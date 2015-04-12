@@ -12,11 +12,10 @@ INDEX
    result for errors
 ** Do comprehensive test of PLplot
 ** Install and test a local copy of the PLplot website
+** Upload the local website to SourceForge
 ** Create ChangeLog.release
 ** Create the PLplot Release
    ++ Preliminaries
-   ++ Install and test a local copy of the PLplot website
-   ++ Upload the local website to SourceForge
    ++ Create a final release tarball and check the result for errors
    ++ Tag the release
    ++ Sign the release with your plplot Release Manager gpg key
@@ -29,7 +28,7 @@ INDEX for Appendix
 ** GNU Privacy Guard (gpg)
 ** Correct computer time
 ** System prerequisites for viewing local website
-
+** Fix website permissions
 
 N.B. the order of steps below is important because of the dependencies
 between the steps which are noted (except for the generation of the
@@ -50,10 +49,10 @@ _________________________________________________________________________
 
 This step does not depend on other steps.
 
-git log --name-status --reverse <tagname>..master >| ChangeLog.release_preliminary
+git log --name-status --reverse <commit_id>..master >| ChangeLog.release_preliminary
 
-where <tagname> is the tag name (e.g., v5_10_0) of the last release to
-exclude from the log all commits that are reachable from that tag.
+where <commit_id> is the last commit id of the log of commits for the
+previous release cycle (i.e., d4fdf0bab for the 5.10.0 release).
 
 Note the "_preliminary" suffix to distinguish this from the final
 result below which will contain (if all goes well in the steps below)
@@ -197,6 +196,11 @@ This step depends on the steps above entitled
 "Prepare and test the documentation" and
 "Update website-related files"
 
+Also you should use your best estimate of the UTC release_date
+which is configured as RELEASE_DATE in doc/docbook/src/CMakeLists.txt.
+That value will likely require modification to generate the final
+website result below.
+
 N.B. The git checkout-index command exports everything from the
 working directory that is in the index or committed, but it will
 ignore local changes in the working directory that haven't been
@@ -211,13 +215,15 @@ local changes)
 
 scripts/generate_website.sh
 
-with no arguments.  The script asks you four questions, gives you a chance
-to verify your answers, then does all the rest of it (downloading a
-throwaway copy of the PLplot source code, building the doxygen and DocBook documentation,
-generating the announcements that are part of the base website, uploading
-the base website, uploading the documentation, building the examples,
-running the examples, uploading the example source code and example results)
-automatically.  I (AWI) ran this script as follows:
+with no arguments (but with stdin configured as below using echo).
+The script asks you four questions, gives you a chance to verify your
+answers, then does all the rest of it (downloading a throwaway copy of
+the PLplot source code, building the doxygen and DocBook
+documentation, generating the announcements that are part of the base
+website, uploading the base website, uploading the documentation,
+building the examples, running the examples, uploading the example
+source code and example results) automatically.  I (AWI) ran this
+script as follows:
 
 echo irwin$'\n'irwin$'\n'raven$'\n'/home/irwin/public_html/plplot$'\n'yes |scripts/generate_website.sh
 
@@ -258,8 +264,8 @@ website you should commit all your changes so they are available for
 generating the tarball and ChangeLog (see below) for this release.
 
 N.B. The iterated result should be identical to the final result (see
-below) except that the documentation release date (configured as RELEASE_DATE
-in doc/docbook/src/CMakeLists.txt) might be incorrect.
+below) except for correcting (if necessary) the RELEASE_DATE as mentioned
+above.
 _________________________________________________________________________
 
 ** Update this file (README.Release_Manager_CookBook)
@@ -331,78 +337,30 @@ find ../comprehensive_test_disposeable -name "*.out" |grep -v a.out |xargs grep 
 scripts/comprehensive_test.sh  --do_test_interactive no
 find ../comprehensive_test_disposeable -name "*.out" |grep -v a.out |xargs grep -i error
 
-Enter results of these and all other tests of this release into
-README.release.
+Alternatively, on platforms (such as MinGW/MSYS) with
+limited system libraries or platforms (such as CentOS) with system libraries which are too old for
+PLplot's needs you can also do comprehensive testing using epa_build
+(see cmake/epa_build/README for details).
+
+Enter results of these and all other tests at
+<https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>
+(which is referred to by README.release).
 _________________________________________________________________________
 
-** Create ChangeLog.release
+Install and test a local copy of the PLplot website
 
-N.B. commit all local changes to the repository so they will be
-reflected in the ChangeLog, tagged version of the release, and the
-release tarball.  And if there are committed changes after this one
-repeat this step so the ChangeLog.release commit is the last commit on
-master for this release cycle (with the possible exception of the
-current file, README.Release_Manager_Cookbook).
+This step depends on the step above entitled
+"Install and test a
+(preliminary) local copy of the PLplot website"
 
-Prepare the ChangeLog.release file to keep track of all changes
-made for the release.  Make sure master is up to date using
+Follow the exact instructions given in that step except this time correct
+RELEASE_DATE (configured in doc/docbook/src/CMakeLists.text) if
+necessary.  Here is the command I used for this step
 
-git fetch
-git log -1 origin/master
-git log -1 master
-
-Create final ChangeLog for this release
-
-git checkout master
-git checkout -b latest_release
-git log --name-status <tagname>..HEAD >| ChangeLog.release
-
-where <tagname> is the tag name (e.g., v5_10_0) of the last release to
-exclude from the log all commits that are reachable from that tag.  Note
-this result (unlike the prelimary version above) will be in the traditional
-reverse chronological order.
-
-# Commit, fast-forward merge to master, and push
-
-git commit -a
-git checkout master
-get merge --ff-only latest_release_changelog
-git push
-git branch --delete latest_release_changelog
-
-The above command destroys the ChangeLog.release file
-from the previous release and the associated commit on
-master (and origin/master) should be the last commit of
-this release.
+echo irwin$'\n'irwin$'\n'raven$'\n'/home/irwin/public_html/plplot$'\n'yes | scripts/generate_website.sh
 _________________________________________________________________________
 
-** Create the PLplot Release
-
-   ++ Preliminaries
-
-The preliminaries are very simple with git.  Stay on master and
-change nothing there for the following tests of this release.
-
-   ++ Install and test a local copy of the PLplot website
-
-This step depends on the steps above entitled
-
-"Prepare and test the documentation"
-"Update website-related files"
-"Update release date and versions"
-
-The step below entitled
-
-"Upload the local website to SourceForge"
-
-depends on this one.
-
-Follow the exact steps given above in "Install and test a
-(preliminary) local copy of the PLplot website" but this time with the
-correct RELEASE_DATE and VERSION and also do this
-using the files from the tagged release directory, e.g., plplot_tags_5.11.0
-
-   ++ Upload the local website to SourceForge
+Upload the local website to SourceForge
 
 Once you are satisfied with the local website, you should upload it to
 SourceForge with rsync.
@@ -424,7 +382,7 @@ are recommended by the rsync man page to preserve SourceForge's file
 and directory attributes.  It is only with those options that I am
 able to get a clean result for a second rsync run.  (Otherwise, each
 directory is mentioned as being changed.)  These options may solve the
-permissions problem mentioned below.
+website permissions problem mentioned in an Appendix.
 
 N.B. the trailing slash on the source directory is essential and means rsync
 the contents of this directory with the contents of the destination htdocs
@@ -432,79 +390,66 @@ directory.  Without the trailing slash you would rsync the the contents of
 the source directory with the contents of the htdocs/htdocs destination
 directory which is not what you want to do.  
 
-N.B. the --dry-run option for rsync is a god-send and tells you exactly what
+N.B. the --dry-run option for rsync is a godsend since it tells you exactly what
 will happen without actually doing it.
-
-<Fix permission problems if that is necessary any more>
-This discussion of dealing with permissions problems may be moot now
-because of the--no-p --no-g --chmod=ugo=rwX options recently
-introduced for the rsync command above or because Allura handles website
-file permissions differently now.  But we won't know that for a
-fact until someone besides the current release manager attempts to
-generate the website and upload it so I will leave the following
-instructions for dealing with permissions problems in place, "just in
-case".
-
-Note that when changing those who upload the website, the SF
-permissions (at least in the pre-Allura version of SF) were not set
-up correctly to delete files belonging to the old release manager
-using rsync.
-
-If this problem re-occurs, then one thing to try is to attempt to
-mass-delete all website files using
-
-mkdir /tmp/empty
-rsync -av --delete  /tmp/empty/ airwin,plplot@web.sourceforge.net:htdocs
-
-followed by the original rsync command above to upload the website using
-the new ownership of files.  
-
-For more on the extremly non-posix permissions of the SF website files
-see
-<https://sourceforge.net/p/forge/documentation/Project%20Web%20Filesystem%20Permissions/>
-which claims, for example, that any authorized PLplot user can delete
-files regardless of ownership so the above may work fine.  But that document also implies you
-can change permissions from the defaults which (as reported by the
-sftp "ls -l" command) are "drwxrwxr-x" for all directories and
-"-rw-rw-r--" for all files.  This is indeed true using the sftp
-"chmod" command which allows you to change permissions one file at a
-time (ugh).  But any attempt to get rsync to change permissions from
-these defaults (e.g., with the "--no-g
---chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r" set of options with or without
--no-p and starting from empty or not) failed.
-
-
-"Just in case" the above mass-deletion with rsync fails, this quite
-laborious method worked to delete all files in the past.
-
-sftp airwin,plplot@web.sourceforge.net
-
-Then use the 
-
-ls -l
-
-command to figure out who owns what and the
-
-rm *
-
-command on the _file_ contents of each subdirectory of htdocs, and use
-the
-
-rmdir <directory name>
-
-command on empty directories.
-
-Note, sftp has no recursive feature so you have to figure out the
-directory structure and cd to the correct directory levels to remove
-the files in each directory, ugh.  I did try the sftp chown command,
-but that did not work so the only possibility I could find was the above
-commands to remove htdocs and everything below it in a piece-meal fashion.
-</Fix permission problems>
 
 Once you have a proper upload of the local website to SourceForge, test
 it as before.  Also, click the xhtml and css validate buttons on each of
 index.php, download.php, examples.php, documentation.php, and credits.php
 to validate those pages.
+
+_________________________________________________________________________
+
+** Create ChangeLog.release
+
+N.B. commit all local changes to the repository so they will be
+reflected in the ChangeLog, tagged version of the release, and the
+release tarball.  And if there are committed changes after this one
+repeat this step so the ChangeLog.release commit is the last commit on
+master for this release cycle (with the possible exception of the
+current file, README.Release_Manager_Cookbook).
+
+Prepare the ChangeLog.release file to keep track of all changes
+made for the release.  Make sure master is up to date using
+
+git fetch
+git log -1 origin/master
+git log -1 master
+
+Create final ChangeLog for this release
+
+# maint is a private topic branch I use for maintenance.
+git checkout maint
+git log --name-status <commit_id>..master >| ChangeLog.release
+
+where <commit_id> is the last commit id of the log of commits for the
+previous release cycle (i.e., d4fdf0bab for the 5.10.0 release).  Note
+this result (unlike the prelimary version above) will be in the
+traditional reverse chronological order.
+
+# Commit, fast-forward merge to master, and push
+
+git commit -all
+git checkout master
+#Last check there is nothing to download from server.
+git fetch 
+# Only if git fetch did not download anything....
+git merge --ff-only maint
+git push origin master
+
+The above command destroys the ChangeLog.release file
+from the previous release and the associated commit on
+master (and origin/master) should be the last commit of
+this release.
+_________________________________________________________________________
+
+** Create the PLplot Release
+
+   ++ Preliminaries
+
+The preliminaries are very simple with git.  Stay on master and
+change nothing there for the following tests of this release.
+
 
    ++ Create a final release tarball and check the result for errors
 
@@ -584,6 +529,8 @@ cd /home/frs/project/p/pl/plplot/plplot/5.11.0\ Source
 put /tmp/README.release
 exit
 
+   ++ Make a SourceForge news item concerning this release
+
 Create a news item for this release largely following previous
 news items (or even identical to them but with a changed title).
 
@@ -598,13 +545,13 @@ the URL's in the text with angle brackets, e.g.
 For now I simply make all paragraphs one giant line which seems
 to give reasonable default results.
 
-(15) Publicize the release announcement
+   ++ Publicize the release announcement
 
 Jerry: macresearch.org
 
 Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
-(16) Prepare immediately for the next release cycle
+   ++ Prepare immediately for the next release cycle
 
   a. Preserve the historical record of the
      significant changes between versions of PLplot in one file by
@@ -823,5 +770,76 @@ WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
 that directory location browses as
 http://raven/~irwin/plplot/htdocs/.)
+_________________________________________________________________________
 
+Fix website permissions
 
+When the release manager uploads the website, those files belong to both
+him and the PLplot group.  So in theory those files can be overwritten by
+anyone else belonging to the group.  But in the past, this did not work
+and whenever someone else tried to upload the website (e.g., when the
+release manager changed), there were lots of permission issues to deal with.
+
+This discussion of dealing with permissions problems may be moot now
+because of the--no-p --no-g --chmod=ugo=rwX options recently
+introduced for the rsync command above or because Allura handles website
+file permissions differently now.  But we won't know that for a
+fact until someone besides the current release manager attempts to
+generate the website and upload it so I will leave the following
+instructions for dealing with permissions problems in place, "just in
+case".
+
+Note that when changing those who upload the website, the SF
+permissions (at least in the pre-Allura version of SF) were not set
+up correctly to delete files belonging to the old release manager
+using rsync.
+
+If this problem re-occurs, then one thing to try is to attempt to
+mass-delete all website files using
+
+mkdir /tmp/empty
+rsync -av --delete  /tmp/empty/ airwin,plplot@web.sourceforge.net:htdocs
+
+followed by the original rsync command above to upload the website using
+the new ownership of files.  
+
+For more on the extremly non-posix permissions of the SF website files
+see
+<https://sourceforge.net/p/forge/documentation/Project%20Web%20Filesystem%20Permissions/>
+which claims, for example, that any authorized PLplot user can delete
+files regardless of ownership so the above may work fine.  But that document also implies you
+can change permissions from the defaults which (as reported by the
+sftp "ls -l" command) are "drwxrwxr-x" for all directories and
+"-rw-rw-r--" for all files.  This is indeed true using the sftp
+"chmod" command which allows you to change permissions one file at a
+time (ugh).  But any attempt to get rsync to change permissions from
+these defaults (e.g., with the "--no-g
+--chmod=Du=rwx,Dgo=rx,Fu=rw,Fgo=r" set of options with or without
+-no-p and starting from empty or not) failed.
+
+"Just in case" the above mass-deletion with rsync fails, this quite
+laborious method worked to delete all files in the past.
+
+sftp airwin,plplot@web.sourceforge.net
+
+Then use the 
+
+ls -l
+
+command to figure out who owns what and the
+
+rm *
+
+command on the _file_ contents of each subdirectory of htdocs, and use
+the
+
+rmdir <directory name>
+
+command on empty directories.
+
+Note, sftp has no recursive feature so you have to figure out the
+directory structure and cd to the correct directory levels to remove
+the files in each directory, ugh.  I did try the sftp chown command,
+but that did not work so the only possibility I could find was the above
+commands to remove htdocs and everything below it in a piece-meal fashion.
+_________________________________________________________________________
