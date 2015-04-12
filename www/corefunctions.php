@@ -81,7 +81,7 @@ END;
 	function pageFooter()
 	{
 		echo '		<div id="pagefooter">';
-		echo '			<p>Original design by <a href="http://DesignsByDarren.com">DesignsByDarren.com</a>, Some Rights Reserved.<br/>Design modifications &copy; 2008-2013 Plplot developer community.<br /><br/>';
+		echo '			<p>Original design by <a href="http://DesignsByDarren.com">DesignsByDarren.com</a>, Some Rights Reserved.<br/>Design modifications &copy; 2008-2015 Plplot developer community.<br /><br/>';
 		echo '			<a href="http://validator.w3.org/check?uri=referer"><img style="border:0;width:88px;height:31px" src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Transitional" /></a>';
 		echo '      <a href="http://jigsaw.w3.org/css-validator/check?uri=referer"><img style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" /></a>';
 		echo '      </p>';
