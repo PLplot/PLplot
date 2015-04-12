@@ -40,7 +40,7 @@ label plots.</p>
 				   <li>MinGW/MSYS on the Wine (1.6.1 and later) version of Windows</li>
 				 </ul>
 
-				 <p>For each of the above platforms, PLplot can be built from <a href="downloads.php">source</a>, and for the Linux and Mac OS X platforms third-party binary packages for PLplot <a href="downloads.php">are available</a>.</p>
+				 <p>For each of the above platforms, PLplot can be built from <a href="downloads.php">source</a>, and for the Linux and Mac OS X platforms third-party binary packages for PLplot <a href="downloads.php#Binary_Packages">are available</a>.</p>
 				<h4><a name="bindings">Language Bindings</a></h4>
 				<p>There are many bindings to the PLplot library</p>
 				<ul class="arrowlist">

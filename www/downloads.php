@@ -25,7 +25,7 @@ accessed a number of ways.  You can obtain the latest stable version of PLplot f
 		     <p>Finally, you can browse our git repository
 		     <a href="http://sourceforge.net/p/plplot/plplot/ci/master/tree">
 		     here</a>.</p>
-			<h3>Binary Packages</h3>
+			<h3><a name="Binary_Packages">Binary Packages</a></h3>
 			<p>A number of third-party binary packages for PLplot are available.
 Binary packages are provided by at least the following Linux distributions:</p>
 		  <ul class="arrowlist">
