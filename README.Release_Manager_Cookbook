@@ -410,15 +410,18 @@ master for this release cycle (with the possible exception of the
 current file, README.Release_Manager_Cookbook).
 
 Prepare the ChangeLog.release file to keep track of all changes
-made for the release.  Make sure master is up to date using
+made for the release.  Make sure master and maint are up to date using
 
 git fetch
-git log -1 origin/master
-git log -1 master
+git log --oneline -1 origin/master
+git log --oneline -1 master
+git log --oneline -1 maint
 
 Create final ChangeLog for this release
 
-# maint is a private topic branch I use for maintenance.
+# maint is a private topic branch I use for maintenance which I keep
+# identical to master (confirmed with above git log command) before I
+# start using it.
 git checkout maint
 git log --name-status <commit_id>..master >| ChangeLog.release
 
@@ -429,7 +432,17 @@ traditional reverse chronological order.
 
 # Commit, fast-forward merge to master, and push
 
-git commit -all
+git add ChangeLog.release
+git commit
+# There is a chicken/egg situation here since the ChangeLog.release file
+# does not include the log of its own last commit.  You could address
+# that issue by re-running the above commit command, and amending the commit.
+# However, that amending will change the commit id so the ChangeLog.release
+# will have incorrect information about its own commmit id.
+# So the best course is not to do such amending and accept that the
+# ChangeLog.release file will not include the log of the last commit (i.e., its own commit)
+# for the release.
+
 git checkout master
 #Last check there is nothing to download from server.
 git fetch 
@@ -470,20 +483,36 @@ and push it.
 
 git checkout master
 git tag plplot-5.11.0
-# Irrevocable step since no pushed tags can ever be deleted.
-git push --tags
+# Note, a tag simply tags a particular commit so if I checkout some
+# other branch (such as maint) that has the same tagged commit as
+# as master, then the "git tag --list" command will find the tag
+# (which I proved was actually true for maint).
+
+# Irrevocable step since no pushed tags can ever be deleted from
+# upstream repository.
+git push --tags origin master
 
 (Note we are changing release tag names here from the old scheme
 which would have been v5_11_0 to a more informative scheme for names.)
 
    ++ Sign the release with your plplot Release Manager gpg key
 
-gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-X.Y.Z.tar.gz
+A list of your GPG keys can be obtained using, e.g.,
+software@raven> gpg --list-keys Alan
+pub   2048R/BB159E92 2011-08-19 [expires: 2016-08-17]
+uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
+uid                  Alan W. Irwin (libLASi key) <airwin@users.sourceforge.net>
+uid                  Alan W. Irwin (FreeEOS key) <airwin@users.sourceforge.net>
+uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
+sub   2048R/C5ECCF77 2011-08-19 [expires: 2016-08-17]
 
-A list of your GPG keys can be obtained using the command "gpg --list-keys <name>".
+
+gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz
+
+where YYYYYYYY is BB159E92 for Alan W. Irwin as taken from the above key list.
 
    ++ Verify the release tarball signing
-gpg --verify /tmp/plplot-dist-prep/plplot-X.Y.Z.tar.gz.asc
+gpg --verify /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz.asc
 
    ++ Make a SourceForge file release
 
@@ -498,25 +527,21 @@ put plplot-5.11.0.tar.gz.asc
 put plplot-5.11.0.tar.gz
 exit
 
-Make, e.g., plplot-5.11.0.tar.gz, the "latest" version.
-
-login to SF website
-files ==> plplot ==> 5.11.0 Source ==> view details (the "i" icon) for
-plplot-5.11.0.tar.gz ==> select "all" for the default
-
-The above used to spin indefinitely with iceweasel.  Now it finishes
-with a "properties updated" message, but it doesn't appear to "take"
-immediately so check it later.
-
 # Save a local copy of the release tarball for future reference and
 # also check it.
 cd /home/software/plplot_svn/HEAD/export #(or wherever)
 cp -a /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz* .
 gpg --verify plplot-5.11.0.tar.gz.asc
 
+# Check and verify download from SF works:
+cd /tmp
+wget http://downloads.sourceforge.net/plplot/plplot/5.11.0%20Source/plplot-5.11.0.tar.gz.asc
+wget http://downloads.sourceforge.net/plplot/plplot/5.11.0%20Source/plplot-5.11.0.tar.gz
+gpg --verify plplot-5.11.0.tar.gz.asc
+
 Prepare concatanated release notes + Changelog.
 
-cd plplot_tags_5.11.0
+cd /tmp/plplot-dist-prep/plplot-5.11.0
 echo "
 
 DETAILED CHANGELOG FOR THIS RELEASE
@@ -529,6 +554,16 @@ cd /home/frs/project/p/pl/plplot/plplot/5.11.0\ Source
 put /tmp/README.release
 exit
 
+Make, e.g., plplot-5.11.0.tar.gz, the "latest" version.
+
+login to SF website
+files ==> plplot ==> 5.11.0 Source ==> view details (the "i" icon) for
+plplot-5.11.0.tar.gz ==> select "all" for the default
+
+The above used to spin indefinitely with iceweasel.  Now it finishes
+with a "properties updated" message, but it doesn't appear to "take"
+immediately so check it later.
+
    ++ Make a SourceForge news item concerning this release
 
 Create a news item for this release largely following previous
@@ -538,12 +573,10 @@ Point your browser to http://sf.net/projects/plplot and login.  A
 news item will then be available on the menu bar.  Click that, then
 "new post".
 
-Enter the title (e.g., PLplot Release 5.11.0) and the text.  Surround
-the URL's in the text with angle brackets, e.g.
-<http://sourceforge.net/projects/plplot/files/plplot>.
-
-For now I simply make all paragraphs one giant line which seems
-to give reasonable default results.
+Enter the title (e.g., PLplot Release 5.11.0) and the text.
+The text is in markdown format so cutting and pasting from
+previous news items is a very efficient way to create the
+new news item.
 
    ++ Publicize the release announcement
 
@@ -561,7 +594,12 @@ cat README.release OLD-README.release > OLD-README.release_new
 mv OLD-README.release_new OLD-README.release
 
 
-  b. Update README.release file to reflect the start of a new release cycle.
+  b. Update README.release file to reflect the start of a new release
+     cycle.
+
+  c. Commit typically last-minute changes in
+     README.Release_Manager_Cookbook that reflect the latest practice
+     done for the current release.
 
 --- Appendix ---
 _________________________________________________________________________
