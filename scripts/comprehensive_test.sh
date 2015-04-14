@@ -29,17 +29,25 @@ INSTALL_TREE = $INSTALL_TREE
 
 The location below is the top-level directory of the build tree used
 for the CMake-based build and test of the installed examples.
-INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE
+INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE"
+
+    # $BASH contains full path of bash used to execute this
+    # script. Therefore ${BASH##*.} will be equal to "exe" on _all_
+    # Windows systems and something else for all other platforms
+    # (since the pattern "##*." removes from the first character in
+    # the $BASH string up to the last "." in $BASH).
+    if [ "${BASH##*.}" = "exe" ] ; then
+	ANY_WINDOWS_PLATFORM="true"
+    else
+	ANY_WINDOWS_PLATFORM="false"
+    fi
+    echo "
+This variable specifies whether any windows platform has been detected
+ANY_WINDOWS_PLATFORM=$ANY_WINDOWS_PLATFORM
 
 Each of the steps in this comprehensive test may take a while...."
 
     PATH_SAVE=$PATH
-    if [ "$generator_string" = "MinGW Makefiles" -o "$generator_string" = "MSYS Makefiles" ] ; then
-	MINGW_OR_MSYS="true"
-    else
-	MINGW_OR_MSYS="false"
-    fi
-
     mkdir -p "$OUTPUT_TREE"
     rm -rf "$BUILD_TREE"
     mkdir -p "$BUILD_TREE"
@@ -52,7 +60,7 @@ Each of the steps in this comprehensive test may take a while...."
     output="$OUTPUT_TREE"/cmake.out
     rm -f "$output"
 
-    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$MINGW_OR_MSYS" = "true" ] ; then
+    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
 	echo "Prepend $BUILD_TREE/dll to the original PATH"
 	PATH=$BUILD_TREE/dll:$PATH_SAVE
     fi
@@ -147,7 +155,7 @@ Each of the steps in this comprehensive test may take a while...."
 	echo "Prepend $INSTALL_TREE/bin to the original PATH"
 	PATH="$INSTALL_TREE/bin":$PATH_SAVE
 
-	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$MINGW_OR_MSYS" = "true" ] ; then
+	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
 	    # Use this logic to be as version-independent as possible.
 	    current_dir=$(pwd)
 	    # Wild cards must not be inside quotes.
@@ -216,7 +224,7 @@ Each of the steps in this comprehensive test may take a while...."
 
     if [ "$do_test_interactive" = "yes" ] ; then
 	if [ "$do_test_build_tree" = "yes" ] ; then
-	    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$MINGW_OR_MSYS" = "true" ] ; then
+	    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
 		echo "Prepend $BUILD_TREE/dll to the original PATH"
 		PATH=$BUILD_TREE/dll:$PATH_SAVE
 	    fi
@@ -246,7 +254,7 @@ Each of the steps in this comprehensive test may take a while...."
 	echo "Prepend $INSTALL_TREE/bin to the original PATH"
 	PATH="$INSTALL_TREE/bin":$PATH_SAVE
 
-	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$MINGW_OR_MSYS" = "true" ] ; then
+	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
 	    # Use this logic to be as version-independent as possible.
 	    current_dir=$(pwd)
 	    # Wild cards must not be inside quotes.
