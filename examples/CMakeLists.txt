@@ -395,7 +395,7 @@ else(CORE_BUILD)
   # The minimum version and policy settings normally follow what is
   # done for the core build.  Check the core build for the reasons for
   # these decisions.
-  cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
+  cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
   if(POLICY CMP0022)
     message(STATUS "Explicitly setting policy CMP0022 to OLD")
     cmake_policy(SET CMP0022 OLD)

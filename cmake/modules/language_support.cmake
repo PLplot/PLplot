@@ -26,22 +26,7 @@ if(NOT CMAKE_PLATFORM_INFO_DIR)
   message(STATUS 'CMAKE_PLATFORM_INFO_DIR = \${CMAKE_PLATFORM_INFO_DIR}')
 endif(NOT CMAKE_PLATFORM_INFO_DIR)
 
-if(CMAKE_SYSTEM_NAME STREQUAL \"Linux\")
-  # We prefer to support only the latest CMake version because it
-  # tends to be more free of issues and more consistent with recent
-  # software releases of software that PLplot depends on than earlier versions.
-  # However, as a special concession to our modern (not enterprise or
-  # LTS) Linux distro users so they can avoid a download of recent CMake,
-  # we allow them to use the system version of
-  # CMake which at this time (2011-10) is typically 2.8.2 or later.
-  cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
-else(CMAKE_SYSTEM_NAME STREQUAL \"Linux\")
-  # For non-Linux platforms we prefer to support only the most recent
-  # CMake version since that tends to be most free of issues and most
-  # consistent with releases of software that PLplot depends on.  The
-  # most recently released CMake is 2.8.6 at this time (2011-10).
-  cmake_minimum_required(VERSION 2.8.6 FATAL_ERROR)
-endif(CMAKE_SYSTEM_NAME STREQUAL \"Linux\")
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 message(STATUS \"CMAKE_GENERATOR = ${CMAKE_GENERATOR}\")
 #enable_language(${language} OPTIONAL)
 enable_language(${language})

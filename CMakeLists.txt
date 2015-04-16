@@ -30,7 +30,7 @@ set(
   ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
   )
 
-cmake_minimum_required(VERSION 2.8.9 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 # cmake-2.8.12.1 (2.8.12 screwed up the implementation) introduced a
 # corrected implementation of keyword signatures for

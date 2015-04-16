@@ -1,6 +1,6 @@
 # Top-level CMakeLists.txt for a simple Ada-language project.  See the README
 # file in this directory for the motivations behind this project.
-cmake_minimum_required(VERSION 2.8.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 # Ideally use "project(simple_ada_test Ada)", but that doesn't work
 # (at least for case where Ada support files are in user-specified
