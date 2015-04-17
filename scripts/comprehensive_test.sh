@@ -31,12 +31,12 @@ The location below is the top-level directory of the build tree used
 for the CMake-based build and test of the installed examples.
 INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE"
 
-    # $BASH contains full path of bash used to execute this
-    # script. Therefore ${BASH##*.} will be equal to "exe" on _all_
-    # Windows systems and something else for all other platforms
-    # (since the pattern "##*." removes from the first character in
-    # the $BASH string up to the last "." in $BASH).
-    if [ "${BASH##*.}" = "exe" ] ; then
+    # Use OSTYPE variable to discover if it is a Windows platform or not.
+    if [[ "$OSTYPE" =~ ^cygwin ]]; then
+	ANY_WINDOWS_PLATFORM="true"
+    elif [[ "$OSTYPE" =~ ^msys ]]; then
+	ANY_WINDOWS_PLATFORM="true"
+    elif [[ "$OSTYPE" =~ ^win ]]; then
 	ANY_WINDOWS_PLATFORM="true"
     else
 	ANY_WINDOWS_PLATFORM="false"
