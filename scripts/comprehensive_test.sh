@@ -60,7 +60,7 @@ Each of the steps in this comprehensive test may take a while...."
     output="$OUTPUT_TREE"/cmake.out
     rm -f "$output"
 
-    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
+    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
 	echo "Prepend $BUILD_TREE/dll to the original PATH"
 	PATH=$BUILD_TREE/dll:$PATH_SAVE
     fi
@@ -224,7 +224,7 @@ Each of the steps in this comprehensive test may take a while...."
 
     if [ "$do_test_interactive" = "yes" ] ; then
 	if [ "$do_test_build_tree" = "yes" ] ; then
-	    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
+	    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
 		echo "Prepend $BUILD_TREE/dll to the original PATH"
 		PATH=$BUILD_TREE/dll:$PATH_SAVE
 	    fi
