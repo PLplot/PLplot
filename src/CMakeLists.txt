@@ -251,60 +251,6 @@ if(WITH_FREETYPE)
   list(APPEND libplplot_LINK_LIBRARIES ${FREETYPE_LIBRARIES})
 endif(WITH_FREETYPE)
 
-set(libstdcxx_full_path)
-if(ENABLE_cxx AND NOT BUILD_SHARED_LIBS)
-  # For this special case where the plplot library is a static C++
-  # library, pkg-config needs to add -L and -l options corresponding
-  # to libstd++.so to the link flags it delivers.  Another alternative
-  # is to have the plplot library link statically to libstd++.a, but
-  # static linking is not well-supported in CMake, and I am attempting
-  # to keep this fix limited to just the configuration of the
-  # plplotd.pc pkg-config file.  N.B. the logic below for finding the
-  # C++ library is extremely specific to GNU g++ (either Unix or MinGW
-  # version), but it is good to get at least this compiler to work for
-  # the special case of a static C++ plplot library.
-  if(EXISTS "${CMAKE_CXX_COMPILER}")
-    execute_process(
-      COMMAND ${CMAKE_CXX_COMPILER} --verbose --version
-      RESULT_VARIABLE CXX_rc
-      ERROR_VARIABLE CXX_string
-      ERROR_STRIP_TRAILING_WHITESPACE
-      OUTPUT_QUIET
-      )
-  else(EXISTS "${CMAKE_CXX_COMPILER}")
-    set(CXX_rc 2)
-  endif(EXISTS "${CMAKE_CXX_COMPILER}")
-  if(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
-    string(REGEX REPLACE "^.*(LIBRARY_PATH=.*)\nCOLLECT_GCC_OPTIONS.*$" "\\1"
-      CXX_library_path_string "${CXX_string}"
-      )
-    #message(STATUS "CXX_library_path_string = ${CXX_library_path_string}")
-    if(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
-      string(REGEX REPLACE "^LIBRARY_PATH=" "" CXX_library_path "${CXX_library_path_string}")
-      # For both Linux and MinGW, CXX_library_path is a semicolon
-      # delimited list which is identical to the form of a CMake list.
-      # Furthermore, for the MinGW case, the drive letters are in the
-      # colon form, but experiments show that is exactly the form
-      # required by find_library for the MinGW case.  Net result: no
-      # conversion necessary for either Linux or MinGW.
-      find_library(libstdcxx_full_path NAMES stdc++ PATHS ${CXX_library_path})
-      message(STATUS "libstdcxx_full_path = ${libstdcxx_full_path}")
-    else(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
-      message(STATUS "WARNING: execute_process failed to obtain C++ library needed for pkg-config")
-      message(STATUS "CXX_string = ${CXX_string}")
-      message(STATUS "CXX_library_path_string = ${CXX_library_path_string}")
-    endif(CXX_library_path_string MATCHES "^LIBRARY_PATH=")
-  else(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
-    message(STATUS "WARNING: execute_process failed to obtain C++ library needed for pkg-config")
-    message(STATUS "CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")
-    message(STATUS "CXX_rc = ${CXX_rc}")
-    message(STATUS "CXX_string = ${CXX_string}")
-  endif(CXX_rc STREQUAL "0" AND CXX_string MATCHES "LIBRARY_PATH=")
-  if(NOT libstdcxx_full_path)
-    message(STATUS "WARNING: failed to find libstdc++ so pkg-config link flags will be incomplete") 
-  endif(NOT libstdcxx_full_path)
-endif(ENABLE_cxx AND NOT BUILD_SHARED_LIBS)
-
 # Copy current information in libplplot_LINK_LIBRARIES
 # into libplplot_LINK_FLAGS, which contains the equivalent list information
 # in a combination of library list form and pkg-config form that will
@@ -313,10 +259,6 @@ endif(ENABLE_cxx AND NOT BUILD_SHARED_LIBS)
 # which have a different pkg-config treatment than the external libraries
 # dealt with here.
 set(libplplot_LINK_FLAGS ${libplplot_LINK_LIBRARIES})
-
-if(libstdcxx_full_path)
-  list(APPEND libplplot_LINK_FLAGS ${libstdcxx_full_path})
-endif(libstdcxx_full_path)
 
 # The above completes dealing with the external libraries.  Now
 # deal with the internal libraries that are built by the PLplot

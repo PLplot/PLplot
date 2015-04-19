@@ -271,7 +271,14 @@ if(CORE_BUILD)
 
   install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
 
-  set(CC ${CMAKE_C_COMPILER})
+  if(ENABLE_cxx AND NOT ENABLE_DYNDRIVERS)
+    # For this case must link with C++ compiler for
+    # the traditional build of the examples since
+    # core PLplot library contains C++ code.
+    set(CC ${CMAKE_CXX_COMPILER})
+  else(ENABLE_cxx AND NOT ENABLE_DYNDRIVERS)
+    set(CC ${CMAKE_C_COMPILER})
+  endif(ENABLE_cxx AND NOT ENABLE_DYNDRIVERS)
 
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in

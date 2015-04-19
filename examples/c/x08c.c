@@ -24,9 +24,13 @@
 
 #include "plcdemos.h"
 
-// plexit not declared in public header!
-PLDLLIMPEXP void
-plexit( const char *errormsg );
+// plexit not declared in public header!  However, explicit
+// declaration (commented out below) does not work for g++ compiler
+// (used for non-dynamic and static cases) for unknown reasons.  So
+// use private header instead to declare plexit (which does work).
+//PLDLLIMPEXP void
+//plexit( const char *errormsg );
+#include "plplotP.h"
 
 // These values must be odd, for the middle
 // of the index range to be an integer, and thus
