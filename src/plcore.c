@@ -2876,10 +2876,6 @@ int plInBuildTree()
                         *pcurrdir = tolower( *pcurrdir );
                     for (; *pbuilddir; ++pbuilddir )
                         *pbuilddir = tolower( *pbuilddir );
-#define PLPLOT_PATH_DELIMITER    '\\'
-#else
-#define PLPLOT_PATH_DELIMITER    '/'
-#endif
                     // builddir does not have trailing path delimiter
                     // so the strncmp comparison checks if currdir is
                     // exactly the builddir or builddir with a string
@@ -2889,7 +2885,11 @@ int plInBuildTree()
                     // delimiter, i.e., whether currdir is the builddir or
                     // a subdirectory of that directory.
                     if ( strncmp( builddir, currdir, len_builddir ) == 0 &&
-                         ( len_currdir == len_builddir || currdir[len_builddir] == PLPLOT_PATH_DELIMITER ) )
+                         ( len_currdir == len_builddir || currdir[len_builddir] == '\\' || currdir[len_builddir] == '/' ) )
+#else
+                    if ( strncmp( builddir, currdir, len_builddir ) == 0 &&
+                         ( len_currdir == len_builddir || currdir[len_builddir] == '/' ) )
+#endif
                     {
                         inBuildTree = 1;
                     }
@@ -2961,11 +2961,11 @@ plInitDispatchTable()
     int n;
 
 #ifdef ENABLE_DYNDRIVERS
-    char buf[BUFFER2_SIZE];
+    char         buf[BUFFER2_SIZE];
     const char   * drvdir;
     char         *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
-    int seq;
-    int i, j, driver_found, done = 0;
+    int          seq;
+    int          i, j, driver_found, done = 0;
     FILE         *fp_drvdb   = NULL;
     DIR          * dp_drvdir = NULL;
     struct dirent* entry;
@@ -3203,9 +3203,9 @@ plInitDispatchTable()
 static void
 plSelectDev()
 {
-    int dev, i, count;
+    int    dev, i, count;
     size_t length;
-    char response[80];
+    char   response[80];
     char   * devname_env;
 
 // If device name is not already specified, try to get it from environment
@@ -3313,11 +3313,11 @@ static void
 plLoadDriver( void )
 {
 #ifdef ENABLE_DYNDRIVERS
-    int i, drvidx;
+    int  i, drvidx;
     char sym[BUFFER_SIZE];
     char *tag;
 
-    int n = plsc->device - 1;
+    int  n = plsc->device - 1;
     PLDispatchTable  *dev    = dispatch_table[n];
     PLLoadableDriver *driver = 0;
 
@@ -4323,7 +4323,7 @@ plP_image( PLFLT *z, PLINT nx, PLINT ny, PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT
 #if 0   // BEGIN dev_fastimg COMMENT
     PLINT i, npts;
     short *xscl, *yscl;
-    int plbuf_write;
+    int   plbuf_write;
 
     plsc->page_status = DRAWING;
 
