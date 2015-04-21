@@ -2856,6 +2856,8 @@ int plInBuildTree()
         }
         else
         {
+            pldebug( "plInBuildTree(): ", "current directory >%s<\n", currdir );
+            pldebug( "plInBuildTree(): ", "build directory >%s<\n", BUILD_DIR );
             // The chdir / getcwd call is to ensure we get the physical
             // path without any symlinks
             // Ignore error in chdir - build tree may not exist
@@ -2869,13 +2871,26 @@ int plInBuildTree()
                 {
                     len_currdir  = strlen( currdir );
                     len_builddir = strlen( builddir );
-#if defined ( _MSC_VER )
+#if defined ( IGNORECASE )
+                    pldebug( "plInBuildTree(): ", "comparing ignoring case\n" );
                     // On Windows all parts of the path are case insensitive
                     // so convert to lower case for the comparison.
                     for (; *pcurrdir; ++pcurrdir )
+                    {
                         *pcurrdir = tolower( *pcurrdir );
+                        if ( *pcurrdir == '\\' )
+                        {
+                            *pcurrdir = '/';
+                        }
+                    }
                     for (; *pbuilddir; ++pbuilddir )
+                    {
                         *pbuilddir = tolower( *pbuilddir );
+                        if ( *pbuilddir == '\\' )
+                        {
+                            *pbuilddir = '/';
+                        }
+                    }
                     // builddir does not have trailing path delimiter
                     // so the strncmp comparison checks if currdir is
                     // exactly the builddir or builddir with a string
@@ -2887,6 +2902,7 @@ int plInBuildTree()
                     if ( strncmp( builddir, currdir, len_builddir ) == 0 &&
                          ( len_currdir == len_builddir || currdir[len_builddir] == '\\' || currdir[len_builddir] == '/' ) )
 #else
+                    pldebug( "plInBuildTree(): ", "comparing respecting case\n" );
                     if ( strncmp( builddir, currdir, len_builddir ) == 0 &&
                          ( len_currdir == len_builddir || currdir[len_builddir] == '/' ) )
 #endif

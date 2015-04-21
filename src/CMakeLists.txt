@@ -89,6 +89,9 @@ if(ENABLE_DYNDRIVERS)
   if(NOT PLCORE_COMPILE_PROPS)
     set(PLCORE_COMPILE_PROPS)
   endif(NOT PLCORE_COMPILE_PROPS)
+  if(WIN32_OR_CYGWIN)
+    set(PLCORE_COMPILE_PROPS "${PLCORE_COMPILE_PROPS} -DIGNORECASE")
+  endif(WIN32_OR_CYGWIN)
   set_source_files_properties(
     plcore.c
     PROPERTIES COMPILE_FLAGS "${PLCORE_COMPILE_PROPS} -I${LTDL_INCLUDE_DIR}"
@@ -142,10 +145,10 @@ else(ENABLE_DYNDRIVERS)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build static qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
-    
+
     # qt device driver code within libplplot has some symbols that need to be
-    # visible for qt_example in installed examples/c++ directory to link 
-    # properly. 
+    # visible for qt_example in installed examples/c++ directory to link
+    # properly.
     if(BUILD_SHARED_LIBS AND SOURCE_ROOT_NAME STREQUAL "qt")
       set(${SOURCE_ROOT_NAME}_COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGDLL")
     endif(BUILD_SHARED_LIBS AND SOURCE_ROOT_NAME STREQUAL "qt")
@@ -225,12 +228,12 @@ if(HAVE_SHAPELIB)
   if(NOT PLMAP_COMPILE_PROPS)
     set(PLMAP_COMPILE_PROPS)
   endif(NOT PLMAP_COMPILE_PROPS)
-  set_source_files_properties(plmap.c 
+  set_source_files_properties(plmap.c
     PROPERTIES
     COMPILE_FLAGS "${PLMAP_COMPILE_PROPS} -I${SHAPELIB_INCLUDE_DIR}"
     )
   if(HAVE_SAHOOKS)
-  set_source_files_properties(plmap.c 
+  set_source_files_properties(plmap.c
     PROPERTIES
     COMPILE_DEFINITIONS HAVE_SAHOOKS
     )
@@ -310,7 +313,7 @@ if(USE_RPATH)
   filter_rpath(LIB_INSTALL_RPATH)
   set_target_properties(
     plplot
-    PROPERTIES 
+    PROPERTIES
     SOVERSION ${plplot_SOVERSION}
     VERSION ${plplot_VERSION}
     INSTALL_RPATH "${LIB_INSTALL_RPATH}"
@@ -319,7 +322,7 @@ if(USE_RPATH)
 else(USE_RPATH)
   set_target_properties(
     plplot
-    PROPERTIES 
+    PROPERTIES
     SOVERSION ${plplot_SOVERSION}
     VERSION ${plplot_VERSION}
     INSTALL_NAME_DIR "${LIB_DIR}"
@@ -334,7 +337,7 @@ install(TARGETS plplot
   )
 
 # This exports information for every target in the whole build that
-# has the EXPORT export_plplot signature (as above) for the 
+# has the EXPORT export_plplot signature (as above) for the
 # install(TARGETS ... # command.
 install(EXPORT export_plplot DESTINATION ${LIB_DIR}/cmake/plplot)
 
@@ -351,7 +354,7 @@ endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 message("libplplot_LINK_FLAGS = ${libplplot_LINK_FLAGS}")
 
-string(REGEX REPLACE ";" " " 
+string(REGEX REPLACE ";" " "
   libplplot_COMPILE_FLAGS
   "${libplplot_COMPILE_FLAGS}"
   )
