@@ -877,9 +877,8 @@ int
 c_plparseopts( int *p_argc, const char **argv, PLINT mode )
 {
     const char **argsave, **argend;
-    int        i, myargc, status = 0;
+    int        i, myargc, myargcsave, status = 0;
 
-    pllib_init();
 
 // Initialize
 
@@ -905,18 +904,51 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
     if ( myargc == 0 )
         return 0;
 
-// Process the command line
+    // Process the command line
+
+    // Special hack to deal with -debug option before
+    // pllib_init() is called.
+    argsave    = argv;
+    myargcsave = myargc;
+    for (; myargc > 0; --myargc, ++argv )
+    {
+        // Allow for "holes" in argv list
+        if ( *argv == NULL || *argv[0] == '\0' )
+            continue;
+
+        if ( ( !mode_nodash && !strcmp( *argv, "-debug" ) ) || ( mode_nodash && !strcmp( *argv, "debug" ) ) )
+        {
+            //fprintf(stderr, "Found debug option in argv\n");
+            // Loop over all options tables, starting with the last
+            for ( i = tables - 1; i >= 0; i-- )
+            {
+                // Check option table for option
+
+                status = ParseOpt( &myargc, &argv, p_argc, &argsave,
+                    ploption_info[i].options );
+
+                if ( !status )
+                    break;
+            }
+            break;
+        }
+    }
+    // Restore pointers to condition before the above loop
+    // Although array length and content stored in those pointers
+    // is likely changed.
+    myargc = myargcsave;
+    argv   = argsave;
+
+    pllib_init();
 
     argsave = argv;
     for (; myargc > 0; --myargc, ++argv )
     {
         // Allow for "holes" in argv list
-
         if ( *argv == NULL || *argv[0] == '\0' )
             continue;
 
         // Loop over all options tables, starting with the last
-
         for ( i = tables - 1; i >= 0; i-- )
         {
             // Check option table for option
