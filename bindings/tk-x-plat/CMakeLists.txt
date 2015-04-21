@@ -1,7 +1,7 @@
 # bindings/tk-x-plat/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -20,32 +20,20 @@
 
 if(PLD_tkwin)
 
-set(DRV_HARDDIR ${DRV_DIR})
-set(LIB_HARDDIR ${LIB_DIR})
+  set(DRV_HARDDIR ${DRV_DIR})
+  set(LIB_HARDDIR ${LIB_DIR})
 
-get_target_property(
-DLNAME_LIBPLPLOT
-plplot
-LOCATION
-)
-get_filename_component(
-DLNAME_LIBPLPLOT
-${DLNAME_LIBPLPLOT} 
-NAME
-)
-string(REPLACE "plplotd" "plplot"
-DLNAME_LIBPLPLOT
-${DLNAME_LIBPLPLOT}
-)
-string(REPLACE "plplot" "plplotd"
-DLNAME_LIBPLPLOTD
-${DLNAME_LIBPLPLOT}
-)
-
-configure_file(
-${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in 
-${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
-@ONLY
-)
+  set(DLNAME_LIBPLPLOT $<TARGET_FILE_NAME:plplot>)
+  # Configure "@" items
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl_atonly
+    @ONLY
+    )
+  # Configure generator expression items.
+  file(GENERATE
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
+    INPUT ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl_atonly
+    )
 
 endif(PLD_tkwin)

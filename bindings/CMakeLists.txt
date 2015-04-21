@@ -40,13 +40,13 @@ add_subdirectory(qt_gui)
 
 set(index)
 if(ENABLE_tcl)
-  set(index ${index} ${CMAKE_CURRENT_BINARY_DIR}/tcl/pkgIndex.tcl)
+  list(APPEND index ${CMAKE_CURRENT_BINARY_DIR}/tcl/pkgIndex.tcl)
 endif(ENABLE_tcl)
 if(ENABLE_tk)
-  set(index ${index} ${CMAKE_CURRENT_BINARY_DIR}/tk/pkgIndex.tcl)
+  list(APPEND index ${CMAKE_CURRENT_BINARY_DIR}/tk/pkgIndex.tcl)
 endif(ENABLE_tk)
 if(PLD_tkwin)
-  set(index ${index} ${CMAKE_CURRENT_BINARY_DIR}/tk-x-plat/pkgIndex.tcl)
+  list(APPEND index ${CMAKE_CURRENT_BINARY_DIR}/tk-x-plat/pkgIndex.tcl)
 endif(PLD_tkwin)
 
 if(index)
@@ -57,11 +57,30 @@ if(index)
   # of the files in index is configured at cmake time.
   # N.B. the quotes on filecontents below are necessary to avoid
   # having semicolons in filecontents messing up the results.
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl "")
-  foreach(filename ${index})
-    file(READ ${filename} filecontents)
-    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl "${filecontents}")
-  endforeach(filename ${index})
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/concatenate_pkgIndex.tcl.cmake
+"
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl \"\")
+foreach(filename ${index})
+  file(READ \${filename} filecontents)
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl \"\${filecontents}\")
+endforeach(filename ${index})
+"
+  )
+
+  add_custom_command(
+    OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
+    COMMAND
+    ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/concatenate_pkgIndex.tcl.cmake
+    DEPENDS
+    ${index}
+    VERBATIM
+    )
+  add_custom_target(
+    concatenate_pkgIndex.tcl ALL
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
+    )
 
   install(
   FILES ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl

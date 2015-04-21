@@ -1,6 +1,6 @@
 # Load PLplot tkwin extension
 
-# Copyright (C) 2004-2014 Alan W. Irwin
+# Copyright (C) 2004-2015 Alan W. Irwin
 # Copyright (C) 2004  Joao Cardoso
 #
 # This file is part of PLplot.
@@ -59,8 +59,7 @@ proc load_pkg_Plplotter {dir} {
 	if { $file == "" } {
 	# Dynamic driver location failed, now try static driver location.
 	    set searchdirs [list "@LIB_HARDDIR@"]
-	# prefer double precision version
-	    set dlnames [list "@DLNAME_LIBPLPLOTD@ @DLNAME_LIBPLPLOT@"]
+	    set dlnames [list "@DLNAME_LIBPLPLOT@"]
 	set file ""
 	foreach reldir $searchdirs {
 	    foreach dlname $dlnames {
