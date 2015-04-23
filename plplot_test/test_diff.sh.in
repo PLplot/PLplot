@@ -208,8 +208,8 @@ for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d plrende
 		    fi
                     done
 		    if [ "$index" != "14a" ] ; then
-			  if [ -f x${xsuffix}${index}${suffix}_psc.txt ] ; then
-			    @DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c_psc.txt x${xsuffix}${index}${suffix}_psc.txt 2>&1 > /dev/null
+			  if [ -f x${xsuffix}${index}${suffix}_${device}.txt ] ; then
+			    @DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c_${device}.txt x${xsuffix}${index}${suffix}_${device}.txt 2>&1 > /dev/null
 			    if [ $? != 0 ] ; then
 				  diffstdout="${diffstdout} ${index}"
 			    fi
