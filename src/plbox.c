@@ -1,7 +1,7 @@
 //      Routines for drawing axes & box around the current viewport.
 //
 // Copyright (C) 2004  Joao Cardoso
-// Copyright (C) 2004-2014 Alan W. Irwin
+// Copyright (C) 2004-2015 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -771,12 +771,13 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nxsub,
 //
 // b: Draw box boundary
 // f: Always use fixed point numeric labels
+// d: Interpret axis as a date/time when writing labels
 // i: Inverts tick marks (i.e. drawn downwards)
 // l: Logarithmic axes, major ticks at decades, minor ticks at units
 // n: Write numeric label
 // o: Use custom label function
-// t: Draw major tick marks
 // s: Draw minor tick marks
+// t: Draw major tick marks
 // u: Write label on line
 //--------------------------------------------------------------------------
 
@@ -795,7 +796,8 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
 // of ticks) from the boundary that an X or Y numerical label can be drawn.
     PLFLT      dwx, dwy, lambda, tcrit, tspace = 0.1;
     const char * esc_string = plgesc_string();
-
+    PLFLT      tstart, factor;
+    const char *timefmt = NULL;
     vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
     vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
 
@@ -816,10 +818,10 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
     li = plP_stsearch( opt, 'i' );
     ll = plP_stsearch( opt, 'l' );
     ln = plP_stsearch( opt, 'n' );
+    lo = plP_stsearch( opt, 'o' );
     ls = plP_stsearch( opt, 's' );
     lt = plP_stsearch( opt, 't' );
     lu = plP_stsearch( opt, 'u' );
-    lo = plP_stsearch( opt, 'o' );
 
     if ( lu )
         plxytx( wx1, wy1, wx2, wy2, 3.2, 0.5, 0.5, label );
@@ -852,7 +854,13 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
     plP_drawor( wx2, wy2 );
     if ( lt )
     {
-        tp = tick1 * floor( vmin / tick1 );
+        if ( ld )
+        {
+            pldtfac( vmin, vmax, &factor, &tstart );
+            tp = tick1 * ( floor( ( vmin - tstart ) / tick1 ) ) + tstart;
+        }
+        else
+            tp = tick1 * floor( vmin / tick1 );
         for (;; )
         {
             tn = tp + tick1;
@@ -910,15 +918,25 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
     if ( ln && lt )
     {
         pldprec( vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale );
-        pos    = 1.0;
-        height = 3.2;
-        tcrit  = tspace * tick1;
-        tp     = tick1 * ( 1. + floor( vmin / tick1 ) );
+        timefmt = plP_gtimefmt();
+        pos     = 1.0;
+        height  = 3.2;
+        tcrit   = tspace * tick1;
+        if ( ld )
+        {
+            pldtfac( vmin, vmax, &factor, &tstart );
+            tp = tick1 * ( 1. + floor( ( vmin - tstart ) / tick1 ) ) + tstart;
+        }
+        else
+            tp = tick1 * ( 1. + floor( vmin / tick1 ) );
         for ( tn = tp; BETW( tn, vmin, vmax ); tn += tick1 )
         {
             if ( BETW( tn, vmin + tcrit, vmax - tcrit ) )
             {
-                plform( axis, tn, scale, prec, string, STRING_LEN, ll, lf, lo );
+                if ( ld )
+                    strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
+                else
+                    plform( axis, tn, scale, prec, string, STRING_LEN, ll, lf, lo );
                 pos = ( vmax_in > vmin_in ) ?
                       ( tn - vmin ) / ( vmax - vmin ) :
                       ( vmax - tn ) / ( vmax - vmin );
@@ -926,7 +944,7 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
             }
         }
         *digits = 2;
-        if ( !ll && !lo && mode )
+        if ( !ll && !lo && !ld && mode )
         {
             snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) scale, esc_string );
             plxytx( wx1, wy1, wx2, wy2, height, 1.0, 0.5, string );
@@ -997,6 +1015,10 @@ plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
 //
 // b: Draws left-hand axis
 // c: Draws right-hand axis
+// N.B. d is already used for another purpose (back grid) in zopt
+// before this routine is called so chose e here to be as close to d
+// as possible without interfering with the historical use of d.
+// e: Interpret axis as a date/time when writing labels
 // f: Always use fixed point numeric labels
 // i: Inverts tick marks (i.e. drawn to the left)
 // l: Logarithmic axes, major ticks at decades, minor ticks at units
@@ -1022,6 +1044,8 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     PLFLT       dwy, lambda, diag, major, minor, xmajor, xminor;
     PLFLT       ymajor, yminor, dxm, dym, vmin, vmax;
     const char  * esc_string = plgesc_string();
+    PLFLT       tstart, factor;
+    const char  *timefmt = NULL;
 
     vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
     vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
@@ -1038,17 +1062,17 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 
     lb = plP_stsearch( opt, 'b' );
     lc = plP_stsearch( opt, 'c' );
-    ld = plP_stsearch( opt, 'd' );
+    ld = plP_stsearch( opt, 'e' );
     lf = plP_stsearch( opt, 'f' );
     li = plP_stsearch( opt, 'i' );
     ll = plP_stsearch( opt, 'l' );
     lm = plP_stsearch( opt, 'm' );
     ln = plP_stsearch( opt, 'n' );
+    lo = plP_stsearch( opt, 'o' );
     ls = plP_stsearch( opt, 's' );
     lt = plP_stsearch( opt, 't' );
     lu = plP_stsearch( opt, 'u' );
     lv = plP_stsearch( opt, 'v' );
-    lo = plP_stsearch( opt, 'o' );
 
     if ( lu && !right )
         plztx( "h", dx, dy, wx, wy1, wy2, 5.0, 0.5, 0.5, label );
@@ -1089,7 +1113,13 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     plP_drawor( wx, wy2 );
     if ( lt )
     {
-        tp = tick1 * floor( vmin / tick1 );
+        if ( ld )
+        {
+            pldtfac( vmin, vmax, &factor, &tstart );
+            tp = tick1 * ( floor( ( vmin - tstart ) / tick1 ) ) + tstart;
+        }
+        else
+            tp = tick1 * floor( vmin / tick1 );
         for (;; )
         {
             tn = tp + tick1;
@@ -1146,11 +1176,21 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
     if ( ( ln || lm ) && lt )
     {
         pldprec( vmin, vmax, tick1, lf, &mode, &prec, *digits, &scale );
+        timefmt = plP_gtimefmt();
         *digits = 0;
-        tp      = tick1 * floor( vmin / tick1 );
+        if ( ld )
+        {
+            pldtfac( vmin, vmax, &factor, &tstart );
+            tp = tick1 * ( floor( ( vmin - tstart ) / tick1 ) ) + tstart;
+        }
+        else
+            tp = tick1 * floor( vmin / tick1 );
         for ( tn = tp + tick1; BETW( tn, vmin, vmax ); tn += tick1 )
         {
-            plform( PL_Z_AXIS, tn, scale, prec, string, STRING_LEN, ll, lf, lo );
+            if ( ld )
+                strfqsas( string, STRING_LEN, timefmt, (double) tn, plsc->qsasconfig );
+            else
+                plform( PL_Z_AXIS, tn, scale, prec, string, STRING_LEN, ll, lf, lo );
             pos = ( vmax_in > vmin_in ) ?
                   ( tn - vmin ) / ( vmax - vmin ) :
                   ( vmax - tn ) / ( vmax - vmin );
@@ -1163,7 +1203,7 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
             lstring = (PLINT) strlen( string );
             *digits = MAX( *digits, lstring );
         }
-        if ( !ll && !lo && mode )
+        if ( !ll && !lo && !ld && mode )
         {
             snprintf( string, STRING_LEN, "(x10%su%d%sd)", esc_string, (int) scale, esc_string );
             pos    = 1.15;

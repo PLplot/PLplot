@@ -1261,6 +1261,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
+		  <literal>d</literal>: Plot labels as date / time. 
+		  Values are assumed to be seconds since the epoch 
+		  (as used by gmtime).
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
 		  <literal>f</literal>: Always use fixed point numeric labels.
 		</para>
 	      </listitem>
@@ -1433,6 +1440,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		  x-y plane behind the figure.  These lines are not drawn
 		  until after &plot3d; or &plmesh; are called because of
 		  the need for hidden line removal.
+		</para>
+	      </listitem>
+	      <listitem>
+		<para>
+		  <literal>e</literal>: Plot labels as date / time. 
+		  Values are assumed to be seconds since the epoch 
+		  (as used by gmtime).  Note this suboption is interpreted
+                  the same as the <literal>d</literal> suboption for
+                  <literal><parameter>xopt</parameter></literal> and
+                  <literal><parameter>yopt</parameter></literal>, but
+                  it has to be identified as <literal>e</literal> for
+                  <literal><parameter>zopt</parameter></literal> since
+                  <literal>d</literal> has already been used for the
+                  different purpose above. 
 		</para>
 	      </listitem>
 	      <listitem>
