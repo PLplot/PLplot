@@ -770,8 +770,8 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nxsub,
 // "nsub" is zero, automatic tick positions are computed
 //
 // b: Draw box boundary
-// f: Always use fixed point numeric labels
 // d: Interpret axis as a date/time when writing labels
+// f: Always use fixed point numeric labels
 // i: Inverts tick marks (i.e. drawn downwards)
 // l: Logarithmic axes, major ticks at decades, minor ticks at units
 // n: Write numeric label
