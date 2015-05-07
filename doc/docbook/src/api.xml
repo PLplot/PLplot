@@ -19800,7 +19800,7 @@ device support!)
 
     <para>
       Sets the format for date / time labels. To enable date / time
-      format labels see the options to &plbox; and &plenv;.
+      format labels see the options to &plbox;, &plbox3;, and &plenv;.
     </para>
 
     <variablelist>
@@ -19811,62 +19811,228 @@ device support!)
         </term>
         <listitem>
           <para>
-            This string is passed directly to the system strftime. See
-            the system documentation for a full list of conversion
-            specifications for your system. All conversion
-            specifications take the form of a '%' character followed by
-            further conversion specification character. All other text
-            is printed as-is. Common options include:
+            This string is interpreted similarly to the format
+	    specifier of typical system strftime routines except that PLplot
+	    ignores locale and also supplies some useful extensions in the context
+	    of plotting.  All text in the string is printed as-is other than
+	    conversion specifications which take the form of a '%' character
+	    followed by further conversion specification character.  The
+	    conversion specifications which are similar to those provided by
+	    system strftime routines are the following:
             <itemizedlist>
               <listitem>
                 <para>
-                  <literal>%c</literal>: The preferred date and time
-                  representation for the current locale.
+                  <literal>%a</literal>: The abbreviated (English) weekday name.
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%d</literal>: The day of the month as a
-                  decimal number.
+                  <literal>%A</literal>: The full (English) weekday name.
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%H</literal>: The hour as a decimal number
-                  using a 24-hour clock.
+                  <literal>%b</literal>: The abbreviated (English) month name.
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%j</literal>: The day of the year as a
-                  decimal number.
+                  <literal>%B</literal>: The full (English) month name.
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%m</literal>: The month as a decimal number.
+                  <literal>%c</literal>: Equivalent to %a %b %d %T %Y (non-ISO).
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%M</literal>: The minute as a decimal number.
+                  <literal>%C</literal>: The century number (year/100) as a 2-digit integer.
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%S</literal>: The second as a decimal number.
+                  <literal>%d</literal>: The day of the month as a decimal number (range 01 to 31).
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%y</literal>: The year as a decimal number
-                  without a century.
+                  <literal>%D</literal>: Equivalent to %m/%d/%y (non-ISO).
                 </para>
               </listitem>
               <listitem>
                 <para>
-                  <literal>%Y</literal>: The year  as a decimal number
-                  including a century.
+                  <literal>%e</literal>: Like %d, but a leading zero is replaced by a space.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%F</literal>: Equivalent to %Y-%m-%d (the ISO 8601 date format).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%h</literal>: Equivalent to %b.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%H</literal>: The hour as a decimal number using a 24-hour clock (range 00 to 23).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%I</literal>: The hour as a decimal number using a 12-hour clock (range 01 to 12).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%j</literal>: The day of the year as a decimal number (range 001 to 366).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%k</literal>: The hour (24-hour clock) as a decimal number (range 0 to 23); single digits are preceded by a blank.  (See also %H.)
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%l</literal>: The hour (12-hour clock) as a decimal number (range 1 to 12); single digits are preceded by a blank.  (See also %I.)
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%m</literal>: The month as a decimal number (range 01 to 12).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%M</literal>: The minute as a decimal number (range 00 to 59).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%n</literal>: A newline character.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%p</literal>: Either "AM" or "PM" according to the given time value.  Noon is
+              treated as "PM" and midnight as "AM".
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%r</literal>: Equivalent to %I:%M:%S %p.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%R</literal>: The time in 24-hour notation (%H:%M). For a version including the seconds, see %T below.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%s</literal>: The number of seconds since the Epoch, 1970-01-01 00:00:00 +0000 (UTC).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%S</literal>: The second as a decimal number (range 00 to 60).  (The range is up to 60 to allow for occasional leap seconds.)
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%t</literal>: A tab character.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%T</literal>: The time in 24-hour notation (%H:%M:%S).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%u</literal>: The day of the week as a decimal, range 1 to 7, Monday being 1.  See also %w.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%U</literal>: The week number of the current year as a decimal number, range 00 to 53, starting with the first Sunday as the first day of week 01.  See also %V and %W.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%v</literal>: Equivalent to %e-%b-%Y.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%V</literal>: The ISO 8601 week number of the current year as a decimal number, range 01 to 53, where week 1 is the first week that has at least 4 days in the new year.  See also %U and %W.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%w</literal>: The day of the week as a decimal, range 0 to 6, Sunday being 0.  See also %u.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%W</literal>: The week number of the current year as a decimal number, range 00 to 53, starting with the first Monday as the first day of week 01.
+                </para>
+              </listitem>
+               <listitem>
+                <para>
+                  <literal>%x</literal>: Equivalent to %a %b %d %Y.
+                </para>
+              </listitem>
+             <listitem>
+                <para>
+                  <literal>%X</literal>: Equivalent to %T.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%y</literal>: The year as a decimal number without a century (range 00 to 99).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%Y</literal>: The year as a decimal number including a century.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%z</literal>: The UTC time-zone string = "+0000".
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%Z</literal>: The UTC time-zone abbreviation = "UTC".
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%+</literal>: The UTC date and time in default format of the Unix date command which is equivalent to %a %b %d %T %Z %Y.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%%</literal>: A literal "%" character.
+                </para>
+              </listitem>
+            </itemizedlist>
+	    The conversion specifications which are extensions to those normally
+	    provided by system strftime routines are the following:
+            <itemizedlist>
+              <listitem>
+                <para>
+                  <literal>%(0-9)</literal>: The fractional part of the seconds field (including leading decimal point) to the specified accuracy. Thus %S%3 would give seconds to millisecond accuracy (00.000).
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>%.</literal>: The fractional part of the seconds field (including leading decimal point) to the maximum available accuracy. Thus %S%. would give seconds with fractional part up to 9 decimal places if available.
                 </para>
               </listitem>
             </itemizedlist>
