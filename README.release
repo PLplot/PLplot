@@ -33,7 +33,7 @@ CONTENTS
 
 2. Improvements relative to the previous release
 
-2.1 Placeholder index item
+2.1 Plot labels as date / time are now available for 3D plots
 
 ________________________________________________________________
 
@@ -45,5 +45,12 @@ ________________________________________________________________
 
 2. Improvements relative to the previous release
 
-2.1 Placeholder for first note about an improvement
+2.1 Plot labels as date / time are now available for 3D plots
+
+The plbox3 function now supports the d suboption for xopt and yopt and
+the e suboption (d is already used for something different for zopt)
+for zopt to generate X, Y, or Z axis labels using date/time
+formatting.  As in the 2D case (see standard example 29) call
+the pltimefmt routine beforehand to control the date/time format that
+is used.
 ________________________________________________________________
