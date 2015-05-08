@@ -3,13 +3,13 @@
 # Geoffrey Furnish
 # 11 April 1994
 #
-# @> A script for using Tk to control xtk01, using the PLplot itcl interface.
+# @> A script for using Tk to control xtk02, using the PLplot itcl interface.
 ###############################################################################
 
 package require Pltk
 eval package require $pl_itk_package_name
 
-wm title . "x01c -- TK version"
+wm title . "x01c -- Tk/Itcl version"
 plstdwin .
 
 ###############################################################################

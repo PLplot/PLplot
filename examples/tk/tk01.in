@@ -6,7 +6,7 @@
 # @> A script for using Tk to control xtk01
 ###############################################################################
 
-wm title . "x01c -- TK version"
+wm title . "x01c -- Tk version"
 plstdwin .
 
 # If you just want a bare plframe, set this to 0.
@@ -42,7 +42,7 @@ pack append .menu .menu.exit {right expand fill}
 message .msg \
 	-font -Adobe-helvetica-medium-r-normal--*-240* -aspect 200 \
 	 -width 500 -borderwidth 1 \
-	-text "TK01: Control x01c from TK"
+	-text "tk01: Control x01c from Tk"
 
 pack append . \
 	.menu {top fillx} \
