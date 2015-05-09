@@ -507,7 +507,7 @@ void QtPLDriver::setSolid()
 }
 
 ////////////////// Raster driver-specific definitions: class and interface functions /////////
-#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt )
+#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt ) || defined ( PLD_memqt )
 QtRasterDevice::QtRasterDevice( int i_iWidth, int i_iHeight ) :
     QtPLDriver( i_iWidth, i_iHeight ),
     QImage( i_iWidth, i_iHeight, QImage::Format_RGB32 )

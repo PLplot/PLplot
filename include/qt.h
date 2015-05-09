@@ -164,7 +164,7 @@ protected:
     QPainter * m_painterP;
 };
 
-#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt )
+#if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt ) || defined ( PLD_memqt )
 // Driver painting whatever raster format Qt can save
 class PLDLLIMPEXP_QT QtRasterDevice : public QtPLDriver, public QImage
 {

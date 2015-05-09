@@ -179,19 +179,6 @@ if(ANY_QT_DEVICE)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
 endif(ANY_QT_DEVICE)
 
-# ENABLE_qt depends on PLD_extqt
-if(NOT ANY_QT_DEVICE)
-  set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
-endif(NOT ANY_QT_DEVICE)
-
-if(ENABLE_qt AND NOT PLD_extqt)
-  message(STATUS
-    "WARNING: PLD_extqt is OFF so "
-    "setting ENABLE_qt to OFF."
-    )
-  set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
-endif(ENABLE_qt AND NOT PLD_extqt)
-
 if(ENABLE_qt)
   if(NOT PLPLOT_USE_QT5)
     # Use a minimum version corresponding to the version installed by
@@ -273,13 +260,13 @@ if(ENABLE_pyqt4 AND NOT ENABLE_python)
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
 endif(ENABLE_pyqt4 AND NOT ENABLE_python)
 
-if(ENABLE_pyqt4 AND NOT ENABLE_qt)
+if(ENABLE_pyqt4 AND NOT PLD_extqt)
   message(STATUS
-    "WARNING: ENABLE_qt is OFF so "
+    "WARNING: PLD_extqt is OFF so "
     "setting ENABLE_pyqt4 to OFF."
     )
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
-endif(ENABLE_pyqt4 AND NOT ENABLE_qt)
+endif(ENABLE_pyqt4 AND NOT PLD_extqt)
 
 ## FIXME if/when there is a way to make pyqt work with Qt5.
 if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
