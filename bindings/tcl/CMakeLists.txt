@@ -471,16 +471,11 @@ if(ENABLE_tcl)
 
   set(DLNAME_LIBPLPLOTTCLTK $<TARGET_FILE_NAME:plplottcltk>)
 
-  # Configure "@" items
-  configure_file(
+  # N.B. Results only available at generate time.
+  configure_file_generate(
     ${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl_atonly
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
     @ONLY
-    )
-  # Configure generator expression items.
-  file(GENERATE
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
-    INPUT ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl_atonly
     )
 
   pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "${libplplottcltk_LINK_FLAGS}")

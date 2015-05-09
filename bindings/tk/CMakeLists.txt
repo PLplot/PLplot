@@ -149,16 +149,12 @@ if(ENABLE_tk)
   set(LIB_HARDDIR ${LIB_DIR})
 
   set(DLNAME_LIBPLPLOT $<TARGET_FILE_NAME:plplot>)
-  # Configure "@" items
-  configure_file(
+
+  # N.B. Results only available at generate time.
+  configure_file_generate(
     ${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in
-    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl_atonly
+    ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
     @ONLY
-    )
-  # Configure generator expression items.
-  file(GENERATE
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
-    INPUT ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl_atonly
     )
 
 endif(ENABLE_tk)

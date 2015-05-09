@@ -23,16 +23,28 @@
 
 # This is called from plplot-test.sh with $tcldir, $device, $dsuffix,
 # $options, and possibly $verbose_test defined.
-# Put pltcl on the PATH.
-PLTCL_DIR=@PLTCL_DIR_ESCAPED@
-PATH=$PLTCL_DIR:$PATH
+
 PLATFORM=@PLATFORM@
+
+# Put pltcl on the PATH.
+PLTCL_DIR="@PLTCL_DIR@"
+# Escape blanks anywhere in fullpathname.
+PLTCL_DIR=${PLTCL_DIR// /\\ } 
+if [ "$PLATFORM" == "CYGWIN" -o "$PLATFORM" == "MSYS" -o "$PLATFORM" == "MINGW" ] ; then
+    # Convert from "<drive_letter>:/" to "/<drive_letter>/" form.
+    re='^([a-zA-Z]):/(.*)'
+    if [[ $PLTCL_DIR =~ $re ]] ; then
+	PLTCL_DIR=/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}
+    fi
+fi
+
+PATH=$PLTCL_DIR:$PATH
 if [ "$PLATFORM" == "MSVC" ] ; then
     cp test_tcl_caller.bat "$tcldir"
 fi
 lang="t"
 
-if [ "$PLATFORM" == "CYGWIN" -o "$PLATFORM" == "MSYS" -o "$PLATFORM" == "MINGW" ] ; then 
+if [ "$PLATFORM" == "CYGWIN" -o "$PLATFORM" == "MSYS" -o "$PLATFORM" == "MINGW" ] ; then
     cd "${OUTPUT_DIR}"
     # On the above Windows platforms (but apparently not MSVC) this
     # sed stanza is needed to converts from leading slash form to

@@ -478,6 +478,45 @@ else(TARGET tclIndex_tk)
   set(TARGET_tclIndex_tk)
 endif(TARGET tclIndex_tk)
 
+if(WORKAROUND_FILE_GENERATE_BUG)
+  # This bug workaround must be set up after last call to configure_file_generate
+  # (which currently happens in plplot_test).
+  add_custom_command(
+    OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/touched_workaround_file_generate_bug
+    COMMAND ${CMAKE_COMMAND} -E touch
+    ${CMAKE_CURRENT_BINARY_DIR}/touched_workaround_file_generate_bug
+    )
+
+  get_property(files_WORKAROUND_FILE_GENERATE_BUG GLOBAL PROPERTY FILES_WORKAROUND_FILE_GENERATE_BUG)
+
+  foreach(output_file ${files_WORKAROUND_FILE_GENERATE_BUG})
+    set(intermediate_file ${output_file}${configure_file_generate_suffix})
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/touched_workaround_file_generate_bug
+      COMMAND chmod --reference=${intermediate_file} ${output_file}
+      APPEND
+      )
+  endforeach(output_file ${files_WORKAROUND_FILE_GENERATE_BUG})
+  # ALL option means the permissions will be correct on
+  # all installed files and everything tested by ctest (since
+  # all target must be run before ctest).  However,
+  # will have to use add_dependencies(<target> workaround_file_generate_bug)
+  # in various spots in the examples subtree within the build tree to
+  # apply this permissions workaround when running PLplot test targets
+  # such as test_interactive.
+  add_custom_target(
+    workaround_file_generate_bug ALL
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/touched_workaround_file_generate_bug
+    )
+else(WORKAROUND_FILE_GENERATE_BUG)
+  # if WORKAROUND_FILE_GENERATE_BUG is false (which happens some times
+  # for both core builds and installed examples builds) then create a
+  # vacuous target (needed below).
+  add_custom_target(workaround_file_generate_bug)
+endif(WORKAROUND_FILE_GENERATE_BUG)
+
 if(BUILD_TEST)
   # lena.pgm needed in build tree for the examples that are run from there.
   # Done at cmake time without dependencies because cannot see how this
@@ -588,6 +627,7 @@ if(BUILD_TEST)
 
 	if(language STREQUAL "tcl")
 	  list(APPEND tcl_targets_LIST test_${language}_psc)
+	  add_dependencies(test_${language}_psc workaround_file_generate_bug)
 	endif(language STREQUAL "tcl")
 
 	# If the subdirectory used an add_custom_target (as indicated
@@ -1029,6 +1069,7 @@ if(BUILD_TEST)
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
       )
     add_dependencies(test_pltcl_standard_examples
+      workaround_file_generate_bug
       pltcl
       tcl_examples
       ${TARGET_tclIndex_tcl}
@@ -1085,6 +1126,7 @@ if(BUILD_TEST)
       DEPENDS ${xwin_file_and_target}
       )
     add_dependencies(test_tk_01
+      workaround_file_generate_bug
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
       ${xwin_target}
@@ -1099,6 +1141,7 @@ if(BUILD_TEST)
       DEPENDS ${xwin_file_and_target}
       )
     add_dependencies(test_tk_03
+      workaround_file_generate_bug
       plserver
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
@@ -1109,20 +1152,14 @@ if(BUILD_TEST)
     endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_tk_03)
 
-    if(CORE_BUILD)
-      add_custom_target(test_tk_plgrid
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
-	DEPENDS ${xwin_file_and_target}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
-	)
-    else(CORE_BUILD)
-      add_custom_target(test_tk_plgrid
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
-	DEPENDS ${xwin_file_and_target}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tcl
-	)
-    endif(CORE_BUILD)
+    add_custom_target(test_tk_plgrid
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
+      DEPENDS ${xwin_file_and_target}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+      )
+
     add_dependencies(test_tk_plgrid
+      workaround_file_generate_bug
       plserver
       tcl_examples
       ${TARGET_tclIndex_tcl}
@@ -1140,6 +1177,7 @@ if(BUILD_TEST)
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
       )
     add_dependencies(test_plserver_standard_examples
+      workaround_file_generate_bug
       plserver
       tcl_examples
       ${TARGET_tclIndex_tcl}
@@ -1191,6 +1229,7 @@ if(BUILD_TEST)
 	DEPENDS ${xwin_file_and_target}
 	)
       add_dependencies(test_tk_02
+	workaround_file_generate_bug
 	${TARGET_tclIndex_tcl}
 	${TARGET_tclIndex_tk}
 	${xwin_target}
@@ -1212,6 +1251,7 @@ if(BUILD_TEST)
 	DEPENDS ${xwin_file_and_target}
 	)
       add_dependencies(test_tk_04
+        workaround_file_generate_bug
 	${TARGET_tclIndex_tcl}
 	${TARGET_tclIndex_tk}
 	${xwin_target}
@@ -1232,6 +1272,7 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
       add_dependencies(test_plserver_runAllDemos
+        workaround_file_generate_bug
 	plserver
 	tcl_examples
 	${TARGET_tclIndex_tcl}

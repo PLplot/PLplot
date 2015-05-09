@@ -147,22 +147,34 @@ endif(ENABLE_itkX)
 
 # plserver_standard_examples is a configured shell script that runs
 # all the standard examples under plserver.
-set(tk_SCRIPTS
+
+# N.B. "gen_" prefix means the configured script has a generator expression.
+# while "non_gen_" prefix means the configured script does not have a generator expression.
+set(gen_tk_SCRIPTS
   tk01
   tk03
   plgrid
   plserver_standard_examples
-  wish_standard_examples
   )
+
+set(non_gen_tk_SCRIPTS
+  wish_standard_examples
+)
+  
 # These examples depend on Itk to work.
 if(ENABLE_itkX)
-  list(APPEND tk_SCRIPTS 
+  list(APPEND gen_tk_SCRIPTS 
     tk02
     tk04
     plserver_runAllDemos
+    )
+
+  list(APPEND non_gen_tk_SCRIPTS 
     wish_runAllDemos
     )
 endif(ENABLE_itkX)
+
+set(tk_SCRIPTS ${gen_tk_SCRIPTS} ${non_gen_tk_SCRIPTS})
 
 if(BUILD_TEST)
   if(CORE_BUILD)
@@ -214,20 +226,27 @@ if(BUILD_TEST)
 
   foreach(tk_related_target xtk01 plserver xtk02 xtk04)
     if(TARGET ${tk_related_target})
-      get_target_property(${tk_related_target}_LOCATION
-	${tk_related_target} LOCATION
-	)
+      set(${tk_related_target}_LOCATION $<TARGET_FILE:${tk_related_target}>)
     endif(TARGET ${tk_related_target})
   endforeach(tk_related_target xtk01 plserver xtk02 xtk04)
 
   # Configure the tk_SCRIPTS
-  foreach(tk_SCRIPT ${tk_SCRIPTS})
+  foreach(tk_SCRIPT ${non_gen_tk_SCRIPTS})
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in 
       ${CMAKE_CURRENT_BINARY_DIR}/${tk_SCRIPT}
       @ONLY
       )
-  endforeach(tk_SCRIPT ${tk_SCRIPTS})
+  endforeach(tk_SCRIPT ${non_gen_tk_SCRIPTS})
+
+  foreach(tk_SCRIPT ${gen_tk_SCRIPTS})
+    # N.B. Results only available at generate time.
+    configure_file_generate(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in 
+      ${CMAKE_CURRENT_BINARY_DIR}/${tk_SCRIPT}
+      @ONLY
+      )
+  endforeach(tk_SCRIPT ${gen_tk_SCRIPTS})
 endif(BUILD_TEST)
 
 if(CORE_BUILD)

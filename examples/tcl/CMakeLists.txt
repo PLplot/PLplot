@@ -78,8 +78,9 @@ endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
 # pltcl_standard_examples is a configured shell script that runs all
 # the standard examples under pltcl.
-get_target_property(pltcl_LOCATION pltcl LOCATION)
-configure_file(
+set(pltcl_LOCATION $<TARGET_FILE:pltcl>)
+# N.B. Results only available at generate time.
+configure_file_generate(
   ${CMAKE_CURRENT_SOURCE_DIR}/pltcl_standard_examples.in
   ${CMAKE_CURRENT_BINARY_DIR}/pltcl_standard_examples
   @ONLY
@@ -94,6 +95,7 @@ if(CORE_BUILD)
 else(CORE_BUILD)
     set(pkgIndex_LOCATION ${DATA_DIR})
 endif(CORE_BUILD)
+
 configure_file(
   ${CMAKE_CURRENT_SOURCE_DIR}/tclsh_standard_examples.in
   ${CMAKE_CURRENT_BINARY_DIR}/tclsh_standard_examples

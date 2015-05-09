@@ -71,7 +71,6 @@ if(ENABLE_DYNDRIVERS)
         BUILD_WITH_INSTALL_RPATH ON
         )
     endif(USE_DLL_SUBDIRECTORY)
-    get_target_property(test-drv-info_LOCATION test-drv-info LOCATION)
     set(test_dyndrivers_TDEPENDS test-drv-info)
 
   endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
@@ -207,11 +206,6 @@ if(ENABLE_DYNDRIVERS)
     endif(USE_RPATH)
 
     if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
-      get_target_property(
-	${SOURCE_ROOT_NAME}_LOCATION
-	${SOURCE_ROOT_NAME}
-	LOCATION
-	)
       add_custom_command(
 	OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
@@ -222,8 +216,8 @@ if(ENABLE_DYNDRIVERS)
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info
 	DEPENDS
-	${${SOURCE_ROOT_NAME}_LOCATION}
-	${test-drv-info_LOCATION}
+	${SOURCE_ROOT_NAME}
+	test-drv-info
 	)
       add_custom_target(test_${SOURCE_ROOT_NAME}_dyndriver
 	DEPENDS

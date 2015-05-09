@@ -58,85 +58,53 @@ if(PLD_cgm)
 
   option(TEST_NISTCD "Test libnistcd" ON)
   if(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)
-    # build applications to test libnistcd.
-    set( cd_EXE cdexpert cdmulti cdsimple cdtest cdtext color16 )
-    foreach(EXE ${cd_EXE})
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir)
+
+    # build applications and configure tests for libnistcd.
+    set( cd_EXECUTABLES
+      cdexpert
+      cdmulti
+      cdsimple
+      cdtest
+      cdtext
+      color16
+      )
+
+    foreach(cd_EXECUTABLE ${cd_EXECUTABLES})
       if(BUILD_SHARED_LIBS)
-      set_source_files_properties( ${EXE}.c
+      set_source_files_properties(${cd_EXECUTABLE}.c
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${cd_ADD_DEFINES}"
         )
       else(BUILD_SHARED_LIBS)
-      set_source_files_properties( ${EXE}.c
+      set_source_files_properties( ${cd_EXECUTABLE}.c
         PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
         )
       endif(BUILD_SHARED_LIBS)
-      add_executable( ${EXE} ${EXE}.c )
-      target_link_libraries( ${EXE} nistcd )
-      get_target_property(${EXE}_LOC ${EXE} LOCATION)
-    endforeach(EXE ${cd_EXE})
-    # Create tests for libnistcd.
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir)
+      add_executable( ${cd_EXECUTABLE} ${cd_EXECUTABLE}.c )
+      target_link_libraries( ${cd_EXECUTABLE} nistcd )
 
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdexp1.cgm
-      COMMAND ${cdexpert_LOC}
-      COMMAND ${CMAKE_COMMAND} -E compare_files
-      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdexp1.cgm
-      ${CMAKE_CURRENT_SOURCE_DIR}/cdexp1.cgm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir
-      DEPENDS ${cdexpert_LOC}
-      )
+      # Create tests for libnistcd.
+      if(cd_EXECUTABLE STREQUAL "cdexpert")
+	set(output_template cdexp1)
+      elseif(cd_EXECUTABLE STREQUAL "cdtest")
+	set(output_template cdout)
+      else(cd_EXECUTABLE STREQUAL "cdexpert")
+	set(output_template ${cd_EXECUTABLE})
+      endif(cd_EXECUTABLE STREQUAL "cdexpert")
+      
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/${output_template}.cgm
+	COMMAND $<TARGET_FILE:${cd_EXECUTABLE}>
+	COMMAND ${CMAKE_COMMAND} -E compare_files
+	${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/${output_template}.cgm
+	${CMAKE_CURRENT_SOURCE_DIR}/${output_template}.cgm
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir
+	DEPENDS
+	${cd_EXECUTABLE}
+	)
     
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdmulti.cgm
-      COMMAND ${cdmulti_LOC}
-      COMMAND ${CMAKE_COMMAND} -E compare_files
-      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdmulti.cgm
-      ${CMAKE_CURRENT_SOURCE_DIR}/cdmulti.cgm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir
-      DEPENDS ${cdmulti_LOC}
-      )
+    endforeach(cd_EXECUTABLE ${cd_EXECUTABLES})
     
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdsimple.cgm
-      COMMAND ${cdsimple_LOC}
-      COMMAND ${CMAKE_COMMAND} -E compare_files
-      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdsimple.cgm
-      ${CMAKE_CURRENT_SOURCE_DIR}/cdsimple.cgm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir
-      DEPENDS ${cdsimple_LOC}
-      )
-    
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdout.cgm
-      COMMAND ${cdtest_LOC}
-      COMMAND ${CMAKE_COMMAND} -E compare_files
-      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdout.cgm
-      ${CMAKE_CURRENT_SOURCE_DIR}/cdout.cgm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir
-      DEPENDS ${cdtest_LOC}
-      )
-    
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdtext.cgm
-      COMMAND ${cdtext_LOC}
-      COMMAND ${CMAKE_COMMAND} -E compare_files
-      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdtext.cgm
-      ${CMAKE_CURRENT_SOURCE_DIR}/cdtext.cgm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir
-      DEPENDS ${cdtext_LOC}
-      )
-    
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/color16.cgm
-      COMMAND ${color16_LOC}
-      COMMAND ${CMAKE_COMMAND} -E compare_files
-      ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/color16.cgm
-      ${CMAKE_CURRENT_SOURCE_DIR}/color16.cgm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir
-      DEPENDS ${color16_LOC}
-      )
-
     add_custom_target(test_nistcd ALL
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdexp1.cgm

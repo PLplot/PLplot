@@ -146,7 +146,11 @@ if(ENABLE_qt)
       if(Qt5_library_fullpath MATCHES "^Qt5::")
 	# This is the Qt5 convention for imported library names, and
         # according to <http://doc.qt.io/qt-5/cmake-manual.html> the
-        # corresponding locations can be found as follows:
+        # corresponding locations can be found as follows (and noting
+        # from the CMP0026 documentation and cmake-devel list discussion
+        # from Nils Gladitz that that policy only
+        # excludes using _build_ target LOCATION properties and not
+        # _imported_ target LOCATION properties like this one):
 	get_target_property(Qt5_library_fullpath ${Qt5_library_fullpath} LOCATION)
 	if(Qt5_library_fullpath)
 	  list(APPEND Qt5_library_fullpath_list ${Qt5_library_fullpath})
