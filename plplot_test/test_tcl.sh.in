@@ -53,7 +53,8 @@ if [ "$PLATFORM" == "CYGWIN" -o "$PLATFORM" == "MSYS" -o "$PLATFORM" == "MINGW" 
     results="$(pwd |sed 's?^/\(.\)/?\1:/?')"
     cd "$tcldir"
 else
-    results=${OUTPUT_DIR}
+    cd "${OUTPUT_DIR}"
+    results=$(pwd)
     cd "$tcldir"
 fi
 export results
