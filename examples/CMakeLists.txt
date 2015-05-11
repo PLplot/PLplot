@@ -388,30 +388,83 @@ if(CORE_BUILD)
   endif(LANG_SUPPORT_FILES)
 
 else(CORE_BUILD)
+
+  # This logic copied exactly from top-level CMakeLists.txt file except for
+  # name of project.
+  function(plplot_cmake_minimum_required)
+    # The PLplot version of cmake_minimum_required that
+    # includes all processing of policies.
+    cmake_minimum_required(${ARGV})
+
+    # cmake-2.8.12.1 (2.8.12 screwed up the implementation) introduced a
+    # corrected implementation of keyword signatures for
+    # target_link_libraries which are preferred now over the traditional
+    # plain signatures.  There are a lot of implications concerning
+    # these preferred keyword signatures which I don't understand at the
+    # moment, but it is clear some modifications to our build system
+    # will be required to start using keyword signatures appropriately.
+    # So until then quiet warnings about this issue by explicitly
+    # setting policies CMP0022 and CMP0023 (if they exist for whatever
+    # CMake version the user is running) to OLD.
+    if(POLICY CMP0022)
+      message(STATUS "Explicitly setting policy CMP0022 to OLD")
+      cmake_policy(SET CMP0022 OLD)
+    endif(POLICY CMP0022)
+    if(POLICY CMP0023)
+      message(STATUS "Explicitly setting policy CMP0023 to OLD")
+      cmake_policy(SET CMP0023 OLD)
+    endif(POLICY CMP0023)
+
+    # MAINTENANCE! Change this whenever the minimum version
+    # range (currently 3.0.2 to 3.2.2) is changed for our various platforms.
+    # This should be one more than the maximum policy of 3.0.2.
+    set(minimum_old_policy 51)
+    # This should be the maximum policy of 3.2.2
+    set(maximum_old_policy 56)
+    # Adopt old policies for any policies introduced since 3.0.2 so that all
+    # our platforms have the same policies.
+
+    foreach(policy RANGE ${minimum_old_policy} ${maximum_old_policy})
+      if(POLICY CMP00${policy})
+	message(STATUS "Explicitly setting policy CMP00${policy} to OLD")
+	cmake_policy(SET CMP00${policy} OLD)
+      endif(POLICY CMP00${policy})
+    endforeach(policy RANGE ${minimum_old_policy} ${maximum_old_policy})
+
+  endfunction(plplot_cmake_minimum_required)
+  
+  # We prefer to support only recent CMake versions and latest CMake
+  # policies to keep our build system as simple and as bug free as
+  # possible.  However, as a special concession for our modern (not
+  # enterprise or LTS) Linux distro users and our Cygwin users we allow
+  # them to use the system version of CMake which at this time (2015-05)
+  # is typically 3.0.2 or later.  By coincidence there is a CMake bug
+  # for 3.0 (a permissions issue for file(GENERATE...), see
+  # cmake/modules/plplot_functions.cmake for details) that has a
+  # workaround that only works on Cygwin and Linux so all other
+  # platforms than Cygwin and Linux _must_ use CMake 3.2.
+
+  # Adapted method suggested by Brad King for using
+  # different minimum versions for different platforms.
+
+  plplot_cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
   project(installed_plplot_examples NONE)
+  if(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
+    # Latest CMake version as of 2015-05 for all platforms
+    # other than Cygwin or Linux.
+    plplot_cmake_minimum_required(VERSION 3.2.2 FATAL_ERROR)
+  endif(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
+
+
+  # It is a fatal error if no working C compiler is available to build
+  # the PLplot core C library and core C examples.  All other compilers
+  # required by our bindings are optional in that if no working compiler
+  # of the kind needed is available, the associated bindings and
+  # examples are disabled.
+  enable_language(C)
+
   message(STATUS "CMake version = ${CMAKE_VERSION}")
   message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
-
-  # The minimum version and policy settings normally follow what is
-  # done for the core build.  Check the core build for the reasons for
-  # these decisions.
-  cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
-  if(POLICY CMP0022)
-    message(STATUS "Explicitly setting policy CMP0022 to OLD")
-    cmake_policy(SET CMP0022 OLD)
-  endif(POLICY CMP0022)
-  if(POLICY CMP0023)
-    message(STATUS "Explicitly setting policy CMP0023 to OLD")
-    cmake_policy(SET CMP0023 OLD)
-  endif(POLICY CMP0023)
-  if(POLICY CMP0026)
-    message(STATUS "Explicitly setting policy CMP0026 to OLD")
-    cmake_policy(SET CMP0026 OLD)
-  endif(POLICY CMP0026)
-  if(POLICY CMP0046)
-    message(STATUS "Explicitly setting policy CMP0046 to NEW")
-    cmake_policy(SET CMP0046 NEW)
-  endif(POLICY CMP0046)
 
   message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
   # Locations where PLplot cmake build system first looks for cmake modules.
