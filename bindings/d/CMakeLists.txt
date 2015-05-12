@@ -38,8 +38,6 @@ if(ENABLE_d)
 	PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(BUILD_SHARED_LIBS)
 
-    target_link_libraries(plplotdmd plplot)
-
     if(USE_RPATH)
       get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
       set_target_properties(plplotdmd
@@ -59,13 +57,12 @@ if(ENABLE_d)
     endif(USE_RPATH)
   else(plplotdmd_SHARED)
     add_library(plplotdmd STATIC ${plplotdmd_LIB_SRCS})
-    target_link_libraries(plplotdmd plplot)
   endif(plplotdmd_SHARED)
 
   if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links to
-    # libplplotdmdd in the shared libraries case.
-    target_link_libraries(plplotdmd LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplotdmd PRIVATE plplot)
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplotdmd PUBLIC plplot)
   endif(NON_TRANSITIVE)
 
   install(TARGETS plplotdmd

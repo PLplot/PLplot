@@ -56,12 +56,6 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
   # Create plplotwxwidgets[d] library
   add_library(plplotwxwidgets ${plplotwxwidgets_LIB_SRCS})
 
-  if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links to
-    # libplplotwxwidgetsd in the shared libraries case.
-    target_link_libraries(plplotwxwidgets LINK_INTERFACE_LIBRARIES)
-  endif(NON_TRANSITIVE)
-
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS} -DUSINGDLL"
@@ -83,12 +77,11 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
       PROPERTY COMPILE_DEFINITIONS_DEBUG ${wxWidgets_DEFINITIONS_DEBUG})
   ENDIF(wxWidgets_DEFINITIONS_DEBUG)
 
-  target_link_libraries(
-    plplotwxwidgets
-    plplot
-    plplotcxx
-    ${wxwidgets_LINK_FLAGS}
-    )
+  if(NON_TRANSITIVE)
+    target_link_libraries(plplotwxwidgets PRIVATE plplot plplotcxx ${wxwidgets_LINK_FLAGS})
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplotwxwidgets PUBLIC plplot plplotcxx ${wxwidgets_LINK_FLAGS})
+  endif(NON_TRANSITIVE)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)

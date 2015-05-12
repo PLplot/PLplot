@@ -72,12 +72,6 @@ if(ENABLE_ada)
 
   add_library(plplotada ${plplotada_LIB_SRCS})
 
-  if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links to
-    # libplplotada in the shared libraries case.
-    target_link_libraries(plplotada LINK_INTERFACE_LIBRARIES)
-  endif(NON_TRANSITIVE)
-
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed
   # at the Ada language support level and not worked around here.
@@ -91,9 +85,11 @@ if(ENABLE_ada)
       )
   endif(USE_DLL_SUBDIRECTORY)
 
-  target_link_libraries(plplotada
-    plplot ${GNAT_LIB}
-    )
+  if(NON_TRANSITIVE)
+    target_link_libraries(plplotada PRIVATE plplot ${GNAT_LIB})
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplotada PUBLIC plplot ${GNAT_LIB})
+  endif(NON_TRANSITIVE)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)

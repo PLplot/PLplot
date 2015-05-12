@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -39,12 +39,6 @@ if(PL_HAVE_QHULL)
 
   add_library(csironn ${csironn_LIB_SRCS})
 
-  if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links to
-    # libcsironn in the shared libraries case.
-    target_link_libraries(csironn LINK_INTERFACE_LIBRARIES)
-  endif(NON_TRANSITIVE)
-
   set_target_properties(
     csironn
     PROPERTIES
@@ -68,7 +62,11 @@ if(PL_HAVE_QHULL)
       )
   endif(MATH_LIB)
 
-  target_link_libraries(csironn ${csironn_LINK_LIBRARIES})
+  if(NON_TRANSITIVE)
+    target_link_libraries(csironn PRIVATE ${csironn_LINK_LIBRARIES})
+  else(NON_TRANSITIVE)
+    target_link_libraries(csironn PUBLIC ${csironn_LINK_LIBRARIES})
+  endif(NON_TRANSITIVE)
 
   install(TARGETS csironn
     EXPORT export_plplot

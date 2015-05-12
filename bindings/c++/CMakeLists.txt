@@ -43,13 +43,12 @@ if(ENABLE_cxx)
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
 
-  target_link_libraries(plplotcxx plplot)
   if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links
-    # to libplplotcxx in the shared libraries case.
-    target_link_libraries(plplotcxx LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplotcxx PRIVATE plplot)
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplotcxx PUBLIC plplot)
   endif(NON_TRANSITIVE)
-
+  
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(plplotcxx

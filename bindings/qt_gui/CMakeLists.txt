@@ -50,34 +50,39 @@ if(ENABLE_qt)
     # needed here, but I will leave it in since it is informative.
     qt5_use_modules(plplotqt Svg Gui PrintSupport)
 
-    target_link_libraries(
-      plplotqt
-      plplot
-      ${MATH_LIB}
-      )
+    if(NON_TRANSITIVE)
+      target_link_libraries(plplotqt PRIVATE plplot ${MATH_LIB})
+    else(NON_TRANSITIVE)
+      target_link_libraries(plplotqt PUBLIC plplot ${MATH_LIB})
+    endif(NON_TRANSITIVE)
   else(PLPLOT_USE_QT5)
+    if(NON_TRANSITIVE)
+      target_link_libraries(plplotqt PRIVATE plplot ${MATH_LIB})
+    else(NON_TRANSITIVE)
+      target_link_libraries(plplotqt PUBLIC plplot ${MATH_LIB})
+    endif(NON_TRANSITIVE)
+
     if(NOT QT_LIBRARIES)
       message(FATAL_ERROR "PLplot build-system inconsistency in bindings/qt_gui subdirectory.")
     endif(NOT QT_LIBRARIES)
-    target_link_libraries(
-      plplotqt
-      plplot
-      ${MATH_LIB}
-      ${QT_LIBRARIES}
-      )
+
+    # According to the latter part of a discussion on plplot-devel in
+    # 2013 with the subject line "Can't build on OS X Lion", Andrew
+    # and Jerry found together (using the old LINK_INTERFACE_LIBRARIES
+    # approach) that is was necessary that ${QT_LIBRARIES} was always
+    # transitively linked.  I think this is covered in the recent
+    # documentation of the PUBLIC keyword where it is stated that "If
+    # a dependency is additionally used in the header files of a
+    # library (e.g. for class inheritance), then it should be
+    # specified as a ``PUBLIC`` dependency."
+    # Therefore, my conclusion is that the PUBLIC keyword should
+    # be used here in all cases, but further checking of this assumption
+    # (by looking for overlinking issues) is desireable.
+    target_link_libraries(plplotqt PUBLIC ${QT_LIBRARIES})
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
     set_qt_target_properties(plplotqt)
   endif(PLPLOT_USE_QT5)
 
-  if(NON_TRANSITIVE)
-    # Note that there are implicit references to classes in QtCore, QtGui and QtSvg 
-    # so we need to add all three to the list of libraries to link to plplotqtd.
-    # This is just equivalent to adding QT_LIBRARIES.
-    # 
-    # empty list ==> non-transitive linking for everything that links to
-    # libplplotqtd in the shared libraries case.
-    target_link_libraries(plplotqt LINK_INTERFACE_LIBRARIES ${QT_LIBRARIES})
-  endif(NON_TRANSITIVE)
   # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the 
   # install-tree rpath since cmake handles the build-tree rpath
   # automatically (so long as full pathnames to libraries are used).

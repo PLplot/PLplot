@@ -57,7 +57,11 @@ if(ENABLE_f95)
 
   add_library(plplotf95c ${plplotf95c_LIB_SRCS})
 
-  target_link_libraries(plplotf95c  plplot)
+  if(NON_TRANSITIVE)
+    target_link_libraries(plplotf95c PRIVATE plplot)
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplotf95c PUBLIC plplot)
+  endif(NON_TRANSITIVE)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
@@ -138,13 +142,10 @@ if(ENABLE_f95)
   add_library(plplotf95 ${plplotf95_LIB_SRCS})
 
   if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links to
-    # libplplotf95cd and libplplotf95d in the shared libraries case.
-    target_link_libraries(plplotf95c LINK_INTERFACE_LIBRARIES)
-    target_link_libraries(plplotf95 LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplotf95 PRIVATE plplotf95c)
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplotf95 PUBLIC plplotf95c)
   endif(NON_TRANSITIVE)
-
-  target_link_libraries(plplotf95  plplotf95c)
 
   if(USE_RPATH)
     set_target_properties(plplotf95

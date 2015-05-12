@@ -66,13 +66,21 @@ if(ENABLE_tcl)
   add_library(tclmatrix ${tclmatrix_LIB_SRCS})
 
   if(USE_TCL_TK_STUBS)
-    target_link_libraries(tclmatrix ${TCL_STUB_LIBRARY})
+    if(NON_TRANSITIVE)
+      target_link_libraries(tclmatrix PRIVATE ${TCL_STUB_LIBRARY})
+    else(NON_TRANSITIVE)
+      target_link_libraries(tclmatrix PUBLIC ${TCL_STUB_LIBRARY})
+    endif(NON_TRANSITIVE)
     set_target_properties(
       tclmatrix
       PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
       )
   else(USE_TCL_TK_STUBS)
-    target_link_libraries(tclmatrix ${TCL_LIBRARY})
+    if(NON_TRANSITIVE)
+      target_link_libraries(tclmatrix PRIVATE ${TCL_LIBRARY})
+    else(NON_TRANSITIVE)
+      target_link_libraries(tclmatrix PUBLIC ${TCL_LIBRARY})
+    endif(NON_TRANSITIVE)
   endif(USE_TCL_TK_STUBS)
 
   if(USE_RPATH)
@@ -324,27 +332,14 @@ if(ENABLE_tcl)
     endif(ENABLE_tkX)
   endif(USE_TCL_TK_STUBS)
 
+  #message(STATUS "plplottcltk_link_libraries = ${plplottcltk_link_libraries}"
   if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links to
-    # libtclmatrixd and libplplottcltkd in the shared libraries case.
-    target_link_libraries(tclmatrix LINK_INTERFACE_LIBRARIES)
-    target_link_libraries(plplottcltk LINK_INTERFACE_LIBRARIES)
-    target_link_libraries(plplottcltk_Main LINK_INTERFACE_LIBRARIES)
+    target_link_libraries(plplottcltk PRIVATE ${plplottcltk_link_libraries})
+    target_link_libraries(plplottcltk_Main PRIVATE ${plplottcltk_Main_link_libraries})
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplottcltk PUBLIC ${plplottcltk_link_libraries})
+    target_link_libraries(plplottcltk_Main PUBLIC ${plplottcltk_Main_link_libraries})
   endif(NON_TRANSITIVE)
-
-  #message(STATUS
-  #"plplottcltk_link_libraries =
-  #${plplottcltk_link_libraries}"
-  #)
-  target_link_libraries(
-    plplottcltk
-    ${plplottcltk_link_libraries}
-    )
-
-  target_link_libraries(
-    plplottcltk_Main
-    ${plplottcltk_Main_link_libraries}
-    )
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)

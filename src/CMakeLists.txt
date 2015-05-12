@@ -194,11 +194,6 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   qt5_use_modules(plplot Svg Gui PrintSupport)
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
-if(NON_TRANSITIVE)
-  # empty list ==> non-transitive linking for everything that links to
-  # libplplotd in the shared libraries case.
-  target_link_libraries(plplot LINK_INTERFACE_LIBRARIES)
-endif(NON_TRANSITIVE)
 
 # Deal with external libraries.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
@@ -304,10 +299,17 @@ endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets)
 
 #message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
 
-target_link_libraries(
-  plplot
-  ${libplplot_LINK_LIBRARIES}
-  )
+if(NON_TRANSITIVE)
+  target_link_libraries(
+    plplot PRIVATE
+    ${libplplot_LINK_LIBRARIES}
+    )
+else(NON_TRANSITIVE)
+  target_link_libraries(
+    plplot PUBLIC
+    ${libplplot_LINK_LIBRARIES}
+    )
+endif(NON_TRANSITIVE)
 
 if(USE_RPATH)
   filter_rpath(LIB_INSTALL_RPATH)

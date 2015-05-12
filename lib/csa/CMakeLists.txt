@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -33,19 +33,17 @@ if(WITH_CSA)
 
   add_library(csirocsa ${csirocsa_LIB_SRCS})
 
-  if(NON_TRANSITIVE)
-    # empty list ==> non-transitive linking for everything that links to
-    # libcsirocsa in the shared libraries case.
-    target_link_libraries(csirocsa LINK_INTERFACE_LIBRARIES)
-  endif(NON_TRANSITIVE)
-
   set_target_properties(csirocsa
     PROPERTIES SOVERSION ${csirocsa_SOVERSION} VERSION ${csirocsa_VERSION}
     INSTALL_NAME_DIR "${LIB_DIR}"
     )
 
   if(MATH_LIB)
-    target_link_libraries(csirocsa ${MATH_LIB})
+    if(NON_TRANSITIVE)
+      target_link_libraries(csirocsa PRIVATE ${MATH_LIB})
+    else(NON_TRANSITIVE)
+      target_link_libraries(csirocsa PUBLIC ${MATH_LIB})
+    endif(NON_TRANSITIVE)
   endif(MATH_LIB)  
 
   install(TARGETS csirocsa

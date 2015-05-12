@@ -35,25 +35,6 @@ function(plplot_cmake_minimum_required)
   # includes all processing of policies.
   cmake_minimum_required(${ARGV})
 
-  # cmake-2.8.12.1 (2.8.12 screwed up the implementation) introduced a
-  # corrected implementation of keyword signatures for
-  # target_link_libraries which are preferred now over the traditional
-  # plain signatures.  There are a lot of implications concerning
-  # these preferred keyword signatures which I don't understand at the
-  # moment, but it is clear some modifications to our build system
-  # will be required to start using keyword signatures appropriately.
-  # So until then quiet warnings about this issue by explicitly
-  # setting policies CMP0022 and CMP0023 (if they exist for whatever
-  # CMake version the user is running) to OLD.
-  if(POLICY CMP0022)
-    message(STATUS "Explicitly setting policy CMP0022 to OLD")
-    cmake_policy(SET CMP0022 OLD)
-  endif(POLICY CMP0022)
-  if(POLICY CMP0023)
-    message(STATUS "Explicitly setting policy CMP0023 to OLD")
-    cmake_policy(SET CMP0023 OLD)
-  endif(POLICY CMP0023)
-
   # MAINTENANCE! Change this whenever the minimum version
   # range (currently 3.0.2 to 3.2.2) is changed for our various platforms.
   # This should be one more than the maximum policy of 3.0.2.
