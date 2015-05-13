@@ -1924,14 +1924,15 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
 }
 #endif
 
-// Returns a 0 status code if the two line segments A, and B defined
+// Returns a 0 status code
+// if the two line segments A, and B defined
 // by their end points (xA1, yA1, xA2, yA2, xB1, yB1, xB2, and yB2)
 // definitely (i.e., intersection point is not near the ends of either
 // of the line segments) cross each other.  Otherwise, return a status
 // code specifying the type of non-crossing (i.e., completely
-// separate, near one of the ends, parallel).  Return the actual
-// intersection (or average of the x end points and y end points for
-// the parallel, not crossed case) via the argument list pointers to
+// separate, near one of the ends, parallel).
+// Only if status = 0, return the actual
+// intersection via the argument list pointers to
 // xintersect and yintersect.
 
 int
@@ -1976,34 +1977,6 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
             status = status | PL_NEAR_PARALLEL;
         else
             status = status | PL_PARALLEL;
-        // Choice of intersect is arbitrary in this case.  Choose A1, A2,
-        // B1, or B2 (in that order) if any of them lie inside or near
-        // the other line segment.  Otherwise, choose the average point.
-        if ( ( BETW_NBCC( xA1, xB1, xB2 ) && BETW_NBCC( yA1, yB1, yB2 ) ) )
-        {
-            fxintersect = xA1;
-            fyintersect = yA1;
-        }
-        else if ( ( BETW_NBCC( xA2, xB1, xB2 ) && BETW_NBCC( yA2, yB1, yB2 ) ) )
-        {
-            fxintersect = xA2;
-            fyintersect = yA2;
-        }
-        else if ( ( BETW_NBCC( xB1, xA1, xA2 ) && BETW_NBCC( yB1, yA1, yA2 ) ) )
-        {
-            fxintersect = xB1;
-            fyintersect = yB1;
-        }
-        else if ( ( BETW_NBCC( xB2, xA1, xA2 ) && BETW_NBCC( yB2, yA1, yA2 ) ) )
-        {
-            fxintersect = xB2;
-            fyintersect = yB2;
-        }
-        else
-        {
-            fxintersect = 0.25 * ( xA1 + xA2 + xB1 + xB2 );
-            fyintersect = 0.25 * ( yA1 + yA2 + yB1 + yB2 );
-        }
     }
     else
     {
@@ -2037,8 +2010,12 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
     }
     else
         status = status | PL_NOT_CROSSED;
-    *xintersect = (PLINT) fxintersect;
-    *yintersect = (PLINT) fyintersect;
+
+    if ( !status )
+    {
+        *xintersect = (PLINT) fxintersect;
+        *yintersect = (PLINT) fyintersect;
+    }
 
     return status;
 }
