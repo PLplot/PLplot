@@ -264,8 +264,8 @@
 
       do k = 0,6
          if (k .eq. 0) then
-            call plctime(1950,0,2,0,0,0.,xmin)
-            call plctime(2020,0,2,0,0,0.,xmax)
+            call plctime(1950,0,2,0,0,0._plflt,xmin)
+            call plctime(2020,0,2,0,0,0._plflt,xmax)
             npts = 70*12 + 1
             ymin = 0.0_plflt
             ymax = 36.0_plflt
