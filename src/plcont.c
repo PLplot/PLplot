@@ -694,8 +694,8 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     {
         // Use intermediates to avoid possible floating point
         // under / over flow during multiplication.
-        sfi = (f[i] > 0.0) ? -1 : ( (f[i] < 0.0) ? 1 : 0);
-        sfj = (f[j] > 0.0) ? -1 : ( (f[j] < 0.0) ? 1 : 0);      
+        sfi = (f[i] > 0.0) ? 1 : ( (f[i] < 0.0) ? -1 : 0);
+        sfj = (f[j] > 0.0) ? 1 : ( (f[j] < 0.0) ? -1 : 0);      
         iedge[i] = ( sfi * sfj > 0 ) ? -1 : ( ( sfi * sfj < 0 ) ? 1 : 0 );
     }
 
