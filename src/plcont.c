@@ -677,7 +677,7 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
     PLFLT f[4];
     PLFLT px[4], py[4], locx[4], locy[4];
     PLINT iedge[4];
-    PLINT i, j, k, num, first, inext, kcolnext, krownext;
+    PLINT i, j, k, num, first, inext, kcolnext, krownext, sfi, sfj;
 
 
     ( *pltr )( kcol, krow + 1, &px[0], &py[0], pltr_data );
@@ -692,7 +692,11 @@ pldrawcn( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
     for ( i = 0, j = 1; i < 4; i++, j = ( j + 1 ) % 4 )
     {
-        iedge[i] = ( f[i] * f[j] > 0.0 ) ? -1 : ( ( f[i] * f[j] < 0.0 ) ? 1 : 0 );
+        // Use intermediates to avoid possible floating point
+        // under / over flow during multiplication.
+        sfi = (f[i] > 0.0) ? -1 : ( (f[i] < 0.0) ? 1 : 0);
+        sfj = (f[j] > 0.0) ? -1 : ( (f[j] < 0.0) ? 1 : 0);      
+        iedge[i] = ( sfi * sfj > 0 ) ? -1 : ( ( sfi * sfj < 0 ) ? 1 : 0 );
     }
 
     // Mark this square as done
