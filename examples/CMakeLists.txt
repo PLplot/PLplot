@@ -389,53 +389,19 @@ if(CORE_BUILD)
 
 else(CORE_BUILD)
 
+  # MAINTENANCE
   # This logic copied exactly from top-level CMakeLists.txt file except for
-  # name of project.
-  function(plplot_cmake_minimum_required)
-    # The PLplot version of cmake_minimum_required that
-    # includes all processing of policies.
-    cmake_minimum_required(${ARGV})
-
-    # MAINTENANCE! Change this whenever the minimum version
-    # range (currently 3.0.2 to 3.2.2) is changed for our various platforms.
-    # This should be one more than the maximum policy of 3.0.2.
-    set(minimum_old_policy 51)
-    # This should be the maximum policy of 3.2.2
-    set(maximum_old_policy 56)
-    # Adopt old policies for any policies introduced since 3.0.2 so that all
-    # our platforms have the same policies.
-
-    foreach(policy RANGE ${minimum_old_policy} ${maximum_old_policy})
-      if(POLICY CMP00${policy})
-	message(STATUS "Explicitly setting policy CMP00${policy} to OLD")
-	cmake_policy(SET CMP00${policy} OLD)
-      endif(POLICY CMP00${policy})
-    endforeach(policy RANGE ${minimum_old_policy} ${maximum_old_policy})
-
-  endfunction(plplot_cmake_minimum_required)
-  
-  # We prefer to support only recent CMake versions and latest CMake
-  # policies to keep our build system as simple and as bug free as
-  # possible.  However, as a special concession for our modern (not
-  # enterprise or LTS) Linux distro users and our Cygwin users we allow
-  # them to use the system version of CMake which at this time (2015-05)
-  # is typically 3.0.2 or later.  By coincidence there is a CMake bug
-  # for 3.0 (a permissions issue for file(GENERATE...), see
-  # cmake/modules/plplot_functions.cmake for details) that has a
-  # workaround that only works on Cygwin and Linux so all other
-  # platforms than Cygwin and Linux _must_ use CMake 3.2.
-
-  # Adapted method suggested by Brad King for using
-  # different minimum versions for different platforms.
-
-  plplot_cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+  # the name of the project.
+  cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+  cmake_policy(VERSION 3.0.2)
   project(installed_plplot_examples NONE)
   if(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
     # Latest CMake version as of 2015-05 for all platforms
     # other than Cygwin or Linux.
-    plplot_cmake_minimum_required(VERSION 3.2.2 FATAL_ERROR)
+    cmake_minimum_required(VERSION 3.2.2 FATAL_ERROR)
+    # Keep policy consistent for all platforms.
+    cmake_policy(VERSION 3.0.2)
   endif(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
-
 
   # It is a fatal error if no working C compiler is available to build
   # the PLplot core C library and core C examples.  All other compilers
