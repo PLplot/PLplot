@@ -172,6 +172,15 @@ module plplot
     end interface
 
     interface
+        subroutine plbtime( year, month, day, hour, min, sec, ctime )
+            use plplot_types
+            implicit none
+            integer(kind=plint) :: year, month, day, hour, min
+            real(kind=plflt)    :: sec, ctime
+        end subroutine plbtime
+    end interface
+
+    interface
         subroutine plcalc_world( rx, ry, wx, wy, window )
             use plplot_types
             implicit none
@@ -206,13 +215,27 @@ module plplot
         module procedure plcolorbar_2
     end interface
 
+    interface
+        subroutine plconfigtime( scale, offset1, offset2, control, ifbtime_offset, &
+                                 year, month, day, hour, min, sec )
+            use plplot_types
+            implicit none
+            real(kind=plflt)    :: scale, offset1, offset2, sec
+            integer(kind=plint) :: control, ifbtime_offset, year, month, day, hour, min
+        end subroutine plconfigtime
+    end interface
+
     interface plcpstrm
          module procedure plcpstrm
     end interface
 
     interface
-        subroutine plend
-        end subroutine plend
+        subroutine plctime( year, month, day, hour, min, sec, ctime )
+            use plplot_types
+            implicit none
+            integer(kind=plint) :: year, month, day, hour, min
+            real(kind=plflt)    :: sec, ctime
+        end subroutine plctime
     end interface
 
     interface
