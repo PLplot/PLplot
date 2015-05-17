@@ -1,6 +1,6 @@
 //      Polygon pattern fill.
 //
-// Copyright (C) 2004-2014 Alan W. Irwin
+// Copyright (C) 2004-2015 Alan W. Irwin
 // Copyright (C) 2005, 2006, 2007, 2008, 2009  Arjen Markus
 //
 // This file is part of PLplot.
@@ -1988,29 +1988,28 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
         factor      = ( xB1A1 * yB2A1 - yB1A1 * xB2A1 ) / factor;
         fxintersect = factor * xA2A1 + xA1;
         fyintersect = factor * yA2A1 + yA1;
+        // The "redundant" x and y segment range checks (which include near the
+        // end points) are needed for the vertical and the horizontal cases.
+        if ( ( BETW_NBCC( fxintersect, xA1, xA2 ) && BETW_NBCC( fyintersect, yA1, yA2 ) ) &&
+             ( BETW_NBCC( fxintersect, xB1, xB2 ) && BETW_NBCC( fyintersect, yB1, yB2 ) ) )
+        {
+            // The intersect is close (within +/- PL_NBCC) to an end point or
+            // corresponds to a definite crossing of the two line segments.
+            // Find out which.
+            if ( fabs( fxintersect - xA1 ) <= PL_NBCC && fabs( fyintersect - yA1 ) <= PL_NBCC )
+                status = status | PL_NEAR_A1;
+            else if ( fabs( fxintersect - xA2 ) <= PL_NBCC && fabs( fyintersect - yA2 ) <= PL_NBCC )
+                status = status | PL_NEAR_A2;
+            else if ( fabs( fxintersect - xB1 ) <= PL_NBCC && fabs( fyintersect - yB1 ) <= PL_NBCC )
+                status = status | PL_NEAR_B1;
+            else if ( fabs( fxintersect - xB2 ) <= PL_NBCC && fabs( fyintersect - yB2 ) <= PL_NBCC )
+                status = status | PL_NEAR_B2;
+            // N.B. if none of the above conditions hold then status remains at
+            // zero to signal we have a definite crossing.
+        }
+        else
+            status = status | PL_NOT_CROSSED;
     }
-    // The "redundant" x and y segment range checks (which include near the
-    // end points) are needed for the vertical and the horizontal cases.
-    if ( ( BETW_NBCC( fxintersect, xA1, xA2 ) && BETW_NBCC( fyintersect, yA1, yA2 ) ) &&
-         ( BETW_NBCC( fxintersect, xB1, xB2 ) && BETW_NBCC( fyintersect, yB1, yB2 ) ) )
-    {
-        // The intersect is close (within +/- PL_NBCC) to an end point or
-        // corresponds to a definite crossing of the two line segments.
-        // Find out which.
-        if ( fabs( fxintersect - xA1 ) <= PL_NBCC && fabs( fyintersect - yA1 ) <= PL_NBCC )
-            status = status | PL_NEAR_A1;
-        else if ( fabs( fxintersect - xA2 ) <= PL_NBCC && fabs( fyintersect - yA2 ) <= PL_NBCC )
-            status = status | PL_NEAR_A2;
-        else if ( fabs( fxintersect - xB1 ) <= PL_NBCC && fabs( fyintersect - yB1 ) <= PL_NBCC )
-            status = status | PL_NEAR_B1;
-        else if ( fabs( fxintersect - xB2 ) <= PL_NBCC && fabs( fyintersect - yB2 ) <= PL_NBCC )
-            status = status | PL_NEAR_B2;
-        // N.B. if none of the above conditions hold then status remains at
-        // zero to signal we have a definite crossing.
-    }
-    else
-        status = status | PL_NOT_CROSSED;
-
     if ( !status )
     {
         *xintersect = (PLINT) fxintersect;
