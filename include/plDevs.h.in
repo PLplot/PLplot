@@ -65,7 +65,6 @@
 #cmakedefine PLD_xwin
 #cmakedefine PLD_tk
 #cmakedefine PLD_pbm
-#cmakedefine PLD_gcw
 #cmakedefine PLD_gnome
 #cmakedefine PLD_pstex
 #cmakedefine PLD_psttf

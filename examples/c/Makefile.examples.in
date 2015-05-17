@@ -28,10 +28,6 @@ EXEEXT = @EXEEXT@
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 RPATHCMD = @RPATHCMD@
 
-@gcw_true@PLPLOTCANVAS_EXECUTABLES_list = \
-@gcw_true@		 plplotcanvas_demo$(EXEEXT) \
-@gcw_true@		 plplotcanvas_animation$(EXEEXT)
-
 @extXdrawable_true@extXdrawable_EXECUTABLES_list = \
 @extXdrawable_true@	extXdrawable_demo$(EXEEXT)
 
@@ -73,7 +69,6 @@ EXECUTABLES_list = \
 		 x31c$(EXEEXT) \
 		 x32c$(EXEEXT) \
 		 x33c$(EXEEXT) \
-		 $(PLPLOTCANVAS_EXECUTABLES_list) \
 		 $(extXdrawable_EXECUTABLES_list) \
 		 $(extcairo_EXECUTABLES_list)
 
@@ -81,15 +76,6 @@ all: $(EXECUTABLES_list)
 
 clean:
 	rm -f $(EXECUTABLES_list)
-
-@gcw_true@plplotcanvas_demo$(EXEEXT): plplotcanvas_demo.c
-@gcw_true@	$(CC) $< -o $@ $(RPATHCMD) \
-@gcw_true@			$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-gnome2)
-
-@gcw_true@plplotcanvas_animation$(EXEEXT): plplotcanvas_animation.c
-@gcw_true@	$(CC) $< -o $@ $(RPATHCMD) \
-@gcw_true@			$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-gnome2) \
-@gcw_true@			$(shell pkg-config @PC_STATIC_OPTION@ --cflags --libs gthread-2.0)			
 
 # target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} plplot)
 # N.B. the above CMake method derives ${GTK_X11_LINK_FLAGS} from pkg-config

@@ -21,10 +21,7 @@ qt.h
 
 <skip_headers>
 <!-- Remove headers that currently cause errors for
-abi-compliance-checker.  gcw.h and plplotcanvas.h are deprecated in
-any case, but may figure out the wxwidget-related headers later. -->
-gcw.h
-plplotcanvas.h
+abi-compliance-checker.-->
 wxPLplotstream.h
 wxPLplotwindow.h
 </skip_headers>

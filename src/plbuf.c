@@ -1,7 +1,7 @@
 //  Handle plot buffer.
 //
 //  Copyright (C) 1992  Maurice LeBrun
-//  Copyright (C) 2004-2014 Alan W. Irwin
+//  Copyright (C) 2004-2015 Alan W. Irwin
 //  Copyright (C) 2005  Thomas J. Duck
 //  Copyright (C) 2006  Jim Dishaw
 //
@@ -329,7 +329,7 @@ plbuf_text( PLStream *pls, EscText *text )
 {
     dbug_enter( "plbuf_text" );
 
-    // Check for missing data.  The gcw driver needs this
+    // Check for missing data.
     if ( text == NULL )
         return;
 
@@ -1452,13 +1452,12 @@ wr_data( PLStream *pls, void *buf, size_t buf_size )
 
 // plbuf_save(state)
 //
-// Saves the current state of the plot into a save buffer.
-// This code was originally in gcw.c and gcw-lib.c.  The original
-// code used a temporary file for the plot buffer and memory
-// to perserve colormaps.  That method does not offer a clean
-// break between using memory buffers and file buffers.  This
-// function preserves the same functionality by returning a data
-// structure that saves the plot buffer.
+// Saves the current state of the plot into a save buffer.  The
+// original code used a temporary file for the plot buffer and memory
+// to perserve colormaps.  That method does not offer a clean break
+// between using memory buffers and file buffers.  This function
+// preserves the same functionality by returning a data structure that
+// saves the plot buffer.
 //
 // The caller passes an existing save buffer for reuse or NULL
 // to force the allocation of a new buffer.  Since one malloc()

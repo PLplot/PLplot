@@ -47,7 +47,7 @@
 // plplot dll macros
 #ifdef ENABLE_DYNDRIVERS
   #if defined ( aqt_EXPORTS ) || defined ( cairo_EXPORTS ) || defined ( cgm_EXPORTS ) ||       \
-    defined ( dg300_EXPORTS ) || defined ( gd_EXPORTS ) || defined ( gcw_EXPORTS ) ||          \
+    defined ( dg300_EXPORTS ) || defined ( gd_EXPORTS ) || \
     defined ( hpgl_EXPORTS ) || defined ( impress_EXPORTS ) || defined ( linuxvga_EXPORTS ) || \
     defined ( ljii_EXPORTS ) || defined ( ljiip_EXPORTS ) || defined ( mem_EXPORTS ) ||        \
     defined ( ntk_EXPORTS ) || defined ( null_EXPORTS ) || defined ( pbm_EXPORTS ) ||          \
@@ -105,22 +105,6 @@
 #else
   #define PLDLLIMPEXP_TCLTK    PLDLLIMPORT
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLIMPORT type
-#endif
-
-#if defined ( plplotgnome2_EXPORTS )
-  #define PLDLLIMPEXP_GNOME2    PLDLLEXPORT
-  #define PLDLLIMPEXP_GNOME2_DATA( type )    PLDLLEXPORT type
-#else
-  #define PLDLLIMPEXP_GNOME2    PLDLLIMPORT
-  #define PLDLLIMPEXP_GNOME2_DATA( type )    PLDLLIMPORT type
-#endif
-
-#if defined ( cplplotcanvasmodule_EXPORTS )
-  #define PLDLLIMPEXP_CPLPLOTCANVASMODULE    PLDLLEXPORT
-  #define PLDLLIMPEXP_CPLPLOTCANVASMODULE_DATA( type )    PLDLLEXPORT type
-#else
-  #define PLDLLIMPEXP_CPLPLOTCANVASMODULE    PLDLLIMPORT
-  #define PLDLLIMPEXP_CPLPLOTCANVASMODULE_DATA( type )    PLDLLIMPORT type
 #endif
 
 #if defined ( plplot_widgetmodule_EXPORTS )

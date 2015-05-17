@@ -738,13 +738,6 @@ if(BUILD_TEST)
 	set(cairo_file_and_target ${FILE_DEPENDS_cairo} cairo)
       endif(TARGET cairo)
 
-      if(TARGET gcw)
-	get_property(FILE_DEPENDS_gcw 
-	  GLOBAL PROPERTY FILE_DEPENDS_gcw_dyndriver
-	  )
-	set(gcw_file_and_target ${FILE_DEPENDS_gcw} gcw)
-      endif(TARGET gcw)
-
       if(TARGET qt)
 	get_property(FILE_DEPENDS_qt
 	  GLOBAL PROPERTY FILE_DEPENDS_qt_dyndriver
@@ -792,7 +785,6 @@ if(BUILD_TEST)
       # MAINTENANCE: the variables set here must be the same as
       # in the above if block statements
       set(cairo_file_and_target plplot)
-      set(gcw_file_and_target plplot)
       set(qt_target plplot)
       set(qt_file_and_target plplot)
       set(wxwidgets_file_and_target plplot)
@@ -946,21 +938,6 @@ if(BUILD_TEST)
       list(APPEND interactive_targets_LIST test_extXdrawable)
     endif(PLD_xcairo)
 
-    if(ENABLE_gnome2)
-      add_custom_target(test_plplotcanvas
-	COMMAND plplotcanvas_demo
-	COMMAND plplotcanvas_animation
-	DEPENDS 
-	plplotcanvas_demo
-	plplotcanvas_animation
-	${gcw_file_and_target}
-	)
-      if(FILE_DEPENDS_gcw)
-	add_dependencies(test_plplotcanvas test_gcw_dyndriver)
-      endif(FILE_DEPENDS_gcw)
-      list(APPEND interactive_targets_LIST test_plplotcanvas)
-    endif(ENABLE_gnome2)
-
   endif(ENABLE_c)
 
   if(ENABLE_cxx)
@@ -1030,41 +1007,6 @@ if(BUILD_TEST)
     
     list(APPEND interactive_targets_LIST test_pyqt4_example)
   endif(ENABLE_pyqt4)
-
-  if(ENABLE_pygcw)
-    if(CORE_BUILD)
-      add_custom_target(test_pygcw
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_demo.py
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_animation.py
-	DEPENDS
-	gcwmodule
-	cplplotcanvasmodule
-	${gcw_file_and_target}
-	_plplotcmodule_fixed
-	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_demo.py
-	${CMAKE_CURRENT_BINARY_DIR}/python/plplotcanvas_animation.py
-	WORKING_DIRECTORY
-	${CMAKE_CURRENT_BINARY_DIR}/python
-	)
-      add_dependencies(test_pygcw copy_plplotcanvas)
-      if(FILE_DEPENDS_gcw)
-	add_dependencies(test_pygcw test_gcw_dyndriver)
-      endif(FILE_DEPENDS_gcw)
-    else(CORE_BUILD)
-      add_custom_target(test_pygcw
-	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/plplotcanvas_demo.py
-	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/plplotcanvas_animation.py
-	DEPENDS
-	gcwmodule
-	cplplotcanvasmodule
-	${gcw_file_and_target}
-	_plplotcmodule
-	WORKING_DIRECTORY
-	${CMAKE_CURRENT_SOURCE_DIR}/python
-	)
-    endif(CORE_BUILD)
-    list(APPEND interactive_targets_LIST test_pygcw)
-  endif(ENABLE_pygcw)
 
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
     add_custom_target(test_pltcl_standard_examples
@@ -1467,7 +1409,6 @@ Interactive bindings:
 
 ENABLE_qt:		${ENABLE_qt}
 ENABLE_tk:		${ENABLE_tk}
-ENABLE_gnome2:		${ENABLE_gnome2}
 ENABLE_wxwidgets:	${ENABLE_wxwidgets}
 ")
 

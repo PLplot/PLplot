@@ -88,13 +88,8 @@ include(drivers-init)
 # not available.
 include(cairo)
 include(cgm)
-#Everything having to do with gcw is retired
-set(PLD_gcw OFF CACHE INTERNAL "gcw is retired" FORCE)
-set(ENABLE_gnome2 OFF CACHE INTERNAL "gnome2 is retired" FORCE)
-set(ENABLE_pygcw OFF CACHE INTERNAL "pygcw is retired" FORCE)
 include(gd)
-#include(gcw)
-# Do not implement gnome which is superseded by gcw
+# Do not implement gnome which is retired.
 #include(gnome)
 include(linuxvga)
 include(xwin)

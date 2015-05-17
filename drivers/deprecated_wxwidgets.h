@@ -136,7 +136,7 @@ public: // variables
 
     bool         plstate_width;         // Flags indicating change of state before
     bool         plstate_color0;        // device is fully initialized
-    bool         plstate_color1;        // taken from gcw driver
+    bool         plstate_color1;        // 
 
     PLGraphicsIn gin;                   // Graphics input structure
     int          locate_mode;           // Set while in locate mode

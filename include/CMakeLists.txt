@@ -76,8 +76,6 @@ set(include_INSTALLED_HEADERS
   plplotP.h
   plstrm.h
   plxwd.h
-  gcw.h
-  plplotcanvas.h
   ${CMAKE_CURRENT_BINARY_DIR}/plConfig.h
   ${CMAKE_CURRENT_BINARY_DIR}/plDevs.h
   )

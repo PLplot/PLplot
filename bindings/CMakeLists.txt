@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -30,7 +30,6 @@ add_subdirectory(tk-x-plat)
 add_subdirectory(python)
 add_subdirectory(octave)
 add_subdirectory(java)
-add_subdirectory(gnome2)
 add_subdirectory(wxwidgets)
 add_subdirectory(ada)
 add_subdirectory(d)

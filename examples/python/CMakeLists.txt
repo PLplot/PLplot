@@ -1,7 +1,6 @@
 # examples/python/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006, 2007, 2008, 2009 Alan W. Irwin
+
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -126,15 +125,6 @@ if(ENABLE_pyqt4)
     )
 endif(ENABLE_pyqt4)
 
-if(ENABLE_pygcw)
-  set(
-    python_SCRIPTS
-    ${python_SCRIPTS}
-    plplotcanvas_demo.py
-    plplotcanvas_animation.py
-    )
-endif(ENABLE_pygcw)
-
 # This list contains python modules which are not executable on their own and
 # data files that should be installed in the examples/python directory.
 
@@ -146,14 +136,6 @@ set(
   README.rendering_tests
   README.logo
   )
-
-if(ENABLE_pygcw)
-  set(
-    python_DATA
-    ${python_DATA}
-    README.plplotcanvas
-    )
-endif(ENABLE_pygcw)
 
 if(CORE_BUILD)
 
@@ -176,13 +158,6 @@ if(CORE_BUILD)
     set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
       _plplotcmodule_fixed plplot_widgetmodule)
     set_property(GLOBAL PROPERTY FILES_examples_python ${command_DEPENDS})
-    if(ENABLE_pygcw)
-      add_custom_target(copy_plplotcanvas
-	DEPENDS
-	${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_demo.py
-	${CMAKE_CURRENT_BINARY_DIR}/plplotcanvas_animation.py
-	)
-    endif(ENABLE_pygcw)
   endif(BUILD_TEST)
 
   set(PLSMEM_DEVICE_LIST)
@@ -238,7 +213,6 @@ if(CORE_BUILD)
     set(python_location4)
   endif(USE_DLL_SUBDIRECTORY)
   set(python_location5 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
-  set(python_location6 ${CMAKE_BINARY_DIR}/bindings/gnome2/python)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py

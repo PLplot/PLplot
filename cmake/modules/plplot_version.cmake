@@ -55,9 +55,6 @@ set(plplotf95_VERSION ${plplotf95_SOVERSION}.0.0)
 set(plplotqt_SOVERSION 2)
 set(plplotqt_VERSION ${plplotqt_SOVERSION}.0.0)
 
-set(plplotgnome2_SOVERSION 1)
-set(plplotgnome2_VERSION ${plplotgnome2_SOVERSION}.0.0)
-
 set(tclmatrix_SOVERSION 10)
 set(tclmatrix_VERSION ${tclmatrix_SOVERSION}.2.0)
 

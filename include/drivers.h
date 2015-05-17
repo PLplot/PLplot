@@ -38,7 +38,6 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_aqt( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_nx( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_os2( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_xw( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_gcw( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_gnome( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_tk( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_vga( PLDispatchTable *pdt );

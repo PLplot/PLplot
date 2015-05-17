@@ -36,7 +36,7 @@ Options:
        --device="qtwidget extqt").  Note each specified device must be
        taken from the following list of eligible interactive devices:
 
-       xwin, tk, xcairo, gcw, wxwidgets, qtwidget, extcairo or extqt.
+       xwin, tk, xcairo, wxwidgets, qtwidget, extcairo or extqt.
 
    [--help]
 
@@ -99,7 +99,6 @@ PLD_xwin=@PLD_xwin@
 PLD_tk=@PLD_tk@
 PLD_ntk=@PLD_ntk@
 PLD_xcairo=@PLD_xcairo@
-PLD_gcw=@PLD_gcw@
 PLD_wxwidgets=@PLD_wxwidgets@
 PLD_qtwidget=@PLD_qtwidget@
 PLD_extcairo=@PLD_extcairo@
@@ -107,7 +106,7 @@ PLD_extqt=@PLD_extqt@
 
 # These blank-delimited strings must be consistent with previous configured
 # list of devices.
-POSSIBLE_INTERACTIVE_DEVICES_LIST="xwin tk ntk xcairo gcw qtwidget"
+POSSIBLE_INTERACTIVE_DEVICES_LIST="xwin tk ntk xcairo qtwidget"
 if [ "@SHELL_TEST_WXWIDGETS@" -ne 0 ] ; then
     POSSIBLE_INTERACTIVE_DEVICES_LIST="$POSSIBLE_INTERACTIVE_DEVICES_LIST wxwidgets"
 fi
@@ -181,30 +180,6 @@ if [ "@PLD_extqt@" = "ON" -a "@ENABLE_cxx@" = "ON" -a "@qt_gui_true@" != "#" ] ;
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
     COMMAND[$COUNT]="./qt_example"
-    COUNT=$(( $COUNT + 1 ))
-fi
-
-if [ "@ENABLE_gnome2@" = "ON" ] ; then
-    INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
-    COMMAND[$COUNT]="./plplotcanvas_demo"
-    COUNT=$(( $COUNT + 1 ))
-
-    INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
-    COMMAND[$COUNT]="./plplotcanvas_animation"
-    COUNT=$(( $COUNT + 1 ))
-fi
-
-if [ "@ENABLE_pygcw@" = "ON" ] ; then
-    INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${SRC_EXAMPLES_DIR}/python"
-    COMMAND[$COUNT]="./plplotcanvas_demo.py"
-    COUNT=$(( $COUNT + 1 ))
-
-    INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${SRC_EXAMPLES_DIR}/python"
-    COMMAND[$COUNT]="./plplotcanvas_animation.py"
     COUNT=$(( $COUNT + 1 ))
 fi
 

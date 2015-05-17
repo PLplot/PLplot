@@ -85,23 +85,7 @@ if(CORE_BUILD)
     set(cairo_DOCS README.cairo)
   endif(PLD_xcairo OR PLD_extcairo)
 
-  if(ENABLE_gnome2)
-    set(plplotcanvas_SRCS
-      plplotcanvas_demo.c
-      plplotcanvas_animation.c
-      )
-
-    set(plplotcanvas_DOCS
-      README.plplotcanvas
-      )
-    set(gcw_true "")
-    set(gcw_false "#")
-  else(ENABLE_gnome2)
-    set(gcw_true "#")
-    set(gcw_false "")
-  endif(ENABLE_gnome2)
-
-  install(FILES ${c_SRCS} ${plplotcanvas_SRCS} ${plplotcanvas_DOCS} ${extXdrawable_SRC} ${extcairo_SRC} ${cairo_DOCS}
+  install(FILES ${c_SRCS} ${extXdrawable_SRC} ${extcairo_SRC} ${cairo_DOCS}
     DESTINATION ${DATA_DIR}/examples/c
     )
 
@@ -168,51 +152,6 @@ if(BUILD_TEST)
   target_link_libraries(test_plbuf plplot ${MATH_LIB})
 
   if(PKG_CONFIG_EXECUTABLE)
-    if(ENABLE_gnome2)
-      # plplotcanvas_demo.c and plplotcanvas_animation.c both
-      # contain "#include <gtk/gtk.h>" which occurs in the
-      # /usr/include/gtk-2.0 directory.  They also contain 
-      # "#include <plplotcanvas.h>".  These issues are both taken care of
-      # by the libgnomeprintui-2.2 pkg-config module.
-      message(STATUS "Determine compile and link flags for plotcanvas_demo")
-      pkg_check_pkgconfig(libgnomeprintui-2.2 includedir libdir linkflags1 cflags1 version1 _GNOMEPRINTUI)
-      if(linkflags1)
-	# Requires blank-delimited list.
-	string(REGEX REPLACE ";" " " GNOMEPRINTUI_COMPILE_FLAGS "${cflags1}")
-	if(BUILD_SHARED_LIBS)
-	  set(GNOMEPRINTUI_COMPILE_FLAGS "-DUSINGDLL ${GNOMEPRINTUI_COMPILE_FLAGS}")
-	endif(BUILD_SHARED_LIBS)
-	set(GNOMEPRINTUI_LINK_FLAGS "${linkflags1}")
-	set_source_files_properties(
-	  plplotcanvas_demo.c
-	  PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS}"
-	  )
-	add_executable(plplotcanvas_demo plplotcanvas_demo.c)
-	target_link_libraries(plplotcanvas_demo ${GNOMEPRINTUI_LINK_FLAGS} plplotgnome2)
-
-	# plplotcanvas_animation.c contains a reference to gthread_init and also
-	# contains '#include <glib.h>'.  Analysis shows both these issues are
-	# taken care of by the gthread-2.0 pkg-config module.
-        message(STATUS "Determine compile and link flags for plotcanvas_animation")
-	pkg_check_pkgconfig(gthread-2.0 includedir libdir linkflags2 cflags2 version2 _GTHREAD_2.0)
-	if(linkflags2)
-	  # Requires blank-delimited list.
-	  string(REGEX REPLACE ";" " " GTHREAD_2.0_COMPILE_FLAGS "${cflags2}")
-	  set(GTHREAD_2.0_LINK_FLAGS "${linkflags2}")
-	  set_source_files_properties(
-	    plplotcanvas_animation.c
-	    PROPERTIES COMPILE_FLAGS "${GNOMEPRINTUI_COMPILE_FLAGS} ${GTHREAD_2.0_COMPILE_FLAGS}"
-	    )
-	  add_executable(plplotcanvas_animation plplotcanvas_animation.c)
-	  target_link_libraries(plplotcanvas_animation ${GNOMEPRINTUI_LINK_FLAGS} ${GTHREAD_2.0_LINK_FLAGS} plplotgnome2 ${MATH_LIB})
-	else(linkflags2)
-	  message(STATUS "WARNING: gthread-2.0 not found.  plplotcanvas_animation not built")
-	endif(linkflags2)
-      else(linkflags1)
-	message(STATUS "WARNING: libgnomeprintui-2.2 not found.  plplotcanvas_demo and plplotcanvas_animation not built.")
-      endif(linkflags1)
-    endif(ENABLE_gnome2)
-    
     if(PLD_xcairo)
       message(STATUS "Determine compile and link flags for extXdrawable_demo")
       pkg_check_pkgconfig(gtk+-x11-2.0 includedir libdir linkflags3 cflags3 version3 _GTK_X11)
@@ -255,6 +194,6 @@ if(BUILD_TEST)
       endif(linkflags4)
     endif(PLD_extcairo)
   else(PKG_CONFIG_EXECUTABLE)
-    message(STATUS "WARNING: pkg-config not found so plplotcanvas_demo, plplotcanvas_animation,  extXdrawable_demo, and ext-cairo-test not built.")
+    message(STATUS "WARNING: pkg-config not found so extXdrawable_demo, and ext-cairo-test not built.")
   endif(PKG_CONFIG_EXECUTABLE)
 endif(BUILD_TEST)
