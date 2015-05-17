@@ -136,6 +136,6 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
     )
   
   # Configure pkg-config *.pc file corresponding to libplplotwxwidgets
-  pkg_config_file("wxwidgets" "wxWidgets" " wxWidgets binding" "plplotwxwidgets" "${libplplotwxwidgets_COMPILE_FLAGS}" "-lplplotcxx;${wxwidgets_LINK_FLAGS}")
+  pkg_config_file("wxwidgets" "wxWidgets" " wxWidgets binding" "plplotwxwidgets" "${libplplotwxwidgets_COMPILE_FLAGS}" "-lplplot;-lplplotcxx;${wxwidgets_LINK_FLAGS}")
 
 endif(ENABLE_wxwidgets AND ENABLE_cxx)

@@ -195,5 +195,7 @@ if(ENABLE_f95)
     )
 
   # Configure pkg-config *.pc file corresponding to libplplotf95
-  pkg_config_file("f95" "F95" " F95 binding" "plplotf95${VERSION_SUFFIX}" "-I\"${F95_MOD_DIR}\"" "-lplplotf95c${VERSION_SUFFIX}")
+  # Note, Fortran executables need to link plplotf95c as a public
+  # library so specify it as 7th argument.
+  pkg_config_file("f95" "F95" " F95 binding" "plplotf95${VERSION_SUFFIX}" "-I\"${F95_MOD_DIR}\"" "-lplplot" "-lplplotf95c${VERSION_SUFFIX}")
 endif(ENABLE_f95)

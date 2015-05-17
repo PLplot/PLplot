@@ -1,7 +1,7 @@
 # bindings/ada/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2007 Alan W. Irwin
+# Copyright (C) 2007-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -86,10 +86,16 @@ if(ENABLE_ada)
   endif(USE_DLL_SUBDIRECTORY)
 
   if(NON_TRANSITIVE)
-    target_link_libraries(plplotada PRIVATE plplot ${GNAT_LIB})
+    target_link_libraries(plplotada PRIVATE ${GNAT_LIB})
   else(NON_TRANSITIVE)
-    target_link_libraries(plplotada PUBLIC plplot ${GNAT_LIB})
+    target_link_libraries(plplotada PUBLIC ${GNAT_LIB})
   endif(NON_TRANSITIVE)
+
+  # N.B. nm evidence shows that examples that use
+  # callbacks (e.g., plfill in x15a.adb) have unresolved references
+  # to c_plfill, etc. that require a public link to plplot
+  # regardless of how NON_TRANSITIVE is set.
+  target_link_libraries(plplotada PUBLIC plplot)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
@@ -132,6 +138,7 @@ if(ENABLE_ada)
   SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ALI_LIST}")
 
   # Configure pkg-config *.pc file corresponding to libplplotada
-  pkg_config_file("ada" "Ada" " Ada binding" "plplotada" "" "")
+  # See remarks above concerning why plplot has to be public.
+  pkg_config_file("ada" "Ada" " Ada binding" "plplotada" "" "${GNAT_LIB}" "-lplplot")
 
 endif(ENABLE_ada)

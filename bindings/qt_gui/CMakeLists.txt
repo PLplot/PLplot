@@ -134,7 +134,7 @@ if(ENABLE_qt)
 
   # Configure pkg-config *.pc file corresponding to the compile and link
   # flags needed by a Qt GUI executable using extqt to gain access to PLplot.
-  pkg_config_file("qt" "Qt" " Qt binding" "plplotqt" "${pc_qt_COMPILE_FLAGS}" "${libplplotqt_LINK_FLAGS}")
+  pkg_config_file("qt" "Qt" " Qt binding" "plplotqt" "${pc_qt_COMPILE_FLAGS}" "-lplplot;${MATH_LIB}" "${libplplotqt_LINK_FLAGS}")
 
   add_subdirectory(pyqt4)
   add_subdirectory(smoke)

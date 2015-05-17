@@ -1,8 +1,8 @@
 # examples/f95/Makefile.examples.in for PLplot
 ###
-### Process this file with configure to produce Makefile.examples
+### Configure this file with CMake to produce Makefile.examples
 ###
-# Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2002-2015  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 # Copyright (C) 2004  Andrew Ross
 #
@@ -69,6 +69,9 @@ all: $(EXECUTABLES_list)
 clean:
 	rm -f $(EXECUTABLES_list)
 
+# target_link_libraries(x${STRING_INDEX}f95 plf95demolib plplotf95 plplotf95c)
+# Note, the corresponding *.pc file lists both plplotf95 and plplotf95c as PUBLIC
+# libraries.
 .f90$(EXEEXT):
 	$(F95) @MODULESINCCMD@ $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-f95) -lplf95demolib
 

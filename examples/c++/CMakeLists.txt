@@ -83,15 +83,6 @@ if(CORE_BUILD)
   install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} ${qt_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
 
   set(CXX ${CMAKE_CXX_COMPILER})
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-    )
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
-    DESTINATION ${DATA_DIR}/examples/c++
-    RENAME Makefile
-    )
 
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/c++
@@ -141,6 +132,9 @@ if(BUILD_TEST)
     endif(BUILD_SHARED_LIBS)
     add_executable(wxPLplotDemo WIN32 ${wxPLplotDemo_SRCS})
     target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
+    # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
+    # for use in configuring Makefiles.examples.
+    pkg_config_link_flags(pkg_config_wxwidgets_LINK_FLAGS "${wxwidgets_LINK_FLAGS}")
   endif(ENABLE_wxwidgets)
 
   if(PLD_extqt)
@@ -166,6 +160,9 @@ if(BUILD_TEST)
 	  if(NOT QT_LIBRARIES)
             message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
 	  endif(NOT QT_LIBRARIES)
+	  # Transform QT_LIBRARIES from list of libraries to the standard pkg-config form
+	  # for use in configuring Makefiles.examples.
+	  pkg_config_link_flags(pkg_config_QT_LIBRARIES "${QT_LIBRARIES}")
 	  set(BUILD_qt_example ON)
 	else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
 	  message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
@@ -190,12 +187,12 @@ if(BUILD_TEST)
 	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
 	qt5_use_modules(qt_example Svg Gui PrintSupport)
 	if(ENABLE_DYNDRIVERS)
-	  target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot ${qt_example_TARGETS})
+	  target_link_libraries(qt_example plplotqt plplot ${qt_example_TARGETS})
 	else(ENABLE_DYNDRIVERS)
 	  # In this case plplot contains all the code in plplotqt so there is no
           # need to link to plplotqt at all, and in fact for some reason it
           # causes memory management issues to link to both plplot and plplotqt in this case.
-	  target_link_libraries(qt_example ${QT_LIBRARIES} plplot ${qt_example_TARGETS})
+	  target_link_libraries(qt_example plplot ${qt_example_TARGETS})
 	endif(ENABLE_DYNDRIVERS)
       else(PLPLOT_USE_QT5)
 	qt4_wrap_cpp(
@@ -226,3 +223,18 @@ if(BUILD_TEST)
     endif(BUILD_qt_example)
   endif(PLD_extqt)
 endif(BUILD_TEST)
+
+if(CORE_BUILD)
+  # This configuration must occur after the pkg_config variables are
+  # determined above.
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+    DESTINATION ${DATA_DIR}/examples/c++
+    RENAME Makefile
+    )
+
+endif(CORE_BUILD)

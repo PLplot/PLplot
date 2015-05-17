@@ -2,7 +2,7 @@
 ###
 ### Process this file with configure to produce Makefile.examples
 ###
-# Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2002-2015  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 # Copyright (C) 2004  Andrew Ross
 #
@@ -102,10 +102,11 @@ all: $(EXECUTABLES_list)
 clean:
 	rm -f $(EXECUTABLES_list) *.ali *.o
 
+# target_link_libraries(${TARGET_NAME} plplotada plplot)
 # Due to command-line limitations of gnatmake cannot continue (by trailing \)
 # anything after -cargs below.
 .adb$(EXEEXT):
 	$(GNAT_EXECUTABLE_BUILDER) $< \
-	-cargs $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot-ada) -largs $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot-ada)
+	-cargs $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot-ada plplot) -largs $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot-ada plplot)
 
 .SUFFIXES: .adb $(EXEEXT)

@@ -2,7 +2,7 @@
 ###
 ### Process this file with configure to produce Makefile.examples
 ###
-# Copyright (C) 2002, 2004  Alan W. Irwin
+# Copyright (C) 2002-2015  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
@@ -36,7 +36,8 @@ all: $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 clean:
 	rm -f $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
+# target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
 .c$(EXEEXT):
-	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-tcl_Main plplot-tcl plplot) @MATH_LIB@
+	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-tcl_Main plplot-tcl plplot) -ltclmatrix @pkg_config_TK_LIBRARY@ @pkg_config_TCL_LIBRARY@ @MATH_LIB@
 
 .SUFFIXES: .c $(EXEEXT)

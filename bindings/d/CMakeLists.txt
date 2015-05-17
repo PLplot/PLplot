@@ -2,6 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2008 Werner Smekal
+# Copyright (C) 2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -73,5 +74,5 @@ if(ENABLE_d)
   )
 
   # Configure pkg-config *.pc file corresponding to libplplotdmd
-  pkg_config_file("d" "D" " D binding" "plplotdmd" "" "")
+  pkg_config_file("d" "D" " D binding" "plplotdmd" "" "-lplplot")
 endif(ENABLE_d)

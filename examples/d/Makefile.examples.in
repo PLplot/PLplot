@@ -68,7 +68,9 @@ clean:
 
 .d.o:
 	$(DC) $< -c -o $@ $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot-d)
+
+# target_link_libraries(x${STRING_INDEX}d plplotdmd plplot ${MATH_LIB})
 .o$(EXEEXT):
-	$(DC) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot-d)
+	$(DC) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot-d plplot) @MATH_LIB@
 
 .SUFFIXES: .d .o $(EXEEXT)

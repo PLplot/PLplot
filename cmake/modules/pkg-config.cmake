@@ -182,10 +182,10 @@ function(pkg_config_link_flags link_flags_out link_flags_in)
     #message(STATUS "link_flag = ${link_flag}")
     if(WIN32_OR_CYGWIN)
       # Look for colon-delimited drive-letter form on these platforms.
-      string(REGEX REPLACE "^([a-zA-Z]:/.*)/lib(.*)${suffix_pattern}$" "-L\"\\1\" -l\\2" link_flag ${link_flag})
+      string(REGEX REPLACE "^([a-zA-Z]:/.*)/lib(.*)${suffix_pattern}$" "-L\"\\1\" -l\\2" link_flag "${link_flag}")
     endif(WIN32_OR_CYGWIN)
     # Look for form starting with "/" on all platforms.
-    string(REGEX REPLACE "^(/.*)/lib(.*)${suffix_pattern}$" "-L\"\\1\" -l\\2" link_flag ${link_flag})
+    string(REGEX REPLACE "^(/.*)/lib(.*)${suffix_pattern}$" "-L\"\\1\" -l\\2" link_flag "${link_flag}")
     #message(STATUS "(-L form of link_flag = ${link_flag}")
     list(APPEND _link_flags ${link_flag})
   endforeach(link_flag IN LISTS link_flags)
@@ -324,7 +324,13 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
   #                         PC_COMPILE_FLAGS used in *.pc Libs: and Cflags:
   #			    fields.
   # PC_COMPILE_FLAGS      - Space-delimited string of compile flags for this library.
-  # PC_LINK_Flags         - List of libraries that this library depends on.
+  # PC_LINK_Flags         - List of libraries that this library depends on.  These will
+  #                         be added to the public libraries for NON_TRANSITIVE OFF
+  #                         and added to the private libraries for NON_TRANSITIVE ON
+  #
+  # There may be one additional optional argument (accessed with ${ARGN}) containing
+  # a list of additional libraries to be added to the public libraries regardless of
+  # NON_TRANSITIVE value.
 
   # An example of a call of this function using these arguments is
   # pkg_config_file("tcl" "Tcl/Tk" "Tcl/Tk bindings, " "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "${libplplottcltk_LINK_FLAGS}")
@@ -340,6 +346,7 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
   # PKG_CONFIG_DIR
 
   if(PKG_CONFIG_EXECUTABLE)
+    #message(STATUS "pkg_config_file called with ARGV = ${ARGV}")
 
     if(PC_LONG_NAME MATCHES "^ ")
       if(PL_DOUBLE)
@@ -351,8 +358,22 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
       set(PC_PRECISION)
     endif(PC_LONG_NAME MATCHES "^ ")
 
-    # Transform PC_LINK flags from list of libraries to the standard pkg-config form.
+    # Transform PC_LINK_FLAGS from list of libraries to the standard pkg-config form.
     pkg_config_link_flags(PC_LINK_FLAGS "${PC_LINK_FLAGS}")
+    if(NON_TRANSITIVE)
+      set(PC_PRIVATE_LINK_FLAGS ${PC_LINK_FLAGS})
+    else(NON_TRANSITIVE)
+      set(PC_PUBLIC_LINK_FLAGS ${PC_LINK_FLAGS})
+    endif(NON_TRANSITIVE)
+
+    if(ARGC EQUAL 7)
+      #message(STATUS "pkg_config_file called with ARGN = ${ARGN}")
+      pkg_config_link_flags(added_private_libraries "${ARGN}")
+      set(PC_PUBLIC_LINK_FLAGS "${PC_PUBLIC_LINK_FLAGS} ${added_private_libraries}")
+    elseif(ARGC LESS 6)
+      message(STATUS "pkg_config_file called with ARGV = ${ARGV}")
+      message(FATAL_ERROR "pkg_config_file called with wrong number of arguments")
+    endif(ARGC EQUAL 7)
 
     if(BINDING STREQUAL "c")
       set(PC_FILE_SUFFIX "")
@@ -366,9 +387,6 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
     endif(BINDING STREQUAL "c")
 
     if(NON_TRANSITIVE)
-      if(NOT ${PC_LIBRARY_NAME} STREQUAL "plplot") 
-	set(PC_LINK_FLAGS "-lplplot ${PC_LINK_FLAGS}")
-      endif(NOT ${PC_LIBRARY_NAME} STREQUAL "plplot")
       if(BINDING STREQUAL "ocaml")
 	# Don't know how to do non-transitive linking for
         # Ocaml binding of PLplot.
@@ -379,7 +397,11 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
     else(NON_TRANSITIVE)
       set(PC_REQUIRES_TAG "Requires")
     endif(NON_TRANSITIVE)
-    set(PC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_LINK_FLAGS}")
+
+    # Include library itself in space-separated list of public libraries for
+    # this package.
+    set(PC_PUBLIC_LINK_FLAGS "-l${PC_LIBRARY_NAME} ${PC_PUBLIC_LINK_FLAGS}")
+
     set(PC_CONFIGURED_FILE
       ${CMAKE_BINARY_DIR}/pkgcfg/plplot${PC_FILE_SUFFIX}.pc
       )

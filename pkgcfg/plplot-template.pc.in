@@ -6,5 +6,6 @@ Name: PLplot @PC_SHORT_NAME@
 Description: Scientific plotting library (@PC_PRECISION@@PC_LONG_NAME@)
 @PC_REQUIRES_TAG@: @PC_REQUIRES@
 Version: @PLPLOT_VERSION@
-Libs: -L"${libdir}" @PC_LINK_FLAGS@
+Libs: -L"${libdir}" @PC_PUBLIC_LINK_FLAGS@
+Libs.private: -L"${libdir}" @PC_PRIVATE_LINK_FLAGS@
 Cflags: -I"${includedir}" @PC_COMPILE_FLAGS@

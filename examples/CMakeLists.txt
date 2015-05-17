@@ -187,20 +187,24 @@ if(CORE_BUILD)
     set(PDFQT_COMMENT "#")
   endif(NOT PLD_pdfqt)
 
-  if(FORCE_EXTERNAL_STATIC)
-    # This experiment option untested, but it should work as well as
-    # FORCE_EXTERNAL_STATIC does for the CMake linking case for the
-    # core build in the build tree.  That is, not well at all (drivers
-    # limited to those without external dependencies and languages limited
-    # to C, C++, D, and Fortran 95) because
-    # of severe limitations in static library support on Linux.
-
-    # pkg-config does use --static option for traditional installed examples build.
-    set(PC_STATIC_OPTION "--static")
-  else(FORCE_EXTERNAL_STATIC)
-    # pkg-config does not use --static option for traditional installed examples build.
+  # Note that the results configured in the Requires,
+  # Requires.private, Libs, and Libs.private lines of the PLplot *.pc
+  # files used in our traditional build of the installed examples
+  # depend on whether NON_TRANSITIVE is ON or OFF.
+  if(BUILD_SHARED_LIBS)
+    # pkg-config will not use the --static pkg-config option for the
+    # traditional installed examples build, i.e., the configured
+    # Requires.private and Libs.private results will be completely
+    # ignored in the PLplot *.pc files.
     set(PC_STATIC_OPTION)
-  endif(FORCE_EXTERNAL_STATIC)
+  else(BUILD_SHARED_LIBS)
+    # pkg-config will use the --static pkg-config option for the
+    # traditional installed examples build, i.e., the configured
+    # Requires.private results will be appended to the
+    # Requires results and the configured Libs.private results will
+    # be appended to the Libs results.
+    set(PC_STATIC_OPTION "--static")
+  endif(BUILD_SHARED_LIBS)
 
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in

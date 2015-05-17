@@ -473,8 +473,8 @@ if(ENABLE_tcl)
     @ONLY
     )
 
-  pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "${libplplottcltk_LINK_FLAGS}")
-  pkg_config_file("tcl_Main" "Tcl_Main/Tk_Main" " Tcl_Main/Tk_Main bindings" "plplottcltk_Main" "${libplplottcltk_Main_COMPILE_FLAGS}" "${libplplottcltk_Main_LINK_FLAGS}")
+  pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_LINK_FLAGS}")
+  pkg_config_file("tcl_Main" "Tcl_Main/Tk_Main" " Tcl_Main/Tk_Main bindings" "plplottcltk_Main" "${libplplottcltk_Main_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_Main_LINK_FLAGS}")
 
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(pltcl.c

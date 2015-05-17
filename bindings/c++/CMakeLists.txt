@@ -2,6 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
+# Copyright (C) 2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -79,6 +80,6 @@ if(ENABLE_cxx)
     )
 
   # Configure pkg-config *.pc file corresponding to libplplotcxx
-  pkg_config_file("c++" "C++" " C++ binding" "plplotcxx" "" "")
+  pkg_config_file("c++" "C++" " C++ binding" "plplotcxx" "" "-lplplot")
 
 endif(ENABLE_cxx)
