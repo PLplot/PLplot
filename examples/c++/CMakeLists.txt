@@ -100,9 +100,7 @@ if(BUILD_TEST)
   else(CORE_BUILD)
     include_directories(${INCLUDE_DIR})
   endif(CORE_BUILD)
-endif(BUILD_TEST)
 
-if(BUILD_TEST)
   set_property(GLOBAL PROPERTY TARGETS_examples_cxx)
   foreach(STRING_INDEX ${cxx_STRING_INDICES})
     if(BUILD_SHARED_LIBS)
@@ -113,16 +111,18 @@ if(BUILD_TEST)
     target_link_libraries(x${STRING_INDEX} plplotcxx ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_cxx x${STRING_INDEX})
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
+endif(BUILD_TEST)
 
-  if(ENABLE_wxwidgets)
-    # Build wxwidgets applications with same wxwidgets compile and link flags
-    # as used with the PLplot wxwidgets device driver.
-    if(CORE_BUILD)
-      include_directories(
-	${CMAKE_SOURCE_DIR}/bindings/wxwidgets
-	${CMAKE_BINARY_DIR}/bindings/wxwidgets
-	)
-    endif(CORE_BUILD)
+if(ENABLE_wxwidgets)
+  # Build wxwidgets applications with same wxwidgets compile and link flags
+  # as used with the PLplot wxwidgets device driver.
+  if(CORE_BUILD)
+    include_directories(
+      ${CMAKE_SOURCE_DIR}/bindings/wxwidgets
+      ${CMAKE_BINARY_DIR}/bindings/wxwidgets
+      )
+  endif(CORE_BUILD)
+  if(BUILD_TEST)
     if(BUILD_SHARED_LIBS)
       set_source_files_properties(${wxPLplotDemo_SRCS}
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
@@ -132,97 +132,98 @@ if(BUILD_TEST)
     endif(BUILD_SHARED_LIBS)
     add_executable(wxPLplotDemo WIN32 ${wxPLplotDemo_SRCS})
     target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
-    # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
-    # for use in configuring Makefiles.examples.
-    pkg_config_link_flags(pkg_config_wxwidgets_LINK_FLAGS "${wxwidgets_LINK_FLAGS}")
-  endif(ENABLE_wxwidgets)
+  endif(BUILD_TEST)
+  # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
+  # for use in configuring Makefiles.examples.
+  pkg_config_link_flags(pkg_config_wxwidgets_LINK_FLAGS "${wxwidgets_LINK_FLAGS}")
+endif(ENABLE_wxwidgets)
 
-  if(PLD_extqt)
-    if(CORE_BUILD)
+if(PLD_extqt)
+  if(CORE_BUILD)
+    set(BUILD_qt_example ON)
+    if(NOT PLPLOT_USE_QT5 AND NOT QT_LIBRARIES)
+      message(FATAL_ERROR "include(${QT_USE_FILE}) failed in core build examples/c++ subdirectory.")
+    endif(NOT PLPLOT_USE_QT5 AND NOT QT_LIBRARIES)
+  else(CORE_BUILD)
+    if(PLPLOT_USE_QT5)
+      # qt_example build linking taken care of automatically by importing
+      # the plplotqt library.
       set(BUILD_qt_example ON)
-      if(NOT PLPLOT_USE_QT5 AND NOT QT_LIBRARIES)
-        message(FATAL_ERROR "include(${QT_USE_FILE}) failed in core build examples/c++ subdirectory.")
-      endif(NOT PLPLOT_USE_QT5 AND NOT QT_LIBRARIES)
-    else(CORE_BUILD)
-      if(PLPLOT_USE_QT5)
-	# qt_example build linking taken care of automatically by importing
-	# the plplotqt library.
+    else(PLPLOT_USE_QT5)
+      # Must find Qt4 all over again here rather than simply copying variables
+      # from the core build to this installed examples build so that we can
+      # access the qt4_wrap_cpp macro here.
+      find_package(Qt4 4.8.2 REQUIRED QtCore QtGui QtSvg)
+      # To avoid Qt4 version mismatch make sure the Qt version matches that
+      # used by the core build.
+      if(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+	include(ndp_UseQt4)
+	if(NOT QT_LIBRARIES)
+          message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
+	endif(NOT QT_LIBRARIES)
+	# Transform QT_LIBRARIES from list of libraries to the standard pkg-config form
+	# for use in configuring Makefiles.examples.
+	pkg_config_link_flags(pkg_config_QT_LIBRARIES "${QT_LIBRARIES}")
 	set(BUILD_qt_example ON)
-      else(PLPLOT_USE_QT5)
-	# Must find Qt4 all over again here rather than simply copying variables
-	# from the core build to this installed examples build so that we can
-	# access the qt4_wrap_cpp macro here.
-	find_package(Qt4 4.8.2 REQUIRED QtCore QtGui QtSvg)
-	# To avoid Qt4 version mismatch make sure the Qt version matches that
-	# used by the core build.
-	if(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
-	  include(ndp_UseQt4)
-	  if(NOT QT_LIBRARIES)
-            message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
-	  endif(NOT QT_LIBRARIES)
-	  # Transform QT_LIBRARIES from list of libraries to the standard pkg-config form
-	  # for use in configuring Makefiles.examples.
-	  pkg_config_link_flags(pkg_config_QT_LIBRARIES "${QT_LIBRARIES}")
-	  set(BUILD_qt_example ON)
-	else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
-	  message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
-	  set(BUILD_qt_example OFF)
-	endif(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
-      endif(PLPLOT_USE_QT5)
-    endif(CORE_BUILD)
-    if(BUILD_qt_example)
-      if(PLPLOT_USE_QT5)
-	qt5_wrap_cpp(
-	  QT_MOC_OUTFILES
-	  ${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
-	  )
-	set_source_files_properties(
-	  ${QT_MOC_OUTFILES}
-	  PROPERTIES GENERATED "ON"
-	  )
-	if(BUILD_SHARED_LIBS)
-	  set_source_files_properties(qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES}
-            PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
-	endif(BUILD_SHARED_LIBS)
-	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
-	qt5_use_modules(qt_example Svg Gui PrintSupport)
-	if(ENABLE_DYNDRIVERS)
-	  target_link_libraries(qt_example plplotqt plplot ${qt_example_TARGETS})
-	else(ENABLE_DYNDRIVERS)
-	  # In this case plplot contains all the code in plplotqt so there is no
-          # need to link to plplotqt at all, and in fact for some reason it
-          # causes memory management issues to link to both plplot and plplotqt in this case.
-	  target_link_libraries(qt_example plplot ${qt_example_TARGETS})
-	endif(ENABLE_DYNDRIVERS)
-      else(PLPLOT_USE_QT5)
-	qt4_wrap_cpp(
-	  QT_MOC_OUTFILES
-	  ${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
-	  )
-	# message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
-	set_source_files_properties(
-	  ${QT_MOC_OUTFILES}
-	  PROPERTIES GENERATED "ON"
-	  )
-	if(BUILD_SHARED_LIBS)
-	  set_source_files_properties(qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES}
-            PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
-	endif(BUILD_SHARED_LIBS)
-	add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
-	if(ENABLE_DYNDRIVERS)
-	  target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot)
-	else(ENABLE_DYNDRIVERS)
-	  # In this case plplot contains all the code in plplotqt so there is no
-          # need to link to plplotqt at all, and in fact for some reason it
-          # causes memory management issues to link to both plplot and plplotqt in this case.
-	  target_link_libraries(qt_example ${QT_LIBRARIES} plplot)
-	endif(ENABLE_DYNDRIVERS)
-	# Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-	set_qt_target_properties(qt_example)
-      endif(PLPLOT_USE_QT5)
-    endif(BUILD_qt_example)
-  endif(PLD_extqt)
-endif(BUILD_TEST)
+      else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+	message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
+	set(BUILD_qt_example OFF)
+      endif(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
+    endif(PLPLOT_USE_QT5)
+  endif(CORE_BUILD)
+endif(PLD_extqt)
+
+if(BUILD_TEST AND BUILD_qt_example)
+  if(PLPLOT_USE_QT5)
+    qt5_wrap_cpp(
+      QT_MOC_OUTFILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
+      )
+    set_source_files_properties(
+      ${QT_MOC_OUTFILES}
+      PROPERTIES GENERATED "ON"
+      )
+    if(BUILD_SHARED_LIBS)
+      set_source_files_properties(qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES}
+        PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
+    endif(BUILD_SHARED_LIBS)
+    add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
+    qt5_use_modules(qt_example Svg Gui PrintSupport)
+    if(ENABLE_DYNDRIVERS)
+      target_link_libraries(qt_example plplotqt plplot ${qt_example_TARGETS})
+    else(ENABLE_DYNDRIVERS)
+      # In this case plplot contains all the code in plplotqt so there is no
+      # need to link to plplotqt at all, and in fact for some reason it
+      # causes memory management issues to link to both plplot and plplotqt in this case.
+      target_link_libraries(qt_example plplot ${qt_example_TARGETS})
+    endif(ENABLE_DYNDRIVERS)
+  else(PLPLOT_USE_QT5)
+    qt4_wrap_cpp(
+      QT_MOC_OUTFILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/qt_PlotWindow.h
+      )
+    # message("QT_MOC_OUTFILES = ${QT_MOC_OUTFILES}")
+    set_source_files_properties(
+      ${QT_MOC_OUTFILES}
+      PROPERTIES GENERATED "ON"
+      )
+    if(BUILD_SHARED_LIBS)
+      set_source_files_properties(qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES}
+        PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
+    endif(BUILD_SHARED_LIBS)
+    add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
+    if(ENABLE_DYNDRIVERS)
+      target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot)
+    else(ENABLE_DYNDRIVERS)
+      # In this case plplot contains all the code in plplotqt so there is no
+      # need to link to plplotqt at all, and in fact for some reason it
+      # causes memory management issues to link to both plplot and plplotqt in this case.
+      target_link_libraries(qt_example ${QT_LIBRARIES} plplot)
+    endif(ENABLE_DYNDRIVERS)
+    # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+    set_qt_target_properties(qt_example)
+  endif(PLPLOT_USE_QT5)
+endif(BUILD_TEST AND BUILD_qt_example)
 
 if(CORE_BUILD)
   # This configuration must occur after the pkg_config variables are

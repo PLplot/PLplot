@@ -203,13 +203,9 @@ if(BUILD_TEST)
     endif(BUILD_SHARED_LIBS)
     add_executable(${TK_EXE} ${TK_SRC_FILE})
     target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
-    # Transform TK_LIBRARY and TCL_LIBRARY from list of libraries to the standard pkg-config form
-    # to help configure Makefile.examples below.
-    pkg_config_link_flags(pkg_config_TK_LIBRARY "${TK_LIBRARY}")
-    pkg_config_link_flags(pkg_config_TCL_LIBRARY "${TCL_LIBRARY}")
-
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
   endforeach(TK_SRC_FILE ${tk_SRC})
+
   set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk tclIndex_examples_tk)
 
   # Provide locations for several tk-related targets that will be used
@@ -304,8 +300,11 @@ if(CORE_BUILD)
     set(CC ${CMAKE_C_COMPILER})
   endif(ENABLE_cxx AND NOT ENABLE_DYNDRIVERS)
 
-  # This configuration must occur after pkg_config_* variables
-  # are determined above.
+  # Transform TK_LIBRARY and TCL_LIBRARY from list of libraries to the standard pkg-config form
+  # to help configure Makefile.examples below.
+  pkg_config_link_flags(pkg_config_TK_LIBRARY "${TK_LIBRARY}")
+  pkg_config_link_flags(pkg_config_TCL_LIBRARY "${TCL_LIBRARY}")
+
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
