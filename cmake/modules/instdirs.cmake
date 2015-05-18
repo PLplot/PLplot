@@ -1,6 +1,6 @@
 # cmake/modules/installdirs.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -71,6 +71,12 @@ ${CMAKE_INSTALL_DATADIR}/man
 CACHE PATH "install location for man documentation"
 )
 
+set(
+CMAKE_INSTALL_PKG_CONFIG_DIR
+${CMAKE_INSTALL_DATADIR}/pkgconfig
+CACHE PATH "install location for pkg-config *.pc files"
+)
+
 # Configured PLplot install locations determined from user-updatable
 # cached values above.
 
@@ -111,6 +117,9 @@ set(INFO_DIR ${CMAKE_INSTALL_INFODIR})
 
 # Man pages.
 set(MAN_DIR ${CMAKE_INSTALL_MANDIR})
+
+# pkg-config *.pc files
+set(PKG_CONFIG_DIR ${CMAKE_INSTALL_PKG_CONFIG_DIR})
 
 # Other path-related variables.
 
