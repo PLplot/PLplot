@@ -64,7 +64,7 @@ Python, and Tcl/Tk.
 File Devices: PLplot has devices that produce files in the CGM, GIF,
 JPEG, LaTeX, PBM, PDF, PNG, PostScript, SVG, and Xfig formats.
 
-GUI Devices: PLplot has devices that produce GUI's on the GNOME, Gtk+,
+GUI Devices: PLplot has devices that produce GUI's on the Gtk+,
 PyQt, Qt, Tcl/Tk, wxWidgets, and X platforms.
 
       Tcl stands for ``tool command language'' and is pronounced ``tickle.''  

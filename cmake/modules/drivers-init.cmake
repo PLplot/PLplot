@@ -165,8 +165,6 @@ set(DRIVERS_DEVICE_LIST
   "gif:gd:OFF:F:ON"
   "jpeg:gd:OFF:F:ON"
   "png:gd:OFF:F:ON" 
-  # Do not implement gnome which is retired
-  #"gnome:gnome:OFF:I:OFF"
   # hpgl devices produce tons of "Invalid pen selection." messages and the
   # lj_hpgl device produces the error message "Unable to locate dispatch
   # table initialization function for driver: hpgl."

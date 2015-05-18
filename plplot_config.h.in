@@ -90,13 +90,6 @@
 // Define to 1 if you have the <libart_lgpl/libart.h> header file.
 #cmakedefine HAVE_LIBART_LGPL_LIBART_H 1
 
-// Define to 1 if you have the <libgnomecanvas/libgnomecanvas.h> header file.
-//
-#cmakedefine HAVE_LIBGNOMECANVAS_LIBGNOMECANVAS_H 1
-
-// Define to 1 if you have the <libgnomeprint/gnome-print.h> header file.
-#cmakedefine HAVE_LIBGNOMEPRINT_GNOME_PRINT_H 1
-
 // Define if libunicode is available
 #cmakedefine HAVE_LIBUNICODE
 

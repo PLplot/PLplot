@@ -89,8 +89,6 @@ include(drivers-init)
 include(cairo)
 include(cgm)
 include(gd)
-# Do not implement gnome which is retired.
-#include(gnome)
 include(linuxvga)
 include(xwin)
 include(tk)

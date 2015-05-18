@@ -186,7 +186,6 @@ if [ "$interactive" = "on" -o "$interactive_octave" = "on" ] ; then
     # List of interactive devices for PLplot that _might_ be enabled.
     PLD_aqt=@PLD_aqt@
     PLD_qtwidget=@PLD_qtwidget@
-    PLD_gnome=@PLD_gnome@
     PLD_ntk=@PLD_ntk@
     PLD_tk=@PLD_tk@
     PLD_wingcc=@PLD_wingcc@
@@ -300,7 +299,6 @@ PLD_ppmqt=@PLD_ppmqt@
 PLD_tiffqt=@PLD_tiffqt@
 PLD_svgqt=@PLD_svgqt@
 PLD_gif=@PLD_gif@
-#interactive PLD_gnome=@PLD_gnome@
 PLD_hp7470=@PLD_hp7470@
 PLD_hp7580=@PLD_hp7580@
 PLD_imp=@PLD_imp@

@@ -125,9 +125,6 @@ static PLDispatchInit  static_device_initializers[] = {
 #if defined ( PLD_xwin ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_xw,
 #endif
-#if defined ( PLD_gnome ) && !defined ( ENABLE_DYNDRIVERS )
-    plD_dispatch_init_gnome,
-#endif
 #if defined ( PLD_tk ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_tk,
 #endif
