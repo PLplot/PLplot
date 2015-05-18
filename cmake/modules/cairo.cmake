@@ -180,14 +180,6 @@ endif(
   OR PLD_wincairo
   )
 
-if(NOT PLD_xcairo)
-  set(extXdrawable_true "#")
-endif(NOT PLD_xcairo)
-
-if(NOT PLD_extcairo)
-  set(extcairo_true "#")
-endif(NOT PLD_extcairo)
-
 if(PLD_wincairo)
   if(NOT WIN32_OR_CYGWIN)
     message(STATUS

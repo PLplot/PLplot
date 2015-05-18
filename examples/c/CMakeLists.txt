@@ -102,15 +102,6 @@ if(CORE_BUILD)
     set(CC ${CMAKE_C_COMPILER})
   endif(ENABLE_cxx AND NOT ENABLE_DYNDRIVERS)
 
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-    )
-
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
-    DESTINATION ${DATA_DIR}/examples/c
-    RENAME Makefile
-    )
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
@@ -150,50 +141,71 @@ if(BUILD_TEST)
   endif(BUILD_SHARED_LIBS)
   add_executable(test_plbuf test_plbuf.c)
   target_link_libraries(test_plbuf plplot ${MATH_LIB})
+endif(BUILD_TEST)
 
-  if(PKG_CONFIG_EXECUTABLE)
-    if(PLD_xcairo)
-      message(STATUS "Determine compile and link flags for extXdrawable_demo")
-      pkg_check_pkgconfig(gtk+-x11-2.0 includedir libdir linkflags3 cflags3 version3 _GTK_X11)
-      if(linkflags3)
-	# Requires blank-delimited list.
-	string(REGEX REPLACE ";" " " GTK_X11_COMPILE_FLAGS "${cflags3}")
-	if(BUILD_SHARED_LIBS)
-	  set(GTK_X11_COMPILE_FLAGS "-DUSINGDLL ${GTK_X11_COMPILE_FLAGS}")
-	endif(BUILD_SHARED_LIBS)
-	set(GTK_X11_LINK_FLAGS "${linkflags3}")
+if(PKG_CONFIG_EXECUTABLE)
+  if(PLD_xcairo)
+    message(STATUS "Determine compile and link flags for extXdrawable_demo")
+    pkg_check_pkgconfig(gtk+-x11-2.0 includedir libdir linkflags3 cflags3 version3 _GTK_X11)
+    if(linkflags3)
+      # Requires blank-delimited list.
+      string(REGEX REPLACE ";" " " GTK_X11_COMPILE_FLAGS "${cflags3}")
+      if(BUILD_SHARED_LIBS)
+	set(GTK_X11_COMPILE_FLAGS "-DUSINGDLL ${GTK_X11_COMPILE_FLAGS}")
+      endif(BUILD_SHARED_LIBS)
+      set(GTK_X11_LINK_FLAGS "${linkflags3}")
+      if(BUILD_TEST)
 	set_source_files_properties(
 	  extXdrawable_demo.c
 	  PROPERTIES COMPILE_FLAGS "${GTK_X11_COMPILE_FLAGS}"
 	  )
 	add_executable(extXdrawable_demo extXdrawable_demo.c)
 	target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} plplot)
-      else(linkflags3)
-	message(STATUS "WARNING: gtk+-x11-2.0 not found.  extXdrawable_demo not built.")
-      endif(linkflags3)
-    endif(PLD_xcairo)
+      endif(BUILD_TEST)
+    else(linkflags3)
+      message(STATUS "WARNING: gtk+-x11-2.0 not found.  extXdrawable_demo not built.")
+      set(extXdrawable_true "#")
+    endif(linkflags3)
+  endif(PLD_xcairo)
 
-    if(PLD_extcairo)
-      message(STATUS "Determine compile and link flags for ext-cairo-test")
-      pkg_check_pkgconfig(cairo includedir libdir linkflags4 cflags4 version4 _CAIRO)
-      if(linkflags4)
-	# Requires blank-delimited list.
-	string(REGEX REPLACE ";" " " CAIRO_COMPILE_FLAGS "${cflags4}")
-	if(BUILD_SHARED_LIBS)
-	  set(CAIRO_COMPILE_FLAGS "-DUSINGDLL ${CAIRO_COMPILE_FLAGS}")
-	endif(BUILD_SHARED_LIBS)
-	set(CAIRO_LINK_FLAGS "${linkflags4}")
+  if(PLD_extcairo)
+    message(STATUS "Determine compile and link flags for ext-cairo-test")
+    pkg_check_pkgconfig(cairo includedir libdir linkflags4 cflags4 version4 _CAIRO)
+    if(linkflags4)
+      # Requires blank-delimited list.
+      string(REGEX REPLACE ";" " " CAIRO_COMPILE_FLAGS "${cflags4}")
+      if(BUILD_SHARED_LIBS)
+	set(CAIRO_COMPILE_FLAGS "-DUSINGDLL ${CAIRO_COMPILE_FLAGS}")
+      endif(BUILD_SHARED_LIBS)
+      set(CAIRO_LINK_FLAGS "${linkflags4}")
+      if(BUILD_TEST)
 	set_source_files_properties(
 	  ext-cairo-test.c
 	  PROPERTIES COMPILE_FLAGS "${CAIRO_COMPILE_FLAGS}"
 	  )
 	add_executable(ext-cairo-test ext-cairo-test.c)
 	target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} plplot)
-      else(linkflags4)
-	message(STATUS "WARNING: cairo not found.  ext-cairo-test not built.")
-      endif(linkflags4)
-    endif(PLD_extcairo)
-  else(PKG_CONFIG_EXECUTABLE)
-    message(STATUS "WARNING: pkg-config not found so extXdrawable_demo, and ext-cairo-test not built.")
-  endif(PKG_CONFIG_EXECUTABLE)
-endif(BUILD_TEST)
+      endif(BUILD_TEST)
+    else(linkflags4)
+      message(STATUS "WARNING: cairo not found.  ext-cairo-test not built.")
+      set(extcairo_true "#")
+    endif(linkflags4)
+  endif(PLD_extcairo)
+else(PKG_CONFIG_EXECUTABLE)
+  message(STATUS "WARNING: pkg-config not found so extXdrawable_demo, and ext-cairo-test not built.")
+  set(extXdrawable_true "#")
+  set(extcairo_true "#")
+endif(PKG_CONFIG_EXECUTABLE)
+
+if(CORE_BUILD)
+  # This configuration must occur after extXdrawable_true and extcairo_true are defined above.
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    )
+
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
+    DESTINATION ${DATA_DIR}/examples/c
+    RENAME Makefile
+    )
+endif(CORE_BUILD)
