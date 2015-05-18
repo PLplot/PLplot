@@ -206,7 +206,8 @@ c_plschr( PLFLT def, PLFLT scale )
 
     plsc->chrht = scale * plsc->chrdef;
 
-    plP_state( PLSTATE_CHR );
+    if ( plsc->level > 0 )
+        plP_state( PLSTATE_CHR );
 }
 
 //--------------------------------------------------------------------------
@@ -253,7 +254,8 @@ c_plssym( PLFLT def, PLFLT scale )
 
     plsc->symht = scale * plsc->symdef;
 
-    plP_state( PLSTATE_SYM );
+    if ( plsc->level > 0 )
+        plP_state( PLSTATE_SYM );
 }
 
 //--------------------------------------------------------------------------
@@ -365,5 +367,6 @@ spat( const PLINT inc[], const PLINT del[], PLINT nlin )
         plsc->delta[i]  = del[i];
     }
 
-    plP_state( PLSTATE_FILL );
+    if ( plsc->level > 0 )
+        plP_state( PLSTATE_FILL );
 }
