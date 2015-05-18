@@ -73,7 +73,7 @@ CACHE PATH "install location for man documentation"
 
 set(
 CMAKE_INSTALL_PKG_CONFIG_DIR
-${CMAKE_INSTALL_DATADIR}/pkgconfig
+${CMAKE_INSTALL_LIBDIR}/pkgconfig
 CACHE PATH "install location for pkg-config *.pc files"
 )
 
