@@ -164,16 +164,6 @@ if(ENABLE_f95)
       )
   endif(USE_RPATH)
 
-  # Set the path and the suffix for the (shared) libraries
-  if(CYGWIN)
-    if(BUILD_SHARED_LIBS)
-      set(SHLIB_DIR "${BIN_DIR}")
-    endif(BUILD_SHARED_LIBS)
-    set(VERSION_SUFFIX "-${plplotf95_VERSION}")
-  else(CYGWIN)
-    set(VERSION_SUFFIX "")
-  endif(CYGWIN)
-
   install(TARGETS plplotf95
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
@@ -197,5 +187,5 @@ if(ENABLE_f95)
   # Configure pkg-config *.pc file corresponding to libplplotf95
   # Note, Fortran executables need to link plplotf95c as a public
   # library so specify it as 7th argument.
-  pkg_config_file("f95" "F95" " F95 binding" "plplotf95${VERSION_SUFFIX}" "-I\"${F95_MOD_DIR}\"" "-lplplot" "-lplplotf95c${VERSION_SUFFIX}")
+  pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "-lplplot" "-lplplotf95c")
 endif(ENABLE_f95)
