@@ -48,13 +48,7 @@ if(PLD_cgm)
   endif(BUILD_SHARED_LIBS)
 
   add_library( nistcd ${cd_LIB_SRCS} )
-  set_target_properties(
-    nistcd
-    PROPERTIES
-    SOVERSION ${nistcd_SOVERSION}
-    VERSION ${nistcd_VERSION}
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
+  set_library_properties(nistcd)
 
   option(TEST_NISTCD "Test libnistcd" ON)
   if(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)

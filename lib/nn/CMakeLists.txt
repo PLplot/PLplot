@@ -42,11 +42,9 @@ if(PL_HAVE_QHULL)
   set_target_properties(
     csironn
     PROPERTIES
-    SOVERSION ${csironn_SOVERSION}
-    VERSION ${csironn_VERSION}
     COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
-    INSTALL_NAME_DIR "${LIB_DIR}"
     )
+  set_library_properties(csironn)
 
   set(
     csironn_LINK_LIBRARIES

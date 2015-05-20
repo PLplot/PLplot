@@ -95,21 +95,9 @@ if(ENABLE_qt)
       ${libplplot_RPATH}
       )
     #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
-    set_target_properties(plplotqt
-      PROPERTIES
-      SOVERSION ${plplotqt_SOVERSION}
-      VERSION ${plplotqt_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(plplotqt
-      PROPERTIES
-      SOVERSION ${plplotqt_SOVERSION}
-      VERSION ${plplotqt_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
   endif(USE_RPATH)
+  set_library_properties(plplotqt)
+
   install(TARGETS plplotqt
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}

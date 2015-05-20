@@ -1,4 +1,4 @@
-# cmake/modules/installdirs.cmake
+# cmake/modules/instdirs.cmake
 #
 # Copyright (C) 2006-2015  Alan W. Irwin
 #

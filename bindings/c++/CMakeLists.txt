@@ -52,21 +52,9 @@ if(ENABLE_cxx)
   
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
-    set_target_properties(plplotcxx
-      PROPERTIES
-      SOVERSION ${plplotcxx_SOVERSION}
-      VERSION ${plplotcxx_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(plplotcxx
-      PROPERTIES
-      SOVERSION ${plplotcxx_SOVERSION}
-      VERSION ${plplotcxx_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
   endif(USE_RPATH)
+  set_library_properties(plplotcxx)
+
   # Install library in lib/
   install(TARGETS plplotcxx
     EXPORT export_plplot

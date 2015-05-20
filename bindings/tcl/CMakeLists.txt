@@ -85,22 +85,8 @@ if(ENABLE_tcl)
 
   if(USE_RPATH)
     set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
-    filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(tclmatrix
-      PROPERTIES
-      SOVERSION ${tclmatrix_SOVERSION}
-      VERSION ${tclmatrix_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(tclmatrix
-      PROPERTIES
-      SOVERSION ${tclmatrix_SOVERSION}
-      VERSION ${tclmatrix_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
   endif(USE_RPATH)
+  set_library_properties(tclmatrix)
 
   install(TARGETS tclmatrix
     EXPORT export_plplot
@@ -344,41 +330,14 @@ if(ENABLE_tcl)
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
-    filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(plplottcltk
-      PROPERTIES
-      SOVERSION ${plplottcltk_SOVERSION}
-      VERSION ${plplottcltk_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
+  endif(USE_RPATH)
+  set_library_properties(plplottcltk)
 
+  if(USE_RPATH)
     # This version of LIB_INSTALL_RPATH also used below for pltcl.
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
-    filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(plplottcltk_Main
-      PROPERTIES
-      SOVERSION ${plplottcltk_Main_SOVERSION}
-      VERSION ${plplottcltk_Main_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(plplottcltk
-      PROPERTIES
-      SOVERSION ${plplottcltk_SOVERSION}
-      VERSION ${plplottcltk_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-
-    set_target_properties(plplottcltk_Main
-      PROPERTIES
-      SOVERSION ${plplottcltk_Main_SOVERSION}
-      VERSION ${plplottcltk_Main_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-
   endif(USE_RPATH)
+  set_library_properties(plplottcltk_Main)
 
   install(TARGETS plplottcltk
     EXPORT export_plplot
@@ -488,6 +447,7 @@ if(ENABLE_tcl)
   endif(ENABLE_itcl)
 
   if(USE_RPATH)
+    filter_rpath(LIB_INSTALL_RPATH)
     set_target_properties(pltcl
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"

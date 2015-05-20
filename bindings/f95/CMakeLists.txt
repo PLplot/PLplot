@@ -65,21 +65,8 @@ if(ENABLE_f95)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
-    set_target_properties(plplotf95c
-      PROPERTIES
-      SOVERSION ${plplotf95_SOVERSION}
-      VERSION ${plplotf95_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(plplotf95c
-      PROPERTIES
-      SOVERSION ${plplotf95_SOVERSION}
-      VERSION ${plplotf95_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
   endif(USE_RPATH)
+  set_library_properties(plplotf95c)
 
   install(TARGETS plplotf95c
     EXPORT export_plplot
@@ -147,22 +134,7 @@ if(ENABLE_f95)
     target_link_libraries(plplotf95 PUBLIC plplotf95c)
   endif(NON_TRANSITIVE)
 
-  if(USE_RPATH)
-    set_target_properties(plplotf95
-      PROPERTIES
-      SOVERSION ${plplotf95_SOVERSION}
-      VERSION ${plplotf95_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(plplotf95
-      PROPERTIES
-      SOVERSION ${plplotf95_SOVERSION}
-      VERSION ${plplotf95_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  endif(USE_RPATH)
+  set_library_properties(plplotf95)
 
   install(TARGETS plplotf95
     EXPORT export_plplot

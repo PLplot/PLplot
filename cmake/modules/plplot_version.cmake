@@ -28,6 +28,8 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 # (4) If there are no library source code changes at all, then leave all
 #     library version numbers the same for the release.
 
+# N.B. all these variables must include the exact library name
+# so that set_library_properties function works correctly.
 set(nistcd_SOVERSION 0)
 set(nistcd_VERSION ${nistcd_SOVERSION}.0.1)
 
@@ -48,6 +50,9 @@ set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.0.0)
 
 set(plplotdmd_SOVERSION 2)
 set(plplotdmd_VERSION ${plplotdmd_SOVERSION}.0.0)
+
+set(plplotf95c_SOVERSION 12)
+set(plplotf95c_VERSION ${plplotf95c_SOVERSION}.0.0)
 
 set(plplotf95_SOVERSION 12)
 set(plplotf95_VERSION ${plplotf95_SOVERSION}.0.0)

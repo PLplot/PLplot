@@ -86,23 +86,8 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
-    filter_rpath(LIB_INSTALL_RPATH)
-    
-    set_target_properties(plplotwxwidgets
-      PROPERTIES
-      SOVERSION ${plplotwxwidgets_SOVERSION}
-      VERSION ${plplotwxwidgets_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(plplotwxwidgets
-      PROPERTIES
-      SOVERSION ${plplotwxwidgets_SOVERSION}
-      VERSION ${plplotwxwidgets_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
   endif(USE_RPATH)
+  set_library_properties(plplotwxwidgets)
 
   # Install library in lib/
   install(TARGETS plplotwxwidgets

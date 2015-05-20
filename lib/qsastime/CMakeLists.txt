@@ -105,13 +105,8 @@ if(MATH_LIB)
   endif(NON_TRANSITIVE)
 endif(MATH_LIB)
 
-set_target_properties(
-  qsastime
-  PROPERTIES
-  SOVERSION ${qsastime_SOVERSION}
-  VERSION ${qsastime_VERSION}
-  INSTALL_NAME_DIR "${LIB_DIR}"
-  )
+set_library_properties(qsastime)
+
 set(qsastime_INSTALLED_HEADERS
   qsastime.h
   qsastimedll.h

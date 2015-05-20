@@ -311,25 +311,7 @@ else(NON_TRANSITIVE)
     )
 endif(NON_TRANSITIVE)
 
-if(USE_RPATH)
-  filter_rpath(LIB_INSTALL_RPATH)
-  set_target_properties(
-    plplot
-    PROPERTIES
-    SOVERSION ${plplot_SOVERSION}
-    VERSION ${plplot_VERSION}
-    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
-else(USE_RPATH)
-  set_target_properties(
-    plplot
-    PROPERTIES
-    SOVERSION ${plplot_SOVERSION}
-    VERSION ${plplot_VERSION}
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
-endif(USE_RPATH)
+set_library_properties(plplot)
 
 install(TARGETS plplot
   EXPORT export_plplot

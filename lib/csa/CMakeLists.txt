@@ -33,10 +33,7 @@ if(WITH_CSA)
 
   add_library(csirocsa ${csirocsa_LIB_SRCS})
 
-  set_target_properties(csirocsa
-    PROPERTIES SOVERSION ${csirocsa_SOVERSION} VERSION ${csirocsa_VERSION}
-    INSTALL_NAME_DIR "${LIB_DIR}"
-    )
+  set_library_properties(csirocsa)
 
   if(MATH_LIB)
     if(NON_TRANSITIVE)

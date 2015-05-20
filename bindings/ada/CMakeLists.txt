@@ -99,21 +99,8 @@ if(ENABLE_ada)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
-    set_target_properties(plplotada
-      PROPERTIES
-      SOVERSION ${plplotada_SOVERSION}
-      VERSION ${plplotada_VERSION}
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  else(USE_RPATH)
-    set_target_properties(plplotada
-      PROPERTIES
-      SOVERSION ${plplotada_SOVERSION}
-      VERSION ${plplotada_VERSION}
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
   endif(USE_RPATH)
+  set_library_properties(plplotada)
 
   install(FILES ${plplotada_LIB_SRCS} 
     DESTINATION ${ADA_INCLUDE_DIR}
