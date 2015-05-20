@@ -166,6 +166,7 @@ if(ENABLE_qt)
   endif(PLPLOT_USE_QT5)
 endif(ENABLE_qt)
 
+# MAINTENANCE: mention every qt device here.
 if(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt OR PLD_memqt)
   set(ANY_QT_DEVICE ON)
 endif(PLD_bmpqt OR PLD_jpgqt OR PLD_pngqt OR PLD_ppmqt OR PLD_tiffqt OR PLD_epsqt OR PLD_pdfqt OR PLD_qtwidget OR PLD_svgqt OR PLD_extqt OR PLD_memqt)
@@ -230,14 +231,15 @@ if(ENABLE_qt)
 endif(ENABLE_qt)
 
 # All qt devices depend on ENABLE_qt
-if(NOT ENABLE_qt)
+if(NOT ENABLE_qt AND ANY_QT_DEVICE)
   message(STATUS
     "WARNING: ENABLE_qt is OFF so "
     "setting all qt devices to OFF."
     )
   set(ANY_QT_DEVICE OFF)
-endif(NOT ENABLE_qt)
+endif(NOT ENABLE_qt AND ANY_QT_DEVICE)
 
+# MAINTENANCE: must mention all qt devices here.
 if(NOT ANY_QT_DEVICE)
   set(PLD_bmpqt OFF CACHE BOOL "Enable Qt Windows bmp device" FORCE)
   set(PLD_jpgqt OFF CACHE BOOL "Enable Qt jpg device" FORCE)
@@ -251,6 +253,20 @@ if(NOT ANY_QT_DEVICE)
   set(PLD_extqt OFF CACHE BOOL "Enable Qt ext device" FORCE)
   set(PLD_memqt OFF CACHE BOOL "Enable Qt mem device" FORCE)
 endif(NOT ANY_QT_DEVICE)
+
+# The libplplotqt build depends on MOC file generation which
+# depends on at least some qt devices being
+# enabled.  Therefore, disable the library build if there
+# are no qt devices.  (In any case, I think that library build
+# would not be useful for much without devices.)
+
+if(NOT ANY_QT_DEVICE AND ENABLE_qt)
+  message(STATUS
+    "WARNING: ANY_QT_DEVICE is OFF so "
+    "setting ENABLE_qt to OFF."
+    )
+  set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
+endif(NOT ANY_QT_DEVICE AND ENABLE_qt)
 
 if(ENABLE_pyqt4 AND NOT ENABLE_python)
   message(STATUS
