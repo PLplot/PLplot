@@ -332,6 +332,9 @@ function(set_library_properties library)
     SOVERSION ${${library}_SOVERSION}
     VERSION ${${library}_VERSION}
     INSTALL_NAME_DIR "${LIB_DIR}"
+    # This allows PLplot static library builds to
+    # be linked by shared libraries.
+    POSITION_INDEPENDENT_CODE ON
     )
 
 endfunction(set_library_properties library)
