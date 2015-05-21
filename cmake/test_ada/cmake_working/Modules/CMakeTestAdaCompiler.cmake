@@ -17,6 +17,7 @@ end;
 
   FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
   "
+cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 # FIXME: This specific location currently needs to be changed whenever the
 # location of the Ada support files are changed.
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_working/Modules)
