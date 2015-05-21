@@ -2,7 +2,7 @@
 # configured by our CMake-based build system to examples/Makefile.examples
 # in the build tree and installed as examples/Makefile in the install tree.
 
-# Copyright (C) 2004, 2008  Alan W. Irwin
+# Copyright (C) 2004-2015  Alan W. Irwin
 # 
 # This file is part of PLplot.
 #

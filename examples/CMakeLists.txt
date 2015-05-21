@@ -89,6 +89,56 @@ if(CORE_BUILD)
     set(PSC_LUA_COMMENT "#")
   endif(PLD_ps)
 
+  # For the following conditions:
+
+  # 1. static build of PLplot libraries;
+
+  # 2. C++ code in libplplot (i.e., if any of the qt, psttf, or
+  # wxwidgets devices are enabled); and
+
+  # 3. traditional build of PLplot examples that are written in
+  # languages other than C or C++
+
+  # it turns out that information on the required special C++ library
+  # (e.g., libstdc++.so for the g++ compiler) is missing from the
+  # explicit PLplot linker information (because cannot work around
+  # this problem by linking with g++, for e.g., the f95 examples).
+  # Therefore, the traditional build sometimes fails for this special
+  # combination of circumstances. (It also sometimes succeeds by
+  # accident on some platforms if some shared system library such as
+  # the Qt libraries is linked which drags in a link to the correct
+  # version of the special C++ library, IF, there is a match in g++
+  # special library version between the system build of Qt and the
+  # PLplot build).  But, for example, this does not happen on Linux if
+  # psttf is the only C++ device included, and that external library
+  # happens to be only available in static form.  So my preliminary
+  # test of that case failed demonstrating the problematic nature of
+  # the linking of the traditional build for this special combination
+  # of circumstances.
+
+  # Note, CMake is smart enough to figure out this difficult case
+  # (presumably by figuring out the names and locations of the special
+  # libraries associated with each kind of compiler).  And the
+  # traditional build system can fudge the correct special C++ library
+  # by using the C++ compiler for all the C example builds.  But
+  # figuring out the name and location of the C++ library for all C++
+  # compilers that CMake supports is far beyond what can be expected
+  # from our traditional build system. Therefore, exclude the non-C or
+  # C++ compiled language examples (i.e., ada, d, f95, java, and
+  # ocaml) of the traditional comprehensive test for this combination
+  # of circumstances.
+
+  # MAINTENANCE of list of all C++ devices.
+  if(NOT BUILD_SHARED_LIBS AND (ANY_QT_DEVICE OR PLD_psttf OR PLD_wxwidgets))
+    # MAINTENANCE of list of all examples directories
+    # for compiled examples that are not C or C++.
+    set(PSC_ADA_COMMENT "#")
+    set(PSC_D_COMMENT "#")
+    set(PSC_F95_COMMENT "#")
+    set(PSC_JAVA_COMMENT "#")
+    set(PSC_OCAML_COMMENT "#")
+  endif(NOT BUILD_SHARED_LIBS AND (ANY_QT_DEVICE OR PLD_psttf OR PLD_wxwidgets))
+
   if(NOT(ENABLE_cxx AND (PLD_ps OR ENABLE_qt)))
     set(CXX_COMMENT "#")
   endif(NOT(ENABLE_cxx AND (PLD_ps OR ENABLE_qt)))
