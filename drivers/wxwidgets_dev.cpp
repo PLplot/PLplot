@@ -1288,6 +1288,7 @@ void wxPLDevice::SetupMemoryMap()
         while ( counter < maxTries && viewerSignal == 0 )
         {
             wxMilliSleep( 10 );
+            ++counter;
         }
         if ( viewerSignal == 0 )
             plwarn( "wxPLViewer failed to signal it has found the shared memory." );
