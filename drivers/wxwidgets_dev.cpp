@@ -97,8 +97,8 @@ public:
         m_dc->SetLogicalOrigin( m_xOriginOld, m_yOriginOld );
     }
 private:
-    wxDC *m_dc;
-	wxCoord m_xOriginOld;
+    wxDC    *m_dc;
+    wxCoord m_xOriginOld;
     wxCoord m_yOriginOld;
 };
 
@@ -773,7 +773,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     Scaler scaler( m_dc, 1.0, 1.0 );
 
     //Also move the origin so the text region buts up to the dc top, not the bottom
-    OriginChanger originChanger( m_dc, 0, wxCoord (m_height - m_plplotEdgeLength / m_yScale ) );
+    OriginChanger originChanger( m_dc, 0, wxCoord( m_height - m_plplotEdgeLength / m_yScale ) );
 
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
