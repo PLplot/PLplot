@@ -59,13 +59,11 @@ if(ENABLE_pdl)
 	  OUTPUT_VARIABLE PDL_VERSION
 	  )
 	message(STATUS "PDL_VERSION = ${PDL_VERSION}")
-	transform_version(NUMERICAL_PDL_MINIMUM_VERSION "2.4.7")
-	transform_version(NUMERICAL_PDL_VERSION "${PDL_VERSION}")
-	if(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
+	if(${PDL_VERSION} VERSION_LESS "2.4.7")
           message(STATUS "WARNING: "
             "PDL version < 2.4.7. Disabling Perl/PDL examples in tests")
           set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
-	else(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
+	else(${PDL_VERSION} VERSION_LESS "2.4.7")
           execute_process(
 	    COMMAND ${PERL_EXECUTABLE}
 	    -MPDL::Graphics::PLplot "-e print \"$PDL::Graphics::PLplot::VERSION\""
@@ -84,26 +82,22 @@ if(ENABLE_pdl)
               ERROR_VARIABLE PDL_PLPLOT_VERSION
               )
             message(STATUS "PDL_PLPLOT_VERSION = ${PDL_PLPLOT_VERSION}")
-            transform_version(NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION "0.55.0")
-            transform_version(NUMERICAL_PDL_PLPLOT_VERSION "${PDL_PLPLOT_VERSION}.0")
-	    #message("NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION = ${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
-	    #message("NUMERICAL_PDL_PLPLOT_VERSION = ${NUMERICAL_PDL_PLPLOT_VERSION}")
-            if(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+            if(${PDL_PLPLOT_VERSION} VERSION_LESS "0.55")
               message(STATUS "WARNING: "
 		"perl PDL PLplot version < 0.55\n"
 		"   Drop testing of Perl/PDL examples.")
 	      set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
-            else(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+            else(${PDL_PLPLOT_VERSION} VERSION_LESS "0.55")
               message(STATUS
 		"perl PDL PLplot version >= 0.55\n"
 		"   Test Perl/PDL examples")
-            endif(NUMERICAL_PDL_PLPLOT_VERSION LESS "${NUMERICAL_PDL_PLPLOT_MINIMUM_VERSION}")
+            endif(${PDL_PLPLOT_VERSION} VERSION_LESS "0.55")
 	  else(NOT PDL_GRAPHICS_PLPLOT_RETURN_CODE)
 	    message(STATUS "WARNING: "
 	      "perl PDL::GRAPHICS_PLplot module not found. Disabling Perl/PDL examples")
 	    set(ENABLE_pdl OFF CACHE BOOL "Enable Perl/PDL examples in tests" FORCE)
 	  endif(NOT PDL_GRAPHICS_PLPLOT_RETURN_CODE)
-	endif(NUMERICAL_PDL_VERSION LESS "${NUMERICAL_PDL_MINIMUM_VERSION}")
+	endif(${PDL_VERSION} VERSION_LESS "2.4.7")
       else(NOT PDL_RETURNCODE)
 	message(STATUS "WARNING: "
 	  "perl PDL module not found. Disabling Perl/PDL examples")

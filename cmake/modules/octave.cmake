@@ -1,6 +1,6 @@
 # cmake/modules/octave.cmake
 #
-# Copyright (C) 2006-2010  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -102,22 +102,11 @@ endif(ENABLE_octave)
 
 if(ENABLE_octave)
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
-  # Logic that depends on octave version
-  transform_version(NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION "3.2.0")
-  transform_version(NUMERICAL_OCTAVE_VERSION "${OCTAVE_VERSION}")
-  if(
-   NUMERICAL_OCTAVE_VERSION
-   LESS
-   "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
-   )
+  if(${OCTAVE_VERSION} VERSION_LESS "3.2.0")
     message(STATUS "WARNING: "
     "plplot require octave version 3.2 or greater. Disabling octave bindings")
     set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
-  endif(
-   NUMERICAL_OCTAVE_VERSION
-   LESS
-   "${NUMERICAL_OCTAVE_TESTING_MINIMUM_VERSION}"
-   )
+  endif(${OCTAVE_VERSION} VERSION_LESS "3.2.0")
 endif(ENABLE_octave)
 
 if(ENABLE_octave)

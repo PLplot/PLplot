@@ -116,11 +116,10 @@ if(
     # Check that the pangocairo library version is recent
     # enough to efficiently handle text clipping.
     # If it is not then we print a warning.
-    transform_version(NUMERICAL_PANGOCAIRO_MINIMUM_VERSION "1.20.5")
-    transform_version(NUMERICAL_PANGOCAIRO_VERSION "${version}")
-    if(NUMERICAL_PANGOCAIRO_VERSION LESS "${NUMERICAL_PANGOCAIRO_MINIMUM_VERSION}")
-      message("Pango Cairo version (${version}) < 1.20.5, if text rendering is slow recommend turning off text clipping")
-    endif(NUMERICAL_PANGOCAIRO_VERSION LESS "${NUMERICAL_PANGOCAIRO_MINIMUM_VERSION}")
+    if(${version} VERSION_LESS "1.20.5")
+      message(STATUS "WARNING: Pango Cairo version (${version}) < 1.20.5, if text rendering is slow recommend turning off text clipping")
+    endif(${version} VERSION_LESS "1.20.5")
+
     set(cairo_RPATH ${linkdir})
     filter_rpath(cairo_RPATH)
 

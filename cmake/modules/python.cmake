@@ -1,6 +1,6 @@
 # cmake/modules/python.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -136,18 +136,12 @@ if(ENABLE_python)
     )
   message(STATUS "PYTHON_VERSION = ${PYTHON_VERSION}")
 
-  # Enable plsmem if the Python and Swig versions support it
-  transform_version(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_PLSMEM "1.3.38")
-  transform_version(NUMERICAL_PYTHON_MINIMUM_VERSION_FOR_PLSMEM "2.6.0")
-  transform_version(NUMERICAL_SWIG_VERSION "${SWIG_VERSION}")
-  transform_version(NUMERICAL_PYTHON_VERSION "${PYTHON_VERSION}")
-
-  SET(PYTHON_HAVE_PYBUFFER OFF)
-  IF(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_PLSMEM LESS NUMERICAL_SWIG_VERSION)
-    IF(NUMERICAL_PYTHON_MINIMUM_VERSION_FOR_PLSMEM LESS NUMERICAL_PYTHON_VERSION)
+  if(("1.3.38" VERSION_LESS ${SWIG_VERSION}) AND ("2.6.0" VERSION_LESS ${PYTHON_VERSION}))
       message(STATUS "Building Python binding with plsmem() support")
-      SET(PYTHON_HAVE_PYBUFFER ON)
-    ENDIF(NUMERICAL_PYTHON_MINIMUM_VERSION_FOR_PLSMEM LESS NUMERICAL_PYTHON_VERSION)
-  ENDIF(NUMERICAL_SWIG_MINIMUM_VERSION_FOR_PLSMEM LESS NUMERICAL_SWIG_VERSION)
+      set(PYTHON_HAVE_PYBUFFER ON)
+  else(("1.3.38" VERSION_LESS ${SWIG_VERSION}) AND ("2.6.0" VERSION_LESS ${PYTHON_VERSION}))
+      message(STATUS "WARNING: Python and Swig versions do not support building Python binding with plsmem() support")
+      set(PYTHON_HAVE_PYBUFFER OFF)
+  endif(("1.3.38" VERSION_LESS ${SWIG_VERSION}) AND ("2.6.0" VERSION_LESS ${PYTHON_VERSION}))
 
 endif(ENABLE_python)
