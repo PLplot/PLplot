@@ -115,16 +115,17 @@ if(SH_EXECUTABLE)
     set(SHELL_TEST_WISH_RUNALLDEMOS 0)
   endif(BUILD_SHARED_LIBS)
 
-  if(WIN32_AND_NOT_CYGWIN)
-    set(SHELL_TEST_WXWIDGETS 1)
-  else(WIN32_AND_NOT_CYGWIN)
-    # FIXME.
-    # The wxwidgets device on Unix generates "forced mousing" screen
-    # refreshes for the wxwidgets-3.0.0 case so it is temporarily excluded
-    # from the interactive tests done for the traditional build system
-    # for the installed examples.
-    set(SHELL_TEST_WXWIDGETS 0)
-  endif(WIN32_AND_NOT_CYGWIN)
+  message(STATUS "WARNING: The wxwidgets device is painful to use in the test
+   environment for the traditional build of the installed examples
+   because the -np option does not work requiring much clicking to go
+   through the pages and exit each example.  Therefore, until the -np
+   option works correctly for the wxwidgets device temporarily avoid
+   testing this device for the traditional build of the installed
+   examples.")
+
+  # This value normally should be set to 1, but see message above for
+  # why it is temporarily set to 0.
+  set(SHELL_TEST_WXWIDGETS 0)
 
   configure_file(
     plplot-test-interactive.sh.in

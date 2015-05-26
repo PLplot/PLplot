@@ -933,6 +933,12 @@ if(BUILD_TEST)
    PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
    temporarily exclude this target from being a dependency of other more general interactive
    test targets")
+      elseif(device STREQUAL "wxwidgets")
+	message(STATUS "WARNING: The test_c_wxwidgets target can be run independently
+   but is painful to use in a comprehensive test environment because the -np option does
+   not work requiring much clicking to go through the pages and exit each example.  Therefore,
+   until the -np option works correctly for wxwidgets temporarily exclude this target from
+   being a dependency of other more general interactive test targets")
       else(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
 	list(APPEND interactive_targets_LIST test_c_${device})
 	if(device STREQUAL "tk" OR device STREQUAL "ntk")
