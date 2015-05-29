@@ -27,7 +27,7 @@
 //it uses a memory map name without random characters
 //and does not execute the viewer, allowing the user to do
 //it in a debugger
-//#define WXPLVIEWER_DEBUG
+#define WXPLVIEWER_DEBUG
 
 //headers needed for Rand
 #ifdef WIN32
@@ -536,7 +536,7 @@ PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
 //--------------------------------------------------------------------------
 void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel )
 {
-    if ( !m_dc )
+	if ( !m_dc && drawText)
         return;
 
     char utf8_string[m_max_string_length];
@@ -585,7 +585,8 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
 
                     ++superscriptLevel;
                     fontScale = pow( 0.8, abs( superscriptLevel ) );
-                    m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
+					if( m_dc )
+						m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {                                 // draw string so far
@@ -595,7 +596,8 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
 
                     --superscriptLevel;
                     fontScale = pow( 0.8, abs( superscriptLevel ) );
-                    m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
+					if( m_dc )
+						m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
                 {                                 // draw string so far
@@ -604,7 +606,8 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
                     DrawTextSection( utf8_string, baseFontSize * fontScale, yOffset, drawText );
 
                     m_underlined = !m_underlined;
-                    m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
+					if( m_dc )
+						m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
                 }
                 if ( ucs4[i] == (PLUNICODE) '+' ) // overline
                 {                                 // not implemented yet
@@ -621,7 +624,8 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
 
             // get new font
             m_fci = ucs4[i];
-            m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
+			if( m_dc )
+				m_dc->SetFont( GetFont( m_fci, baseFontSize * fontScale ) );
             i++;
         }
     }
@@ -642,7 +646,7 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
 //--------------------------------------------------------------------------
 void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT yOffset, bool drawText )
 {
-    if ( !m_dc )
+    if ( !m_dc && drawText )
         return;
 
     wxCoord  w, h, d, l;
@@ -650,7 +654,32 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
     wxString str = wxString::FromUTF8( utf8_string );
     //wxString str( wxConvUTF8.cMB2WC( utf8_string ), *wxConvCurrent );
 
-    m_dc->GetTextExtent( str, &w, &h, &d, &l );
+	if( m_dc )
+		m_dc->GetTextExtent( str, &w, &h, &d, &l );
+	
+	if ( !m_dc && m_outputMemoryMap.isValid() )
+    {
+        MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
+		header->textSizeInfo.written=false;
+		wxString fontString=GetFont( m_fci, scaledFontSize ).GetNativeFontInfoDesc();
+		if( fontString.length() > 255 )
+			plabort( "wxPLDevice::ProcessString Font description is too long to send to wxPLViewer" );
+		wcscpy( header->textSizeInfo.font, fontString.wc_str() );
+		wcscpy( header->textSizeInfo.text, str.wc_str() );
+		TransmitBuffer( NULL, transmissionRequestTextSize );
+        bool            gotResponse = false;
+		size_t counter = 0;
+        while ( !gotResponse && counter < 100)
+        {
+            wxMilliSleep( 100 );
+            PLNamedMutexLocker lock( &m_mutex );
+			gotResponse = header->textSizeInfo.written;
+			++counter;
+        }
+
+		w=header->textSizeInfo.width;
+		h=header->textSizeInfo.height;
+    }
 
     if ( drawText )
     {
@@ -762,18 +791,22 @@ wxFont wxPLDevice::GetFont( PLUNICODE fci, PLFLT scaledFontSize )
 //  text string is determined and then the string is drawn to the canvas.
 //--------------------------------------------------------------------------
 void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
-{
-    if ( !m_dc )
+{   
+	if ( !m_dc && !m_outputMemoryMap.isValid() )
         return;
 
-    //for text, work in native coordinates, partly to avoid rewriting existing code
-    //but also because we should get better text hinting for screen display I think.
-    //The scaler object sets the scale to the new value until it is destroyed
-    //when this function exits.
-    Scaler scaler( m_dc, 1.0, 1.0 );
+	if( m_dc )
+	{
+		//for text, work in native coordinates, partly to avoid rewriting existing code
+		//but also because we should get better text hinting for screen display I think.
+		//The scaler object sets the scale to the new value until it is destroyed
+		//when this function exits.
+		Scaler scaler( m_dc, 1.0, 1.0 );
 
-    //Also move the origin so the text region buts up to the dc top, not the bottom
-    OriginChanger originChanger( m_dc, 0, wxCoord( m_height - m_plplotEdgeLength / m_yScale ) );
+
+		//Also move the origin so the text region buts up to the dc top, not the bottom
+		OriginChanger originChanger( m_dc, 0, wxCoord (m_height - m_plplotEdgeLength / m_yScale ) );
+	}
 
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
@@ -803,7 +836,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         cpoints[i].x = rcx[i] / m_xScale;
         cpoints[i].y = m_height - rcy[i] / m_yScale;
     }
-    wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
+	if( m_dc )
+		wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
 
     PLUNICODE   *lineStart     = args->unicode_array;
     int         lineLen        = 0;
@@ -815,7 +849,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     plgfci( &m_fci );
     //set the font up, we use a textObjectChanger here so that the font returns
     //to its original value on exit
-    TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ),
+	if( m_dc )
+		TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ),
                                            wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
                                            wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) );
 
@@ -852,7 +887,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             paraHeight += m_superscriptHeight - m_textHeight;
 
         // actually draw text, resetting the font first
-        if ( !pls->get_string_length )
+        if ( !pls->get_string_length && m_dc )
         {
             superscriptLevel = lineStartSuperscriptLevel;
             m_fci            = lineStartFci;
@@ -1132,6 +1167,18 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                 continue;
             }
 
+			if( transmissionType == transmissionRequestTextSize )
+			{
+				memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
+                    (void *) ( &transmissionRequestTextSize ), sizeof ( transmissionRequestTextSize ) );
+                mapHeader.writeLocation += sizeof ( transmissionRequestTextSize );
+                if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
+                    mapHeader.writeLocation = plMemoryMapReservedSpace;
+                counter   = 0;
+                completed = true;
+                continue;
+			}
+
             //if we have looped round stay 1 character behind the read buffer - it makes it
             //easier to test whether the reading has caught up with the writing or vica versa
             if ( mapHeader.writeLocation < mapHeader.readLocation && mapHeader.readLocation > 0 )
@@ -1149,19 +1196,22 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                 else
                     memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
                         (char *) ( &transmissionComplete ), sizeof ( transmissionComplete ) );
-                memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation + sizeof ( transmissionComplete ),
-                    (char *) ( &copyAmount ), sizeof ( copyAmount ) );
-                memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation + headerSize,
-                    (char *) pls->plbuf_buffer + m_localBufferPosition, copyAmount );
-                m_localBufferPosition   += copyAmount;
-                mapHeader.writeLocation += copyAmount + headerSize;
-                if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
-                    mapHeader.writeLocation = plMemoryMapReservedSpace;
-                amountToCopy -= copyAmount;
-                counter       = 0;
-                if ( amountToCopy == 0 && transmissionType != transmissionEndOfPage
-                     && transmissionType != transmissionLocate )
-                    completed = true;
+				if ( pls )
+				{
+					memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation + sizeof ( transmissionComplete ),
+						(char *) ( &copyAmount ), sizeof ( copyAmount ) );
+					memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation + headerSize,
+						(char *) pls->plbuf_buffer + m_localBufferPosition, copyAmount );
+					m_localBufferPosition   += copyAmount;
+					mapHeader.writeLocation += copyAmount + headerSize;
+					if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
+						mapHeader.writeLocation = plMemoryMapReservedSpace;
+					amountToCopy -= copyAmount;
+					counter       = 0;
+				}
+				if ( amountToCopy == 0 && transmissionType != transmissionEndOfPage
+						&& transmissionType != transmissionLocate )
+					completed = true;
             }
             else
             {
@@ -1279,7 +1329,10 @@ void wxPLDevice::SetupMemoryMap()
 #endif  //WIN32
         size_t maxTries = 1000;
 #else //WXPLVIEWER_DEBUG
-        fprintf( stdout, "Begin Running wxPLViewer in the debugger now to continue." );
+		wxString runMessage;
+		runMessage << "Begin Running wxPLViewer in the debugger now to continue. Use the parameters: plplotMemoryMap " <<
+			mapSize << " " << m_width << " " << m_height;
+        fprintf( stdout, runMessage );
         size_t maxTries = 100000;
 #endif  //WXPLVIEWER_DEBUG
         //wait until the viewer signals it has opened the map file

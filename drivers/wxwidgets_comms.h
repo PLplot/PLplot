@@ -32,14 +32,23 @@
 #endif
 
 //data transmission codes
-const unsigned char transmissionRegular     = 0;
-const unsigned char transmissionSkipFileEnd = 1;
-const unsigned char transmissionEndOfPage   = 2;
-const unsigned char transmissionBeginPage   = 3;
-const unsigned char transmissionLocate      = 4;
-const unsigned char transmissionPartial     = 5;
-const unsigned char transmissionComplete    = 6;
+const unsigned char transmissionRegular         = 0;
+const unsigned char transmissionSkipFileEnd     = 1;
+const unsigned char transmissionEndOfPage       = 2;
+const unsigned char transmissionBeginPage       = 3;
+const unsigned char transmissionLocate          = 4;
+const unsigned char transmissionPartial         = 5;
+const unsigned char transmissionComplete        = 6;
+const unsigned char transmissionRequestTextSize = 7;
 
+struct TextSizeInfo
+{
+	long width;
+	long height;
+	wchar_t font[256];
+	wchar_t text[501];
+	bool written;
+};
 
 struct MemoryMapHeader
 {
@@ -49,6 +58,7 @@ struct MemoryMapHeader
     size_t       locateModeFlag;
     size_t       completeFlag;
     PLGraphicsIn graphicsIn;
+	TextSizeInfo textSizeInfo;
 };
 
 const PLINT plMemoryMapReservedSpace = sizeof ( MemoryMapHeader );
