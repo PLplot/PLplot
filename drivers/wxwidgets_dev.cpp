@@ -64,12 +64,16 @@ public:
     Scaler( wxDC * dc, double xScale, double yScale )
     {
         m_dc = dc;
-        dc->GetLogicalScale( &m_xScaleOld, &m_yScaleOld );
-        dc->SetLogicalScale( xScale, yScale );
+		if( m_dc )
+		{
+			dc->GetLogicalScale( &m_xScaleOld, &m_yScaleOld );
+			dc->SetLogicalScale( xScale, yScale );
+		}
     }
     ~Scaler( )
     {
-        m_dc->SetLogicalScale( m_xScaleOld, m_yScaleOld );
+		if( m_dc )
+			m_dc->SetLogicalScale( m_xScaleOld, m_yScaleOld );
     }
 private:
     wxDC   *m_dc;
@@ -89,12 +93,16 @@ public:
     OriginChanger( wxDC * dc, wxCoord xOrigin, wxCoord yOrigin )
     {
         m_dc = dc;
-        dc->GetLogicalOrigin( &m_xOriginOld, &m_yOriginOld );
-        dc->SetLogicalOrigin( xOrigin, yOrigin );
+		if( m_dc )
+		{
+			dc->GetLogicalOrigin( &m_xOriginOld, &m_yOriginOld );
+			dc->SetLogicalOrigin( xOrigin, yOrigin );
+		}
     }
     ~OriginChanger( )
     {
-        m_dc->SetLogicalOrigin( m_xOriginOld, m_yOriginOld );
+		if( m_dc )
+			m_dc->SetLogicalOrigin( m_xOriginOld, m_yOriginOld );
     }
 private:
     wxDC    *m_dc;
@@ -114,15 +122,21 @@ public:
     DrawingObjectsChanger( wxDC *dc, const wxPen &pen, const wxBrush &brush )
     {
         m_dc    = dc;
-        m_pen   = dc->GetPen();
-        m_brush = dc->GetBrush();
-        dc->SetPen( pen );
-        dc->SetBrush( brush );
+		if( m_dc )
+		{
+			m_pen   = dc->GetPen();
+			m_brush = dc->GetBrush();
+			dc->SetPen( pen );
+			dc->SetBrush( brush );
+		}
     }
     ~DrawingObjectsChanger()
     {
-        m_dc->SetPen( m_pen );
-        m_dc->SetBrush( m_brush );
+		if( m_dc )
+		{
+			m_dc->SetPen( m_pen );
+			m_dc->SetBrush( m_brush );
+		}
     }
 private:
     wxDC    *m_dc;
@@ -141,27 +155,36 @@ class TextObjectsChanger
 public:
     TextObjectsChanger( wxDC *dc, const wxFont &font, const wxColour &textForeground, const wxColour &textBackground )
     {
-        m_dc             = dc;
-        m_font           = dc->GetFont();
-        m_textForeground = dc->GetTextForeground();
-        m_textBackground = dc->GetTextBackground();
-        dc->SetTextForeground( textForeground );
-        dc->SetTextBackground( textBackground );
-        dc->SetFont( font );
+        m_dc = dc;
+		if ( m_dc )
+		{
+			m_font           = dc->GetFont();
+			m_textForeground = dc->GetTextForeground();
+			m_textBackground = dc->GetTextBackground();
+			dc->SetTextForeground( textForeground );
+			dc->SetTextBackground( textBackground );
+			dc->SetFont( font );
+		}
     }
     TextObjectsChanger( wxDC *dc, const wxFont &font )
     {
-        m_dc             = dc;
-        m_font           = dc->GetFont();
-        m_textForeground = dc->GetTextForeground();
-        m_textBackground = dc->GetTextBackground();
-        dc->SetFont( font );
+        m_dc = dc;
+		if( m_dc )
+		{
+			m_font           = dc->GetFont();
+			m_textForeground = dc->GetTextForeground();
+			m_textBackground = dc->GetTextBackground();
+			dc->SetFont( font );
+		}
     }
     ~TextObjectsChanger()
     {
-        m_dc->SetTextForeground( m_textForeground );
-        m_dc->SetTextBackground( m_textBackground );
-        m_dc->SetFont( m_font );
+		if( m_dc )
+		{
+			m_dc->SetTextForeground( m_textForeground );
+			m_dc->SetTextBackground( m_textBackground );
+			m_dc->SetFont( m_font );
+		}
     }
 private:
     wxDC     *m_dc;
