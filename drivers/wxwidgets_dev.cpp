@@ -734,12 +734,12 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
 		TransmitBuffer( NULL, transmissionRequestTextSize );
         bool            gotResponse = false;
 		size_t counter = 0;
-        while ( !gotResponse && counter < 100)
+        while ( !gotResponse && counter < 1000)
         {
-            wxMilliSleep( 100 );
             PLNamedMutexLocker lock( &m_mutex );
 			gotResponse = header->textSizeInfo.written;
 			++counter;
+            wxMilliSleep( 1 );
         }
 
 		w=header->textSizeInfo.width;
