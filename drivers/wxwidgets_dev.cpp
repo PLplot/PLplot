@@ -27,7 +27,7 @@
 //it uses a memory map name without random characters
 //and does not execute the viewer, allowing the user to do
 //it in a debugger
-#define WXPLVIEWER_DEBUG
+//#define WXPLVIEWER_DEBUG
 
 //headers needed for Rand
 #ifdef WIN32
@@ -191,6 +191,47 @@ private:
     wxFont   m_font;
     wxColour m_textForeground;
     wxColour m_textBackground;
+};
+
+//--------------------------------------------------------------------------
+// Clipper class
+// This class changes the clipping region of a dc on construction and restores
+// it to its previous region on destruction. It is ideal for making temporary
+// changes to the clip region and guarenteeing that the scale gets set back.
+//--------------------------------------------------------------------------
+class Clipper
+{
+public:
+    Clipper( wxDC * dc, const wxRegion &region )
+    {
+        m_dc = dc;
+		if( m_dc )
+		{
+			dc->GetClippingBox( m_boxOld );
+			dc->SetClippingRegion( region.GetBox() );
+		}
+    }
+    Clipper( wxDC * dc, const wxRect &rect )
+    {
+        m_dc = dc;
+		if( m_dc )
+		{
+			dc->GetClippingBox( m_boxOld );
+			dc->SetClippingRegion( rect );
+		}
+    }
+    ~Clipper( )
+    {
+		if( m_dc )
+		{
+			m_dc->DestroyClippingRegion();
+			m_dc->SetClippingRegion( m_boxOld );
+		}
+
+    }
+private:
+    wxDC *m_dc;
+	wxRect m_boxOld;
 };
 
 //--------------------------------------------------------------------------
@@ -818,18 +859,21 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 	if ( !m_dc && !m_outputMemoryMap.isValid() )
         return;
 
-	if( m_dc )
-	{
-		//for text, work in native coordinates, partly to avoid rewriting existing code
-		//but also because we should get better text hinting for screen display I think.
-		//The scaler object sets the scale to the new value until it is destroyed
-		//when this function exits.
-		Scaler scaler( m_dc, 1.0, 1.0 );
+	//for text, work in native coordinates, partly to avoid rewriting existing code
+	//but also because we should get better text hinting for screen display I think.
+	//The scaler object sets the scale to the new value until it is destroyed
+	//when this function exits.
+	Scaler scaler( m_dc, 1.0, 1.0 );
 
+<<<<<<< HEAD
 
 		//Also move the origin so the text region buts up to the dc top, not the bottom
 		OriginChanger originChanger( m_dc, 0, wxCoord (m_height - m_plplotEdgeLength / m_yScale ) );
 	}
+=======
+	//Also move the origin so the text region buts up to the dc top, not the bottom
+	OriginChanger originChanger( m_dc, 0, wxCoord (m_height - m_plplotEdgeLength / m_yScale ) );
+>>>>>>> Added a clipper class to wxwidgets_dev.cpp. This differs from
 
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
@@ -859,8 +903,8 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         cpoints[i].x = rcx[i] / m_xScale;
         cpoints[i].y = m_height - rcy[i] / m_yScale;
     }
-	if( m_dc )
-		wxDCClipper clip( *m_dc, wxRegion( 4, cpoints ) );
+
+	Clipper clipper( m_dc, wxRegion( 4, cpoints ) );
 
     PLUNICODE   *lineStart     = args->unicode_array;
     int         lineLen        = 0;
@@ -872,8 +916,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
     plgfci( &m_fci );
     //set the font up, we use a textObjectChanger here so that the font returns
     //to its original value on exit
-	if( m_dc )
-		TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ),
+	TextObjectsChanger textObjectsChanger( m_dc, GetFont( m_fci, baseFontSize ),
                                            wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
                                            wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) );
 
