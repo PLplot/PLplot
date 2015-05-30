@@ -179,7 +179,7 @@ void plD_init_wxwidgets( PLStream* pls )
             plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
             pls->freeaspect = 1;
         }
-		pls->has_string_length = 1;
+        pls->has_string_length = 1;
     }
     catch ( char *message )
     {

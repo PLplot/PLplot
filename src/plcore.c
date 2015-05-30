@@ -2904,7 +2904,11 @@ int plInBuildTree()
 #else
                     pldebug( "plInBuildTree(): ", "comparing respecting case\n" );
                     if ( strncmp( builddir, currdir, len_builddir ) == 0 &&
-                         ( len_currdir == len_builddir || currdir[len_builddir] == '/' ) )
+                         ( len_currdir == len_builddir || currdir[len_builddir] == '/'
+#ifdef WIN32
+                           || currdir[len_builddir] == '\\'
+#endif
+                         ) )
 #endif
                     {
                         inBuildTree = 1;

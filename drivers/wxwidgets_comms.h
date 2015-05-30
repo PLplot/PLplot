@@ -43,11 +43,11 @@ const unsigned char transmissionRequestTextSize = 7;
 
 struct TextSizeInfo
 {
-	long width;
-	long height;
-	wchar_t font[256];
-	wchar_t text[501];
-	bool written;
+    long    width;
+    long    height;
+    wchar_t font[256];
+    wchar_t text[501];
+    bool    written;
 };
 
 struct MemoryMapHeader
@@ -58,7 +58,7 @@ struct MemoryMapHeader
     size_t       locateModeFlag;
     size_t       completeFlag;
     PLGraphicsIn graphicsIn;
-	TextSizeInfo textSizeInfo;
+    TextSizeInfo textSizeInfo;
 };
 
 const PLINT plMemoryMapReservedSpace = sizeof ( MemoryMapHeader );

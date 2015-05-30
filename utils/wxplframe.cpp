@@ -195,17 +195,17 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             SetPageAndUpdate();
             m_locateMode = true;
         }
-		else if (transmissionType == transmissionRequestTextSize )
-		{
-			wxClientDC dc( this );
-			wxCoord width;
-			wxCoord height;
-			wxFont font( wxString( header->textSizeInfo.font ) );
-			dc.GetTextExtent( wxString( header->textSizeInfo.text ), &width, &height, 0, 0, &font );
-			header->textSizeInfo.width = long(width);
-			header->textSizeInfo.height = long(height);
-			header->textSizeInfo.written = true;
-		}
+        else if ( transmissionType == transmissionRequestTextSize )
+        {
+            wxClientDC dc( this );
+            wxCoord    width;
+            wxCoord    height;
+            wxFont     font( wxString( header->textSizeInfo.font ) );
+            dc.GetTextExtent( wxString( header->textSizeInfo.text ), &width, &height, 0, 0, &font );
+            header->textSizeInfo.width   = long(width);
+            header->textSizeInfo.height  = long(height);
+            header->textSizeInfo.written = true;
+        }
         else if ( transmissionType == transmissionPartial || transmissionType == transmissionComplete )
         {
             size_t dataSize;
