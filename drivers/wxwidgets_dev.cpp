@@ -225,7 +225,8 @@ public:
 		if( m_dc )
 		{
 			m_dc->DestroyClippingRegion();
-			m_dc->SetClippingRegion( m_boxOld );
+			if( m_boxOld.width != 0 && m_boxOld.height != 0 )
+				m_dc->SetClippingRegion( m_boxOld );
 		}
 
     }
