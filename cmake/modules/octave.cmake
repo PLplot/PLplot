@@ -182,7 +182,7 @@ if(ENABLE_octave)
 	)
       else(OCTAVE_INCLUDE_PATH_EXTERNAL)
 	message(STATUS "WARNING: "
-	  "Required external octave header, hdf5.h, not found. Disabling octave bindings")
+	  "Required external octave header, hdf5.h, that is typically part of the libhdf5-dev package, has not found. Disabling octave bindings")
 	set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
       endif(OCTAVE_INCLUDE_PATH_EXTERNAL)
     else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
