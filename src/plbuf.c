@@ -590,7 +590,8 @@ rdbuf_eop( PLStream * PL_UNUSED( pls ) )
 static void
 rdbuf_bop( PLStream *pls )
 {
-    U_CHAR cmd;
+    U_CHAR cmd = 0;
+    int    nRead;
 
     dbug_enter( "rdbuf_bop" );
 
@@ -605,23 +606,59 @@ rdbuf_bop( PLStream *pls )
     // We need to read the colormaps that were stored by plbuf_bop
     // now because when plP_state is used to set the color, a wrong
     // colormap will be used if it was changed.
+
     // Read the command (should be CHANGE_STATE PLSTATE_CMAP0)
-    rd_command( pls, &cmd );
+    nRead = rd_command( pls, &cmd );
+    if ( nRead == 0 || cmd != CHANGE_STATE )
+    {
+        plabort( "rdbuf_bop: Error reading first change state" );
+        return;
+    }
     plbuf_control( pls, cmd );
+
     // Read the command (should be CHANGE_STATE PLSTATE_CMAP1)
-    rd_command( pls, &cmd );
+    nRead = rd_command( pls, &cmd );
+    if ( nRead == 0 || cmd != CHANGE_STATE )
+    {
+        plabort( "rdbuf_bop: Error reading second change state" );
+        return;
+    }
     plbuf_control( pls, cmd );
+
     // Read the command (should be CHANGE_STATE PLSTATE_WIDTH)
-    rd_command( pls, &cmd );
+    nRead = rd_command( pls, &cmd );
+    if ( nRead == 0 || cmd != CHANGE_STATE )
+    {
+        plabort( "rdbuf_bop: Error reading third change state" );
+        return;
+    }
     plbuf_control( pls, cmd );
+
     // Read the command (should be CHANGE_STATE PLSTATE_FILL)
-    rd_command( pls, &cmd );
+    nRead = rd_command( pls, &cmd );
+    if ( nRead == 0 || cmd != CHANGE_STATE )
+    {
+        plabort( "rdbuf_bop: Error reading fourth change state" );
+        return;
+    }
     plbuf_control( pls, cmd );
+
     // Read the command (should be CHANGE_STATE PLSTATE_CHR)
-    rd_command( pls, &cmd );
+    nRead = rd_command( pls, &cmd );
+    if ( nRead == 0 || cmd != CHANGE_STATE )
+    {
+        plabort( "rdbuf_bop: Error reading fifth change state" );
+        return;
+    }
     plbuf_control( pls, cmd );
+
     // Read the command (should be CHANGE_STATE PLSTATE_SYM)
-    rd_command( pls, &cmd );
+    nRead = rd_command( pls, &cmd );
+    if ( nRead == 0 || cmd != CHANGE_STATE )
+    {
+        plabort( "rdbuf_bop: Error reading sixth change state" );
+        return;
+    }
     plbuf_control( pls, cmd );
 
     // and now we can set the color
