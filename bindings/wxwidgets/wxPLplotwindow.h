@@ -95,11 +95,15 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
 }
 
 
-//! Destructor - currently we have nothing to clean up.
+//! Destructor - delete the dc and gcdc if needed.
 //
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
 {
+	if( m_memoryDc )
+		delete m_memoryDc;
+	if( m_gcDc )
+		delete m_gcDc;
 }
 
 
