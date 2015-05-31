@@ -198,26 +198,30 @@ private:
 // This class changes the clipping region of a dc on construction and restores
 // it to its previous region on destruction. It is ideal for making temporary
 // changes to the clip region and guarenteeing that the scale gets set back.
+//
+// It turns out that clipping is mostly broken for wxGCDC - see
+// http://trac.wxwidgets.org/ticket/17013. So there are a lot of things in
+// this class to work aound those bugs. In particular you should check
+// isEveryThingClipped before drawing as I'm not sure if non-overlapping
+//clip regions behave properly.
 //--------------------------------------------------------------------------
 class Clipper
 {
 public:
-    Clipper( wxDC * dc, const wxRegion &region )
-    {
-        m_dc = dc;
-        if ( m_dc )
-        {
-            dc->GetClippingBox( m_boxOld );
-            dc->SetClippingRegion( region.GetBox() );
-        }
-    }
     Clipper( wxDC * dc, const wxRect &rect )
     {
-        m_dc = dc;
+        m_dc             = dc;
+        m_clipEverything = true;
         if ( m_dc )
         {
             dc->GetClippingBox( m_boxOld );
-            dc->SetClippingRegion( rect );
+            wxRect newRect = rect;
+            m_clipEverything = !( newRect.Intersects( m_boxOld )
+                                  || ( m_boxOld.width == 0 && m_boxOld.height == 0 ) );
+            if ( m_clipEverything )
+                dc->SetClippingRegion( wxRect( -1, -1, 1, 1 ) );                 //not sure if this works
+            else
+                dc->SetClippingRegion( rect );
         }
     }
     ~Clipper( )
@@ -225,13 +229,20 @@ public:
         if ( m_dc )
         {
             m_dc->DestroyClippingRegion();
+            m_dc->SetClippingRegion( wxRect( 0, 0, 0, 0 ) );
+            m_dc->DestroyClippingRegion();
             if ( m_boxOld.width != 0 && m_boxOld.height != 0 )
                 m_dc->SetClippingRegion( m_boxOld );
         }
     }
+    bool isEverythingClipped()
+    {
+        return m_clipEverything;
+    }
 private:
     wxDC   *m_dc;
     wxRect m_boxOld;
+    bool   m_clipEverything;
 };
 
 //--------------------------------------------------------------------------
@@ -897,7 +908,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
         cpoints[i].y = m_height - rcy[i] / m_yScale;
     }
 
-    Clipper   clipper( m_dc, wxRegion( 4, cpoints ) );
+    Clipper   clipper( m_dc, wxRegion( 4, cpoints ).GetBox() );
 
     PLUNICODE *lineStart     = args->unicode_array;
     int       lineLen        = 0;
