@@ -1,7 +1,7 @@
 // plgridd.c: Plot grids data from irregularly sampled data.
 
 // Copyright (C) 2004  Joao Cardoso
-// Copyright (C) 2004-2014 Alan W. Irwin
+// Copyright (C) 2004-2015 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -30,7 +30,7 @@
 
 #ifdef PL_HAVE_QHULL
 #include "../lib/nn/nn.h"
-#include <qhull/qhull_a.h>
+#include <qhull_a.h>
 #endif
 
 // forward declarations

@@ -1,6 +1,6 @@
 # cmake/modules/csiro.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -86,8 +86,10 @@ if(PL_HAVE_QHULL)
       set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
     endif(QH_NEW_EXIST)
   else(QHULL_FOUND)
+    message(STATUS "QHULL_INCLUDE_DIRS = ${QHULL_INCLUDE_DIRS}")
+    message(STATUS "QHULL_LIBRARIES = ${QHULL_LIBRARIES}")
     message(STATUS
-      "WARNING: qhull library not found.  Setting PL_HAVE_QHULL to OFF."
+      "WARNING: at least one of QHULL_INCLUDE_DIRS or QHULL_LIBRARIES is false so setting PL_HAVE_QHULL to OFF."
       )
     set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
   endif(QHULL_FOUND)
