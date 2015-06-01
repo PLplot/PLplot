@@ -1114,7 +1114,7 @@ void setup_page( PLmDev *mf_dev, PLStream *pls )
 //--------------------------------------------------------------------------
 void plreadmetafile( char *infile )
 {
-    PDFstrm          *plm;
+    PDFstrm          *plm = NULL;
     PLStream         mf_pls;
     PLmDev           mf_dev;
     PLmIndex         index;
