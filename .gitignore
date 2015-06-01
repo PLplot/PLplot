@@ -25,3 +25,7 @@ build/
 # file but which are currently undocumented.
 *.flc
 tmp/
+
+# Ignore Mac OS X generated file/directory attribute storage files
+\.DS_Store
+\._\.DS_Store

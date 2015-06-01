@@ -274,6 +274,9 @@ set(CPACK_SOURCE_GENERATOR TGZ)
 set(CPACK_SOURCE_IGNORE_FILES
   "\\\\#.*$"
   "~$"
+  # Ignore Mac OS X generated file/directory attribute storage files.
+  "\\\\.DS_Store"
+  "\\\\._\\\\.DS_Store"
   "^${PROJECT_SOURCE_DIR}.*/\\\\.git/"
   "^${PROJECT_SOURCE_DIR}/old/"
   "^${PROJECT_SOURCE_DIR}/sys/mac"
