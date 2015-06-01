@@ -303,7 +303,7 @@ enum _plm_status read_entry( PDFstrm *plm,
     U_SHORT          x;
     float            f;
     enum _plm_status rc;
-    int pdf_rc;
+    int pdf_rc = 0;
 
     switch ( from_type )
     {
