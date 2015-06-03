@@ -408,9 +408,17 @@ if(NOT WIN32_OR_CYGWIN)
   endif(NOT MATH_LIB)
 endif(NOT WIN32_OR_CYGWIN)
 
+# Temporary workaround for language support that is required
+# for all language bindings.
+include(language_support)
+
+# C++ language support and binding
+include(c++)
+
 # =======================================================================
 # pkg-config support as well as macros to put link flags in standard
 # *.pc (pkg-config) form as well as standard fullpath form used by cmake.
+# Must come after c++ is enabled (just above).
 # =======================================================================
 include(pkg-config)
 
@@ -465,17 +473,7 @@ option(DEFAULT_NO_BINDINGS
 OFF
 )
 
-# Need to define CMAKE_PLATFORM_INFO_DIR for all CMake versions less than 2.8.10
-if(NOT CMAKE_PLATFORM_INFO_DIR)
-  set(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
-  message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
-endif(NOT CMAKE_PLATFORM_INFO_DIR)
-
-# Temporary workaround for language support that is required.
-include(language_support)
-
-# Individual language support.
-include(c++)
+# Individual language support (beyond C and C++)
 include(fortran)
 include(java)
 include(python)

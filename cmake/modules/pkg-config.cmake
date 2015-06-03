@@ -64,6 +64,26 @@ if(PKG_CONFIG_EXECUTABLE)
 
   set(PKG_CONFIG_ENV PKG_CONFIG_PATH="${_pkg_config_path}")
 
+  # Figure out C++ special library support for traditional build system by
+  # copying CMake's knowledge of those libraries (held in the CMake lists,
+  # CMAKE_CXX_IMPLICIT_LINK_LIBRARIES and CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES)
+  # for the C++ compiler chosen by the user.
+  set(cxx_compiler_library_pathname_list)
+  if(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES)
+    foreach(cmake_cxx_implicit_link_library ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
+      if(cmake_cxx_implicit_link_library)
+	unset(library_pathname CACHE)
+	find_library(library_pathname ${cmake_cxx_implicit_link_library} HINTS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES})
+	if(library_pathname)
+	  list(APPEND cxx_compiler_library_pathname_list ${library_pathname})
+	else(library_pathname)
+	  message(STATUS "WARNING: could not find special C++ library ${cmake_cxx_implicit_link_library} anywhere in CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES = ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES}")
+	endif(library_pathname)
+      endif(cmake_cxx_implicit_link_library)
+    endforeach(cmake_cxx_implicit_link_library ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
+  endif(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES)
+  message(STATUS "cxx_compiler_library_pathname_list = ${cxx_compiler_library_pathname_list}")
+
 else(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - not found")
   message(STATUS
@@ -356,7 +376,9 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
     endif(PC_LONG_NAME MATCHES "^ ")
 
     # Transform PC_LINK_FLAGS from list of libraries to the standard pkg-config form.
+    #message(STATUS "input PC_LINK_FLAGS = ${PC_LINK_FLAGS}")
     pkg_config_link_flags(PC_LINK_FLAGS "${PC_LINK_FLAGS}")
+    #message(STATUS "pkg-config form of PC_LINK_FLAGS = ${PC_LINK_FLAGS}")
     if(NON_TRANSITIVE)
       set(PC_PRIVATE_LINK_FLAGS ${PC_LINK_FLAGS})
     else(NON_TRANSITIVE)

@@ -351,4 +351,4 @@ string(REGEX REPLACE ";" " "
 #message("libplplot_COMPILE_FLAGS = ${libplplot_COMPILE_FLAGS}")
 
 # Configure pkg-config *.pc file corresponding to libplplot
-pkg_config_file("c" "" " Core C library" "plplot" "${libplplot_COMPILE_FLAGS}" "${libplplot_LINK_FLAGS}")
+pkg_config_file("c" "" " Core C library" "plplot" "${libplplot_COMPILE_FLAGS}" "${libplplot_LINK_FLAGS};${cxx_compiler_library_pathname_list}")
