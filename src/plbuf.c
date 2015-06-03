@@ -63,6 +63,8 @@ static void     rdbuf_text_unicode( PLINT op, PLStream *pls );
 static void     rdbuf_fill( PLStream *pls );
 static void     rdbuf_swin( PLStream *pls );
 static void     rdbuf_di( PLStream *pls );
+static void     rdbuf_setsub( PLStream *pls );
+static void     rdbuf_ssub( PLStream *pls );
 
 //--------------------------------------------------------------------------
 // Plplot internal interface to the plot buffer
@@ -150,6 +152,8 @@ plbuf_bop( PLStream *pls )
     wr_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
     wr_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
     wr_data( pls, &( pls->curcmap ), sizeof ( pls->curcmap ) );
+    wr_data( pls, &pls->nsubx, sizeof ( pls->nsubx ) );
+    wr_data( pls, &pls->nsuby, sizeof ( pls->nsuby ) );
 
     // Save all the other state parameters via the plbuf_state function
     plbuf_state( pls, PLSTATE_CMAP0 );
@@ -158,6 +162,41 @@ plbuf_bop( PLStream *pls )
     plbuf_state( pls, PLSTATE_FILL );
     plbuf_state( pls, PLSTATE_CHR );
     plbuf_state( pls, PLSTATE_SYM );
+}
+
+//--------------------------------------------------------------------------
+//
+// plbuf_setsub()
+//
+// Set the subpage. Required to carry out commands which apply to just one
+// sub page such as plclear
+//--------------------------------------------------------------------------
+
+void
+plbuf_setsub( PLStream * pls )
+{
+    dbug_enter( "plbuf_setsub" );
+
+    wr_command( pls, (U_CHAR) SETSUB );
+    wr_data( pls, &pls->cursub, sizeof ( pls->cursub ) );
+}
+
+//--------------------------------------------------------------------------
+//
+// plbuf_ssub()
+//
+// Set the number of subpages. Required to carry out commands which apply to
+// just one sub page such as plclear
+//--------------------------------------------------------------------------
+
+void
+plbuf_ssub( PLStream * pls )
+{
+    dbug_enter( "plbuf_setsub" );
+
+    wr_command( pls, (U_CHAR) SSUB );
+    wr_data( pls, &pls->nsubx, sizeof ( pls->nsubx ) );
+    wr_data( pls, &pls->nsuby, sizeof ( pls->nsuby ) );
 }
 
 //--------------------------------------------------------------------------
@@ -602,6 +641,8 @@ rdbuf_bop( PLStream *pls )
     rd_data( pls, &( pls->icol1 ), sizeof ( pls->icol1 ) );
     rd_data( pls, &( pls->curcolor ), sizeof ( pls->curcolor ) );
     rd_data( pls, &( pls->curcmap ), sizeof ( pls->curcmap ) );
+    rd_data( pls, &( pls->nsubx ), sizeof ( pls->nsubx ) );
+    rd_data( pls, &( pls->nsuby ), sizeof ( pls->nsuby ) );
 
     // We need to read the colormaps that were stored by plbuf_bop
     // now because when plP_state is used to set the color, a wrong
@@ -672,6 +713,33 @@ rdbuf_bop( PLStream *pls )
     }
 
     plP_bop();
+}
+
+//--------------------------------------------------------------------------
+// rdbuf_setsub()
+//
+// set the subpage
+//--------------------------------------------------------------------------
+
+static void
+rdbuf_setsub( PLStream *pls )
+{
+    rd_data( pls, (void *) ( &pls->cursub ), sizeof ( pls->cursub ) );
+    plP_setsub();
+}
+
+//--------------------------------------------------------------------------
+// rdbuf_ssub()
+//
+// set the subpage number of subpages
+//--------------------------------------------------------------------------
+
+static void
+rdbuf_ssub( PLStream *pls )
+{
+    rd_data( pls, (void *) ( &pls->nsubx ), sizeof ( pls->nsubx ) );
+    rd_data( pls, (void *) ( &pls->nsuby ), sizeof ( pls->nsuby ) );
+    c_plssub( pls->nsubx, pls->nsuby );
 }
 
 //--------------------------------------------------------------------------
@@ -1325,6 +1393,14 @@ plbuf_control( PLStream *pls, U_CHAR c )
 
     case DRIVER_INTERFACE:
         rdbuf_di( pls );
+        break;
+
+    case SETSUB:
+        rdbuf_setsub( pls );
+        break;
+
+    case SSUB:
+        rdbuf_ssub( pls );
         break;
 
     // Obsolete commands, left here to maintain compatibility with previous

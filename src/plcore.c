@@ -3582,6 +3582,9 @@ c_plssub( PLINT nx, PLINT ny )
 //AWI	plP_eop();
 //      plP_bop();
     }
+    //write the sub pages to the buffer if required
+    if ( plsc->plbuf_write )
+        plbuf_ssub( plsc );
 }
 
 // Set the device (keyword) name

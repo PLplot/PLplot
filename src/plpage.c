@@ -23,6 +23,7 @@
 //!
 
 #include "plplotP.h"
+#include "drivers.h"
 
 //--------------------------------------------------------------------------
 //! Advance to subpage "page" or to the next page if "page" = 0.
@@ -201,6 +202,9 @@ plP_setsub( void )
     plsc->sppyma = plP_dcpcy( plsc->spdyma );
 
     plP_sclp( plsc->sppxmi, plsc->sppxma, plsc->sppymi, plsc->sppyma );
+
+    if ( plsc->plbuf_write )
+        plbuf_setsub( plsc );
 }
 
 //--------------------------------------------------------------------------

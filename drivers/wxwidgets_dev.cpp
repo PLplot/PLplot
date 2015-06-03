@@ -867,6 +867,7 @@ wxFont wxPLDevice::GetFont( PLUNICODE fci, PLFLT scaledFontSize )
 //--------------------------------------------------------------------------
 void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
 {
+    return;
     if ( !m_dc && !m_outputMemoryMap.isValid() )
         return;
 
