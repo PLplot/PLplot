@@ -108,15 +108,34 @@
 # Copyright 2004-2009 Kitware, Inc.
 # Copyright 2007-2009 Miguel A. Figueroa-Villanueva <miguelf at ieee dot org>
 #
-# Distributed under the OSI-approved BSD License (the "License");
-# see accompanying file Copyright.txt for details.
-#
-# This software is distributed WITHOUT ANY WARRANTY; without even the
-# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-# See the License for more information.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 
+# * Redistributions of source code must retain the above copyright
+#   notice, this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+#   notice, this list of conditions and the following disclaimer in the
+#   documentation and/or other materials provided with the distribution.
+# 
+# * Neither the names of Kitware, Inc., the Insight Software Consortium,
+#   nor the names of their contributors may be used to endorse or promote
+#   products derived from this software without specific prior written
+#   permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #=============================================================================
-# (To distribute this file outside of CMake, substitute the full
-#  License text for the above reference.)
 
 #
 # FIXME: check this and provide a correct sample usage...
@@ -229,13 +248,12 @@ else()
 endif()
 
 #=====================================================================
+# Determine whether unix or win32 paths should be used
 #=====================================================================
-if(WIN32 AND NOT CYGWIN AND NOT MSYS)
+if(WIN32 AND NOT CYGWIN AND NOT MSYS AND NOT CMAKE_CROSSCOMPILING)
   set(wxWidgets_FIND_STYLE "win32")
 else()
-  if(UNIX OR MSYS)
-    set(wxWidgets_FIND_STYLE "unix")
-  endif()
+  set(wxWidgets_FIND_STYLE "unix")
 endif()
 
 #=====================================================================
@@ -461,6 +479,8 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
       D:/
       ENV ProgramFiles
     PATH_SUFFIXES
+      wxWidgets-3.0.2
+      wxWidgets-3.0.1
       wxWidgets-3.0.0
       wxWidgets-2.9.5
       wxWidgets-2.9.4
@@ -503,22 +523,13 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
     set(wxWidgets_LIB_DIR "wxWidgets_LIB_DIR-NOTFOUND"
         CACHE PATH "Cleared." FORCE)
   endif()
-  #include(CMakeDetermineCCompiler)
-  #message(STATUS "CMAKE_CROSSCOMPILING = ${CMAKE_CROSSCOMPILING}")
-  #message(STATUS "CMAKE_C_COMPILER = ${CMAKE_C_COMPILER}")
-  #message(STATUS "MSVC_C_ARCHITECTURE_ID = ${MSVC_C_ARCHITECTURE_ID}")
-  #message(STATUS "MSVC_CXX_ARCHITECTURE_ID = ${MSVC_CXX_ARCHITECTURE_ID}")
-  #message(STATUS "CMAKE_CL_64 = ${CMAKE_CL_64}")
-  #message(STATUS "LIB = $ENV{LIB}")
-  #message(STATUS "GENERATOR = ${CMAKE_GENERATOR}")
+
   if(WX_ROOT_DIR)
     # Select one default tree inside the already determined wx tree.
     # Prefer static/shared order usually consistent with build
     # settings.
     if(MINGW)
       set(WX_LIB_DIR_PREFIX gcc)
-    #The following should check for compiling 64 bit with nmake or VS
-    #Check for use of 64 bit NMake Makefile generator or a Visual Studio XX Win64 generator
     elseif(CMAKE_CL_64)
       set(WX_LIB_DIR_PREFIX vc_x64)
     #unfortunately the above doesn't work on my system - can't find why, but workaround below
@@ -581,7 +592,7 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
 
     if(WX_LIB_DIR)
       # If building shared libs, define WXUSINGDLL to use dllimport.
-      if(WX_LIB_DIR MATCHES ".*[dD][lL][lL].*")
+      if(WX_LIB_DIR MATCHES "[dD][lL][lL]")
         set(wxWidgets_DEFINITIONS WXUSINGDLL)
         DBG_MSG_V("detected SHARED/DLL tree WX_LIB_DIR=${WX_LIB_DIR}")
       endif()
@@ -689,7 +700,7 @@ else()
       if(_wx_result EQUAL 0)
         foreach(_opt_name debug static unicode universal)
           string(TOUPPER ${_opt_name} _upper_opt_name)
-          if(_wx_selected_config MATCHES ".*${_opt_name}.*")
+          if(_wx_selected_config MATCHES "${_opt_name}")
             set(wxWidgets_DEFAULT_${_upper_opt_name} ON)
           else()
             set(wxWidgets_DEFAULT_${_upper_opt_name} OFF)
