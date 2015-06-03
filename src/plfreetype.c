@@ -63,9 +63,7 @@
 //
 //
 
-#if !defined ( WIN32 ) || defined ( __GNUC__ )
-  #include <unistd.h>
-#else
+#if defined ( WIN32 ) || defined ( _WIN32 ) || !defined ( __GNUC__ )
   #define F_OK    1
   #include <stdio.h>
 int access( char *filename, int flag )
@@ -82,6 +80,8 @@ int access( char *filename, int flag )
         return 1;
     }
 }
+#else
+  #include <unistd.h>
 #endif
 
 #define makeunixslash( b )    do { char *I; for ( I = b; *I != 0; *I++ ) if ( *I == '\\' ) *I = '/';} while ( 0 )
