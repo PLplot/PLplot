@@ -76,8 +76,15 @@ if(PKG_CONFIG_EXECUTABLE)
 	find_library(library_pathname ${cmake_cxx_implicit_link_library} HINTS ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES})
 	if(library_pathname)
 	  list(APPEND cxx_compiler_library_pathname_list ${library_pathname})
+	elseif(EXISTS ${cmake_cxx_implicit_link_library})
+	  # Sometimes ${cmake_cxx_implicit_link_library} is the name of an existing file.
+          # In this case assume it is the name of a library.
+	  list(APPEND cxx_compiler_library_pathname_list ${cmake_cxx_implicit_link_library})
 	else(library_pathname)
-	  message(STATUS "WARNING: could not find special C++ library ${cmake_cxx_implicit_link_library} anywhere in CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES = ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES}")
+	  message(STATUS "WARNING: could not find special C++ library ${cmake_cxx_implicit_link_library} as an
+   existing full pathname of a library or anywhere in CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES =
+   ${CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES}.
+   So ${cmake_cxx_implicit_link_library} has been ignored in forming cxx_compiler_library_pathname_list")
 	endif(library_pathname)
       endif(cmake_cxx_implicit_link_library)
     endforeach(cmake_cxx_implicit_link_library ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
