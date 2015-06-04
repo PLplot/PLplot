@@ -36,6 +36,20 @@
 
 class wxPLplotFrame;
 
+class FontGrabber
+{
+public:
+    FontGrabber();
+    wxFont GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underlined );
+    bool lastWasCached( ){ return m_lastWasCached; }
+private:
+    wxFont    m_prevFont;
+    PLUNICODE m_prevFci;
+    PLFLT     m_prevScaledFontSize;
+    bool      m_prevUnderlined;
+    bool      m_lastWasCached;
+};
+
 // base device class
 class wxPLDevice
 {
@@ -59,11 +73,10 @@ public:
     void Flush( PLStream* pls );
 
 private:
-    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel );
-    void DrawTextSection( char* utf8_string, PLFLT baseFontSize, PLFLT yOffset, bool drawText );
+    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, bool &underlined );
+    void DrawTextSection( char* utf8_string, PLFLT baseFontSize, PLFLT yOffset, bool underlined, bool drawText );
     void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
     void SetupMemoryMap();
-    wxFont GetFont( PLUNICODE fci, PLFLT scaledFontSize );
 
     //The DC we will draw on if given by the user
     wxDC *m_dc;
@@ -89,12 +102,15 @@ private:
 
     // font variables
     static const int m_max_string_length = 500;
-    wxFont           m_font;
-    bool             m_underlined;
-    //PLFLT            m_fontSize;
-    //PLFLT            m_fontScale;
-    wxCoord   m_textWidth, m_textHeight, m_textDescent, m_textLeading;
-    PLUNICODE m_fci;
+    //bool m_underlined;
+    FontGrabber      m_fontGrabber;
+    wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
+    PLUNICODE        m_fci;
+
+    //memory of previous single character string (likely plot point)
+    PLUNICODE m_prevSingleCharString;
+    PLINT     m_prevSingleCharStringWidth;
+    PLINT     m_prevSingleCharStringHeight;
 
     //Text positioning related variables
     wxCoord m_superscriptHeight;          //distance between superscript top and baseline
