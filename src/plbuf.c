@@ -493,16 +493,26 @@ plbuf_esc( PLStream *pls, PLINT op, void *ptr )
         break;
 
     case PLESC_IMPORT_BUFFER:
-        buffer = (plbuffer *) ptr;
-        if ( buffer->size > pls->plbuf_buffer_size )
-        {
-            pls->plbuf_buffer      = realloc( pls->plbuf_buffer, buffer->size );
-            pls->plbuf_buffer_size = buffer->size;
-        }
-        if ( !pls->plbuf_buffer )
-            plexit( "plbuf_esc: Failed to reallocate buffer during PLESC_SET_BUFFER case" );
+    {
+        size_t extraSize;
+        buffer    = (plbuffer *) ptr;
+        extraSize = buffer->size > pls->plbuf_top ? buffer->size - pls->plbuf_top : 0;
+        check_buffer_size( pls, extraSize );
         memcpy( pls->plbuf_buffer, buffer->buffer, buffer->size );
         pls->plbuf_top = buffer->size;
+        break;
+    }
+
+    case PLESC_APPEND_BUFFER:
+        buffer = (plbuffer *) ptr;
+        check_buffer_size( pls, buffer->size );
+        memcpy( (char *) ( pls->plbuf_buffer ) + pls->plbuf_top, buffer->buffer, buffer->size );
+        pls->plbuf_top += buffer->size;
+        break;
+
+    case PLESC_FLUSH_REMAINING_BUFFER:
+        plFlushBuffer( pls, FALSE, (size_t) ( -1 ) );
+        break;
 
 #if 0
     // These are a no-op.  They just need an entry in the buffer.
@@ -1284,6 +1294,22 @@ rdbuf_text_unicode( PLINT op, PLStream *pls )
 void
 plRemakePlot( PLStream *pls )
 {
+    plFlushBuffer( pls, TRUE, (size_t) ( -1 ) );
+}
+
+//--------------------------------------------------------------------------
+// plFlushBuffer( )
+//
+// Flush the current contents of the buffer to the plot either restarting
+// from the beginning of the buffer or continuing from the current read
+// location. Setting amount to -1 will flush to the end, setting it to
+// another value flushes until at least that amount has been flushed then
+// stops
+//--------------------------------------------------------------------------
+
+void
+plFlushBuffer( PLStream *pls, PLBOOL restart, size_t amount )
+{
     U_CHAR c;
     PLINT  plbuf_write;
     PLINT  cursub;
@@ -1305,8 +1331,7 @@ plRemakePlot( PLStream *pls )
     {
         // State saving variables
         PLStream *save_current_pls;
-
-        pls->plbuf_readpos = 0;
+        size_t   finalReadPos;
 
         // Save state
 
@@ -1319,16 +1344,22 @@ plRemakePlot( PLStream *pls )
         // Make the current plot stream the one passed by the caller
         plsc = pls;
 
-        //end any current page on the destination stream.
-        //This will do nothing if we are already at the end
-        //of a page.
-        //Doing this ensures that the first bop command in the
-        //buffer actually does something
-        plP_eop();
+        if ( restart )
+        {
+            pls->plbuf_readpos = 0;
 
-        // Restore the
+            //end any current page on the destination stream.
+            //This will do nothing if we are already at the end
+            //of a page.
+            //Doing this ensures that the first bop command in the
+            //buffer actually does something
+            plP_eop();
+        }
+
+        finalReadPos = amount == (size_t) ( -1 ) ? pls->plbuf_top : MIN( pls->plbuf_readpos + amount, pls->plbuf_top );
+
         // Replay the plot command buffer
-        while ( rd_command( pls, &c ) )
+        while ( rd_command( pls, &c ) && pls->plbuf_readpos < finalReadPos )
         {
             plbuf_control( pls, c );
         }
@@ -1352,7 +1383,8 @@ plRemakePlot( PLStream *pls )
 static void
 plbuf_control( PLStream *pls, U_CHAR c )
 {
-    static U_CHAR c_old = 0;
+    static U_CHAR c_old   = 0;
+    static U_CHAR esc_old = 0;
 
     dbug_enter( "plbuf_control" );
 
@@ -1388,6 +1420,7 @@ plbuf_control( PLStream *pls, U_CHAR c )
         break;
 
     case ESCAPE:
+        esc_old = *( (U_CHAR *) ( pls->plbuf_buffer ) + pls->plbuf_readpos );
         rdbuf_esc( pls );
         break;
 

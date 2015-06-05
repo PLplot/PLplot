@@ -56,6 +56,7 @@ public:
     void RenewPlot();                               //!< Redo plot and update dc
     void SetDC( wxDC *dc );                         //!< Set a new dc to write to
     void ImportBuffer( void *buffer, size_t size ); //!< Import a buffer of plplot commands
+    void AppendBuffer( void *buffer, size_t size ); //!< Append a buffer of plplot commands
     void SetFixedAspectRatio( bool fixed );         //!< Set Fixed aspect ratio of the plot
     bool IsValid();
 

@@ -129,6 +129,15 @@ void wxPLplotstream::ImportBuffer( void *buffer, size_t size )
     RenewPlot();
 }
 
+void wxPLplotstream::AppendBuffer( void *buffer, size_t size )
+{
+    plbuffer buf;
+    buf.buffer = buffer;
+    buf.size   = size;
+    cmd( PLESC_APPEND_BUFFER, &buf );
+    cmd( PLESC_FLUSH_REMAINING_BUFFER, NULL );
+}
+
 void wxPLplotstream::SetFixedAspectRatio( bool fixed )
 {
     PLBOOL f = fixed ? 1 : 0;

@@ -360,8 +360,10 @@ void wxPlFrame::SetPageAndUpdate( size_t page )
     //valid instruction) then send that buffer to the driver and replot the page.
     if ( m_bufferValidFlags[m_viewingPage] && m_plottedBufferAmount < m_pageBuffers[m_viewingPage].size() )
     {
+        //GetStream()->ImportBuffer( &m_pageBuffers[m_viewingPage][0], m_pageBuffers[m_viewingPage].size() );
+        GetStream()->AppendBuffer( &m_pageBuffers[m_viewingPage][m_plottedBufferAmount],
+            m_pageBuffers[m_viewingPage].size() - m_plottedBufferAmount );
         m_plottedBufferAmount = m_pageBuffers[m_viewingPage].size();
-        GetStream()->ImportBuffer( &m_pageBuffers[m_viewingPage][0], m_pageBuffers[m_viewingPage].size() );
         Refresh();
     }
 }

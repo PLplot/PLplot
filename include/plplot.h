@@ -207,59 +207,61 @@ typedef void*    PLPointer;
 // Some of these are obsolete but are retained in order to process
 // old metafiles
 
-#define PLESC_SET_RGB            1      // obsolete
-#define PLESC_ALLOC_NCOL         2      // obsolete
-#define PLESC_SET_LPB            3      // obsolete
-#define PLESC_EXPOSE             4      // handle window expose
-#define PLESC_RESIZE             5      // handle window resize
-#define PLESC_REDRAW             6      // handle window redraw
-#define PLESC_TEXT               7      // switch to text screen
-#define PLESC_GRAPH              8      // switch to graphics screen
-#define PLESC_FILL               9      // fill polygon
-#define PLESC_DI                 10     // handle DI command
-#define PLESC_FLUSH              11     // flush output
-#define PLESC_EH                 12     // handle Window events
-#define PLESC_GETC               13     // get cursor position
-#define PLESC_SWIN               14     // set window parameters
-#define PLESC_DOUBLEBUFFERING    15     // configure double buffering
-#define PLESC_XORMOD             16     // set xor mode
-#define PLESC_SET_COMPRESSION    17     // AFR: set compression
-#define PLESC_CLEAR              18     // RL: clear graphics region
-#define PLESC_DASH               19     // RL: draw dashed line
-#define PLESC_HAS_TEXT           20     // driver draws text
-#define PLESC_IMAGE              21     // handle image
-#define PLESC_IMAGEOPS           22     // plimage related operations
-#define PLESC_PL2DEVCOL          23     // convert PLColor to device color
-#define PLESC_DEV2PLCOL          24     // convert device color to PLColor
-#define PLESC_SETBGFG            25     // set BG, FG colors
-#define PLESC_DEVINIT            26     // alternate device initialization
-#define PLESC_GETBACKEND         27     // get used backend of (wxWidgets) driver - no longer used
-#define PLESC_BEGIN_TEXT         28     // get ready to draw a line of text
-#define PLESC_TEXT_CHAR          29     // render a character of text
-#define PLESC_CONTROL_CHAR       30     // handle a text control character (super/subscript, etc.)
-#define PLESC_END_TEXT           31     // finish a drawing a line of text
-#define PLESC_START_RASTERIZE    32     // start rasterized rendering
-#define PLESC_END_RASTERIZE      33     // end rasterized rendering
-#define PLESC_ARC                34     // render an arc
-#define PLESC_GRADIENT           35     // render a gradient
-#define PLESC_MODESET            36     // set drawing mode
-#define PLESC_MODEGET            37     // get drawing mode
-#define PLESC_FIXASPECT          38     // set or unset fixing the aspect ratio of the plot
-#define PLESC_IMPORT_BUFFER      39     // set the contents of the buffer to a specified byte string
+#define PLESC_SET_RGB                   1  // obsolete
+#define PLESC_ALLOC_NCOL                2  // obsolete
+#define PLESC_SET_LPB                   3  // obsolete
+#define PLESC_EXPOSE                    4  // handle window expose
+#define PLESC_RESIZE                    5  // handle window resize
+#define PLESC_REDRAW                    6  // handle window redraw
+#define PLESC_TEXT                      7  // switch to text screen
+#define PLESC_GRAPH                     8  // switch to graphics screen
+#define PLESC_FILL                      9  // fill polygon
+#define PLESC_DI                        10 // handle DI command
+#define PLESC_FLUSH                     11 // flush output
+#define PLESC_EH                        12 // handle Window events
+#define PLESC_GETC                      13 // get cursor position
+#define PLESC_SWIN                      14 // set window parameters
+#define PLESC_DOUBLEBUFFERING           15 // configure double buffering
+#define PLESC_XORMOD                    16 // set xor mode
+#define PLESC_SET_COMPRESSION           17 // AFR: set compression
+#define PLESC_CLEAR                     18 // RL: clear graphics region
+#define PLESC_DASH                      19 // RL: draw dashed line
+#define PLESC_HAS_TEXT                  20 // driver draws text
+#define PLESC_IMAGE                     21 // handle image
+#define PLESC_IMAGEOPS                  22 // plimage related operations
+#define PLESC_PL2DEVCOL                 23 // convert PLColor to device color
+#define PLESC_DEV2PLCOL                 24 // convert device color to PLColor
+#define PLESC_SETBGFG                   25 // set BG, FG colors
+#define PLESC_DEVINIT                   26 // alternate device initialization
+#define PLESC_GETBACKEND                27 // get used backend of (wxWidgets) driver - no longer used
+#define PLESC_BEGIN_TEXT                28 // get ready to draw a line of text
+#define PLESC_TEXT_CHAR                 29 // render a character of text
+#define PLESC_CONTROL_CHAR              30 // handle a text control character (super/subscript, etc.)
+#define PLESC_END_TEXT                  31 // finish a drawing a line of text
+#define PLESC_START_RASTERIZE           32 // start rasterized rendering
+#define PLESC_END_RASTERIZE             33 // end rasterized rendering
+#define PLESC_ARC                       34 // render an arc
+#define PLESC_GRADIENT                  35 // render a gradient
+#define PLESC_MODESET                   36 // set drawing mode
+#define PLESC_MODEGET                   37 // get drawing mode
+#define PLESC_FIXASPECT                 38 // set or unset fixing the aspect ratio of the plot
+#define PLESC_IMPORT_BUFFER             39 // set the contents of the buffer to a specified byte string
+#define PLESC_APPEND_BUFFER             40 // append the given byte string to the buffer
+#define PLESC_FLUSH_REMAINING_BUFFER    41 // flush the remaining buffer e.g. after new data was appended
 
 // Alternative unicode text handling control characters
-#define PLTEXT_FONTCHANGE        0      // font change in the text stream
-#define PLTEXT_SUPERSCRIPT       1      // superscript in the text stream
-#define PLTEXT_SUBSCRIPT         2      // subscript in the text stream
-#define PLTEXT_BACKCHAR          3      // back-char in the text stream
-#define PLTEXT_OVERLINE          4      // toggle overline in the text stream
-#define PLTEXT_UNDERLINE         5      // toggle underline in the text stream
+#define PLTEXT_FONTCHANGE               0 // font change in the text stream
+#define PLTEXT_SUPERSCRIPT              1 // superscript in the text stream
+#define PLTEXT_SUBSCRIPT                2 // subscript in the text stream
+#define PLTEXT_BACKCHAR                 3 // back-char in the text stream
+#define PLTEXT_OVERLINE                 4 // toggle overline in the text stream
+#define PLTEXT_UNDERLINE                5 // toggle underline in the text stream
 
 // image operations
-#define ZEROW2B                  1
-#define ZEROW2D                  2
-#define ONEW2B                   3
-#define ONEW2D                   4
+#define ZEROW2B                         1
+#define ZEROW2D                         2
+#define ONEW2B                          3
+#define ONEW2D                          4
 
 // Window parameter tags
 
