@@ -75,7 +75,18 @@ if(ENABLE_ada)
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed
   # at the Ada language support level and not worked around here.
-  if(USE_DLL_SUBDIRECTORY)
+
+  # N.B. On the Cygwin platform the copy_if_different below would fail
+  # because on that platform a very different library naming
+  # convention is used. Furthermore, it appears the naming convention
+  # for the plplotada library on Cygwin is consistent, i.e.,
+  # dll/cygplplot-13.dll and dll/cygplplotada-2.dll for the plplot and
+  # plplotada libraries (presumably because UNIX is true on Cygwin).
+  # Therefore, there is no need, in any case, for any
+  # naming-convention workarounds for that platform.  Thus,
+  # specifically exclude Cygwin below.
+
+  if(USE_DLL_SUBDIRECTORY AND NOT CYGWIN)
     add_custom_command(
       TARGET plplotada POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different 
@@ -83,7 +94,7 @@ if(ENABLE_ada)
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll
       VERBATIM
       )
-  endif(USE_DLL_SUBDIRECTORY)
+  endif(USE_DLL_SUBDIRECTORY AND NOT CYGWIN)
 
   if(NON_TRANSITIVE)
     target_link_libraries(plplotada PRIVATE ${GNAT_LIB})
