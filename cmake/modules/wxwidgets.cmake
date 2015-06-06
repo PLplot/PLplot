@@ -69,6 +69,36 @@ if(PLD_wxwidgets OR PLD_wxpng)
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(PLD_wxwidgets OR PLD_wxpng)
+  # Determine wxwidgets version in cross-platform way.
+  set(check_wxwidgets_version_source "
+#include <wx/version.h>
+int main(void)
+{
+// True if version is 2.8.12 or later....
+#if  wxCHECK_VERSION(2, 8, 12)
+// Return success
+  return 0;
+#else
+// Return failure
+  return 1;
+#endif
+}
+")
+  include(CheckCSourceRuns)
+  set(CMAKE_REQUIRED_INCLUDES ${wxWidgets_INCLUDE_DIRS})
+  check_c_source_runs("${check_wxwidgets_version_source}" WX_VERSION_LARGE_ENOUGH)
+  unset(CMAKE_REQUIRED_INCLUDES)
+  if(NOT WX_VERSION_LARGE_ENOUGH)
+    message(STATUS
+      "WARNING: wxWidgets version is less than 2.8.12 so "
+      "setting all wxwidgets devices to OFF."
+      )
+    set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+    set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
+  endif(NOT WX_VERSION_LARGE_ENOUGH)
+endif(PLD_wxwidgets OR PLD_wxpng)
+
+if(PLD_wxwidgets OR PLD_wxpng)
   string(REGEX REPLACE ";" " -I" 
     wxwidgets_COMPILE_FLAGS
     "-I${wxWidgets_INCLUDE_DIRS}"
