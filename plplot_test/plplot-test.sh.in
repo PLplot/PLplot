@@ -193,6 +193,7 @@ if [ "$interactive" = "on" -o "$interactive_octave" = "on" ] ; then
     PLD_wxwidgets=@PLD_wxwidgets@
     PLD_xcairo=@PLD_xcairo@
     PLD_xwin=@PLD_xwin@
+	PLD_wingdi=@PLD_wingdi@
 
     eval pld_device='$'PLD_$device
     if [ -z "$pld_device" ] ; then

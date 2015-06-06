@@ -184,6 +184,7 @@ set(DRIVERS_DEVICE_LIST
   #"wxpng:wxwidgets:OFF:F:ON"
   "xfig:xfig:ON:F:ON"
   "xwin:xwin:ON:I:OFF"
+  "wingdi:wingdi:OFF:I:OFF"
   )
 
 # PRESET_DEFAULT keeps track of whether the DEFAULT value has been

@@ -214,6 +214,7 @@ set(PLD_wingcc @PLD_wingcc@)
 set(PLD_wxwidgets @PLD_wxwidgets@)
 set(PLD_xcairo @PLD_xcairo@)
 set(PLD_xwin @PLD_xwin@)
+set(PLD_wingdi @PLD_wingdi@)
 
 # Set external devices that are needed to build certain examples.
 set(PLD_extcairo @PLD_extcairo@)

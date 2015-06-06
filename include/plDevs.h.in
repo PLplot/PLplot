@@ -83,5 +83,7 @@
 #cmakedefine PLD_wxwidgets
 #cmakedefine PLD_xfig
 #cmakedefine PLD_xwin
+#cmakedefine PLD_wingdi
+>>>>>>> Implement a new Windows GDI (wingdi) driver
 
 #endif  // __PLDEVS_H__

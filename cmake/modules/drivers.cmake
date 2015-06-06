@@ -98,6 +98,7 @@ include(wingcc)
 include(aqt)
 include(wxwidgets)
 include(pdf)
+include(wingdi)
 
 # Finalize device options.
 include(drivers-finish)
