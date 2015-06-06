@@ -46,10 +46,9 @@
 // wxwidgets headers
 #include <wx/dir.h>
 
-
-
 // std and driver headers
 #include <cmath>
+#include <limits>
 
 
 //--------------------------------------------------------------------------
