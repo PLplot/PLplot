@@ -775,6 +775,21 @@ else()
       DOC "Location of wxWidgets library configuration provider binary (wx-config)."
       ONLY_CMAKE_FIND_ROOT_PATH
       )
+    #On Cygwin wx-config is actually called wx-config-3.0 or wx-config-2.8 - rather
+    #frustrating really as this will need updating every release.
+    if(NOT wxWidgets_CONFIG_EXECUTABLE)
+      find_program(wxWidgets_CONFIG_EXECUTABLE wx-config-3.0
+        DOC "Location of wxWidgets library configuration provider binary (wx-config)."
+        ONLY_CMAKE_FIND_ROOT_PATH
+        )
+    endif(NOT wxWidgets_CONFIG_EXECUTABLE)
+    if(NOT wxWidgets_CONFIG_EXECUTABLE)
+      find_program(wxWidgets_CONFIG_EXECUTABLE wx-config-2.8
+        DOC "Location of wxWidgets library configuration provider binary (wx-config)."
+        ONLY_CMAKE_FIND_ROOT_PATH
+        )
+    endif(NOT wxWidgets_CONFIG_EXECUTABLE)
+
 
     if(wxWidgets_CONFIG_EXECUTABLE)
       set(wxWidgets_FOUND TRUE)
