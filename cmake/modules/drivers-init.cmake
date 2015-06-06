@@ -219,7 +219,7 @@ set(DRIVERS_DEVICE_LIST
   "tk:tk:ON:I:OFF"
   "tkwin:tkwin:ON:E:OFF"
   "wingcc:wingcc:ON:I:OFF"
-  "wxwidgets:wxwidgets:OFF:I:OFF"
+  "wxwidgets:wxwidgets:ON:I:OFF"
   "wxpng:wxwidgets:OFF:F:ON"
   "xfig:xfig:ON:F:ON"
   "xwin:xwin:ON:I:OFF"
