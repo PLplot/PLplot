@@ -413,7 +413,8 @@ plbuf_text( PLStream *pls, EscText *text )
     {
         U_SHORT len;
 
-        len = strlen( text->string );
+        // len + 1 to copy the NUL termination
+        len = strlen( text->string ) + 1;
         wr_data( pls, &len, sizeof ( len ) );
         if ( len > 0 )
             wr_data( pls, (void *) text->string, sizeof ( char ) * len );
@@ -1225,6 +1226,13 @@ rdbuf_text( PLStream *pls )
     rd_data( pls, &text.refy, sizeof ( text.refy ) );
     rd_data( pls, &text.font_face, sizeof ( text.font_face ) );
 
+    // Initialize text arrays to NULL.  This protects drivers that
+    // determine the text representation by looking at which members
+    // are set.
+    text.unicode_array_len = 0;
+    text.unicode_array     = NULL;
+    text.string            = NULL;
+
     // Read in the text
     if ( pls->dev_unicode )
     {
@@ -1243,10 +1251,6 @@ rdbuf_text( PLStream *pls )
                 (void **) ( &text.unicode_array ),
                 sizeof ( PLUNICODE ) * text.unicode_array_len );
         }
-        else
-        {
-            text.unicode_array = NULL;
-        }
     }
     else
     {
@@ -1261,10 +1265,6 @@ rdbuf_text( PLStream *pls )
                 pls,
                 (void **) ( &text.string ),
                 sizeof ( char ) * len );
-        }
-        else
-        {
-            text.string = NULL;
         }
     }
 
