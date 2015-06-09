@@ -230,7 +230,14 @@ plbuf_line( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     xpl[1] = x2a;
     ypl[0] = y1a;
     ypl[1] = y2a;
+	
+	//store the clipping information first
+    wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    wr_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    wr_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 
+	//then the line data
     wr_data( pls, xpl, sizeof ( short ) * 2 );
     wr_data( pls, ypl, sizeof ( short ) * 2 );
 }
@@ -247,9 +254,17 @@ plbuf_polyline( PLStream *pls, short *xa, short *ya, PLINT npts )
     dbug_enter( "plbuf_polyline" );
 
     wr_command( pls, (U_CHAR) POLYLINE );
+	
+	//store the clipping information first
+    wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    wr_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    wr_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 
+	//then the number of points
     wr_data( pls, &npts, sizeof ( PLINT ) );
 
+	//then the point data
     wr_data( pls, xa, sizeof ( short ) * (size_t) npts );
     wr_data( pls, ya, sizeof ( short ) * (size_t) npts );
 }
@@ -766,7 +781,14 @@ rdbuf_line( PLStream *pls )
     PLINT npts = 2;
 
     dbug_enter( "rdbuf_line" );
+	
+	//read the clipping data first
+    rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    rd_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    rd_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 
+	//then the line data
     // Use the "no copy" version because the endpoint data array does
     // not need to persist outside of this function
     rd_data_no_copy( pls, (void **) &xpl, sizeof ( short ) * (size_t) npts );
@@ -788,9 +810,17 @@ rdbuf_polyline( PLStream *pls )
     PLINT npts;
 
     dbug_enter( "rdbuf_polyline" );
+	
+	//read the clipping data first
+    rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    rd_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    rd_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 
+	//then the number of points
     rd_data( pls, &npts, sizeof ( PLINT ) );
 
+	//then the line data
     // Use the "no copy" version because the node data array does
     // not need to persist outside of ths function
     rd_data_no_copy( pls, (void **) &xpl, sizeof ( short ) * (size_t) npts );
