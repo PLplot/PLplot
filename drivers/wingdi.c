@@ -38,6 +38,7 @@
 #include "drivers.h"
 #include "plevent.h"
 
+#define ARRAY_SIZE(x) ((sizeof x) / (sizeof *x))
 #define INITIAL_HEAP_SIZE 16384     // Initial size of heap in bytes
 
 // Enumerated type for the device states
@@ -52,10 +53,21 @@ enum _dev_state
 
 // Enumerated type used to indicate the device type
 // for updating page metrics
-enum _page_device
+enum _dev_type
 {
-	PAGE_WINDOW,      // Setup page metrics for a window
-	PAGE_PRINTER,     // Setup page metrics for a printer
+	DEV_WINDOW,      // Setup page metrics for a window
+	DEV_PRINTER      // Setup page metrics for a printer
+};
+
+// Data structure used to track the fonts that are created.
+// This avoids the overhead of recreating the font everytime
+// a string is rendered.
+struct _font_entry 
+{
+	LOGFONT info;
+	HDC     hdc;                // Device context used to create font
+	HFONT   font;
+	struct _font_entry *next;   // Next entry in the font list
 };
 
 // Device-specific info per stream
@@ -64,14 +76,17 @@ struct wingdi_Dev
 	//
 	// Members that are common to interactive GUI devices
 	//
+	PLFLT        xdpmm;      // Device x pixel per mm
+	PLFLT        ydpmm;      // Device y pixel per mm
 	PLFLT        xscale;	 // Virtual x pixels to device pixel scaling
 	PLFLT		 yscale;	 // Virtual y pixels to device pixel scaling
     PLINT        width;      // Window Width (which can change)
     PLINT        height;     // Window Height
 
+	enum _dev_type  type;     
 	enum _dev_state state;      // Current state of the device
 	enum _dev_state prev_state; // Previous state of the device
-							      // Used to restore after redraw
+							    // Used to restore after redraw
 								  
     //
     // WIN32 API variables
@@ -100,6 +115,9 @@ static HMENU plot_popup_menu;
 // Private heap used to allocate memory for the driver
 static HANDLE wingdi_heap;
 
+// Font tracking list
+struct _font_entry *font_list = NULL;
+
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_wingdi( PLDispatchTable *pdt );
 void plD_init_wingdi( PLStream * );
 
@@ -109,15 +127,17 @@ void plD_init_wingdi( PLStream * );
 static void plD_line_wingdi( PLStream *, short, short, short, short );
 static void plD_polyline_wingdi( PLStream *, short *, short *, PLINT );
 static void plD_fill_polygon_wingdi( PLStream *pls );
+static void plD_clear_wingdi( PLStream *pls, 
+							  PLINT x1, PLINT y1, PLINT x2, PLINT y2 );
 static void plD_eop_wingdi( PLStream * );
 static void plD_bop_wingdi( PLStream * );
 static void plD_tidy_wingdi( PLStream * );
 static void plD_state_wingdi( PLStream *, PLINT );
 static void plD_esc_wingdi( PLStream *, PLINT, void * );
 
-#define PopupPrint       0x08A1
-#define PopupNextPage    0x08A2
-#define PopupQuit        0x08A3
+#define CommandPrint       0x08A1
+#define CommandNextPage    0x08A2
+#define CommandQuit        0x08A3
 
 void plD_dispatch_init_wingdi( PLDispatchTable *pdt )
 {
@@ -175,14 +195,15 @@ BusyCursor( struct wingdi_Dev * dev )
 //      The flag variable is used to tell the function if it is updating
 //      from the printer (1) or screen (0).
 //--------------------------------------------------------------------------
-static void UpdatePageMetrics( PLStream *pls, enum _page_device dev_type )
+static void UpdatePageMetrics( PLStream *pls, enum _dev_type dev_type )
 {
     struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
 
-    if ( dev_type == PAGE_PRINTER )
+	dev->type = dev_type;
+    if ( dev_type == DEV_PRINTER )
     {
 		// Get the page size from the printer
-        dev->width  = GetDeviceCaps( dev->hdc, HORZRES ); 
+        dev->width  = GetDeviceCaps( dev->hdc, HORZRES );
         dev->height = GetDeviceCaps( dev->hdc, VERTRES );
     }
     else
@@ -192,14 +213,18 @@ static void UpdatePageMetrics( PLStream *pls, enum _page_device dev_type )
         GetClientRect( dev->hwnd, &rect );
         dev->width  = rect.right;
         dev->height = rect.bottom;
-		
+
 		pldebug( "wingdi", "Page size [%d %d] [%d %d]\n", 
 				 rect.left, rect.top, 
 				 rect.right, rect.bottom );
     }
 
-	dev->xscale = (PLFLT) PIXELS_X / dev->width;
-	dev->yscale = (PLFLT) PIXELS_Y / dev->height;
+	// We need the -1 because some of the coordinates
+	// are signed and PIXEL_X/PIXEL_Y can exceed the
+	// maximum value of a positive signed integer, which
+	// results in a negative value.
+	dev->xscale = (PLFLT) (PIXELS_X - 1) / dev->width;
+	dev->yscale = (PLFLT) (PIXELS_Y - 1) / dev->height;
 
     pldebug( "wingdi", "Scale = (%f %f) (FLT)\n",
 			 dev->xscale, dev->yscale );
@@ -209,20 +234,31 @@ static void UpdatePageMetrics( PLStream *pls, enum _page_device dev_type )
 	// HORZSIZE/VERTSIZE = Width/Height in millimeters
 	pldebug( "wingdi", "Original xdpi = %f ydpi = %f\n",
 			 pls->xdpi, pls->ydpi );
-	pls->xdpi = GetDeviceCaps( dev->hdc, HORZRES ) 
-				/ GetDeviceCaps( dev->hdc, HORZSIZE ) * 25.4;
-	pls->ydpi = GetDeviceCaps( dev->hdc, VERTRES ) 
-				/ GetDeviceCaps( dev->hdc, VERTSIZE ) * 25.4;
+	//dev->xdpmm = GetDeviceCaps( dev->hdc, HORZRES ) 
+	//			/ GetDeviceCaps( dev->hdc, HORZSIZE );
+	//pls->xdpi = dev->xdpmm * 25.4;
+	//dev->ydpmm = GetDeviceCaps( dev->hdc, VERTRES ) 
+	//			/ GetDeviceCaps( dev->hdc, VERTSIZE );
+	//pls->ydpi = dev->ydpmm * 25.4;
+	pls->xdpi = GetDeviceCaps( dev->hdc, LOGPIXELSX );
+	dev->xdpmm = pls->xdpi / 25.4;
+	pls->ydpi = GetDeviceCaps( dev->hdc, LOGPIXELSY );
+	dev->ydpmm = pls->ydpi / 25.4;
+	
 	pldebug( "wingdi", "New xdpi = %f ydpi = %f\n",
 			 pls->xdpi, pls->ydpi );
-	
+	pldebug( "wingdi", "Windows reports xdpi = %d ydpi = %d\n",
+			 GetDeviceCaps( dev->hdc, LOGPIXELSX ),
+			 GetDeviceCaps( dev->hdc, LOGPIXELSY )) ;
+
 	// Set the mapping from pixels to mm
     plP_setpxl( dev->xscale * pls->xdpi / 25.4, 
 				dev->yscale * pls->ydpi / 25.4 );
 
-	// Set the physical limits for this device
-    plP_setphy( 0, PIXELS_X, 
-				0, PIXELS_Y );
+	// Set the physical limits for this device.  See the
+	// previous comment about the -1.
+    plP_setphy( 0, PIXELS_X - 1, 
+				0, PIXELS_Y - 1);
 }
 
 //--------------------------------------------------------------------------
@@ -239,52 +275,50 @@ static void PrintPage( PLStream *pls )
     DOCINFO    docinfo;
     struct wingdi_Dev *push;      // A copy of the entire structure
 
-    //    Reset the docinfo structure to 0 and set it's fields up
-    //    This structure is used to supply a name to the print queue
+    // Reset the docinfo structure to 0 and set it's fields up
+    // This structure is used to supply a name to the print queue
     ZeroMemory( &docinfo, sizeof ( docinfo ) );
     docinfo.cbSize      = sizeof ( docinfo );
     docinfo.lpszDocName = _T( "Plplot Page" );
 
-    //   Reset out printer structure to zero and initialise it
+    // Reset out printer structure to zero and initialise it
     ZeroMemory( &Printer, sizeof ( PRINTDLG ) );
     Printer.lStructSize = sizeof ( PRINTDLG );
     Printer.hwndOwner   = dev->hwnd;
     Printer.Flags       = PD_NOPAGENUMS | PD_NOSELECTION | PD_RETURNDC;
     Printer.nCopies     = 1;
 
-    //   Call the printer dialog function.
-    //   If the user has clicked on "Print", then we will continue
-    //   processing and print out the page.
+    // Call the printer dialog function.
+    // If the user has clicked on "Print", then we will continue
+    // processing and print out the page.
     if ( PrintDlg( &Printer ) != 0 )
     {
-        //  Before doing anything, we will take some backup copies
-        //  of the existing values for page size and the like, because
-        //  all we are going to do is a quick and dirty modification
-        //  of plplot's internals to match the new page size and hope
-        //  it all works out ok. After that, we will manip the values,
-        //  and when all is done, restore them.
+        // Before doing anything, we will take some backup copies
+        // of the existing values for page size and the like, because
+        // all we are going to do is a quick and dirty modification
+        // of plplot's internals to match the new page size and hope
+        // it all works out ok. After that, we will manip the values,
+        // and when all is done, restore them.
 		push = HeapAlloc( wingdi_heap, 0, sizeof ( struct wingdi_Dev ) );
         if ( push != NULL )
         {
             BusyCursor( dev );
+			
+			// Save all the state information of this device
             memcpy( push, dev, sizeof ( struct wingdi_Dev ) );
 
 			// Change the device context to the printer
             dev->hdc = Printer.hDC;
-            UpdatePageMetrics( pls, PAGE_PRINTER );
+            UpdatePageMetrics( pls, DEV_PRINTER );
 
-            //
-            //   Now the stuff that actually does the printing !!
-            //
+            // Now the stuff that actually does the printing !!
             StartDoc( dev->hdc, &docinfo );
             plRemakePlot( pls );
             EndDoc( dev->hdc );
 
-            //
-            //  Now to undo everything back to what it was for the screen
-            //
+            // Now to undo everything back to what it was for the screen
             memcpy( dev, push, sizeof ( struct wingdi_Dev ) );
-			UpdatePageMetrics( pls, PAGE_WINDOW );
+			UpdatePageMetrics( pls, DEV_WINDOW );
 
             HeapFree( wingdi_heap, 0, push );
             NormalCursor( dev );
@@ -342,16 +376,16 @@ wait_for_user_input( PLStream *pls )
         case WM_COMMAND:
             switch ( LOWORD( msg.wParam ) )
             {
-            case PopupPrint:
-                pldebug( "wingdi", "PopupPrint\n" );
+            case CommandPrint:
+                pldebug( "wingdi", "CommandPrint\n" );
                 PrintPage( pls );
                 break;
-            case PopupNextPage:
-                pldebug( "wingdi", "PopupNextPage\n" );
+            case CommandNextPage:
+                pldebug( "wingdi", "CommandNextPage\n" );
                 dev->state = DEV_ACTIVE;
                 break;
-            case PopupQuit:
-                pldebug( "wingdi", "PopupQuit\n" );
+            case CommandQuit:
+                pldebug( "wingdi", "CommandQuit\n" );
                 dev->state = DEV_ACTIVE;
                 PostQuitMessage( 0 );
                 break;
@@ -477,7 +511,7 @@ static void Resize( PLStream *pls )
 		// Check to make sure it isn't just minimised (i.e. zero size)
         if ( ( rect.right > 0 ) && ( rect.bottom > 0 ) )
         {
-			UpdatePageMetrics( pls, PAGE_WINDOW );
+			UpdatePageMetrics( pls, DEV_WINDOW );
 			
 			// Save the current state because remaking the plot
 			// will change it when the BOP is executed.
@@ -673,8 +707,18 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
             //    supposedly this executes faster than creating a brush and
             //    filling a rectangle - go figure ?
             //
-			// NOTE:  Should GetUpdateRect be used instead?
-			GetClientRect( dev->hwnd, &rect );
+			if( dev->type == DEV_WINDOW) 
+			{
+				// NOTE:  Should GetUpdateRect be used instead?
+				GetClientRect( dev->hwnd, &rect );				
+			}
+			else
+			{
+				rect.left = 0;
+				rect.top = 0;
+				rect.right = GetDeviceCaps( dev->hdc, HORZRES );
+				rect.bottom = GetDeviceCaps( dev->hdc, VERTRES );
+			}
             previous_color = SetBkColor( dev->hdc, 
 			                             RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
             ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &rect, _T( "" ), 0, 0 );
@@ -752,9 +796,9 @@ wingdi_module_initialize( void )
     // Create the popup menu used by the plot window
     //
     plot_popup_menu = CreatePopupMenu();
-    AppendMenu( plot_popup_menu, MF_STRING, PopupPrint, _T( "Print" ) );
-    AppendMenu( plot_popup_menu, MF_STRING, PopupNextPage, _T( "Next Page" ) );
-    AppendMenu( plot_popup_menu, MF_STRING, PopupQuit, _T( "Quit" ) );	
+    AppendMenu( plot_popup_menu, MF_STRING, CommandPrint, _T( "Print" ) );
+    AppendMenu( plot_popup_menu, MF_STRING, CommandNextPage, _T( "Next Page" ) );
+    AppendMenu( plot_popup_menu, MF_STRING, CommandQuit, _T( "Quit" ) );	
 
 	//
 	// Create a private heap to use for memory allocation.
@@ -773,20 +817,30 @@ wingdi_module_initialize( void )
 
 static void wingdi_module_cleanup( void )
 {
+	struct _font_entry *ptr;
+	
 	wingdi_streams--;
 	if(wingdi_streams > 0) return;
-	
-    DeleteMenu( plot_popup_menu, PopupPrint, 0 );
-    DeleteMenu( plot_popup_menu, PopupNextPage, 0 );
-    DeleteMenu( plot_popup_menu, PopupQuit, 0 );
+
+    DeleteMenu( plot_popup_menu, CommandPrint, 0 );
+    DeleteMenu( plot_popup_menu, CommandNextPage, 0 );
+    DeleteMenu( plot_popup_menu, CommandQuit, 0 );
     DestroyMenu( plot_popup_menu );
-	
-	if( HeapDestroy(wingdi_heap) == 0 ) {
-		plexit("wingdi: Failed to destroy heap");
-	}
 	
 	if( ! UnregisterClass(plot_window_class_name, plot_window_class.hInstance) ) {
 		plexit("wingdi: Failed to unregister window class");
+	}
+	
+	while( font_list != NULL )
+	{
+		ptr = font_list;
+		DeleteObject( ptr->font );
+		font_list = ptr->next;
+		HeapFree( wingdi_heap, 0, ptr );
+	}	
+	
+	if( HeapDestroy(wingdi_heap) == 0 ) {
+		plexit("wingdi: Failed to destroy heap");
 	}
 }
 
@@ -827,13 +881,15 @@ plD_init_wingdi( PLStream *pls )
 	
     pls->icol0 = 1;                   // Set a fall back pen color in case user doesn't
 
-    pls->termin      = 1;             // interactive device
-    pls->graphx      = GRAPHICS_MODE; // No text mode for this driver (at least for now, might add a console window if I ever figure it out and have the inclination)
-    pls->dev_fill0   = 1;             // driver can do solid area fills
-    pls->dev_xor     = 1;             // driver supports xor mode
-    pls->dev_clear   = 0;             // driver does not support clear - what is the proper API?
-    pls->dev_dash    = 0;             // driver can not do dashed lines (yet)
-    pls->plbuf_write = 1;             // driver uses the buffer for redraws
+    pls->termin       = 1;             // interactive device
+    pls->graphx       = GRAPHICS_MODE; // No text mode for this driver
+    pls->dev_fill0    = 1;             // driver can do solid area fills
+    pls->dev_xor      = 1;             // driver supports xor mode
+    pls->dev_clear    = 1;             // driver supports clear
+	pls->dev_text     = 1;             // driver supports text
+	pls->dev_gradient = 0;			   // driver not support gradient fills
+    pls->dev_dash     = 0;             // driver can not do dashed lines (yet)
+    pls->plbuf_write  = 1;             // driver uses the buffer for redraws
 
     if ( !pls->colorset )
         pls->color = 1;
@@ -903,27 +959,11 @@ plD_init_wingdi( PLStream *pls )
     ShowWindow( dev->hwnd, SW_SHOWDEFAULT );
     SetForegroundWindow( dev->hwnd );
 
-    // Set up the DPI etc...
-    if ( pls->xdpi <= 0 ) // Get DPI from windows
-    {
-        plspage( GetDeviceCaps( dev->hdc, HORZRES ) 
-				 / GetDeviceCaps( dev->hdc, HORZSIZE ) * 25.4,
-                 GetDeviceCaps( dev->hdc, VERTRES ) 
-				 / GetDeviceCaps( dev->hdc, VERTSIZE ) * 25.4, 
-				 0, 0, 0, 0 );
-    }
-    else
-    {
-        pls->ydpi = pls->xdpi;        // Set X and Y dpi's to the same value
-    }
-
-    //
     //  Now we have to find out, from windows, just how big our drawing area is
     //  when we specified the page size earlier on, that includes the borders,
     //  title bar etc... so now that windows has done all its initialisations,
     //  we will ask how big the drawing area is, and tell plplot
-    //
-	UpdatePageMetrics( pls, PAGE_WINDOW );
+	UpdatePageMetrics( pls, DEV_WINDOW );
 	plspage( pls->xdpi, pls->ydpi, 0, 0, 0, 0 );
 
     // Set fill rule.
@@ -1010,7 +1050,6 @@ plD_polyline_wingdi( PLStream *pls, short *xa, short *ya, PLINT npts )
 //
 // Fill polygon described in points pls->dev_x[] and pls->dev_y[].
 //--------------------------------------------------------------------------
-
 static void
 plD_fill_polygon_wingdi( PLStream *pls )
 {
@@ -1019,39 +1058,620 @@ plD_fill_polygon_wingdi( PLStream *pls )
     POINT      *points = NULL;
 	HGDIOBJ    previous_brush, previous_pen;
     HPEN       hpen;
-    HBRUSH     fillbrush;  // brush used for fills
+    HBRUSH     fillbrush;
 
-    if ( pls->dev_npts > 0 )
+	// Do nothing if there are no points
+    if ( pls->dev_npts == 0 ) return;
+	
+    points = HeapAlloc( wingdi_heap, HEAP_ZERO_MEMORY, 
+						(size_t) pls->dev_npts * sizeof ( POINT ) );
+
+    if ( points == NULL )
+		plexit( "Could not allocate memory to \"plD_fill_polygon_wingdi\"\n" );
+
+    for ( i = 0; i < pls->dev_npts; i++ )
     {
-        points = HeapAlloc( wingdi_heap, HEAP_ZERO_MEMORY, 
-						    (size_t) pls->dev_npts * sizeof ( POINT ) );
-
-        if ( points == NULL )
-            plexit( "Could not allocate memory to \"plD_fill_polygon_wingdi\"\n" );
-
-        for ( i = 0; i < pls->dev_npts; i++ )
-        {
-            points[i].x = (PLINT) ( pls->dev_x[i] / dev->xscale );
-            points[i].y = (PLINT) ( dev->height - ( pls->dev_y[i] / dev->yscale ) );
-        }
-
-		// Create a brush for the fill and a pen for the border
-        fillbrush = CreateSolidBrush( dev->color );
-        hpen      = CreatePen( PS_SOLID, 1, dev->color );
-        previous_brush = SelectObject( dev->hdc, fillbrush );
-        previous_pen   = SelectObject( dev->hdc, hpen );
-		
-		// Draw the filled polygon
-        Polygon( dev->hdc, points, pls->dev_npts );
-		
-		// Restore the previous objects and delete
-        SelectObject( dev->hdc, previous_brush );
-        DeleteObject( fillbrush );
-        SelectObject( dev->hdc, previous_pen );
-        DeleteObject( hpen );
-		
-        HeapFree( wingdi_heap, 0, points );
+        points[i].x = (PLINT) ( pls->dev_x[i] / dev->xscale );
+        points[i].y = (PLINT) ( dev->height - ( pls->dev_y[i] / dev->yscale ) );
     }
+
+	// Create a brush for the fill and a pen for the border
+    fillbrush = CreateSolidBrush( dev->color );
+    hpen      = CreatePen( PS_SOLID, 1, dev->color );
+    previous_brush = SelectObject( dev->hdc, fillbrush );
+    previous_pen   = SelectObject( dev->hdc, hpen );
+		
+	// Draw the filled polygon
+    Polygon( dev->hdc, points, pls->dev_npts );
+		
+	// Restore the previous objects and delete
+    SelectObject( dev->hdc, previous_brush );
+    DeleteObject( fillbrush );
+    SelectObject( dev->hdc, previous_pen );
+    DeleteObject( hpen );
+		
+    HeapFree( wingdi_heap, 0, points );
+}
+
+//--------------------------------------------------------------------------
+// plD_clear_wingdi()
+//
+// Clears the client area of a window.
+//--------------------------------------------------------------------------
+static void
+plD_clear_wingdi( PLStream *pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
+{
+    struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
+	COLORREF previous_color;
+	RECT rect;
+
+	if( x1 >= 0 && y1 >= 0 && x2 >= 0 && y2 >= 0 )
+	{
+		rect.left = (LONG) ( x1 / dev->xscale );
+		rect.top = (LONG) ( dev->height - ( y1 / dev->yscale ) );
+		rect.right = (LONG) ( x2 / dev->xscale );
+		rect.bottom = (LONG) ( dev->height - ( y2 / dev->yscale ) );
+	}
+	else
+	{
+		// Invalid coordinates, erase the entire area
+		GetClientRect( dev->hwnd, &rect );
+	}
+
+    //    This is a new "High Speed" way of filling in the background.
+    //    supposedly this executes faster than creating a brush and
+    //    filling a rectangle - go figure ?
+    previous_color = SetBkColor( dev->hdc, 
+								 RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
+    ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &rect, _T( "" ), 0, 0 );
+    SetBkColor( dev->hdc, previous_color );
+}
+
+struct _text_state {
+	// Font information
+	PLFLT font_height;
+	LONG font_weight;
+	BYTE font_charset;
+	BYTE font_pitch;
+	BYTE font_family;
+	BYTE italic;	
+
+	// Font transformation
+	PLFLT rotation, shear, stride;
+	
+	// Super/subscript state
+	PLINT level; 		      // super/subscript level
+	PLFLT old_sscale, sscale;
+    PLFLT old_soffset, soffset;
+};
+
+// set_font()
+//
+// Sets the current font of the plot window device context to one that
+// best matches the desired attributes.  The previous font is returned so
+// that the caller can restore the original font.  This routine caches the
+// fonts that it creates to improve performance.
+static HFONT
+set_font( struct wingdi_Dev * dev, 
+		  LONG font_height, LONG escapement, 
+		  LONG weight, BYTE italic,
+		  BYTE charset,
+		  BYTE pitch, BYTE family )
+{
+	struct _font_entry *ptr = font_list;
+	
+	for( ptr = font_list; ptr != NULL; ptr = ptr->next )
+	{
+		if(
+			ptr->info.lfHeight == font_height
+			&& ptr->info.lfEscapement == escapement
+			&& ptr->info.lfWeight == weight
+			&& ptr->info.lfItalic == italic
+			&& ptr->info.lfCharSet == charset
+			&& ptr->info.lfPitchAndFamily == ( pitch | family )
+			&& ptr->hdc == dev->hdc
+		)
+		{
+			return SelectObject( dev->hdc, ptr->font );
+		}
+	}
+
+	// Allocate space for this font entry
+	ptr = HeapAlloc( wingdi_heap, 0, sizeof ( struct _font_entry ) );
+	
+	// The font was not found, thus we need to create it
+	ptr->info.lfHeight = font_height;
+	ptr->info.lfWidth = 0;
+	ptr->info.lfEscapement = escapement;  // Escapement angle
+	ptr->info.lfOrientation = 0;          // Orientation angle
+	ptr->info.lfWeight = weight;          // Font weight (e.g. bold)
+	ptr->info.lfItalic = italic;
+	ptr->info.lfUnderline = 0;
+	ptr->info.lfStrikeOut = 0;
+	ptr->info.lfCharSet = charset;
+	ptr->info.lfOutPrecision = OUT_OUTLINE_PRECIS;
+	ptr->info.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+	ptr->info.lfQuality = DEFAULT_QUALITY;
+	ptr->info.lfPitchAndFamily = pitch | family;
+	ptr->font = CreateFontIndirect( &(ptr->info) );
+	ptr->hdc = dev->hdc;
+	ptr->next = NULL;
+	
+	if( ptr->font == NULL )
+	{
+		plwarn( "wingdi:  Unable to create a font, using default\n");
+		HeapFree( wingdi_heap, 0, ptr );
+		return NULL;
+	}
+	else 
+	{
+		if( font_list != NULL ) 
+		{
+			ptr->next = font_list;
+			font_list = ptr;
+		}
+		else
+		{
+			font_list = ptr;
+		}
+	}
+	
+	return SelectObject( dev->hdc, ptr->font );
+}
+
+// Find the corresponding ANSI value for a given 
+// Hershey character
+static const char hershey_to_ansi_lookup[] =
+{ 
+	   0,    0,   0,   0,   0,   0,   0,   0,    0,    0, //  0
+	   0,    0,   0,   0,   0,   0,   0,   0,    0,    0, // 10
+	   0,    0,   0,   0,   0,   0,   0,   0,    0,    0, // 20
+	   0,    0,   0, '!', '"', '#', '$', '%',	 '&', '\'', // 30
+	 '(',  ')', '*', '+', ',', '-', '.', '/',  '0',  '1', // 40
+	 '2',  '3', '4', '5', '6', '7', '8', '9',  ':',  ';', // 50
+	 '<',  '=', '>', '?', '@', 'A', 'B', 'C',  'D',  'E', // 60
+	 'F',  'G', 'H', 'I', 'J', 'K', 'L', 'M',  'N',  'O', // 70
+	 'P',  'Q', 'R', 'S', 'T', 'U', 'V', 'W',  'X',  'Y', // 80
+	 'Z',  '[','\\', ']', '^', '_', '`', 'a',  'b',  'c', // 90
+	 'd',  'e', 'f', 'g', 'h', 'i', 'j', 'k',  'l',  'm', // 100
+	 'n',  'o', 'p', 'q', 'r', 's', 't', 'u',  'v',  'w', // 110
+	 'x',  'y', 'z', '{', '|', '}', '~',   0,   0,    0, // 120
+};
+static const char hershey_to_symbol_lookup[] =
+{
+	   0, 0xB7, 0x2B, 0x2A,   0,   0,   0,   0,    0,    0, //  0
+	   0,    0,    0,    0,   0,   0,   0,   0,    0,    0, // 10
+	   0,    0,    0,    0,   0,   0,   0,   0, 0xAC, 0xAE, // 20
+	0xAD, 0xAF
+};
+
+static void
+process_text_escape( struct wingdi_Dev *dev, EscText *args, 
+					 int *i, char *buffer, int *j,
+					 struct _text_state *state )
+{
+	int val;
+	
+	// Get the next character to determine what the escape action is
+	switch( args->string[++(*i)] )
+	{
+	case 'u': // Superscript or end of subscript
+		plP_script_scale( TRUE, &state->level,
+						  &state->old_sscale, &state->sscale, 
+						  &state->old_soffset, &state->soffset );
+						  
+		set_font( dev, 
+				 (LONG) (state->font_height * state->sscale), 
+				 (LONG) (state->rotation),
+				 state->font_weight, 
+				 state->italic, 
+				 state->font_charset,
+				 state->font_pitch, state->font_family );
+		break;
+	case 'd': // Subscript or end of superscript
+		plP_script_scale( FALSE, &state->level,
+						  &state->old_sscale, &state->sscale, 
+						  &state->old_soffset, &state->soffset );
+						  
+		set_font( dev, 
+				 (LONG) (state->font_height * state->sscale), 
+				 (LONG) (state->rotation),
+				 state->font_weight, 
+				 state->italic, 
+				 state->font_charset,
+				 state->font_pitch, state->font_family );
+		break;
+	case 'f': // Font switch
+		switch( args->string[++(*i)] )
+		{
+		case 'n':
+			state->font_family = FF_SWISS;
+			state->italic = 0;
+			state->font_charset = ANSI_CHARSET;
+			break;
+		case 'r':
+			state->font_family = FF_ROMAN;
+			state->italic = 0;
+			state->font_charset = ANSI_CHARSET;
+			break;
+		case 'i':
+			state->font_family = FF_ROMAN;
+			state->italic = 1;
+			state->font_charset = ANSI_CHARSET;
+			break;
+		case 's':
+			state->font_family = FF_SCRIPT;
+			state->italic = 0;
+			state->font_charset = ANSI_CHARSET;
+			break;
+		}
+		set_font( dev, 
+				 (LONG) (state->font_height * state->sscale), 
+				 (LONG) (state->rotation),
+				 state->font_weight, 
+				 state->italic, 
+				 state->font_charset,
+				 state->font_pitch, state->font_family );
+		break;
+	case 'g': // Greek character font
+		state->font_family = FF_DONTCARE;
+		state->italic = 0;
+		state->font_charset = GREEK_CHARSET;
+		
+		set_font( dev, 
+				 (LONG) (state->font_height * state->sscale), 
+				 (LONG) (state->rotation),
+				 state->font_weight, 
+				 state->italic, 
+				 state->font_charset,
+				 state->font_pitch, state->font_family );
+		break;
+	case '(': // Hershey character specified
+		sscanf( args->string + *i, "%d",  &val );
+		
+		if( val > 0 && val < ARRAY_SIZE(hershey_to_ansi_lookup) 
+			&& hershey_to_ansi_lookup[val] != 0 )
+		{			
+			buffer[(*j)++] = hershey_to_ansi_lookup[val];
+		}
+		else
+		{
+			plwarn( "Unsupported hershey character\n" );
+			// Substitute a bullet so something is displayed
+			buffer[(*j)++] = 0x95;   
+		}
+		*i += 4;
+		break;
+	case '[]': // Unicode character specified
+		plwarn( "Unicode characters are not supported\n" );
+		*i += 4;
+		break;		
+	default:
+		plwarn( "Ignoring escape code %c\n" );
+		//plwarn( "Ignoring escape code %c\n", args->string[i-1] );
+	}
+}
+
+//--------------------------------------------------------------------------
+// plD_text_wingdi()
+//
+// Renders text on the string.  Support non-Unicode and Unicode strings.
+//--------------------------------------------------------------------------
+static void
+plD_text_wingdi( PLStream * pls, EscText * args )
+{
+	struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
+	struct _text_state state;
+	PLFLT cos_rot, sin_rot;
+	PLFLT cos_shear, sin_shear;
+	int   rx, ry;
+	UINT  halign, valign;
+	HFONT font = NULL, prev_font = NULL;
+	COLORREF prev_color;
+	int prev_bkmode;
+	int text_segments;
+	char esc;
+	
+	// Get the escape character used to format strings
+	plgesc( &esc );
+
+	// Determine the font characteristics
+	state.italic = 0;
+	state.font_weight = FW_NORMAL;
+	state.font_charset = ANSI_CHARSET;
+	state.font_pitch = DEFAULT_PITCH;
+	state.font_family = FF_DONTCARE;
+	switch( pls->cfont )
+	{
+    case 1:
+		// normal = (medium, upright, sans serif)
+		state.font_family = FF_SWISS;
+		break;
+    case 2:
+		// roman = (medium, upright, serif)
+		state.font_family = FF_ROMAN;
+        break;
+    case 3:
+	    // italic = (medium, italic, serif)
+		state.font_family = FF_ROMAN;
+		state.italic = 1;
+		break;
+    case 4:	
+		// script = (medium, upright, script)
+		state.font_family = FF_SCRIPT;
+		break;
+	}
+	
+    // Calculate the font size from mm to device units
+	state.font_height = pls->chrht * dev->ydpmm;
+
+    plRotationShear( args->xform, 
+					 &state.rotation, &state.shear, &state.stride );
+    state.rotation -= pls->diorot * PI / 2.0;					 
+    cos_rot   = (PLFLT) cos( state.rotation );
+    sin_rot   = (PLFLT) sin( state.rotation );
+    cos_shear = (PLFLT) cos( state.shear );
+    sin_shear = (PLFLT) sin( state.shear );
+	// Convert from radians to tenths of a degree, which is what
+	// CreateFont() uses
+	state.rotation = state.rotation * (180.0 / M_PI) * 10.0;
+
+	// Is the page rotated?
+	if( pls->diorot != 0) 
+	{
+		// The page is rotated.  We need to apply the page rotation because
+		// args x,y are not rotated.
+		PLFLT x, y, ox, oy;
+		PLFLT cos_theta, sin_theta;
+		
+		// Translate origin of the virtual coordinates to the midpoint
+		ox = (PLFLT)args->x - PIXELS_X / 2;
+		oy = (PLFLT)args->y - PIXELS_Y / 2;
+		
+		// Apply the orientation rotation
+		cos_theta = cos( -pls->diorot * PI / 2.0 );
+		sin_theta = sin( -pls->diorot * PI / 2.0 );
+		x = cos_theta * (PLFLT)ox - sin_theta * (PLFLT)oy;
+		y = sin_theta * (PLFLT)ox + cos_theta * (PLFLT)oy;
+
+		// Untranslate origin
+		x = x + PIXELS_X / 2;
+		y = y + PIXELS_Y / 2;
+		
+		// Convert to device coordinates
+		rx = (int) ( x / dev->xscale);
+		ry = (int) ( dev->height - ( y / dev->yscale ) );
+	}
+	else
+	{
+		rx = (int) ( args->x / dev->xscale );
+		ry = (int) ( dev->height - ( args->y / dev->yscale ) );		
+	}
+	
+    // Determine the location of the bounding rectangle relative to the
+	// reference point (bottom, top, or center)
+	// Windows draws the text within a rectangle, thus the rectangle
+	// needs to be positioned relative to specified coordinate
+    if ( args->base == 2 ) 
+	{
+		//  If base = 2, it is aligned with the top of the text box
+		valign = TA_TOP;
+	}
+    else if ( args->base == 1 )
+	{
+		//  If base = 1, it is aligned with the baseline of the text box
+		valign = TA_BOTTOM;
+    }
+	else
+	{
+		//  If base = 0, it is aligned with the center of the text box
+		valign = TA_TOP;
+		
+		// Adjust the reference point by 1/2 of the character height
+		ry -= (int) (0.5 * pls->chrht * dev->ydpmm );
+	}
+	
+    // Text justification.  Left (0.0), center (0.5) and right (1.0) 
+	// justification, which are the more common options, are supported.  
+	if( args->just < 0.499 ) 
+	{
+		// Looks left aligned
+		halign = TA_LEFT;
+	}
+	else if( args->just > 0.501 )
+	{
+		// Looks right aligned
+		halign = TA_RIGHT;
+	}
+	else
+	{
+		halign = TA_CENTER;
+	}
+
+	prev_font = set_font( dev, 
+						  (LONG)state.font_height, 
+						  (LONG)state.rotation, 
+					      state.font_weight, 
+						  state.italic, 
+						  state.font_charset,
+						  state.font_pitch, 
+						  state.font_family );
+	prev_color = SetTextColor( dev->hdc, dev->color );
+	prev_bkmode = SetBkMode( dev->hdc, TRANSPARENT );
+	
+    if ( args->unicode_array_len == 0 )
+    {
+		// Non unicode string
+		size_t i, j, len;
+		char * buffer;
+		int height = 0, width = 0;
+				
+		// Determine the string length and allocate a buffer to
+		// use as a working copy of the output string.  The passed
+		// string will always be larger than the formatted version
+		len = strlen( args->string );
+		buffer = HeapAlloc( wingdi_heap, 0, (len + 1) * sizeof ( char ) );
+		if( buffer == NULL ) 
+		{
+			plexit( "wingdi: Unable to allocate character buffer\n");
+		}
+		
+		// First we need to determine the number of text segments in the
+		// string.  Text segments are delimited by the escape characters
+		text_segments = 1;
+		state.level = 0;
+		state.sscale = 1.0;
+		for(i = j = 0; i < len + 1; i++)
+		{
+			if( args->string[i] != esc && args->string[i] != '\0' )
+			{
+				// Copy characters into the buffer to build the
+				// string segment
+				buffer[j++] = args->string[i];
+			}
+			else if( i != len && args->string[i+1] == esc)
+			{
+				// We have two escape characters in a row, which means
+				// to ignore the escape and copy the character
+				buffer[j++] = args->string[i];
+				i++;
+			}
+			else
+			{
+				if( j > 0)
+				{
+					SIZE segment_size;
+
+					// NUL terminate what we have copied so far
+					buffer[j] = '\0';
+				
+					// Determine the size of the text segment and add
+					// it to the width of the overall string
+					GetTextExtentPoint32( dev->hdc,
+										  buffer, j,
+										  &segment_size );
+										  
+					// The effect of super/subscripts on the size of the
+					// bounding box is ignored at this time.  This will result
+					// in small positional errors.
+					
+					width += segment_size.cx;
+					if( segment_size.cy > height ) height = segment_size.cy;
+				}
+				j = 0;
+				if( i != len )
+				{
+					text_segments++;
+					process_text_escape( dev, args, 
+										 &i, buffer, &j,
+										 &state );
+				}
+			}
+		}
+
+		// Output the text segments
+		if( text_segments > 1)
+		{
+			UINT save_text_align;
+
+			// We have the total width of all the text segments.  Determine
+			// the initial reference point based on the desired alignment.
+			// When rendering text, we use left alignment and adjust the reference
+			// point accordingly.
+			switch( halign )
+			{
+			case TA_LEFT:
+				break;
+			case TA_RIGHT:
+				rx -= width;
+				break;
+			case TA_CENTER:
+				rx -= (int) (cos_rot * 0.5 * (PLFLT)width);
+				ry += (int) (sin_rot * 0.5 * (PLFLT)width);
+				break;
+			}
+			save_text_align = SetTextAlign( dev->hdc, TA_LEFT | valign );
+
+			state.level = 0;
+			state.sscale = 1.0;
+			for(i = j = 0; i < len + 1; i++)
+			{
+				if( args->string[i] != esc && args->string[i] != '\0' )
+				{
+					// Copy characters into the buffer to build the
+					// string segment
+					buffer[j++] = args->string[i];
+				}
+				else if( i != len && args->string[i+1] == esc)
+				{
+					// We have two escape characters in a row, which means
+					// to ignore the escape and copy the character
+					buffer[j++] = args->string[i];
+					i++;
+				}
+				else
+				{
+					SIZE segment_size;
+					int sx, sy;
+				
+					if( j > 0 )
+					{
+						// NUL terminate what we have copied so far
+						buffer[j] = '\0';
+				
+						GetTextExtentPoint32( dev->hdc,
+											  buffer, j,
+											  &segment_size );
+						
+						// Determine the offset due to super/subscripts
+						sx = (int)( (1.0 - cos_rot) * (PLFLT)state.soffset );
+						sy = (int)( (1.0 - sin_rot) * (PLFLT)state.soffset );
+						
+						TextOut( dev->hdc, 
+								 rx + sx, 
+								 ry + sy,
+								 buffer, j );
+				
+						rx += (int)( cos_rot * (PLFLT)segment_size.cx );
+						ry -= (int)( sin_rot * (PLFLT)segment_size.cx );
+					}
+					j = 0;
+					
+					if( i != len ) 
+						process_text_escape( dev, args, 
+											 &i, buffer, &j, 
+											 &state );
+				}
+			}
+		}
+		HeapFree( wingdi_heap, 0, buffer );
+    }
+	else
+	{
+		// Unicode string
+	}
+
+	if( text_segments == 1 )
+	{
+		// Only one text segment, thus this is a simple string
+		// that can be written to the device in one step.  We 
+		// check for this because many strings are simple and
+		// this approach is faster
+		UINT save_text_align;
+		
+		save_text_align = SetTextAlign( dev->hdc, halign | valign );
+
+		TextOut( dev->hdc, 
+				 rx, ry,
+			     args->string, strlen( args->string ) );
+				 
+		SetTextAlign( dev->hdc, save_text_align );
+	}
+	
+	// Restore the previous text settings
+	if( prev_font != NULL ) SelectObject( dev->hdc, prev_font );
+	SetTextColor( dev->hdc, prev_color );
+	SetBkMode( dev->hdc, prev_bkmode );
 }
 
 void
@@ -1116,7 +1736,8 @@ plD_tidy_wingdi( PLStream *pls )
         if ( dev->bitmap != NULL )
             DeleteObject( dev->bitmap );
 
-		DestroyWindow( dev->hwnd );
+		if( dev->hwnd != NULL )
+			DestroyWindow( dev->hwnd );
 		
         free_mem( pls->dev );
 		
@@ -1173,8 +1794,21 @@ plD_esc_wingdi( PLStream *pls, PLINT op, void *ptr )
     case PLESC_FILL:
         plD_fill_polygon_wingdi( pls );
         break;
+				
+	case PLESC_CLEAR:
+		plD_clear_wingdi( pls, 
+						  pls->sppxmi, pls->sppymi,
+						  pls->sppxma, pls->sppyma );
+		break;
+		
+	case PLESC_HAS_TEXT:
+		plD_text_wingdi( pls, (EscText *) ptr );
+		break;
 
     case PLESC_DOUBLEBUFFERING:
+		// Ignore double buffering requests.  It causes problems with
+		// strip charts and most machines are fast enough that it
+		// does not make much of a difference.
         break;
 
     case PLESC_XORMOD:
