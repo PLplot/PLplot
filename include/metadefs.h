@@ -70,6 +70,7 @@
 #define DRIVER_INTERFACE    17
 #define SETSUB              18
 #define SSUB                19
+#define CLIP                20
 #define END_OF_FIELD        255
 
 // Data structures

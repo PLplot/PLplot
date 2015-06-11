@@ -61,6 +61,7 @@ static void     rdbuf_image( PLStream *pls );
 static void     rdbuf_text( PLStream *pls );
 static void     rdbuf_text_unicode( PLINT op, PLStream *pls );
 static void     rdbuf_fill( PLStream *pls );
+static void     rdbuf_clip( PLStream *pls );
 static void     rdbuf_swin( PLStream *pls );
 static void     rdbuf_di( PLStream *pls );
 static void     rdbuf_setsub( PLStream *pls );
@@ -232,10 +233,10 @@ plbuf_line( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
     ypl[1] = y2a;
 	
 	//store the clipping information first
-    wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    /*wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
     wr_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
     wr_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
-    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
+    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );*/
 
 	//then the line data
     wr_data( pls, xpl, sizeof ( short ) * 2 );
@@ -256,10 +257,10 @@ plbuf_polyline( PLStream *pls, short *xa, short *ya, PLINT npts )
     wr_command( pls, (U_CHAR) POLYLINE );
 	
 	//store the clipping information first
-    wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    /*wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
     wr_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
     wr_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
-    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
+    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );*/
 
 	//then the number of points
     wr_data( pls, &npts, sizeof ( PLINT ) );
@@ -391,10 +392,10 @@ plbuf_text( PLStream *pls, EscText *text )
 
     wr_data( pls, &pls->chrht, sizeof ( pls->chrht ) );
     wr_data( pls, &pls->diorot, sizeof ( pls->diorot ) );
-    wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    /*wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
     wr_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
     wr_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
-    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
+    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );*/
 
     // Store the text layout information
 
@@ -582,6 +583,24 @@ plbuf_fill( PLStream *pls )
     wr_data( pls, &pls->dev_npts, sizeof ( PLINT ) );
     wr_data( pls, pls->dev_x, sizeof ( short ) * (size_t) pls->dev_npts );
     wr_data( pls, pls->dev_y, sizeof ( short ) * (size_t) pls->dev_npts );
+}
+
+//--------------------------------------------------------------------------
+// plbuf_clip
+// 
+// Set the clipping limits
+//--------------------------------------------------------------------------
+void
+plbuf_clip( PLStream *pls )
+{
+	dbug_enter( "plbuf_clip" );
+	
+	wr_command( pls, (U_CHAR) CLIP );
+
+    wr_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    wr_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    wr_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    wr_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
 }
 
 //--------------------------------------------------------------------------
@@ -783,10 +802,10 @@ rdbuf_line( PLStream *pls )
     dbug_enter( "rdbuf_line" );
 	
 	//read the clipping data first
-    rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    /*rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
     rd_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
     rd_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
-    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
+    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );*/
 
 	//then the line data
     // Use the "no copy" version because the endpoint data array does
@@ -812,10 +831,10 @@ rdbuf_polyline( PLStream *pls )
     dbug_enter( "rdbuf_polyline" );
 	
 	//read the clipping data first
-    rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    /*rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
     rd_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
     rd_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
-    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
+    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );*/
 
 	//then the number of points
     rd_data( pls, &npts, sizeof ( PLINT ) );
@@ -1092,6 +1111,21 @@ rdbuf_fill( PLStream *pls )
 }
 
 //--------------------------------------------------------------------------
+//
+// rdbuf_clip()
+//
+//
+//--------------------------------------------------------------------------
+static void
+rdbuf_clip( PLStream *pls )
+{
+    rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    rd_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
+    rd_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
+    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
+}
+
+//--------------------------------------------------------------------------
 // rdbuf_image()
 //
 // .
@@ -1240,10 +1274,10 @@ rdbuf_text( PLStream *pls )
 
     rd_data( pls, &pls->chrht, sizeof ( pls->chrht ) );
     rd_data( pls, &pls->diorot, sizeof ( pls->diorot ) );
-    rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
+    /*rd_data( pls, &pls->clpxmi, sizeof ( pls->clpxmi ) );
     rd_data( pls, &pls->clpxma, sizeof ( pls->clpxma ) );
     rd_data( pls, &pls->clpymi, sizeof ( pls->clpymi ) );
-    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );
+    rd_data( pls, &pls->clpyma, sizeof ( pls->clpyma ) );*/
 
     // Read the text layout information
 
@@ -1465,6 +1499,10 @@ plbuf_control( PLStream *pls, U_CHAR c )
     case SSUB:
         rdbuf_ssub( pls );
         break;
+
+	case CLIP:
+		rdbuf_clip( pls );
+		break;
 
     // Obsolete commands, left here to maintain compatibility with previous
     // version of plot metafiles
