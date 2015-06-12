@@ -37,25 +37,15 @@ if(PLD_wingdi)
   find_library(GDI32_LIBRARY gdi32 HINTS ${MINGWLIBPATH} ${BORLANDLIBPATH})
   if(GDI32_LIBRARY)
     find_library(COMDLG32_LIBRARY comdlg32 HINTS ${MINGWLIBPATH} ${BORLANDLIBPATH})
+	find_library(COMCTL32_LIBRARY comctl32 HINTS ${MINGWLIBPATH} ${BORLANDLIBPATH})
   endif(GDI32_LIBRARY)
-  if(GDI32_LIBRARY AND COMDLG32_LIBRARY)
+  if(GDI32_LIBRARY AND COMDLG32_LIBRARY AND COMCTL32_LIBRARY)
     message(STATUS "Looking for gdi32 header and library - found")
-    set(wingdi_LINK_FLAGS "${GDI32_LIBRARY};${COMDLG32_LIBRARY}")
-    if(WITH_FREETYPE)
-      set(
-      wingdi_COMPILE_FLAGS
-      "${wingdi_COMPILE_FLAGS} ${FREETYPE_INCLUDE_CFLAGS}"
-      )
-      set(
-      wingdi_LINK_FLAGS
-      ${wingdi_LINK_FLAGS}
-      ${FREETYPE_LIBRARIES}
-      )
-    endif(WITH_FREETYPE)
+    set(wingdi_LINK_FLAGS "${GDI32_LIBRARY};${COMDLG32_LIBRARY};${COMCTL32_LIBRARY}")
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${wingdi_LINK_FLAGS})
-  else(GDI32_LIBRARY AND COMDLG32_LIBRARY)
+  else(GDI32_LIBRARY AND COMDLG32_LIBRARY AND COMCTL32_LIBRARY)
     message(STATUS "Looking for gdi32 header and library - not found")
     message(STATUS "WARNING: Setting PLD_wingdi to OFF.")
     set(PLD_wingdi OFF CACHE BOOL "Enable wingdi device" FORCE)
-  endif(GDI32_LIBRARY AND COMDLG32_LIBRARY)
+  endif(GDI32_LIBRARY AND COMDLG32_LIBRARY AND COMCTL32_LIBRARY)
 endif(PLD_wingdi)

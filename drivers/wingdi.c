@@ -25,6 +25,7 @@
 
 #include <string.h>
 #include <windows.h>
+#include <commctrl.h>       // For status bars
 #if !defined ( __CYGWIN__ )
 #include <tchar.h>
 #else
@@ -91,23 +92,29 @@ struct wingdi_Dev
     //
     // WIN32 API variables
     //
-    HWND              hwnd;       // Handle for the main window.
 	HDC               hdc;        // Plot window device context
 	HPEN              pen;        // Current pen used for drawing
 	COLORREF		  color;      // Current color
 	HDC               hdc_bmp;    // Bitmap device context
     HBITMAP           bitmap;     // Bitmap of current display
+    HWND              frame;      // Handle for the main window.
+	HWND     		  plot;       // Handle for the plot area
+	HWND			  status_bar; // Handle for the status bar
 };
 
 // Device info
-PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingdi = "wingdi:Windows GDI:1:wingdi:9:wingdi\n";
+PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingdi = "wingdi:Windows GDI:1:wingdi:11:wingdi\n";
 
 // Counter used to indicate the number of streams in use
 static int wingdi_streams = 0; 
 
-// Window class for a plot window
-static TCHAR* plot_window_class_name = _T( "PlplotWin" );
-static WNDCLASSEX plot_window_class;
+// Window class for the overall frame
+static TCHAR* frame_window_class_name = _T( "PLplotFrame" );
+static WNDCLASSEX frame_window_class;
+
+// Window class for the plot area
+static TCHAR* plot_area_class_name = _T( "PLplotArea" );
+static WNDCLASSEX plot_area_class;
 
 // Popup menu used by a plot window
 static HMENU plot_popup_menu;
@@ -135,9 +142,11 @@ static void plD_tidy_wingdi( PLStream * );
 static void plD_state_wingdi( PLStream *, PLINT );
 static void plD_esc_wingdi( PLStream *, PLINT, void * );
 
-#define CommandPrint       0x08A1
-#define CommandNextPage    0x08A2
-#define CommandQuit        0x08A3
+#define CommandPrint       	0x08A1
+#define CommandNextPage    	0x08A2
+#define CommandQuit        	0x08A3
+#define PlotAreaId          0x08F0
+#define StatusBarId			0x08F1
 
 void plD_dispatch_init_wingdi( PLDispatchTable *pdt )
 {
@@ -146,7 +155,7 @@ void plD_dispatch_init_wingdi( PLDispatchTable *pdt )
     pdt->pl_DevName = "wingdi";
 #endif
     pdt->pl_type     = plDevType_Interactive;
-    pdt->pl_seq      = 9;
+    pdt->pl_seq      = 11;
     pdt->pl_init     = (plD_init_fp) plD_init_wingdi;
     pdt->pl_line     = (plD_line_fp) plD_line_wingdi;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_wingdi;
@@ -163,7 +172,7 @@ CrossHairCursor( struct wingdi_Dev * dev )
 	HCURSOR cursor;
 	
     cursor = LoadCursor( NULL, IDC_CROSS );
-    SetClassLong( dev->hwnd, GCL_HCURSOR, (long) cursor );
+    SetClassLong( dev->frame, GCL_HCURSOR, (long) cursor );
     SetCursor( cursor ); 
 }
 
@@ -173,7 +182,7 @@ NormalCursor( struct wingdi_Dev * dev)
 	HCURSOR cursor;
 	
 	cursor = LoadCursor( NULL, IDC_ARROW );
-    SetClassLongPtr( dev->hwnd, GCL_HCURSOR, (LONG_PTR) cursor );
+    SetClassLongPtr( dev->frame, GCL_HCURSOR, (LONG_PTR) cursor );
 	SetCursor( cursor ); 
 }
 
@@ -183,8 +192,26 @@ BusyCursor( struct wingdi_Dev * dev )
 	HCURSOR cursor;
 	
 	cursor = LoadCursor( NULL, IDC_WAIT );
-    SetClassLongPtr( dev->hwnd, GCL_HCURSOR, (LONG_PTR) cursor );
+    SetClassLongPtr( dev->frame, GCL_HCURSOR, (LONG_PTR) cursor );
     SetCursor( cursor ); 
+}
+
+static void
+update_status_bar( struct wingdi_Dev * dev )
+{
+	LPSTR status_text[] =
+	{
+		TEXT("Waiting"),
+		TEXT("Active"),
+		TEXT("Size/Move"),
+		TEXT("Resize"),
+		TEXT("Drawing")
+	};
+	
+	SendMessage( dev->status_bar, 
+				 SB_SETTEXT,
+				 (WPARAM) 0,
+				 (LPARAM)status_text[dev->state] );
 }
 
 //--------------------------------------------------------------------------
@@ -203,14 +230,33 @@ static void UpdatePageMetrics( PLStream *pls, enum _dev_type dev_type )
     if ( dev_type == DEV_PRINTER )
     {
 		// Get the page size from the printer
-        dev->width  = GetDeviceCaps( dev->hdc, HORZRES );
-        dev->height = GetDeviceCaps( dev->hdc, VERTRES );
+		PLINT vsize, hsize;
+		PLFLT plot_aspect, print_aspect;
+        hsize  = GetDeviceCaps( dev->hdc, HORZRES );
+        vsize = GetDeviceCaps( dev->hdc, VERTRES );
+		
+		// Determine which orientation best matches the aspect 
+		// ratio of the plot window
+		plot_aspect = (PLFLT)dev->width / (PLFLT)dev->height;
+		print_aspect = (PLFLT)hsize / (PLFLT)vsize;
+		if( plot_aspect > 1.0 )
+		{
+			// Wider than tall
+			dev->width = hsize;
+			dev->height = (PLINT)((PLFLT) hsize / plot_aspect );
+		}
+		else
+		{
+			// Taller than wide
+			dev->width = (PLINT)((PLFLT) vsize * plot_aspect );
+			dev->height = vsize;
+		}
     }
     else
     {
 		RECT rect;
 		
-        GetClientRect( dev->hwnd, &rect );
+        GetClientRect( dev->plot, &rect );
         dev->width  = rect.right;
         dev->height = rect.bottom;
 
@@ -271,8 +317,11 @@ static void UpdatePageMetrics( PLStream *pls, enum _dev_type dev_type )
 static void PrintPage( PLStream *pls )
 {
     struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
-    PRINTDLG   Printer;
+    PRINTDLGEX   Printer;
+	PROPSHEETPAGE PrintPropSheet;
+	HPROPSHEETPAGE hPrintPropSheetList[1];
     DOCINFO    docinfo;
+	DEVMODE    * hDevMode;
     struct wingdi_Dev *push;      // A copy of the entire structure
 
     // Reset the docinfo structure to 0 and set it's fields up
@@ -281,17 +330,50 @@ static void PrintPage( PLStream *pls )
     docinfo.cbSize      = sizeof ( docinfo );
     docinfo.lpszDocName = _T( "Plplot Page" );
 
+	// Create a page setup property sheet
+	/*ZeroMemory( &PrintPropSheet, sizeof( PROPSHEETPAGE ) );
+	PrintPropSheet.dwSize = sizeof( PROPSHEETPAGE );
+	PrintPropSheet.dwFlags = 
+	
+	hPrintPropSheetList[0] = CreatePropertySheetPage( &PrintPropSheet );
+	*/
+	
+	// Set the defaults for the printer device
+	// Allocate a moveable block of memory.  Must use GlobalAlloc because
+	// HeapAlloc is not moveable.
+	hDevMode = GlobalAlloc( GHND, sizeof( DEVMODE ) );
+	if( hDevMode == NULL ) 
+	{
+		plwarn( "wingdi:  Failed to allocate memory for printer defaults\n" );
+	}
+	hDevMode->dmSpecVersion = DM_SPECVERSION;
+	hDevMode->dmSize = sizeof( DEVMODE );
+	hDevMode->dmFields = DM_ORIENTATION;
+	hDevMode->dmOrientation = DMORIENT_LANDSCAPE;
+	
     // Reset out printer structure to zero and initialise it
-    ZeroMemory( &Printer, sizeof ( PRINTDLG ) );
-    Printer.lStructSize = sizeof ( PRINTDLG );
-    Printer.hwndOwner   = dev->hwnd;
-    Printer.Flags       = PD_NOPAGENUMS | PD_NOSELECTION | PD_RETURNDC;
+    ZeroMemory( &Printer, sizeof ( PRINTDLGEX ) );
+    Printer.lStructSize = sizeof ( PRINTDLGEX );
+    Printer.hwndOwner   = dev->frame;
+	Printer.hDevMode    = hDevMode;
+    Printer.Flags       = PD_NOPAGENUMS | PD_NOSELECTION  | PD_COLLATE 
+					      | PD_RETURNDC;
+	// Place holder for page ranges
+	Printer.nPageRanges = 0;
+	Printer.nMaxPageRanges = 0;
+	Printer.lpPageRanges = NULL;
+	Printer.nMinPage = 1;
+	Printer.nMaxPage = 1000;
     Printer.nCopies     = 1;
-
+	//Printer.nPropertyPages = ARRAY_SIZE( hPrintPropSheetList ),
+	//Printer.lphPropertyPages = hPrintPropSheetList;
+	Printer.nStartPage = START_PAGE_GENERAL;
+	
     // Call the printer dialog function.
     // If the user has clicked on "Print", then we will continue
     // processing and print out the page.
-    if ( PrintDlg( &Printer ) != 0 )
+    if ( PrintDlgEx( &Printer ) == S_OK 
+		 && Printer.dwResultAction == PD_RESULT_PRINT )
     {
         // Before doing anything, we will take some backup copies
         // of the existing values for page size and the like, because
@@ -322,9 +404,16 @@ static void PrintPage( PLStream *pls )
 
             HeapFree( wingdi_heap, 0, push );
             NormalCursor( dev );
-            RedrawWindow( dev->hwnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ERASENOW );
+            RedrawWindow( dev->frame, 
+						  NULL, NULL, 
+						  RDW_ERASE | RDW_INVALIDATE | RDW_ERASENOW );
         }
     }
+	
+	// Cleanup after printing
+	if( Printer.hDC != NULL ) DeleteDC( Printer.hDC );
+	if( Printer.hDevMode != NULL ) DeleteDC( Printer.hDevMode );
+	if( Printer.hDevNames != NULL ) DeleteDC( Printer.hDevNames );
 }
 
 static void
@@ -332,10 +421,13 @@ wait_for_user_input( PLStream *pls )
 {
 	struct wingdi_Dev * dev = (struct wingdi_Dev *) pls->dev;
 	MSG msg;
+
+	pldebug( "wingdi", "Waiting for user input\n" );	
 	
+	// Update the state and the message in the status bar
     dev->state = DEV_WAITING;
-	pldebug( "wingdi", "Waiting for user input\n" );
-	
+	update_status_bar( dev );
+				 
 	// Process messages in the queue or until we are no longer waiting
     while ( GetMessage( &msg, NULL, 0, 0 ) && dev->state != DEV_ACTIVE )
     {
@@ -349,7 +441,7 @@ wait_for_user_input( PLStream *pls )
 							LOWORD( msg.lParam ),
 							HIWORD( msg.lParam ), 
 							0, 
-							dev->hwnd, 
+							dev->frame, 
 							NULL );
             break;
 
@@ -358,12 +450,14 @@ wait_for_user_input( PLStream *pls )
                  ( (TCHAR) ( msg.wParam ) == 13 ) )
             {
                 dev->state = DEV_ACTIVE;
+				update_status_bar( dev );
             }
             else if ( ( (TCHAR) ( msg.wParam ) == 27 ) ||
                       ( (TCHAR) ( msg.wParam ) == 'q' ) ||
                       ( (TCHAR) ( msg.wParam ) == 'Q' ) )
             {
                 dev->state = DEV_ACTIVE;
+				update_status_bar( dev );
                 PostQuitMessage( 0 );
             }
             break;
@@ -371,6 +465,7 @@ wait_for_user_input( PLStream *pls )
         case WM_LBUTTONDBLCLK:
             pldebug( "wingdi", "WM_LBUTTONDBLCLK\n" );
             dev->state = DEV_ACTIVE;
+			update_status_bar( dev );
             break;
 
         case WM_COMMAND:
@@ -383,10 +478,12 @@ wait_for_user_input( PLStream *pls )
             case CommandNextPage:
                 pldebug( "wingdi", "CommandNextPage\n" );
                 dev->state = DEV_ACTIVE;
+				update_status_bar( dev );
                 break;
             case CommandQuit:
                 pldebug( "wingdi", "CommandQuit\n" );
                 dev->state = DEV_ACTIVE;
+				update_status_bar( dev );
                 PostQuitMessage( 0 );
                 break;
             }
@@ -475,7 +572,7 @@ static void CopySCRtoBMP( PLStream *pls )
         DeleteObject( dev->bitmap );
 
     dev->hdc_bmp = CreateCompatibleDC( dev->hdc );
-    GetClientRect( dev->hwnd, &rect );
+    GetClientRect( dev->plot, &rect );
     dev->bitmap    = CreateCompatibleBitmap( dev->hdc, 
 										     rect.right, rect.bottom );
     previous = SelectObject( dev->hdc_bmp, dev->bitmap );
@@ -503,7 +600,7 @@ static void Resize( PLStream *pls )
 	// Only resize the window IF plplot has finished with it
     if ( dev->state == DEV_WAITING )
     {
-        GetClientRect( dev->hwnd, &rect );
+        GetClientRect( dev->plot, &rect );
         pldebug( "wingdi", "[%d %d] [%d %d]\n", 
 			rect.left, rect.top,
 			rect.right, rect.bottom );
@@ -518,6 +615,7 @@ static void Resize( PLStream *pls )
 			current = dev->state;
 			plRemakePlot( pls );
 			dev->state = current;
+			update_status_bar( dev );
 			
 			// Regenerate the bitmap so that it is available for the
 			// WM_PAINT message
@@ -527,12 +625,106 @@ static void Resize( PLStream *pls )
 }
 
 //--------------------------------------------------------------------------
-// This is the window function for the plot window. Whenever a message is
+// This is the window function for the frame window. 
+//--------------------------------------------------------------------------
+LRESULT CALLBACK PlplotFrameProc(
+    HWND hwnd,        // handle to window
+    UINT uMsg,        // message identifier
+    WPARAM wParam,    // first message parameter
+    LPARAM lParam)    // second message parameter
+{ 
+    struct wingdi_Dev *dev = NULL;
+
+	// Try to get the address to pls for this window
+#ifdef _WIN64
+	dev = (struct wingdi_Dev *) GetWindowLongPtr( hwnd, GWLP_USERDATA );
+#else
+	dev = (struct wingdi_Dev *) GetWindowLongPtr( hwnd, GWL_USERDATA ); 
+#endif
+	
+    switch (uMsg) 
+    { 
+    case WM_CREATE: 
+		// Initialize the window. 
+		{
+			HWND hStatus;
+
+			// Create the status bar only if the frame is being created
+			hStatus = CreateWindowEx(
+				0, 
+				STATUSCLASSNAME, 
+				NULL, 
+				WS_CHILD | WS_VISIBLE, 
+				0, 0, 0, 0, 
+				hwnd, 
+				(HMENU) StatusBarId, 
+				GetModuleHandle(NULL), 
+				NULL);
+			if( hStatus != NULL )
+			{
+				int status_widths[] = { 100, 100, 100, -1 };
+				SendMessage( hStatus, SB_SETPARTS, 
+							(WPARAM)ARRAY_SIZE(status_widths), 
+							(LPARAM)status_widths );
+				SendMessage( hStatus, SB_SETTEXT,
+							(WPARAM) 0,
+							(LPARAM)(LPSTR)TEXT("Active") );
+			}
+			else
+			{
+				MessageBox(hwnd, "Could not create status bar.", 
+						   "Error", MB_OK | MB_ICONERROR);
+			}
+		}
+        return 0; 
+ 
+    case WM_SIZE: 
+		{
+			// Set the size and position of the window, including the
+			// child controls
+			HWND hStatus, hPlot;
+			RECT rStatus, rFrame;
+			int plot_height;
+			
+			// Get the client area of the frame
+			GetClientRect( hwnd, &rFrame );
+			
+			// Get the status bar size
+			hStatus = GetDlgItem( hwnd, StatusBarId );
+			SendMessage( hStatus, WM_SIZE, 0, 0 );
+			GetWindowRect( hStatus, &rStatus );
+			
+			// Set the size of the plot area
+			hPlot = GetDlgItem( hwnd, PlotAreaId );
+			plot_height = rFrame.bottom - (rStatus.bottom - rStatus.top);
+			SetWindowPos( hPlot,		// Handle to the plot area window
+						  NULL, 
+						  0, 0,
+						  rFrame.right, plot_height,
+						  SWP_NOZORDER | SWP_SHOWWINDOW );
+		}
+		return 0; 
+ 
+    case WM_DESTROY: 
+        // Clean up window-specific data objects. 
+        return 0; 
+ 
+    // 
+    // Process other messages. 
+    // 
+    default: 
+        return DefWindowProc(hwnd, uMsg, wParam, lParam); 
+    }
+	
+    return 0; 
+} 
+
+//--------------------------------------------------------------------------
+// This is the window function for the plot area. Whenever a message is
 // dispatched using DispatchMessage (or sent with SendMessage) this function
 // gets called with the contents of the message.
 //--------------------------------------------------------------------------
-
-LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK PlplotPlotAreaProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lParam )
 {
     PLStream   *pls = NULL;
     struct wingdi_Dev *dev = NULL;
@@ -593,14 +785,14 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 		// Per the MSDN document, calling GetUpdateRect with a NULL RECT
 		// value will determine if there is an update region.  BeginPaint()
 		// will provide the update region in rcPaint.
-		if ( GetUpdateRect( dev->hwnd, NULL, FALSE ) )
+		if ( GetUpdateRect( dev->plot, NULL, FALSE ) )
 		{
 			// Yes there is, start the redraw
 			PAINTSTRUCT  ps;
 			HGDIOBJ      previous;
 				
 			BusyCursor( dev );
-			BeginPaint( dev->hwnd, &ps );
+			BeginPaint( dev->plot, &ps );
 			
 			pldebug( "wingdi", "  Need to redraw area (%d,%d) (%d,%d)\n",
 					 ps.rcPaint.left, ps.rcPaint.top,
@@ -627,7 +819,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 				SelectObject( dev->hdc_bmp, previous );			
 			}
 
-			EndPaint( dev->hwnd, &ps );
+			EndPaint( dev->plot, &ps );
 			NormalCursor( dev );
         }
 		
@@ -652,6 +844,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 			// size and not just moved.
 			pldebug( "wingdi", "  Save state %d\n", dev->state );	
 			dev->state = DEV_RESIZE;
+			update_status_bar( dev );
 		} 
 		else if( wParam == SIZE_RESTORED ) 
 		{
@@ -669,6 +862,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 		dev->prev_state = dev->state;
 		// Indicate that we might be sizing or moving the window
 		dev->state = DEV_SIZEMOVE;
+		update_status_bar( dev );
         return ( 0 );
         break;
 
@@ -683,6 +877,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 			// The resize routine needs the original state to preserve
 			// the state when the buffer is replayed.
 			dev->state = dev->prev_state;
+			update_status_bar( dev );
 			Resize( pls );
 		}
         return ( 0 );
@@ -710,7 +905,7 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 			if( dev->type == DEV_WINDOW) 
 			{
 				// NOTE:  Should GetUpdateRect be used instead?
-				GetClientRect( dev->hwnd, &rect );				
+				GetClientRect( dev->plot, &rect );				
 			}
 			else
 			{
@@ -749,48 +944,98 @@ LRESULT CALLBACK PlplotWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM lPar
 static void
 wingdi_module_initialize( void )
 {	
+	INITCOMMONCONTROLSEX init_controls;
+	
     // Return if the module has been initialized
 	if(wingdi_streams > 0) return;
 	wingdi_streams++;
 	
 	pldebug( "wingdi", "module init\n" );
 	
+	// Initialize common contorls
+	init_controls.dwSize = sizeof(INITCOMMONCONTROLSEX);
+	init_controls.dwICC = ICC_BAR_CLASSES;
+	if( ! InitCommonControlsEx( &init_controls ) )
+	{
+		plwarn( "wingdi:  Failed to initialize common Window controls\n" );
+	}
+
+	//
+	// Initialize the frame window class
+	//
+	
 	// Initialize the entire structure to zero.
-    memset( &plot_window_class, 0, sizeof ( WNDCLASSEX ) );
+    memset( &frame_window_class, 0, sizeof ( WNDCLASSEX ) );
 
 	// Set the name of the plot window class
-    plot_window_class.lpszClassName = plot_window_class_name;
+    frame_window_class.lpszClassName = frame_window_class_name;
 
     // Set the size of the window class structure, to include
 	// any extra data that might be passed
-    plot_window_class.cbSize = sizeof ( WNDCLASSEX );
+    frame_window_class.cbSize = sizeof ( WNDCLASSEX );
 
     // All windows of this class redraw when resized.
-    plot_window_class.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS 
-                              | CS_OWNDC | CS_PARENTDC;
+    frame_window_class.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS 
+                               | CS_OWNDC;
 
     // Set the callback function.
-    plot_window_class.lpfnWndProc = PlplotWndProc;
+    frame_window_class.lpfnWndProc = PlplotFrameProc;
 
     // This class is used with the current program instance.
-    plot_window_class.hInstance = GetModuleHandle( NULL );
+    frame_window_class.hInstance = GetModuleHandle( NULL );
 
     // Use standard application icon and arrow cursor provided by the OS
-    plot_window_class.hIcon   = LoadIcon( NULL, IDI_APPLICATION );
-    plot_window_class.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
-    plot_window_class.hCursor = LoadCursor( NULL, IDC_ARROW );
+    frame_window_class.hIcon   = LoadIcon( NULL, IDI_APPLICATION );
+    frame_window_class.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
+    frame_window_class.hCursor = LoadCursor( NULL, IDC_ARROW );
+
+    // Generic solid background for the frame window
+    frame_window_class.hbrBackground = (HBRUSH)COLOR_WINDOW;
+
+	// Do not allocate extra space for the callback
+    frame_window_class.cbWndExtra = sizeof ( struct wingdi_Dev * );
+
+    // Now register the window class for use.
+    RegisterClassEx( &frame_window_class );
+	
+	//
+	// Initialize the plot area class
+	//
+	
+	// Initialize the entire structure to zero.
+    memset( &plot_area_class, 0, sizeof ( WNDCLASSEX ) );
+
+	// Set the name of the plot window class
+    plot_area_class.lpszClassName = plot_area_class_name;
+
+    // Set the size of the window class structure, to include
+	// any extra data that might be passed
+    plot_area_class.cbSize = sizeof ( WNDCLASSEX );
+
+    // All windows of this class redraw when resized.
+    plot_area_class.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS 
+                              | CS_OWNDC;
+
+    // Set the callback function.
+    plot_area_class.lpfnWndProc = PlplotPlotAreaProc;
+
+    // This class is used with the current program instance.
+    plot_area_class.hInstance = GetModuleHandle( NULL );
+
+    // Use standard application icon and arrow cursor provided by the OS
+    plot_area_class.hIcon   = LoadIcon( NULL, IDI_APPLICATION );
+    plot_area_class.hIconSm = LoadIcon( NULL, IDI_APPLICATION );
+    plot_area_class.hCursor = LoadCursor( NULL, IDC_ARROW );
 
     // Handle the erase background in the callback function
-    plot_window_class.hbrBackground = NULL;
+    plot_area_class.hbrBackground = NULL;
 
 	// Allocate extra space for a window instance to store the
 	// pointer to the plot stream (PLStream)
-    plot_window_class.cbWndExtra = sizeof ( PLStream * );
+    plot_area_class.cbWndExtra = sizeof ( PLStream * );
 
-    //
     // Now register the window class for use.
-    //
-    RegisterClassEx( &plot_window_class );
+    RegisterClassEx( &plot_area_class );
 
     //
     // Create the popup menu used by the plot window
@@ -826,8 +1071,11 @@ static void wingdi_module_cleanup( void )
     DeleteMenu( plot_popup_menu, CommandNextPage, 0 );
     DeleteMenu( plot_popup_menu, CommandQuit, 0 );
     DestroyMenu( plot_popup_menu );
-	
-	if( ! UnregisterClass(plot_window_class_name, plot_window_class.hInstance) ) {
+
+	if( ! UnregisterClass(plot_area_class_name, plot_area_class.hInstance) ) {
+		plexit("wingdi: Failed to unregister window class");
+	}
+	if( ! UnregisterClass(frame_window_class_name, frame_window_class.hInstance) ) {
 		plexit("wingdi: Failed to unregister window class");
 	}
 	
@@ -919,21 +1167,39 @@ plD_init_wingdi( PLStream *pls )
 #endif
   
     // Create our main window using the plot window class
-    dev->hwnd = CreateWindowEx( 
+    dev->frame = CreateWindowEx( 
 		WS_EX_WINDOWEDGE + WS_EX_LEFT,
-        plot_window_class_name,        // Class name
+        frame_window_class_name,       // Class name
         program,                       // Caption
-        WS_OVERLAPPEDWINDOW,           // Style
+        WS_OVERLAPPEDWINDOW            // Window style
+		| WS_CLIPCHILDREN,             // Exclude child area from parent
         pls->xoffset,                  // Initial x (use default)
         pls->yoffset,                  // Initial y (use default)
         pls->xlength,                  // Initial x size (use default)
         pls->ylength,                  // Initial y size (use default)
         NULL,                          // No parent window
         NULL,                          // No menu
-        plot_window_class.hInstance,   // This program instance
+        frame_window_class.hInstance,  // This program instance
         NULL                           // Creation parameters
         );
 
+	// Create the plot area
+	dev->plot= CreateWindowEx( 
+		0,
+        plot_area_class_name,          // Class name
+        NULL,                          // Caption
+        WS_CHILD | WS_VISIBLE,         // Style
+		0, 0, 0, 0,                    // Position information
+        dev->frame,                    // Parent window
+        (HMENU)PlotAreaId,             // No menu
+        plot_area_class.hInstance,     // This program instance
+        NULL                           // Creation parameters
+        );
+	if( dev->plot == NULL )
+	{
+		plexit( "wingdi:  Failed to create plot area\n" );
+	}
+		
 #ifdef UNICODE
     free( program );
 #endif
@@ -942,13 +1208,15 @@ plD_init_wingdi( PLStream *pls )
     // this pointer will be used by the windows call back for
     // process this window
 #ifdef _WIN64
-    SetWindowLongPtr( dev->hwnd, GWLP_USERDATA, (LONG_PTR) pls );
+    SetWindowLongPtr( dev->plot, GWLP_USERDATA, (LONG_PTR) pls );
+	SetWindowLongPtr( dev->frame, GWLP_USERDATA, (LONG_PTR) dev );
 #else
-	SetWindowLongPtr( dev->hwnd, GWL_USERDATA, (LONG) pls );
+	SetWindowLongPtr( dev->plot, GWL_USERDATA, (LONG) pls );
+	SetWindowLongPtr( dev->frame, GWL_USERDATA, (LONG) dev );
 #endif
 
 	// Get the device context of the window that was created
-	dev->hdc = GetDC( dev->hwnd );
+	dev->hdc = GetDC( dev->plot );
 
 	// Set the initial color for the drawing pen
     plD_state_wingdi( pls, PLSTATE_COLOR0 );
@@ -956,9 +1224,13 @@ plD_init_wingdi( PLStream *pls )
     // Display the window which we just created (using the nShow
     // passed by the OS, which allows for start minimized and that
     // sort of thing).
-    ShowWindow( dev->hwnd, SW_SHOWDEFAULT );
-    SetForegroundWindow( dev->hwnd );
-
+    ShowWindow( dev->frame, SW_SHOWDEFAULT );
+    SetForegroundWindow( dev->frame );
+	
+	// Get the handle for the status bar.  This will
+	// make it easier to update the contents
+	dev->status_bar = GetDlgItem( dev->frame, StatusBarId );
+	
     //  Now we have to find out, from windows, just how big our drawing area is
     //  when we specified the page size earlier on, that includes the borders,
     //  title bar etc... so now that windows has done all its initialisations,
@@ -974,6 +1246,7 @@ plD_init_wingdi( PLStream *pls )
 
 	// Indicate that the plot window is active
 	dev->state = DEV_ACTIVE;
+	update_status_bar( dev );
 }
 
 //--------------------------------------------------------------------------
@@ -1115,7 +1388,7 @@ plD_clear_wingdi( PLStream *pls, PLINT x1, PLINT y1, PLINT x2, PLINT y2 )
 	else
 	{
 		// Invalid coordinates, erase the entire area
-		GetClientRect( dev->hwnd, &rect );
+		GetClientRect( dev->plot, &rect );
 	}
 
     //    This is a new "High Speed" way of filling in the background.
@@ -1403,7 +1676,7 @@ plD_text_wingdi( PLStream * pls, EscText * args )
 	}
 	
     // Calculate the font size from mm to device units
-	state.font_height = pls->chrht * dev->ydpmm;
+	state.font_height = 1.6 * pls->chrht * dev->ydpmm;
 
     plRotationShear( args->xform, 
 					 &state.rotation, &state.shear, &state.stride );
@@ -1681,6 +1954,8 @@ plD_eop_wingdi( PLStream *pls )
 
     pldebug( "wingdi", "End of the page\n" );
 	
+	// NOTE:  No need to save bitmap for print versions.  Also need
+	// to add an EndPage.
 	// Save a bitmap of the current screen to help with redraws
     CopySCRtoBMP( pls );
 
@@ -1705,17 +1980,19 @@ plD_bop_wingdi( PLStream *pls )
 
 	// Indicate that the device is actively drawing
 	dev->state = DEV_DRAWING;
+	// Update the status bar
+	update_status_bar( dev );
 
-    //
-    //  Turn the cursor to a busy sign, clear the page by "invalidating" it
-    //  then reset the colors and pen width
-    //
-	
 	// Change the cursor to indicate the program is busy
     BusyCursor( dev );
 	
-    RedrawWindow( dev->hwnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ERASENOW );
+	// Invalidate the page so that it gets erased on the WM_PAINT.  It might be
+	// better to just clear now and not invalidate.
+	// NOTE:  Need to add StartPage when printing.  Is RedrawWindow needed only for
+	// the window output device type?
+    RedrawWindow( dev->plot, NULL, NULL, RDW_ERASE | RDW_INVALIDATE | RDW_ERASENOW );
 
+	// Reset the pen color
     plD_state_wingdi( pls, PLSTATE_COLOR0 );
 }
 
@@ -1731,13 +2008,17 @@ plD_tidy_wingdi( PLStream *pls )
         dev = (struct wingdi_Dev *) pls->dev;
 
         if ( dev->hdc != NULL )
-            ReleaseDC( dev->hwnd, dev->hdc );
+            ReleaseDC( dev->plot, dev->hdc );
 		
         if ( dev->bitmap != NULL )
             DeleteObject( dev->bitmap );
 
-		if( dev->hwnd != NULL )
-			DestroyWindow( dev->hwnd );
+		if( dev->plot != NULL )
+			DestroyWindow( dev->plot );
+		if( dev->status_bar != NULL )
+			DestroyWindow( dev->status_bar );
+		if( dev->frame != NULL )
+			DestroyWindow( dev->frame );
 		
         free_mem( pls->dev );
 		
@@ -1780,6 +2061,22 @@ plD_state_wingdi( PLStream *pls, PLINT op )
 // Handle PLplot escapes
 //--------------------------------------------------------------------------
 
+#ifndef PLESC_TELLME
+//
+// Placeholder code from Greg Jung until it gets incorporated
+// somewhere else
+//
+struct passmeup
+{
+	MSG *msg;
+	HWND *hwnd;
+	HDC *hdc;
+	void *roomformore[6];
+	char *flags;
+};
+#define PLESC_TELLME 41
+#endif
+
 void
 plD_esc_wingdi( PLStream *pls, PLINT op, void *ptr )
 {
@@ -1817,6 +2114,15 @@ plD_esc_wingdi( PLStream *pls, PLINT op, void *ptr )
         else
             SetROP2( dev->hdc, R2_XORPEN );
         break;
+		
+	case PLESC_TELLME:
+		{
+			struct passmeup *pup = ptr;
+			
+			pup->hwnd = &(dev->plot);
+			pup->hdc = &(dev->hdc);
+		}
+		break;
     }
 }
 
