@@ -217,6 +217,7 @@ void plD_bop_pdfqt( PLStream * );
 void plD_dispatch_init_qtwidget( PLDispatchTable *pdt );
 void plD_init_qtwidget( PLStream * );
 void plD_eop_qtwidget( PLStream * );
+void plD_wait_qtwidget( PLStream * );
 void plD_line_qtwidget( PLStream *, short, short, short, short );
 void plD_polyline_qtwidget( PLStream *, short*, short*, PLINT );
 void plD_tidy_qtwidget( PLStream * );
@@ -1249,6 +1250,7 @@ void plD_dispatch_init_qtwidget( PLDispatchTable *pdt )
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_qtwidget;
     pdt->pl_state    = (plD_state_fp) plD_state_qtwidget;
     pdt->pl_esc      = (plD_esc_fp) plD_esc_qtwidget;
+    pdt->pl_wait     = (plD_wait_fp) plD_wait_qtwidget;
 }
 
 void plD_init_qtwidget( PLStream * pls )
@@ -1321,13 +1323,21 @@ void plD_init_qtwidget( PLStream * pls )
 void plD_eop_qtwidget( PLStream *pls )
 {
     QtPLWidget* widget    = ( (QtPLWidget *) pls->dev );
-    int       currentPage = widget->pageNumber;
+
     widget->flush();
     widget->raise();
-    while ( currentPage == widget->pageNumber && handler.isMasterDevice( widget ) && !pls->nopause )
+}
+
+void plD_wait_qtwidget( PLStream *pls )
+{
+    QtPLWidget* widget    = ( (QtPLWidget *) pls->dev );
+    int       currentPage = widget->pageNumber;
+
+    widget->raise();
+    while ( currentPage == widget->pageNumber && handler.isMasterDevice( widget ) )
     {
         qApp->processEvents( QEventLoop::WaitForMoreEvents );
-    }
+    }  
 }
 
 void plD_bop_qtwidget( PLStream *pls )

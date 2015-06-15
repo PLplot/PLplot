@@ -211,6 +211,7 @@ void plD_bop_tkwin( PLStream * );
 void plD_tidy_tkwin( PLStream * );
 void plD_state_tkwin( PLStream *, PLINT );
 void plD_esc_tkwin( PLStream *, PLINT, void * );
+void plD_wait_tkwin( PLStream * );
 void plD_open_tkwin( PLStream *pls );
 
 void plD_dispatch_init_tkwin( PLDispatchTable *pdt )
@@ -229,6 +230,7 @@ void plD_dispatch_init_tkwin( PLDispatchTable *pdt )
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_tkwin;
     pdt->pl_state    = (plD_state_fp) plD_state_tkwin;
     pdt->pl_esc      = (plD_esc_fp) plD_esc_tkwin;
+    pdt->pl_wait     = (plD_wait_fp) plD_wait_tkwin;
 }
 
 //--------------------------------------------------------------------------
@@ -523,7 +525,7 @@ plD_polyline_tkwin( PLStream *pls, short *xa, short *ya, PLINT npts )
 //--------------------------------------------------------------------------
 // plD_eop_tkwin()
 //
-// End of page. User must hit return (or third mouse button) to continue.
+// End of page. 
 //--------------------------------------------------------------------------
 
 void
@@ -539,6 +541,26 @@ plD_eop_tkwin( PLStream *pls )
     XFlush( tkwd->display );
     if ( pls->db )
         ExposeCmd( pls, NULL );
+
+    if ( !pls->nopause )
+        WaitForPage( pls );
+}
+
+//--------------------------------------------------------------------------
+// plD_wait_tkwin()
+//
+// User must hit return (or third mouse button) to continue.
+//--------------------------------------------------------------------------
+
+void
+plD_wait_tkwin( PLStream *pls )
+{
+    TkwDev     *dev  = (TkwDev *) pls->dev;
+    TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
+
+    dbug_enter( "plD_wait_tkw" );
+    if ( dev->flags & 1 )
+        return;
 
     if ( !pls->nopause )
         WaitForPage( pls );

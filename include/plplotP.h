@@ -1097,6 +1097,11 @@ plP_esc( PLINT op, void *ptr );
 void
 plP_swin( PLWindow *plwin );
 
+// Wait for user input
+
+PLDLLIMPEXP void
+plP_wait( void );
+  
 // Return file pointer to lib file.
 
 FILE *

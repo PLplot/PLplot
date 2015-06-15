@@ -72,6 +72,7 @@ typedef void ( *plD_bop_fp )( struct PLStream_struct * );
 typedef void ( *plD_tidy_fp )( struct PLStream_struct * );
 typedef void ( *plD_state_fp )( struct PLStream_struct *, PLINT );
 typedef void ( *plD_esc_fp )( struct PLStream_struct *, PLINT, void * );
+typedef void ( *plD_wait_fp )( struct PLStream_struct * );
 
 typedef struct
 {
@@ -87,6 +88,7 @@ typedef struct
     plD_tidy_fp     pl_tidy;
     plD_state_fp    pl_state;
     plD_esc_fp      pl_esc;
+    plD_wait_fp     pl_wait;
 } PLDispatchTable;
 
 #endif // __DISPATCH_H__

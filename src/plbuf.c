@@ -119,9 +119,11 @@ plbuf_init( PLStream *pls )
 //--------------------------------------------------------------------------
 
 void
-plbuf_eop( PLStream * PL_UNUSED( pls ) )
+plbuf_eop( PLStream * pls )
 {
     dbug_enter( "plbuf_eop" );
+
+    wr_command( pls, (U_CHAR) EOP );
 }
 
 //--------------------------------------------------------------------------
@@ -1425,7 +1427,7 @@ plFlushBuffer( PLStream *pls, PLBOOL restart, size_t amount )
             //of a page.
             //Doing this ensures that the first bop command in the
             //buffer actually does something
-            plP_eop();
+            //plP_eop();
         }
 
         finalReadPos = amount == (size_t) ( -1 ) ? pls->plbuf_top : MIN( pls->plbuf_readpos + amount, pls->plbuf_top );

@@ -132,6 +132,7 @@ void plD_polyline_xw( PLStream *, short *, short *, PLINT );
 void plD_eop_xw( PLStream * );
 void plD_bop_xw( PLStream * );
 void plD_tidy_xw( PLStream * );
+void plD_wait_xw( PLStream * );
 void plD_state_xw( PLStream *, PLINT );
 void plD_esc_xw( PLStream *, PLINT, void * );
 
@@ -229,6 +230,7 @@ void plD_dispatch_init_xw( PLDispatchTable *pdt )
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_xw;
     pdt->pl_state    = (plD_state_fp) plD_state_xw;
     pdt->pl_esc      = (plD_esc_fp) plD_esc_xw;
+    pdt->pl_wait     = (plD_wait_fp) plD_wait_xw;
 }
 
 //--------------------------------------------------------------------------
@@ -488,9 +490,6 @@ plD_eop_xw( PLStream *pls )
     if ( pls->db )
         ExposeCmd( pls, NULL );
 
-    if ( dev->is_main && !pls->nopause )
-        WaitForPage( pls );
-
 #ifdef PL_HAVE_PTHREAD
     if ( usepthreads )
         pthread_mutex_unlock( &events_mutex );
@@ -589,6 +588,32 @@ plD_tidy_xw( PLStream *pls )
     // ANR: if we set this here the tmp file will not be closed
     // See also comment in tkwin.c
     //pls->plbuf_write = 0;
+}
+
+//--------------------------------------------------------------------------
+// plD_wait_xw()
+//
+// Wait for user input
+//--------------------------------------------------------------------------
+
+void
+plD_wait_xw( PLStream *pls )
+{
+  XwDev     *dev = (XwDev *) pls->dev;
+  dbug_enter( "plD_eop_xw" );
+
+#ifdef PL_HAVE_PTHREAD
+  if ( usepthreads )
+    pthread_mutex_lock( &events_mutex );
+#endif
+  
+  if ( dev->is_main )
+        WaitForPage( pls );
+
+#ifdef PL_HAVE_PTHREAD
+    if ( usepthreads )
+        pthread_mutex_unlock( &events_mutex );
+#endif
 }
 
 //--------------------------------------------------------------------------
