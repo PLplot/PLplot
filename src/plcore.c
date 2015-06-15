@@ -4141,7 +4141,7 @@ plP_sclp( PLINT ixmin, PLINT ixmax, PLINT iymin, PLINT iymax )
     plsc->clpxma = ixmax;
     plsc->clpymi = iymin;
     plsc->clpyma = iymax;
-	if ( plsc->plbuf_write )
+    if ( plsc->plbuf_write )
         plbuf_clip( plsc );
 }
 
