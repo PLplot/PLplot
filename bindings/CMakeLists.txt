@@ -39,13 +39,13 @@ add_subdirectory(qt_gui)
 
 set(index)
 if(ENABLE_tcl)
-  list(APPEND index ${CMAKE_CURRENT_BINARY_DIR}/tcl/pkgIndex.tcl)
+  list(APPEND index "${CMAKE_CURRENT_BINARY_DIR}/tcl/pkgIndex.tcl")
 endif(ENABLE_tcl)
 if(ENABLE_tk)
-  list(APPEND index ${CMAKE_CURRENT_BINARY_DIR}/tk/pkgIndex.tcl)
+  list(APPEND index "${CMAKE_CURRENT_BINARY_DIR}/tk/pkgIndex.tcl")
 endif(ENABLE_tk)
 if(PLD_tkwin)
-  list(APPEND index ${CMAKE_CURRENT_BINARY_DIR}/tk-x-plat/pkgIndex.tcl)
+  list(APPEND index "${CMAKE_CURRENT_BINARY_DIR}/tk-x-plat/pkgIndex.tcl")
 endif(PLD_tkwin)
 
 if(index)
@@ -58,11 +58,14 @@ if(index)
   # having semicolons in filecontents messing up the results.
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/concatenate_pkgIndex.tcl.cmake
 "
+set(script_index \"${index}\")
+#message(STATUS \"script_index = \${script_index}\")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl \"\")
-foreach(filename ${index})
+foreach(filename IN LISTS script_index)
+  #message(STATUS \"filename = \${filename}\")
   file(READ \${filename} filecontents)
   file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl \"\${filecontents}\")
-endforeach(filename ${index})
+endforeach(filename IN LISTS script_index)
 "
   )
 
