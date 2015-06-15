@@ -25,6 +25,7 @@
 
 #include <string.h>
 #include <windows.h>
+#include <windowsx.h>		// GET_X_LPARAM/GET_Y_LPARAM
 #include <commctrl.h>       // For status bars
 #if !defined ( __CYGWIN__ )
 #include <tchar.h>
@@ -674,7 +675,8 @@ LRESULT CALLBACK PlplotFrameProc(
 				NULL);
 			if( hStatus != NULL )
 			{
-				int status_widths[] = { 100, 100, 100, -1 };
+				int status_widths[] = { 100, 200, 300, -1 };
+
 				SendMessage( hStatus, SB_SETPARTS, 
 							(WPARAM)ARRAY_SIZE(status_widths), 
 							(LPARAM)status_widths );
@@ -937,6 +939,34 @@ LRESULT CALLBACK PlplotPlotAreaProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
         return ( 0 );
         break;
 
+	case WM_MOUSEMOVE:
+		{
+			char mesg[80];
+			int xw, yw;
+			double x, y;
+
+			xw = GET_X_LPARAM( lParam );
+			yw = GET_Y_LPARAM( lParam );
+			x = (double) xw * dev->xscale;
+			y = (double)( dev->height - yw ) * dev->yscale;
+			
+			snprintf( mesg, sizeof(mesg), "%5.1lf", x );
+			SendMessage( dev->status_bar, 
+						 SB_SETTEXT,
+						 (WPARAM) 1,
+						 (LPARAM) mesg );
+						 
+			snprintf( mesg, sizeof(mesg), "%5.1lf", y );
+			SendMessage( dev->status_bar, 
+						 SB_SETTEXT,
+						 (WPARAM) 2,
+						 (LPARAM) mesg );						 
+		}
+
+		// Indicate that we did not process this message
+		return ( 1 );
+		break;
+		
     case WM_COMMAND:
         pldebug( "wingdi", "WM_COMMAND\n" );
         return ( 0 );
@@ -1478,7 +1508,7 @@ set_font( struct wingdi_Dev * dev,
 	ptr->info.lfCharSet = charset;
 	ptr->info.lfOutPrecision = OUT_OUTLINE_PRECIS;
 	ptr->info.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-	ptr->info.lfQuality = DEFAULT_QUALITY;
+	ptr->info.lfQuality = ANTIALIASED_QUALITY;
 	ptr->info.lfPitchAndFamily = pitch | family;
 	ptr->font = CreateFontIndirect( &(ptr->info) );
 	ptr->hdc = dev->hdc;
