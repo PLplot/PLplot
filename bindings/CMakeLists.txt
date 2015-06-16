@@ -60,11 +60,11 @@ if(index)
 "
 set(script_index \"${index}\")
 #message(STATUS \"script_index = \${script_index}\")
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl \"\")
+file(WRITE \"${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl\" \"\")
 foreach(filename IN LISTS script_index)
   #message(STATUS \"filename = \${filename}\")
   file(READ \${filename} filecontents)
-  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl \"\${filecontents}\")
+  file(APPEND \"${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl\" \"\${filecontents}\")
 endforeach(filename IN LISTS script_index)
 "
   )
