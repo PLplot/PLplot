@@ -131,6 +131,7 @@ void plD_polyline_wingcc( PLStream *, short *, short *, PLINT );
 void plD_eop_wingcc( PLStream * );
 void plD_bop_wingcc( PLStream * );
 void plD_tidy_wingcc( PLStream * );
+void plD_wait_wingcc( PLStream * );
 void plD_state_wingcc( PLStream *, PLINT );
 void plD_esc_wingcc( PLStream *, PLINT, void * );
 
@@ -230,6 +231,7 @@ void plD_dispatch_init_wingcc( PLDispatchTable *pdt )
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_wingcc;
     pdt->pl_state    = (plD_state_fp) plD_state_wingcc;
     pdt->pl_esc      = (plD_esc_fp) plD_esc_wingcc;
+	pdt->pl_wait     = (plD_wait_fp) plD_wait_wingcc;
 }
 
 static TCHAR* szWndClass = _T( "PlplotWin" );
@@ -834,68 +836,6 @@ plD_eop_wingcc( PLStream *pls )
     dev->already_erased = 2;
 
     NormalCursor();
-
-    if ( !pls->nopause )
-    {
-        dev->waiting = 1;
-        while ( GetMessage( &dev->msg, NULL, 0, 0 ) )
-        {
-            TranslateMessage( &dev->msg );
-            switch ( (int) dev->msg.message )
-            {
-            case WM_CONTEXTMENU:
-            case WM_RBUTTONDOWN:
-                TrackPopupMenu( dev->PopupMenu, TPM_CENTERALIGN | TPM_RIGHTBUTTON, LOWORD( dev->msg.lParam ),
-                    HIWORD( dev->msg.lParam ), 0, dev->hwnd, NULL );
-                break;
-
-            case WM_CHAR:
-                if ( ( (TCHAR) ( dev->msg.wParam ) == 32 ) ||
-                     ( (TCHAR) ( dev->msg.wParam ) == 13 ) )
-                {
-                    dev->waiting = 0;
-                }
-                else if ( ( (TCHAR) ( dev->msg.wParam ) == 27 ) ||
-                          ( (TCHAR) ( dev->msg.wParam ) == 'q' ) ||
-                          ( (TCHAR) ( dev->msg.wParam ) == 'Q' ) )
-                {
-                    dev->waiting = 0;
-                    PostQuitMessage( 0 );
-                }
-                break;
-
-            case WM_LBUTTONDBLCLK:
-                Debug( "WM_LBUTTONDBLCLK\t" );
-                dev->waiting = 0;
-                break;
-
-            case WM_COMMAND:
-                switch ( LOWORD( dev->msg.wParam ) )
-                {
-                case PopupPrint:
-                    Debug( "PopupPrint" );
-                    PrintPage( pls );
-                    break;
-                case PopupNextPage:
-                    Debug( "PopupNextPage" );
-                    dev->waiting = 0;
-                    break;
-                case PopupQuit:
-                    Debug( "PopupQuit" );
-                    dev->waiting = 0;
-                    PostQuitMessage( 0 );
-                    break;
-                }
-                break;
-
-            default:
-                DispatchMessage( &dev->msg );
-                break;
-            }
-            if ( dev->waiting == 0 )
-                break;
-        }
-    }
 }
 
 //--------------------------------------------------------------------------
@@ -957,11 +897,74 @@ plD_tidy_wingcc( PLStream *pls )
     }
 }
 
+void
+plD_wait_wingcc( PLStream * pls )
+{
+	wingcc_Dev *dev = (wingcc_Dev *) pls->dev;
 
+    Debug( "Wait for user input\n" );
+	
+    dev->waiting = 1;
+	while ( dev->waiting == 1 && GetMessage( &dev->msg, NULL, 0, 0 ) )
+    {
+        TranslateMessage( &dev->msg );
+		switch ( (int) dev->msg.message )
+		{
+        case WM_RBUTTONDOWN:
+		case WM_CONTEXTMENU:
+			TrackPopupMenu( dev->PopupMenu, TPM_CENTERALIGN | TPM_RIGHTBUTTON, LOWORD( dev->msg.lParam ),
+				HIWORD( dev->msg.lParam ), 0, dev->hwnd, NULL );
+			break;
+
+		case WM_CHAR:
+			if ( ( (TCHAR) ( dev->msg.wParam ) == 32 ) ||
+				 ( (TCHAR) ( dev->msg.wParam ) == 13 ) )
+            {
+				dev->waiting = 0;
+			}
+			else if ( ( (TCHAR) ( dev->msg.wParam ) == 27 ) ||
+					  ( (TCHAR) ( dev->msg.wParam ) == 'q' ) ||
+					  ( (TCHAR) ( dev->msg.wParam ) == 'Q' ) )
+			{
+				dev->waiting = 0;
+				PostQuitMessage( 0 );
+			}
+			break;
+
+		case WM_LBUTTONDBLCLK:
+			Debug( "WM_LBUTTONDBLCLK\t" );
+			dev->waiting = 0;
+			break;
+
+		case WM_COMMAND:
+			switch ( LOWORD( dev->msg.wParam ) )
+			{
+			case PopupPrint:
+				Debug( "PopupPrint" );
+				PrintPage( pls );
+				break;
+			case PopupNextPage:
+				Debug( "PopupNextPage" );
+				dev->waiting = 0;
+				break;
+			case PopupQuit:
+				Debug( "PopupQuit" );
+				dev->waiting = 0;
+				PostQuitMessage( 0 );
+				break;
+			}
+                break;
+
+		default:
+			DispatchMessage( &dev->msg );
+			break;
+		}
+	}
+}
 
 
 //--------------------------------------------------------------------------
-// plD_state_png()
+// plD_state_wingcc()
 //
 // Handle change in PLStream state (color, pen width, fill attribute, etc).
 //--------------------------------------------------------------------------
