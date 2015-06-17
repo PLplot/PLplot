@@ -1641,7 +1641,7 @@ check_buffer_size( PLStream *pls, size_t data_size )
 static void
 wr_command( PLStream *pls, U_CHAR c )
 {
-    check_buffer_size( pls, sizeof ( U_CHAR ) );
+    check_buffer_size( pls, sizeof ( uint16_t ) );
 
     *(U_CHAR *) ( (uint8_t *) pls->plbuf_buffer + pls->plbuf_top ) = c;
 
@@ -1660,7 +1660,7 @@ wr_command( PLStream *pls, U_CHAR c )
 static void
 wr_data( PLStream *pls, void *buf, size_t buf_size )
 {
-    check_buffer_size( pls, buf_size );
+    check_buffer_size( pls, buf_size + ( buf_size % sizeof ( uint16_t ) ) );
     memcpy( (uint8_t *) pls->plbuf_buffer + pls->plbuf_top, buf, buf_size );
 
     // Advance position but maintain alignment
