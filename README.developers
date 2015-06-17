@@ -5,6 +5,10 @@ PLplot uses git for version control.  The fundamental git
 documentation we refer to most often is the freely downloadable
 [Pro Git Book](http://git-scm.com/book).
 
+There is excellent advise about commit messages and how to organize
+commits at <http://who-t.blogspot.be/2009/12/on-commit-messages.html>
+as well.
+
 Installation of git is straightforward as described at
 <http://git-scm.com/book/en/Getting-Started-Installing-Git>
 
