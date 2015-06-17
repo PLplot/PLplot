@@ -145,10 +145,6 @@ if(ENABLE_tcl)
     endif(NOT truncated_version STREQUAL library_version)
   endif(library_version)
 
-  # Initially mark various quantities as unfound in case that turns out to be true.
-  set(HAVE_ITCL OFF)
-  set(HAVE_ITK OFF)
-
   if(ENABLE_itcl)
     if(USE_INCRTCL_VERSION_4)
       set(SUGGESTED_ITCL_VERSION 4)
@@ -238,8 +234,6 @@ void main(void){}
 	  message(STATUS "ITCL_LIBRARY = ${ITCL_LIBRARY}")
 	  get_filename_component(ITCL_LIBRARY_PATH ${ITCL_LIBRARY} PATH)
 	  list(APPEND TCL_TK_ITCL_ITK_RPATH ${ITCL_LIBRARY_PATH})
-          set(HAVE_ITCL ON)
-          find_path(HAVE_ITCLDECLS_H itclDecls.h HINTS "${ITCL_INCLUDE_PATH}")
         else(ITCL_LIBRARY)
           message(STATUS "Looking for itcl library - not found")
           message(STATUS "WARNING: Disabling Itcl interface code")
@@ -471,7 +465,6 @@ void main(void){}
         if(ITK_LIBRARY)
           message(STATUS "Looking for itk library - found")
 	  message(STATUS "ITK_LIBRARY = ${ITK_LIBRARY}")
-	  set(HAVE_ITK ON)
 
 	  # Test version consistency between iwidgets, itk, and itcl.
 	  if(NOT IWIDGETS_VERSIONS_LIST)
@@ -617,3 +610,14 @@ if(NOT ENABLE_itk)
   set(PLPLOT_ITK_VERSION 0.0.0)
   set(PLPLOT_IWIDGETS_VERSION 0.0.0)
 endif(NOT ENABLE_itk)
+
+if(ENABLE_itcl)
+  set(HAVE_ITCL ON)
+  find_path(HAVE_ITCLDECLS_H itclDecls.h HINTS "${ITCL_INCLUDE_PATH}")
+endif(ENABLE_itcl)
+
+if(ENABLE_itk)
+  set(HAVE_ITK ON)
+endif(ENABLE_itk)
+
+
