@@ -1,6 +1,14 @@
 #ifndef __PL_DLL_H
 #define __PL_DLL_H
 
+// In some cases, this header is #included without #including
+// plplot_config.h which normally #defines ENABLE_DYNDRIVERS (or not).
+#ifndef ENABLE_DYNDRIVERS
+// Define if there is support for dynamically loaded drivers
+#cmakedefine ENABLE_DYNDRIVERS
+#endif
+
+
 #ifdef USINGDLL
   #if defined ( WIN32 )
 // Visual C/C++, Borland, MinGW and Watcom
@@ -91,7 +99,10 @@
   #define PLDLLIMPEXP_WX_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( tclmatrix_EXPORTS )
+// Note for the case when ENABLE_DYNDRIVERS is not defined, the
+// libplplot build specifically includes the tclmatrix code (see
+// cmake/modules/tk.cmake).
+#if defined ( tclmatrix_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
   #define PLDLLIMPEXP_TCLMAT    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLMAT_DATA( type )    PLDLLEXPORT type
 #else
@@ -99,7 +110,10 @@
   #define PLDLLIMPEXP_TCLMAT_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplottcltk_Main_EXPORTS ) | defined ( plplottcltk_EXPORTS )
+// Note for the case when ENABLE_DYNDRIVERS is not defined, the
+// libplplot build specifically includes the plplottcltk code (see
+// cmake/modules/tk.cmake).
+#if defined ( plplottcltk_Main_EXPORTS ) || defined ( plplottcltk_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
   #define PLDLLIMPEXP_TCLTK    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLEXPORT type
 #else

@@ -1,7 +1,7 @@
 # examples/tcl/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2012 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -147,11 +147,17 @@ if(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
+  if(ENABLE_DYNDRIVERS)
+    set(plplottcltk_target plplottcltk)
+  else(ENABLE_DYNDRIVERS)
+    set(plplottcltk_target plplot)
+  endif(ENABLE_DYNDRIVERS)
+
   if(CORE_BUILD)
     set_property(GLOBAL PROPERTY TARGETS_examples_tcl
       tcl_examples
       tclIndex_examples_tcl
-      plplottcltk
+      ${plplottcltk_target}
       pltcl
       plplot.tcl_target
       tclIndex_tcl
@@ -161,7 +167,7 @@ if(BUILD_TEST)
     set_property(GLOBAL PROPERTY FILES_examples_tcl
       ${tclIndex_DEPENDS}
       ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-      plplottcltk
+      ${plplottcltk_target}
       pltcl
       ${files_plplot.tcl_target}
       ${files_tclIndex_tcl}
@@ -169,11 +175,11 @@ if(BUILD_TEST)
   else(CORE_BUILD)
     set_property(GLOBAL PROPERTY TARGETS_examples_tcl
       tcl_examples
-      plplottcltk
+      ${plplottcltk_target}
       )
     set_property(GLOBAL PROPERTY FILES_examples_tcl
       ${tclIndex_DEPENDS}
-      plplottcltk
+      ${plplottcltk_target}
       )
   endif(CORE_BUILD)
 endif(BUILD_TEST)

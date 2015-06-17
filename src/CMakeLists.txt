@@ -152,12 +152,12 @@ if(NOT ENABLE_DYNDRIVERS)
       endif(ANY_QT_DEVICE)
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
 
-    # qt device driver code within libplplot has some symbols that need to be
-    # visible for qt_example in installed examples/c++ directory to link
-    # properly.
-    if(BUILD_SHARED_LIBS AND SOURCE_ROOT_NAME STREQUAL "qt")
+    # qt and tk or tkwin device driver code within libplplot has some
+    # symbols that need to be visible for qt_example in examples/c++
+    # and various Tcl/Tk PLplot applications to link properly.
+    if(BUILD_SHARED_LIBS AND (SOURCE_ROOT_NAME STREQUAL "qt" OR SOURCE_ROOT_NAME STREQUAL "tk" OR SOURCE_ROOT_NAME STREQUAL "tkwin"))
       set(${SOURCE_ROOT_NAME}_COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGDLL")
-    endif(BUILD_SHARED_LIBS AND SOURCE_ROOT_NAME STREQUAL "qt")
+    endif(BUILD_SHARED_LIBS AND (SOURCE_ROOT_NAME STREQUAL "qt" OR SOURCE_ROOT_NAME STREQUAL "tk" OR SOURCE_ROOT_NAME STREQUAL "tkwin"))
 
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(

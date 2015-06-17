@@ -1,7 +1,7 @@
 # bindings/python/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -136,18 +136,23 @@ if(ENABLE_python)
     "-DUSINGDLL"
     )
 
-  if(ENABLE_tkX)
+  if(ENABLE_tkX AND ENABLE_DYNDRIVERS)
     target_link_libraries( plplot_widgetmodule
       plplot
       plplottcltk
       ${PYTHON_LIBRARIES}
       )
-  else(ENABLE_tkX)
+  else(ENABLE_tkX AND ENABLE_DYNDRIVERS)
+    # Don't link to plplottcltk if ENABLE_tkX is false
+    # or ENABLE_DYNDRIVERS is false.  If ENABLE_tkX is true
+    # and ENABLE_DYNDRIVERS is false all of the plplottcltk 
+    # code is already in plplot so this rule avoids redundant
+    # linking.
     target_link_libraries( plplot_widgetmodule
       plplot
       ${PYTHON_LIBRARIES}
       )
-  endif(ENABLE_tkX)
+  endif(ENABLE_tkX AND ENABLE_DYNDRIVERS)
 
   if(USE_RPATH)
     set_target_properties(

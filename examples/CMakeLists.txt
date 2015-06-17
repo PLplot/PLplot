@@ -765,6 +765,10 @@ if(BUILD_TEST)
 	set(tk_target tk)
       endif(TARGET tk)
 
+      if(TARGET plplottcltk)
+	set(plplottcltk_target plplottcltk)
+      endif(TARGET plplottcltk)
+
       if(TARGET tkwin)
 	set(tkwin_target tkwin)
       endif(TARGET tkwin)
@@ -790,6 +794,7 @@ if(BUILD_TEST)
       set(wxwidgets_file_and_target plplot)
       set(xwin_target plplot)
       set(xwin_file_and_target plplot)
+      set(plplottcltk_target plplot)
       set(tk_target plplot)
       set(tkwin_target plplot)
       set(${generic_interactive_device}_file_and_target plplot)
@@ -1030,15 +1035,8 @@ if(BUILD_TEST)
     if(FILE_DEPENDS_${generic_interactive_device})
       add_dependencies(test_pltcl_standard_examples test_${generic_interactive_device}_dyndriver)
     endif(FILE_DEPENDS_${generic_interactive_device})
-    if(WIN32_AND_NOT_CYGWIN)
-      message(STATUS "WARNING: The test_pltcl_standard_examples target can be run independently on 
-   the Windows platform, but it generates an unhandled exception at the end so
-   it is temporarily excluded from being a dependency of other more general
-   interactive test targets") 
-    else(WIN32_AND_NOT_CYGWIN)
-      list(APPEND interactive_targets_LIST test_pltcl_standard_examples)
-      list(APPEND tcl_targets_LIST test_pltcl_standard_examples)
-    endif(WIN32_AND_NOT_CYGWIN)
+    list(APPEND interactive_targets_LIST test_pltcl_standard_examples)
+    list(APPEND tcl_targets_LIST test_pltcl_standard_examples)
 
     if(BUILD_SHARED_LIBS)
       # tests that use "package require Pltcl" only work if
@@ -1048,25 +1046,28 @@ if(BUILD_TEST)
 	DEPENDS ${${generic_interactive_device}_file_and_target}
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
-      add_dependencies(test_tclsh_standard_examples
-	plplottcltk
-	tcl_examples
-	${TARGET_tclIndex_tcl}
-	${${generic_interactive_device}_target}
-	)
+
+      if(ENABLE_DYNDRIVERS)
+	add_dependencies(test_tclsh_standard_examples
+	  ${plplottcltk_target}
+	  tcl_examples
+	  ${TARGET_tclIndex_tcl}
+	  ${${generic_interactive_device}_target}
+	  )
+      else(ENABLE_DYNDRIVERS)
+	add_dependencies(test_tclsh_standard_examples
+	  plplot
+	  tcl_examples
+	  ${TARGET_tclIndex_tcl}
+	  ${${generic_interactive_device}_target}
+	  )
+      endif(ENABLE_DYNDRIVERS)
+
       if(FILE_DEPENDS_${generic_interactive_device})
 	add_dependencies(test_tclsh_standard_examples test_${generic_interactive_device}_dyndriver)
       endif(FILE_DEPENDS_${generic_interactive_device})
-      if(WIN32_AND_NOT_CYGWIN)
-	message(STATUS "WARNING: The test_tclsh_standard_examples target can be run independently on 
-   the Windows platform, but for the nondynamic drivers case the exit
-   command generates a non-zero return code so until this issue is
-   dealt with this target is excluded from being a dependency of other
-   more general interactive test targets")
-      else(WIN32_AND_NOT_CYGWIN)
-	list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
-	list(APPEND tcl_targets_LIST test_tclsh_standard_examples)
-      endif(WIN32_AND_NOT_CYGWIN)
+      list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
+      list(APPEND tcl_targets_LIST test_tclsh_standard_examples)
     endif(BUILD_SHARED_LIBS)
   endif(ENABLE_tcl AND PLD_${generic_interactive_device})
 
@@ -1150,7 +1151,7 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
       add_dependencies(test_wish_standard_examples
-	plplottcltk
+	${plplottcltk_target}
 	${tk_target}
 	${xwin_target}
 	tcl_examples
@@ -1246,7 +1247,7 @@ if(BUILD_TEST)
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	  )
 	add_dependencies(test_wish_runAllDemos
-	  plplottcltk
+	  ${plplottcltk_target}
 	  ${tkwin_target}
 	  tcl_examples
 	  ${TARGET_tclIndex_tcl}

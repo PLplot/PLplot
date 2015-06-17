@@ -38,12 +38,6 @@ if(ENABLE_tcl)
 
   add_dependencies(check_all check_tcl_parameters)
 
-  # tclmatrix
-  set(tclmatrix_LIB_SRCS
-    tclMatrix.c
-    matrixInit.c
-    )
-
   include_directories(
     ${TCL_INCLUDE_PATH}
     ${CMAKE_SOURCE_DIR}/include
@@ -53,124 +47,236 @@ if(ENABLE_tcl)
     ${CMAKE_BINARY_DIR}/include
     )
 
-  set(
-    libplplottcltk_COMPILE_FLAGS
-    "-I\"${TCL_INCLUDE_PATH}\""
-    )
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${tclmatrix_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-  endif(BUILD_SHARED_LIBS)
-
-  add_library(tclmatrix ${tclmatrix_LIB_SRCS})
-
-  if(USE_TCL_TK_STUBS)
-    if(NON_TRANSITIVE)
-      target_link_libraries(tclmatrix PRIVATE ${TCL_STUB_LIBRARY})
-    else(NON_TRANSITIVE)
-      target_link_libraries(tclmatrix PUBLIC ${TCL_STUB_LIBRARY})
-    endif(NON_TRANSITIVE)
-    set_target_properties(
-      tclmatrix
-      PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
-      )
-  else(USE_TCL_TK_STUBS)
-    if(NON_TRANSITIVE)
-      target_link_libraries(tclmatrix PRIVATE ${TCL_LIBRARY})
-    else(NON_TRANSITIVE)
-      target_link_libraries(tclmatrix PUBLIC ${TCL_LIBRARY})
-    endif(NON_TRANSITIVE)
-  endif(USE_TCL_TK_STUBS)
-
-  if(USE_RPATH)
-    set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
-  endif(USE_RPATH)
-  set_library_properties(tclmatrix)
-
-  install(TARGETS tclmatrix
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
-
+  # These installed header files required regardless of whether the
+  # tclmatrix and plplottcltk libraries are built or their source
+  # code is included in the plplot library.
   set(tclmatrix_INSTALLED_HEADERS
     tclMatrix.h
     )
-
+  
   install(
     FILES ${tclmatrix_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}
     )
-  # end tclmatrix
-
-  # plplottcltk
-  set(
-    tclgenfiles
-    ${CMAKE_CURRENT_BINARY_DIR}/tclgen.h
-    ${CMAKE_CURRENT_BINARY_DIR}/tclgen_s.h
-    ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
+  
+  set(plplottcltk_INSTALLED_HEADERS
+    pltcl.h
+    )
+  
+  install(
+    FILES ${plplottcltk_INSTALLED_HEADERS}
+    DESTINATION ${INCLUDE_DIR}
     )
 
-  add_custom_command(
-    OUTPUT ${tclgenfiles}
-    COMMAND ${TCL_TCLSH}
-    ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl ${CMAKE_CURRENT_SOURCE_DIR}
-    DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl
-    ${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl
-    ${CMAKE_CURRENT_SOURCE_DIR}/tclcmd.tpl
-    )
+  if(ENABLE_DYNDRIVERS)
+    # tclmatrix
+    set(tclmatrix_LIB_SRCS
+      tclMatrix.c
+      matrixInit.c
+      )
 
-  include_directories(${CMAKE_CURRENT_BINARY_DIR})
-  set_source_files_properties(
-    tclAPI.c
-    PROPERTIES OBJECT_DEPENDS "${tclgenfiles}"
-    )
+    set(
+      libplplottcltk_COMPILE_FLAGS
+      "-I\"${TCL_INCLUDE_PATH}\""
+      )
 
-  set(plplottcltk_LIB_SRCS
-    tclAPI.c
-    )
+    if(BUILD_SHARED_LIBS)
+      set_source_files_properties(${tclmatrix_LIB_SRCS}
+	PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+    endif(BUILD_SHARED_LIBS)
+
+    add_library(tclmatrix ${tclmatrix_LIB_SRCS})
+
+    if(USE_TCL_TK_STUBS)
+      if(NON_TRANSITIVE)
+	target_link_libraries(tclmatrix PRIVATE ${TCL_STUB_LIBRARY})
+      else(NON_TRANSITIVE)
+	target_link_libraries(tclmatrix PUBLIC ${TCL_STUB_LIBRARY})
+      endif(NON_TRANSITIVE)
+      set_target_properties(
+	tclmatrix
+	PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
+	)
+    else(USE_TCL_TK_STUBS)
+      if(NON_TRANSITIVE)
+	target_link_libraries(tclmatrix PRIVATE ${TCL_LIBRARY})
+      else(NON_TRANSITIVE)
+	target_link_libraries(tclmatrix PUBLIC ${TCL_LIBRARY})
+      endif(NON_TRANSITIVE)
+    endif(USE_TCL_TK_STUBS)
+
+    if(USE_RPATH)
+      set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
+    endif(USE_RPATH)
+    set_library_properties(tclmatrix)
+
+    install(TARGETS tclmatrix
+      EXPORT export_plplot
+      ARCHIVE DESTINATION ${LIB_DIR}
+      LIBRARY DESTINATION ${LIB_DIR}
+      RUNTIME DESTINATION ${BIN_DIR}
+      )
+
+    # end tclmatrix
+
+    # plplottcltk
+    set(
+      tclgenfiles
+      ${CMAKE_CURRENT_BINARY_DIR}/tclgen.h
+      ${CMAKE_CURRENT_BINARY_DIR}/tclgen_s.h
+      ${CMAKE_CURRENT_BINARY_DIR}/tclgen.c
+      )
+
+    add_custom_command(
+      OUTPUT ${tclgenfiles}
+      COMMAND ${TCL_TCLSH}
+      ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl ${CMAKE_CURRENT_SOURCE_DIR}
+      DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/pltclgen.tcl
+      ${CMAKE_CURRENT_SOURCE_DIR}/plapi.tpl
+      ${CMAKE_CURRENT_SOURCE_DIR}/tclcmd.tpl
+      )
+
+    include_directories(${CMAKE_CURRENT_BINARY_DIR})
+    set_source_files_properties(
+      tclAPI.c
+      PROPERTIES OBJECT_DEPENDS "${tclgenfiles}"
+      )
+
+    set(plplottcltk_LIB_SRCS
+      tclAPI.c
+      )
+
+    if(BUILD_SHARED_LIBS)
+      set_source_files_properties(${plplottcltk_LIB_SRCS}
+	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
+
+    if(USE_TCL_TK_STUBS)
+      set(
+	plplottcltk_link_libraries
+	tclmatrix
+	plplot
+	${TCL_STUB_LIBRARY}
+	)
+      set(
+	libplplottcltk_LINK_FLAGS
+	-ltclmatrix
+	${TCL_STUB_LIBRARY}
+	)
+    else(USE_TCL_TK_STUBS)
+      set(
+	plplottcltk_link_libraries
+	tclmatrix
+	plplot
+	${TCL_LIBRARY}
+	)
+      set(
+	libplplottcltk_LINK_FLAGS
+	-ltclmatrix
+	${TCL_LIBRARY}
+	)
+    endif(USE_TCL_TK_STUBS)
+
+    if(ENABLE_tkX)
+      set(plplottcltk_LIB_SRCS
+	${plplottcltk_LIB_SRCS}
+	${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
+	${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
+	${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
+	${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
+	)
+
+      include_directories(${TK_INCLUDE_PATH})
+      # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
+      string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
+      set(
+	libplplottcltk_COMPILE_FLAGS
+	"${libplplottcltk_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
+	)
+
+      if(BUILD_SHARED_LIBS)
+	set_source_files_properties(${plplottcltk_LIB_SRCS}
+	  PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+	  )
+      endif(BUILD_SHARED_LIBS)
+
+      if(USE_TCL_TK_STUBS)
+	set(plplottcltk_link_libraries
+	  ${plplottcltk_link_libraries}
+	  ${TK_STUB_LIBRARY}
+	  ${X11_X11_LIB}
+	  )
+	set(
+	  libplplottcltk_LINK_FLAGS
+	  ${libplplottcltk_LINK_FLAGS}
+	  ${TK_STUB_LIBRARY}
+	  )
+      else(USE_TCL_TK_STUBS)
+	set(plplottcltk_link_libraries
+	  ${plplottcltk_link_libraries}
+	  ${TK_LIBRARY}
+	  ${X11_X11_LIB}
+	  )
+	set(
+	  libplplottcltk_LINK_FLAGS
+	  ${libplplottcltk_LINK_FLAGS}
+	  ${TK_LIBRARY}
+	  )
+      endif(USE_TCL_TK_STUBS)
+    endif(ENABLE_tkX)
+
+    add_library(plplottcltk ${plplottcltk_LIB_SRCS})
+
+    if(USE_TCL_TK_STUBS)
+      if(ENABLE_tkX)
+	set_target_properties(
+	  plplottcltk
+	  PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
+	  )
+      else(ENABLE_tkX)
+	set_target_properties(
+	  plplottcltk
+	  PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
+	  )
+      endif(ENABLE_tkX)
+    endif(USE_TCL_TK_STUBS)
+
+    #message(STATUS "plplottcltk_link_libraries = ${plplottcltk_link_libraries}"
+    if(NON_TRANSITIVE)
+      target_link_libraries(plplottcltk PRIVATE ${plplottcltk_link_libraries})
+    else(NON_TRANSITIVE)
+      target_link_libraries(plplottcltk PUBLIC ${plplottcltk_link_libraries})
+    endif(NON_TRANSITIVE)
+
+    if(USE_RPATH)
+      get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+      list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
+    endif(USE_RPATH)
+    set_library_properties(plplottcltk)
+
+    if(USE_RPATH)
+      # This version of LIB_INSTALL_RPATH also used below for pltcl.
+      list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
+    endif(USE_RPATH)
+
+    install(TARGETS plplottcltk
+      EXPORT export_plplot
+      ARCHIVE DESTINATION ${LIB_DIR}
+      LIBRARY DESTINATION ${LIB_DIR}
+      RUNTIME DESTINATION ${BIN_DIR}
+      )
+
+    pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_LINK_FLAGS}")
+    # end plplottcltk
+  endif(ENABLE_DYNDRIVERS)
+
+  # start plplottcltk_Main
 
   set(plplottcltk_Main_LIB_SRCS
     tclMain.c
     )
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplottcltk_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-      )
-    set_source_files_properties(${plplottcltk_Main_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-
-  if(USE_TCL_TK_STUBS)
-    set(
-      plplottcltk_link_libraries
-      tclmatrix
-      plplot
-      ${TCL_STUB_LIBRARY}
-      )
-    set(
-      libplplottcltk_LINK_FLAGS
-      -ltclmatrix
-      ${TCL_STUB_LIBRARY}
-      )
-  else(USE_TCL_TK_STUBS)
-    set(
-      plplottcltk_link_libraries
-      tclmatrix
-      plplot
-      ${TCL_LIBRARY}
-      )
-    set(
-      libplplottcltk_LINK_FLAGS
-      -ltclmatrix
-      ${TCL_LIBRARY}
-      )
-  endif(USE_TCL_TK_STUBS)
 
   set(
     plplottcltk_Main_link_libraries
@@ -208,13 +314,6 @@ if(ENABLE_tcl)
   message(STATUS "Itcl libraries: ${plplottcltk_Main_link_libraries}")
 
   if(ENABLE_tkX)
-    set(plplottcltk_LIB_SRCS
-      ${plplottcltk_LIB_SRCS}
-      ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
-      ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
-      ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
-      ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
-      )
 
     set(plplottcltk_Main_LIB_SRCS
       ${plplottcltk_Main_LIB_SRCS}
@@ -224,10 +323,6 @@ if(ENABLE_tcl)
     include_directories(${TK_INCLUDE_PATH})
     # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
     string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
-    set(
-      libplplottcltk_COMPILE_FLAGS
-      "${libplplottcltk_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
-      )
 
     set(
       libplplottcltk_Main_COMPILE_FLAGS
@@ -235,37 +330,10 @@ if(ENABLE_tcl)
       )
 
     if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${plplottcltk_LIB_SRCS}
-	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-	)
       set_source_files_properties(${plplottcltk_Main_LIB_SRCS}
 	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
 	)
     endif(BUILD_SHARED_LIBS)
-
-    if(USE_TCL_TK_STUBS)
-      set(plplottcltk_link_libraries
-	${plplottcltk_link_libraries}
-	${TK_STUB_LIBRARY}
-	${X11_X11_LIB}
-	)
-      set(
-	libplplottcltk_LINK_FLAGS
-	${libplplottcltk_LINK_FLAGS}
-	${TK_STUB_LIBRARY}
-	)
-    else(USE_TCL_TK_STUBS)
-      set(plplottcltk_link_libraries
-	${plplottcltk_link_libraries}
-	${TK_LIBRARY}
-	${X11_X11_LIB}
-	)
-      set(
-	libplplottcltk_LINK_FLAGS
-	${libplplottcltk_LINK_FLAGS}
-	${TK_LIBRARY}
-	)
-    endif(USE_TCL_TK_STUBS)
 
     set(plplottcltk_Main_link_libraries
       ${plplottcltk_Main_link_libraries}
@@ -301,29 +369,11 @@ if(ENABLE_tcl)
     endif(ENABLE_itkX)
   endif(ENABLE_tkX)
 
-  add_library(plplottcltk ${plplottcltk_LIB_SRCS})
   add_library(plplottcltk_Main ${plplottcltk_Main_LIB_SRCS})
 
-  if(USE_TCL_TK_STUBS)
-    if(ENABLE_tkX)
-      set_target_properties(
-	plplottcltk
-	PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
-	)
-    else(ENABLE_tkX)
-      set_target_properties(
-	plplottcltk
-	PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
-	)
-    endif(ENABLE_tkX)
-  endif(USE_TCL_TK_STUBS)
-
-  #message(STATUS "plplottcltk_link_libraries = ${plplottcltk_link_libraries}"
   if(NON_TRANSITIVE)
-    target_link_libraries(plplottcltk PRIVATE ${plplottcltk_link_libraries})
     target_link_libraries(plplottcltk_Main PRIVATE ${plplottcltk_Main_link_libraries})
   else(NON_TRANSITIVE)
-    target_link_libraries(plplottcltk PUBLIC ${plplottcltk_link_libraries})
     target_link_libraries(plplottcltk_Main PUBLIC ${plplottcltk_Main_link_libraries})
   endif(NON_TRANSITIVE)
 
@@ -331,20 +381,12 @@ if(ENABLE_tcl)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
   endif(USE_RPATH)
-  set_library_properties(plplottcltk)
 
   if(USE_RPATH)
     # This version of LIB_INSTALL_RPATH also used below for pltcl.
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
   endif(USE_RPATH)
   set_library_properties(plplottcltk_Main)
-
-  install(TARGETS plplottcltk
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
 
   install(TARGETS plplottcltk_Main
     EXPORT export_plplot
@@ -353,16 +395,7 @@ if(ENABLE_tcl)
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  set(plplottcltk_INSTALLED_HEADERS
-    pltcl.h
-    )
-
-  install(
-    FILES ${plplottcltk_INSTALLED_HEADERS}
-    DESTINATION ${INCLUDE_DIR}
-    )
-
-  # end plplottcltk
+  # end plplottcltk_Main
 
   # Generate plplot.tcl and tclIndex in build tree.  At least the first one
   # is always needed for build-tree tests of tcl examples.
@@ -421,9 +454,19 @@ if(ENABLE_tcl)
       )
   endif(NOT ENABLE_tk)
 
-  set(LIB_HARDDIR ${LIB_DIR})
+  if(USE_DLL_SUBDIRECTORY)
+    set(LIB_INSTALL_DIR ${BIN_DIR})
+  else(USE_DLL_SUBDIRECTORY)
+    set(LIB_INSTALL_DIR ${LIB_DIR})
+  endif(USE_DLL_SUBDIRECTORY)
 
-  set(DLNAME_LIBPLPLOTTCLTK $<TARGET_FILE_NAME:plplottcltk>)
+  if(ENABLE_DYNDRIVERS)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplottcltk>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplottcltk>)
+  else(ENABLE_DYNDRIVERS)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplot>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplot>)
+  endif(ENABLE_DYNDRIVERS)
 
   # N.B. Results only available at generate time.
   configure_file_generate(
@@ -432,7 +475,6 @@ if(ENABLE_tcl)
     @ONLY
     )
 
-  pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_LINK_FLAGS}")
   pkg_config_file("tcl_Main" "Tcl_Main/Tk_Main" " Tcl_Main/Tk_Main bindings" "plplottcltk_Main" "${libplplottcltk_Main_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_Main_LINK_FLAGS}")
 
   if(BUILD_SHARED_LIBS)
@@ -440,11 +482,20 @@ if(ENABLE_tcl)
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
   endif(BUILD_SHARED_LIBS)
   add_executable(pltcl pltcl.c)
-  if(ENABLE_itcl)
-    target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
-  else(ENABLE_itcl)
-    target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${TCL_LIBRARY})
-  endif(ENABLE_itcl)
+  if(ENABLE_DYNDRIVERS)
+    if(ENABLE_itcl)
+      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
+    else(ENABLE_itcl)
+      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${TCL_LIBRARY})
+    endif(ENABLE_itcl)
+  else(ENABLE_DYNDRIVERS)
+    # For this case, all of plplottcltk code is already in plplot so don't redundantly link
+    if(ENABLE_itcl)
+      target_link_libraries(pltcl plplot plplottcltk_Main ${ITCL_LIBRARY} ${TCL_LIBRARY})
+    else(ENABLE_itcl)
+      target_link_libraries(pltcl plplot plplottcltk_Main ${TCL_LIBRARY})
+    endif(ENABLE_itcl)
+  endif(ENABLE_DYNDRIVERS)
 
   if(USE_RPATH)
     filter_rpath(LIB_INSTALL_RPATH)

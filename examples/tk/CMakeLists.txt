@@ -202,7 +202,12 @@ if(BUILD_TEST)
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
     endif(BUILD_SHARED_LIBS)
     add_executable(${TK_EXE} ${TK_SRC_FILE})
-    target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
+    if(ENABLE_DYNDRIVERS)
+      target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
+    else(ENABLE_DYNDRIVERS)
+      # For this case, all of plplottcltk and tclmatrix code is already in plplot so don't redundantly link
+      target_link_libraries(${TK_EXE} plplottcltk_Main plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
+    endif(ENABLE_DYNDRIVERS)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
   endforeach(TK_SRC_FILE ${tk_SRC})
 

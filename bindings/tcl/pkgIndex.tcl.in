@@ -38,21 +38,13 @@ proc load_pkg_Pltcl {dir} {
     set buildDir "@BUILD_DIR@"
     set bLen [string length $buildDir]
     # If pkgIndexDir is in the build tree...
-    if {$tcl_platform(platform) == "unix"} {
-	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
-	    set searchdirs "."
-	} else {
-	    set searchdirs [list "@LIB_HARDDIR@"]
-	}
+    if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
+	set searchdirs [list "@DLNAME_LIBRARY_DIR@"]
     } else {
-	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
-	    set searchdirs "../../dll"
-	} else {
-	    set searchdirs [list "@LIB_HARDDIR@/../bin"]
-	}
+	set searchdirs [list "@LIB_INSTALL_DIR@"]
     }
     #puts $searchdirs
-    set dlnames [list "@DLNAME_LIBPLPLOTTCLTK@"]
+    set dlnames [list "@DLNAME_LIBRARY@"]
     set file ""
     foreach reldir $searchdirs {
 	foreach dlname $dlnames {

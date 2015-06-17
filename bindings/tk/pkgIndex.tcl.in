@@ -30,68 +30,39 @@ proc load_pkg_Pltk {dir} {
     #puts "loading Pltk, dir: $dir"
     set pllibrary $dir
 
-    if {$tcl_platform(platform) == "unix"} {
-	if {[string match "*CYGWIN*" $::tcl_platform(os)]} {
-	    set stem cygplplottcltk-@plplottcltk_SOVERSION@
-	} else {
-	    set stem tk
-	}
-	set thisDir [pwd]
-	# Find absolute path of $dir
-	cd $dir
-	set pkgIndexDir [pwd]
-	cd $thisDir
-	set buildDir "@BUILD_DIR@"
-	set bLen [string length $buildDir]
-	# If pkgIndexDir is in the build tree...
-	if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
-		set searchdirs [list "../../drivers" "../../dll"]} else {
-		set searchdirs [list "@DRV_HARDDIR@"]}
-	#puts $searchdirs
-	set suf [info sharedlibextension]
-
-	set file ""
-	foreach reldir $searchdirs {
-	    set driver [file join $dir $reldir $stem$suf]
+    set thisDir [pwd]
+    # Find absolute path of $dir 
+    cd $dir
+    set pkgIndexDir [pwd]
+    cd $thisDir
+    set buildDir "@BUILD_DIR@"
+    set bLen [string length $buildDir]
+    # If pkgIndexDir is in the build tree...
+    if {![string compare -length $bLen $buildDir $pkgIndexDir]} then {
+	set searchdirs [list "@DLNAME_LIBRARY_DIR@"]
+    } else {
+	set searchdirs [list "@LIB_INSTALL_DIR@"]
+    }
+    #puts $searchdirs
+    set dlnames [list "@DLNAME_LIBRARY@"]
+    set file ""
+    foreach reldir $searchdirs {
+	foreach dlname $dlnames {
+	    set driver [file join $dir $reldir $dlname]
 	    #puts "looking for driver file: $driver"
 	    if [file exists $driver] {
-	        set file $driver
-	        break
+		set file $driver
+		break
 	    }
-	    if { $file != "" } { break }
 	}
-	if { $file == "" } {
-	# Dynamic driver location failed, now try static driver location.
-	set searchdirs [list "@LIB_HARDDIR@"]
-	set dlnames [list "@DLNAME_LIBPLPLOT@"]
-	set file ""
-	foreach reldir $searchdirs {
-	    foreach dlname $dlnames {
-		set driver [file join $dir $reldir $dlname]
-		#puts "looking for driver file: $driver"
-		if [file exists $driver] {
-		    set file $driver
-		    break
-		}
-	    }
-	    if { $file != "" } { break }
-	}
-	}
-	if { $file == "" } {
-	    error "load_pkg_Pltk: could not find loadable driver"
-	}
-
-    } else {
-    # This is probably broken, someone should fix it.
-	if {[info exists tcl_platform(debug)]} {
-	    set file [file join $dir plplot510d[info sharedlibextension]]
-	} else {
-	    set file [file join $dir plplot510[info sharedlibextension]]
-	}
+	if { $file != "" } { break }
+    }
+    if { $file == "" } {
+	error "load_pkg_Pltk: could not find loadable driver"
     }
 
     load $file Pltk
-# put core tcl scripts in path
+    # put core tcl scripts in path
     lappend auto_path $dir/tcl
     rename load_pkg_Pltk {}
 }

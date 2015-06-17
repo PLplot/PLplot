@@ -1,27 +1,26 @@
 Running the Tk Demos.
 
-Note these directions (aside from runAllDemos.tcl) as well as taking
-proper care of all the dependencies have been incorporated into our
-CMake-based build systems for the core build and the installed
-examples build.  So with the exception of runAllDemos.tcl the tests
+Note these directions as well as taking proper care of all the
+dependencies have been incorporated into our CMake-based build systems
+for the core build and the installed examples build.  So the tests
 below of the Tcl, Tk, Itcl, Itk, and Iwidgets components of PLplot can
-be done by simply running
+be normally be done by simply running
 
 make test_interactive
 
 However, we preserve the directions below for historical reasons and
-in case you want to do any of these commands by hand.
+in case you want to do any of these commands by hand, e.g., with
+valgrind.
 
 There are two ways to run the examples below, where the alternatives
 are indicated by "|".  The first alternative should only be used if
 you have changed directories to
 $prefix/share/plplot$VERSION/examples/tk where $prefix is the PLplot
 install prefix and $VERSION is the PLplot release version, e.g.,
-5.9.10.  (That is, the first alternative should be used if you have
-changed directories to the installed tk examples directory.)  The
+5.11.0.  That is, the first alternative should be used if you have
+changed directories to the installed tk examples directory.  The
 second alternative should only be used if you have changed directories
 to bindings/examples/tk in the build tree.
-
 
 To run the plot.tcl demo follow the directions in that file to run it
 under plserver using the plframe widget.
@@ -33,8 +32,7 @@ following way:
 
 ./xtk01 -f tk01
 ./xtk02 -f tk02
-./tk03 		# to run this demo in the build tree, change line 11
-		# from "plserver" to "../../bindings/plserver"
+./tk03
 ./xtk04 -f tk04
 
 (1) Run tkdemos.tcl from plserver.  This potentially exercises all the x??.tcl
@@ -42,9 +40,11 @@ examples using the plframe widget:
 
 plserver | ../../bindings/tk/plserver
 source tkdemos.tcl
+0
 1
 2
 ....
+exit
 
 Note the plserver command has normal PLplot command-line options (run
 plserver -h to find out what they are).
@@ -52,12 +52,13 @@ plserver -h to find out what they are).
 (2) Run tkdemos.tcl from wish.
 
 wish -geometry 600x400
-lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk 
+lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk
 package require Pltk
 source tkdemos.tcl
 1
 2
 ....
+exit
 
 To find out more about the wish command (which comes as part of the Tk
 package) use man wish.
@@ -72,7 +73,7 @@ source runAllDemos.tcl
 
 (4) Run runAllDemos.tcl from wish.
 
-wish
+wish -geometry 600x400
 lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tk-x-plat ../../bindings/tk
 package require Plplotter
 source runAllDemos.tcl

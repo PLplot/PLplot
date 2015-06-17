@@ -8,23 +8,23 @@ below of the Tcl component of PLplot can be done by simply running
 make test_interactive
 
 However, we preserve the directions below for historical reasons and
-in case you want to do any of these commands by hand.
+in case you want to do any of these commands by hand, e.g., with
+valgrind.
 
 There are two ways to run the examples below, where the alternatives
 are indicated by "|".  The first alternative should only be used if
 you have changed directories to
 $prefix/share/plplot$VERSION/examples/tcl where $prefix is the PLplot
 install prefix and $VERSION is the PLplot release version, e.g.,
-5.9.10.  (That is, the first alternative should be used if you have
-changed directories to the installed tk examples directory.)  The
+5.9.10.  That is, the first alternative should be used if you have
+changed directories to the installed examples/tcl directory.  The
 second alternative should only be used if you have changed directories
-to bindings/examples/tk in the build tree.
-
+to bindings/examples/ttcl in the build tree.
 
 To run individual examples, run the x?? script corresponding to the x??.tcl
 example, where ?? is 00 through 33 (except for 32), e.g.,
 
-./x00 -dev xwin |  env PATH=../../utils:$PATH ./x00 -dev xwin
+./x00 -dev xwin |  env PATH=../../bindings/tcl:$PATH ./x00 -dev xwin
 
 Note, -dev xwin is just one possible PLplot driver, and there are many others.
 
@@ -49,6 +49,8 @@ source tcldemos.tcl
 1
 2
 ....
+plend
+exit
 
 Note the pltcl command has normal PLplot command-line options (run pltcl -h
 to find out what they are).  In fact, you can specify, e.g., -dev tk or
@@ -57,7 +59,7 @@ well use the device driver chooser in that case.
 
 (2) Note, fill in $prefix below with whatever you configured for the install
 prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION 
-you are running at this time (5.2.0 or whatever).
+you are running at this time (5.11.0 or whatever).
 
 tclsh
 lappend auto_path $prefix/share/plplot$VERSION | ../../bindings/tcl
@@ -68,6 +70,8 @@ source tcldemos.tcl
 1
 2
 ....
+plend
+exit
 
 To find out more about the tclsh command (which comes as part of the tcl
 package) use man tclsh.
