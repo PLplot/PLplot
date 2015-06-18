@@ -1047,21 +1047,21 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
 	)
 
-      if(ENABLE_DYNDRIVERS)
-	add_dependencies(test_tclsh_standard_examples
-	  ${plplottcltk_target}
-	  tcl_examples
-	  ${TARGET_tclIndex_tcl}
-	  ${${generic_interactive_device}_target}
-	  )
-      else(ENABLE_DYNDRIVERS)
+      if(tcltk_in_plplot_library)
 	add_dependencies(test_tclsh_standard_examples
 	  plplot
 	  tcl_examples
 	  ${TARGET_tclIndex_tcl}
 	  ${${generic_interactive_device}_target}
 	  )
-      endif(ENABLE_DYNDRIVERS)
+      else(tcltk_in_plplot_library)
+	add_dependencies(test_tclsh_standard_examples
+	  ${plplottcltk_target}
+	  tcl_examples
+	  ${TARGET_tclIndex_tcl}
+	  ${${generic_interactive_device}_target}
+	  )
+      endif(tcltk_in_plplot_library)
 
       if(FILE_DEPENDS_${generic_interactive_device})
 	add_dependencies(test_tclsh_standard_examples test_${generic_interactive_device}_dyndriver)
@@ -1071,7 +1071,7 @@ if(BUILD_TEST)
     endif(BUILD_SHARED_LIBS)
   endif(ENABLE_tcl AND PLD_${generic_interactive_device})
 
-  if(ENABLE_tkX AND PLD_tk)
+  if(ENABLE_tkX)
     set(targets_examples_tk)
 
     add_custom_target(test_tk_01
@@ -1143,9 +1143,9 @@ if(BUILD_TEST)
     endif(FILE_DEPENDS_xwin)
     list(APPEND targets_examples_tk test_plserver_standard_examples)
 
-    if(BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS AND PLD_tk)
       # tests that use "package require Pltk" only work if
-      # BUILD_SHARED_LIBS is true.
+      # BUILD_SHARED_LIBS is true and PLD_tk is true.
       add_custom_target(test_wish_standard_examples
 	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
@@ -1174,7 +1174,7 @@ if(BUILD_TEST)
    it segfaults at the end so it is temporarily excluded from being a dependency
    of other more general interactive test targets") 
       # list(APPEND targets_examples_tk test_wish_standard_examples)
-    endif(BUILD_SHARED_LIBS)
+    endif(BUILD_SHARED_LIBS AND PLD_tk)
 
     if(ENABLE_itkX)
       add_custom_target(test_tk_02
@@ -1219,49 +1219,49 @@ if(BUILD_TEST)
       else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_04)
       endif(USE_INCRTCL_VERSION_4)
+    endif(ENABLE_itkX)
 
-      add_custom_target(test_plserver_runAllDemos
-	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_runAllDemos
+    add_custom_target(test_plserver_runAllDemos
+      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_runAllDemos
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+      )
+    add_dependencies(test_plserver_runAllDemos
+      workaround_file_generate_bug
+      plserver
+      tcl_examples
+      ${TARGET_tclIndex_tcl}
+      ${TARGET_tclIndex_tk}
+      tclIndex_examples_tk
+      ${xwin_target}
+      )
+
+    message(STATUS "WARNING: The test_plserver_runAlldemos target can be run independently but 
+   there are several issues with this target so it is temporarily excluded from being a
+   dependency of other more general interactive test targets") 
+    #list(APPEND targets_examples_tk test_plserver_runAllDemos)
+
+    if(BUILD_SHARED_LIBS AND PLD_tkwin)
+      # tests that use "package require Plplotter" only work if
+      # BUILD_SHARED_LIBS is true and PLD_tkwin is true.
+      add_custom_target(test_wish_runAllDemos
+	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
 	)
-      add_dependencies(test_plserver_runAllDemos
-        workaround_file_generate_bug
-	plserver
+      add_dependencies(test_wish_runAllDemos
+	${plplottcltk_target}
+	${tkwin_target}
 	tcl_examples
 	${TARGET_tclIndex_tcl}
 	${TARGET_tclIndex_tk}
 	tclIndex_examples_tk
-	${xwin_target}
 	)
-
-      message(STATUS "WARNING: The test_plserver_runAlldemos target can be run independently but 
+      message(STATUS "WARNING: The test_wish_runAlldemos target can be run independently but 
    there are several issues with this target so it is temporarily excluded from being a
    dependency of other more general interactive test targets") 
-      #list(APPEND targets_examples_tk test_plserver_runAllDemos)
+      # list(APPEND targets_examples_tk test_wish_runAlldemos)
+    endif(BUILD_SHARED_LIBS AND PLD_tkwin)
 
-      if(BUILD_SHARED_LIBS)
-	# tests that use "package require Plplotter" only work if
-	# BUILD_SHARED_LIBS is true.
-	add_custom_target(test_wish_runAllDemos
-	  COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos
-	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
-	  )
-	add_dependencies(test_wish_runAllDemos
-	  ${plplottcltk_target}
-	  ${tkwin_target}
-	  tcl_examples
-	  ${TARGET_tclIndex_tcl}
-	  ${TARGET_tclIndex_tk}
-	  tclIndex_examples_tk
-	  )
-	message(STATUS "WARNING: The test_wish_runAlldemos target can be run independently but 
-   there are several issues with this target so it is temporarily excluded from being a
-   dependency of other more general interactive test targets") 
-	# list(APPEND targets_examples_tk test_wish_runAlldemos)
-      endif(BUILD_SHARED_LIBS)
-
-    endif(ENABLE_itkX)
-  endif(ENABLE_tkX AND PLD_tk)
+  endif(ENABLE_tkX)
 
   if(targets_examples_tk)
     list(APPEND interactive_targets_LIST ${targets_examples_tk})

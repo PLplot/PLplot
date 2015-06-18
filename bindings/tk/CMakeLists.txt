@@ -34,13 +34,13 @@ if(ENABLE_tkX)
     set_source_files_properties(plserver.c
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
   endif(BUILD_SHARED_LIBS)
+
   add_executable(plserver plserver.c)
-  if(ENABLE_DYNDRIVERS)
-    target_link_libraries(plserver plplot plplottcltk_Main plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
-  else(ENABLE_DYNDRIVERS)
-    # For this case, all of plplottcltk code is already in plplot so don't redundantly link
+  if(tcltk_in_plplot_library)
     target_link_libraries(plserver plplot plplottcltk_Main ${TK_LIBRARY} ${TCL_LIBRARY})
-  endif(ENABLE_DYNDRIVERS)
+  else(tcltk_in_plplot_library)
+    target_link_libraries(plserver plplot plplottcltk_Main plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
+  endif(tcltk_in_plplot_library)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
@@ -149,20 +149,22 @@ if(ENABLE_tk)
     FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
     DESTINATION ${TCL_DIR}
     )
+endif(ENABLE_tk)
 
+if(PLD_tk)
   if(USE_DLL_SUBDIRECTORY)
     set(LIB_INSTALL_DIR ${BIN_DIR})
   else(USE_DLL_SUBDIRECTORY)
     set(LIB_INSTALL_DIR ${DRV_DIR})
   endif(USE_DLL_SUBDIRECTORY)
 
-  if(ENABLE_DYNDRIVERS)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:tk>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:tk>)
-  else(ENABLE_DYNDRIVERS)
+  if(tcltk_in_plplot_library)
     set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplot>)
     set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplot>)
-  endif(ENABLE_DYNDRIVERS)
+  else(tcltk_in_plplot_library)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:tk>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:tk>)
+  endif(tcltk_in_plplot_library)
 
   # N.B. Results only available at generate time.
   configure_file_generate(
@@ -170,5 +172,5 @@ if(ENABLE_tk)
     ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
     @ONLY
     )
+endif(PLD_tk)
 
-endif(ENABLE_tk)

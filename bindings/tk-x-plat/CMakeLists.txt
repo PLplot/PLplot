@@ -26,13 +26,13 @@ if(PLD_tkwin)
     set(LIB_INSTALL_DIR ${DRV_DIR})
   endif(USE_DLL_SUBDIRECTORY)
 
-  if(ENABLE_DYNDRIVERS)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:tkwin>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:tkwin>)
-  else(ENABLE_DYNDRIVERS)
+  if(tcltk_in_plplot_library)
     set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplot>)
     set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplot>)
-  endif(ENABLE_DYNDRIVERS)
+  else(tcltk_in_plplot_library)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:tkwin>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:tkwin>)
+  endif(tcltk_in_plplot_library)
 
   # N.B. Results only available at generate time.
   configure_file_generate(

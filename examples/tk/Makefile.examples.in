@@ -36,14 +36,13 @@ all: $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 clean:
 	rm -f $(EXECUTABLES_list) $(itk_EXECUTABLES_list)
 
-#if(ENABLE_DYNDRIVERS)
-#  target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
-#else(ENABLE_DYNDRIVERS)
-#  # For this case, all of plplottcltk and tclmatrix code is already in plplot so don't redundantly link
+#if(tcltk_in_plplot_library)
 #  target_link_libraries(${TK_EXE} plplottcltk_Main plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
-#endif(ENABLE_DYNDRIVERS)
+#else(tcltk_in_plplot_library)
+#  target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
+#endif(tcltk_in_plplot_library)
 .c$(EXEEXT):
-@enable_dyndrivers_true@	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-tcl_Main plplot-tcl plplot) -ltclmatrix @pkg_config_TK_LIBRARY@ @pkg_config_TCL_LIBRARY@ @MATH_LIB@
-@enable_dyndrivers_false@	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot-tcl_Main plplot) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot-tcl_Main plplot) @pkg_config_TK_LIBRARY@ @pkg_config_TCL_LIBRARY@ @MATH_LIB@
+@tcltk_in_plplot_library_true@	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot-tcl_Main plplot) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --libs plplot-tcl_Main plplot) @pkg_config_TK_LIBRARY@ @pkg_config_TCL_LIBRARY@ @MATH_LIB@
+@tcltk_in_plplot_library_false@	$(CC) $< -o $@ $(plplottcltk_Main_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-tcl_Main plplot-tcl plplot) -ltclmatrix @pkg_config_TK_LIBRARY@ @pkg_config_TCL_LIBRARY@ @MATH_LIB@
 
 .SUFFIXES: .c $(EXEEXT)

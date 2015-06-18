@@ -68,7 +68,7 @@ if(ENABLE_tcl)
     DESTINATION ${INCLUDE_DIR}
     )
 
-  if(ENABLE_DYNDRIVERS)
+  if(NOT tcltk_in_plplot_library)
     # tclmatrix
     set(tclmatrix_LIB_SRCS
       tclMatrix.c
@@ -147,12 +147,6 @@ if(ENABLE_tcl)
       tclAPI.c
       )
 
-    if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${plplottcltk_LIB_SRCS}
-	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-	)
-    endif(BUILD_SHARED_LIBS)
-
     if(USE_TCL_TK_STUBS)
       set(
 	plplottcltk_link_libraries
@@ -196,12 +190,6 @@ if(ENABLE_tcl)
 	"${libplplottcltk_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
 	)
 
-      if(BUILD_SHARED_LIBS)
-	set_source_files_properties(${plplottcltk_LIB_SRCS}
-	  PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-	  )
-      endif(BUILD_SHARED_LIBS)
-
       if(USE_TCL_TK_STUBS)
 	set(plplottcltk_link_libraries
 	  ${plplottcltk_link_libraries}
@@ -226,6 +214,12 @@ if(ENABLE_tcl)
 	  )
       endif(USE_TCL_TK_STUBS)
     endif(ENABLE_tkX)
+
+    if(BUILD_SHARED_LIBS)
+      set_source_files_properties(${plplottcltk_LIB_SRCS}
+	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
 
     add_library(plplottcltk ${plplottcltk_LIB_SRCS})
 
@@ -270,7 +264,7 @@ if(ENABLE_tcl)
 
     pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_LINK_FLAGS}")
     # end plplottcltk
-  endif(ENABLE_DYNDRIVERS)
+  endif(NOT tcltk_in_plplot_library)
 
   # start plplottcltk_Main
 
@@ -285,7 +279,7 @@ if(ENABLE_tcl)
     )
   set(
     libplplottcltk_Main_LINK_FLAGS
-     ${TCL_LIBRARY}
+    ${TCL_LIBRARY}
     )
 
   message(STATUS "ENABLE_itcl: ${ENABLE_itcl}")
@@ -329,12 +323,6 @@ if(ENABLE_tcl)
       "${libplplottcltk_Main_COMPILE_FLAGS} ${TKLIB_COMPILE_FLAGS}"
       )
 
-    if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${plplottcltk_Main_LIB_SRCS}
-	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-	)
-    endif(BUILD_SHARED_LIBS)
-
     set(plplottcltk_Main_link_libraries
       ${plplottcltk_Main_link_libraries}
       ${TK_LIBRARY}
@@ -368,6 +356,12 @@ if(ENABLE_tcl)
 	)
     endif(ENABLE_itkX)
   endif(ENABLE_tkX)
+
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(${plplottcltk_Main_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
 
   add_library(plplottcltk_Main ${plplottcltk_Main_LIB_SRCS})
 
@@ -460,13 +454,13 @@ if(ENABLE_tcl)
     set(LIB_INSTALL_DIR ${LIB_DIR})
   endif(USE_DLL_SUBDIRECTORY)
 
-  if(ENABLE_DYNDRIVERS)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplottcltk>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplottcltk>)
-  else(ENABLE_DYNDRIVERS)
+  if(tcltk_in_plplot_library)
     set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplot>)
     set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplot>)
-  endif(ENABLE_DYNDRIVERS)
+  else(tcltk_in_plplot_library)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplottcltk>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplottcltk>)
+  endif(tcltk_in_plplot_library)
 
   # N.B. Results only available at generate time.
   configure_file_generate(
@@ -481,21 +475,22 @@ if(ENABLE_tcl)
     set_source_files_properties(pltcl.c
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
   endif(BUILD_SHARED_LIBS)
+
   add_executable(pltcl pltcl.c)
-  if(ENABLE_DYNDRIVERS)
-    if(ENABLE_itcl)
-      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
-    else(ENABLE_itcl)
-      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${TCL_LIBRARY})
-    endif(ENABLE_itcl)
-  else(ENABLE_DYNDRIVERS)
-    # For this case, all of plplottcltk code is already in plplot so don't redundantly link
+
+  if(tcltk_in_plplot_library)
     if(ENABLE_itcl)
       target_link_libraries(pltcl plplot plplottcltk_Main ${ITCL_LIBRARY} ${TCL_LIBRARY})
     else(ENABLE_itcl)
       target_link_libraries(pltcl plplot plplottcltk_Main ${TCL_LIBRARY})
     endif(ENABLE_itcl)
-  endif(ENABLE_DYNDRIVERS)
+  else(tcltk_in_plplot_library)
+    if(ENABLE_itcl)
+      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
+    else(ENABLE_itcl)
+      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${TCL_LIBRARY})
+    endif(ENABLE_itcl)
+  endif(tcltk_in_plplot_library)
 
   if(USE_RPATH)
     filter_rpath(LIB_INSTALL_RPATH)
