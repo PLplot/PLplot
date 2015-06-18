@@ -1,6 +1,6 @@
 # cmake/modules/tk.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -61,9 +61,11 @@ if(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
   set(PLD_tkwin OFF CACHE BOOL "Enable Tk device" FORCE)
 endif(NOT X11_FOUND AND (PLD_tk OR PLD_tkwin))
 
-# Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
-string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
-message(STATUS "TKLIB_COMPILE_FLAGS = ${TKLIB_COMPILE_FLAGS}")
+if(PLD_tk OR PLD_ntk OR PLD_tkwin)
+  # Transform TK_INCLUDE_PATH (which is a list) to blank-delimited flag form.
+  string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
+  message(STATUS "TKLIB_COMPILE_FLAGS = ${TKLIB_COMPILE_FLAGS}")
+endif(PLD_tk OR PLD_ntk OR PLD_tkwin)
 	
 if(PLD_tk)
   set(tk_COMPILE_FLAGS 
