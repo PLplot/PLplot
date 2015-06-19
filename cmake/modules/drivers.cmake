@@ -29,7 +29,7 @@
 #   device.
 # devicename_LINK_FLAGS: link options (e.g., -L  and -l) for each
 #   individual device.
-# DRIVERS_LINK_FLAGS: concatanated link options for all devices.
+# DRIVERS_LINK_FLAGS: concatenated link options for all devices.
 # DEVICES_LIST: list of devices (e.g. png, jpeg),where PLD_devicename is ON
 # DRIVERS_LIST: list of device drivers (e.g., gd for the png and jpeg devices)
 #   where at least one of the associated devices is enabled.

@@ -539,7 +539,7 @@ wget http://downloads.sourceforge.net/plplot/plplot/5.11.0%20Source/plplot-5.11.
 wget http://downloads.sourceforge.net/plplot/plplot/5.11.0%20Source/plplot-5.11.0.tar.gz
 gpg --verify plplot-5.11.0.tar.gz.asc
 
-Prepare concatanated release notes + Changelog.
+Prepare concatenated release notes + Changelog.
 
 cd /tmp/plplot-dist-prep/plplot-5.11.0
 echo "
