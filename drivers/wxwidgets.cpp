@@ -378,7 +378,10 @@ void plD_tidy_wxwidgets( PLStream *pls )
     {
         wxPLDevice *device = (wxPLDevice *) pls->dev;
         if ( device )
+        {
+            device->PreDestructorTidy( pls );
             delete device;
+        }
         pls->dev = NULL;         //so it doesn't get freed elswhere
     }
     catch ( char* message )

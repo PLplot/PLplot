@@ -71,6 +71,7 @@ public:
     void FixAspectRatio( bool fix );
     void Locate( PLStream* pls, PLGraphicsIn *graphicsIn );
     void Flush( PLStream* pls );
+    void PreDestructorTidy( PLStream *pls );
 
 private:
     void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, bool &underlined );

@@ -32,14 +32,16 @@
 #endif
 
 //data transmission codes
-const unsigned char transmissionRegular         = 0;
-const unsigned char transmissionSkipFileEnd     = 1;
-const unsigned char transmissionEndOfPage       = 2;
-const unsigned char transmissionBeginPage       = 3;
-const unsigned char transmissionLocate          = 4;
-const unsigned char transmissionPartial         = 5;
-const unsigned char transmissionComplete        = 6;
-const unsigned char transmissionRequestTextSize = 7;
+const unsigned char transmissionRegular          = 0;
+const unsigned char transmissionSkipFileEnd      = 1;
+const unsigned char transmissionEndOfPage        = 2;
+const unsigned char transmissionBeginPage        = 3;
+const unsigned char transmissionLocate           = 4;
+const unsigned char transmissionPartial          = 5;
+const unsigned char transmissionComplete         = 6;
+const unsigned char transmissionRequestTextSize  = 7;
+const unsigned char transmissionEndOfPageNoPause = 8;
+const unsigned char transmissionClose            = 9;
 
 struct TextSizeInfo
 {

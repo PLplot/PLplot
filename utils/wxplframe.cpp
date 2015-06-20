@@ -184,11 +184,14 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             m_bufferValidFlags.push_back( false );
             m_writingPage = m_pageBuffers.size() - 1;
         }
-        else if ( transmissionType == transmissionEndOfPage )
+        else if ( transmissionType == transmissionEndOfPage || transmissionType == transmissionEndOfPageNoPause )
         {
             if ( !m_bufferValidFlags[m_writingPage] )
                 throw( "Received an end of page transmission after an incomplete or no draw instruction" );
-            SetPageAndUpdate();
+            if ( transmissionType == transmissionEndOfPage )
+                SetPageAndUpdate();
+            else
+                SetPageAndUpdate( m_writingPage );
         }
         else if ( transmissionType == transmissionLocate )
         {
@@ -225,6 +228,10 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             if ( m_writingPage == m_viewingPage &&
                  ( m_plottedBufferAmount + 1024 ) < m_pageBuffers[ m_writingPage ].size() )
                 SetPageAndUpdate();
+        }
+        else if ( transmissionType == transmissionClose )
+        {
+            exit( 0 );
         }
         header->readLocation += nRead;
         if ( header->readLocation == m_memoryMap.getSize() )

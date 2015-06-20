@@ -459,6 +459,17 @@ wxPLDevice::~wxPLDevice()
     }
 }
 
+//--------------------------------------------------------------------------
+//  void wxPLDevice::PreDestructorTidy( PLStream *pls )
+//
+//  This function performs any tidying up that requires a PLStream. should
+//  be called before the destructor obviously
+//--------------------------------------------------------------------------
+void wxPLDevice::PreDestructorTidy( PLStream *pls )
+{
+    if ( !m_dc && pls->nopause )
+        TransmitBuffer( pls, transmissionClose );
+}
 
 //--------------------------------------------------------------------------
 //  void wxPLDevice::DrawLine( short x1a, short y1a, short x2a, short y2a )
@@ -1098,7 +1109,10 @@ void wxPLDevice::EndPage( PLStream* pls )
 {
     if ( !m_dc )
     {
-        TransmitBuffer( pls, transmissionEndOfPage );
+        if ( pls->nopause )
+            TransmitBuffer( pls, transmissionEndOfPageNoPause );
+        else
+            TransmitBuffer( pls, transmissionEndOfPage );
         return;
     }
 }
@@ -1271,11 +1285,12 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
 
             //if this is a end of page and we have completed
             //the buffer then send a end of page flag first
-            if ( transmissionType == transmissionEndOfPage && amountToCopy == 0 )
+            if ( ( transmissionType == transmissionEndOfPage || transmissionType == transmissionEndOfPageNoPause )
+                 && amountToCopy == 0 )
             {
                 memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
-                    (void *) ( &transmissionEndOfPage ), sizeof ( transmissionEndOfPage ) );
-                mapHeader.writeLocation += sizeof ( transmissionEndOfPage );
+                    (void *) ( &transmissionType ), sizeof ( transmissionType ) );
+                mapHeader.writeLocation += sizeof ( transmissionType );
                 if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
                     mapHeader.writeLocation = plMemoryMapReservedSpace;
                 counter   = 0;
@@ -1301,6 +1316,17 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                 memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
                     (void *) ( &transmissionRequestTextSize ), sizeof ( transmissionRequestTextSize ) );
                 mapHeader.writeLocation += sizeof ( transmissionRequestTextSize );
+                if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
+                    mapHeader.writeLocation = plMemoryMapReservedSpace;
+                counter   = 0;
+                completed = true;
+                continue;
+            }
+            if ( transmissionType == transmissionClose )
+            {
+                memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
+                    (void *) ( &transmissionType ), sizeof ( transmissionType ) );
+                mapHeader.writeLocation += sizeof ( transmissionType );
                 if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
                     mapHeader.writeLocation = plMemoryMapReservedSpace;
                 counter   = 0;
@@ -1339,7 +1365,8 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                     counter       = 0;
                 }
                 if ( amountToCopy == 0 && transmissionType != transmissionEndOfPage
-                     && transmissionType != transmissionLocate )
+                     && transmissionType != transmissionLocate
+                     && transmissionType != transmissionEndOfPageNoPause )
                     completed = true;
             }
             else
