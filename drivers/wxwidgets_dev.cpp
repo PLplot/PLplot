@@ -1287,7 +1287,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
             {
                 memcpy( m_outputMemoryMap.getBuffer() + mapHeader.writeLocation,
                     (void *) ( &transmissionLocate ), sizeof ( transmissionLocate ) );
-                mapHeader.writeLocation += sizeof ( transmissionEndOfPage );
+                mapHeader.writeLocation += sizeof ( transmissionLocate );
                 if ( mapHeader.writeLocation == m_outputMemoryMap.getSize() )
                     mapHeader.writeLocation = plMemoryMapReservedSpace;
                 mapHeader.locateModeFlag = 1;
