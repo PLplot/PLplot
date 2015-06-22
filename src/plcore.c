@@ -358,14 +358,14 @@ plP_wait( void )
 {
     // If the nopause is disabled (which means pauses are wanted) and the
     // the device supports waiting for user input
-    if( ! plsc->nopause && *plsc->dispatch_table->pl_wait != NULL)
+    if ( !plsc->nopause && *plsc->dispatch_table->pl_wait != NULL )
     {
-      char *save_locale = plsave_set_locale();
-      if ( !plsc->stream_closed )
-      {
-	( *plsc->dispatch_table->pl_wait )( (struct PLStream_struct *) plsc );
-      }
-      plrestore_locale( save_locale );
+        char *save_locale = plsave_set_locale();
+        if ( !plsc->stream_closed )
+        {
+            ( *plsc->dispatch_table->pl_wait )( (struct PLStream_struct *) plsc );
+        }
+        plrestore_locale( save_locale );
     }
 }
 
@@ -2518,7 +2518,7 @@ c_plend1( void )
     if ( plsc->level > 0 )
     {
         plP_eop();
-	plP_wait();
+        plP_wait();
         plP_tidy();
         plsc->level = 0;
     }
@@ -3111,11 +3111,11 @@ plInitDispatchTable()
 #endif
             plexit( "plInitDispatchTable: Insufficient memory" );
         }
-	
+
         // Initialize to zero to force all function pointers to NULL.  That way optional capabilities
         // (e.g. wait for user input) do not need to be explicitly set to NULL in the driver's
         // initialization function
-        memset( dispatch_table[n], 0, sizeof( PLDispatchTable) );
+        memset( dispatch_table[n], 0, sizeof ( PLDispatchTable ) );
 
         ( *static_device_initializers[n] )( dispatch_table[n] );
     }
@@ -3172,14 +3172,14 @@ plInitDispatchTable()
 
         // Initialize to zero to force all function pointers to NULL.  That way optional capabilities
         // (e.g. wait for user input) do not need to be explicitly set to NULL in the driver's
-        // initialization function nor do we need to do it in this function. 
-        memset( dispatch_table[n], 0, sizeof( PLDispatchTable) );
-	
+        // initialization function nor do we need to do it in this function.
+        memset( dispatch_table[n], 0, sizeof ( PLDispatchTable ) );
+
         // Fill in the dispatch table entries.
-        dispatch_table[n]->pl_MenuStr  = plstrdup( devdesc );
-        dispatch_table[n]->pl_DevName  = plstrdup( devnam );
-        dispatch_table[n]->pl_type     = atoi( devtype );
-        dispatch_table[n]->pl_seq      = seq;
+        dispatch_table[n]->pl_MenuStr = plstrdup( devdesc );
+        dispatch_table[n]->pl_DevName = plstrdup( devnam );
+        dispatch_table[n]->pl_type    = atoi( devtype );
+        dispatch_table[n]->pl_seq     = seq;
 
         // Add a record to the loadable device list
         loadable_device_list[i].devnam      = plstrdup( devnam );

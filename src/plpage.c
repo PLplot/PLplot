@@ -47,7 +47,7 @@ c_pladv( PLINT page )
         if ( plsc->cursub >= plsc->nsubx * plsc->nsuby )
         {
             plP_eop();
-	    plP_wait();
+            plP_wait();
             plP_bop();
             plsc->cursub = 1;
         }

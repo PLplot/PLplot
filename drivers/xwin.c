@@ -599,15 +599,15 @@ plD_tidy_xw( PLStream *pls )
 void
 plD_wait_xw( PLStream *pls )
 {
-  XwDev     *dev = (XwDev *) pls->dev;
-  dbug_enter( "plD_eop_xw" );
+    XwDev *dev = (XwDev *) pls->dev;
+    dbug_enter( "plD_eop_xw" );
 
 #ifdef PL_HAVE_PTHREAD
-  if ( usepthreads )
-    pthread_mutex_lock( &events_mutex );
+    if ( usepthreads )
+        pthread_mutex_lock( &events_mutex );
 #endif
-  
-  if ( dev->is_main )
+
+    if ( dev->is_main )
         WaitForPage( pls );
 
 #ifdef PL_HAVE_PTHREAD

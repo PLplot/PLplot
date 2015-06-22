@@ -2084,7 +2084,7 @@ void plD_bop_xcairo( PLStream *pls )
 
 void plD_eop_xcairo( PLStream *pls )
 {
-    PLCairo        *aStream;
+    PLCairo *aStream;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -2144,7 +2144,7 @@ void plD_wait_xcairo( PLStream *pls )
     aStream = (PLCairo *) pls->dev;
 
     aStream->exit_event_loop = 0;
-    
+
     // Loop, handling selected events, till the user elects to close the plot.
     event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
     XSelectInput( aStream->XDisplay, aStream->XWindow, event_mask );

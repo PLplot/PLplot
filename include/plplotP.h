@@ -1101,7 +1101,7 @@ plP_swin( PLWindow *plwin );
 
 PLDLLIMPEXP void
 plP_wait( void );
-  
+
 // Return file pointer to lib file.
 
 FILE *

@@ -1322,7 +1322,7 @@ void plD_init_qtwidget( PLStream * pls )
 
 void plD_eop_qtwidget( PLStream *pls )
 {
-    QtPLWidget* widget    = ( (QtPLWidget *) pls->dev );
+    QtPLWidget* widget = ( (QtPLWidget *) pls->dev );
 
     widget->flush();
     widget->raise();
@@ -1337,7 +1337,7 @@ void plD_wait_qtwidget( PLStream *pls )
     while ( currentPage == widget->pageNumber && handler.isMasterDevice( widget ) )
     {
         qApp->processEvents( QEventLoop::WaitForMoreEvents );
-    }  
+    }
 }
 
 void plD_bop_qtwidget( PLStream *pls )
