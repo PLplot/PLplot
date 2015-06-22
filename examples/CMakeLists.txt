@@ -1349,7 +1349,6 @@ PLD_pscairo:		${PLD_pscairo}
 PLD_epscairo:		${PLD_epscairo}
 PLD_svgcairo:		${PLD_svgcairo}
 PLD_cgm:		${PLD_cgm}
-PLD_dg300:		${PLD_dg300}
 PLD_epsqt:		${PLD_epsqt}
 PLD_pdfqt:		${PLD_pdfqt}
 PLD_bmpqt:		${PLD_bmpqt}
@@ -1361,13 +1360,6 @@ PLD_svgqt:		${PLD_svgqt}
 PLD_gif:		${PLD_gif}
 PLD_jpeg:		${PLD_jpeg}
 PLD_png:		${PLD_png}
-PLD_hp7470:		${PLD_hp7470}
-PLD_hp7580:		${PLD_hp7580}
-PLD_lj_hpgl:		${PLD_lj_hpgl}
-PLD_imp:		${PLD_imp}
-PLD_ljii:		${PLD_ljii}
-PLD_ljiip:		${PLD_ljiip}
-PLD_pbm:		${PLD_pbm}
 PLD_pdf:		${PLD_pdf}
 PLD_ps:			${PLD_ps}
 PLD_psc:		${PLD_psc}
@@ -1375,8 +1367,6 @@ PLD_pstex:		${PLD_pstex}
 PLD_psttf:		${PLD_psttf}
 PLD_psttfc:		${PLD_psttfc}
 PLD_svg:		${PLD_svg}
-PLD_tek4010f:		${PLD_tek4010f}
-PLD_tek4107f:		${PLD_tek4107f}
 PLD_wxpng:		${PLD_wxpng}
 PLD_xfig:		${PLD_xfig}
 

@@ -77,11 +77,7 @@
 //
 // Some of the macros set during configuration are described here.
 //
-// If HAVE_TERMIOS_H is set, we employ POSIX.1 tty terminal I/O.  One purpose
-// of this is to select character-oriented (CBREAK) i/o in the tek driver and
-// all its variants.  It is usable without this but not as powerful.  The
-// reason for using this is that some supported systems are still not
-// POSIX.1 compliant (and some may never be).
+// If HAVE_TERMIOS_H is set, we employ POSIX.1 tty terminal I/O.
 //
 // If STDC_HEADERS is defined, the system's libc is ANSI-compliant.
 // ANSI libc calls are used for: (a) setting up handlers to be called
@@ -312,7 +308,7 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #define LPAGE_Y     ( PIXELS_Y / VDPMM ) // virtual page length in y in mm (192)
 
 // This defines the first argument of the plRotPhy invocation that is made
-// in a number of device drivers (e.g., found in ljii.c, ljiip.c, ps.c,
+// in a number of device drivers (e.g., found in ps.c
 // and pstex.c) to rotate them "permanently" from portrait mode to non-
 // portrait mode.  ORIENTATION of 1 corresponds to seascape mode (90 deg
 // clockwise rotation from portrait).  This is the traditional value

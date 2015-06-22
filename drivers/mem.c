@@ -91,7 +91,6 @@ plD_init_mem( PLStream *pls )
 
 #define sign( a )    ( ( a < 0 ) ? -1 : ( ( a == 0 ) ? 0 : 1 ) )
 
-// Modified version of the ljii routine (see ljii.c)
 void
 plD_line_mem( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {

@@ -32,80 +32,56 @@
 extern "C" {
 #endif
 
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_mac8( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_mac1( PLDispatchTable *pdt );
+// The order of these results (in alphabetic order by source file name and device)
+// may be found from the following command:
+//
+// find drivers -type f | grep -v .git | grep -v deprecated | xargs grep 'plD_dispatch_init.*)$'  | grep -v // |sort
+//
+// with suitable editing afterward to remove file name prepend "PLDLLIMPEXP_DRIVER " and append ";"
+
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_aqt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_nx( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_os2( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_xw( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tk( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_vga( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_mgr( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_win3( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_vga( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_vga( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_vga( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tiff( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_jpg( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_jpeg( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_bmp( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_vga( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_xterm( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tekt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tek4107t( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_mskermit( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_versaterm( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_vlt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_conex( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_dg( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_plm( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tekf( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tek4107f( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_psm( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_psc( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_xfig( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_ljiip( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_ljii( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_hp7470( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_hp7580( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_hpgl( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_imp( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pbm( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_png( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_gif( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_epscairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_extcairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_memcairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfcairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_pngcairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_pscairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgcairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_wincairo( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_xcairo( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_cgm( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_gif( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_jpeg( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_png( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_mem( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_ntk( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_null( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tkwin( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdf( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_plm( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_psc( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_psm( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_pstex( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_psttfc( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_psttfm( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_ntk( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_mem( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_wingcc( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxpng( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_svg( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdf( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_xcairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfcairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pscairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_epscairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgcairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pngcairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_memcairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_extcairo( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_wincairo( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_bmpqt( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_epsqt( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_extqt( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_jpgqt( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_memqt( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfqt( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_pngqt( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_ppmqt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_tiffqt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgqt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_epsqt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_pdfqt( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_qtwidget( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_extqt( PLDispatchTable *pdt );
-PLDLLIMPEXP_DRIVER void plD_dispatch_init_memqt( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_svgqt( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_tiffqt( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_svg( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_tk( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_tkwin( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_wingcc( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxpng( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_xfig( PLDispatchTable *pdt );
+PLDLLIMPEXP_DRIVER void plD_dispatch_init_xw( PLDispatchTable *pdt );
 
 // Prototypes for plot buffer calls.
 

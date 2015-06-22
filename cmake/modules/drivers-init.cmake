@@ -138,10 +138,6 @@ set(DRIVERS_DEVICE_LIST
   "wincairo:cairo:ON:I:OFF"
   # new example 16 shows severe valgrind issues with this device.
   "cgm:cgm:OFF:F:OFF"
-  # This unmaintained device driver builds but does not actually work 
-  # (with error message: "Unable to locate dispatch table initialization
-  # function for driver: dg300.") so retire it.
-  # "dg300:dg300:OFF:F:OFF"
   "epsqt:qt:ON:F:ON"
   "pdfqt:qt:ON:F:ON"
   "qtwidget:qt:ON:I:OFF"
@@ -165,33 +161,9 @@ set(DRIVERS_DEVICE_LIST
   "gif:gd:OFF:F:ON"
   "jpeg:gd:OFF:F:ON"
   "png:gd:OFF:F:ON" 
-  # hpgl devices produce tons of "Invalid pen selection." messages and the
-  # lj_hpgl device produces the error message "Unable to locate dispatch
-  # table initialization function for driver: hpgl."
-  # Retire this elderly device driver rather than fixing it.
-  #"hp7470:hpgl:OFF:F:OFF"
-  #"hp7580:hpgl:OFF:F:OFF"
-  #"lj_hpgl:hpgl:OFF:F:OFF"
-  # This unmaintained driver generates double frees for example 14.
-  # Retire this elderly device driver rather than fixing it.
-  # "imp:impress:OFF:I:OFF"
-  # linuxvga is retired because it is poorly maintained (e.g., colours
-  # are incorrect), it is primitive (e.g., Hershey fonts, software
-  # fill), and it must be run as root.  Also, svgalib is not supported
-  # for some mainstream (e.g., intel) graphics chips anymore so it is
-  # difficult to even test this device.
-  #"linuxvga:linuxvga:OFF:I:OFF"
-  # ljii is unmaintained and both the ljii and ljiip segfault on example 14.
-  # Retire this elderly device driver rather than fixing it.
-  #"ljii:ljii:OFF:F:OFF"
-  #"ljiip:ljiip:OFF:F:OFF"
   "mem:mem:ON:M:OFF"
   "ntk:ntk:ON:I:OFF"
   "null:null:ON:N:OFF"
-  # The pbm device is primitive (e.g., Hershey fonts, software fills,
-  # no alpha transparency) and poorly maintained (the double free for
-  # example 2 has not been fixed).  Therefore retire this device.
-  # "pbm:pbm:OFF:F:OFF"
   "pdf:pdf:ON:F:OFF"
   # (2007-09-01) As discussed on list, don't enable plmeta until we sort
   # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
@@ -204,18 +176,6 @@ set(DRIVERS_DEVICE_LIST
   "pstex:pstex:OFF:F:OFF"
   "psttf:psttf:ON:F:OFF"
   "svg:svg:ON:F:ON"
-  # Build issues (inconsistent use of PLD names).  We believe there is no
-  # user interest in the tek devices any more so retire them rather than
-  # fix them.
-  #"conex:tek:OFF:I:OFF" 
-  #"mskermit:tek:OFF:I:OFF"
-  #"tek4010:tek:OFF:I:OFF"
-  #"tek4010f:tek:OFF:F:OFF"
-  #"tek4107:tek:OFF:I:OFF"
-  #"tek4107f:tek:OFF:F:OFF"
-  #"versaterm:tek:OFF:I:OFF"
-  #"vlt:tek:OFF:I:OFF"
-  #"xterm:tek:OFF:I:OFF"
   "tk:tk:ON:I:OFF"
   "tkwin:tkwin:ON:E:OFF"
   "wingcc:wingcc:ON:I:OFF"
