@@ -13,15 +13,16 @@ a device driver (which we'll call <driver>).
 
 The following PLplot source-tree files are affected:
 
-plplot/drivers/<driver>.driver_info.in
-plplot/cmake/modules/drivers-init.cmake
-plplot/include/drivers.h
-plplot/include/plDevs.h.cmake
-plplot/include/plcore.h
-plplot/plplot-test/plplot-test.sh.cmake
-plplot/examples/plplot_configure.cmake_installed_examples.in
+1. drivers/<driver>.driver_info.in
+2. cmake/modules/drivers-init.cmake
+3. include/drivers.h
+4. include/plDevs.h.in
+5. include/plcore.h
+6. plplot-test/plplot-test.sh.in
+7. examples/plplot_configure.cmake_installed_examples.in
+8. include/pldll.h.in
 
-1. Add a line to plplot/drivers/<driver>.driver_info.in consisting of the following
+1. Add a line to drivers/<driver>.driver_info.in consisting of the following
 colon-separated fields:
 
 <device>:<description string>:<interactive?>:<driver>:<device number>:<device>
@@ -29,7 +30,7 @@ colon-separated fields:
 This should be the exact duplicate of the corresponding entry in the
 driver source code for plD_DEVICE_INFO_<driver>.
 
-2. Add the following line to plplot/cmake/modules/drivers-init.cmake in
+2. Add the following line to cmake/modules/drivers-init.cmake in
 set(DRIVERS_DEVICE_LIST... 
 
 "<dev>:<driver>:ON:<kind>:<familied>"
@@ -37,19 +38,19 @@ set(DRIVERS_DEVICE_LIST...
 where that file documents how the last two fields should be set depending
 on the characteristics of the device you are adding.
 
-3. Add the following line to plplot/include/drivers.h:
+3. Add the following line to include/drivers.h:
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_<device> ( PLDispatchTable *pdt );
 
-4. Add the following line to include/plDevs.h.cmake
+4. Add the following line to include/plDevs.h.in
 #cmakedefine PLD_<device>
 
-5. Add the following 3 lines to plplot/include/plcore.h:
+5. Add the following 3 lines to include/plcore.h:
 #if defined(PLD_<device>) && !defined(ENABLE_DYNDRIVERS)
     plD_dispatch_init_<device>,
 #endif
 
 6. For each interactive and file device of the driver add the
-following line to plplot/plplot_test/plplot-test.sh.cmake:
+following line to plplot_test/plplot-test.sh.in:
 
 PLD_<device>=@PLD_<device>@
 
@@ -57,19 +58,19 @@ Note, that the interactive and file devices are dealt with in separate places
 in that script so be careful where you put the above change.
 
 7. Add the following line to
-plplot/examples/plplot_configure.cmake_installed_examples.in:
+examples/plplot_configure.cmake_installed_examples.in:
 set(PLD_<device> @PLD_<device>@)
 
 8. For dynamic drivers (the most likely situation), add <driver>_EXPORTS
-to the #ifdef ENABLE_DYNDRIVERS statement of plplot/include/pldll.h.in
+to the #ifdef ENABLE_DYNDRIVERS statement of include/pldll.h.in
 
 If the driver requires additional additional files or external libraries for
 compiling and linking then you should add a file called <driver>.cmake to
-plplot/cmake/modules and add a call to this file in the file 
-plplot/cmake/modules/drivers.cmake (include(<driver>)). The file
+cmake/modules and add a call to this file in the file 
+cmake/modules/drivers.cmake (include(<driver>)). The file
 <driver>.cmake should consist of cmake instructions for finding and the
 files and libraries and setting the appropriate environment variables
 (PLD_<driver>, <driver>_COMPILE_FLAGS and <driver>_LINK_FLAGS).
 
 The code for the driver itself should be in a file called <driver>.c or
-<driver>.cpp in the plplot/drivers directory.
+<driver>.cpp in the drivers directory.
