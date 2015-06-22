@@ -2084,13 +2084,6 @@ void plD_bop_xcairo( PLStream *pls )
 
 void plD_eop_xcairo( PLStream *pls )
 {
-    int            number_chars;
-    long           event_mask;
-    char           event_string[10];
-    KeySym         keysym;
-    XComposeStatus cs;
-    XEvent         event;
-    XExposeEvent   *expose;
     PLCairo        *aStream;
 
     aStream = (PLCairo *) pls->dev;
@@ -2139,7 +2132,14 @@ void plD_tidy_xcairo( PLStream *pls )
 
 void plD_wait_xcairo( PLStream *pls )
 {
-    PLCairo *aStream;
+    PLCairo        *aStream;
+    long           event_mask;
+    char           event_string[10];
+    int            number_chars;
+    KeySym         keysym;
+    XComposeStatus cs;
+    XEvent         event;
+    XExposeEvent   *expose;
 
     aStream = (PLCairo *) pls->dev;
 
