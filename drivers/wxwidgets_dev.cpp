@@ -1448,14 +1448,16 @@ void wxPLDevice::SetupMemoryMap()
 
         //try to find the wxPLViewer executable, in the first instance just assume it
         //is in the path.
+        //wxString exeName = wxT( "/nfs/see-fs-02_users/earpros/usr/src/plplot-plplot/build/utils/wxPLViewer" );
         wxString exeName = wxT( "wxPLViewer" );
         if ( plInBuildTree() )
         {
             //if we are in the build tree check for the needed exe in there
             wxArrayString files;
-            wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName, wxDIR_FILES | wxDIR_DIRS );
+            wxString utilsDir = wxString( wxT( BUILD_DIR ) ) + wxString( wxT( "/utils" ) );
+            wxDir::GetAllFiles( utilsDir, &files, exeName, wxDIR_FILES | wxDIR_DIRS );
             if ( files.size() == 0 )
-                wxDir::GetAllFiles( wxT( BUILD_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES | wxDIR_DIRS );
+	      wxDir::GetAllFiles( utilsDir, &files, exeName + wxT( ".exe" ), wxDIR_FILES | wxDIR_DIRS );
             if ( files.size() > 0 )
                 exeName = files[0];
         }
@@ -1468,7 +1470,7 @@ void wxPLDevice::SetupMemoryMap()
                 wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES | wxDIR_DIRS );
             if ( files.size() > 0 )
                 exeName = files[0];
-        }
+	}
         //Run the wxPlViewer with command line parameters telling it the location and size of the buffer
         wxString command;
         command << wxT( "\"" ) << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
