@@ -812,11 +812,13 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
         size_t counter     = 0;
         while ( !gotResponse && counter < 1000 )
         {
-            PLNamedMutexLocker lock( &m_mutex );
+            //PLNamedMutexLocker lock( &m_mutex );
             gotResponse = header->textSizeInfo.written;
             ++counter;
             wxMilliSleep( 1 );
         }
+        if( counter == 1000 )
+	    plwarn( "Failed to get text size from wxPLViewer - timeout" );
 
         w = header->textSizeInfo.width;
         h = header->textSizeInfo.height;
@@ -1264,6 +1266,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                         (void *) ( &transmissionSkipFileEnd ), sizeof ( transmissionSkipFileEnd ) );
                     mapHeader.writeLocation = plMemoryMapReservedSpace;
                     counter = 0;
+		    plwarn( "wxWidgets wrapping buffer" );
                     continue;
                 }
             }

@@ -53,6 +53,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     m_file                 = file;
     m_fileSize             = fileSize;
     m_inCheckTimerFunction = false;
+    m_nothingToDoCounter   = 0;
 
     if ( file.length() > 0 )
     {
@@ -138,6 +139,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
         //Check if there is anything to read
         if ( header->readLocation == header->writeLocation )
         {
+	    ++m_nothingToDoCounter;
             if ( header->completeFlag != 0 )
             {
                 //if there is nothing to read and the complete flag is set then
@@ -145,7 +147,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
                 m_transferComplete = true;
                 m_checkTimer.Stop();
             }
-            else if ( m_currentTimerInterval != m_idleTimerInterval )
+            else if ( m_currentTimerInterval != m_idleTimerInterval && m_nothingToDoCounter > m_nothingToDoCounterLimit )
             {
                 //if there is nothing to read but we might have more to come
                 //then check less frequently
@@ -166,6 +168,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             m_checkTimer.Stop();
             m_checkTimer.Start( m_busyTimerInterval );
             m_currentTimerInterval = m_busyTimerInterval;
+	    m_nothingToDoCounter = 0;
         }
 
         unsigned char transmissionType;
