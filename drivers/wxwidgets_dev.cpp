@@ -297,6 +297,21 @@ private:
     unsigned int m_seed;
 };
 
+void plFontToWxFontParameters( PLUNICODE fci, PLFLT scaledFontSize, wxFontFamily &family, int &style, int &weight, int &pt )
+{
+	
+    unsigned char plFontFamily, plFontStyle, plFontWeight;
+
+    plP_fci2hex( fci, &plFontFamily, PL_FCI_FAMILY );
+    plP_fci2hex( fci, &plFontStyle, PL_FCI_STYLE );
+    plP_fci2hex( fci, &plFontWeight, PL_FCI_WEIGHT );
+	
+    family = fontFamilyLookup[plFontFamily];
+    style = fontStyleLookup[plFontStyle];
+    weight = fontWeightLookup[plFontWeight];
+	pt = ROUND( scaledFontSize );
+}
+
 //--------------------------------------------------------------------------
 //  FontGrabber::FontGrabber( )
 //
@@ -326,27 +341,18 @@ wxFont FontGrabber::GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underline
         return m_prevFont;
     }
 
-
-    unsigned char fontFamily, fontStyle, fontWeight;
-
-    plP_fci2hex( fci, &fontFamily, PL_FCI_FAMILY );
-    plP_fci2hex( fci, &fontStyle, PL_FCI_STYLE );
-    plP_fci2hex( fci, &fontWeight, PL_FCI_WEIGHT );
-
     m_prevFci            = fci;
     m_prevScaledFontSize = scaledFontSize;
     m_prevUnderlined     = underlined;
     m_lastWasCached      = false;
 
-    //create the font based on point size ( with 1 point = 1/72 inch )
-    return m_prevFont = wxFont( ROUND( scaledFontSize ),
-        fontFamilyLookup[fontFamily],
-        fontStyleLookup[fontStyle],
-        fontWeightLookup[fontWeight],
-        underlined,
-        wxEmptyString,
-        wxFONTENCODING_DEFAULT
-        );
+	wxFontFamily family;
+	int style;
+	int weight;
+	int pt;
+	plFontToWxFontParameters( fci, scaledFontSize, family, style, weight, pt );
+
+    return m_prevFont = wxFont( pt, family, style, weight, underlined, wxEmptyString, wxFONTENCODING_DEFAULT );
 }
 
 //--------------------------------------------------------------------------
@@ -802,23 +808,20 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
     {
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
         header->textSizeInfo.written = false;
-        wxString        fontString = m_fontGrabber.GetFont( m_fci, scaledFontSize, underlined ).GetNativeFontInfoDesc();
-        if ( fontString.length() > 255 )
-            plabort( "wxPLDevice::ProcessString Font description is too long to send to wxPLViewer" );
-        wcscpy( header->textSizeInfo.font, fontString.wc_str() );
-        wcscpy( header->textSizeInfo.text, str.wc_str() );
-        TransmitBuffer( NULL, transmissionRequestTextSize );
+		plFontToWxFontParameters( m_fci, scaledFontSize, header->textSizeInfo.family, header->textSizeInfo.style,
+			header->textSizeInfo.weight, header->textSizeInfo.pt );
+		header->textSizeInfo.underlined = underlined;
         bool   gotResponse = false;
-        size_t counter     = 0;
+        TransmitBuffer( NULL, transmissionRequestTextSize );
+        size_t counter = 0;
         while ( !gotResponse && counter < 1000 )
         {
-            //PLNamedMutexLocker lock( &m_mutex );
             gotResponse = header->textSizeInfo.written;
             ++counter;
             wxMilliSleep( 1 );
         }
         if( counter == 1000 )
-	    plwarn( "Failed to get text size from wxPLViewer - timeout" );
+	        plwarn( "Failed to get text size from wxPLViewer - timeout" );
 
         w = header->textSizeInfo.width;
         h = header->textSizeInfo.height;

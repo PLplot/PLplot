@@ -31,6 +31,8 @@
 #include <errno.h>
 #endif
 
+#include<wx/font.h>
+
 //data transmission codes
 const unsigned char transmissionRegular          = 0;
 const unsigned char transmissionSkipFileEnd      = 1;
@@ -45,11 +47,15 @@ const unsigned char transmissionClose            = 9;
 
 struct TextSizeInfo
 {
-    long    width;
-    long    height;
-    wchar_t font[256];
-    wchar_t text[501];
-    bool    written;
+    long         width;
+    long         height;
+	wxFontFamily family;
+	int          style;
+	int          weight;
+	int          pt;
+	bool         underlined;
+    wchar_t      text[501];
+    bool         written;
 };
 
 struct MemoryMapHeader

@@ -206,8 +206,9 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             wxClientDC dc( this );
             wxCoord    width;
             wxCoord    height;
-            wxFont     font( wxString( header->textSizeInfo.font ) );
-            dc.GetTextExtent( wxString( header->textSizeInfo.text ), &width, &height, 0, 0, &font );
+			wxFont     *font = wxTheFontList->FindOrCreateFont(header->textSizeInfo.pt, header->textSizeInfo.family,
+				header->textSizeInfo.style, header->textSizeInfo.weight, header->textSizeInfo.underlined );
+            dc.GetTextExtent( wxString( header->textSizeInfo.text ), &width, &height, 0, 0, font );
             header->textSizeInfo.width   = long(width);
             header->textSizeInfo.height  = long(height);
             header->textSizeInfo.written = true;
