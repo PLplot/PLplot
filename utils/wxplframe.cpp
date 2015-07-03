@@ -126,8 +126,16 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 {
     //repeatedly call ReadTransmission until there is nothing
     //left to read
-    while ( ReadTransmission() )
+    PLINT nFalses = 0;
+    while ( nFalses < 100 )
     {
+		if( ReadTransmission() )
+            nFalses = 0;
+		else
+		{
+            ++nFalses;
+            wxMilliSleep(1);
+		}
     }
 }
 
