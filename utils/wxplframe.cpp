@@ -124,10 +124,22 @@ wxPlFrame::~wxPlFrame()
 
 void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 {
+    //repeatedly call ReadTransmission until there is nothing
+    //left to read
+    while ( ReadTransmission() )
+    {
+    }
+}
+
+//This function reads any transmissions from the shared memoy and acts upon
+//it. If there was nothing to read it returns false, otherwise it returns
+//true indicating that the program may want to read some more.
+bool wxPlFrame::ReadTransmission()
+{
     //avoid reentrant behaviour if some function yields allowing the
     //timer to call this function again
     if ( m_inCheckTimerFunction )
-        return;
+        return true;
     m_inCheckTimerFunction = true;
     //basically we check to see if we have any more data in the buffer
     //if so we add it to the apropriate plotBuffer
@@ -158,7 +170,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 
             //nothing to do so return
             m_inCheckTimerFunction = false;
-            return;
+            return false;
         }
 
         if ( m_currentTimerInterval != m_busyTimerInterval )
@@ -179,7 +191,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
         {
             header->readLocation   = plMemoryMapReservedSpace;
             m_inCheckTimerFunction = false;
-            return;
+            return true;
         }
         else if ( transmissionType == transmissionBeginPage )
         {
@@ -242,6 +254,8 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             header->readLocation = plMemoryMapReservedSpace;
     }
     m_inCheckTimerFunction = false;
+
+    return true;
 }
 void wxPlFrame::OnToggleFixAspect( wxCommandEvent &event )
 {

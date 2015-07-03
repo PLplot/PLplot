@@ -61,6 +61,7 @@ private:
     void OnCheckTimer( wxTimerEvent &event );
     void OnMouse( wxMouseEvent &event );
     void OnKey( wxKeyEvent &event );
+    bool ReadTransmission();
     void SetPageAndUpdate( size_t page = size_t(-1) );
     std::vector<std::vector<char> > m_pageBuffers;
     std::vector<bool> m_bufferValidFlags;
