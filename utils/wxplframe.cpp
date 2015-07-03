@@ -139,7 +139,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
         //Check if there is anything to read
         if ( header->readLocation == header->writeLocation )
         {
-	    ++m_nothingToDoCounter;
+            ++m_nothingToDoCounter;
             if ( header->completeFlag != 0 )
             {
                 //if there is nothing to read and the complete flag is set then
@@ -168,7 +168,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             m_checkTimer.Stop();
             m_checkTimer.Start( m_busyTimerInterval );
             m_currentTimerInterval = m_busyTimerInterval;
-	    m_nothingToDoCounter = 0;
+            m_nothingToDoCounter   = 0;
         }
 
         unsigned char transmissionType;
@@ -206,8 +206,8 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             wxClientDC dc( this );
             wxCoord    width;
             wxCoord    height;
-			wxFont     *font = wxTheFontList->FindOrCreateFont(header->textSizeInfo.pt, header->textSizeInfo.family,
-				header->textSizeInfo.style, header->textSizeInfo.weight, header->textSizeInfo.underlined );
+            wxFont     *font = wxTheFontList->FindOrCreateFont( header->textSizeInfo.pt, header->textSizeInfo.family,
+                header->textSizeInfo.style, header->textSizeInfo.weight, header->textSizeInfo.underlined );
             dc.GetTextExtent( wxString( header->textSizeInfo.text ), &width, &height, 0, 0, font );
             header->textSizeInfo.width   = long(width);
             header->textSizeInfo.height  = long(height);

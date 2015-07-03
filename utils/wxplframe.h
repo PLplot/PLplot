@@ -76,7 +76,7 @@ private:
     int m_currentTimerInterval;
     static const int  m_idleTimerInterval = 100;
     static const int  m_busyTimerInterval = 0;
-    int               m_nothingToDoCounter;
+    int m_nothingToDoCounter;
     static const int  m_nothingToDoCounterLimit = 5000;
     bool              m_transferComplete;
     bool              m_inCheckTimerFunction;

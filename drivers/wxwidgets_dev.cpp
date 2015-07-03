@@ -299,17 +299,16 @@ private:
 
 void plFontToWxFontParameters( PLUNICODE fci, PLFLT scaledFontSize, wxFontFamily &family, int &style, int &weight, int &pt )
 {
-	
     unsigned char plFontFamily, plFontStyle, plFontWeight;
 
     plP_fci2hex( fci, &plFontFamily, PL_FCI_FAMILY );
     plP_fci2hex( fci, &plFontStyle, PL_FCI_STYLE );
     plP_fci2hex( fci, &plFontWeight, PL_FCI_WEIGHT );
-	
+
     family = fontFamilyLookup[plFontFamily];
-    style = fontStyleLookup[plFontStyle];
+    style  = fontStyleLookup[plFontStyle];
     weight = fontWeightLookup[plFontWeight];
-	pt = ROUND( scaledFontSize );
+    pt     = ROUND( scaledFontSize );
 }
 
 //--------------------------------------------------------------------------
@@ -346,11 +345,11 @@ wxFont FontGrabber::GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underline
     m_prevUnderlined     = underlined;
     m_lastWasCached      = false;
 
-	wxFontFamily family;
-	int style;
-	int weight;
-	int pt;
-	plFontToWxFontParameters( fci, scaledFontSize, family, style, weight, pt );
+    wxFontFamily family;
+    int          style;
+    int          weight;
+    int          pt;
+    plFontToWxFontParameters( fci, scaledFontSize, family, style, weight, pt );
 
     return m_prevFont = wxFont( pt, family, style, weight, underlined, wxEmptyString, wxFONTENCODING_DEFAULT );
 }
@@ -808,9 +807,9 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
     {
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
         header->textSizeInfo.written = false;
-		plFontToWxFontParameters( m_fci, scaledFontSize, header->textSizeInfo.family, header->textSizeInfo.style,
-			header->textSizeInfo.weight, header->textSizeInfo.pt );
-		header->textSizeInfo.underlined = underlined;
+        plFontToWxFontParameters( m_fci, scaledFontSize, header->textSizeInfo.family, header->textSizeInfo.style,
+            header->textSizeInfo.weight, header->textSizeInfo.pt );
+        header->textSizeInfo.underlined = underlined;
         bool   gotResponse = false;
         TransmitBuffer( NULL, transmissionRequestTextSize );
         size_t counter = 0;
@@ -820,8 +819,8 @@ void wxPLDevice::DrawTextSection( char* utf8_string, PLFLT scaledFontSize, PLFLT
             ++counter;
             wxMilliSleep( 1 );
         }
-        if( counter == 1000 )
-	        plwarn( "Failed to get text size from wxPLViewer - timeout" );
+        if ( counter == 1000 )
+            plwarn( "Failed to get text size from wxPLViewer - timeout" );
 
         w = header->textSizeInfo.width;
         h = header->textSizeInfo.height;
@@ -1269,7 +1268,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                         (void *) ( &transmissionSkipFileEnd ), sizeof ( transmissionSkipFileEnd ) );
                     mapHeader.writeLocation = plMemoryMapReservedSpace;
                     counter = 0;
-		    plwarn( "wxWidgets wrapping buffer" );
+                    plwarn( "wxWidgets wrapping buffer" );
                     continue;
                 }
             }
@@ -1460,10 +1459,10 @@ void wxPLDevice::SetupMemoryMap()
         {
             //if we are in the build tree check for the needed exe in there
             wxArrayString files;
-            wxString utilsDir = wxString( wxT( BUILD_DIR ) ) + wxString( wxT( "/utils" ) );
+            wxString      utilsDir = wxString( wxT( BUILD_DIR ) ) + wxString( wxT( "/utils" ) );
             wxDir::GetAllFiles( utilsDir, &files, exeName, wxDIR_FILES | wxDIR_DIRS );
             if ( files.size() == 0 )
-	      wxDir::GetAllFiles( utilsDir, &files, exeName + wxT( ".exe" ), wxDIR_FILES | wxDIR_DIRS );
+                wxDir::GetAllFiles( utilsDir, &files, exeName + wxT( ".exe" ), wxDIR_FILES | wxDIR_DIRS );
             if ( files.size() > 0 )
                 exeName = files[0];
         }
@@ -1476,7 +1475,7 @@ void wxPLDevice::SetupMemoryMap()
                 wxDir::GetAllFiles( wxT( BIN_DIR ), &files, exeName + wxT( ".exe" ), wxDIR_FILES | wxDIR_DIRS );
             if ( files.size() > 0 )
                 exeName = files[0];
-	}
+        }
         //Run the wxPlViewer with command line parameters telling it the location and size of the buffer
         wxString command;
         command << wxT( "\"" ) << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
