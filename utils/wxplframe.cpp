@@ -69,7 +69,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     if ( !m_memoryMap.isValid() )
     {
         wxMessageBox( wxT( "Error initializing the shared memory and/or mutex needed for the application. The application will close" ) );
-        exit( 1 );
+        throw( 1 );
     }
 
     m_locateMode          = false;
@@ -255,7 +255,7 @@ bool wxPlFrame::ReadTransmission()
         }
         else if ( transmissionType == transmissionClose )
         {
-            exit( 0 );
+            Close( 0 );
         }
         header->readLocation += nRead;
         if ( header->readLocation == m_memoryMap.getSize() )
