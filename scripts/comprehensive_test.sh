@@ -638,6 +638,24 @@ ENVIRONMENT_LOG=$prefix/$RELATIVE_ENVIRONMENT_LOG
 # with the echo_tee command.
 rm -f $COMPREHENSIVE_TEST_LOG
 
+hash git
+hash_rc=$?
+
+if [ "$hash_rc" -ne 0 ] ; then
+    echo_tee "WARNING: git not on PATH so cannot determine if SOURCE_TREE = 
+$SOURCE_TREE is a git repository or not"
+else
+    cd $SOURCE_TREE
+    git_commit_id=$(git rev-parse --short HEAD)
+    git_rc=$?
+    if [ "$git_rc" -ne 0 ] ; then
+	echo_tee "WARNING: SOURCE_TREE = $SOURCE_TREE is not a git repository
+ so cannot determine git commit id of the version of PLplot being tested"
+    else
+	echo_tee "git commit id for the PLplot version being tested = $git_commit_id"
+    fi
+fi
+
 echo_tee "OSTYPE = ${OSTYPE}"
 
 hash pkg-config
