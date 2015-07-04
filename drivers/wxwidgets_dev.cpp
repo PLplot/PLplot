@@ -27,7 +27,7 @@
 //it uses a memory map name without random characters
 //and does not execute the viewer, allowing the user to do
 //it in a debugger
-#define WXPLVIEWER_DEBUG
+//#define WXPLVIEWER_DEBUG
 
 //headers needed for Rand
 #ifdef WIN32
