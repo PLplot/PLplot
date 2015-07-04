@@ -129,13 +129,13 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
     PLINT nFalses = 0;
     while ( nFalses < 100 )
     {
-		if( ReadTransmission() )
+        if ( ReadTransmission() )
             nFalses = 0;
-		else
-		{
+        else
+        {
             ++nFalses;
-            wxMilliSleep(1);
-		}
+            wxMilliSleep( 1 );
+        }
     }
 }
 

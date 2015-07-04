@@ -65,10 +65,10 @@ bool wxPlViewerApp::OnInit()
         frame->SetClientSize( width, height );
         frame->fixAspect( true );
         frame->Show();
-	}
-    catch( ... )
-	{
+    }
+    catch ( ... )
+    {
         return false;
-	}
+    }
     return true;
 }
