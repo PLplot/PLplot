@@ -151,7 +151,7 @@ static char  errmsg[160];
 #define PL_LIBRARY    ""
 #endif
 
-extern PLDLLIMPORT char * plplotLibDir;
+extern PLDLLIMPEXP_TCLTK_DATA( char * ) plplotLibDir;
 
 #if ( !defined ( MAC_TCL ) && !defined ( __WIN32__ ) )
 //
