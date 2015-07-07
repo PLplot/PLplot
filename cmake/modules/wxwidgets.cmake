@@ -188,12 +188,13 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_wxwidgets "Enable wxwidgets bindings" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-if(ENABLE_wxwidgets AND NOT CMAKE_CXX_COMPILER_WORKS)
-  message(STATUS "WARNING: no working C++ compiler so "
+if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
+  # libplplotwxwidgets depends on libplplotcxx.
+  message(STATUS "WARNING: C++ binding is disabled so "
     "setting ENABLE_wxwidgets to OFF."
     )
   set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
-endif(ENABLE_wxwidgets AND NOT CMAKE_CXX_COMPILER_WORKS)
+endif(ENABLE_wxwidgets AND NOT ENABLE_cxx)
 
 if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
   message(STATUS
@@ -207,4 +208,11 @@ if(ENABLE_wxwidgets)
   set(wxwidgets_true "")
 else(ENABLE_wxwidgets)
   set(wxwidgets_true "#")
+  # -dev wxwidgets depends on wxPLViewer which depends on libplplotwxwidgets
+  message(STATUS
+    "WARNING: ENABLE_wxwidgets is OFF so "
+    "setting all wxwidgets devices to OFF."
+    )
+    set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
+    set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
 endif(ENABLE_wxwidgets)

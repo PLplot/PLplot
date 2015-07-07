@@ -19,7 +19,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-if(ENABLE_wxwidgets AND ENABLE_cxx)
+# ENABLE_wxwidgets is only true if ENABLE_cxx is also true.
+if(ENABLE_wxwidgets)
   if(OLD_WXWIDGETS)
     set(plplotwxwidgets_LIB_SRCS
       deprecated_wxPLplotstream.cpp
@@ -53,7 +54,7 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-  # Create plplotwxwidgets[d] library
+  # Create plplotwxwidgets library
   add_library(plplotwxwidgets ${plplotwxwidgets_LIB_SRCS})
 
   if(BUILD_SHARED_LIBS)
@@ -123,4 +124,4 @@ if(ENABLE_wxwidgets AND ENABLE_cxx)
   # Configure pkg-config *.pc file corresponding to libplplotwxwidgets
   pkg_config_file("wxwidgets" "wxWidgets" " wxWidgets binding" "plplotwxwidgets" "${libplplotwxwidgets_COMPILE_FLAGS}" "-lplplot;-lplplotcxx;${wxwidgets_LINK_FLAGS}")
 
-endif(ENABLE_wxwidgets AND ENABLE_cxx)
+endif(ENABLE_wxwidgets)
