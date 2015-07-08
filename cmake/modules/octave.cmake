@@ -106,7 +106,7 @@ if(ENABLE_octave)
     message(STATUS "WARNING: "
     "plplot require octave version 3.2 or greater. Disabling octave bindings")
     set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
-  elseif(NOT ${OCTAVE_VERSION} VERSION_LESS "3")
+  elseif(NOT ${OCTAVE_VERSION} VERSION_LESS "4")
     message(STATUS "WARNING: Octave-4 has been found which is likely to lead to build errors for PLplot.")
     option(TRY_OCTAVE4 "Experimentally try Octave-4 if it is found" OFF)
     if(TRY_OCTAVE4)
