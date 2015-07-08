@@ -43,7 +43,6 @@
 // Driver-dependent includes
 #if defined ( PLD_wincairo )
 #include <windows.h>
-#include <cairo-win32.h>
 #endif
 #if defined ( PLD_xcairo )
 #include <cairo-xlib.h>
@@ -3290,7 +3289,7 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
     }
     else
     {
-        pls = (PLStream *) GetWindowLongPtr( hwnd, GWLP_USERDATA ); // Try to get the address to pls for this window
+        pls = (PLStream *) GetWindowLong( hwnd, GWL_USERDATA ); // Try to get the address to pls for this window
         if ( pls )                                              // If we got it, then we will initialise this windows plplot private data area
         {
             dev = (PLCairo *) pls->dev;
@@ -3497,7 +3496,7 @@ void plD_init_wincairo( PLStream *pls )
 // process this window
 //
 
-    SetWindowLongPtr( aStream->hwnd, GWLP_USERDATA, (LONG_PTR) pls );
+    SetWindowLong( aStream->hwnd, GWL_USERDATA, (long) pls );
     aStream->SCRN_hdc = aStream->hdc = GetDC( aStream->hwnd );
 
 //
