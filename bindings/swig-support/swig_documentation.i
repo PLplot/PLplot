@@ -427,6 +427,8 @@ ARGUMENTS:
     axis at base, at height z=
     zmin where zmin is defined by call to plw3d.  This character must be
     specified in order to use any of the other options. 
+        d: Plot labels as date / time.  Values are assumed to be
+        seconds since the epoch  (as used by gmtime). 
         f: Always use fixed point numeric labels. 
         i: Inverts tick marks, so they are drawn downwards, rather
         than upwards. 
@@ -481,6 +483,11 @@ ARGUMENTS:
         d: Draws grid lines parallel to the x-y plane behind the
         figure.  These lines are not drawn until after plot3d or
         plmesh are called because of the need for hidden line removal. 
+        e: Plot labels as date / time.  Values are assumed to be
+        seconds since the epoch  (as used by gmtime).  Note this
+        suboption is interpreted the same as the d suboption for xopt
+        and yopt, but it has to be identified as e for zopt since d
+        has already been used for the different purpose above.  
         f: Always use fixed point numeric labels. 
         i: Inverts tick marks, so they are drawn away from the center. 
         l: Labels axis logarithmically.  This only affects the labels,
@@ -7165,7 +7172,7 @@ pltext;
 DESCRIPTION:
 
     Sets the format for date / time labels. To enable date / time format
-    labels see the options to plbox and plenv. 
+    labels see the options to plbox, plbox3, and plenv. 
 
     Redacted form: pltimefmt(fmt)
 
@@ -7179,21 +7186,82 @@ pltimefmt(fmt)
 
 ARGUMENTS:
 
-    fmt (const char *, fmt) :     This string is passed directly to the
-    system strftime. See the system documentation for a full list of
-    conversion specifications for your system. All conversion
-    specifications take the form of a '%' character followed by
-    further conversion specification character. All other text is
-    printed as-is. Common options include: %c: The preferred date and
-    time representation for the current locale. 
-        %d: The day of the month as a decimal number. 
-        %H: The hour as a decimal number using a 24-hour clock. 
-        %j: The day of the year as a decimal number. 
-        %m: The month as a decimal number. 
-        %M: The minute as a decimal number. 
-        %S: The second as a decimal number. 
-        %y: The year as a decimal number without a century. 
-        %Y: The year  as a decimal number including a century. 
+    fmt (const char *, fmt) :     This string is interpreted similarly to
+    the format specifier of typical system strftime routines except
+    that PLplot ignores locale and also supplies some useful
+    extensions in the context of plotting.    All text in the string is
+    printed as-is other than conversion specifications which take the
+    form of a '%' character followed by further conversion
+    specification character.  The conversion specifications which are
+    similar to those provided by system strftime routines are the
+    following: %a: The abbreviated (English) weekday name. 
+        %A: The full (English) weekday name. 
+        %b: The abbreviated (English) month name. 
+        %B: The full (English) month name. 
+        %c: Equivalent to %a %b %d %T %Y (non-ISO). 
+        %C: The century number (year/100) as a 2-digit integer. 
+        %d: The day of the month as a decimal number (range 01 to 31). 
+        %D: Equivalent to %m/%d/%y (non-ISO). 
+        %e: Like %d, but a leading zero is replaced by a space. 
+        %F: Equivalent to %Y-%m-%d (the ISO 8601 date format). 
+        %h: Equivalent to %b. 
+        %H: The hour as a decimal number using a 24-hour clock (range
+        00 to 23). 
+        %I: The hour as a decimal number using a 12-hour clock (range
+        01 to 12). 
+        %j: The day of the year as a decimal number (range 001 to
+        366). 
+        %k: The hour (24-hour clock) as a decimal number (range 0 to
+        23); single digits are preceded by a blank.  (See also %H.) 
+        %l: The hour (12-hour clock) as a decimal number (range 1 to
+        12); single digits are preceded by a blank.  (See also %I.) 
+        %m: The month as a decimal number (range 01 to 12). 
+        %M: The minute as a decimal number (range 00 to 59). 
+        %n: A newline character. 
+        %p: Either \"AM\" or \"PM\" according to the given time value. 
+        Noon is treated as \"PM\" and midnight as \"AM\". 
+        %r: Equivalent to %I:%M:%S %p. 
+        %R: The time in 24-hour notation (%H:%M). For a version
+        including the seconds, see %T below. 
+        %s: The number of seconds since the Epoch, 1970-01-01 00:00:00
+        +0000 (UTC). 
+        %S: The second as a decimal number (range 00 to 60).  (The
+        range is up to 60 to allow for occasional leap seconds.) 
+        %t: A tab character. 
+        %T: The time in 24-hour notation (%H:%M:%S). 
+        %u: The day of the week as a decimal, range 1 to 7, Monday
+        being 1.  See also %w. 
+        %U: The week number of the current year as a decimal number,
+        range 00 to 53, starting with the first Sunday as the first
+        day of week 01.  See also %V and %W. 
+        %v: Equivalent to %e-%b-%Y. 
+        %V: The ISO 8601 week number of the current year as a decimal
+        number, range 01 to 53, where week 1 is the first week that
+        has at least 4 days in the new year.  See also %U and %W. 
+        %w: The day of the week as a decimal, range 0 to 6, Sunday
+        being 0.  See also %u. 
+        %W: The week number of the current year as a decimal number,
+        range 00 to 53, starting with the first Monday as the first
+        day of week 01. 
+        %x: Equivalent to %a %b %d %Y. 
+        %X: Equivalent to %T. 
+        %y: The year as a decimal number without a century (range 00
+        to 99). 
+        %Y: The year as a decimal number including a century. 
+        %z: The UTC time-zone string = \"+0000\". 
+        %Z: The UTC time-zone abbreviation = \"UTC\". 
+        %+: The UTC date and time in default format of the Unix date
+        command which is equivalent to %a %b %d %T %Z %Y. 
+        %%: A literal \"%\" character. 
+      The conversion specifications which are extensions to those normally
+     provided by system strftime routines are the following: %(0-9):
+     The fractional part of the seconds field (including leading
+     decimal point) to the specified accuracy. Thus %S%3 would give
+     seconds to millisecond accuracy (00.000). 
+        %.: The fractional part of the seconds field (including
+        leading decimal point) to the maximum available accuracy. Thus
+        %S%. would give seconds with fractional part up to 9 decimal
+        places if available. 
 ")
 pltimefmt;
 
