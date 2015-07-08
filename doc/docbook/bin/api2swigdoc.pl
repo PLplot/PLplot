@@ -232,9 +232,9 @@ for ($i = 0; $i < $ns; $i++) {
                            s/\t/    /g;
                            $_;
                          } split ("\n", $varlist));
-  # Get rid of preceding name identifier followed by ":" that is normally
-  # part of the raw title in api.xml.
-  $title =~s/^.*: //;
+  # Get rid of preceding name identifier followed by ":" and any extra
+  # blanks that is normally part of the raw title in api.xml.
+  $title =~s/^.*: *//;
 
   # Escape double quotes in description and arguments
   $desc =~ s/\"/\\"/g;

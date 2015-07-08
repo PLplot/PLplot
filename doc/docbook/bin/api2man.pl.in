@@ -210,7 +210,9 @@ for ($i = 0; $i < $ns; $i++) {
   print MAN $opening;
   print MAN ".TH " . uc ($name) . ' 3plplot  "' . $date . '" "" "PLplot API"' . "\n";
   $titles .= "\n.TP\n$title";
-  $title =~ s/:/ -/;
+  # Get rid of extra spaces which might be after ":" in title
+  # and replace ":" by "-"
+  $title =~ s/: */ - /;
   print MAN ".SH NAME\n$title";
   print MAN "\n.SH SYNOPSIS\n$synopsis";
   print MAN "\n.SH DESCRIPTION\n$desc";

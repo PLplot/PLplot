@@ -1754,7 +1754,7 @@ ARGUMENTS:
 ")
 plgcol0a;
 
-%feature( "docstring", " Returns the background color (cmap0[0]) by 8-bit RGB value 
+%feature( "docstring", "Returns the background color (cmap0[0]) by 8-bit RGB value 
 
 DESCRIPTION:
 
@@ -1783,7 +1783,7 @@ ARGUMENTS:
 ")
 plgcolbg;
 
-%feature( "docstring", " Returns the background color (cmap0[0])  by 8-bit RGB value and double alpha transparency value 
+%feature( "docstring", "Returns the background color (cmap0[0])  by 8-bit RGB value and double alpha transparency value 
 
 DESCRIPTION:
 
@@ -5012,7 +5012,7 @@ ARGUMENTS:
 ")
 plscmap1n;
 
-%feature( "docstring", " Set 8-bit RGB values for given cmap0 color index 
+%feature( "docstring", "Set 8-bit RGB values for given cmap0 color index 
 
 DESCRIPTION:
 
@@ -5048,7 +5048,7 @@ ARGUMENTS:
 ")
 plscol0;
 
-%feature( "docstring", " Set 8-bit RGB values and double alpha transparency value for given cmap0 color index 
+%feature( "docstring", "Set 8-bit RGB values and double alpha transparency value for given cmap0 color index 
 
 DESCRIPTION:
 
@@ -5752,7 +5752,7 @@ my_plshades;
 plshades;
 #endif
 
-%feature( "docstring", " Shade individual region on the basis of value 
+%feature( "docstring", "Shade individual region on the basis of value 
 
 DESCRIPTION:
 
