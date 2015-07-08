@@ -115,17 +115,9 @@ if(SH_EXECUTABLE)
     set(SHELL_TEST_WISH_RUNALLDEMOS 0)
   endif(BUILD_SHARED_LIBS)
 
-  message(STATUS "WARNING: The wxwidgets device is painful to use in the test
-   environment for the traditional build of the installed examples
-   because the -np option does not work requiring much clicking to go
-   through the pages and exit each example.  Therefore, until the -np
-   option works correctly for the wxwidgets device temporarily avoid
-   testing this device for the traditional build of the installed
-   examples.")
-
-  # This value normally should be set to 1, but see message above for
-  # why it is temporarily set to 0.
-  set(SHELL_TEST_WXWIDGETS 0)
+  # Set this value to 0 if you want to temporarily disable wxwidgets tests
+  # for the traditional build.
+  set(SHELL_TEST_WXWIDGETS 1)
 
   configure_file(
     plplot-test-interactive.sh.in
