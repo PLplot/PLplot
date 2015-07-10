@@ -63,7 +63,8 @@
 //
 //
 
-#if defined ( WIN32 ) || defined ( _WIN32 ) || !defined ( __GNUC__ )
+#include "plConfig.h"
+#if !PL_HAVE_UNISTD_H
   #define F_OK    1
   #include <stdio.h>
 int access( char *filename, int flag )
