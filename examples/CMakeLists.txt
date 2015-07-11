@@ -402,7 +402,7 @@ else(CORE_BUILD)
   if(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
     # Latest CMake version as of 2015-05 for all platforms
     # other than Cygwin or Linux.
-    cmake_minimum_required(VERSION 3.2.2 FATAL_ERROR)
+    cmake_minimum_required(VERSION 3.2.3 FATAL_ERROR)
     # Keep policy consistent for all platforms.
     cmake_policy(VERSION 3.0.2)
   endif(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
