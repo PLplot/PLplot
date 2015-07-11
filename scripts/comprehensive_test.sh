@@ -625,13 +625,16 @@ if [ $usage_reported -eq 1 ]; then
     exit 1
 fi
 
+# Create $prefix directory if it does not exist already
+mkdir -p $prefix
+
 # Establish names of output files.  We do this here (as soon as
 # possible after $prefix is determined) because
 # $COMPREHENSIVE_TEST_LOG affects echo_tee results.
 # The relative versions of these are needed for the tar command.
 RELATIVE_COMPREHENSIVE_TEST_LOG=comprehensive_test.sh.out
-COMPREHENSIVE_TEST_LOG=$prefix/$RELATIVE_COMPREHENSIVE_TEST_LOG
 RELATIVE_ENVIRONMENT_LOG=comprehensive_test_env.out
+COMPREHENSIVE_TEST_LOG=$prefix/$RELATIVE_COMPREHENSIVE_TEST_LOG
 ENVIRONMENT_LOG=$prefix/$RELATIVE_ENVIRONMENT_LOG
 
 # Clean up stale results before appending new information to this file
