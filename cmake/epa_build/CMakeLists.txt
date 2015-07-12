@@ -426,6 +426,7 @@ else(BUILD_THE_BUILDTOOLS)
     # qt4_lite
     qt5_lite
     freetype
+    lapack_blas
     )
 endif(BUILD_THE_BUILDTOOLS)
 
