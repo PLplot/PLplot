@@ -189,27 +189,27 @@ Each of the steps in this comprehensive test may take a while...."
 	if [ "$make_rc" -eq 0 ] ; then
 	    output="$OUTPUT_TREE"/ctest.out
 	    rm -f "$output"
-	    echo_tee "$ctest_command in the build tree"
+	    echo_tee "$ctest_command --extra-verbose in the build tree"
 	    $ctest_command --extra-verbose >& "$output"
 	    ctest_rc=$?
 	    if [ "$ctest_rc" -eq 0 ] ; then
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
 		    output="$OUTPUT_TREE"/clean_ctest_plot_files.out
 		    rm -f "$output"
-		    echo_tee "$build_command clean_ctest_plot_files in the build tree (since we are done with ctest)"
-		    $build_command clean_ctest_plot_files >& "$output"
+		    echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the build tree (since we are done with ctest)"
+		    $build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
 		    make_rc=$?
 		    if [ "$make_rc" -ne 0 ] ; then
-			echo_tee "ERROR: $build_command clean_ctest_plot_files failed in the build tree"
+			echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the build tree"
 			collect_exit 1
 		    fi
 		fi
 	    else
-		echo_tee "ERROR: $ctest_command failed in the build tree"
+		echo_tee "ERROR: $ctest_command --extra-verbose failed in the build tree"
 		collect_exit 1
 	    fi
 	else
-	    echo_tee "ERROR: $build_command failed in the build tree"
+	    echo_tee "ERROR: $build_command VERBOSE=1 failed in the build tree"
 	    collect_exit 1
 	fi
     fi
@@ -221,7 +221,7 @@ Each of the steps in this comprehensive test may take a while...."
 	$build_command VERBOSE=1 test_noninteractive >& "$output"
 	make_test_noninteractive_rc=$?
 	if [ "$make_test_noninteractive_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command test_noninteractive failed in the build tree"
+	    echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the build tree"
 	    collect_exit 1
 	fi
     fi
@@ -235,7 +235,7 @@ Each of the steps in this comprehensive test may take a while...."
 	$build_command VERBOSE=1 install >& "$output"
 	make_install_rc=$?
 	if [ "$make_install_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command install failed in the build tree"
+	    echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
 	    collect_exit 1
 	fi
     fi
@@ -243,11 +243,11 @@ Each of the steps in this comprehensive test may take a while...."
     if [ "$do_clean_as_you_go" = "yes" ] ; then
 	output="$OUTPUT_TREE"/clean.out
 	rm -f "$output"
-	echo_tee "$build_command clean in the build tree (since we are done with it at least for the non-interactive test case)"
-	$build_command clean >& "$output"
+	echo_tee "$build_command VERBOSE=1 clean in the build tree (since we are done with it at least for the non-interactive test case)"
+	$build_command VERBOSE=1 clean >& "$output"
 	make_rc=$?
 	if [ "$make_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command clean failed in the build tree"
+	    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the build tree"
 	    collect_exit 1
 	fi
     fi
@@ -282,17 +282,17 @@ Each of the steps in this comprehensive test may take a while...."
 		$build_command VERBOSE=1 test_noninteractive >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: $build_command test_noninteractive failed in the installed examples build tree"
+		    echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the installed examples build tree"
 		    collect_exit 1
 		fi
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
 		    output="$OUTPUT_TREE"/installed_clean.out
 		    rm -f "$output"
-		    echo_tee "$build_command clean in the installed examples build tree (since we are done with it at least for the non-interactive test case)"
-		    $build_command clean >& "$output"
+		    echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it at least for the non-interactive test case)"
+		    $build_command VERBOSE=1 clean >& "$output"
 		    make_rc=$?
 		    if [ "$make_rc" -ne 0 ] ; then
-			echo_tee "ERROR: $build_command clean failed in the installed examples build tree"
+			echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
 			collect_exit 1
 		    fi
 		fi
@@ -338,18 +338,18 @@ Each of the steps in this comprehensive test may take a while...."
 	    $build_command VERBOSE=1 test_interactive >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: $build_command test_interactive failed in the build tree"
+		echo_tee "ERROR: $build_command VERBOSE=1 test_interactive failed in the build tree"
 		collect_exit 1
 	    fi
 	fi
 	if [ "$do_clean_as_you_go" = "yes" ] ; then
 	    output="$OUTPUT_TREE"/clean.out
 	    rm -f "$output"
-	    echo_tee "$build_command clean in the build tree (since we are done with it)"
-	    $build_command clean >& "$output"
+	    echo_tee "$build_command VERBOSE=1 clean in the build tree (since we are done with it)"
+	    $build_command VERBOSE=1 clean >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: $build_command clean failed in the build tree"
+		echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the build tree"
 		collect_exit 1
 	    fi
 	fi
@@ -374,17 +374,17 @@ Each of the steps in this comprehensive test may take a while...."
 	    $build_command VERBOSE=1 test_interactive >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: $build_command test_interactive failed in the installed examples build tree"
+		echo_tee "ERROR: $build_command VERBOSE=1 test_interactive failed in the installed examples build tree"
 		collect_exit 1
 	    fi
 	    if [ "$do_clean_as_you_go" = "yes" ] ; then
 		output="$OUTPUT_TREE"/installed_clean.out
 		rm -f "$output"
-		echo_tee "$build_command clean in the installed examples build tree (since we are done with it)"
-		$build_command clean >& "$output"
+		echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it)"
+		$build_command VERBOSE=1 clean >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: $build_command clean failed in the installed examples build tree"
+		    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
 		    collect_exit 1
 		fi
 	    fi
