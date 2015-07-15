@@ -384,6 +384,7 @@ if(BUILD_THE_BUILDTOOLS)
     pkg-config
     ##subversion
     swig
+    lapack_blas
     tk
     # itcl version 4 is integrated into tcl
     # itk version 4 is not integrated into tk (or tcl).
@@ -426,7 +427,7 @@ else(BUILD_THE_BUILDTOOLS)
     # qt4_lite
     qt5_lite
     freetype
-    lapack_blas
+    octave_lite
     )
 endif(BUILD_THE_BUILDTOOLS)
 
