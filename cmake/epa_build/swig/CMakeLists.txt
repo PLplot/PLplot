@@ -9,7 +9,7 @@
 # consider changing their source files (e.g., by editing the files
 # used in those scripts) or add a patch to be run by those scripts.
 
-# Copyright (C) 2013 Alan W. Irwin
+# Copyright (C) 2013-2015  Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -59,9 +59,9 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 
 # Data that is related to downloads.
-set(URL http://downloads.sourceforge.net/swig/swig/swig-2.0.11/swig-2.0.11.tar.gz)
+set(URL http://downloads.sourceforge.net/swig/swig/swig-3.0.6/swig-3.0.6.tar.gz)
 set(DOWNLOAD_HASH_TYPE SHA256)
-set(DOWNLOAD_HASH 63780bf29f53937ad399a1f68bccb3730c90f65746868c4cdfc25cafcd0a424e)
+set(DOWNLOAD_HASH c67f63ea11956106e4cda66416d5020330dc4ce2ee45057d39a9494ce33eca05)
 
 ExternalProject_Add(
   build_${PACKAGE}
@@ -72,14 +72,14 @@ ExternalProject_Add(
   CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" "LDFLAGS=-Wl,-rpath -Wl,${EPA_CMAKE_INSTALL_PREFIX}/lib" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --with-pcre-prefix=${EPA_CMAKE_INSTALL_PREFIX} --with-maximum-compile-warnings=no
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
   BUILD_IN_SOURCE OFF
-  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}  install
+  INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
   )
 
 add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
   COMMAND ${CMAKE_COMMAND} -E echo
-  "Provide swig support for octave-3.8.0"
-  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/octave-3.8.0.patch
+  "Provide swig-3.0.x support for octave-4.0.0"
+  COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/octave-4.0.0.patch
   APPEND
   )
