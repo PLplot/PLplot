@@ -82,8 +82,13 @@ collect_exit() {
     rm -f $TARBALL $TARBALL.gz
 
     # Collect relevant subset of $prefix information in the tarball
-    tar rf $TARBALL $RELATIVE_COMPREHENSIVE_TEST_LOG
-    tar rf $TARBALL $RELATIVE_ENVIRONMENT_LOG
+    if [ -f $RELATIVE_COMPREHENSIVE_TEST_LOG ] ; then
+	tar rf $TARBALL $RELATIVE_COMPREHENSIVE_TEST_LOG
+    fi
+
+    if [ -f $RELATIVE_ENVIRONMENT_LOG ] ; then
+	tar rf $TARBALL $RELATIVE_ENVIRONMENT_LOG
+    fi
 
     for directory in shared nondynamic static ; do
 	if [ -d $directory/output_tree ] ; then
@@ -685,27 +690,27 @@ fi
 
 echo_tee "Summary of options used for these tests
 
-prefix=$prefix
+--prefix \"$prefix\"
 
-do_clean_as_you_go=$do_clean_as_you_go
+--do_clean_as_you_go $do_clean_as_you_go
 
-generator_string=$generator_string"
+--generator_string \"$generator_string"\"
 echo_tee "
-ctest_command=$ctest_command
-build_command=$build_command
-traditional_build_command=$traditional_build_command
+--ctest_command \"$ctest_command\"
+--build_command \"$build_command\"
+--traditional_build_command \"$traditional_build_command\"
 
-cmake_added_options=$cmake_added_options
-do_shared=$do_shared
-do_nondynamic=$do_nondynamic
-do_static=$do_static
+--cmake_added_options \"$cmake_added_options\"
+--do_shared $do_shared
+--do_nondynamic $do_nondynamic
+--do_static $do_static
 
-do_ctest=$do_ctest
-do_test_noninteractive=$do_test_noninteractive
-do_test_interactive=$do_test_interactive
-do_test_build_tree=$do_test_build_tree
-do_test_install_tree=$do_test_install_tree
-do_test_traditional_install_tree=$do_test_traditional_install_tree
+--do_ctest $do_ctest
+--do_test_noninteractive $do_test_noninteractive
+--do_test_interactive $do_test_interactive
+--do_test_build_tree $do_test_build_tree
+--do_test_install_tree $do_test_install_tree
+--do_test_traditional_install_tree $do_test_traditional_install_tree
 
 N.B. do_clean_as_you_go above should be yes unless you don't mind an
 accumulation of ~40GB of plot files!  Even with this option set to yes
@@ -739,8 +744,15 @@ if [ "$do_clean_first" = "yes" ] ; then
     rm -rf $prefix/shared $prefix/nondynamic $prefix/static
 fi
 
+hash printenv
+hash_rc=$?
+if [ "$hash_rc" -ne 0 ] ; then
+    echo_tee "WARNING: printenv not on PATH so not collecting environment variables in $ENVIRONMENT_LOG"
+    rm -f $ENVIRONMENT_LOG
+else
 # Collect environment variable results prior to testing.
-printenv >| $ENVIRONMENT_LOG
+    printenv >| $ENVIRONMENT_LOG
+fi
 
 # Shared + dynamic
 if [ "$do_shared" = "yes" ] ; then
