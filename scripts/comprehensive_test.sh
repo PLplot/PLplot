@@ -646,6 +646,10 @@ ENVIRONMENT_LOG=$prefix/$RELATIVE_ENVIRONMENT_LOG
 # with the echo_tee command.
 rm -f $COMPREHENSIVE_TEST_LOG
 
+# Set up trap of user interrupts as soon as possible after the above variables
+# have been determined and the stale $COMPREHENSIVE_TEST_LOG has been removed.
+trap '{ echo_tee "Exiting because of user interrupt" ; collect_exit 1; }' INT
+
 hash git
 hash_rc=$?
 
