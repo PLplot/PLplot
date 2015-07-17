@@ -9,7 +9,7 @@
 
 include(FindPackageHandleStandardArgs)
 
-find_path(QHULL_INCLUDE_DIR qhull_a.h PATH_SUFFIXES qhull libqhull)
+find_path(QHULL_INCLUDE_DIR qhull/qhull_a.h)
 
 if(QHULL_INCLUDE_DIR)
   set(QHULL_INCLUDE_DIRS ${QHULL_INCLUDE_DIR})

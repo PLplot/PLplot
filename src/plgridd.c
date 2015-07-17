@@ -30,7 +30,7 @@
 
 #ifdef PL_HAVE_QHULL
 #include "../lib/nn/nn.h"
-#include <qhull_a.h>
+#include <qhull/qhull_a.h>
 #endif
 
 // forward declarations
