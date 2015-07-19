@@ -71,7 +71,7 @@ if(CORE_BUILD)
     DESTINATION ${DATA_DIR}/examples/d
     )
 
-  set(DC ${CMAKE_D_COMPILER})
+  set(DC "${CMAKE_D_COMPILER} ${CMAKE_D_COMPILER_ARG1} ${CMAKE_D_FLAGS}")
 
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in

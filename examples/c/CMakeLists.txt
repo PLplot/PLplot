@@ -93,7 +93,7 @@ if(CORE_BUILD)
     DESTINATION ${DATA_DIR}/examples/c
     )
 
-  set(CC ${CMAKE_C_COMPILER})
+  set(CC "${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1} ${CMAKE_C_FLAGS}")
 
 endif(CORE_BUILD)
 

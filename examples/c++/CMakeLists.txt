@@ -82,7 +82,7 @@ if(CORE_BUILD)
 
   install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} ${qt_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
 
-  set(CXX ${CMAKE_CXX_COMPILER})
+  set(CXX "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} ${CMAKE_CXX_FLAGS}")
 
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/c++

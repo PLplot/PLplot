@@ -292,7 +292,7 @@ if(CORE_BUILD)
 
   install(FILES ${tk_SRC} DESTINATION ${DATA_DIR}/examples/tk)
 
-  set(CC ${CMAKE_C_COMPILER})
+  set(CC "${CMAKE_C_COMPILER} ${CMAKE_C_COMPILER_ARG1} ${CMAKE_C_FLAGS}")
 
   # Transform TK_LIBRARY and TCL_LIBRARY from list of libraries to the standard pkg-config form
   # to help configure Makefile.examples below.

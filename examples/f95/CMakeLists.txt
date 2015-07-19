@@ -111,7 +111,7 @@ if(CORE_BUILD)
     DESTINATION ${DATA_DIR}/examples/f95
     )
 
-  set(FC ${CMAKE_Fortran_COMPILER})
+  set(FC "${CMAKE_Fortran_COMPILER} ${CMAKE_Fortran_COMPILER_ARG1} ${CMAKE_Fortran_FLAGS}")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
