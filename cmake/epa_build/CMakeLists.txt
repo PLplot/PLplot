@@ -384,7 +384,6 @@ if(BUILD_THE_BUILDTOOLS)
     pkg-config
     ##subversion
     swig
-    lapack_blas
     tk
     # itcl version 4 is integrated into tcl
     # itk version 4 is not integrated into tk (or tcl).
@@ -406,6 +405,9 @@ if(BUILD_THE_BUILDTOOLS)
     # non-MSYS platform case.  And for the MSYS platform case use a
     # binary version of CMake supplied by Kitware.
     list(APPEND subdirectories_LIST cmake)
+    # epa_build of lapack_blas and valgrind not tested on MSYS_PLATFORM yet
+    # so add them here for the time being.
+    list(APPEND subdirectories_LIST lapack_blas valgrind)
   endif(NOT MSYS_PLATFORM)
 else(BUILD_THE_BUILDTOOLS)
   # List sufficient normal package configurations so they will suck in 
