@@ -94,13 +94,13 @@ if(MINGW)
   get_filename_component(MINGWBINPATH ${CMAKE_C_COMPILER} PATH)
   set(MINGWLIBPATH ${MINGWBINPATH}/../lib
     CACHE FILEPATH
-    DOCSTRING "Path to MinGW import libraries")
+    "Path to MinGW import libraries")
 endif(MINGW)
 if(BORLAND)
   get_filename_component(BORLANDBINPATH ${CMAKE_C_COMPILER} PATH)
   set(BORLANDLIBPATH ${BORLANDBINPATH}/../Lib/PSDK
     CACHE FILEPATH
-    DOCSTRING "Path to Borland import libraries")
+    "Path to Borland import libraries")
 endif(BORLAND)
 
 # Version data that need modification for each release.
