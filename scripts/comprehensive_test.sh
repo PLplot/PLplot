@@ -754,8 +754,12 @@ if [ "$hash_rc" -ne 0 ] ; then
     echo_tee "WARNING: printenv not on PATH so not collecting environment variables in $ENVIRONMENT_LOG"
     rm -f $ENVIRONMENT_LOG
 else
-# Collect environment variable results prior to testing.
-    printenv >| $ENVIRONMENT_LOG
+# Collect selected important environment variable results prior to testing.
+    echo "PATH=$PATH" >| $ENVIRONMENT_LOG
+    echo "CC=$CC" >> $ENVIRONMENT_LOG
+    echo "CXX=$CXX" >> $ENVIRONMENT_LOG
+    echo "FC=$FC" >> $ENVIRONMENT_LOG
+    printenv |grep -E 'CMAKE_.*PATH|FLAGS|PKG_CONFIG_PATH|LD_LIBRARY_PATH' >> $ENVIRONMENT_LOG
 fi
 
 # Shared + dynamic
