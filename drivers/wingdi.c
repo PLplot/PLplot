@@ -342,8 +342,8 @@ static void PrintPage( PLStream *pls )
 {
     struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
     PRINTDLGEX   Printer;
-	PROPSHEETPAGE PrintPropSheet;
-	HPROPSHEETPAGE hPrintPropSheetList[1];
+	//PROPSHEETPAGE PrintPropSheet;
+	//HPROPSHEETPAGE hPrintPropSheetList[1];
     DOCINFO    docinfo;
 	DEVMODE    * hDevMode;
     struct wingdi_Dev *push;      // A copy of the entire structure
@@ -638,7 +638,8 @@ static void CopySCRtoBMP( PLStream *pls )
     struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
 	RECT rect;
 	HGDIOBJ previous;
-	
+
+	// Delete the existing bitmap before creating a new one
 	if ( dev->hdc_bmp != NULL )
 		DeleteDC( dev->hdc_bmp );
     if ( dev->bitmap != NULL )
@@ -651,6 +652,42 @@ static void CopySCRtoBMP( PLStream *pls )
     previous = SelectObject( dev->hdc_bmp, dev->bitmap );
     BitBlt( dev->hdc_bmp, 0, 0, rect.right, rect.bottom, dev->hdc, 0, 0, SRCCOPY );
     SelectObject( dev->hdc_bmp, previous );
+}
+
+//--------------------------------------------------------------------------
+// static void Erase ( PLStream *pls )
+//
+// This function erases the client area of a window
+//--------------------------------------------------------------------------
+static void
+Erase( PLStream *pls )
+{
+    struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
+	COLORREF previous_color;
+	RECT rect;
+	
+	pldebug( "wingdi", "  Erasing window\n" );
+    //
+	//    This is a new "High Speed" way of filling in the background.
+	//    supposedly this executes faster than creating a brush and
+    //    filling a rectangle - go figure ?
+    //
+	if( dev->type == DEV_WINDOW) 
+	{
+		// NOTE:  Should GetUpdateRect be used instead?
+		GetClientRect( dev->plot, &rect );
+		previous_color = SetBkColor( dev->hdc, 
+									 RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
+		ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &rect, _T( "" ), 0, 0 );
+		SetBkColor( dev->hdc, previous_color );
+	}
+	else
+	{
+		rect.left = 0;
+		rect.top = 0;
+		rect.right = GetDeviceCaps( dev->hdc, HORZRES );
+		rect.bottom = GetDeviceCaps( dev->hdc, VERTRES );
+	}
 }
 
 //--------------------------------------------------------------------------
@@ -669,8 +706,10 @@ static void Resize( PLStream *pls )
 	
     pldebug( "wingdi", "Resizing\n" );
 
-	// Only resize the window IF plplot has finished with it
-    if ( dev->state == DEV_WAITING )
+	// Only resize the window IF plplot is not busy
+    if ( dev->state == DEV_WAITING 
+		 || dev->state == DEV_ACTIVE 
+		 || dev->state == DEV_DRAWING )
     {
         GetClientRect( dev->plot, &rect );
         pldebug( "wingdi", "  Size = [%d %d] [%d %d]\n", 
@@ -681,7 +720,7 @@ static void Resize( PLStream *pls )
         if ( ( rect.right > 0 ) && ( rect.bottom > 0 ) )
         {
 			UpdatePageMetrics( pls, DEV_WINDOW );
-			
+
 			// Save the current state because remaking the plot
 			// will change it when the BOP is executed.
 			current = dev->state;
@@ -873,7 +912,7 @@ LRESULT CALLBACK PlplotPlotAreaProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
 					 ps.rcPaint.right, ps.rcPaint.bottom );
 			pldebug( "wingdi", "  Erase status = %d\n", ps.fErase );
 			pldebug( "wingdi", "  Device state = %d\n", dev->state );
-			
+
 			// If we have a valid bitmap and are not currently drawing
 			// a new plot, then we can blit the bitmap to handle the 
 			// redraw.  On a resize, this will result in the bitmap being 
@@ -895,7 +934,9 @@ LRESULT CALLBACK PlplotPlotAreaProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
 			}
 			else
 			{
-				pldebug( "wingdi", "  No paint action bitmap = %lx\n" );
+				pldebug( "wingdi", 
+						 "  No paint action bitmap = %lx state = \n",
+						 dev->bitmap, dev->state );
 			}
 
 			EndPaint( dev->plot, &ps );
@@ -980,45 +1021,17 @@ LRESULT CALLBACK PlplotPlotAreaProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
 		// on the current state.
 		// DEV_WAITING = No erase necessary, the next WM_PAINT
 		//    will repaint the affected area
-		// DEV_ACTIVE = Erase the client area because a new
-		//    a plot will need to be generated
 		pldebug( "wingdi", "WM_ERASEBKGND state = %d\n", dev->state );
+
 		if( dev->state != DEV_WAITING )
 		{
-			COLORREF previous_color;
-			RECT rect;
-
-			pldebug( "wingdi", "  Erasing window\n" );
-            //
-            //    This is a new "High Speed" way of filling in the background.
-            //    supposedly this executes faster than creating a brush and
-            //    filling a rectangle - go figure ?
-            //
-			if( dev->type == DEV_WINDOW) 
-			{
-				// NOTE:  Should GetUpdateRect be used instead?
-				GetClientRect( dev->plot, &rect );
-				previous_color = SetBkColor( dev->hdc, 
-											 RGB( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b ) );
-				ExtTextOut( dev->hdc, 0, 0, ETO_OPAQUE, &rect, _T( "" ), 0, 0 );
-				SetBkColor( dev->hdc, previous_color );
-			}
-			else
-			{
-				rect.left = 0;
-				rect.top = 0;
-				rect.right = GetDeviceCaps( dev->hdc, HORZRES );
-				rect.bottom = GetDeviceCaps( dev->hdc, VERTRES );
-			}
-
-			// Indicate that the window was erased
+			Erase ( pls );
+			// Indicate that the client area was erased 
             return ( 1 );
         }
-		else
-		{
-			pldebug( "wingdi", "  No erase action taken\n" );
-		}
+		
 		// Indicate no action was taken
+		pldebug( "wingdi", "  No erase action taken\n" );		
         return ( 0 );
         break;
 
@@ -1075,8 +1088,11 @@ wingdi_module_initialize( void )
 	INITCOMMONCONTROLSEX init_controls;
 	
     // Return if the module has been initialized
-	if(wingdi_streams > 0) return;
-	wingdi_streams++;
+	// Use a postfix increment so that wingdi_streams is incremented
+	// every time this function is called. That ensures a valid count
+	// for the number of streams that are created.  This allows the
+	// module cleanup to free resources when the last stream is closed.
+	if(wingdi_streams++ > 0) return;
 	
 	pldebug( "wingdi", "module init\n" );
 	
@@ -1423,6 +1439,9 @@ plD_init_wingdi( PLStream *pls )
     else
         SetPolyFillMode( dev->hdc, WINDING );
 
+	// Erase the plot window
+	Erase( pls );
+	
 	// Indicate that the plot window is active
 	dev->state = DEV_ACTIVE;
 	update_status_bar( dev );
@@ -2144,6 +2163,9 @@ plD_eop_wingdi( PLStream *pls )
 	
 	// Set the cursor to normal to indicate that the window is not busy
     NormalCursor( dev );
+	
+	// Indicate that the driver is no longer drawing and is ready to continue
+	dev->state = DEV_ACTIVE;
 }
 
 //--------------------------------------------------------------------------
@@ -2157,6 +2179,7 @@ plD_bop_wingdi( PLStream *pls )
 
 	// Indicate that the device is actively drawing
 	dev->state = DEV_DRAWING;
+	
 	// Update the status bar
 	update_status_bar( dev );
 
