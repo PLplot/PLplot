@@ -1849,7 +1849,6 @@ void plD_init_xcairo( PLStream * );
 void plD_bop_xcairo( PLStream * );
 void plD_eop_xcairo( PLStream * );
 void plD_tidy_xcairo( PLStream * );
-void plD_wait_xcairo( PLStream * );
 void plD_esc_xcairo( PLStream *, PLINT, void * );
 static void xcairo_get_cursor( PLStream *, PLGraphicsIn * );
 
@@ -1875,7 +1874,6 @@ void plD_dispatch_init_xcairo( PLDispatchTable *pdt )
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_xcairo;
     pdt->pl_state    = (plD_state_fp) plD_state_cairo;
     pdt->pl_esc      = (plD_esc_fp) plD_esc_xcairo;
-    pdt->pl_wait     = (plD_wait_fp) plD_wait_xcairo;
 }
 
 //--------------------------------------------------------------------------
@@ -2085,7 +2083,14 @@ void plD_bop_xcairo( PLStream *pls )
 
 void plD_eop_xcairo( PLStream *pls )
 {
-    PLCairo *aStream;
+    int            number_chars;
+    long           event_mask;
+    char           event_string[10];
+    KeySym         keysym;
+    XComposeStatus cs;
+    XEvent         event;
+    XExposeEvent   *expose;
+    PLCairo        *aStream;
 
     aStream = (PLCairo *) pls->dev;
 
@@ -2094,57 +2099,10 @@ void plD_eop_xcairo( PLStream *pls )
 
     if ( aStream->xdrawable_mode )
         return;
-}
 
-//--------------------------------------------------------------------------
-// plD_tidy_xcairo()
-//
-// X Windows: close graphics file or otherwise clean up.
-//--------------------------------------------------------------------------
-
-void plD_tidy_xcairo( PLStream *pls )
-{
-    PLCairo *aStream;
-
-    aStream = (PLCairo *) pls->dev;
-
-    plD_tidy_cairo( pls );
-
-    // Also free up the Cairo X surface and context
-    cairo_destroy( aStream->cairoContext_X );
-    cairo_surface_destroy( aStream->cairoSurface_X );
-
-    if ( aStream->xdrawable_mode )
-        return;
-
-    // Close the window and the display.
-    XFlush( aStream->XDisplay );
-
-    XDestroyWindow( aStream->XDisplay, aStream->XWindow );
-
-    XCloseDisplay( aStream->XDisplay );
-}
-
-//--------------------------------------------------------------------------
-// plD_wait_xcairo()
-//
-// Wait for user input
-//--------------------------------------------------------------------------
-
-void plD_wait_xcairo( PLStream *pls )
-{
-    PLCairo        *aStream;
-    long           event_mask;
-    char           event_string[10];
-    int            number_chars;
-    KeySym         keysym;
-    XComposeStatus cs;
-    XEvent         event;
-    XExposeEvent   *expose;
-
-    aStream = (PLCairo *) pls->dev;
-
-    aStream->exit_event_loop = 0;
+    // Only pause if nopause is unset.
+    if ( pls->nopause )
+        aStream->exit_event_loop = 1;
 
     // Loop, handling selected events, till the user elects to close the plot.
     event_mask = ButtonPressMask | KeyPressMask | ExposureMask;
@@ -2185,6 +2143,35 @@ void plD_wait_xcairo( PLStream *pls )
         }
     }
     aStream->exit_event_loop = 0;
+}
+
+//--------------------------------------------------------------------------
+// plD_tidy_xcairo()
+//
+// X Windows: close graphics file or otherwise clean up.
+//--------------------------------------------------------------------------
+
+void plD_tidy_xcairo( PLStream *pls )
+{
+    PLCairo *aStream;
+
+    aStream = (PLCairo *) pls->dev;
+
+    plD_tidy_cairo( pls );
+
+    // Also free up the Cairo X surface and context
+    cairo_destroy( aStream->cairoContext_X );
+    cairo_surface_destroy( aStream->cairoSurface_X );
+
+    if ( aStream->xdrawable_mode )
+        return;
+
+    // Close the window and the display.
+    XFlush( aStream->XDisplay );
+
+    XDestroyWindow( aStream->XDisplay, aStream->XWindow );
+
+    XCloseDisplay( aStream->XDisplay );
 }
 
 //--------------------------------------------------------------------------
@@ -3291,7 +3278,7 @@ LRESULT CALLBACK PlplotCairoWndProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
     else
     {
         pls = (PLStream *) GetWindowLongPtr( hwnd, GWLP_USERDATA ); // Try to get the address to pls for this window
-        if ( pls )                                              // If we got it, then we will initialise this windows plplot private data area
+        if ( pls )                                                  // If we got it, then we will initialise this windows plplot private data area
         {
             dev = (PLCairo *) pls->dev;
         }
