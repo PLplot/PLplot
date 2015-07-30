@@ -222,3 +222,6 @@ set(WIN32_OR_CYGWIN @WIN32_OR_CYGWIN@)
 
 #Qt5 support
 set(PLPLOT_USE_QT5 @PLPLOT_USE_QT5@)
+
+# Needed for Tcl/Tk linking decisions.
+set(tcltk_in_plplot_library @tcltk_in_plplot_library@)
