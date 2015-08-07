@@ -31,7 +31,7 @@ RPATHCMD = @RPATHCMD@
 @qt_gui_true@qt_RPATHCMD = @qt_RPATHCMD@
 
 @wxwidgets_true@PLPLOTWXWIDGETS_EXECUTABLES_list = \
-@wxwidgets_true@	wxPLplotDemo$(EXEEXT)
+@wxwidgets_true@	@wxdemo_name@$(EXEEXT)
 
 @qt_gui_true@qt_gui_EXECUTABLES_list = \
 @qt_gui_true@	qt_example$(EXEEXT)
@@ -81,7 +81,7 @@ clean:
 	rm -f $(EXECUTABLES_list)
 
 # target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
-@wxwidgets_true@wxPLplotDemo$(EXEEXT): wxPLplotDemo.cpp
+@wxwidgets_true@@wxdemo_name@$(EXEEXT): @wxdemo_name@.cpp
 @wxwidgets_true@	$(CXX) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-wxwidgets plplot-c++) @pkg_config_wxwidgets_LINK_FLAGS@ @MATH_LIB@
 
 # Note, must filter out -p options which confuse $(QT_MOC_EXECUTABLE).  Such

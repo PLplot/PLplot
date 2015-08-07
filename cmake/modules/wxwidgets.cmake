@@ -206,6 +206,13 @@ endif(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 
 if(ENABLE_wxwidgets)
   set(wxwidgets_true "")
+
+  if(OLD_WXWIDGETS)
+    set(wxdemo_name deprecated_wxPLplotDemo)
+  else(OLD_WXWIDGETS)
+    set(wxdemo_name wxPLplotDemo)
+  endif(OLD_WXWIDGETS)
+
 else(ENABLE_wxwidgets)
   set(wxwidgets_true "#")
   # -dev wxwidgets depends on wxPLViewer which depends on libplplotwxwidgets

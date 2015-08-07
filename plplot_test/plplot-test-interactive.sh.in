@@ -173,7 +173,7 @@ fi
 if [ "@ENABLE_wxwidgets@" = "ON" -a "@SHELL_TEST_WXWIDGETS@" -ne 0 ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
-    COMMAND[$COUNT]="./wxPLplotDemo"
+    COMMAND[$COUNT]="./@wxdemo_name@"
     COUNT=$(( $COUNT + 1 ))
 fi
 

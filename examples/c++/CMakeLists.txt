@@ -63,11 +63,7 @@ set(cxx_STRING_INDICES
   )
 
 if(ENABLE_wxwidgets)
-  if(OLD_WXWIDGETS)
-    set(wxPLplotDemo_SRCS deprecated_wxPLplotDemo.cpp)
-  else(OLD_WXWIDGETS)
-    set(wxPLplotDemo_SRCS wxPLplotDemo.cpp)
-  endif(OLD_WXWIDGETS)
+  set(wxPLplotDemo_SRCS ${wxdemo_name}.cpp)
 endif(ENABLE_wxwidgets)
 
 if(CORE_BUILD)
