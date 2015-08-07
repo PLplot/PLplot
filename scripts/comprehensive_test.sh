@@ -280,6 +280,11 @@ Each of the steps in this comprehensive test may take a while...."
 	    rm -f "$output"
 	    echo_tee "cmake in the installed examples build tree"
 	    cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+	    cmake_rc=$?
+	    if [ "$cmake_rc" -ne 0 ] ; then
+		echo_tee "ERROR: cmake in the installed examples build tree failed"
+		collect_exit 1
+	    fi
 	    if [ "$do_test_noninteractive" = "yes" ] ; then
 		output="$OUTPUT_TREE"/installed_make_noninteractive.out
 		rm -f "$output"
