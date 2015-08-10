@@ -48,9 +48,9 @@
 #endif
 
 // PLplot version information.
-#define PLPLOT_VERSION_MAJOR    "@PLPLOT_VERSION_MAJOR@"
-#define PLPLOT_VERSION_MINOR    "@PLPLOT_VERSION_MINOR@"
-#define PLPLOT_VERSION_PATCH    "@PLPLOT_VERSION_PATCH@"
+#define PLPLOT_VERSION_MAJOR    @PLPLOT_VERSION_MAJOR@
+#define PLPLOT_VERSION_MINOR    @PLPLOT_VERSION_MINOR@
+#define PLPLOT_VERSION_PATCH    @PLPLOT_VERSION_PATCH@
 #define PLPLOT_VERSION          "@PLPLOT_VERSION@"
 
 // Define if you have c++ accessible stdint.h
