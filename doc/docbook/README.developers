@@ -212,9 +212,9 @@ situations where xmlto's call to xmllint will segfault.
 Testing the documentation that has been built.
 ==============================================
 
-All tests are performed in the doc/dockbook/src subdirectory _of the
+All tests are performed in the doc/docbook/src subdirectory _of the
 build tree_.  The given test commands are for the bash shell, and
-$version is currently 5.9.10.  For the man pages, look carefully at
+$version is currently 5.11.1.  For the man pages, look carefully at
 the style of the results.  For the rest, look carefully at the style
 of the api chapter and the style/results near Table-3.4 in the
 advanced chapter.  In particular look at how the following examples
@@ -225,7 +225,7 @@ paragraph just after Table-3.5.
 
 1. man pages.
 
-I cannot figure out how to get nroff to work properly with utf8 man pages
+I cannot figure out how to get nroff to work properly with UTF-8 man pages
 so use the man command to test the generated man pages as follows:
 
 From the top of the build tree....
@@ -235,25 +235,34 @@ ln -s $(find $(pwd) -name "*.3plplot") man/man3
 for MANPAGE in $(find man/man3 -type l|sort|grep -E '(plot3dcl|plsurf3dl)'); do MANPAGE1=${MANPAGE##*/}; man -M./man ${MANPAGE1%%.3plplot} ; done
 
 Two of our man pages (plot3dcl.3plplot and plsurf3dl.3plplot)
-currently contain utf8 symbols (for the math symbols ≤ and ≥) so I have selected those in the
-above example, but if you prefer to look at all man pages that "|grep -E '(plot3dcl|plsurf3dl)'"
-stanza should be dropped.
+currently contain UTF-8 symbols (for the math symbols ≤ and ≥) so I
+have selected those in the above example, and those UTF-8 symbols
+render fine (see discussion below), but if you prefer to look at all
+man pages that "|grep -E '(plot3dcl|plsurf3dl)'" stanza should be
+dropped.
 
 2. info pages.
 
 info --file doc/docbook/src/plplotdoc.info
 
+I suggest searching explicitly for plot3dcl, plsurf3dl, and peace to
+evaluate how the UTF-8 symbols are rendered. Typically, math symbols
+are fine, but the Korean, Hindi, and Mandarin "peace" words are
+missing in the info pages, see discussion below.
+
 3. web pages.
 
-Browse with your favorite browser the
-doc/docbook/src/index.html file in your
-build tree.
+Browse with your favorite browser the <doc/docbook/src/index.html> file
+in your build tree.  To look especially for UTF-8 issues (if any)
+browse <doc/docbook/src/plot3dcl.html>, <doc/docbook/src/plsurf3dl.html>, and in the
+range of lines near <doc/docbook/src/characters.html#peace>.
 
 4. pdf file
 
-Browse with your favorite browser the 
-doc/docbook/src/plplot-$version.pdf file
-that is generated in your build tree.
+Browse with your favorite browser the
+<doc/docbook/src/plplot-$version.pdf> file that is generated in your
+build tree.  To look especially for UTF-8 issues search for
+plot3dcl, plsurf3dl, and peace.
 
 UTF-8 limitations of the current set of backend tools
 =====================================================
@@ -347,18 +356,17 @@ generic font names, the idea is the fontspec package would simply hand
 off font selection to fontconfig which does a very nice job of
 automatically selecting the ideal sans, serif, or mono system font to
 provide a particular UTF-8 glyph.  I have asked the fontspec
-maintainer about this potential feature several days before the
-current writing, but so far he has not replied.  Therefore, it appears
-at this time there will be no quick fixes to xelatex/fontspec with
-regard to automatic selection of fonts for the generic case, and we
-will be stuck for the foreseeable future with the specific font
-approach.  That approach forces a compromise between complete glyph
-coverage and reasonable quality.  Thus, as a result of avoiding truly
-ugly fonts in our generated pdf documentation there are missing CJK
-glyphs in the results.
+maintainer about this potential feature, and his reply indicated there
+will be no quick fixes to xelatex/fontspec with regard to automatic
+selection of fonts for the generic case, and we will be stuck for the
+foreseeable future with the specific font approach.  That approach
+forces a compromise between complete glyph coverage and reasonable
+quality.  Thus, as a result of avoiding truly ugly fonts in our
+generated pdf documentation there are missing CJK glyphs in the
+results.
 
 Installing the generated documentation (and the rest of the generated website) at plplot.sf.net
 ===============================================================================================
 
 Follow the directions in README.Release_Manager_Cookbook.  That file is
-located in the top-level source tree.
+located in the top-level source tree for PLplot.
