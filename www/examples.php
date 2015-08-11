@@ -230,7 +230,7 @@ END;
 		echo <<<END
 			<h3>Examples</h3>
 			<p>These examples were generated with the pngcairo device and
-				 reflect the status of PLplot-5.11.0.</p>
+				 reflect the status of PLplot-5.11.1.</p>
 			<p>Select a thumbnail to view full-size image and source code.</p>
 			<p>
 END;

@@ -2,7 +2,7 @@
 
 set(PLPLOT_VERSION_MAJOR 5)
 set(PLPLOT_VERSION_MINOR 11)
-set(PLPLOT_VERSION_PATCH 0)
+set(PLPLOT_VERSION_PATCH 1)
 
 # Overall PLplot version number.
 set(PLPLOT_VERSION ${PLPLOT_VERSION_MAJOR}.${PLPLOT_VERSION_MINOR}.${PLPLOT_VERSION_PATCH})
@@ -14,7 +14,13 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 
 # PLplot library version information.
 
-# Rules: 
+# Use git log and git diff with appropriate limits on
+# the list of revisions and in appropriate directores for
+# each of the libraries below to determine an overview of the source code
+# changes have been made in the current release cycle.
+
+# Then use that information and the following rules to update the PLplot
+# library version information: 
 # (1) If a backwards incompatible API change has been made in the library
 #     API (e.g., if old compiled and linked applications will no longer work)
 #     then increment SOVERSION and zero the corresponding minor and patch
@@ -30,6 +36,8 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 
 # N.B. all these variables must include the exact library name
 # so that set_library_properties function works correctly.
+
+# Libraries with source code in the lib subdirectory tree.
 set(nistcd_SOVERSION 0)
 set(nistcd_VERSION ${nistcd_SOVERSION}.0.1)
 
@@ -42,9 +50,11 @@ set(csironn_VERSION ${csironn_SOVERSION}.0.1)
 set(qsastime_SOVERSION 0)
 set(qsastime_VERSION ${qsastime_SOVERSION}.0.1)
 
+# Library with source code in the src subdirectory.
 set(plplot_SOVERSION 13)
-set(plplot_VERSION ${plplot_SOVERSION}.0.1)
+set(plplot_VERSION ${plplot_SOVERSION}.1.2)
 
+# Libraries with source code in the bindings subdirectory tree.
 set(plplotcxx_SOVERSION 12)
 set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.0.0)
 
@@ -55,22 +65,22 @@ set(plplotf95c_SOVERSION 12)
 set(plplotf95c_VERSION ${plplotf95c_SOVERSION}.0.0)
 
 set(plplotf95_SOVERSION 12)
-set(plplotf95_VERSION ${plplotf95_SOVERSION}.0.0)
+set(plplotf95_VERSION ${plplotf95_SOVERSION}.1.0)
 
 set(plplotqt_SOVERSION 2)
-set(plplotqt_VERSION ${plplotqt_SOVERSION}.0.0)
+set(plplotqt_VERSION ${plplotqt_SOVERSION}.0.1)
 
 set(tclmatrix_SOVERSION 10)
 set(tclmatrix_VERSION ${tclmatrix_SOVERSION}.2.0)
 
 set(plplottcltk_SOVERSION 12)
-set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.1.0)
+set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.1.1)
 
 set(plplottcltk_Main_SOVERSION 1)
 set(plplottcltk_Main_VERSION ${plplottcltk_Main_SOVERSION}.0.0)
 
 set(plplotwxwidgets_SOVERSION 1)
-set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.0.0)
+set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.1.0)
 
 set(plplotada_SOVERSION 2)
 set(plplotada_VERSION ${plplotada_SOVERSION}.0.0)
