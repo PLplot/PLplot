@@ -46,6 +46,8 @@
       integer(kind=plint), parameter :: PLESC_MODEGET = 37 ! get drawing mode
       integer(kind=plint), parameter :: PLESC_FIXASPECT = 38 ! set or unset fixing the aspect ratio of the plot
       integer(kind=plint), parameter :: PLESC_IMPORT_BUFFER = 39 ! set the contents of the buffer to a specified byte string
+      integer(kind=plint), parameter :: PLESC_APPEND_BUFFER = 40 ! append the given byte string to the buffer
+      integer(kind=plint), parameter :: PLESC_FLUSH_REMAINING_BUFFER = 41 ! flush the remaining buffer e.g. after new data was appended
       integer(kind=plint), parameter :: PLTEXT_FONTCHANGE = 0 ! font change in the text stream
       integer(kind=plint), parameter :: PLTEXT_SUPERSCRIPT = 1 ! superscript in the text stream
       integer(kind=plint), parameter :: PLTEXT_SUBSCRIPT = 2 ! subscript in the text stream

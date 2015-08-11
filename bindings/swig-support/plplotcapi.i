@@ -84,6 +84,8 @@ typedef void*  PLPointer;
 #define PLESC_MODEGET                    37 // get drawing mode
 #define PLESC_FIXASPECT                  38 // set or unset fixing the aspect ratio of the plot
 #define PLESC_IMPORT_BUFFER              39 // set the contents of the buffer to a specified byte string
+#define PLESC_APPEND_BUFFER              40 // append the given byte string to the buffer
+#define PLESC_FLUSH_REMAINING_BUFFER     41 // flush the remaining buffer e.g. after new data was appended
 #define PLTEXT_FONTCHANGE                0  // font change in the text stream
 #define PLTEXT_SUPERSCRIPT               1  // superscript in the text stream
 #define PLTEXT_SUBSCRIPT                 2  // subscript in the text stream
@@ -839,7 +841,7 @@ plshade1( const PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
 #endif
 
 //--------------------------------------------------------------------------
-//		Functions for use from C or C++ only
+//  Functions for use from C or C++ only
 //  N.B. If you want these in python, they should be officially put in
 //  the common API for all front-ends to the PLplot library with "c_" suffix,
 //  DocBook xml documentation in the api.xml chapter, etc.
