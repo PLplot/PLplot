@@ -43,6 +43,12 @@ CONTENTS
 
 2.8 Many improvements and bug fixes for the new wxwidgets device
 
+2.9 Substantially improved results for comprehensive testing of PLplot
+on the Cygwin platform
+
+2.10 Initial success of comprehensive testing of PLplot on the MSYS2
+platform
+
 3. PLplot comprehensive testing reports
 
 ________________________________________________________________
@@ -52,7 +58,7 @@ ________________________________________________________________
 1.1 Minimum CMake version bump
 
 The minimum version of CMake has been bumped to 3.2.3 on all platforms
-other than Cygwin and Linux where it has been bumped to 3.0.2.
+other than Cygwin and Linux where it has been bumped to 3.0.2 instead.
 
 ________________________________________________________________
 
@@ -111,21 +117,70 @@ is used.
 
 The principal improvement is to collect the most important information
 concerning a given comprehensive test into a report tarball that helps
-to diagnose any problems turned up by the test or in the case of
+others to diagnose any problems turned up by the test or in the case of
 complete test success provide enough information for a summary of the
 test (see, for example, the tables below summarizing comprehensive
 test success on various platforms).
 
 2.7 Build system and file cleanup concerning retired devices
 
-We have long since retired the gnome, gcw, gnome2, dg300, hpgl, impress, linuxvga, ljii, ljiip,
-pbm, and tek device drivers.  This (intrusive!) change removed all references to these from
-files other than our DocBook documentation of devices which needs an independent upgrade
-in any case.
+We have long since retired the gnome, gcw, gnome2, dg300, hpgl,
+impress, linuxvga, ljii, ljiip, pbm, and tek device drivers.  This
+(intrusive!) change removed all references to these from files (or
+removes entire files if the file was only relevant to one of the
+retired device drivers).  The only exception to this cleanup is our
+DocBook documentation of devices which needs a complete rewrite
+instead.
 
 2.8 Many improvements and bug fixes for the new wxwidgets device
 
-See ChangeLog.release for details.
+The new wxwidgets device is still being actively developed.  See the
+ChangeLog.release file for the details of all such changes for this
+release cycle.  The current status is this new version of the
+wxwidgets device has no serious build or run-time issues.  However,
+there are still known rendering issues with this device which can be
+found at <http://sourceforge.net/p/plplot/bugs/search/?q=wxwidget> and
+which we are in the process of fixing.  If any of these issues are an
+important concern to our wxwidgets users for this release we suggest
+they try the -DOLD_WXWIDGETS=ON option to access the old version of
+the wxwidgets device.  We do sufficient maintenance of that old
+wxwidgets device so that it passes comprehensive testing (see the
+report below).  However, there are no plans to do further changes to
+the old wxwidgets device driver other than minimal maintenance, and at
+some point that old version of the wxwidgets device will be removed.
+
+2.9 Substantially improved results for comprehensive testing of PLplot
+on the Cygwin platform
+
+See the detailed reports for 64-bit Cygwin below.  A substantial
+amount of bug fixing for our build and test system during this release
+cycle contributed to this 64-bit Cygwin success.  Because of this
+success and because this platform provides almost every PLplot
+soft prerequisite we highly recommend 64-bit Cygwin as a PLplot
+platform with the caveat that the results depend on the Cygwin dll,
+i.e., they are not pure Windows results.
+
+We similarly expect that 32-bit Cygwin will be a good platform for
+PLplot, but we have not comprehensively tested this platform yet.
+
+2.10 Initial success of comprehensive testing of PLplot on the MSYS2
+platform
+
+Greg Jung reports that comprehensive testing of PLplot on
+mingw-w64-x86_64/MSYS2 succeeds (see the detailed report below). This
+derivative of the modern Cygwin platform allows use of posix MSYS2
+tools to build pure (i.e., no dependence on the MSYS2 dll) Windows
+applications and libraries using the mingw-w64-x86_64 toolchain and
+the associated mingw64 software repository.  Although this repository
+does not contain all the free software that is available for Cygwin,
+it nevertheless does cover most of the PLplot prerequisites.  So we
+can now highly recommend this platform for pure Windows builds of
+PLplot using the mingw-w64-x86_64 toolchain.  Thanks, Greg!
+
+We similarly expect that the mingw-w64-i686/MSYS2 platform
+will also work well for pure Windows builds of PLplot using the
+mingw-w64-i686 toolchain although we haven't comprehensively tested
+this platform yet.
 
 ________________________________________________________________
 
@@ -133,6 +188,29 @@ ________________________________________________________________
 
 These reports are in reverse chronological order and formatted in the
 SourceForge markdown syntax for a table.
+
+|||
+---|---|---|---
+Tester|Alan W. Irwin
+Notes|(a), (b), (c), (d), (e), (k), (A)
+Date|2015-08-07
+PLplot commit|6747256
+CMake version|3.0.2
+Generator|\"Unix Makefiles\"
+Platform|Debian wheezy = oldstable with system libraries
+Pango/Cairo version|1.30.0/1.12.2
+Qt version|4.8.2
+WxWidgets version|2.8.12.1
+Shared libraries?|Dynamic drivers?
+Yes|Yes
+Yes|No
+No|No
+CMake-based build tree?|test_noninteractive?|test_interactive?|ctest?
+Yes|No|Yes|No
+CMake-based installed examples?|test_noninteractive?|test_interactive
+Yes|No|Yes
+Traditional Installed examples?|test_noninteractive?|test_interactive
+Yes|No|Yes
 
 |||
 ---|---|---|---
@@ -352,6 +430,7 @@ Testing notes where lower case notes concern configuration and build options whi
 * (h) This MinGW/MSYS platform with no epa_built libraries has very few PLplot soft prerequisites available so tests on this platform necessarily only apply to a small number of the PLplot components (i.e., just the mem, ntk, null, ps, svg, wingcc, and xfig device drivers and just the c++, f95, and tcl bindings).
 * (i) CMake was hand-built to make it depend on Qt4 rather than Qt5 to help avoid Qt4/Qt5 MSYS2 package conflicts.
 * (j) g++ (but not gcc) -DUNICODE option required to make wxwidgets device driver buildable.
+* (k) wxwidgets-only interactive tests using -DOLD_WXWIDGETS=ON to comprehensively test the old wxwidgets device driver.
 * (A) No obvious configure, build, or install errors. No run-time errors in tests other than those noted in additional \"upper-case\" notes (if any).
 * (B) Interactive tests disabled to avoid run-time errors.
 * (B') Interactive tests ignored.
