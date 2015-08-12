@@ -461,3 +461,5 @@ Testing notes where lower case notes concern configuration and build options whi
 `--cmake_added_options \"DEFAULT_NO_QT_DEVICES=ON -DENABLE_qt=OFF\"`
 * (M) gtk+-x11-2.0 development package not installed, therefore extXdrawable_demo test not run.
 * (N) sip ignored so pyqt4 not tested.
+
+________________________________________________________________

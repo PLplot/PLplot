@@ -570,10 +570,11 @@ DETAILED CHANGELOG FOR THIS RELEASE
 " | cat README.release - ChangeLog.release >| /tmp/README.release
 
 cd /tmp
-sftp airwin,plplot@frs.sourceforge.net
+sftp airwin,plplot@frs.sourceforge.net <<EOF
 cd /home/frs/project/p/pl/plplot/plplot/${plplot_version}\ Source
 put /tmp/README.release
 exit
+EOF
 
 Make, e.g., plplot-$plplot_version.tar.gz, the "latest" version.
 
@@ -582,8 +583,12 @@ files ==> plplot ==> ${plplot_version} Source ==> view details (the "i" icon) fo
 plplot-${plplot_version}.tar.gz ==> select "all" for the default
 
 The above used to spin indefinitely with iceweasel.  Now it finishes
-with a "properties updated" message, but it doesn't appear to "take"
-immediately so check it later.
+with a "properties updated" message, and appears to "take"
+immediately.
+
+Note also, the above does not work with konqueror (perhaps because we
+take care of security issues with cookies and javascript with that browser
+while iceweasel is wide open).
 
    ++ Make a SourceForge news item concerning this release
 
@@ -607,7 +612,11 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
    ++ Prepare immediately for the next release cycle
 
-  a. Preserve the historical record of the
+  a. Commit last-minute tweaks (e.g., in README.Release_Manager_Cookbook)
+     that did not make it into the official tarball of the release or
+     official tag of the release.
+
+  b. Preserve the historical record of the
      significant changes between versions of PLplot in one file by
      prepending README.release for $plplot_version to OLD-README.release
 
@@ -615,12 +624,8 @@ cat README.release OLD-README.release > OLD-README.release_new
 mv OLD-README.release_new OLD-README.release
 
 
-  b. Update README.release file to reflect the start of a new release
+  c. Update README.release file to reflect the start of a new release
      cycle.
-
-  c. Commit typically last-minute changes in
-     README.Release_Manager_Cookbook that reflect the latest practice
-     done for the current release.
 
 --- Appendix ---
 _________________________________________________________________________
