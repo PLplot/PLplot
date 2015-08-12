@@ -25,6 +25,7 @@ INDEX
 ** Prepare immediately for the next release cycle
 
 INDEX for Appendix
+** The golang API consistency checker
 ** GNU Privacy Guard (gpg)
 ** Correct computer time
 ** System prerequisites for viewing local website
@@ -43,6 +44,14 @@ This step depends on no others.
 Update PLplot version in www/examples.php.  Also follow the
 instructions in cmake/modules/plplot_version.cmake to update all
 version information.
+
+Also
+
+export plplot_version=5.11.1
+export old_plplot_version=5.11.0
+
+for further use in this file (much of it for real on the command line, but
+some of it symbolic for what you do using GUI's).
 _________________________________________________________________________
 
 ** Prepare a (preliminary) version of the ChangeLog file for this release
@@ -52,7 +61,8 @@ This step does not depend on other steps.
 git log --name-status --reverse <commit_id>..master >| ChangeLog.release_preliminary
 
 where <commit_id> is the last commit id of the log of commits for the
-previous release cycle (i.e., d4fdf0bab for the 5.10.0 release).
+previous release cycle (i.e., plplot-$old_plplot_version for the
+plplot-$plplot_version release).
 
 Note the "_preliminary" suffix to distinguish this from the final
 result below which will contain (if all goes well in the steps below)
@@ -91,7 +101,7 @@ documentation.  Generate and test our doxygen form of documentation
 following the instructions in doc/README.doxygen.
 
 Update doc/docbook/src/CMakeLists.txt to reflect the best estimate
-of the release date that will be used in the documentation build.
+of the (UTC) release date that will be used in the documentation build.
 
 Update, generate and test our Docbook documentation following the
 instructions in doc/docbook/README.developers.
@@ -125,7 +135,13 @@ in the build tree.  The current result of that command should be
 ... check_swig_documentation
 ... check_tcl_parameters
 
-Note, one of these targets (check_plplot_h.inc) only exists 
+Note the check_api_xml_consistency checker only exists if
+-DADD_SPECIAL_CONSISTENCY_CHECKING=ON and our build system finds the
+golang application api.xml_consistency_checker.  For more details
+concerning how to install that application see the Appendix section
+entitled "The golang API consistency checker".
+
+Note the check_plplot_h.inc target only exists 
 because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
 -DGENERATE_PLPLOT_H_INC=ON by default which in turn requires
 that at least the OCaml version of the Perl regular expression library
@@ -168,13 +184,15 @@ _________________________________________________________________________
 
 This step does not depend on other steps.
 
-If necessary, update the examples list in
-scripts/htdocs-gen_plot-examples.sh. That list is used to generate the
-website example-related files and copy the results to the website. The
-list automatically controls what example source code is configured
-(for source code that needs that), as well as what example plots and
-example thumbnails are generated.  The list also automatically
-controls what examples-related files are copied to the website.
+Use "git diff" on the examples directory with appropriate commit id
+limits to discover whether there is a necessity to update the examples
+list in scripts/htdocs-gen_plot-examples.sh. And if so, do that
+update.  That list is used to generate the website example-related
+files and copy the results to the website. The list automatically
+controls what example source code is configured (for source code that
+needs that), as well as what example plots and example thumbnails are
+generated.  The list also automatically controls what examples-related
+files are copied to the website.
 
 Update the project web page, including the examples: edit
 www/examples.php to reflect any changes to the examples themselves
@@ -305,12 +323,14 @@ Browse the following install locations that were generated from the
 tarball:
 
 /tmp/plplot_install/share/doc/plplot/html/index.html
-/tmp/plplot_install/share/doc/plplot/plplot-5.11.0.pdf
+/tmp/plplot_install/share/doc/plplot/doxygen/html/index.html
+
+/tmp/plplot_install/share/doc/plplot/plplot-$plplot_version.pdf
 
 Look at tarball contents to make sure included filenames are
 what is intended.
 
-less /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz
+less /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
 
 Look at a few man pages that were generated from the tarball, e.g.,
 
@@ -426,7 +446,7 @@ git checkout maint
 git log --name-status <commit_id>..master >| ChangeLog.release
 
 where <commit_id> is the last commit id of the log of commits for the
-previous release cycle (i.e., d4fdf0bab for the 5.10.0 release).  Note
+previous release cycle (i.e., plplot-$old_plplot_version for the $plplot_version release).  Note
 this result (unlike the prelimary version above) will be in the
 traditional reverse chronological order.
 
@@ -482,7 +502,7 @@ Assuming all is well with the release tarball tests, then tag HEAD of master
 and push it.
 
 git checkout master
-git tag plplot-5.11.0
+git tag plplot-$plplot_version
 # Note, a tag simply tags a particular commit so if I checkout some
 # other branch (such as maint) that has the same tagged commit as
 # as master, then the "git tag --list" command will find the tag
@@ -507,41 +527,42 @@ uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
 sub   2048R/C5ECCF77 2011-08-19 [expires: 2016-08-17]
 
 
-gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz
+gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
 
 where YYYYYYYY is BB159E92 for Alan W. Irwin as taken from the above key list.
 
    ++ Verify the release tarball signing
-gpg --verify /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz.asc
+gpg --verify /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz.asc
 
    ++ Make a SourceForge file release
 
 #IMPORTANT
 cd /tmp/plplot-dist-prep/
 
-sftp airwin,plplot@frs.sourceforge.net
+sftp airwin,plplot@frs.sourceforge.net <<EOF
 cd /home/frs/project/p/pl/plplot/plplot
-mkdir 5.11.0\ Source
-cd 5.11.0\ Source
-put plplot-5.11.0.tar.gz.asc
-put plplot-5.11.0.tar.gz
+mkdir ${plplot_version}\ Source
+cd ${plplot_version}\ Source
+put plplot-$plplot_version.tar.gz.asc
+put plplot-$plplot_version.tar.gz
 exit
+EOF
 
 # Save a local copy of the release tarball for future reference and
 # also check it.
 cd /home/software/plplot_svn/HEAD/export #(or wherever)
-cp -a /tmp/plplot-dist-prep/plplot-5.11.0.tar.gz* .
-gpg --verify plplot-5.11.0.tar.gz.asc
+cp -a /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz* .
+gpg --verify plplot-$plplot_version.tar.gz.asc
 
 # Check and verify download from SF works:
 cd /tmp
-wget http://downloads.sourceforge.net/plplot/plplot/5.11.0%20Source/plplot-5.11.0.tar.gz.asc
-wget http://downloads.sourceforge.net/plplot/plplot/5.11.0%20Source/plplot-5.11.0.tar.gz
-gpg --verify plplot-5.11.0.tar.gz.asc
+wget http://downloads.sourceforge.net/plplot/plplot/${plplot_version}%20Source/plplot-$plplot_version.tar.gz.asc
+wget http://downloads.sourceforge.net/plplot/plplot/${plplot_version}%20Source/plplot-$plplot_version.tar.gz
+gpg --verify plplot-$plplot_version.tar.gz.asc
 
 Prepare concatenated release notes + Changelog.
 
-cd /tmp/plplot-dist-prep/plplot-5.11.0
+cd /tmp/plplot-dist-prep/plplot-$plplot_version
 echo "
 
 DETAILED CHANGELOG FOR THIS RELEASE
@@ -550,15 +571,15 @@ DETAILED CHANGELOG FOR THIS RELEASE
 
 cd /tmp
 sftp airwin,plplot@frs.sourceforge.net
-cd /home/frs/project/p/pl/plplot/plplot/5.11.0\ Source
+cd /home/frs/project/p/pl/plplot/plplot/${plplot_version}\ Source
 put /tmp/README.release
 exit
 
-Make, e.g., plplot-5.11.0.tar.gz, the "latest" version.
+Make, e.g., plplot-$plplot_version.tar.gz, the "latest" version.
 
 login to SF website
-files ==> plplot ==> 5.11.0 Source ==> view details (the "i" icon) for
-plplot-5.11.0.tar.gz ==> select "all" for the default
+files ==> plplot ==> ${plplot_version} Source ==> view details (the "i" icon) for
+plplot-${plplot_version}.tar.gz ==> select "all" for the default
 
 The above used to spin indefinitely with iceweasel.  Now it finishes
 with a "properties updated" message, but it doesn't appear to "take"
@@ -573,7 +594,7 @@ Point your browser to http://sf.net/projects/plplot and login.  A
 news item will then be available on the menu bar.  Click that, then
 "new post".
 
-Enter the title (e.g., PLplot Release 5.11.0) and the text.
+Enter the title (e.g., PLplot Release $plplot_version) and the text.
 The text is in markdown format so cutting and pasting from
 previous news items is a very efficient way to create the
 new news item.
@@ -588,7 +609,7 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
   a. Preserve the historical record of the
      significant changes between versions of PLplot in one file by
-     prepending README.release for 5.11.0 to OLD-README.release
+     prepending README.release for $plplot_version to OLD-README.release
 
 cat README.release OLD-README.release > OLD-README.release_new
 mv OLD-README.release_new OLD-README.release
@@ -602,6 +623,32 @@ mv OLD-README.release_new OLD-README.release
      done for the current release.
 
 --- Appendix ---
+_________________________________________________________________________
+
+** The golang API consistency checker
+
+The instructions for installing this golang application
+are taken from doc/docbook/src/CMakeLists.txt.
+
+To build Hǎiliàng Wang's "check" application (which is written in the Go language)
+follow these simple directions (which worked fine on 2014-01-26):
+
+# Install go-lang package from your distro (I used the Debian testing
+# version, go-lang version 1.2).
+
+cd /home/software/golang_apps #(or wherever you like)
+export GOPATH=$(pwd)
+go get -u github.com/hailiang/go-plplot/c/check
+go build github.com/hailiang/go-plplot/c/check
+
+# The above creates the "check" executable in $GOPATH/bin
+# That is too generic a name so symlink a more individual name
+cd $GOPATH/bin; ln -s check api.xml_consistency_checker;
+
+# Now put $GOPATH/bin on your PATH and CMake should do the rest
+# by finding the api.xml_consistency_checker application on your
+# PATH and running that appropriately when you build the
+# check_all or check_api_xml_consistency targets (see above).
 _________________________________________________________________________
 
 ** GNU Privacy Guard (gpg)
