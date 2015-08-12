@@ -135,8 +135,10 @@ for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 
 	examples/ada/xthick${exe}a.adb \
         examples/c/x${exe}c.c \
 	examples/c++/x${exe}.cc \
+	examples/d/x${exe}d.d \
 	examples/f95/x${exe}f.f90 \
         examples/java/x${exe}.java \
+        examples/lua/x${exe}.lua \
         examples/ocaml/x${exe}.ml \
         examples/octave/x${exe}c.m \
         examples/python/xw${exe}.py \
@@ -157,8 +159,10 @@ for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 
 	    *.adb \
             *.c \
 	    *.cc \
+	    *.d \
 	    *.f90 \
 	    *.java \
+	    *.lua \
 	    *.ml \
 	    *.m \
 	    *.py \
