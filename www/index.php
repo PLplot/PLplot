@@ -36,6 +36,7 @@ label plots.</p>
 				   <li>Linux, Mac OS X, and other Unices</li>
 				   <li>MSVC IDE on the Microsoft version of Windows (Windows 2000 and later)</li>
 				   <li>Cygwin on the Microsoft version of Windows</li>
+				   <li>MinGW-w64/MSYS2 on the Microsoft version of Windows</li>
 				   <li>MinGW/MSYS on the Microsoft version of Windows</li>
 				   <li>MinGW/MSYS on the Wine (1.6.1 and later) version of Windows</li>
 				 </ul>
@@ -75,7 +76,7 @@ label plots.</p>
 				<h4><a name="interactive">Interactive Platforms</a></h4>
 				<p>PLplot device drivers support a number of platforms that are suitable for interactive plotting.</p>
 				<ul class="arrowlist">
-				  <li>Gtk+</li>
+				  <li>GTK+</li>
 				  <li>PyQt</li>
 				  <li>Qt</li>
 				  <li>Tcl/Tk</li>
