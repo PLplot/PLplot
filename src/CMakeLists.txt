@@ -64,6 +64,12 @@ if(LTDL_WIN32)
   set(plplot_LIB_SRCS ${plplot_LIB_SRCS} ltdl_win32.c)
 endif(LTDL_WIN32)
 
+if(HAS_LIBQHULL_INCLUDE)
+  set_source_files_properties(plgridd.c
+    PROPERTIES COMPILE_DEFINITIONS HAS_LIBQHULL_INCLUDE
+    )
+endif(HAS_LIBQHULL_INCLUDE)
+
 if(BUILD_SHARED_LIBS)
   set_source_files_properties(${plplot_LIB_SRCS}
     PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )

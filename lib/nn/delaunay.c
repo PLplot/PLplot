@@ -34,7 +34,11 @@
 #include <limits.h>
 #include <float.h>
 #ifdef USE_QHULL
+#ifdef HAS_LIBQHULL_INCLUDE
+#include <libqhull/qhull_a.h>
+#else
 #include <qhull/qhull_a.h>
+#endif
 #else
 #include "triangle.h"
 #endif

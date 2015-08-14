@@ -31,6 +31,12 @@ if(PL_HAVE_QHULL)
     nncommon.c
     )
 
+  if(HAS_LIBQHULL_INCLUDE)
+    set_source_files_properties(delaunay.c
+      PROPERTIES COMPILE_DEFINITIONS HAS_LIBQHULL_INCLUDE
+      )
+  endif(HAS_LIBQHULL_INCLUDE)
+
   if(BUILD_SHARED_LIBS)
     set_source_files_properties( ${csironn_LIB_SRCS}
       PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
