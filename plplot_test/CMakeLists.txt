@@ -38,22 +38,21 @@ if(SH_EXECUTABLE)
     "EXAMPLES_DIR=${CMAKE_BINARY_DIR_ESCAPED}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR_ESCAPED}/examples OUTPUT_DIR=${CTEST_EXAMPLES_OUTPUT_DIR_ESCAPED} VC_CTEST_DIRECTORY=${VC_CTEST_DIRECTORY}"
     )
   message(STATUS "TEST_ENVIRONMENT = ${TEST_ENVIRONMENT}")
-  set(TEST_DEVICE psc CACHE STRING "device used for ctest")
+  set(PLPLOT_TEST_DEVICE psc CACHE STRING "device used for ctest")
   # There is no PLD_psc or PLD_psttfc and the PLD_ps and PLD_psttf
   # variables must be used instead.  All other PLD_* names correspond
   # to exact device names.  So adjust for this complicated naming
-  # scheme in a general way in case some other TEST_DEVICE is chosen
-  # in the future.
-  if(TEST_DEVICE STREQUAL "psc")
+  # scheme in a general way.
+  if(PLPLOT_TEST_DEVICE STREQUAL "psc")
     set(PLD_TEST_DEVICE ${PLD_ps})
-  elseif(TEST_DEVICE STREQUAL "psttfc")
+  elseif(PLPLOT_TEST_DEVICE STREQUAL "psttfc")
     set(PLD_TEST_DEVICE ${PLD_psttf})
-  else(TEST_DEVICE STREQUAL "psc")
-    set(PLD_TEST_DEVICE ${PLD_${TEST_DEVICE}})
-  endif(TEST_DEVICE STREQUAL "psc")
+  else(PLPLOT_TEST_DEVICE STREQUAL "psc")
+    set(PLD_TEST_DEVICE ${PLD_${PLPLOT_TEST_DEVICE}})
+  endif(PLPLOT_TEST_DEVICE STREQUAL "psc")
 
   set(TEST_SCRIPT "./plplot-test.sh --verbose")
-  set(TEST_SCRIPT_DEVICE "${TEST_SCRIPT} --device=${TEST_DEVICE}")
+  set(TEST_SCRIPT_DEVICE "${TEST_SCRIPT} --device=${PLPLOT_TEST_DEVICE}")
 
   set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
 
@@ -384,150 +383,31 @@ if(SH_EXECUTABLE)
     endif(PLD_TEST_DEVICE)
   endif(PLD_plmeta)
 
-  # Run C examples with different drivers
+  # Add tests for all enabled file devices (except for PLPLOT_TEST_DEVICE) for C language.
   if(PLD_ps)
-    if (NOT TEST_DEVICE STREQUAL "psc")
-      add_test(NAME examples_psc
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psc"
-	)
-    endif(NOT TEST_DEVICE STREQUAL "psc")
+    list(APPEND FILE_DEVICES_LIST psc:ps:OFF)
   endif(PLD_ps)
-
   if(PLD_psttf)
-    add_test(NAME examples_psttfc
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=psttfc"
-      )
+    list(APPEND FILE_DEVICES_LIST psttfc:psttf:OFF)
   endif(PLD_psttf)
 
-  if(PLD_pstex)
-    add_test(NAME examples_pstex
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pstex"
-      )
-  endif(PLD_pstex)
+  # FILE_DEVICES_LIST is set in cmake/modules/drivers-finish.cmake
+  # for all enabled _file_ devices and adjusted above for the
+  # special case of the psc and psttfc devices.
+  # Each list member consists of a colon-separated device name, driver
+  # name, and a Boolean variable that indicates if the device has familied
+  # output in plplot-test.sh (i.e., requires familying).  Only the
+  # enabled device name is important in this context.
 
-  if(PLD_png)
-    add_test(NAME examples_png
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=png"
-      )
-  endif(PLD_png)
-
-  if(PLD_svg)
-    if (NOT TEST_DEVICE STREQUAL "svg")
-    add_test(NAME examples_svg
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svg"
-      )
-    endif (NOT TEST_DEVICE STREQUAL "svg")
-  endif(PLD_svg)
-
-  if(PLD_plmeta)
-    add_test(NAME examples_plmeta
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=plmeta"
-      )
-  endif(PLD_plmeta)
-
-  if(PLD_pscairo)
-    add_test(NAME examples_pscairo
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pscairo"
-      )
-  endif(PLD_pscairo)
-
-  if(PLD_pngcairo)
-    add_test(NAME examples_pngcairo
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngcairo"
-      )
-  endif(PLD_pngcairo)
-
-  if(PLD_xfig)
-    add_test(NAME examples_xfig
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=xfig"
-      )
-  endif(PLD_xfig)
-
-  if(PLD_gif)
-    add_test(NAME examples_gif
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=gif"
-      )
-  endif(PLD_gif)
-
-  if(PLD_cgm)
-    add_test(NAME examples_cgm
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=cgm"
-      )
-  endif(PLD_cgm)
-
-  if(PLD_bmpqt)
-    add_test(NAME examples_bmpqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=bmpqt"
-      )
-  endif(PLD_bmpqt)
-
-  if(PLD_jpgqt)
-    add_test(NAME examples_jpgqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=jpgqt"
-      )
-  endif(PLD_jpgqt)
-
-  if(PLD_pngqt)
-    add_test(NAME examples_pngqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pngqt"
-      )
-  endif(PLD_pngqt)
-
-  if(PLD_ppmqt)
-    add_test(NAME examples_ppmqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=ppmqt"
-      )
-  endif(PLD_ppmqt)
-
-  if(PLD_tiffqt)
-    add_test(NAME examples_tiffqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=tiffqt"
-      )
-  endif(PLD_tiffqt)
-
-  if(PLD_svgqt)
-    add_test(NAME examples_svgqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=svgqt"
-      )
-  endif(PLD_svgqt)
-
-  if(PLD_epsqt)
-    add_test(NAME examples_epsqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=epsqt"
-      )
-  endif(PLD_epsqt)
-
-  if(PLD_pdfqt)
-    add_test(NAME examples_pdfqt
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdfqt"
-      )
-  endif(PLD_pdfqt)
-
-  if(PLD_pdf)
-    add_test(NAME examples_pdf
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=pdf"
-      )
-  endif(PLD_pdf)
+  foreach(file_devices_info ${FILE_DEVICES_LIST})
+    string(REGEX REPLACE "^(.*):.*:.*$" "\\1" device ${file_devices_info})
+    if (NOT PLPLOT_TEST_DEVICE STREQUAL device)
+      add_test(NAME examples_${device}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT} --front-end=c --device=${device}"
+	)
+    endif(NOT PLPLOT_TEST_DEVICE STREQUAL device)
+  endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
   if(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
     configure_file(
@@ -540,13 +420,9 @@ if(SH_EXECUTABLE)
     string(REPLACE " " "\\ " TEST_DIFF_SH "${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh")
     add_test(NAME examples_compare
       WORKING_DIRECTORY ${CTEST_EXAMPLES_OUTPUT_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_DIFF_SH} --device=${TEST_DEVICE}"
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_DIFF_SH} --device=${PLPLOT_TEST_DEVICE}"
       )
-    # There is a bug in 2.8.x with x < 5 where tests are run out of
-    # the order in which they are declared by default.  Also, 2.8.x
-    # can run repeat tests out of order due to some optimizations that
-    # have been implemented.  Thus, always force examples_compare to
-    # be run after the other tests it depends on.
+    # Always force examples_compare to be run after the other tests it depends on.
     #message(STATUS "DEBUG: examples_compare_DEPENDS = ${examples_compare_DEPENDS}")
     set_tests_properties(examples_compare
       PROPERTIES
