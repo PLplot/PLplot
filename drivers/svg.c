@@ -62,6 +62,7 @@ static DrvOpt svg_options[] = { { "text_clipping", DRV_INT, &text_clipping, "Use
 typedef struct
 {
     short textClipping;
+    int   which_clip;
     int   canvasXSize;
     int   canvasYSize;
     PLFLT scale;
@@ -561,7 +562,6 @@ void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 void proc_str( PLStream *pls, EscText *args )
 {
     char         plplot_esc;
-    static short which_clip = 0;
     short        i;
     short        totalTags = 1;
     short        ucs4Len   = (short) args->unicode_array_len;
@@ -602,7 +602,7 @@ void proc_str( PLStream *pls, EscText *args )
         // transform the coordinates of the clipping rectangle
         difilt_clip( rcx, rcy );
         same_clip = TRUE;
-        if ( which_clip == 0 )
+        if ( aStream->which_clip == 0 )
         {
             same_clip = FALSE;
         }
@@ -618,7 +618,7 @@ void proc_str( PLStream *pls, EscText *args )
         if ( !same_clip )
         {
             svg_open( aStream, "clipPath" );
-            svg_attr_values( aStream, "id", "text-clipping%d", which_clip );
+            svg_attr_values( aStream, "id", "text-clipping%d", aStream->which_clip );
             svg_general( aStream, ">\n" );
 
             // Output a polygon to represent the clipping region.
@@ -642,11 +642,11 @@ void proc_str( PLStream *pls, EscText *args )
                 prev_rcx[i] = rcx[i];
                 prev_rcy[i] = rcy[i];
             }
-            which_clip++;
+            aStream->which_clip++;
         }
         svg_open( aStream, "g" );
         svg_attr_values( aStream, "clip-path",
-            "url(#text-clipping%d)", which_clip - 1 );
+            "url(#text-clipping%d)", aStream->which_clip - 1 );
         svg_general( aStream, ">\n" );
     }
 
