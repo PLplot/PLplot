@@ -3,7 +3,7 @@
 # Complete tests of PLplot for the three generic build types which
 # consist of shared+dynamic, shared+nondynamic, and
 # static+nondynamic.  These complete tests that are run for each build
-# type are (I) ctest, test_noninteractive, and test_interactive in
+# type are (I) test_noninteractive, test_interactive, and ctest in the
 # build tree; (II) traditional [Makefile+pkg-config]
 # test_noninteractive and test_interactive of installed examples; and
 # (III) CMake-based test_noninteractive and test_interactive of
@@ -90,7 +90,7 @@ collect_exit() {
 	tar rf $TARBALL $RELATIVE_ENVIRONMENT_LOG
     fi
 
-    for directory in shared nondynamic static ; do
+    for directory in shared/interactive shared/noninteractive nondynamic/interactive nondynamic/noninteractive static/interactive static/noninteractive ; do
 	if [ -d $directory/output_tree ] ; then
 	    tar rf $TARBALL $directory/output_tree
 	fi
@@ -118,12 +118,14 @@ echo "$@" |tee -a $COMPREHENSIVE_TEST_LOG
 
 comprehensive_test () {
     CMAKE_BUILD_TYPE_OPTION=$1
+    TEST_TYPE=$2
     echo_tee "
 Running comprehensive_test function with the following variables set:
 
 The variables below are key CMake options which determine the entire
 kind of build that will be tested.
 CMAKE_BUILD_TYPE_OPTION = $CMAKE_BUILD_TYPE_OPTION
+TEST_TYPE = ${TEST_TYPE}
 
 The location below is where all the important *.out files will be found.
 OUTPUT_TREE = $OUTPUT_TREE
@@ -158,6 +160,10 @@ Each of the steps in this comprehensive test may take a while...."
     mkdir -p "$OUTPUT_TREE"
     rm -rf "$BUILD_TREE"
     mkdir -p "$BUILD_TREE"
+    if [ "$do_test_install_tree" = "yes" ] ; then
+	rm -rf "$INSTALL_BUILD_TREE"
+	mkdir -p "$INSTALL_BUILD_TREE"
+    fi
     cd "$BUILD_TREE"
     if [ "$do_ctest" = "yes" -o "$do_test_build_tree" = "yes" ] ; then
 	BUILD_TEST_OPTION="-DBUILD_TEST=ON"
@@ -185,177 +191,70 @@ Each of the steps in this comprehensive test may take a while...."
 	collect_exit 1
     fi
 
-    if [ "$do_ctest" = "yes" ] ; then
-	output="$OUTPUT_TREE"/make.out
-	rm -f "$output"
-	echo_tee "$build_command VERBOSE=1 in the build tree"
-	$build_command VERBOSE=1 >& "$output"
-	make_rc=$?
-	if [ "$make_rc" -eq 0 ] ; then
-	    output="$OUTPUT_TREE"/ctest.out
+    if [ "$TEST_TYPE" = "noninteractive" ] ; then
+	if [ "$do_test_build_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
+	    output="$OUTPUT_TREE"/make_noninteractive.out
 	    rm -f "$output"
-	    echo_tee "$ctest_command --extra-verbose in the build tree"
-	    $ctest_command --extra-verbose >& "$output"
-	    ctest_rc=$?
-	    if [ "$ctest_rc" -eq 0 ] ; then
-		if [ "$do_clean_as_you_go" = "yes" ] ; then
-		    output="$OUTPUT_TREE"/clean_ctest_plot_files.out
-		    rm -f "$output"
-		    echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the build tree (since we are done with ctest)"
-		    $build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
-		    make_rc=$?
-		    if [ "$make_rc" -ne 0 ] ; then
-			echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the build tree"
-			collect_exit 1
+	    echo_tee "$build_command VERBOSE=1 test_noninteractive in the build tree"
+	    $build_command VERBOSE=1 test_noninteractive >& "$output"
+	    make_test_noninteractive_rc=$?
+	    if [ "$make_test_noninteractive_rc" -ne 0 ] ; then
+		echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the build tree"
+		collect_exit 1
+	    fi
+	fi
+
+	if [ "$do_ctest" = "yes" ] ; then
+	    output="$OUTPUT_TREE"/make.out
+	    rm -f "$output"
+	    echo_tee "$build_command VERBOSE=1 in the build tree"
+	    $build_command VERBOSE=1 >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -eq 0 ] ; then
+		output="$OUTPUT_TREE"/ctest.out
+		rm -f "$output"
+		echo_tee "$ctest_command --extra-verbose in the build tree"
+		$ctest_command --extra-verbose >& "$output"
+		ctest_rc=$?
+		if [ "$ctest_rc" -eq 0 ] ; then
+		    if [ "$do_clean_as_you_go" = "yes" ] ; then
+			output="$OUTPUT_TREE"/clean_ctest_plot_files.out
+			rm -f "$output"
+			echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the build tree (since we are done with ctest)"
+			$build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
+			make_rc=$?
+			if [ "$make_rc" -ne 0 ] ; then
+			    echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the build tree"
+			    collect_exit 1
+			fi
 		    fi
+		else
+		    echo_tee "ERROR: $ctest_command --extra-verbose failed in the build tree"
+		    collect_exit 1
 		fi
 	    else
-		echo_tee "ERROR: $ctest_command --extra-verbose failed in the build tree"
+		echo_tee "ERROR: $build_command VERBOSE=1 failed in the build tree"
 		collect_exit 1
 	    fi
-	else
-	    echo_tee "ERROR: $build_command VERBOSE=1 failed in the build tree"
-	    collect_exit 1
-	fi
-    fi
-
-    if [ "$do_test_build_tree" = "yes" -a  "$do_test_noninteractive" = "yes" ] ; then
-	output="$OUTPUT_TREE"/make_noninteractive.out
-	rm -f "$output"
-	echo_tee "$build_command VERBOSE=1 test_noninteractive in the build tree"
-	$build_command VERBOSE=1 test_noninteractive >& "$output"
-	make_test_noninteractive_rc=$?
-	if [ "$make_test_noninteractive_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the build tree"
-	    collect_exit 1
-	fi
-    fi
-
-    if [ "$do_test_install_tree" = "yes" -o \
-	"$do_test_traditional_install_tree" = "yes" ] ; then
-	rm -rf "$INSTALL_TREE"
-	output="$OUTPUT_TREE"/make_install.out
-	rm -f "$output"
-	echo_tee "$build_command VERBOSE=1 install in the build tree"
-	$build_command VERBOSE=1 install >& "$output"
-	make_install_rc=$?
-	if [ "$make_install_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
-	    collect_exit 1
-	fi
-    fi
-
-    if [ "$do_clean_as_you_go" = "yes" ] ; then
-	output="$OUTPUT_TREE"/clean.out
-	rm -f "$output"
-	echo_tee "$build_command VERBOSE=1 clean in the build tree (since we are done with it at least for the non-interactive test case)"
-	$build_command VERBOSE=1 clean >& "$output"
-	make_rc=$?
-	if [ "$make_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the build tree"
-	    collect_exit 1
-	fi
-    fi
-
-    if [ "$do_test_install_tree" = "yes" -o \
-	"$do_test_traditional_install_tree" = "yes" ] ; then
-	echo_tee "Prepend $INSTALL_TREE/bin to the original PATH"
-	PATH="$INSTALL_TREE/bin":$PATH_SAVE
-
-	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
-	    # Use this logic to be as version-independent as possible.
-	    current_dir=$(pwd)
-	    # Wild cards must not be inside quotes.
-	    cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
-	    echo_tee "Prepend $(pwd) to the current PATH"
-	    PATH="$(pwd):$PATH"
-	    cd $current_dir
 	fi
 
-	if [ "$do_test_install_tree" = "yes" ] ; then
-	    rm -rf "$INSTALL_BUILD_TREE"
-	    mkdir -p "$INSTALL_BUILD_TREE"
-	    cd "$INSTALL_BUILD_TREE"
-	    output="$OUTPUT_TREE"/installed_cmake.out
+	if [ "$do_test_install_tree" = "yes" -o "$do_test_traditional_install_tree" = "yes" ] ; then
+	    rm -rf "$INSTALL_TREE"
+	    output="$OUTPUT_TREE"/make_install.out
 	    rm -f "$output"
-	    echo_tee "cmake in the installed examples build tree"
-	    cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
-	    cmake_rc=$?
-	    if [ "$cmake_rc" -ne 0 ] ; then
-		echo_tee "ERROR: cmake in the installed examples build tree failed"
-		collect_exit 1
-	    fi
-	    if [ "$do_test_noninteractive" = "yes" ] ; then
-		output="$OUTPUT_TREE"/installed_make_noninteractive.out
-		rm -f "$output"
-		echo_tee "$build_command VERBOSE=1 test_noninteractive in the installed examples build tree"
-		$build_command VERBOSE=1 test_noninteractive >& "$output"
-		make_rc=$?
-		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the installed examples build tree"
-		    collect_exit 1
-		fi
-		if [ "$do_clean_as_you_go" = "yes" ] ; then
-		    output="$OUTPUT_TREE"/installed_clean.out
-		    rm -f "$output"
-		    echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it at least for the non-interactive test case)"
-		    $build_command VERBOSE=1 clean >& "$output"
-		    make_rc=$?
-		    if [ "$make_rc" -ne 0 ] ; then
-			echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
-			collect_exit 1
-		    fi
-		fi
-	    fi
-	fi
-
-	if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
-	    cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
-	    output="$OUTPUT_TREE"/traditional_make_noninteractive.out
-	    rm -f "$output"
-	    echo_tee "Traditional $traditional_build_command test_noninteractive in the installed examples tree"
-	    $traditional_build_command test_noninteractive >& "$output"
-	    make_rc=$?
-	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: Traditional $traditional_build_command test_noninteractive failed in the installed examples tree"
-		collect_exit 1
-	    fi
-	    if [ "$do_clean_as_you_go" = "yes" ] ; then
-		output="$OUTPUT_TREE"/traditional_clean.out
-		rm -f "$output"
-		echo_tee "Traditional $traditional_build_command clean in the installed examples tree (since we are done with it at least for the non-interactive test case)"
-		$traditional_build_command clean >& "$output"
-		make_rc=$?
-		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
-		    collect_exit 1
-		fi
-	    fi
-	fi
-    fi
-
-    if [ "$do_test_interactive" = "yes" ] ; then
-	if [ "$do_test_build_tree" = "yes" ] ; then
-	    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
-		echo_tee "Prepend $BUILD_TREE/dll to the original PATH"
-		PATH=$BUILD_TREE/dll:$PATH_SAVE
-	    fi
-
-	    cd "$BUILD_TREE"
-	    output="$OUTPUT_TREE"/make_interactive.out
-	    rm -f "$output"
-	    echo_tee "$build_command VERBOSE=1 test_interactive in the build tree"
-	    $build_command VERBOSE=1 test_interactive >& "$output"
-	    make_rc=$?
-	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: $build_command VERBOSE=1 test_interactive failed in the build tree"
+	    echo_tee "$build_command VERBOSE=1 install in the build tree"
+	    $build_command VERBOSE=1 install >& "$output"
+	    make_install_rc=$?
+	    if [ "$make_install_rc" -ne 0 ] ; then
+		echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
 		collect_exit 1
 	    fi
 	fi
+
 	if [ "$do_clean_as_you_go" = "yes" ] ; then
 	    output="$OUTPUT_TREE"/clean.out
 	    rm -f "$output"
-	    echo_tee "$build_command VERBOSE=1 clean in the build tree (since we are done with it)"
+	    echo_tee "$build_command VERBOSE=1 clean in the build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
 	    $build_command VERBOSE=1 clean >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
@@ -363,66 +262,200 @@ Each of the steps in this comprehensive test may take a while...."
 		collect_exit 1
 	    fi
 	fi
-	echo_tee "Prepend $INSTALL_TREE/bin to the original PATH"
-	PATH="$INSTALL_TREE/bin":$PATH_SAVE
 
-	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
-	    # Use this logic to be as version-independent as possible.
-	    current_dir=$(pwd)
-	    # Wild cards must not be inside quotes.
-	    cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
-	    echo_tee "Prepend $(pwd) to the current PATH"
-	    PATH="$(pwd):$PATH"
-	    cd $current_dir
-	fi
+	if [ "$do_test_install_tree" = "yes" -o "$do_test_traditional_install_tree" = "yes" ] ; then
+	    echo_tee "Prepend $INSTALL_TREE/bin to the original PATH"
+	    PATH="$INSTALL_TREE/bin":$PATH_SAVE
 
-	if [ "$do_test_install_tree" = "yes" ] ; then
-	    cd "$INSTALL_BUILD_TREE"
-	    output="$OUTPUT_TREE"/installed_make_interactive.out
-	    rm -f "$output"
-	    echo_tee "$build_command VERBOSE=1 test_interactive in the installed examples build tree"
-	    $build_command VERBOSE=1 test_interactive >& "$output"
-	    make_rc=$?
-	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: $build_command VERBOSE=1 test_interactive failed in the installed examples build tree"
-		collect_exit 1
+	    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
+	        # Use this logic to be as version-independent as possible.
+		current_dir=$(pwd)
+	        # Wild cards must not be inside quotes.
+		cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
+		echo_tee "Prepend $(pwd) to the current PATH"
+		PATH="$(pwd):$PATH"
+		cd $current_dir
 	    fi
-	    if [ "$do_clean_as_you_go" = "yes" ] ; then
-		output="$OUTPUT_TREE"/installed_clean.out
+
+	    if [ "$do_test_install_tree" = "yes" ] ; then
+		cd "$INSTALL_BUILD_TREE"
+		output="$OUTPUT_TREE"/installed_cmake.out
 		rm -f "$output"
-		echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it)"
-		$build_command VERBOSE=1 clean >& "$output"
-		make_rc=$?
-		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
+		echo_tee "cmake in the installed examples build tree"
+		cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+		cmake_rc=$?
+		if [ "$cmake_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: cmake in the installed examples build tree failed"
 		    collect_exit 1
 		fi
+		if [ "$do_test_noninteractive" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/installed_make_noninteractive.out
+		    rm -f "$output"
+		    echo_tee "$build_command VERBOSE=1 test_noninteractive in the installed examples build tree"
+		    $build_command VERBOSE=1 test_noninteractive >& "$output"
+		    make_rc=$?
+		    if [ "$make_rc" -ne 0 ] ; then
+			echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the installed examples build tree"
+			collect_exit 1
+		    fi
+		    if [ "$do_clean_as_you_go" = "yes" ] ; then
+			output="$OUTPUT_TREE"/installed_clean.out
+			rm -f "$output"
+			echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
+			$build_command VERBOSE=1 clean >& "$output"
+			make_rc=$?
+			if [ "$make_rc" -ne 0 ] ; then
+			    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
+			    collect_exit 1
+			fi
+		    fi
+		fi
 	    fi
-	fi
-	if [ "$do_test_traditional_install_tree" = "yes" ] ; then
-	    cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
-	    output="$OUTPUT_TREE"/traditional_make_interactive.out
-	    rm -f "$output"
-	    echo_tee "Traditional $traditional_build_command test_interactive in the installed examples tree"
-	    $traditional_build_command test_interactive >& "$output"
-	    make_rc=$?
-	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: Traditional $traditional_build_command test_interactive failed in the installed examples tree"
-		collect_exit 1
-	    fi
-	    if [ "$do_clean_as_you_go" = "yes" ] ; then
-		output="$OUTPUT_TREE"/traditional_clean.out
+
+	    if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_noninteractive" = "yes" ] ; then
+		cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
+		output="$OUTPUT_TREE"/traditional_make_noninteractive.out
 		rm -f "$output"
-		echo_tee "Traditional $traditional_build_command clean in the installed examples tree (since we are done with it)"
-		$traditional_build_command clean >& "$output"
+		echo_tee "Traditional $traditional_build_command test_noninteractive in the installed examples tree"
+		$traditional_build_command test_noninteractive >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
+		    echo_tee "ERROR: Traditional $traditional_build_command test_noninteractive failed in the installed examples tree"
 		    collect_exit 1
+		fi
+		if [ "$do_clean_as_you_go" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/traditional_clean.out
+		    rm -f "$output"
+		    echo_tee "Traditional $traditional_build_command clean in the installed examples tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
+		    $traditional_build_command clean >& "$output"
+		    make_rc=$?
+		    if [ "$make_rc" -ne 0 ] ; then
+			echo_tee "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
+			collect_exit 1
+		    fi
 		fi
 	    fi
 	fi
     fi
+
+    # This logic identical to previous stanza except that "noninteractive" is
+    # replaced everywhere by "interactive" and the ctest stanza is removed.
+    # There is likely a way with bash to implement this by generalizing the previous
+    # stanza, and thus halving the code size and maintenance, but I don't know
+    # how to do that so this brute-force edit of copy of previous stanza was done instead.
+    if [ "$TEST_TYPE" = "interactive" ] ; then
+	if [ "$do_test_build_tree" = "yes" -a "$do_test_interactive" = "yes" ] ; then
+	    output="$OUTPUT_TREE"/make_interactive.out
+	    rm -f "$output"
+	    echo_tee "$build_command VERBOSE=1 test_interactive in the build tree"
+	    $build_command VERBOSE=1 test_interactive >& "$output"
+	    make_test_interactive_rc=$?
+	    if [ "$make_test_interactive_rc" -ne 0 ] ; then
+		echo_tee "ERROR: $build_command VERBOSE=1 test_interactive failed in the build tree"
+		collect_exit 1
+	    fi
+	fi
+
+	if [ "$do_test_install_tree" = "yes" -o "$do_test_traditional_install_tree" = "yes" ] ; then
+	    rm -rf "$INSTALL_TREE"
+	    output="$OUTPUT_TREE"/make_install.out
+	    rm -f "$output"
+	    echo_tee "$build_command VERBOSE=1 install in the build tree"
+	    $build_command VERBOSE=1 install >& "$output"
+	    make_install_rc=$?
+	    if [ "$make_install_rc" -ne 0 ] ; then
+		echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
+		collect_exit 1
+	    fi
+	fi
+
+	if [ "$do_clean_as_you_go" = "yes" ] ; then
+	    output="$OUTPUT_TREE"/clean.out
+	    rm -f "$output"
+	    echo_tee "$build_command VERBOSE=1 clean in the build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
+	    $build_command VERBOSE=1 clean >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -ne 0 ] ; then
+		echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the build tree"
+		collect_exit 1
+	    fi
+	fi
+
+	if [ "$do_test_install_tree" = "yes" -o "$do_test_traditional_install_tree" = "yes" ] ; then
+	    echo_tee "Prepend $INSTALL_TREE/bin to the original PATH"
+	    PATH="$INSTALL_TREE/bin":$PATH_SAVE
+
+	    if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
+	        # Use this logic to be as version-independent as possible.
+		current_dir=$(pwd)
+	        # Wild cards must not be inside quotes.
+		cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
+		echo_tee "Prepend $(pwd) to the current PATH"
+		PATH="$(pwd):$PATH"
+		cd $current_dir
+	    fi
+
+	    if [ "$do_test_install_tree" = "yes" ] ; then
+		cd "$INSTALL_BUILD_TREE"
+		output="$OUTPUT_TREE"/installed_cmake.out
+		rm -f "$output"
+		echo_tee "cmake in the installed examples build tree"
+		cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+		cmake_rc=$?
+		if [ "$cmake_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: cmake in the installed examples build tree failed"
+		    collect_exit 1
+		fi
+		if [ "$do_test_interactive" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/installed_make_interactive.out
+		    rm -f "$output"
+		    echo_tee "$build_command VERBOSE=1 test_interactive in the installed examples build tree"
+		    $build_command VERBOSE=1 test_interactive >& "$output"
+		    make_rc=$?
+		    if [ "$make_rc" -ne 0 ] ; then
+			echo_tee "ERROR: $build_command VERBOSE=1 test_interactive failed in the installed examples build tree"
+			collect_exit 1
+		    fi
+		    if [ "$do_clean_as_you_go" = "yes" ] ; then
+			output="$OUTPUT_TREE"/installed_clean.out
+			rm -f "$output"
+			echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
+			$build_command VERBOSE=1 clean >& "$output"
+			make_rc=$?
+			if [ "$make_rc" -ne 0 ] ; then
+			    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
+			    collect_exit 1
+			fi
+		    fi
+		fi
+	    fi
+
+	    if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_interactive" = "yes" ] ; then
+		cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
+		output="$OUTPUT_TREE"/traditional_make_interactive.out
+		rm -f "$output"
+		echo_tee "Traditional $traditional_build_command test_interactive in the installed examples tree"
+		$traditional_build_command test_interactive >& "$output"
+		make_rc=$?
+		if [ "$make_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: Traditional $traditional_build_command test_interactive failed in the installed examples tree"
+		    collect_exit 1
+		fi
+		if [ "$do_clean_as_you_go" = "yes" ] ; then
+		    output="$OUTPUT_TREE"/traditional_clean.out
+		    rm -f "$output"
+		    echo_tee "Traditional $traditional_build_command clean in the installed examples tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
+		    $traditional_build_command clean >& "$output"
+		    make_rc=$?
+		    if [ "$make_rc" -ne 0 ] ; then
+			echo_tee "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
+			collect_exit 1
+		    fi
+		fi
+	    fi
+	fi
+    fi
+
     echo_tee "Restore PATH to the original PATH"
     PATH=$PATH_SAVE
 }
@@ -764,34 +797,45 @@ else
     echo "CC=$CC" >> $ENVIRONMENT_LOG
     echo "CXX=$CXX" >> $ENVIRONMENT_LOG
     echo "FC=$FC" >> $ENVIRONMENT_LOG
-    printenv |grep -E 'CMAKE_.*PATH|FLAGS|PKG_CONFIG_PATH|LD_LIBRARY_PATH' >> $ENVIRONMENT_LOG
+    printenv |grep -E 'CMAKE_.*PATH|FLAGS|PKG_CONFIG_PATH|LD_LIBRARY_PATH|PLPLOT' >> $ENVIRONMENT_LOG
 fi
 
-# Shared + dynamic
-if [ "$do_shared" = "yes" ] ; then
-    OUTPUT_TREE="$prefix/shared/output_tree"
-    BUILD_TREE="$prefix/shared/build_tree"
-    INSTALL_TREE="$prefix/shared/install_tree"
-    INSTALL_BUILD_TREE="$prefix/shared/install_build_tree"
-    comprehensive_test "-DBUILD_SHARED_LIBS=ON"
+test_types=
+if [ "$do_test_interactive" = "yes" ] ; then
+    test_types="${test_types} interactive"
 fi
 
-# Shared + nondynamic
-if [ "$do_nondynamic" = "yes" ] ; then
-    OUTPUT_TREE="$prefix/nondynamic/output_tree"
-    BUILD_TREE="$prefix/nondynamic/build_tree"
-    INSTALL_TREE="$prefix/nondynamic/install_tree"
-    INSTALL_BUILD_TREE="$prefix/nondynamic/install_build_tree"
-    comprehensive_test "-DBUILD_SHARED_LIBS=ON -DENABLE_DYNDRIVERS=OFF"
+if [ "$do_test_noninteractive" = "yes" -o "$do_ctest" = "yes" ] ; then
+    test_types="${test_types} noninteractive"
 fi
 
-if [ "$do_static" = "yes" ] ; then
-# Static + nondynamic
-    OUTPUT_TREE="$prefix/static/output_tree"
-    BUILD_TREE="$prefix/static/build_tree"
-    INSTALL_TREE="$prefix/static/install_tree"
-    INSTALL_BUILD_TREE="$prefix/static/install_build_tree"
-    comprehensive_test "-DBUILD_SHARED_LIBS=OFF"
-fi
+for test_type in ${test_types} ; do
+    # Shared + dynamic
+    if [ "$do_shared" = "yes" ] ; then
+	OUTPUT_TREE="$prefix/shared/$test_type/output_tree"
+	BUILD_TREE="$prefix/shared/$test_type/build_tree"
+	INSTALL_TREE="$prefix/shared/$test_type/install_tree"
+	INSTALL_BUILD_TREE="$prefix/shared/$test_type/install_build_tree"
+	comprehensive_test "-DBUILD_SHARED_LIBS=ON" $test_type
+    fi
+
+    # Shared + nondynamic
+    if [ "$do_nondynamic" = "yes" ] ; then
+	OUTPUT_TREE="$prefix/nondynamic/$test_type/output_tree"
+	BUILD_TREE="$prefix/nondynamic/$test_type/build_tree"
+	INSTALL_TREE="$prefix/nondynamic/$test_type/install_tree"
+	INSTALL_BUILD_TREE="$prefix/nondynamic/$test_type/install_build_tree"
+	comprehensive_test "-DBUILD_SHARED_LIBS=ON -DENABLE_DYNDRIVERS=OFF" $test_type
+    fi
+
+    # Static + nondynamic
+    if [ "$do_static" = "yes" ] ; then
+	OUTPUT_TREE="$prefix/static/$test_type/output_tree"
+	BUILD_TREE="$prefix/static/$test_type/build_tree"
+	INSTALL_TREE="$prefix/static/$test_type/install_tree"
+	INSTALL_BUILD_TREE="$prefix/static/$test_type/install_build_tree"
+	comprehensive_test "-DBUILD_SHARED_LIBS=OFF" $test_type
+    fi
+done
 
 collect_exit 0
