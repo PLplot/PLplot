@@ -320,6 +320,7 @@ endif(ANY_QT_DEVICE)
 
 if(ENABLE_pyqt4)
   find_program(SIP_EXECUTABLE sip)
+  message(STATUS "pyqt4: SIP_EXECUTABLE = ${SIP_EXECUTABLE}")
   if(NOT SIP_EXECUTABLE)
     message(STATUS
       "WARNING: sip not found so setting ENABLE_pyqt4 to OFF."
@@ -335,6 +336,7 @@ if(ENABLE_pyqt4)
     RESULT_VARIABLE PYQT_SIP_DIR_ERR
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+  message(STATUS "pyqt4: PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
   if(PYQT_SIP_DIR_ERR)
     message(STATUS
       "WARNING: could not find sip directory so setting ENABLE_pyqt4 to OFF."
@@ -350,15 +352,17 @@ if(ENABLE_pyqt4)
     RESULT_VARIABLE PYQT_SIP_FLAGS_ERR
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+  # Must change from blank-delimited string to CMake list so that sip
+  # COMMAND will work properly with these flags later on.
+  string(REGEX REPLACE " " ";" PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}")
+  message(STATUS "pyqt4: PYQT_SIP_FLAGS = ${PYQT_SIP_FLAGS}")
+
   if(PYQT_SIP_FLAGS_ERR)
     message(STATUS
       "WARNING: could not find sip flags so setting ENABLE_pyqt4 to OFF."
       )
     set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
   endif(PYQT_SIP_FLAGS_ERR)
-  # Must change from blank-delimited string to CMake list so that sip
-  # COMMAND will work properly with these flags later on.
-  string(REGEX REPLACE " " ";" PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}") 
 endif(ENABLE_pyqt4)
 
 if(ENABLE_smoke)
