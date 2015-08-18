@@ -67,16 +67,16 @@ Options:
    [--interactive]   Run subset of C examples for interactive devices only.
    [--interactive_octave]   Run interactive octave examples for interactive devices only.
    [--verbose]	     Echo each PLplot example that is executed.
-   [--debug="debug command"]         
+   [--debug="debug command"]
                      Run examples with given debug command.
    [--debug]         Run examples with default debug command (valgrind).
    [--version]
    [--help]
 
 Environment variables:
-   DEVICE, FRONT_END, EXAMPLES_DIR, SRC_EXAMPLES_DIR, and OUTPUT_DIR can be 
+   DEVICE, FRONT_END, EXAMPLES_DIR, SRC_EXAMPLES_DIR, and OUTPUT_DIR can be
    used to specify the devices, front-ends, the examples directory, the
-   source examples directory (used for the special case of build-tree checks 
+   source examples directory (used for the special case of build-tree checks
    when that tree is separated from the source tree), and output directory.
    These environment variables are overridden by the options --device,
    --front-end, --examples-dir, --src-examples-dir, and --output-dir.
@@ -174,7 +174,7 @@ exit 1
 fi
 
 # Find where the front-end scripts are by looking at the directory name of the
-# current script.  
+# current script.
 
 if [ "@WIN32@" = "1" ] ; then
    scripts_dir=${0%/*}
@@ -232,7 +232,7 @@ script with DEVICE='"$device"'.
 "$EXAMPLES_DIR"/../bindings/octave:\
 "$EXAMPLES_DIR"/../bindings/octave/PLplot
             if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then
-		octavedir=$octavedir:"$EXAMPLES_DIR"/../../dll
+		octavedir=$octavedir:"$EXAMPLES_DIR"/../dll
 	    fi
         else
             export octavedir=\
@@ -277,7 +277,7 @@ if [ "$BUILD_TREE" = "YES" ] ; then
 "$EXAMPLES_DIR"/../bindings/octave:\
 "$EXAMPLES_DIR"/../bindings/octave/PLplot
     if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then
-	octavedir=$octavedir:"$EXAMPLES_DIR"/../../dll
+	octavedir=$octavedir:"$EXAMPLES_DIR"/../dll
     fi
 else
     export octavedir=\
@@ -294,7 +294,7 @@ export cdir cxxdir f95dir pythondir javadir octave octavedir tcldir perldir adad
 
 fe=""
 
-# List of non-interactive (i.e., file) devices for PLplot that 
+# List of non-interactive (i.e., file) devices for PLplot that
 # _might_ be enabled.  For completeness you may want to specify all devices
 # here, but be sure to comment out the interactive ones since they are
 # handled by the above --interactive logic.
@@ -346,7 +346,7 @@ eval pld_device='$'PLD_$device
 if [ -z "$pld_device" ] ; then
 echo '
 Never heard of a file device called '"$device"'.  Either this is not a
-legitimate file (i.e. non-interactive) device for PLplot or else 
+legitimate file (i.e. non-interactive) device for PLplot or else
 plplot-test.sh.cmake needs some maintenance to include this file device in
 the list of possible PLplot file devices.
 '
@@ -405,7 +405,7 @@ if [ "@WIN32@" = "1" ] ; then
  exesuffix=".exe"
 else
  critical_examples="14 17 29"
- exesuffix= 
+ exesuffix=
 fi
 export critical_examples exesuffix
 for i in $FRONT_END ; do
