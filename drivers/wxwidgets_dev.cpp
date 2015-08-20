@@ -176,12 +176,12 @@ public:
             dc->SetFont( font );
         }
     }
-	TextObjectsChanger( wxDC *dc, FontGrabber &fontGrabber, PLUNICODE fci, PLFLT size, bool underlined, const wxColour &textForeground, const wxColour &textBackground )
+    TextObjectsChanger( wxDC *dc, FontGrabber &fontGrabber, PLUNICODE fci, PLFLT size, bool underlined, const wxColour &textForeground, const wxColour &textBackground )
     {
         m_dc = dc;
         if ( m_dc )
         {
-			wxFont font = fontGrabber.GetFont( fci, size, underlined ).getWxFont();
+            wxFont font = fontGrabber.GetFont( fci, size, underlined ).getWxFont();
             m_font           = dc->GetFont();
             m_textForeground = dc->GetTextForeground();
             m_textBackground = dc->GetTextBackground();
@@ -327,20 +327,20 @@ void plFontToWxFontParameters( PLUNICODE fci, PLFLT scaledFontSize, wxFontFamily
 
 Font::Font ( )
 {
-	m_fci = 0;
-	m_size = std::numeric_limits<PLFLT>::quiet_NaN();
-	m_underlined = false;
-	m_hasFont = false;
+    m_fci        = 0;
+    m_size       = std::numeric_limits<PLFLT>::quiet_NaN();
+    m_underlined = false;
+    m_hasFont    = false;
 }
 
 Font::Font( PLUNICODE fci, PLFLT size, bool underlined, bool createFontOnConstruction )
 {
-	m_fci = fci;
-	m_size = size;
-	m_underlined = underlined;
-	m_hasFont = false;
-	if( createFontOnConstruction )
-		createFont();
+    m_fci        = fci;
+    m_size       = size;
+    m_underlined = underlined;
+    m_hasFont    = false;
+    if ( createFontOnConstruction )
+        createFont();
 }
 
 void Font::createFont()
@@ -351,22 +351,22 @@ void Font::createFont()
     int          pt;
     plFontToWxFontParameters( m_fci, m_size, family, style, weight, pt );
 
-    m_font = wxFont( pt, family, style, weight, m_underlined, wxEmptyString, wxFONTENCODING_DEFAULT );
-	m_hasFont = true;
+    m_font    = wxFont( pt, family, style, weight, m_underlined, wxEmptyString, wxFONTENCODING_DEFAULT );
+    m_hasFont = true;
 }
 
 wxFont Font::getWxFont()
 {
-	if( !m_hasFont )
-		createFont();
-	return m_font;
+    if ( !m_hasFont )
+        createFont();
+    return m_font;
 }
 
-bool operator == ( const Font &lhs, const Font &rhs )
+bool operator ==( const Font &lhs, const Font &rhs )
 {
-	return lhs.getFci() == rhs.getFci() 
-		&& lhs.getSize() == rhs.getSize() 
-		&& lhs.getUnderlined() ==rhs.getUnderlined();
+    return lhs.getFci() == rhs.getFci()
+           && lhs.getSize() == rhs.getSize()
+           && lhs.getUnderlined() == rhs.getUnderlined();
 }
 
 //--------------------------------------------------------------------------
@@ -386,16 +386,16 @@ FontGrabber::FontGrabber( )
 //--------------------------------------------------------------------------
 Font FontGrabber::GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underlined )
 {
-	Font newFont( fci, scaledFontSize, underlined );
-	if ( m_prevFont == newFont )
+    Font newFont( fci, scaledFontSize, underlined );
+    if ( m_prevFont == newFont )
     {
         m_lastWasCached = true;
         return m_prevFont;
     }
 
-    m_lastWasCached      = false;
+    m_lastWasCached = false;
 
-	return m_prevFont = newFont;
+    return m_prevFont = newFont;
 }
 
 //--------------------------------------------------------------------------
@@ -776,7 +776,7 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
                     ++superscriptLevel;
                     fontScale = pow( 0.8, abs( superscriptLevel ) );
                     if ( m_dc )
-						m_dc->SetFont( m_fontGrabber.GetFont( m_fci, baseFontSize * fontScale, underlined ).getWxFont() );
+                        m_dc->SetFont( m_fontGrabber.GetFont( m_fci, baseFontSize * fontScale, underlined ).getWxFont() );
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' ) // Subscript
                 {                                 // draw string so far
@@ -787,7 +787,7 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
                     --superscriptLevel;
                     fontScale = pow( 0.8, abs( superscriptLevel ) );
                     if ( m_dc )
-						m_dc->SetFont( m_fontGrabber.GetFont( m_fci, baseFontSize * fontScale, underlined ).getWxFont() );
+                        m_dc->SetFont( m_fontGrabber.GetFont( m_fci, baseFontSize * fontScale, underlined ).getWxFont() );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' ) // underline
                 {                                 // draw string so far
@@ -815,7 +815,7 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize,
             // get new font
             m_fci = ucs4[i];
             if ( m_dc )
-				m_dc->SetFont( m_fontGrabber.GetFont( m_fci, baseFontSize * fontScale, underlined ).getWxFont() );
+                m_dc->SetFont( m_fontGrabber.GetFont( m_fci, baseFontSize * fontScale, underlined ).getWxFont() );
             i++;
         }
     }
@@ -1071,7 +1071,7 @@ void wxPLDevice::ProcessString( PLStream* pls, EscText* args )
             superscriptLevel = lineStartSuperscriptLevel;
             m_fci            = lineStartFci;
             underlined       = lineStartUnderlined;
-			m_dc->SetFont( m_fontGrabber.GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize, underlined ).getWxFont() );
+            m_dc->SetFont( m_fontGrabber.GetFont( m_fci, pow( 0.8, abs( superscriptLevel ) ) * baseFontSize, underlined ).getWxFont() );
 
 
             // calculate rotation of text

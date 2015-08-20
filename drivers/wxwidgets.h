@@ -37,32 +37,32 @@
 class wxPLplotFrame;
 
 // A font class which encapsulates the PlPlot font metrics and
-// a wxFont object. Importantly however the creation of the 
+// a wxFont object. Importantly however the creation of the
 // wxFont is delayed until it is actually requested. This is
 // useful because on Linux in wxWidgets 3.0 creation of a wxFont
 // in a console mode application caused a crash.
 class Font
 {
 public:
-	Font();
-	Font( PLUNICODE fci, PLFLT size, bool underlined, bool createFontOnConstruction = false );
-	wxFont getWxFont();
-	PLUNICODE getFci() const { return m_fci; }
-	PLFLT getSize() const { return m_size; }
-	bool getUnderlined() const { return m_underlined; }
+    Font();
+    Font( PLUNICODE fci, PLFLT size, bool underlined, bool createFontOnConstruction = false );
+    wxFont getWxFont();
+    PLUNICODE getFci() const { return m_fci; }
+    PLFLT getSize() const { return m_size; }
+    bool getUnderlined() const { return m_underlined; }
 private:
-	void createFont();
-	wxFont m_font;
-	PLUNICODE m_fci;
-	PLFLT m_size;
-	bool m_underlined;
-	bool m_hasFont;
+    void createFont();
+    wxFont    m_font;
+    PLUNICODE m_fci;
+    PLFLT     m_size;
+    bool      m_underlined;
+    bool      m_hasFont;
 };
 //check equivalence of two fonts. Note that a font created
 //with the default constructor always campares false to any
 //other font and that whether the wxFont has been created is
 //not included in the test.
-bool operator == ( const Font &lhs, const Font &rhs );
+bool operator ==( const Font &lhs, const Font &rhs );
 
 class FontGrabber
 {
@@ -71,8 +71,8 @@ public:
     Font GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underlined );
     bool lastWasCached( ){ return m_lastWasCached; }
 private:
-    Font    m_prevFont;
-    bool      m_lastWasCached;
+    Font m_prevFont;
+    bool m_lastWasCached;
 };
 
 // base device class
