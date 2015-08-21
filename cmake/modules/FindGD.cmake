@@ -1,13 +1,13 @@
-# - Find GD
 # Find the native GD includes and library
-# This module defines
-#  GD_INCLUDE_DIR, where to find gd.h, etc.
-#  GD_LIBRARIES, the libraries needed to use GD.
-#  GD_FOUND, If false, do not try to use GD.
-# also defined, but not for general use are
-#  GD_LIBRARY, where to find the GD library.
+# This module defines the following uncached variables:
+#  GD_FOUND, if false, do not try to use the gd library
+#  GD_INCLUDE_DIRS, where to find gd.h.
+#  GD_LIBRARIES, the libraries to link against to use the GD library
+#  GD_LIBRARY_DIRS, the directory where the gd library is found.
 #  GD_SUPPORTS_PNG, GD_SUPPORTS_JPEG, GD_SUPPORTS_GIF, test
 #  support for image formats in GD.
+
+include(FindPackageHandleStandardArgs)
 
 find_path(GD_INCLUDE_DIR gd.h
 /usr/local/include
@@ -114,21 +114,10 @@ if(GD_FOUND)
 endif(GD_FOUND)
 
 if(GD_FOUND)
-   if(NOT GD_FIND_QUIETLY)
-      message(STATUS "Found GD: ${GD_LIBRARY}")
-   endif(NOT GD_FIND_QUIETLY)
-else(GD_FOUND)
-   if(GD_FIND_REQUIRED)
-      message(FATAL_ERROR "Could not find GD library")
-   endif(GD_FIND_REQUIRED)
+  set(GD_INCLUDE_DIRS ${GD_INCLUDE_DIR})
+  set(GD_LIBRARY_DIRS ${GD_LIBRARY_DIR})
 endif(GD_FOUND)
 
-mark_as_advanced(
-GD_LIBRARY
-GD_LIBRARIES
-GD_INCLUDE_DIR
-GD_LIBRARY_DIR
-GD_SUPPORTS_PNG
-GD_SUPPORTS_JPEG
-GD_SUPPORTS_GIF
-)
+find_package_handle_standard_args(GD 
+  REQUIRED_VARS GD_INCLUDE_DIRS GD_LIBRARIES GD_LIBRARY_DIRS
+  )
