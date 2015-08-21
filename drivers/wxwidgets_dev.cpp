@@ -463,20 +463,12 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     // the user might have already set this with plspage
     // so check first
     if ( !plsc->pageset )
-        c_plspage( 90, 90, 900, 675, 0, 0 );
+        plspage( 0., 0., 900, 675, 0, 0 );
 
-    //check dpi is non-zero otherwise we get infinities in some calcualtions
-    //and ridiculous numbers in others
-    if ( pls->xdpi == 0.0 || pls->ydpi == 0 )
+    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-        if ( pls->xdpi == 0.0 && pls->ydpi == 0 )
-            c_plspage( 90, 90, 0, 0, 0, 0 );
-        else
-        {
-            PLFLT dpi = MAX( pls->xdpi, pls->ydpi );
-            pls->xdpi = dpi;
-            pls->ydpi = dpi;
-        }
+        // Use recommended default DPI
+        plspage( PLPLOT_DEFAULT_DPI, PLPLOT_DEFAULT_DPI, 0, 0, 0, 0 );
     }
 
     m_localBufferPosition = 0;

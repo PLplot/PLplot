@@ -266,14 +266,10 @@ void plD_init_cgm( PLStream *pls )
 
 #endif
 
-    if ( pls->xdpi <= 0 )
+    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-// This corresponds to a typical monitor resolution of 4 pixels/mm.
-        plspage( 4. * 25.4, 4. * 25.4, 0, 0, 0, 0 );
-    }
-    else
-    {
-        pls->ydpi = pls->xdpi;        // Set X and Y dpi's to the same value
+        // Use recommended default DPI
+        plspage( PLPLOT_DEFAULT_DPI, PLPLOT_DEFAULT_DPI, 0, 0, 0, 0 );
     }
 // Convert DPI to pixels/mm
     plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );

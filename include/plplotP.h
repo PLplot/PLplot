@@ -307,6 +307,10 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #define LPAGE_X     ( PIXELS_X / VDPMM ) // virtual page length in x in mm (256)
 #define LPAGE_Y     ( PIXELS_Y / VDPMM ) // virtual page length in y in mm (192)
 
+// Constants that help to define ideal plspage arguments for devices
+
+#define PLPLOT_DEFAULT_DPI 90.
+
 // This defines the first argument of the plRotPhy invocation that is made
 // in a number of device drivers (e.g., found in ps.c
 // and pstex.c) to rotate them "permanently" from portrait mode to non-
