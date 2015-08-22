@@ -3,7 +3,7 @@
 # Configure the build of a "lite" version of PLplot (with fewer dependencies
 # but with fewer features as well).
 
-# Copyright (C) 2013-2014 Alan W. Irwin
+# Copyright (C) 2013-2015 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,20 @@ set(dependencies_LIST
   libharu
   libqhull
   shapelib
+  #wxwidgets
   )
+
+# For now only add in these dependencies for the Unix case because
+# these epa_builds do not yet work on Windows.
+
+if(NOT MSYS_PLATFORM)
+  list(APPEND dependencies_LIST
+    #pango
+    #qt5_lite
+    #libLASi
+    octave_lite
+    )
+endif(NOT MSYS_PLATFORM)
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
@@ -50,11 +63,7 @@ set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
 set(FFLAGS "$ENV{FFLAGS}")
 
-# Disable the octave binding for PLplot.  There is no epa_build of
-# octave yet.  Furthermore, non-epa_built versions of octave will have
-# many dependencies that are likely to clash with the versions of the
-# other PLplot dependencies that are epa_built.
-set(cmake_args -DENABLE_octave=OFF)
+set(cmake_args)
 
 # Drop gtk+2-only dependencies since those clash (at build time for static
 # device drivers and at run-time with dynamic device drivers) with
@@ -63,8 +72,9 @@ list(APPEND cmake_args
   -DDROP_GTK_PLUS_2_BUILDS=ON
   )
 
-# In addition turn off wxwidgets, cairo, and qt for plplot_lite.
+# In addition turn off psttf (which depends on libLASi), wxwidgets, cairo, and qt for plplot_lite.
 list(APPEND cmake_args
+  -DPLD_psttf=OFF
   -DPLD_wxwidgets=OFF
   -DENABLE_wxwidgets=OFF
   -DDEFAULT_NO_CAIRO_DEVICES:BOOL=ON

@@ -51,9 +51,13 @@ string(REGEX REPLACE "-fvisibility=hidden" "" CFLAGS "${CFLAGS}")
 string(REGEX REPLACE "-fvisibility=hidden" "" CXXFLAGS "${CXXFLAGS}")
 
 # Data that is related to downloads.
-set(URL ftp://ftp.gnu.org/gnu/octave/octave-4.0.0.tar.xz)
+# Simple tests of octave bindings for PLplot for epa_built octave_lite 4.0.0 fail
+# so try 3.8.2 version instead.
+#set(URL ftp://ftp.gnu.org/gnu/octave/octave-4.0.0.tar.xz)
+set(URL ftp://ftp.gnu.org/gnu/octave/octave-3.8.2.tar.gz)
 set(DOWNLOAD_HASH_TYPE MD5)
-set(DOWNLOAD_HASH f3de0a0d9758e112f13ce1f5eaf791bf)
+#set(DOWNLOAD_HASH f3de0a0d9758e112f13ce1f5eaf791bf)
+set(DOWNLOAD_HASH ed6ab54e5259a6e1ca7ece192026745a)
 
 # Find full pathname of blas and lapack libraries.
 # This only works if Fortran is enabled.
@@ -92,12 +96,44 @@ set(LIB_LAPACK "-L${LIB_LAPACK} -llapack")
 message(STATUS "(processed) LIB_BLAS = ${LIB_BLAS}")
 message(STATUS "(processed) LIB_LAPACK = ${LIB_LAPACK}")
 
+set(configure_options
+  --disable-silent-rules
+  --disable-java
+  --with-qhull-includedir=${EPA_CMAKE_INSTALL_PREFIX}/include 
+  --with-qhull-libdir=${EPA_CMAKE_INSTALL_PREFIX}/lib
+  --without-z
+  --without-hdf5 
+# Works properly (no fftw build errors) only with 4.0.0
+#  --without-fftw3
+#  --without-fftw3f
+  --without-glpk
+  --without-curl
+#4.0.0  --without-sndfile
+#4.0.0  --without-portaudio
+  --without-framework-carbon
+  --without-opengl
+  --without-framework-opengl
+#4.0.0  --without-fltk
+#4.0.0  --without-OSMesa
+  --with-blas=${LIB_BLAS}
+  --with-lapack=${LIB_LAPACK}
+  --without-qrupdate
+  --without-amd 
+  --without-camd
+  --without-colamd
+  --without-ccolamd
+  --without-cholmod
+  --without-cxsparse
+  --without-umfpack
+  --without-arpack
+)
+
 ExternalProject_Add(
   build_${PACKAGE}
   DEPENDS ${dependencies_targets}
   URL ${URL}
   URL_HASH ${DOWNLOAD_HASH_TYPE}=${DOWNLOAD_HASH}
-  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" "FFLAGS=${FFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} --disable-silent-rules --disable-java --with-qhull-includedir=${EPA_CMAKE_INSTALL_PREFIX}/include --with-qhull-libdir=${EPA_CMAKE_INSTALL_PREFIX}/lib --without-z --without-hdf5 --without-fftw3 --without-fftw3f --without-glpk --without-curl --without-sndfile --without-portaudio --without-framework-carbon --without-opengl --without-framework-opengl --without-fltk --without-OSMesa --with-blas=${LIB_BLAS} --with-lapack=${LIB_LAPACK} --without-qrupdate --without-amd --without-camd --without-colamd --without-ccolamd --without-cholmod --without-cxsparse --without-umfpack --without-arpack
+  CONFIGURE_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} "CFLAGS=${CFLAGS}" "CXXFLAGS=${CXXFLAGS}" "FFLAGS=${FFLAGS}" ${source_PATH}/${EPA_CONFIGURE_COMMAND} ${configure_options}
   BUILD_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND}
   INSTALL_COMMAND ${ENV_EXECUTABLE} PATH=${EPA_PATH} ${EPA_PARALLEL_MAKE_COMMAND} install
   )

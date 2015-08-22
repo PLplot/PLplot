@@ -139,7 +139,7 @@ if(ENABLE_octave)
     find_path(
     OCTAVE_INCLUDE_PATH
     oct.h
-    PATHS ${OCTAVE_INCLUDE_DIR}
+    HINTS ${OCTAVE_INCLUDE_DIR}
     PATH_SUFFIXES octave
     )
 
@@ -152,13 +152,13 @@ if(ENABLE_octave)
     find_library(
     OCTAVE_LIBRARIES
     octave
-    PATHS ${OCTAVE_LIB_DIR}
+    HINTS ${OCTAVE_LIB_DIR}
     )
     
     find_library(
     OCTINTERP_LIBRARIES
     octinterp
-    PATHS ${OCTAVE_LIB_DIR}
+    HINTS ${OCTAVE_LIB_DIR}
     )
 
     if(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)

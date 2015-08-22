@@ -43,9 +43,9 @@ if(NOT MSYS_PLATFORM)
     pango
     qt5_lite
     libLASi
+    octave_lite
     )
 endif(NOT MSYS_PLATFORM)
-
 
 # Do boilerplate tasks that must be done for each different project
 # that is configured as part of epa_build.
@@ -62,11 +62,7 @@ set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
 set(FFLAGS "$ENV{FFLAGS}")
 
-# Disable the octave binding for PLplot.  There is no epa_build of
-# octave yet.  Furthermore, non-epa_built versions of octave will have
-# many dependencies that are likely to clash with the versions of the
-# other PLplot dependencies that are epa_built.
-set(cmake_args -DENABLE_octave=OFF)
+set(cmake_args)
 
 # Drop gtk+2-only dependencies since those clash (at build time for static
 # device drivers and at run-time with dynamic device drivers) with
