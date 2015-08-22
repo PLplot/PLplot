@@ -463,7 +463,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     // the user might have already set this with plspage
     // so check first
     if ( !plsc->pageset )
-        plspage( 0., 0., 900, 675, 0, 0 );
+		plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIX, PLPLOT_DEFAULT_HEIGHT_PIX, 0, 0 );
 
     if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
