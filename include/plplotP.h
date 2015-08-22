@@ -310,6 +310,12 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 // Constants that help to define ideal plspage arguments for devices
 
 #define PLPLOT_DEFAULT_DPI 90.
+//Use A4 papaer as the default for drivers which use "real world" page sizes
+#define PLPLOT_DEFAULT_WIDTH_MM 297.
+#define PLPLOT_DEFAULT_HEIGHT_MM 210.
+//Use A5 as the default scaled using the default dpi for drivers which use pixel page sizes
+#define PLPLOT_DEFAULT_WIDTH_PIX 744
+#define PLPLOT_DEFAULT_HEIGHT_PIX 538
 
 // This defines the first argument of the plRotPhy invocation that is made
 // in a number of device drivers (e.g., found in ps.c
