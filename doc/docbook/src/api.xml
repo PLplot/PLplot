@@ -1,4 +1,4 @@
-<!-- -*-  mode: nxml -*- -->
+﻿<!-- -*-  mode: nxml -*- -->
 <!--
     api.xml: "The Common API for PLplot" chapter
 
@@ -12621,7 +12621,10 @@ device support!)
         <listitem>
           <para>
             The default height of a character in millimeters, should be set
-            to zero if the default height is to remain unchanged.
+            to zero if the default height is to remain unchanged. For rasterized
+            drivers the dx and dy values specified in &plspage; are used to
+            convert from mm to pixels (note the different unit systems used).  This
+            dpi aware scaling is not implemented for all drivers yet.
           </para>
         </listitem>
       </varlistentry>
@@ -16871,11 +16874,18 @@ device support!)
       recognized by all drivers and the interpretation is device-dependent.
       The X-window driver uses the length and offset parameters to determine
       the window size and location.  The length and offset values are expressed
-      in units that are specific to the current driver. For instance:
+      in units that are specific to the current driver.  For instance:
       screen drivers will usually interpret them as number of pixels,
       whereas printer drivers will usually use mm.
-      This routine, if used, must be called
-      before initializing PLplot.
+      </para>
+      <para>This routine, if used, must be called before initializing PLplot.  It may be
+      called at later times for interactive drivers to change only the dpi for subsequent
+      redraws which you can force via a call to &plreplot;.  If this function is not
+      called then the page size defaults to landscape A4 for drivers which use real world page
+      sizes and 744 pixels wide by 538 pixels high for raster drivers. The default
+      value for dx and dy is 90 pixels per inch for raster drivers.
+    </para>
+    <para>
     </para>
 
     <variablelist>
@@ -16886,7 +16896,8 @@ device support!)
         </term>
         <listitem>
           <para>
-            Number of pixels/inch (DPI), x.
+            Number of pixels per inch (DPI), x. Used only by raster drivers, ignored by drivers
+            which use "real world" units (e.g. mm).
           </para>
         </listitem>
       </varlistentry>
@@ -16897,7 +16908,8 @@ device support!)
         </term>
         <listitem>
           <para>
-            Number of pixels/inch (DPI), y.
+            Number of pixels per inch (DPI), y.  Used only by raster drivers, ignored by drivers
+            which use "real world" units (e.g. mm).
           </para>
         </listitem>
       </varlistentry>
