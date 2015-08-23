@@ -239,7 +239,6 @@ typedef struct
 // xdpi..	PLFLT	Device DPI settings in x and y
 // xlength..	PLINT	Device output lengths in x and y
 // xoffset..	PLINT	Device offsets from upper left hand corner
-// pageset	PLINT	Set if page dimensions were specified
 // hack		PLINT	Enables driver-specific hack(s) if set
 //
 //--------------------------------------------------------------------------
@@ -616,7 +615,7 @@ typedef struct
     PLFLT xdpi, ydpi;
     PLINT xlength, ylength;
     PLINT xoffset, yoffset;
-    PLINT pageset, hack;
+    PLINT hack;
 
 // Per stream tidy function.
 

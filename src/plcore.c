@@ -3583,8 +3583,6 @@ c_plspage( PLFLT xp, PLFLT yp, PLINT xleng, PLINT yleng, PLINT xoff, PLINT yoff 
         plsc->xoffset = xoff;
     if ( yoff )
         plsc->yoffset = yoff;
-
-    plsc->pageset = 1;
 }
 
 // Set the number of subwindows in x and y
