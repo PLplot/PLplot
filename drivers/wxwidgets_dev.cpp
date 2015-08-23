@@ -459,11 +459,9 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     plP_setphy( (PLINT) 0, (PLINT) SHRT_MAX,
         (PLINT) 0, (PLINT) SHRT_MAX );
 
-    // set dpi and page size defaults
-    // the user might have already set this with plspage
-    // so check first
-    if ( !plsc->pageset )
-		plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIX, PLPLOT_DEFAULT_HEIGHT_PIX, 0, 0 );
+    // set dpi and page size defaults if the user has not already set
+    // these with -dpi or -geometry command line options or with
+    // plspage.
 
     if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
@@ -471,6 +469,11 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
         plspage( PLPLOT_DEFAULT_DPI, PLPLOT_DEFAULT_DPI, 0, 0, 0, 0 );
     }
 
+    if ( pls->xlength == 0 || pls->ylength == 0 )
+    {
+        // Use recommended default pixel width and height.
+        plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIX, PLPLOT_DEFAULT_HEIGHT_PIX, 0, 0 );
+    }
     m_localBufferPosition = 0;
 
     SetSize( pls, plsc->xlength, plsc->ylength );
