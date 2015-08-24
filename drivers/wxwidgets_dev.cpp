@@ -465,8 +465,8 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 
     if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-        // Use recommended default DPI
-        plspage( PLPLOT_DEFAULT_DPI, PLPLOT_DEFAULT_DPI, 0, 0, 0, 0 );
+        // Use recommended default pixels per inch.
+        plspage( PLPLOT_DEFAULT_PIXPI, PLPLOT_DEFAULT_PIXPI, 0, 0, 0, 0 );
     }
 
     if ( pls->xlength == 0 || pls->ylength == 0 )

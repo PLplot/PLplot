@@ -515,8 +515,8 @@ void plD_init_png( PLStream *pls )
 
     if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-        // Use recommended default DPI
-        plspage( PLPLOT_DEFAULT_DPI, PLPLOT_DEFAULT_DPI, 0, 0, 0, 0 );
+        // Use recommended default pixels per inch.
+        plspage( PLPLOT_DEFAULT_PIXPI, PLPLOT_DEFAULT_PIXPI, 0, 0, 0, 0 );
     }
 // Convert DPI to pixels/mm
     plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );
@@ -666,8 +666,8 @@ void plD_init_gif( PLStream *pls )
 
     if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-        // Use recommended default DPI
-        plspage( PLPLOT_DEFAULT_DPI, PLPLOT_DEFAULT_DPI, 0, 0, 0, 0 );
+        // Use recommended default pixels per inch.
+        plspage( PLPLOT_DEFAULT_PIXPI, PLPLOT_DEFAULT_PIXPI, 0, 0, 0, 0 );
     }
 
 // Convert DPI to pixels/mm

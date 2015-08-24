@@ -308,14 +308,24 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #define LPAGE_Y     ( PIXELS_Y / VDPMM ) // virtual page length in y in mm (192)
 
 // Constants that help to define ideal plspage arguments for devices
+// "MM" refers to millimeters, "I" to inches, and PIX to pixels.
 
-#define PLPLOT_DEFAULT_DPI           90.
-//Use A4 papaer as the default for drivers which use "real world" page sizes
-#define PLPLOT_DEFAULT_WIDTH_MM      297.
-#define PLPLOT_DEFAULT_HEIGHT_MM     210.
-//Use A5 as the default scaled using the default dpi for drivers which use pixel page sizes
+// Devices with real world units for sizes.
+// Define constants with mm units which can be scaled to any real-world unit desired.
+#define PLPLOT_DEFAULT_MMPI         25.4
+//Use A4 (297mm x 210 mm) size as the default for drivers which use "real world" page sizes
+#define PLPLOT_DEFAULT_WIDTH_MM     297.
+#define PLPLOT_DEFAULT_HEIGHT_MM    210.
+
+// Devices with pixel units for sizes.
+// Adopt this value as reasonable approximation for typical LCD monitors.
+#define PLPLOT_DEFAULT_PIXPI    90.
+// These pixel dimensions correspond to A5 (210mm x 148mm) size if actual pixels per inch was
+// PLPLOT_DEFAULT_PIXPI.  That is,
+// PLPLOT_DEFAULT_WIDTH_PIX ~ 210 * PLPLOT_DEFAULT_PIXPI/25.4
+// PLPLOT_DEFAULT_HEIGHT_PIX ~ 148 * PLPLOT_DEFAULT_PIXPI/25.4
 #define PLPLOT_DEFAULT_WIDTH_PIX     744
-#define PLPLOT_DEFAULT_HEIGHT_PIX    538
+#define PLPLOT_DEFAULT_HEIGHT_PIX    524
 
 // This defines the first argument of the plRotPhy invocation that is made
 // in a number of device drivers (e.g., found in ps.c
