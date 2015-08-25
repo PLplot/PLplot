@@ -92,15 +92,15 @@ public:
     void EndPage( PLStream* pls );
     void BeginPage( PLStream* pls );
     void SetSize( PLStream* pls, int width, int height );
-    void ProcessString( PLStream* pls, EscText* args );
+    void drawText( PLStream* pls, EscText* args );
     void FixAspectRatio( bool fix );
     void Locate( PLStream* pls, PLGraphicsIn *graphicsIn );
     void Flush( PLStream* pls );
     void PreDestructorTidy( PLStream *pls );
 
 private:
-    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, bool &underlined );
-    void DrawTextSection( char* utf8_string, PLFLT baseFontSize, PLFLT yOffset, bool underlined, bool drawText );
+    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y, PLFLT angle, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth );
+    void DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT angle, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth );
     void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
     void SetupMemoryMap();
     wxRegion GetClipRegion();
@@ -131,22 +131,23 @@ private:
     static const int m_max_string_length = 500;
     //bool m_underlined;
     FontGrabber      m_fontGrabber;
-    wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
-    PLUNICODE        m_fci;
+    //wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
+    //PLUNICODE        m_fci;
 
     //memory of previous single character string (likely plot point)
-    PLUNICODE m_prevSingleCharString;
-    PLINT     m_prevSingleCharStringWidth;
-    PLINT     m_prevSingleCharStringHeight;
+    wxChar m_prevSingleCharString;
+    PLINT  m_prevSingleCharStringWidth;
+    PLINT  m_prevSingleCharStringHeight;
+	PLINT  m_prevSingleCharStringDepth;
 
     //Text positioning related variables
-    wxCoord m_superscriptHeight;          //distance between superscript top and baseline
-    wxCoord m_subscriptDepth;             //distance between subscript base and baseline
+    //wxCoord m_superscriptHeight;          //distance between superscript top and baseline
+    //wxCoord m_subscriptDepth;             //distance between subscript base and baseline
     PLFLT   m_lineSpacing;
     //PLFLT   m_yOffset;
-    PLINT   m_posX;
-    PLINT   m_posY;
-    PLFLT   m_rotation;
+    //PLINT   m_posX;
+    //PLINT   m_posY;
+    //PLFLT   m_rotation;
 
     //variables for dealing with sending/receiving commands
     //via a memory map

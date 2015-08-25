@@ -475,7 +475,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
             break;
 
         case PLESC_HAS_TEXT:
-            device->ProcessString( pls, (EscText *) ptr );
+            device->drawText( pls, (EscText *) ptr );
             break;
 
         case PLESC_RESIZE:
