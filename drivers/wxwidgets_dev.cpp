@@ -860,16 +860,20 @@ void wxPLDevice::drawText( PLStream* pls, EscText* args )
 			PLFLT sin_rot   = sin( angle );
             PLFLT cos_shear = cos( shear );
             PLFLT sin_shear = sin( shear );
-			//correct for the fact we told PlPlot the region was square
+			//correct for the fact we told PlPlot the region was square. This 
+			//works because we told plplot that we were square in terms of internal
+			//coordinats and mm - see wxPLDevice::setSize(). If we give PLPlot the
+			//correct aspect ratio in mm size then there is an odd inconsistency
+			//between 2d rotated and 3d text.
 			if( angle != 0 )
 			{
-				angle = atan2( sin_rot * m_yAspect, cos_rot );
+				angle = atan2( sin_rot * m_yAspect, cos_rot * m_xAspect );
 				cos_rot   = cos( angle );
 				sin_rot   = sin( angle );
 			}
 			if( shear != 0 )
 			{
-				shear = atan2( sin_shear, cos_shear * m_xAspect );
+				shear = atan2( sin_shear * m_yAspect, cos_shear * m_xAspect );
 				cos_shear = cos( shear );
 				sin_shear = sin( shear );
 			}
@@ -1233,9 +1237,15 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     pls->ylength = PLINT( m_height + 0.5 );
 
     // Set the number of plplot pixels per mm
-    plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->ydpi / 25.4 );
+    //plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->ydpi / 25.4 );
+	//
+	//The line above is technically correct, however, 3d text only looks at device dimensions (32000x32000 square)
+	//but 2d rotated text uses the mm size derived above. The only way to consistently deal with them is
+	//by having an equal device units per mm in both directions and do a correction in DrawText().
+	//Usefully this also allows us to change text rotation as aspect ratios change
+	PLFLT size = m_xAspect > m_yAspect ? m_width : m_height;
+	plP_setpxl( m_plplotEdgeLength / size * pls->xdpi / 25.4, m_plplotEdgeLength / size * pls->ydpi / 25.4 );
 
-    pls->aspect = m_xAspect / m_yAspect;
 
     // redraw the plot
     if ( m_dc && pls->plbuf_buffer )
