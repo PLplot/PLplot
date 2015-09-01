@@ -1085,7 +1085,9 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
     }
     else if ( m_dc )
     {
-        m_dc->GetTextExtent( section, &sectionWidth, &sectionHeight, &sectionDepth, &leading, &( font.getWxFont() ) );
+        wxFont theFont = font.getWxFont();
+        m_dc->GetTextExtent( section, &sectionWidth, &sectionHeight,
+            &sectionDepth, &leading, &theFont );
         sectionDepth += leading;
     }
     else if ( m_outputMemoryMap.isValid() )
