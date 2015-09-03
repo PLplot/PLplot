@@ -83,6 +83,10 @@ include(CheckIncludeFiles)
 include(CheckFunctionExists)
 include(CheckSymbolExists)
 include(CheckPrototypeExists)
+# Required for the cmake_push_check_state and cmake_pop_check_state
+# macros used to store and retrieve CMAKE_REQUIRED_* variables used in
+# conjunction with some of the CMake check_* functions that we call.
+include(CMakePushCheckState)
 
 # Include some useful functions that Plplot requires.
 include(plplot_functions)

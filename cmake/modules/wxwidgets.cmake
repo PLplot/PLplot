@@ -85,9 +85,11 @@ int main(void)
 }
 ")
   include(CheckCSourceRuns)
-  set(CMAKE_REQUIRED_INCLUDES ${wxWidgets_INCLUDE_DIRS})
+
+  cmake_push_check_state()
+  list(APPEND CMAKE_REQUIRED_INCLUDES ${wxWidgets_INCLUDE_DIRS})
   check_c_source_runs("${check_wxwidgets_version_source}" WX_VERSION_LARGE_ENOUGH)
-  unset(CMAKE_REQUIRED_INCLUDES)
+  cmake_pop_check_state()
   if(NOT WX_VERSION_LARGE_ENOUGH)
     message(STATUS
       "WARNING: wxWidgets version is less than 2.8.12 so "
