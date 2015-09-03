@@ -351,9 +351,9 @@ if(PL__HAVE_ISINF)
 endif(PL__HAVE_ISINF)
 
 
-check_function_exists(snprintf PL_HAVE_SNPRINTF)
+check_symbol_exists(snprintf stdio.h PL_HAVE_SNPRINTF)
 if(NOT PL_HAVE_SNPRINTF)
-  check_function_exists(_snprintf _PL_HAVE_SNPRINTF)
+  check_symbol_exists(_snprintf stdio.h _PL_HAVE_SNPRINTF)
   set(PL_HAVE_SNPRINTF ${_PL_HAVE_SNPRINTF} CACHE INTERNAL "Have function _sprintf")
 endif(NOT PL_HAVE_SNPRINTF)
 
