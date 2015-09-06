@@ -73,7 +73,13 @@
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_wingcc = "wingcc:Win32 (GCC):1:wingcc:9:wingcc\n";
 
 // Struct to hold device-specific info.
-
+// NOTE:  This struct is being used externally by the GNU Data Language
+// project.  They have copied the struct definition into their code
+// in order to access the hwnd, hdc, and waiting members.  Until an
+// alternative method can be devised, changes to this struct should be
+// avoided--at a minimum new member should be placed after the waiting
+// member, which should avoid breaking GDL (barring a memory alignment
+// optimization by the compiler).
 typedef struct
 {
     PLFLT        scale;              // scaling factor to "blow up" to the "virtual" page in removing hidden lines
@@ -83,8 +89,6 @@ typedef struct
     PLFLT        PRNT_scale;
     PLINT        PRNT_width;
     PLINT        PRNT_height;
-
-    PLGraphicsIn gin;
 
     char         FT_smooth_text;
 //
@@ -1068,8 +1072,6 @@ void
 plD_esc_wingcc( PLStream *pls, PLINT op, void *ptr )
 {
     wingcc_Dev   *dev = (wingcc_Dev *) pls->dev;
-    PLGraphicsIn *gin = &( dev->gin );
-
 
     switch ( op )
     {
