@@ -180,7 +180,8 @@ set(DRIVERS_DEVICE_LIST
   "tkwin:tkwin:ON:E:OFF"
   "wingcc:wingcc:ON:I:OFF"
   "wxwidgets:wxwidgets:ON:I:OFF"
-  "wxpng:wxwidgets:OFF:F:ON"
+  # Retire this unmaintained/broken device.
+  #"wxpng:wxwidgets:OFF:F:ON"
   "xfig:xfig:ON:F:ON"
   "xwin:xwin:ON:I:OFF"
   )
