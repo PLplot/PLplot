@@ -74,8 +74,8 @@ if(PLD_wxwidgets OR PLD_wxpng)
 #include <wx/version.h>
 int main(void)
 {
-// True if version is 2.8.12 or later....
-#if  wxCHECK_VERSION(2, 8, 12)
+// True if version is 3.0.0 or later....
+#if  wxCHECK_VERSION(3, 0, 0)
 // Return success
   return 0;
 #else
@@ -88,11 +88,12 @@ int main(void)
 
   cmake_push_check_state()
   list(APPEND CMAKE_REQUIRED_INCLUDES ${wxWidgets_INCLUDE_DIRS})
+  message(STATUS "Checking whether wxwidgets version >= 3.0.0")
   check_c_source_runs("${check_wxwidgets_version_source}" WX_VERSION_LARGE_ENOUGH)
   cmake_pop_check_state()
   if(NOT WX_VERSION_LARGE_ENOUGH)
     message(STATUS
-      "WARNING: wxWidgets version is less than 2.8.12 so "
+      "WARNING: wxWidgets version is less than 3.0.0 so "
       "setting all wxwidgets devices to OFF."
       )
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
