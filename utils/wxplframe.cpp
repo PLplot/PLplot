@@ -226,16 +226,16 @@ bool wxPlFrame::ReadTransmission()
             wxClientDC dc( this );
             wxCoord    width;
             wxCoord    height;
-			wxCoord    depth;
-			wxCoord    leading;
+            wxCoord    depth;
+            wxCoord    leading;
             wxFont     *font = wxTheFontList->FindOrCreateFont( header->textSizeInfo.pt, header->textSizeInfo.family,
                 header->textSizeInfo.style, header->textSizeInfo.weight, header->textSizeInfo.underlined );
             dc.GetTextExtent( wxString( header->textSizeInfo.text ), &width, &height, &depth, &leading, font );
-            header->textSizeInfo.width    = long(width);
-            header->textSizeInfo.height   = long(height);
-            header->textSizeInfo.depth    = long(depth);
-            header->textSizeInfo.leading  = long(leading);
-            header->textSizeInfo.written  = true;
+            header->textSizeInfo.width   = long(width);
+            header->textSizeInfo.height  = long(height);
+            header->textSizeInfo.depth   = long(depth);
+            header->textSizeInfo.leading = long(leading);
+            header->textSizeInfo.written = true;
         }
         else if ( transmissionType == transmissionPartial || transmissionType == transmissionComplete )
         {

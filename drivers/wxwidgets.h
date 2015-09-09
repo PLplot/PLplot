@@ -138,12 +138,12 @@ private:
     wxChar m_prevSingleCharString;
     PLINT  m_prevSingleCharStringWidth;
     PLINT  m_prevSingleCharStringHeight;
-	PLINT  m_prevSingleCharStringDepth;
+    PLINT  m_prevSingleCharStringDepth;
 
     //Text positioning related variables
     //wxCoord m_superscriptHeight;          //distance between superscript top and baseline
     //wxCoord m_subscriptDepth;             //distance between subscript base and baseline
-    PLFLT   m_lineSpacing;
+    PLFLT m_lineSpacing;
     //PLFLT   m_yOffset;
     //PLINT   m_posX;
     //PLINT   m_posY;

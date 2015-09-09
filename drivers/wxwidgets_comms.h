@@ -45,13 +45,13 @@ const unsigned char transmissionRequestTextSize  = 7;
 const unsigned char transmissionEndOfPageNoPause = 8;
 const unsigned char transmissionClose            = 9;
 
-#define TEXTSIZEINFO_MAX_LENGTH 500
+#define TEXTSIZEINFO_MAX_LENGTH    500
 struct TextSizeInfo
 {
     long         width;
     long         height;
-	long         depth;
-	long         leading;
+    long         depth;
+    long         leading;
     wxFontFamily family;
     int          style;
     int          weight;
