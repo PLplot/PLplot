@@ -981,7 +981,7 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord 
             if ( ucs4[i] == (PLUNICODE) plplotEsc )             // draw the actual excape character
             {
                 //add it to the string
-                section += wxUString( ucs4[i] );
+                section += wxUString( (wxChar32) ucs4[i] );
             }
             else
             {
@@ -1040,7 +1040,7 @@ void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord 
         else
         {
             //just a regular character - add it to the string
-            section += wxUString( ucs4[i] );
+            section += wxUString( (wxChar32) ucs4[i] );
         }
 
         //increment i
