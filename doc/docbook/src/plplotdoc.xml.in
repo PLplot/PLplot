@@ -128,6 +128,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plgfam '<link linkend="plgfam"><function>plgfam</function></link>'>
 <!ENTITY plgfci '<link linkend="plgfci"><function>plgfci</function></link>'>
 <!ENTITY plgfnam '<link linkend="plgfnam"><function>plgfnam</function></link>'>
+<!ENTITY plgfont '<link linkend="plgfont"><function>plgfont</function></link>'>
 <!ENTITY plglevel '<link linkend="plglevel"><function>plglevel</function></link>'>
 <!ENTITY plgpage '<link linkend="plgpage"><function>plgpage</function></link>'>
 <!ENTITY plgra '<link linkend="plgra"><function>plgra</function></link>'>
@@ -214,6 +215,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plsfam '<link linkend="plsfam"><function>plsfam</function></link>'>
 <!ENTITY plsfci '<link linkend="plsfci"><function>plsfci</function></link>'>
 <!ENTITY plsfnam '<link linkend="plsfnam"><function>plsfnam</function></link>'>
+<!ENTITY plsfont '<link linkend="plsfont"><function>plsfont</function></link>'>
 <!ENTITY plshades '<link linkend="plshades"><function>plshades</function></link>'>
 <!ENTITY plshade '<link linkend="plshade"><function>plshade</function></link>'>
 <!ENTITY plshade1 '<link linkend="plshade1"><function>plshade1</function></link>'>

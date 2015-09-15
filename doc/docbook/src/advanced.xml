@@ -1622,47 +1622,49 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Plplot uses two separate font systems to display characters. The
-      traditional system uses Hershey fonts which are available for all
-      device drivers, while the recently introduced unicode system is
-      currently available only for the ps, psc, png, jpeg, and gif devices.
-      For details on how to enable the unicode font system for additional
-      device drivers using the FreeType library, see 
-      <xref linkend="FreeType-notes"/>.
+      Hershey font system gives access to Hershey fonts that come with
+      PLplot.  All of our older devices and most of our modern devices allow
+      use of the Hershey font system.  The unicode font system gives access
+      to unicode-aware system fonts.  Some of our older devices and most of
+      our modern devices allow use of the unicode font system.  The
+      advantages of the unicode font system over the Hershey font system are
+      discussed in <xref linkend="unicodefont"/>.
     </para>
 
     <sect2 id="hersheyfont">
-      <title>Hershey fonts</title>
+      <title>Hershey font system</title>
 
       <para>
-	There are two Hershey font character sets included with PLplot.
-	These are known
-	as the standard and extended character sets.  The
-	standard character set is a subset of the extended set.  It contains
-	177 characters including the ascii characters in a normal style font,
-	the Greek alphabet and several plotter symbols.  The extended
-	character set contains almost 1000 characters, including four font
-	styles, and several math, musical and plotter symbols.
+	There are two Hershey font character sets included with
+	PLplot.  These are known as the standard and extended character sets.
+	The standard character set is a subset of the extended set.  It
+	contains 177 characters including the ascii characters in a normal
+	style font, the Greek alphabet and several plotter symbols.  The
+	extended character set contains almost 1000 characters, including four
+	font styles, and several math, musical and plotter symbols.
       </para>
 
       <para>
-	The extended character set is loaded into memory automatically when
-	&plstar; or &plstart; is called.  The standard character set is
-	loaded by calling &plfontld;.  The extended character set requires
-	about 50 KBytes of memory, versus about 5 KBytes for the standard
-	set.  &plfontld; can be used to switch between the extended and
-	standard sets (one set is unloaded before the next is loaded).
-	&plfontld; can be called before &plstar;.
+	The extended character set is loaded into memory automatically
+	when PLplot is initialized.  The standard character set is loaded by
+	calling &plfontld;.  The extended character set requires about 50
+	KBytes of memory, versus about 5 KBytes for the standard set.
+	&plfontld; can be used to switch between the extended and standard
+	sets (one set is unloaded before the next is loaded).  &plfontld; can
+	be called before &plstar;.
       </para>
 
       <para>
-	When the extended character set is loaded there are four different
-	font styles to choose from.  In this case, the routine &plfont; sets
-	up the default Hershey font for all character strings.  It may be overridden
-	for any portion of a string by using an escape sequence within the
-	text, as described below.  This routine has no effect when the
-	standard font set is loaded.  The default font (1) is simple and
-	fastest to draw; the others are useful for presentation plots on a
-	high-resolution device.
+	When the extended character set is loaded there are four
+	different font styles to choose from.  In this case, the routine
+	&plfont; sets up the default Hershey font for all character strings.
+	It may be overridden for any portion of a string by using an escape
+	sequence within the text, as described in <xref
+	linkend="escape-sequences"/>.  For the Hershey font
+	system (but not the unicode font system, see below) this routine has
+	no practical effect when the standard font set is loaded.  The default
+	font (1) is simple and fastest to draw; the others are useful for
+	presentation plots on a high-resolution device.
       </para>
 
       <para>
@@ -1694,217 +1696,289 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
 
     <sect2 id="unicodefont">
-      <title>Unicode fonts</title>
+      <title>Unicode font system</title>
       <para>
-	The advantages of the unicode fonts over the more traditional PLplot
-	Hershey fonts are the availability of many additional glyphs
+	The advantages of the unicode fonts over the more traditional
+	PLplot Hershey fonts are the availability of many additional glyphs
 	(including mathematical symbols and glyphs from other than
-	western-European languages) and much better display of characters on
-	computer screens using anti-aliasing and hinting.  Unicode fonts are
-	obtained by specifying a command-line option of -drvopt text for
-	the devices (currently ps, psc, png, jpeg, gif, and wingcc) 
-	where it has been implemented.
+	western-European languages); support of complex text layout languages
+	for a substantial subset (see <xref linkend="svg_device_driver"/> and
+	<xref linkend="psttf_cairo_qt_wxwidgets_device_drivers"/>) of the
+	devices that support the Unicode font system; and much better display
+	of characters on computer screens using anti-aliasing and hinting.
       </para>
       <para>
-	For the ps and psc devices, there is a fixed relationship between the
-	FCI (font characterization integer, see <xref linkend="fci"/>) 
-	and the actual Type 1
-	fonts that are being used.  This fixed relationship is specified in
-	the Type1Lookup array in include/plfci.h.  This array maps the
-	font-family attributes of sans-serif, serif, monotype, script, and
-	symbol to the standard postscript font families called Helvetica,
-	Times-Roman, Courier, Times-Roman, and Symbol.  (There is no script
-	font family amongst the 35 standard Type 1 postscript fonts so that is
-	why we map the font-family attribute of script to Times-Roman.)
-	Similarly, this array maps the font-style attributes of upright,
-	italic or oblique and the font-weight attributes of medium or bold to
-	the appropriate variety of the Helvetica, Times-Roman, Courier,
-	and Symbol font families that are part of the 
-	35 standard Type 1 postscript fonts.  These standard postscript fonts
-	are normally installed on a user's system using the gsfonts package.
+	The unicode font system can use font specification methods
+	that were designed for the Hershey fonts to specify the unicode font.
+	For this case &plfont; internally calls &plsfci; using four different
+	FCI values to choose unicode font attributes similar to the 4 kinds of
+	Hershey fonts, and the corresponding Hershey text escape-sequences
+	(see <xref linkend="escape-sequences"/>) designed to override the
+	Hershey font selection are treated similarly.  However, for the
+	unicode font system the preferred and much more flexible methods of
+	specifying the unicode font are calling the &plsfci;
+	routine, calling the &plsfont; routine which provides a
+	user-friendly interface to &plsfci;, or using unicode text
+	escape-sequences to override unicode font attributes in the middle of
+	strings (see <xref linkend="fci"/>).
       </para>
 
-      <para>
-	For the devices handled by the FreeType library (currently png, jpeg,
-	and gif) there is a configurable relationship between the FCI (font
-	characterization integer, see <xref linkend="fci"/>) 
-	and the TrueType fonts that are actually used.  
-      </para>
-      <para>
-	The TrueType fonts corresponding to the 30 possible
-	valid FCIs can be specified using cmake options. The defaults for the
-        30 cmake variables PL_FREETYPE_FONT[_MODIFIER] (where FONT is one of 
-        MONO, SANS, SCRIPT, SERIF or SYMBOL and the optional MODIFIER is one
-	of BOLD, BOLD_ITALIC, BOLD_OBLIQUE, ITALIC or OBLIQUE) are documented 
-	in cmake/modules/freetype.cmake. On Windows these defaults use standard
-	Windows fonts. On all other platforms defaults
-	are taken from fonts available from the ttf-freefont font
-	package.  We recommend this font package because it has a rather
-	complete set of glyphs for most unicode blocks.  (We also recommend
-	the gucharmap application for determining other unicode font
-	possibilities on your system that are available via the FreeType
-	library.)
-      </para>
-      <para>
-	For all systems, the 30 possible TrueType fonts can be specified at run
-	time using the following environment variables:
-	<itemizedlist>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SANS_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SERIF_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_MONO_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SCRIPT_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SYMBOL_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SANS_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SERIF_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_MONO_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SCRIPT_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SYMBOL_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SANS_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SERIF_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_MONO_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SCRIPT_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SYMBOL_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SANS_BOLD_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SERIF_BOLD_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_MONO_BOLD_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SCRIPT_BOLD_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SYMBOL_BOLD_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SANS_BOLD_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SERIF_BOLD_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_MONO_BOLD_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SCRIPT_BOLD_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SYMBOL_BOLD_ITALIC_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SANS_BOLD_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SERIF_BOLD_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_MONO_BOLD_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	  <listitem>
-	    <para>
-	      PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT
-	    </para>
-	  </listitem>
-	</itemizedlist>
-	On Unix/Linux systems if these environment variables are not specified
-	with an absolute path starting with "/", then the absolute path is
-	specified by the cmake variable PL_FREETYPE_FONT_PATH or at
-	run time with the environment variable PLPLOT_FREETYPE_FONT_DIR.
-      </para>
+      <sect3 id="ps_device_driver">
+	<title>The ps device driver</title>
+	<para>
+	  The ps and psc devices that are implemented with the ps
+	  device driver are only unicode-aware in a technical sense because they
+	  use a fixed relationship between the FCI (font characterization
+	  integer, see <xref linkend="fci"/>) and the actual Type 1 system fonts
+	  that are being used which unlike typical TTF system fonts have
+	  extremely limited glyphs available. This fixed relationship is
+	  specified in the Type1Lookup array in include/plfci.h.  This array
+	  maps the FCI font-family attributes of sans-serif, serif, monotype,
+	  script, and symbol to the standard PostScript font families called
+	  Helvetica, Times-Roman, Courier, Times-Roman, and Symbol.  (There is
+	  no script font family amongst the 35 standard Type 1 postscript fonts
+	  so that is why we map the font-family attribute of script to
+	  Times-Roman.)  Similarly, this array maps the FCI font-style
+	  attributes of upright, italic or oblique and the FCI font-weight
+	  attributes of medium or bold to the appropriate variety of the
+	  Helvetica, Times-Roman, Courier, and Symbol font families that are
+	  part of the 35 standard Type 1 PostScript fonts.  These fonts are
+	  normally available on all platforms (e.g., with the gsfonts package on
+	  Linux systems).
+	</para>
+      </sect3>
+
+      <sect3 id="gd_cgm_wingcc_device_drivers">
+	<title>The gd, cgm, and wingcc device drivers</title>
+	<para>
+	  For the png, jpeg, and gif devices (implemented with the gd
+	  device driver) and the cgm and wingcc devices (implemented with the
+	  cgm and wingcc device drivers), the plfreetype approach is used for
+	  accessing unicode-aware system fonts.  This approach has two
+	  drawbacks.  (1) text layout is only left-to-right so that complex text
+	  layout languages (such as those used in our standard example 24) are not correctly rendered.
+	  (2) System fonts are only accessed by file name rather than using the
+	  fontconfig approach or something similar to select the best system
+	  font to render the given unicode glyph.  Because of this latter
+	  drawback a configurable relationship must be established between the
+	  FCI (font characterization integer, see <xref linkend="fci"/>) and the
+	  TrueType fontname that is actually used for rendering a unicode glyph.
+	  This can be a considerable inconvenience for the user if they want
+          to specify anything other than a default set of font names.
+	</para>
+	<para>
+	  The TrueType fontnames corresponding to the 30 possible
+	  valid FCIs can be specified using cmake options. The defaults for the
+	  30 cmake variables PL_FREETYPE_FONT[_MODIFIER] (where FONT is one of 
+	  MONO, SANS, SCRIPT, SERIF or SYMBOL and the optional MODIFIER is one
+	  of BOLD, BOLD_ITALIC, BOLD_OBLIQUE, ITALIC or OBLIQUE) are documented 
+	  in cmake/modules/freetype.cmake. On Windows these defaults use standard
+	  Windows font files. On all other platforms default font file names
+	  are taken from fonts available from the ttf-freefont font
+	  package.  We recommend this font package because it has a rather
+	  complete set of glyphs for most unicode blocks.  (We also recommend
+	  the gucharmap application for determining other unicode font
+	  possibilities on your system that are available via the FreeType
+	  library.)
+	</para>
+	<para>
+	  For all platforms, the 30 possible TrueType font files can be specified at run
+	  time using the following environment variables:
+	  <itemizedlist>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SANS_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SERIF_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_MONO_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SCRIPT_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SYMBOL_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SANS_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SERIF_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_MONO_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SCRIPT_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SYMBOL_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SANS_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SERIF_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_MONO_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SCRIPT_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SYMBOL_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SANS_BOLD_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SERIF_BOLD_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_MONO_BOLD_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SCRIPT_BOLD_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SYMBOL_BOLD_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SANS_BOLD_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SERIF_BOLD_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_MONO_BOLD_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SCRIPT_BOLD_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SYMBOL_BOLD_ITALIC_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SANS_BOLD_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SERIF_BOLD_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_MONO_BOLD_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	    <listitem>
+	      <para>
+		PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT
+	      </para>
+	    </listitem>
+	  </itemizedlist>
+	  On Unix/Linux systems if these environment variables are not specified
+	  with an absolute path starting with "/", then the absolute path is
+	  specified by the cmake variable PL_FREETYPE_FONT_PATH or at
+	  run time with the environment variable PLPLOT_FREETYPE_FONT_DIR.
+	</para>
+      </sect3>
+      <sect3 id="svg_device_driver">
+	<title>The svg device driver</title>
+	<para>
+	  The svg device (which is implemented with the svg device
+	  driver) is a device that implements the unicode font method by mapping
+	  FCI attributes (see <xref linkend="fci"/>) to corresponding
+	  combinations of the SVG attributes font-family, font-style, and
+	  font-weight.  Since these attributes are generic ones, (e.g., FCI
+	  font-family "sans-serif", "serif", "monospace", "script", and "symbol"
+	  correspond to SVG font-family "sans-serif", "serif", "mono-space",
+	  "cursive", and "sans-serif") the SVG viewer applications that render
+	  the SVG files produced by the svg device have a large degree of
+	  freedom within these generic guidelines for choosing which system font
+	  to use to render a given unicode glyph.  Note that unlike devices that
+	  use the plfreetype approach (see <xref
+	  linkend="gd_cgm_wingcc_device_drivers"/>) this device requires no user
+	  intervention to set up the correct mapping between FCI and font, and
+	  complex text layout languages are rendered correctly (assuming the SVG
+	  viewer does that).
+	</para>
+      </sect3>
+      <sect3 id="psttf_cairo_qt_wxwidgets_device_drivers">
+	<title>The psttf, cairo, qt, and wxwidgets device drivers</title>
+	<para>
+	  The large number of unicode-aware devices that are implemented by the
+	  psttf, cairo, qt, and wxwidgets device drivers implement the unicode
+	  font method using PLplot FCI values (see <xref linkend="fci"/>) to
+	  characterize the generic fonts that are needed by the associated
+	  libLASi (psttf), pango/cairo (cairo), Qt (qt), and wxWidgets
+	  (wxwidgets) library dependencies of these device drivers. Note that
+	  unlike devices that use the plfreetype approach (see <xref
+	  linkend="gd_cgm_wingcc_device_drivers"/>) these devices require no
+	  user intervention to set up the correct mapping between FCI and font, and
+	  complex text layout languages are rendered correctly (assuming the
+	  associated library dependency of the device driver does that).
+	</para>
+      </sect3>
     </sect2>
 
     <sect2 id="fci">
@@ -1912,16 +1986,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>
 	We specify the properties of unicode fonts with the FCI (font
 	characterization integer).  The FCI is a 32-bit unsigned integer whose
-	most significant hexadecimal digit is marked with an 0x8 (0x80000000
-	is ORed with the FCI value to mark it) to distinguish it from a unicode
-	(UCS4) integer (whose maximum value 0x7fffffff). Users obtain the
-	current FCI by calling &plgfci; and store a new FCI to be used at the
-	start of each subsequent string using &plsfci;. Independent
-	hexadecimal values within the FCI are characterized by the hexdigit
-	and hexpower.  The hexpower is defined as the power of 16 or number of
-	hexadecimal places to the left of the "decimal place" in the FCI 
-	where the hexdigit is stored. The interpretation of the hexdigit and
-	hexpower values in the FCI are given in <xref linkend="fci-table"/>.
+	most significant hexadecimal digit is set (by ORing 0x80000000 with the
+	FCI value) to distinguish it from a unicode (UCS4) integer
+	(whose maximum value is 0x7fffffff). Users obtain the current FCI by
+	calling &plgfci; and store a new FCI to be used at the start of each
+	subsequent string using &plsfci;. The FCI contains three independent
+	hexadecimal values corresponding to font family, font-style, and font
+	weight.  These three values can also be obtained and set in a user-friendly
+	way using &plgfont; and &plsfont;.  These values are also
+	characterized by "hexdigit" (defined as the actual hexadecimal value
+	used for one of the hexadecimal digits) and "hexpower" (defined as the
+	power of 16 or number of hexadecimal places to the left of the
+	"decimal place" in the FCI where the hexdigit is stored).  The
+	interpretation of the hexdigit and hexpower values in the FCI are
+        given in <xref linkend="fci-table"/>.
       </para>
       <table frame="all" id="fci-table">
 	<title>FCI interpretation</title>
@@ -2261,28 +2339,29 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </table>
       
       <para>
-	The escape sequences <literal>#fn</literal>, <literal>#fr</literal>,
-	<literal>#fi</literal>, <literal>#fs</literal>, and 
-	<literal>#(nnn)</literal> are designed for the four Hershey fonts, but
-	an effort has been made to allow some limited forward compatibility so
-	these escape sequences have a reasonable result when unicode
-	fonts are being used.  However, for maximum flexibility when using
-	unicode fonts, these 5 escape sequences should be replaced by using
-	the 4 escape sequences <literal>#[nnn]</literal>,
+	The escape sequences <literal>#fn</literal>,
+	<literal>#fr</literal>, <literal>#fi</literal>,
+	<literal>#fs</literal>, and <literal>#(nnn)</literal> are designed for
+	the four Hershey fonts, but an effort has been made to allow some
+	limited forward compatibility so these escape sequences have a
+	reasonable result when unicode fonts are being used.  However, for
+	maximum flexibility when using unicode fonts, these 5 Hershey escape
+	sequences should be replaced by using the 4 unicode escape sequences
 	<literal>#&lt;0x8nnnnnnn&gt;</literal>,
-	<literal>#&lt;0xmn&gt;</literal>, or <literal>#&lt;FCI COMMAND
-	STRING/&gt;</literal> as appropriate.
+	<literal>#&lt;0xmn&gt;</literal>, <literal>#&lt;FCI COMMAND
+	STRING/&gt;</literal>, and <literal>#[nnn]</literal> as appropriate.
       </para>
 
       <para>
 	It should be emphasized that the unicode escape sequences
 	above only work properly for modern unicode-aware devices such as the
-	svg device or the very large set of cairo and qt devices.  And for
-	those devices the alternative of simply specifying the unicode symbols
-	using UTF-8 encoding of PLplot input strings is much more convenient
-	for users than using the above escape sequences.  For example, we
-        use UTF-8 strings rather than escape sequences in example 24
-	to render the word "Peace" in several different languages.
+	svg and wxwidgets devices or the very large set of cairo and qt
+	devices.  And for those devices the alternative of directly specifying
+	the unicode symbols using UTF-8 encoding of PLplot input strings is
+	much more convenient for users than using the above
+	<literal>#[nnn]</literal> type of escape sequence.  For example, we
+	use UTF-8 strings rather than escape sequences in example 24 to render
+	the word "Peace" in several different languages.
       </para>
 
       <table frame="all" id="peace">

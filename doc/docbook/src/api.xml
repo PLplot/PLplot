@@ -4400,7 +4400,7 @@ time is specified by the following parameters:
 
   <sect1 id="plfont" renderas="sect3">
     <title>
-      <function>plfont</function>: Set character font
+      <function>plfont</function>: Set font
     </title>
 
     <para>
@@ -4415,9 +4415,15 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Sets the default character font for subsequent character drawing.
-      Also affects symbols produced by &plpoin;.  This routine has no
-      effect unless the extended character set is loaded (see &plfontld;).
+      Sets the font used for subsequent text and symbols.  For devices
+      that still use Hershey fonts this routine has no effect unless the
+      Hershey fonts with extended character set are loaded (see &plfontld;).
+      For unicode-aware devices that use system fonts instead of
+      Hershey fonts, this routine calls the &plsfci; routine with argument set up
+      appropriately for the various cases below.  However, this method of
+      specifying the font for unicode-aware devices is deprecated, and the much
+      more flexible method of calling &plsfont; directly is recommended
+      instead (where &plsfont; provides a user-friendly interface to &plsfci;),
     </para>
 
     <variablelist>
@@ -4432,12 +4438,12 @@ time is specified by the following parameters:
 	    <itemizedlist>
 	      <listitem>
 		<para>
-		  <literal>1</literal>: Normal font (simplest and fastest)
+		  <literal>1</literal>: Sans serif font (simplest and fastest)
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>2</literal>: Roman font
+		  <literal>2</literal>: Serif font
 		</para>
 	      </listitem>
 	      <listitem>
@@ -4468,7 +4474,7 @@ time is specified by the following parameters:
 
   <sect1 id="plfontld" renderas="sect3">
     <title>
-      <function>plfontld</function>: Load character font
+      <function>plfontld</function>: Load Hershey fonts
     </title>
 
     <para>
@@ -4483,8 +4489,13 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Sets the character set to use for subsequent character drawing.  May
-      be called before initializing PLplot.
+      Loads the Hershey fonts used for text and symbols.  This routine
+      may be called before or after initializing PLplot.  If not explicitly
+      called before PLplot initialization, then by default that
+      initialization loads Hershey fonts with the extended character set.
+      This routine only has a practical effect for devices that still use
+      Hershey fonts (as opposed to modern devices that use unicode-aware
+      system fonts instead of Hershey fonts).
     </para>
 
     <variablelist>
@@ -4495,19 +4506,10 @@ time is specified by the following parameters:
 	</term>
 	<listitem>
 	  <para>
-	    Specifies the character set to load:
-	    <itemizedlist>
-	      <listitem>
-		<para>
-		  <literal>0</literal>: Standard character set
-		</para>
-	      </listitem>
-	      <listitem>
-		<para>
-		  <literal>1</literal>: Extended character set
-		</para>
-	      </listitem>
-	    </itemizedlist>
+	    Specifies the type of Hershey fonts to load.  A zero value
+            specifies Hershey fonts with the standard character set and a non-zero value
+            (the default assumed if &plfontld; is never called) specifies
+            Hershey fonts with the extended character set.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -15093,9 +15095,11 @@ device support!)
     </para>
 
     <para>
-      Sets font characteristics to be used at the start of the next string
-      using the FCI approach.
-      See <xref linkend="fci"/> for more information.
+      Sets font characteristics to be used at the start of the next
+      string using the FCI approach.  See <xref linkend="fci"/> for more
+      information.  Note, &plsfont; (which
+      calls &plsfci; internally) provides a more user-friendly API for setting the
+      font characterisitics.
     </para>
 
     <variablelist>
