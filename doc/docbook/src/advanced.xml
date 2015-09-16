@@ -1748,12 +1748,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</para>
       </sect3>
 
-      <sect3 id="gd_cgm_wingcc_device_drivers">
-	<title>The gd, cgm, and wingcc device drivers</title>
+      <sect3 id="gd_wingcc_device_drivers">
+	<title>The gd and wingcc device drivers</title>
 	<para>
 	  For the png, jpeg, and gif devices (implemented with the gd
-	  device driver) and the cgm and wingcc devices (implemented with the
-	  cgm and wingcc device drivers), the plfreetype approach is used for
+	  device driver) and the wingcc device (implemented with the
+	  wingcc device driver), the plfreetype approach is used for
 	  accessing unicode-aware system fonts.  This approach has two
 	  drawbacks.  (1) text layout is only left-to-right so that complex text
 	  layout languages (such as those used in our standard example 24) are not correctly rendered.
@@ -1957,7 +1957,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  freedom within these generic guidelines for choosing which system font
 	  to use to render a given unicode glyph.  Note that unlike devices that
 	  use the plfreetype approach (see <xref
-	  linkend="gd_cgm_wingcc_device_drivers"/>) this device requires no user
+	  linkend="gd_wingcc_device_drivers"/>) this device requires no user
 	  intervention to set up the correct mapping between FCI and font, and
 	  complex text layout languages are rendered correctly (assuming the SVG
 	  viewer does that).
@@ -1973,7 +1973,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  libLASi (psttf), pango/cairo (cairo), Qt (qt), and wxWidgets
 	  (wxwidgets) library dependencies of these device drivers. Note that
 	  unlike devices that use the plfreetype approach (see <xref
-	  linkend="gd_cgm_wingcc_device_drivers"/>) these devices require no
+	  linkend="gd_wingcc_device_drivers"/>) these devices require no
 	  user intervention to set up the correct mapping between FCI and font, and
 	  complex text layout languages are rendered correctly (assuming the
 	  associated library dependency of the device driver does that).
