@@ -493,13 +493,13 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
         // Use recommended default pixels per inch.
-        plspage( PLPLOT_DEFAULT_PIXPI, PLPLOT_DEFAULT_PIXPI, 0, 0, 0, 0 );
+        plspage( PLPLOT_DEFAULT_PIXELS_PER_INCH, PLPLOT_DEFAULT_PIXELS_PER_INCH, 0, 0, 0, 0 );
     }
 
     if ( pls->xlength == 0 || pls->ylength == 0 )
     {
         // Use recommended default pixel width and height.
-        plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIX, PLPLOT_DEFAULT_HEIGHT_PIX, 0, 0 );
+        plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIXELS, PLPLOT_DEFAULT_HEIGHT_PIXELS, 0, 0 );
     }
     m_localBufferPosition = 0;
 
@@ -789,7 +789,7 @@ void wxPLDevice::drawText( PLStream* pls, EscText* args )
 
     // Calculate the font size (in pt)
     // Plplot saves it in mm (bizarre units!)
-    PLFLT baseFontSize = pls->chrht * 72.0 / 25.4;
+    PLFLT baseFontSize = pls->chrht * PLPLOT_POINTS_PER_INCH / PLPLOT_MM_PER_INCH;
 
     bool  lastFontWasCached = m_fontGrabber.lastWasCached();
 
@@ -1238,14 +1238,14 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     pls->ylength = PLINT( m_height + 0.5 );
 
     // Set the number of plplot pixels per mm
-    //plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / 25.4, m_plplotEdgeLength / m_height * pls->ydpi / 25.4 );
+    //plP_setpxl( m_plplotEdgeLength / m_width * pls->xdpi / PLPLOT_MM_PER_INCH, m_plplotEdgeLength / m_height * pls->ydpi / PLPLOT_MM_PER_INCH );
     //
     //The line above is technically correct, however, 3d text only looks at device dimensions (32000x32000 square)
     //but 2d rotated text uses the mm size derived above. The only way to consistently deal with them is
     //by having an equal device units per mm in both directions and do a correction in DrawText().
     //Usefully this also allows us to change text rotation as aspect ratios change
     PLFLT size = m_xAspect > m_yAspect ? m_width : m_height;
-    plP_setpxl( m_plplotEdgeLength / size * pls->xdpi / 25.4, m_plplotEdgeLength / size * pls->ydpi / 25.4 );
+    plP_setpxl( m_plplotEdgeLength / size * pls->xdpi / PLPLOT_MM_PER_INCH, m_plplotEdgeLength / size * pls->ydpi / PLPLOT_MM_PER_INCH );
 
 
     // redraw the plot

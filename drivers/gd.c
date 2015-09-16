@@ -484,11 +484,20 @@ void plD_init_png( PLStream *pls )
     plD_init_png_Dev( pls );
     dev = (png_Dev *) pls->dev;
 
-    if ( pls->xlength <= 0 || pls->ylength <= 0 )
+    // set dpi and page size defaults if the user has not already set
+    // these with -dpi or -geometry command line options or with
+    // plspage.
+
+    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-// use default width, height of 800x600 if not specifed by -geometry option
-// or plspage
-        plspage( 0., 0., 800, 600, 0, 0 );
+        // Use recommended default pixels per inch.
+        plspage( PLPLOT_DEFAULT_PIXELS_PER_INCH, PLPLOT_DEFAULT_PIXELS_PER_INCH, 0, 0, 0, 0 );
+    }
+
+    if ( pls->xlength == 0 || pls->ylength == 0 )
+    {
+        // Use recommended default pixel width and height.
+        plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIXELS, PLPLOT_DEFAULT_HEIGHT_PIXELS, 0, 0 );
     }
 
     pls->graphx = GRAPHICS_MODE;
@@ -512,14 +521,8 @@ void plD_init_png( PLStream *pls )
 
 #endif
 
-
-    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
-    {
-        // Use recommended default pixels per inch.
-        plspage( PLPLOT_DEFAULT_PIXPI, PLPLOT_DEFAULT_PIXPI, 0, 0, 0, 0 );
-    }
 // Convert DPI to pixels/mm
-    plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );
+    plP_setpxl( dev->scale * pls->xdpi / PLPLOT_MM_PER_INCH, dev->scale * pls->ydpi / PLPLOT_MM_PER_INCH );
 
     plP_setphy( 0, dev->scale * dev->pngx, 0, dev->scale * dev->pngy );
 
@@ -635,11 +638,20 @@ void plD_init_gif( PLStream *pls )
     plD_init_gif_Dev( pls );
     dev = (png_Dev *) pls->dev;
 
-    if ( pls->xlength <= 0 || pls->ylength <= 0 )
+    // set dpi and page size defaults if the user has not already set
+    // these with -dpi or -geometry command line options or with
+    // plspage.
+
+    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-// use default width, height of 800x600 if not specifed by -geometry option
-// or plspage
-        plspage( 0., 0., 800, 600, 0, 0 );
+        // Use recommended default pixels per inch.
+        plspage( PLPLOT_DEFAULT_PIXELS_PER_INCH, PLPLOT_DEFAULT_PIXELS_PER_INCH, 0, 0, 0, 0 );
+    }
+
+    if ( pls->xlength == 0 || pls->ylength == 0 )
+    {
+        // Use recommended default pixel width and height.
+        plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIXELS, PLPLOT_DEFAULT_HEIGHT_PIXELS, 0, 0 );
     }
 
     pls->graphx = GRAPHICS_MODE;
@@ -664,14 +676,8 @@ void plD_init_gif( PLStream *pls )
 #endif
 
 
-    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
-    {
-        // Use recommended default pixels per inch.
-        plspage( PLPLOT_DEFAULT_PIXPI, PLPLOT_DEFAULT_PIXPI, 0, 0, 0, 0 );
-    }
-
 // Convert DPI to pixels/mm
-    plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );
+    plP_setpxl( dev->scale * pls->xdpi / PLPLOT_MM_PER_INCH, dev->scale * pls->ydpi / PLPLOT_MM_PER_INCH );
 
     plP_setphy( 0, dev->scale * dev->pngx, 0, dev->scale * dev->pngy );
 

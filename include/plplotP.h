@@ -11,6 +11,7 @@
 //  Copyright (C) 2004  Andrew Roach
 //  Copyright (C) 2006  Andrew Ross
 //  Copyright (C) 2006  Hazen Babcock
+//  Copyright (C) 2001-2015  Alan W. Irwin
 //
 //
 //  This file is part of PLplot.
@@ -308,24 +309,42 @@ int plsnscanf( const char *buffer, int n, const char *format, ... );
 #define LPAGE_Y     ( PIXELS_Y / VDPMM ) // virtual page length in y in mm (192)
 
 // Constants that help to define ideal plspage arguments for devices
-// "MM" refers to millimeters, "I" to inches, and PIX to pixels.
 
-// Devices with real world units for sizes.
-// Define constants with mm units which can be scaled to any real-world unit desired.
-#define PLPLOT_DEFAULT_MMPI         25.4
-//Use A4 (297mm x 210 mm) size as the default for drivers which use "real world" page sizes
-#define PLPLOT_DEFAULT_WIDTH_MM     297.
-#define PLPLOT_DEFAULT_HEIGHT_MM    210.
+#define PLPLOT_MM_PER_INCH        25.4
+#define PLPLOT_POINTS_PER_INCH    72.
+#define PLPLOT_WIDTH_A4_MM        297.
+#define PLPLOT_HEIGHT_A4_MM       210.
+#define PLPLOT_WIDTH_A5_MM        210.
+#define PLPLOT_HEIGHT_A5_MM       148.
 
 // Devices with pixel units for sizes.
-// Adopt this value as reasonable approximation for typical LCD monitors.
-#define PLPLOT_DEFAULT_PIXPI    90.
-// These pixel dimensions correspond to A5 (210mm x 148mm) size if actual pixels per inch was
-// PLPLOT_DEFAULT_PIXPI.  That is,
-// PLPLOT_DEFAULT_WIDTH_PIX ~ 210 * PLPLOT_DEFAULT_PIXPI/25.4
-// PLPLOT_DEFAULT_HEIGHT_PIX ~ 148 * PLPLOT_DEFAULT_PIXPI/25.4
-#define PLPLOT_DEFAULT_WIDTH_PIX     744
-#define PLPLOT_DEFAULT_HEIGHT_PIX    524
+
+// Adopt this default value as reasonable approximation for typical
+// LCD monitors, but note that the user can replace this default by
+// setting plsc->[xy]dpi values (e.g., by using the -dpi command-line
+// option or by calling plspage with non-zero first two arguments).
+#define PLPLOT_DEFAULT_PIXELS_PER_INCH    90.
+// These default pixel dimensions correspond to A5 size if actual
+// pixels per inch is PLPLOT_DEFAULT_PIXELS_PER_INCH
+#define PLPLOT_DEFAULT_WIDTH_PIXELS       ( (int) ( PLPLOT_WIDTH_A5_MM * PLPLOT_DEFAULT_PIXELS_PER_INCH / PLPLOT_MM_PER_INCH ) )
+#define PLPLOT_DEFAULT_HEIGHT_PIXELS      ( (int) ( PLPLOT_HEIGHT_A5_MM * PLPLOT_DEFAULT_PIXELS_PER_INCH / PLPLOT_MM_PER_INCH ) )
+
+// Devices with real world units for sizes.
+
+// N.B. these devices normally use fixed values of units per inch,
+// i.e., they ignore any attempt by users to set plsc->[xy]dpi values
+// (e.g., by using the -dpi command-line option or by calling plspage
+// with non-zero first two arguments).
+
+// 1. Devices with mm units for sizes.
+// These default mm dimensions correspond to A4 size.
+#define PLPLOT_DEFAULT_WIDTH_MM     ( (int) ( PLPLOT_WIDTH_A4_MM )
+#define PLPLOT_DEFAULT_HEIGHT_MM    ( (int) ( PLPLOT_HEIGHT_A4_MM )
+
+// 2. Devices with points (= 1/72 inch) units for sizes.
+// These default points dimensions correspond to A4 size.
+#define PLPLOT_DEFAULT_WIDTH_POINTS     ( (int) ( PLPLOT_WIDTH_A4_MM * PLPLOT_POINTS_PER_INCH / PLPLOT_MM_PER_INCH ) )
+#define PLPLOT_DEFAULT_HEIGHT_POINTS    ( (int) ( PLPLOT_HEIGHT_A4_MM * PLPLOT_POINTS_PER_INCH / PLPLOT_MM_PER_INCH ) )
 
 // This defines the first argument of the plRotPhy invocation that is made
 // in a number of device drivers (e.g., found in ps.c

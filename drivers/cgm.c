@@ -131,17 +131,17 @@ typedef struct
 // more efficient files (I guess).
 //
 
-    int colour;                                 // Current Colour
-    int last_line_colour;                       // Last line colour used
-    int fill_colour;                            // Current Fill colour
-    int last_fill_colour;                       // Last Fill colour used
+    int   colour;                               // Current Colour
+    int   last_line_colour;                     // Last line colour used
+    int   fill_colour;                          // Current Fill colour
+    int   last_fill_colour;                     // Last Fill colour used
 
-    int totcol;                                 // Total number of colours
-    int ncol1;                                  // Actual size of ncol1 we got
-    int scale;                                  // scaling factor to "blow up" to
+    int   totcol;                               // Total number of colours
+    int   ncol1;                                // Actual size of ncol1 we got
+    PLFLT scale;                                // scaling factor to "blow up" to
                                                 // the "virtual" page in removing hidden lines
-    int force_edges;                            // Forces edges to be drawn in fills
-    int disable_background;                     // Turns off background rectangle
+    int   force_edges;                          // Forces edges to be drawn in fills
+    int   disable_background;                   // Turns off background rectangle
 } cgm_Dev;
 
 void plD_init_cgm( PLStream * );
@@ -238,11 +238,20 @@ void plD_init_cgm( PLStream *pls )
     plD_init_cgm_Dev( pls );
     dev = (cgm_Dev *) pls->dev;
 
-    if ( pls->xlength <= 0 || pls->ylength <= 0 )
+    // set dpi and page size defaults if the user has not already set
+    // these with -dpi or -geometry command line options or with
+    // plspage.
+
+    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
     {
-// use default width, height of 800x600 if not specifed by -geometry option
-// or plspage
-        plspage( 0., 0., 800, 600, 0, 0 );
+        // Use recommended default pixels per inch.
+        plspage( PLPLOT_DEFAULT_PIXELS_PER_INCH, PLPLOT_DEFAULT_PIXELS_PER_INCH, 0, 0, 0, 0 );
+    }
+
+    if ( pls->xlength == 0 || pls->ylength == 0 )
+    {
+        // Use recommended default pixel width and height.
+        plspage( 0., 0., PLPLOT_DEFAULT_WIDTH_PIXELS, PLPLOT_DEFAULT_HEIGHT_PIXELS, 0, 0 );
     }
 
     pls->graphx = GRAPHICS_MODE;
@@ -254,25 +263,20 @@ void plD_init_cgm( PLStream *pls )
 
     if ( dev->cgmx > dev->cgmy ) // Work out the scaling factor for the
     {                            // "virtual" (oversized) page
-        dev->scale = ( PIXELS_X - 1 ) / dev->cgmx;
+        dev->scale = (PLFLT) ( PIXELS_X - 1 ) / (PLFLT) dev->cgmx;
     }
     else
     {
-        dev->scale = PIXELS_Y / dev->cgmy;
+        dev->scale = (PLFLT) PIXELS_Y / (PLFLT) dev->cgmy;
     }
 #else
 
-    dev->scale = 1;
+    dev->scale = 1.;
 
 #endif
 
-    if ( pls->xdpi <= 0. || pls->ydpi <= 0. )
-    {
-        // Use recommended default pixels per inch.
-        plspage( PLPLOT_DEFAULT_PIXPI, PLPLOT_DEFAULT_PIXPI, 0, 0, 0, 0 );
-    }
 // Convert DPI to pixels/mm
-    plP_setpxl( dev->scale * pls->xdpi / 25.4, dev->scale * pls->ydpi / 25.4 );
+    plP_setpxl( dev->scale * pls->xdpi / PLPLOT_MM_PER_INCH, dev->scale * pls->ydpi / PLPLOT_MM_PER_INCH );
 
     plP_setphy( 0, dev->scale * dev->cgmx, 0, dev->scale * dev->cgmy );
 }
