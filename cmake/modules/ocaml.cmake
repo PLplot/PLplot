@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Hezekiah M. Carty
-# Copyright (C) 2009-2014 Alan W. Irwin
+# Copyright (C) 2009-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -196,6 +196,9 @@ if(ENABLE_ocaml)
   if(OCAMLFIND)
     if(PLD_extcairo)
       option(OCAML_HAS_CAIRO "OCaml has the cairo package" ON)
+      # Disable since substantial maintenance is required before this component
+      # of PLplot will configure, build, and/or run.
+      set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
       if(OCAML_HAS_CAIRO)
 	set(text_cairo "module C = Cairo")
 	file(WRITE ${CMAKE_BINARY_DIR}/test_cairo.ml ${text_cairo})
