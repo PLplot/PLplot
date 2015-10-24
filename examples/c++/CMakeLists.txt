@@ -130,7 +130,7 @@ if(ENABLE_wxwidgets)
     target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   endif(BUILD_TEST)
   # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
-  # for use in configuring Makefiles.examples.
+  # for use in configuring Makefile.examples.
   pkg_config_link_flags(pkg_config_wxwidgets_LINK_FLAGS "${wxwidgets_LINK_FLAGS}")
 endif(ENABLE_wxwidgets)
 
@@ -157,9 +157,6 @@ if(PLD_extqt)
 	if(NOT QT_LIBRARIES)
           message(FATAL_ERROR "include(${QT_USE_FILE}) failed in installed examples build examples/c++ subdirectory.")
 	endif(NOT QT_LIBRARIES)
-	# Transform QT_LIBRARIES from list of libraries to the standard pkg-config form
-	# for use in configuring Makefiles.examples.
-	pkg_config_link_flags(pkg_config_QT_LIBRARIES "${QT_LIBRARIES}")
 	set(BUILD_qt_example ON)
       else(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
 	message(STATUS "WARNING: Qt4 not found or wrong version.  qt_example not built")
@@ -167,6 +164,11 @@ if(PLD_extqt)
       endif(QT4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
     endif(PLPLOT_USE_QT5)
   endif(CORE_BUILD)
+  # Transform QT_LIBRARIES from list of libraries to the standard pkg-config form
+  # for use in configuring Makefile.examples.
+  pkg_config_link_flags(pkg_config_QT_LIBRARIES "${QT_LIBRARIES}")
+  #message(STATUS "QT_LIBRARIES = ${QT_LIBRARIES}")
+  #message(STATUS "pkg_config_QT_LIBRARIES = ${pkg_config_QT_LIBRARIES}")
 endif(PLD_extqt)
 
 if(BUILD_TEST AND BUILD_qt_example)
