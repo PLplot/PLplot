@@ -182,10 +182,12 @@ if(ENABLE_octave)
       # with both the Linux and Windows binary versions of octave, it
       # appears that hdf5.h is one external header that is necessary,
       # and it is never part of the octave-${OCTAVE_VERSION}/octave
-      # hierarchy so that PATH_SUFFIXES signature is dropped.
+      # hierarchy.
+      # N.B. Debian jessie octave-dev package depends on
+      # hdf5-dev which stores hdf5.h in /usr/include/hdf5/serial
       find_path(
 	OCTAVE_INCLUDE_PATH_EXTERNAL
-	hdf5.h
+	hdf5.h PATH_SUFFIXES hdf5/serial
 	)
       if(OCTAVE_INCLUDE_PATH_EXTERNAL)
         set(OCTAVE_INCLUDE_PATH 
