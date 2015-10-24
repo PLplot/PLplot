@@ -180,12 +180,14 @@ if(ENABLE_tcl)
 	# Search first for epa_build install location.
         find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION}")
       endif(NOT USE_INCRTCL_VERSION_4)
-      find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}")
+      message(STATUS "PLPLOT_ITCL_VERSION = ${PLPLOT_ITCL_VERSION}")
+      string(SUBSTRING ${PLPLOT_ITCL_VERSION} 0 1 SHORT_PLPLOT_ITCL_VERSION)
+      # N.B. Debian jessie itcl3-dev package stores itcl.h in /usr/include/itcl${SHORT_PLPLOT_ITCL_VERSION}
+      find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}" PATH_SUFFIXES itcl${SHORT_PLPLOT_ITCL_VERSION})
 
       if(ITCL_INCLUDE_PATH)
         message(STATUS "Looking for itcl.h - found")
 	message(STATUS "ITCL_INCLUDE_PATH = ${ITCL_INCLUDE_PATH}")
-	message(STATUS "PLPLOT_ITCL_VERSION = ${PLPLOT_ITCL_VERSION}")
 
 	message(STATUS "Checking for Itcl header version consistency")
 	string(REGEX REPLACE "^([0-9]*)\\.[0-9]*.*$" "\\1" ITCL_MAJOR_VERSION  "${PLPLOT_ITCL_VERSION}")
@@ -412,12 +414,13 @@ void main(void){}
 	# Search first for epa_build install location.
         find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION}")
       endif(NOT USE_INCRTCL_VERSION_4)
-      find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}")
+      message(STATUS "PLPLOT_ITK_VERSION = ${PLPLOT_ITK_VERSION}")
+      # N.B. Debian jessie itk3-dev package stores itk.h in /usr/include/itcl${SHORT_PLPLOT_ITCL_VERSION}
+      find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}" PATH_SUFFIXES itcl${SHORT_PLPLOT_ITCL_VERSION})
 
       if(ITK_INCLUDE_PATH)
         message(STATUS "Looking for itk.h - found")
 	message(STATUS "ITK_INCLUDE_PATH = ${ITK_INCLUDE_PATH}")
-	message(STATUS "PLPLOT_ITK_VERSION = ${PLPLOT_ITK_VERSION}")
 
 	message(STATUS "Checking for Itk header version consistency")
 	string(REGEX REPLACE "^([0-9]*)\\.[0-9]*.*$" "\\1" ITK_MAJOR_VERSION  "${PLPLOT_ITK_VERSION}")
