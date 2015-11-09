@@ -99,8 +99,4 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
   endif(USE_RPATH)
 
   install(TARGETS wxPLViewer DESTINATION ${BIN_DIR})
-  if(TARGET wxwidgets)
-    add_dependencies(wxwidgets wxPLViewer)
-  endif(TARGET wxwidgets)
-
 endif(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
