@@ -3779,7 +3779,8 @@ GetEntries( Tcl_Interp *interp, const char *string, int *n )
 {
     tclMatrix *mati;
     int       argc;
-    int       *entries;
+    // NULL returned on all failures.
+    int       *entries = NULL;
     char      **argv;
     int       i;
 
@@ -3901,18 +3902,18 @@ plmapfillCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
     }
 
-    if ( transform && idxname == 2 )
-    {
-        plmapfill( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
-    }
-    else
-    {
-        // No transformation given
-        plmapfill( NULL, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
-    }
-
     if ( entries != NULL )
     {
+        if ( transform && idxname == 2 )
+        {
+            plmapfill( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
+        }
+        else
+        {
+            // No transformation given
+            plmapfill( NULL, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
+        }
+
         free( entries );
     }
 
@@ -4012,18 +4013,18 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
     }
 
-    if ( transform && idxname == 2 )
-    {
-        plmapline( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
-    }
-    else
-    {
-        // No transformation given
-        plmapline( NULL, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
-    }
-
     if ( entries != NULL )
     {
+        if ( transform && idxname == 2 )
+        {
+            plmapline( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
+        }
+        else
+        {
+            // No transformation given
+            plmapline( NULL, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
+        }
+
         free( entries );
     }
 
@@ -4128,18 +4129,18 @@ plmapstringCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
     }
 
-    if ( transform && idxname == 2 )
-    {
-        plmapstring( &mapform, argv[idxname], string, minlong, maxlong, minlat, maxlat, entries, nentries );
-    }
-    else
-    {
-        // No transformation given
-        plmapstring( NULL, argv[idxname], string, minlong, maxlong, minlat, maxlat, entries, nentries );
-    }
-
     if ( entries != NULL )
     {
+        if ( transform && idxname == 2 )
+        {
+            plmapstring( &mapform, argv[idxname], string, minlong, maxlong, minlat, maxlat, entries, nentries );
+        }
+        else
+        {
+            // No transformation given
+            plmapstring( NULL, argv[idxname], string, minlong, maxlong, minlat, maxlat, entries, nentries );
+        }
+
         free( entries );
     }
 
@@ -4257,18 +4258,18 @@ plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
     }
 
-    if ( transform && idxname == 2 )
-    {
-        plmaptex( &mapform, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
-    }
-    else
-    {
-        // No transformation given
-        plmaptex( NULL, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
-    }
-
     if ( entries != NULL )
     {
+        if ( transform && idxname == 2 )
+        {
+            plmaptex( &mapform, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
+        }
+        else
+        {
+            // No transformation given
+            plmaptex( NULL, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
+        }
+
         free( entries );
     }
 
