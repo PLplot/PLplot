@@ -35,12 +35,29 @@ set(
 # policies to keep our build system as simple and as bug free as
 # possible.  However, as a special concession for our modern (not
 # enterprise or LTS) Linux distro users and our Cygwin users we allow
-# them to use the system version of CMake which at this time (2015-05)
+# them to use the system version of CMake which at this time (2015-11)
 # is typically 3.0.2 or later.  By coincidence there is a CMake bug
 # for 3.0 (a permissions issue for file(GENERATE...), see
 # cmake/modules/plplot_functions.cmake for details) that has a
 # workaround that only works on Cygwin and Linux so all other
-# platforms than Cygwin and Linux _must_ use CMake 3.2.
+# platforms than Cygwin and Linux _must_ use CMake 3.2 (where that permissions
+# bug was fixed) or later.
+#
+# In addition, CMake 3.3.2 solves a fundamental and quite nasty CMake
+# find regression that occurred from 3.2.0 through 3.3.1. See threads
+# entitled "[BUG] HINTS not correctly handled in find_program" and
+# "find_program HINTS no longer preferred over PATH" on the
+# cmake-devel list.  I think this regression will not affect users who
+# only have the system versions of libraries to find in the standard
+# locations, but more sophisticated users who are perhaps building
+# their own sets of libraries that are not installed in system
+# locations could run into find trouble.  So it is not a showstopper
+# regression, but still it makes any bug report specified for that
+# range of CMake versions somewhat suspect in case the error reported
+# is a result of this find regression.  For this reason we adopt 3.3.2
+# as our minimum CMake version below except for Linux and Cygwin where
+# the minimum version is 3.0.2, and we warn of find issue if
+# the actual version is in the range from 3.2.0 through 3.3.1.
 
 # Adapted method suggested by Brad King for using
 # different minimum versions for different platforms.
@@ -48,13 +65,18 @@ set(
 cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 cmake_policy(VERSION 3.0.2)
 project(plplot NONE)
-if(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
-  # Latest CMake version as of 2015-05 for all platforms
+if(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  if(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
+    message(STATUS "WARNING: CMAKE_VERSION = ${CMAKE_VERSION} is in the range from 3.2 through 3.3.1 which has
+   a compromised find ability that was fixed in 3.3.2.  Please upgrade to 3.3.2 or greater.")
+  endif(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
+else(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  # Latest CMake version as of 2015-11 for all platforms
   # other than Cygwin or Linux.
-  cmake_minimum_required(VERSION 3.2.3 FATAL_ERROR)
+  cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
   # Keep policy consistent for all platforms.
   cmake_policy(VERSION 3.0.2)
-endif(NOT (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux") )
+endif(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
