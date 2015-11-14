@@ -649,9 +649,9 @@ if(BUILD_TEST)
 	  add_dependencies(test_${language}_psc ${targets_examples_${language}})
 	endif(files_examples_${language} AND targets_examples_${language})
 	# ps_file_depends is empty if test_ps_dyndriver target is not defined.
-	if(ps_file_depends)
+	if(TARGET test_ps_dyndriver)
 	  add_dependencies(test_${language}_psc test_ps_dyndriver)
-	endif(ps_file_depends)
+	endif(TARGET test_ps_dyndriver)
       endif(ENABLE_${language})
     endforeach(language_info ${language_info_LIST})
 
@@ -878,13 +878,13 @@ if(BUILD_TEST)
       add_dependencies(test_noninteractive ${noninteractive_targets_LIST})
     endif(noninteractive_targets_LIST)
 
-    if(PLD_xcairo)
+    if(PLD_xcairo AND TARGET extXdrawable_demo)
       add_custom_target(test_extXdrawable
 	COMMAND extXdrawable_demo
 	)
       add_dependencies(test_extXdrawable extXdrawable_demo ${cairo_targets})
       list(APPEND interactive_targets_LIST test_extXdrawable)
-    endif(PLD_xcairo)
+    endif(PLD_xcairo AND TARGET extXdrawable_demo)
 
   endif(ENABLE_c)
 
