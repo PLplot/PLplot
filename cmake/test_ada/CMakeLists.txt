@@ -14,15 +14,14 @@ cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 
 project(simple_ada_test C)
 
-# Need to define CMAKE_PLATFORM_INFO_DIR for all CMake versions less than 2.8.10
-if(NOT CMAKE_PLATFORM_INFO_DIR)
-  set(CMAKE_PLATFORM_INFO_DIR ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY})
-  message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
-endif(NOT CMAKE_PLATFORM_INFO_DIR)
-
 # First location where simple_ada_test looks for CMake Ada language
 # support files.
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_working/Modules)
+option(EXPERIMENTAL_SUPPORT "Try experimental CMake language support" OFF)
+if(EXPERIMENTAL_SUPPORT)
+  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_experimental/Modules)
+else(EXPERIMENTAL_SUPPORT)
+  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_working/Modules)
+endif(EXPERIMENTAL_SUPPORT)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
