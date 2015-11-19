@@ -16,12 +16,7 @@ project(simple_ada_test C)
 
 # First location where simple_ada_test looks for CMake Ada language
 # support files.
-option(EXPERIMENTAL_SUPPORT "Try experimental CMake language support" OFF)
-if(EXPERIMENTAL_SUPPORT)
-  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_experimental/Modules)
-else(EXPERIMENTAL_SUPPORT)
-  set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_working/Modules)
-endif(EXPERIMENTAL_SUPPORT)
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/Modules)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
