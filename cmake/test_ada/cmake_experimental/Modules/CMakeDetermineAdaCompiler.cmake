@@ -80,12 +80,7 @@ else()
 
     # finally list compilers to try
     if(NOT CMAKE_Ada_COMPILER_INIT)
-      # The gcc in this list means _cmake_find_compiler will find the
-      # ccache version of gcc due to /usr/lib/ccache being put on the
-      # list of directories to search first.  So for now drop
-      # gcc as an experiment.
-      #set(CMAKE_Ada_COMPILER_LIST gnatgcc gcc)
-      set(CMAKE_Ada_COMPILER_LIST gnatgcc)
+      set(CMAKE_Ada_COMPILER_LIST gnatgcc gcc)
     endif()
 
     _cmake_find_compiler(Ada)
