@@ -116,8 +116,10 @@ elseif(CMAKE_Ada_PLATFORM_ID MATCHES "Cygwin")
 endif()
 
 # configure all variables set in this file
+# FIXME: This specific location needs to be changed whenever the
+# location of the Ada support files are changed.
 #configure_file(${CMAKE_ROOT}/Modules/CMakeAdaCompiler.cmake.in
-configure_file(${CMAKE_MODULE_PATH}/CMakeAdaCompiler.cmake.in
+configure_file(${CMAKE_SOURCE_DIR}/cmake/Modules/CMakeAdaCompiler.cmake.in
   ${CMAKE_PLATFORM_INFO_DIR}/CMakeAdaCompiler.cmake
   @ONLY
   )
