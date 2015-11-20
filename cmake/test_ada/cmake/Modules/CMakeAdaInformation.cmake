@@ -62,19 +62,22 @@ set(CMAKE_BASE_NAME)
 get_filename_component(CMAKE_BASE_NAME "${CMAKE_Ada_COMPILER}" NAME_WE)
 
 # load the system- and compiler specific files
+message(STATUS "CMAKE_Ada_COMPILER_ID = ${CMAKE_Ada_COMPILER_ID}")
 if(CMAKE_Ada_COMPILER_ID)
   include(Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Ada_COMPILER_ID}-Ada OPTIONAL RESULT_VARIABLE _INCLUDED_FILE)
 endif()
 if (NOT _INCLUDED_FILE)
-  include(Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME} OPTIONAL
-          RESULT_VARIABLE _INCLUDED_FILE)
+  #disable because its irrelevant and might include something by accident.
+#  include(Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME} OPTIONAL
+#          RESULT_VARIABLE _INCLUDED_FILE)
 endif ()
 # We specify the compiler information in the system file for some
 # platforms, but this language may not have been enabled when the file
 # was first included.  Include it again to get the language info.
 # Remove this when all compiler info is removed from system files.
 if (NOT _INCLUDED_FILE)
-  include(Platform/${CMAKE_SYSTEM_NAME} OPTIONAL)
+  #disable because its irrelevant and might include something by accident.
+#  include(Platform/${CMAKE_SYSTEM_NAME} OPTIONAL)
 endif ()
 
 if(CMAKE_Ada_COMPILER_LINKS_STATICALLY)

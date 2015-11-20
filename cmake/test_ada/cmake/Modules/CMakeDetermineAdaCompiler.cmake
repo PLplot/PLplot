@@ -91,6 +91,30 @@ else()
 
 endif()
 
+# Set ID variables by brute force for this gnatmake case rather than
+# using the normal compiler identification script supplied by CMake.
+# As far as I can tell, CMAKE_Ada_COMPILER_ID is required to set up a
+# proper include of the relevant Platform file as well as in the
+# logic stanza below while CMAKE_Ada_PLATFORM_ID is only needed in the
+# logic stanza below.
+set(CMAKE_Ada_COMPILER_ID GNU)
+set(CMAKE_Ada_PLATFORM_ID)
+if(MINGW)
+  set(CMAKE_Ada_PLATFORM_ID MinGW)
+endif(MINGW)
+if(CYGWIN)
+  set(CMAKE_Ada_PLATFORM_ID Cygwin)
+endif(CYGWIN)
+
+if(CMAKE_Ada_COMPILER_ID STREQUAL "GNU")
+  set(CMAKE_COMPILER_IS_GNUADA 1)
+endif()
+if(CMAKE_Ada_PLATFORM_ID MATCHES "MinGW")
+  set(CMAKE_COMPILER_IS_MINGW 1)
+elseif(CMAKE_Ada_PLATFORM_ID MATCHES "Cygwin")
+  set(CMAKE_COMPILER_IS_CYGWIN 1)
+endif()
+
 # configure all variables set in this file
 #configure_file(${CMAKE_ROOT}/Modules/CMakeAdaCompiler.cmake.in
 configure_file(${CMAKE_MODULE_PATH}/CMakeAdaCompiler.cmake.in
