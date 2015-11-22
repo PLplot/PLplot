@@ -261,19 +261,19 @@ include(CMakeCommonLanguageInclude)
 # <CMAKE_RANLIB>
 
 # create an Ada shared library
-IF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
-  IF(APPLE)
+if(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
+  if(APPLE)
     # Temporary fixup for one user's Ada/Mac OS X problems when using the
     # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
-    SET(CMAKE_Ada_CREATE_SHARED_LIBRARY
+    set(CMAKE_Ada_CREATE_SHARED_LIBRARY
       "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> -lgcc_s.1"
       )
-  ELSE(APPLE)
-    SET(CMAKE_Ada_CREATE_SHARED_LIBRARY
+  else(APPLE)
+    set(CMAKE_Ada_CREATE_SHARED_LIBRARY
       "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
       )
-  ENDIF(APPLE)
-ENDIF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
+  endif(APPLE)
+endif(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
 
 # create an Ada shared module copy the shared library rule by default
 if(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
@@ -281,21 +281,21 @@ if(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
 endif()
 
 # create an Ada static library
-IF(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
-  SET(CMAKE_Ada_CREATE_STATIC_LIBRARY
+if(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
+  set(CMAKE_Ada_CREATE_STATIC_LIBRARY
     "<CMAKE_AR> cr <TARGET> <LINK_FLAGS> <OBJECTS> "
     "<CMAKE_RANLIB> <TARGET> ")
-ENDIF(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
+endif(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
 	
 # compile a Ada file into an object file
 if(NOT CMAKE_Ada_COMPILE_OBJECT)
-  IF(NOT CMAKE_VERSION VERSION_LESS 3.4)
+  if(NOT CMAKE_VERSION VERSION_LESS 3.4)
     set(CMAKE_Ada_COMPILE_OBJECT
     "<CMAKE_Ada_COMPILER>  <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
-  ELSE()
-    SET(CMAKE_Ada_COMPILE_OBJECT
+  else()
+    set(CMAKE_Ada_COMPILE_OBJECT
       "<CMAKE_Ada_COMPILER> <FLAGS> -c <SOURCE> -o <OBJECT>")
-  ENDIF()
+  endif()
 endif()
 
 # Constraints:  GNAT_EXECUTABLE_BUILDER = gnatmake
@@ -327,30 +327,33 @@ endif()
 # However, so long as you pay attention to these
 # constraints, add_executable should work for the Ada language.
 
-IF(NOT CMAKE_Ada_LINK_EXECUTABLE)
-  # N.B. under some circumstances (build tests) GNAT_EXECUTABLE_BUILDER is not
-  # defined at this stage for unknown reasons so try to find it again as a 
-  # last resort.
-  GET_FILENAME_COMPONENT(COMPILER_LOCATION "${CMAKE_Ada_COMPILER}"
-    PATH)
-  FIND_PROGRAM(GNAT_EXECUTABLE_BUILDER NAMES gnatmake PATHS ${COMPILER_LOCATION} )
+get_filename_component(COMPILER_LOCATION "${CMAKE_Ada_COMPILER}"
+  PATH)
+find_program(GNAT_EXECUTABLE_BUILDER NAMES gnatmake PATHS ${COMPILER_LOCATION} )
 
-  IF(APPLE)
-    # Temporary fixup for one user's Ada/Mac OS X problems when using the
-    # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
-    SET(CMAKE_Ada_LINK_EXECUTABLE
-    "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES> -lgcc_s.1")
-  ELSE(APPLE)
-    SET(CMAKE_Ada_LINK_EXECUTABLE
-    "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES>")
-  ENDIF(APPLE)
-ENDIF(NOT CMAKE_Ada_LINK_EXECUTABLE)
+# From the above considerations CMAKE_Ada_LINK_EXECUTABLE needs to be in a special
+# form for Ada.
 
-MARK_AS_ADVANCED(
+# WARNING. For both the Platform/Cygwin-GNU.cmake and
+# Platform/Windows-GNU.cmake cases (included indirectly above on the
+# respective platforms), CMAKE_Ada_LINK_EXECUTABLE is set to
+# "<CMAKE_${lang}_COMPILER> <FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> -Wl,--out-implib,<TARGET_IMPLIB> ${CMAKE_GNULD_IMAGE_VERSION} <LINK_LIBRARIES>"
+# This is the wrong form for Ada.  For example, it uses
+# <CMAKE_${lang}_COMPILER> rather than the required
+# ${GNAT_EXECUTABLE_BUILDER}.  Furthermore, the extra implib and
+# image_version linker stuff seems suitable only for building
+# components of libraries (as opposed to a standalone executable).  So
+# ignore the CMAKE_Ada_LINK_EXECUTABLE value if it exists and use the
+# following form on all platforms:
+set(CMAKE_Ada_LINK_EXECUTABLE
+  "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES>"
+  )
+
+mark_as_advanced(
 CMAKE_Ada_FLAGS
 CMAKE_Ada_FLAGS_DEBUG
 CMAKE_Ada_FLAGS_MINSIZEREL
 CMAKE_Ada_FLAGS_RELEASE
 CMAKE_Ada_FLAGS_RELWITHDEBINFO
 )
-SET(CMAKE_Ada_INFORMATION_LOADED 1)
+set(CMAKE_Ada_INFORMATION_LOADED 1)
