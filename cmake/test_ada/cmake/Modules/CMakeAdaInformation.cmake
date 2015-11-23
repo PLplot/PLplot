@@ -55,7 +55,7 @@ set(_INCLUDED_FILE 0)
 
 # Load compiler-specific information.
 if(CMAKE_Ada_COMPILER_ID)
-  include(Compiler/${CMAKE_Ada_COMPILER_ID}-Ada OPTIONAL)
+  include(${CMAKE_Ada_MODULES}/Compiler/${CMAKE_Ada_COMPILER_ID}-Ada.cmake OPTIONAL)
 endif()
 
 set(CMAKE_BASE_NAME)
