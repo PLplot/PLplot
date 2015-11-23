@@ -68,10 +68,7 @@ end;
   FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
   "
 cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
-# FIXME: This specific location needs to be changed whenever the
-# location of the Ada support files are changed.
-#set(CMAKE_MODULE_PATH ${CMAKE_ROOT}/Modules)
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+set(CMAKE_MODULE_PATH ${CMAKE_Ada_MODULES})
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL \"\" FORCE)
 project(test Ada)
 add_executable(testadacompiler testadacompiler.adb)
@@ -116,10 +113,7 @@ else()
 
   # Re-configure to save learned information.
   configure_file(
-    # FIXME: This specific location needs to be changed whenever the
-    # location of the Ada support files are changed.
-    #${CMAKE_ROOT}/Modules/CMakeAdaCompiler.cmake.in
-    ${CMAKE_SOURCE_DIR}/cmake/Modules/CMakeAdaCompiler.cmake.in
+    ${CMAKE_Ada_MODULES}/CMakeAdaCompiler.cmake.in
     ${CMAKE_PLATFORM_INFO_DIR}/CMakeAdaCompiler.cmake
     @ONLY
     )

@@ -32,6 +32,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #=============================================================================
 
+# Fixme: this important location of the Ada modules (which is used by
+# the Ada modules including this one) needs to be changed depending on
+# which project these Ada modules are distributed with and what
+# conventions that project uses for the location of language-support modules.
+# Location if these files are distributed by CMake itself (some day) ....
+#set(CMAKE_Ada_MODULES ${CMAKE_ROOT}/Modules)
+# Location if these files are distributed by the test_ada project....
+set(CMAKE_Ada_MODULES ${CMAKE_SOURCE_DIR}/cmake/Modules)
+# Location if these files are distributed by the PLplot project....
+#set(CMAKE_Ada_MODULES ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake)
+
 # determine the compiler to use for Ada programs
 # NOTE, a generator may set CMAKE_Ada_COMPILER before
 # loading this file to force a compiler.
@@ -115,11 +126,7 @@ elseif(CMAKE_Ada_PLATFORM_ID MATCHES "Cygwin")
   set(CMAKE_COMPILER_IS_CYGWIN 1)
 endif()
 
-# configure all variables set in this file
-# FIXME: This specific location needs to be changed whenever the
-# location of the Ada support files are changed.
-#configure_file(${CMAKE_ROOT}/Modules/CMakeAdaCompiler.cmake.in
-configure_file(${CMAKE_SOURCE_DIR}/cmake/Modules/CMakeAdaCompiler.cmake.in
+configure_file(${CMAKE_Ada_MODULES}/CMakeAdaCompiler.cmake.in
   ${CMAKE_PLATFORM_INFO_DIR}/CMakeAdaCompiler.cmake
   @ONLY
   )
