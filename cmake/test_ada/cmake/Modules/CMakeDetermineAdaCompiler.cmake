@@ -126,6 +126,8 @@ elseif(CMAKE_Ada_PLATFORM_ID MATCHES "Cygwin")
   set(CMAKE_COMPILER_IS_CYGWIN 1)
 endif()
 
+include(CMakeFindBinUtils)
+
 configure_file(${CMAKE_Ada_MODULES}/CMakeAdaCompiler.cmake.in
   ${CMAKE_PLATFORM_INFO_DIR}/CMakeAdaCompiler.cmake
   @ONLY

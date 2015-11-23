@@ -10,15 +10,22 @@ To run the test
 mkdir build_dir
 cd build_dir
 
-(2) configure project with cmake 
+(2) configure project with cmake
+
+Note, in projects that include standard languages such as C, CXX, or Fortran, compiler
+introspection for those languages helps to determine CMAKE_LIBRARY_ARCHITECTURE which
+in turn allows cmake to find language-specific libraries such as libgnat.  However,
+such compiler introspection is not implemented by our Ada language support so for projects like test_ada
+where C, CXX, and/or Fortran are not enabled CMAKE_LIBRARY_ARCHITECTURE is not defined. Therefore,
+the -DCMAKE_LIBRARY_PATH option is required to help find the libgnat library below.
 
   option a (built library is static).
 
-cmake -DBUILD_SHARED_LIBS=OFF path/to/this/source/directory >& cmake.out
+cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH:PATH=<path to the gnat library> <path/to/this/source/directory> >& cmake.out
 
   option b (built library is shared by default).
 
-cmake path/to/this/source/directory >& cmake.out
+cmake -DCMAKE_LIBRARY_PATH:PATH=<path to the gnat library> <path/to/this/source/directory> >& cmake.out
 
 (2a) In cases where there are CMake errors revealed by either of the
 above commands, use the --trace option for cmake (which traces every
@@ -31,7 +38,12 @@ make VERBOSE=1 >& make.out
 
 (4) run test that should generate "hello, world" phrase.
 
-src_executable/hello >& exectuable.out
+Note for this step to work on Windows platforms it will be
+necessary to put the src_lib subdirectory of the build tree
+on your PATH so the dll can be found when running the hello
+application below.
+
+src_executable/hello >& executable.out
 
 (5, optional) Test with valgrind:
 
