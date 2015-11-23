@@ -10,9 +10,6 @@ project(test_ada Ada)
 
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
-# Set up Ada variables specific to this project.
-include(ada.cmake)
-
 # Build Ada library
 add_subdirectory(src_lib)
 # Build Ada executable that links to that Ada library

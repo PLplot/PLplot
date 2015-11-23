@@ -38,8 +38,6 @@ ${ALI_PREFIX}/hello_1.ali
 
 add_library(hello_1 ${SOURCE_LIST})
 
-target_link_libraries(hello_1 ${GNAT_LIB})
-
 set_target_properties(hello_1
 PROPERTIES
 SOVERSION 0
