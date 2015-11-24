@@ -1,129 +1,243 @@
+
+#=============================================================================
+# Copyright 2004-2011 Kitware, Inc.
+# Copyright 2015 Alan W. Irwin
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+#
+# * Redistributions of source code must retain the above copyright
+#   notice, this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+#   notice, this list of conditions and the following disclaimer in the
+#   documentation and/or other materials provided with the distribution.
+#
+# * Neither the names of Kitware, Inc., the Insight Software Consortium,
+#   nor the names of their contributors may be used to endorse or promote
+#   products derived from this software without specific prior written
+#   permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#=============================================================================
+
 # This file sets the basic flags for the Ada language in CMake.
 # It also loads the available platform file for the system-compiler
 # if it exists.
+# It also loads a system - compiler - processor (or target hardware)
+# specific file, which is mainly useful for crosscompiling and embedded systems.
 
-GET_FILENAME_COMPONENT(CMAKE_BASE_NAME ${CMAKE_Ada_COMPILER} NAME_WE)
-SET(CMAKE_SYSTEM_AND_Ada_COMPILER_INFO_FILE
-  ${CMAKE_ROOT}/Modules/Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME}.cmake)
-INCLUDE(Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME} OPTIONAL)
+# some compilers use different extensions (e.g. sdcc uses .rel)
+# so set the extension here first so it can be overridden by the compiler specific file
+if(UNIX)
+  set(CMAKE_Ada_OUTPUT_EXTENSION .o)
+else()
+  set(CMAKE_Ada_OUTPUT_EXTENSION .obj)
+endif()
+
+# According to Brad King, this change needed to adjust Ada language
+# support to an internal change to language support infrastructure
+# that occurred for CMake-2.6.0 and beyond.
+set(CMAKE_Ada_OUTPUT_EXTENSION_REPLACE 1)
+
+set(_INCLUDED_FILE 0)
+
+# Load compiler-specific information.
+if(CMAKE_Ada_COMPILER_ID)
+  include(${CMAKE_Ada_MODULES}/Compiler/${CMAKE_Ada_COMPILER_ID}-Ada.cmake OPTIONAL)
+endif()
+
+set(CMAKE_BASE_NAME)
+get_filename_component(CMAKE_BASE_NAME "${CMAKE_Ada_COMPILER}" NAME_WE)
+
+# load the system- and compiler specific files
+message(STATUS "CMAKE_Ada_COMPILER_ID = ${CMAKE_Ada_COMPILER_ID}")
+if(CMAKE_Ada_COMPILER_ID)
+  include(Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_Ada_COMPILER_ID}-Ada OPTIONAL RESULT_VARIABLE _INCLUDED_FILE)
+endif()
+if (NOT _INCLUDED_FILE)
+  #disable because its irrelevant and might include something by accident.
+#  include(Platform/${CMAKE_SYSTEM_NAME}-${CMAKE_BASE_NAME} OPTIONAL
+#          RESULT_VARIABLE _INCLUDED_FILE)
+endif ()
+# We specify the compiler information in the system file for some
+# platforms, but this language may not have been enabled when the file
+# was first included.  Include it again to get the language info.
+# Remove this when all compiler info is removed from system files.
+if (NOT _INCLUDED_FILE)
+  #disable because its irrelevant and might include something by accident.
+#  include(Platform/${CMAKE_SYSTEM_NAME} OPTIONAL)
+endif ()
+
+if(CMAKE_Ada_COMPILER_LINKS_STATICALLY)
+  set_property(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS FALSE)
+endif()
 
 # This should be included before the _INIT variables are
-# used to initialize the cache.  Since the rule variables 
+# used to initialize the cache.  Since the rule variables
 # have if blocks on them, users can still define them here.
 # But, it should still be after the platform file so changes can
 # be made to those values.
 
-IF(CMAKE_USER_MAKE_RULES_OVERRIDE)
-   INCLUDE(${CMAKE_USER_MAKE_RULES_OVERRIDE})
-ENDIF(CMAKE_USER_MAKE_RULES_OVERRIDE)
+if(CMAKE_USER_MAKE_RULES_OVERRIDE)
+  # Save the full path of the file so try_compile can use it.
+  include(${CMAKE_USER_MAKE_RULES_OVERRIDE} RESULT_VARIABLE _override)
+  set(CMAKE_USER_MAKE_RULES_OVERRIDE "${_override}")
+endif()
 
-IF(CMAKE_USER_MAKE_RULES_OVERRIDE_Ada)
-   INCLUDE(${CMAKE_USER_MAKE_RULES_OVERRIDE_Ada})
-ENDIF(CMAKE_USER_MAKE_RULES_OVERRIDE_Ada)
+if(CMAKE_USER_MAKE_RULES_OVERRIDE_Ada)
+  # Save the full path of the file so try_compile can use it.
+  include(${CMAKE_USER_MAKE_RULES_OVERRIDE_Ada} RESULT_VARIABLE _override)
+  set(CMAKE_USER_MAKE_RULES_OVERRIDE_Ada "${_override}")
+endif()
+
 
 # Create a set of shared library variable specific to Ada
 # For 90% of the systems, these are the same flags as the C versions
 # so if these are not set just copy the flags from the c version
+if(NOT CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS)
+  set(CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS})
+endif()
 
-IF(NOT CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS)
-  SET(CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS})
-ENDIF(NOT CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS)
+if(NOT CMAKE_Ada_COMPILE_OPTIONS_PIC)
+  set(CMAKE_Ada_COMPILE_OPTIONS_PIC ${CMAKE_C_COMPILE_OPTIONS_PIC})
+endif()
 
-IF(NOT CMAKE_Ada_COMPILE_OPTIONS_PIC)
-  SET(CMAKE_Ada_COMPILE_OPTIONS_PIC ${CMAKE_C_COMPILE_OPTIONS_PIC})
-ENDIF(NOT CMAKE_Ada_COMPILE_OPTIONS_PIC)
+if(NOT CMAKE_Ada_COMPILE_OPTIONS_PIE)
+  set(CMAKE_Ada_COMPILE_OPTIONS_PIE ${CMAKE_C_COMPILE_OPTIONS_PIE})
+endif()
 
-IF(NOT CMAKE_Ada_COMPILE_OPTIONS_PIE)
-  SET(CMAKE_Ada_COMPILE_OPTIONS_PIE ${CMAKE_C_COMPILE_OPTIONS_PIE})
-ENDIF(NOT CMAKE_Ada_COMPILE_OPTIONS_PIE)
+if(NOT CMAKE_Ada_COMPILE_OPTIONS_DLL)
+  set(CMAKE_Ada_COMPILE_OPTIONS_DLL ${CMAKE_C_COMPILE_OPTIONS_DLL})
+endif()
 
-IF(NOT CMAKE_Ada_COMPILE_OPTIONS_DLL)
-  SET(CMAKE_Ada_COMPILE_OPTIONS_DLL ${CMAKE_C_COMPILE_OPTIONS_DLL})
-ENDIF(NOT CMAKE_Ada_COMPILE_OPTIONS_DLL)
+if(NOT CMAKE_SHARED_LIBRARY_Ada_FLAGS)
+  set(CMAKE_SHARED_LIBRARY_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_C_FLAGS})
+endif()
 
-IF(NOT CMAKE_SHARED_LIBRARY_Ada_FLAGS)
-  SET(CMAKE_SHARED_LIBRARY_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_C_FLAGS})
-ENDIF(NOT CMAKE_SHARED_LIBRARY_Ada_FLAGS)
+if(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS)
+  set(CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS})
+endif()
 
-IF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS)
-  SET(CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_LINK_C_FLAGS})
-ENDIF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_FLAGS)
+if(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG)
+  set(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG})
+endif()
 
-IF(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG)
-  SET(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG}) 
-ENDIF(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG)
+if(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP)
+  set(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG_SEP})
+endif()
 
-IF(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP)
-  SET(CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG_SEP})
-ENDIF(NOT CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP)
+if(NOT CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG)
+  set(CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_C_FLAG})
+endif()
 
-IF(NOT CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG)
-  SET(CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_C_FLAG})
-ENDIF(NOT CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG)
+if(NOT DEFINED CMAKE_EXE_EXPORTS_Ada_FLAG)
+  set(CMAKE_EXE_EXPORTS_Ada_FLAG ${CMAKE_EXE_EXPORTS_C_FLAG})
+endif()
+
+if(NOT DEFINED CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG)
+  set(CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_SONAME_C_FLAG})
+endif()
+
+if(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG)
+  set(CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG})
+endif()
+
+if(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP)
+  set(CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP})
+endif()
+
+if(NOT CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG)
+  set(CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG})
+endif()
+
+if(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH)
+  set(CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH ${CMAKE_SHARED_LIBRARY_LINK_C_WITH_RUNTIME_PATH})
+endif()
+
+if(NOT CMAKE_INCLUDE_FLAG_Ada)
+  set(CMAKE_INCLUDE_FLAG_Ada ${CMAKE_INCLUDE_FLAG_C})
+endif()
+
+if(NOT CMAKE_INCLUDE_FLAG_SEP_Ada)
+  set(CMAKE_INCLUDE_FLAG_SEP_Ada ${CMAKE_INCLUDE_FLAG_SEP_C})
+endif()
+
+# for most systems a module is the same as a shared library
+# so unless the variable CMAKE_MODULE_EXISTS is set just
+# copy the values from the LIBRARY variables
+if(NOT CMAKE_MODULE_EXISTS)
+  set(CMAKE_SHARED_MODULE_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_Ada_FLAGS})
+  set(CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS ${CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS})
+endif()
 
 # repeat for modules
-IF(NOT CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS)
-  SET(CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS ${CMAKE_SHARED_MODULE_CREATE_C_FLAGS})
-ENDIF(NOT CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS)
+if(NOT CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS)
+  set(CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS ${CMAKE_SHARED_MODULE_CREATE_C_FLAGS})
+endif()
 
-IF(NOT CMAKE_SHARED_MODULE_Ada_FLAGS)
-  SET(CMAKE_SHARED_MODULE_Ada_FLAGS ${CMAKE_SHARED_MODULE_C_FLAGS})
-ENDIF(NOT CMAKE_SHARED_MODULE_Ada_FLAGS)
+if(NOT CMAKE_SHARED_MODULE_Ada_FLAGS)
+  set(CMAKE_SHARED_MODULE_Ada_FLAGS ${CMAKE_SHARED_MODULE_C_FLAGS})
+endif()
 
-IF(NOT CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG)
-  SET(CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG ${CMAKE_SHARED_MODULE_RUNTIME_C_FLAG}) 
-ENDIF(NOT CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG)
+# Initialize Ada link type selection flags from C versions.
+foreach(type SHARED_LIBRARY SHARED_MODULE EXE)
+  if(NOT CMAKE_${type}_LINK_STATIC_Ada_FLAGS)
+    set(CMAKE_${type}_LINK_STATIC_Ada_FLAGS
+      ${CMAKE_${type}_LINK_STATIC_C_FLAGS})
+  endif()
+  if(NOT CMAKE_${type}_LINK_DYNAMIC_Ada_FLAGS)
+    set(CMAKE_${type}_LINK_DYNAMIC_Ada_FLAGS
+      ${CMAKE_${type}_LINK_DYNAMIC_C_FLAGS})
+  endif()
+endforeach()
 
-IF(NOT CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG_SEP)
-  SET(CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_MODULE_RUNTIME_C_FLAG_SEP})
-ENDIF(NOT CMAKE_SHARED_MODULE_RUNTIME_Ada_FLAG_SEP)
+# add the flags to the cache based
+# on the initial values computed in the platform/*.cmake files
+# use _INIT variables so that this only happens the first time
+# and you can set these flags in the cmake cache
+set(CMAKE_Ada_FLAGS_INIT "$ENV{ADAFLAGS} ${CMAKE_Ada_FLAGS_INIT}")
+# avoid just having a space as the initial value for the cache
+if(CMAKE_Ada_FLAGS_INIT STREQUAL " ")
+  set(CMAKE_Ada_FLAGS_INIT)
+endif()
+set (CMAKE_Ada_FLAGS "${CMAKE_Ada_FLAGS_INIT}" CACHE STRING
+     "Flags used by the compiler during all build types.")
 
-IF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG)
-  SET(CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG})
-ENDIF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG)
+if(NOT CMAKE_NOT_USING_CONFIG_FLAGS)
+  set (CMAKE_Ada_FLAGS_DEBUG "${CMAKE_Ada_FLAGS_DEBUG_INIT}" CACHE STRING
+     "Flags used by the compiler during debug builds.")
+  set (CMAKE_Ada_FLAGS_MINSIZEREL "${CMAKE_Ada_FLAGS_MINSIZEREL_INIT}" CACHE STRING
+     "Flags used by the compiler during release builds for minimum size.")
+  set (CMAKE_Ada_FLAGS_RELEASE "${CMAKE_Ada_FLAGS_RELEASE_INIT}" CACHE STRING
+     "Flags used by the compiler during release builds.")
+  set (CMAKE_Ada_FLAGS_RELWITHDEBINFO "${CMAKE_Ada_FLAGS_RELWITHDEBINFO_INIT}" CACHE STRING
+     "Flags used by the compiler during release builds with debug info.")
 
-IF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP)
-  SET(CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_Ada_FLAG_SEP})
-ENDIF(NOT CMAKE_EXECUTABLE_RUNTIME_Ada_FLAG_SEP)
+endif()
 
-IF(NOT CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG)
-  SET(CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_Ada_FLAG})
-ENDIF(NOT CMAKE_EXECUTABLE_RPATH_LINK_Ada_FLAG)
+if(CMAKE_Ada_STANDARD_LIBRARIES_INIT)
+  set(CMAKE_Ada_STANDARD_LIBRARIES "${CMAKE_Ada_STANDARD_LIBRARIES_INIT}"
+    CACHE STRING "Libraries linked by default with all Ada applications.")
+  mark_as_advanced(CMAKE_Ada_STANDARD_LIBRARIES)
+endif()
 
-IF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH)
-  SET(CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH ${CMAKE_SHARED_LIBRARY_LINK_C_WITH_RUNTIME_PATH})
-ENDIF(NOT DEFINED CMAKE_SHARED_LIBRARY_LINK_Ada_WITH_RUNTIME_PATH)
+include(CMakeCommonLanguageInclude)
 
-IF(NOT CMAKE_INCLUDE_FLAG_Ada)
-  SET(CMAKE_INCLUDE_FLAG_Ada ${CMAKE_INCLUDE_FLAG_C})
-ENDIF(NOT CMAKE_INCLUDE_FLAG_Ada)
-
-IF(NOT CMAKE_INCLUDE_FLAG_SEP_Ada)
-  SET(CMAKE_INCLUDE_FLAG_SEP_Ada ${CMAKE_INCLUDE_FLAG_SEP_C})
-ENDIF(NOT CMAKE_INCLUDE_FLAG_SEP_Ada)
-
-# Copy C version of this flag which is normally determined in platform file.
-IF(NOT CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG)
-  SET(CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG ${CMAKE_SHARED_LIBRARY_SONAME_C_FLAG})
-ENDIF(NOT CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG)
-
-SET(CMAKE_VERBOSE_MAKEFILE FALSE CACHE BOOL "If this value is on, makefiles will be generated without the .SILENT directive, and all commands will be echoed to the console during the make.  This is useful for debugging only. With Visual Studio IDE projects all commands are done without /nologo.")
-
-SET(CMAKE_Ada_FLAGS_INIT "$ENV{ADAFLAGS} ${CMAKE_Ada_FLAGS_INIT}")
-# avoid just having a space as the initial value for the cache 
-IF(CMAKE_Ada_FLAGS_INIT STREQUAL " ")
-  SET(CMAKE_Ada_FLAGS_INIT)
-ENDIF(CMAKE_Ada_FLAGS_INIT STREQUAL " ")
-SET (CMAKE_Ada_FLAGS "${CMAKE_Ada_FLAGS_INIT}" CACHE STRING
-     "Flags for Ada compiler.")
-
-INCLUDE(CMakeCommonLanguageInclude)
-
-# now define the following rule variables
-
+# now define the following rules:
 # CMAKE_Ada_CREATE_SHARED_LIBRARY
 # CMAKE_Ada_CREATE_SHARED_MODULE
-# CMAKE_Ada_CREATE_STATIC_LIBRARY
 # CMAKE_Ada_COMPILE_OBJECT
 # CMAKE_Ada_LINK_EXECUTABLE
 
@@ -137,53 +251,52 @@ INCLUDE(CMakeCommonLanguageInclude)
 # <LINK_FLAGS>
 
 # Ada compiler information
-# <CMAKE_Ada_COMPILER>  
+# <CMAKE_Ada_COMPILER>
 # <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS>
 # <CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS>
 # <CMAKE_Ada_LINK_FLAGS>
 
 # Static library tools
-# <CMAKE_AR> 
+# <CMAKE_AR>
 # <CMAKE_RANLIB>
 
-
 # create an Ada shared library
-IF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
-  IF(APPLE)
+if(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
+  if(APPLE)
     # Temporary fixup for one user's Ada/Mac OS X problems when using the
     # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
-    SET(CMAKE_Ada_CREATE_SHARED_LIBRARY
-    "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> -lgcc_s.1"
-    )
-  ELSE(APPLE)
-    SET(CMAKE_Ada_CREATE_SHARED_LIBRARY
-    "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
-    )
-  ENDIF(APPLE)
-ENDIF(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
+    set(CMAKE_Ada_CREATE_SHARED_LIBRARY
+      "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> -lgcc_s.1"
+      )
+  else(APPLE)
+    set(CMAKE_Ada_CREATE_SHARED_LIBRARY
+      "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
+      )
+  endif(APPLE)
+endif(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
 
-# create an Ada shared module just copy the shared library rule
-IF(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
-  SET(CMAKE_Ada_CREATE_SHARED_MODULE ${CMAKE_Ada_CREATE_SHARED_LIBRARY})
-ENDIF(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
+# create an Ada shared module copy the shared library rule by default
+if(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
+  set(CMAKE_Ada_CREATE_SHARED_MODULE ${CMAKE_Ada_CREATE_SHARED_LIBRARY})
+endif()
 
 # create an Ada static library
-IF(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
-  SET(CMAKE_Ada_CREATE_STATIC_LIBRARY
-      "<CMAKE_AR> cr <TARGET> <LINK_FLAGS> <OBJECTS> "
-      "<CMAKE_RANLIB> <TARGET> ")
-ENDIF(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
-
+if(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
+  set(CMAKE_Ada_CREATE_STATIC_LIBRARY
+    "<CMAKE_AR> cr <TARGET> <LINK_FLAGS> <OBJECTS> "
+    "<CMAKE_RANLIB> <TARGET> ")
+endif(NOT CMAKE_Ada_CREATE_STATIC_LIBRARY)
+	
 # compile a Ada file into an object file
-IF(NOT CMAKE_Ada_COMPILE_OBJECT)
-  IF(NOT CMAKE_VERSION VERSION_LESS 3.4)
-    SET(CMAKE_Ada_COMPILE_OBJECT
-      "<CMAKE_Ada_COMPILER> <INCLUDES> <FLAGS> -c <SOURCE> -o <OBJECT>")
-  ELSE()
-    SET(CMAKE_Ada_COMPILE_OBJECT
+if(NOT CMAKE_Ada_COMPILE_OBJECT)
+  if(NOT CMAKE_VERSION VERSION_LESS 3.4)
+    set(CMAKE_Ada_COMPILE_OBJECT
+    "<CMAKE_Ada_COMPILER>  <DEFINES> <INCLUDES> <FLAGS> -o <OBJECT> -c <SOURCE>")
+  else()
+    set(CMAKE_Ada_COMPILE_OBJECT
       "<CMAKE_Ada_COMPILER> <FLAGS> -c <SOURCE> -o <OBJECT>")
-  ENDIF()
-ENDIF(NOT CMAKE_Ada_COMPILE_OBJECT)
+  endif()
+endif()
 
 # Constraints:  GNAT_EXECUTABLE_BUILDER = gnatmake
 # is required to do the compile+bind+link of
@@ -214,47 +327,33 @@ ENDIF(NOT CMAKE_Ada_COMPILE_OBJECT)
 # However, so long as you pay attention to these
 # constraints, add_executable should work for the Ada language.
 
-IF(NOT CMAKE_Ada_LINK_EXECUTABLE)
-  # N.B. under some circumstances (build tests) GNAT_EXECUTABLE_BUILDER is not
-  # defined at this stage for unknown reasons so try to find it again as a 
-  # last resort.
-  GET_FILENAME_COMPONENT(COMPILER_LOCATION "${CMAKE_Ada_COMPILER}"
-    PATH)
-  FIND_PROGRAM(GNAT_EXECUTABLE_BUILDER NAMES gnatmake PATHS ${COMPILER_LOCATION} )
+get_filename_component(COMPILER_LOCATION "${CMAKE_Ada_COMPILER}"
+  PATH)
+find_program(GNAT_EXECUTABLE_BUILDER NAMES gnatmake PATHS ${COMPILER_LOCATION} )
 
-  IF(APPLE)
-    # Temporary fixup for one user's Ada/Mac OS X problems when using the
-    # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
-    SET(CMAKE_Ada_LINK_EXECUTABLE
-    "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES> -lgcc_s.1")
-  ELSE(APPLE)
-    SET(CMAKE_Ada_LINK_EXECUTABLE
-    "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES>")
-  ENDIF(APPLE)
-ENDIF(NOT CMAKE_Ada_LINK_EXECUTABLE)
+# From the above considerations CMAKE_Ada_LINK_EXECUTABLE needs to be in a special
+# form for Ada.
 
-IF(CMAKE_Ada_STANDARD_LIBRARIES_INIT)
-  SET(CMAKE_Ada_STANDARD_LIBRARIES "${CMAKE_Ada_STANDARD_LIBRARIES_INIT}"
-    CACHE STRING "Libraries linked by default with all Ada applications.")
-  MARK_AS_ADVANCED(CMAKE_Ada_STANDARD_LIBRARIES)
-ENDIF(CMAKE_Ada_STANDARD_LIBRARIES_INIT)
+# WARNING. For both the Platform/Cygwin-GNU.cmake and
+# Platform/Windows-GNU.cmake cases (included indirectly above on the
+# respective platforms), CMAKE_Ada_LINK_EXECUTABLE is set to
+# "<CMAKE_${lang}_COMPILER> <FLAGS> <CMAKE_${lang}_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> -Wl,--out-implib,<TARGET_IMPLIB> ${CMAKE_GNULD_IMAGE_VERSION} <LINK_LIBRARIES>"
+# This is the wrong form for Ada.  For example, it uses
+# <CMAKE_${lang}_COMPILER> rather than the required
+# ${GNAT_EXECUTABLE_BUILDER}.  Furthermore, the extra implib and
+# image_version linker stuff seems suitable only for building
+# components of libraries (as opposed to a standalone executable).  So
+# ignore the CMAKE_Ada_LINK_EXECUTABLE value if it exists and use the
+# following form on all platforms:
+set(CMAKE_Ada_LINK_EXECUTABLE
+  "${GNAT_EXECUTABLE_BUILDER} <CMAKE_Ada_LINK_FLAGS> <LINK_FLAGS> <TARGET_BASE>.adb -cargs <FLAGS> -largs <LINK_LIBRARIES>"
+  )
 
-IF(NOT CMAKE_NOT_USING_CONFIG_FLAGS)
-  SET (CMAKE_Ada_FLAGS_DEBUG "${CMAKE_Ada_FLAGS_DEBUG_INIT}" CACHE STRING
-     "Flags used by the compiler during debug builds.")
-  SET (CMAKE_Ada_FLAGS_MINSIZEREL "${CMAKE_Ada_FLAGS_MINSIZEREL_INIT}" CACHE STRING
-     "Flags used by the compiler during release minsize builds.")
-  SET (CMAKE_Ada_FLAGS_RELEASE "${CMAKE_Ada_FLAGS_RELEASE_INIT}" CACHE STRING
-     "Flags used by the compiler during release builds (/MD /Ob1 /Oi /Ot /Oy /Gs will produce slightly less optimized but smaller files).")
-  SET (CMAKE_Ada_FLAGS_RELWITHDEBINFO "${CMAKE_Ada_FLAGS_RELWITHDEBINFO_INIT}" CACHE STRING
-     "Flags used by the compiler during Release with Debug Info builds.")
-ENDIF(NOT CMAKE_NOT_USING_CONFIG_FLAGS)
-
-MARK_AS_ADVANCED(
+mark_as_advanced(
 CMAKE_Ada_FLAGS
 CMAKE_Ada_FLAGS_DEBUG
 CMAKE_Ada_FLAGS_MINSIZEREL
 CMAKE_Ada_FLAGS_RELEASE
 CMAKE_Ada_FLAGS_RELWITHDEBINFO
 )
-SET(CMAKE_Ada_INFORMATION_LOADED 1)
+set(CMAKE_Ada_INFORMATION_LOADED 1)

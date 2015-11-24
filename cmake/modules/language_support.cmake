@@ -47,6 +47,11 @@ enable_language(${language})
 	language_support/cmake/CMakeAdaInformation.cmake
 	language_support/cmake/CMakeDetermineAdaCompiler.cmake
 	language_support/cmake/CMakeTestAdaCompiler.cmake
+	language_support/cmake/Platform/CYGWIN-GNU-Ada.cmake
+	language_support/cmake/Platform/Darwin-GNU-Ada.cmake
+	language_support/cmake/Platform/Linux-GNU-Ada.cmake
+	language_support/cmake/Platform/Windows-GNU-Ada.cmake
+	language_support/cmake/Compiler/GNU-Ada.cmake
 	)
     elseif(language STREQUAL "D")
       set(language_special ON)

@@ -1,6 +1,6 @@
 # cmake/modules/ada.cmake
 #
-# Copyright (C) 2007 Alan W. Irwin
+# Copyright (C) 2007-2015 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -40,21 +40,4 @@ if(ENABLE_ada)
     message(STATUS "WARNING: no working Ada compiler so disabling Ada bindings and examples.")
     set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
   endif(NOT CMAKE_Ada_COMPILER_WORKS)
-endif(ENABLE_ada)
-
-if(ENABLE_ada)
-  # Find the gnat version used in order to search for the right version of libgnat 
-  execute_process(COMMAND ${CMAKE_Ada_COMPILER} --version OUTPUT_VARIABLE ADA_OUTPUT)
-  string(REGEX MATCH "gcc.* [(][^)]*[)] ([0-9]*)([.][0-9]*)[.][0-9]" ADA_OUTPUT_TRIM ${ADA_OUTPUT})
-  set(GNATMAJVERSION ${CMAKE_MATCH_1})
-  set(GNATVERSION ${CMAKE_MATCH_1}${CMAKE_MATCH_2})
-  message(STATUS "gnat version = ${GNATVERSION}")
-  find_library(GNAT_LIB NAMES gnat gnat-${GNATVERSION} gnat-${GNATMAJVERSION})
-  if(NOT GNAT_LIB)
-    message(STATUS "WARNING: "
-      "gnat library not found. Disabling ada bindings")
-    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
-  else(NOT GNAT_LIB)
-    message(STATUS "FOUND gnat library ${GNAT_LIB}")
-  endif(NOT GNAT_LIB)
 endif(ENABLE_ada)
