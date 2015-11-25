@@ -96,6 +96,12 @@ if(ENABLE_ada)
       )
   endif(USE_DLL_SUBDIRECTORY AND NOT CYGWIN)
 
+  # Link to GNAT_LIB to avoid underlinking the plplotada library (which causes
+  # link errors on at least the Cygwin platform), but use
+  # the PRIVATE keyword (on all platforms) to avoid overlinking Ada applications
+  # that link to plplotada.         
+  target_link_libraries(plplotada PRIVATE ${GNAT_LIB})
+
   # N.B. nm evidence shows that examples that use
   # callbacks (e.g., plfill in x15a.adb) have unresolved references
   # to c_plfill, etc. that require a public link to plplot
@@ -131,6 +137,6 @@ if(ENABLE_ada)
 
   # Configure pkg-config *.pc file corresponding to libplplotada
   # See remarks above concerning why plplot has to be public.
-  pkg_config_file("ada" "Ada" " Ada binding" "plplotada" "" "" "-lplplot")
+  pkg_config_file("ada" "Ada" " Ada binding" "plplotada" "" "${GNAT_LIB}" "-lplplot")
 
 endif(ENABLE_ada)

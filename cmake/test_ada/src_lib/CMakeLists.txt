@@ -38,6 +38,12 @@ ${ALI_PREFIX}/hello_1.ali
 
 add_library(hello_1 ${SOURCE_LIST})
 
+# Link to GNAT_LIB to avoid underlinking the hello_1 library (which causes
+# link errors on at least the Cygwin platform), but use
+# the PRIVATE keyword (on all platforms) to avoid overlinking Ada applications
+# that link to hello_1.
+target_link_libraries(hello_1 PRIVATE ${GNAT_LIB})
+
 set_target_properties(hello_1
 PROPERTIES
 SOVERSION 0
