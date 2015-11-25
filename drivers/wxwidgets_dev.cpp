@@ -67,14 +67,14 @@ public:
         m_dc = dc;
         if ( m_dc )
         {
-            dc->GetLogicalScale( &m_xScaleOld, &m_yScaleOld );
-            dc->SetLogicalScale( xScale, yScale );
+            dc->GetUserScale( &m_xScaleOld, &m_yScaleOld );
+            dc->SetUserScale( xScale, yScale );
         }
     }
     ~Scaler( )
     {
         if ( m_dc )
-            m_dc->SetLogicalScale( m_xScaleOld, m_yScaleOld );
+            m_dc->SetUserScale( m_xScaleOld, m_yScaleOld );
     }
 private:
     wxDC   *m_dc;
