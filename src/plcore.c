@@ -558,13 +558,18 @@ plP_gradient( short *x, short *y, PLINT npts )
 int text2num( const char *text, char end, PLUNICODE *num )
 {
     char *endptr;
-    char msgbuf[BUFFER_SIZE];
+    // This special base logic required to _avoid_ interpretation of
+    // numbers with leading zeroes as octal numbers if base = 0.
+    int base = 10;
+    if ( !strncmp( text, "0x", 2 ) || !strncmp( text, "0X", 2 ) )
+        base = 16;
 
-    *num = (PLUNICODE) strtoul( text, &endptr, 0 );
+    *num = (PLUNICODE) strtoul( text, &endptr, base );
 
     if ( end != endptr[0] )
     {
-        snprintf( msgbuf, BUFFER_SIZE, "text2num: invalid control string detected - %c expected", end );
+        char msgbuf[BUFFER2_SIZE];
+        snprintf( msgbuf, BUFFER2_SIZE, "text2num: for base = %d, strtoul found invalid non-numeric character \"%c\" detected in string \"%s\" when looking for \"%c\" ", base, *endptr, text, end );
         plwarn( msgbuf );
     }
 
