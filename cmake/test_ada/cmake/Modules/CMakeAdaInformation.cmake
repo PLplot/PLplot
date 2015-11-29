@@ -40,11 +40,15 @@
 
 # some compilers use different extensions (e.g. sdcc uses .rel)
 # so set the extension here first so it can be overridden by the compiler specific file
-if(UNIX)
-  set(CMAKE_Ada_OUTPUT_EXTENSION .o)
-else()
-  set(CMAKE_Ada_OUTPUT_EXTENSION .obj)
-endif()
+
+# Additional Ada comment:
+# Contrary to C++ where this extension is either .o for Unix or .obj
+# otherwise we have evidence on both MinGW (from years ago) and
+# MinGW-w64 (now) that this extension is always .o for Ada regardless
+# of platform.  So use that assumption unless or until we find a
+# platform where that assumption is not correct (i.e., one where the
+# error message "gnat1: incorrect object file extension" is emitted.)
+set(CMAKE_Ada_OUTPUT_EXTENSION .o)
 
 # According to Brad King, this change needed to adjust Ada language
 # support to an internal change to language support infrastructure
