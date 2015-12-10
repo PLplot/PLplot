@@ -106,4 +106,7 @@
 // - broken Mac OSX systems
 #cmakedefine PL_BROKEN_ISNAN_CXX
 
+// Define if built with shapefile support
+#cmakedefine PL_USE_SHAPEFILES
+
 #endif  // __PLCONFIG_H__

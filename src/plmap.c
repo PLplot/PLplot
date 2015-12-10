@@ -234,6 +234,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
     PLFLT penultimatesplitpointx;
     PLFLT penultimatesplitpointy;
     char  islatlon = 1;
+    int   appendresult = 0;
 
 
 #ifdef HAVE_SHAPELIB
@@ -252,7 +253,6 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
     char          *prjfilename = NULL;
     PDFstrm       *prjfile;
     char          prjtype[]    = { 0, 0, 0, 0, 0, 0, 0 };
-    int           appendresult = 0;
 #else
     PDFstrm       *in;
     //PLFLT            bufx[ncopies][200], bufy[ncopies][200];

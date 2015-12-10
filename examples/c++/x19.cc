@@ -250,6 +250,8 @@ x19::x19( int argc, const char ** argv )
     // For C, this is how the global transform is cleared
     pls->stransform( NULL, NULL );
 
+#ifdef PL_USES_SHAPEFILES
+
     // An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
     // These were chosen because they provide shapefiles for small grid boxes which
     // are easilly manageable for this demo.
@@ -364,6 +366,8 @@ x19::x19( int argc, const char ** argv )
     pls->maptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 );
     pls->maptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 );
     pls->maptex( NULL, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 );
+
+#endif
 
     delete pls;
 }
