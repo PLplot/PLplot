@@ -638,7 +638,7 @@ are taken from doc/docbook/src/CMakeLists.txt.
 To build Hǎiliàng Wang's "check" application (which is written in the Go language)
 follow these simple directions (which worked fine on 2014-01-26):
 
-# Install go-lang package from your distro (I used the Debian testing
+# Install go-lang package from your distro (I used the Debian Jessie
 # version, go-lang version 1.2).
 
 cd /home/software/golang_apps #(or wherever you like)
@@ -832,8 +832,8 @@ _________________________________________________________________________
 
 ** System prerequisites for viewing local website
 
-You should install both apache and PHP on your computer.  For Debian stable
-(a.k.a. wheezy) that is done (as root) by installing libapache2-mod-php5
+You should install both apache and PHP on your computer.  For Debian Jessie
+that is done (as root) by installing libapache2-mod-php5
 and enabling user directories using the command
 
 a2enmod userdir
