@@ -212,7 +212,7 @@ main( int argc, const char **argv )
     // For C, this is how the global transform is cleared
     plstransform( NULL, NULL );
 
-#ifdef PL_USES_SHAPEFILES
+#ifdef PL_USE_SHAPEFILES
 
     // An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
     // These were chosen because they provide shapefiles for small grid boxes which
