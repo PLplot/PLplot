@@ -49,9 +49,14 @@ src_executable/hello >& executable.out
 
 valgrind src_executable/hello >& valgrind.out
 
-(6, optional) Test with ldd
+(6, optional) Test whether run-time loader finds all the required libraries
 
+# Most Unix-like platforms (including MinGW-w64/MSYS2? and definitely Cygwin, but excluding Mac OS X)
 ldd -r src_executable/hello >& ldd.out
+
+# On Mac OS X
+otool -L src_executable/hello >& otool.out
+
 
 N.B. on at least one platform (Cygwin) the -r option (which checks for
 any undefined symbols) is not implemented yet (as of 2015-11) so you
