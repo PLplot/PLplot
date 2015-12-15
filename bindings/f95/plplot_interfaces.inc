@@ -1,0 +1,1429 @@
+!***********************************************************************
+!  plplot_interfaces.inc
+!
+!  Copyright (C) 2005-2015  Arjen Markus
+!  Copyright (C) 2006-2015 Alan W. Irwin
+!
+!  This file is part of PLplot.
+!
+!  PLplot is free software; you can redistribute it and/or modify
+!  it under the terms of the GNU Library General Public License as published
+!  by the Free Software Foundation; either version 2 of the License, or
+!  (at your option) any later version.
+!
+!  PLplot is distributed in the hope that it will be useful,
+!  but WITHOUT ANY WARRANTY; without even the implied warranty of
+!  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!  GNU Library General Public License for more details.
+!
+!  You should have received a copy of the GNU Library General Public License
+!  along with PLplot; if not, write to the Free Software
+!  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+!
+!
+!  This file defines the Fortran interfaces for the PLplot library.
+!  Limited to example x00f!
+!
+!***********************************************************************
+
+   !interface plenv
+   !    !
+   !    ! We can not use this binding via iso_c_binding directly, as the interface would
+   !    ! conflict with plenv_single/plenv_double which would force us to leave
+   !    ! out one of the two, depending on the selected precision. So use an interface block
+   !    ! locally to define the exact interface without aliasing the name. (See the implementation
+   !    ! of plenv_single/plenv_double)
+   !    !
+   !    !subroutine c_plenv( xmin, xmax, ymin, ymax, just, axis ) bind(c, name='c_plenv')
+   !    !    use iso_c_binding
+   !    !    include 'plplot_interface_private_types.inc'
+   !    !    implicit none
+   !    !    real(kind=private_plflt), value :: xmin, xmax, ymin, ymax
+   !    !    integer(kind=private_plint), value :: just, axis
+   !    !end subroutine c_plenv
+   !
+   !    module procedure plenv_impl
+   !end interface plenv
+
+    private :: matrix_to_c
+
+    interface plarc
+        module procedure plarc_log_impl
+        module procedure plarc_impl
+    end interface plarc
+    private :: plarc_impl
+
+    interface plbin
+        module procedure plbin_impl
+    end interface plbin
+    private :: plbin_impl
+
+    interface plbox
+        module procedure plbox_impl
+    end interface plbox
+    private :: plbox_impl
+
+    interface plbox3
+        module procedure plbox3_impl
+    end interface plbox3
+    private :: plbox3_impl
+
+    interface plcalc_world
+        module procedure plcalc_world_impl
+    end interface plcalc_world
+    private :: plcalc_world_impl
+
+    interface plcol1
+        module procedure plcol1_impl
+    end interface plcol1
+    private :: plcol1_impl
+
+    interface plenv
+        module procedure plenv_impl
+    end interface plenv
+    private :: plenv_impl
+
+    interface plerrx
+        module procedure plerrx_impl
+    end interface plerrx
+    private :: plerrx_impl
+
+    interface plerry
+        module procedure plerry_impl
+    end interface plerry
+    private :: plerry_impl
+
+    interface plfill
+        module procedure plfill_impl
+    end interface plfill
+    private :: plfill_impl
+
+    interface plfill3
+        module procedure plfill3_impl
+    end interface plfill3
+    private :: plfill3_impl
+
+    interface plgchr
+        module procedure plgchr_impl
+    end interface plgchr
+    private :: plgchr_impl
+
+    interface plgcmap1_range
+        module procedure plgcmap1_range_impl
+    end interface plgcmap1_range
+    private :: plgcmap1_range_impl
+
+    interface plgcol0a
+        module procedure plgcol0a_impl
+    end interface plgcol0a
+    private :: plgcol0a_impl
+
+    interface plgcolbga
+        module procedure plgcolbga_impl
+    end interface plgcolbga
+    private :: plgcolbga_impl
+
+    interface plgdidev
+        module procedure plgdidev_impl
+    end interface plgdidev
+    private :: plgdidev_impl
+
+    interface plgdiori
+        module procedure plgdiori_impl
+    end interface plgdiori
+    private :: plgdiori_impl
+
+    interface plgdiplt
+        module procedure plgdiplt_impl
+    end interface plgdiplt
+    private :: plgdiplt_impl
+
+    interface plgpage
+        module procedure plgpage_impl
+    end interface plgpage
+    private :: plgpage_impl
+
+    interface plgradient
+        module procedure plgradient_impl
+    end interface plgradient
+    private :: plgradient_impl
+
+    interface plgspa
+        module procedure plgspa_impl
+    end interface plgspa
+    private :: plgspa_impl
+
+    interface plgvpd
+        module procedure plgvpd_impl
+    end interface plgvpd
+    private :: plgvpd_impl
+
+    interface plgvpw
+        module procedure plgvpw_impl
+    end interface plgvpw
+    private :: plgvpw_impl
+
+    interface plhist
+        module procedure plhist_impl
+    end interface plhist
+    private :: plhist_impl
+
+    interface plhlsrgb
+        module procedure plhlsrgb_impl
+    end interface plhlsrgb
+    private :: plhlsrgb_impl
+
+    interface pljoin
+        module procedure pljoin_impl
+    end interface pljoin
+    private :: pljoin_impl
+
+    interface pllegend
+        module procedure pllegend_1_impl
+        module procedure pllegend_2_impl
+    end interface pllegend
+    private :: pllegend_1_impl
+
+    interface pllightsource
+        module procedure pllightsource_impl
+    end interface pllightsource
+    private :: pllightsource_impl
+
+    interface plline
+        module procedure plline_impl
+    end interface plline
+    private :: plline_impl
+
+    interface plline3
+        module procedure plline3_impl
+    end interface plline3
+    private :: plline3_impl
+
+    interface plmtex
+        module procedure plmtex_impl
+    end interface plmtex
+    private :: plmtex_impl
+
+    interface plpath
+        module procedure plpath_impl
+    end interface plpath
+    private :: plpath_impl
+
+    interface plpoin
+        module procedure plpoin_impl
+    end interface plpoin
+    private :: plpoin_impl
+
+    interface plpoin3
+        module procedure plpoin3_impl
+    end interface plpoin3
+    private :: plpoin3_impl
+
+    interface plpoly3
+        module procedure plpoly3_impl
+    end interface plpoly3
+    private :: plpoly3_impl
+
+    interface plptex
+        module procedure plptex_impl
+    end interface plptex
+    private :: plptex_impl
+
+    interface plrgbhls
+        module procedure plrgbhls_impl
+    end interface plrgbhls
+    private :: plrgbhls_impl
+
+    interface plschr
+        module procedure plschr_impl
+    end interface plschr
+    private :: plschr_impl
+
+    interface plscmap0a
+        module procedure plscmap0a_impl
+    end interface plscmap0a
+    private :: plscmap0a_impl
+
+    interface plscmap1a
+        module procedure plscmap1a_impl
+    end interface plscmap1a
+    private :: plscmap1a_impl
+
+    interface plscmap1l
+        module procedure plscmap1l_impl
+    end interface plscmap1l
+    private :: plscmap1l_impl
+
+    interface plscmap1la
+        module procedure plscmap1la_impl
+    end interface plscmap1la
+    private :: plscmap1la_impl
+
+    interface plscol0a
+        module procedure plscol0a_impl
+    end interface plscol0a
+    private :: plscol0a_impl
+
+    interface plsdidev
+        module procedure plsdidev_impl
+    end interface plsdidev
+    private :: plsdidev_impl
+
+    interface plsdimap
+        module procedure plsdimap_impl
+    end interface plsdimap
+    private :: plsdimap_impl
+
+    interface plstring
+        module procedure plstring_impl
+    end interface plstring
+    private :: plstring_impl
+
+    interface plsurf3d
+        module procedure plsurf3d_impl
+    end interface plsurf3d
+    private :: plsurf3d_impl
+
+    interface plsurf3dl
+        module procedure plsurf3dl_impl
+    end interface plsurf3dl
+    private :: plsurf3dl_impl
+
+    interface plsym
+        module procedure plsym_impl
+    end interface plsym
+    private :: plsym_impl
+
+    interface plvpor
+        module procedure plvpor_impl
+    end interface plvpor
+    private :: plvpor_impl
+
+    interface plw3d
+        module procedure plw3d_impl
+    end interface plw3d
+    private :: plw3d_impl
+
+    interface plwidth
+        module procedure plwidth_impl
+    end interface plwidth
+    private :: plwidth_impl
+
+    interface plwind
+        module procedure plwind_impl
+    end interface plwind
+    private :: plwind_impl
+
+
+contains
+
+subroutine matrix_to_c( array, carray, cadress )
+    real(kind=wp), dimension(:,:), intent(in) :: array
+    real(kind=private_plflt), dimension(:,:), allocatable, target, intent(out) :: carray
+    type(c_ptr), dimension(:), allocatable, intent(out) :: cadress
+
+    integer :: i
+
+    allocate( carray(size(array,2),size(array,1)) )
+    allocate( cadress(size(array,2)) )
+
+    carray = transpose( array )
+
+    do i = 1,size(array,2)
+        cadress(i) = c_loc(carray(1,i))
+    enddo
+end subroutine matrix_to_c
+
+subroutine plarc_log_impl( x, y, a, b, angle1, angle2, rotate, fill )
+   real(kind=wp), intent(in) :: x, y, a, b, angle1, angle2, rotate
+   logical, intent(in) :: fill
+
+   call plarc_impl( x, y, a, b, angle1, angle2, rotate, int( merge(1,0,fill), kind=private_plint ) )
+end subroutine plarc_log_impl
+
+subroutine plarc_impl( x, y, a, b, angle1, angle2, rotate, fill )
+   real(kind=wp), intent(in) :: x, y, a, b, angle1, angle2, rotate
+   integer, intent(in) :: fill
+
+   interface
+       subroutine c_plarc( x, y, a, b, angle1, angle2, rotate, fill ) bind(c,name='c_plarc')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: fill
+           real(kind=private_plflt), value :: x, y, a, b, angle1, angle2, rotate
+       end subroutine c_plarc
+   end interface
+
+   call c_plarc( real(x,kind=private_plflt), real(y,kind=private_plflt), real(a,kind=private_plflt), &
+                 real(b,kind=private_plflt), real(angle1,kind=private_plflt), real(angle2,kind=private_plflt), &
+                 real(rotate,kind=private_plflt), int(fill,kind=private_plint) )
+end subroutine plarc_impl
+
+subroutine plbin_impl( x, y, center )
+   real(kind=wp), dimension(:), intent(in) :: x, y
+   integer, intent(in) :: center
+
+   interface
+       subroutine c_plbin( sz, x, y, center ) bind(c,name='c_plbin')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: sz, center
+           real(kind=private_plflt), dimension(*), intent(in) :: x, y
+       end subroutine c_plbin
+   end interface
+
+   call c_plbin( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                 int(center,kind=private_plint) )
+end subroutine plbin_impl
+
+subroutine plbox_impl(xopt,xtick,nxsub,yopt,ytick,nysub)
+    real(kind=wp), intent(in) :: xtick, ytick
+    integer, intent(in) :: nxsub, nysub
+    character*(*), intent(in) :: xopt,yopt
+
+    interface
+        subroutine c_plbox(xopt,xtick,nxsub,yopt,ytick,nysub) bind(c,name='c_plbox')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: xtick, ytick
+            integer(kind=private_plint), value :: nxsub, nysub
+            character(len=1), dimension(*), intent(in) :: xopt, yopt
+        end subroutine c_plbox
+    end interface
+
+    call c_plbox( trim(xopt)//c_null_char, real(xtick,kind=private_plflt), int(nxsub,kind=private_plint), &
+                  trim(yopt)//c_null_char, real(ytick,kind=private_plflt), int(nysub,kind=private_plint) )
+end subroutine plbox_impl
+
+subroutine plbox3_impl(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub, &
+                       zopt,zlabel,ztick,nzsub)
+
+    real(kind=wp), intent(in) :: xtick, ytick, ztick
+    character*(*), intent(in) :: xopt, xlabel, yopt, ylabel, zopt, zlabel
+    integer, intent(in) :: nxsub, nysub, nzsub
+
+    interface
+        subroutine c_plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub, &
+                            zopt,zlabel,ztick,nzsub) bind(c,name='c_plbox3')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value    :: xtick, ytick, ztick
+            integer(kind=private_plint), value :: nxsub, nysub, nzsub
+            character(len=1), dimension(*), intent(in) :: xopt, yopt, zopt, xlabel, ylabel, zlabel
+        end subroutine c_plbox3
+    end interface
+
+  call c_plbox3( trim(xopt)//c_null_char, trim(xlabel)//c_null_char, real(xtick,kind=private_plflt), &
+                 int(nxsub,kind=private_plint),                                                      &
+                 trim(yopt)//c_null_char, trim(ylabel)//c_null_char, real(ytick,kind=private_plflt), &
+                 int(nysub,kind=private_plint),                                                      &
+                 trim(zopt)//c_null_char, trim(zlabel)//c_null_char, real(ztick,kind=private_plflt), &
+                 int(nzsub,kind=private_plint)                                                       )
+end subroutine plbox3_impl
+
+subroutine plcalc_world_impl( rx, ry, wx, wy, window )
+    real(kind=wp), intent(in) :: rx, ry
+    real(kind=wp), intent(out) :: wx, wy
+    integer, intent(out) :: window
+
+    real(kind=private_plflt) :: wxx, wyy
+    integer(kind=private_plint) :: windowout
+
+    interface
+        subroutine c_plcalc_world( rx, ry, wx, wy, window ) bind(c,name='c_plcalc_world')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), intent(in) :: window
+            real(kind=private_plflt), value :: rx, ry
+            real(kind=private_plflt), intent(out) :: wx, wy
+        end subroutine c_plcalc_world
+    end interface
+
+    call c_plcalc_world( real(rx,kind=private_plflt), real(ry,kind=private_plflt), wxx, wyy, windowout )
+    wx = wxx
+    wy = wyy
+    window = windowout
+end subroutine plcalc_world_impl
+
+subroutine plcol1_impl( col )
+    real(kind=wp), intent(in) :: col
+
+    interface
+        subroutine c_plcol1( col ) bind(c,name='c_plcol1')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: col
+        end subroutine c_plcol1
+    end interface
+
+    call c_plcol1( real(col,kind=private_plflt) )
+end subroutine plcol1_impl
+
+subroutine plenv_impl( xmin, xmax, ymin, ymax, just, axis )
+    real(kind=wp), intent(in)  :: xmin, xmax, ymin, ymax
+    integer, intent(in) :: just, axis
+
+    interface
+        subroutine c_plenv( xmin, xmax, ymin, ymax, just, axis ) bind(c, name='c_plenv')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: xmin, xmax, ymin, ymax
+            integer(kind=private_plint), value :: just, axis
+        end subroutine c_plenv
+    end interface
+
+    call c_plenv( real(xmin,private_plflt), real(xmax,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt), &
+                  int(just,private_plint), int(axis,private_plint) )
+end subroutine plenv_impl
+
+subroutine plerrx_impl( xmin, xmax, y )
+    real(kind=wp), intent(in) :: xmin, xmax
+    real(kind=wp), dimension(:), intent(in) :: y
+
+    interface
+        subroutine c_plerrx( n, xmin, xmax, y ) bind( c, name='c_plerrx')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n
+            real(kind=private_plflt), value :: xmin, xmax
+            real(kind=private_plflt), dimension(*), intent(in) :: y
+        end subroutine c_plerrx
+    end interface
+
+    call c_plerrx( size(y,kind=private_plint), real(xmin,private_plflt), real(xmax,private_plflt), real(y,private_plflt) )
+end subroutine plerrx_impl
+
+subroutine plerry_impl( x, ymin, ymax )
+    real(kind=wp), dimension(:), intent(in) :: x
+    real(kind=wp), intent(in) :: ymin, ymax
+
+    interface
+        subroutine c_plerry( n, x, ymin, ymax ) bind( c, name='c_plerry')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n
+            real(kind=private_plflt), dimension(*), intent(in) :: x
+            real(kind=private_plflt), value :: ymin, ymax
+        end subroutine c_plerry
+    end interface
+
+    call c_plerry( size(x,kind=private_plint), real(x,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt) )
+end subroutine plerry_impl
+
+subroutine plfill_impl( x, y )
+    real(kind=wp), dimension(:), intent(in) :: x, y
+
+    interface
+        subroutine c_plfill( n, x, y ) bind( c, name='c_plfill')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y
+        end subroutine c_plfill
+    end interface
+
+    call c_plfill( size(x,kind=private_plint), real(x,private_plflt), real(y,private_plflt) )
+end subroutine plfill_impl
+
+subroutine plfill3_impl( x, y, z )
+    real(kind=wp), dimension(:), intent(in) :: x, y, z
+
+    interface
+        subroutine c_plfill3( n, x, y, z ) bind( c, name='c_plfill3')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
+        end subroutine c_plfill3
+    end interface
+
+    call c_plfill3( size(x,kind=private_plint), real(x,private_plflt), real(y,private_plflt) , real(z,private_plflt) )
+end subroutine plfill3_impl
+
+subroutine plgchr_impl( chrdef, chrht )
+    real(kind=wp), intent(out) :: chrdef, chrht
+
+    real(kind=private_plflt) :: cchrdef, cchrht
+
+    interface
+       subroutine c_plgchr( chrdef, chrht ) bind(c,name='c_plgchr')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           real(kind=private_plflt), intent(out) :: chrdef, chrht
+       end subroutine c_plgchr
+   end interface
+
+   call c_plgchr( cchrdef, cchrht )
+   chrdef = cchrdef
+   chrht  = cchrht
+end subroutine plgchr_impl
+
+subroutine plgcmap1_range_impl( min_color, max_color )
+    real(kind=wp), intent(out) :: min_color, max_color
+
+    real(kind=private_plflt) :: mmin_color, mmax_color
+
+    interface
+        subroutine c_plgcmap1_range( min_color, max_color ) bind(c,name='c_plgcmap1_range')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(out) :: min_color, max_color
+        end subroutine c_plgcmap1_range
+    end interface
+
+    call c_plgcmap1_range( mmin_color, mmax_color )
+    min_color = mmin_color
+    max_color = mmax_color
+end subroutine plgcmap1_range_impl
+
+subroutine plgcol0a_impl( icol, r, g, b, a )
+    integer, intent(in) :: icol
+    integer, intent(out) :: r, g, b
+    real(kind=wp), intent(out) :: a
+
+    integer(kind=private_plint) :: rr, gg, bb
+    real(kind=private_plflt) :: aa
+
+    interface
+        subroutine c_plgcol0a( icol, r, g, b, a ) bind(c,name='c_plgcol0a')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: icol
+            integer(kind=private_plint)        :: r, g, b
+            real(kind=private_plflt)           :: a
+        end subroutine c_plgcol0a
+    end interface
+
+    call c_plgcol0a( int(icol,kind=private_plint), rr, gg, bb, aa )
+    r = rr
+    g = gg
+    b = bb
+    a = aa
+end subroutine plgcol0a_impl
+
+subroutine plgcolbga_impl( r, g, b, a )
+    integer, intent(out) :: r, g, b
+    real(kind=wp), intent(out) :: a
+
+    integer(kind=private_plint) :: rr, gg, bb
+    real(kind=private_plflt)    :: aa
+
+    interface
+        subroutine c_plgcolbga( r, g, b, a ) bind(c,name='c_plgcolbga')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), intent(out) :: r, g, b
+            real(kind=private_plflt), intent(out) :: a
+        end subroutine c_plgcolbga
+    end interface
+
+    call c_plgcolbga( rr, gg, bb, aa )
+    r = rr
+    g = gg
+    b = bb
+    a = aa
+end subroutine plgcolbga_impl
+
+subroutine plgdidev_impl( mar, aspect, jx, jy )
+    real(kind=wp), intent(out) :: mar, aspect, jx, jy
+
+    real(kind=private_plflt) :: mmar, aaspect, jjx, jjy
+
+    interface
+        subroutine c_plgdidev( mar, aspect, jx, jy ) bind(c,name='c_plgdidev')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(out) :: mar, aspect, jx, jy
+        end subroutine c_plgdidev
+    end interface
+
+    call c_plgdidev( mmar, aaspect, jjx, jjy )
+    mar    = mmar
+    aspect = aaspect
+    jx     = jjx
+    jy     = jjy
+end subroutine plgdidev_impl
+
+subroutine plgdiori_impl( rot )
+    real(kind=wp), intent(out) :: rot
+
+    real(kind=private_plflt) :: rrot
+
+    interface
+        subroutine c_plgdiori( rot ) bind(c,name='c_plgdiori')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(out) :: rot
+        end subroutine c_plgdiori
+    end interface
+
+    call c_plgdiori( rrot )
+    rot = rrot
+end subroutine plgdiori_impl
+
+subroutine plgdiplt_impl( xmin, xmax, ymin, ymax )
+    real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
+
+    real(kind=private_plflt)  :: xxmin, xxmax, yymin, yymax
+
+    interface
+        subroutine c_plgdiplt( xmin, xmax, ymin, ymax ) bind(c,name='c_plgdiplt')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(out) :: xmin, xmax, ymin, ymax
+        end subroutine c_plgdiplt
+    end interface
+
+    call c_plgdiplt( xxmin, xxmax, yymin, yymax )
+    xmin = xxmin
+    xmax = xxmax
+    ymin = yymin
+    ymax = yymax
+end subroutine plgdiplt_impl
+
+subroutine plgpage_impl( xpmm, ypmm, xwid, ywid, xoff, yoff )
+    real(kind=wp), intent(out) :: xpmm, ypmm
+    integer, intent(out) :: xwid, ywid, xoff, yoff
+
+    real(kind=private_plflt) :: xxpmm, yypmm
+    integer(kind=private_plint) :: xxwid, yywid, xxoff, yyoff
+    interface
+        subroutine c_plgpage( xpmm, ypmm, xwid, ywid, xoff, yoff ) bind(c,name='c_plgpage')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(out) :: xpmm, ypmm
+            integer(kind=private_plint), intent(out) :: xwid, ywid, xoff, yoff
+        end subroutine c_plgpage
+    end interface
+
+    call c_plgpage( xxpmm, yypmm, xxwid, yywid, xxoff, yyoff )
+    xpmm = xxpmm
+    ypmm = yypmm
+    xwid = xxwid
+    ywid = yywid
+    xoff = xxoff
+    yoff = yyoff
+end subroutine plgpage_impl
+
+subroutine plgradient_impl( x, y, angle )
+    real(kind=wp), dimension(:), intent(in) :: x, y
+    real(kind=wp), intent(in) :: angle
+
+    interface
+       subroutine c_plgradient( sz, x, y, angle ) bind(c,name='c_plgradient')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: sz
+           real(kind=private_plflt), dimension(*), intent(in) :: x, y
+           real(kind=private_plflt), value        :: angle
+       end subroutine c_plgradient
+    end interface
+
+    call c_plgradient( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                       real(angle,kind=private_plflt) )
+end subroutine plgradient_impl
+
+subroutine plgspa_impl( xmin, xmax, ymin, ymax )
+    real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
+
+    real(kind=private_plflt) :: xxmin, xxmax, yymin, yymax
+
+    interface
+        subroutine c_plgspa( xmin, xmax, ymin, ymax ) bind(c,name='c_plgspa')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt) :: xmin, xmax, ymin, ymax
+        end subroutine c_plgspa
+    end interface
+
+    call c_plgspa( xxmin, xxmax, yymin, yymax )
+    xmin = xxmin
+    xmax = xxmax
+    ymin = yymin
+    ymax = yymax
+end subroutine plgspa_impl
+
+subroutine plgvpd_impl( xmin, xmax, ymin, ymax )
+    real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
+
+    real(kind=private_plflt)  :: xxmin, xxmax, yymin, yymax
+
+    interface
+        subroutine c_plgvpd( xmin, xmax, ymin, ymax ) bind(c,name='c_plgvpd')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(out) :: xmin, xmax, ymin, ymax
+        end subroutine c_plgvpd
+    end interface
+
+    call c_plgvpd( xxmin, xxmax, yymin, yymax )
+    xmin = xxmin
+    xmax = xxmax
+    ymin = yymin
+    ymax = yymax
+end subroutine plgvpd_impl
+
+subroutine plgvpw_impl( xmin, xmax, ymin, ymax )
+    real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
+
+    real(kind=private_plflt)  :: xxmin, xxmax, yymin, yymax
+
+    interface
+        subroutine c_plgvpw( xmin, xmax, ymin, ymax ) bind(c,name='c_plgvpw')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(out) :: xmin, xmax, ymin, ymax
+        end subroutine c_plgvpw
+    end interface
+
+    call c_plgvpw( xxmin, xxmax, yymin, yymax )
+    xmin = xxmin
+    xmax = xxmax
+    ymin = yymin
+    ymax = yymax
+end subroutine plgvpw_impl
+
+subroutine plhist_impl( data, datmin, datmax, nbin, oldwin )
+    real(kind=wp), dimension(:), intent(in) :: data
+    real(kind=wp), intent(in) :: datmin, datmax
+    integer, intent(in) :: nbin, oldwin
+
+    interface
+        subroutine c_plhist( n, data, datmin, datmax, nbin, oldwin ) bind(c,name='c_plhist')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), dimension(*), intent(in) :: data
+            real(kind=private_plflt), value :: datmin, datmax
+            integer(kind=private_plint), value :: n, nbin, oldwin
+        end subroutine c_plhist
+    end interface
+
+   call c_plhist( size(data,kind=private_plint), real(data,kind=private_plflt),     &
+                  real(datmin,kind=private_plflt), real(datmax,kind=private_plflt), &
+                  int(nbin,kind=private_plint), int(oldwin,kind=private_plint) )
+end subroutine plhist_impl
+
+subroutine plhlsrgb_impl( h, l, s, r, g, b )
+    real(kind=wp), intent(in) :: h, l, s
+    real(kind=wp), intent(out) :: r, g, b
+
+    real(kind=private_plflt) :: rr, gg, bb
+
+    interface
+        subroutine c_plhlsrgb( h, l, s, r, g, b ) bind(c,name='c_plhlsrgb')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: h, l, s
+            real(kind=private_plflt), intent(out) :: r, g, b
+        end subroutine c_plhlsrgb
+    end interface
+
+    call c_plhlsrgb( real(h,kind=private_plflt), real(l,kind=private_plflt), real(s,kind=private_plflt), &
+                     rr, gg, bb )
+    r = rr
+    b = bb
+    g = gg
+end subroutine plhlsrgb_impl
+
+subroutine pljoin_impl( x1, y1, x2, y2 )
+    real(kind=wp), intent(in) :: x1, y1, x2, y2
+
+    interface
+        subroutine c_pljoin( x1, y1, x2, y2 ) bind(c,name='c_pljoin')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: x1, y1, x2, y2
+        end subroutine c_pljoin
+    end interface
+
+    call c_pljoin( real(x1,kind=private_plflt), real(y1,kind=private_plflt), &
+                   real(x2,kind=private_plflt), real(y2,kind=private_plflt) )
+end subroutine pljoin_impl
+
+subroutine pllegend_1_impl( legend_width, legend_height, &
+                            opt, position, x, y, &
+                            plot_width, bg_color, bb_color, bb_style, &
+                            nrow, ncolumn, nlegend, opt_array, &
+                            text_offset, text_scale, text_spacing, &
+                            text_justification, text_colors, text, &
+                            box_colors, box_patterns, box_scales, &
+                            box_line_widths, &
+                            line_colors, line_styles, line_widths, &
+                            symbol_colors, symbol_scales, &
+                            symbol_numbers, symbols )
+
+    real(kind=wp), intent(in) :: legend_width, legend_height, plot_width, x, y
+    real(kind=wp), intent(in) :: text_offset, text_scale, text_spacing, text_justification
+    integer, intent(in) :: position, opt, bg_color, bb_color, bb_style
+    integer, intent(in) :: nrow, ncolumn, nlegend
+
+    character(len=*), dimension(:), intent(in) :: text, symbols
+
+    integer, dimension(:), intent(in) :: opt_array, text_colors, box_colors
+    integer, dimension(:), intent(in) :: box_patterns
+    real(kind=wp), dimension(:), intent(in) :: box_line_widths
+    integer, dimension(:), intent(in) :: line_colors, line_styles
+    real(kind=wp), dimension(:), intent(in) :: line_widths
+    integer, dimension(:), intent(in) :: symbol_colors, symbol_numbers
+    real(kind=wp), dimension(:), intent(in) :: box_scales, symbol_scales
+
+    ! TODO!
+end subroutine pllegend_1_impl
+
+subroutine pllegend_2_impl( legend_width, legend_height, &
+                            opt, position, x, y, &
+                            plot_width, bg_color, bb_color, bb_style, &
+                            nrow, ncolumn, opt_array, &
+                            text_offset, text_scale, text_spacing, &
+                            text_justification, text_colors, text, &
+                            box_colors, box_patterns, box_scales, &
+                            box_line_widths, &
+                            line_colors, line_styles, line_widths, &
+                            symbol_colors, symbol_scales, &
+                            symbol_numbers, symbols )
+    real(kind=wp), intent(in) :: legend_width, legend_height, plot_width, x, y
+    real(kind=wp), intent(in) :: text_offset, text_scale, text_spacing, text_justification
+    integer, intent(in) :: position, opt, bg_color, bb_color, bb_style
+    integer, intent(in) :: nrow, ncolumn
+
+    character(len=*), dimension(:), intent(in) :: text, symbols
+
+    integer, dimension(:), intent(in) :: opt_array, text_colors, box_colors
+    integer, dimension(:), intent(in) :: box_patterns
+    real(kind=wp), dimension(:), intent(in) :: box_line_widths
+    integer, dimension(:), intent(in) :: line_colors, line_styles
+    real(kind=wp), dimension(:), intent(in) :: line_widths
+    integer, dimension(:), intent(in) :: symbol_colors, symbol_numbers
+    real(kind=wp), dimension(:), intent(in) :: box_scales, symbol_scales
+
+    integer(kind=private_plint) :: nlegend
+
+    !
+    ! Determine number of legend entries
+    !
+    nlegend = min( size(opt_array), size(text) )
+
+    call pllegend_1_impl( legend_width, legend_height, &
+                          opt, position, x, y, &
+                          plot_width, bg_color, bb_color, bb_style, &
+                          nrow, ncolumn, nlegend, opt_array, &
+                          text_offset, text_scale, text_spacing, &
+                          text_justification, text_colors, text, &
+                          box_colors, box_patterns, box_scales, &
+                          box_line_widths, &
+                          line_colors, line_styles, line_widths, &
+                          symbol_colors, symbol_scales, &
+                          symbol_numbers, symbols )
+
+end subroutine pllegend_2_impl
+
+subroutine pllightsource_impl( x, y, z )
+    real(kind=wp), intent(in) :: x, y, z
+
+    interface
+        subroutine c_pllightsource( x, y, z ) bind(c,name='c_pllightsource')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: x, y, z
+        end subroutine c_pllightsource
+    end interface
+
+    call c_pllightsource( real(x,kind=private_plflt), real(y,kind=private_plflt), real(z,kind=private_plflt) )
+end subroutine pllightsource_impl
+
+subroutine plline_impl( x, y )
+    real(kind=wp), dimension(:), intent(in) :: x, y
+
+    interface
+        subroutine c_plline( sz, x, y ) bind(c,name='c_plline')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: sz
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y
+        end subroutine c_plline
+    end interface
+
+    call c_plline( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt) )
+end subroutine plline_impl
+
+subroutine plline3_impl( x, y, z )
+   real(kind=wp), dimension(:), intent(in) :: x, y, z
+
+   interface
+       subroutine c_plline3( sz, x, y, z ) bind(c,name='c_plline3')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: sz
+           real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
+       end subroutine c_plline3
+   end interface
+
+   call c_plline3( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                   real(z,kind=private_plflt) )
+end subroutine plline3_impl
+
+subroutine plmtex_impl( side, disp, pos, xjust, text )
+    real(kind=wp), intent(in) :: disp, pos, xjust
+    character*(*), intent(in) :: side, text
+
+    interface
+        subroutine c_plmtex( side, disp, pos, xjust, text ) bind(c,name='c_plmtex')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            character(len=1), dimension(*), intent(in) :: side, text
+            real(kind=private_plflt), value :: disp, pos, xjust
+        end subroutine c_plmtex
+    end interface
+
+    call c_plmtex( trim(side)//c_null_char, real(disp,kind=private_plflt), real(pos,kind=private_plflt), &
+                   real(xjust,kind=private_plflt), trim(text)//c_null_char )
+end subroutine plmtex_impl
+
+subroutine plpath_impl( n, x1, y1, x2, y2 )
+    integer, intent(in) :: n
+    real(kind=wp), intent(in) :: x1, y1, x2, y2
+
+    interface
+        subroutine c_plpath( n, x1, y1, x2, y2 ) bind(c,name='c_plpath')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n
+            real(kind=private_plflt), value :: x1, y1, x2, y2
+        end subroutine c_plpath
+    end interface
+
+    call c_plpath( int(n,kind=private_plint), real(x1,kind=private_plflt), &
+                   real(y1,kind=private_plflt), real(x2,kind=private_plflt), real(y2,kind=private_plflt) )
+end subroutine plpath_impl
+
+subroutine plpoin_impl( x, y, code )
+    integer, intent(in) :: code
+    real(kind=wp), dimension(:), intent(in) :: x, y
+
+      interface
+          subroutine c_plpoin( n, x, y, code ) bind(c,name='c_plpoin')
+              implicit none
+              include 'plplot_interface_private_types.inc'
+              integer(kind=private_plint), value :: n, code
+              real(kind=private_plflt), dimension(*), intent(in) :: x, y
+          end subroutine c_plpoin
+      end interface
+
+     call c_plpoin( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                    int(code,kind=private_plint) )
+end subroutine plpoin_impl
+
+subroutine plpoin3_impl( x, y, z, code )
+    integer, intent(in) :: code
+    real(kind=wp), dimension(:), intent(in) :: x, y, z
+
+    interface
+        subroutine c_plpoin3( n, x, y, z, code ) bind(c,name='c_plpoin3')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n, code
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
+        end subroutine c_plpoin3
+    end interface
+
+   call c_plpoin3( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                   real(z,kind=private_plflt), int(code,kind=private_plint) )
+end subroutine plpoin3_impl
+
+subroutine plpoly3_impl( x, y, z, draw, ifcc )
+    logical, intent(in) :: ifcc
+    logical, dimension(:), intent(in) :: draw
+    real(kind=wp), dimension(:), intent(in) :: x, y, z
+
+    integer(kind=private_plint), dimension(size(draw)) :: idraw
+    integer(kind=private_plint)                        :: iifcc
+
+    interface
+        subroutine c_plpoly3( n, x, y, z, draw, ifcc ) bind(c,name='c_plpoly3')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n, ifcc
+            integer(kind=private_plint), dimension(*), intent(in) :: draw
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
+        end subroutine c_plpoly3
+    end interface
+
+    iifcc = merge(1,0,ifcc)
+    idraw = merge(1,0,draw)
+   call c_plpoly3( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                   real(z,kind=private_plflt), idraw, iifcc )
+end subroutine plpoly3_impl
+
+subroutine plptex_impl( x, y, dx, dy, xjust, text )
+
+    real(kind=wp), intent(in) :: x, y, dx, dy, xjust
+    character*(*), intent(in) :: text
+
+    interface
+        subroutine c_plptex( x, y, dx, dy, xjust, text ) bind(c,name='c_plptex')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            character(len=1), dimension(*), intent(in) :: text
+            real(kind=private_plflt), value :: x, y, dx, dy, xjust
+        end subroutine c_plptex
+    end interface
+
+    call c_plptex( real(x,kind=private_plflt), real(y,kind=private_plflt), real(dx,kind=private_plflt), &
+                   real(dy,kind=private_plflt), real(xjust,kind=private_plflt), trim(text)//c_null_char)
+
+end subroutine plptex_impl
+
+subroutine plrgbhls_impl( r, g, b, h, l, s )
+    real(kind=wp), intent(in) :: r, g, b
+    real(kind=wp), intent(out) :: h, l, s
+
+    real(kind=private_plflt) :: hh, ll, ss
+
+    interface
+        subroutine c_plrgbhls( r, g, b, h, l, s ) bind(c,name='c_plrgbhls')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: r, g, b
+            real(kind=private_plflt), intent(out) :: h, l, s
+        end subroutine c_plrgbhls
+    end interface
+
+    call c_plrgbhls( real(r,kind=private_plflt), real(g,kind=private_plflt), real(b,kind=private_plflt), &
+                     hh, ll, ss )
+    h = hh
+    l = ll
+    s = ss
+end subroutine plrgbhls_impl
+
+subroutine plscmap0a_impl( r, g, b, a )
+    integer, dimension(:), intent(in) :: r, g, b
+    real(kind=wp), dimension(:), intent(in) :: a
+
+    interface
+        subroutine c_plscmap0a( r, g, b, a, n ) bind(c,name='c_plscmap0a')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), dimension(*), intent(in) :: r, g, b
+            real(kind=private_plflt), dimension(*), intent(in) :: a
+            integer(kind=private_plint), value :: n
+        end subroutine c_plscmap0a
+    end interface
+
+    call c_plscmap0a( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
+                      real(a,kind=private_plflt), size(r,kind=private_plint) )
+end subroutine plscmap0a_impl
+
+subroutine plscmap1a_impl( r, g, b, a )
+    integer, dimension(:), intent(in) :: r, g, b
+    real(kind=wp), dimension(:), intent(in) :: a
+
+    interface
+        subroutine c_plscmap1a( r, g, b, a, n ) bind(c,name='c_plscmap1a')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), dimension(*), intent(in) :: r, g, b
+            real(kind=private_plflt), dimension(*), intent(in) :: a
+            integer(kind=private_plint), value :: n
+        end subroutine c_plscmap1a
+    end interface
+
+    call c_plscmap1a( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
+                      real(a,kind=private_plflt), size(r,kind=private_plint) )
+end subroutine plscmap1a_impl
+
+subroutine plscmap1la_impl( rgbtype, intensity, coord1, coord2, coord3, alpha, alt_hue_path)
+    logical, intent(in) :: rgbtype
+    real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3, alpha
+    logical, dimension(:), intent(in) :: alt_hue_path
+
+    integer(kind=private_plint), dimension(size(alt_hue_path)) :: ialt_hue_path
+
+    interface
+        subroutine c_plscmap1la( type, n, intensity, coord1, coord2, coord3, alpha, alt_hue_path ) bind(c,name='c_plscmap1la')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3, alpha
+            integer(kind=private_plint), dimension(*), intent(in) :: alt_hue_path
+            integer(kind=private_plint), value :: type, n
+        end subroutine c_plscmap1la
+    end interface
+
+   ialt_hue_path = merge(1,0,alt_hue_path)
+   call c_plscmap1la( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+                      real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), real(coord2,kind=private_plflt), &
+                      real(coord3,kind=private_plflt), real(alpha,kind=private_plflt), ialt_hue_path )
+end subroutine plscmap1la_impl
+
+subroutine plscol0a_impl( icol, r, g, b, a )
+    integer, intent(in) :: icol, r, g, b
+    real(kind=wp), intent(in) :: a
+
+    interface
+        subroutine c_plscol0a( icol, r, g, b, a ) bind(c,name='c_plscol0a')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: icol, r, g, b
+            real(kind=private_plflt), value :: a
+        end subroutine c_plscol0a
+    end interface
+
+    call c_plscol0a( int(icol,kind=private_plint), int(r,kind=private_plint), int(g,kind=private_plint), &
+                     int(b,kind=private_plint), real(a,kind=private_plflt) )
+end subroutine plscol0a_impl
+
+subroutine plscolbga_impl( r, g, b, a )
+    integer, intent(in) :: r, g, b
+    real(kind=wp), intent(in) :: a
+
+    interface
+        subroutine c_plscolbga( r, g, b, a ) bind(c,name='c_plscolbga')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: r, g, b
+            real(kind=private_plflt), value :: a
+        end subroutine c_plscolbga
+    end interface
+
+    call c_plscolbga( int(r,kind=private_plint), int(g,kind=private_plint), &
+                      int(b,kind=private_plint), real(a,kind=private_plflt) )
+end subroutine plscolbga_impl
+
+subroutine plschr_impl( chrdef, chrht )
+    real(kind=wp), intent(in) :: chrdef, chrht
+
+    interface
+        subroutine c_plschr( chrdef, chrht ) bind(c,name='c_plschr')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: chrdef, chrht
+        end subroutine c_plschr
+    end interface
+
+    call c_plschr( real(chrdef,kind=private_plflt), real(chrht,kind=private_plflt) )
+end subroutine plschr_impl
+
+subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_path)
+    logical, intent(in) :: rgbtype
+    real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3
+    logical, dimension(:), intent(in), optional :: alt_hue_path
+
+    integer :: i
+    integer(kind=private_plint), dimension(:), allocatable, target :: ialt_hue_path
+
+    interface
+        subroutine c_plscmap1l( type, npts, intensity, coord1, coord2, coord3, alt_hue_path ) bind(c,name='c_plscmap1l')
+            use iso_c_binding
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: type, npts
+            real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3
+            !integer(kind=private_plint), dimension(*), intent(in) :: alt_hue_path
+            type(c_ptr), value :: alt_hue_path
+        end subroutine c_plscmap1l
+    end interface
+
+    if ( present(alt_hue_path) ) then
+        allocate( ialt_hue_path(size(alt_hue_path)) )
+        ialt_hue_path = merge(1,0,alt_hue_path)
+
+        call c_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+                          real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
+                          real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
+                          c_loc(ialt_hue_path) )
+    else
+        call c_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+                          real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
+                          real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
+                          c_null_ptr )
+    endif
+end subroutine plscmap1l_impl
+
+subroutine plsdidev_impl( mar, aspect, jx, jy )
+    real(kind=wp), intent(in) :: mar, aspect, jx, jy
+
+    interface
+        subroutine c_plsdidev( mar, aspect, jx, jy ) bind(c,name='c_plsdidev')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: mar, aspect, jx, jy
+        end subroutine c_plsdidev
+    end interface
+
+    call c_plsdidev( real(mar,kind=private_plflt), real(aspect,kind=private_plflt), &
+                     real(jx,kind=private_plflt), real(jy,kind=private_plflt) )
+end subroutine plsdidev_impl
+
+subroutine plsdimap_impl( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm )
+    real(kind=wp), intent(in) :: dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm
+
+    interface
+        subroutine c_plsdimap( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm ) bind(c,name='c_plsdimap')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm
+        end subroutine c_plsdimap
+    end interface
+
+    call c_plsdimap( real(dimxmi,kind=private_plflt), real(dimxmax,kind=private_plflt), &
+                     real(diymin,kind=private_plflt), real(dimymax,kind=private_plflt), &
+                     real(dimxpmm,kind=private_plflt), real(diypmm,kind=private_plflt) )
+end subroutine plsdimap_impl
+
+subroutine plstring_impl( x, y, string )
+
+   real(kind=wp), intent(in) :: x(:), y(:)
+   character(len=*), intent(in) :: string
+
+   interface
+       subroutine c_plstring( n, x, y, string ) bind(c,name='c_plstring')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: n
+           real(kind=private_plflt), dimension(*), intent(in) :: x, y
+           character(len=1), dimension(*), intent(in) :: string
+       end subroutine c_plstring
+   end interface
+
+   call c_plstring( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                    trim(string//c_null_char) )
+end subroutine plstring_impl
+
+subroutine plsurf3d_impl( x, y, z, opt, clevel )
+    integer, intent(in) :: opt
+    real(kind=wp), dimension(:), intent(in) :: x, y, clevel
+    real(kind=wp), dimension(:,:), intent(in) :: z
+
+    real(kind=private_plflt), dimension(:,:), allocatable :: zz
+    type(c_ptr), dimension(:), allocatable :: zadress
+
+    interface
+        subroutine c_plsurf3d( x, y, zadress, nx, ny, opt, clevel, nlevel, lx ) bind(c,name='c_plsurf3d')
+            use iso_c_binding
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: nx, ny, opt, nlevel, lx
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
+            type(c_ptr), dimension(*), intent(in) :: zadress
+        end subroutine c_plsurf3d
+    end interface
+
+    call matrix_to_c( z, zz, zadress )
+
+    call c_plsurf3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress,  &
+                     size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+                     real(clevel,kind=private_plflt), size(clevel,kind=private_plint), size(x,kind=private_plint) )
+
+end subroutine plsurf3d_impl
+
+subroutine plsurf3dl_impl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin, indexymax )
+    integer, intent(in) :: opt
+    real(kind=wp), dimension(:), intent(in) :: x, y, clevel
+    real(kind=wp), dimension(:,:), intent(in) :: z
+    integer, intent(in) :: indexxmin, indexxmax
+    integer, dimension(:), intent(in) :: indexymin, indexymax
+
+    real(kind=private_plflt), dimension(:,:), allocatable :: zz
+    type(c_ptr), dimension(:), allocatable :: zadress
+
+    interface
+        subroutine c_plsurf3dl( x, y, zadress, nx, ny, opt, clevel, nlevel, &
+                                indexxmin, indexxmax, indexymin, indexymax ) bind(c,name='c_plsurf3dl')
+            use iso_c_binding
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: nx, ny, opt, nlevel, indexxmin, indexxmax
+            integer(kind=private_plint), dimension(*), intent(in) :: indexymin, indexymax
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
+            type(c_ptr), dimension(*), intent(in) :: zadress
+        end subroutine c_plsurf3dl
+    end interface
+
+    call matrix_to_c( z, zz, zadress )
+
+    call c_plsurf3dl( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress, &
+                      size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+                      real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
+                      int(indexxmin-1,kind=private_plint), int(indexxmax-1,kind=private_plint), &
+                      int(indexymin-1,kind=private_plint), int(indexymax-1,kind=private_plint) )
+
+end subroutine plsurf3dl_impl
+
+subroutine plsym_impl( x, y, code )
+    integer, intent(in) :: code
+    real(kind=wp), dimension(:), intent(in) :: x, y
+
+    interface
+        subroutine c_plsym( n, x, y, code ) bind(c,name='c_plsym')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: n, code
+            real(kind=private_plflt), dimension(*), intent(in) :: x, y
+        end subroutine c_plsym
+    end interface
+
+    call c_plsym( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+                  int(code,kind=private_plint) )
+end subroutine plsym_impl
+
+subroutine plvpor_impl( xmin, xmax, ymin, ymax )
+    real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
+
+    interface
+        subroutine c_plvpor( xmin, xmax, ymin, ymax ) bind(c,name='c_plvpor')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: xmin, xmax, ymin, ymax
+        end subroutine c_plvpor
+    end interface
+
+    call c_plvpor( real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
+                   real(ymin,kind=private_plflt), real(ymax,kind=private_plflt)  )
+end subroutine plvpor_impl
+
+subroutine plw3d_impl( basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az )
+    real(kind=wp), intent(in) :: basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az
+
+    interface
+        subroutine c_plw3d( basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az ) bind(c,name='c_plw3d')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az
+        end subroutine c_plw3d
+    end interface
+
+    call c_plw3d( real(basex,kind=private_plflt), real(basey,kind=private_plflt), real(height,kind=private_plflt), &
+                  real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), real(ymin,kind=private_plflt),     &
+                  real(ymax,kind=private_plflt), real(zmin,kind=private_plflt), real(zmax,kind=private_plflt),     &
+                  real(alt,kind=private_plflt), real(az,kind=private_plflt) )
+end subroutine plw3d_impl
+
+subroutine plwidth_impl( width )
+    real(kind=wp), intent(in) :: width
+
+    interface
+        subroutine c_plwidth( width ) bind(c,name='c_plwidth')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: width
+        end subroutine c_plwidth
+    end interface
+
+    call c_plwidth( real(width,kind=private_plflt) )
+end subroutine plwidth_impl
+
+subroutine plwind_impl( xmin, xmax, ymin, ymax )
+    real(kind=wp) :: xmin, xmax, ymin, ymax
+
+    interface
+        subroutine c_plwind( xmin, xmax, ymin, ymax ) bind(c,name='c_plwind')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: xmin, xmax, ymin, ymax
+        end subroutine c_plwind
+    end interface
+
+    call c_plwind( real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
+                   real(ymin,kind=private_plflt), real(ymax,kind=private_plflt) )
+end subroutine plwind_impl
+
+
