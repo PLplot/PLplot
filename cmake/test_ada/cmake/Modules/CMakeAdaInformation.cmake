@@ -267,21 +267,34 @@ include(CMakeCommonLanguageInclude)
 # create an Ada shared library
 if(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
   if(APPLE)
-    # Temporary fixup for one user's Ada/Mac OS X problems when using the
-    # the 4.2 version of the http://macada.org/ version of the GNAT compiler.
+    # Ada adaptation of the special treatment of
+    # CMAKE_CXX_CREATE_SHARED_LIBRARY in Modules/Platform/Darwin.cmake
+    # where that special treatment has been invariant from CMake-3.0.2
+    # to at least CMake-3.4.0.
     set(CMAKE_Ada_CREATE_SHARED_LIBRARY
-      "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES> -lgcc_s.1"
+      "<CMAKE_Ada_COMPILER> <LANGUAGE_COMPILE_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <LINK_FLAGS> -o <TARGET> <SONAME_FLAG> <TARGET_INSTALLNAME_DIR><TARGET_SONAME> <OBJECTS> <LINK_LIBRARIES>"
       )
   else(APPLE)
+    # Follow CXX generic.
     set(CMAKE_Ada_CREATE_SHARED_LIBRARY
       "<CMAKE_Ada_COMPILER> <CMAKE_SHARED_LIBRARY_Ada_FLAGS> <LANGUAGE_COMPILE_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_Ada_FLAGS> <CMAKE_SHARED_LIBRARY_SONAME_Ada_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
       )
   endif(APPLE)
 endif(NOT CMAKE_Ada_CREATE_SHARED_LIBRARY)
 
-# create an Ada shared module copy the shared library rule by default
 if(NOT CMAKE_Ada_CREATE_SHARED_MODULE)
-  set(CMAKE_Ada_CREATE_SHARED_MODULE ${CMAKE_Ada_CREATE_SHARED_LIBRARY})
+  if(APPLE)
+    # Ada adaptation of the special treatment of
+    # CMAKE_CXX_CREATE_SHARED_MODULE in Modules/Platform/Darwin.cmake
+    # where that special treatment has been invariant from CMake-3.0.2
+    # to at least CMake-3.4.0.
+    set(CMAKE_Ada_CREATE_SHARED_MODULE
+      "<CMAKE_Ada_COMPILER> <LANGUAGE_COMPILE_FLAGS> <CMAKE_SHARED_MODULE_CREATE_Ada_FLAGS> <LINK_FLAGS> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>"
+      )
+  else(APPLE)
+    # Follow CXX generic which is to create an Ada shared module like an Ada shared library
+    set(CMAKE_Ada_CREATE_SHARED_MODULE ${CMAKE_Ada_CREATE_SHARED_LIBRARY})
+  endif(APPLE)
 endif()
 
 # create an Ada static library
