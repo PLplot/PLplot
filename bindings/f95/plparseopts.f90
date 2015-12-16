@@ -26,7 +26,7 @@
       character (len=maxlen), dimension(0:maxargs) :: arg
 
       interface
-          subroutine f_plparseopts( nargs, arg, mode, length ) bind(c,name='f_plparseopts')
+          subroutine f_plparseopts( nargs, arg, mode, length ) bind(c,name='c_plparseopts')
               implicit none
               include 'plplot_interface_private_types.inc'
               integer(kind=private_plint), value :: nargs, mode, length

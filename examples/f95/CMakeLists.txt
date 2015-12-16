@@ -134,6 +134,9 @@ endif(CORE_BUILD)
 if(BUILD_TEST)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_f95)
+  # Temporary unless and until plplotf95c is required again by the new fortran binding
+  #set(fortran_library_targets plplotf95 plplotf95c plplot)
+  set(fortran_library_targets plplotf95 plplot)
   foreach(STRING_INDEX ${f95_STRING_INDICES})
     # Need unique target name
     add_executable(x${STRING_INDEX}f95 x${STRING_INDEX}f.f90)
@@ -141,13 +144,13 @@ if(BUILD_TEST)
       x${STRING_INDEX}f95 PROPERTIES
       OUTPUT_NAME x${STRING_INDEX}f
       )
-    target_link_libraries(x${STRING_INDEX}f95 plf95demolib plplotf95 plplotf95c)
+    target_link_libraries(x${STRING_INDEX}f95 plf95demolib ${fortran_library_targets})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_f95 x${STRING_INDEX}f95)
   endforeach(STRING_INDEX ${f95_STRING_INDICES})
 
   if(CORE_BUILD)
     # Build code that tests auxiliary functions in plf95demolib
     add_executable(test_plf95demolib test_plf95demolib.f90)
-    target_link_libraries(test_plf95demolib plf95demolib plplotf95 plplotf95c)
+    target_link_libraries(test_plf95demolib plf95demolib ${fortran_library_targets})
   endif(CORE_BUILD)
 endif(BUILD_TEST)

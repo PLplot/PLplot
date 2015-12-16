@@ -39,7 +39,7 @@ program x00f95
     !enddo
 
     ! Parse and process command line arguments
-    call plparseopts( PL_PARSE_FULL )
+!    call plparseopts( PL_PARSE_FULL )
 
     ! Initialize plplot
     call plinit
