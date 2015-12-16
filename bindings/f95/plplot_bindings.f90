@@ -60,7 +60,7 @@ module plplot
     use plplot_double
     use plplot_types, only: plflt => private_plflt, private_plint, private_plunicode
     implicit none
-
+    integer(kind=private_plint), parameter :: maxlen = 320
     include 'plplot_parameters.inc'
     private :: private_plint, private_plunicode
     private :: copystring

@@ -17,7 +17,6 @@
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
       subroutine plparseopts(mode)
-      use plplot
       use iso_c_binding
       implicit none
       include 'plplot_interface_private_types.inc'
