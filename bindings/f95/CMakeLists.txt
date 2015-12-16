@@ -79,12 +79,6 @@ if(ENABLE_f95)
     set(ONE_IN_DEFAULT_PRECISION "1.0")
   endif(PL_DOUBLE)
 
-  configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_types.f90.in
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.f90
-    @ONLY
-    )
-
   set(PLPLOT_F95_PRIVATE "private,")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_private_types.inc.in
@@ -98,9 +92,7 @@ if(ENABLE_f95)
     @ONLY
     )
 
-  set(plplotf95_LIB_SRCS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.f90
-    plplot_bindings.f90
+  set(plplotf95_LIB_SRCS plplot_bindings.f90
     )
 
   if(WIN32_AND_NOT_CYGWIN AND BUILD_SHARED_LIBS AND NOT MINGW)
