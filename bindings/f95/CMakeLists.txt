@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -43,6 +43,33 @@ if(ENABLE_f95)
       SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /DCVF")
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
   endif(WIN32_OR_CYGWIN)
+
+  set(plplotf95c_LIB_SRCS plplotf95c.c)
+
+  if(BUILD_SHARED_LIBS)
+    set_source_files_properties(${plplotf95c_LIB_SRCS}
+      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
+  endif(BUILD_SHARED_LIBS)
+
+  add_library(plplotf95c ${plplotf95c_LIB_SRCS})
+
+  if(NON_TRANSITIVE)
+    target_link_libraries(plplotf95c PRIVATE plplot)
+  else(NON_TRANSITIVE)
+    target_link_libraries(plplotf95c PUBLIC plplot)
+  endif(NON_TRANSITIVE)
+
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+  endif(USE_RPATH)
+  set_library_properties(plplotf95c)
+
+  install(TARGETS plplotf95c
+    EXPORT export_plplot
+    ARCHIVE DESTINATION ${LIB_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    RUNTIME DESTINATION ${BIN_DIR}
+    )
 
   # Build fortran part of F95 bindings.
   # Notes:
@@ -102,9 +129,9 @@ if(ENABLE_f95)
   add_library(plplotf95 ${plplotf95_LIB_SRCS})
 
   if(NON_TRANSITIVE)
-    target_link_libraries(plplotf95 PRIVATE plplot)
+    target_link_libraries(plplotf95 PRIVATE plplotf95c plplot)
   else(NON_TRANSITIVE)
-    target_link_libraries(plplotf95 PUBLIC plplot)
+    target_link_libraries(plplotf95 PUBLIC plplotf95c plplot)
   endif(NON_TRANSITIVE)
 
   set_library_properties(plplotf95)
@@ -115,7 +142,6 @@ if(ENABLE_f95)
     LIBRARY DESTINATION ${LIB_DIR}
     RUNTIME DESTINATION ${BIN_DIR}
     )
-
 
   # For CMake-2.6.0 and above, the module files are created by
   # default during the library build in the bindings/f95 directory.
@@ -129,5 +155,7 @@ if(ENABLE_f95)
     )
 
   # Configure pkg-config *.pc file corresponding to libplplotf95
-  pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "-lplplot")
+  # Note, Fortran executables need to link plplotf95c as a public
+  # library so specify it as 7th argument.
+  pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "-lplplot" "-lplplotf95c")
 endif(ENABLE_f95)

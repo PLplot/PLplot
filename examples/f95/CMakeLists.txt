@@ -34,31 +34,31 @@ set(f95_STRING_INDICES
   "06"
   "07"
   "08"
-  "09"
-  "10"
-  "11"
+#  "09"
+#  "10"
+#  "11"
   "12"
-  "13"
-  "14"
-  "15"
-  "16"
-  "16a"
-  "17"
-  "18"
-  "19"
-  "20"
-  "21"
-  "22"
-  "23"
+#  "13"
+#  "14"
+#  "15"
+#  "16"
+#  "16a"
+#  "17"
+#  "18"
+#  "19"
+#  "20"
+#  "21"
+#  "22"
+#  "23"
   "24"
   "25"
   "26"
   "27"
-  "28"
-  "29"
+#  "28"
+#  "29"
   "30"
-  "31"
-  "33"
+#  "31"
+#  "33"
   )
 
 if(CORE_BUILD)
@@ -134,9 +134,8 @@ endif(CORE_BUILD)
 if(BUILD_TEST)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_f95)
-  # Temporary unless and until plplotf95c is required again by the new fortran binding
-  #set(fortran_library_targets plplotf95 plplotf95c plplot)
-  set(fortran_library_targets plplotf95 plplot)
+  # nm analysis shows these libraries are all required to link the new Fortran binding
+  set(fortran_library_targets plplotf95 plplotf95c plplot)
   foreach(STRING_INDEX ${f95_STRING_INDICES})
     # Need unique target name
     add_executable(x${STRING_INDEX}f95 x${STRING_INDEX}f.f90)

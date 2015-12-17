@@ -1,4 +1,4 @@
-!      Copyright (C) 2004-2014 Alan W. Irwin
+!      Copyright (C) 2004-2016 Alan W. Irwin
 !
 !      This file is part of PLplot.
 !
@@ -18,20 +18,22 @@
 
       subroutine plparseopts(mode)
       use iso_c_binding
-      implicit none
       include 'plplot_interface_private_types.inc'
       integer                :: mode
-      integer                :: iargs, numargs, idx
-      integer, parameter     :: maxargs = 20
+      integer                :: iargs, numargs
+      integer, parameter     :: maxargs = 100
       character (len=maxlen), dimension(0:maxargs) :: arg
 
       interface
-          subroutine f_plparseopts( nargs, arg, mode, length ) bind(c,name='c_plparseopts')
-              implicit none
+           subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
+              use iso_c_binding, only: c_int, c_char
               include 'plplot_interface_private_types.inc'
-              integer(kind=private_plint), value :: nargs, mode, length
-              character(len=1), dimension(*)     :: arg
-          end subroutine f_plparseopts
+              integer(kind=private_plint), value :: length, nargs, mode
+              ! This Fortran argument requires special processing done
+              ! in fc_plparseopts at the C level to interoperate properly
+              ! with the C version of plparseopts.
+              character(c_char) arg(length, nargs)
+          end subroutine interface_plparseopts
       end interface
 
       numargs = command_argument_count()
@@ -40,17 +42,13 @@
         write(0,'(a)') 'plparseopts: negative number of arguments'
         return
       endif
-      if(numargs+1 > maxargs) then
+      if(numargs > maxargs) then
         write(0,'(a)') 'plparseopts: too many arguments'
         return
       endif
       do iargs = 0, numargs
         call get_command_argument(iargs, arg(iargs))
-        idx = 1 + len_trim(arg(iargs))
-        if (idx >= maxlen) then
-            idx = idx -1
-        endif
-        arg(iargs)(idx:idx) = c_null_char
       enddo
-      call f_plparseopts(int(numargs+1,kind=private_plint), arg, int(mode,kind=private_plint), len(arg(1),kind=private_plint))
+      call interface_plparseopts(len(arg(0), kind=private_plint), int(numargs+1, kind=private_plint), arg, &
+           int(mode, kind=private_plint))
       end subroutine plparseopts
