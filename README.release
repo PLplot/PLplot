@@ -23,11 +23,14 @@ CONTENTS
 
 1. OFFICIAL NOTICES FOR USERS
 
+1.1 Octal interpretation removed from numerical escape sequences in text
+1.2 Backwards incompatibilities in Fortran
+
 2. Improvements relative to the previous release
 
 2.1 Bug fixes
-
 2.2 Rewrite Ada language support
+2.3 Rewrite the Fortran binding
 
 3. PLplot testing
 
@@ -35,14 +38,21 @@ ________________________________________________________________
 
 1. OFFICIAL NOTICES FOR USERS
 
+1.1 Octal interpretation removed from numerical escape sequences in text
+
 The undocumented feature where leading 0's in numerical escape
 sequences meant the whole number was interpreted as octal rather than
 decimal has been removed, i.e., if the number string starts with 0x or
 0X then the interpretation of the number is hexadecimal (as before),
 but all other number strings starting with 0 are interpreted as
-decimal rather than octal.  Thus, the interpretation of "#(0123)" and
-"#(123)" is now identical, and there are no errors introduced by
-leading-zero decimal escape sequences such as "#(0855)".
+decimal rather than octal.  Thus, the decimal interpretation of
+"#(0123)" and "#(123)" is now identical, and there are no errors
+introduced by leading-zero decimal escape sequences such as "#(0855)".
+
+1.2 Backwards incompatibilities in Fortran
+
+The new implementation of the Fortran binding has introduced some
+backwards incompatibilities.  See 2.3 below for the details.
 
 ________________________________________________________________
 
@@ -65,6 +75,40 @@ the new Ada language support is based on modern CMake language support
 principles and infrastructure as opposed to whatever was available for
 language support a decade ago when the old Ada language support was
 implemented.
+
+2.3 Rewrite the Fortran binding
+
+The Fortran binding has been completely rewritten using the powerful
+capabilities of the iso-c-binding module that is available for modern
+Fortran.  There are two principal advantages to this rewritten
+binding.  (1) The interface code is much more compact and therefore it
+is much easier for developers to understand and maintain it.  (2) If
+users use consistent single-precision or double-precision real
+arguments in a given PLplot call, the rewritten binding automatically
+transforms those real arguments into the actual real precision
+available for the PLplot library.
+
+The rewritten Fortran binding does have some backwards incompatible
+API changes we have decided to introduce at this time to improve
+consistency.
+
+a. In general only the redacted form of API (with all redundant
+dimension arguments removed) is supported.  This was largely true of
+the old Fortran binding as well, but in particular the
+non-redacted form of pllegend call that includes the redundant nlegend
+argument that was present (by accident) in the old Fortran API
+has now been deliberately removed to be consistent with the rest of the
+Fortran API in this regard.
+
+b. In general, multiple arrays in a redacted argument list should have
+identical sizes for dimensions that are designed for the same purpose.
+This rule is automatically enforced for our 4 languages (Python, Java,
+Lua, and Octave) where the binding has been created by swig, and now
+we enforce this same rule for the Fortran case.  For example, pllegend
+has 14 arrays in its argument list, and we now calculate nlegend from
+one of them, and check the remainder of those arrays all have that
+identical size.  (The old Fortran binding was much sloppier about
+this.)
 
 ________________________________________________________________
 
