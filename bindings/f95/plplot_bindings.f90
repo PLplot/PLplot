@@ -776,5 +776,38 @@ subroutine plszax( digmax, digits )
     call c_plszax( int(digmax,kind=private_plint), int(digits,kind=private_plint) )
 end subroutine plszax
 
-include 'plparseopts.f90'
+subroutine plparseopts(mode)
+  integer                :: mode
+  integer                :: iargs, numargs
+  integer, parameter     :: maxargs = 100
+  character (len=maxlen), dimension(0:maxargs) :: arg
+  
+  interface
+     subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
+       use iso_c_binding, only: c_int, c_char
+       include 'plplot_interface_private_types.inc'
+       integer(kind=private_plint), value :: length, nargs, mode
+       ! This Fortran argument requires special processing done
+       ! in fc_plparseopts at the C level to interoperate properly
+       ! with the C version of plparseopts.
+       character(c_char) arg(length, nargs)
+     end subroutine interface_plparseopts
+  end interface
+  
+  numargs = command_argument_count()
+  if (numargs < 0) then
+     !       This actually happened historically on a badly linked Cygwin platform.
+     write(0,'(a)') 'plparseopts: negative number of arguments'
+     return
+  endif
+  if(numargs > maxargs) then
+     write(0,'(a)') 'plparseopts: too many arguments'
+     return
+  endif
+  do iargs = 0, numargs
+     call get_command_argument(iargs, arg(iargs))
+  enddo
+  call interface_plparseopts(len(arg(0), kind=private_plint), int(numargs+1, kind=private_plint), arg, &
+       int(mode, kind=private_plint))
+end subroutine plparseopts
 end module plplot
