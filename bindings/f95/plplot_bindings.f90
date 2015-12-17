@@ -1,8 +1,8 @@
 !***********************************************************************
 !  plplot_binding.f90
 !
-!  Copyright (C) 2005-2015  Arjen Markus
-!  Copyright (C) 2006-2015 Alan W. Irwin
+!  Copyright (C) 2005-2016  Arjen Markus
+!  Copyright (C) 2006-2016 Alan W. Irwin
 !
 !  This file is part of PLplot.
 !
@@ -26,7 +26,7 @@
 !
 !***********************************************************************
 
-! TODO: pllegend, plsurf3d, plsurf3dl
+! TODO: plsurf3d, plsurf3dl
 
 module plplot_types
     include 'plplot_interface_private_types.inc'
@@ -40,7 +40,7 @@ module plplot_single
     integer, parameter :: wp = private_single
     private :: wp, private_single, private_double, private_plint, private_plunicode
 
-    include 'plplot_interfaces.inc'
+    include 'plplot_real_interfaces.inc'
 end module plplot_single
 
 module plplot_double
@@ -51,7 +51,7 @@ module plplot_double
     integer, parameter :: wp = private_double
     private :: wp, private_single, private_double, private_plint, private_plunicode
 
-    include 'plplot_interfaces.inc'
+    include 'plplot_real_interfaces.inc'
 
 end module plplot_double
 
