@@ -43,9 +43,9 @@ subroutine plot1(type)
     real(kind=plflt)  :: legend_width, legend_height
     integer           :: opt_array(2), text_colors(2), line_colors(2), &
                          line_styles(2), symbol_colors(2), symbol_numbers(2)
-    real(kind=plflt)  :: line_widths(2), symbol_scales(2), box_scales(0)
-    integer           :: box_colors(0), box_patterns(0)
-    real(kind=plflt)  :: box_line_widths(0)
+    real(kind=plflt)  :: line_widths(2), symbol_scales(2), box_scales(2)
+    integer           :: box_colors(2), box_patterns(2)
+    real(kind=plflt)  :: box_line_widths(2)
     character(len=20) :: text(2)
     character(len=20)  :: symbols(2)
 
@@ -120,19 +120,18 @@ subroutine plot1(type)
 
 !   from the above opt_arrays we can completely ignore everything
 !   to do with boxes. (Hence the size 0 for the associated arrays)
-!   (note: use the argument nlegend explicitly)
 
     call plscol0a( 15, 32, 32, 32, 0.70_plflt )
     call pllegend( legend_width, legend_height, &
         PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, 0, &
         0.0_plflt, 0.0_plflt, 0.1_plflt, 15, &
         1, 1, 0, 0, &
-        nlegend, opt_array, &
+        opt_array(1:nlegend), &
         1.0_plflt, 1.0_plflt, 2.0_plflt, &
-        1.0_plflt, text_colors, text, &
-        box_colors, box_patterns, box_scales, box_line_widths, &
-        line_colors, line_styles, line_widths, &
-        symbol_colors, symbol_scales, symbol_numbers, symbols )
+        1.0_plflt, text_colors(1:nlegend), text(1:nlegend), &
+        box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+        line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+        symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 end subroutine plot1
 
 subroutine setdata

@@ -1,8 +1,8 @@
 !***********************************************************************
-!  plplot_interfaces.inc
+!  plplot_real_interfaces.inc
 !
-!  Copyright (C) 2005-2015  Arjen Markus
-!  Copyright (C) 2006-2015 Alan W. Irwin
+!  Copyright (C) 2005-2016  Arjen Markus
+!  Copyright (C) 2006-2016 Alan W. Irwin
 !
 !  This file is part of PLplot.
 !
@@ -21,29 +21,14 @@
 !  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
 !
-!  This file defines the Fortran interfaces for the PLplot library.
-!  Limited to example x00f!
+!  This file defines the Fortran interfaces for the the subset of the
+!  PLplot API which has at least one real argument.  Keeping this part
+!  of the interface definitions separate allows convenient defining of
+!  these interfaces for both single and double precision real
+!  arguments.  See plplot_bindings.f90 for the definition of the
+!  Fortran interfaces for the remaining part of the PLplot API.
 !
 !***********************************************************************
-
-   !interface plenv
-   !    !
-   !    ! We can not use this binding via iso_c_binding directly, as the interface would
-   !    ! conflict with plenv_single/plenv_double which would force us to leave
-   !    ! out one of the two, depending on the selected precision. So use an interface block
-   !    ! locally to define the exact interface without aliasing the name. (See the implementation
-   !    ! of plenv_single/plenv_double)
-   !    !
-   !    !subroutine c_plenv( xmin, xmax, ymin, ymax, just, axis ) bind(c, name='c_plenv')
-   !    !    use iso_c_binding
-   !    !    include 'plplot_interface_private_types.inc'
-   !    !    implicit none
-   !    !    real(kind=private_plflt), value :: xmin, xmax, ymin, ymax
-   !    !    integer(kind=private_plint), value :: just, axis
-   !    !end subroutine c_plenv
-   !
-   !    module procedure plenv_impl
-   !end interface plenv
 
     private :: matrix_to_c
 
@@ -179,10 +164,9 @@
     private :: pljoin_impl
 
     interface pllegend
-        module procedure pllegend_1_impl
-        module procedure pllegend_2_impl
+        module procedure pllegend_impl
     end interface pllegend
-    private :: pllegend_1_impl
+    private :: pllegend_impl
 
     interface pllightsource
         module procedure pllightsource_impl
@@ -840,82 +824,139 @@ subroutine pljoin_impl( x1, y1, x2, y2 )
                    real(x2,kind=private_plflt), real(y2,kind=private_plflt) )
 end subroutine pljoin_impl
 
-subroutine pllegend_1_impl( legend_width, legend_height, &
-                            opt, position, x, y, &
-                            plot_width, bg_color, bb_color, bb_style, &
-                            nrow, ncolumn, nlegend, opt_array, &
-                            text_offset, text_scale, text_spacing, &
-                            text_justification, text_colors, text, &
-                            box_colors, box_patterns, box_scales, &
-                            box_line_widths, &
-                            line_colors, line_styles, line_widths, &
-                            symbol_colors, symbol_scales, &
-                            symbol_numbers, symbols )
+subroutine pllegend_impl( &
+     legend_width, legend_height, &
+     opt, position, x, y, &
+     plot_width, bg_color, bb_color, bb_style, &
+     nrow, ncolumn, opt_array, &
+     text_offset, text_scale, text_spacing, &
+     text_justification, text_colors, text, &
+     box_colors, box_patterns, box_scales, &
+     box_line_widths, &
+     line_colors, line_styles, line_widths, &
+     symbol_colors, symbol_scales, &
+     symbol_numbers, symbols )
 
-    real(kind=wp), intent(in) :: legend_width, legend_height, plot_width, x, y
-    real(kind=wp), intent(in) :: text_offset, text_scale, text_spacing, text_justification
-    integer, intent(in) :: position, opt, bg_color, bb_color, bb_style
-    integer, intent(in) :: nrow, ncolumn, nlegend
-
-    character(len=*), dimension(:), intent(in) :: text, symbols
-
-    integer, dimension(:), intent(in) :: opt_array, text_colors, box_colors
-    integer, dimension(:), intent(in) :: box_patterns
-    real(kind=wp), dimension(:), intent(in) :: box_line_widths
-    integer, dimension(:), intent(in) :: line_colors, line_styles
-    real(kind=wp), dimension(:), intent(in) :: line_widths
-    integer, dimension(:), intent(in) :: symbol_colors, symbol_numbers
-    real(kind=wp), dimension(:), intent(in) :: box_scales, symbol_scales
-
-    ! TODO!
-end subroutine pllegend_1_impl
-
-subroutine pllegend_2_impl( legend_width, legend_height, &
-                            opt, position, x, y, &
-                            plot_width, bg_color, bb_color, bb_style, &
-                            nrow, ncolumn, opt_array, &
-                            text_offset, text_scale, text_spacing, &
-                            text_justification, text_colors, text, &
-                            box_colors, box_patterns, box_scales, &
-                            box_line_widths, &
-                            line_colors, line_styles, line_widths, &
-                            symbol_colors, symbol_scales, &
-                            symbol_numbers, symbols )
-    real(kind=wp), intent(in) :: legend_width, legend_height, plot_width, x, y
+    real(kind=wp), intent(out) :: legend_width, legend_height
+    real(kind=wp), intent(in) :: plot_width, x, y
     real(kind=wp), intent(in) :: text_offset, text_scale, text_spacing, text_justification
     integer, intent(in) :: position, opt, bg_color, bb_color, bb_style
     integer, intent(in) :: nrow, ncolumn
 
-    character(len=*), dimension(:), intent(in) :: text, symbols
+    character(len=*), dimension(0:), intent(in) :: text, symbols
 
-    integer, dimension(:), intent(in) :: opt_array, text_colors, box_colors
-    integer, dimension(:), intent(in) :: box_patterns
-    real(kind=wp), dimension(:), intent(in) :: box_line_widths
-    integer, dimension(:), intent(in) :: line_colors, line_styles
-    real(kind=wp), dimension(:), intent(in) :: line_widths
-    integer, dimension(:), intent(in) :: symbol_colors, symbol_numbers
-    real(kind=wp), dimension(:), intent(in) :: box_scales, symbol_scales
+    integer, dimension(0:), intent(in) :: opt_array, text_colors, box_colors
+    integer, dimension(0:), intent(in) :: box_patterns
+    real(kind=wp), dimension(0:), intent(in) :: box_line_widths
+    integer, dimension(0:), intent(in) :: line_colors, line_styles
+    real(kind=wp), dimension(0:), intent(in) :: line_widths
+    integer, dimension(0:), intent(in) :: symbol_colors, symbol_numbers
+    real(kind=wp), dimension(0:), intent(in) :: box_scales, symbol_scales
 
     integer(kind=private_plint) :: nlegend
+    real(kind=private_plflt) :: legend_width_out, legend_height_out
 
-    !
-    ! Determine number of legend entries
-    !
-    nlegend = min( size(opt_array), size(text) )
+    interface
+       subroutine interface_pllegend( &
+            legend_width, legend_height, &
+            opt, position, x, y, &
+            plot_width, bg_color, bb_color, bb_style, &
+            nrow, ncolumn, nlegend, opt_array, &
+            text_offset, text_scale, text_spacing, &
+            text_justification, text_colors, length_text, text, &
+            box_colors, box_patterns, box_scales, &
+            box_line_widths, &
+            line_colors, line_styles, line_widths, &
+            symbol_colors, symbol_scales, &
+            symbol_numbers, length_symbols, symbols ) &
+            bind(c,name='fc_pllegend')
 
-    call pllegend_1_impl( legend_width, legend_height, &
-                          opt, position, x, y, &
-                          plot_width, bg_color, bb_color, bb_style, &
-                          nrow, ncolumn, nlegend, opt_array, &
-                          text_offset, text_scale, text_spacing, &
-                          text_justification, text_colors, text, &
-                          box_colors, box_patterns, box_scales, &
-                          box_line_widths, &
-                          line_colors, line_styles, line_widths, &
-                          symbol_colors, symbol_scales, &
-                          symbol_numbers, symbols )
+         use iso_c_binding, only: c_char
+         implicit none
+         include 'plplot_interface_private_types.inc'
 
-end subroutine pllegend_2_impl
+         real(kind=private_plflt), intent(out) :: legend_width, legend_height
+         real(kind=private_plflt), intent(in), value :: plot_width, x, y
+         real(kind=private_plflt), intent(in), value :: text_offset, text_scale, text_spacing, text_justification
+         integer(kind=private_plint), intent(in), value :: position, opt, bg_color, bb_color, bb_style
+         integer(kind=private_plint), intent(in), value :: nrow, ncolumn, nlegend, length_text, length_symbols
+         
+         ! These Fortran arguments require special processing done
+         ! in fc_pllegend at the C level to interoperate properly
+         ! with the C version of pllegend.
+         character(c_char), intent(in) :: text(length_text, nlegend), symbols(length_symbols, nlegend)
+         
+         integer(kind=private_plint), dimension(*), intent(in) :: opt_array, text_colors, box_colors
+         integer(kind=private_plint), dimension(*), intent(in) :: box_patterns
+         real(kind=private_plflt), dimension(*), intent(in) :: box_line_widths
+         integer(kind=private_plint), dimension(*), intent(in) :: line_colors, line_styles
+         real(kind=private_plflt), dimension(*), intent(in) :: line_widths
+         integer(kind=private_plint), dimension(*), intent(in) :: symbol_colors, symbol_numbers
+         real(kind=private_plflt), dimension(*), intent(in) :: box_scales, symbol_scales
+       end subroutine interface_pllegend
+    end interface
+
+
+    ! Determine number of legend entries and demand consistent
+    ! array sizes.
+
+    nlegend = size(opt_array)
+    if( &
+         nlegend /= size(text_colors) .or. &
+         nlegend /= size(text) .or. & 
+         nlegend /= size(box_colors) .or. & 
+         nlegend /= size(box_patterns) .or. & 
+         nlegend /= size(box_scales) .or. & 
+         nlegend /= size(box_line_widths) .or. & 
+         nlegend /= size(line_colors) .or. & 
+         nlegend /= size(line_styles) .or. & 
+         nlegend /= size(line_widths) .or. & 
+         nlegend /= size(symbol_colors) .or. & 
+         nlegend /= size(symbol_scales) .or. & 
+         nlegend /= size(symbol_numbers) .or. & 
+         nlegend /= size(symbols) &
+         ) then
+       write(0,*) "f95 pllegend: inconsistent array sizes not allowed for the following arrays:"
+       write(0,*) "opt_array"
+       write(0,*) "text_colors"
+       write(0,*) "text"
+       write(0,*) "box_colors"
+       write(0,*) "box_patterns"
+       write(0,*) "box_scales"
+       write(0,*) "box_line_widths"
+       write(0,*) "line_colors"
+       write(0,*) "line_styles"
+       write(0,*) "line_widths"
+       write(0,*) "symbol_colors"
+       write(0,*) "symbol_scales"
+       write(0,*) "symbol_numbers"
+       write(0,*) "symbols"
+       return
+    end if
+
+    call interface_pllegend( &
+         legend_width_out, legend_height_out, &
+         int(opt,kind=private_plint), int(position,kind=private_plint), &
+         real(x,kind=private_plflt), real(y,kind=private_plflt), &
+         real(plot_width,kind=private_plflt), int(bg_color,kind=private_plint), &
+         int(bb_color,kind=private_plint), int(bb_style,kind=private_plint), &
+         int(nrow,kind=private_plint), int(ncolumn,kind=private_plint), &
+         int(nlegend,kind=private_plint), int(opt_array,kind=private_plint), &
+         real(text_offset,kind=private_plflt), real(text_scale,kind=private_plflt), &
+         real(text_spacing,kind=private_plflt), &
+         real(text_justification,kind=private_plflt), int(text_colors,kind=private_plint), len(text(0)), text, &
+         int(box_colors,kind=private_plint), int(box_patterns,kind=private_plint), &
+         real(box_scales,kind=private_plflt), &
+         real(box_line_widths,kind=private_plflt), &
+         int(line_colors,kind=private_plint), int(line_styles,kind=private_plint), &
+         real(line_widths,kind=private_plflt), &
+         int(symbol_colors,kind=private_plint), real(symbol_scales,kind=private_plflt), &
+         int(symbol_numbers,kind=private_plint), len(symbols(0)), symbols )
+    ! Transform output real values.
+    legend_width = real(legend_width_out, kind=wp)
+    legend_height = real(legend_height_out, kind=wp)
+
+end subroutine pllegend_impl
 
 subroutine pllightsource_impl( x, y, z )
     real(kind=wp), intent(in) :: x, y, z

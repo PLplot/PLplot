@@ -156,8 +156,8 @@ end program x26f
     integer          symbol_colors(nlegend)
     real(kind=plflt) symbol_scales(nlegend)
     character(len=20) symbols(nlegend)
-    integer          box_colors(0), box_patterns(0)
-    real(kind=plflt) box_scales(0), box_line_widths(0)
+    integer          box_colors(nlegend), box_patterns(nlegend)
+    real(kind=plflt) box_scales(nlegend), box_line_widths(nlegend)
     real(kind=plflt) legend_width, legend_height
 
     call pladv(0)

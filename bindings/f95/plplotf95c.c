@@ -176,10 +176,11 @@ convert_string_array( char **cstrings, char * fstrings, unsigned number, unsigne
     }
 }
 
-//! This plparseopts wrapper is called from the Fortran level via an iso_c_binding
-//! interface.  This wrapper is necessary because of the call to
-//! convert_string_array to convert the Fortran array of characters argument to the
-//! array of char pointers form required by the plparseopts argument.
+//! This plparseopts wrapper is called from the Fortran level via an
+//! iso_c_binding interface.  This wrapper is necessary because of the
+//! call to convert_string_array to convert the Fortran array of
+//! characters argument to the array of char pointers form required by
+//! the corresponding plparseopts argument.
 //!
 //! @param name_length [IN ONLY] integer value which contains the
 //! Fortran character string size of names.
@@ -218,9 +219,75 @@ fc_plparseopts(  unsigned name_length, unsigned size, char *names, PLINT mode)
     // character*(name_length) names(size) array) to cnames which
     // is an array of pointers to null-terminated C strings.
     convert_string_array( cnames, names, size, name_length );
+
     plparseopts(&size, (const char **) cnames, mode);
-    // plparseopts changes size (and also the contents of cnames[1] to NULL) during parsing
-    // so must free what was cnames[1] and make the Free2dChar call with actual_size
+
+    // cleanup
+    // plparseopts changes size (and also the contents of cnames[1] to
+    // NULL) during parsing so must free what was cnames[1] and make
+    // the Free2dChar call with actual_size
     free((void *) save_pointer);
     Free2dChar( cnames, actual_size );
+}
+
+//! This pllegend wrapper is called from the Fortran level via an iso_c_binding
+//! interface.  This wrapper is necessary because of the call to
+//! convert_string_array to convert the Fortran array of characters arguments to the
+//! array of char pointers form required by the corresponding pllegend arguments.
+//!
+
+void
+fc_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
+	     PLINT opt, PLINT position, PLFLT x, PLFLT y, PLFLT plot_width,
+	     PLINT bg_color, PLINT bb_color, PLINT bb_style,
+	     PLINT nrow, PLINT ncolumn,
+	     PLINT nlegend, const PLINT *opt_array,
+	     PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
+	     PLFLT text_justification,
+	     const PLINT *text_colors, unsigned length_ftext, char *ftext,
+	     const PLINT *box_colors, const PLINT *box_patterns,
+	     const PLFLT *box_scales, const PLFLT *box_line_widths,
+	     const PLINT *line_colors, const PLINT *line_styles,
+	     const PLFLT *line_widths,
+	     const PLINT *symbol_colors, const PLFLT *symbol_scales,
+	     const PLINT *symbol_numbers, unsigned length_fsymbols, char *fsymbols )
+
+{
+
+  // Assign to NULL to quiet spurious potentially undefined warning.
+  char ** ctext = NULL;
+  char ** csymbols = NULL;
+
+  // Make ctext and csymbols the same sizes as the corresponding
+  // Fortran character arrays ftext and fsymbols except the character
+  // string size is one larger to contain the trailing NULL associated
+  // with C strings.
+  Alloc2dChar( &ctext, nlegend, length_ftext + 1 );
+  Alloc2dChar( &csymbols, nlegend, length_fsymbols + 1 );
+
+  // Convert ftext (which refers to a blank-terminated Fortran
+  // character*(length_ftext) names(nlegend) array) and fsymbols
+  // (which refers to a blank-terminated Fortran
+  // character*(length_fsymbols) names(nlegend) array) to ctext and
+  // csymbols which are arrays of pointers to null-terminated C
+  // strings.
+  convert_string_array( ctext, ftext, nlegend, length_ftext );
+  convert_string_array( csymbols, fsymbols, nlegend, length_fsymbols );
+
+  pllegend(
+	    p_legend_width, p_legend_height,
+	    opt, position, x, y,
+	    plot_width, bg_color, bb_color, bb_style,
+	    nrow, ncolumn, nlegend, opt_array,
+	    text_offset, text_scale, text_spacing,
+	    text_justification, text_colors, (const char **) ctext,
+	    box_colors, box_patterns, box_scales,
+	    box_line_widths,
+	    line_colors, line_styles, line_widths,
+	    symbol_colors, symbol_scales,
+	    symbol_numbers, (const char **) csymbols );
+	     
+  //cleanup
+  Free2dChar( ctext, nlegend );
+  Free2dChar( csymbols, nlegend );
 }
