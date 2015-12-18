@@ -448,6 +448,7 @@ end subroutine plpat
 real (kind=private_plflt) function plrandd_impl()
     interface
         function c_plrandd() bind(c,name='c_plrandd')
+            implicit none
             include 'plplot_interface_private_types.inc'
             real(kind=private_plflt) :: c_plrandd
         end function c_plrandd
@@ -785,6 +786,7 @@ subroutine plparseopts(mode)
   interface
      subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
        use iso_c_binding, only: c_int, c_char
+       implicit none
        include 'plplot_interface_private_types.inc'
        integer(kind=private_plint), value :: length, nargs, mode
        ! This Fortran argument requires special processing done
@@ -797,11 +799,11 @@ subroutine plparseopts(mode)
   numargs = command_argument_count()
   if (numargs < 0) then
      !       This actually happened historically on a badly linked Cygwin platform.
-     write(0,'(a)') 'plparseopts: negative number of arguments'
+     write(0,'(a)') 'f95 plparseopts: negative number of arguments'
      return
   endif
   if(numargs > maxargs) then
-     write(0,'(a)') 'plparseopts: too many arguments'
+     write(0,'(a)') 'f95 plparseopts: too many arguments'
      return
   endif
   do iargs = 0, numargs
