@@ -67,6 +67,11 @@ module plplot
 !
 ! Interfaces that do not depend on the real kind
 !
+    interface pl_setcontlabelformat
+        module procedure pl_setcontlabelformat_impl
+    end interface pl_setcontlabelformat
+    private :: pl_setcontlabelformat_impl
+
     interface
         subroutine plbop() bind(c,name='c_plbop')
         end subroutine plbop
@@ -159,6 +164,20 @@ end subroutine copystring
 !
 ! Interface routines
 !
+subroutine pl_setcontlabelformat_impl( lexp, sigdig )
+   integer, intent(in) :: lexp, sigdig
+
+   interface
+       subroutine c_pl_setcontlabelformat( lexp, sigdig ) bind(c,name='c_pl_setcontlabelformat')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: lexp, sigdig
+       end subroutine c_pl_setcontlabelformat
+   end interface
+
+   call c_pl_setcontlabelformat( int(lexp,kind=private_plint), int(sigdig,kind=private_plint) )
+end subroutine pl_setcontlabelformat_impl
+
 subroutine pladv( sub )
     integer, intent(in) :: sub
     interface

@@ -32,6 +32,11 @@
 
     private :: matrix_to_c
 
+    interface pl_setcontlabelparam
+        module procedure pl_setcontlabelparam_impl
+    end interface pl_setcontlabelparam
+    private :: pl_setcontlabelparam_impl
+
     interface plarc
         module procedure plarc_log_impl
         module procedure plarc_impl
@@ -313,6 +318,11 @@
     end interface plvasp
     private :: plvasp_impl
 
+    interface plvpas
+        module procedure plvpas_impl
+    end interface plvpas
+    private :: plvpas_impl
+
     interface plvpor
         module procedure plvpor_impl
     end interface plvpor
@@ -352,6 +362,23 @@ subroutine matrix_to_c( array, carray, cadress )
         cadress(i) = c_loc(carray(1,i))
     enddo
 end subroutine matrix_to_c
+
+subroutine pl_setcontlabelparam_impl( offset, size, spacing, active )
+   real(kind=wp), intent(in) :: offset, size, spacing
+   integer, intent(in) :: active
+
+   interface
+       subroutine c_pl_setcontlabelparam( offset, size, spacing, active) bind(c,name='c_pl_setcontlabelparam')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: active
+           real(kind=private_plflt), value :: offset, size, spacing
+       end subroutine c_pl_setcontlabelparam
+   end interface
+
+   call c_pl_setcontlabelparam( real(offset,kind=private_plflt), real(size,kind=private_plflt), &
+        real(spacing,kind=private_plflt), int(active,kind=private_plint) )
+end subroutine pl_setcontlabelparam_impl
 
 subroutine plarc_log_impl( x, y, a, b, angle1, angle2, rotate, fill )
    real(kind=wp), intent(in) :: x, y, a, b, angle1, angle2, rotate
@@ -1612,6 +1639,21 @@ subroutine plvasp_impl( aspect)
 
     call c_plvasp( real(aspect,kind=private_plflt) )
 end subroutine plvasp_impl
+
+subroutine plvpas_impl( xmin, xmax, ymin, ymax, aspect )
+    real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, aspect
+
+    interface
+        subroutine c_plvpas( xmin, xmax, ymin, ymax, aspect ) bind(c,name='c_plvpas')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: xmin, xmax, ymin, ymax, aspect
+        end subroutine c_plvpas
+    end interface
+
+    call c_plvpas( real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
+                   real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), real(aspect,kind=private_plflt) )
+end subroutine plvpas_impl
 
 subroutine plvpor_impl( xmin, xmax, ymin, ymax )
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
