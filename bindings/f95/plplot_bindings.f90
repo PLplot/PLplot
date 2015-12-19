@@ -122,6 +122,11 @@ module plplot
         end subroutine plreplot
     end interface
 
+    interface plsetopt
+        module procedure plsetopt_impl
+    end interface plsetopt
+    private :: plsetopt_impl
+
     interface plstyl
         module procedure plstyl_scalar
         module procedure plstyl_n_array
@@ -280,6 +285,22 @@ subroutine plgcompression( compression )
     call c_plgcompression( compression_p )
     compression = compression_p
 end subroutine plgcompression
+
+subroutine plgdev(dev)
+    character*(*), intent(out) :: dev
+
+    character(len=1), dimension(100) :: devc
+
+    interface
+        subroutine c_plgdev( dev ) bind(c,name='c_plgdev')
+            implicit none
+            character(len=1), dimension(*), intent(out) :: dev
+        end subroutine c_plgdev
+    end interface
+
+    call c_plgdev( devc )
+    call copystring( dev, devc )
+end subroutine plgdev
 
 subroutine plgfam( fam, num, bmax )
     integer, intent(out) :: fam, num, bmax
@@ -598,6 +619,20 @@ subroutine plscompression( compression )
     call c_plscompression( int(compression,kind=private_plint) )
 end subroutine plscompression
 
+subroutine plsdev( devname )
+   character(len=*), intent(in) :: devname
+
+   interface
+       subroutine c_plsdev( devname ) bind(c,name='c_plsdev')
+           implicit none
+           character(len=1), dimension(*), intent(in) :: devname
+       end subroutine c_plsdev
+   end interface
+
+   call c_plsdev( trim(devname) // c_null_char )
+
+end subroutine plsdev
+
 subroutine plseed( s )
     integer, intent(in) :: s
     interface
@@ -624,6 +659,20 @@ subroutine plsesc( esc )
 
     call c_plsesc( int(esc,kind=private_plint) )
 end subroutine plsesc
+
+subroutine plsetopt_impl( opt, optarg )
+   character(len=*), intent(in) :: opt, optarg
+
+   interface
+       subroutine c_plsetopt( opt, optarg ) bind(c,name='c_plsetopt')
+           implicit none
+           character(len=1), dimension(*), intent(in) :: opt, optarg
+       end subroutine c_plsetopt
+   end interface
+
+   call c_plsetopt( trim(opt) // c_null_char, trim(optarg) // c_null_char )
+
+end subroutine plsetopt_impl
 
 subroutine plsfam( fam, num, bmax )
     integer, intent(in) :: fam, num, bmax

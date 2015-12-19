@@ -288,6 +288,11 @@
     end interface plsdimap
     private :: plsdimap_impl
 
+    interface plspage
+        module procedure plspage_impl
+    end interface plspage
+    private :: plspage_impl
+
     interface plstring
         module procedure plstring_impl
     end interface plstring
@@ -1514,6 +1519,26 @@ subroutine plsdimap_impl( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm )
                      real(diymin,kind=private_plflt), real(dimymax,kind=private_plflt), &
                      real(dimxpmm,kind=private_plflt), real(diypmm,kind=private_plflt) )
 end subroutine plsdimap_impl
+
+subroutine plspage_impl( xp, yp, xleng, yleng, xoff, yoff )
+    integer, intent(in) :: xleng, yleng, xoff, yoff
+    real(kind=wp), intent(in) :: xp, yp
+
+    interface
+        subroutine c_plspage( xp, yp, xleng, yleng, xoff, yoff ) bind(c,name='c_plspage')
+            use iso_c_binding
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: xleng, yleng, xoff, yoff
+            real(kind=private_plflt), intent(in) :: xp, yp
+        end subroutine c_plspage
+    end interface
+
+    call c_plspage( real(xp,kind=private_plflt), real(yp,kind=private_plflt), &
+         int(xleng,kind=private_plint), int(yleng,kind=private_plint), &
+         int(xoff,kind=private_plint), int(yoff,kind=private_plint) )
+
+end subroutine plspage_impl
 
 subroutine plstring_impl( x, y, string )
 

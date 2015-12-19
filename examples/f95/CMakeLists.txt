@@ -39,7 +39,7 @@ set(f95_STRING_INDICES
   "11"
   "12"
   "13"
-#c  "14"
+#plcont  "14"
 #c  "15"
 #c  "16"
 #c  "16a"
