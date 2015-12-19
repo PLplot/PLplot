@@ -713,6 +713,38 @@ subroutine plsori( rot )
     call c_plsori( int(rot,kind=private_plint) )
 end subroutine plsori
 
+subroutine plspal0( filename )
+  character(len=*), intent(in) :: filename
+
+   interface
+       subroutine c_plspal0( filename ) bind(c,name='c_plspal0')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           character(len=1), dimension(*), intent(in) :: filename
+       end subroutine c_plspal0
+   end interface
+
+   call c_plspal0( trim(filename) // c_null_char )
+
+end subroutine plspal0
+
+subroutine plspal1( filename, interpolate )
+  character(len=*), intent(in) :: filename
+  logical, intent(in) :: interpolate
+
+   interface
+       subroutine c_plspal1( filename, interpolate ) bind(c,name='c_plspal1')
+           implicit none
+           include 'plplot_interface_private_types.inc'
+           integer(kind=private_plint), value :: interpolate
+           character(len=1), dimension(*), intent(in) :: filename
+       end subroutine c_plspal1
+   end interface
+
+   call c_plspal1( trim(filename) // c_null_char, int( merge(1,0,interpolate),kind=private_plint) )
+
+end subroutine plspal1
+
 subroutine plspause( lpause )
     logical, intent(in) :: lpause
 

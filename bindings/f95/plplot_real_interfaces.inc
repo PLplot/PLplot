@@ -258,6 +258,11 @@
     end interface plscmap0a
     private :: plscmap0a_impl
 
+    interface plscmap1_range
+        module procedure plscmap1_range_impl
+    end interface plscmap1_range
+    private :: plscmap1_range_impl
+
     interface plscmap1a
         module procedure plscmap1a_impl
     end interface plscmap1a
@@ -287,6 +292,16 @@
         module procedure plsdimap_impl
     end interface plsdimap
     private :: plsdimap_impl
+
+    interface plsmaj
+        module procedure plsmaj_impl
+    end interface plsmaj
+    private :: plsmaj_impl
+
+    interface plsmin
+        module procedure plsmin_impl
+    end interface plsmin
+    private :: plsmin_impl
 
     interface plspage
         module procedure plspage_impl
@@ -1346,6 +1361,20 @@ subroutine plrgbhls_impl( r, g, b, h, l, s )
     s = ss
 end subroutine plrgbhls_impl
 
+subroutine plschr_impl( chrdef, chrht )
+    real(kind=wp), intent(in) :: chrdef, chrht
+
+    interface
+        subroutine c_plschr( chrdef, chrht ) bind(c,name='c_plschr')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: chrdef, chrht
+        end subroutine c_plschr
+    end interface
+
+    call c_plschr( real(chrdef,kind=private_plflt), real(chrht,kind=private_plflt) )
+end subroutine plschr_impl
+
 subroutine plscmap0a_impl( r, g, b, a )
     integer, dimension(:), intent(in) :: r, g, b
     real(kind=wp), dimension(:), intent(in) :: a
@@ -1364,6 +1393,20 @@ subroutine plscmap0a_impl( r, g, b, a )
                       real(a,kind=private_plflt), size(r,kind=private_plint) )
 end subroutine plscmap0a_impl
 
+subroutine plscmap1_range_impl( chrdef, chrht )
+    real(kind=wp), intent(in) :: chrdef, chrht
+
+    interface
+        subroutine c_plscmap1_range( chrdef, chrht ) bind(c,name='c_plscmap1_range')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: chrdef, chrht
+        end subroutine c_plscmap1_range
+    end interface
+
+    call c_plscmap1_range( real(chrdef,kind=private_plflt), real(chrht,kind=private_plflt) )
+end subroutine plscmap1_range_impl
+
 subroutine plscmap1a_impl( r, g, b, a )
     integer, dimension(:), intent(in) :: r, g, b
     real(kind=wp), dimension(:), intent(in) :: a
@@ -1381,6 +1424,42 @@ subroutine plscmap1a_impl( r, g, b, a )
     call c_plscmap1a( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
                       real(a,kind=private_plflt), size(r,kind=private_plint) )
 end subroutine plscmap1a_impl
+
+subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_path)
+    logical, intent(in) :: rgbtype
+    real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3
+    logical, dimension(:), intent(in), optional :: alt_hue_path
+
+    integer :: i
+    integer(kind=private_plint), dimension(:), allocatable, target :: ialt_hue_path
+
+    interface
+        subroutine c_plscmap1l( type, npts, intensity, coord1, coord2, coord3, alt_hue_path ) bind(c,name='c_plscmap1l')
+            use iso_c_binding
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            integer(kind=private_plint), value :: type, npts
+            real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3
+            !integer(kind=private_plint), dimension(*), intent(in) :: alt_hue_path
+            type(c_ptr), value :: alt_hue_path
+        end subroutine c_plscmap1l
+    end interface
+
+    if ( present(alt_hue_path) ) then
+        allocate( ialt_hue_path(size(alt_hue_path)) )
+        ialt_hue_path = merge(1,0,alt_hue_path)
+
+        call c_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+                          real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
+                          real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
+                          c_loc(ialt_hue_path) )
+    else
+        call c_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+                          real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
+                          real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
+                          c_null_ptr )
+    endif
+end subroutine plscmap1l_impl
 
 subroutine plscmap1la_impl( rgbtype, intensity, coord1, coord2, coord3, alpha, alt_hue_path)
     logical, intent(in) :: rgbtype
@@ -1439,56 +1518,6 @@ subroutine plscolbga_impl( r, g, b, a )
                       int(b,kind=private_plint), real(a,kind=private_plflt) )
 end subroutine plscolbga_impl
 
-subroutine plschr_impl( chrdef, chrht )
-    real(kind=wp), intent(in) :: chrdef, chrht
-
-    interface
-        subroutine c_plschr( chrdef, chrht ) bind(c,name='c_plschr')
-            implicit none
-            include 'plplot_interface_private_types.inc'
-            real(kind=private_plflt), value :: chrdef, chrht
-        end subroutine c_plschr
-    end interface
-
-    call c_plschr( real(chrdef,kind=private_plflt), real(chrht,kind=private_plflt) )
-end subroutine plschr_impl
-
-subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_path)
-    logical, intent(in) :: rgbtype
-    real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3
-    logical, dimension(:), intent(in), optional :: alt_hue_path
-
-    integer :: i
-    integer(kind=private_plint), dimension(:), allocatable, target :: ialt_hue_path
-
-    interface
-        subroutine c_plscmap1l( type, npts, intensity, coord1, coord2, coord3, alt_hue_path ) bind(c,name='c_plscmap1l')
-            use iso_c_binding
-            implicit none
-            include 'plplot_interface_private_types.inc'
-            integer(kind=private_plint), value :: type, npts
-            real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3
-            !integer(kind=private_plint), dimension(*), intent(in) :: alt_hue_path
-            type(c_ptr), value :: alt_hue_path
-        end subroutine c_plscmap1l
-    end interface
-
-    if ( present(alt_hue_path) ) then
-        allocate( ialt_hue_path(size(alt_hue_path)) )
-        ialt_hue_path = merge(1,0,alt_hue_path)
-
-        call c_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
-                          real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
-                          real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
-                          c_loc(ialt_hue_path) )
-    else
-        call c_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
-                          real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
-                          real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
-                          c_null_ptr )
-    endif
-end subroutine plscmap1l_impl
-
 subroutine plsdidev_impl( mar, aspect, jx, jy )
     real(kind=wp), intent(in) :: mar, aspect, jx, jy
 
@@ -1519,6 +1548,38 @@ subroutine plsdimap_impl( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm )
                      real(diymin,kind=private_plflt), real(dimymax,kind=private_plflt), &
                      real(dimxpmm,kind=private_plflt), real(diypmm,kind=private_plflt) )
 end subroutine plsdimap_impl
+
+subroutine plsmaj_impl( def, scale )
+    real(kind=wp), intent(in) :: def, scale
+
+    interface
+        subroutine c_plsmaj( def, scale ) bind(c,name='c_plsmaj')
+            use iso_c_binding
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(in) :: def, scale
+        end subroutine c_plsmaj
+    end interface
+
+    call c_plsmaj( real(def,kind=private_plflt), real(scale,kind=private_plflt) )
+
+end subroutine plsmaj_impl
+
+subroutine plsmin_impl( def, scale )
+    real(kind=wp), intent(in) :: def, scale
+
+    interface
+        subroutine c_plsmin( def, scale ) bind(c,name='c_plsmin')
+            use iso_c_binding
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), intent(in) :: def, scale
+        end subroutine c_plsmin
+    end interface
+
+    call c_plsmin( real(def,kind=private_plflt), real(scale,kind=private_plflt) )
+
+end subroutine plsmin_impl
 
 subroutine plspage_impl( xp, yp, xleng, yleng, xoff, yoff )
     integer, intent(in) :: xleng, yleng, xoff, yoff

@@ -853,7 +853,7 @@
          real(kind=plflt), dimension(:)   :: values
 
          ! Load the color palette
-         call plspal1( palette, 1 )
+         call plspal1( palette, .true. )
 
          do label_i = 0,COLORBAR_LABELS-1
             do cap_i = 0,COLORBAR_CAPS-1

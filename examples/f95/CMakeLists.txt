@@ -40,9 +40,10 @@ set(f95_STRING_INDICES
   "12"
   "13"
 #plcont  "14"
-#c  "15"
-#c  "16"
-#c  "16a"
+#plshade  "15"
+#plshades  "16"
+"16"
+#plshades  "16a"
 #  "17"
 #  "18"
 #  "19"
@@ -58,7 +59,7 @@ set(f95_STRING_INDICES
 #  "29"
   "30"
 #  "31"
-# "33"
+ "33"
   )
 
 if(CORE_BUILD)

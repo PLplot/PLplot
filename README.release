@@ -110,6 +110,10 @@ one of them, and check the remainder of those arrays all have that
 identical size.  (The old Fortran binding was much sloppier about
 this.)
 
+c. Last plspal1 argument type has been changed from integer to logical
+to be consistent with the PLBOOL type of the corresponding
+argument of the C routine.
+
 ________________________________________________________________
 
 3. PLplot testing

@@ -55,7 +55,7 @@
 
 !      Load color palettes
       call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_gray.pal',1)
+      call plspal1('cmap1_gray.pal', .true.)
 
 !      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
       call plscmap0n(3)
@@ -166,7 +166,7 @@
 !      Plot using 1d coordinate transform
 
       call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_blue_yellow.pal',1)
+      call plspal1('cmap1_blue_yellow.pal', .true.)
       call plscmap0n(3)
 
       call pladv(0)
@@ -214,7 +214,7 @@
 !      Plot using 2d coordinate transform
 
       call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_blue_red.pal',1)
+      call plspal1('cmap1_blue_red.pal', .true.)
       call plscmap0n(3)
 
       call pladv(0)
@@ -263,7 +263,7 @@
 
 !      Plot using 2d coordinate transform and plshades contours.
       call plspal0('')
-      call plspal1('',1)
+      call plspal1('', .true. )
       call plscmap0n(3)
 
       call pladv(0)
@@ -310,7 +310,7 @@
 
 !      Example with polar coordinates.
       call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_gray.pal',1)
+      call plspal1('cmap1_gray.pal', .true. )
       call plscmap0n(3)
 
       call pladv(0)
