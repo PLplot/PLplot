@@ -308,6 +308,11 @@
     end interface plsym
     private :: plsym_impl
 
+    interface plvasp
+        module procedure plvasp_impl
+    end interface plvasp
+    private :: plvasp_impl
+
     interface plvpor
         module procedure plvpor_impl
     end interface plvpor
@@ -1593,6 +1598,20 @@ subroutine plsym_impl( x, y, code )
     call c_plsym( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
                   int(code,kind=private_plint) )
 end subroutine plsym_impl
+
+subroutine plvasp_impl( aspect)
+    real(kind=wp), intent(in) :: aspect
+
+    interface
+        subroutine c_plvasp( aspect ) bind(c,name='c_plvasp')
+            implicit none
+            include 'plplot_interface_private_types.inc'
+            real(kind=private_plflt), value :: aspect
+        end subroutine c_plvasp
+    end interface
+
+    call c_plvasp( real(aspect,kind=private_plflt) )
+end subroutine plvasp_impl
 
 subroutine plvpor_impl( xmin, xmax, ymin, ymax )
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
