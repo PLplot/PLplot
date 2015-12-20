@@ -16920,7 +16920,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>xleng</parameter>
-          (<literal>PLINT </literal>, input)
+          (<literal>PLINT</literal>, input)
         </term>
         <listitem>
           <para>
