@@ -29,7 +29,7 @@
 ! TODO: plsurf3d, plsurf3dl
 
 module plplot_types
-    include 'plplot_interface_private_types.inc'
+    include 'included_plplot_interface_private_types.f90'
 end module plplot_types
 
 module plplot_single
@@ -40,7 +40,7 @@ module plplot_single
     integer, parameter :: wp = private_single
     private :: wp, private_single, private_double, private_plint, private_plunicode
 
-    include 'plplot_real_interfaces.inc'
+    include 'included_plplot_real_interfaces.f90'
 end module plplot_single
 
 module plplot_double
@@ -51,7 +51,7 @@ module plplot_double
     integer, parameter :: wp = private_double
     private :: wp, private_single, private_double, private_plint, private_plunicode
 
-    include 'plplot_real_interfaces.inc'
+    include 'included_plplot_real_interfaces.f90'
 
 end module plplot_double
 
@@ -61,7 +61,7 @@ module plplot
     use plplot_types, only: plflt => private_plflt, private_plint, private_plunicode
     implicit none
     integer(kind=private_plint), parameter :: maxlen = 320
-    include 'plplot_parameters.inc'
+    include 'included_plplot_parameters.f90'
     private :: private_plint, private_plunicode
     private :: copystring
 !
@@ -175,7 +175,7 @@ subroutine pl_setcontlabelformat_impl( lexp, sigdig )
    interface
        subroutine c_pl_setcontlabelformat( lexp, sigdig ) bind(c,name='c_pl_setcontlabelformat')
            implicit none
-           include 'plplot_interface_private_types.inc'
+           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value :: lexp, sigdig
        end subroutine c_pl_setcontlabelformat
    end interface
@@ -188,7 +188,7 @@ subroutine pladv( sub )
     interface
         subroutine c_pladv( sub ) bind( c, name = 'c_pladv' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: sub
         end subroutine c_pladv
     end interface
@@ -201,7 +201,7 @@ subroutine plcol0( icol )
     interface
         subroutine c_plcol0( icol ) bind(c, name = 'c_plcol0' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: icol
         end subroutine c_plcol0
     end interface
@@ -214,7 +214,7 @@ subroutine plfont( font )
     interface
         subroutine c_plfont( font ) bind( c, name = 'c_plfont' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: font
         end subroutine c_plfont
     end interface
@@ -227,7 +227,7 @@ subroutine plfontld( charset )
     interface
         subroutine c_plfontld( charset ) bind( c, name = 'c_plfontld' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: charset
         end subroutine c_plfontld
     end interface
@@ -242,7 +242,7 @@ subroutine plgcol0( icol, r, g, b )
     interface
         subroutine c_plgcol0( icol, r, g, b ) bind( c, name = 'c_plgcol0' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: icol
             integer(kind=private_plint), intent(out) :: r, g, b
         end subroutine c_plgcol0
@@ -260,7 +260,7 @@ subroutine plgcolbg( r, g, b )
     interface
         subroutine c_plgcolbg( r, g, b ) bind( c, name = 'c_plgcolbg' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: r, g, b
         end subroutine c_plgcolbg
     end interface
@@ -277,7 +277,7 @@ subroutine plgcompression( compression )
     interface
         subroutine c_plgcompression( compression ) bind( c, name = 'c_plgcompression' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: compression
         end subroutine c_plgcompression
     end interface
@@ -308,7 +308,7 @@ subroutine plgfam( fam, num, bmax )
     interface
         subroutine c_plgfam( fam, num, bmax ) bind( c, name = 'c_plgfam' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: fam, num, bmax
         end subroutine c_plgfam
     end interface
@@ -325,7 +325,7 @@ subroutine plgfont( family, style, weight )
     interface
         subroutine c_plgfont( family, style, weight ) bind( c, name = 'c_plgfont' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: family, style, weight
         end subroutine c_plgfont
     end interface
@@ -342,7 +342,7 @@ subroutine plglevel( level )
     interface
         subroutine c_plglevel( level ) bind( c, name = 'c_plglevel' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: level
         end subroutine c_plglevel
     end interface
@@ -357,7 +357,7 @@ subroutine plgstrm( strm )
     interface
         subroutine c_plgstrm( strm ) bind( c, name = 'c_plgstrm' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: strm
         end subroutine c_plgstrm
     end interface
@@ -388,7 +388,7 @@ subroutine plgxax( digmax, digits )
     interface
         subroutine c_plgxax( digmax, digits ) bind( c, name = 'c_plgxax' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: digmax, digits
         end subroutine c_plgxax
     end interface
@@ -404,7 +404,7 @@ subroutine plgyax( digmax, digits )
     interface
         subroutine c_plgyax( digmax, digits ) bind( c, name = 'c_plgyax' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: digmax, digits
         end subroutine c_plgyax
     end interface
@@ -420,7 +420,7 @@ subroutine plgzax( digmax, digits )
     interface
         subroutine c_plgzax( digmax, digits ) bind( c, name = 'c_plgzax' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: digmax, digits
         end subroutine c_plgzax
     end interface
@@ -449,7 +449,7 @@ subroutine pllsty( lin )
     interface
         subroutine c_pllsty( lin ) bind( c, name = 'c_pllsty' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: lin
         end subroutine c_pllsty
     end interface
@@ -462,7 +462,7 @@ subroutine plmkstrm( strm )
     interface
         subroutine c_plmkstrm( strm ) bind( c, name = 'c_plmkstrm' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: strm
         end subroutine c_plmkstrm
     end interface
@@ -475,7 +475,7 @@ subroutine plpat( nlin, inc, del )
     interface
         subroutine c_plpat( nlin, inc, del ) bind( c, name = 'c_plpat' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: nlin, inc, del
         end subroutine c_plpat
     end interface
@@ -489,7 +489,7 @@ real (kind=private_plflt) function plrandd()
     interface
         function c_plrandd() bind(c,name='c_plrandd')
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: c_plrandd
         end function c_plrandd
     end interface
@@ -502,7 +502,7 @@ subroutine plprec( setp, prec )
     interface
         subroutine c_plprec( setp, prec ) bind( c, name = 'c_plprec' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: setp, prec
         end subroutine c_plprec
     end interface
@@ -515,7 +515,7 @@ subroutine plpsty( patt )
     interface
         subroutine c_plpsty( patt ) bind( c, name = 'c_plpsty' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: patt
         end subroutine c_plpsty
     end interface
@@ -529,7 +529,7 @@ subroutine plscmap0( r, g, b )
     interface
         subroutine c_plscmap0( r, g, b, n ) bind(c,name='c_plscmap0')
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), dimension(*), intent(in) :: r, g, b
             integer(kind=private_plint), value :: n
         end subroutine c_plscmap0
@@ -544,7 +544,7 @@ subroutine plscmap0n( n )
     interface
         subroutine c_plscmap0n( n ) bind( c, name = 'c_plscmap0n' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: n
         end subroutine c_plscmap0n
     end interface
@@ -557,7 +557,7 @@ subroutine plscmap1n( n )
     interface
         subroutine c_plscmap1n( n ) bind( c, name = 'c_plscmap1n' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: n
         end subroutine c_plscmap1n
     end interface
@@ -570,7 +570,7 @@ subroutine plscol0( icol, r, g, b )
     interface
         subroutine c_plscol0( icol, r, g, b ) bind( c, name = 'c_plscol0' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: icol, r, g, b
         end subroutine c_plscol0
     end interface
@@ -584,7 +584,7 @@ subroutine plscolbg( r, g, b )
     interface
         subroutine c_plscolbg( r, g, b ) bind( c, name = 'c_plscolbg' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: r, g, b
         end subroutine c_plscolbg
     end interface
@@ -598,7 +598,7 @@ subroutine plscolor( color )
     interface
         subroutine c_plscolor( color ) bind( c, name = 'c_plscolor' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: color
         end subroutine c_plscolor
     end interface
@@ -611,7 +611,7 @@ subroutine plscompression( compression )
     interface
         subroutine c_plscompression( compression ) bind( c, name = 'c_plscompression' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: compression
         end subroutine c_plscompression
     end interface
@@ -638,7 +638,7 @@ subroutine plseed( s )
     interface
         subroutine c_plseed( s ) bind( c, name = 'c_plseed' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: s
         end subroutine c_plseed
     end interface
@@ -652,7 +652,7 @@ subroutine plsesc( esc )
     interface
         subroutine c_plsesc( esc ) bind( c, name = 'c_plsesc' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: esc
         end subroutine c_plsesc
     end interface
@@ -679,7 +679,7 @@ subroutine plsfam( fam, num, bmax )
     interface
         subroutine c_plsfam( fam, num, bmax ) bind( c, name = 'c_plsfam' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: fam, num, bmax
         end subroutine c_plsfam
     end interface
@@ -692,7 +692,7 @@ subroutine plsfont( family, style, weight )
     interface
         subroutine c_plsfont( family, style, weight ) bind( c, name = 'c_plsfont' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: family, style, weight
         end subroutine c_plsfont
     end interface
@@ -705,7 +705,7 @@ subroutine plsori( rot )
     interface
         subroutine c_plsori( rot ) bind( c, name = 'c_plsori' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: rot
         end subroutine c_plsori
     end interface
@@ -719,7 +719,7 @@ subroutine plspal0( filename )
    interface
        subroutine c_plspal0( filename ) bind(c,name='c_plspal0')
            implicit none
-           include 'plplot_interface_private_types.inc'
+           include 'included_plplot_interface_private_types.f90'
            character(len=1), dimension(*), intent(in) :: filename
        end subroutine c_plspal0
    end interface
@@ -735,7 +735,7 @@ subroutine plspal1( filename, interpolate )
    interface
        subroutine c_plspal1( filename, interpolate ) bind(c,name='c_plspal1')
            implicit none
-           include 'plplot_interface_private_types.inc'
+           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value :: interpolate
            character(len=1), dimension(*), intent(in) :: filename
        end subroutine c_plspal1
@@ -751,7 +751,7 @@ subroutine plspause( lpause )
     interface
         subroutine c_plspause( ipause ) bind(c,name='c_plspause')
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: ipause
         end subroutine c_plspause
     end interface
@@ -764,7 +764,7 @@ subroutine plsstrm( strm )
     interface
         subroutine c_plsstrm( strm ) bind( c, name = 'c_plsstrm' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: strm
         end subroutine c_plsstrm
     end interface
@@ -777,7 +777,7 @@ subroutine plssub( nx, ny )
     interface
         subroutine c_plssub( nx, ny ) bind( c, name = 'c_plssub' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: nx, ny
         end subroutine c_plssub
     end interface
@@ -790,7 +790,7 @@ subroutine plstar( nx, ny )
     interface
         subroutine c_plstar( nx, ny ) bind( c, name = 'c_plstar' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: nx, ny
         end subroutine c_plstar
     end interface
@@ -803,7 +803,7 @@ subroutine plstripd( id )
     interface
         subroutine c_plstripd( id ) bind( c, name = 'c_plstripd' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: id
         end subroutine c_plstripd
     end interface
@@ -829,7 +829,7 @@ subroutine plstyl_n_array( n, mark, space )
     interface
         subroutine c_plstyl( n, mark, space ) bind( c, name = 'c_plstyl' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: n
             integer(kind=private_plint), dimension(*) :: mark, space
         end subroutine c_plstyl
@@ -843,7 +843,7 @@ subroutine plsxax( digmax, digits )
     interface
         subroutine c_plsxax( digmax, digits ) bind( c, name = 'c_plsxax' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: digmax, digits
         end subroutine c_plsxax
     end interface
@@ -856,7 +856,7 @@ subroutine plsyax( digmax, digits )
     interface
         subroutine c_plsyax( digmax, digits ) bind( c, name = 'c_plsyax' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: digmax, digits
         end subroutine c_plsyax
     end interface
@@ -869,7 +869,7 @@ subroutine plszax( digmax, digits )
     interface
         subroutine c_plszax( digmax, digits ) bind( c, name = 'c_plszax' )
             implicit none
-            include 'plplot_interface_private_types.inc'
+            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: digmax, digits
         end subroutine c_plszax
     end interface
@@ -887,7 +887,7 @@ subroutine plparseopts(mode)
      subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
        use iso_c_binding, only: c_char
        implicit none
-       include 'plplot_interface_private_types.inc'
+       include 'included_plplot_interface_private_types.f90'
        integer(kind=private_plint), value :: length, nargs, mode
        ! This Fortran argument requires special processing done
        ! in fc_plparseopts at the C level to interoperate properly

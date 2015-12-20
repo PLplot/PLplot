@@ -75,25 +75,24 @@ if(ENABLE_f95)
   # Notes:
 
   # The CMake Fortran dependency scanner finds the Fortran include
-  # files, sfstubs.inc and plplot_parameters.inc and deals properly
-  # with the dependencies on those files.  Therefore, there is no need
-  # to include those files in the SRCS list or do anything special
-  # with their dependencies.
+  # files and deals properly with the dependencies on those files.
+  # Therefore, there is no need to include those files in the SRCS
+  # list or do anything special with their dependencies.
 
-  # Check consistency of plplot_parameters.inc.
+  # Check consistency of included_plplot_parameters.f90.
   add_custom_target(
     check_f95_parameters
-    ${CMAKE_COMMAND} -E echo "Check that bindings/f95/plplot_parameters.inc is consistent with the #defines in bindings/swig-support/plplotcapi.i"
+    ${CMAKE_COMMAND} -E echo "Check that bindings/f95/included_plplot_parameters.f90 is consistent with the #defines in bindings/swig-support/plplotcapi.i"
     COMMAND ${CMAKE_COMMAND} -E remove -f
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.inc_compare
+    ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_parameters.f90_compare
     COMMAND
     sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed <
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i >
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.inc_compare
+    ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_parameters.f90_compare
     COMMAND
     COMMAND
-    cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.inc
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.inc_compare
+    cmp ${CMAKE_CURRENT_SOURCE_DIR}/included_plplot_parameters.f90
+    ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_parameters.f90_compare
     )
 
   add_dependencies(check_all check_f95_parameters)
@@ -108,14 +107,14 @@ if(ENABLE_f95)
 
   set(PLPLOT_F95_PRIVATE "private,")
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_private_types.inc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_private_types.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/included_plplot_private_types.f90.in
+    ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_private_types.f90
     @ONLY
     )
   set(PLPLOT_F95_PRIVATE)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_private_types.inc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_interface_private_types.inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/included_plplot_private_types.f90.in
+    ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_interface_private_types.f90
     @ONLY
     )
 

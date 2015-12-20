@@ -1,11 +1,11 @@
 !     Do not edit this generated file.  Instead, check its consistency
-!     with the #defines in bindings/swig-support/plplotcapi.i using the
-!     (Unix) target "check_f95_parameters".  If that target reports an
-!     inconsistency (via a cmp message) between the generated
-!     plplot_parameters.inc_compare file in the build tree and
-!     plplot_parameters.inc in the source tree, then copy
-!     plplot_parameters.inc_compare on top of plplot_parameters.inc and
-!     check in that result.
+!     with the #defines in bindings/swig-support/plplotcapi.i using
+!     the (Unix) target "check_f95_parameters".  If that target
+!     reports an inconsistency (via a cmp message) between the
+!     generated included_plplot_parameters.f90_compare file in the
+!     build tree and included_plplot_parameters.f90 in the source
+!     tree, then copy included_plplot_parameters.f90_compare on top of
+!     included_plplot_parameters.f90 and check in that result.
 
       integer(kind=private_plint), parameter :: PLESC_SET_RGB = 1 ! obsolete
       integer(kind=private_plint), parameter :: PLESC_ALLOC_NCOL = 2 ! obsolete
