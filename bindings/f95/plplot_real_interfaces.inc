@@ -68,6 +68,11 @@
     end interface plcol1
     private :: plcol1_impl
 
+    interface plcolorbar
+        module procedure plcolorbar_impl
+    end interface plcolorbar
+    private :: plcolorbar_impl
+
     interface plenv
         module procedure plenv_impl
     end interface plenv
@@ -366,20 +371,20 @@
 
 contains
 
-subroutine matrix_to_c( array, carray, cadress )
+subroutine matrix_to_c( array, carray, caddress )
     real(kind=wp), dimension(:,:), intent(in) :: array
     real(kind=private_plflt), dimension(:,:), allocatable, target, intent(out) :: carray
-    type(c_ptr), dimension(:), allocatable, intent(out) :: cadress
+    type(c_ptr), dimension(:), allocatable, intent(out) :: caddress
 
     integer :: i
 
     allocate( carray(size(array,2),size(array,1)) )
-    allocate( cadress(size(array,2)) )
+    allocate( caddress(size(array,2)) )
 
     carray = transpose( array )
 
     do i = 1,size(array,2)
-        cadress(i) = c_loc(carray(1,i))
+        caddress(i) = c_loc(carray(1,i))
     enddo
 end subroutine matrix_to_c
 
@@ -524,6 +529,112 @@ subroutine plcol1_impl( col )
 
     call c_plcol1( real(col,kind=private_plflt) )
 end subroutine plcol1_impl
+
+subroutine plcolorbar_impl( &
+     colorbar_width, colorbar_height, &
+     opt, position, x, y, &
+     x_length, y_length, bg_color, bb_color, bb_style, &
+     low_cap_color, high_cap_color, &
+     cont_color, cont_width, &
+     label_opts, labels, &
+     axis_opts, ticks, sub_ticks, n_values, values )
+     
+
+    real(kind=wp), intent(out) :: colorbar_width, colorbar_height
+    real(kind=wp), intent(in) :: x_length, y_length, x, y, low_cap_color, high_cap_color, cont_width
+    real(kind=wp), dimension(0:, 0:), intent(in) :: values
+    integer, intent(in) :: position, opt, bg_color, bb_color, bb_style, cont_color
+
+    integer, dimension(0:), intent(in) :: label_opts, sub_ticks, n_values
+    real(kind=wp), dimension(0:), intent(in) :: ticks
+    character(len=*), dimension(0:), intent(in) :: labels, axis_opts
+
+    integer :: n_labels, n_axes
+    real(kind=private_plflt) :: colorbar_width_out, colorbar_height_out
+    real(kind=private_plflt), dimension(:,:), allocatable :: values_c
+    type(c_ptr), dimension(:), allocatable :: values_address
+
+    interface
+       subroutine interface_plcolorbar( &
+            colorbar_width, colorbar_height, &
+            opt, position, x, y, &
+            x_length, y_length, bg_color, bb_color, bb_style, &
+            low_cap_color, high_cap_color, &
+            cont_color, cont_width, &
+            n_labels, label_opts, length_labels, labels, &
+            n_axes, length_axis_opts, axis_opts, ticks, sub_ticks, n_values, values_address ) &
+            bind(c,name='fc_plcolorbar')
+
+         use iso_c_binding, only: c_char, c_ptr
+         implicit none
+         include 'plplot_interface_private_types.inc'
+
+         real(kind=private_plflt), intent(out) :: colorbar_width, colorbar_height
+         real(kind=private_plflt), intent(in), value :: x_length, y_length, x, y, &
+              low_cap_color, high_cap_color, cont_width
+         integer(kind=private_plint), intent(in), value :: position, opt, bg_color, bb_color, bb_style, cont_color
+         integer(kind=private_plint), intent(in), value :: n_labels, length_labels, n_axes, length_axis_opts
+         real(kind=private_plflt), intent(in), dimension(*) :: ticks
+         integer(kind=private_plint), intent(in), dimension(*) :: label_opts, sub_ticks, n_values
+         type(c_ptr), intent(in), dimension(*) :: values_address
+         
+         ! These Fortran arguments require special processing done
+         ! in fc_plcolorbar at the C level to interoperate properly
+         ! with the C version of plcolorbar.
+         character(c_char), intent(in) :: labels(length_labels, n_labels), axis_opts(length_axis_opts, n_axes)
+         
+       end subroutine interface_plcolorbar
+    end interface
+
+
+    ! Determine number of label entries and demand consistent
+    ! array sizes.
+
+    n_labels = size(label_opts)
+    if( n_labels /= size(labels) ) then
+       write(0,*) "f95 plcolorbar: inconsistent array sizes not allowed for the following arrays:"
+       write(0,*) "label_opts"
+       write(0,*) "labels"
+       return
+    end if
+
+    n_axes = size(axis_opts)
+    if( &
+         n_axes /= size(ticks) .or. &
+         n_axes /= size(sub_ticks) .or. &
+         n_axes /= size(n_values) .or. &
+         n_axes /= size(values,1) &
+         ) then
+       write(0,*) "f95 plcolorbar: inconsistent array sizes not allowed for the following arrays:"
+       write(0,*) "axis_opts"
+       write(0,*) "ticks"
+       write(0,*) "sub_ticks"
+       write(0,*) "n_values"
+       write(0,*) "first dimension of values"
+    end if
+
+    call matrix_to_c( values, values_c, values_address )
+
+    call interface_plcolorbar( &
+         colorbar_width_out, colorbar_height_out, &
+         int(opt,kind=private_plint), int(position,kind=private_plint), &
+         real(x,kind=private_plflt), real(y,kind=private_plflt), &
+         real(x_length,kind=private_plflt), real(y_length,kind=private_plflt), &
+         int(bg_color,kind=private_plint), &
+         int(bb_color,kind=private_plint), int(bb_style,kind=private_plint), &
+         real(low_cap_color,kind=private_plflt), real(high_cap_color,kind=private_plflt), &
+         int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
+         int(n_labels, kind=private_plint), int(label_opts, kind=private_plint), &
+         len(labels(0), kind=private_plint), labels, &
+         int(n_axes, kind=private_plint), len(axis_opts(0), kind=private_plint), &
+         axis_opts, real(ticks, kind=private_plflt), int(sub_ticks, kind=private_plint), &
+         int(n_values, kind=private_plint), values_address &
+         )
+    ! Transform output real values.
+    colorbar_width = real(colorbar_width_out, kind=wp)
+    colorbar_height = real(colorbar_height_out, kind=wp)
+
+end subroutine plcolorbar_impl
 
 subroutine plenv_impl( xmin, xmax, ymin, ymax, just, axis )
     real(kind=wp), intent(in)  :: xmin, xmax, ymin, ymax
@@ -1026,14 +1137,15 @@ subroutine pllegend_impl( &
          int(nlegend,kind=private_plint), int(opt_array,kind=private_plint), &
          real(text_offset,kind=private_plflt), real(text_scale,kind=private_plflt), &
          real(text_spacing,kind=private_plflt), &
-         real(text_justification,kind=private_plflt), int(text_colors,kind=private_plint), len(text(0)), text, &
+         real(text_justification,kind=private_plflt), int(text_colors,kind=private_plint), &
+         len(text(0), kind=private_plint), text, &
          int(box_colors,kind=private_plint), int(box_patterns,kind=private_plint), &
          real(box_scales,kind=private_plflt), &
          real(box_line_widths,kind=private_plflt), &
          int(line_colors,kind=private_plint), int(line_styles,kind=private_plint), &
          real(line_widths,kind=private_plflt), &
          int(symbol_colors,kind=private_plint), real(symbol_scales,kind=private_plflt), &
-         int(symbol_numbers,kind=private_plint), len(symbols(0)), symbols )
+         int(symbol_numbers,kind=private_plint), len(symbols(0), kind=private_plint), symbols )
     ! Transform output real values.
     legend_width = real(legend_width_out, kind=wp)
     legend_height = real(legend_height_out, kind=wp)
@@ -1091,22 +1203,22 @@ subroutine plmesh_impl( x, y, z, opt )
     real(kind=wp), dimension(:,:), intent(in) :: z
 
     real(kind=private_plflt), dimension(:,:), allocatable :: zz
-    type(c_ptr), dimension(:), allocatable :: zadress
+    type(c_ptr), dimension(:), allocatable :: zaddress
 
     interface
-        subroutine c_plmesh( x, y, zadress, nx, ny, opt ) bind(c,name='c_plmesh')
-            use iso_c_binding
+        subroutine c_plmesh( x, y, zaddress, nx, ny, opt ) bind(c,name='c_plmesh')
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: nx, ny, opt
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
-            type(c_ptr), dimension(*), intent(in) :: zadress
+            type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine c_plmesh
     end interface
 
-    call matrix_to_c( z, zz, zadress )
+    call matrix_to_c( z, zz, zaddress )
 
-    call c_plmesh( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress, &
+    call c_plmesh( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress, &
                       size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint))
 
 end subroutine plmesh_impl
@@ -1117,22 +1229,22 @@ subroutine plmeshc_impl( x, y, z, opt, clevel )
     real(kind=wp), dimension(:,:), intent(in) :: z
 
     real(kind=private_plflt), dimension(:,:), allocatable :: zz
-    type(c_ptr), dimension(:), allocatable :: zadress
+    type(c_ptr), dimension(:), allocatable :: zaddress
 
     interface
-        subroutine c_plmeshc( x, y, zadress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plmeshc')
-            use iso_c_binding
+        subroutine c_plmeshc( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plmeshc')
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: nx, ny, opt, nlevel
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
-            type(c_ptr), dimension(*), intent(in) :: zadress
+            type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine c_plmeshc
     end interface
 
-    call matrix_to_c( z, zz, zadress )
+    call matrix_to_c( z, zz, zaddress )
 
-    call c_plmeshc( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress, &
+    call c_plmeshc( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress, &
                       size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
                       real(clevel,kind=private_plflt), size(clevel,kind=private_plint) )
 
@@ -1163,24 +1275,24 @@ subroutine plot3d_impl( x, y, z, opt, side)
 
     integer(kind=private_plint)                        :: iside
     real(kind=private_plflt), dimension(:,:), allocatable :: zz
-    type(c_ptr), dimension(:), allocatable :: zadress
+    type(c_ptr), dimension(:), allocatable :: zaddress
     
 
     interface
-        subroutine c_plot3d( x, y, zadress, nx, ny, opt, iside ) bind(c,name='c_plot3d')
-            use iso_c_binding
+        subroutine c_plot3d( x, y, zaddress, nx, ny, opt, iside ) bind(c,name='c_plot3d')
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: nx, ny, opt, iside
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
-            type(c_ptr), dimension(*), intent(in) :: zadress
+            type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine c_plot3d
     end interface
 
-    call matrix_to_c( z, zz, zadress )
+    call matrix_to_c( z, zz, zaddress )
     iside = merge(1,0,side)
 
-    call c_plot3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress,  &
+    call c_plot3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress,  &
          size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), iside)
 
 end subroutine plot3d_impl
@@ -1191,22 +1303,22 @@ subroutine plot3dc_impl( x, y, z, opt, clevel )
     real(kind=wp), dimension(:,:), intent(in) :: z
 
     real(kind=private_plflt), dimension(:,:), allocatable :: zz
-    type(c_ptr), dimension(:), allocatable :: zadress
+    type(c_ptr), dimension(:), allocatable :: zaddress
 
     interface
-        subroutine c_plot3dc( x, y, zadress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plot3dc')
-            use iso_c_binding
+        subroutine c_plot3dc( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plot3dc')
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: nx, ny, opt, nlevel
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
-            type(c_ptr), dimension(*), intent(in) :: zadress
+            type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine c_plot3dc
     end interface
 
-    call matrix_to_c( z, zz, zadress )
+    call matrix_to_c( z, zz, zaddress )
 
-    call c_plot3dc( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress,  &
+    call c_plot3dc( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress,  &
                      size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
                      real(clevel,kind=private_plflt), size(clevel,kind=private_plint) )
 
@@ -1220,24 +1332,24 @@ subroutine plot3dcl_impl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin,
     integer, dimension(:), intent(in) :: indexymin, indexymax
 
     real(kind=private_plflt), dimension(:,:), allocatable :: zz
-    type(c_ptr), dimension(:), allocatable :: zadress
+    type(c_ptr), dimension(:), allocatable :: zaddress
 
     interface
-        subroutine c_plot3dcl( x, y, zadress, nx, ny, opt, clevel, nlevel, &
+        subroutine c_plot3dcl( x, y, zaddress, nx, ny, opt, clevel, nlevel, &
                                 indexxmin, indexxmax, indexymin, indexymax ) bind(c,name='c_plot3dcl')
-            use iso_c_binding
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: nx, ny, opt, nlevel, indexxmin, indexxmax
             integer(kind=private_plint), dimension(*), intent(in) :: indexymin, indexymax
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
-            type(c_ptr), dimension(*), intent(in) :: zadress
+            type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine c_plot3dcl
     end interface
 
-    call matrix_to_c( z, zz, zadress )
+    call matrix_to_c( z, zz, zaddress )
 
-    call c_plot3dcl( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress, &
+    call c_plot3dcl( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress, &
                       size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
                       real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                       int(indexxmin-1,kind=private_plint), int(indexxmax-1,kind=private_plint), &
@@ -1435,7 +1547,7 @@ subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_p
 
     interface
         subroutine c_plscmap1l( type, npts, intensity, coord1, coord2, coord3, alt_hue_path ) bind(c,name='c_plscmap1l')
-            use iso_c_binding
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: type, npts
@@ -1554,10 +1666,9 @@ subroutine plsmaj_impl( def, scale )
 
     interface
         subroutine c_plsmaj( def, scale ) bind(c,name='c_plsmaj')
-            use iso_c_binding
             implicit none
             include 'plplot_interface_private_types.inc'
-            real(kind=private_plflt), intent(in) :: def, scale
+            real(kind=private_plflt), value, intent(in) :: def, scale
         end subroutine c_plsmaj
     end interface
 
@@ -1570,10 +1681,9 @@ subroutine plsmin_impl( def, scale )
 
     interface
         subroutine c_plsmin( def, scale ) bind(c,name='c_plsmin')
-            use iso_c_binding
             implicit none
             include 'plplot_interface_private_types.inc'
-            real(kind=private_plflt), intent(in) :: def, scale
+            real(kind=private_plflt), value, intent(in) :: def, scale
         end subroutine c_plsmin
     end interface
 
@@ -1587,11 +1697,10 @@ subroutine plspage_impl( xp, yp, xleng, yleng, xoff, yoff )
 
     interface
         subroutine c_plspage( xp, yp, xleng, yleng, xoff, yoff ) bind(c,name='c_plspage')
-            use iso_c_binding
             implicit none
             include 'plplot_interface_private_types.inc'
-            integer(kind=private_plint), value :: xleng, yleng, xoff, yoff
-            real(kind=private_plflt), intent(in) :: xp, yp
+            integer(kind=private_plint), value, intent(in) :: xleng, yleng, xoff, yoff
+            real(kind=private_plflt), value, intent(in) :: xp, yp
         end subroutine c_plspage
     end interface
 
@@ -1626,22 +1735,22 @@ subroutine plsurf3d_impl( x, y, z, opt, clevel )
     real(kind=wp), dimension(:,:), intent(in) :: z
 
     real(kind=private_plflt), dimension(:,:), allocatable :: zz
-    type(c_ptr), dimension(:), allocatable :: zadress
+    type(c_ptr), dimension(:), allocatable :: zaddress
 
     interface
-        subroutine c_plsurf3d( x, y, zadress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plsurf3d')
-            use iso_c_binding
+        subroutine c_plsurf3d( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plsurf3d')
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: nx, ny, opt, nlevel
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
-            type(c_ptr), dimension(*), intent(in) :: zadress
+            type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine c_plsurf3d
     end interface
 
-    call matrix_to_c( z, zz, zadress )
+    call matrix_to_c( z, zz, zaddress )
 
-    call c_plsurf3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress,  &
+    call c_plsurf3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress,  &
                      size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
                      real(clevel,kind=private_plflt), size(clevel,kind=private_plint) )
 
@@ -1655,24 +1764,24 @@ subroutine plsurf3dl_impl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin
     integer, dimension(:), intent(in) :: indexymin, indexymax
 
     real(kind=private_plflt), dimension(:,:), allocatable :: zz
-    type(c_ptr), dimension(:), allocatable :: zadress
+    type(c_ptr), dimension(:), allocatable :: zaddress
 
     interface
-        subroutine c_plsurf3dl( x, y, zadress, nx, ny, opt, clevel, nlevel, &
+        subroutine c_plsurf3dl( x, y, zaddress, nx, ny, opt, clevel, nlevel, &
                                 indexxmin, indexxmax, indexymin, indexymax ) bind(c,name='c_plsurf3dl')
-            use iso_c_binding
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: nx, ny, opt, nlevel, indexxmin, indexxmax
             integer(kind=private_plint), dimension(*), intent(in) :: indexymin, indexymax
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
-            type(c_ptr), dimension(*), intent(in) :: zadress
+            type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine c_plsurf3dl
     end interface
 
-    call matrix_to_c( z, zz, zadress )
+    call matrix_to_c( z, zz, zaddress )
 
-    call c_plsurf3dl( real(x,kind=private_plflt), real(y,kind=private_plflt), zadress, &
+    call c_plsurf3dl( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress, &
                       size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
                       real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                       int(indexxmin-1,kind=private_plint), int(indexxmax-1,kind=private_plint), &

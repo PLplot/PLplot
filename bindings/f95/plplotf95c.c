@@ -176,58 +176,61 @@ convert_string_array( char **cstrings, char * fstrings, unsigned number, unsigne
     }
 }
 
-//! This plparseopts wrapper is called from the Fortran level via an
-//! iso_c_binding interface.  This wrapper is necessary because of the
-//! call to convert_string_array to convert the Fortran array of
-//! characters argument to the array of char pointers form required by
-//! the corresponding plparseopts argument.
-//!
-//! @param name_length [IN ONLY] integer value which contains the
-//! Fortran character string size of names.
-//! @param size [IN ONLY] integer value which contains the number of
-//! elements of the Fortran names character array.
-//! @param names [IN ONLY] Pointer to a Fortran character array which
-//! contains the command-line argument strings.  This array should be
-//! declared by the Fortran calling routine as "character
-//! names(size)*name_length".
-//! @param mode [IN ONLY] integer value which contains the mode
-//! for the call to plparsopts
+//! This plcolorbar wrapper is called from the Fortran level via an iso_c_binding
+//! interface.  This wrapper is necessary because of the call to
+//! convert_string_array to convert the Fortran array of characters arguments to the
+//! array of char pointers form required by the corresponding plcolorbar arguments.
 //!
 
 void
-fc_plparseopts(  unsigned name_length, unsigned size, char *names, PLINT mode)
+fc_plcolorbar(
+	      PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+	      PLINT opt, PLINT position, PLFLT x, PLFLT y,
+	      PLFLT x_length, PLFLT y_length,
+	      PLINT bg_color, PLINT bb_color, PLINT bb_style,
+	      PLFLT low_cap_color, PLFLT high_cap_color,
+	      PLINT cont_color, PLFLT cont_width,
+	       PLINT n_labels, const PLINT *label_opts, unsigned length_flabels, char *flabels,
+	       PLINT n_axes, unsigned length_axis_opts, char * faxis_opts,
+	      const PLFLT *ticks, const PLINT *sub_ticks,
+	      const PLINT *n_values, const PLFLT * const *values )
 {
-    // Assign to NULL to quiet spurious potentially undefined warning.
-    char ** cnames = NULL;
-    unsigned actual_size = size;
-    char * save_pointer;
 
-    // names is a pointer to a a blank-terminated Fortran
-    // character*(name_length) names(size) array.
+  // Assign to NULL to quiet spurious potentially undefined warning.
+  char ** clabels = NULL;
+  char ** caxis_opts = NULL;
 
-    
-    // Make cnames the same size as the Fortran character array names
-    // except the character string size is one larger to contain the
-    // trailing NULL associated with C strings.
-    Alloc2dChar( &cnames, actual_size, name_length + 1 );
-    // gdb analysis indicates this pointer gets set to NULL below
-    // in the plparseopts call so we need to save it so we
-    // can free the associated memory after the plparseopts call.
-    save_pointer = cnames[1];
+  // Make clabels and caxis_opts the same sizes as the corresponding
+  // Fortran character arrays flabels and faxis_opts except the character
+  // string size is one larger to contain the trailing NULL associated
+  // with C strings.
+  Alloc2dChar( &clabels, n_labels, length_flabels + 1 );
+  Alloc2dChar( &caxis_opts, n_axes, length_axis_opts + 1 );
 
-    // Convert names (which refers to a blank-terminated Fortran
-    // character*(name_length) names(size) array) to cnames which
-    // is an array of pointers to null-terminated C strings.
-    convert_string_array( cnames, names, size, name_length );
+  // Convert flabels (which refers to a blank-terminated Fortran
+  // character*(length_flabels) names(n_labels) array) and faxis_opts
+  // (which refers to a blank-terminated Fortran
+  // character*(length_axis_opts) names(n_axes) array) to clabels and
+  // caxis_opts which are arrays of pointers to null-terminated C
+  // strings.
+  convert_string_array( clabels, flabels, n_labels, length_flabels );
+  convert_string_array( caxis_opts, faxis_opts, n_axes, length_axis_opts );
 
-    plparseopts(&size, (const char **) cnames, mode);
-
-    // cleanup
-    // plparseopts changes size (and also the contents of cnames[1] to
-    // NULL) during parsing so must free what was cnames[1] and make
-    // the Free2dChar call with actual_size
-    free((void *) save_pointer);
-    Free2dChar( cnames, actual_size );
+  plcolorbar(
+	     p_colorbar_width, p_colorbar_height,
+	     opt, position, x, y,
+	     x_length, y_length,
+	     bg_color, bb_color, bb_style,
+	     low_cap_color, high_cap_color,
+	     cont_color, cont_width,
+	     n_labels, label_opts, (const char * const *)clabels,
+	     n_axes, (const char * const *) caxis_opts,
+	     ticks, sub_ticks,
+	     n_values, values );
+	     
+  //cleanup
+  Free2dChar( clabels, n_labels );
+  Free2dChar( caxis_opts, n_axes );
 }
 
 //! This pllegend wrapper is called from the Fortran level via an iso_c_binding
@@ -290,4 +293,58 @@ fc_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
   //cleanup
   Free2dChar( ctext, nlegend );
   Free2dChar( csymbols, nlegend );
+}
+
+//! This plparseopts wrapper is called from the Fortran level via an
+//! iso_c_binding interface.  This wrapper is necessary because of the
+//! call to convert_string_array to convert the Fortran array of
+//! characters argument to the array of char pointers form required by
+//! the corresponding plparseopts argument.
+//!
+//! @param name_length [IN ONLY] integer value which contains the
+//! Fortran character string size of names.
+//! @param size [IN ONLY] integer value which contains the number of
+//! elements of the Fortran names character array.
+//! @param names [IN ONLY] Pointer to a Fortran character array which
+//! contains the command-line argument strings.  This array should be
+//! declared by the Fortran calling routine as "character
+//! names(size)*name_length".
+//! @param mode [IN ONLY] integer value which contains the mode
+//! for the call to plparsopts
+//!
+
+void
+fc_plparseopts(  unsigned name_length, unsigned size, char *names, PLINT mode)
+{
+    // Assign to NULL to quiet spurious potentially undefined warning.
+    char ** cnames = NULL;
+    unsigned actual_size = size;
+    char * save_pointer;
+
+    // names is a pointer to a a blank-terminated Fortran
+    // character*(name_length) names(size) array.
+
+    
+    // Make cnames the same size as the Fortran character array names
+    // except the character string size is one larger to contain the
+    // trailing NULL associated with C strings.
+    Alloc2dChar( &cnames, actual_size, name_length + 1 );
+    // gdb analysis indicates this pointer gets set to NULL below
+    // in the plparseopts call so we need to save it so we
+    // can free the associated memory after the plparseopts call.
+    save_pointer = cnames[1];
+
+    // Convert names (which refers to a blank-terminated Fortran
+    // character*(name_length) names(size) array) to cnames which
+    // is an array of pointers to null-terminated C strings.
+    convert_string_array( cnames, names, size, name_length );
+
+    plparseopts(&size, (const char **) cnames, mode);
+
+    // cleanup
+    // plparseopts changes size (and also the contents of cnames[1] to
+    // NULL) during parsing so must free what was cnames[1] and make
+    // the Free2dChar call with actual_size
+    free((void *) save_pointer);
+    Free2dChar( cnames, actual_size );
 }

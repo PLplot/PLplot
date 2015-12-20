@@ -208,10 +208,10 @@
               0.05_plflt, 0.05_plflt,                                &
               0.1_plflt, 15, 1, 1, 0, 0,                             &
               opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt, &
-              1._plflt, text_colors, text,                           &
-              box_colors, box_patterns, box_scales, box_line_widths, &
-              line_colors, line_styles, line_widths,                 &
-              symbol_colors, symbol_scales, symbol_numbers, symbols  )
+              1._plflt, text_colors(1:nlegend), text(1:nlegend),     &
+              box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+              line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+              symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend)  )
       enddo
 
 !     Second page illustrating effect of nrow, ncolumn for the same legend
@@ -260,10 +260,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-          1._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
       position = PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
       opt     = opt_base
@@ -274,10 +274,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-          1._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
       position = PL_POSITION_LEFT + PL_POSITION_OUTSIDE
       opt     = opt_base
@@ -288,10 +288,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-          1._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
       position = PL_POSITION_RIGHT + PL_POSITION_OUTSIDE
       opt     = opt_base
@@ -302,10 +302,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-          1._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
       position = PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_INSIDE
       opt     = opt_base
@@ -316,10 +316,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-          1._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
       position = PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_INSIDE
       opt     = opt_base + PL_LEGEND_ROW_MAJOR
@@ -330,10 +330,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-          1._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
       position = PL_POSITION_BOTTOM + PL_POSITION_INSIDE
       opt     = opt_base + PL_LEGEND_ROW_MAJOR
@@ -344,10 +344,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-          1._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
 !     Third page demonstrating legend alignment
 
@@ -404,10 +404,10 @@
               x, y,                                                  &
               0.025_plflt, 15, 1, 1, nrow, ncolumn,                  &
               opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 1.5_plflt, &
-              1._plflt, text_colors, text,                           &
-              box_colors, box_patterns, box_scales, box_line_widths, &
-              line_colors, line_styles, line_widths,                 &
-              symbol_colors, symbol_scales, symbol_numbers, symbols  )
+              1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+              box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+              line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+              symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
           if ( i .eq. nturn ) then
               position = PL_POSITION_TOP + PL_POSITION_RIGHT + PL_POSITION_SUBPAGE
@@ -490,10 +490,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up symbol legend entries with various symbols.
@@ -515,10 +515,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up symbol legend entries with various numbers of symbols.
@@ -540,10 +540,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up box legend entries with various colours.
@@ -570,10 +570,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up box legend entries with various patterns.
@@ -595,10 +595,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up box legend entries with various box pattern line widths.
@@ -620,10 +620,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up line legend entries with various colours.
@@ -649,10 +649,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up line legend entries with various styles.
@@ -673,10 +673,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Set up line legend entries with various widths.
@@ -697,10 +697,10 @@
       call pllegend( legend_width, legend_height, opt, position, x, y, &
           0.1_plflt, 15, 1, 1, 0, 0,                                   &
           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-          0._plflt, text_colors, text,                                 &
-          box_colors, box_patterns, box_scales, box_line_widths,       &
-          line_colors, line_styles, line_widths,                       &
-          symbol_colors, symbol_scales, symbol_numbers, symbols        )
+          0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+          box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
+          line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
+          symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
       max_height = max( max_height, legend_height )
 
 !     Color bar examples

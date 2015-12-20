@@ -33,7 +33,7 @@ module plplot_types
 end module plplot_types
 
 module plplot_single
-    use, intrinsic :: iso_c_binding
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc
     use plplot_types
     implicit none
 
@@ -44,7 +44,7 @@ module plplot_single
 end module plplot_single
 
 module plplot_double
-    use, intrinsic :: iso_c_binding
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc
     use plplot_types
     implicit none
 
@@ -582,7 +582,7 @@ end subroutine plscol0
 subroutine plscolbg( r, g, b )
     integer, intent(in) :: r, g, b
     interface
-        subroutine c_plscolbg( r, g, b ) bind( c, name = 'c_plscol0' )
+        subroutine c_plscolbg( r, g, b ) bind( c, name = 'c_plscolbg' )
             implicit none
             include 'plplot_interface_private_types.inc'
             integer(kind=private_plint), value :: r, g, b
@@ -885,7 +885,7 @@ subroutine plparseopts(mode)
   
   interface
      subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
-       use iso_c_binding, only: c_int, c_char
+       use iso_c_binding, only: c_char
        implicit none
        include 'plplot_interface_private_types.inc'
        integer(kind=private_plint), value :: length, nargs, mode
