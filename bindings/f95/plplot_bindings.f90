@@ -485,7 +485,7 @@ subroutine plpat( nlin, inc, del )
 end subroutine plpat
 
 ! Should be defined only once - return type not part of disambiguation
-real (kind=private_plflt) function plrandd_impl()
+real (kind=private_plflt) function plrandd()
     interface
         function c_plrandd() bind(c,name='c_plrandd')
             implicit none
@@ -494,8 +494,8 @@ real (kind=private_plflt) function plrandd_impl()
         end function c_plrandd
     end interface
 
-    plrandd_impl = c_plrandd()
-end function plrandd_impl
+    plrandd = c_plrandd()
+end function plrandd
 
 subroutine plprec( setp, prec )
     integer, intent(in) :: setp, prec

@@ -611,6 +611,12 @@ subroutine plcolorbar_impl( &
        write(0,*) "sub_ticks"
        write(0,*) "n_values"
        write(0,*) "first dimension of values"
+       return
+    end if
+
+    if(maxval(n_values) > size(values,2) ) then
+       write(0,*) "f95: plcolorbar: maximum of n_values > second dimension of values"
+       return
     end if
 
     call matrix_to_c( values, values_c, values_address )
