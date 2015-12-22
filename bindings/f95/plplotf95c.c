@@ -182,7 +182,7 @@ convert_string_array( char **cstrings, char * fstrings, unsigned number, unsigne
 //! array of char pointers form required by the corresponding plcolorbar arguments.
 //!
 
-void
+PLDLLIMPEXP_F95C void
 fc_plcolorbar(
 	      PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
 	      PLINT opt, PLINT position, PLFLT x, PLFLT y,
@@ -239,7 +239,7 @@ fc_plcolorbar(
 //! array of char pointers form required by the corresponding pllegend arguments.
 //!
 
-void
+PLDLLIMPEXP_F95C void
 fc_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 	     PLINT opt, PLINT position, PLFLT x, PLFLT y, PLFLT plot_width,
 	     PLINT bg_color, PLINT bb_color, PLINT bb_style,
@@ -313,7 +313,7 @@ fc_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 //! for the call to plparsopts
 //!
 
-void
+PLDLLIMPEXP_F95C void
 fc_plparseopts(  unsigned name_length, unsigned size, char *names, PLINT mode)
 {
     // Assign to NULL to quiet spurious potentially undefined warning.
