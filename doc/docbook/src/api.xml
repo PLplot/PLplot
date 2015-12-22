@@ -20067,57 +20067,6 @@ device support!)
 
   </sect1>
 
-  <sect1 id="plTranslateCursor" renderas="sect3">
-    <title>
-      <function>plTranslateCursor</function>: Convert device to world coordinates
-    </title>
-
-    <para>
-      <funcsynopsis>
-        <funcprototype>
-          <funcdef>
-            <function>plTranslateCursor</function>
-          </funcdef>
-          <paramdef>
-            <parameter>gin</parameter>
-          </paramdef>
-        </funcprototype>
-      </funcsynopsis>
-    </para>
-
-    <para>
-      Convert from device to world coordinates. The variable gin must have
-      members dX and dY set before the call.These represent the coordinates
-      of the point as a fraction of the total drawing area. If the point passed in is
-      on a window then the function returns 1, members wX and wY will be filled with
-      the world coordinates of that point and the subwindow member will be 
-      filled with the index of the window on which the point falls. If the point
-      falls on more than one window (because they overlap) then the window
-      with the lowest index is used. If the point does not fall on a window then
-      the function returns 0, wX and wY are set to 0 and subwindow remains
-      unchanged.
-    </para>
-
-    <variablelist>
-      <varlistentry>
-        <term>
-          <parameter>gin</parameter>
-          (<literal>PLGraphicsIn *</literal>, input/output)
-        </term>
-        <listitem>
-          <para>
-            Pointer to a graphics in structure to hold the input and output coordinates.
-          </para>
-        </listitem>
-      </varlistentry>
-    </variablelist>
-
-    <para>
-      Redacted form: <function>plTranslateCursor(gin)</function>
-    </para>
-
-  </sect1>
-
   <sect1 id="plvasp" renderas="sect3">
     <title>
       <function>plvasp</function>: Specify viewport using aspect ratio only

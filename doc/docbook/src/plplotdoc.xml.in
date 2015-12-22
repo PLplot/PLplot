@@ -248,6 +248,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plszax '<link linkend="plszax"><function>plszax</function></link>'>
 <!ENTITY pltext '<link linkend="pltext"><function>pltext</function></link>'>
 <!ENTITY pltimefmt '<link linkend="pltimefmt"><function>pltimefmt</function></link>'>
+<!ENTITY plTranslateCursor '<link linkend="plTranslateCursor"><function>plTranslateCursor</function></link>'>
 <!ENTITY pltr0 '<link linkend="pltr0"><function>pltr0</function></link>'>
 <!ENTITY pltr1 '<link linkend="pltr1"><function>pltr1</function></link>'>
 <!ENTITY pltr2 '<link linkend="pltr2"><function>pltr2</function></link>'>

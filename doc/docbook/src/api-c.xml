@@ -1149,15 +1149,66 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
   </sect1>
+  
+  <sect1 id="plTranslateCursor" renderas="sect3">
+    <title>
+      <function>plTranslateCursor</function>: Convert device to world coordinates
+    </title>
+
+    <para>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>
+            <function>plTranslateCursor</function>
+          </funcdef>
+          <paramdef>
+            <parameter>gin</parameter>
+          </paramdef>
+        </funcprototype>
+      </funcsynopsis>
+    </para>
+
+    <para>
+      Convert from device to world coordinates. The variable gin must have
+      members dX and dY set before the call.These represent the coordinates
+      of the point as a fraction of the total drawing area. If the point passed in is
+      on a window then the function returns 1, members wX and wY will be filled with
+      the world coordinates of that point and the subwindow member will be 
+      filled with the index of the window on which the point falls. If the point
+      falls on more than one window (because they overlap) then the window
+      with the lowest index is used. If the point does not fall on a window then
+      the function returns 0, wX and wY are set to 0 and subwindow remains
+      unchanged.
+    </para>
+
+    <variablelist>
+      <varlistentry>
+        <term>
+          <parameter>gin</parameter>
+          (<literal>&PLGraphicsIn; *</literal>, input/output)
+        </term>
+        <listitem>
+          <para>
+            Pointer to a &PLGraphicsIn; structure to hold the input and output coordinates.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <para>
+      Redacted form: <function>plTranslateCursor(gin)</function>
+    </para>
+
+  </sect1>
 
   <sect1 id="PLGraphicsIn" renderas="sect3">
     <title><structname>PLGraphicsIn</structname>: PLplot Graphics Input structure</title>
 
     <para>
       The <structname>PLGraphicsIn</structname> structure is used by 
-      &plGetCursor; to return information 
-      on the current cursor position and key / button state for 
-      interactive drivers. The structure contains the following fields:
+      &plGetCursor; and &plTranslateCursor; to return information 
+      on the current cursor position and key / button state. 
+      The structure contains the following fields:
     </para>
 
     <variablelist>
@@ -1179,7 +1230,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Key or button mask.
+	    Key or button mask. Consists of a combination of the following masks: <literal>PL_MASK_SHIFT,
+	    PL_MASK_CAPS, PL_MASK_CONTROL, PL_MASK_ALT, PL_MASK_NUM PL_MASK_ALTGR,
+	    PL_MASK_WIN, PL_MASK_SCROLL, PL_MASK_BUTTON1, PL_MASK_BUTTON2,
+	    PL_MASK_BUTTON3, PL_MASK_BUTTON4, PL_MASK_BUTTON5</literal>. The button values indicate
+	    mouse buttons. Caps, num and scroll indicate that the appropriate lock is on.
 	  </para>
 	</listitem>
       </varlistentry>
