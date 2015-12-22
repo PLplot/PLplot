@@ -356,6 +356,25 @@ typedef struct
 
 #define PL_MAXKEY    16
 
+//Masks for use with PLGraphicsIn::state
+//These exactly coincide with the X11 masks
+//from X11/X.h, however the values 1<<3 to
+//1<<7 aparently may vary depending upon
+//X implimentation and keyboard
+#define PL_MASK_SHIFT   (1<<0)
+#define PL_MASK_CAPS    (1<<1)
+#define PL_MASK_CONTROL (1<<2)
+#define PL_MASK_ALT     (1<<3)
+#define PL_MASK_NUM     (1<<4)
+#define PL_MASK_ALTGR   (1<<5)
+#define PL_MASK_WIN     (1<<6)
+#define PL_MASK_SCROLL  (1<<7)
+#define PL_MASK_BUTTON1 (1<<8)
+#define PL_MASK_BUTTON2 (1<<9)
+#define PL_MASK_BUTTON3 (1<<10)
+#define PL_MASK_BUTTON4 (1<<11)
+#define PL_MASK_BUTTON5 (1<<12)
+
 typedef struct
 {
     int          type;              // of event (CURRENTLY UNUSED)
