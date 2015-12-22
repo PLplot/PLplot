@@ -93,14 +93,9 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
     WXWINDOW::Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( wxPLplotwindow<WXWINDOW>::OnErase ) );
     WXWINDOW::Connect( wxEVT_CREATE, wxWindowCreateEventHandler( wxPLplotwindow<WXWINDOW>::OnCreate ) );
     WXWINDOW::Connect( wxEVT_MOTION, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
-    //WXWINDOW::Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
-    //WXWINDOW::Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
-    //WXWINDOW::Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_LEFT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
-    //Bind( wxEVT_SIZE, &wxPLplotwindow<WXWINDOW>::OnSize, this );
-    //Bind( wxEVT_PAINT, &wxPLplotwindow<WXWINDOW>::OnPaint, this );
 }
 
 
