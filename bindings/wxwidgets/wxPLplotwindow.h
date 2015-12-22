@@ -93,9 +93,9 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
     WXWINDOW::Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( wxPLplotwindow<WXWINDOW>::OnErase ) );
     WXWINDOW::Connect( wxEVT_CREATE, wxWindowCreateEventHandler( wxPLplotwindow<WXWINDOW>::OnCreate ) );
     WXWINDOW::Connect( wxEVT_MOTION, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
-    WXWINDOW::Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
-    WXWINDOW::Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
-    WXWINDOW::Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    //WXWINDOW::Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    //WXWINDOW::Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    //WXWINDOW::Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_LEFT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
@@ -234,17 +234,17 @@ void wxPLplotwindow<WXWINDOW>::OnMouse( wxMouseEvent &event )
     graphicsIn.dX     = PLFLT( cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
     graphicsIn.dY     = 1.0 - PLFLT( cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
     graphicsIn.keysym = 0x20;
-    if ( event.LeftDown() )
+    if ( event.LeftUp() )
     {
         graphicsIn.button = 1;             // X11/X.h: #define Button1	1
         graphicsIn.state  = 1 << 8;        // X11/X.h: #define Button1Mask	(1<<8)
     }
-    else if ( event.MiddleDown() )
+    else if ( event.MiddleUp() )
     {
         graphicsIn.button = 2;             // X11/X.h: #define Button2	2
         graphicsIn.state  = 1 << 9;        // X11/X.h: #define Button2Mask	(1<<9)
     }
-    else if ( event.RightDown() )
+    else if ( event.RightUp() )
     {
         graphicsIn.button = 3;              // X11/X.h: #define Button3	3
         graphicsIn.state  = 1 << 10;        // X11/X.h: #define Button3Mask	(1<<10)
