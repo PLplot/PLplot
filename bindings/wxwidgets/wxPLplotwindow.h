@@ -51,6 +51,7 @@ protected:
     virtual void OnSize( wxSizeEvent & event );          //!< Size event
     virtual void OnErase( wxEraseEvent &event );         //!< Background erase event
     virtual void OnCreate( wxWindowCreateEvent &event ); //!< Window created event
+    void OnMouse( wxMouseEvent &event );                 //!< Mouse events
     wxPLplotstream m_stream;                             //!< The wxPLplotstream which belongs to this plot widget
     bool           m_created;                            //!< Flag to indicate the window has been Created
 
@@ -66,6 +67,7 @@ private:
     wxGCDC     *m_gcDc;
 #endif
     wxColour   m_canvasColour;
+    virtual void OnLocate( const PLGraphicsIn &graphicsIn ){}
 };
 
 
@@ -90,6 +92,13 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
     WXWINDOW::Connect( wxEVT_PAINT, wxPaintEventHandler( wxPLplotwindow<WXWINDOW>::OnPaint ) );
     WXWINDOW::Connect( wxEVT_ERASE_BACKGROUND, wxEraseEventHandler( wxPLplotwindow<WXWINDOW>::OnErase ) );
     WXWINDOW::Connect( wxEVT_CREATE, wxWindowCreateEventHandler( wxPLplotwindow<WXWINDOW>::OnCreate ) );
+    WXWINDOW::Connect( wxEVT_MOTION, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    WXWINDOW::Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    WXWINDOW::Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    WXWINDOW::Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    WXWINDOW::Connect( wxEVT_LEFT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    WXWINDOW::Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    WXWINDOW::Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     //Bind( wxEVT_SIZE, &wxPLplotwindow<WXWINDOW>::OnSize, this );
     //Bind( wxEVT_PAINT, &wxPLplotwindow<WXWINDOW>::OnPaint, this );
 }
@@ -212,6 +221,47 @@ void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
     }
 }
 
+//Capture Mouse events and pass the
+template<class WXWINDOW>
+void wxPLplotwindow<WXWINDOW>::OnMouse( wxMouseEvent &event )
+{
+    PLGraphicsIn graphicsIn;
+    wxPoint      cursorPosition = event.GetPosition();
+    wxSize       clientSize     = GetClientSize();
+
+    graphicsIn.pX     = cursorPosition.x;
+    graphicsIn.pY     = cursorPosition.y;
+    graphicsIn.dX     = PLFLT( cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
+    graphicsIn.dY     = 1.0 - PLFLT( cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
+    graphicsIn.keysym = 0x20;
+    if ( event.LeftDown() )
+    {
+        graphicsIn.button = 1;             // X11/X.h: #define Button1	1
+        graphicsIn.state  = 1 << 8;        // X11/X.h: #define Button1Mask	(1<<8)
+    }
+    else if ( event.MiddleDown() )
+    {
+        graphicsIn.button = 2;             // X11/X.h: #define Button2	2
+        graphicsIn.state  = 1 << 9;        // X11/X.h: #define Button2Mask	(1<<9)
+    }
+    else if ( event.RightDown() )
+    {
+        graphicsIn.button = 3;              // X11/X.h: #define Button3	3
+        graphicsIn.state  = 1 << 10;        // X11/X.h: #define Button3Mask	(1<<10)
+    }
+    else
+    {
+        graphicsIn.button = 0;
+        graphicsIn.state  = 0;
+        graphicsIn.keysym = 0;
+    }
+    graphicsIn.subwindow = -1;
+    graphicsIn.type      = 0;
+    graphicsIn.string[0] = '\0';
+
+    m_stream.translatecursor( &graphicsIn );
+    this->OnLocate( graphicsIn );
+}
 
 //! Redo the whole plot, only if the window has been Created
 //

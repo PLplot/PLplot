@@ -42,7 +42,7 @@ extern "C" { void CPSEnableForegroundOperation( ProcessSerialNumber* psn ); }
 
 // Application icon as XPM
 // This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/
-static const char *graph[] = {
+static const char            *graph[] = {
 // columns rows colors chars-per-pixel
     "16 16 4 2",
     "   c black",
@@ -67,6 +67,36 @@ static const char *graph[] = {
     ". . . . . . . . . . . . . . . . ",
     "UX. . . . . . . . . . . . . . UX"
 };
+
+class wxPlDemoFrame : public wxPLplotwindow<wxFrame>
+{
+private:
+    virtual void OnLocate( const PLGraphicsIn &graphicsIn );
+};
+
+void wxPlDemoFrame::OnLocate( const PLGraphicsIn &graphicsIn )
+{
+    if ( graphicsIn.button == 0 )
+        return;         //Do nothing for motion, only respond to clicks
+    wxString message;
+    if ( graphicsIn.button == 1 )
+        message << "Left click.\n";
+    else if ( graphicsIn.button == 2 )
+        message << "Middle click.\n";
+    else if ( graphicsIn.button == 3 )
+        message << "Right click.\n";
+    message << "Pixels: x = " << graphicsIn.pX << " y = " << graphicsIn.pY << ".\n";
+    if ( graphicsIn.subwindow >= 0 )
+    {
+        message << "World: x = " << graphicsIn.wX << " y = " << graphicsIn.wY << ".\n";
+        message << "Window = " << graphicsIn.subwindow << ".\n";
+    }
+    else
+    {
+        message << "Point is not in a Window.\n";
+    }
+    wxMessageBox( message, "Mouse capture demo" );
+}
 
 template< class WXWINDOW >
 void Plot( wxPLplotwindow<WXWINDOW> *plotwindow );
@@ -93,7 +123,7 @@ bool MyApp::OnInit()
     SetFrontProcess( &psn );
 #endif
 
-    wxPLplotwindow<wxFrame> *frame = new wxPLplotwindow<wxFrame>();
+    wxPLplotwindow<wxFrame> *frame = new wxPlDemoFrame();
     frame->Create( NULL, wxID_ANY, wxT( "wxPLplotDemo" ) );
     frame->SetIcon( wxIcon( graph ) );
     frame->Show();

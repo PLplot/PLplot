@@ -233,7 +233,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
     PLFLT lastsplitpointy;
     PLFLT penultimatesplitpointx;
     PLFLT penultimatesplitpointy;
-    char  islatlon = 1;
+    char  islatlon     = 1;
     int   appendresult = 0;
 
 
@@ -252,7 +252,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
     double        *bufyraw;
     char          *prjfilename = NULL;
     PDFstrm       *prjfile;
-    char          prjtype[]    = { 0, 0, 0, 0, 0, 0, 0 };
+    char          prjtype[] = { 0, 0, 0, 0, 0, 0, 0 };
 #else
     PDFstrm       *in;
     //PLFLT            bufx[ncopies][200], bufy[ncopies][200];

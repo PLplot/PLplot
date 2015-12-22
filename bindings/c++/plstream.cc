@@ -1424,6 +1424,15 @@ void plstream::ptex3( PLFLT wx, PLFLT wy, PLFLT wz,
     plptex3( wx, wy, wz, dx, dy, dz, sx, sy, sz, just, text );
 }
 
+// Get the world coordinates associated with device coordinates
+
+void plstream::translatecursor( PLGraphicsIn *gin )
+{
+    set_stream();
+
+    plTranslateCursor( gin );
+}
+
 // Replays contents of plot buffer to current device/file.
 
 void plstream::replot()

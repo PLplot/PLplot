@@ -636,6 +636,10 @@ public:
     void ptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
                 PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text );
 
+// Get the world coordinates associated with device coordinates
+
+    void translatecursor( PLGraphicsIn *gin );
+
 // Replays contents of plot buffer to current device/file.
 
     void replot( void );
