@@ -38,7 +38,7 @@ class wxPLplotwindow : public WXWINDOW
 {
 public:
     wxPLplotwindow( bool useGraphicsContext = true );                       //!< Constructor.
-    virtual ~wxPLplotwindow( void );                                                //!< Destructor.
+    virtual ~wxPLplotwindow( void );                                        //!< Destructor.
 
     void RenewPlot( void );                                                 //!< Redo plot.
     bool SavePlot( const wxString& driver, const wxString& filename );      //!< Save plot using a different driver.
@@ -224,35 +224,64 @@ void wxPLplotwindow<WXWINDOW>::OnMouse( wxMouseEvent &event )
     wxPoint      cursorPosition = event.GetPosition();
     wxSize       clientSize     = GetClientSize();
 
-    graphicsIn.pX     = cursorPosition.x;
-    graphicsIn.pY     = cursorPosition.y;
-    graphicsIn.dX     = PLFLT( cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
-    graphicsIn.dY     = 1.0 - PLFLT( cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
-    graphicsIn.keysym = 0x20;
+    graphicsIn.pX        = cursorPosition.x;
+    graphicsIn.pY        = cursorPosition.y;
+    graphicsIn.dX        = PLFLT( cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
+    graphicsIn.dY        = 1.0 - PLFLT( cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
+    graphicsIn.keysym    = 0x20;
+    graphicsIn.state     = 0;
+    graphicsIn.subwindow = -1;
+    graphicsIn.type      = 0;
+    graphicsIn.string[0] = '\0';
     if ( event.LeftUp() )
     {
-        graphicsIn.button = 1;             // X11/X.h: #define Button1	1
-        graphicsIn.state  = 1 << 8;        // X11/X.h: #define Button1Mask	(1<<8)
+        graphicsIn.button = 1;
+        graphicsIn.state |= PL_MASK_BUTTON1;
     }
     else if ( event.MiddleUp() )
     {
-        graphicsIn.button = 2;             // X11/X.h: #define Button2	2
-        graphicsIn.state  = 1 << 9;        // X11/X.h: #define Button2Mask	(1<<9)
+        graphicsIn.button = 2;
+        graphicsIn.state |= PL_MASK_BUTTON2;
     }
     else if ( event.RightUp() )
     {
-        graphicsIn.button = 3;              // X11/X.h: #define Button3	3
-        graphicsIn.state  = 1 << 10;        // X11/X.h: #define Button3Mask	(1<<10)
+        graphicsIn.button = 3;
+        graphicsIn.state |= PL_MASK_BUTTON3;
+    }
+    else if ( event.Aux1Up() )
+    {
+        graphicsIn.button = 4;
+        graphicsIn.state |= PL_MASK_BUTTON4;
+    }
+    else if ( event.Aux2Up() )
+    {
+        graphicsIn.button = 5;
+        graphicsIn.state |= PL_MASK_BUTTON5;
     }
     else
     {
+        //If we get here we have just captured motion
+        //not a click
         graphicsIn.button = 0;
         graphicsIn.state  = 0;
         graphicsIn.keysym = 0;
     }
-    graphicsIn.subwindow = -1;
-    graphicsIn.type      = 0;
-    graphicsIn.string[0] = '\0';
+
+    if ( wxGetKeyState( WXK_SHIFT ) )
+        graphicsIn.state |= PL_MASK_SHIFT;
+    if ( wxGetKeyState( WXK_CAPITAL ) )
+        graphicsIn.state |= PL_MASK_CAPS;
+    if ( wxGetKeyState( WXK_ALT ) && wxGetKeyState( WXK_CONTROL ) )
+        graphicsIn.state |= PL_MASK_ALTGR;
+    else if ( wxGetKeyState( WXK_CONTROL ) )
+        graphicsIn.state |= PL_MASK_CONTROL;
+    else if ( wxGetKeyState( WXK_ALT ) )
+        graphicsIn.state |= PL_MASK_ALT;
+    if ( wxGetKeyState( WXK_NUMLOCK ) )
+        graphicsIn.state |= PL_MASK_NUM;
+    if ( wxGetKeyState( WXK_SCROLL ) )
+        graphicsIn.state |= PL_MASK_SCROLL;
+    //Note I can't find a way to catch the windows key
 
     m_stream.translatecursor( &graphicsIn );
     this->OnLocate( graphicsIn );

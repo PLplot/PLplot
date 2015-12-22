@@ -78,7 +78,26 @@ void wxPlDemoFrame::OnLocate( const PLGraphicsIn &graphicsIn )
 {
     if ( graphicsIn.button == 0 )
         return;         //Do nothing for motion, only respond to clicks
+
     wxString message;
+
+    if ( ( graphicsIn.state & PL_MASK_SHIFT ) != 0 )
+        message << "Shift-";
+    if ( ( graphicsIn.state & PL_MASK_CAPS ) != 0 )
+        message << "Caps Lock-";
+    if ( ( graphicsIn.state & PL_MASK_CONTROL ) != 0 )
+        message << "Ctrl-";
+    if ( ( graphicsIn.state & PL_MASK_ALT ) != 0 )
+        message << "Alt-";
+    if ( ( graphicsIn.state & PL_MASK_NUM ) != 0 )
+        message << "Num Lock-";
+    if ( ( graphicsIn.state & PL_MASK_ALTGR ) != 0 )
+        message << "Alt Gr-";
+    if ( ( graphicsIn.state & PL_MASK_WIN ) != 0 )
+        message << "Win-";
+    if ( ( graphicsIn.state & PL_MASK_SCROLL ) != 0 )
+        message << "Scroll Lock-";
+
     if ( graphicsIn.button == 1 )
         message << "Left click.\n";
     else if ( graphicsIn.button == 2 )
