@@ -72,56 +72,6 @@ module plplot
     end interface pl_setcontlabelformat
     private :: pl_setcontlabelformat_impl
 
-    interface
-        subroutine plbop() bind(c,name='c_plbop')
-        end subroutine plbop
-    end interface
-
-    interface
-        subroutine plclear() bind(c,name='c_plclear')
-        end subroutine plclear
-    end interface
-
-    interface
-        subroutine plend() bind( c, name = 'c_plend' )
-        end subroutine plend
-    end interface
-
-    interface
-        subroutine plend1() bind( c, name = 'c_plend1' )
-        end subroutine plend1
-    end interface
-
-    interface
-        subroutine pleop() bind( c, name = 'c_pleop' )
-        end subroutine pleop
-    end interface
-
-    interface
-        subroutine plfamadv() bind( c, name = 'c_plfamadv' )
-        end subroutine plfamadv
-    end interface
-
-    interface
-        subroutine plflush() bind( c, name = 'c_plflush' )
-        end subroutine plflush
-    end interface
-
-    interface
-        subroutine plgra() bind( c, name = 'c_plgra' )
-        end subroutine plgra
-    end interface
-
-    interface
-        subroutine plinit() bind( c, name = 'c_plinit' )
-        end subroutine plinit
-    end interface
-
-    interface
-        subroutine plreplot() bind(c,name='c_plreplot')
-        end subroutine plreplot
-    end interface
-
     interface plsetopt
         module procedure plsetopt_impl
     end interface plsetopt
@@ -133,16 +83,6 @@ module plplot
         module procedure plstyl_array
     end interface
     private :: plstyl_scalar, plstyl_n_array, plstyl_array
-
-    interface
-        subroutine pltext() bind(c,name='c_pltext')
-        end subroutine pltext
-    end interface
-
-    interface
-        subroutine plvsta() bind(c,name='c_plvsta')
-        end subroutine plvsta
-    end interface
 
 contains
 
@@ -196,6 +136,22 @@ subroutine pladv( sub )
     call c_pladv( int(sub,kind=private_plint) )
 end subroutine pladv
 
+subroutine plbop()
+    interface
+        subroutine interface_plbop() bind(c,name='c_plbop')
+        end subroutine interface_plbop
+     end interface
+     call interface_plbop()
+end subroutine plbop
+
+subroutine plclear()
+    interface
+        subroutine interface_plclear() bind(c,name='c_plclear')
+        end subroutine interface_plclear
+     end interface
+     call interface_plclear()
+end subroutine plclear
+
 subroutine plcol0( icol )
     integer, intent(in)  :: icol
     interface
@@ -208,6 +164,46 @@ subroutine plcol0( icol )
 
     call c_plcol0( int(icol,kind=private_plint) )
 end subroutine plcol0
+
+subroutine plend()
+    interface
+        subroutine interface_plend() bind( c, name = 'c_plend' )
+        end subroutine interface_plend
+     end interface
+     call interface_plend()
+end subroutine plend
+
+subroutine plend1()
+    interface
+        subroutine interface_plend1() bind( c, name = 'c_plend1' )
+        end subroutine interface_plend1
+     end interface
+     call interface_plend1()
+end subroutine plend1
+
+subroutine pleop()
+    interface
+        subroutine interface_pleop() bind( c, name = 'c_pleop' )
+        end subroutine interface_pleop
+     end interface
+     call interface_pleop()
+end subroutine pleop
+
+subroutine plfamadv()
+    interface
+        subroutine interface_plfamadv() bind( c, name = 'c_plfamadv' )
+        end subroutine interface_plfamadv
+     end interface
+     call interface_plfamadv()
+end subroutine plfamadv
+
+subroutine plflush()
+    interface
+        subroutine interface_plflush() bind( c, name = 'c_plflush' )
+        end subroutine interface_plflush
+     end interface
+     call interface_plflush()
+end subroutine plflush
 
 subroutine plfont( font )
     integer, intent(in)  :: font
@@ -351,6 +347,14 @@ subroutine plglevel( level )
     level = level_p
 end subroutine plglevel
 
+subroutine plgra()
+    interface
+        subroutine interface_plgra() bind( c, name = 'c_plgra' )
+        end subroutine interface_plgra
+     end interface
+     call interface_plgra()
+end subroutine plgra
+
 subroutine plgstrm( strm )
     integer, intent(out) :: strm
     integer(kind=private_plint) :: strm_p
@@ -430,6 +434,14 @@ subroutine plgzax( digmax, digits )
     digits = digits_p
 end subroutine plgzax
 
+subroutine plinit()
+    interface
+        subroutine interface_plinit() bind( c, name = 'c_plinit' )
+        end subroutine interface_plinit
+     end interface
+     call interface_plinit()
+end subroutine plinit
+
 subroutine pllab( xlab, ylab, title )
    character(len=*), intent(in) :: xlab, ylab, title
 
@@ -470,6 +482,42 @@ subroutine plmkstrm( strm )
     call c_plmkstrm( int(strm,kind=private_plint) )
 end subroutine plmkstrm
 
+subroutine plparseopts(mode)
+  integer                :: mode
+  integer                :: iargs, numargs
+  integer, parameter     :: maxargs = 100
+  character (len=maxlen), dimension(0:maxargs) :: arg
+  
+  interface
+     subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
+       use iso_c_binding, only: c_char
+       implicit none
+       include 'included_plplot_interface_private_types.f90'
+       integer(kind=private_plint), value :: length, nargs, mode
+       ! This Fortran argument requires special processing done
+       ! in fc_plparseopts at the C level to interoperate properly
+       ! with the C version of plparseopts.
+       character(c_char) arg(length, nargs)
+     end subroutine interface_plparseopts
+  end interface
+  
+  numargs = command_argument_count()
+  if (numargs < 0) then
+     !       This actually happened historically on a badly linked Cygwin platform.
+     write(0,'(a)') 'f95 plparseopts: negative number of arguments'
+     return
+  endif
+  if(numargs > maxargs) then
+     write(0,'(a)') 'f95 plparseopts: too many arguments'
+     return
+  endif
+  do iargs = 0, numargs
+     call get_command_argument(iargs, arg(iargs))
+  enddo
+  call interface_plparseopts(len(arg(0), kind=private_plint), int(numargs+1, kind=private_plint), arg, &
+       int(mode, kind=private_plint))
+end subroutine plparseopts
+
 subroutine plpat( nlin, inc, del )
     integer, intent(in) :: nlin, inc, del
     interface
@@ -483,19 +531,6 @@ subroutine plpat( nlin, inc, del )
     call c_plpat( int(nlin,kind=private_plint), int(inc,kind=private_plint), int(del,kind=private_plint) )
 
 end subroutine plpat
-
-! Should be defined only once - return type not part of disambiguation
-real (kind=private_plflt) function plrandd()
-    interface
-        function c_plrandd() bind(c,name='c_plrandd')
-            implicit none
-            include 'included_plplot_interface_private_types.f90'
-            real(kind=private_plflt) :: c_plrandd
-        end function c_plrandd
-    end interface
-
-    plrandd = c_plrandd()
-end function plrandd
 
 subroutine plprec( setp, prec )
     integer, intent(in) :: setp, prec
@@ -522,6 +557,27 @@ subroutine plpsty( patt )
 
     call c_plpsty( int(patt,kind=private_plint) )
 end subroutine plpsty
+
+! Should be defined only once - return type not part of disambiguation
+real (kind=private_plflt) function plrandd()
+    interface
+        function c_plrandd() bind(c,name='c_plrandd')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            real(kind=private_plflt) :: c_plrandd
+        end function c_plrandd
+    end interface
+
+    plrandd = c_plrandd()
+end function plrandd
+
+subroutine plreplot()
+    interface
+        subroutine interface_plreplot() bind(c,name='c_plreplot')
+        end subroutine interface_plreplot
+     end interface
+     call interface_plreplot()
+end subroutine plreplot
 
 subroutine plscmap0( r, g, b )
     integer, dimension(:), intent(in) :: r, g, b
@@ -877,39 +933,20 @@ subroutine plszax( digmax, digits )
     call c_plszax( int(digmax,kind=private_plint), int(digits,kind=private_plint) )
 end subroutine plszax
 
-subroutine plparseopts(mode)
-  integer                :: mode
-  integer                :: iargs, numargs
-  integer, parameter     :: maxargs = 100
-  character (len=maxlen), dimension(0:maxargs) :: arg
-  
-  interface
-     subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
-       use iso_c_binding, only: c_char
-       implicit none
-       include 'included_plplot_interface_private_types.f90'
-       integer(kind=private_plint), value :: length, nargs, mode
-       ! This Fortran argument requires special processing done
-       ! in fc_plparseopts at the C level to interoperate properly
-       ! with the C version of plparseopts.
-       character(c_char) arg(length, nargs)
-     end subroutine interface_plparseopts
-  end interface
-  
-  numargs = command_argument_count()
-  if (numargs < 0) then
-     !       This actually happened historically on a badly linked Cygwin platform.
-     write(0,'(a)') 'f95 plparseopts: negative number of arguments'
-     return
-  endif
-  if(numargs > maxargs) then
-     write(0,'(a)') 'f95 plparseopts: too many arguments'
-     return
-  endif
-  do iargs = 0, numargs
-     call get_command_argument(iargs, arg(iargs))
-  enddo
-  call interface_plparseopts(len(arg(0), kind=private_plint), int(numargs+1, kind=private_plint), arg, &
-       int(mode, kind=private_plint))
-end subroutine plparseopts
+subroutine pltext()
+    interface
+        subroutine interface_pltext() bind(c,name='c_pltext')
+        end subroutine interface_pltext
+     end interface
+     call interface_pltext()
+end subroutine pltext
+
+subroutine plvsta()
+    interface
+        subroutine interface_plvsta() bind(c,name='c_plvsta')
+        end subroutine interface_plvsta
+     end interface
+     call interface_plvsta()
+end subroutine plvsta
+
 end module plplot
