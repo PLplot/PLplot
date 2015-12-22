@@ -38,7 +38,7 @@ class wxPLplotwindow : public WXWINDOW
 {
 public:
     wxPLplotwindow( bool useGraphicsContext = true );                       //!< Constructor.
-    ~wxPLplotwindow( void );                                                //!< Destructor.
+    virtual ~wxPLplotwindow( void );                                                //!< Destructor.
 
     void RenewPlot( void );                                                 //!< Redo plot.
     bool SavePlot( const wxString& driver, const wxString& filename );      //!< Save plot using a different driver.
