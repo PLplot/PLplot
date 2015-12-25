@@ -43,6 +43,11 @@
     end interface plarc
     private :: plarc_impl
 
+    interface plaxes
+        module procedure plaxes_impl
+    end interface plaxes
+    private :: plaxes_impl
+
     interface plbin
         module procedure plbin_impl
     end interface plbin
@@ -58,6 +63,11 @@
     end interface plbox3
     private :: plbox3_impl
 
+    interface plbtime
+        module procedure plbtime_impl
+    end interface plbtime
+    private :: plbtime_impl
+
     interface plcalc_world
         module procedure plcalc_world_impl
     end interface plcalc_world
@@ -72,6 +82,16 @@
         module procedure plcolorbar_impl
     end interface plcolorbar
     private :: plcolorbar_impl
+
+    interface plconfigtime
+        module procedure plconfigtime_impl
+    end interface plconfigtime
+    private :: plconfigtime_impl
+
+    interface plctime
+        module procedure plctime_impl
+    end interface plctime
+    private :: plctime_impl
 
     interface plenv
         module procedure plenv_impl
@@ -313,6 +333,11 @@
     end interface plspage
     private :: plspage_impl
 
+    interface plssym
+        module procedure plssym_impl
+    end interface plssym
+    private :: plssym_impl
+
     interface plstring
         module procedure plstring_impl
     end interface plstring
@@ -374,6 +399,7 @@ contains
 subroutine matrix_to_c( array, carray, caddress )
     real(kind=wp), dimension(:,:), intent(in) :: array
     real(kind=private_plflt), dimension(:,:), allocatable, target, intent(out) :: carray
+
     type(c_ptr), dimension(:), allocatable, intent(out) :: caddress
 
     integer :: i
@@ -429,6 +455,55 @@ subroutine plarc_impl( x, y, a, b, angle1, angle2, rotate, fill )
                  real(b,kind=private_plflt), real(angle1,kind=private_plflt), real(angle2,kind=private_plflt), &
                  real(rotate,kind=private_plflt), int(fill,kind=private_plint) )
 end subroutine plarc_impl
+
+subroutine plaxes_impl(x0, y0, xopt,xtick,nxsub,yopt,ytick,nysub)
+    real(kind=wp), intent(in) :: x0, y0, xtick, ytick
+    integer, intent(in) :: nxsub, nysub
+    character*(*), intent(in) :: xopt,yopt
+
+    interface
+        subroutine c_plaxes(x0, y0, xopt,xtick,nxsub,yopt,ytick,nysub) bind(c,name='c_plaxes')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            real(kind=private_plflt), value :: x0, y0, xtick, ytick
+            integer(kind=private_plint), value :: nxsub, nysub
+            character(len=1), dimension(*), intent(in) :: xopt, yopt
+        end subroutine c_plaxes
+    end interface
+
+    call c_plaxes( &
+         real(x0,kind=private_plflt), real(y0,kind=private_plflt), &
+         trim(xopt)//c_null_char, real(xtick,kind=private_plflt), int(nxsub,kind=private_plint), &
+         trim(yopt)//c_null_char, real(ytick,kind=private_plflt), int(nysub,kind=private_plint) )
+end subroutine plaxes_impl
+
+subroutine plbtime_impl( year, month, day, hour, min, sec, ctime )
+   real(kind=wp), intent(in) :: ctime
+   integer, intent(out) :: year, month, day, hour, min
+   real(kind=wp), intent(out) :: sec
+
+   integer(kind=private_plint) :: year_out, month_out, day_out, hour_out, min_out
+   real(kind=private_plflt) :: sec_out
+
+   interface
+       subroutine c_plbtime( year, month, day, hour, min, sec, ctime ) bind(c,name='c_plbtime')
+           implicit none
+           include 'included_plplot_interface_private_types.f90'
+           real(kind=private_plflt), value, intent(in) :: ctime
+           integer(kind=private_plint), intent(out) :: year, month, day, hour, min
+           real(kind=private_plflt), intent(out) :: sec
+       end subroutine c_plbtime
+   end interface
+
+   call c_plbtime( year_out, month_out, day_out, hour_out, min_out, sec_out, real(ctime, kind=private_plflt))
+   year = int(year_out)
+   month = int(month_out)
+   day = int(day_out)
+   hour = int(hour_out)
+   min = int(min_out)
+   sec = real(sec_out, kind=wp)
+
+end subroutine plbtime_impl
 
 subroutine plbin_impl( x, y, center )
    real(kind=wp), dimension(:), intent(in) :: x, y
@@ -489,31 +564,33 @@ subroutine plbox3_impl(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub, &
                  trim(yopt)//c_null_char, trim(ylabel)//c_null_char, real(ytick,kind=private_plflt), &
                  int(nysub,kind=private_plint),                                                      &
                  trim(zopt)//c_null_char, trim(zlabel)//c_null_char, real(ztick,kind=private_plflt), &
-                 int(nzsub,kind=private_plint)                                                       )
+                 int(nzsub,kind=private_plint) )
 end subroutine plbox3_impl
 
 subroutine plcalc_world_impl( rx, ry, wx, wy, window )
+    integer, intent(out) :: window
     real(kind=wp), intent(in) :: rx, ry
     real(kind=wp), intent(out) :: wx, wy
-    integer, intent(out) :: window
 
-    real(kind=private_plflt) :: wxx, wyy
-    integer(kind=private_plint) :: windowout
+    real(kind=private_plflt) :: wx_out, wy_out
+    integer(kind=private_plint) window_out
+    
 
     interface
         subroutine c_plcalc_world( rx, ry, wx, wy, window ) bind(c,name='c_plcalc_world')
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), intent(in) :: window
-            real(kind=private_plflt), value :: rx, ry
+            integer(kind=private_plint), intent(out) :: window
+            real(kind=private_plflt), value, intent(in) :: rx, ry
             real(kind=private_plflt), intent(out) :: wx, wy
         end subroutine c_plcalc_world
     end interface
 
-    call c_plcalc_world( real(rx,kind=private_plflt), real(ry,kind=private_plflt), wxx, wyy, windowout )
-    wx = wxx
-    wy = wyy
-    window = windowout
+    call c_plcalc_world( real(rx,kind=private_plflt), real(ry,kind=private_plflt), wx_out, wy_out, window_out )
+    window = int(window_out)
+    wx = real(wx_out, kind=wp)
+    wy = real(wy_out, kind=wp)
+
 end subroutine plcalc_world_impl
 
 subroutine plcol1_impl( col )
@@ -540,14 +617,13 @@ subroutine plcolorbar_impl( &
      axis_opts, ticks, sub_ticks, n_values, values )
      
 
-    real(kind=wp), intent(out) :: colorbar_width, colorbar_height
     real(kind=wp), intent(in) :: x_length, y_length, x, y, low_cap_color, high_cap_color, cont_width
     real(kind=wp), dimension(0:, 0:), intent(in) :: values
     integer, intent(in) :: position, opt, bg_color, bb_color, bb_style, cont_color
-
     integer, dimension(0:), intent(in) :: label_opts, sub_ticks, n_values
     real(kind=wp), dimension(0:), intent(in) :: ticks
     character(len=*), dimension(0:), intent(in) :: labels, axis_opts
+    real(kind=wp), intent(out) :: colorbar_width, colorbar_height
 
     integer :: n_labels, n_axes
     real(kind=private_plflt) :: colorbar_width_out, colorbar_height_out
@@ -569,7 +645,6 @@ subroutine plcolorbar_impl( &
          implicit none
          include 'included_plplot_interface_private_types.f90'
 
-         real(kind=private_plflt), intent(out) :: colorbar_width, colorbar_height
          real(kind=private_plflt), intent(in), value :: x_length, y_length, x, y, &
               low_cap_color, high_cap_color, cont_width
          integer(kind=private_plint), intent(in), value :: position, opt, bg_color, bb_color, bb_style, cont_color
@@ -582,6 +657,7 @@ subroutine plcolorbar_impl( &
          ! in fc_plcolorbar at the C level to interoperate properly
          ! with the C version of plcolorbar.
          character(c_char), intent(in) :: labels(length_labels, n_labels), axis_opts(length_axis_opts, n_axes)
+         real(kind=private_plflt), intent(out) :: colorbar_width, colorbar_height
          
        end subroutine interface_plcolorbar
     end interface
@@ -592,7 +668,7 @@ subroutine plcolorbar_impl( &
 
     n_labels = size(label_opts)
     if( n_labels /= size(labels) ) then
-       write(0,*) "f95 plcolorbar: inconsistent array sizes not allowed for the following arrays:"
+       write(0,*) "f95 plcolorbar ERROR: inconsistent array sizes not allowed for the following arrays:"
        write(0,*) "label_opts"
        write(0,*) "labels"
        return
@@ -605,7 +681,7 @@ subroutine plcolorbar_impl( &
          n_axes /= size(n_values) .or. &
          n_axes /= size(values,1) &
          ) then
-       write(0,*) "f95 plcolorbar: inconsistent array sizes not allowed for the following arrays:"
+       write(0,*) "f95 plcolorbar ERROR: inconsistent array sizes not allowed for the following arrays:"
        write(0,*) "axis_opts"
        write(0,*) "ticks"
        write(0,*) "sub_ticks"
@@ -615,7 +691,7 @@ subroutine plcolorbar_impl( &
     end if
 
     if(maxval(n_values) > size(values,2) ) then
-       write(0,*) "f95: plcolorbar: maximum of n_values > second dimension of values"
+       write(0,*) "f95: plcolorbar ERROR: maximum of n_values > second dimension of values"
        return
     end if
 
@@ -636,11 +712,56 @@ subroutine plcolorbar_impl( &
          axis_opts, real(ticks, kind=private_plflt), int(sub_ticks, kind=private_plint), &
          int(n_values, kind=private_plint), values_address &
          )
-    ! Transform output real values.
     colorbar_width = real(colorbar_width_out, kind=wp)
     colorbar_height = real(colorbar_height_out, kind=wp)
 
 end subroutine plcolorbar_impl
+
+subroutine plconfigtime_impl( scale, offset1, offset2, ccontrol, ifbtime_offset, year, month, day, hour, min, sec )
+   integer, intent(in) :: ccontrol, ifbtime_offset, year, month, day, hour, min
+   real(kind=wp), intent(in) :: scale, offset1, offset2, sec
+
+   interface
+      subroutine c_plconfigtime( scale, offset1, offset2, ccontrol, ifbtime_offset, &
+           year, month, day, hour, min, sec) bind(c,name='c_plconfigtime')
+        implicit none
+        include 'included_plplot_interface_private_types.f90'
+        integer(kind=private_plint), value, intent(in) :: ccontrol, ifbtime_offset, year, month, day, hour, min
+        real(kind=private_plflt), value, intent(in) :: scale, offset1, offset2, sec
+      end subroutine c_plconfigtime
+   end interface
+
+   call c_plconfigtime( &
+        real(scale, kind=private_plflt), real(offset1, kind=private_plflt), real(offset2, kind=private_plflt), &
+        int(ccontrol, kind=private_plint), int(ifbtime_offset, kind=private_plint), &
+        int(year, kind=private_plint), int(month, kind=private_plint), int(day, kind=private_plint), &
+        int(hour, kind=private_plint), int(min, kind=private_plint), real(sec, kind=private_plflt) )
+end subroutine plconfigtime_impl
+
+subroutine plctime_impl( year, month, day, hour, min, sec, ctime )
+   integer, intent(in) :: year, month, day, hour, min
+   real(kind=wp), intent(in) :: sec
+   real(kind=wp), intent(out) :: ctime
+
+   real(kind=private_plflt) :: ctime_out
+
+   interface
+       subroutine c_plctime( year, month, day, hour, min, sec, ctime ) bind(c,name='c_plctime')
+           implicit none
+           include 'included_plplot_interface_private_types.f90'
+           integer(kind=private_plint), value, intent(in) :: year, month, day, hour, min
+           real(kind=private_plflt), value, intent(in) :: sec
+           real(kind=private_plflt), intent(out) :: ctime
+       end subroutine c_plctime
+   end interface
+
+   call c_plctime( &
+        int(year, kind=private_plint), int(month, kind=private_plint), int(day, kind=private_plint), &
+        int(hour, kind=private_plint), int(min, kind=private_plint), real(sec, kind=private_plflt), ctime_out )
+   ! Transform output real values.
+   ctime = real(ctime_out, kind=wp)
+
+end subroutine plctime_impl
 
 subroutine plenv_impl( xmin, xmax, ymin, ymax, just, axis )
     real(kind=wp), intent(in)  :: xmin, xmax, ymin, ymax
@@ -660,37 +781,49 @@ subroutine plenv_impl( xmin, xmax, ymin, ymax, just, axis )
 end subroutine plenv_impl
 
 subroutine plerrx_impl( xmin, xmax, y )
-    real(kind=wp), intent(in) :: xmin, xmax
-    real(kind=wp), dimension(:), intent(in) :: y
+    real(kind=wp), dimension(:), intent(in) :: xmin, xmax, y
+
+    integer(kind=private_plint) n
 
     interface
         subroutine c_plerrx( n, xmin, xmax, y ) bind( c, name='c_plerrx')
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: n
-            real(kind=private_plflt), value :: xmin, xmax
-            real(kind=private_plflt), dimension(*), intent(in) :: y
+            real(kind=private_plflt), dimension(*), intent(in) :: xmin, xmax, y
         end subroutine c_plerrx
     end interface
 
-    call c_plerrx( size(y,kind=private_plint), real(xmin,private_plflt), real(xmax,private_plflt), real(y,private_plflt) )
+    n = size(y,kind=private_plint)
+    if( n /= size(xmin, kind=private_plint) .or. n /= size(xmax, kind=private_plint) ) then
+       write(0,*) "f95 plerrx ERROR: inconsistent sizes for xmin, xmax, and/or y"
+       return
+    end if
+    
+    call c_plerrx( n, real(xmin,private_plflt), real(xmax,private_plflt), real(y,private_plflt) )
 end subroutine plerrx_impl
 
 subroutine plerry_impl( x, ymin, ymax )
-    real(kind=wp), dimension(:), intent(in) :: x
-    real(kind=wp), intent(in) :: ymin, ymax
+    real(kind=wp), dimension(:), intent(in) :: x, ymin, ymax
+
+    integer(kind=private_plint) n
 
     interface
         subroutine c_plerry( n, x, ymin, ymax ) bind( c, name='c_plerry')
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value :: n
-            real(kind=private_plflt), dimension(*), intent(in) :: x
-            real(kind=private_plflt), value :: ymin, ymax
+            real(kind=private_plflt), dimension(*), intent(in) :: x, ymin, ymax
         end subroutine c_plerry
     end interface
 
-    call c_plerry( size(x,kind=private_plint), real(x,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt) )
+    n = size(x,kind=private_plint)
+    if( n /= size(ymin, kind=private_plint) .or. n /= size(ymax, kind=private_plint) ) then
+       write(0,*) "f95 plerry ERROR: inconsistent sizes for x, ymin, and/or ymax"
+       return
+    end if
+    
+    call c_plerry( n, real(x,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt) )
 end subroutine plerry_impl
 
 subroutine plfill_impl( x, y )
@@ -726,7 +859,7 @@ end subroutine plfill3_impl
 subroutine plgchr_impl( chrdef, chrht )
     real(kind=wp), intent(out) :: chrdef, chrht
 
-    real(kind=private_plflt) :: cchrdef, cchrht
+    real(kind=private_plflt) :: chrdef_out, chrht_out
 
     interface
        subroutine c_plgchr( chrdef, chrht ) bind(c,name='c_plgchr')
@@ -736,15 +869,16 @@ subroutine plgchr_impl( chrdef, chrht )
        end subroutine c_plgchr
    end interface
 
-   call c_plgchr( cchrdef, cchrht )
-   chrdef = cchrdef
-   chrht  = cchrht
+   call c_plgchr( chrdef_out, chrht_out )
+   chrdef = real(chrdef_out, kind=wp)
+   chrht = real(chrht_out, kind=wp)
+
 end subroutine plgchr_impl
 
 subroutine plgcmap1_range_impl( min_color, max_color )
     real(kind=wp), intent(out) :: min_color, max_color
 
-    real(kind=private_plflt) :: mmin_color, mmax_color
+    real(kind=private_plflt) :: min_color_out, max_color_out
 
     interface
         subroutine c_plgcmap1_range( min_color, max_color ) bind(c,name='c_plgcmap1_range')
@@ -754,9 +888,10 @@ subroutine plgcmap1_range_impl( min_color, max_color )
         end subroutine c_plgcmap1_range
     end interface
 
-    call c_plgcmap1_range( mmin_color, mmax_color )
-    min_color = mmin_color
-    max_color = mmax_color
+    call c_plgcmap1_range( min_color_out, max_color_out )
+    min_color = real(min_color_out, kind=wp)
+    max_color = real(max_color_out, kind=wp)
+
 end subroutine plgcmap1_range_impl
 
 subroutine plgcol0a_impl( icol, r, g, b, a )
@@ -764,8 +899,8 @@ subroutine plgcol0a_impl( icol, r, g, b, a )
     integer, intent(out) :: r, g, b
     real(kind=wp), intent(out) :: a
 
-    integer(kind=private_plint) :: rr, gg, bb
-    real(kind=private_plflt) :: aa
+    integer(kind=private_plint) :: r_out, g_out, b_out
+    real(kind=private_plflt) :: a_out
 
     interface
         subroutine c_plgcol0a( icol, r, g, b, a ) bind(c,name='c_plgcol0a')
@@ -777,19 +912,19 @@ subroutine plgcol0a_impl( icol, r, g, b, a )
         end subroutine c_plgcol0a
     end interface
 
-    call c_plgcol0a( int(icol,kind=private_plint), rr, gg, bb, aa )
-    r = rr
-    g = gg
-    b = bb
-    a = aa
+    call c_plgcol0a( int(icol,kind=private_plint), r_out, g_out, b_out, a_out )
+    r = int(r_out)
+    g = int(g_out)
+    b = int(b_out)
+    a = real(a_out, kind=private_plflt)
 end subroutine plgcol0a_impl
 
 subroutine plgcolbga_impl( r, g, b, a )
     integer, intent(out) :: r, g, b
     real(kind=wp), intent(out) :: a
 
-    integer(kind=private_plint) :: rr, gg, bb
-    real(kind=private_plflt)    :: aa
+    integer(kind=private_plint) :: r_out, g_out, b_out
+    real(kind=private_plflt) :: a_out
 
     interface
         subroutine c_plgcolbga( r, g, b, a ) bind(c,name='c_plgcolbga')
@@ -800,17 +935,17 @@ subroutine plgcolbga_impl( r, g, b, a )
         end subroutine c_plgcolbga
     end interface
 
-    call c_plgcolbga( rr, gg, bb, aa )
-    r = rr
-    g = gg
-    b = bb
-    a = aa
+    call c_plgcolbga( r_out, g_out, b_out, a_out )
+    r = int(r_out)
+    g = int(g_out)
+    b = int(b_out)
+    a = real(a_out, kind=private_plflt)
 end subroutine plgcolbga_impl
 
 subroutine plgdidev_impl( mar, aspect, jx, jy )
     real(kind=wp), intent(out) :: mar, aspect, jx, jy
 
-    real(kind=private_plflt) :: mmar, aaspect, jjx, jjy
+    real(kind=private_plflt) :: mar_out, aspect_out, jx_out, jy_out
 
     interface
         subroutine c_plgdidev( mar, aspect, jx, jy ) bind(c,name='c_plgdidev')
@@ -820,17 +955,17 @@ subroutine plgdidev_impl( mar, aspect, jx, jy )
         end subroutine c_plgdidev
     end interface
 
-    call c_plgdidev( mmar, aaspect, jjx, jjy )
-    mar    = mmar
-    aspect = aaspect
-    jx     = jjx
-    jy     = jjy
+    call c_plgdidev( mar_out, aspect_out, jx_out, jy_out )
+    mar    = real(mar_out, kind=wp)
+    aspect = real(aspect, kind=wp)
+    jx     = real(jx, kind=wp)
+    jy     = real(jy, kind=wp)
 end subroutine plgdidev_impl
 
 subroutine plgdiori_impl( rot )
     real(kind=wp), intent(out) :: rot
 
-    real(kind=private_plflt) :: rrot
+    real(kind=private_plflt) :: rot_out
 
     interface
         subroutine c_plgdiori( rot ) bind(c,name='c_plgdiori')
@@ -840,14 +975,14 @@ subroutine plgdiori_impl( rot )
         end subroutine c_plgdiori
     end interface
 
-    call c_plgdiori( rrot )
-    rot = rrot
+    call c_plgdiori( rot_out )
+    rot = real(rot_out, kind=wp)
 end subroutine plgdiori_impl
 
 subroutine plgdiplt_impl( xmin, xmax, ymin, ymax )
     real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
 
-    real(kind=private_plflt)  :: xxmin, xxmax, yymin, yymax
+    real(kind=private_plflt)  :: xmin_out, xmax_out, ymin_out, ymax_out
 
     interface
         subroutine c_plgdiplt( xmin, xmax, ymin, ymax ) bind(c,name='c_plgdiplt')
@@ -857,36 +992,37 @@ subroutine plgdiplt_impl( xmin, xmax, ymin, ymax )
         end subroutine c_plgdiplt
     end interface
 
-    call c_plgdiplt( xxmin, xxmax, yymin, yymax )
-    xmin = xxmin
-    xmax = xxmax
-    ymin = yymin
-    ymax = yymax
+    call c_plgdiplt( xmin_out, xmax_out, ymin_out, ymax_out )
+    xmin = real(xmin_out, kind=wp)
+    xmax = real(xmax_out, kind=wp)
+    ymin = real(ymin_out, kind=wp)
+    ymax = real(ymax_out, kind=wp)
 end subroutine plgdiplt_impl
 
 subroutine plgpage_impl( xpmm, ypmm, xwid, ywid, xoff, yoff )
-    real(kind=wp), intent(out) :: xpmm, ypmm
     integer, intent(out) :: xwid, ywid, xoff, yoff
+    real(kind=wp), intent(out) :: xpmm, ypmm
 
-    real(kind=private_plflt) :: xxpmm, yypmm
-    integer(kind=private_plint) :: xxwid, yywid, xxoff, yyoff
+    integer(kind=private_plint) :: xwid_out, ywid_out, xoff_out, yoff_out 
+    real(kind=private_plflt) :: xpmm_out, ypmm_out
+
     interface
         subroutine c_plgpage( xpmm, ypmm, xwid, ywid, xoff, yoff ) bind(c,name='c_plgpage')
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            real(kind=private_plflt), intent(out) :: xpmm, ypmm
             integer(kind=private_plint), intent(out) :: xwid, ywid, xoff, yoff
+            real(kind=private_plflt), intent(out) :: xpmm, ypmm
         end subroutine c_plgpage
     end interface
 
-    call c_plgpage( xxpmm, yypmm, xxwid, yywid, xxoff, yyoff )
-    xpmm = xxpmm
-    ypmm = yypmm
-    xwid = xxwid
-    ywid = yywid
-    xoff = xxoff
-    yoff = yyoff
-end subroutine plgpage_impl
+    call c_plgpage( xpmm_out, ypmm_out, xwid_out, ywid_out, xoff_out, yoff_out )
+    xwid = int(xwid_out)
+    ywid = int(ywid_out)
+    xoff = int(xoff_out)
+    yoff = int(yoff_out)
+    xpmm = real(xpmm, kind=wp)
+    ypmm = real(ypmm, kind=wp)
+ end subroutine plgpage_impl
 
 subroutine plgradient_impl( x, y, angle )
     real(kind=wp), dimension(:), intent(in) :: x, y
@@ -909,7 +1045,7 @@ end subroutine plgradient_impl
 subroutine plgspa_impl( xmin, xmax, ymin, ymax )
     real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
 
-    real(kind=private_plflt) :: xxmin, xxmax, yymin, yymax
+    real(kind=private_plflt) :: xmin_out, xmax_out, ymin_out, ymax_out
 
     interface
         subroutine c_plgspa( xmin, xmax, ymin, ymax ) bind(c,name='c_plgspa')
@@ -919,17 +1055,17 @@ subroutine plgspa_impl( xmin, xmax, ymin, ymax )
         end subroutine c_plgspa
     end interface
 
-    call c_plgspa( xxmin, xxmax, yymin, yymax )
-    xmin = xxmin
-    xmax = xxmax
-    ymin = yymin
-    ymax = yymax
+    call c_plgspa( xmin_out, xmax_out, ymin_out, ymax_out )
+    xmin = real(xmin_out, kind=private_plflt)
+    xmax = real(xmax_out, kind=private_plflt)
+    ymin = real(ymin_out, kind=private_plflt)
+    ymax = real(ymax_out, kind=private_plflt)
 end subroutine plgspa_impl
 
 subroutine plgvpd_impl( xmin, xmax, ymin, ymax )
     real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
 
-    real(kind=private_plflt)  :: xxmin, xxmax, yymin, yymax
+    real(kind=private_plflt) :: xmin_out, xmax_out, ymin_out, ymax_out
 
     interface
         subroutine c_plgvpd( xmin, xmax, ymin, ymax ) bind(c,name='c_plgvpd')
@@ -939,18 +1075,17 @@ subroutine plgvpd_impl( xmin, xmax, ymin, ymax )
         end subroutine c_plgvpd
     end interface
 
-    call c_plgvpd( xxmin, xxmax, yymin, yymax )
-    xmin = xxmin
-    xmax = xxmax
-    ymin = yymin
-    ymax = yymax
+    call c_plgvpd( xmin_out, xmax_out, ymin_out, ymax_out )
+    xmin = real(xmin_out, kind=private_plflt)
+    xmax = real(xmax_out, kind=private_plflt)
+    ymin = real(ymin_out, kind=private_plflt)
+    ymax = real(ymax_out, kind=private_plflt)
 end subroutine plgvpd_impl
 
 subroutine plgvpw_impl( xmin, xmax, ymin, ymax )
     real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
 
-    real(kind=private_plflt)  :: xxmin, xxmax, yymin, yymax
-
+    real(kind=private_plflt) :: xmin_out, xmax_out, ymin_out, ymax_out
     interface
         subroutine c_plgvpw( xmin, xmax, ymin, ymax ) bind(c,name='c_plgvpw')
             implicit none
@@ -959,11 +1094,11 @@ subroutine plgvpw_impl( xmin, xmax, ymin, ymax )
         end subroutine c_plgvpw
     end interface
 
-    call c_plgvpw( xxmin, xxmax, yymin, yymax )
-    xmin = xxmin
-    xmax = xxmax
-    ymin = yymin
-    ymax = yymax
+    call c_plgvpw( xmin_out, xmax_out, ymin_out, ymax_out )
+    xmin = real(xmin_out, kind=private_plflt)
+    xmax = real(xmax_out, kind=private_plflt)
+    ymin = real(ymin_out, kind=private_plflt)
+    ymax = real(ymax_out, kind=private_plflt)
 end subroutine plgvpw_impl
 
 subroutine plhist_impl( data, datmin, datmax, nbin, oldwin )
@@ -990,7 +1125,7 @@ subroutine plhlsrgb_impl( h, l, s, r, g, b )
     real(kind=wp), intent(in) :: h, l, s
     real(kind=wp), intent(out) :: r, g, b
 
-    real(kind=private_plflt) :: rr, gg, bb
+    real(kind=private_plflt) :: r_out, g_out, b_out
 
     interface
         subroutine c_plhlsrgb( h, l, s, r, g, b ) bind(c,name='c_plhlsrgb')
@@ -1002,10 +1137,10 @@ subroutine plhlsrgb_impl( h, l, s, r, g, b )
     end interface
 
     call c_plhlsrgb( real(h,kind=private_plflt), real(l,kind=private_plflt), real(s,kind=private_plflt), &
-                     rr, gg, bb )
-    r = rr
-    b = bb
-    g = gg
+         r_out, g_out, b_out )
+    r = real(r_out, kind=wp)
+    g = real(g_out, kind=wp)
+    b = real(b_out, kind=wp)
 end subroutine plhlsrgb_impl
 
 subroutine pljoin_impl( x1, y1, x2, y2 )
@@ -1036,11 +1171,11 @@ subroutine pllegend_impl( &
      symbol_colors, symbol_scales, &
      symbol_numbers, symbols )
 
-    real(kind=wp), intent(out) :: legend_width, legend_height
     real(kind=wp), intent(in) :: plot_width, x, y
     real(kind=wp), intent(in) :: text_offset, text_scale, text_spacing, text_justification
     integer, intent(in) :: position, opt, bg_color, bb_color, bb_style
     integer, intent(in) :: nrow, ncolumn
+    real(kind=wp), intent(out) :: legend_width, legend_height
 
     character(len=*), dimension(0:), intent(in) :: text, symbols
 
@@ -1074,7 +1209,6 @@ subroutine pllegend_impl( &
          implicit none
          include 'included_plplot_interface_private_types.f90'
 
-         real(kind=private_plflt), intent(out) :: legend_width, legend_height
          real(kind=private_plflt), intent(in), value :: plot_width, x, y
          real(kind=private_plflt), intent(in), value :: text_offset, text_scale, text_spacing, text_justification
          integer(kind=private_plint), intent(in), value :: position, opt, bg_color, bb_color, bb_style
@@ -1092,6 +1226,7 @@ subroutine pllegend_impl( &
          real(kind=private_plflt), dimension(*), intent(in) :: line_widths
          integer(kind=private_plint), dimension(*), intent(in) :: symbol_colors, symbol_numbers
          real(kind=private_plflt), dimension(*), intent(in) :: box_scales, symbol_scales
+         real(kind=private_plflt), intent(out) :: legend_width, legend_height
        end subroutine interface_pllegend
     end interface
 
@@ -1115,7 +1250,7 @@ subroutine pllegend_impl( &
          nlegend /= size(symbol_numbers) .or. & 
          nlegend /= size(symbols) &
          ) then
-       write(0,*) "f95 pllegend: inconsistent array sizes not allowed for the following arrays:"
+       write(0,*) "f95 pllegend ERROR: inconsistent array sizes not allowed for the following arrays:"
        write(0,*) "opt_array"
        write(0,*) "text_colors"
        write(0,*) "text"
@@ -1152,7 +1287,6 @@ subroutine pllegend_impl( &
          real(line_widths,kind=private_plflt), &
          int(symbol_colors,kind=private_plint), real(symbol_scales,kind=private_plflt), &
          int(symbol_numbers,kind=private_plint), len(symbols(0), kind=private_plint), symbols )
-    ! Transform output real values.
     legend_width = real(legend_width_out, kind=wp)
     legend_height = real(legend_height_out, kind=wp)
 
@@ -1461,7 +1595,7 @@ subroutine plrgbhls_impl( r, g, b, h, l, s )
     real(kind=wp), intent(in) :: r, g, b
     real(kind=wp), intent(out) :: h, l, s
 
-    real(kind=private_plflt) :: hh, ll, ss
+    real(kind=private_plflt) :: h_out, l_out, s_out
 
     interface
         subroutine c_plrgbhls( r, g, b, h, l, s ) bind(c,name='c_plrgbhls')
@@ -1473,10 +1607,10 @@ subroutine plrgbhls_impl( r, g, b, h, l, s )
     end interface
 
     call c_plrgbhls( real(r,kind=private_plflt), real(g,kind=private_plflt), real(b,kind=private_plflt), &
-                     hh, ll, ss )
-    h = hh
-    l = ll
-    s = ss
+                     h_out, l_out, s_out )
+    h = real(h_out, kind=wp)
+    l = real(l_out, kind=wp)
+    s = real(s_out, kind=wp)
 end subroutine plrgbhls_impl
 
 subroutine plschr_impl( chrdef, chrht )
@@ -1715,6 +1849,21 @@ subroutine plspage_impl( xp, yp, xleng, yleng, xoff, yoff )
          int(xoff,kind=private_plint), int(yoff,kind=private_plint) )
 
 end subroutine plspage_impl
+
+subroutine plssym_impl( def, scale )
+
+   real(kind=wp), intent(in) :: def, scale
+
+   interface
+       subroutine c_plssym( def, scale ) bind(c,name='c_plssym')
+           implicit none
+           include 'included_plplot_interface_private_types.f90'
+           real(kind=private_plflt), value, intent(in) :: def, scale
+       end subroutine c_plssym
+   end interface
+
+   call c_plssym( real(def,kind=private_plflt), real(scale,kind=private_plflt) )
+end subroutine plssym_impl
 
 subroutine plstring_impl( x, y, string )
 

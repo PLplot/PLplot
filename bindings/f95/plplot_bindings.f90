@@ -26,8 +26,6 @@
 !
 !***********************************************************************
 
-! TODO: plsurf3d, plsurf3dl
-
 module plplot_types
     include 'included_plplot_interface_private_types.f90'
 end module plplot_types
@@ -83,6 +81,11 @@ module plplot
         module procedure plstyl_array
     end interface
     private :: plstyl_scalar, plstyl_n_array, plstyl_array
+
+    interface pltimefmt
+        module procedure pltimefmt_impl
+    end interface pltimefmt
+    private :: pltimefmt_impl
 
 contains
 
@@ -234,7 +237,9 @@ end subroutine plfontld
 subroutine plgcol0( icol, r, g, b )
     integer, intent(in) :: icol
     integer, intent(out) :: r, g, b
-    integer(kind=private_plint) :: r_p, g_p, b_p
+
+    integer(kind=private_plint) :: r_out, g_out, b_out
+
     interface
         subroutine c_plgcol0( icol, r, g, b ) bind( c, name = 'c_plgcol0' )
             implicit none
@@ -244,15 +249,17 @@ subroutine plgcol0( icol, r, g, b )
         end subroutine c_plgcol0
     end interface
 
-    call c_plgcol0( int(icol,kind=private_plint), r_p, g_p, b_p )
-    r = r_p
-    g = g_p
-    b = b_p
+    call c_plgcol0( int(icol,kind=private_plint), r_out, g_out, b_out )
+    r = int(r_out)
+    g = int(g_out)
+    b = int(b_out)
 end subroutine plgcol0
 
 subroutine plgcolbg( r, g, b )
     integer, intent(out) :: r, g, b
-    integer(kind=private_plint) :: r_p, g_p, b_p
+
+    integer(kind=private_plint) :: r_out, g_out, b_out
+
     interface
         subroutine c_plgcolbg( r, g, b ) bind( c, name = 'c_plgcolbg' )
             implicit none
@@ -261,15 +268,17 @@ subroutine plgcolbg( r, g, b )
         end subroutine c_plgcolbg
     end interface
 
-    call c_plgcolbg( r_p, g_p, b_p )
-    r = r_p
-    g = g_p
-    b = b_p
+    call c_plgcolbg( r_out, g_out, b_out )
+    r = int(r_out)
+    g = int(g_out)
+    b = int(b_out)
 end subroutine plgcolbg
 
 subroutine plgcompression( compression )
     integer, intent(out) :: compression
-    integer(kind=private_plint) :: compression_p
+
+    integer(kind=private_plint) :: compression_out
+
     interface
         subroutine c_plgcompression( compression ) bind( c, name = 'c_plgcompression' )
             implicit none
@@ -278,14 +287,14 @@ subroutine plgcompression( compression )
         end subroutine c_plgcompression
     end interface
 
-    call c_plgcompression( compression_p )
-    compression = compression_p
+    call c_plgcompression( compression_out )
+    compression = int(compression_out)
 end subroutine plgcompression
 
 subroutine plgdev(dev)
     character*(*), intent(out) :: dev
 
-    character(len=1), dimension(100) :: devc
+    character(len=1), dimension(100) :: dev_out
 
     interface
         subroutine c_plgdev( dev ) bind(c,name='c_plgdev')
@@ -294,13 +303,15 @@ subroutine plgdev(dev)
         end subroutine c_plgdev
     end interface
 
-    call c_plgdev( devc )
-    call copystring( dev, devc )
+    call c_plgdev( dev_out )
+    call copystring( dev, dev_out )
 end subroutine plgdev
 
 subroutine plgfam( fam, num, bmax )
     integer, intent(out) :: fam, num, bmax
-    integer(kind=private_plint) :: fam_p, num_p, bmax_p
+
+    integer(kind=private_plint) :: fam_out, num_out, bmax_out
+
     interface
         subroutine c_plgfam( fam, num, bmax ) bind( c, name = 'c_plgfam' )
             implicit none
@@ -309,15 +320,17 @@ subroutine plgfam( fam, num, bmax )
         end subroutine c_plgfam
     end interface
 
-    call c_plgfam( fam_p, num_p, bmax_p )
-    fam  = fam_p
-    num  = num_p
-    bmax = bmax_p
+    call c_plgfam( fam_out, num_out, bmax_out )
+    fam  = int(fam_out)
+    num  = int(num_out)
+    bmax = int(bmax_out)
 end subroutine plgfam
 
 subroutine plgfont( family, style, weight )
     integer, intent(out) :: family, style, weight
-    integer(kind=private_plint) :: family_p, style_p, weight_p
+
+    integer(kind=private_plint) :: family_out, style_out, weight_out
+
     interface
         subroutine c_plgfont( family, style, weight ) bind( c, name = 'c_plgfont' )
             implicit none
@@ -326,15 +339,17 @@ subroutine plgfont( family, style, weight )
         end subroutine c_plgfont
     end interface
 
-    call c_plgfont( family_p, style_p, weight_p )
-    family = family_p
-    style  = style_p
-    weight = weight_p
+    call c_plgfont( family_out, style_out, weight_out )
+    family = int(family_out)
+    style  = int(style_out)
+    weight = int(weight_out)
 end subroutine plgfont
 
 subroutine plglevel( level )
     integer, intent(out) :: level
-    integer(kind=private_plint) :: level_p
+
+    integer(kind=private_plint) :: level_out
+
     interface
         subroutine c_plglevel( level ) bind( c, name = 'c_plglevel' )
             implicit none
@@ -343,8 +358,8 @@ subroutine plglevel( level )
         end subroutine c_plglevel
     end interface
 
-    call c_plglevel( level_p )
-    level = level_p
+    call c_plglevel( level_out )
+    level = int(level_out)
 end subroutine plglevel
 
 subroutine plgra()
@@ -357,7 +372,9 @@ end subroutine plgra
 
 subroutine plgstrm( strm )
     integer, intent(out) :: strm
-    integer(kind=private_plint) :: strm_p
+
+    integer(kind=private_plint) :: strm_out
+
     interface
         subroutine c_plgstrm( strm ) bind( c, name = 'c_plgstrm' )
             implicit none
@@ -366,14 +383,14 @@ subroutine plgstrm( strm )
         end subroutine c_plgstrm
     end interface
 
-    call c_plgstrm( strm_p )
-    strm = strm_p
+    call c_plgstrm( strm_out )
+    strm = int(strm_out)
 end subroutine plgstrm
 
 subroutine plgver(ver)
     character*(*), intent(out) :: ver
 
-    character(len=1), dimension(100) :: verc
+    character(len=1), dimension(100) :: ver_out
 
     interface
         subroutine c_plgver( ver ) bind(c,name='c_plgver')
@@ -382,13 +399,15 @@ subroutine plgver(ver)
         end subroutine c_plgver
     end interface
 
-    call c_plgver( verc )
-    call copystring( ver, verc )
+    call c_plgver( ver_out )
+    call copystring( ver, ver_out )
 end subroutine plgver
 
 subroutine plgxax( digmax, digits )
     integer, intent(out) :: digmax, digits
-    integer(kind=private_plint) :: digmax_p, digits_p
+
+    integer(kind=private_plint) :: digmax_out, digits_out
+
     interface
         subroutine c_plgxax( digmax, digits ) bind( c, name = 'c_plgxax' )
             implicit none
@@ -397,14 +416,16 @@ subroutine plgxax( digmax, digits )
         end subroutine c_plgxax
     end interface
 
-    call c_plgxax( digmax_p, digits_p )
-    digmax = digmax_p
-    digits = digits_p
+    call c_plgxax( digmax_out, digits_out )
+    digmax = int(digmax_out)
+    digits = int(digits_out)
 end subroutine plgxax
 
 subroutine plgyax( digmax, digits )
     integer, intent(out) :: digmax, digits
-    integer(kind=private_plint) :: digmax_p, digits_p
+
+    integer(kind=private_plint) :: digmax_out, digits_out
+
     interface
         subroutine c_plgyax( digmax, digits ) bind( c, name = 'c_plgyax' )
             implicit none
@@ -413,14 +434,16 @@ subroutine plgyax( digmax, digits )
         end subroutine c_plgyax
     end interface
 
-    call c_plgyax( digmax_p, digits_p )
-    digmax = digmax_p
-    digits = digits_p
+    call c_plgyax( digmax_out, digits_out )
+    digmax = int(digmax_out)
+    digits = int(digits_out)
 end subroutine plgyax
 
 subroutine plgzax( digmax, digits )
     integer, intent(out) :: digmax, digits
-    integer(kind=private_plint) :: digmax_p, digits_p
+
+    integer(kind=private_plint) :: digmax_out, digits_out
+
     interface
         subroutine c_plgzax( digmax, digits ) bind( c, name = 'c_plgzax' )
             implicit none
@@ -429,9 +452,9 @@ subroutine plgzax( digmax, digits )
         end subroutine c_plgzax
     end interface
 
-    call c_plgzax( digmax_p, digits_p )
-    digmax = digmax_p
-    digits = digits_p
+    call c_plgzax( digmax_out, digits_out )
+    digmax = int(digmax_out)
+    digits = int(digits_out)
 end subroutine plgzax
 
 subroutine plinit()
@@ -504,11 +527,11 @@ subroutine plparseopts(mode)
   numargs = command_argument_count()
   if (numargs < 0) then
      !       This actually happened historically on a badly linked Cygwin platform.
-     write(0,'(a)') 'f95 plparseopts: negative number of arguments'
+     write(0,'(a)') 'f95 plparseopts ERROR: negative number of arguments'
      return
   endif
   if(numargs > maxargs) then
-     write(0,'(a)') 'f95 plparseopts: too many arguments'
+     write(0,'(a)') 'f95 plparseopts ERROR: too many arguments'
      return
   endif
   do iargs = 0, numargs
@@ -940,6 +963,20 @@ subroutine pltext()
      end interface
      call interface_pltext()
 end subroutine pltext
+
+subroutine pltimefmt_impl( fmt )
+   character(len=*), intent(in) :: fmt
+
+   interface
+       subroutine c_pltimefmt( fmt ) bind(c,name='c_pltimefmt')
+           implicit none
+           character(len=1), dimension(*), intent(in) :: fmt
+       end subroutine c_pltimefmt
+   end interface
+
+   call c_pltimefmt( trim(fmt) // c_null_char )
+
+end subroutine pltimefmt_impl
 
 subroutine plvsta()
     interface
