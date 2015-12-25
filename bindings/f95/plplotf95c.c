@@ -348,3 +348,41 @@ fc_plparseopts(  unsigned name_length, unsigned size, char *names, PLINT mode)
     free((void *) save_pointer);
     Free2dChar( cnames, actual_size );
 }
+
+PLDLLIMPEXP_F95C void
+fc_plstripc( PLINT *id, const char *xspec, const char *yspec,
+	     PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+	     PLFLT xlpos, PLFLT ylpos,
+	     PLBOOL y_ascl, PLBOOL acc,
+	     PLINT colbox, PLINT collab,
+	     unsigned n_pens, const PLINT *colline, const PLINT *styline,
+	     unsigned length_legline, char *legline,
+	     const char *labx, const char *laby, const char *labtop )
+{
+    // Assign to NULL to quiet spurious potentially undefined warning.
+    char ** clegline = NULL;
+ 
+    // legline is a pointer to a a blank-terminated Fortran
+    // character*(length_legline) legline(n_pens) array.
+    
+    // Make clegline the same size as the Fortran character array leglines
+    // except the character string size is one larger to contain the
+    // trailing NULL associated with C strings.
+    Alloc2dChar( &clegline, n_pens, length_legline + 1 );
+
+    // Convert legline (which refers to a blank-terminated Fortran
+    // character*(length_legline) legline(n_pens) array) to clegline which
+    // is an array of pointers to null-terminated C strings.
+    convert_string_array( clegline, legline, n_pens, length_legline );
+
+    c_plstripc( id, xspec, yspec,
+		xmin, xmax, xjump, ymin, ymax,
+		xlpos, ylpos,
+		y_ascl, acc,
+		colbox, collab,
+		colline, styline,
+		(const char **) clegline,
+		labx, laby, labtop );
+    // cleanup
+    Free2dChar( clegline, n_pens );
+}

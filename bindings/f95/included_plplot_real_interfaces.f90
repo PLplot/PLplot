@@ -343,6 +343,16 @@
     end interface plstring
     private :: plstring_impl
 
+    interface plstripa
+        module procedure plstripa_impl
+    end interface plstripa
+    private :: plstripa_impl
+
+    interface plstripc
+        module procedure plstripc_impl
+    end interface plstripc
+    private :: plstripc_impl
+
     interface plsurf3d
         module procedure plsurf3d_impl
     end interface plsurf3d
@@ -1587,7 +1597,7 @@ subroutine plptex_impl( x, y, dx, dy, xjust, text )
     end interface
 
     call c_plptex( real(x,kind=private_plflt), real(y,kind=private_plflt), real(dx,kind=private_plflt), &
-                   real(dy,kind=private_plflt), real(xjust,kind=private_plflt), trim(text)//c_null_char)
+                   real(dy,kind=private_plflt), real(xjust,kind=private_plflt), trim(text)//c_null_char )
 
 end subroutine plptex_impl
 
@@ -1881,8 +1891,90 @@ subroutine plstring_impl( x, y, string )
    end interface
 
    call c_plstring( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
-                    trim(string//c_null_char) )
+                    trim(string)//c_null_char )
 end subroutine plstring_impl
+
+subroutine plstripa_impl( id, pen, x, y )
+
+   integer, intent(in) :: id, pen
+   real(kind=wp), intent(in) :: x, y
+
+   interface
+       subroutine c_plstripa( id, pen, x, y ) bind(c,name='c_plstripa')
+           implicit none
+           include 'included_plplot_interface_private_types.f90'
+           integer(kind=private_plint), value, intent(in) :: id, pen
+           real(kind=private_plflt), value, intent(in) :: x, y
+       end subroutine c_plstripa
+   end interface
+
+   call c_plstripa( int(id, kind=private_plint), int(pen, kind=private_plint), &
+        real(x,kind=private_plflt), real(y,kind=private_plflt) )
+end subroutine plstripa_impl
+
+subroutine plstripc_impl( &
+     id, xspec, yspec, &
+     xmin, xmax, xjump, ymin, ymax, &
+     xlpos, ylpos, &
+     y_ascl, acc, &
+     colbox, collab, &
+     colline, styline, legline, &
+     labx, laby, labtop )
+
+  logical, intent(in) :: y_ascl, acc
+  integer, intent(in) :: colbox, collab
+  integer, dimension(:), intent(in) :: colline, styline
+  real(kind=wp), intent(in) :: xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
+  character(len=*), intent(in) :: xspec, yspec, labx, laby, labtop
+  character(len=*), dimension(:), intent(in) :: legline
+  integer, intent(out) :: id
+
+  integer(kind=private_plint) :: id_out, n_pens
+
+  interface
+     subroutine c_plstripc( &
+          id, xspec, yspec, &
+          xmin, xmax, xjump, ymin, ymax, &
+          xlpos, ylpos, &
+          y_ascl, acc, &
+          colbox, collab, &
+          n_pens, colline, styline, length_legline, legline, &
+          labx, laby, labtop ) bind(c,name='fc_plstripc')
+       use iso_c_binding
+       implicit none
+       include 'included_plplot_interface_private_types.f90'
+       integer(kind=private_plint), value, intent(in) :: y_ascl, acc
+       integer(kind=private_plint), value, intent(in) :: colbox, collab, n_pens, length_legline
+       integer(kind=private_plint), dimension(*), intent(in) :: colline, styline
+       real(kind=private_plflt), value, intent(in) :: xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
+       character(len=1), dimension(*), intent(in) :: xspec, yspec, labx, laby, labtop
+       ! These Fortran arguments require special processing done
+       ! in fc_pllegend at the C level to interoperate properly
+       ! with the C version of pllegend.
+       character(c_char), intent(in) :: legline(length_legline, n_pens)
+       integer(kind=private_plint), intent(out) :: id
+       
+     end subroutine c_plstripc
+  end interface
+
+  n_pens = size(colline)
+  if( n_pens /= 4 .or. n_pens /= size(styline) .or. n_pens /= size(legline) ) then
+     write(0,*) "f95 plstripc ERROR: sizes of colline, styline, and/or legline are not 4"
+     return
+  endif
+  
+  call c_plstripc( &
+       id_out, trim(xspec)//c_null_char, trim(yspec)//c_null_char, &
+       real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), real(xjump, kind=private_plflt), &
+       real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
+       real(xlpos, kind=private_plflt), real(ylpos, kind=private_plflt), &
+       merge(1_private_plint, 0_private_plint, y_ascl), merge(1_private_plint, 0_private_plint, acc), &
+       int(colbox, kind=private_plint), int(collab, kind=private_plint), &
+       n_pens, int(colline, kind=private_plint), int(styline, kind=private_plint), &
+       len(legline, kind=private_plint), legline, &
+       trim(labx)//c_null_char, trim(laby)//c_null_char, trim(labtop)//c_null_char )
+  id = int(id_out, kind=private_plint)
+end subroutine plstripc_impl
 
 subroutine plsurf3d_impl( x, y, z, opt, clevel )
     integer, intent(in) :: opt

@@ -43,7 +43,7 @@ set(f95_STRING_INDICES
 #plshade  "15"
 #plshades, plcont  "16"
 #plshade  "16a"
-#  "17"
+  "17"
 #  "18"
 #  "19"
 #  "20"
