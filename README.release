@@ -29,8 +29,9 @@ CONTENTS
 2. Improvements relative to the previous release
 
 2.1 Bug fixes
-2.2 Rewrite Ada language support
+2.2 Rewrite the CMake Ada language support
 2.3 Rewrite the Fortran binding
+2.4 Remove "c_" prefix from our C API
 
 3. PLplot testing
 
@@ -63,7 +64,7 @@ ________________________________________________________________
 The bug fixes in this release are noted in the commit messages
 collected in ChangeLog.release.
 
-2.2 Rewrite Ada language support
+2.2 Rewrite the CMake Ada language support
 
 The CMake-based Ada language support has been totally rewritten
 based on the official CMake-3.4.0 language support that is used for
@@ -79,40 +80,92 @@ implemented.
 2.3 Rewrite the Fortran binding
 
 The Fortran binding has been completely rewritten using the powerful
-capabilities of the iso-c-binding module that is available for modern
-Fortran.  There are two principal advantages to this rewritten
-binding.  (1) The interface code is much more compact and therefore it
-is much easier for developers to understand and maintain it.  (2) If
-users use consistent single-precision or double-precision real
-arguments in a given PLplot call, the rewritten binding automatically
-transforms those real arguments into the actual real precision
-available for the PLplot library.
+capabilities of the iso_c_binding module that is available for modern
+Fortran.  There are several advantages to this rewritten binding.
+
+(i) It is implemented using much more compact code with virtually none
+of the interfacing done in C (i.e., the plplotf95c library has shrunk
+to a tiny fraction of its previous size).
+
+(ii) It is much easier to understand and maintain than the previous
+effort.
+
+(iii) Linking issues are simplified.  (nm --undefined-only shows that
+the Fortran examples only need to be linked to libplplotf95 and not
+libplplotf95c or libplplot)
+
+(iv) The "c_" prefixes on our C API that were required to avoid
+nameclashes with the Fortran versions of the routines can be dropped.
+See 2.4 for more details about this simplification.
+
+(v) The Fortran user will no longer be forced to use one particular
+Fortran real precision that agrees with however PLFLT was configured
+(which can be double or single precision depending on how the PLplot
+library build was configured). Instead, they can conveniently use
+single precision or double precision (even mixed in the same code so
+long as a given PLplot call has consistent real precision), and our
+new Fortran binding does the appropriate conversions to PLFLT using
+modern Fortran's overloading mechanism.
 
 The rewritten Fortran binding does have some backwards incompatible
 API changes we have decided to introduce at this time to improve
 consistency.
 
-a. In general only the redacted form of API (with all redundant
+(i) In general, only the redacted form of API (with all redundant
 dimension arguments removed) is supported.  This was largely true of
-the old Fortran binding as well, but in particular the
-non-redacted form of pllegend call that includes the redundant nlegend
-argument that was present (by accident) in the old Fortran API
-has now been deliberately removed to be consistent with the rest of the
-Fortran API in this regard.
+the old Fortran binding as well, but in particular the non-redacted
+form of pllegend call that includes the redundant nlegend argument
+that was present (by accident) in the old Fortran API has now been
+deliberately removed to be consistent with the rest of the Fortran API
+in this regard.
 
-b. In general, multiple arrays in a redacted argument list should have
-identical sizes for dimensions that are designed for the same purpose.
-This rule is automatically enforced for our 4 languages (Python, Java,
-Lua, and Octave) where the binding has been created by swig, and now
-we enforce this same rule for the Fortran case.  For example, pllegend
-has 14 arrays in its argument list, and we now calculate nlegend from
-one of them, and check the remainder of those arrays all have that
-identical size.  (The old Fortran binding was much sloppier about
-this.)
+(ii) In general, multiple arrays in a redacted argument list should
+have identical sizes for dimensions that are designed for the same
+purpose.  This rule is automatically enforced for our 4 languages
+(Python, Java, Lua, and Octave) where the binding has been created by
+swig, and now we enforce this same rule for the Fortran case.  For
+example, pllegend has 14 arrays in its argument list, and we now
+calculate nlegend from one of them, and check the remainder of those
+arrays all have that identical size.  (The old Fortran binding was
+much sloppier about this.)
 
-c. Last plspal1 argument type has been changed from integer to logical
-to be consistent with the PLBOOL type of the corresponding
-argument of the C routine.
+(iii) In general, Fortran logical arguments are used for all cases
+where the corresponding C argument is PLBOOL.  For example, the last
+plspal1 argument type has been changed from integer to logical to be
+consistent with this rule.
+
+(iv) In general, for those rare cases where there are defined types or
+predetermined parameters that involve real types, we supply both
+*_single and *_double varieties, and the user must pick one of those
+to use.  The (rare) cases of this issue we are aware of are the
+defined types PlGraphicsIn_single and PlGraphicsIn_double, and the
+predetermined real parameters PL_NOTSET_SINGLE, PL_PI_SINGLE, and
+PL_TWOPI_SINGLE and PL_NOTSET_DOUBLE, PL_PI_DOUBLE, and
+PL_TWOPI_DOUBLE.  These replace the (double precision) instances that
+were used before,
+
+FIXME.  This is our current plan (already implemented for
+PlGraphicsIn_single and PlGraphicsIn_single, but not for the rest).
+However, on second thought it would be better to preserve the old
+double precision definitions (with no _double suffix) for backwards
+compatiblity, and also provide *_single versions for the new Fortran
+binding.
+
+2.4 Remove "c_" prefix from our C API
+
+See 2.3 for why this simplification is possible.
+
+FIXME. This change has not been done yet, but if/when it is done more
+details should be added here such as, for example replacing
+
+#define    plcol0                   c_plcol0
+
+with
+
+#define c_plcol0 plcol0
+
+where the latter is only there to assure backwards compatibility
+for those who are still using the prefixed names for our C API.
 
 ________________________________________________________________
 
