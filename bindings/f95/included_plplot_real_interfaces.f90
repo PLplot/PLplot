@@ -188,10 +188,10 @@
     end interface plhlsrgb
     private :: plhlsrgb_impl
 
-!    interface plimage
-!        module procedure plimage_impl
-!    end interface plimage
-!    private :: plimage_impl
+    interface plimage
+       module procedure plimage_impl
+    end interface plimage
+    private :: plimage_impl
 
     interface pljoin
         module procedure pljoin_impl
@@ -1162,6 +1162,38 @@ subroutine plhlsrgb_impl( h, l, s, r, g, b )
     g = real(g_out, kind=wp)
     b = real(b_out, kind=wp)
 end subroutine plhlsrgb_impl
+
+subroutine plimage_impl( idata, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, Dymax )
+    real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, Dymax
+    real(kind=wp), dimension(:, :), intent(in) :: idata
+
+    real(kind=private_plflt), dimension(:,:), allocatable :: idata_local
+    type(c_ptr), dimension(:), allocatable :: idata_address_local
+
+    interface
+       subroutine interface_plimage( idata, nx, ny, &
+            xmin, xmax, ymin, ymax, &
+            zmin, zmax, Dxmin, Dxmax, Dymin, Dymax ) bind(c,name='c_plimage')
+            use iso_c_binding
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: nx, ny
+            real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, Dymax
+            type(c_ptr), dimension(*), intent(in) :: idata
+        end subroutine interface_plimage
+     end interface
+
+     call matrix_to_c( idata, idata_local, idata_address_local )
+
+     call interface_plimage( &
+          idata_address_local, size(idata, 1, kind=private_plint), size(idata, 2, kind=private_plint), &
+          real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), &
+          real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
+          real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
+          real(Dxmin, kind=private_plflt), real(Dxmax, kind=private_plflt), &
+          real(Dymin, kind=private_plflt), real(Dymax, kind=private_plflt) &
+          )
+end subroutine plimage_impl
 
 subroutine pljoin_impl( x1, y1, x2, y2 )
     real(kind=wp), intent(in) :: x1, y1, x2, y2

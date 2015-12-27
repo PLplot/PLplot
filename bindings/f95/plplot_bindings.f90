@@ -169,6 +169,11 @@ module plplot
     end interface pltimefmt
     private :: pltimefmt_impl
 
+    interface plxormod
+        module procedure plxormod_impl
+    end interface plxormod
+    private :: plxormod_impl
+
 contains
 
 !
@@ -250,14 +255,28 @@ subroutine plcol0( icol )
     call interface_plcol0( int(icol,kind=private_plint) )
 end subroutine plcol0
 
+subroutine plcpstrm( iplsr, flags )
+  integer, intent(in)  :: iplsr
+  logical, intent(in) :: flags
+    interface
+        subroutine interface_plcpstrm( iplsr, flags ) bind(c, name = 'c_plcpstrm' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: iplsr, flags
+        end subroutine interface_plcpstrm
+    end interface
+
+    call interface_plcpstrm( int(iplsr,kind=private_plint), int(merge(1,0,flags),kind=private_plint) )
+end subroutine plcpstrm
+
 subroutine plend()
     interface
         subroutine interface_plend() bind( c, name = 'c_plend' )
         end subroutine interface_plend
      end interface
      call interface_plend()
-end subroutine plend
-
+   end subroutine plend
+   
 subroutine plend1()
     interface
         subroutine interface_plend1() bind( c, name = 'c_plend1' )
@@ -850,6 +869,20 @@ subroutine plsfam( fam, num, bmax )
     call interface_plsfam( int(fam,kind=private_plint), int(num,kind=private_plint), int(bmax,kind=private_plint) )
 end subroutine plsfam
 
+subroutine plsfnam( fnam )
+   character(len=*), intent(in) :: fnam
+
+   interface
+       subroutine interface_plsfnam( fnam ) bind(c,name='c_plsfnam')
+           implicit none
+           character(len=1), dimension(*), intent(in) :: fnam
+       end subroutine interface_plsfnam
+   end interface
+
+   call interface_plsfnam( trim(fnam) // c_null_char )
+
+end subroutine plsfnam
+
 subroutine plsfont( family, style, weight )
     integer, intent(in) :: family, style, weight
     interface
@@ -1069,5 +1102,25 @@ subroutine plvsta()
      end interface
      call interface_plvsta()
 end subroutine plvsta
+
+subroutine plxormod_impl( mode, status )
+  logical, intent(in) :: mode
+  logical, intent(out) :: status
+
+  integer(kind=private_plint) :: status_out
+
+  interface
+     subroutine interface_plxormod( mode, status ) bind(c,name='c_plxormod')
+       implicit none
+       include 'included_plplot_interface_private_types.f90'
+       integer(kind=private_plint), value, intent(in) :: mode
+       integer(kind=private_plint), intent(out) :: status
+     end subroutine interface_plxormod
+  end interface
+  
+  call interface_plxormod( int( merge(1,0,mode),kind=private_plint), status_out )
+  status = status_out /= 0_private_plint
+  
+end subroutine plxormod_impl
 
 end module plplot

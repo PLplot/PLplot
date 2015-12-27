@@ -67,7 +67,7 @@
 !};
 
       program x20f
-      use plplot, M_PI => PL_PI
+      use plplot, M_PI => PL_PI, PlGraphicsIn => PlGraphicsIn_double
 
       implicit none
 
