@@ -36,8 +36,9 @@ or
 
 make -j4 build_docbook_documentation >& build_docbook_documentation.out
 
-to build the DocBook documentation.  (The former builds all aspects of
-PLplot including the documentation, while the latter is quicker
+to build the DocBook documentation - note however, that the j4 (parallel 
+build option does not work on Cygwin.  (The former builds all aspects
+of PLplot including the documentation, while the latter is quicker
 because it just builds the documentation and its PLplot
 prerequisites.)  Furthermore, at build-time xmlto and dblatex
 automatically check for required tools, and dblatex checks for missing
