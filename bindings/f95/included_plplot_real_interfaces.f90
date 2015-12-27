@@ -98,6 +98,11 @@
     end interface plenv
     private :: plenv_impl
 
+    interface plenv0
+        module procedure plenv0_impl
+    end interface plenv0
+    private :: plenv0_impl
+
     interface plerrx
         module procedure plerrx_impl
     end interface plerrx
@@ -162,6 +167,11 @@
         module procedure plgradient_impl
     end interface plgradient
     private :: plgradient_impl
+
+    interface plgriddata
+        module procedure plgriddata_impl
+    end interface plgriddata
+    private :: plgriddata_impl
 
     interface plgspa
         module procedure plgspa_impl
@@ -425,11 +435,11 @@ subroutine matrix_to_c( array, carray, caddress )
     integer :: i_local
 
     allocate( carray(size(array,2),size(array,1)) )
-    allocate( caddress(size(array,2)) )
+    allocate( caddress(size(array,1)) )
 
     carray = transpose( array )
 
-    do i_local = 1,size(array,2)
+    do i_local = 1,size(array,1)
         caddress(i_local) = c_loc(carray(1,i_local))
     enddo
 end subroutine matrix_to_c
@@ -658,7 +668,7 @@ subroutine plcolorbar_impl( &
             low_cap_color, high_cap_color, &
             cont_color, cont_width, &
             n_labels, label_opts, length_labels, labels, &
-            n_axes, length_axis_opts, axis_opts, ticks, sub_ticks, n_values, values_address ) &
+            n_axes, length_axis_opts, axis_opts, ticks, sub_ticks, n_values, values ) &
             bind(c,name='fc_plcolorbar')
 
          use iso_c_binding, only: c_char, c_ptr
@@ -671,7 +681,7 @@ subroutine plcolorbar_impl( &
          integer(kind=private_plint), value, intent(in) :: n_labels, length_labels, n_axes, length_axis_opts
          real(kind=private_plflt), dimension(*), intent(in) :: ticks
          integer(kind=private_plint), dimension(*), intent(in) :: label_opts, sub_ticks, n_values
-         type(c_ptr), dimension(*), intent(in) :: values_address
+         type(c_ptr), dimension(*), intent(in) :: values
          
          ! These Fortran arguments require special processing done
          ! in fc_plcolorbar at the C level to interoperate properly
@@ -799,6 +809,23 @@ subroutine plenv_impl( xmin, xmax, ymin, ymax, just, axis )
     call interface_plenv( real(xmin,private_plflt), real(xmax,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt), &
                   int(just,private_plint), int(axis,private_plint) )
 end subroutine plenv_impl
+
+subroutine plenv0_impl( xmin, xmax, ymin, ymax, just, axis )
+    real(kind=wp), intent(in)  :: xmin, xmax, ymin, ymax
+    integer, intent(in) :: just, axis
+
+    interface
+        subroutine interface_plenv0( xmin, xmax, ymin, ymax, just, axis ) bind(c, name='c_plenv0')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
+            integer(kind=private_plint), value, intent(in) :: just, axis
+        end subroutine interface_plenv0
+    end interface
+
+    call interface_plenv0( real(xmin,private_plflt), real(xmax,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt), &
+                  int(just,private_plint), int(axis,private_plint) )
+end subroutine plenv0_impl
 
 subroutine plerrx_impl( xmin, xmax, y )
     real(kind=wp), dimension(:), intent(in) :: xmin, xmax, y
@@ -1062,6 +1089,65 @@ subroutine plgradient_impl( x, y, angle )
                        real(angle,kind=private_plflt) )
 end subroutine plgradient_impl
 
+subroutine plgriddata_impl( x, y, z, xg, yg, zg, type, data )
+    integer, intent(in) :: type
+    real(kind=wp), intent(in) :: data
+    real(kind=wp), dimension(:), intent(in) :: x, y, z, xg, yg
+    real(kind=wp), dimension(:, :), intent(out) :: zg
+
+    real(kind=private_plflt), dimension(:,:), allocatable, target :: transpose_local
+    type(c_ptr), dimension(:), allocatable :: transpose_address_local
+    integer(kind=private_plint) :: npts_local, nptsx_local, nptsy_local
+    integer :: i_local
+
+    interface
+       subroutine interface_plgriddata( x, y, z, npts, xg, nptsx, yg, nptsy, zg, type, data ) bind(c,name='c_plgriddata')
+           use iso_c_binding, only: c_ptr
+           implicit none
+           include 'included_plplot_interface_private_types.f90'
+           integer(kind=private_plint), value, intent(in) :: npts, nptsx, nptsy, type
+           real(kind=private_plflt), value, intent(in) :: data
+           real(kind=private_plflt), dimension(*), intent(in) :: x, y, z, xg, yg
+           type(c_ptr), dimension(*), intent(out) :: zg
+       end subroutine interface_plgriddata
+    end interface
+
+    npts_local = size(x, kind=private_plint)
+
+    if( &
+         npts_local /= size(y, kind=private_plint) .or. &
+         npts_local /= size(z, kind=private_plint) ) then
+       write(0,*) "f95 plgriddata ERROR: inconsistent sizes for x, y, and/or z"
+       return
+    end if
+
+    nptsx_local = size(xg, kind=private_plint)
+    nptsy_local = size(yg, kind=private_plint)
+
+    if( &
+         nptsx_local /= size(zg, 1, kind=private_plint) .or. &
+         nptsy_local /= size(zg, 2, kind=private_plint) ) then
+       write(0,*) "f95 plgriddata ERROR: inconsistent sizes for xg and first dimension of zg or yg and second dimension of zg"
+       return
+    end if
+
+    ! Prepare array areas to be written to by C version of plgriddata
+    ! following relevant parts of code in matrix_to_c.
+    allocate( transpose_local(nptsy_local, nptsx_local) )
+    allocate( transpose_address_local(nptsx_local) )
+    do i_local = 1, nptsx_local
+       transpose_address_local(i_local) = c_loc(transpose_local(1,i_local))
+    enddo
+       
+    call interface_plgriddata( &
+         real(x,kind=private_plflt), real(y,kind=private_plflt), real(z,kind=private_plflt), npts_local, &
+         real(xg,kind=private_plflt), nptsx_local, real(yg,kind=private_plflt), nptsy_local, &
+         transpose_address_local, int(type, kind=private_plint), real(data, kind=private_plflt) )
+
+    zg = real(transpose(transpose_local), kind=wp)
+    deallocate(transpose_local, transpose_address_local)
+end subroutine plgriddata_impl
+
 subroutine plgspa_impl( xmin, xmax, ymin, ymax )
     real(kind=wp), intent(out) :: xmin, xmax, ymin, ymax
 
@@ -1174,7 +1260,7 @@ subroutine plimage_impl( idata, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax
        subroutine interface_plimage( idata, nx, ny, &
             xmin, xmax, ymin, ymax, &
             zmin, zmax, Dxmin, Dxmax, Dymin, Dymax ) bind(c,name='c_plimage')
-            use iso_c_binding
+            use iso_c_binding, only: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny
@@ -2032,7 +2118,7 @@ subroutine plstripc_impl( &
           colbox, collab, &
           n_pens, colline, styline, length_legline, legline, &
           labx, laby, labtop ) bind(c,name='fc_plstripc')
-       use iso_c_binding
+       use iso_c_binding, only: c_char
        implicit none
        include 'included_plplot_interface_private_types.f90'
        integer(kind=private_plint), value, intent(in) :: y_ascl, acc
