@@ -142,14 +142,11 @@ if(ENABLE_f95)
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  # For CMake-2.6.0 and above, the module files are created by
-  # default during the library build in the bindings/f95 directory.
+  # N.B. None of the modules that are use(d) by the plplot module
+  # need to be installed since user programmes only should "use plplot".
   install(
     FILES
     ${CMAKE_BINARY_DIR}/bindings/f95/plplot.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_double.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_single.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_types.mod
     DESTINATION ${F95_MOD_DIR}
     )
 
