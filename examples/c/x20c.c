@@ -176,15 +176,18 @@ main( int argc, const char *argv[] )
     plFree2dGrid( z, XDIM, YDIM );
 
     // read Lena image
-    // Note we try two different locations to cover the case where this
-    // examples is being run from the test_c.sh script
+    // Note we try three different locations to cover the case where this
+    // examples is being run from the test_c.sh script or directly on Windows
     if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ) )
     {
         if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
         {
-            fprintf( stderr, "No such file" );
-            plend();
-            exit( 1 );
+            if (read_img("../../lena.pgm", &img_f, &width, &height, &num_col))
+            {
+                fprintf(stderr, "No such file");
+                plend();
+                exit(1);
+            }
         }
     }
 
