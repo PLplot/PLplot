@@ -243,6 +243,11 @@
     end interface plmtex
     private :: plmtex_impl
 
+    interface plmtex3
+        module procedure plmtex3_impl
+    end interface plmtex3
+    private :: plmtex3_impl
+
     interface plot3d
         module procedure plot3d_impl
     end interface plot3d
@@ -282,6 +287,11 @@
         module procedure plptex_impl
     end interface plptex
     private :: plptex_impl
+
+    interface plptex3
+        module procedure plptex3_impl
+    end interface plptex3
+    private :: plptex3_impl
 
     interface plrgbhls
         module procedure plrgbhls_impl
@@ -1528,22 +1538,39 @@ subroutine plmeshc_impl( x, y, z, opt, clevel )
 
 end subroutine plmeshc_impl
 
-subroutine plmtex_impl( side, disp, pos, xjust, text )
-    real(kind=wp), intent(in) :: disp, pos, xjust
+subroutine plmtex_impl( side, disp, pos, just, text )
+    real(kind=wp), intent(in) :: disp, pos, just
     character*(*), intent(in) :: side, text
 
     interface
-        subroutine interface_plmtex( side, disp, pos, xjust, text ) bind(c,name='c_plmtex')
+        subroutine interface_plmtex( side, disp, pos, just, text ) bind(c,name='c_plmtex')
             implicit none
             include 'included_plplot_interface_private_types.f90'
             character(len=1), dimension(*), intent(in) :: side, text
-            real(kind=private_plflt), value, intent(in) :: disp, pos, xjust
+            real(kind=private_plflt), value, intent(in) :: disp, pos, just
         end subroutine interface_plmtex
     end interface
 
     call interface_plmtex( trim(side)//c_null_char, real(disp,kind=private_plflt), real(pos,kind=private_plflt), &
-                   real(xjust,kind=private_plflt), trim(text)//c_null_char )
+                   real(just,kind=private_plflt), trim(text)//c_null_char )
 end subroutine plmtex_impl
+
+subroutine plmtex3_impl( side, disp, pos, just, text )
+    real(kind=wp), intent(in) :: disp, pos, just
+    character*(*), intent(in) :: side, text
+
+    interface
+        subroutine interface_plmtex3( side, disp, pos, just, text ) bind(c,name='c_plmtex3')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            character(len=1), dimension(*), intent(in) :: side, text
+            real(kind=private_plflt), value, intent(in) :: disp, pos, just
+        end subroutine interface_plmtex3
+    end interface
+
+    call interface_plmtex3( trim(side)//c_null_char, real(disp,kind=private_plflt), real(pos,kind=private_plflt), &
+                   real(just,kind=private_plflt), trim(text)//c_null_char )
+end subroutine plmtex3_impl
 
 subroutine plot3d_impl( x, y, z, opt, side)
     logical, intent(in) :: side
@@ -1710,24 +1737,45 @@ subroutine plpoly3_impl( x, y, z, draw, ifcc )
                    real(z,kind=private_plflt), idraw_local, iifcc_local )
 end subroutine plpoly3_impl
 
-subroutine plptex_impl( x, y, dx, dy, xjust, text )
+subroutine plptex_impl( x, y, dx, dy, just, text )
 
-    real(kind=wp), intent(in) :: x, y, dx, dy, xjust
+    real(kind=wp), intent(in) :: x, y, dx, dy, just
     character*(*), intent(in) :: text
 
     interface
-        subroutine interface_plptex( x, y, dx, dy, xjust, text ) bind(c,name='c_plptex')
+        subroutine interface_plptex( x, y, dx, dy, just, text ) bind(c,name='c_plptex')
             implicit none
             include 'included_plplot_interface_private_types.f90'
             character(len=1), dimension(*), intent(in) :: text
-            real(kind=private_plflt), value, intent(in) :: x, y, dx, dy, xjust
+            real(kind=private_plflt), value, intent(in) :: x, y, dx, dy, just
         end subroutine interface_plptex
     end interface
 
     call interface_plptex( real(x,kind=private_plflt), real(y,kind=private_plflt), real(dx,kind=private_plflt), &
-                   real(dy,kind=private_plflt), real(xjust,kind=private_plflt), trim(text)//c_null_char )
+                   real(dy,kind=private_plflt), real(just,kind=private_plflt), trim(text)//c_null_char )
 
 end subroutine plptex_impl
+
+subroutine plptex3_impl( wx, wy, wz, dx, dy, dz, sx, sy, sz, just, text )
+
+    real(kind=wp), intent(in) :: wx, wy, wz, dx, dy, dz, sx, sy, sz, just
+    character*(*), intent(in) :: text
+
+    interface
+        subroutine interface_plptex3( wx, wy, wz, dx, dy, dz, sx, sy, sz, just, text ) bind(c,name='c_plptex3')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            character(len=1), dimension(*), intent(in) :: text
+            real(kind=private_plflt), value, intent(in) :: wx, wy, wz, dx, dy, dz, sx, sy, sz, just
+        end subroutine interface_plptex3
+    end interface
+
+    call interface_plptex3( real(wx,kind=private_plflt), real(wy,kind=private_plflt), real(wz,kind=private_plflt), &
+         real(dx,kind=private_plflt), real(dy,kind=private_plflt), real(dz,kind=private_plflt), &
+         real(sx,kind=private_plflt), real(sy,kind=private_plflt), real(sz,kind=private_plflt), &
+         real(just,kind=private_plflt), trim(text)//c_null_char )
+
+end subroutine plptex3_impl
 
 subroutine plrgbhls_impl( r, g, b, h, l, s )
     real(kind=wp), intent(in) :: r, g, b
