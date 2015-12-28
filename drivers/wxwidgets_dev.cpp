@@ -1295,7 +1295,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
         //lock the mutex so reading and writing don't overlap
         try
         {
-            PLNamedMutexLocker lock( &m_mutex );
+            //PLNamedMutexLocker lock( &m_mutex );
             MemoryMapHeader &  mapHeader = *(MemoryMapHeader *) m_outputMemoryMap.getBuffer();
 
             //check how much free space we have before the end of the buffer
