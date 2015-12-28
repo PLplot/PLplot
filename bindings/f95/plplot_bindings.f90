@@ -154,10 +154,20 @@ module plplot
     end interface pl_setcontlabelformat
     private :: pl_setcontlabelformat_impl
 
+    interface plgfci
+        module procedure plgfci_impl
+    end interface plgfci
+    private :: plgfci_impl
+
     interface plsetopt
         module procedure plsetopt_impl
     end interface plsetopt
     private :: plsetopt_impl
+
+    interface plsfci
+        module procedure plsfci_impl
+    end interface plsfci
+    private :: plsfci_impl
 
     interface plstyl
         module procedure plstyl_scalar
@@ -435,6 +445,23 @@ subroutine plgfam( fam, num, bmax )
     num  = int(num_out)
     bmax = int(bmax_out)
 end subroutine plgfam
+
+subroutine plgfci_impl( fci )
+    integer, intent(out) :: fci
+
+    integer(kind=private_plunicode) :: fci_out
+
+    interface
+        subroutine interface_plgfci( fci ) bind( c, name = 'c_plgfci' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plunicode), intent(out) :: fci
+        end subroutine interface_plgfci
+    end interface
+
+    call interface_plgfci( fci_out )
+    fci  = int(fci_out)
+end subroutine plgfci_impl
 
 subroutine plgfont( family, style, weight )
     integer, intent(out) :: family, style, weight
@@ -877,6 +904,21 @@ subroutine plsfam( fam, num, bmax )
 
     call interface_plsfam( int(fam,kind=private_plint), int(num,kind=private_plint), int(bmax,kind=private_plint) )
 end subroutine plsfam
+
+subroutine plsfci_impl( fci )
+    integer, intent(in) :: fci
+
+    interface
+        subroutine interface_plsfci( fci ) bind( c, name = 'c_plsfci' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plunicode), value, intent(in) :: fci
+        end subroutine interface_plsfci
+    end interface
+
+    call interface_plsfci( int(fci,kind=private_plunicode) )
+    
+end subroutine plsfci_impl
 
 subroutine plsfnam( fnam )
    character(len=*), intent(in) :: fnam
