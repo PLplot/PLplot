@@ -2036,7 +2036,6 @@ subroutine plstring_impl( x, y, string )
   n_local = size(x, kind=private_plint)
   if(n_local /= size(y, kind=private_plint) ) then
      write(0,*) "f95 plstring ERROR: inconsistent array sizes not allowed for x and y"
-     write(0, *)
      return
   end if
   

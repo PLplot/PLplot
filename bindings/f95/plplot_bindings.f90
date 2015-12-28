@@ -145,7 +145,9 @@ module plplot
     private :: private_plint, private_plunicode
     private :: copystring
 !
-! Interfaces that do not depend on the real kind
+    ! Interfaces that do not depend on the real kind or which
+    ! have optional real components (e.g., plsvect) that generate
+    ! an ambiguous interface if implemented with plplot_single and plplot_double
 !
     interface pl_setcontlabelformat
         module procedure pl_setcontlabelformat_impl
@@ -161,9 +163,16 @@ module plplot
         module procedure plstyl_scalar
         module procedure plstyl_n_array
         module procedure plstyl_array
-    end interface
+    end interface plstyl
     private :: plstyl_scalar, plstyl_n_array, plstyl_array
 
+    interface plsvect
+       module procedure plsvect_none
+       module procedure plsvect_single
+       module procedure plsvect_double
+    end interface plsvect
+    private :: plsvect_none, plsvect_single, plsvect_double
+    
     interface pltimefmt
         module procedure pltimefmt_impl
     end interface pltimefmt
@@ -980,6 +989,74 @@ subroutine plssub( nx, ny )
 
     call interface_plssub( int(nx,kind=private_plint), int(ny,kind=private_plint) )
 end subroutine plssub
+
+subroutine plsvect_double( arrowx, arrowy, fill )
+  logical, intent(in) :: fill 
+  real(kind=private_double), dimension(:), intent(in) :: arrowx, arrowy
+
+  integer(kind=private_plint) :: npts_local
+  logical :: if_arg1_local, if_arg2_local, if_arg3_local
+
+    interface
+        subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
+            use iso_c_binding, only: c_ptr
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: npts, fill
+            real(kind=private_plflt), dimension(*), intent(in) :: arrowx, arrowy
+        end subroutine interface_plsvect
+     end interface
+
+     if(npts_local /= size(arrowx, kind=private_plflt) ) then
+        write(0,*) "f95 plsvect ERROR: sizes of arrowx and arrowy are not consistent"
+        return
+     end if
+
+     call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &
+          npts_local, int(merge(1,0,fill), kind=private_plint) )
+end subroutine plsvect_double
+
+subroutine plsvect_none( fill )
+  logical, optional, intent(in) :: fill 
+
+    interface
+        subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
+            use iso_c_binding, only: c_ptr
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: npts, fill
+            type(c_ptr), value, intent(in) :: arrowx, arrowy
+        end subroutine interface_plsvect
+     end interface
+
+     call interface_plsvect( c_null_ptr, c_null_ptr, 0_private_plint, 0_private_plint )
+end subroutine plsvect_none
+
+subroutine plsvect_single( arrowx, arrowy, fill )
+  logical, intent(in) :: fill 
+  real(kind=private_single), dimension(:), intent(in) :: arrowx, arrowy
+
+  integer(kind=private_plint) :: npts_local
+  logical :: if_arg1_local, if_arg2_local, if_arg3_local
+
+    interface
+        subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
+            use iso_c_binding, only: c_ptr
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: npts, fill
+            real(kind=private_plflt), dimension(*), intent(in) :: arrowx, arrowy
+        end subroutine interface_plsvect
+     end interface
+
+     if(npts_local /= size(arrowx, kind=private_plflt) ) then
+        write(0,*) "f95 plsvect ERROR: sizes of arrowx and arrowy are not consistent"
+        return
+     end if
+
+     call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &
+          npts_local, int(merge(1,0,fill), kind=private_plint) )
+end subroutine plsvect_single
 
 subroutine plstar( nx, ny )
     integer, intent(in) :: nx, ny
