@@ -322,7 +322,7 @@
       call plmapfill( "ss/ss64ne_Building_Area", minx, maxx, miny, maxy )
 
       ! labels
-      call plsfci( int(z'00000100',kind=plint) )
+      call plsfci( int(z'00000100') )
       call plschr( 0._plflt, 0.8_plflt )
       call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
       call plschr( 0._plflt, 0.7_plflt );

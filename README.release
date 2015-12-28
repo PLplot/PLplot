@@ -107,6 +107,11 @@ long as a given PLplot call has consistent real precision), and our
 new Fortran binding does the appropriate conversions to PLFLT using
 modern Fortran's overloading mechanism.
 
+N.B. support for kind=plflt Fortran real type corresponding to the
+PLFLT C type remains for backwards compatibility, but eventually this
+will be deprecated and removed so users are currently encouraged not
+to use kind=plflt since it is no longer necessary.
+
 The rewritten Fortran binding does have some backwards incompatible
 API changes we have decided to introduce at this time to improve
 consistency.
@@ -136,7 +141,7 @@ consistent with this rule.
 
 (iv) In general, for those rare cases where there are defined types or
 predetermined parameters that involve real types, we supply both
-*_single and *_double varieties, and the user must pick one of those
+*_single and *_double variaties, and the user must pick one of those
 to use.  The (rare) cases of this issue we are aware of are the
 defined types PlGraphicsIn_single and PlGraphicsIn_double, and the
 predetermined real parameters PL_NOTSET_SINGLE, PL_PI_SINGLE, and
@@ -144,12 +149,18 @@ PL_TWOPI_SINGLE and PL_NOTSET_DOUBLE, PL_PI_DOUBLE, and
 PL_TWOPI_DOUBLE.  These replace the (double precision) instances that
 were used before,
 
-FIXME.  This is our current plan (already implemented for
-PlGraphicsIn_single and PlGraphicsIn_single, but not for the rest).
-However, on second thought it would be better to preserve the old
-double precision definitions (with no _double suffix) for backwards
-compatiblity, and also provide *_single versions for the new Fortran
-binding.
+FIXME.  The paragraph above is our current plan (already implemented
+for PlGraphicsIn_single and PlGraphicsIn_single, but not for the
+rest).  However, on second thought it would be better to preserve the
+old double precision definitions (with no _double suffix) for
+backwards compatiblity, and also provide *_single (and *_double?)
+versions for the new Fortran binding.
+
+(v) The experimental and non-uniform support for the kind=plint and
+kind=plunicode Fortran integer types has now been removed.  Instead,
+ordinary default kind integers are used for the Fortran types
+corresponding to the PLINT and PLUNICODE C types.
+
 
 2.4 Remove "c_" prefix from our C API
 

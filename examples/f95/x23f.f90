@@ -30,7 +30,7 @@
       real(kind=plflt) chardef, charht, deltax, deltay, x, y
       integer i, j, page, length, slice
       character(len=20) cmdString
-      integer(kind=plunicode) fci_old
+      integer fci_old
       integer ifamily, istyle, iweight
       real(kind=plflt) dy
       integer family_index, style_index, weight_index
@@ -54,7 +54,7 @@
       integer      nxcells(11)
       integer      nycells(11)
       integer      offset(11)
-      integer(kind=plunicode) :: fci(fci_combinations)
+      integer :: fci(fci_combinations)
       character(len=11) family(5)
       character(len=8)  style(3)
       character(len=7)  weight(2)
@@ -313,7 +313,7 @@
        call pladv(0)
        call plvpor(0.02_plflt, 0.98_plflt, 0.02_plflt, 0.90_plflt)
        call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-       call plsfci(0_plunicode)
+       call plsfci(0)
        if (page == 11) then
           call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
                '#<0x10>PLplot Example 23 - '// &
