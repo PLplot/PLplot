@@ -27,7 +27,21 @@
 !***********************************************************************
 
 module plplot_types
-    include 'included_plplot_interface_private_types.f90'
+  use iso_c_binding, only: c_ptr
+  include 'included_plplot_interface_private_types.f90'
+
+  ! The PLfGrid and PLcGrid types transfer information about a multidimensional
+  ! array to the plcontour/plshade family of routines.
+
+  type, bind(c) :: PLfGrid
+     type(c_ptr) :: f
+     integer(kind=private_plint) :: nx, ny, nz
+  end type PLfGrid
+
+  type, bind(c) :: PLcGrid
+     type(c_ptr) :: xg, yg, zg
+     integer(kind=private_plint) :: nx, ny, nz
+  end type PLcGrid
 end module plplot_types
 
 module plplot_graphics
@@ -114,9 +128,26 @@ end subroutine plGetCursor_single
 
 end module plplot_graphics
 
+! The bind(c) attribute exposes the pltr routine which ought to be private
+module plplot_private_exposed
+    implicit none
+contains
+subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
+   use iso_c_binding
+   use plplot_types
+   real(kind=private_plflt), value :: x, y
+   real(kind=private_plflt), intent(out) :: tx, ty
+   real(kind=private_plflt), dimension(*), intent(in) :: tr
+
+   tx = tr(1) * x + tr(2) * y + tr(3)
+   ty = tr(4) * x + tr(5) * y + tr(6)
+end subroutine plplot_private_pltr
+end module plplot_private_exposed
+
 module plplot_single
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, c_funloc, c_f_pointer
     use plplot_types, only: private_plflt, private_plint, private_single
+    use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_single
@@ -126,8 +157,9 @@ module plplot_single
 end module plplot_single
 
 module plplot_double
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, c_funloc, c_f_pointer
     use plplot_types, only: private_plflt, private_plint, private_double
+    use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_double
@@ -196,7 +228,7 @@ module plplot
        module procedure plsvect_double
     end interface plsvect
     private :: plsvect_none, plsvect_single, plsvect_double
-    
+
     interface pltimefmt
         module procedure pltimefmt_impl
     end interface pltimefmt
@@ -309,7 +341,7 @@ subroutine plend()
      end interface
      call interface_plend()
    end subroutine plend
-   
+
 subroutine plend1()
     interface
         subroutine interface_plend1() bind( c, name = 'c_plend1' )
@@ -694,7 +726,7 @@ subroutine plparseopts(mode)
 
   integer, parameter :: maxargs_local = 100
   character (len=maxlen), dimension(0:maxargs_local) :: arg_local
-  
+
   interface
      subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
        use iso_c_binding, only: c_char
@@ -707,7 +739,7 @@ subroutine plparseopts(mode)
        character(c_char) arg(length, nargs)
      end subroutine interface_plparseopts
   end interface
-  
+
   numargs_local = command_argument_count()
   if (numargs_local < 0) then
      !       This actually happened historically on a badly linked Cygwin platform.
@@ -1001,7 +1033,7 @@ subroutine plsfci_impl( fci )
     end interface
 
     call interface_plsfci( int(fci,kind=private_plunicode) )
-    
+
 end subroutine plsfci_impl
 
 subroutine plsfnam( fnam )
@@ -1117,7 +1149,7 @@ subroutine plssub( nx, ny )
 end subroutine plssub
 
 subroutine plsvect_double( arrowx, arrowy, fill )
-  logical, intent(in) :: fill 
+  logical, intent(in) :: fill
   real(kind=private_double), dimension(:), intent(in) :: arrowx, arrowy
 
   integer(kind=private_plint) :: npts_local
@@ -1143,7 +1175,7 @@ subroutine plsvect_double( arrowx, arrowy, fill )
 end subroutine plsvect_double
 
 subroutine plsvect_none( fill )
-  logical, optional, intent(in) :: fill 
+  logical, optional, intent(in) :: fill
 
     interface
         subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
@@ -1159,7 +1191,7 @@ subroutine plsvect_none( fill )
 end subroutine plsvect_none
 
 subroutine plsvect_single( arrowx, arrowy, fill )
-  logical, intent(in) :: fill 
+  logical, intent(in) :: fill
   real(kind=private_single), dimension(:), intent(in) :: arrowx, arrowy
 
   integer(kind=private_plint) :: npts_local
@@ -1320,10 +1352,10 @@ subroutine plxormod_impl( mode, status )
        integer(kind=private_plint), intent(out) :: status
      end subroutine interface_plxormod
   end interface
-  
+
   call interface_plxormod( int( merge(1,0,mode),kind=private_plint), status_out )
   status = status_out /= 0_private_plint
-  
+
 end subroutine plxormod_impl
 
 end module plplot
