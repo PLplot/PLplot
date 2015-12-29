@@ -135,7 +135,7 @@ contains
 subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
    use iso_c_binding
    use plplot_types
-   real(kind=private_plflt), value :: x, y
+   real(kind=private_plflt), value, intent(in) :: x, y
    real(kind=private_plflt), intent(out) :: tx, ty
    real(kind=private_plflt), dimension(*), intent(in) :: tr
 
@@ -146,7 +146,7 @@ end module plplot_private_exposed
 
 module plplot_single
     use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, c_funloc, c_f_pointer
-    use plplot_types, only: private_plflt, private_plint, private_single
+    use plplot_types, only: private_plflt, private_plint, private_single, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 
@@ -158,7 +158,7 @@ end module plplot_single
 
 module plplot_double
     use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, c_funloc, c_f_pointer
-    use plplot_types, only: private_plflt, private_plint, private_double
+    use plplot_types, only: private_plflt, private_plint, private_double, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 

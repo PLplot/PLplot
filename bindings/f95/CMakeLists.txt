@@ -142,11 +142,17 @@ if(ENABLE_f95)
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  # N.B. None of the modules that are use(d) by the plplot module
-  # need to be installed since user programmes only should "use plplot".
+  # While user programmes should only use the plplot module,
+  # some compilers (e.g. Intel Fortran, but not gfortran) require access
+  # to all the module intermediate files
   install(
     FILES
     ${CMAKE_BINARY_DIR}/bindings/f95/plplot.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_double.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_single.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_graphics.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_private_exposed.mod
+    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_types.mod
     DESTINATION ${F95_MOD_DIR}
     )
 

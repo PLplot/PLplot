@@ -836,8 +836,8 @@ subroutine plcontour_0( z, kx, lx, ky, ly, clevel )
             implicit none
             include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
-            integer(kind=private_plint), value :: ix, iy
-            type(c_ptr), value :: data
+            integer(kind=private_plint), value, intent(in) :: ix, iy
+            type(c_ptr), value, intent(in) :: data
         end function plf2evalr
     end interface
 
@@ -847,7 +847,7 @@ subroutine plcontour_0( z, kx, lx, ky, ly, clevel )
             use plplot_types, only: private_plint, private_plflt, PLfGrid
             implicit none
             integer(kind=private_plint), value, intent(in) :: nx, ny, kx, lx, ky, ly, nlevel
-            type(c_ptr), value :: grid
+            type(c_ptr), value, intent(in)  :: grid
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
             type(c_ptr), intent(in) :: data
             type(c_funptr) :: lookup
@@ -882,8 +882,8 @@ subroutine plcontour_1( z, kx, lx, ky, ly, clevel, xg, yg )
             implicit none
             include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
-            integer(kind=private_plint), value :: ix, iy
-            type(c_ptr), value :: data
+            integer(kind=private_plint), value, intent(in) :: ix, iy
+            type(c_ptr), value, intent(in)  :: data
         end function plf2evalr
     end interface
 
@@ -892,7 +892,7 @@ subroutine plcontour_1( z, kx, lx, ky, ly, clevel, xg, yg )
             use iso_c_binding
             use plplot_types, only: private_plflt, PLcGrid
             implicit none
-            real(kind=private_plflt), value :: x, y
+            real(kind=private_plflt), value, intent(in) :: x, y
             real(kind=private_plflt), intent(out) :: tx, ty
             type(PLcGrid), intent(in) :: data
         end subroutine pltr1
@@ -904,17 +904,17 @@ subroutine plcontour_1( z, kx, lx, ky, ly, clevel, xg, yg )
             use plplot_types, only: private_plint, private_plflt, PLfGrid
             implicit none
             integer(kind=private_plint), value, intent(in) :: nx, ny, kx, lx, ky, ly, nlevel
-            type(c_ptr), value :: grid
+            type(c_ptr), value, intent(in)  :: grid
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
-            type(c_ptr), value :: data
+            type(c_ptr), value, intent(in)  :: data
             interface
                 function lookup( ix, iy, data ) bind(c)
                     use iso_c_binding
                     implicit none
                     include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
-                    integer(kind=private_plint), value :: ix, iy
-                    type(c_ptr), value :: data
+                    integer(kind=private_plint), value, intent(in)  :: ix, iy
+                    type(c_ptr), value, intent(in)  :: data
                 end function lookup
             end interface
             interface
@@ -922,7 +922,7 @@ subroutine plcontour_1( z, kx, lx, ky, ly, clevel, xg, yg )
                     use iso_c_binding
                     use plplot_types, only: private_plflt, PLcGrid
                     implicit none
-                    real(kind=private_plflt), value :: x, y
+                    real(kind=private_plflt), value, intent(in)  :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
                     type(PLcGrid), intent(in) :: data
                 end subroutine transform
@@ -966,8 +966,8 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
             implicit none
             include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
-            integer(kind=private_plint), value :: ix, iy
-            type(c_ptr), value :: data
+            integer(kind=private_plint), value, intent(in)  :: ix, iy
+            type(c_ptr), value, intent(in)  :: data
         end function plf2evalr
     end interface
 
@@ -976,9 +976,9 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
             use iso_c_binding
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            real(kind=private_plflt), value :: x, y
+            real(kind=private_plflt), value, intent(in)  :: x, y
             real(kind=private_plflt), intent(out) :: tx, ty
-            type(c_ptr), value :: data
+            type(c_ptr), value, intent(in)  :: data
         end subroutine pltr2f
     end interface
 
@@ -988,17 +988,17 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
             use plplot_types, only: private_plint, private_plflt, PLfGrid
             implicit none
             integer(kind=private_plint), value, intent(in) :: nx, ny, kx, lx, ky, ly, nlevel
-            type(c_ptr), value :: grid
+            type(c_ptr), value, intent(in)  :: grid
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
-            type(c_ptr), value :: data
+            type(c_ptr), value, intent(in)  :: data
             interface
                 function lookup( ix, iy, data ) bind(c)
                     use iso_c_binding
                     implicit none
                     include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
-                    integer(kind=private_plint), value :: ix, iy
-                    type(c_ptr), value :: data
+                    integer(kind=private_plint), value, intent(in)  :: ix, iy
+                    type(c_ptr), value, intent(in)  :: data
                 end function lookup
             end interface
 
@@ -1007,9 +1007,9 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
                     use iso_c_binding
                     implicit none
                     include 'included_plplot_interface_private_types.f90'
-                    real(kind=private_plflt), value :: x, y
+                    real(kind=private_plflt), value, intent(in)  :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
-                    type(c_ptr), value :: data
+                    type(c_ptr), value, intent(in)  :: data
                 end subroutine transform
             end interface
         end subroutine interface_plfcont
@@ -1050,8 +1050,8 @@ subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
             implicit none
             include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
-            integer(kind=private_plint), value :: ix, iy
-            type(c_ptr), value :: data
+            integer(kind=private_plint), value, intent(in) :: ix, iy
+            type(c_ptr), value, intent(in)  :: data
         end function plf2evalr
     end interface
 
@@ -1072,7 +1072,7 @@ subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
             use plplot_types, only: private_plint, private_plflt, PLfGrid
             implicit none
             integer(kind=private_plint), value, intent(in) :: nx, ny, kx, lx, ky, ly, nlevel
-            type(c_ptr), value :: grid
+            type(c_ptr), value, intent(in)  :: grid
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
             real(kind=private_plflt), dimension(*), intent(in) :: data
             interface
@@ -1081,8 +1081,8 @@ subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
                     implicit none
                     include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
-                    integer(kind=private_plint), value :: ix, iy
-                    type(c_ptr), value :: data
+                    integer(kind=private_plint), value, intent(in)  :: ix, iy
+                    type(c_ptr), value, intent(in)  :: data
                 end function lookup
             end interface
             interface
@@ -1090,7 +1090,7 @@ subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
                     use iso_c_binding
                     implicit none
                     include 'included_plplot_interface_private_types.f90'
-                    real(kind=private_plflt), value :: x, y
+                    real(kind=private_plflt), value, intent(in)  :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
                     real(kind=private_plflt), dimension(*), intent(in) :: data
                     !type(c_ptr), value :: data
