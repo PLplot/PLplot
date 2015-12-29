@@ -222,7 +222,7 @@ void wxPLplotwindow<WXWINDOW>::OnMouse( wxMouseEvent &event )
 {
     PLGraphicsIn graphicsIn;
     wxPoint      cursorPosition = event.GetPosition();
-    wxSize       clientSize     = GetClientSize();
+    wxSize       clientSize     = WXWINDOW::GetClientSize();
 
     graphicsIn.pX        = cursorPosition.x;
     graphicsIn.pY        = cursorPosition.y;
