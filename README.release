@@ -139,22 +139,27 @@ where the corresponding C argument is PLBOOL.  For example, the last
 plspal1 argument type has been changed from integer to logical to be
 consistent with this rule.
 
-(iv) In general, for those rare cases where there are defined types or
-predetermined parameters that involve real types, we supply both
-*_single and *_double variaties, and the user must pick one of those
-to use.  The (rare) cases of this issue we are aware of are the
-defined types PlGraphicsIn_single and PlGraphicsIn_double, and the
-predetermined real parameters PL_NOTSET_SINGLE, PL_PI_SINGLE, and
-PL_TWOPI_SINGLE and PL_NOTSET_DOUBLE, PL_PI_DOUBLE, and
-PL_TWOPI_DOUBLE.  These replace the (double precision) instances that
-were used before,
+(iv) In general, for those rare cases where the actual real precision
+cannot be automatically specified by the user via the precision of the
+real arguments which are used for a call to a subroutine or function,
+then the default choice is double precision rather than the previous
+choice which was the actual real precision of the PLplot C library.
+(This is only a backwards-incompatibility in those rare cases where
+the user has deliberately chosen to configure and use a
+single-precision version of that library.)
 
-FIXME.  The paragraph above is our current plan (already implemented
-for PlGraphicsIn_single and PlGraphicsIn_single, but not for the
-rest).  However, on second thought it would be better to preserve the
-old double precision definitions (with no _double suffix) for
-backwards compatiblity, and also provide *_single (and *_double?)
-versions for the new Fortran binding.
+The instances of this issue are the function plrandd, the defined type
+PLGraphicsIn, and the pre-defined real parameters PL_NOTSET, PL_PI,
+and PL_TWOPI.  For those cases where the user prefers not to use these
+double-precision entities, we also supply single-precision entities as
+well (distinguished by adding a "_single" suffix to the name of the
+entity, i.e., plrandd_single, PLGraphicsIn_single, PL_NOTSET_single,
+PL_PI_single, and PL_TWOPI_single.
+
+FIXME. This naming convention is implemented now for plrandd and
+PLGraphicsIn, but only the double-precision variants PL_NOTSET, PL_PI,
+and PL_TWOPI of the predefined parameters have been currently
+implemented.
 
 (v) The experimental and non-uniform support for the kind=plint and
 kind=plunicode Fortran integer types has now been removed.  Instead,

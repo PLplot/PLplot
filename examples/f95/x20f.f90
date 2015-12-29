@@ -67,7 +67,7 @@
 !};
 
       program x20f
-      use plplot, M_PI => PL_PI, PlGraphicsIn => PlGraphicsIn_double
+      use plplot, M_PI => PL_PI
 
       implicit none
 
@@ -517,7 +517,7 @@
                xxi = gin%wX
                yyi = gin%wY
                if (start) then
-!C                clear previous rectangle
+!                 Clear previous rectangle
                   call plline(sx, sy)
                endif
 

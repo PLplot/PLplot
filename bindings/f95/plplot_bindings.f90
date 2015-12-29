@@ -38,6 +38,21 @@ module plplot_graphics
   ! Some references say to use sequence for these derived data types
   ! that are going to be passed to C, but sequence was not used
   ! in the old Fortran binding so I will continue that here.
+
+  ! N.B. use naming convention that double-precision entity has no
+  ! special suffix and single-precision entity has the "_single" suffix.
+  type :: PLGraphicsIn
+     integer type                     ! of event (CURRENTLY UNUSED)
+     integer state                    ! key or button mask
+     integer  keysym                  ! key selected
+     integer  button                  ! mouse button selected
+     integer subwindow                ! subwindow (alias subpage, alias subplot) number
+     character(len=16) string         ! translated string
+     integer pX, pY                   ! absolute device coordinates of pointer
+     real(kind=private_double) dX, dY ! relative device coordinates of pointer
+     real(kind=private_double) wX, wY ! world coordinates of pointer
+  end type PLGraphicsIn
+
   type :: PLGraphicsIn_single
      integer type                     ! of event (CURRENTLY UNUSED)
      integer state                    ! key or button mask
@@ -50,31 +65,35 @@ module plplot_graphics
      real(kind=private_single) wX, wY ! world coordinates of pointer
   end type PLGraphicsIn_single
   
-  type :: PLGraphicsIn_double
-     integer type                     ! of event (CURRENTLY UNUSED)
-     integer state                    ! key or button mask
-     integer  keysym                  ! key selected
-     integer  button                  ! mouse button selected
-     integer subwindow                ! subwindow (alias subpage, alias subplot) number
-     character(len=16) string         ! translated string
-     integer pX, pY                   ! absolute device coordinates of pointer
-     real(kind=private_double) dX, dY ! relative device coordinates of pointer
-     real(kind=private_double) wX, wY ! world coordinates of pointer
-  end type PLGraphicsIn_double
-
   ! Need to define two versions of plGetCursor (one with a
-  ! PLGraphicsIn_single argument, one with a PLGraphicsIn_double
+  ! PLGraphicsIn argument, one with a PLGraphicsIn_single
   ! argument).  There may be a less bulky way to do it (as with
   ! included_plplot_real_interfaces.f90 for the wp type), but I could
   ! not figure out a similar method for derived types.
 
   interface plGetCursor
-     module procedure plGetCursor_single
      module procedure plGetCursor_double
+     module procedure plGetCursor_single
   end interface plGetCursor
-  private :: plGetCursor_single, plGetCursor_double
+  private :: plGetCursor_double, plGetCursor_single
 
   contains
+
+subroutine plGetCursor_double( gin )
+  type(PLGraphicsIn), intent(out) :: gin
+
+  type(c_ptr) :: gin_out
+
+  ! FIXME: still need to work out details of copying gin_out back to Fortran gin argument
+  interface
+     subroutine interface_plGetCursor_double( gin ) bind(c,name='plGetCursor')
+       use iso_c_binding, only:  c_ptr
+       implicit none
+       type(c_ptr), intent(out) :: gin
+     end subroutine interface_plGetCursor_double
+  end interface
+  call interface_plGetCursor_double( gin_out )
+end subroutine plGetCursor_double
 
 subroutine plGetCursor_single( gin )
   type(PLGraphicsIn_single), intent(out) :: gin
@@ -91,22 +110,6 @@ subroutine plGetCursor_single( gin )
   end interface
   call interface_plGetCursor_single( gin_out )
 end subroutine plGetCursor_single
-
-subroutine plGetCursor_double( gin )
-  type(PLGraphicsIn_double), intent(out) :: gin
-
-  type(c_ptr) :: gin_out
-
-  ! FIXME: still need to work out details of copying gin_out back to Fortran gin argument
-  interface
-     subroutine interface_plGetCursor_double( gin ) bind(c,name='plGetCursor')
-       use iso_c_binding, only:  c_ptr
-       implicit none
-       type(c_ptr), intent(out) :: gin
-     end subroutine interface_plGetCursor_double
-  end interface
-  call interface_plGetCursor_double( gin_out )
-end subroutine plGetCursor_double
 
 end module plplot_graphics
 
@@ -136,14 +139,19 @@ end module plplot_double
 module plplot
     use plplot_single
     use plplot_double
-    use plplot_types, only: plflt => private_plflt, private_plint, private_plunicode
+    use plplot_types, only: private_plflt, private_plint, private_plunicode
     use plplot_graphics
     implicit none
+    ! For backwards compatibility define plflt, but use of this
+    ! parameter is deprecated since any real precision should work
+    ! for users so long as the precision of the real arguments
+    ! of a given call to a PLplot routine are identical.
+    integer, parameter :: plflt = private_plflt
     integer(kind=private_plint), parameter :: maxlen = 320
     character(len=1), parameter :: PL_END_OF_STRING = achar(0)
     include 'included_plplot_parameters.f90'
-    private :: private_plint, private_plunicode
-    private :: copystring
+    private :: private_plflt, private_plint, private_plunicode
+    private :: copystring, maxlen
 !
     ! Interfaces that do not depend on the real kind or which
     ! have optional real components (e.g., plsvect) that generate
@@ -426,6 +434,21 @@ subroutine plgdev(dev)
     call interface_plgdev( dev_out )
     call copystring( dev, dev_out )
 end subroutine plgdev
+
+function plgdrawmode()
+
+    integer :: plgdrawmode !function type
+
+    interface
+        function interface_plgdrawmode() bind(c,name='c_plgdrawmode')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint) :: interface_plgdrawmode !function type
+        end function interface_plgdrawmode
+    end interface
+
+    plgdrawmode = int(interface_plgdrawmode())
+end function plgdrawmode
 
 subroutine plgfam( fam, num, bmax )
     integer, intent(out) :: fam, num, bmax
@@ -720,18 +743,41 @@ subroutine plpsty( patt )
     call interface_plpsty( int(patt,kind=private_plint) )
 end subroutine plpsty
 
-! Should be defined only once - return type not part of disambiguation
-real (kind=private_plflt) function plrandd()
+! Return type is not part of the disambiguation so must provide two
+! explicitly named versions where we use the convention that the
+! double-precision version has no name suffix (which ~99 per cent of
+! users will use) and the single-precision version has a "_single"
+! suffix for those who are strict (for some strange reason) about
+! keeping all double precision values out of their Fortran code.
+function plrandd()
+
+  real(kind=private_double) :: plrandd !function type
+
     interface
-        function c_plrandd() bind(c,name='c_plrandd')
+        function interface_plrandd() bind(c,name='c_plrandd')
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            real(kind=private_plflt) :: c_plrandd
-        end function c_plrandd
+            real(kind=private_plflt) :: interface_plrandd !function type
+        end function interface_plrandd
     end interface
 
-    plrandd = c_plrandd()
+    plrandd = real(interface_plrandd(), kind=private_double)
 end function plrandd
+
+function plrandd_single()
+
+  real(kind=private_single) :: plrandd_single !function type
+
+    interface
+        function interface_plrandd() bind(c,name='c_plrandd')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            real(kind=private_plflt) :: interface_plrandd !function type
+        end function interface_plrandd
+    end interface
+
+    plrandd_single = real(interface_plrandd(), kind=private_single)
+end function plrandd_single
 
 subroutine plreplot()
     interface
