@@ -250,7 +250,7 @@
         shade_min = zmin + (zmax - zmin) * (i-1) / 10.0_plflt
         shade_max = zmin + (zmax - zmin) * i / 10.0_plflt
         sh_color = i+5
-        call plpat(nlin(i),inc(1,i),del(1,i))
+        call plpat( inc(1:nlin(i),i),del(1:nlin(i),i))
 !        Use_ plshade0 instead of plshade1 - identity mapping
         call plshade(z(:XPTS,:YPTS), undefined, &
           -1._plflt, 1._plflt, -1._plflt, 1._plflt, &

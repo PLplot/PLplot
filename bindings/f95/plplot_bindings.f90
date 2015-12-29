@@ -757,17 +757,27 @@ subroutine plparseopts(mode)
        arg_local, int(mode, kind=private_plint))
 end subroutine plparseopts
 
-subroutine plpat( nlin, inc, del )
-    integer, intent(in) :: nlin, inc, del
+subroutine plpat( inc, del )
+    integer, dimension(:), intent(in) :: inc, del
+
+    integer(kind=private_plint) :: nlin_local
+
     interface
         subroutine interface_plpat( nlin, inc, del ) bind( c, name = 'c_plpat' )
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: nlin, inc, del
+            integer(kind=private_plint), value, intent(in) :: nlin
+            integer(kind=private_plint), dimension(*), intent(in) :: inc, del
         end subroutine interface_plpat
-    end interface
+     end interface
 
-    call interface_plpat( int(nlin,kind=private_plint), int(inc,kind=private_plint), int(del,kind=private_plint) )
+     nlin_local = size(inc, kind=private_plint)
+     if(nlin_local /= size(del, kind=private_plint) ) then
+        write(0,*) "f95 plpat ERROR: sizes of inc and del are not consistent"
+        return
+     endif
+
+    call interface_plpat( nlin_local, int(inc,kind=private_plint), int(del,kind=private_plint) )
 
 end subroutine plpat
 

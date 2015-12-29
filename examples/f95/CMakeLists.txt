@@ -40,7 +40,7 @@ set(f95_STRING_INDICES
   "12"
   "13"
   "14"
-#plshade callback  "15"
+  "15"
 #plshades, plcont callbacks "16"
 #plshade callback "16a"
   "17"

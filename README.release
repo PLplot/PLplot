@@ -119,8 +119,8 @@ consistency.
 (i) In general, only the redacted form of API (with all redundant
 dimension arguments removed) is supported.  This was largely true of
 the old Fortran binding as well, but in particular the non-redacted
-form of pllegend call that includes the redundant nlegend argument
-that was present (by accident) in the old Fortran API has now been
+form of pllegend call that includes the redundant nlegend argument and
+the plpat call that includes the redundant nlin argument have now been
 deliberately removed to be consistent with the rest of the Fortran API
 in this regard.
 
