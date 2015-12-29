@@ -34,7 +34,8 @@ module plplot_graphics
   use plplot_types, only: private_single, private_double
   use iso_c_binding, only: c_ptr
   implicit none
-  
+  private :: private_single, private_double
+    
   ! Some references say to use sequence for these derived data types
   ! that are going to be passed to C, but sequence was not used
   ! in the old Fortran binding so I will continue that here.
@@ -115,22 +116,22 @@ end module plplot_graphics
 
 module plplot_single
     use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc
-    use plplot_types
+    use plplot_types, only: private_plflt, private_plint, private_single
     implicit none
 
     integer, parameter :: wp = private_single
-    private :: wp, private_single, private_double, private_plint, private_plunicode
+    private :: wp, private_plflt, private_plint, private_single
 
     include 'included_plplot_real_interfaces.f90'
 end module plplot_single
 
 module plplot_double
     use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc
-    use plplot_types
+    use plplot_types, only: private_plflt, private_plint, private_double
     implicit none
 
     integer, parameter :: wp = private_double
-    private :: wp, private_single, private_double, private_plint, private_plunicode
+    private :: wp, private_plflt, private_plint, private_double
 
     include 'included_plplot_real_interfaces.f90'
 
@@ -139,7 +140,7 @@ end module plplot_double
 module plplot
     use plplot_single
     use plplot_double
-    use plplot_types, only: private_plflt, private_plint, private_plunicode
+    use plplot_types, only: private_plflt, private_plint, private_plunicode, private_single, private_double
     use plplot_graphics
     implicit none
     ! For backwards compatibility define plflt, but use of this
@@ -150,7 +151,7 @@ module plplot
     integer(kind=private_plint), parameter :: maxlen = 320
     character(len=1), parameter :: PL_END_OF_STRING = achar(0)
     include 'included_plplot_parameters.f90'
-    private :: private_plflt, private_plint, private_plunicode
+    private :: private_plflt, private_plint, private_plunicode, private_single, private_double
     private :: copystring, maxlen
 !
     ! Interfaces that do not depend on the real kind or which
@@ -166,6 +167,11 @@ module plplot
         module procedure plgfci_impl
     end interface plgfci
     private :: plgfci_impl
+
+    interface plscmap1
+       module procedure plscmap1_impl
+    end interface plscmap1
+    private :: plscmap1_impl
 
     interface plsetopt
         module procedure plsetopt_impl
@@ -485,6 +491,22 @@ subroutine plgfci_impl( fci )
     call interface_plgfci( fci_out )
     fci  = int(fci_out)
 end subroutine plgfci_impl
+
+subroutine plgfnam( fnam )
+    character*(*), intent(out) :: fnam
+
+    character(len=1), dimension(100) :: fnam_out
+
+    interface
+        subroutine interface_plgfnam( fnam ) bind(c,name='c_plgfnam')
+            implicit none
+            character(len=1), dimension(*), intent(out) :: fnam
+        end subroutine interface_plgfnam
+    end interface
+
+    call interface_plgfnam( fnam_out )
+    call copystring( fnam, fnam_out )
+end subroutine plgfnam
 
 subroutine plgfont( family, style, weight )
     integer, intent(out) :: family, style, weight
@@ -815,6 +837,22 @@ subroutine plscmap0n( n )
 
     call interface_plscmap0n( int(n,kind=private_plint) )
 end subroutine plscmap0n
+
+subroutine plscmap1_impl( r, g, b )
+    integer, dimension(:), intent(in) :: r, g, b
+
+    interface
+        subroutine interface_plscmap1( r, g, b,  n ) bind(c,name='c_plscmap1')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), dimension(*), intent(in) :: r, g, b
+            integer(kind=private_plint), value, intent(in) :: n
+        end subroutine interface_plscmap1
+    end interface
+
+    call interface_plscmap1( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
+         size(r,kind=private_plint) )
+end subroutine plscmap1_impl
 
 subroutine plscmap1n( n )
     integer, intent(in) :: n

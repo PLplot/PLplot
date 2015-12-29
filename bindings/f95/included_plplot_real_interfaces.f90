@@ -333,6 +333,11 @@
     end interface plscol0a
     private :: plscol0a_impl
 
+    interface plscolbga
+        module procedure plscolbga_impl
+    end interface plscolbga
+    private :: plscolbga_impl
+
     interface plsdidev
         module procedure plsdidev_impl
     end interface plsdidev
@@ -342,6 +347,21 @@
         module procedure plsdimap_impl
     end interface plsdimap
     private :: plsdimap_impl
+
+    interface plsdiori
+        module procedure plsdiori_impl
+    end interface plsdiori
+    private :: plsdiori_impl
+
+    interface plsdiplt
+        module procedure plsdiplt_impl
+    end interface plsdiplt
+    private :: plsdiplt_impl
+
+    interface plsdiplz
+        module procedure plsdiplz_impl
+    end interface plsdiplz
+    private :: plsdiplz_impl
 
     interface plsmaj
         module procedure plsmaj_impl
@@ -1014,9 +1034,9 @@ subroutine plgdidev_impl( mar, aspect, jx, jy )
 
     call interface_plgdidev( mar_out, aspect_out, jx_out, jy_out )
     mar    = real(mar_out, kind=wp)
-    aspect = real(aspect, kind=wp)
-    jx     = real(jx, kind=wp)
-    jy     = real(jy, kind=wp)
+    aspect = real(aspect_out, kind=wp)
+    jx     = real(jx_out, kind=wp)
+    jy     = real(jy_out, kind=wp)
 end subroutine plgdidev_impl
 
 subroutine plgdiori_impl( rot )
@@ -1077,8 +1097,8 @@ subroutine plgpage_impl( xpmm, ypmm, xwid, ywid, xoff, yoff )
     ywid = int(ywid_out)
     xoff = int(xoff_out)
     yoff = int(yoff_out)
-    xpmm = real(xpmm, kind=wp)
-    ypmm = real(ypmm, kind=wp)
+    xpmm = real(xpmm_out, kind=wp)
+    ypmm = real(ypmm_out, kind=wp)
  end subroutine plgpage_impl
 
 subroutine plgradient_impl( x, y, angle )
@@ -1999,6 +2019,52 @@ subroutine plsdimap_impl( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm )
                      real(diymin,kind=private_plflt), real(dimymax,kind=private_plflt), &
                      real(dimxpmm,kind=private_plflt), real(diypmm,kind=private_plflt) )
 end subroutine plsdimap_impl
+
+subroutine plsdiori_impl( rot )
+    real(kind=wp), intent(in) :: rot
+
+    interface
+        subroutine interface_plsdiori( rot) bind(c,name='c_plsdiori')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            real(kind=private_plflt), value, intent(in) :: rot
+        end subroutine interface_plsdiori
+    end interface
+
+    call interface_plsdiori( real(rot,kind=private_plflt) )
+end subroutine plsdiori_impl
+
+subroutine plsdiplt_impl( xmin, ymin, xmax, ymax )
+    real(kind=wp), intent(in) :: xmin, ymin, xmax, ymax
+
+    interface
+        subroutine interface_plsdiplt( xmin, ymin, xmax, ymax ) bind(c,name='c_plsdiplt')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            real(kind=private_plflt), value, intent(in) :: xmin, ymin, xmax, ymax
+        end subroutine interface_plsdiplt
+    end interface
+
+    call interface_plsdiplt( &
+         real(xmin,kind=private_plflt), real(ymin,kind=private_plflt), &
+         real(xmax,kind=private_plflt), real(ymax,kind=private_plflt) )
+end subroutine plsdiplt_impl
+
+subroutine plsdiplz_impl( xmin, ymin, xmax, ymax )
+    real(kind=wp), intent(in) :: xmin, ymin, xmax, ymax
+
+    interface
+        subroutine interface_plsdiplz( xmin, ymin, xmax, ymax ) bind(c,name='c_plsdiplz')
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            real(kind=private_plflt), value, intent(in) :: xmin, ymin, xmax, ymax
+        end subroutine interface_plsdiplz
+    end interface
+
+    call interface_plsdiplz( &
+         real(xmin,kind=private_plflt), real(ymin,kind=private_plflt), &
+         real(xmax,kind=private_plflt), real(ymax,kind=private_plflt) )
+end subroutine plsdiplz_impl
 
 subroutine plsmaj_impl( def, scale )
     real(kind=wp), intent(in) :: def, scale
