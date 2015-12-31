@@ -224,11 +224,11 @@ x20::x20( int argc, const char ** argv )
     {
         if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
         {
-            if (read_img("../../lena.pgm", &img_f, &width, &height, &num_col))
+            if ( read_img( "../../lena.pgm", &img_f, &width, &height, &num_col ) )
             {
-                fprintf(stderr, "No such file");
-                plend();
-                exit(1);
+                cout << "No such file - aborting" << endl;
+                delete pls;
+                exit( 1 );
             }
         }
     }
