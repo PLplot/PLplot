@@ -182,11 +182,11 @@ main( int argc, const char *argv[] )
     {
         if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
         {
-            if (read_img("../../lena.pgm", &img_f, &width, &height, &num_col))
+            if ( read_img( "../../lena.pgm", &img_f, &width, &height, &num_col ) )
             {
-                fprintf(stderr, "No such file");
+                fprintf( stderr, "No such file" );
                 plend();
-                exit(1);
+                exit( 1 );
             }
         }
     }
