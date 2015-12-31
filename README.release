@@ -116,15 +116,15 @@ The rewritten Fortran binding does have some backwards incompatible
 API changes we have decided to introduce at this time to improve
 consistency.
 
-(i) In general, only the redacted form of API (with all redundant
-dimension arguments removed) is supported.  This was largely true of
-the old Fortran binding as well, but in particular the non-redacted
-form of pllegend call that includes the redundant nlegend argument and
-the plpat call that includes the redundant nlin argument have now been
-deliberately removed to be consistent with the rest of the Fortran API
-in this regard.
+(i) Only the redacted form of API (with all redundant dimension
+arguments removed) is supported.  In order to comply strictly with
+this rule the list of functions that have been changed from
+non-redacted to redacted form is the following:
 
-(ii) In general, multiple arrays in a redacted argument list should
+pllegend (drop redundant nlegend argument), and
+plpat (drop redundant nlin argument).
+
+(ii) Multiple arrays in a redacted argument list should
 have identical sizes for dimensions that are designed for the same
 purpose.  This rule is automatically enforced for our 4 languages
 (Python, Java, Lua, and Octave) where the binding has been created by
@@ -134,12 +134,23 @@ calculate nlegend from one of them, and check the remainder of those
 arrays all have that identical size.  (The old Fortran binding was
 much sloppier about this.)
 
-(iii) In general, Fortran logical arguments are used for all cases
-where the corresponding C argument is PLBOOL.  For example, the last
-plspal1 argument type has been changed from integer to logical to be
-consistent with this rule.
+FIXME.  Still haven't looked systematically at this following
+what is done in bindings/swig-support/plplotcapi.i.  Ultimately, there
+should be a complete list of functions here where the API has
+been changed because of this.
 
-(iv) In general, for those rare cases where the actual real precision
+(iii) Fortran logical arguments are strictly used for all cases
+where the corresponding C argument is PLBOOL.  In order to
+comply strictly with this rule, the list of functions
+whose arguments have changed from integer to logical or functions where
+an extra signature with integer argument rather than correct logical
+argument has been removed is the following:
+
+plarc (last argument),
+plspal1 (last argument), and
+plconfigtime (fifth argument).
+
+(iv) For those rare cases where the actual real precision
 cannot be automatically specified by the user via the precision of the
 real arguments which are used for a call to a subroutine or function,
 then the default choice is double precision rather than the previous
@@ -148,20 +159,22 @@ choice which was the actual real precision of the PLplot C library.
 the user has deliberately chosen to configure and use a
 single-precision version of that library.)
 
-The instances of this issue are the function plrandd, the defined type
-PLGraphicsIn, and the pre-defined real parameters PL_NOTSET, PL_PI,
-and PL_TWOPI.  For those cases where the user prefers not to use these
-double-precision entities, we also supply single-precision entities as
-well (distinguished by adding a "_single" suffix to the name of the
-entity, i.e., plrandd_single, PLGraphicsIn_single, PL_NOTSET_single,
+The instances of this issue are the real return value of the function
+plrandd, real elements of the defined type PLGraphicsIn, and the
+pre-defined real parameters PL_NOTSET, PL_PI, and PL_TWOPI.  For those
+cases where the user prefers not to use these double-precision
+entities, we also supply single-precision entities as well
+(distinguished by adding a "_single" suffix to the name of the entity,
+i.e., plrandd_single, PLGraphicsIn_single, PL_NOTSET_single,
 PL_PI_single, and PL_TWOPI_single.
 
 FIXME. This naming convention is implemented now for plrandd and
-PLGraphicsIn, but only the double-precision variants PL_NOTSET, PL_PI,
-and PL_TWOPI of the predefined parameters have been currently
-implemented.
+PLGraphicsIn, but PL_NOTSET, PL_PI, and PL_TWOPI of the predefined
+parameters continue to have plflt precision, and there are no
+definitions yet of PL_NOTSET_single, PL_PI_single, and
+PL_TWOPI_single.
 
-(v) The experimental and non-uniform support for the kind=plint and
+(v) The experimental and far from uniform support for the kind=plint and
 kind=plunicode Fortran integer types has now been removed.  Instead,
 ordinary default kind integers are used for the Fortran types
 corresponding to the PLINT and PLUNICODE C types.

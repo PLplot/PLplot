@@ -38,7 +38,6 @@
     private :: pl_setcontlabelparam_impl
 
     interface plarc
-        module procedure plarc_log_impl
         module procedure plarc_impl
     end interface plarc
     private :: plarc_impl
@@ -520,29 +519,22 @@ subroutine pl_setcontlabelparam_impl( offset, size, spacing, active )
         real(spacing,kind=private_plflt), int(active,kind=private_plint) )
 end subroutine pl_setcontlabelparam_impl
 
-subroutine plarc_log_impl( x, y, a, b, angle1, angle2, rotate, fill )
-   real(kind=wp), intent(in) :: x, y, a, b, angle1, angle2, rotate
-   logical, intent(in) :: fill
-
-   call plarc_impl( x, y, a, b, angle1, angle2, rotate, int( merge(1,0,fill), kind=private_plint ) )
-end subroutine plarc_log_impl
-
 subroutine plarc_impl( x, y, a, b, angle1, angle2, rotate, fill )
    real(kind=wp), intent(in) :: x, y, a, b, angle1, angle2, rotate
-   integer, intent(in) :: fill
+   logical, intent(in) :: fill
 
    interface
        subroutine interface_plarc( x, y, a, b, angle1, angle2, rotate, fill ) bind(c,name='c_plarc')
            implicit none
            include 'included_plplot_interface_private_types.f90'
-           integer(kind=private_plint), value, intent(in) :: fill
+           integer(kind=private_plbool), value, intent(in) :: fill
            real(kind=private_plflt), value, intent(in) :: x, y, a, b, angle1, angle2, rotate
        end subroutine interface_plarc
    end interface
 
    call interface_plarc( real(x,kind=private_plflt), real(y,kind=private_plflt), real(a,kind=private_plflt), &
                  real(b,kind=private_plflt), real(angle1,kind=private_plflt), real(angle2,kind=private_plflt), &
-                 real(rotate,kind=private_plflt), int(fill,kind=private_plint) )
+                 real(rotate,kind=private_plflt), int(merge(1,0,fill),kind=private_plbool) )
 end subroutine plarc_impl
 
 subroutine plaxes_impl(x0, y0, xopt,xtick,nxsub,yopt,ytick,nysub)
@@ -807,7 +799,8 @@ subroutine plcolorbar_impl( &
 end subroutine plcolorbar_impl
 
 subroutine plconfigtime_impl( scale, offset1, offset2, ccontrol, ifbtime_offset, year, month, day, hour, min, sec )
-   integer, intent(in) :: ccontrol, ifbtime_offset, year, month, day, hour, min
+   integer, intent(in) :: ccontrol, year, month, day, hour, min
+   logical, intent(in) :: ifbtime_offset
    real(kind=wp), intent(in) :: scale, offset1, offset2, sec
 
    interface
@@ -815,14 +808,15 @@ subroutine plconfigtime_impl( scale, offset1, offset2, ccontrol, ifbtime_offset,
            year, month, day, hour, min, sec) bind(c,name='c_plconfigtime')
         implicit none
         include 'included_plplot_interface_private_types.f90'
-        integer(kind=private_plint), value, intent(in) :: ccontrol, ifbtime_offset, year, month, day, hour, min
+        integer(kind=private_plint), value, intent(in) :: ccontrol, year, month, day, hour, min
+        integer(kind=private_plbool), value, intent(in) :: ifbtime_offset
         real(kind=private_plflt), value, intent(in) :: scale, offset1, offset2, sec
       end subroutine interface_plconfigtime
    end interface
 
    call interface_plconfigtime( &
         real(scale, kind=private_plflt), real(offset1, kind=private_plflt), real(offset2, kind=private_plflt), &
-        int(ccontrol, kind=private_plint), int(ifbtime_offset, kind=private_plint), &
+        int(ccontrol, kind=private_plint), int(merge(1,0,ifbtime_offset), kind=private_plbool), &
         int(year, kind=private_plint), int(month, kind=private_plint), int(day, kind=private_plint), &
         int(hour, kind=private_plint), int(min, kind=private_plint), real(sec, kind=private_plflt) )
 end subroutine plconfigtime_impl
@@ -1917,27 +1911,27 @@ subroutine plot3d_impl( x, y, z, opt, side)
     real(kind=wp), dimension(:), intent(in) :: x, y
     real(kind=wp), dimension(:,:), intent(in) :: z
 
-    integer(kind=private_plint) :: iside_local
     real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
     type(c_ptr), dimension(:), allocatable :: zaddress_local
 
 
     interface
-        subroutine interface_plot3d( x, y, zaddress, nx, ny, opt, iside ) bind(c,name='c_plot3d')
+        subroutine interface_plot3d( x, y, zaddress, nx, ny, opt, side ) bind(c,name='c_plot3d')
             use iso_c_binding, only: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: nx, ny, opt, iside
+            integer(kind=private_plint), value, intent(in) :: nx, ny, opt
+            integer(kind=private_plbool), value, intent(in) :: side
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
             type(c_ptr), dimension(*), intent(in) :: zaddress
         end subroutine interface_plot3d
     end interface
 
     call matrix_to_c( z, zz_local, zaddress_local )
-    iside_local = merge(1,0,side)
 
     call interface_plot3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local,  &
-         size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), iside_local)
+         size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+         int(merge(1,0,side),kind=private_plbool) )
 
 end subroutine plot3d_impl
 
@@ -2057,23 +2051,20 @@ subroutine plpoly3_impl( x, y, z, draw, ifcc )
     logical, dimension(:), intent(in) :: draw
     real(kind=wp), dimension(:), intent(in) :: x, y, z
 
-    integer(kind=private_plint), dimension(size(draw)) :: idraw_local
-    integer(kind=private_plint)                        :: iifcc_local
-
     interface
         subroutine interface_plpoly3( n, x, y, z, draw, ifcc ) bind(c,name='c_plpoly3')
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: n, ifcc
-            integer(kind=private_plint), dimension(*), intent(in) :: draw
+            integer(kind=private_plint), value, intent(in) :: n
+            integer(kind=private_plbool), value, intent(in) :: ifcc
+            integer(kind=private_plbool), dimension(*), intent(in) :: draw
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
         end subroutine interface_plpoly3
     end interface
 
-    iifcc_local = merge(1,0,ifcc)
-    idraw_local = merge(1,0,draw)
-   call interface_plpoly3( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
-                   real(z,kind=private_plflt), idraw_local, iifcc_local )
+    call interface_plpoly3( size(x,kind=private_plint), &
+         real(x,kind=private_plflt), real(y,kind=private_plflt), real(z,kind=private_plflt), &
+         int(merge(1,0,draw),kind=private_plbool), int(merge(1,0,ifcc),kind=private_plbool) )
 end subroutine plpoly3_impl
 
 subroutine plptex_impl( x, y, dx, dy, just, text )
@@ -2207,31 +2198,33 @@ subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_p
     real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3
     logical, dimension(:), optional, intent(in) :: alt_hue_path
 
-    integer(kind=private_plint), dimension(:), allocatable, target :: ialt_hue_path_local
-
+    integer(kind=private_plbool), dimension(:), allocatable, target :: ialt_hue_path_local
+    
     interface
-        subroutine interface_plscmap1l( type, npts, intensity, coord1, coord2, coord3, alt_hue_path ) bind(c,name='c_plscmap1l')
+        subroutine interface_plscmap1l( rgbtype, npts, intensity, coord1, coord2, coord3, alt_hue_path ) &
+            bind(c,name='c_plscmap1l')
             use iso_c_binding, only: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: type, npts
+            integer(kind=private_plint), value, intent(in) :: npts
+            integer(kind=private_plbool), value, intent(in) :: rgbtype
             real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3
-            !integer(kind=private_plint), dimension(*), intent(in) :: alt_hue_path
+            !integer(kind=private_plbool), dimension(*), intent(in) :: alt_hue_path
             type(c_ptr), value, intent(in) :: alt_hue_path
         end subroutine interface_plscmap1l
     end interface
 
     if ( present(alt_hue_path) ) then
-        allocate( ialt_hue_path_local(size(alt_hue_path)) )
-        ialt_hue_path_local = merge(1,0,alt_hue_path)
-
-        call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+       allocate( ialt_hue_path_local(size(alt_hue_path)) )
+       ialt_hue_path_local = int(merge(1,0,alt_hue_path),kind=private_plbool)
+       
+       call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
                           real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                           real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                           c_loc(ialt_hue_path_local) )
-        deallocate(ialt_hue_path_local)
+       deallocate( ialt_hue_path_local )
     else
-        call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+        call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
                           real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                           real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                           c_null_ptr )
@@ -2243,31 +2236,33 @@ subroutine plscmap1la_impl( rgbtype, intensity, coord1, coord2, coord3, alpha, a
     real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3, alpha
     logical, dimension(:), optional, intent(in) :: alt_hue_path
 
-    integer(kind=private_plint), dimension(:), allocatable, target :: ialt_hue_path_local
+    integer(kind=private_plbool), dimension(:), allocatable, target :: ialt_hue_path_local
 
     interface
-        subroutine interface_plscmap1la( type, n, intensity, coord1, coord2, coord3, alpha, alt_hue_path ) &
+        subroutine interface_plscmap1la( rgbtype, n, intensity, coord1, coord2, coord3, alpha, alt_hue_path ) &
             bind(c,name='c_plscmap1la')
             use iso_c_binding, only: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: type, n
+            integer(kind=private_plint), value, intent(in) :: n
+            integer(kind=private_plbool), value, intent(in) :: rgbtype
             real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3, alpha
+            !integer(kind=private_plbool), dimension(*), intent(in) :: alt_hue_path
             type(c_ptr), value, intent(in) :: alt_hue_path
          end subroutine interface_plscmap1la
     end interface
 
     if ( present(alt_hue_path) ) then
         allocate( ialt_hue_path_local(size(alt_hue_path)) )
-        ialt_hue_path_local = merge(1,0,alt_hue_path)
+        ialt_hue_path_local = int(merge(1,0,alt_hue_path),kind=private_plbool)
 
-        call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+        call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
                           real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                           real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                           real(alpha,kind=private_plflt), c_loc(ialt_hue_path_local) )
         deallocate(ialt_hue_path_local)
     else
-        call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plint), size(intensity,kind=private_plint), &
+        call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
                           real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                           real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                           real(alpha,kind=private_plflt), c_null_ptr )
@@ -2610,7 +2605,7 @@ subroutine plstripc_impl( &
   character(len=*), dimension(:), intent(in) :: legline
   integer, intent(out) :: id
 
-  integer(kind=private_plint) :: id_out, n_pens
+  integer(kind=private_plint) :: id_out, n_pens_local
 
   interface
      subroutine interface_plstripc( &
@@ -2624,9 +2619,9 @@ subroutine plstripc_impl( &
        use iso_c_binding, only: c_char
        implicit none
        include 'included_plplot_interface_private_types.f90'
-       integer(kind=private_plint), value, intent(in) :: y_ascl, acc
        integer(kind=private_plint), value, intent(in) :: colbox, collab, n_pens, length_legline
        integer(kind=private_plint), dimension(*), intent(in) :: colline, styline
+       integer(kind=private_plbool), value, intent(in) :: y_ascl, acc
        real(kind=private_plflt), value, intent(in) :: xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
        character(len=1), dimension(*), intent(in) :: xspec, yspec, labx, laby, labtop
        ! These Fortran arguments require special processing done
@@ -2638,8 +2633,11 @@ subroutine plstripc_impl( &
      end subroutine interface_plstripc
   end interface
 
-  n_pens = size(colline)
-  if( n_pens /= 4 .or. n_pens /= size(styline) .or. n_pens /= size(legline) ) then
+  n_pens_local = size(colline, kind=private_plint)
+  if( &
+       n_pens_local /= 4 .or. &
+       n_pens_local /= size(styline, kind=private_plint) .or. &
+       n_pens_local /= size(legline, kind=private_plint) ) then
      write(0,*) "f95 plstripc ERROR: sizes of colline, styline, and/or legline are not 4"
      return
   endif
@@ -2649,9 +2647,9 @@ subroutine plstripc_impl( &
        real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), real(xjump, kind=private_plflt), &
        real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
        real(xlpos, kind=private_plflt), real(ylpos, kind=private_plflt), &
-       merge(1_private_plint, 0_private_plint, y_ascl), merge(1_private_plint, 0_private_plint, acc), &
+       int(merge(1,0,y_ascl),kind=private_plbool), int(merge(1,0,acc),kind=private_plbool),&
        int(colbox, kind=private_plint), int(collab, kind=private_plint), &
-       n_pens, int(colline, kind=private_plint), int(styline, kind=private_plint), &
+       n_pens_local, int(colline, kind=private_plint), int(styline, kind=private_plint), &
        len(legline, kind=private_plint), legline, &
        trim(labx)//c_null_char, trim(laby)//c_null_char, trim(labtop)//c_null_char )
   id = int(id_out, kind=private_plint)

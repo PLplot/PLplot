@@ -10,12 +10,14 @@
 ! adopted for the core C PLplot library.
 integer, @PLPLOT_F95_PRIVATE@ parameter :: private_plflt  = kind(@ONE_IN_DEFAULT_PRECISION@)
 
-! The idea here is to match the Fortran 4-byte integer with
-! the corresponding C types for PLINT (normally int32_t) and
-! PLUNICODE (normally uint32_t).  According to websites I have
-! read, Fortran has no unsigned integer types and
-! using 4 here is safer than anything more complicated.
+! The idea here is to match the Fortran 4-byte integer with the
+! corresponding C types for PLINT (normally int32_t), PLBOOL
+! (currently typedefed to PLINT) and PLUNICODE (normally
+! uint32_t).  According to websites I have read, Fortran has no
+! unsigned integer types and using 4 here is safer than anything more
+! complicated.
 integer, @PLPLOT_F95_PRIVATE@ parameter :: private_plint  = 4
+integer, @PLPLOT_F95_PRIVATE@ parameter :: private_plbool  = 4
 integer, @PLPLOT_F95_PRIVATE@ parameter :: private_plunicode  = 4
 
 ! Define parameters for identifying the precision, so that we can

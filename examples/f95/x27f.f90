@@ -235,7 +235,7 @@ subroutine arcs( )
   do i = 0, NSEG-1
      call plcol0( mod(i,2) + 1 )
      call plarc(0.0_plflt, 0.0_plflt, 8.0_plflt, 8.0_plflt, theta, &
-          theta + dtheta, 0.0_plflt, 0)
+          theta + dtheta, 0.0_plflt, .false.)
      theta = theta + dtheta
   enddo
   

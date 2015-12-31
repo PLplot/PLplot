@@ -259,7 +259,7 @@
       scale = 365.242198781_plflt
       offset1 = -678940.0_plflt
       offset2 = -0.3641639_plflt
-      call plconfigtime(scale, offset1, offset2, 0, 0, 0, 0, 0, 0, &
+      call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, 0, 0, &
            0, 0._plflt)
 
       do k = 0,6
@@ -326,16 +326,16 @@
 
          do i=0,npts-1
             x(i+1) = xmin + i*(xmax-xmin)/(dble(npts-1))
-            call plconfigtime(scale, offset1, offset2, 0, 0, 0, 0, 0, &
+            call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, 0, &
                  0, 0, 0._plflt)
             tai = x(i+1)
             call plbtime(tai_year, tai_month, tai_day, tai_hour, &
                  tai_min, tai_sec, tai)
-            call plconfigtime(scale, offset1, offset2, 2, 0, 0, 0, &
+            call plconfigtime(scale, offset1, offset2, 2, .false., 0, 0, &
                  0, 0, 0, 0._plflt)
             call plbtime(utc_year, utc_month, utc_day, utc_hour, &
                  utc_min, utc_sec, tai)
-            call plconfigtime(scale, offset1, offset2, 0, 0, 0, 0, &
+            call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, &
                  0, 0, 0, 0._plflt)
             call plctime(utc_year, utc_month, utc_day, utc_hour, &
                  utc_min, utc_sec, utc)
@@ -347,10 +347,10 @@
          call plwind(xmin, xmax, ymin, ymax)
          call plcol0(1)
          if (if_TAI_time_format) then
-            call plconfigtime(scale, offset1, offset2, 0, 0, 0, 0, &
+            call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, &
                  0, 0, 0, 0._plflt)
          else
-            call plconfigtime(scale, offset1, offset2, 2, 0, 0, 0, &
+            call plconfigtime(scale, offset1, offset2, 2, .false., 0, 0, &
                  0, 0, 0, 0._plflt)
          endif
          call pltimefmt(time_format)

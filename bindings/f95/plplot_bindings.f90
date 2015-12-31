@@ -28,7 +28,9 @@
 
 module plplot_types
   use iso_c_binding, only: c_ptr
+  implicit none
   include 'included_plplot_interface_private_types.f90'
+  private :: c_ptr
 
   ! The PLfGrid and PLcGrid types transfer information about a multidimensional
   ! array to the plcontour/plshade family of routines.
@@ -48,7 +50,7 @@ module plplot_graphics
   use plplot_types, only: private_single, private_double
   use iso_c_binding, only: c_ptr
   implicit none
-  private :: private_single, private_double
+  private :: private_single, private_double, c_ptr
     
   ! Some references say to use sequence for these derived data types
   ! that are going to be passed to C, but sequence was not used
@@ -130,11 +132,11 @@ end module plplot_graphics
 
 ! The bind(c) attribute exposes the pltr routine which ought to be private
 module plplot_private_exposed
+    use plplot_types, only: private_plflt
     implicit none
+    private :: private_plflt
 contains
 subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
-   use iso_c_binding
-   use plplot_types
    real(kind=private_plflt), value, intent(in) :: x, y
    real(kind=private_plflt), intent(out) :: tx, ty
    real(kind=private_plflt), dimension(*), intent(in) :: tr
@@ -145,25 +147,27 @@ end subroutine plplot_private_pltr
 end module plplot_private_exposed
 
 module plplot_single
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, c_funloc, c_f_pointer
-    use plplot_types, only: private_plflt, private_plint, private_single, PLcGrid, PLfGrid
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
+    use plplot_types, only: private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_single
-    private :: wp, private_plflt, private_plint, private_single
+    private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
+    private :: wp, private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
 
     include 'included_plplot_real_interfaces.f90'
 end module plplot_single
 
 module plplot_double
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, c_funloc, c_f_pointer
-    use plplot_types, only: private_plflt, private_plint, private_double, PLcGrid, PLfGrid
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
+    use plplot_types, only: private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_double
-    private :: wp, private_plflt, private_plint, private_double
+    private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
+    private :: wp, private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
 
     include 'included_plplot_real_interfaces.f90'
 
@@ -172,9 +176,9 @@ end module plplot_double
 module plplot
     use plplot_single
     use plplot_double
-    use plplot_types, only: private_plflt, private_plint, private_plunicode, private_single, private_double
+    use plplot_types, only: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     use plplot_graphics
-    use iso_c_binding, only: c_char, c_loc
+    use iso_c_binding, only: c_char, c_loc, c_null_char, c_null_ptr
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -184,7 +188,8 @@ module plplot
     integer(kind=private_plint), parameter :: maxlen = 320
     character(len=1), parameter :: PL_END_OF_STRING = achar(0)
     include 'included_plplot_parameters.f90'
-    private :: private_plflt, private_plint, private_plunicode, private_single, private_double
+    private :: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
+    private :: c_char, c_loc, c_null_char, c_null_ptr
     private :: copystring, maxlen
 !
     ! Interfaces that do not depend on the real kind or which
@@ -328,11 +333,12 @@ subroutine plcpstrm( iplsr, flags )
         subroutine interface_plcpstrm( iplsr, flags ) bind(c, name = 'c_plcpstrm' )
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: iplsr, flags
+            integer(kind=private_plint), value, intent(in) :: iplsr
+            integer(kind=private_plbool), value, intent(in) :: flags
         end subroutine interface_plcpstrm
     end interface
 
-    call interface_plcpstrm( int(iplsr,kind=private_plint), int(merge(1,0,flags),kind=private_plint) )
+    call interface_plcpstrm( int(iplsr,kind=private_plint), int(merge(1,0,flags),kind=private_plbool) )
 end subroutine plcpstrm
 
 subroutine plend()
@@ -690,7 +696,7 @@ subroutine pllab( xlab, ylab, title )
        end subroutine interface_pllab
    end interface
 
-   call interface_pllab( trim(xlab) // c_null_char, trim(ylab) // c_null_char, trim(title) // c_null_char )
+   call interface_pllab( trim(xlab)//c_null_char, trim(ylab)//c_null_char, trim(title)//c_null_char )
 
 end subroutine pllab
 
@@ -974,7 +980,7 @@ subroutine plsdev( devname )
        end subroutine interface_plsdev
    end interface
 
-   call interface_plsdev( trim(devname) // c_null_char )
+   call interface_plsdev( trim(devname)//c_null_char )
 
 end subroutine plsdev
 
@@ -1028,7 +1034,7 @@ subroutine plsetopt_impl( opt, optarg )
        end subroutine interface_plsetopt
    end interface
 
-   call interface_plsetopt( trim(opt) // c_null_char, trim(optarg) // c_null_char )
+   call interface_plsetopt( trim(opt)//c_null_char, trim(optarg)//c_null_char )
 
 end subroutine plsetopt_impl
 
@@ -1070,7 +1076,7 @@ subroutine plsfnam( fnam )
        end subroutine interface_plsfnam
    end interface
 
-   call interface_plsfnam( trim(fnam) // c_null_char )
+   call interface_plsfnam( trim(fnam)//c_null_char )
 
 end subroutine plsfnam
 
@@ -1175,7 +1181,7 @@ subroutine plspal0( filename )
        end subroutine interface_plspal0
    end interface
 
-   call interface_plspal0( trim(filename) // c_null_char )
+   call interface_plspal0( trim(filename)//c_null_char )
 
 end subroutine plspal0
 
@@ -1187,27 +1193,27 @@ subroutine plspal1( filename, interpolate )
        subroutine interface_plspal1( filename, interpolate ) bind(c,name='c_plspal1')
            implicit none
            include 'included_plplot_interface_private_types.f90'
-           integer(kind=private_plint), value, intent(in) :: interpolate
+           integer(kind=private_plbool), value, intent(in) :: interpolate
            character(len=1), dimension(*), intent(in) :: filename
        end subroutine interface_plspal1
    end interface
 
-   call interface_plspal1( trim(filename) // c_null_char, int( merge(1,0,interpolate),kind=private_plint) )
+   call interface_plspal1( trim(filename)//c_null_char, int( merge(1,0,interpolate),kind=private_plbool) )
 
 end subroutine plspal1
 
-subroutine plspause( lpause )
-    logical, intent(in) :: lpause
+subroutine plspause( pause )
+    logical, intent(in) :: pause
 
     interface
-        subroutine interface_plspause( ipause ) bind(c,name='c_plspause')
+        subroutine interface_plspause( pause ) bind(c,name='c_plspause')
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: ipause
+            integer(kind=private_plbool), value, intent(in) :: pause
         end subroutine interface_plspause
     end interface
 
-   call interface_plspause( int( merge(1,0,lpause),kind=private_plint) )
+   call interface_plspause( int( merge(1,0,pause),kind=private_plbool) )
 end subroutine plspause
 
 subroutine plsstrm( strm )
@@ -1309,24 +1315,25 @@ subroutine plsvect_double( arrowx, arrowy, fill )
   real(kind=private_double), dimension(:), intent(in) :: arrowx, arrowy
 
   integer(kind=private_plint) :: npts_local
-  logical :: if_arg1_local, if_arg2_local, if_arg3_local
 
     interface
         subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: npts, fill
+            integer(kind=private_plint), value, intent(in) :: npts
+            integer(kind=private_plbool), value, intent(in) :: fill
             real(kind=private_plflt), dimension(*), intent(in) :: arrowx, arrowy
         end subroutine interface_plsvect
      end interface
 
-     if(npts_local /= size(arrowx, kind=private_plflt) ) then
+     npts_local = size(arrowx, kind=private_plint)
+     if(npts_local /= size(arrowy, kind=private_plint) ) then
         write(0,*) "f95 plsvect ERROR: sizes of arrowx and arrowy are not consistent"
         return
      end if
 
      call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &
-          npts_local, int(merge(1,0,fill), kind=private_plint) )
+          npts_local, int(merge(1,0,fill), kind=private_plbool) )
 end subroutine plsvect_double
 
 subroutine plsvect_none( fill )
@@ -1337,12 +1344,13 @@ subroutine plsvect_none( fill )
             use iso_c_binding, only: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: npts, fill
+            integer(kind=private_plint), value, intent(in) :: npts
+            integer(kind=private_plbool), value, intent(in) :: fill
             type(c_ptr), value, intent(in) :: arrowx, arrowy
         end subroutine interface_plsvect
      end interface
 
-     call interface_plsvect( c_null_ptr, c_null_ptr, 0_private_plint, 0_private_plint )
+     call interface_plsvect( c_null_ptr, c_null_ptr, 0_private_plint, 0_private_plbool )
 end subroutine plsvect_none
 
 subroutine plsvect_single( arrowx, arrowy, fill )
@@ -1350,24 +1358,25 @@ subroutine plsvect_single( arrowx, arrowy, fill )
   real(kind=private_single), dimension(:), intent(in) :: arrowx, arrowy
 
   integer(kind=private_plint) :: npts_local
-  logical :: if_arg1_local, if_arg2_local, if_arg3_local
 
     interface
         subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
             implicit none
             include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: npts, fill
+            integer(kind=private_plint), value, intent(in) :: npts
+            integer(kind=private_plbool), value, intent(in) :: fill
             real(kind=private_plflt), dimension(*), intent(in) :: arrowx, arrowy
         end subroutine interface_plsvect
      end interface
 
-     if(npts_local /= size(arrowx, kind=private_plflt) ) then
+     npts_local = size(arrowx, kind=private_plint)
+     if(npts_local /= size(arrowy, kind=private_plint) ) then
         write(0,*) "f95 plsvect ERROR: sizes of arrowx and arrowy are not consistent"
         return
      end if
 
      call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &
-          npts_local, int(merge(1,0,fill), kind=private_plint) )
+          npts_local, int(merge(1,0,fill), kind=private_plbool) )
 end subroutine plsvect_single
 
 subroutine plsxax( digmax, digits )
@@ -1427,7 +1436,7 @@ subroutine pltimefmt_impl( fmt )
        end subroutine interface_pltimefmt
    end interface
 
-   call interface_pltimefmt( trim(fmt) // c_null_char )
+   call interface_pltimefmt( trim(fmt)//c_null_char )
 
 end subroutine pltimefmt_impl
 
@@ -1443,19 +1452,19 @@ subroutine plxormod_impl( mode, status )
   logical, intent(in) :: mode
   logical, intent(out) :: status
 
-  integer(kind=private_plint) :: status_out
+  integer(kind=private_plbool) :: status_out
 
   interface
      subroutine interface_plxormod( mode, status ) bind(c,name='c_plxormod')
        implicit none
        include 'included_plplot_interface_private_types.f90'
-       integer(kind=private_plint), value, intent(in) :: mode
-       integer(kind=private_plint), intent(out) :: status
+       integer(kind=private_plbool), value, intent(in) :: mode
+       integer(kind=private_plbool), intent(out) :: status
      end subroutine interface_plxormod
   end interface
 
-  call interface_plxormod( int( merge(1,0,mode),kind=private_plint), status_out )
-  status = status_out /= 0_private_plint
+  call interface_plxormod( int( merge(1,0,mode),kind=private_plbool), status_out )
+  status = status_out /= 0_private_plbool
 
 end subroutine plxormod_impl
 
