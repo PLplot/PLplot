@@ -566,34 +566,6 @@ subroutine plaxes_impl(x0, y0, xopt,xtick,nxsub,yopt,ytick,nysub)
          trim(yopt)//c_null_char, real(ytick,kind=private_plflt), int(nysub,kind=private_plint) )
 end subroutine plaxes_impl
 
-subroutine plbtime_impl( year, month, day, hour, min, sec, ctime )
-   real(kind=wp), intent(in) :: ctime
-   integer, intent(out) :: year, month, day, hour, min
-   real(kind=wp), intent(out) :: sec
-
-   integer(kind=private_plint) :: year_out, month_out, day_out, hour_out, min_out
-   real(kind=private_plflt) :: sec_out
-
-   interface
-       subroutine interface_plbtime( year, month, day, hour, min, sec, ctime ) bind(c,name='c_plbtime')
-           implicit none
-           include 'included_plplot_interface_private_types.f90'
-           real(kind=private_plflt), value, intent(in) :: ctime
-           integer(kind=private_plint), intent(out) :: year, month, day, hour, min
-           real(kind=private_plflt), intent(out) :: sec
-       end subroutine interface_plbtime
-   end interface
-
-   call interface_plbtime( year_out, month_out, day_out, hour_out, min_out, sec_out, real(ctime, kind=private_plflt))
-   year = int(year_out)
-   month = int(month_out)
-   day = int(day_out)
-   hour = int(hour_out)
-   min = int(min_out)
-   sec = real(sec_out, kind=wp)
-
-end subroutine plbtime_impl
-
 subroutine plbin_impl( x, y, center )
    real(kind=wp), dimension(:), intent(in) :: x, y
    integer, intent(in) :: center
@@ -655,6 +627,34 @@ subroutine plbox3_impl(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub, &
                  trim(zopt)//c_null_char, trim(zlabel)//c_null_char, real(ztick,kind=private_plflt), &
                  int(nzsub,kind=private_plint) )
 end subroutine plbox3_impl
+
+subroutine plbtime_impl( year, month, day, hour, min, sec, ctime )
+   real(kind=wp), intent(in) :: ctime
+   integer, intent(out) :: year, month, day, hour, min
+   real(kind=wp), intent(out) :: sec
+
+   integer(kind=private_plint) :: year_out, month_out, day_out, hour_out, min_out
+   real(kind=private_plflt) :: sec_out
+
+   interface
+       subroutine interface_plbtime( year, month, day, hour, min, sec, ctime ) bind(c,name='c_plbtime')
+           implicit none
+           include 'included_plplot_interface_private_types.f90'
+           real(kind=private_plflt), value, intent(in) :: ctime
+           integer(kind=private_plint), intent(out) :: year, month, day, hour, min
+           real(kind=private_plflt), intent(out) :: sec
+       end subroutine interface_plbtime
+   end interface
+
+   call interface_plbtime( year_out, month_out, day_out, hour_out, min_out, sec_out, real(ctime, kind=private_plflt))
+   year = int(year_out)
+   month = int(month_out)
+   day = int(day_out)
+   hour = int(hour_out)
+   min = int(min_out)
+   sec = real(sec_out, kind=wp)
+
+end subroutine plbtime_impl
 
 subroutine plcalc_world_impl( rx, ry, wx, wy, window )
     integer, intent(out) :: window

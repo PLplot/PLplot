@@ -174,6 +174,7 @@ module plplot
     use plplot_double
     use plplot_types, only: private_plflt, private_plint, private_plunicode, private_single, private_double
     use plplot_graphics
+    use iso_c_binding, only: c_char, c_loc
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -977,6 +978,19 @@ subroutine plsdev( devname )
 
 end subroutine plsdev
 
+subroutine plsdrawmode( mode )
+    integer, intent(in) :: mode
+    interface
+        subroutine interface_plsdrawmode( mode ) bind( c, name = 'c_plsdrawmode' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: mode
+        end subroutine interface_plsdrawmode
+    end interface
+
+    call interface_plsdrawmode( int(mode,kind=private_plint) )
+end subroutine plsdrawmode
+
 subroutine plseed( s )
     integer, intent(in) :: s
     interface
@@ -1073,6 +1087,70 @@ subroutine plsfont( family, style, weight )
     call interface_plsfont( int(family,kind=private_plint), int(style,kind=private_plint), int(weight,kind=private_plint) )
 end subroutine plsfont
 
+! Probably would be better to define this in redacted form, but it is not documented that
+! way, and the python interface also does not use redacted form.  So leave it for now.
+! I (AWI) followed advice in <http://stackoverflow.com/questions/10755896/fortran-how-to-store-value-255-into-one-byte>
+! for the type statement for plotmem
+subroutine plsmem( maxx, maxy, plotmem )
+    integer, intent(in) :: maxx, maxy
+    character(kind=c_char), dimension(:, :, :), target, intent(in) :: plotmem
+    interface
+        subroutine interface_plsmem( maxx, maxy, plotmem ) bind( c, name = 'c_plsmem' )
+            use iso_c_binding, only: c_ptr
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: maxx, maxy
+            type(c_ptr), value, intent(in) :: plotmem
+        end subroutine interface_plsmem
+     end interface
+
+     ! We need a first dimension of 3 to have space for RGB
+     if( 3 /= size(plotmem,1) ) then
+        write(0,*) "f95 plsmem ERROR: first dimension of plotmem is not 3"
+        return
+     endif
+        
+     ! Since not defined in redacted form, we at least check that
+     ! maxx, and maxy are consistent with the second and third dimensions of plotmem.
+     if( maxx /= size(plotmem,2) .or. maxy /= size(plotmem,3) ) then
+        write(0,*) "f95 plsmem ERROR: maxx and/or maxy not consistent with second and third plotmem dimensions"
+        return
+     endif
+    call interface_plsmem( int(maxx,kind=private_plint), int(maxy,kind=private_plint),  c_loc(plotmem))
+end subroutine plsmem
+
+! Probably would be better to define this in redacted form, but it is not documented that
+! way, and the python interface also does not use redacted form.  So leave it for now.
+! I (AWI) followed advice in <http://stackoverflow.com/questions/10755896/fortran-how-to-store-value-255-into-one-byte>
+! for the type statement for plotmem
+subroutine plsmema( maxx, maxy, plotmem )
+    integer, intent(in) :: maxx, maxy
+    character(kind=c_char), dimension(:, :, :), target, intent(in) :: plotmem
+    interface
+        subroutine interface_plsmema( maxx, maxy, plotmem ) bind( c, name = 'c_plsmema' )
+            use iso_c_binding, only: c_ptr
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: maxx, maxy
+            type(c_ptr), value, intent(in) :: plotmem
+        end subroutine interface_plsmema
+     end interface
+
+     ! We need a first dimension of 4 to have space for RGBa
+     if( 4 /= size(plotmem,1) ) then
+        write(0,*) "f95 plsmema ERROR: first dimension of plotmem is not 4"
+        return
+     endif
+        
+     ! Since not defined in redacted form, we at least check that
+     ! maxx, and maxy are consistent with the second and third dimensions of plotmem.
+     if( maxx /= size(plotmem,2) .or. maxy /= size(plotmem,3) ) then
+        write(0,*) "f95 plsmema ERROR: maxx and/or maxy not consistent with second and third plotmem dimensions"
+        return
+     endif
+    call interface_plsmema( int(maxx,kind=private_plint), int(maxy,kind=private_plint),  c_loc(plotmem))
+end subroutine plsmema
+
 subroutine plsori( rot )
     integer, intent(in) :: rot
     interface
@@ -1158,6 +1236,74 @@ subroutine plssub( nx, ny )
     call interface_plssub( int(nx,kind=private_plint), int(ny,kind=private_plint) )
 end subroutine plssub
 
+subroutine plstar( nx, ny )
+    integer, intent(in) :: nx, ny
+    interface
+        subroutine interface_plstar( nx, ny ) bind( c, name = 'c_plstar' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: nx, ny
+        end subroutine interface_plstar
+    end interface
+
+    call interface_plstar( int(nx,kind=private_plint), int(ny,kind=private_plint) )
+end subroutine plstar
+
+subroutine plstart( devname, nx, ny )
+    integer, intent(in) :: nx, ny
+    character(len=*), intent(in) :: devname
+    interface
+        subroutine interface_plstart( devname, nx, ny ) bind( c, name = 'c_plstart' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: nx, ny
+            character(len=1), dimension(*), intent(in) :: devname
+        end subroutine interface_plstart
+    end interface
+
+    call interface_plstart( trim(devname)//c_null_char, int(nx,kind=private_plint), int(ny,kind=private_plint) )
+end subroutine plstart
+
+subroutine plstripd( id )
+    integer, intent(in) :: id
+    interface
+        subroutine interface_plstripd( id ) bind( c, name = 'c_plstripd' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: id
+        end subroutine interface_plstripd
+    end interface
+
+    call interface_plstripd( int(id,kind=private_plint) )
+end subroutine plstripd
+
+subroutine plstyl_scalar( n, mark, space )
+    integer, intent(in) :: n, mark, space
+
+    call plstyl_n_array( n, (/ mark /), (/ space /) )
+end subroutine plstyl_scalar
+
+subroutine plstyl_array( mark, space )
+    integer, dimension(:), intent(in) :: mark, space
+
+    call plstyl_n_array( size(mark), mark, space )
+end subroutine plstyl_array
+
+subroutine plstyl_n_array( n, mark, space )
+    integer, intent(in) :: n
+    integer, dimension(:), intent(in) :: mark, space
+    interface
+        subroutine interface_plstyl( n, mark, space ) bind( c, name = 'c_plstyl' )
+            implicit none
+            include 'included_plplot_interface_private_types.f90'
+            integer(kind=private_plint), value, intent(in) :: n
+            integer(kind=private_plint), dimension(*), intent(in) :: mark, space
+        end subroutine interface_plstyl
+    end interface
+
+    call interface_plstyl( int(n,kind=private_plint), int(mark,kind=private_plint), int(space,kind=private_plint) )
+end subroutine plstyl_n_array
+
 subroutine plsvect_double( arrowx, arrowy, fill )
   logical, intent(in) :: fill
   real(kind=private_double), dimension(:), intent(in) :: arrowx, arrowy
@@ -1167,7 +1313,6 @@ subroutine plsvect_double( arrowx, arrowy, fill )
 
     interface
         subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
-            use iso_c_binding, only: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: npts, fill
@@ -1209,7 +1354,6 @@ subroutine plsvect_single( arrowx, arrowy, fill )
 
     interface
         subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
-            use iso_c_binding, only: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: npts, fill
@@ -1225,59 +1369,6 @@ subroutine plsvect_single( arrowx, arrowy, fill )
      call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &
           npts_local, int(merge(1,0,fill), kind=private_plint) )
 end subroutine plsvect_single
-
-subroutine plstar( nx, ny )
-    integer, intent(in) :: nx, ny
-    interface
-        subroutine interface_plstar( nx, ny ) bind( c, name = 'c_plstar' )
-            implicit none
-            include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: nx, ny
-        end subroutine interface_plstar
-    end interface
-
-    call interface_plstar( int(nx,kind=private_plint), int(ny,kind=private_plint) )
-end subroutine plstar
-
-subroutine plstripd( id )
-    integer, intent(in) :: id
-    interface
-        subroutine interface_plstripd( id ) bind( c, name = 'c_plstripd' )
-            implicit none
-            include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: id
-        end subroutine interface_plstripd
-    end interface
-
-    call interface_plstripd( int(id,kind=private_plint) )
-end subroutine plstripd
-
-subroutine plstyl_scalar( n, mark, space )
-    integer, intent(in) :: n, mark, space
-
-    call plstyl_n_array( n, (/ mark /), (/ space /) )
-end subroutine plstyl_scalar
-
-subroutine plstyl_array( mark, space )
-    integer, dimension(:), intent(in) :: mark, space
-
-    call plstyl_n_array( size(mark), mark, space )
-end subroutine plstyl_array
-
-subroutine plstyl_n_array( n, mark, space )
-    integer, intent(in) :: n
-    integer, dimension(:), intent(in) :: mark, space
-    interface
-        subroutine interface_plstyl( n, mark, space ) bind( c, name = 'c_plstyl' )
-            implicit none
-            include 'included_plplot_interface_private_types.f90'
-            integer(kind=private_plint), value, intent(in) :: n
-            integer(kind=private_plint), dimension(*), intent(in) :: mark, space
-        end subroutine interface_plstyl
-    end interface
-
-    call interface_plstyl( int(n,kind=private_plint), int(mark,kind=private_plint), int(space,kind=private_plint) )
-end subroutine plstyl_n_array
 
 subroutine plsxax( digmax, digits )
     integer, intent(in) :: digmax, digits
