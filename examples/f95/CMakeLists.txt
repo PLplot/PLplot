@@ -46,7 +46,7 @@ set(f95_STRING_INDICES
   "17"
   "18"
 #plmap*, plmeridians, plslabelfunc, and  plstransform callbacks  "19"
-#plimagefr callback  "20"
+  "20"
 #plshades callback  "21"
 #plcont, plshades, plstransform, and plvect callbacks  "22"
   "23"

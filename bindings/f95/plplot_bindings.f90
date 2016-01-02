@@ -314,7 +314,7 @@ subroutine plclear()
 end subroutine plclear
 
 subroutine plcol0( icol )
-    integer, intent(in)  :: icol
+    integer, intent(in) :: icol
     interface
         subroutine interface_plcol0( icol ) bind(c, name = 'c_plcol0' )
             implicit none
@@ -327,7 +327,7 @@ subroutine plcol0( icol )
 end subroutine plcol0
 
 subroutine plcpstrm( iplsr, flags )
-  integer, intent(in)  :: iplsr
+  integer, intent(in) :: iplsr
   logical, intent(in) :: flags
     interface
         subroutine interface_plcpstrm( iplsr, flags ) bind(c, name = 'c_plcpstrm' )
@@ -382,7 +382,7 @@ subroutine plflush()
 end subroutine plflush
 
 subroutine plfont( font )
-    integer, intent(in)  :: font
+    integer, intent(in) :: font
     interface
         subroutine interface_plfont( font ) bind( c, name = 'c_plfont' )
             implicit none
@@ -395,7 +395,7 @@ subroutine plfont( font )
 end subroutine plfont
 
 subroutine plfontld( charset )
-    integer, intent(in)  :: charset
+    integer, intent(in) :: charset
     interface
         subroutine interface_plfontld( charset ) bind( c, name = 'c_plfontld' )
             implicit none

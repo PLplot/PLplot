@@ -1,4 +1,4 @@
-!      Copyright (C) 2004  Alan W. Irwin
+!      Copyright (C) 2004-2016  Alan W. Irwin
 !      Copyright (C) 2008  Andrew Ross
 !
 !
@@ -85,6 +85,7 @@
       integer width, height, num_col
       real(kind=plflt), dimension(:,:), pointer :: img_f
       real(kind=plflt), dimension(:,:), pointer :: xg, yg
+      real(kind=plflt), dimension(:), pointer :: xg1, yg1
       real(kind=plflt) :: img_max, img_min
 
       real(kind=plflt) :: x0, y0, dy, stretch
@@ -184,7 +185,7 @@
 !
 !     Read Lena image
 !     Note we try two different locations to cover the case where this
-!     examples is being run from the test_c.sh script
+!     example is being run from the test_c.sh script
 !
       if (.not. read_img('lena.pgm', img_f, width, height, num_col)) then
           if (.not. read_img('../lena.pgm', img_f, width, height, num_col)) then
@@ -251,7 +252,7 @@
 
 !         Zoom in selection
           call plenv(xi, xe, ye, yi, 1, -1)
-          call plimage(img_f, 1._plflt, width_r, 1._plflt, &
+         call plimage(img_f, 1._plflt, width_r, 1._plflt, &
               height_r, 0._plflt, 0._plflt, xi, xe, ye, yi)
       endif
 
@@ -290,6 +291,39 @@
       call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
            height_r, 0._plflt, 0._plflt, img_min, img_max, xg, yg)
 
+      if(.false.) then
+         ! Two test pages to compare undistorted results plotted with
+         ! doubly dimensioned xg, yg, versus singly dimensioned xg1, yg1
+         call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+         call pllab("", "", "Undistorted image example")
+         
+         do i=1,width+1
+            do j=1,height+1
+               xg(i,j) = dble(i-1)
+               yg(i,j) = dble(j-1)
+            enddo
+         enddo
+         call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
+              height_r, 0._plflt, 0._plflt, img_min, img_max, xg, yg)
+         
+         call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+         call pllab("", "", "Undistorted image example")
+
+         allocate( xg1(width+1) )
+         allocate( yg1(height+1) )
+         do i=1,width+1
+            xg1(i) = dble(i-1)
+         enddo
+         do j=1,height+1
+            yg1(j) = dble(j-1)
+         enddo
+         
+         call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
+              height_r, 0._plflt, 0._plflt, img_min, img_max, xg1, yg1)
+
+         deallocate(xg1, yg1)
+      end if
+         
       deallocate( img_f, xg, yg )
 
       call plend()
@@ -297,22 +331,25 @@
 
       contains
 
-!     Determine the unit of length for direct-access files
+!     Determine the unit of length (of 8 or less) for direct-access files
       subroutine bytes_in_rec( bytes )
       implicit none
       integer     bytes
 
       character(len=8) string
-      integer     i
       integer     ierr
 
       open( 10, file = '_x20f_.bin', access = 'direct', recl = 1 )
-      do i = 1,8
-          write( 10, rec = 1, iostat = ierr ) string(1:i)
-          if ( ierr /= 0 ) exit
-          bytes = i
-      enddo
 
+      string = "12345678"
+      bytes = 0
+      ierr = 0
+      do while(ierr == 0 .and. bytes < 8)
+         bytes = bytes + 1
+         write( 10, rec = 1, iostat = ierr ) string(1:bytes)
+      enddo
+      if(ierr /= 0) bytes = bytes -1
+      
       close( 10, status = 'delete' )
 
       end subroutine
