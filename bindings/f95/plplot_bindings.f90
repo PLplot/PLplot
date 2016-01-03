@@ -51,7 +51,7 @@ module plplot_graphics
   use iso_c_binding, only: c_ptr
   implicit none
   private :: private_single, private_double, c_ptr
-    
+
   ! Some references say to use sequence for these derived data types
   ! that are going to be passed to C, but sequence was not used
   ! in the old Fortran binding so I will continue that here.
@@ -81,7 +81,7 @@ module plplot_graphics
      real(kind=private_single) dX, dY ! relative device coordinates of pointer
      real(kind=private_single) wX, wY ! world coordinates of pointer
   end type PLGraphicsIn_single
-  
+
   ! Need to define two versions of plGetCursor (one with a
   ! PLGraphicsIn argument, one with a PLGraphicsIn_single
   ! argument).  There may be a less bulky way to do it (as with
@@ -144,32 +144,88 @@ subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
    tx = tr(1) * x + tr(2) * y + tr(3)
    ty = tr(4) * x + tr(5) * y + tr(6)
 end subroutine plplot_private_pltr
+
+subroutine plplot_private_pltr0f( x, y, tx, ty, data ) bind(c)
+   use iso_c_binding, only: c_ptr
+   use plplot_types, only: private_plflt
+   real(kind=private_plflt), value, intent(in) :: x, y
+   real(kind=private_plflt), intent(out) :: tx, ty
+   type(c_ptr), value, intent(in) :: data
+
+   tx = x + 1.0_private_plflt
+   ty = y + 1.0_private_plflt
+end subroutine plplot_private_pltr0f
 end module plplot_private_exposed
 
 module plplot_single
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, &
+                             c_funloc, c_f_pointer, c_f_procpointer
+    use iso_fortran_env, only: error_unit
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_single
     private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
-    private :: wp, private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
+
+    abstract interface
+        subroutine pltransform_proc_single( x, y, tx, ty )
+            import :: private_single
+            real(kind=private_single), intent(in) :: x, y
+            real(kind=private_single), intent(out) :: tx, ty
+        end subroutine pltransform_proc_single
+    end interface
+    procedure(pltransform_proc_single), pointer :: pltransform_single
 
     include 'included_plplot_real_interfaces.f90'
+
+    subroutine pltransformf2c_single( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_single')
+        real(kind=private_plflt), value :: x, y
+        real(kind=private_plflt), intent(out) :: tx, ty
+        type(c_ptr), value, intent(in) :: data
+
+        real(kind=wp) :: tx_out, ty_out
+
+        call pltransform_single( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out )
+        tx = tx_out
+        ty = ty_out
+    end subroutine pltransformf2c_single
+
 end module plplot_single
 
 module plplot_double
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
+    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, &
+                             c_funloc, c_f_pointer, c_f_procpointer
+    use iso_fortran_env, only: error_unit
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_double
     private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer
-    private :: wp, private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
+
+    abstract interface
+        subroutine pltransform_proc_double( x, y, tx, ty )
+            import :: private_double
+            real(kind=private_double), intent(in) :: x, y
+            real(kind=private_double), intent(out) :: tx, ty
+        end subroutine pltransform_proc_double
+    end interface
+    procedure(pltransform_proc_double), pointer :: pltransform_double
 
     include 'included_plplot_real_interfaces.f90'
+
+  subroutine pltransformf2c_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_double')
+        real(kind=private_plflt), value :: x, y
+        real(kind=private_plflt), intent(out) :: tx, ty
+        type(c_ptr), value, intent(in) :: data
+
+        real(kind=wp) :: tx_out, ty_out
+
+        call pltransform_double( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out )
+        tx = tx_out
+        ty = ty_out
+    end subroutine pltransformf2c_double
 
 end module plplot_double
 
@@ -178,7 +234,7 @@ module plplot
     use plplot_double
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     use plplot_graphics
-    use iso_c_binding, only: c_char, c_loc, c_null_char, c_null_ptr
+    use iso_c_binding, only: c_char, c_loc, c_funloc, c_null_char, c_null_ptr, c_null_funptr
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -191,6 +247,8 @@ module plplot
     private :: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     private :: c_char, c_loc, c_null_char, c_null_ptr
     private :: copystring, maxlen
+    private :: pltransform_single
+    private :: pltransform_double
 !
     ! Interfaces that do not depend on the real kind or which
     ! have optional real components (e.g., plsvect) that generate
@@ -227,6 +285,15 @@ module plplot
         module procedure plstyl_array
     end interface plstyl
     private :: plstyl_scalar, plstyl_n_array, plstyl_array
+
+    interface plstransform
+        module procedure plstransform_double
+        module procedure plstransform_single
+        module procedure plstransform_null
+    end interface plstransform
+    private :: plstransform_single
+    private :: plstransform_double
+    private :: plstransform_null
 
     interface plsvect
        module procedure plsvect_none
@@ -1115,7 +1182,7 @@ subroutine plsmem( maxx, maxy, plotmem )
         write(0,*) "f95 plsmem ERROR: first dimension of plotmem is not 3"
         return
      endif
-        
+
      ! Since not defined in redacted form, we at least check that
      ! maxx, and maxy are consistent with the second and third dimensions of plotmem.
      if( maxx /= size(plotmem,2) .or. maxy /= size(plotmem,3) ) then
@@ -1147,7 +1214,7 @@ subroutine plsmema( maxx, maxy, plotmem )
         write(0,*) "f95 plsmema ERROR: first dimension of plotmem is not 4"
         return
      endif
-        
+
      ! Since not defined in redacted form, we at least check that
      ! maxx, and maxy are consistent with the second and third dimensions of plotmem.
      if( maxx /= size(plotmem,2) .or. maxy /= size(plotmem,3) ) then
@@ -1269,6 +1336,51 @@ subroutine plstart( devname, nx, ny )
 
     call interface_plstart( trim(devname)//c_null_char, int(nx,kind=private_plint), int(ny,kind=private_plint) )
 end subroutine plstart
+
+subroutine plstransform_null
+
+    interface
+        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
+            use iso_c_binding, only: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plstransform
+    end interface
+
+    call interface_plstransform( c_null_funptr, c_null_ptr )
+end subroutine plstransform_null
+
+subroutine plstransform_double( proc, data )
+    procedure(pltransform_proc_double) :: proc
+    real(kind=private_double) :: data
+
+    interface
+        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
+            use iso_c_binding, only: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plstransform
+    end interface
+
+    pltransform_double => proc
+    call interface_plstransform( c_funloc(pltransformf2c_double), c_null_ptr )
+end subroutine plstransform_double
+
+subroutine plstransform_single( proc, data )
+    procedure(pltransform_proc_single) :: proc
+    real(kind=private_single) :: data
+
+    interface
+        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
+            use iso_c_binding, only: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plstransform
+    end interface
+
+    pltransform_single => proc
+    call interface_plstransform( c_funloc(pltransformf2c_single), c_null_ptr )
+end subroutine plstransform_single
 
 subroutine plstripd( id )
     integer, intent(in) :: id

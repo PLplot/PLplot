@@ -202,7 +202,7 @@
       ymax = dble(ny)/2.0_plflt*dy
 
 
-      call plstransform( transform )
+      call plstransform( transform, 0.0_plflt ) ! Second argument for disambiguation
 
       Q = 2.0_plflt
       do i=1,nx
