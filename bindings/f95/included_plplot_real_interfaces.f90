@@ -1006,8 +1006,8 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
     interface
         subroutine pltr2f( x, y, tx, ty, data ) bind(c, name = 'pltr2f' )
             use iso_c_binding, only: c_ptr
+            use plplot_types, only: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: x, y
             real(kind=private_plflt), intent(out) :: tx, ty
             type(c_ptr), value, intent(in) :: data
@@ -1036,9 +1036,9 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
+                    use plplot_types, only: private_plflt
                     use iso_c_binding, only: c_ptr
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt), value, intent(in) :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
                     type(c_ptr), value, intent(in) :: data
@@ -1065,6 +1065,7 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
     allocate( xg_in(nx_in,ny_in), yg_in(nx_in,ny_in) )
     xg_in = xg
     yg_in = yg
+
     cgrid_local%nx = nx_in
     cgrid_local%ny = ny_in
     cgrid_local%xg = c_loc(xg_in)
@@ -1117,13 +1118,11 @@ subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    !use iso_c_binding, only: c_ptr
+                    use plplot_types, only: private_plflt
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt), value, intent(in) :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
                     real(kind=private_plflt), dimension(*), intent(in) :: data
-                    !type(c_ptr), value :: data
                 end subroutine transform
             end interface
         end subroutine interface_plfcont
@@ -1696,9 +1695,10 @@ end subroutine plimagefr_impl_null
 subroutine plimagefr_impl_1( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, xg, yg )
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
     real(kind=wp), dimension(:, :), intent(in) :: idata
-    real(kind=wp), dimension(:), target, intent(in) :: xg, yg
+    real(kind=wp), dimension(:), intent(in) :: xg, yg
 
     integer(kind=private_plint) :: nx_in, ny_in
+    real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
     type(PLcGrid), target :: cgrid_local
     real(kind=private_plflt), dimension(:,:), allocatable :: idata_local
     type(c_ptr), dimension(:), allocatable :: idata_address_local
@@ -1743,10 +1743,13 @@ subroutine plimagefr_impl_1( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin
         return
      end if
 
+    allocate( xg_in(nx_in+1), yg_in(ny_in+1) )
+    xg_in = xg
+    yg_in = yg
     cgrid_local%nx = nx_in + 1
     cgrid_local%ny = ny_in + 1
-    cgrid_local%xg = c_loc(xg)
-    cgrid_local%yg = c_loc(yg)
+    cgrid_local%xg = c_loc(xg_in)
+    cgrid_local%yg = c_loc(yg_in)
 
     call matrix_to_c( idata, idata_local, idata_address_local )
 
@@ -1763,9 +1766,10 @@ end subroutine plimagefr_impl_1
 subroutine plimagefr_impl_2( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, xg, yg )
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
     real(kind=wp), dimension(:, :), intent(in) :: idata
-    real(kind=wp), dimension(:, :), target, intent(in) :: xg, yg
+    real(kind=wp), dimension(:, :), intent(in) :: xg, yg
 
     integer(kind=private_plint) :: nx_in, ny_in
+    real(kind=private_plflt), dimension(:, :), allocatable, target :: xg_in, yg_in
     type(PLcGrid), target :: cgrid_local
     real(kind=private_plflt), dimension(:,:), allocatable :: idata_local
     type(c_ptr), dimension(:), allocatable :: idata_address_local
@@ -1794,8 +1798,8 @@ subroutine plimagefr_impl_2( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin
             type(c_ptr), value, intent(in) :: data
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use iso_c_binding, only: c_ptr
                     use plplot_types, only: private_plflt
+                    use iso_c_binding, only: c_ptr
                     implicit none
                     real(kind=private_plflt), value, intent(in) :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
@@ -1814,10 +1818,13 @@ subroutine plimagefr_impl_2( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin
         return
      end if
 
+     allocate( xg_in(nx_in+1,ny_in+1), yg_in(ny_in+1,ny_in+1) )
+     xg_in = xg
+     yg_in = yg
      cgrid_local%nx = nx_in + 1
      cgrid_local%ny = ny_in + 1
-     cgrid_local%xg = c_loc(xg)
-     cgrid_local%yg = c_loc(yg)
+     cgrid_local%xg = c_loc(xg_in)
+     cgrid_local%yg = c_loc(yg_in)
 
      call matrix_to_c( idata, idata_local, idata_address_local )
 
@@ -2656,11 +2663,12 @@ subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
     real(kind=wp), dimension(:), intent(in) :: xg, yg
     integer, intent(in) :: sh_cmap, min_color, max_color
 
+    integer(kind=private_plint) :: nx_in, ny_in
+    real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
     integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
-    real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
-    type(PLcGrid), target :: cgrid
+    type(PLcGrid), target :: cgrid_local
 
     interface
         subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
@@ -2716,15 +2724,21 @@ subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
 
     call matrix_to_c( z, z_c_local, z_address_local )
 
-    allocate( xg_in(size(z,1)), yg_in(size(z,2)) )
+    nx_in = size(z,1,kind=private_plint)
+    ny_in = size(z,2,kind=private_plint)
+    if(nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
+       write(error_unit,*) "f95 plshade_single_1 ERROR: inconsistent sizes for z, xg, and/or yg"
+       return
+    end if
+     allocate( xg_in(nx_in), yg_in(ny_in) )
     xg_in = xg
     yg_in = yg
-    cgrid%nx = size(z,1)
-    cgrid%ny = size(z,2)
-    cgrid%xg = c_loc(xg_in)
-    cgrid%yg = c_loc(yg_in)
+    cgrid_local%nx = nx_in
+    cgrid_local%ny = ny_in
+    cgrid_local%xg = c_loc(xg_in)
+    cgrid_local%yg = c_loc(yg_in)
 
-    call interface_plshade( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+    call interface_plshade( z_address_local, nx_in, ny_in, c_null_ptr, &
                    real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
                    real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
                    real(shade_min,kind=private_plflt), real(shade_max,kind=private_plflt), &
@@ -2732,7 +2746,7 @@ subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                    real(sh_width,kind=private_plflt), &
                    int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                    int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
-                   fill, rectangular, pltr1, c_loc(cgrid) )
+                   fill, rectangular, pltr1, c_loc(cgrid_local) )
 end subroutine plshade_single_1
 
 subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
@@ -2745,11 +2759,12 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
     real(kind=wp), dimension(:,:), intent(in) :: xg, yg
     integer, intent(in) :: sh_cmap, min_color, max_color
 
+    integer(kind=private_plint) :: nx_in, ny_in
+    real(kind=private_plflt), dimension(:,:), allocatable, target :: xg_in, yg_in
     integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
-    real(kind=private_plflt), dimension(:,:), allocatable, target :: xg_in, yg_in
-    type(PLcGrid), target :: cgrid
+    type(PLcGrid), target :: cgrid_local
 
     interface
         subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
@@ -2761,11 +2776,12 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
 
     interface
         subroutine pltr2f( x, y, tx, ty, data ) bind(c, name = 'pltr2f' )
-            use plplot_types, only: private_plflt, PLcGrid
+            use iso_c_binding, only: c_ptr
+            use plplot_types, only: private_plflt
             implicit none
             real(kind=private_plflt), value, intent(in) :: x, y
             real(kind=private_plflt), intent(out) :: tx, ty
-            type(PLcGrid), intent(in) :: data
+            type(c_ptr), value, intent(in) :: data
         end subroutine pltr2f
     end interface
 
@@ -2793,12 +2809,12 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use iso_c_binding
-                    use plplot_types, only: private_plflt, PLcGrid
+                    use plplot_types, only: private_plflt
+                    use iso_c_binding, only: c_ptr
                     implicit none
-                    real(kind=private_plflt), value, intent(in)  :: x, y
+                    real(kind=private_plflt), value, intent(in) :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
-                    type(PLcGrid), intent(in) :: data
+                    type(c_ptr), value, intent(in) :: data
                 end subroutine transform
             end interface
         end subroutine interface_plshade
@@ -2806,15 +2822,23 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
 
     call matrix_to_c( z, z_c_local, z_address_local )
 
-    allocate( xg_in(size(z,1),size(z,2)), yg_in(size(z,1),size(z,2)) )
+     nx_in = size(z,1, kind=private_plint)
+     ny_in = size(z,2, kind=private_plint)
+     if( &
+          nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
+          nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
+        write(error_unit,*) "f95 plshade_single_2 ERROR: inconsistent sizes for z, xg and/or yg"
+        return
+     end if
+    allocate( xg_in(nx_in, ny_in), yg_in(nx_in, ny_in) )
     xg_in = xg
     yg_in = yg
-    cgrid%nx = size(z,1)
-    cgrid%ny = size(z,2)
-    cgrid%xg = c_loc(xg_in)
-    cgrid%yg = c_loc(yg_in)
+    cgrid_local%nx = nx_in
+    cgrid_local%ny = ny_in
+    cgrid_local%xg = c_loc(xg_in)
+    cgrid_local%yg = c_loc(yg_in)
 
-    call interface_plshade( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+    call interface_plshade( z_address_local, nx_in, ny_in, c_null_ptr, &
                    real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
                    real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
                    real(shade_min,kind=private_plflt), real(shade_max,kind=private_plflt), &
@@ -2822,7 +2846,7 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                    real(sh_width,kind=private_plflt), &
                    int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                    int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
-                   fill, rectangular, pltr2f, c_loc(cgrid) )
+                   fill, rectangular, pltr2f, c_loc(cgrid_local) )
 end subroutine plshade_single_2
 
 subroutine plshade_single_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
@@ -2872,8 +2896,7 @@ subroutine plshade_single_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, sha
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use iso_c_binding
-                    use plplot_types, only: private_plflt, PLcGrid
+                    use plplot_types, only: private_plflt
                     implicit none
                     real(kind=private_plflt), value, intent(in)  :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
@@ -2970,11 +2993,12 @@ subroutine plshades_multiple_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill
     integer :: cont_color
     real(kind=wp), dimension(:), intent(in) :: xg, yg
 
+    integer(kind=private_plint) :: nx_in, ny_in
+    real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
     integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
-    real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
-    type(PLcGrid), target :: cgrid
+    type(PLcGrid), target :: cgrid_local
 
     interface
         subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
@@ -3029,21 +3053,28 @@ subroutine plshades_multiple_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill
 
     call matrix_to_c( z, z_c_local, z_address_local )
 
-    allocate( xg_in(size(z,1)), yg_in(size(z,2)) )
+     nx_in = size(z,1, kind=private_plint)
+     ny_in = size(z,2, kind=private_plint)
+     if( &
+          nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
+        write(error_unit,*) "f95 plshades_multiple_1 ERROR: inconsistent sizes for z, xg and/or yg"
+        return
+     end if
+    allocate( xg_in(nx_in), yg_in(ny_in) )
     xg_in = xg
     yg_in = yg
-    cgrid%nx = size(z,1)
-    cgrid%ny = size(z,2)
-    cgrid%xg = c_loc(xg_in)
-    cgrid%yg = c_loc(yg_in)
+    cgrid_local%nx = nx_in
+    cgrid_local%ny = ny_in
+    cgrid_local%xg = c_loc(xg_in)
+    cgrid_local%yg = c_loc(yg_in)
 
-    call interface_plshades( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+    call interface_plshades( z_address_local, nx_in, ny_in, c_null_ptr, &
                    real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
                    real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
                    real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                    real(fill_width,kind=private_plflt), &
                    int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-                   fill, rectangular, pltr1, c_loc(cgrid) )
+                   fill, rectangular, pltr1, c_loc(cgrid_local) )
 end subroutine plshades_multiple_1
 
 subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -3056,11 +3087,12 @@ subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill
     integer :: cont_color
     real(kind=wp), dimension(:,:), intent(in) :: xg, yg
 
+    integer(kind=private_plint) :: nx_in, ny_in
+    real(kind=private_plflt), dimension(:,:), allocatable, target :: xg_in, yg_in
     integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
-    real(kind=private_plflt), dimension(:,:), allocatable, target :: xg_in, yg_in
-    type(PLcGrid), target :: cgrid
+    type(PLcGrid), target :: cgrid_local
 
     interface
         subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
@@ -3072,11 +3104,12 @@ subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill
 
     interface
         subroutine pltr2f( x, y, tx, ty, data ) bind(c, name = 'pltr2f' )
-            use plplot_types, only: private_plflt, PLcGrid
+            use iso_c_binding, only: c_ptr
+            use plplot_types, only: private_plflt
             implicit none
             real(kind=private_plflt), value, intent(in) :: x, y
             real(kind=private_plflt), intent(out) :: tx, ty
-            type(PLcGrid), intent(in) :: data
+            type(c_ptr), value, intent(in) :: data
         end subroutine pltr2f
     end interface
 
@@ -3103,11 +3136,12 @@ subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use plplot_types, only: private_plflt, PLcGrid
+                    use plplot_types, only: private_plflt
+                    use iso_c_binding, only: c_ptr
                     implicit none
-                    real(kind=private_plflt), value, intent(in)  :: x, y
+                    real(kind=private_plflt), value, intent(in) :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
-                    type(PLcGrid), intent(in) :: data
+                    type(c_ptr), value, intent(in) :: data
                 end subroutine transform
             end interface
         end subroutine interface_plshades
@@ -3115,21 +3149,30 @@ subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill
 
     call matrix_to_c( z, z_c_local, z_address_local )
 
-    allocate( xg_in(size(z,1),size(z,2)), yg_in(size(z,1),size(z,2)) )
+    nx_in = size(z,1, kind=private_plint)
+    ny_in = size(z,2, kind=private_plint)
+    if( &
+         nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
+         nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
+       write(error_unit,*) "f95 plshades_multiple_2 ERROR: inconsistent sizes for z, xg and/or yg"
+       return
+    end if
+
+    allocate( xg_in(nx_in+1,ny_in+1), yg_in(ny_in+1,ny_in+1) )
     xg_in = xg
     yg_in = yg
-    cgrid%nx = size(z,1)
-    cgrid%ny = size(z,2)
-    cgrid%xg = c_loc(xg_in)
-    cgrid%yg = c_loc(yg_in)
+    cgrid_local%nx = nx_in
+    cgrid_local%ny = ny_in
+    cgrid_local%xg = c_loc(xg_in)
+    cgrid_local%yg = c_loc(yg_in)
 
-    call interface_plshades( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+    call interface_plshades( z_address_local, nx_in, ny_in, c_null_ptr, &
                    real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
                    real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
                    real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                    real(fill_width,kind=private_plflt), &
                    int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-                   fill, rectangular, pltr2f, c_loc(cgrid) )
+                   fill, rectangular, pltr2f, c_loc(cgrid_local) )
 end subroutine plshades_multiple_2
 
 subroutine plshades_multiple_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -3146,7 +3189,7 @@ subroutine plshades_multiple_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fil
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
     real(kind=private_plflt), dimension(6), target :: tr_in
-    type(PLcGrid), target :: cgrid
+    type(PLcGrid), target :: cgrid_local
 
     interface
         subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
@@ -3179,7 +3222,7 @@ subroutine plshades_multiple_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fil
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use plplot_types, only: private_plflt, PLcGrid
+                    use plplot_types, only: private_plflt
                     implicit none
                     real(kind=private_plflt), value, intent(in)  :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
@@ -3312,7 +3355,6 @@ subroutine plstring3_impl( x, y, z, string )
   n_local = size(x, kind=private_plint)
   if(n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) ) then
      write(error_unit,*) "f95 plstring3 ERROR: inconsistent array sizes not allowed for x, y, and z"
-     write(error_unit, *)
      return
   end if
 
@@ -3550,8 +3592,8 @@ subroutine plvectors_0( u, v, scale )
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use iso_c_binding, only: c_ptr
                     use plplot_types, only: private_plflt, PLcGrid
+                    use iso_c_binding, only: c_ptr
                     implicit none
                     real(kind=private_plflt), value, intent(in)  :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
@@ -3582,10 +3624,11 @@ subroutine plvectors_1( u, v, scale, xg, yg )
     real(kind=wp), dimension(:), intent(in) :: xg, yg
     real(kind=wp), intent(in) :: scale
 
-    real(kind=private_plflt), dimension(:,:), allocatable, target :: u_in, v_in
+    integer(kind=private_plint) :: nx_in, ny_in
     real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
+    real(kind=private_plflt), dimension(:,:), allocatable, target :: u_in, v_in
     type(PLfGrid), target :: fgrid1, fgrid2
-    type(PLcGrid), target :: cgrid
+    type(PLcGrid), target :: cgrid_local
 
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
@@ -3630,7 +3673,6 @@ subroutine plvectors_1( u, v, scale, xg, yg )
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use iso_c_binding
                     use plplot_types, only: private_plflt, PLcGrid
                     implicit none
                     real(kind=private_plflt), value, intent(in)  :: x, y
@@ -3641,27 +3683,41 @@ subroutine plvectors_1( u, v, scale, xg, yg )
         end subroutine interface_plfvect
     end interface
 
-    allocate( u_in(size(u,1),size(u,2)) )
-    allocate( v_in(size(v,1),size(v,2)) )
+    nx_in = size(u,1,kind=private_plint)
+    ny_in = size(u,2,kind=private_plint)
+
+    if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
+       write(error_unit,*) "f95 plvectors_1 ERROR: inconsistent sizes for u and v"
+       return
+    end if
+
+    if(nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
+       write(error_unit,*) "f95 plvectors_1 ERROR: inconsistent sizes for u, xg, and/or yg"
+       return
+    end if
+
+    allocate( u_in(nx_in, ny_in) )
+    allocate( v_in(nx_in, ny_in) )
     u_in = u
     v_in = v
     fgrid1%f  = c_loc(u_in)
-    fgrid1%nx = size(u,1)
-    fgrid1%ny = size(u,2)
-    fgrid2%f  = c_loc(v_in)
-    fgrid2%nx = size(v,1)
-    fgrid2%ny = size(v,2)
+    fgrid1%nx = nx_in
+    fgrid1%ny = ny_in
 
-    allocate( xg_in(size(u,1)), yg_in(size(u,2)) )
+    fgrid2%f  = c_loc(v_in)
+    fgrid2%nx = nx_in
+    fgrid2%ny = ny_in
+
+    allocate( xg_in(nx_in), yg_in(ny_in) )
     xg_in = xg
     yg_in = yg
-    cgrid%nx = size(u,1)
-    cgrid%ny = size(u,2)
-    cgrid%xg = c_loc(xg_in)
-    cgrid%yg = c_loc(yg_in)
+    cgrid_local%nx = nx_in
+    cgrid_local%ny = ny_in
+    cgrid_local%xg = c_loc(xg_in)
+    cgrid_local%yg = c_loc(yg_in)
 
-    call interface_plfvect( plf2evalr, fgrid1, fgrid2, size(u,1,kind=private_plint), &
-                   size(u,2,kind=private_plint), real(scale,kind=private_plflt), pltr1, cgrid )
+    call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
+         real(scale,kind=private_plflt), pltr1, cgrid_local )
 end subroutine plvectors_1
 
 subroutine plvectors_2( u, v, scale, xg, yg )
@@ -3669,10 +3725,11 @@ subroutine plvectors_2( u, v, scale, xg, yg )
     real(kind=wp), dimension(:,:), intent(in) :: xg, yg
     real(kind=wp), intent(in) :: scale
 
+    integer(kind=private_plint) :: nx_in, ny_in
     real(kind=private_plflt), dimension(:,:), allocatable, target :: u_in, v_in
     real(kind=private_plflt), dimension(:,:), allocatable, target :: xg_in, yg_in
     type(PLfGrid), target :: fgrid1, fgrid2
-    type(PLcGrid), target :: cgrid
+    type(PLcGrid), target :: cgrid_local
 
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
@@ -3688,11 +3745,11 @@ subroutine plvectors_2( u, v, scale, xg, yg )
     interface
         subroutine pltr2f( x, y, tx, ty, data ) bind(c, name = 'pltr2f' )
             use iso_c_binding, only: c_ptr
-            use plplot_types, only: private_plflt, PLcGrid
+            use plplot_types, only: private_plflt
             implicit none
-            real(kind=private_plflt), value, intent(in)  :: x, y
+            real(kind=private_plflt), value, intent(in) :: x, y
             real(kind=private_plflt), intent(out) :: tx, ty
-            type(PLcGrid), intent(in)  :: data
+            type(c_ptr), value, intent(in) :: data
         end subroutine pltr2f
     end interface
 
@@ -3717,38 +3774,54 @@ subroutine plvectors_2( u, v, scale, xg, yg )
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use iso_c_binding
-                    use plplot_types, only: private_plflt, PLcGrid
+                    use plplot_types, only: private_plflt
+                    use iso_c_binding, only: c_ptr
                     implicit none
-                    real(kind=private_plflt), value, intent(in)  :: x, y
+                    real(kind=private_plflt), value, intent(in) :: x, y
                     real(kind=private_plflt), intent(out) :: tx, ty
-                    type(PLcGrid), intent(in) :: data
+                    type(c_ptr), value, intent(in) :: data
                 end subroutine transform
             end interface
         end subroutine interface_plfvect
     end interface
 
-    allocate( u_in(size(u,1),size(u,2)) )
-    allocate( v_in(size(v,1),size(v,2)) )
+    nx_in = size(u,1,kind=private_plint)
+    ny_in = size(u,2,kind=private_plint)
+
+    if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
+       write(error_unit,*) "f95 plvectors_2 ERROR: inconsistent sizes for u and v"
+       return
+    end if
+
+    if( &
+         nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
+         nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
+       write(error_unit,*) "f95 plvectors_2 ERROR: inconsistent sizes for u, xg, and/or yg"
+       return
+    end if
+
+    allocate( u_in(nx_in, ny_in) )
+    allocate( v_in(nx_in, ny_in) )
     u_in = u
     v_in = v
     fgrid1%f  = c_loc(u_in)
-    fgrid1%nx = size(u,1)
-    fgrid1%ny = size(u,2)
-    fgrid2%f  = c_loc(v_in)
-    fgrid2%nx = size(v,1)
-    fgrid2%ny = size(v,2)
+    fgrid1%nx = nx_in
+    fgrid1%ny = ny_in
 
-    allocate( xg_in(size(u,1),size(u,2)), yg_in(size(u,1),size(u,2)) )
+    fgrid2%f  = c_loc(v_in)
+    fgrid2%nx = nx_in
+    fgrid2%ny = ny_in
+
+    allocate( xg_in(nx_in, ny_in), yg_in(nx_in, ny_in) )
     xg_in = xg
     yg_in = yg
-    cgrid%nx = size(u,1)
-    cgrid%ny = size(u,2)
-    cgrid%xg = c_loc(xg_in)
-    cgrid%yg = c_loc(yg_in)
+    cgrid_local%nx = nx_in
+    cgrid_local%ny = ny_in
+    cgrid_local%xg = c_loc(xg_in)
+    cgrid_local%yg = c_loc(yg_in)
 
-    call interface_plfvect( plf2evalr, fgrid1, fgrid2, size(u,1,kind=private_plint), &
-                   size(u,2,kind=private_plint), real(scale,kind=private_plflt), pltr2f, cgrid )
+    call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
+         real(scale,kind=private_plflt), pltr2f, cgrid_local )
 end subroutine plvectors_2
 
 subroutine plvectors_tr( u, v, scale, tr )
@@ -3792,7 +3865,6 @@ subroutine plvectors_tr( u, v, scale, tr )
             end interface
             interface
                 subroutine transform( x, y, tx, ty, data ) bind(c)
-                    use iso_c_binding
                     use plplot_types, only: private_plflt, PLcGrid
                     implicit none
                     real(kind=private_plflt), value, intent(in)  :: x, y
