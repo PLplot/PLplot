@@ -515,13 +515,6 @@ c_plcont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
           PLPointer pltr_data )
 {
-    if ( pltr == NULL )
-    {
-        // If pltr is undefined, abort with an error.
-        plabort( "plcont: The pltr callback must be defined" );
-        return;
-    }
-
     plfcont( plf2eval1, (PLPointer) f,
         nx, ny, kx, lx, ky, ly, clevel, nlevel,
         pltr, pltr_data );
@@ -553,6 +546,13 @@ plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
          PLPointer pltr_data )
 {
     PLINT i, **ipts;
+
+    if ( pltr == NULL )
+    {
+        // If pltr is undefined, abort with an error.
+        plabort( "plfcont: The pltr callback must be defined" );
+        return;
+    }
 
     if ( kx < 1 || kx >= lx )
     {
