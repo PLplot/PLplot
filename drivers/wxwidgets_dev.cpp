@@ -438,13 +438,13 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     m_lineSpacing = 1.0;
 
     m_dc = NULL;
-	//m_interactiveTextDialog = new wxDialog();
-	//m_interactiveTextDc = new wxClientDC(m_interactiveTextDialog);
-	m_interactiveTextBitmap.Create(1, 1, wxBITMAP_SCREEN_DEPTH);
-	m_interactiveTextDc = new wxMemoryDC(m_interactiveTextBitmap);
+    //m_interactiveTextDialog = new wxDialog();
+    //m_interactiveTextDc = new wxClientDC(m_interactiveTextDialog);
+    m_interactiveTextBitmap.Create( 1, 1, wxBITMAP_SCREEN_DEPTH );
+    m_interactiveTextDc = new wxMemoryDC( m_interactiveTextBitmap );
 #ifdef wxUSE_GRAPHICS_CONTEXT
-	m_interactiveTextGc = wxGraphicsContext::Create(m_interactiveTextDc);
-	m_interactiveTextGcdc = new wxGCDC(m_interactiveTextGc);
+    m_interactiveTextGc   = wxGraphicsContext::Create( m_interactiveTextDc );
+    m_interactiveTextGcdc = new wxGCDC( m_interactiveTextGc );
 #endif
 
     m_prevSingleCharString       = 0;
@@ -537,10 +537,10 @@ wxPLDevice::~wxPLDevice()
         header->completeFlag = 1;
     }
 
-	delete m_interactiveTextDc;
+    delete m_interactiveTextDc;
 #ifdef wxUSE_GRAPHICS_CONTEXT
-	delete m_interactiveTextGc;
-	delete m_interactiveTextGcdc;
+    delete m_interactiveTextGc;
+    delete m_interactiveTextGcdc;
 #endif
 }
 
@@ -1104,18 +1104,18 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
             &sectionDepth, &leading, &theFont );
         sectionDepth += leading;
     }
-	else
-	{
-		wxFont theFont = font.getWxFont();
+    else
+    {
+        wxFont theFont = font.getWxFont();
 #ifdef wxUSE_GRAPHICS_CONTEXT
-		m_interactiveTextGcdc->GetTextExtent(section, &sectionWidth, &sectionHeight,
-			&sectionDepth, &leading, &theFont);
+        m_interactiveTextGcdc->GetTextExtent( section, &sectionWidth, &sectionHeight,
+            &sectionDepth, &leading, &theFont );
 #else
-		m_interactiveTextDc->GetTextExtent(section, &sectionWidth, &sectionHeight,
-			&sectionDepth, &leading, &theFont);
+        m_interactiveTextDc->GetTextExtent( section, &sectionWidth, &sectionHeight,
+            &sectionDepth, &leading, &theFont );
 #endif
-		sectionDepth += leading;
-	}
+        sectionDepth += leading;
+    }
 
     //draw the text if requested
     if ( drawText && m_dc )
