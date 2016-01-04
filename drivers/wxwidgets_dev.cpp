@@ -438,6 +438,14 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     m_lineSpacing = 1.0;
 
     m_dc = NULL;
+	//m_interactiveTextDialog = new wxDialog();
+	//m_interactiveTextDc = new wxClientDC(m_interactiveTextDialog);
+	m_interactiveTextBitmap.Create(1, 1, wxBITMAP_SCREEN_DEPTH);
+	m_interactiveTextDc = new wxMemoryDC(m_interactiveTextBitmap);
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	m_interactiveTextGc = wxGraphicsContext::Create(m_interactiveTextDc);
+	m_interactiveTextGcdc = new wxGCDC(m_interactiveTextGc);
+#endif
 
     m_prevSingleCharString       = 0;
     m_prevSingleCharStringWidth  = 0;
@@ -528,6 +536,12 @@ wxPLDevice::~wxPLDevice()
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
         header->completeFlag = 1;
     }
+
+	delete m_interactiveTextDc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	delete m_interactiveTextGc;
+	delete m_interactiveTextGcdc;
+#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1090,37 +1104,18 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
             &sectionDepth, &leading, &theFont );
         sectionDepth += leading;
     }
-    else if ( m_outputMemoryMap.isValid() )
-    {
-        MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
-        header->textSizeInfo.written = false;
-        plFontToWxFontParameters( fci, scaledFontSize, header->textSizeInfo.family, header->textSizeInfo.style,
-            header->textSizeInfo.weight, header->textSizeInfo.pt );
-        header->textSizeInfo.underlined = underlined;
-        size_t len = MIN( TEXTSIZEINFO_MAX_LENGTH, section.length() );
-        memcpy( header->textSizeInfo.text, section.wc_str(), len * sizeof ( header->textSizeInfo.text[0] ) );
-        header->textSizeInfo.text[len] = '\0';
-        bool   gotResponse = false;
-        TransmitBuffer( NULL, transmissionRequestTextSize );
-        size_t counter = 0;
-        while ( !gotResponse && counter < 1000 )
-        {
-            gotResponse = header->textSizeInfo.written;
-            ++counter;
-            wxMilliSleep( 1 );
-        }
-        if ( counter == 1000 )
-            plwarn( "Failed to get text size from wxPLViewer - timeout" );
-
-        sectionWidth  = header->textSizeInfo.width;
-        sectionHeight = header->textSizeInfo.height;
-        sectionDepth  = header->textSizeInfo.depth + header->textSizeInfo.leading;
-    }
-    else
-    {
-        //If we get here then we have no dc, nor a viewer to use
-        return;
-    }
+	else
+	{
+		wxFont theFont = font.getWxFont();
+#ifdef wxUSE_GRAPHICS_CONTEXT
+		m_interactiveTextGcdc->GetTextExtent(section, &sectionWidth, &sectionHeight,
+			&sectionDepth, &leading, &theFont);
+#else
+		m_interactiveTextDc->GetTextExtent(section, &sectionWidth, &sectionHeight,
+			&sectionDepth, &leading, &theFont);
+#endif
+		sectionDepth += leading;
+	}
 
     //draw the text if requested
     if ( drawText && m_dc )

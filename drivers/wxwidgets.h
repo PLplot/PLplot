@@ -114,6 +114,15 @@ private:
     wxPen             m_pen;
     wxBrush           m_brush;
 
+	//A device context specifically for checking the size of text for use with
+	//the interactive viewer.
+	wxBitmap m_interactiveTextBitmap;
+	wxMemoryDC *m_interactiveTextDc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+	wxGraphicsContext *m_interactiveTextGc;
+	wxGCDC *m_interactiveTextGcdc;
+#endif
+
     //Size and Scale
     //As far as plplot is concerned the size of the window is SHRT_MAX by
     //SHRT_MAX which gives us the best resolution.
