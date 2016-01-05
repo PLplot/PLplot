@@ -438,13 +438,10 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     m_lineSpacing = 1.0;
 
     m_dc = NULL;
-    //m_interactiveTextDialog = new wxDialog();
-    //m_interactiveTextDc = new wxClientDC(m_interactiveTextDialog);
     m_interactiveTextBitmap.Create( 1, 1, wxBITMAP_SCREEN_DEPTH );
     m_interactiveTextDc = new wxMemoryDC( m_interactiveTextBitmap );
 #ifdef wxUSE_GRAPHICS_CONTEXT
-    m_interactiveTextGc   = wxGraphicsContext::Create( m_interactiveTextDc );
-    m_interactiveTextGcdc = new wxGCDC( m_interactiveTextGc );
+    m_interactiveTextGcdc = new wxGCDC( wxGraphicsContext::Create(m_interactiveTextDc) ); //note that the wxGCDC will delete the wxGraphicsContext so we don't need to remember it
 #endif
 
     m_prevSingleCharString       = 0;
@@ -539,7 +536,6 @@ wxPLDevice::~wxPLDevice()
 
     delete m_interactiveTextDc;
 #ifdef wxUSE_GRAPHICS_CONTEXT
-    delete m_interactiveTextGc;
     delete m_interactiveTextGcdc;
 #endif
 }

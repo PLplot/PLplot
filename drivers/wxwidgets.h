@@ -119,7 +119,6 @@ private:
     wxBitmap          m_interactiveTextBitmap;
     wxMemoryDC        *m_interactiveTextDc;
 #ifdef wxUSE_GRAPHICS_CONTEXT
-    wxGraphicsContext *m_interactiveTextGc;
     wxGCDC            *m_interactiveTextGcdc;
 #endif
 
