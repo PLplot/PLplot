@@ -153,20 +153,20 @@ void plD_init_wxwidgets( PLStream* pls )
         if ( device )
             throw( "plD_init_wxwidgets called when a initialization has already occurred." );
 
-		//initialise wxWidgets - this is required in order to allow some wxWidgets functions to
-		//be called frm within the driver when the user isn't passing a wxDC in. See e.g
-		//http://stackoverflow.com/questions/208373
-		if (!wxTheApp)
-		{
-			wxApp::SetInstance(new wxApp());
-			int argc = 0;
-			char* argv[1];
-			g_weInitializedWx = wxEntryStart(argc, (char**)NULL);
-			if (!g_weInitializedWx)
-				throw("plD_init_wxWidgets could not initialise wxWidgets");
-		}
-		else
-			g_weInitializedWx = false;
+        //initialise wxWidgets - this is required in order to allow some wxWidgets functions to
+        //be called frm within the driver when the user isn't passing a wxDC in. See e.g
+        //http://stackoverflow.com/questions/208373
+        if ( !wxTheApp )
+        {
+            wxApp::SetInstance( new wxApp() );
+            int argc = 0;
+            char* argv[1];
+            g_weInitializedWx = wxEntryStart( argc, (char **) NULL );
+            if ( !g_weInitializedWx )
+                throw( "plD_init_wxWidgets could not initialise wxWidgets" );
+        }
+        else
+            g_weInitializedWx = false;
 
         // default options
         static PLINT text    = 1;
@@ -400,8 +400,8 @@ void plD_tidy_wxwidgets( PLStream *pls )
             delete device;
         }
         pls->dev = NULL;         //so it doesn't get freed elswhere
-		if (g_weInitializedWx)
-			wxEntryCleanup();
+        if ( g_weInitializedWx )
+            wxEntryCleanup();
     }
     catch ( char* message )
     {

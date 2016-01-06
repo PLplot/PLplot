@@ -116,10 +116,10 @@ private:
 
     //A device context specifically for checking the size of text for use with
     //the interactive viewer.
-    wxBitmap          m_interactiveTextBitmap;
-    wxMemoryDC        *m_interactiveTextDc;
+    wxBitmap   m_interactiveTextBitmap;
+    wxMemoryDC *m_interactiveTextDc;
 #ifdef wxUSE_GRAPHICS_CONTEXT
-    wxGCDC            *m_interactiveTextGcdc;
+    wxGCDC     *m_interactiveTextGcdc;
 #endif
 
     //Size and Scale
