@@ -861,6 +861,15 @@ subroutine plcontour_0( z, kx, lx, ky, ly, clevel )
             type(c_ptr), value, intent(in) :: data
         end function plf2evalr
     end interface
+    interface
+        subroutine pltr0f( x, y, tx, ty, data ) bind(c, name = 'pltr0f' )
+            use plplot_types, only: private_plflt, PLcGrid
+            implicit none
+            real(kind=private_plflt), value, intent(in) :: x, y
+            real(kind=private_plflt), intent(out) :: tx, ty
+            type(PLcGrid), intent(in) :: data
+        end subroutine pltr1
+    end interface
 
     interface
         subroutine interface_plfcont( lookup, grid, nx, ny, kx, lx, ky, ly, clevel, nlevel, transform, data ) &
@@ -870,10 +879,28 @@ subroutine plcontour_0( z, kx, lx, ky, ly, clevel )
             implicit none
             integer(kind=private_plint), value, intent(in) :: nx, ny, kx, lx, ky, ly, nlevel
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
-            type(c_funptr) :: lookup
             type(c_ptr), value, intent(in) :: grid
-            type(c_funptr) :: transform
             type(c_ptr), intent(in) :: data
+            interface
+                function lookup( ix, iy, data ) bind(c)
+                    use iso_c_binding, only: c_ptr
+                    use plplot_types, only: private_plflt, private_plint
+                    implicit none
+                    real(kind=private_plflt) :: lookup
+                    integer(kind=private_plint), value, intent(in) :: ix, iy
+                    type(c_ptr), value, intent(in) :: data
+                end function lookup
+            end interface
+            interface
+                subroutine transform( x, y, tx, ty, data ) bind(c)
+                    use plplot_types, only: private_plflt, PLcGrid
+                    use iso_c_binding, only: c_ptr
+                    implicit none
+                    real(kind=private_plflt), value, intent(in)  :: x, y
+                    real(kind=private_plflt), intent(out) :: tx, ty
+                    type(c_ptr), value, intent(in) :: data
+                end subroutine transform
+            end interface
         end subroutine interface_plfcont
     end interface
 
@@ -885,7 +912,7 @@ subroutine plcontour_0( z, kx, lx, ky, ly, clevel )
 
     call interface_plfcont( c_funloc(plf2evalr), c_loc(fgrid_local), size(z,1,kind=private_plint), size(z,2,kind=private_plint), &
                   kx, lx, ky, ly, real(clevel, kind=private_plflt), size(clevel,kind=private_plint), &
-                  c_null_funptr, c_null_ptr )
+                  plplot_private_pltr0f, c_null_ptr )
     deallocate(z_in)
 end subroutine plcontour_0
 

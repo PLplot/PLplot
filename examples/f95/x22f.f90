@@ -20,7 +20,7 @@
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 !      Does several contour plots using different coordinate mappings.
- 
+
   program x22f95
       use plplot
       implicit none
@@ -163,14 +163,19 @@ contains
 
 ! Global transform function for a constriction using data passed in
 ! This is the same transformation used in constriction.
+! Note:
+! We need to use double precision here, independent of what precision is used
+! in the rest of the program
+!
       subroutine transform( x, y, xt, yt )
       use plplot, PI => PL_PI
       implicit none
 
-      real(kind=plflt), intent(in) ::  x, y
-      real(kind=plflt), intent(out) :: xt, yt
+      integer, parameter :: double = kind(1.0d0)
+      real(kind=double), intent(in) ::  x, y
+      real(kind=double), intent(out) :: xt, yt
 
-      real(kind=plflt) xmax
+      real(kind=double) xmax
       common /transform_data/ xmax
 
       xt = x
@@ -203,7 +208,7 @@ contains
       ymax = dble(ny)/2.0_plflt*dy
 
 
-      call plstransform( transform, 0.0_plflt ) ! Second argument for disambiguation
+      call plstransform( transform )
 
       Q = 2.0_plflt
       do i=1,nx
