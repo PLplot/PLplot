@@ -1,6 +1,6 @@
 !      Vector plot demo.
 !
-!      Copyright (C) 2004  Alan W. Irwin
+!      Copyright (C) 2004-2016  Alan W. Irwin
 !      Copyright (C) 2004  Andrew Ross
 !
 !      This file is part of PLplot.
@@ -20,6 +20,8 @@
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 !      Does several contour plots using different coordinate mappings.
+ 
+  program x22f95
       use plplot
       implicit none
 
@@ -63,8 +65,8 @@
 
       call plend
 
-      end
 
+contains
 !     vector plot of the circulation around the origin
       subroutine circulation()
       use plplot
@@ -105,7 +107,7 @@
       call plvect(u,v,scaling,xg,yg)
       call plcol0(1)
 
-      end
+    end subroutine circulation
 
 !     vector plot of the flow through a constricted pipe
       subroutine constriction( astyle )
@@ -157,7 +159,7 @@
       call plvect(u,v,scaling,xg,yg)
       call plcol0(1)
 
-      end
+    end subroutine constriction
 
 ! Global transform function for a constriction using data passed in
 ! This is the same transformation used in constriction.
@@ -165,7 +167,8 @@
       use plplot, PI => PL_PI
       implicit none
 
-      real(kind=plflt) x, y, xt, yt
+      real(kind=plflt), intent(in) ::  x, y
+      real(kind=plflt), intent(out) :: xt, yt
 
       real(kind=plflt) xmax
       common /transform_data/ xmax
@@ -190,8 +193,6 @@
       real(kind=plflt) clev(nc);
       common /transform_data/ ymax
       character(len=1) defined
-
-      external transform
 
       dx = 1.0_plflt
       dy = 1.0_plflt
@@ -235,7 +236,7 @@
       call plpath(nseg, xmin, ymin, xmax, ymin)
       call plcol0(1)
 
-      call plstransform
+      call plstransform()
 
       end subroutine constriction2
 
@@ -326,7 +327,7 @@
 
       call plline(px,py)
 
-      end
+    end subroutine potential
 
 !----------------------------------------------------------------------------
 !      Subroutine a2mnmx
@@ -347,4 +348,5 @@
           fmin = min(fmin, f(i, j))
         enddo
       enddo
-      end
+    end subroutine a2mnmx
+  end program x22f95
