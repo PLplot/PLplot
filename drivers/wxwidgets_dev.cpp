@@ -441,7 +441,11 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     m_interactiveTextBitmap.Create( 1, 1, 24 );
     m_interactiveTextDc = new wxMemoryDC( m_interactiveTextBitmap );
 #if defined(wxUSE_GRAPHICS_CONTEXT) && defined(WIN32)
-    m_interactiveTextGcdc = new wxGCDC( wxGraphicsContext::Create(m_interactiveTextDc) ); //note that the wxGCDC will delete the wxGraphicsContext so we don't need to remember it
+	//On Windows we create a wxGraphicsContext and from it a wxGCDC, this is because we use a wxGCDC in wxPLViewer
+	//On Linux this causes a crash, which is odd because it appears that a wxMemoryDC uses a wxGraphicsContext
+	//internally anyway.
+	//note that the wxGCDC will delete the wxGraphicsContext so we don't need to remember it
+    m_interactiveTextGcdc = new wxGCDC( wxGraphicsContext::Create(m_interactiveTextDc) ); 
 #endif
 
     m_prevSingleCharString       = 0;
