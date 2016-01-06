@@ -288,10 +288,8 @@ module plplot
 
     interface plstransform
         module procedure plstransform_double
-        module procedure plstransform_single
         module procedure plstransform_null
     end interface plstransform
-    private :: plstransform_single
     private :: plstransform_double
     private :: plstransform_null
 
@@ -1350,10 +1348,8 @@ subroutine plstransform_null
     call interface_plstransform( c_null_funptr, c_null_ptr )
 end subroutine plstransform_null
 
-subroutine plstransform_double( proc, data )
+subroutine plstransform_double( proc )
     procedure(pltransform_proc_double) :: proc
-    real(kind=private_double) :: data
-
     interface
         subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
             use iso_c_binding, only: c_funptr, c_ptr
@@ -1365,22 +1361,6 @@ subroutine plstransform_double( proc, data )
     pltransform_double => proc
     call interface_plstransform( c_funloc(pltransformf2c_double), c_null_ptr )
 end subroutine plstransform_double
-
-subroutine plstransform_single( proc, data )
-    procedure(pltransform_proc_single) :: proc
-    real(kind=private_single) :: data
-
-    interface
-        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-            use iso_c_binding, only: c_funptr, c_ptr
-            type(c_funptr), value, intent(in) :: proc
-            type(c_ptr), value, intent(in) :: data
-        end subroutine interface_plstransform
-    end interface
-
-    pltransform_single => proc
-    call interface_plstransform( c_funloc(pltransformf2c_single), c_null_ptr )
-end subroutine plstransform_single
 
 subroutine plstripd( id )
     integer, intent(in) :: id
