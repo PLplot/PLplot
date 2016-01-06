@@ -440,7 +440,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     m_dc = NULL;
     m_interactiveTextBitmap.Create( 1, 1, 24 );
     m_interactiveTextDc = new wxMemoryDC( m_interactiveTextBitmap );
-#ifdef wxUSE_GRAPHICS_CONTEXT
+#ifdef wxUSE_GRAPHICS_CONTEXT && WIN32
     m_interactiveTextGcdc = new wxGCDC( wxGraphicsContext::Create(m_interactiveTextDc) ); //note that the wxGCDC will delete the wxGraphicsContext so we don't need to remember it
 #endif
 
@@ -535,7 +535,7 @@ wxPLDevice::~wxPLDevice()
     }
 
     delete m_interactiveTextDc;
-#ifdef wxUSE_GRAPHICS_CONTEXT
+#ifdef wxUSE_GRAPHICS_CONTEXT && WIN32
     delete m_interactiveTextGcdc;
 #endif
 }
@@ -1103,7 +1103,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
     else
     {
         wxFont theFont = font.getWxFont();
-#ifdef wxUSE_GRAPHICS_CONTEXT
+#ifdef wxUSE_GRAPHICS_CONTEXT && WIN32
         m_interactiveTextGcdc->GetTextExtent( section, &sectionWidth, &sectionHeight,
             &sectionDepth, &leading, &theFont );
 #else
