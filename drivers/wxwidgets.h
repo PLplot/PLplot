@@ -30,9 +30,7 @@
 // some special wxWidgets headers
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
-#ifdef wxUSE_GRAPHICS_CONTEXT
 #include <wx/dcgraph.h>
-#endif
 
 class wxPLplotFrame;
 
@@ -116,11 +114,8 @@ private:
 
     //A device context specifically for checking the size of text for use with
     //the interactive viewer.
-    wxBitmap   m_interactiveTextBitmap;
-    wxMemoryDC *m_interactiveTextDc;
-#ifdef wxUSE_GRAPHICS_CONTEXT
+	wxImage    m_interactiveTextImage;
     wxGCDC     *m_interactiveTextGcdc;
-#endif
 
     //Size and Scale
     //As far as plplot is concerned the size of the window is SHRT_MAX by

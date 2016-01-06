@@ -431,22 +431,24 @@ Font FontGrabber::GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underlined 
 //  class. Only some initialisations are done.
 //--------------------------------------------------------------------------
 wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
-    : m_plplotEdgeLength( PLFLT( SHRT_MAX ) )
+    : m_plplotEdgeLength( PLFLT( SHRT_MAX ) ), m_interactiveTextImage(1,1)
 {
     m_fixedAspect = false;
 
     m_lineSpacing = 1.0;
 
     m_dc = NULL;
-    m_interactiveTextBitmap.Create( 1, 1, 24 );
-    m_interactiveTextDc = new wxMemoryDC( m_interactiveTextBitmap );
-#if defined ( wxUSE_GRAPHICS_CONTEXT ) && defined ( WIN32 )
-    //On Windows we create a wxGraphicsContext and from it a wxGCDC, this is because we use a wxGCDC in wxPLViewer
-    //On Linux this causes a crash, which is odd because it appears that a wxMemoryDC uses a wxGraphicsContext
-    //internally anyway.
-    //note that the wxGCDC will delete the wxGraphicsContext so we don't need to remember it
-    m_interactiveTextGcdc = new wxGCDC( wxGraphicsContext::Create( m_interactiveTextDc ) );
-#endif
+
+	wxGraphicsContext *gc = wxGraphicsContext::Create(m_interactiveTextImage);
+	try
+	{
+		m_interactiveTextGcdc = new wxGCDC(gc);
+	}
+	catch (...)
+	{
+		delete gc;
+		throw;
+	}
 
     m_prevSingleCharString       = 0;
     m_prevSingleCharStringWidth  = 0;
@@ -538,10 +540,7 @@ wxPLDevice::~wxPLDevice()
         header->completeFlag = 1;
     }
 
-    delete m_interactiveTextDc;
-#if defined ( wxUSE_GRAPHICS_CONTEXT ) && defined ( WIN32 )
     delete m_interactiveTextGcdc;
-#endif
 }
 
 //--------------------------------------------------------------------------
@@ -1107,13 +1106,8 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
     else
     {
         wxFont theFont = font.getWxFont();
-#if defined ( wxUSE_GRAPHICS_CONTEXT ) && defined ( WIN32 )
         m_interactiveTextGcdc->GetTextExtent( section, &sectionWidth, &sectionHeight,
             &sectionDepth, &leading, &theFont );
-#else
-        m_interactiveTextDc->GetTextExtent( section, &sectionWidth, &sectionHeight,
-            &sectionDepth, &leading, &theFont );
-#endif
         sectionDepth += leading;
     }
 
