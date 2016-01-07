@@ -22,14 +22,23 @@
 !      Does several contour plots using different coordinate mappings.
 
   program x22f95
-      use plplot
+    use plplot, PI => PL_PI
+    use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
       implicit none
+
+      integer, parameter :: double = kind(1.0d0)
+      real(kind=double) common_max
 
       integer narr
       logical fill
       parameter (narr=6)
       real(kind=plflt) arrow_x(narr),arrow_y(narr), &
-        arrow2_x(narr),arrow2_y(narr)
+           arrow2_x(narr),arrow2_y(narr)
+
+      type callback_data_type
+         ! Only contains data required by the tranform_data callback
+         real(kind=double) max
+      end type callback_data_type
 
       data arrow_x/-0.5_plflt, 0.5_plflt, 0.3_plflt, 0.5_plflt, 0.3_plflt, 0.5_plflt/
       data arrow_y/0._plflt, 0._plflt, 0.2_plflt, 0._plflt, -0.2_plflt, 0._plflt/
@@ -69,8 +78,6 @@
 contains
 !     vector plot of the circulation around the origin
       subroutine circulation()
-      use plplot
-      implicit none
 
       integer i, j, nx, ny
       parameter (nx=20, ny=20)
@@ -111,8 +118,6 @@ contains
 
 !     vector plot of the flow through a constricted pipe
       subroutine constriction( astyle )
-      use plplot, PI => PL_PI
-      implicit none
 
       integer i, j, nx, ny, astyle
       parameter (nx=20, ny=20)
@@ -168,25 +173,30 @@ contains
 ! in the rest of the program
 !
       subroutine transform( x, y, xt, yt )
-      use plplot, PI => PL_PI
-      implicit none
 
-      integer, parameter :: double = kind(1.0d0)
       real(kind=double), intent(in) ::  x, y
       real(kind=double), intent(out) :: xt, yt
 
-      real(kind=double) xmax
-      common /transform_data/ xmax
+      xt = x
+      yt = y / 4.0_plflt * ( 3.0_plflt - cos( PI * x / common_max ) )
+      end subroutine transform
+
+! Variant of transform that carries a generic data argument.
+      subroutine transform_data( x, y, xt, yt, data )
+
+      real(kind=double), intent(in) ::  x, y
+      real(kind=double), intent(out) :: xt, yt
+      type(c_ptr), intent(in) :: data
+      type(callback_data_type), pointer :: d
+      call c_f_pointer(data, d)
 
       xt = x
-      yt = y / 4.0_plflt * ( 3.0_plflt - cos( PI * x / xmax ) )
-      end subroutine transform
+      yt = y / 4.0_plflt * ( 3.0_plflt - cos( PI * x / d%max ) )
+      end subroutine transform_data
 
 ! Vector plot of flow through a constricted pipe
 ! with a coordinate transform
       subroutine constriction2()
-      use plplot, PI => PL_PI
-      implicit none
 
       integer i, j, nx, ny, nc, nseg
       parameter (nx=20, ny=20, nc=11, nseg=20)
@@ -196,8 +206,9 @@ contains
       real(kind=plflt) Q, b, scaling
       real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
       real(kind=plflt) clev(nc);
-      common /transform_data/ ymax
       character(len=1) defined
+
+      type(callback_data_type), target :: data
 
       dx = 1.0_plflt
       dy = 1.0_plflt
@@ -206,9 +217,15 @@ contains
       xmax = dble(nx)/2.0_plflt*dx
       ymin = -dble(ny)/2.0_plflt*dy
       ymax = dble(ny)/2.0_plflt*dy
+      common_max = ymax
+      data%max = common_max
 
 
-      call plstransform( transform )
+      if(.false.) then
+         call plstransform( transform )
+      else
+         call plstransform( transform_data, c_loc(data))
+      endif
 
       Q = 2.0_plflt
       do i=1,nx
@@ -246,8 +263,6 @@ contains
       end subroutine constriction2
 
       subroutine potential()
-      use plplot, PI => PL_PI
-      implicit none
 
       integer i, j, nr, ntheta, nper, nlevel
       parameter (nr=20, ntheta=20, nper=100, nlevel=10)
@@ -339,8 +354,6 @@ contains
 !      Minimum and the maximum elements of a 2-d array.
 
       subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
-      use plplot
-      implicit none
 
       integer   i, j, nx, ny, xdim
       real(kind=plflt)    f(xdim, ny), fmin, fmax

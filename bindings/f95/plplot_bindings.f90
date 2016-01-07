@@ -213,6 +213,16 @@ module plplot_double
     end interface
     procedure(pltransform_proc_double), pointer :: pltransform_double
 
+    abstract interface
+        subroutine pltransform_proc_data_double( x, y, tx, ty, data )
+            import :: private_double, c_ptr
+            real(kind=private_double), intent(in) :: x, y
+            real(kind=private_double), intent(out) :: tx, ty
+            type(c_ptr), intent(in) :: data
+        end subroutine pltransform_proc_data_double
+    end interface
+    procedure(pltransform_proc_data_double), pointer :: pltransform_data_double
+
     include 'included_plplot_real_interfaces.f90'
 
   subroutine pltransformf2c_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_double')
@@ -227,6 +237,18 @@ module plplot_double
         ty = ty_out
     end subroutine pltransformf2c_double
 
+  subroutine pltransformf2c_data_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_data_double')
+        real(kind=private_plflt), value :: x, y
+        real(kind=private_plflt), intent(out) :: tx, ty
+        type(c_ptr), value, intent(in) :: data
+
+        real(kind=wp) :: tx_out, ty_out
+
+        call pltransform_data_double( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out, data )
+        tx = tx_out
+        ty = ty_out
+    end subroutine pltransformf2c_data_double
+
 end module plplot_double
 
 module plplot
@@ -234,7 +256,7 @@ module plplot
     use plplot_double
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     use plplot_graphics
-    use iso_c_binding, only: c_char, c_loc, c_funloc, c_null_char, c_null_ptr, c_null_funptr
+    use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_null_char, c_null_ptr, c_null_funptr
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -288,9 +310,11 @@ module plplot
 
     interface plstransform
         module procedure plstransform_double
+        module procedure plstransform_data_double
         module procedure plstransform_null
     end interface plstransform
     private :: plstransform_double
+    private :: plstransform_data_double
     private :: plstransform_null
 
     interface plsvect
@@ -1361,6 +1385,21 @@ subroutine plstransform_double( proc )
     pltransform_double => proc
     call interface_plstransform( c_funloc(pltransformf2c_double), c_null_ptr )
 end subroutine plstransform_double
+
+subroutine plstransform_data_double( proc, data )
+    procedure(pltransform_proc_data_double) :: proc
+    type(c_ptr), intent(in) :: data
+    interface
+        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
+            use iso_c_binding, only: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plstransform
+    end interface
+
+    pltransform_data_double => proc
+    call interface_plstransform( c_funloc(pltransformf2c_data_double), data )
+end subroutine plstransform_data_double
 
 subroutine plstripd( id )
     integer, intent(in) :: id
