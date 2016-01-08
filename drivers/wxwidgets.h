@@ -114,8 +114,8 @@ private:
 
     //A device context specifically for checking the size of text for use with
     //the interactive viewer.
-	wxImage    m_interactiveTextImage;
-    wxGCDC     *m_interactiveTextGcdc;
+    wxImage m_interactiveTextImage;
+    wxGCDC  *m_interactiveTextGcdc;
 
     //Size and Scale
     //As far as plplot is concerned the size of the window is SHRT_MAX by

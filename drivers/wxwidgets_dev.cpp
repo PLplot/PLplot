@@ -431,7 +431,7 @@ Font FontGrabber::GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underlined 
 //  class. Only some initialisations are done.
 //--------------------------------------------------------------------------
 wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
-    : m_plplotEdgeLength( PLFLT( SHRT_MAX ) ), m_interactiveTextImage(1,1)
+    : m_plplotEdgeLength( PLFLT( SHRT_MAX ) ), m_interactiveTextImage( 1, 1 )
 {
     m_fixedAspect = false;
 
@@ -439,16 +439,16 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 
     m_dc = NULL;
 
-	wxGraphicsContext *gc = wxGraphicsContext::Create(m_interactiveTextImage);
-	try
-	{
-		m_interactiveTextGcdc = new wxGCDC(gc);
-	}
-	catch (...)
-	{
-		delete gc;
-		throw;
-	}
+    wxGraphicsContext *gc = wxGraphicsContext::Create( m_interactiveTextImage );
+    try
+    {
+        m_interactiveTextGcdc = new wxGCDC( gc );
+    }
+    catch ( ... )
+    {
+        delete gc;
+        throw;
+    }
 
     m_prevSingleCharString       = 0;
     m_prevSingleCharStringWidth  = 0;
