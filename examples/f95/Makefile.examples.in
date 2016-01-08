@@ -56,6 +56,7 @@ EXECUTABLES_list = \
 		 x16af$(EXEEXT) \
 		 x17f$(EXEEXT) \
 		 x18f$(EXEEXT) \
+		 x19f$(EXEEXT) \
 		 x20f$(EXEEXT) \
 		 x21f$(EXEEXT) \
 		 x22f$(EXEEXT) \
@@ -70,8 +71,6 @@ EXECUTABLES_list = \
 		 x31f$(EXEEXT) \
 		 x33f$(EXEEXT)
 
-unbuilt_EXECUTABLES_list = \
-		 x19f$(EXEEXT)
 
 
 all: $(EXECUTABLES_list)
