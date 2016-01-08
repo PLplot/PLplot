@@ -174,6 +174,7 @@ contains
 !
       subroutine transform( x, y, xt, yt )
 
+      ! These callback arguments must have exactly these attributes.
       real(kind=double), intent(in) ::  x, y
       real(kind=double), intent(out) :: xt, yt
 
@@ -184,9 +185,11 @@ contains
 ! Variant of transform that carries a generic data argument.
       subroutine transform_data( x, y, xt, yt, data )
 
+      ! These callback arguments must have exactly these attributes.
       real(kind=double), intent(in) ::  x, y
       real(kind=double), intent(out) :: xt, yt
       type(c_ptr), intent(in) :: data
+
       type(callback_data_type), pointer :: d
       call c_f_pointer(data, d)
 
