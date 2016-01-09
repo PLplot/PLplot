@@ -42,20 +42,16 @@
 
 #include "plplotP.h"
 
-#ifdef HAVE_SHAPELIB
-#include <shapefil.h>
 
-SHPHandle
-OpenShapeFile( const char *fn );
-
-#ifdef HAVE_SAHOOKS
-static void
-CustomErrors( const char *message );
-#endif //HAVE_SAHOOKS
-
-#define MAP_FILE    ""
-#define OpenMap     OpenShapeFile
-#define CloseMap    SHPClose
+#define MAP_FILE        ".map"
+#define OpenMap         plLibOpenPdfstrm
+#define CloseMap        pdf_close
+#define OFFSET          ( 180 * 100 )
+#define SCALE           100.0
+#define W_BUFSIZ        ( 32 * 1024 )
+#define SHPT_ARC        1
+#define SHPT_POINT      2
+#define SHPT_POLYGON    3
 
 //redistributes the lon value onto either 0-360 or -180-180 for wrapping
 //purposes.
@@ -157,13 +153,6 @@ drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT 
             plptex( x[i], y[i], dx, dy, just, text );
     else if ( shapetype == SHPT_POLYGON )
         plfill( n, x, y );
-    else if ( shapetype == SHPT_ARCZ || shapetype == SHPT_ARCM )
-        plline( n, x, y );
-    else if ( shapetype == SHPT_POLYGON || shapetype == SHPT_POLYGONZ || shapetype == SHPT_POLYGONM )
-        plfill( n, x, y );
-    else if ( shapetype == SHPT_POINT || shapetype == SHPT_POINTM || shapetype == SHPT_POINTZ )
-        for ( i = 0; i < n; ++i )
-            plptex( x[i], y[i], dx, dy, just, text );
 }
 
 
@@ -199,42 +188,30 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
          PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
-    int   i, j;
-    char  *filename = NULL;
-    char  truncatedfilename[900];
-    char  warning[1024];
-    int   nVertices = 200;
-    PLFLT minsectlon, maxsectlon, minsectlat, maxsectlat;
-    PLFLT *bufx   = NULL, *bufy = NULL;
-    int   bufsize = 0;
-    int   filenamelen;
-    PLFLT **splitx             = NULL;
-    PLFLT **splity             = NULL;
-    int   *splitsectionlengths = NULL;
-    int   nsplitsections;
-    PLFLT lastsplitpointx;
-    PLFLT lastsplitpointy;
-    PLFLT penultimatesplitpointx;
-    PLFLT penultimatesplitpointy;
-    char  islatlon     = 1;
-    int   appendresult = 0;
+    int           i, j;
+    char          *filename = NULL;
+    char          truncatedfilename[900];
+    char          warning[1024];
+    int           nVertices = 200;
+    PLFLT         minsectlon, maxsectlon, minsectlat, maxsectlat;
+    PLFLT         *bufx   = NULL, *bufy = NULL;
+    int           bufsize = 0;
+    int           filenamelen;
+    PLFLT         **splitx             = NULL;
+    PLFLT         **splity             = NULL;
+    int           *splitsectionlengths = NULL;
+    int           nsplitsections;
+    PLFLT         lastsplitpointx;
+    PLFLT         lastsplitpointy;
+    PLFLT         penultimatesplitpointx;
+    PLFLT         penultimatesplitpointy;
+    char          islatlon     = 1;
+    int           appendresult = 0;
 
-
-    SHPHandle in;
-    int       nentries;
-    int       entryindex = 0;
-    // Unnecessarily set nparts to quiet -O3 -Wuninitialized warnings.
-    //int              nparts      = 0;
-    int       entrynumber = 0;
-    int       partnumber  = 0;
-    double    mins[4];
-    double    maxs[4];
-    SHPObject *object = NULL;
-    double    *bufxraw;
-    double    *bufyraw;
-    char      *prjfilename = NULL;
-    PDFstrm   *prjfile;
-    char      prjtype[] = { 0, 0, 0, 0, 0, 0, 0 };
+    PDFstrm       *in;
+    //PLFLT            bufx[ncopies][200], bufy[ncopies][200];
+    unsigned char n_buff[2], buff[800];
+    long int      t;
 
     //
     // read map outline
@@ -271,79 +248,17 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
     strcpy( warning, "Could not find " );
     strcat( warning, filename );
     strcat( warning, " file." );
-    //Open the shp and shx file using shapelib
-    if ( ( in = OpenShapeFile( filename ) ) == NULL )
+    if ( ( in = plLibOpenPdfstrm( filename ) ) == NULL )
     {
-        plabort( warning );
-        free( filename );
+        plwarn( warning );
         return;
     }
-    SHPGetInfo( in, &nentries, &shapetype, mins, maxs );
-    //also check for a prj file which will tell us if the data is lat/lon or projected
-    //if it is projected then set ncopies to 1 - i.e. don't wrap round longitudes
-    prjfilename = (char *) malloc( filenamelen + 5 );
-    if ( !prjfilename )
-    {
-        free( filename );
-        plabort( "Could not allocate memory for generating map projection filename" );
-        return;
-    }
-    strncpy( prjfilename, name, filenamelen );
-    prjfilename[ filenamelen ] = '\0';
-    strcat( prjfilename, ".prj" );
-    prjfile = plLibOpenPdfstrm( prjfilename );
-    if ( prjfile && prjfile->file )
-    {
-        fread( prjtype, 1, 6, prjfile->file );
-        if ( strcmp( prjtype, "PROJCS" ) == 0 )
-            islatlon = 0;
-        pdf_close( prjfile );
-    }
-    free( prjfilename );
-    prjfilename = NULL;
 
     bufx = NULL;
     bufy = NULL;
 
     for (;; )
     {
-        //each object in the shapefile is split into parts.
-        //If we are need to plot the first part of an object then read in a new object
-        //and check how many parts it has. Otherwise use the object->panPartStart vector
-        //to check the offset of this part and the next part and allocate memory. Copy
-        //the data to this memory converting it to PLFLT and draw it.
-        //finally increment the part number or if we have finished with the object reset the
-        //part numberand increment the object.
-
-        //break condition if we've reached the end of the file
-        if ( ( !plotentries && ( entrynumber == nentries ) ) || ( plotentries && ( entryindex == nplotentries ) ) )
-            break;
-
-        //if partnumber == 0 then we need to load the next object
-        if ( partnumber == 0 )
-        {
-            if ( plotentries )
-                object = SHPReadObject( in, plotentries[entryindex] );
-            else
-                object = SHPReadObject( in, entrynumber );
-        }
-        //if the object could not be read, increment the object index to read and
-        //return to the top of the loop to try the next object.
-        if ( object == NULL )
-        {
-            entrynumber++;
-            entryindex++;
-            partnumber = 0;
-            continue;
-        }
-
-        //work out how many points are in the current part
-        if ( object->nParts == 0 )
-            nVertices = object->nVertices;                                                       //if object->nParts==0, we can still have 1 vertex. A bit odd but it's the way it goes
-        else if ( partnumber == ( object->nParts - 1 ) )
-            nVertices = object->nVertices - object->panPartStart[partnumber];                    //panPartStart holds the offset for each part
-        else
-            nVertices = object->panPartStart[partnumber + 1] - object->panPartStart[partnumber]; //panPartStart holds the offset for each part
         //allocate memory for the data
         if ( nVertices > bufsize )
         {
@@ -362,47 +277,33 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
             }
         }
 
-        //point the plot buffer to the correct starting vertex
-        //and copy it to the PLFLT arrays. If we had object->nParts == 0
-        //then panPartStart will be NULL
-        if ( object->nParts > 0 )
-        {
-            bufxraw = object->padfX + object->panPartStart[partnumber];
-            bufyraw = object->padfY + object->panPartStart[partnumber];
-        }
-        else
-        {
-            bufxraw = object->padfX;
-            bufyraw = object->padfY;
-        }
-
-        for ( i = 0; i < nVertices; i++ )
-        {
-            bufx[i] = (PLFLT) bufxraw[i];
-            bufy[i] = (PLFLT) bufyraw[i];
-        }
-
-        //set the min x/y of the object
-        minsectlon = object->dfXMin;
-        maxsectlon = object->dfXMax;
-        minsectlat = object->dfYMin;
-        maxsectlat = object->dfYMax;
-
-        //increment the partnumber or if we've reached the end of
-        //an entry increment the entrynumber and set partnumber to 0
-        if ( partnumber == object->nParts - 1 || object->nParts == 0 )
-        {
-            entrynumber++;
-            entryindex++;
-            partnumber = 0;
-            SHPDestroyObject( object );
-            object = NULL;
-        }
-        else
-            partnumber++;
-
+        // read in # points in segment
+        if ( pdf_rdx( n_buff, (long) sizeof ( unsigned char ) * 2, in ) == 0 )
+            break;
+        nVertices = ( n_buff[0] << 8 ) + n_buff[1];
         if ( nVertices == 0 )
+            break;
+
+        pdf_rdx( buff, (long) sizeof ( unsigned char ) * 4 * nVertices, in );
+        if ( nVertices == 1 )
             continue;
+
+        for ( j = i = 0; i < nVertices; i++, j += 2 )
+        {
+            t       = ( buff[j] << 8 ) + buff[j + 1];
+            bufx[i] = ( (PLFLT) t - OFFSET ) / SCALE;
+        }
+        for ( i = 0; i < nVertices; i++, j += 2 )
+        {
+            t       = ( buff[j] << 8 ) + buff[j + 1];
+            bufy[i] = ( (PLFLT) t - OFFSET ) / SCALE;
+        }
+        //set the min/max section lat/lon with extreme values
+        //to be overwritten later
+        minsectlon = 1000.;
+        maxsectlon = -1000.;
+        minsectlat = 1000.;
+        maxsectlat = -1000.;
 
         if ( islatlon )
         {
@@ -561,14 +462,14 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
         free( splitsectionlengths );
     }
     // Close map file
-    SHPClose( in );
+    pdf_close( in );
 
     //free memory
     free( bufx );
     free( bufy );
     free( filename );
 }
-#endif //HAVE_SHAPELIB
+
 
 
 //--------------------------------------------------------------------------
@@ -615,12 +516,8 @@ void
 plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
        PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy )
 {
-#ifdef HAVE_SHAPELIB
     drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, NULL, minx, maxx,
         miny, maxy, NULL, 0 );
-#else
-    plwarn( "plmap is a no-op because shapelib is not available." );
-#endif
 }
 
 //--------------------------------------------------------------------------
@@ -645,12 +542,9 @@ plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
            const PLINT *plotentries, PLINT nplotentries )
 {
-#ifdef HAVE_SHAPELIB
-    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, "", minx, maxx,
-        miny, maxy, plotentries, nplotentries );
-#else
-    plwarn( "plmapline is a no-op because shapelib is not available." );
-#endif
+//    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, "", minx, maxx,
+//      miny, maxy, plotentries, nplotentries );
+    plwarn( "plmapline not available when -DPL_DEPRECATED=ON cmake option is used." );
 }
 
 //--------------------------------------------------------------------------
@@ -668,12 +562,9 @@ plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
              PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
              const PLINT *plotentries, PLINT nplotentries )
 {
-#ifdef HAVE_SHAPELIB
-    drawmap( mapform, name, 1.0, 0.0, SHPT_POINT, 0.5, string, minx, maxx,
-        miny, maxy, plotentries, nplotentries );
-#else
-    plwarn( "plmapstring is a no-op because shapelib is not available." );
-#endif
+//    drawmap( mapform, name, 1.0, 0.0, SHPT_POINT, 0.5, string, minx, maxx,
+//        miny, maxy, plotentries, nplotentries );
+    plwarn( "plmapstring not available when -DPL_DEPRECATED=ON cmake option is used." );
 }
 
 //--------------------------------------------------------------------------
@@ -691,12 +582,9 @@ plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
           PLINT plotentry )
 {
-#ifdef HAVE_SHAPELIB
-    drawmap( mapform, name, dx, dy, SHPT_POINT, just, text, minx, maxx,
-        miny, maxy, &plotentry, 1 );
-#else
-    plwarn( "plmaptex is a no-op because shapelib is not available." );
-#endif
+//    drawmap( mapform, name, dx, dy, SHPT_POINT, just, text, minx, maxx,
+//        miny, maxy, &plotentry, 1 );
+    plwarn( "plmaptext not available when -DPL_DEPRECATED=ON cmake option is used." );
 }
 
 //--------------------------------------------------------------------------
@@ -712,12 +600,9 @@ plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
            const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
            PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
-#ifdef HAVE_SHAPELIB
-    drawmap( mapform, name, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minx, maxx,
-        miny, maxy, plotentries, nplotentries );
-#else
-    plwarn( "plmapfill is a no-op because shapelib is not available." );
-#endif
+//    drawmap( mapform, name, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minx, maxx,
+//        miny, maxy, plotentries, nplotentries );
+    plwarn( "plmapfill not available when -DPL_DEPRECATED=ON cmake option is used." );
 }
 
 //--------------------------------------------------------------------------
@@ -818,125 +703,3 @@ plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
         }
     }
 }
-
-//--------------------------------------------------------------------------
-// SHPHandle OpenShapeFile(fn)
-//
-//! Returns a handle to a shapefile from the filename fn. Content based on
-//! plLibOpenPdfstrm in plctrl.c
-//! Locations checked:
-//!	PLPLOT_LIB_ENV = $(PLPLOT_LIB)
-//!	current directory
-//!	PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib
-//!	DATA_DIR
-//!	PLLIBDEV
-//!
-//! @param fn Name of the file.
-//!
-//! @Return handle to a shapefile on success or NULL if the file cannot be
-//! found
-//--------------------------------------------------------------------------
-#ifdef HAVE_SHAPELIB
-#ifdef HAVE_SAHOOKS
-// Our thanks to Frank Warmerdam, the developer of shapelib for suggesting
-// this approach for quieting shapelib "Unable to open" error messages.
-static
-void CustomErrors( const char *message )
-{
-    if ( strstr( message, "Unable to open" ) == NULL )
-        fprintf( stderr, "%s\n", message );
-}
-#endif
-
-SHPHandle
-OpenShapeFile( const char *fn )
-{
-    SHPHandle file;
-    char      *fs = NULL, *dn = NULL;
-#ifdef HAVE_SAHOOKS
-    SAHooks   sHooks;
-
-    SASetupDefaultHooks( &sHooks );
-    sHooks.Error = CustomErrors;
-#else
-    // Using ancient version of shapelib without SAHooks or SHPOpenLL.
-    // For this case live with the misleading "Unable to open" error
-    // messages.
-    // int sHooks;
-#define SHPOpenLL( a, b, c )    SHPOpen( a, b )
-#endif //HAVE_SAHOOKS
-
-//***   search build tree               ***
-
-    if ( plInBuildTree() == 1 )
-    {
-        plGetName( SOURCE_DIR, "data", fn, &fs );
-
-        if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
-            goto done;
-    }
-
-//***	search PLPLOT_LIB_ENV = $(PLPLOT_LIB)	***
-
-#if defined ( PLPLOT_LIB_ENV )
-    if ( ( dn = getenv( PLPLOT_LIB_ENV ) ) != NULL )
-    {
-        plGetName( dn, "", fn, &fs );
-
-        if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
-            goto done;
-        fprintf( stderr, PLPLOT_LIB_ENV "=\"%s\"\n", dn ); // what IS set?
-    }
-#endif  // PLPLOT_LIB_ENV
-
-//***	search current directory	***
-
-    if ( ( file = SHPOpenLL( fn, "rb", &sHooks ) ) != NULL )
-    {
-        pldebug( "OpenShapeFile", "Found file %s in current directory.\n", fn );
-        free_mem( fs );
-        return ( file );
-    }
-
-//***	search PLPLOT_HOME_ENV/lib = $(PLPLOT_HOME)/lib	***
-
-#if defined ( PLPLOT_HOME_ENV )
-    if ( ( dn = getenv( PLPLOT_HOME_ENV ) ) != NULL )
-    {
-        plGetName( dn, "lib", fn, &fs );
-
-        if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
-            goto done;
-        fprintf( stderr, PLPLOT_HOME_ENV "=\"%s\"\n", dn ); // what IS set?
-    }
-#endif  // PLPLOT_HOME_ENV/lib
-
-//***   search installed location	***
-
-#if defined ( DATA_DIR )
-    plGetName( DATA_DIR, "", fn, &fs );
-
-    if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
-        goto done;
-#endif  // DATA_DIR
-
-//***   search hardwired location	***
-
-#ifdef PLLIBDEV
-    plGetName( PLLIBDEV, "", fn, &fs );
-
-    if ( ( file = SHPOpenLL( fs, "rb", &sHooks ) ) != NULL )
-        goto done;
-#endif  // PLLIBDEV
-
-//***   not found, give up      ***
-    pldebug( "OpenShapeFile", "File %s not found.\n", fn );
-    free_mem( fs );
-    return NULL;
-
-done:
-    pldebug( "OpenShapeFile", "SHPOpen successfully opened two files with basename %s\n", fs );
-    free_mem( fs );
-    return ( file );
-}
-#endif //ifdef HAVE_SHAPELIB
