@@ -214,7 +214,7 @@
                call plcol0(15)
                call pllab("X", "Y", title(alg))
                call plshades(zg, defined, xmin, xmax, ymin, &
-                    ymax, clev, 1._plflt, 0, 1._plflt)
+                    ymax, clev, 1._plflt, 0, 1._plflt, .true. )
                call plcol0(2)
             else
 

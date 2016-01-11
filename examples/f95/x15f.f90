@@ -191,7 +191,7 @@
         -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
         shade_min, shade_max, &
         sh_cmap, sh_color, sh_width, &
-        min_color, min_width, max_color, max_width )
+        min_color, min_width, max_color, max_width, .true. )
 
       call plcol0(1)
       call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
@@ -256,7 +256,7 @@
           -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
-          min_color, min_width, max_color, max_width)
+          min_color, min_width, max_color, max_width, .true. )
       enddo
 
       call plcol0(1)

@@ -838,7 +838,7 @@ subroutine plconfigtime_impl( scale, offset1, offset2, ccontrol, ifbtime_offset,
 
    call interface_plconfigtime( &
         real(scale, kind=private_plflt), real(offset1, kind=private_plflt), real(offset2, kind=private_plflt), &
-        int(ccontrol, kind=private_plint), int(merge(1,0,ifbtime_offset), kind=private_plbool), &
+        int(ccontrol, kind=private_plint), int(merge(1,0,ifbtime_offset),kind=private_plbool), &
         int(year, kind=private_plint), int(month, kind=private_plint), int(day, kind=private_plint), &
         int(hour, kind=private_plint), int(min, kind=private_plint), real(sec, kind=private_plflt) )
 end subroutine plconfigtime_impl
@@ -1846,7 +1846,7 @@ subroutine plimagefr_impl_2( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin
         return
      end if
 
-     allocate( xg_in(nx_in+1,ny_in+1), yg_in(ny_in+1,ny_in+1) )
+     allocate( xg_in(nx_in+1,ny_in+1), yg_in(nx_in+1,ny_in+1) )
      xg_in = xg
      yg_in = yg
      cgrid_local%nx = nx_in + 1
@@ -2458,7 +2458,7 @@ subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_p
     if ( present(alt_hue_path) ) then
        allocate( ialt_hue_path_local(size(alt_hue_path)) )
        ialt_hue_path_local = int(merge(1,0,alt_hue_path),kind=private_plbool)
-
+       
        call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
                           real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                           real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
@@ -2622,15 +2622,15 @@ subroutine plsdiplz_impl( xmin, ymin, xmax, ymax )
 end subroutine plsdiplz_impl
 
 subroutine plshade_single_0( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
-                  min_color, min_width, max_color, max_width )
+                  min_color, min_width, max_color, max_width, rectangular )
     real(kind=wp), dimension(:,:), intent(in) :: z
     character(len=*), intent(in) :: defined
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
     real(kind=wp), intent(in) :: sh_width, min_width, max_width
     real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
     integer, intent(in) :: sh_cmap, min_color, max_color
+    logical, intent(in) :: rectangular
 
-    integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
 
@@ -2648,10 +2648,11 @@ subroutine plshade_single_0( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                                       min_color, min_width, max_color, max_width, &
                                       fill, rectangular, transform, data ) bind(c, name = 'c_plshade' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in) :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color, rectangular
+            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
             real(kind=private_plflt), value, intent(in) :: sh_width, min_width, max_width
             real(kind=private_plflt), value, intent(in) :: shade_min, shade_max, sh_color
@@ -2678,11 +2679,11 @@ subroutine plshade_single_0( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                    real(sh_width,kind=private_plflt), &
                    int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                    int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
-                   fill, rectangular, c_null_ptr, c_null_ptr )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool), c_null_ptr, c_null_ptr )
 end subroutine plshade_single_0
 
 subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
-                  min_color, min_width, max_color, max_width, xg, yg )
+                  min_color, min_width, max_color, max_width, rectangular, xg, yg )
     real(kind=wp), dimension(:,:), intent(in) :: z
     character(len=*), intent(in) :: defined
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
@@ -2690,10 +2691,10 @@ subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
     real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
     real(kind=wp), dimension(:), intent(in) :: xg, yg
     integer, intent(in) :: sh_cmap, min_color, max_color
+    logical, intent(in) :: rectangular
 
     integer(kind=private_plint) :: nx_in, ny_in
     real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
-    integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
     type(PLcGrid), target :: cgrid_local
@@ -2722,10 +2723,11 @@ subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                                       min_color, min_width, max_color, max_width, &
                                       fill, rectangular, transform, data ) bind(c, name = 'c_plshade' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in)  :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color, rectangular
+            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
             real(kind=private_plflt), value, intent(in) :: sh_width, min_width, max_width
             real(kind=private_plflt), value, intent(in) :: shade_min, shade_max, sh_color
@@ -2774,11 +2776,11 @@ subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                    real(sh_width,kind=private_plflt), &
                    int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                    int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
-                   fill, rectangular, pltr1, c_loc(cgrid_local) )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool), pltr1, c_loc(cgrid_local) )
 end subroutine plshade_single_1
 
 subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
-                  min_color, min_width, max_color, max_width, xg, yg )
+                  min_color, min_width, max_color, max_width, rectangular, xg, yg )
     real(kind=wp), dimension(:,:), intent(in) :: z
     character(len=*), intent(in) :: defined
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
@@ -2786,10 +2788,10 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
     real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
     real(kind=wp), dimension(:,:), intent(in) :: xg, yg
     integer, intent(in) :: sh_cmap, min_color, max_color
+    logical, intent(in) :: rectangular
 
     integer(kind=private_plint) :: nx_in, ny_in
     real(kind=private_plflt), dimension(:,:), allocatable, target :: xg_in, yg_in
-    integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
     type(PLcGrid), target :: cgrid_local
@@ -2819,10 +2821,11 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                                       min_color, min_width, max_color, max_width, &
                                       fill, rectangular, transform, data ) bind(c, name = 'c_plshade' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in)  :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color, rectangular
+            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
             real(kind=private_plflt), value, intent(in) :: sh_width, min_width, max_width
             real(kind=private_plflt), value, intent(in) :: shade_min, shade_max, sh_color
@@ -2874,20 +2877,20 @@ subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shad
                    real(sh_width,kind=private_plflt), &
                    int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                    int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
-                   fill, rectangular, pltr2f, c_loc(cgrid_local) )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool), pltr2f, c_loc(cgrid_local) )
 end subroutine plshade_single_2
 
 subroutine plshade_single_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
-                  min_color, min_width, max_color, max_width, tr )
+                  min_color, min_width, max_color, max_width, rectangular, tr )
     real(kind=wp), dimension(:,:), intent(in) :: z
     character(len=*), intent(in) :: defined
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
     real(kind=wp), intent(in) :: sh_width, min_width, max_width
     real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
+    logical, intent(in) :: rectangular
     real(kind=wp), dimension(:), intent(in) :: tr
     integer, intent(in) :: sh_cmap, min_color, max_color
 
-    integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
     real(kind=private_plflt), dimension(6), target :: tr_in
@@ -2906,10 +2909,11 @@ subroutine plshade_single_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, sha
                                       min_color, min_width, max_color, max_width, &
                                       fill, rectangular, transform, tr ) bind(c, name = 'c_plshade' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in)  :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color, rectangular
+            integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
             real(kind=private_plflt), value, intent(in) :: sh_width, min_width, max_width
             real(kind=private_plflt), value, intent(in) :: shade_min, shade_max, sh_color
@@ -2945,7 +2949,7 @@ subroutine plshade_single_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, sha
                    real(sh_width,kind=private_plflt), &
                    int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                    int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
-                   fill, rectangular, plplot_private_pltr, tr_in )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool), plplot_private_pltr, tr_in )
 end subroutine plshade_single_tr
 
 subroutine plshades_multiple_0( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -2955,12 +2959,11 @@ subroutine plshades_multiple_0( z, defined, xmin, xmax, ymin, ymax, clevel, fill
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
     real(kind=wp), intent(in) :: fill_width, cont_width
     real(kind=wp), dimension(:), intent(in) :: clevel
-    integer :: cont_color
-    logical, intent(in), optional :: rectangular
+    integer, intent(in) :: cont_color
+    logical, intent(in) :: rectangular
 
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
-    integer(kind=private_plint) :: rect
 
     interface
         subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
@@ -2975,10 +2978,11 @@ subroutine plshades_multiple_0( z, defined, xmin, xmax, ymin, ymax, clevel, fill
                                        clevel, nlevel, fill_width, cont_color, cont_width, &
                                        fill, rectangular, transform, data ) bind(c, name = 'c_plshades' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in)  :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, rectangular, nlevel
+            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
             real(kind=private_plflt), value, intent(in) :: cont_width
@@ -2997,33 +3001,28 @@ subroutine plshades_multiple_0( z, defined, xmin, xmax, ymin, ymax, clevel, fill
 
     call matrix_to_c( z, z_c_local, z_address_local )
 
-    rect = 1_private_plint
-    if ( present(rectangular) ) then
-        rect = merge( 1, 0, rectangular )
-    endif
-
     call interface_plshades( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
                    real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
                    real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
                    real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                    real(fill_width,kind=private_plflt), &
                    int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-                   fill, rect, c_null_ptr, c_null_ptr )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool),  c_null_ptr, c_null_ptr )
 end subroutine plshades_multiple_0
 
 subroutine plshades_multiple_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
-                  xg, yg )
+                  rectangular, xg, yg )
     real(kind=wp), dimension(:,:), intent(in) :: z
     character(len=*), intent(in) :: defined
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
     real(kind=wp), intent(in) :: fill_width, cont_width
     real(kind=wp), dimension(:), intent(in) :: clevel
-    integer :: cont_color
+    integer, intent(in) :: cont_color
+    logical, intent(in) :: rectangular
     real(kind=wp), dimension(:), intent(in) :: xg, yg
 
     integer(kind=private_plint) :: nx_in, ny_in
     real(kind=private_plflt), dimension(:), allocatable, target :: xg_in, yg_in
-    integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
     type(PLcGrid), target :: cgrid_local
@@ -3051,10 +3050,11 @@ subroutine plshades_multiple_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill
                                        clevel, nlevel, fill_width, cont_color, cont_width, &
                                        fill, rectangular, transform, data ) bind(c, name = 'c_plshades' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in)  :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, rectangular, nlevel
+            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
             real(kind=private_plflt), value, intent(in) :: cont_width
@@ -3102,22 +3102,22 @@ subroutine plshades_multiple_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill
                    real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                    real(fill_width,kind=private_plflt), &
                    int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-                   fill, rectangular, pltr1, c_loc(cgrid_local) )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool), pltr1, c_loc(cgrid_local) )
 end subroutine plshades_multiple_1
 
 subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
-                  xg, yg )
+                  rectangular, xg, yg )
     real(kind=wp), dimension(:,:), intent(in) :: z
     character(len=*), intent(in) :: defined
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
     real(kind=wp), intent(in) :: fill_width, cont_width
     real(kind=wp), dimension(:), intent(in) :: clevel
-    integer :: cont_color
+    integer, intent(in) :: cont_color
+    logical, intent(in) :: rectangular
     real(kind=wp), dimension(:,:), intent(in) :: xg, yg
 
     integer(kind=private_plint) :: nx_in, ny_in
     real(kind=private_plflt), dimension(:,:), allocatable, target :: xg_in, yg_in
-    integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
     type(PLcGrid), target :: cgrid_local
@@ -3146,10 +3146,11 @@ subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill
                                        clevel, nlevel, fill_width, cont_color, cont_width, &
                                        fill, rectangular, transform, data ) bind(c, name = 'c_plshades' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in)  :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, rectangular, nlevel
+            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
             real(kind=private_plflt), value, intent(in) :: cont_width
@@ -3186,7 +3187,7 @@ subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill
        return
     end if
 
-    allocate( xg_in(nx_in+1,ny_in+1), yg_in(ny_in+1,ny_in+1) )
+    allocate( xg_in(nx_in,ny_in), yg_in(nx_in,ny_in) )
     xg_in = xg
     yg_in = yg
     cgrid_local%nx = nx_in
@@ -3200,24 +3201,23 @@ subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill
                    real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                    real(fill_width,kind=private_plflt), &
                    int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-                   fill, rectangular, pltr2f, c_loc(cgrid_local) )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool), pltr2f, c_loc(cgrid_local) )
 end subroutine plshades_multiple_2
 
 subroutine plshades_multiple_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
-                  tr )
+                  rectangular, tr )
     real(kind=wp), dimension(:,:), intent(in) :: z
     character(len=*), intent(in) :: defined
     real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
     real(kind=wp), intent(in) :: fill_width, cont_width
     real(kind=wp), dimension(:), intent(in) :: clevel
-    integer :: cont_color
+    integer, intent(in) :: cont_color
+    logical, intent(in) :: rectangular
     real(kind=wp), dimension(:), intent(in) :: tr
 
-    integer(kind=private_plint), parameter :: rectangular = 1
     real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
     type(c_ptr), dimension(:), allocatable :: z_address_local
     real(kind=private_plflt), dimension(6), target :: tr_in
-    type(PLcGrid), target :: cgrid_local
 
     interface
         subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
@@ -3232,10 +3232,11 @@ subroutine plshades_multiple_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fil
                                        clevel, nlevel, fill_width, cont_color, cont_width, &
                                        fill, rectangular, transform, tr ) bind(c, name = 'c_plshades' )
             use iso_c_binding, only: c_ptr, c_funptr, c_null_ptr
-            use plplot_types, only: private_plint, private_plflt
+            use plplot_types, only: private_plint, private_plbool, private_plflt
             implicit none
             type(c_ptr), dimension(*), intent(in)  :: a
-            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, rectangular, nlevel
+            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+            integer(kind=private_plbool), value, intent(in) :: rectangular
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
             real(kind=private_plflt), dimension(*), intent(in) :: clevel
             real(kind=private_plflt), value, intent(in) :: cont_width
@@ -3269,7 +3270,7 @@ subroutine plshades_multiple_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fil
                    real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                    real(fill_width,kind=private_plflt), &
                    int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-                   fill, rectangular, plplot_private_pltr, tr_in )
+                   fill, int(merge(1,0,rectangular),kind=private_plbool), plplot_private_pltr, tr_in )
 end subroutine plshades_multiple_tr
 
 subroutine plsmaj_impl( def, scale )

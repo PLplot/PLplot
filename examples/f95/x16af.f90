@@ -108,7 +108,7 @@
           -1._plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
-          min_color, min_width, max_color, max_width )
+          min_color, min_width, max_color, max_width, .true. )
       enddo
 
       call plcol0(1)
@@ -275,7 +275,7 @@
           shade_min, shade_max, &
           sh_cmap, sh_color, sh_width, &
           min_color, min_width, max_color, max_width, &
-            xg(:NX,:NY), yg(:NX,:NY) )
+            .false., xg(:NX,:NY), yg(:NX,:NY) )
       enddo
 
 !      Draw boundary.

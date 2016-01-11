@@ -133,7 +133,7 @@
       call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width )
+        cont_color, cont_width, .true. )
 
       ! Smaller text
       call  plschr( 0.0_plflt, 0.75_plflt )
@@ -181,7 +181,7 @@
       call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg1(:NX), yg1(:NY))
+        cont_color, cont_width, .true., xg1(:NX), yg1(:NY))
 
       ! Smaller text
       call  plschr( 0.0_plflt, 0.75_plflt )
@@ -229,7 +229,7 @@
       call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
+        cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
 
       ! Smaller text
       call  plschr( 0.0_plflt, 0.75_plflt )
@@ -278,7 +278,7 @@
       call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
+        cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
 
       ! Smaller text
       call  plschr( 0.0_plflt, 0.75_plflt )
@@ -343,7 +343,7 @@
       call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
         1._plflt, &
         shedge, fill_width, &
-        cont_color, cont_width, xg2(:NX,:NY), yg2(:NX,:NY) )
+        cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
 
       ! Smaller text
       call  plschr( 0.0_plflt, 0.75_plflt )

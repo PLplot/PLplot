@@ -31,7 +31,9 @@ CONTENTS
 2.1 Bug fixes
 2.2 Rewrite the CMake Ada language support
 2.3 Rewrite the Fortran binding
-2.4 Remove "c_" prefix from our C API
+2.4 Supply old Fortran binding and examples option
+2.5 Backwards incompatibilites introduced by the new Fortran binding
+2.6 Remove "c_" prefix from our C API
 
 3. PLplot testing
 
@@ -52,8 +54,9 @@ introduced by leading-zero decimal escape sequences such as "#(0855)".
 
 1.2 Backwards incompatibilities in Fortran
 
-The new implementation of the Fortran binding has introduced some
-backwards incompatibilities.  See 2.3 below for the details.
+The new implementation of the Fortran binding has introduced a
+significant number of backwards incompatibilities.  See 2.5 below for
+the details.
 
 ________________________________________________________________
 
@@ -112,9 +115,36 @@ PLFLT C type remains for backwards compatibility, but eventually this
 will be deprecated and removed so users are currently encouraged not
 to use kind=plflt since it is no longer necessary.
 
-The rewritten Fortran binding does have some backwards incompatible
-API changes we have decided to introduce at this time to improve
-consistency.
+2.4 Supply old Fortran binding and examples option
+
+Because the new Fortran binding is not completely compatible with the
+old one (see 2.5 below for the list of incompatibilities) we have
+supplied a -DPL_DEPRECATED_f95=ON CMake option (which defaults to
+OFF) that uses a snapshot of the old Fortran binding and associated
+Fortran examples rather than the new versions.
+
+We have tested the new Fortran bindings and examples on several
+different Fortran platforms accessible to us so it should normally
+work well, but this option should be suitable for emergency conditions
+where you just cannot get the new Fortran binding to work properly.
+But in this case please let us know about those issues so we can fix
+them.  Also, this -DPL_DEPRECATED_f95=ON option should extend the
+length of time that the old Fortran 95 binding is available, but that
+old binding will not be available indefinitely so at some point (after
+discussions on the plplot-general list concerning how many users are
+still using this option) the -DPL_DEPRECATED_f95=ON option will be
+removed and user choices will be reduced to either using an old PLplot
+version or adjusting your software for the incompatibilities mentioned
+below for the new Fortran binding.  And if you start that process
+immediately, you will likely get better help with it since we have
+just gone through that process for the Fortran examples (which should
+be your first guide concerning how to use the new Fortran binding).
+
+2.5 Backwards incompatibilites introduced by the new Fortran binding
+
+The rewritten Fortran binding does have a significant number of
+backwards incompatible API changes we have decided to introduce at
+this time to improve consistency and simplicity as much as possible.
 
 (i) Only the redacted form of API (with all redundant dimension
 arguments removed) is supported.  In order to comply strictly with
@@ -139,12 +169,12 @@ what is done in bindings/swig-support/plplotcapi.i.  Ultimately, there
 should be a complete list of functions here where the API has
 been changed because of this.
 
-(iii) Fortran logical arguments are strictly used for all cases
-where the corresponding C argument is PLBOOL.  In order to
-comply strictly with this rule, the list of functions
-whose arguments have changed from integer to logical or functions where
-an extra signature with integer argument rather than correct logical
-argument has been removed is the following:
+(iii) Fortran logical arguments are strictly used for all cases where
+the corresponding C argument is PLBOOL.  In order to comply strictly
+with this rule, the list of functions whose arguments have changed
+from integer to logical or functions where an extra signature with
+integer argument rather than correct logical argument has been removed
+is the following:
 
 plarc (last argument),
 plspal1 (last argument), and
@@ -153,34 +183,29 @@ plconfigtime (fifth argument).
 (iv) For those rare cases where the actual real precision
 cannot be automatically specified by the user via the precision of the
 real arguments which are used for a call to a subroutine or function,
-then the default choice is double precision rather than the previous
-choice which was the actual real precision of the PLplot C library.
-(This is only a backwards-incompatibility in those rare cases where
-the user has deliberately chosen to configure and use a
-single-precision version of that library.)
+then the only choice we supply is the double precision one regardless
+of the underlying precision of the C plplot library.
 
 The instances of this issue are the real return value of the function
-plrandd, real elements of the defined type PLGraphicsIn, and the
-pre-defined real parameters PL_NOTSET, PL_PI, and PL_TWOPI.  For those
-cases where the user prefers not to use these double-precision
-entities, we also supply single-precision entities as well
-(distinguished by adding a "_single" suffix to the name of the entity,
-i.e., plrandd_single, PLGraphicsIn_single, PL_NOTSET_single,
-PL_PI_single, and PL_TWOPI_single.
-
-FIXME. This naming convention is implemented now for plrandd and
-PLGraphicsIn, but PL_NOTSET, PL_PI, and PL_TWOPI of the predefined
-parameters continue to have plflt precision, and there are no
-definitions yet of PL_NOTSET_single, PL_PI_single, and
-PL_TWOPI_single.
+plrandd, real elements of the defined type PLGraphicsIn, real arguments
+of Fortran callback functions that are used as arguments
+for plstransform and pllabelfunc, and the
+pre-defined real parameters PL_NOTSET, PL_PI, and PL_TWOPI.
 
 (v) The experimental and far from uniform support for the kind=plint and
 kind=plunicode Fortran integer types has now been removed.  Instead,
 ordinary default kind integers are used for the Fortran types
 corresponding to the PLINT and PLUNICODE C types.
 
+(vi) Support for a single integer argument for plstransform that is
+unused is dropped because calling plstransform with no arguments
+has exactly the same effect.
 
-2.4 Remove "c_" prefix from our C API
+(vii) A rectangular logical argument for all variants of plshade and
+plshades has been added to give the same control of this argument to
+Fortran users that is currently experienced by C users.
+
+2.5 Remove "c_" prefix from our C API
 
 See 2.3 for why this simplification is possible.
 

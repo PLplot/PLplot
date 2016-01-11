@@ -171,10 +171,18 @@ module plplot_single
 ! Interfaces for single-precision callbacks
     
     abstract interface
+        subroutine plmapform_proc_single( x, y )
+            import :: wp
+            real(kind=wp), dimension(:), intent(inout) :: x, y
+        end subroutine plmapform_proc_single
+    end interface
+    procedure(plmapform_proc_single), pointer :: plmapform_single
+
+    abstract interface
         subroutine pllabeler_proc_single( axis, value, label )
-            import :: private_single
+            import :: wp
             integer, intent(in) :: axis
-            real(kind=private_single), intent(in) :: value
+            real(kind=wp), intent(in) :: value
             character(len=*), intent(out) :: label
         end subroutine pllabeler_proc_single
     end interface
@@ -182,9 +190,9 @@ module plplot_single
 
     abstract interface
         subroutine pllabeler_proc_data_single( axis, value, label, data )
-            import :: private_single, c_ptr
+            import :: wp, c_ptr
             integer, intent(in) :: axis
-            real(kind=private_single), intent(in) :: value
+            real(kind=wp), intent(in) :: value
             character(len=*), intent(out) :: label
             type(c_ptr), intent(in) :: data
         end subroutine pllabeler_proc_data_single
@@ -193,18 +201,18 @@ module plplot_single
 
     abstract interface
         subroutine pltransform_proc_single( x, y, tx, ty )
-            import :: private_single
-            real(kind=private_single), intent(in) :: x, y
-            real(kind=private_single), intent(out) :: tx, ty
+            import :: wp
+            real(kind=wp), intent(in) :: x, y
+            real(kind=wp), intent(out) :: tx, ty
         end subroutine pltransform_proc_single
     end interface
     procedure(pltransform_proc_single), pointer :: pltransform_single
 
     abstract interface
         subroutine pltransform_proc_data_single( x, y, tx, ty, data )
-            import :: private_single, c_ptr
-            real(kind=private_single), intent(in) :: x, y
-            real(kind=private_single), intent(out) :: tx, ty
+            import :: wp, c_ptr
+            real(kind=wp), intent(in) :: x, y
+            real(kind=wp), intent(out) :: tx, ty
             type(c_ptr), intent(in) :: data
         end subroutine pltransform_proc_data_single
     end interface
@@ -223,7 +231,7 @@ module plplot_single
       character(len=:), allocatable :: label_out
       allocate(character(length) :: label_out)
       
-      call pllabeler_single( int(axis), real(value,kind=private_single), label_out )
+      call pllabeler_single( int(axis), real(value,kind=wp), label_out )
       label(1:length) = trim(label_out)//c_null_char
       
       deallocate(label_out)      
@@ -238,7 +246,7 @@ module plplot_single
       character(len=:), allocatable :: label_out
       allocate(character(length) :: label_out)
       
-      call pllabeler_data_single( int(axis), real(value,kind=private_single), label_out, data )
+      call pllabeler_data_single( int(axis), real(value,kind=wp), label_out, data )
       label(1:length) = trim(label_out)//c_null_char
       
       deallocate(label_out)      
@@ -249,9 +257,9 @@ module plplot_single
         real(kind=private_plflt), intent(out) :: tx, ty
         type(c_ptr), value, intent(in) :: data
 
-        real(kind=private_single) :: tx_out, ty_out
+        real(kind=wp) :: tx_out, ty_out
 
-        call pltransform_single( real(x,kind=private_single), real(y,kind=private_single), tx_out, ty_out )
+        call pltransform_single( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out )
         tx = tx_out
         ty = ty_out
     end subroutine pltransformf2c_single
@@ -261,9 +269,9 @@ module plplot_single
         real(kind=private_plflt), intent(out) :: tx, ty
         type(c_ptr), value, intent(in) :: data
 
-        real(kind=private_single) :: tx_out, ty_out
+        real(kind=wp) :: tx_out, ty_out
 
-        call pltransform_data_single( real(x,kind=private_single), real(y,kind=private_single), tx_out, ty_out, data )
+        call pltransform_data_single( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out, data )
         tx = tx_out
         ty = ty_out
     end subroutine pltransformf2c_data_single
@@ -282,11 +290,20 @@ module plplot_double
     private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer, wp
 
 ! Interfaces for double-precision callbacks
+
+    abstract interface
+        subroutine plmapform_proc_double( x, y )
+            import :: wp
+            real(kind=wp), dimension(:), intent(inout) :: x, y
+        end subroutine plmapform_proc_double
+    end interface
+    procedure(plmapform_proc_double), pointer :: plmapform_double
+
     abstract interface
         subroutine pllabeler_proc_double( axis, value, label )
-            import :: private_double
+            import :: wp
             integer, intent(in) :: axis
-            real(kind=private_double), intent(in) :: value
+            real(kind=wp), intent(in) :: value
             character(len=*), intent(out) :: label
         end subroutine pllabeler_proc_double
     end interface
@@ -294,9 +311,9 @@ module plplot_double
 
     abstract interface
         subroutine pllabeler_proc_data_double( axis, value, label, data )
-            import :: private_double, c_ptr
+            import :: wp, c_ptr
             integer, intent(in) :: axis
-            real(kind=private_double), intent(in) :: value
+            real(kind=wp), intent(in) :: value
             character(len=*), intent(out) :: label
             type(c_ptr), intent(in) :: data
         end subroutine pllabeler_proc_data_double
@@ -305,18 +322,18 @@ module plplot_double
 
     abstract interface
         subroutine pltransform_proc_double( x, y, tx, ty )
-            import :: private_double
-            real(kind=private_double), intent(in) :: x, y
-            real(kind=private_double), intent(out) :: tx, ty
+            import :: wp
+            real(kind=wp), intent(in) :: x, y
+            real(kind=wp), intent(out) :: tx, ty
         end subroutine pltransform_proc_double
     end interface
     procedure(pltransform_proc_double), pointer :: pltransform_double
 
     abstract interface
         subroutine pltransform_proc_data_double( x, y, tx, ty, data )
-            import :: private_double, c_ptr
-            real(kind=private_double), intent(in) :: x, y
-            real(kind=private_double), intent(out) :: tx, ty
+            import :: wp, c_ptr
+            real(kind=wp), intent(in) :: x, y
+            real(kind=wp), intent(out) :: tx, ty
             type(c_ptr), intent(in) :: data
         end subroutine pltransform_proc_data_double
     end interface
@@ -336,7 +353,7 @@ module plplot_double
       integer :: trimmed_length
 
       allocate(character(length) :: label_out)
-      call pllabeler_double( int(axis), real(value,kind=private_double), label_out )
+      call pllabeler_double( int(axis), real(value,kind=wp), label_out )
       trimmed_length = min(length,len_trim(label_out) + 1)
       label(1:trimmed_length) = transfer(trim(label_out(1:length))//c_null_char, " ", trimmed_length)
       deallocate(label_out)      
@@ -351,7 +368,7 @@ module plplot_double
       character(len=:), allocatable :: label_out
       allocate(character(length) :: label_out)
       
-      call pllabeler_data_double( int(axis), real(value,kind=private_double), label_out, data )
+      call pllabeler_data_double( int(axis), real(value,kind=wp), label_out, data )
       label(1:length) = trim(label_out)//c_null_char
       
       deallocate(label_out)      
@@ -362,9 +379,9 @@ module plplot_double
         real(kind=private_plflt), intent(out) :: tx, ty
         type(c_ptr), value, intent(in) :: data
 
-        real(kind=private_double) :: tx_out, ty_out
+        real(kind=wp) :: tx_out, ty_out
 
-        call pltransform_double( real(x,kind=private_double), real(y,kind=private_double), tx_out, ty_out )
+        call pltransform_double( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out )
         tx = tx_out
         ty = ty_out
     end subroutine pltransformf2c_double
@@ -374,9 +391,9 @@ module plplot_double
         real(kind=private_plflt), intent(out) :: tx, ty
         type(c_ptr), value, intent(in) :: data
 
-        real(kind=private_double) :: tx_out, ty_out
+        real(kind=wp) :: tx_out, ty_out
 
-        call pltransform_data_double( real(x,kind=private_double), real(y,kind=private_double), tx_out, ty_out, data )
+        call pltransform_data_double( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out, data )
         tx = tx_out
         ty = ty_out
     end subroutine pltransformf2c_data_double
@@ -434,13 +451,16 @@ module plplot
     private :: plsfci_impl
 
     interface plslabelfunc
+        module procedure plslabelfunc_null
+        ! Only provide double-precison versions because of
+        ! disambiguation problems with the corresponding
+        ! single-precision versions.
         module procedure plslabelfunc_double
         module procedure plslabelfunc_data_double
-        module procedure plslabelfunc_null
     end interface plslabelfunc
+    private :: plslabelfunc_null
     private :: plslabelfunc_double
     private :: plslabelfunc_data_double
-    private :: plslabelfunc_null
 
     interface plstyl
         module procedure plstyl_scalar
@@ -450,13 +470,16 @@ module plplot
     private :: plstyl_scalar, plstyl_n_array, plstyl_array
 
     interface plstransform
+        module procedure plstransform_null
+        ! Only provide double-precison versions because of
+        ! disambiguation problems with the corresponding
+        ! single-precision versions.
         module procedure plstransform_double
         module procedure plstransform_data_double
-        module procedure plstransform_null
     end interface plstransform
+    private :: plstransform_null
     private :: plstransform_double
     private :: plstransform_data_double
-    private :: plstransform_null
 
     interface plsvect
        module procedure plsvect_none
@@ -1336,6 +1359,8 @@ subroutine plslabelfunc_null
     call interface_plslabelfunc( c_null_funptr, c_null_ptr )
 end subroutine plslabelfunc_null
 
+! Only provide double-precison version because of disambiguation
+! problems with the corresponding single-precision version.
 subroutine plslabelfunc_double( proc )
     procedure(pllabeler_proc_double) :: proc
     interface
@@ -1350,6 +1375,8 @@ subroutine plslabelfunc_double( proc )
     call interface_plslabelfunc( c_funloc(pllabelerf2c_double), c_null_ptr )
 end subroutine plslabelfunc_double
 
+! Only provide double-precison version because of disambiguation
+! problems with the corresponding single-precision version.
 subroutine plslabelfunc_data_double( proc, data )
     procedure(pllabeler_proc_data_double) :: proc
     type(c_ptr), intent(in) :: data
@@ -1555,6 +1582,8 @@ subroutine plstransform_null
     call interface_plstransform( c_null_funptr, c_null_ptr )
 end subroutine plstransform_null
 
+! Only provide double-precison version because of disambiguation
+! problems with the corresponding single-precision version.
 subroutine plstransform_double( proc )
     procedure(pltransform_proc_double) :: proc
     interface
@@ -1569,6 +1598,8 @@ subroutine plstransform_double( proc )
     call interface_plstransform( c_funloc(pltransformf2c_double), c_null_ptr )
 end subroutine plstransform_double
 
+! Only provide double-precison version because of disambiguation
+! problems with the corresponding single-precision version.
 subroutine plstransform_data_double( proc, data )
     procedure(pltransform_proc_data_double) :: proc
     type(c_ptr), intent(in) :: data
