@@ -73,8 +73,40 @@ private:
     bool m_lastWasCached;
 };
 
+class PlDevice
+{
+public:
+    virtual ~PlDevice() {}
+    virtual void DrawLine( short x1a, short y1a, short x2a, short y2a ) {}
+    virtual void DrawPolyline( short *xa, short *ya, PLINT npts ){}
+    virtual void ClearBackground( PLStream* pls, PLINT x1 = -1, PLINT y1 = -1, PLINT x2 = -1, PLINT y2 = -1 ){}
+    virtual void FillPolygon( PLStream *pls ){}
+    virtual void SetWidth( PLStream *pls ){}
+    virtual void SetColor( PLStream *pls ){}
+    virtual void SetDC( PLStream *pls, wxDC* dc ){}
+    virtual void EndPage( PLStream* pls ){}
+    virtual void BeginPage( PLStream* pls ){}
+    virtual void SetSize( PLStream* pls, int width, int height ){}
+    virtual void FixAspectRatio( bool fix ){}
+    virtual void Locate( PLStream* pls, PLGraphicsIn *graphicsIn ){}
+    virtual void Flush( PLStream* pls ){}
+    virtual void PreDestructorTidy( PLStream *pls ){}
+
+    void drawText( PLStream* pls, EscText* args );
+private:
+    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth );
+    virtual void DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth ) {}
+
+    PLUNICODE m_prevSymbol;
+    PLFLT     m_prevBaseFontSize;
+    PLINT     m_prevSuperscriptLevel;
+    PLUNICODE m_prevFci;
+    wxCoord   m_prevSymbolWidth;
+    wxCoord   m_prevSymbolHeight;
+};
+
 // base device class
-class wxPLDevice
+class wxPLDevice : public PlDevice
 {
 public:
     wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym );
@@ -90,15 +122,13 @@ public:
     void EndPage( PLStream* pls );
     void BeginPage( PLStream* pls );
     void SetSize( PLStream* pls, int width, int height );
-    void drawText( PLStream* pls, EscText* args );
     void FixAspectRatio( bool fix );
     void Locate( PLStream* pls, PLGraphicsIn *graphicsIn );
     void Flush( PLStream* pls );
     void PreDestructorTidy( PLStream *pls );
 
 private:
-    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y, PLFLT angle, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth );
-    void DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT angle, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth );
+    void DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth );
     void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
     void SetupMemoryMap();
     wxRegion GetClipRegion();

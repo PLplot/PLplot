@@ -60,9 +60,9 @@ bool wxPlViewerApp::OnInit()
         wxMilliSleep( 100 );
 #endif
         wxPlFrame* frame = new wxPlFrame( NULL, wxID_ANY, wxT( "wxPlViewer" ), file,
-            PLINT( fileSize ), wxDefaultPosition, wxDefaultSize );
+            PLINT( fileSize ), wxDefaultPosition, wxSize( width, height ) );
         frame->fixAspect( false );
-        frame->SetClientSize( width, height );
+        //frame->SetClientSize( width, height );
         frame->fixAspect( true );
         frame->Show();
     }

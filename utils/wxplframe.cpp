@@ -43,9 +43,9 @@ END_EVENT_TABLE()
 
 wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wxString file, long fileSize,
                       const wxPoint &pos, const wxSize &size, long style, const wxString &name )
-    : wxPLplotwindow<wxFrame>( true ), m_checkTimer( this, ID_CHECK_TIMER )
+    : wxPLplotwindow<wxFrame>( true, size ), m_checkTimer( this, ID_CHECK_TIMER )
 {
-    wxFrame::Create( parent, id, title, pos, size, style, name );
+    wxFrame::Create( parent, id, title, pos, wxDefaultSize, style, name );
     setupMenus();
 
     m_viewingPage          = 0;

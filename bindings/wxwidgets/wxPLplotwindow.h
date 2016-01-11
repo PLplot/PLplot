@@ -37,12 +37,12 @@ template <class WXWINDOW>
 class wxPLplotwindow : public WXWINDOW
 {
 public:
-    wxPLplotwindow( bool useGraphicsContext = true );                       //!< Constructor.
-    virtual ~wxPLplotwindow( void );                                        //!< Destructor.
+    wxPLplotwindow( bool useGraphicsContext = true, wxSize clientSize = wxDefaultSize ); //!< Constructor.
+    virtual ~wxPLplotwindow( void );                                                     //!< Destructor.
 
-    void RenewPlot( void );                                                 //!< Redo plot.
-    bool SavePlot( const wxString& driver, const wxString& filename );      //!< Save plot using a different driver.
-    wxPLplotstream* GetStream()  { return m_created ? &m_stream : NULL; }   //!< Get pointer to wxPLplotstream of this widget.
+    void RenewPlot( void );                                                              //!< Redo plot.
+    bool SavePlot( const wxString& driver, const wxString& filename );                   //!< Save plot using a different driver.
+    wxPLplotstream* GetStream()  { return m_created ? &m_stream : NULL; }                //!< Get pointer to wxPLplotstream of this widget.
     void setUseGraphicsContext( bool useGraphicsContext );
     void setCanvasColour( const wxColour &colour );
 
@@ -63,6 +63,7 @@ private:
     //resized because reusing either of these causes problems
     //for rendering on a wxGCDC - at least on Windows.
     wxMemoryDC *m_memoryDc;
+    wxSize     m_initialSize;
 #ifdef wxUSE_GRAPHICS_CONTEXT
     wxGCDC     *m_gcDc;
 #endif
@@ -75,8 +76,8 @@ private:
 // methods with events. The WXWINDOW default constructor is used.
 //
 template<class WXWINDOW>
-wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext )
-    : m_created( false )
+wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize clientSize )
+    : m_created( false ), m_initialSize( clientSize )
 
 {
     m_memoryDc = NULL;
@@ -186,6 +187,9 @@ void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
     if ( !m_created )
     {
+        //set the client size if requested
+        if ( m_initialSize != wxDefaultSize )
+            WXWINDOW::SetClientSize( m_initialSize );
         //create the stream
         int width  = WXWINDOW::GetClientSize().GetWidth();
         int height = WXWINDOW::GetClientSize().GetHeight();
