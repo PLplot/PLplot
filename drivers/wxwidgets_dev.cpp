@@ -1176,7 +1176,6 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
                 -transform[2], transform[3],
                 xTransform, -yTransform );
             wxGraphicsMatrix reflectMatrix = m_gc->CreateMatrix();
-            m_gc->DrawEllipse( -2.5, -2.5, 5, 5 );
             m_gc->ConcatTransform( matrix );
             m_gc->DrawText( section, 0, 0 );
             m_gc->SetTransform( originalGcMatrix );
