@@ -3,6 +3,7 @@
 # F95 binding configuration
 #
 # Copyright (C) 2006  Andrew Ross
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -20,6 +21,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Module for determining F95 bindings configuration options
+
+option(PL_DEPRECATED_f95 "Use deprecated version of Fortran 95 binding and examples" OFF)
 
 # Options to enable Fortran bindings
 if(DEFAULT_NO_BINDINGS)

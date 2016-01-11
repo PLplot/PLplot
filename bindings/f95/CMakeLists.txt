@@ -147,12 +147,12 @@ if(ENABLE_f95)
   # to all the module intermediate files
   install(
     FILES
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_double.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_single.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_graphics.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_private_exposed.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_types.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_double.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_single.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_graphics.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_private_exposed.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.mod
     DESTINATION ${F95_MOD_DIR}
     )
 

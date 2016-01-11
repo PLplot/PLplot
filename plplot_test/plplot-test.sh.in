@@ -257,7 +257,11 @@ fi
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
 cdir="$EXAMPLES_DIR"/c$VC_CTEST_DIRECTORY
 cxxdir="$EXAMPLES_DIR"/c++$VC_CTEST_DIRECTORY
-f95dir="$EXAMPLES_DIR"/f95
+if [ "@configured_PL_DEPRECATED_f95@" = "ON" ] ; then
+    f95dir="$EXAMPLES_DIR"/old_f95
+else
+    f95dir="$EXAMPLES_DIR"/f95
+fi
 pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
 tclexamplesdir="$EXAMPLES_DIR"/tcl
 tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl

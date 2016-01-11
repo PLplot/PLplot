@@ -1,0 +1,13 @@
+      function myisnan(x)
+
+      use plplot
+      implicit none
+      logical :: myisnan
+      real (kind=plflt) :: x
+
+@HAVE_F95_ISNAN_FALSE@      myisnan = (x.ne.x)
+@HAVE_F95_ISNAN_TRUE@      myisnan = isnan(x)
+
+      return
+
+      end function

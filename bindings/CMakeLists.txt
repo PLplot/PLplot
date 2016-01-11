@@ -23,7 +23,11 @@
 # python, java, lua, and octave).
 add_subdirectory(swig-support)
 add_subdirectory(c++)
-add_subdirectory(f95)
+if(PL_DEPRECATED_f95)
+  add_subdirectory(old_f95)
+else(PL_DEPRECATED_f95)
+  add_subdirectory(f95)
+endif(PL_DEPRECATED_f95)
 add_subdirectory(tcl)
 add_subdirectory(tk)
 add_subdirectory(tk-x-plat)

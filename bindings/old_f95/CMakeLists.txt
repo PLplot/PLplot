@@ -146,15 +146,15 @@ if(ENABLE_f95)
     )
 
   # For CMake-2.6.0 and above, the module files are created by
-  # default during the library build in the bindings/f95 directory.
+  # default during the library build in the ${CMAKE_CURRENT_BINARY_DIR} directory.
   install(
     FILES
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplotp.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_types.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_graphics.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_str.mod
-    ${CMAKE_BINARY_DIR}/bindings/f95/plplot_strutils.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotp.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_graphics.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_str.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_strutils.mod
     DESTINATION ${F95_MOD_DIR}
     )
 
