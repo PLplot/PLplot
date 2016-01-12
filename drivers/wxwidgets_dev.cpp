@@ -1096,7 +1096,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
             wxFont theFont = font.getWxFont();
             m_dc->GetTextExtent( section, &sectionWidth, &sectionHeight,
                 &sectionDepth, &leading, &theFont );
-			sectionHeight -= sectionDepth + leading;             //The height reported is the line spacing
+            sectionHeight -= sectionDepth + leading;                         //The height reported is the line spacing
             sectionDepth  += leading;
             sectionWidth  *= m_xScale;
             sectionHeight *= m_yScale;
