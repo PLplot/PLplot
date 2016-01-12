@@ -204,13 +204,10 @@ main( int argc, const char *argv[] )
                 break;
 
             pltext();
-            if ( gin.keysym < 0xFF && isprint( gin.keysym ) )
-                printf( "subwin = %d, wx = %f,  wy = %f, dx = %f,  dy = %f,  c = '%c' s = '%s'\n",
-                    gin.subwindow, gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym, gin.string );
-            else
-                printf( "subwin = %d, wx = %f,  wy = %f, dx = %f,  dy = %f,  c = 0x%02x s - '%s'\n",
-                    gin.subwindow, gin.wX, gin.wY, gin.dX, gin.dY, gin.keysym, gin.string );
-
+            printf( "subwin = %d, wx = %f,  wy = %f, dx = %f,  dy = %f\n",
+                gin.subwindow, gin.wX, gin.wY, gin.dX, gin.dY );
+            printf( "keysym = 0x%02x, button = 0x%02x, string = '%s', type = 0x%02x, state = 0x%02x\n",
+                gin.keysym, gin.button, gin.string, gin.type, gin.state );
             plgra();
         }
     }
