@@ -134,8 +134,8 @@ endif(CORE_BUILD)
 if(BUILD_TEST)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_f95)
-  # nm analysis shows these libraries are all required to link the new Fortran binding
-  set(fortran_library_targets plplotf95)
+  # nm analysis shows only these libraries are required to link the new Fortran binding
+  set(fortran_library_targets plplotf95 plplot)
   foreach(STRING_INDEX ${f95_STRING_INDICES})
     # Need unique target name
     add_executable(x${STRING_INDEX}f95 x${STRING_INDEX}f.f90)

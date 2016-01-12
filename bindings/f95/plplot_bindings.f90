@@ -47,86 +47,33 @@ module plplot_types
 end module plplot_types
 
 module plplot_graphics
-  use plplot_types, only: private_single, private_double
-  use iso_c_binding, only: c_ptr
+  use plplot_types, only: private_plint, private_plflt
   implicit none
-  private :: private_single, private_double, c_ptr
+  private :: private_plint, private_plflt
 
-  ! Some references say to use sequence for these derived data types
-  ! that are going to be passed to C, but sequence was not used
-  ! in the old Fortran binding so I will continue that here.
-
-  ! N.B. use naming convention that double-precision entity has no
-  ! special suffix and single-precision entity has the "_single" suffix.
-  type :: PLGraphicsIn
-     integer type                     ! of event (CURRENTLY UNUSED)
-     integer state                    ! key or button mask
-     integer  keysym                  ! key selected
-     integer  button                  ! mouse button selected
-     integer subwindow                ! subwindow (alias subpage, alias subplot) number
-     character(len=16) string         ! translated string
-     integer pX, pY                   ! absolute device coordinates of pointer
-     real(kind=private_double) dX, dY ! relative device coordinates of pointer
-     real(kind=private_double) wX, wY ! world coordinates of pointer
+  ! This derived type is a direct equivalent of the C struct.
+  ! There is no advantage in distinguishing different versions
+  ! with different precision.
+  type, bind(c) :: PLGraphicsIn
+     integer(kind=private_plint) :: type           ! of event (CURRENTLY UNUSED)
+     integer(kind=private_plint) :: state          ! key or button mask
+     integer(kind=private_plint) :: keysym         ! key selected
+     integer(kind=private_plint) :: button         ! mouse button selected
+     integer(kind=private_plint) :: subwindow      ! subwindow (alias subpage, alias subplot) number
+     character(len=16)           :: string         ! translated string
+     integer(kind=private_plint) :: pX, pY         ! absolute device coordinates of pointer
+     real(kind=private_plflt)    :: dX, dY         ! relative device coordinates of pointer
+     real(kind=private_plflt)    :: wX, wY         ! world coordinates of pointer
   end type PLGraphicsIn
 
-  type :: PLGraphicsIn_single
-     integer type                     ! of event (CURRENTLY UNUSED)
-     integer state                    ! key or button mask
-     integer  keysym                  ! key selected
-     integer  button                  ! mouse button selected
-     integer subwindow                ! subwindow (alias subpage, alias subplot) number
-     character(len=16) string         ! translated string
-     integer pX, pY                   ! absolute device coordinates of pointer
-     real(kind=private_single) dX, dY ! relative device coordinates of pointer
-     real(kind=private_single) wX, wY ! world coordinates of pointer
-  end type PLGraphicsIn_single
-
-  ! Need to define two versions of plGetCursor (one with a
-  ! PLGraphicsIn argument, one with a PLGraphicsIn_single
-  ! argument).  There may be a less bulky way to do it (as with
-  ! included_plplot_real_interfaces.f90 for the wp type), but I could
-  ! not figure out a similar method for derived types.
-
-  interface plGetCursor
-     module procedure plGetCursor_double
-     module procedure plGetCursor_single
-  end interface plGetCursor
-  private :: plGetCursor_double, plGetCursor_single
-
-  contains
-
-subroutine plGetCursor_double( gin )
-  type(PLGraphicsIn), intent(out) :: gin
-
-  type(c_ptr) :: gin_out
-
-  ! FIXME: still need to work out details of copying gin_out back to Fortran gin argument
   interface
-     subroutine interface_plGetCursor_double( gin ) bind(c,name='plGetCursor')
+     subroutine plGetCursor( gin ) bind(c,name='plGetCursor')
        use iso_c_binding, only:  c_ptr
+       import :: PLGraphicsIn
        implicit none
-       type(c_ptr), intent(out) :: gin
-     end subroutine interface_plGetCursor_double
+       type(PLGraphicsIn), intent(out) :: gin
+     end subroutine plGetCursor
   end interface
-  call interface_plGetCursor_double( gin_out )
-end subroutine plGetCursor_double
-
-subroutine plGetCursor_single( gin )
-  type(PLGraphicsIn_single), intent(out) :: gin
-
-  type(c_ptr) :: gin_out
-
-  ! FIXME: still need to work out details of copying gin_out back to Fortran gin argument
-  interface
-     subroutine interface_plGetCursor_single( gin ) bind(c,name='plGetCursor')
-       use iso_c_binding, only: c_ptr
-       implicit none
-       type(c_ptr), intent(out) :: gin
-     end subroutine interface_plGetCursor_single
-  end interface
-  call interface_plGetCursor_single( gin_out )
-end subroutine plGetCursor_single
 
 end module plplot_graphics
 
@@ -169,7 +116,7 @@ module plplot_single
     private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer, wp
 
 ! Interfaces for single-precision callbacks
-    
+
     abstract interface
         subroutine plmapform_proc_single( x, y )
             import :: wp
@@ -227,14 +174,14 @@ module plplot_single
       real(kind=private_plflt), value, intent(in) :: value
       character(len=1), dimension(*), intent(out) :: label
       type(c_ptr), intent(in) :: data
-      
+
       character(len=:), allocatable :: label_out
       allocate(character(length) :: label_out)
-      
+
       call pllabeler_single( int(axis), real(value,kind=wp), label_out )
       label(1:length) = trim(label_out)//c_null_char
-      
-      deallocate(label_out)      
+
+      deallocate(label_out)
     end subroutine pllabelerf2c_single
 
     subroutine pllabelerf2c_data_single( axis, value, label, length, data ) bind(c, name = 'plplot_private_pllabeler2c_data_single')
@@ -242,14 +189,14 @@ module plplot_single
       real(kind=private_plflt), value, intent(in) :: value
       character(len=1), dimension(*), intent(out) :: label
       type(c_ptr), intent(in) :: data
-      
+
       character(len=:), allocatable :: label_out
       allocate(character(length) :: label_out)
-      
+
       call pllabeler_data_single( int(axis), real(value,kind=wp), label_out, data )
       label(1:length) = trim(label_out)//c_null_char
-      
-      deallocate(label_out)      
+
+      deallocate(label_out)
     end subroutine pllabelerf2c_data_single
 
     subroutine pltransformf2c_single( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_single')
@@ -348,7 +295,7 @@ module plplot_double
       real(kind=private_plflt), value, intent(in) :: value
       character(len=1), dimension(*), intent(out) :: label
       type(c_ptr), intent(in) :: data
-      
+
       character(len=:), allocatable :: label_out
       integer :: trimmed_length
 
@@ -356,7 +303,7 @@ module plplot_double
       call pllabeler_double( int(axis), real(value,kind=wp), label_out )
       trimmed_length = min(length,len_trim(label_out) + 1)
       label(1:trimmed_length) = transfer(trim(label_out(1:length))//c_null_char, " ", trimmed_length)
-      deallocate(label_out)      
+      deallocate(label_out)
     end subroutine pllabelerf2c_double
 
     subroutine pllabelerf2c_data_double( axis, value, label, length, data ) bind(c, name = 'plplot_private_pllabeler2c_data_double')
@@ -364,14 +311,14 @@ module plplot_double
       real(kind=private_plflt), value, intent(in) :: value
       character(len=1), dimension(*), intent(out) :: label
       type(c_ptr), intent(in) :: data
-      
+
       character(len=:), allocatable :: label_out
       allocate(character(length) :: label_out)
-      
+
       call pllabeler_data_double( int(axis), real(value,kind=wp), label_out, data )
       label(1:length) = trim(label_out)//c_null_char
-      
-      deallocate(label_out)      
+
+      deallocate(label_out)
     end subroutine pllabelerf2c_data_double
 
   subroutine pltransformf2c_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_double')
