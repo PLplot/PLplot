@@ -530,8 +530,8 @@ subroutine pl_setcontlabelparam_impl( offset, size, spacing, active )
 
    interface
        subroutine interface_pl_setcontlabelparam( offset, size, spacing, active) bind(c,name='c_pl_setcontlabelparam')
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value, intent(in) :: active
            real(kind=private_plflt), value, intent(in) :: offset, size, spacing
        end subroutine interface_pl_setcontlabelparam
@@ -547,8 +547,8 @@ subroutine plarc_impl( x, y, a, b, angle1, angle2, rotate, fill )
 
    interface
        subroutine interface_plarc( x, y, a, b, angle1, angle2, rotate, fill ) bind(c,name='c_plarc')
+           import :: private_plbool, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plbool), value, intent(in) :: fill
            real(kind=private_plflt), value, intent(in) :: x, y, a, b, angle1, angle2, rotate
        end subroutine interface_plarc
@@ -566,8 +566,8 @@ subroutine plaxes_impl(x0, y0, xopt,xtick,nxsub,yopt,ytick,nysub)
 
     interface
         subroutine interface_plaxes(x0, y0, xopt,xtick,nxsub,yopt,ytick,nysub) bind(c,name='c_plaxes')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: x0, y0, xtick, ytick
             integer(kind=private_plint), value, intent(in) :: nxsub, nysub
             character(len=1), dimension(*), intent(in) :: xopt, yopt
@@ -586,8 +586,8 @@ subroutine plbin_impl( x, y, center )
 
    interface
        subroutine interface_plbin( sz, x, y, center ) bind(c,name='c_plbin')
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value, intent(in) :: sz, center
            real(kind=private_plflt), dimension(*), intent(in) :: x, y
        end subroutine interface_plbin
@@ -604,8 +604,8 @@ subroutine plbox_impl(xopt,xtick,nxsub,yopt,ytick,nysub)
 
     interface
         subroutine interface_plbox(xopt,xtick,nxsub,yopt,ytick,nysub) bind(c,name='c_plbox')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xtick, ytick
             integer(kind=private_plint), value, intent(in) :: nxsub, nysub
             character(len=1), dimension(*), intent(in) :: xopt, yopt
@@ -626,8 +626,8 @@ subroutine plbox3_impl(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub, &
     interface
         subroutine interface_plbox3(xopt,xlabel,xtick,nxsub,yopt,ylabel,ytick,nysub, &
                             zopt,zlabel,ztick,nzsub) bind(c,name='c_plbox3')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in):: xtick, ytick, ztick
             integer(kind=private_plint), value, intent(in) :: nxsub, nysub, nzsub
             character(len=1), dimension(*), intent(in) :: xopt, yopt, zopt, xlabel, ylabel, zlabel
@@ -652,8 +652,8 @@ subroutine plbtime_impl( year, month, day, hour, min, sec, ctime )
 
    interface
        subroutine interface_plbtime( year, month, day, hour, min, sec, ctime ) bind(c,name='c_plbtime')
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            real(kind=private_plflt), value, intent(in) :: ctime
            integer(kind=private_plint), intent(out) :: year, month, day, hour, min
            real(kind=private_plflt), intent(out) :: sec
@@ -681,8 +681,8 @@ subroutine plcalc_world_impl( rx, ry, wx, wy, window )
 
     interface
         subroutine interface_plcalc_world( rx, ry, wx, wy, window ) bind(c,name='c_plcalc_world')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: window
             real(kind=private_plflt), value, intent(in) :: rx, ry
             real(kind=private_plflt), intent(out) :: wx, wy
@@ -701,8 +701,8 @@ subroutine plcol1_impl( col )
 
     interface
         subroutine interface_plcol1( col ) bind(c,name='c_plcol1')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: col
         end subroutine interface_plcol1
     end interface
@@ -745,8 +745,8 @@ subroutine plcolorbar_impl( &
             bind(c,name='fc_plcolorbar')
 
          import :: c_char, c_ptr
+         import :: private_plint, private_plflt
          implicit none
-         include 'included_plplot_interface_private_types.f90'
 
          real(kind=private_plflt), value, intent(in) :: x_length, y_length, x, y, &
               low_cap_color, high_cap_color, cont_width
@@ -828,8 +828,8 @@ subroutine plconfigtime_impl( scale, offset1, offset2, ccontrol, ifbtime_offset,
    interface
       subroutine interface_plconfigtime( scale, offset1, offset2, ccontrol, ifbtime_offset, &
            year, month, day, hour, min, sec) bind(c,name='c_plconfigtime')
+        import :: private_plint, private_plbool, private_plflt
         implicit none
-        include 'included_plplot_interface_private_types.f90'
         integer(kind=private_plint), value, intent(in) :: ccontrol, year, month, day, hour, min
         integer(kind=private_plbool), value, intent(in) :: ifbtime_offset
         real(kind=private_plflt), value, intent(in) :: scale, offset1, offset2, sec
@@ -854,8 +854,8 @@ subroutine plcontour_0( z, kx, lx, ky, ly, clevel )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -932,8 +932,8 @@ subroutine plcontour_1( z, kx, lx, ky, ly, clevel, xg, yg )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -963,8 +963,8 @@ subroutine plcontour_1( z, kx, lx, ky, ly, clevel, xg, yg )
             interface
                 function lookup( ix, iy, data ) bind(c)
                     import :: c_ptr
+                    import :: private_plint, private_plflt
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
                     integer(kind=private_plint), value, intent(in) :: ix, iy
                     type(c_ptr), value, intent(in) :: data
@@ -1023,8 +1023,8 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -1055,8 +1055,8 @@ subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
             interface
                 function lookup( ix, iy, data ) bind(c)
                     import :: c_ptr
+                    import :: private_plint, private_plflt
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
                     integer(kind=private_plint), value, intent(in) :: ix, iy
                     type(c_ptr), value, intent(in) :: data
@@ -1117,8 +1117,8 @@ subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -1137,8 +1137,8 @@ subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
             interface
                 function lookup( ix, iy, data ) bind(c)
                     import :: c_ptr
+                    import :: private_plint, private_plflt
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
                     integer(kind=private_plint), value, intent(in) :: ix, iy
                     type(c_ptr), value, intent(in) :: data
@@ -1178,8 +1178,8 @@ subroutine plctime_impl( year, month, day, hour, min, sec, ctime )
 
    interface
        subroutine interface_plctime( year, month, day, hour, min, sec, ctime ) bind(c,name='c_plctime')
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value, intent(in) :: year, month, day, hour, min
            real(kind=private_plflt), value, intent(in) :: sec
            real(kind=private_plflt), intent(out) :: ctime
@@ -1200,8 +1200,8 @@ subroutine plenv_impl( xmin, xmax, ymin, ymax, just, axis )
 
     interface
         subroutine interface_plenv( xmin, xmax, ymin, ymax, just, axis ) bind(c, name='c_plenv')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
             integer(kind=private_plint), value, intent(in) :: just, axis
         end subroutine interface_plenv
@@ -1217,8 +1217,8 @@ subroutine plenv0_impl( xmin, xmax, ymin, ymax, just, axis )
 
     interface
         subroutine interface_plenv0( xmin, xmax, ymin, ymax, just, axis ) bind(c, name='c_plenv0')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
             integer(kind=private_plint), value, intent(in) :: just, axis
         end subroutine interface_plenv0
@@ -1235,8 +1235,8 @@ subroutine plerrx_impl( xmin, xmax, y )
 
     interface
         subroutine interface_plerrx( n, xmin, xmax, y ) bind( c, name='c_plerrx')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n
             real(kind=private_plflt), dimension(*), intent(in) :: xmin, xmax, y
         end subroutine interface_plerrx
@@ -1258,8 +1258,8 @@ subroutine plerry_impl( x, ymin, ymax )
 
     interface
         subroutine interface_plerry( n, x, ymin, ymax ) bind( c, name='c_plerry')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n
             real(kind=private_plflt), dimension(*), intent(in) :: x, ymin, ymax
         end subroutine interface_plerry
@@ -1279,8 +1279,8 @@ subroutine plfill_impl( x, y )
 
     interface
         subroutine interface_plfill( n, x, y ) bind( c, name='c_plfill')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
         end subroutine interface_plfill
@@ -1294,8 +1294,8 @@ subroutine plfill3_impl( x, y, z )
 
     interface
         subroutine interface_plfill3( n, x, y, z ) bind( c, name='c_plfill3')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
         end subroutine interface_plfill3
@@ -1311,8 +1311,8 @@ subroutine plgchr_impl( chrdef, chrht )
 
     interface
        subroutine interface_plgchr( chrdef, chrht ) bind(c,name='c_plgchr')
+           import :: private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            real(kind=private_plflt), intent(out) :: chrdef, chrht
        end subroutine interface_plgchr
    end interface
@@ -1330,8 +1330,8 @@ subroutine plgcmap1_range_impl( min_color, max_color )
 
     interface
         subroutine interface_plgcmap1_range( min_color, max_color ) bind(c,name='c_plgcmap1_range')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), intent(out) :: min_color, max_color
         end subroutine interface_plgcmap1_range
     end interface
@@ -1352,8 +1352,8 @@ subroutine plgcol0a_impl( icol, r, g, b, a )
 
     interface
         subroutine interface_plgcol0a( icol, r, g, b, a ) bind(c,name='c_plgcol0a')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: icol
             integer(kind=private_plint), intent(out) :: r, g, b
             real(kind=private_plflt), intent(out) :: a
@@ -1376,8 +1376,8 @@ subroutine plgcolbga_impl( r, g, b, a )
 
     interface
         subroutine interface_plgcolbga( r, g, b, a ) bind(c,name='c_plgcolbga')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: r, g, b
             real(kind=private_plflt), intent(out) :: a
         end subroutine interface_plgcolbga
@@ -1397,8 +1397,8 @@ subroutine plgdidev_impl( mar, aspect, jx, jy )
 
     interface
         subroutine interface_plgdidev( mar, aspect, jx, jy ) bind(c,name='c_plgdidev')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), intent(out) :: mar, aspect, jx, jy
         end subroutine interface_plgdidev
     end interface
@@ -1417,8 +1417,8 @@ subroutine plgdiori_impl( rot )
 
     interface
         subroutine interface_plgdiori( rot ) bind(c,name='c_plgdiori')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), intent(out) :: rot
         end subroutine interface_plgdiori
     end interface
@@ -1434,8 +1434,8 @@ subroutine plgdiplt_impl( xmin, xmax, ymin, ymax )
 
     interface
         subroutine interface_plgdiplt( xmin, xmax, ymin, ymax ) bind(c,name='c_plgdiplt')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), intent(out) :: xmin, xmax, ymin, ymax
         end subroutine interface_plgdiplt
     end interface
@@ -1456,8 +1456,8 @@ subroutine plgpage_impl( xpmm, ypmm, xwid, ywid, xoff, yoff )
 
     interface
         subroutine interface_plgpage( xpmm, ypmm, xwid, ywid, xoff, yoff ) bind(c,name='c_plgpage')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), intent(out) :: xwid, ywid, xoff, yoff
             real(kind=private_plflt), intent(out) :: xpmm, ypmm
         end subroutine interface_plgpage
@@ -1478,8 +1478,8 @@ subroutine plgradient_impl( x, y, angle )
 
     interface
        subroutine interface_plgradient( sz, x, y, angle ) bind(c,name='c_plgradient')
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value, intent(in) :: sz
            real(kind=private_plflt), dimension(*), intent(in) :: x, y
            real(kind=private_plflt), value, intent(in) :: angle
@@ -1504,8 +1504,8 @@ subroutine plgriddata_impl( x, y, z, xg, yg, zg, type, data )
     interface
        subroutine interface_plgriddata( x, y, z, npts, xg, nptsx, yg, nptsy, zg, type, data ) bind(c,name='c_plgriddata')
            import :: c_ptr
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value, intent(in) :: npts, nptsx, nptsy, type
            real(kind=private_plflt), value, intent(in) :: data
            real(kind=private_plflt), dimension(*), intent(in) :: x, y, z, xg, yg
@@ -1557,8 +1557,8 @@ subroutine plgspa_impl( xmin, xmax, ymin, ymax )
 
     interface
         subroutine interface_plgspa( xmin, xmax, ymin, ymax ) bind(c,name='c_plgspa')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), intent(out) :: xmin, xmax, ymin, ymax
         end subroutine interface_plgspa
     end interface
@@ -1577,8 +1577,8 @@ subroutine plgvpd_impl( xmin, xmax, ymin, ymax )
 
     interface
         subroutine interface_plgvpd( xmin, xmax, ymin, ymax ) bind(c,name='c_plgvpd')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), intent(out) :: xmin, xmax, ymin, ymax
         end subroutine interface_plgvpd
     end interface
@@ -1596,8 +1596,8 @@ subroutine plgvpw_impl( xmin, xmax, ymin, ymax )
     real(kind=private_plflt) :: xmin_out, xmax_out, ymin_out, ymax_out
     interface
         subroutine interface_plgvpw( xmin, xmax, ymin, ymax ) bind(c,name='c_plgvpw')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), intent(out) :: xmin, xmax, ymin, ymax
         end subroutine interface_plgvpw
     end interface
@@ -1616,8 +1616,8 @@ subroutine plhist_impl( data, datmin, datmax, nbin, oldwin )
 
     interface
         subroutine interface_plhist( n, data, datmin, datmax, nbin, oldwin ) bind(c,name='c_plhist')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), dimension(*), intent(in) :: data
             real(kind=private_plflt), value, intent(in) :: datmin, datmax
             integer(kind=private_plint), value, intent(in) :: n, nbin, oldwin
@@ -1637,8 +1637,8 @@ subroutine plhlsrgb_impl( h, l, s, r, g, b )
 
     interface
         subroutine interface_plhlsrgb( h, l, s, r, g, b ) bind(c,name='c_plhlsrgb')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: h, l, s
             real(kind=private_plflt), intent(out) :: r, g, b
         end subroutine interface_plhlsrgb
@@ -1663,8 +1663,8 @@ subroutine plimage_impl( idata, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax
             xmin, xmax, ymin, ymax, &
             zmin, zmax, Dxmin, Dxmax, Dymin, Dymax ) bind(c,name='c_plimage')
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, Dymax
             type(c_ptr), dimension(*), intent(in) :: idata
@@ -1870,8 +1870,8 @@ subroutine pljoin_impl( x1, y1, x2, y2 )
 
     interface
         subroutine interface_pljoin( x1, y1, x2, y2 ) bind(c,name='c_pljoin')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: x1, y1, x2, y2
         end subroutine interface_pljoin
     end interface
@@ -1928,8 +1928,8 @@ subroutine pllegend_impl( &
             bind(c,name='fc_pllegend')
 
          import :: c_char
+         import :: private_plint, private_plflt
          implicit none
-         include 'included_plplot_interface_private_types.f90'
 
          real(kind=private_plflt), value, intent(in) :: plot_width, x, y
          real(kind=private_plflt), value, intent(in) :: text_offset, text_scale, text_spacing, text_justification
@@ -2019,8 +2019,8 @@ subroutine pllightsource_impl( x, y, z )
 
     interface
         subroutine interface_pllightsource( x, y, z ) bind(c,name='c_pllightsource')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: x, y, z
         end subroutine interface_pllightsource
     end interface
@@ -2033,8 +2033,8 @@ subroutine plline_impl( x, y )
 
     interface
         subroutine interface_plline( sz, x, y ) bind(c,name='c_plline')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: sz
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
         end subroutine interface_plline
@@ -2048,8 +2048,8 @@ subroutine plline3_impl( x, y, z )
 
    interface
        subroutine interface_plline3( sz, x, y, z ) bind(c,name='c_plline3')
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value, intent(in) :: sz
            real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
        end subroutine interface_plline3
@@ -2070,8 +2070,8 @@ subroutine plmesh_impl( x, y, z, opt )
     interface
         subroutine interface_plmesh( x, y, zaddress, nx, ny, opt ) bind(c,name='c_plmesh')
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny, opt
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
             type(c_ptr), dimension(*), intent(in) :: zaddress
@@ -2096,8 +2096,8 @@ subroutine plmeshc_impl( x, y, z, opt, clevel )
     interface
         subroutine interface_plmeshc( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plmeshc')
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny, opt, nlevel
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
             type(c_ptr), dimension(*), intent(in) :: zaddress
@@ -2118,8 +2118,8 @@ subroutine plmtex_impl( side, disp, pos, just, text )
 
     interface
         subroutine interface_plmtex( side, disp, pos, just, text ) bind(c,name='c_plmtex')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             character(len=1), dimension(*), intent(in) :: side, text
             real(kind=private_plflt), value, intent(in) :: disp, pos, just
         end subroutine interface_plmtex
@@ -2135,8 +2135,8 @@ subroutine plmtex3_impl( side, disp, pos, just, text )
 
     interface
         subroutine interface_plmtex3( side, disp, pos, just, text ) bind(c,name='c_plmtex3')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             character(len=1), dimension(*), intent(in) :: side, text
             real(kind=private_plflt), value, intent(in) :: disp, pos, just
         end subroutine interface_plmtex3
@@ -2159,8 +2159,8 @@ subroutine plot3d_impl( x, y, z, opt, side)
     interface
         subroutine interface_plot3d( x, y, zaddress, nx, ny, opt, side ) bind(c,name='c_plot3d')
             import :: c_ptr
+            import :: private_plint, private_plbool, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny, opt
             integer(kind=private_plbool), value, intent(in) :: side
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
@@ -2187,8 +2187,8 @@ subroutine plot3dc_impl( x, y, z, opt, clevel )
     interface
         subroutine interface_plot3dc( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plot3dc')
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny, opt, nlevel
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
             type(c_ptr), dimension(*), intent(in) :: zaddress
@@ -2217,8 +2217,8 @@ subroutine plot3dcl_impl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin,
         subroutine interface_plot3dcl( x, y, zaddress, nx, ny, opt, clevel, nlevel, &
                                 indexxmin, indexxmax, indexymin, indexymax ) bind(c,name='c_plot3dcl')
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny, opt, nlevel, indexxmin, indexxmax
             integer(kind=private_plint), dimension(*), intent(in) :: indexymin, indexymax
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
@@ -2242,8 +2242,8 @@ subroutine plpath_impl( n, x1, y1, x2, y2 )
 
     interface
         subroutine interface_plpath( n, x1, y1, x2, y2 ) bind(c,name='c_plpath')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n
             real(kind=private_plflt), value, intent(in) :: x1, y1, x2, y2
         end subroutine interface_plpath
@@ -2259,8 +2259,8 @@ subroutine plpoin_impl( x, y, code )
 
       interface
           subroutine interface_plpoin( n, x, y, code ) bind(c,name='c_plpoin')
+              import :: private_plint, private_plflt
               implicit none
-              include 'included_plplot_interface_private_types.f90'
               integer(kind=private_plint), value, intent(in) :: n, code
               real(kind=private_plflt), dimension(*), intent(in) :: x, y
           end subroutine interface_plpoin
@@ -2276,8 +2276,8 @@ subroutine plpoin3_impl( x, y, z, code )
 
     interface
         subroutine interface_plpoin3( n, x, y, z, code ) bind(c,name='c_plpoin3')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n, code
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
         end subroutine interface_plpoin3
@@ -2294,8 +2294,8 @@ subroutine plpoly3_impl( x, y, z, draw, ifcc )
 
     interface
         subroutine interface_plpoly3( n, x, y, z, draw, ifcc ) bind(c,name='c_plpoly3')
+            import :: private_plint, private_plbool, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n
             integer(kind=private_plbool), value, intent(in) :: ifcc
             integer(kind=private_plbool), dimension(*), intent(in) :: draw
@@ -2315,8 +2315,8 @@ subroutine plptex_impl( x, y, dx, dy, just, text )
 
     interface
         subroutine interface_plptex( x, y, dx, dy, just, text ) bind(c,name='c_plptex')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             character(len=1), dimension(*), intent(in) :: text
             real(kind=private_plflt), value, intent(in) :: x, y, dx, dy, just
         end subroutine interface_plptex
@@ -2334,8 +2334,8 @@ subroutine plptex3_impl( wx, wy, wz, dx, dy, dz, sx, sy, sz, just, text )
 
     interface
         subroutine interface_plptex3( wx, wy, wz, dx, dy, dz, sx, sy, sz, just, text ) bind(c,name='c_plptex3')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             character(len=1), dimension(*), intent(in) :: text
             real(kind=private_plflt), value, intent(in) :: wx, wy, wz, dx, dy, dz, sx, sy, sz, just
         end subroutine interface_plptex3
@@ -2356,8 +2356,8 @@ subroutine plrgbhls_impl( r, g, b, h, l, s )
 
     interface
         subroutine interface_plrgbhls( r, g, b, h, l, s ) bind(c,name='c_plrgbhls')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: r, g, b
             real(kind=private_plflt), intent(out) :: h, l, s
         end subroutine interface_plrgbhls
@@ -2375,8 +2375,8 @@ subroutine plschr_impl( chrdef, chrht )
 
     interface
         subroutine interface_plschr( chrdef, chrht ) bind(c,name='c_plschr')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: chrdef, chrht
         end subroutine interface_plschr
     end interface
@@ -2390,8 +2390,8 @@ subroutine plscmap0a_impl( r, g, b, a )
 
     interface
         subroutine interface_plscmap0a( r, g, b, a, n ) bind(c,name='c_plscmap0a')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), dimension(*), intent(in) :: r, g, b
             real(kind=private_plflt), dimension(*), intent(in) :: a
             integer(kind=private_plint), value, intent(in) :: n
@@ -2407,8 +2407,8 @@ subroutine plscmap1_range_impl( chrdef, chrht )
 
     interface
         subroutine interface_plscmap1_range( chrdef, chrht ) bind(c,name='c_plscmap1_range')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: chrdef, chrht
         end subroutine interface_plscmap1_range
     end interface
@@ -2422,8 +2422,8 @@ subroutine plscmap1a_impl( r, g, b, a )
 
     interface
         subroutine interface_plscmap1a( r, g, b, a, n ) bind(c,name='c_plscmap1a')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), dimension(*), intent(in) :: r, g, b
             real(kind=private_plflt), dimension(*), intent(in) :: a
             integer(kind=private_plint), value, intent(in) :: n
@@ -2445,8 +2445,8 @@ subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_p
         subroutine interface_plscmap1l( rgbtype, npts, intensity, coord1, coord2, coord3, alt_hue_path ) &
             bind(c,name='c_plscmap1l')
             import :: c_ptr
+            import :: private_plint, private_plbool, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: npts
             integer(kind=private_plbool), value, intent(in) :: rgbtype
             real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3
@@ -2483,8 +2483,8 @@ subroutine plscmap1la_impl( rgbtype, intensity, coord1, coord2, coord3, alpha, a
         subroutine interface_plscmap1la( rgbtype, n, intensity, coord1, coord2, coord3, alpha, alt_hue_path ) &
             bind(c,name='c_plscmap1la')
             import :: c_ptr
+            import :: private_plint,private_plbool, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n
             integer(kind=private_plbool), value, intent(in) :: rgbtype
             real(kind=private_plflt), dimension(*), intent(in) :: intensity, coord1, coord2, coord3, alpha
@@ -2516,8 +2516,8 @@ subroutine plscol0a_impl( icol, r, g, b, a )
 
     interface
         subroutine interface_plscol0a( icol, r, g, b, a ) bind(c,name='c_plscol0a')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: icol, r, g, b
             real(kind=private_plflt), value, intent(in) :: a
         end subroutine interface_plscol0a
@@ -2533,8 +2533,8 @@ subroutine plscolbga_impl( r, g, b, a )
 
     interface
         subroutine interface_plscolbga( r, g, b, a ) bind(c,name='c_plscolbga')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: r, g, b
             real(kind=private_plflt), value, intent(in) :: a
         end subroutine interface_plscolbga
@@ -2549,8 +2549,8 @@ subroutine plsdidev_impl( mar, aspect, jx, jy )
 
     interface
         subroutine interface_plsdidev( mar, aspect, jx, jy ) bind(c,name='c_plsdidev')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: mar, aspect, jx, jy
         end subroutine interface_plsdidev
     end interface
@@ -2564,8 +2564,8 @@ subroutine plsdimap_impl( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm )
 
     interface
         subroutine interface_plsdimap( dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm ) bind(c,name='c_plsdimap')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: dimxmi, dimxmax, diymin, dimymax, dimxpmm, diypmm
         end subroutine interface_plsdimap
     end interface
@@ -2580,8 +2580,8 @@ subroutine plsdiori_impl( rot )
 
     interface
         subroutine interface_plsdiori( rot) bind(c,name='c_plsdiori')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: rot
         end subroutine interface_plsdiori
     end interface
@@ -2594,8 +2594,8 @@ subroutine plsdiplt_impl( xmin, ymin, xmax, ymax )
 
     interface
         subroutine interface_plsdiplt( xmin, ymin, xmax, ymax ) bind(c,name='c_plsdiplt')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, ymin, xmax, ymax
         end subroutine interface_plsdiplt
     end interface
@@ -2610,8 +2610,8 @@ subroutine plsdiplz_impl( xmin, ymin, xmax, ymax )
 
     interface
         subroutine interface_plsdiplz( xmin, ymin, xmax, ymax ) bind(c,name='c_plsdiplz')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, ymin, xmax, ymax
         end subroutine interface_plsdiplz
     end interface
@@ -3278,8 +3278,8 @@ subroutine plsmaj_impl( def, scale )
 
     interface
         subroutine interface_plsmaj( def, scale ) bind(c,name='c_plsmaj')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: def, scale
         end subroutine interface_plsmaj
     end interface
@@ -3293,8 +3293,8 @@ subroutine plsmin_impl( def, scale )
 
     interface
         subroutine interface_plsmin( def, scale ) bind(c,name='c_plsmin')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: def, scale
         end subroutine interface_plsmin
     end interface
@@ -3309,8 +3309,8 @@ subroutine plspage_impl( xp, yp, xleng, yleng, xoff, yoff )
 
     interface
         subroutine interface_plspage( xp, yp, xleng, yleng, xoff, yoff ) bind(c,name='c_plspage')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: xleng, yleng, xoff, yoff
             real(kind=private_plflt), value, intent(in) :: xp, yp
         end subroutine interface_plspage
@@ -3328,8 +3328,8 @@ subroutine plssym_impl( def, scale )
 
    interface
        subroutine interface_plssym( def, scale ) bind(c,name='c_plssym')
+           import :: private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            real(kind=private_plflt), value, intent(in) :: def, scale
        end subroutine interface_plssym
    end interface
@@ -3346,8 +3346,8 @@ subroutine plstring_impl( x, y, string )
 
   interface
      subroutine interface_plstring( n, x, y, string ) bind(c,name='c_plstring')
+       import :: private_plint, private_plflt
        implicit none
-       include 'included_plplot_interface_private_types.f90'
        integer(kind=private_plint), value, intent(in) :: n
        real(kind=private_plflt), dimension(*), intent(in) :: x, y
        character(len=1), dimension(*), intent(in) :: string
@@ -3373,8 +3373,8 @@ subroutine plstring3_impl( x, y, z, string )
 
   interface
      subroutine interface_plstring3( n, x, y, z, string ) bind(c,name='c_plstring3')
+       import :: private_plint, private_plflt
        implicit none
-       include 'included_plplot_interface_private_types.f90'
        integer(kind=private_plint), value, intent(in) :: n
        real(kind=private_plflt), dimension(*), intent(in) :: x, y, z
        character(len=1), dimension(*), intent(in) :: string
@@ -3398,8 +3398,8 @@ subroutine plstripa_impl( id, pen, x, y )
 
    interface
        subroutine interface_plstripa( id, pen, x, y ) bind(c,name='c_plstripa')
+           import :: private_plint, private_plflt
            implicit none
-           include 'included_plplot_interface_private_types.f90'
            integer(kind=private_plint), value, intent(in) :: id, pen
            real(kind=private_plflt), value, intent(in) :: x, y
        end subroutine interface_plstripa
@@ -3438,8 +3438,8 @@ subroutine plstripc_impl( &
           n_pens, colline, styline, length_legline, legline, &
           labx, laby, labtop ) bind(c,name='fc_plstripc')
        import :: c_char
+       import :: private_plint, private_plbool, private_plflt
        implicit none
-       include 'included_plplot_interface_private_types.f90'
        integer(kind=private_plint), value, intent(in) :: colbox, collab, n_pens, length_legline
        integer(kind=private_plint), dimension(*), intent(in) :: colline, styline
        integer(kind=private_plbool), value, intent(in) :: y_ascl, acc
@@ -3487,8 +3487,8 @@ subroutine plsurf3d_impl( x, y, z, opt, clevel )
     interface
         subroutine interface_plsurf3d( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plsurf3d')
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny, opt, nlevel
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
             type(c_ptr), dimension(*), intent(in) :: zaddress
@@ -3517,8 +3517,8 @@ subroutine plsurf3dl_impl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin
         subroutine interface_plsurf3dl( x, y, zaddress, nx, ny, opt, clevel, nlevel, &
                                 indexxmin, indexxmax, indexymin, indexymax ) bind(c,name='c_plsurf3dl')
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: nx, ny, opt, nlevel, indexxmin, indexxmax
             integer(kind=private_plint), dimension(*), intent(in) :: indexymin, indexymax
             real(kind=private_plflt), dimension(*), intent(in) :: x, y, clevel
@@ -3541,8 +3541,8 @@ subroutine plsvpa_impl( xmin, xmax, ymin, ymax )
 
     interface
         subroutine interface_plsvpa( xmin, xmax, ymin, ymax ) bind(c,name='c_plsvpa')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
         end subroutine interface_plsvpa
     end interface
@@ -3557,8 +3557,8 @@ subroutine plsym_impl( x, y, code )
 
     interface
         subroutine interface_plsym( n, x, y, code ) bind(c,name='c_plsym')
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: n, code
             real(kind=private_plflt), dimension(*), intent(in) :: x, y
         end subroutine interface_plsym
@@ -3573,8 +3573,8 @@ subroutine plvasp_impl( aspect)
 
     interface
         subroutine interface_plvasp( aspect ) bind(c,name='c_plvasp')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: aspect
         end subroutine interface_plvasp
     end interface
@@ -3592,8 +3592,8 @@ subroutine plvectors_0( u, v, scale )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -3612,8 +3612,8 @@ subroutine plvectors_0( u, v, scale )
             interface
                 function lookup( ix, iy, data ) bind(c)
                     import :: c_ptr
+                    import :: private_plint, private_plflt
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
                     integer(kind=private_plint), value, intent(in) :: ix, iy
                     type(c_ptr), value, intent(in) :: data
@@ -3662,8 +3662,8 @@ subroutine plvectors_1( u, v, scale, xg, yg )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -3762,8 +3762,8 @@ subroutine plvectors_2( u, v, scale, xg, yg )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -3793,8 +3793,8 @@ subroutine plvectors_2( u, v, scale, xg, yg )
             interface
                 function lookup( ix, iy, data ) bind(c)
                     import :: c_ptr
+                    import :: private_plint, private_plflt
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
                     integer(kind=private_plint), value, intent(in) :: ix, iy
                     type(c_ptr), value, intent(in) :: data
@@ -3864,8 +3864,8 @@ subroutine plvectors_tr( u, v, scale, tr )
     interface
         function plf2evalr( ix, iy, data ) bind(c, name = 'plf2evalr' )
             import :: c_ptr
+            import :: private_plint, private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt) :: plf2evalr
             integer(kind=private_plint), value, intent(in) :: ix, iy
             type(c_ptr), value, intent(in) :: data
@@ -3884,8 +3884,8 @@ subroutine plvectors_tr( u, v, scale, tr )
             interface
                 function lookup( ix, iy, data ) bind(c)
                     import :: c_ptr
+                    import :: private_plint, private_plflt
                     implicit none
-                    include 'included_plplot_interface_private_types.f90'
                     real(kind=private_plflt) :: lookup
                     integer(kind=private_plint), value, intent(in) :: ix, iy
                     type(c_ptr), value, intent(in) :: data
@@ -3925,8 +3925,8 @@ subroutine plvpas_impl( xmin, xmax, ymin, ymax, aspect )
 
     interface
         subroutine interface_plvpas( xmin, xmax, ymin, ymax, aspect ) bind(c,name='c_plvpas')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, aspect
         end subroutine interface_plvpas
     end interface
@@ -3940,8 +3940,8 @@ subroutine plvpor_impl( xmin, xmax, ymin, ymax )
 
     interface
         subroutine interface_plvpor( xmin, xmax, ymin, ymax ) bind(c,name='c_plvpor')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
         end subroutine interface_plvpor
     end interface
@@ -3955,8 +3955,8 @@ subroutine plw3d_impl( basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax,
 
     interface
         subroutine interface_plw3d( basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az ) bind(c,name='c_plw3d')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az
         end subroutine interface_plw3d
     end interface
@@ -3972,8 +3972,8 @@ subroutine plwidth_impl( width )
 
     interface
         subroutine interface_plwidth( width ) bind(c,name='c_plwidth')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: width
         end subroutine interface_plwidth
     end interface
@@ -3986,8 +3986,8 @@ subroutine plwind_impl( xmin, xmax, ymin, ymax )
 
     interface
         subroutine interface_plwind( xmin, xmax, ymin, ymax ) bind(c,name='c_plwind')
+            import :: private_plflt
             implicit none
-            include 'included_plplot_interface_private_types.f90'
             real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
         end subroutine interface_plwind
     end interface
