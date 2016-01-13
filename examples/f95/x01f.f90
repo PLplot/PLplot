@@ -20,6 +20,7 @@
 
 program x01f95
    use plplot, PI => PL_PI
+   use :: iso_fortran_env, only: stdout => output_unit
    use plf95demolib
 
    implicit none
@@ -27,6 +28,10 @@ program x01f95
    real(plflt) :: xscale, yscale, xoff, yoff
    character(len=80) :: version
    integer :: digmax
+   logical, parameter :: locate_mode = .false.
+   type(PLGraphicsIn) :: gin
+   integer :: PLK_Escape
+   data PLK_Escape /Z'1B'/
 
 !  Process command-line arguments
    call plparseopts(PL_PARSE_FULL)
@@ -65,6 +70,33 @@ program x01f95
 
    call plot2()
    call plot3()
+
+   if( locate_mode ) then
+      do while(.true.)
+         call plGetCursor( gin )
+
+         ! FIXME.  plGetCursor should be interfaced as a function that
+         ! returns non-zero on success.  For example, if the user hits
+         ! the escape key, the xwin device zeros keysym but sets
+         ! conditions for escaping this loop by setting the return
+         ! code to 0 for what should be the above function.  So the
+         ! attempt to exit the loop below is a complete failure for
+         ! the xwin device, and instead we need to check the function
+         ! return code (once plGetCursor is interfaced correctly that
+         ! way) for a zero value.
+
+         ! N.B. keep this check in for devices other than xwin which might actually return the
+         ! keysym for the escape key if the user hits it.
+         if( gin%keysym == PLK_escape ) exit
+
+         write(stdout, "(a,i3,a,f0.6,a,f0.6,a,f0.6,a,f0.6)") &
+              "subwin = ", gin%subwindow, ", wx = ", gin%wX, ", wy = ", gin%wY, &
+              ", dx = ", gin%dX, ", dy = ", gin%dY
+         write(stdout, "(a,z0,a,z0,a,a,z0,a,z0)") &
+              "keysym = 0x", gin%keysym, ", button = 0x", gin%button, ", string = '"//trim(gin%string)//"'", &
+              ", type = 0x", gin%type, ", state = 0x", gin%state
+      enddo
+   end if
 
 !  Don't forget to call PLEND to finish off!
 
