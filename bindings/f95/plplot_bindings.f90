@@ -79,9 +79,10 @@ end module plplot_graphics
 
 ! The bind(c) attribute exposes the pltr routine which ought to be private
 module plplot_private_exposed
+    use iso_c_binding, only: c_ptr
     use plplot_types, only: private_plflt
     implicit none
-    private :: private_plflt
+    private :: c_ptr, private_plflt
 contains
 subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
    real(kind=private_plflt), value, intent(in) :: x, y
@@ -93,8 +94,6 @@ subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
 end subroutine plplot_private_pltr
 
 subroutine plplot_private_pltr0f( x, y, tx, ty, data ) bind(c)
-   use iso_c_binding, only: c_ptr
-   use plplot_types, only: private_plflt
    real(kind=private_plflt), value, intent(in) :: x, y
    real(kind=private_plflt), intent(out) :: tx, ty
    type(c_ptr), value, intent(in) :: data
@@ -105,15 +104,17 @@ end subroutine plplot_private_pltr0f
 end module plplot_private_exposed
 
 module plplot_single
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, &
-                             c_funloc, c_f_pointer, c_f_procpointer
+    use iso_c_binding, only: c_ptr, c_char, c_null_char, c_null_ptr, c_loc,  c_funptr, c_null_funptr, c_funloc
     use iso_fortran_env, only: error_unit
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_single
-    private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer, wp
+    private :: c_ptr, c_char, c_null_char, c_null_ptr, c_loc, c_funptr, c_null_funptr, c_funloc
+    private :: error_unit
+    private :: private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
+    private :: wp
 
 ! Interfaces for single-precision callbacks
 
@@ -226,15 +227,17 @@ module plplot_single
 end module plplot_single
 
 module plplot_double
-    use iso_c_binding, only: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_ptr, c_null_funptr, &
-                             c_funloc, c_f_pointer, c_f_procpointer
+    use iso_c_binding, only: c_ptr, c_char, c_null_char, c_null_ptr, c_loc, c_funptr, c_null_funptr, c_funloc
     use iso_fortran_env, only: error_unit
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
     use plplot_private_exposed
     implicit none
 
     integer, parameter :: wp = private_double
-    private :: c_ptr, c_null_char, c_null_ptr, c_loc, c_null_funptr, c_funloc, c_f_pointer, wp
+    private :: c_ptr, c_char, c_null_char, c_null_ptr, c_loc, c_funptr, c_null_funptr, c_funloc
+    private :: error_unit
+    private :: private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
+    private :: wp
 
 ! Interfaces for double-precision callbacks
 
@@ -352,7 +355,7 @@ module plplot
     use plplot_double
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     use plplot_graphics
-    use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_null_char, c_null_ptr, c_null_funptr
+    use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -363,7 +366,7 @@ module plplot
     character(len=1), parameter :: PL_END_OF_STRING = achar(0)
     include 'included_plplot_parameters.f90'
     private :: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
-    private :: c_char, c_loc, c_null_char, c_null_ptr
+    private :: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     private :: copystring2f, maxlen
     private :: pltransform_single
     private :: pltransform_double
@@ -936,7 +939,7 @@ subroutine plparseopts(mode)
 
   interface
      subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
-       use iso_c_binding, only: c_char
+       import :: c_char
        implicit none
        include 'included_plplot_interface_private_types.f90'
        integer(kind=private_plint), value, intent(in) :: length, nargs, mode
@@ -1297,7 +1300,7 @@ subroutine plslabelfunc_null
 
     interface
         subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-            use iso_c_binding, only: c_funptr, c_ptr
+            import :: c_funptr, c_ptr
             type(c_funptr), value, intent(in) :: proc
             type(c_ptr), value, intent(in) :: data
         end subroutine interface_plslabelfunc
@@ -1312,7 +1315,7 @@ subroutine plslabelfunc_double( proc )
     procedure(pllabeler_proc_double) :: proc
     interface
         subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-            use iso_c_binding, only: c_funptr, c_ptr
+            import :: c_funptr, c_ptr
             type(c_funptr), value, intent(in) :: proc
             type(c_ptr), value, intent(in) :: data
         end subroutine interface_plslabelfunc
@@ -1329,7 +1332,7 @@ subroutine plslabelfunc_data_double( proc, data )
     type(c_ptr), intent(in) :: data
     interface
         subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-            use iso_c_binding, only: c_funptr, c_ptr
+            import :: c_funptr, c_ptr
             type(c_funptr), value, intent(in) :: proc
             type(c_ptr), value, intent(in) :: data
         end subroutine interface_plslabelfunc
@@ -1348,7 +1351,7 @@ subroutine plsmem( maxx, maxy, plotmem )
     character(kind=c_char), dimension(:, :, :), target, intent(in) :: plotmem
     interface
         subroutine interface_plsmem( maxx, maxy, plotmem ) bind( c, name = 'c_plsmem' )
-            use iso_c_binding, only: c_ptr
+            import :: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: maxx, maxy
@@ -1380,7 +1383,7 @@ subroutine plsmema( maxx, maxy, plotmem )
     character(kind=c_char), dimension(:, :, :), target, intent(in) :: plotmem
     interface
         subroutine interface_plsmema( maxx, maxy, plotmem ) bind( c, name = 'c_plsmema' )
-            use iso_c_binding, only: c_ptr
+            import :: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: maxx, maxy
@@ -1520,7 +1523,7 @@ subroutine plstransform_null
 
     interface
         subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-            use iso_c_binding, only: c_funptr, c_ptr
+            import :: c_funptr, c_ptr
             type(c_funptr), value, intent(in) :: proc
             type(c_ptr), value, intent(in) :: data
         end subroutine interface_plstransform
@@ -1535,7 +1538,7 @@ subroutine plstransform_double( proc )
     procedure(pltransform_proc_double) :: proc
     interface
         subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-            use iso_c_binding, only: c_funptr, c_ptr
+            import :: c_funptr, c_ptr
             type(c_funptr), value, intent(in) :: proc
             type(c_ptr), value, intent(in) :: data
         end subroutine interface_plstransform
@@ -1552,7 +1555,7 @@ subroutine plstransform_data_double( proc, data )
     type(c_ptr), intent(in) :: data
     interface
         subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-            use iso_c_binding, only: c_funptr, c_ptr
+            import :: c_funptr, c_ptr
             type(c_funptr), value, intent(in) :: proc
             type(c_ptr), value, intent(in) :: data
         end subroutine interface_plstransform
@@ -1633,7 +1636,7 @@ subroutine plsvect_none( fill )
 
     interface
         subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
-            use iso_c_binding, only: c_ptr
+            import :: c_ptr
             implicit none
             include 'included_plplot_interface_private_types.f90'
             integer(kind=private_plint), value, intent(in) :: npts
