@@ -36,10 +36,10 @@ program x30f95
   data alpha / 1.0_plflt, 1.0_plflt, 1.0_plflt, 1.0_plflt /
   data px / 0.1_plflt, 0.5_plflt, 0.5_plflt, 0.1_plflt /
   data py / 0.1_plflt, 0.1_plflt, 0.5_plflt, 0.5_plflt /
-  data pos / 0.0_plflt, 1.0_plflt / 
-  data rcoord / 1.0_plflt, 1.0_plflt / 
-  data gcoord / 0.0_plflt, 0.0_plflt / 
-  data bcoord / 0.0_plflt, 0.0_plflt / 
+  data pos / 0.0_plflt, 1.0_plflt /
+  data rcoord / 1.0_plflt, 1.0_plflt /
+  data gcoord / 0.0_plflt, 0.0_plflt /
+  data bcoord / 0.0_plflt, 0.0_plflt /
   data acoord / 0.0_plflt, 1.0_plflt /
   data rev / .false. , .false. /
 
@@ -55,7 +55,7 @@ program x30f95
 
   call plscmap0a (red, green, blue, alpha)
 
-  ! 
+  !
   ! Page 1:
   !
   ! This is a series of red, green and blue rectangles overlaid
@@ -69,11 +69,11 @@ program x30f95
   call plcol0 (0)
   call plbox ("", 1.0_plflt, 0, "", 1.0_plflt, 0)
 
-  ! Draw the boxes 
+  ! Draw the boxes
   do i = 1,9
      icol = mod(i-1,3) + 1
 
-     ! Get a color, change its transparency and 
+     ! Get a color, change its transparency and
      ! set it as the current color.
      call plgcol0a (icol, r, g, b, a)
      call plscol0a (icol, r, g, b, 1.0_plflt - dble(i-1)/9.0_plflt)
@@ -91,11 +91,11 @@ program x30f95
   !
   ! Page 2:
   !
-  ! This is a bunch of boxes colored red, green or blue with a single 
+  ! This is a bunch of boxes colored red, green or blue with a single
   ! large (red) box of linearly varying transparency overlaid. The
   ! overlaid box is completely transparent at the bottom and completely
   ! opaque at the top.
-  ! 
+  !
 
   ! Set up the window
   call pladv(0)

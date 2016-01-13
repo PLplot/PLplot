@@ -296,7 +296,7 @@
          ! doubly dimensioned xg, yg, versus singly dimensioned xg1, yg1
          call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
          call pllab("", "", "Undistorted image example")
-         
+
          do i=1,width+1
             do j=1,height+1
                xg(i,j) = dble(i-1)
@@ -305,7 +305,7 @@
          enddo
          call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
               height_r, 0._plflt, 0._plflt, img_min, img_max, xg, yg)
-         
+
          call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
          call pllab("", "", "Undistorted image example")
 
@@ -317,13 +317,13 @@
          do j=1,height+1
             yg1(j) = dble(j-1)
          enddo
-         
+
          call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
               height_r, 0._plflt, 0._plflt, img_min, img_max, xg1, yg1)
 
          deallocate(xg1, yg1)
       end if
-         
+
       deallocate( img_f, xg, yg )
 
       call plend()
@@ -349,7 +349,7 @@
          write( 10, rec = 1, iostat = ierr ) string(1:bytes)
       enddo
       if(ierr /= 0) bytes = bytes -1
-      
+
       close( 10, status = 'delete' )
 
       end subroutine

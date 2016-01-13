@@ -69,7 +69,7 @@
 
       write(6,'(3A)') 'Demo of multiple output streams via the ', &
         trim(driver), ' driver.'
-      write(6,'(A)') 'Running with the second stream as slave '// & 
+      write(6,'(A)') 'Running with the second stream as slave '// &
         'to the first.'
       write(6,*)
 !      flush unit 6 so this part of stdout is guaranteed to be written prior

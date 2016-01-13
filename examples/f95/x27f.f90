@@ -238,13 +238,13 @@ subroutine arcs( )
           theta + dtheta, 0.0_plflt, .false.)
      theta = theta + dtheta
   enddo
-  
+
   ! Draw several filled ellipses inside the circle at different
   ! angles.
   a = 3.0_plflt
   b = a * tan( (dtheta/180.0_plflt*PL_PI)/2.0_plflt )
   theta = dtheta/2.0_plflt
-  do i = 0, NSEG-1 
+  do i = 0, NSEG-1
      call plcol0( 2 - mod(i,2) )
      call plarc( a*cos(theta/180.0_plflt*PL_PI), &
           a*sin(theta/180.0_plflt*PL_PI), &
@@ -253,4 +253,4 @@ subroutine arcs( )
   enddo
 
 end subroutine arcs
-      
+

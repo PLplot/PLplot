@@ -730,13 +730,13 @@
        subroutine plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, n_values, values )
 
          use plplot
-         
+
          implicit none
 
          integer  :: kind_i, label_i, cap_i, cont_color, n_values
          real(kind=plflt)   :: cont_width
          real(kind=plflt), dimension(:)   :: values
-         
+
          ! Parameters for the colorbars on this page
          integer            :: position_i, position, opt
          real(kind=plflt)   :: x, y, x_length, y_length;
@@ -776,7 +776,7 @@
 
             vertical = (iand(position, PL_POSITION_LEFT) > 0 .or. iand(position, PL_POSITION_RIGHT) > 0 )
             ifn      = (iand(position, PL_POSITION_LEFT) > 0 .or. iand(position, PL_POSITION_BOTTOM) > 0 )
-            
+
             ! Set the offset position on the page
             if (vertical .eqv. .true.) then
                x        = 0.0_plflt
@@ -804,7 +804,7 @@
                   axis_opts(1) = "uwxvm"
                endif
             endif
-            
+
             write(labels(1), '(3A)') trim(colorbar_position_option_labels(position_i+1)), &
                  ', ', trim(colorbar_label_option_labels(label_i+1))
 
@@ -833,7 +833,7 @@
             call plsmaj( 0.0_plflt, 1.0_plflt )
             call plsmin( 0.0_plflt, 1.0_plflt )
          enddo
-            
+
 
          ! Draw a page title
          write(title, '(3A)') trim(colorbar_option_kind_labels(kind_i+1)), ' - ', &
@@ -843,9 +843,9 @@
          call plptex( 0.5_plflt, 0.5_plflt, 0.0_plflt, 0.0_plflt, 0.5_plflt, title )
 
          deallocate(values_array)
-         
+
        end subroutine plcolorbar_example_page
-       
+
        subroutine plcolorbar_example( palette, kind_i, cont_color, cont_width, n_values, values )
          character(*) :: palette
          integer  :: kind_i, label_i, cap_i, cont_color, n_values
