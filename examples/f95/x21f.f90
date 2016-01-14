@@ -2,6 +2,7 @@
 !
 !      Copyright (C) 2004  Joao Cardoso
 !      Copyright (C) 2008  Andrew Ross
+!      Copyright (C) 2008-2016 Alan W. Irwin
 !
 !      This file is part of PLplot.
 !
@@ -19,12 +20,10 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-      use plplot, PI => PL_PI
-
+      program x21f
+      use plplot, double_PI => PL_PI
       implicit none
-
-      external myisnan
-      logical myisnan
+      real(kind=plflt), parameter :: PI = double_PI
 
       integer pts, xp, yp, nl, knn_order, randn, rosen
       real(kind=plflt) threshold, wmin
@@ -73,7 +72,7 @@
       call plparseopts(PL_PARSE_FULL)
 
       opt(3) = wmin
-      opt(4) = dble(knn_order)
+      opt(4) = real(knn_order,kind=plflt)
       opt(5) = threshold
 
 ! Initialize plplot
@@ -246,7 +245,7 @@
 
       call plend
 
-      end
+      contains
 
       subroutine cmap1_init
         use plplot
@@ -293,4 +292,4 @@
 
       include 'plf95demos.inc'
 
-
+    end program x21f

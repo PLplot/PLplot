@@ -1,7 +1,7 @@
 !      Demo of multiple stream/window capability
 !
 !      Copyright (C) 2004  Arjen Markus
-!      Copyright (C) 2004  Alan W. Irwin
+!      Copyright (C) 2004-2016  Alan W. Irwin
 !
 !      This file is part of PLplot.
 !
@@ -24,6 +24,7 @@
 ! This version sends the output of the first 4 plots (one page) to two
 ! independent streams.
 
+      program x14f
       use plplot
       implicit none
 
@@ -155,7 +156,8 @@
 !      Call plend to finish off.
 
       call plend()
-      end
+
+      contains
 
 !======================================================================
 
@@ -170,7 +172,7 @@
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
       do i = 1, 60
-        x(i) = xoff + xscale * dble(i)/60.0_plflt
+        x(i) = xoff + xscale * real(i,kind=plflt)/60.0_plflt
         y(i) = yoff + yscale * x(i)**2
       enddo
 
@@ -204,7 +206,7 @@
       call plcol0(4)
       call plline(x(:60), y(:60))
       call plflush
-      end
+    end subroutine plot1
 
 !======================================================================
 
@@ -242,8 +244,8 @@
       call plcol0(3)
       call plline(x(:100), y(:100))
       call plflush
-      end
 
+    end subroutine plot2
 !======================================================================
 
       subroutine plot3()
@@ -251,8 +253,9 @@
 !      For the final graph we wish to override the default tick intervals,
 !      and so do not use_ PLENV
 
-      use plplot, PI => PL_PI
+      use plplot, double_PI => PL_PI
       implicit none
+      real(kind=plflt), parameter :: PI = double_PI
       real(kind=plflt), dimension(101) ::  x, y
       real(kind=plflt), dimension(6) :: xs, ys
       real(kind=plflt) :: xscale, yscale, xoff, yoff
@@ -291,23 +294,24 @@
       call plcol0(4)
       call plline(x, y)
       call plflush
-      end
+    end subroutine plot3
 
 !======================================================================
 
       subroutine plot4()
 
-      use plplot, PI => PL_PI
+      use plplot, double_PI => PL_PI
       implicit none
+      real(kind=plflt), parameter :: PI = double_PI
       character(len=3) :: text
       real(kind=plflt), dimension(0:360) :: x0, y0, x, y
       real(kind=plflt) :: dtr, theta, dx, dy, r
-      integer :: i, j, nsp
+      integer :: i, j
 
       dtr = PI/180.0_plflt
       do i=0,360
-        x0(i) = cos(dtr * dble (i))
-        y0(i) = sin(dtr * dble (i))
+        x0(i) = cos(dtr * real(i,kind=plflt))
+        y0(i) = sin(dtr * real(i,kind=plflt))
       enddo
 
 !      Set up viewport and window, but do not draw box
@@ -348,7 +352,7 @@
 !      Draw the graph
 
       do i=0,360
-        r = sin(dtr*dble (5*i))
+        r = sin(dtr*real(5*i,kind=plflt))
         x(i) = x0(i) * r
         y(i) = y0(i) * r
       enddo
@@ -362,7 +366,7 @@
 !      Flush the plot at end
 
       call plflush
-      end
+    end subroutine plot4
 
 !======================================================================
 
@@ -381,14 +385,15 @@
       do while(text(nsp:nsp).eq.' ' .and. nsp.lt.l)
         nsp = nsp+1
       enddo
-      end
+    end function nsp
 
 !======================================================================
 
       subroutine plot5()
 
-      use plplot, PI => PL_PI
+      use plplot, double_PI => PL_PI
       implicit none
+      real(kind=plflt), parameter :: PI = double_PI
       integer :: i, j, nptsx, nptsy, xdim, ydim
 !      xdim and ydim are the absolute static dimensions.
 !      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
@@ -406,18 +411,18 @@
         -0.2_plflt, &
         0._plflt, 0.2_plflt, 0.4_plflt, 0.6_plflt ,0.8_plflt, 1._plflt/
 
-      tr(1) = 2._plflt/dble(nptsx-1)
+      tr(1) = 2._plflt/real(nptsx-1,kind=plflt)
       tr(2) = 0.0_plflt
       tr(3) = -1.0_plflt
       tr(4) = 0.0_plflt
-      tr(5) = 2._plflt/dble(nptsy-1)
+      tr(5) = 2._plflt/real(nptsy-1,kind=plflt)
       tr(6) = -1.0_plflt
 
 !      Calculate the data matrices.
       do i=1,nptsx
-        xx = dble(i-1-(nptsx/2))/dble (nptsx/2)
+        xx = real(i-1-(nptsx/2),kind=plflt)/real(nptsx/2,kind=plflt)
         do j=1,nptsy
-          yy = dble(j-1-(nptsy/2))/dble (nptsy/2) - 1.0_plflt
+          yy = real(j-1-(nptsy/2),kind=plflt)/real(nptsy/2,kind=plflt) - 1.0_plflt
           z(i,j) = xx*xx - yy*yy
           w(i,j) = 2._plflt*xx*yy
         enddo
@@ -426,21 +431,21 @@
 !      Build the 1-d coord arrays.
       distort = 0.4_plflt
       do i=1,nptsx
-        xx = -1._plflt + dble(i-1)*2._plflt/dble(nptsx-1)
+        xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(nptsx-1,kind=plflt)
         xg1(i) = xx + distort*cos(0.5_plflt*PI*xx)
       enddo
 
       do j=1,nptsy
-        yy = -1._plflt + dble(j-1)*2._plflt/dble(nptsy-1)
+        yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(nptsy-1,kind=plflt)
         yg1(j) = yy - distort*cos(0.5_plflt*PI*yy)
       enddo
 
 !      Build the 2-d coord arrays.
       do i=1,nptsx
-        xx = -1._plflt + dble(i-1)*2._plflt/dble(nptsx-1)
+        xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(nptsx-1,kind=plflt)
         argx = 0.5_plflt*PI*xx
         do j=1,nptsy
-          yy = -1._plflt + dble(j-1)*2._plflt/dble(nptsy-1)
+          yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(nptsy-1,kind=plflt)
           argy = 0.5_plflt*PI*yy
           xg2(i,j) = xx + distort*cos(argx)*cos(argy)
           yg2(i,j) = yy - distort*cos(argx)*cos(argy)
@@ -460,4 +465,5 @@
         'Streamlines of flow')
 
       call plflush
-      end
+    end subroutine plot5
+  end program x14f

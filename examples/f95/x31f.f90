@@ -1,6 +1,6 @@
 !      set / get tester.
 !
-!      Copyright (C) 2008  Alan W. Irwin
+!      Copyright (C) 2008-2016  Alan W. Irwin
 !      Copyright (C) 2008  Andrew Ross
 !
 !      This file is part of PLplot.
@@ -25,10 +25,12 @@
 ! Demonstrates absolute positioning of graphs on a page.
 !--------------------------------------------------------------------------
 
-program x31f95
-  use plplot
+program x31f
+  use plplot, double_PL_NOTSET => PL_NOTSET
 
   implicit none
+  real(kind=plflt), parameter :: NOTSET = double_PL_NOTSET
+  
   real(kind=plflt) xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
   real(kind=plflt) xmid, ymid, wx, wy
   real(kind=plflt) mar, aspect, jx, jy, ori
@@ -202,7 +204,7 @@ program x31f95
      status = 1
   endif
 
-  call plsdidev(0.05_plflt, PL_NOTSET, 0.1_plflt, 0.2_plflt)
+  call plsdidev(0.05_plflt, NOTSET, 0.1_plflt, 0.2_plflt)
   call plgdidev(mar, aspect, jx, jy)
   write(*,'(A,4F9.6)') 'device-space window parameters: '// &
        'mar, aspect, jx, jy =', mar, aspect, jx, jy
@@ -264,4 +266,4 @@ program x31f95
   endif
   stop
 
-end program x31f95
+end program x31f

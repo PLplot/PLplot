@@ -1,6 +1,6 @@
 !     Demonstrate most pllegend capability including unicode symbols.
 !
-!     Copyright (C) 2010 Alan Irwin
+!     Copyright (C) 2010-2016 Alan W. Irwin
 !
 !     This file is part of PLplot.
 !
@@ -33,6 +33,7 @@
 !  Demonstrate most pllegend capability including unicode symbols.
 ! --------------------------------------------------------------------------
 
+      program x33f
       use plplot
 
       implicit none
@@ -90,15 +91,26 @@
           '✽',             &
           '✦'              /
 
-      data values_small   / -1.0e-200_plflt, 1.0e-200_plflt /
+      data values_small   / -1.0_plflt, 1.0_plflt /
       data values_uneven &
-      / -1.0e-200_plflt, 2.0e-200_plflt, 2.6e-200_plflt, 3.4e-200_plflt, &
-      6.0e-200_plflt, 7.0e-200_plflt, 8.0e-200_plflt, 9.0e-200_plflt, &
-      10.0e-200_plflt /
+      / -1.0_plflt, 2.0_plflt, 2.6_plflt, 3.4_plflt, &
+      6.0_plflt, 7.0_plflt, 8.0_plflt, 9.0_plflt, &
+      10.0_plflt /
       data values_even &
-      / -2.0e-200_plflt, -1.0e-200_plflt, 0.0e-200_plflt, 1.0e-200_plflt, &
-      2.0e-200_plflt, 3.0e-200_plflt, 4.0e-200_plflt, 5.0e-200_plflt, &
-      6.0e-200_plflt /
+      / -2.0_plflt, -1.0_plflt, 0.0_plflt, 1.0_plflt, &
+      2.0_plflt, 3.0_plflt, 4.0_plflt, 5.0_plflt, &
+      6.0_plflt /
+
+      real(kind=plflt) :: small_factor
+
+      ! The factor of 1.e-200 is the standard one, but if plflt is
+      ! single precision that will underflow so adopt a
+      ! larger factor which is 1.e10*minimum positive real.
+      small_factor = max(1.e-200_plflt, 1.e10_plflt*tiny(1._plflt))
+
+      values_small = small_factor*values_small
+      values_uneven = small_factor*values_uneven
+      values_even = small_factor*values_even
 
       position_options(1) = PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_OUTSIDE
       position_options(2) = PL_POSITION_TOP + PL_POSITION_OUTSIDE
@@ -864,4 +876,4 @@
          enddo
        end subroutine plcolorbar_example
 
-      end program
+     end program x33f

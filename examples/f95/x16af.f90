@@ -1,7 +1,7 @@
 !      Demonstration of plshade plotting
 !      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 !
-!      Copyright (C) 2004  Alan W. Irwin
+!      Copyright (C) 2004-2016  Alan W. Irwin
 !
 !      This file is part of PLplot.
 !
@@ -19,6 +19,7 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+      program x16af
       use plplot
       implicit none
 
@@ -40,7 +41,8 @@
       call polar()
 
       call plend
-      end
+
+      contains
 
 !      Plot function using the identity transform
 
@@ -76,9 +78,9 @@
 !      Set up data arrays
 
       do i = 1, NX
-        x = (i - 1 - (NX/2)) / dble (NX/2)
+        x = (i - 1 - (NX/2)) / real(NX/2,kind=plflt)
         do j = 1, NY
-          y = (j - 1 - (NY/2)) / dble (NY/2) - 1.0_plflt
+          y = (j - 1 - (NY/2)) / real(NY/2,kind=plflt) - 1.0_plflt
           z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1_plflt)
           w(i,j) = 2*x*y
         enddo
@@ -87,7 +89,7 @@
       call a2mnmx(z, NX, NY, zmin, zmax, xdim)
       do  i = 1, NCONTR
         clevel(i) = zmin + (zmax - zmin) * (i + 0.5_plflt) / &
-          dble (NCONTR)
+          real(NCONTR,kind=plflt)
       enddo
 
 !      Plot using identity transform
@@ -97,11 +99,11 @@
       call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
 
       do i = 1, NCONTR
-        shade_min = zmin + (zmax - zmin) * dble (i - 1) / &
-          dble (NCONTR)
-        shade_max = zmin + (zmax - zmin) * dble (i)     / &
-          dble (NCONTR)
-        sh_color = dble (i - 1) / dble (NCONTR - 1)
+        shade_min = zmin + (zmax - zmin) * real(i - 1,kind=plflt) / &
+          real(NCONTR,kind=plflt)
+        shade_max = zmin + (zmax - zmin) * real(i,kind=plflt)     / &
+          real(NCONTR,kind=plflt)
+        sh_color = real(i - 1,kind=plflt) / real(NCONTR - 1,kind=plflt)
         sh_width = 2
         call plpsty(0)
         call plshade(z(:NX,:NY), ' ', &
@@ -116,14 +118,15 @@
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
-      end
+    end subroutine rect
 
 !      Routine for demonstrating use_ of transformation arrays in contour plots.
 
       subroutine polar()
 
-      use plplot, TWOPI => PL_TWOPI
+      use plplot, double_TWOPI => PL_TWOPI
       implicit none
+      real(kind=plflt), parameter :: TWOPI = double_TWOPI
       integer   xdim, ydim, NX, NY, NCONTR, NBDRY
 !      xdim and ydim are the static dimensions of the 2D arrays while
 !      NX and NY are the defined area.
@@ -169,7 +172,7 @@
       do i = 1, NX
         r = i - 0.5_plflt
         do j = 1, NY
-          theta = TWOPI/dble(NY) * (j-0.5_plflt)
+          theta = TWOPI/real(NY,kind=plflt) * (j-0.5_plflt)
           xg(i,j) = r * cos(theta)
           yg(i,j) = r * sin(theta)
         enddo
@@ -227,7 +230,7 @@
 !      Set up contour levels.
 
       do i = 1, NCONTR
-        clevel(i) = zmin + (i-0.5_plflt)*abs(zmax - zmin)/dble(NCONTR)
+        clevel(i) = zmin + (i-0.5_plflt)*abs(zmax - zmin)/real(NCONTR,kind=plflt)
       enddo
 
 !      Advance graphics frame and get ready to plot.
@@ -262,11 +265,11 @@
 !      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
       do i = 1, NCONTR
-        shade_min = zmin + (zmax - zmin) * dble (i - 1) / &
-          dble (NCONTR)
-        shade_max = zmin + (zmax - zmin) * dble (i)     / &
-          dble (NCONTR)
-        sh_color = dble (i - 1) / dble (NCONTR - 1)
+        shade_min = zmin + (zmax - zmin) * real(i - 1,kind=plflt) / &
+          real(NCONTR,kind=plflt)
+        shade_max = zmin + (zmax - zmin) * real(i,kind=plflt)     / &
+          real(NCONTR,kind=plflt)
+        sh_color = real(i - 1,kind=plflt) / real(NCONTR - 1,kind=plflt)
         sh_width = 2
         call plpsty(0)
 
@@ -281,7 +284,7 @@
 !      Draw boundary.
 
       do i = 1, NBDRY
-        theta = (TWOPI)/(NBDRY-1) * dble(i-1)
+        theta = (TWOPI)/(NBDRY-1) * real(i-1,kind=plflt)
         xtm(i) = x0 + rmax * cos(theta)
         ytm(i) = y0 + rmax * sin(theta)
       enddo
@@ -292,7 +295,7 @@
       call pllab(' ', ' ', &
       'Shielded potential of charges in a conducting sphere')
 
-      end
+    end subroutine polar
 
 !----------------------------------------------------------------------------
 !      Subroutine a2mnmx
@@ -313,4 +316,5 @@
           fmin = min(fmin, f(i, j))
         enddo
       enddo
-      end
+    end subroutine a2mnmx
+  end program x16af

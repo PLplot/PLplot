@@ -1,4 +1,4 @@
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -23,9 +23,11 @@
 !   viewing options in each plot.
 !--------------------------------------------------------------------------
 
-program x18f95
-    use plplot, PI => PL_PI, TWOPI => PL_TWOPI
+program x18f
+    use plplot, double_PI => PL_PI, double_TWOPI => PL_TWOPI
     implicit none
+    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=plflt), parameter :: TWOPI = double_TWOPI
 
     integer, parameter :: NPTS = 1000
 
@@ -52,15 +54,15 @@ program x18f95
 
 !   From the mind of a sick and twisted physicist...
 
-    z = -1._plflt + 2._plflt * dble (ia-1) / dble (NPTS)
+    z = -1._plflt + 2._plflt * real(ia-1,kind=plflt) / real(NPTS,kind=plflt)
 
 !   Pick one ...
 
-!   r = 1. - dble (ia-1) / dble (NPTS)
+!   r = 1. - real(ia-1,kind=plflt) / real(NPTS,kind=plflt)
     r = z
 
-    x = r * cos( 2._plflt * PI * 6._plflt * dble (ia-1) / dble (NPTS) )
-    y = r * sin( 2._plflt * PI * 6._plflt * dble (ia-1) / dble (NPTS) )
+    x = r * cos( 2._plflt * PI * 6._plflt * real(ia-1,kind=plflt) / real(NPTS,kind=plflt) )
+    y = r * sin( 2._plflt * PI * 6._plflt * real(ia-1,kind=plflt) / real(NPTS,kind=plflt) )
 
     do k = 1, 4
         call pladv(0)
@@ -159,4 +161,4 @@ subroutine test_poly(k, alt, az)
     call plcol0(3)
     call plmtex('t', 1.0_plflt, 0.5_plflt, 0.5_plflt, 'unit radius sphere' )
 end subroutine test_poly
-end program x18f95
+end program x18f

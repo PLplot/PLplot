@@ -2,6 +2,7 @@
 !
 !   Copyright (C) 2005 Arjen Markus
 !   Copyright (C) 2008 Andrew Ross
+!   Copyright (C) 2008-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -142,13 +143,13 @@ program x25f
                call plwind(xextreme(1,i), xextreme(2,i), yextreme(1,i), yextreme(2,i))
 
                call plcol0(2)
-               call plbox('bc', 1.0d0, 0, 'bcnv', 10.0d0, 0)
+               call plbox('bc', 1.0_plflt, 0, 'bcnv', 10.0_plflt, 0)
                call plcol0(1)
                call plpsty(0)
                if(k.eq.1) then
                   call plfill(x0(1:npts),y0(1:npts))
                else
-                  call plgradient(x0(1:npts),y0(1:npts),45.d0)
+                  call plgradient(x0(1:npts),y0(1:npts),45._plflt)
                endif
                call plcol0(2)
                call pllsty(1)

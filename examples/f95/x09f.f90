@@ -1,6 +1,6 @@
 !   Contour plot demo.
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -20,10 +20,13 @@
 
 !   Does several contour plots using different coordinate mappings.
 
-program x09f95
-    use plplot, PI => PL_PI, TWOPI => PL_TWOPI
+program x09f
+    use plplot, double_PI => PL_PI, double_TWOPI => PL_TWOPI
     use plf95demolib
     implicit none
+
+    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=plflt), parameter :: TWOPI = double_TWOPI
     integer i, j
 
 !   xdim and ydim are the absolute static dimensions.
@@ -45,12 +48,12 @@ program x09f95
 !   Process command-line arguments
     call plparseopts(PL_PARSE_FULL)
 
-    tr = (/ 2._plflt/dble(nptsx-1), 0.0_plflt, -1.0_plflt, &
-            0.0_plflt, 2._plflt/dble(nptsy-1), -1.0_plflt /)
+    tr = (/ 2._plflt/real(nptsx-1,kind=plflt), 0.0_plflt, -1.0_plflt, &
+            0.0_plflt, 2._plflt/real(nptsy-1,kind=plflt), -1.0_plflt /)
 
 !   Calculate the data matrices.
-    xc = (arange(0,nptsx) - (nptsx/2)) / dble(nptsx/2)
-    yc = (arange(0,nptsy) - (nptsy/2)) / dble(nptsy/2) - 1.0_plflt
+    xc = (arange(0,nptsx) - (nptsx/2)) / real(nptsx/2,kind=plflt)
+    yc = (arange(0,nptsy) - (nptsy/2)) / real(nptsy/2,kind=plflt) - 1.0_plflt
 
     do i=1,nptsx
         do j=1,nptsy
@@ -62,15 +65,15 @@ program x09f95
 !   Build the 1-d coord arrays.
     distort = 0.4_plflt
 
-    xg1(1:nptsx) = coord_function( arange(0,nptsx) / dble(nptsx-1),  distort )
-    yg1(1:nptsy) = coord_function( arange(0,nptsy) / dble(nptsy-1), -distort )
+    xg1(1:nptsx) = coord_function( arange(0,nptsx) / real(nptsx-1,kind=plflt),  distort )
+    yg1(1:nptsy) = coord_function( arange(0,nptsy) / real(nptsy-1,kind=plflt), -distort )
 
 !   Build the 2-d coord arrays.
     do i=1,nptsx
-        xx = -1._plflt + dble(i-1)*2._plflt/dble(nptsx-1)
+        xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(nptsx-1,kind=plflt)
         argx = 0.5_plflt*PI*xx
         do j=1,nptsy
-            yy = -1._plflt + dble(j-1)*2._plflt/dble(nptsy-1)
+            yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(nptsy-1,kind=plflt)
             argy = 0.5_plflt*PI*yy
             xg2(i,j) = xx + distort*cos(argx)*cos(argy)
             yg2(i,j) = yy - distort*cos(argx)*cos(argy)
@@ -162,9 +165,9 @@ subroutine polar()
 
 !   create data to be contoured.
     do j = 1, THETAPTS
-        theta = (2._plflt*PI/dble(THETAPTS-1))*dble(j-1)
+        theta = (2._plflt*PI/real(THETAPTS-1,kind=plflt))*real(j-1,kind=plflt)
         do i = 1, RPTS
-            r = (i-1)/dble(RPTS-1)
+            r = (i-1)/real(RPTS-1,kind=plflt)
             xg(i,j) = r*cos(theta)
             yg(i,j) = r*sin(theta)
             z(i,j) = r
@@ -221,7 +224,7 @@ subroutine potential()
     do i = 1, nx
         r = i - 0.5_plflt
         do j = 1, ny
-            theta = TWOPI/dble(ny-1) * (j-0.5_plflt)
+            theta = TWOPI/real(ny-1,kind=plflt) * (j-0.5_plflt)
             xg(i,j) = r * cos(theta)
             yg(i,j) = r * sin(theta)
         enddo
@@ -280,7 +283,7 @@ subroutine potential()
 !   Set up contour levels.
 
     nlevel = 20
-    dz = abs(zmax - zmin)/dble (nlevel)
+    dz = abs(zmax - zmin)/real(nlevel,kind=plflt)
     clevel(1:nlevel) = zmin + (arange(1,nlevel+1) - 0.5_plflt) * dz
 
 !   Split contours into two parts, z > 0, and z < 0.
@@ -352,4 +355,4 @@ subroutine potential()
     call plcol0(ncollab)
     call pllab('', '', 'Shielded potential of charges in a conducting sphere')
 end subroutine potential
-end program x09f95
+end program x09f

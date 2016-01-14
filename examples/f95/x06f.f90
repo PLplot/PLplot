@@ -1,6 +1,6 @@
 !   Displays the plotter symbols for PLPOIN
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,7 +18,7 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x06f95
+program x06f
     use plplot
     implicit none
     integer :: i, j, k, font, kind_font, maxfont
@@ -93,4 +93,4 @@ program x06f95
     enddo
 
     call plend
-end program x06f95
+end program x06f

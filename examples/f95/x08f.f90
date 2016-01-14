@@ -1,6 +1,6 @@
 !   3-d plot demo
 !
-!   Copyright (C) 2004-2015  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,12 +18,13 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x08f95
-    use plplot, PI => PL_PI
+program x08f
+    use plplot, double_PI => PL_PI
     use plf95demolib
 
     implicit none
 
+    real(kind=plflt), parameter :: PI = double_PI
     integer :: i, j, k, ifshade
 
 !   xdim is the leading dimension of z, xpts <= xdim is the leading
@@ -233,4 +234,4 @@ contains
     call plscmap1n(256)
     call plscmap1l(.false., i, h, l, s)
 end subroutine cmap1_init
-end program x08f95
+end program x08f

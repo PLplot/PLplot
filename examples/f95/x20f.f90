@@ -67,10 +67,11 @@
 !};
 
       program x20f
-      use plplot, M_PI => PL_PI
+      use plplot, double_PI => PL_PI
 
       implicit none
-
+      
+      real(kind=plflt), parameter :: PI = double_PI
       integer, parameter          :: XDIM = 260, YDIM = 220
       real(kind=plflt), parameter :: XDIMR = XDIM, YDIMR = YDIM
 
@@ -154,13 +155,13 @@
       if (.not. nosombrero) then
 !         draw a yellow plot box, useful for diagnostics! :(
           call plcol0(2)
-          call plenv(0._plflt, 2._plflt*M_PI, 0.0_plflt, 3._plflt*M_PI, 1, -1)
+          call plenv(0._plflt, 2._plflt*PI, 0.0_plflt, 3._plflt*PI, 1, -1)
 
           do i=1,XDIM
-              x(i) = dble(i-1)*2._plflt*M_PI/dble(XDIM-1)
+              x(i) = real(i-1,kind=plflt)*2._plflt*PI/real(XDIM-1,kind=plflt)
           enddo
           do i=1,YDIM
-            y(i) = dble(i-1)*3._plflt*M_PI/dble(YDIM-1)
+            y(i) = real(i-1,kind=plflt)*3._plflt*PI/real(YDIM-1,kind=plflt)
           enddo
 
           do i=1,XDIM
@@ -173,8 +174,8 @@
           call pllab('No, an amplitude clipped "sombrero"', '', &
               'Saturn?')
           call plptex(2._plflt, 2._plflt, 3._plflt, 4._plflt, 0._plflt, 'Transparent image')
-          call plimage(z, 0._plflt, 2._plflt*M_PI, 0.0_plflt, 3._plflt*M_PI, &
-              0.05_plflt, 1._plflt, 0._plflt, 2._plflt*M_PI, 0._plflt, 3._plflt*M_PI)
+          call plimage(z, 0._plflt, 2._plflt*PI, 0.0_plflt, 3._plflt*PI, &
+              0.05_plflt, 1._plflt, 0._plflt, 2._plflt*PI, 0._plflt, 3._plflt*PI)
 
 !         Save the plot
           if (f_name .ne. ' ') then
@@ -200,8 +201,8 @@
       call gray_cmap(num_col)
 
 !     Display Lena
-      width_r  = dble(width)
-      height_r = dble(height)
+      width_r  = real(width,kind=plflt)
+      height_r = real(height,kind=plflt)
       call plenv(1._plflt, width_r, 1._plflt, height_r, 1, -1)
 
       if (.not. nointeractive) then
@@ -283,9 +284,9 @@
       stretch = 0.5_plflt
       do i=1,width+1
          do j=1,height+1
-            xg(i,j) = x0 + (x0-dble(i-1))*(1.0_plflt - stretch* &
-                 cos((dble(j-1)-y0)/dy*M_PI*0.5_plflt))
-            yg(i,j) = dble(j-1)
+            xg(i,j) = x0 + (x0-real(i-1,kind=plflt))*(1.0_plflt - stretch* &
+                 cos((real(j-1,kind=plflt)-y0)/dy*PI*0.5_plflt))
+            yg(i,j) = real(j-1,kind=plflt)
          enddo
       enddo
       call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
@@ -299,8 +300,8 @@
 
          do i=1,width+1
             do j=1,height+1
-               xg(i,j) = dble(i-1)
-               yg(i,j) = dble(j-1)
+               xg(i,j) = real(i-1,kind=plflt)
+               yg(i,j) = real(j-1,kind=plflt)
             enddo
          enddo
          call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
@@ -312,10 +313,10 @@
          allocate( xg1(width+1) )
          allocate( yg1(height+1) )
          do i=1,width+1
-            xg1(i) = dble(i-1)
+            xg1(i) = real(i-1,kind=plflt)
          enddo
          do j=1,height+1
-            yg1(j) = dble(j-1)
+            yg1(j) = real(j-1,kind=plflt)
          enddo
 
          call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
@@ -352,7 +353,7 @@
 
       close( 10, status = 'delete' )
 
-      end subroutine
+      end subroutine bytes_in_rec
 
 
 !     Read image from file in binary ppm format
@@ -473,7 +474,7 @@
               if ( pixel <= h*w ) then
                   i     = 1 + mod(pixel-1,w)
                   j     = 1 + (pixel-1)/w
-                  img_f(i,h-j+1) = dble(ichar(img(b)))
+                  img_f(i,h-j+1) = real(ichar(img(b),kind=plflt))
               endif
           enddo
           if ( pixel < h*w ) then
@@ -489,7 +490,7 @@
       height = h
       read_img = .true.
 
-      end function
+      end function read_img
 
 !     Save plot
       subroutine save_plot(fname)
@@ -516,7 +517,7 @@
 !     Return to previous one
       call plsstrm(cur_strm)
 
-      end subroutine
+      end subroutine save_plot
 
 !     Get selection square interactively
       logical function get_clip(xi, xe, yi, ye)
@@ -622,7 +623,7 @@
           return
       endif
 
-      end function
+      end function get_clip
 
 !     Set gray colormap
       subroutine gray_cmap(num_col)
@@ -646,9 +647,8 @@
       call plscmap1n(num_col)
       call plscmap1l(.true., pos, r, g, b, rev)
 
-      end subroutine
+      end subroutine gray_cmap
 
-      end program
 
 !----------------------------------------------------------------------------
 !      Subroutine a2mmx
@@ -669,5 +669,6 @@
           fmin = min(fmin, f(i, j))
         enddo
       enddo
-      end
+    end subroutine a2mnmx
 
+  end program x20f

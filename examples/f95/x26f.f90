@@ -1,6 +1,6 @@
 !  Multi-lingual version of the first page of example 4.
 !
-!  Copyright (C) 2006 Alan Irwin
+!  Copyright (C) 2006-2016 Alan W. Irwin
 !  Copyright (C) 2006,2008 Andrew Ross
 !
 !  Thanks to the following for providing translated strings for this example:
@@ -67,9 +67,10 @@
 
 program x26f
 
-  use plplot, PI => PL_PI
+  use plplot, double_PI => PL_PI
   implicit none
 
+  real(kind=plflt), parameter :: PI = double_PI
   integer, parameter :: nolangs = 2
   integer, parameter :: nlegend = 2
 
@@ -135,9 +136,10 @@ end program x26f
   subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
        legend_text, title_label, line_label )
 
-    use plplot, PI => PL_PI
+    use plplot, double_PI => PL_PI
     implicit none
 
+    real(kind=plflt), parameter :: PI = double_PI
     integer type, nlegend
     character(*) x_label, y_label, alty_label, title_label, line_label
 
@@ -246,7 +248,7 @@ end program x26f
     !     (note: number of legend entries determined from size of
     !     opt_array)
 
-    call plscol0a( 15, 32, 32, 32, 0.70d0 )
+    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
     call pllegend( legend_width, legend_height, &
         PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, 0, &
         0.0_plflt, 0.0_plflt, 0.10_plflt, 15, &

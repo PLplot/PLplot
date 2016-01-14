@@ -1,6 +1,6 @@
 !   Displays the plotter symbols for PLSYM
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,7 +18,7 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x07f95
+program x07f
     use plplot
     implicit none
 
@@ -96,4 +96,4 @@ program x07f95
     enddo
 
     call plend
-end program x07f95
+end program x07f

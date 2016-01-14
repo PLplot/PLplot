@@ -21,10 +21,11 @@
 
 !      Does several contour plots using different coordinate mappings.
 
-  program x22f95
-    use plplot, PI => PL_PI
+  program x22f
+    use plplot, double_PI => PL_PI
     use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
       implicit none
+      real(kind=plflt), parameter :: PI = double_PI
 
       integer, parameter :: double = kind(1.0d0)
       real(kind=double) common_max
@@ -90,15 +91,15 @@ contains
       dx = 1.0_plflt
       dy = 1.0_plflt
 
-      xmin = -dble(nx)/2.0_plflt*dx
-      xmax = dble(nx)/2.0_plflt*dx
-      ymin = -dble(ny)/2.0_plflt*dy
-      ymax = dble(ny)/2.0_plflt*dy
+      xmin = -real(nx,kind=plflt)/2.0_plflt*dx
+      xmax = real(nx,kind=plflt)/2.0_plflt*dx
+      ymin = -real(ny,kind=plflt)/2.0_plflt*dy
+      ymax = real(ny,kind=plflt)/2.0_plflt*dy
 
       do i=1,nx
-        xx = (dble(i)-nx/2.0_plflt-0.5_plflt)*dx
+        xx = (real(i,kind=plflt)-nx/2.0_plflt-0.5_plflt)*dx
         do j=1,ny
-          yy = (dble(j)-ny/2.0_plflt-0.5_plflt)*dy
+          yy = (real(j,kind=plflt)-ny/2.0_plflt-0.5_plflt)*dy
           xg(i,j) = xx
           yg(i,j) = yy
           u(i,j) = yy
@@ -132,16 +133,16 @@ contains
       dx = 1.0_plflt
       dy = 1.0_plflt
 
-      xmin = -dble(nx)/2.0_plflt*dx
-      xmax = dble(nx)/2.0_plflt*dx
-      ymin = -dble(ny)/2.0_plflt*dy
-      ymax = dble(ny)/2.0_plflt*dy
+      xmin = -real(nx,kind=plflt)/2.0_plflt*dx
+      xmax = real(nx,kind=plflt)/2.0_plflt*dx
+      ymin = -real(ny,kind=plflt)/2.0_plflt*dy
+      ymax = real(ny,kind=plflt)/2.0_plflt*dy
 
       Q = 2.0_plflt
       do i=1,nx
-        xx = (dble(i)-dble(nx)/2.0_plflt-0.5_plflt)*dx
+        xx = (real(i,kind=plflt)-real(nx,kind=plflt)/2.0_plflt-0.5_plflt)*dx
         do j=1,ny
-          yy = (dble(j)-dble(ny)/2.0_plflt-0.5_plflt)*dy
+          yy = (real(j,kind=plflt)-real(ny,kind=plflt)/2.0_plflt-0.5_plflt)*dy
           xg(i,j) = xx
           yg(i,j) = yy
           b = ymax/4.0_plflt*(3.0_plflt-cos(PI*xx/xmax))
@@ -216,10 +217,10 @@ contains
       dx = 1.0_plflt
       dy = 1.0_plflt
 
-      xmin = -dble(nx)/2.0_plflt*dx
-      xmax = dble(nx)/2.0_plflt*dx
-      ymin = -dble(ny)/2.0_plflt*dy
-      ymax = dble(ny)/2.0_plflt*dy
+      xmin = -real(nx,kind=plflt)/2.0_plflt*dx
+      xmax = real(nx,kind=plflt)/2.0_plflt*dx
+      ymin = -real(ny,kind=plflt)/2.0_plflt*dy
+      ymax = real(ny,kind=plflt)/2.0_plflt*dy
       common_max = ymax
       data%max = common_max
 
@@ -232,9 +233,9 @@ contains
 
       Q = 2.0_plflt
       do i=1,nx
-        xx = (dble(i)-dble(nx)/2.0_plflt-0.5_plflt)*dx
+        xx = (real(i,kind=plflt)-real(nx,kind=plflt)/2.0_plflt-0.5_plflt)*dx
         do j=1,ny
-          yy = (dble(j)-dble(ny)/2.0_plflt-0.5_plflt)*dy
+          yy = (real(j,kind=plflt)-real(ny,kind=plflt)/2.0_plflt-0.5_plflt)*dy
           xg(i,j) = xx
           yg(i,j) = yy
           b = ymax/4.0_plflt*(3.0_plflt-cos(PI*xx/xmax))
@@ -244,7 +245,7 @@ contains
       enddo
 
       do i=1,nc
-         clev(i) = Q + dble(i-1) * Q / ( dble(nc) - 1.0_plflt )
+         clev(i) = Q + real(i-1,kind=plflt) * Q / ( real(nc,kind=plflt) - 1.0_plflt )
       enddo
 
       call plenv(xmin, xmax, ymin, ymax, 0, 0)
@@ -280,7 +281,7 @@ contains
       real(kind=plflt) eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
       real(kind=plflt) div1, div1i, div2, div2i
 
-      rmax = dble(nr)
+      rmax = real(nr,kind=plflt)
 
       eps = 2.0_plflt
 
@@ -297,9 +298,9 @@ contains
       d2i = rmax**2.0_plflt/d2
 
       do i = 1, nr
-         r = 0.5 + dble(i-1)
+         r = 0.5 + real(i-1,kind=plflt)
         do j = 1, ntheta
-          theta = 2.*PI/dble(ntheta-1)*(dble(j)-0.5)
+          theta = 2.*PI/real(ntheta-1,kind=plflt)*(real(j,kind=plflt)-0.5)
           xx = r*cos(theta)
           yy = r*sin(theta)
           xg(i,j) = xx
@@ -327,7 +328,7 @@ contains
         '#frPLplot Example 22 - potential gradient vector plot')
 
 !     plot contours of the potential
-      dz = abs(zmax - zmin)/dble (nlevel)
+      dz = abs(zmax - zmin)/real(nlevel,kind=plflt)
       do i = 1, nlevel
          clevel(i) = zmin + (i-0.5_plflt)*dz
       enddo
@@ -343,7 +344,7 @@ contains
       call plcol0(1)
 
       do i=1,nper
-         theta = 2.0_plflt*PI/dble(nper-1)*dble(i)
+         theta = 2.0_plflt*PI/real(nper-1,kind=plflt)*real(i,kind=plflt)
          px(i) = rmax*cos(theta)
          py(i) = rmax*sin(theta)
       enddo
@@ -370,4 +371,4 @@ contains
         enddo
       enddo
     end subroutine a2mnmx
-  end program x22f95
+  end program x22f

@@ -1,6 +1,6 @@
 !   Illustration of logarithmic axes, and redefinition of window.
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,11 +18,12 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x04f95
-    use plplot, PI => PL_PI
+program x04f
+    use plplot, double_PI => PL_PI
     use plf95demolib
     implicit none
 
+    real(kind=plflt), parameter :: PI = double_PI
     real(kind=plflt)  :: freql(0:100),ampl(0:100),phase(0:100)
 
 !    Process command-line arguments
@@ -145,4 +146,4 @@ subroutine setdata
     ampl  = 20.0_plflt * log10(1.0_plflt/sqrt(1.0_plflt+(freq/f0)**2))
     phase = -(180.0_plflt/PI)*atan(freq/f0)
 end subroutine setdata
-end program x04f95
+end program x04f

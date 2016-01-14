@@ -1,6 +1,6 @@
 !   Simple line plot and multiple windows demo.
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,13 +18,14 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x01f95
-   use plplot, PI => PL_PI
+program x01f
+   use plplot, double_PI => PL_PI
    use :: iso_fortran_env, only: stdout => output_unit
    use plf95demolib
 
    implicit none
 
+   real(kind=plflt), parameter :: PI = double_PI
    real(plflt) :: xscale, yscale, xoff, yoff
    character(len=80) :: version
    integer :: digmax
@@ -213,4 +214,4 @@ end subroutine plot2
 
 end subroutine plot3
 
-end program x01f95
+end program x01f

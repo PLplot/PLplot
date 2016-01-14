@@ -1,4 +1,4 @@
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -21,9 +21,10 @@
 !      main program
 !--------------------------------------------------------------------------
 
-program x17f95
-    use plplot, PI => PL_PI
+program x17f
+    use plplot, double_PI => PL_PI
     implicit none
+    real(kind=plflt), parameter :: PI = double_PI
 
     integer            :: id1, n
     integer, parameter :: nsteps = 1000
@@ -141,7 +142,7 @@ program x17f95
 !       altogether from this loop.
 !       call sleep(1)
 
-        t = dble(n) * dt
+        t = real(n,kind=plflt) * dt
         noise = plrandd() - 0.5_plflt
         y1 = y1 + noise
         y2 = sin(t*PI/18._plflt)
@@ -171,4 +172,4 @@ program x17f95
 
     call plstripd(id1)
     call plend()
-end program x17f95
+end program x17f

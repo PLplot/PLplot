@@ -1,6 +1,6 @@
 !   Simple demo of a 2D line plot.
 !
-!   Copyright (C) 2011  Alan W. Irwin
+!   Copyright (C) 2011-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,7 +18,7 @@
 !   along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x00f95
+program x00f
     use plf95demolib
 
     integer, parameter :: NSIZE = 101
@@ -54,4 +54,4 @@ program x00f95
     ! Close PLplot library
     call plend
 
-end program x00f95
+end program x00f

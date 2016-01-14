@@ -23,8 +23,9 @@
 !--------------------------------------------------------------------------
 
       program x19f
-      use plplot, PI => PL_PI
+      use plplot, doublePI => PL_PI
       implicit none
+      real(kind=plflt), parameter :: PI = double_PI
 
       integer, parameter :: double = kind(1.0d0)
 

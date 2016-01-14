@@ -1,7 +1,8 @@
 !   Unicode Pace Flag
 !
 !   Copyright (C) 2005 Rafael Laboissiere
-!   Copyright (2) 2008 Andrew Ross
+!   Copyright (C) 2008 Andrew Ross
+!   Copyright (C) 2008-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -28,7 +29,7 @@
 !     PLPLOT_FREETYPE_MONO_FONT=$TTFDIR/ttf-devanagari-fonts/lohit_hi.ttf \
 !     PLPLOT_FREETYPE_SCRIPT_FONT=$TTFDIR/unfonts/UnBatang.ttf \
 !     PLPLOT_FREETYPE_SYMBOL_FONT=$TTFDIR/ttf-bengali-fonts/JamrulNormal.ttf \
-!     ./x24f -dev png -o x24f95.png )
+!     ./x24f -dev png -o x24f.png )
 !
 !   Packages needed:
 !
@@ -63,8 +64,8 @@ program x24f
   data (green(i) ,i=1,7) / 240,   0, 125, 204, 204,  80,   0 /
   data (blue(i) ,i=1,7)  / 240,   0,   0,   0,   0, 204, 125 /
 
-  data (px(i) ,i=1,4) / 0.0d0, 0.0d0, 1.0d0, 1.0d0 /
-  data (py(i) ,i=1,4) / 0.0d0, 0.25d0, 0.25d0, 0.0d0 /
+  data (px(i) ,i=1,4) / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt /
+  data (py(i) ,i=1,4) / 0.0_plflt, 0.25_plflt, 0.25_plflt, 0.0_plflt /
 
   data (sx(i) ,i=1,12) / &
        0.16374, &

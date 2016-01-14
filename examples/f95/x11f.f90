@@ -1,6 +1,6 @@
 !   Mesh plot demo
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,10 +18,12 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x11f95
-    use plplot, PI => PL_PI
+program x11f
+    use plplot, double_PI => PL_PI
     use plf95demolib
     implicit none
+
+    real(kind=plflt), parameter :: PI = double_PI
     integer, parameter :: xpts=35, ypts=46
     integer            :: i, j, k, ifshade
 
@@ -40,8 +42,8 @@ program x11f95
 !    Process command-line arguments
     call plparseopts(PL_PARSE_FULL)
 
-    x = 3._plflt * (arange(0,xpts) - (xpts/2)) / dble(xpts/2)
-    y = 3._plflt * (arange(0,ypts) - (ypts/2)) / dble(ypts/2)
+    x = 3._plflt * (arange(0,xpts) - (xpts/2)) / real(xpts/2,kind=plflt)
+    y = 3._plflt * (arange(0,ypts) - (ypts/2)) / real(ypts/2,kind=plflt)
 
     do i=1,xpts
         xx = x(i)
@@ -155,4 +157,4 @@ subroutine cmap1_init(gray)
     call plscmap1l(.false., i, h, l, s)
 end subroutine cmap1_init
 
-end program x11f95
+end program x11f

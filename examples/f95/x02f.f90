@@ -1,6 +1,6 @@
 !   Demonstrates multiple windows and color map 0
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !   Copyright (C) 2005  Andrew Ross
 !
 !   This file is part of PLplot.
@@ -19,7 +19,7 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x02f95
+program x02f
     use plplot
     implicit none
 
@@ -144,4 +144,4 @@ subroutine draw_windows( nw, cmap0_offset )
     enddo
 
 end subroutine draw_windows
-end program x02f95
+end program x02f

@@ -1,6 +1,6 @@
 !   Displays Greek letters and mathematically interesting Unicode ranges
 !
-!   Copyright (C) 2005 Alan Irwin
+!   Copyright (C) 2005-2016 Alan W. Irwin
 !   Copyright (C) 2005 Andrew Ross
 !
 !
@@ -396,10 +396,9 @@
 
    call plend()
 
- end program x23f
-
+   contains
+   
       subroutine lowercase23(string)
-      use plplot
       implicit none
       character*(*) string
       integer i, len, iascii
@@ -410,4 +409,5 @@
           string(i:i) = achar(iascii+32)
         endif
       enddo
-      end
+    end subroutine lowercase23
+  end program x23f

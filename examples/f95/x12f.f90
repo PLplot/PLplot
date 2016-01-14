@@ -1,6 +1,6 @@
 !   Demonstration program for PLplot: Bar chart example.
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,7 +18,7 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x12f95
+program x12f
     use plplot
     implicit none
 
@@ -48,7 +48,7 @@ program x12f95
 
     do i = 0, 9
 !       call plcol0(i + 1)
-        call plcol1(dble(i)/9.0_plflt)
+        call plcol1(real(i,kind=plflt)/9.0_plflt)
         call plpsty(0)
         call plfbox( 1980._plflt+i, y0(i+1) )
         write (string, '(i0)') int(y0(i+1))
@@ -77,4 +77,4 @@ subroutine plfbox(x0, y0)
     call pllsty(1)
     call plline(x, y)
 end subroutine plfbox
-end program x12f95
+end program x12f

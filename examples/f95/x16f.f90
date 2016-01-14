@@ -1,6 +1,6 @@
 !      plshades demo, using color fill
 !
-!      Copyright (C) 2004  Alan W. Irwin
+!      Copyright (C) 2004-2016  Alan W. Irwin
 !
 !      This file is part of PLplot.
 !
@@ -18,8 +18,10 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-      use plplot, PI => PL_PI
+      program x16f
+      use plplot, double_PI => PL_PI
       implicit none
+      real(kind=plflt), parameter :: PI = double_PI
       real(kind=plflt) xx, yy, argx, argy, distort, r, t
       integer NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
       parameter(NLEVEL = 20)
@@ -74,9 +76,9 @@
 
 !      Calculate the data matrices.
       do i=1,NX
-        xx = dble(i-1-(NX/2))/dble (NX/2)
+        xx = real(i-1-(NX/2),kind=plflt)/real(NX/2,kind=plflt)
         do j=1,NY
-          yy = dble(j-1-(NY/2))/dble (NY/2) - 1.0_plflt
+          yy = real(j-1-(NY/2),kind=plflt)/real(NY/2,kind=plflt) - 1.0_plflt
           z(i,j) = - sin(7._plflt*xx) * cos(7._plflt*yy) + xx*xx - yy*yy
           w(i,j) = - cos(7._plflt*xx) * sin(7._plflt*yy) + 2._plflt*xx*yy
         enddo
@@ -84,30 +86,30 @@
 
       call a2mnmx(z, NX, NY, zmin, zmax, xdim)
       do i = 1, NLEVEL
-        clevel(i) = zmin + (zmax - zmin) * (i - 0.5_plflt) / dble(NLEVEL)
+        clevel(i) = zmin + (zmax - zmin) * (i - 0.5_plflt) / real(NLEVEL,kind=plflt)
       enddo
       do i = 1, NLEVEL+1
-        shedge(i) = zmin + (zmax - zmin) * dble(i-1) / dble(NLEVEL)
+        shedge(i) = zmin + (zmax - zmin) * real(i-1,kind=plflt) / real(NLEVEL,kind=plflt)
       enddo
 
 !      Build the 1-d coord arrays.
       distort = 0.4_plflt
       do i=1,NX
-        xx = -1._plflt + dble(i-1)*2._plflt/dble(NX-1)
+        xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(NX-1,kind=plflt)
         xg1(i) = xx + distort*cos(0.5_plflt*PI*xx)
       enddo
 
       do j=1,NY
-        yy = -1._plflt + dble(j-1)*2._plflt/dble(NY-1)
+        yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(NY-1,kind=plflt)
         yg1(j) = yy - distort*cos(0.5_plflt*PI*yy)
       enddo
 
 !      Build the 2-d coord arrays.
       do i=1,NX
-        xx = -1._plflt + dble(i-1)*2._plflt/dble(NX-1)
+        xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(NX-1,kind=plflt)
         argx = 0.5_plflt*PI*xx
         do j=1,NY
-          yy = -1._plflt + dble(j-1)*2._plflt/dble(NY-1)
+          yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(NY-1,kind=plflt)
           argy = 0.5_plflt*PI*yy
           xg2(i,j) = xx + distort*cos(argx)*cos(argy)
           yg2(i,j) = yy - distort*cos(argx)*cos(argy)
@@ -314,16 +316,16 @@
       call plscmap0n(3)
 
       call pladv(0)
-      call plvpor(0.1d0, 0.9d0, 0.1d0, 0.9d0)
-      call plwind(-1.d0, 1.d0, -1.d0, 1.d0)
+      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
+      call plwind(-1._plflt, 1._plflt, -1._plflt, 1._plflt)
 
       call plpsty(0)
 
 !      Build new coordinate matrices.
       do i = 1, NX
-        r = dble(i-1)/dble(NX-1)
+        r = real(i-1,kind=plflt)/real(NX-1,kind=plflt)
         do j = 1, NY
-          t = (2._plflt*PI/dble(NY-1))*dble(j-1)
+          t = (2._plflt*PI/real(NY-1,kind=plflt))*real(j-1,kind=plflt)
           xg2(i,j) = r*cos(t)
           yg2(i,j) = r*sin(t)
           z(i,j) = exp(-r*r)*cos(5._plflt*PI*r)*cos(5._plflt*t)
@@ -333,7 +335,7 @@
 !      Need a new shedge to go along with the new data set.
       call a2mnmx(z, NX, NY, zmin, zmax, xdim)
       do i = 1, NLEVEL+1
-        shedge(i) = zmin + (zmax - zmin) * dble(i-1) / dble(NLEVEL)
+        shedge(i) = zmin + (zmax - zmin) * real(i-1,kind=plflt) / real(NLEVEL,kind=plflt)
       enddo
 
 !      Now we can shade the interior region.
@@ -370,7 +372,7 @@
 
 !      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
       do i = 1, PERIMETERPTS
-        t = (2._plflt*PI/dble(PERIMETERPTS-1))*dble(i-1)
+        t = (2._plflt*PI/real(PERIMETERPTS-1,kind=plflt))*real(i-1,kind=plflt)
         px(i) = cos(t)
         py(i) = sin(t)
       enddo
@@ -383,8 +385,9 @@
       call pllab( '', '',  'Tokamak Bogon Instability' )
 
       call plend
-      end
 
+      contains
+      
 !----------------------------------------------------------------------------
 !      Subroutine a2mnmx
 !      Minimum and the maximum elements of a 2-d array.
@@ -404,4 +407,5 @@
           fmin = min(fmin, f(i, j))
         enddo
       enddo
-      end
+    end subroutine a2mnmx
+  end program x16f

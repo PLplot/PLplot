@@ -1,6 +1,6 @@
 !   Pie chart demo.
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,9 +18,10 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x13f95
-    use plplot, PI => PL_PI
+program x13f
+    use plplot, double_PI => PL_PI
     implicit none
+    real(kind=plflt), parameter :: PI = double_PI
     real(kind=plflt)   :: just, dx, dy, x(500), y(500)
     integer            ::  i, j, dthet, theta0, theta1, theta
     character(len=20), dimension(5) :: text = &
@@ -86,4 +87,4 @@ program x13f95
     call plptex( 5._plflt, 9._plflt, 1._plflt, 0._plflt, 0.5_plflt, 'Percentage of Sales' )
 
     call plend
-end program x13f95
+end program x13f

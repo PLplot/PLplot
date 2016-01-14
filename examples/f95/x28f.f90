@@ -1,6 +1,6 @@
 !   Demonstrates plotting text in 3D (plmtex3, plptex3)
 !
-!   Copyright (C) 2007  Alan W. Irwin
+!   Copyright (C) 2007-2016  Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -19,11 +19,12 @@
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
 
-   program x28f95
-   use plplot, PI => PL_PI
+   program x28f
+   use plplot, double_PI => PL_PI
 
    implicit none
 
+   real(kind=plflt), parameter :: PI = double_PI
    integer, parameter :: XPTS = 2
    integer, parameter :: YPTS = 2
    integer, parameter :: NREVOLUTION = 16
@@ -97,7 +98,7 @@
    ! z = zmin.
    call plschr(0.0_plflt, 1.0_plflt)
    do i = 1,NREVOLUTION
-      omega = 2.*PI*((i-1)/dble(NREVOLUTION))
+      omega = 2.*PI*((i-1)/real(NREVOLUTION,kind=plflt))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       x_inclination = 0.5*xrange*cos_omega
@@ -116,7 +117,7 @@
    ! x = xmax.
    call plschr(0._plflt, 1.0_plflt)
    do i = 1,NREVOLUTION
-      omega = 2.*PI*((i-1)/dble(NREVOLUTION))
+      omega = 2.*PI*((i-1)/real(NREVOLUTION,kind=plflt))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       x_inclination = 0.
@@ -135,7 +136,7 @@
    ! y = ymax.
    call plschr(0.0_plflt, 1.0_plflt)
    do i = 1,NREVOLUTION
-      omega = 2.*PI*(i-1)/dble(NREVOLUTION)
+      omega = 2.*PI*(i-1)/real(NREVOLUTION,kind=plflt)
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       x_inclination = 0.5*xrange*cos_omega
@@ -173,12 +174,12 @@
    z_inclination = 0.
    x_shear = 0.
    do i = 1,NROTATION
-      omega = 2.*PI*(i-1)/dble(NROTATION)
+      omega = 2.*PI*(i-1)/real(NROTATION,kind=plflt)
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       y_shear = 0.5*yrange*sin_omega
       z_shear = 0.5*zrange*cos_omega
-      zs        = zsmax - dzsrot * dble(i-1)
+      zs        = zsmax - dzsrot * real(i-1,kind=plflt)
       call plptex3( &
          xmid, ymax, zs, &
          x_inclination, y_inclination, z_inclination, &
@@ -193,12 +194,12 @@
    z_inclination = 0.0
    y_shear = 0.0
    do i = 1,NROTATION
-      omega = 2.*PI*((i-1)/dble(NROTATION))
+      omega = 2.*PI*((i-1)/real(NROTATION,kind=plflt))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       x_shear = 0.5*xrange*sin_omega
       z_shear = 0.5*zrange*cos_omega
-      zs        = zsmax - dzsrot * dble(i-1)
+      zs        = zsmax - dzsrot * real(i-1,kind=plflt)
       call plptex3( &
          xmax, ymid, zs, &
          x_inclination, y_inclination, z_inclination, &
@@ -213,12 +214,12 @@
    z_inclination = 0.
    x_shear = 0.
    do i = 1,NROTATION
-      omega = 2.*PI*((i-1)/dble(NROTATION))
+      omega = 2.*PI*((i-1)/real(NROTATION,kind=plflt))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       y_shear = 0.5*yrange*cos_omega
       z_shear = 0.5*zrange*sin_omega
-      ys        = ysmax - dysrot * dble(i-1)
+      ys        = ysmax - dysrot * real(i-1,kind=plflt)
       call plptex3( &
          xmid, ys, zmin, &
          x_inclination, y_inclination, z_inclination, &
@@ -251,12 +252,12 @@
    z_inclination = 0.
    y_shear = 0.
    do i = 1,NSHEAR
-      omega = domega + 2.*PI*((i-1)/dble(NSHEAR))
+      omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=plflt))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       x_shear = 0.5*xrange*sin_omega
       z_shear = 0.5*zrange*cos_omega
-      zs        = zsmax - dzsshear * dble(i-1)
+      zs        = zsmax - dzsshear * real(i-1,kind=plflt)
       call plptex3( &
          xmid, ymax, zs, &
          x_inclination, y_inclination, z_inclination, &
@@ -271,12 +272,12 @@
    z_inclination = 0.
    x_shear = 0.
    do i = 1,NSHEAR
-      omega = domega + 2.*PI*((i-1)/dble(NSHEAR))
+      omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=plflt))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       y_shear = -0.5*yrange*sin_omega
       z_shear = 0.5*zrange*cos_omega
-      zs        = zsmax - dzsshear * dble(i-1)
+      zs        = zsmax - dzsshear * real(i-1,kind=plflt)
       call plptex3( &
          xmax, ymid, zs, &
          x_inclination, y_inclination, z_inclination, &
@@ -291,12 +292,12 @@
    z_inclination = 0.
    z_shear = 0.
    do i = 1,NSHEAR
-      omega = domega + 2.*PI*((i-1)/dble(NSHEAR))
+      omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=plflt))
       sin_omega = sin(omega)
       cos_omega = cos(omega)
       y_shear = 0.5*yrange*cos_omega
       x_shear = 0.5*xrange*sin_omega
-      ys        = ysmax - dysshear * dble(i-1)
+      ys        = ysmax - dysshear * real(i-1,kind=plflt)
       call plptex3( &
          xmid, ys, zmin, &
          x_inclination, y_inclination, z_inclination, &
@@ -385,4 +386,4 @@
    deallocate( x, y, z )
    call plend
    stop
-end program
+ end program x28f

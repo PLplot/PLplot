@@ -1,6 +1,6 @@
 !    Generates polar plot with, 1-1 scaling
 !
-!    Copyright (C) 2004  Alan W. Irwin
+!    Copyright (C) 2004-2016 Alan W. Irwin
 !
 !    This file is part of PLplot.
 !
@@ -18,11 +18,12 @@
 !    License along with PLplot; if not, write to the Free Software
 !    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x03f95
-    use plplot, PI => PL_PI
+program x03f
+    use plplot, double_PI => PL_PI
     use plf95demolib
     implicit none
 
+    real(kind=plflt), parameter :: PI = double_PI
     character (len=3) :: text
     real(kind=plflt), dimension(0:360) :: x0, y0, x, y
     real(kind=plflt) :: dtr, theta, dx, dy, offset
@@ -95,4 +96,4 @@ program x03f95
 !    Close the plot at end
 
     call plend
-end program x03f95
+end program x03f

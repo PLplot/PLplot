@@ -1,7 +1,7 @@
 !      Shade plot demo.
 !      Does a variety of shade plots.
 !
-!      Copyright (C) 2004  Alan W. Irwin
+!      Copyright (C) 2004-2016  Alan W. Irwin
 !
 !      This file is part of PLplot.
 !
@@ -19,6 +19,7 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+      program x15f
       use plplot
       implicit none
 
@@ -46,9 +47,9 @@
 !      Set up data array
 
       do i = 1,XPTS
-        xx = dble(i-1 - (XPTS / 2)) / dble(XPTS / 2)
+        xx = real(i-1 - (XPTS / 2),kind=plflt) / real(XPTS / 2,kind=plflt)
         do j = 1,YPTS
-          yy = dble(j-1 - (YPTS / 2)) / dble(YPTS / 2) - 1.0_plflt
+          yy = real(j-1 - (YPTS / 2),kind=plflt) / real(YPTS / 2,kind=plflt) - 1.0_plflt
           z(i,j) = xx*xx - yy*yy + (xx - yy)/(xx*xx+yy*yy + 0.1_plflt)
         enddo
       enddo
@@ -60,7 +61,8 @@
       call plot3()
 
       call plend()
-      end
+
+      contains
 
 ! -------------------------------------------------------------------------
 !      cmap1_init1
@@ -101,7 +103,7 @@
       s(4) = 1.0_plflt    ! maximum saturation
 
       call plscmap1l(.false., i, h, l, s)
-      end
+    end subroutine cmap1_init1
 
 ! -------------------------------------------------------------------------
 !      cmap1_init2
@@ -142,7 +144,7 @@
       s(4) = 1.0_plflt    ! maximum saturation
 
       call plscmap1l(.false., i, h, l, s)
-      end
+    end subroutine cmap1_init2
 
 ! -------------------------------------------------------------------------
 !      plot1
@@ -198,7 +200,7 @@
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
-      end
+    end subroutine plot1
 
 ! -------------------------------------------------------------------------
 !      plot2
@@ -264,7 +266,7 @@
       call plcol0(2)
       call pllab('distance', 'altitude', 'Bogon flux')
 
-      end
+    end subroutine plot2
 !--------------------------------------------------------------------------
 !     plot3
 !
@@ -306,7 +308,7 @@
       call plline3(xx2, yy2, zz2)
       call plfill3(xx2(1:4), yy2(1:4), zz2(1:4))
 
-      end
+    end subroutine plot3
 
 !----------------------------------------------------------------------------
 !      Subroutine a2mnmx
@@ -327,4 +329,5 @@
           fmin = min(fmin, f(i, j))
         enddo
       enddo
-      end
+    end subroutine a2mnmx
+  end program x15f

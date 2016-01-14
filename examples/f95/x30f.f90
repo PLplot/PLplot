@@ -2,6 +2,7 @@
 !
 !   Copyright (C) 2008 Hazen Babcock
 !   Copyright (C) 2008 Andrew Ross
+!   Copyright (C) 2008-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -20,7 +21,7 @@
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
 
-program x30f95
+program x30f
   use plplot
 
   implicit none
@@ -76,7 +77,7 @@ program x30f95
      ! Get a color, change its transparency and
      ! set it as the current color.
      call plgcol0a (icol, r, g, b, a)
-     call plscol0a (icol, r, g, b, 1.0_plflt - dble(i-1)/9.0_plflt)
+     call plscol0a (icol, r, g, b, 1.0_plflt - real(i-1,kind=plflt)/9.0_plflt)
      call plcol0 (icol)
 
      ! Draw the rectangle
@@ -105,7 +106,7 @@ program x30f95
   ! Draw the boxes. There are 25 of them drawn on a 5 x 5 grid.
   do i = 1,5
      ! Set box X position
-     px(1) = 0.05_plflt + 0.2_plflt * dble(i-1)
+     px(1) = 0.05_plflt + 0.2_plflt * real(i-1,kind=plflt)
      px(2) = px(1) + 0.1_plflt
      px(3) = px(2)
      px(4) = px(1)
@@ -119,7 +120,7 @@ program x30f95
      call plcol0 (icol)
      do j = 1, 5
         ! Set box y position and draw the box.
-        py(1) = 0.05_plflt + 0.2_plflt * dble(j-1)
+        py(1) = 0.05_plflt + 0.2_plflt * real(j-1,kind=plflt)
         py(2) = py(1)
         py(3) = py(1) + 0.1_plflt
         py(4) = py(3)
@@ -147,5 +148,5 @@ program x30f95
   call plgradient( px, py, 90._plflt )
   call plend()
 
-end program x30f95
+end program x30f
 

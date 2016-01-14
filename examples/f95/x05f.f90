@@ -1,6 +1,6 @@
 !   Draws a histogram from sample data
 !
-!   Copyright (C) 2004  Alan W. Irwin
+!   Copyright (C) 2004-2016 Alan W. Irwin
 !
 !   This file is part of PLplot.
 !
@@ -18,11 +18,12 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-program x04f95
-    use plplot, PI => PL_PI
+program x04f
+    use plplot, double_PI => PL_PI
     use plf95demolib
     implicit none
 
+    real(kind=plflt), parameter :: PI = double_PI
     integer, parameter :: NPTS = 2047
     real(kind=plflt) :: data(NPTS), delta
 
@@ -33,7 +34,7 @@ program x04f95
     call plinit()
 
 !   Fill up data points
-    delta = 2.0_plflt * PI / dble (NPTS)
+    delta = 2.0_plflt * PI / real(NPTS,kind=plflt)
     data = sin(delta*arange(0, NPTS))
 
     call plcol0(1)
@@ -43,4 +44,4 @@ program x04f95
       '#frPLplot Example 5 - Probability function of Oscillator')
 
     call plend
-end program x04f95
+end program x04f

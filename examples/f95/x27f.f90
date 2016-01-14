@@ -2,6 +2,7 @@
 !
 !  Copyright (C) 2007  Arjen Markus
 !  Copyright (C) 2008  Andrew Ross
+!  Copyright (C) 2008-2016 Alan W. Irwin
 !
 ! This file is part of PLplot.
 !
@@ -104,7 +105,7 @@ program x27f
 
   call plend()
 
-end program x27f
+  contains
 
 ! --------------------------------------------------------------------------
 ! Calculate greatest common divisor following pseudo-code for the
@@ -136,9 +137,10 @@ end subroutine cycloid
 
 subroutine spiro( params, fill )
 
-  use plplot
+  use plplot, double_PI => PL_PI
   implicit none
 
+  real(kind=plflt), parameter :: PI = double_PI
   real(kind=plflt)      params(*)
   integer     NPNT
   parameter ( NPNT = 2000 )
@@ -159,7 +161,6 @@ subroutine spiro( params, fill )
   real(kind=plflt)      ymin
   real(kind=plflt)      ymax
   real(kind=plflt)      yrange_adjust
-  integer gcd
 
   ! Fill the coordinates
 
@@ -168,7 +169,7 @@ subroutine spiro( params, fill )
   ! http://mathforum.org/mathimages/index.php/Hypotrochoid.
   windings = int(abs(params(2))/gcd(int(params(1)), int(params(2))))
   steps    = NPNT/windings
-  dphi     = 2.0_plflt*PL_PI/dble(steps)
+  dphi     = 2.0_plflt*PI/real(steps,kind=plflt)
 
   n = windings*steps+1
 
@@ -179,7 +180,7 @@ subroutine spiro( params, fill )
   ymax = 0.0
 
   do i = 1,n
-     phi       = dble(i-1) * dphi
+     phi       = real(i-1,kind=plflt) * dphi
      phiw      = (params(1)-params(2))/params(2)*phi
      xcoord(i) = (params(1)-params(2))*cos(phi)+params(3)*cos(phiw)
      ycoord(i) = (params(1)-params(2))*sin(phi)-params(3)*sin(phiw)
@@ -218,9 +219,10 @@ end subroutine spiro
 
 subroutine arcs( )
 
-  use plplot
+  use plplot, double_PI => PL_PI
   implicit none
 
+  real(kind=plflt), parameter :: PI = double_PI
   integer NSEG
   parameter ( NSEG = 8 )
   integer i;
@@ -228,7 +230,7 @@ subroutine arcs( )
   real (kind=plflt) a, b
 
   theta = 0.0_plflt
-  dtheta = 360.0_plflt / dble(NSEG)
+  dtheta = 360.0_plflt / real(NSEG,kind=plflt)
   call plenv( -10.0_plflt, 10.0_plflt, -10.0_plflt, 10.0_plflt, 1, 0 )
 
   ! Plot segments of circle in different colors
@@ -242,15 +244,16 @@ subroutine arcs( )
   ! Draw several filled ellipses inside the circle at different
   ! angles.
   a = 3.0_plflt
-  b = a * tan( (dtheta/180.0_plflt*PL_PI)/2.0_plflt )
+  b = a * tan( (dtheta/180.0_plflt*PI)/2.0_plflt )
   theta = dtheta/2.0_plflt
   do i = 0, NSEG-1
      call plcol0( 2 - mod(i,2) )
-     call plarc( a*cos(theta/180.0_plflt*PL_PI), &
-          a*sin(theta/180.0_plflt*PL_PI), &
+     call plarc( a*cos(theta/180.0_plflt*PI), &
+          a*sin(theta/180.0_plflt*PI), &
           a, b, 0.0_plflt, 360.0_plflt, theta, .true.)
      theta = theta + dtheta;
   enddo
 
 end subroutine arcs
+end program x27f
 
