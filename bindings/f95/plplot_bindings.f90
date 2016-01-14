@@ -29,7 +29,38 @@
 module plplot_types
   use iso_c_binding, only: c_ptr
   implicit none
-  include 'included_plplot_interface_private_types.f90'
+  ! Specify Fortran types used by the various modules below.
+
+  ! N.B. It is those modules' responsibility to keep these precision values
+  ! private.
+
+  ! These types are used along with function overloading so that
+  ! applications do not need a specific real type at all (under the
+  ! constraint that all real arguments must have consistent real type
+  ! for a particular call to a routine in the Fortran binding of
+  ! PLplot.)
+
+  ! This include file only defines the private_plflt parameter at the
+  ! moment which is configured to be either kind(1.0) or kind(1.0d0)
+  ! to agree with the configured real precision (PLFLT) of the PLplot
+  ! C library.
+    include 'included_plplot_configured_types.f90'
+    
+  ! The idea here is to match the Fortran 4-byte integer with the
+  ! corresponding C types for PLINT (normally int32_t), PLBOOL
+  ! (currently typedefed to PLINT) and PLUNICODE (normally
+  ! uint32_t).  According to websites I have read, Fortran has no
+  ! unsigned integer types and using 4 here is safer than anything more
+  ! complicated.
+  integer, parameter :: private_plint  = 4
+  integer, parameter :: private_plbool  = 4
+  integer, parameter :: private_plunicode  = 4
+
+  ! Define parameters for specific real precisions, so that we can
+  ! specify equivalent interfaces for all precisions (kinds)
+  integer, parameter :: private_single  = kind(1.0)
+  integer, parameter :: private_double  = kind(1.0d0)
+
   private :: c_ptr
 
   ! The PLfGrid and PLcGrid types transfer information about a multidimensional

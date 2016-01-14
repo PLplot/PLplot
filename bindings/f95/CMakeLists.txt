@@ -105,10 +105,9 @@ if(ENABLE_f95)
     set(ONE_IN_DEFAULT_PRECISION "1.0")
   endif(PL_DOUBLE)
 
-  set(PLPLOT_F95_PRIVATE)
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/included_plplot_private_types.f90.in
-    ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_interface_private_types.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/included_plplot_configured_types.f90.in
+    ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_configured_types.f90
     @ONLY
     )
 
