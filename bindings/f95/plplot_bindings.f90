@@ -45,7 +45,7 @@ module plplot_types
   ! to agree with the configured real precision (PLFLT) of the PLplot
   ! C library.
     include 'included_plplot_configured_types.f90'
-    
+
   ! The idea here is to match the Fortran 4-byte integer with the
   ! corresponding C types for PLINT (normally int32_t), PLBOOL
   ! (currently typedefed to PLINT) and PLUNICODE (normally
@@ -387,6 +387,7 @@ module plplot
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     use plplot_graphics
     use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
+    use iso_fortran_env, only: error_unit
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -401,6 +402,7 @@ module plplot
     private :: copystring2f, maxlen
     private :: pltransform_single
     private :: pltransform_double
+    private :: error_unit
 !
     ! Interfaces that do not depend on the real kind or which
     ! have optional real components (e.g., plsvect) that generate
@@ -984,11 +986,11 @@ subroutine plparseopts(mode)
   numargs_local = command_argument_count()
   if (numargs_local < 0) then
      !       This actually happened historically on a badly linked Cygwin platform.
-     write(0,'(a)') 'f95 plparseopts ERROR: negative number of arguments'
+     write(error_unit,'(a)') 'f95 plparseopts ERROR: negative number of arguments'
      return
   endif
   if(numargs_local > maxargs_local) then
-     write(0,'(a)') 'f95 plparseopts ERROR: too many arguments'
+     write(error_unit,'(a)') 'f95 plparseopts ERROR: too many arguments'
      return
   endif
   do iargs_local = 0, numargs_local

@@ -332,7 +332,9 @@ fc_plparseopts(  unsigned name_length, unsigned size, char *names, PLINT mode)
     // gdb analysis indicates this pointer gets set to NULL below
     // in the plparseopts call so we need to save it so we
     // can free the associated memory after the plparseopts call.
-    save_pointer = cnames[1];
+    save_pointer = NULL;
+    if ( actual_size > 1 )
+        save_pointer = cnames[1];
 
     // Convert names (which refers to a blank-terminated Fortran
     // character*(name_length) names(size) array) to cnames which
@@ -345,7 +347,8 @@ fc_plparseopts(  unsigned name_length, unsigned size, char *names, PLINT mode)
     // plparseopts changes size (and also the contents of cnames[1] to
     // NULL) during parsing so must free what was cnames[1] and make
     // the Free2dChar call with actual_size
-    free((void *) save_pointer);
+    if ( actual_size > 1 )
+        free((void *) save_pointer);
     Free2dChar( cnames, actual_size );
 }
 
