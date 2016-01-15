@@ -131,17 +131,57 @@ subroutine plplot_private_pltr0f( x, y, tx, ty, data ) bind(c)
 end subroutine plplot_private_pltr0f
 end module plplot_private_exposed
 
+module plplot_private_utilities
+  use iso_c_binding, only: c_ptr, c_null_char, c_loc
+  implicit none
+  private :: c_ptr, c_null_char, c_loc
+
+  contains
+  
+  subroutine character_array_to_c( cstring_array, cstring_address, character_array )
+    ! Translate from Fortran character_array to an array of C strings (cstring_array), where the
+    ! address of the start of each C string is stored in the cstring_address vector.
+    character(len=*), dimension(:), intent(in) :: character_array
+    character(len=1), dimension(:,:), allocatable, target, intent(out) :: cstring_array
+    type(c_ptr), dimension(:), allocatable, intent(out) :: cstring_address
+    
+    integer :: j_local, length_local, number_local, length_column_local
+    
+    ! length of character string
+    length_local = len(character_array)
+    ! number of character strings in array
+    number_local = size(character_array)
+    
+    ! Leave room for trailing c_null_char if the Fortran character string is
+    ! filled with non-blank characters to the end.
+    allocate( cstring_array(length_local+1, number_local) )
+    allocate( cstring_address(number_local) )
+    
+    do j_local = 1, number_local
+       length_column_local = len(trim(character_array(j_local))) + 1
+       ! Drop all trailing blanks in Fortran character string when converting to C string.
+       cstring_array(1:length_column_local, j_local) = &
+            transfer(trim(character_array(j_local))//c_null_char, " ", length_column_local)
+       cstring_address(j_local) = c_loc(cstring_array(1,j_local))
+    enddo
+
+  end subroutine character_array_to_c
+
+end module plplot_private_utilities
+
 module plplot_single
     use iso_c_binding, only: c_ptr, c_char, c_null_char, c_null_ptr, c_loc,  c_funptr, c_null_funptr, c_funloc
     use iso_fortran_env, only: error_unit
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
     use plplot_private_exposed
+    use plplot_private_utilities, only: character_array_to_c
     implicit none
 
     integer, parameter :: wp = private_single
     private :: c_ptr, c_char, c_null_char, c_null_ptr, c_loc, c_funptr, c_null_funptr, c_funloc
     private :: error_unit
     private :: private_plflt, private_plint, private_plbool, private_single, PLcGrid, PLfGrid
+    private :: character_array_to_c
     private :: wp
 
 ! Interfaces for single-precision callbacks
@@ -259,12 +299,14 @@ module plplot_double
     use iso_fortran_env, only: error_unit
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
     use plplot_private_exposed
+    use plplot_private_utilities, only: character_array_to_c
     implicit none
 
     integer, parameter :: wp = private_double
     private :: c_ptr, c_char, c_null_char, c_null_ptr, c_loc, c_funptr, c_null_funptr, c_funloc
     private :: error_unit
     private :: private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
+    private :: character_array_to_c
     private :: wp
 
 ! Interfaces for double-precision callbacks
@@ -385,6 +427,7 @@ module plplot
     use plplot_graphics
     use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     use iso_fortran_env, only: error_unit
+    use plplot_private_utilities, only: character_array_to_c
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -400,6 +443,7 @@ module plplot
     private :: pltransform_single
     private :: pltransform_double
     private :: error_unit
+    private :: character_array_to_c
 !
     ! Interfaces that do not depend on the real kind or which
     ! have optional real components (e.g., plsvect) that generate
@@ -963,20 +1007,22 @@ subroutine plparseopts(mode)
   integer, intent(in) :: mode
 
   integer :: iargs_local, numargs_local
+  integer(kind=private_plint) :: numargsp1_inout
 
   integer, parameter :: maxargs_local = 100
   character (len=maxlen), dimension(0:maxargs_local) :: arg_local
+  character(len=1), dimension(:,:), allocatable :: cstring_arg_local
+  type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
 
   interface
-     subroutine interface_plparseopts( length, nargs, arg, mode ) bind(c,name='fc_plparseopts')
-       import :: c_char
+     subroutine interface_plparseopts( argc, argv, mode ) bind(c,name='c_plparseopts')
+       import :: c_ptr
        import :: private_plint
        implicit none
-       integer(kind=private_plint), value, intent(in) :: length, nargs, mode
-       ! This Fortran argument requires special processing done
-       ! in fc_plparseopts at the C level to interoperate properly
-       ! with the C version of plparseopts.
-       character(c_char) arg(length, nargs)
+       integer(kind=private_plint), value, intent(in) :: mode
+       ! The C routine changes both argc and argv
+       integer(kind=private_plint), intent(inout) :: argc
+       type(c_ptr), dimension(*), intent(inout) :: argv
      end subroutine interface_plparseopts
   end interface
 
@@ -993,8 +1039,18 @@ subroutine plparseopts(mode)
   do iargs_local = 0, numargs_local
      call get_command_argument(iargs_local, arg_local(iargs_local))
   enddo
-  call interface_plparseopts(len(arg_local(0), kind=private_plint), int(numargs_local+1, kind=private_plint), &
-       arg_local, int(mode, kind=private_plint))
+
+  call character_array_to_c( cstring_arg_local, cstring_address_arg_inout, arg_local(0:numargs_local) )
+
+  ! The inout suffix is to remind us that the c_plparseopt routine changes the
+  ! value of numargsp1_inout and the values of the vector elements of cstring_address_arg_inout.
+  ! (and maybe even the elements of cstring_arg_local).  However, these changes in
+  ! contents of vector and possibly array should not affect the deallocation of
+  ! this vector and the array, and I have checked with valgrind that there are
+  ! no memory management issues with this approach.
+  numargsp1_inout = int(numargs_local+1, kind=private_plint)
+  call interface_plparseopts( numargsp1_inout, &
+       cstring_address_arg_inout, int(mode, kind=private_plint))
 end subroutine plparseopts
 
 subroutine plpat( inc, del )

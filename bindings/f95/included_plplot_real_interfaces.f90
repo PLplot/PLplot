@@ -30,7 +30,7 @@
 !
 !***********************************************************************
 
-    private :: matrix_to_c, character_array_to_c
+    private :: matrix_to_c
 
     interface pl_setcontlabelparam
         module procedure pl_setcontlabelparam_impl
@@ -506,7 +506,7 @@
 
 contains
 
-! Private utility routines:
+! Private utility routine that depends on real precision:
   subroutine matrix_to_c( array, carray, caddress )
     real(kind=wp), dimension(:,:), intent(in) :: array
     real(kind=private_plflt), dimension(:,:), allocatable, target, intent(out) :: carray
@@ -524,35 +524,6 @@ contains
         caddress(i_local) = c_loc(carray(1,i_local))
     enddo
   end subroutine matrix_to_c
-
-subroutine character_array_to_c( cstring_array, cstring_address, character_array )
-  ! Translate from Fortran character_array to an array of C strings (cstring_array), where the
-  ! address of the start of each C string is stored in the cstring_address vector.
-    character(len=*), dimension(:), intent(in) :: character_array
-    character(len=1), dimension(:,:), allocatable, target, intent(out) :: cstring_array
-    type(c_ptr), dimension(:), allocatable, intent(out) :: cstring_address
-
-    integer :: j_local, length_local, number_local, length_column_local
-
-    ! length of character string
-    length_local = len(character_array)
-    ! number of character strings in array
-    number_local = size(character_array)
-
-    ! Leave room for trailing c_null_char if the Fortran character string is
-    ! filled with non-blank characters to the end.
-    allocate( cstring_array(length_local+1, number_local) )
-    allocate( cstring_address(number_local) )
-
-    do j_local = 1, number_local
-       length_column_local = len(trim(character_array(j_local))) + 1
-       ! Drop all trailing blanks in Fortran character string when converting to C string.
-       cstring_array(1:length_column_local, j_local) = &
-            transfer(trim(character_array(j_local))//c_null_char, " ", length_column_local)
-       cstring_address(j_local) = c_loc(cstring_array(1,j_local))
-    enddo
-
-  end subroutine character_array_to_c
 
 ! Module procedures:
 

@@ -44,33 +44,6 @@ if(ENABLE_f95)
     ENDIF(TARGET_FORTRAN MATCHES "IVF")
   endif(WIN32_OR_CYGWIN)
 
-  set(plplotf95c_LIB_SRCS plplotf95c.c)
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplotf95c_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-  endif(BUILD_SHARED_LIBS)
-
-  add_library(plplotf95c ${plplotf95c_LIB_SRCS})
-
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplotf95c PRIVATE plplot)
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplotf95c PUBLIC plplot)
-  endif(NON_TRANSITIVE)
-
-  if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
-  endif(USE_RPATH)
-  set_library_properties(plplotf95c)
-
-  install(TARGETS plplotf95c
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
-
   # Build fortran part of F95 bindings.
   # Notes:
 
@@ -121,9 +94,9 @@ if(ENABLE_f95)
   add_library(plplotf95 ${plplotf95_LIB_SRCS})
 
   if(NON_TRANSITIVE)
-    target_link_libraries(plplotf95 PRIVATE plplotf95c plplot)
+    target_link_libraries(plplotf95 PRIVATE plplot)
   else(NON_TRANSITIVE)
-    target_link_libraries(plplotf95 PUBLIC plplotf95c plplot)
+    target_link_libraries(plplotf95 PUBLIC plplot)
   endif(NON_TRANSITIVE)
 
   set_library_properties(plplotf95)
@@ -137,12 +110,13 @@ if(ENABLE_f95)
 
   # While user programmes should only use the plplot module,
   # some compilers (e.g. Intel Fortran, but not gfortran) require access
-  # to all the module intermediate files
+  # to all the modules that the plplot module depends upon.
   install(
     FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.mod
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_double.mod
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_single.mod
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_private_utilities.mod
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_graphics.mod
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_private_exposed.mod
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_types.mod
@@ -150,5 +124,8 @@ if(ENABLE_f95)
     )
 
   # Configure pkg-config *.pc file corresponding to libplplotf95
-  pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "-lplplotf95c -lplplot" "")
+  # FIXME.  Until plGetCursor direct link can be fixed, need -lplplot to be 7th (public) argument
+  # rather than sixth (private) argument
+  # pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "-lplplot" "")
+  pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "" "-lplplot")
 endif(ENABLE_f95)
