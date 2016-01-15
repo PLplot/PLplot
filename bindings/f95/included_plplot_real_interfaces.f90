@@ -30,7 +30,7 @@
 !
 !***********************************************************************
 
-    private :: matrix_to_c
+    private :: matrix_to_c, character_array_to_c
 
     interface pl_setcontlabelparam
         module procedure pl_setcontlabelparam_impl
@@ -506,7 +506,8 @@
 
 contains
 
-subroutine matrix_to_c( array, carray, caddress )
+! Private utility routines:
+  subroutine matrix_to_c( array, carray, caddress )
     real(kind=wp), dimension(:,:), intent(in) :: array
     real(kind=private_plflt), dimension(:,:), allocatable, target, intent(out) :: carray
 
@@ -522,7 +523,38 @@ subroutine matrix_to_c( array, carray, caddress )
     do i_local = 1,size(array,1)
         caddress(i_local) = c_loc(carray(1,i_local))
     enddo
-end subroutine matrix_to_c
+  end subroutine matrix_to_c
+
+subroutine character_array_to_c( cstring_array, cstring_address, character_array )
+  ! Translate from Fortran character_array to an array of C strings (cstring_array), where the
+  ! address of the start of each C string is stored in the cstring_address vector.
+    character(len=*), dimension(:), intent(in) :: character_array
+    character(len=1), dimension(:,:), allocatable, target, intent(out) :: cstring_array
+    type(c_ptr), dimension(:), allocatable, intent(out) :: cstring_address
+
+    integer :: j_local, length_local, number_local, length_column_local
+
+    ! length of character string
+    length_local = len(character_array)
+    ! number of character strings in array
+    number_local = size(character_array)
+
+    ! Leave room for trailing c_null_char if the Fortran character string is
+    ! filled with non-blank characters to the end.
+    allocate( cstring_array(length_local+1, number_local) )
+    allocate( cstring_address(number_local) )
+
+    do j_local = 1, number_local
+       length_column_local = len(trim(character_array(j_local))) + 1
+       ! Drop all trailing blanks in Fortran character string when converting to C string.
+       cstring_array(1:length_column_local, j_local) = &
+            transfer(trim(character_array(j_local))//c_null_char, " ", length_column_local)
+       cstring_address(j_local) = c_loc(cstring_array(1,j_local))
+    enddo
+
+  end subroutine character_array_to_c
+
+! Module procedures:
 
 subroutine pl_setcontlabelparam_impl( offset, size, spacing, active )
    real(kind=wp), intent(in) :: offset, size, spacing
@@ -721,17 +753,19 @@ subroutine plcolorbar_impl( &
 
 
     real(kind=wp), intent(in) :: x_length, y_length, x, y, low_cap_color, high_cap_color, cont_width
-    real(kind=wp), dimension(0:, 0:), intent(in) :: values
+    real(kind=wp), dimension(:, :), intent(in) :: values
     integer, intent(in) :: position, opt, bg_color, bb_color, bb_style, cont_color
-    integer, dimension(0:), intent(in) :: label_opts, sub_ticks, n_values
-    real(kind=wp), dimension(0:), intent(in) :: ticks
-    character(len=*), dimension(0:), intent(in) :: labels, axis_opts
+    integer, dimension(:), intent(in) :: label_opts, sub_ticks, n_values
+    real(kind=wp), dimension(:), intent(in) :: ticks
+    character(len=*), dimension(:), intent(in) :: labels, axis_opts
     real(kind=wp), intent(out) :: colorbar_width, colorbar_height
 
     integer :: n_labels_local, n_axes_local
     real(kind=private_plflt) :: colorbar_width_out, colorbar_height_out
     real(kind=private_plflt), dimension(:,:), allocatable :: values_c_local
     type(c_ptr), dimension(:), allocatable :: values_address_local
+    character(len=1), dimension(:,:), allocatable :: cstring_labels_local, cstring_axis_opts_local
+    type(c_ptr), dimension(:), allocatable :: cstring_address_labels_local, cstring_address_axis_opts_local
 
     interface
        subroutine interface_plcolorbar( &
@@ -740,26 +774,23 @@ subroutine plcolorbar_impl( &
             x_length, y_length, bg_color, bb_color, bb_style, &
             low_cap_color, high_cap_color, &
             cont_color, cont_width, &
-            n_labels, label_opts, length_labels, labels, &
-            n_axes, length_axis_opts, axis_opts, ticks, sub_ticks, n_values, values ) &
-            bind(c,name='fc_plcolorbar')
+            n_labels, label_opts, labels, &
+            n_axes, axis_opts, ticks, sub_ticks, n_values, values ) &
+            bind(c,name='c_plcolorbar')
 
-         import :: c_char, c_ptr
+         import :: c_ptr
          import :: private_plint, private_plflt
          implicit none
 
          real(kind=private_plflt), value, intent(in) :: x_length, y_length, x, y, &
               low_cap_color, high_cap_color, cont_width
          integer(kind=private_plint), value, intent(in) :: position, opt, bg_color, bb_color, bb_style, cont_color
-         integer(kind=private_plint), value, intent(in) :: n_labels, length_labels, n_axes, length_axis_opts
+         integer(kind=private_plint), value, intent(in) :: n_labels, n_axes
          real(kind=private_plflt), dimension(*), intent(in) :: ticks
          integer(kind=private_plint), dimension(*), intent(in) :: label_opts, sub_ticks, n_values
          type(c_ptr), dimension(*), intent(in) :: values
 
-         ! These Fortran arguments require special processing done
-         ! in fc_plcolorbar at the C level to interoperate properly
-         ! with the C version of plcolorbar.
-         character(c_char), intent(in) :: labels(length_labels, n_labels), axis_opts(length_axis_opts, n_axes)
+         type(c_ptr), dimension(*), intent(in) :: labels, axis_opts
          real(kind=private_plflt), intent(out) :: colorbar_width, colorbar_height
 
        end subroutine interface_plcolorbar
@@ -800,6 +831,9 @@ subroutine plcolorbar_impl( &
 
     call matrix_to_c( values, values_c_local, values_address_local )
 
+    call character_array_to_c( cstring_labels_local, cstring_address_labels_local, labels )
+    call character_array_to_c( cstring_axis_opts_local, cstring_address_axis_opts_local, axis_opts )
+
     call interface_plcolorbar( &
          colorbar_width_out, colorbar_height_out, &
          int(opt,kind=private_plint), int(position,kind=private_plint), &
@@ -810,9 +844,9 @@ subroutine plcolorbar_impl( &
          real(low_cap_color,kind=private_plflt), real(high_cap_color,kind=private_plflt), &
          int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
          int(n_labels_local, kind=private_plint), int(label_opts, kind=private_plint), &
-         len(labels(0), kind=private_plint), labels, &
-         int(n_axes_local, kind=private_plint), len(axis_opts(0), kind=private_plint), &
-         axis_opts, real(ticks, kind=private_plflt), int(sub_ticks, kind=private_plint), &
+         cstring_address_labels_local, &
+         int(n_axes_local, kind=private_plint), &
+         cstring_address_axis_opts_local, real(ticks, kind=private_plflt), int(sub_ticks, kind=private_plint), &
          int(n_values, kind=private_plint), values_address_local &
          )
     colorbar_width = real(colorbar_width_out, kind=wp)
@@ -1899,18 +1933,20 @@ subroutine pllegend_impl( &
     integer, intent(in) :: nrow, ncolumn
     real(kind=wp), intent(out) :: legend_width, legend_height
 
-    character(len=*), dimension(0:), intent(in) :: text, symbols
+    character(len=*), dimension(:), intent(in) :: text, symbols
 
-    integer, dimension(0:), intent(in) :: opt_array, text_colors, box_colors
-    integer, dimension(0:), intent(in) :: box_patterns
-    real(kind=wp), dimension(0:), intent(in) :: box_line_widths
-    integer, dimension(0:), intent(in) :: line_colors, line_styles
-    real(kind=wp), dimension(0:), intent(in) :: line_widths
-    integer, dimension(0:), intent(in) :: symbol_colors, symbol_numbers
-    real(kind=wp), dimension(0:), intent(in) :: box_scales, symbol_scales
+    integer, dimension(:), intent(in) :: opt_array, text_colors, box_colors
+    integer, dimension(:), intent(in) :: box_patterns
+    real(kind=wp), dimension(:), intent(in) :: box_line_widths
+    integer, dimension(:), intent(in) :: line_colors, line_styles
+    real(kind=wp), dimension(:), intent(in) :: line_widths
+    integer, dimension(:), intent(in) :: symbol_colors, symbol_numbers
+    real(kind=wp), dimension(:), intent(in) :: box_scales, symbol_scales
 
     integer(kind=private_plint) :: nlegend_local
     real(kind=private_plflt) :: legend_width_out, legend_height_out
+    character(len=1), dimension(:,:), allocatable :: cstring_text_local, cstring_symbols_local
+    type(c_ptr), dimension(:), allocatable :: cstring_address_text_local, cstring_address_symbols_local
 
     interface
        subroutine interface_pllegend( &
@@ -1919,27 +1955,24 @@ subroutine pllegend_impl( &
             plot_width, bg_color, bb_color, bb_style, &
             nrow, ncolumn, nlegend, opt_array, &
             text_offset, text_scale, text_spacing, &
-            text_justification, text_colors, length_text, text, &
+            text_justification, text_colors, text, &
             box_colors, box_patterns, box_scales, &
             box_line_widths, &
             line_colors, line_styles, line_widths, &
             symbol_colors, symbol_scales, &
-            symbol_numbers, length_symbols, symbols ) &
-            bind(c,name='fc_pllegend')
+            symbol_numbers, symbols ) &
+            bind(c,name='c_pllegend')
 
-         import :: c_char
+         import :: c_ptr
          import :: private_plint, private_plflt
          implicit none
 
          real(kind=private_plflt), value, intent(in) :: plot_width, x, y
          real(kind=private_plflt), value, intent(in) :: text_offset, text_scale, text_spacing, text_justification
          integer(kind=private_plint), value, intent(in) :: position, opt, bg_color, bb_color, bb_style
-         integer(kind=private_plint), value, intent(in) :: nrow, ncolumn, nlegend, length_text, length_symbols
+         integer(kind=private_plint), value, intent(in) :: nrow, ncolumn, nlegend
 
-         ! These Fortran arguments require special processing done
-         ! in fc_pllegend at the C level to interoperate properly
-         ! with the C version of pllegend.
-         character(c_char), intent(in) :: text(length_text, nlegend), symbols(length_symbols, nlegend)
+         type(c_ptr), dimension(*), intent(in) :: text, symbols
 
          integer(kind=private_plint), dimension(*), intent(in) :: opt_array, text_colors, box_colors
          integer(kind=private_plint), dimension(*), intent(in) :: box_patterns
@@ -1990,6 +2023,9 @@ subroutine pllegend_impl( &
        return
     end if
 
+    call character_array_to_c( cstring_text_local, cstring_address_text_local, text )
+    call character_array_to_c( cstring_symbols_local, cstring_address_symbols_local, symbols )
+
     call interface_pllegend( &
          legend_width_out, legend_height_out, &
          int(opt,kind=private_plint), int(position,kind=private_plint), &
@@ -2001,14 +2037,15 @@ subroutine pllegend_impl( &
          real(text_offset,kind=private_plflt), real(text_scale,kind=private_plflt), &
          real(text_spacing,kind=private_plflt), &
          real(text_justification,kind=private_plflt), int(text_colors,kind=private_plint), &
-         len(text(0), kind=private_plint), text, &
+         cstring_address_text_local, &
          int(box_colors,kind=private_plint), int(box_patterns,kind=private_plint), &
          real(box_scales,kind=private_plflt), &
          real(box_line_widths,kind=private_plflt), &
          int(line_colors,kind=private_plint), int(line_styles,kind=private_plint), &
          real(line_widths,kind=private_plflt), &
          int(symbol_colors,kind=private_plint), real(symbol_scales,kind=private_plflt), &
-         int(symbol_numbers,kind=private_plint), len(symbols(0), kind=private_plint), symbols )
+         int(symbol_numbers,kind=private_plint), cstring_address_symbols_local )
+
     legend_width = real(legend_width_out, kind=wp)
     legend_height = real(legend_height_out, kind=wp)
 
@@ -3427,6 +3464,8 @@ subroutine plstripc_impl( &
   integer, intent(out) :: id
 
   integer(kind=private_plint) :: id_out, n_pens_local
+  character(len=1), dimension(:,:), allocatable :: cstring_legline_local
+  type(c_ptr), dimension(:), allocatable :: cstring_address_legline_local
 
   interface
      subroutine interface_plstripc( &
@@ -3435,20 +3474,17 @@ subroutine plstripc_impl( &
           xlpos, ylpos, &
           y_ascl, acc, &
           colbox, collab, &
-          n_pens, colline, styline, length_legline, legline, &
-          labx, laby, labtop ) bind(c,name='fc_plstripc')
-       import :: c_char
+          colline, styline, legline, &
+          labx, laby, labtop ) bind(c,name='c_plstripc')
+       import :: c_ptr
        import :: private_plint, private_plbool, private_plflt
        implicit none
-       integer(kind=private_plint), value, intent(in) :: colbox, collab, n_pens, length_legline
+       integer(kind=private_plint), value, intent(in) :: colbox, collab
        integer(kind=private_plint), dimension(*), intent(in) :: colline, styline
        integer(kind=private_plbool), value, intent(in) :: y_ascl, acc
        real(kind=private_plflt), value, intent(in) :: xmin, xmax, xjump, ymin, ymax, xlpos, ylpos
        character(len=1), dimension(*), intent(in) :: xspec, yspec, labx, laby, labtop
-       ! These Fortran arguments require special processing done
-       ! in fc_pllegend at the C level to interoperate properly
-       ! with the C version of pllegend.
-       character(c_char), intent(in) :: legline(length_legline, n_pens)
+       type(c_ptr), dimension(*), intent(in) :: legline
        integer(kind=private_plint), intent(out) :: id
 
      end subroutine interface_plstripc
@@ -3463,6 +3499,8 @@ subroutine plstripc_impl( &
      return
   endif
 
+  call character_array_to_c( cstring_legline_local, cstring_address_legline_local, legline )
+
   call interface_plstripc( &
        id_out, trim(xspec)//c_null_char, trim(yspec)//c_null_char, &
        real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), real(xjump, kind=private_plflt), &
@@ -3470,8 +3508,8 @@ subroutine plstripc_impl( &
        real(xlpos, kind=private_plflt), real(ylpos, kind=private_plflt), &
        int(merge(1,0,y_ascl),kind=private_plbool), int(merge(1,0,acc),kind=private_plbool),&
        int(colbox, kind=private_plint), int(collab, kind=private_plint), &
-       n_pens_local, int(colline, kind=private_plint), int(styline, kind=private_plint), &
-       len(legline, kind=private_plint), legline, &
+       int(colline, kind=private_plint), int(styline, kind=private_plint), &
+       cstring_address_legline_local, &
        trim(labx)//c_null_char, trim(laby)//c_null_char, trim(labtop)//c_null_char )
   id = int(id_out, kind=private_plint)
 end subroutine plstripc_impl

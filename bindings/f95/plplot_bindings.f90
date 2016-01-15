@@ -21,9 +21,6 @@
 !  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
 !
-!  This file is a limited version of what should become the new style
-!  Fortran bindings. It is geared to example x00f only.
-!
 !***********************************************************************
 
 module plplot_types
