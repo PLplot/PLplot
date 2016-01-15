@@ -37,10 +37,11 @@ program x11f
 
     integer            :: opt(2) = (/ 3, 3 /)
     integer, parameter :: nlevel = 10
+    integer :: plparseopts_rc
     real(kind=plflt)   :: zmin, zmax, step, clevel(nlevel)
 
 !    Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     x = 3._plflt * (arange(0,xpts) - (xpts/2)) / real(xpts/2,kind=plflt)
     y = 3._plflt * (arange(0,ypts) - (ypts/2)) / real(ypts/2,kind=plflt)

@@ -40,9 +40,10 @@ program x18f
     real(kind=plflt)   :: az(4)  = (/ 30.0_plflt, 40.0_plflt, 50.0_plflt, 60.0_plflt /)
 
     integer, dimension(NPTS) :: ia = (/(i,i=1,NPTS)/)
+    integer :: plparseopts_rc
 
 !   Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !   Initialize plplot
 

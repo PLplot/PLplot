@@ -27,6 +27,7 @@ program x00f
 
     real(kind=plflt) :: xmin = 0._plflt, xmax = 1._plflt, ymin = 0._plflt, ymax = 100._plflt
     ! integer          :: i
+    integer :: plparseopts_rc
 
     ! Prepare data to be plotted.
     x = arange(0, NSIZE) / real(NSIZE-1,plflt)
@@ -39,7 +40,7 @@ program x00f
     !enddo
 
     ! Parse and process command line arguments
-    call plparseopts( PL_PARSE_FULL )
+    plparseopts_rc = plparseopts( PL_PARSE_FULL )
 
     ! Initialize plplot
     call plinit

@@ -42,13 +42,14 @@
       common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
       real(kind=plflt) :: xp0, yp0
       integer :: xleng0, yleng0, xoff0, yoff0
+      integer :: plparseopts_rc, plsetopt_rc
       logical :: valid_geometry
 
       geometry_master = '500x410+100+200'
       geometry_slave = '500x410+650+200'
 
 !      Process command-line arguments
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !      If valid geometry specified on command line, use it for both streams.
       call plgpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
@@ -59,7 +60,7 @@
       if(valid_geometry) then
          call plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
       else
-         call plsetopt( 'geometry', geometry_master)
+         plsetopt_rc = plsetopt( 'geometry', geometry_master)
       endif
 
       call plssub(2, 2)
@@ -84,7 +85,7 @@
       if(valid_geometry) then
          call plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
       else
-         call plsetopt( 'geometry', geometry_slave)
+         plsetopt_rc = plsetopt( 'geometry', geometry_slave)
       endif
 
 !      Turn off pause to make this a slave (must follow master)
@@ -92,7 +93,7 @@
       call plspause(.false.)
       call plsdev(driver)
       call plsfam(fam,num,bmax)
-      call plsetopt('fflen','2')
+      plsetopt_rc = plsetopt('fflen','2')
       call plinit()
 
 !      Set up the data & plot

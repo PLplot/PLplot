@@ -25,9 +25,11 @@ program x04f
 
     real(kind=plflt), parameter :: PI = double_PI
     real(kind=plflt)  :: freql(0:100),ampl(0:100),phase(0:100)
+    integer :: plparseopts_rc
+    
 
 !    Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     call plinit
     call plfont(2)

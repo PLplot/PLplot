@@ -186,7 +186,8 @@
       0 /
 
 !    drop the leading '8' marker for FCI because some compilers (gfortran)
-!    have an implementation error (integer overflow error) for that case, and
+      !    have an implementation error (integer overflow error) for that case, and
+      integer :: plparseopts_rc
 !    the marker is not needed, in any case, for calls to plsfci.
 
       data (fci(i), i=1,fci_combinations) / &
@@ -237,7 +238,7 @@
              "medium", &
              "bold" /
 
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
       call plinit()
 

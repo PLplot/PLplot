@@ -25,10 +25,11 @@ program x04f
 
     real(kind=plflt), parameter :: PI = double_PI
     integer, parameter :: NPTS = 2047
+    integer :: plparseopts_rc
     real(kind=plflt) :: data(NPTS), delta
 
 !   Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !   Initialize plplot
     call plinit()

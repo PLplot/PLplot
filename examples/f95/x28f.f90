@@ -54,6 +54,7 @@
         x_shear, y_shear, z_shear,                         &
         omega, sin_omega, cos_omega, domega
    integer     :: i, j
+   integer :: plparseopts_rc
    real(PLFLT) :: radius, pitch, xpos, ypos, zpos
 
    ! N.B. Need to append PL_END_OF_STRING so spaces get
@@ -79,7 +80,7 @@
 
    ! Parse and process command line arguments
 
-   call plparseopts(PL_PARSE_FULL)
+   plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
    call plinit
 

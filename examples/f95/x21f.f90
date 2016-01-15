@@ -59,6 +59,7 @@
 
       real(kind=plflt) r
       integer ii, jj
+      integer :: plparseopts_rc
       real(kind=plflt) dist, d
 
       character(len=1) defined
@@ -69,7 +70,7 @@
       ymax = 0.6_plflt
 
 !      call plMergeOpts(options, "x21c options", NULL);
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
       opt(3) = wmin
       opt(4) = real(knn_order,kind=plflt)

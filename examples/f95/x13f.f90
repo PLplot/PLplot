@@ -24,13 +24,14 @@ program x13f
     real(kind=plflt), parameter :: PI = double_PI
     real(kind=plflt)   :: just, dx, dy, x(500), y(500)
     integer            ::  i, j, dthet, theta0, theta1, theta
+    integer :: plparseopts_rc
     character(len=20), dimension(5) :: text = &
          (/ 'Maurice ', 'Geoffrey', 'Alan    ', 'Rafael  ', 'Vince   '/)
     real(kind=plflt)   :: per(5) = &
          (/ 10._plflt , 32._plflt , 12._plflt , 30._plflt , 16._plflt /)
 
 !   Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !   Ask user to specify the output device.
     call plinit()

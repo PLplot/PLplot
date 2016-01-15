@@ -52,6 +52,7 @@ program x24f
   integer red(7)
   integer green(7)
   integer blue(7)
+  integer :: plparseopts_rc
 
   real(kind=plflt)  px(4)
   real(kind=plflt)  py(4)
@@ -135,7 +136,7 @@ program x24f
   !  Kurdish
   peace(12) = '#<0x10>Hasîtî'
 
-  call plparseopts(PL_PARSE_FULL)
+  plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
   call plinit()
 

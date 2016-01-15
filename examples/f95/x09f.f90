@@ -33,6 +33,7 @@ program x09f
 !   nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
 !   arrays that is actually used.
     integer, parameter :: xdim=99, ydim=100, nptsx=35, nptsy=46
+    integer :: plparseopts_rc
 
     real(kind=plflt)   :: z(xdim, ydim), w(xdim, ydim), &
                           xg1(xdim), yg1(ydim), &
@@ -46,7 +47,7 @@ program x09f
             0._plflt,  0.2_plflt,  0.4_plflt,  0.6_plflt,  0.8_plflt, 1._plflt /)
 
 !   Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     tr = (/ 2._plflt/real(nptsx-1,kind=plflt), 0.0_plflt, -1.0_plflt, &
             0.0_plflt, 2._plflt/real(nptsy-1,kind=plflt), -1.0_plflt /)

@@ -41,6 +41,7 @@ program x27f
 
   ! R, r, p, N
   ! R and r should be integers to give correct termination of the
+  integer :: plparseopts_rc
   ! angle loop using gcd.
   ! N.B. N is just a place holder since it is no longer used
   ! (because we now have proper termination of the angle loop).
@@ -59,7 +60,7 @@ program x27f
 
   !  Parse and process command line arguments
 
-  call plparseopts(PL_PARSE_FULL)
+  plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
   !  Initialize plplot
 

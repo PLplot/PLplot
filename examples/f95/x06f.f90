@@ -22,12 +22,13 @@ program x06f
     use plplot
     implicit none
     integer :: i, j, k, font, kind_font, maxfont
+    integer :: plparseopts_rc
     real(kind=plflt), dimension(1:1) :: x, y
 
     character (len=3) :: text
 
 !   Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !   Full sized page for display
     call plinit()

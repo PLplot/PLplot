@@ -82,6 +82,7 @@ program x26f
   character(len=80) line_label(nolangs)
 
   integer      i, j
+  integer :: plparseopts_rc
 
   data (x_label(i) ,i=1,nolangs) / &
        'Frequency', &
@@ -110,7 +111,7 @@ program x26f
 
   !  Parse and process command line arguments
 
-  call plparseopts(PL_PARSE_FULL)
+  plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
   !  Initialize plplot
 

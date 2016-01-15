@@ -22,9 +22,10 @@
 program x10f
     use plplot
     implicit none
+    integer :: plparseopts_rc
 
 !   Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     call plinit()
 

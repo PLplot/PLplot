@@ -84,6 +84,7 @@
 !     Dimensions taken from "lena.pgm"
 !
       integer width, height, num_col
+      integer :: plparseopts_rc
       real(kind=plflt), dimension(:,:), pointer :: img_f
       real(kind=plflt), dimension(:,:), pointer :: xg, yg
       real(kind=plflt), dimension(:), pointer :: xg1, yg1
@@ -117,7 +118,7 @@
       nosombrero     = .false.
       nointeractive  = .false.
       f_name         = ' '
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !     Initialize plplot
 

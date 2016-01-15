@@ -49,13 +49,14 @@ program x31f
   character(len=256) fnam
   integer stderr
   integer status
+  integer :: plparseopts_rc
 
   status = 0
   stderr = 0
 
 !     Parse and process command line arguments
 
-  call plparseopts(PL_PARSE_FULL)
+  plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !     Test setting / getting familying parameters before plinit
   call plgfam(fam0, num0, bmax0)

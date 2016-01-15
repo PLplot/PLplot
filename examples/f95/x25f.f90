@@ -34,6 +34,7 @@ program x25f
 
     integer          :: i, j, k
     integer          :: npts
+    integer :: plparseopts_rc
     real(kind=plflt) :: xextreme(2,10)
     real(kind=plflt) :: yextreme(2,10)
     real(kind=plflt) :: x0(10)
@@ -54,7 +55,7 @@ program x25f
 
     !  Parse and process command line arguments
 
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     !  Initialize plplot
 

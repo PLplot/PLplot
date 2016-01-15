@@ -86,9 +86,9 @@ The Fortran binding has been completely rewritten using the powerful
 capabilities of the iso_c_binding module that is available for modern
 Fortran.  There are several advantages to this rewritten binding.
 
-(i) It is implemented using much more compact code with virtually none
-of the interfacing done in C (i.e., the plplotf95c library has shrunk
-to a tiny fraction of its previous size).
+(i) It is implemented using much more compact code with none
+of the interfacing done in C (i.e., the plplotf95c library has
+now been removed completely).  
 
 (ii) It is much easier to understand and maintain than the previous
 effort.
@@ -111,9 +111,14 @@ new Fortran binding does the appropriate conversions to PLFLT using
 modern Fortran's overloading mechanism.
 
 N.B. support for kind=plflt Fortran real type corresponding to the
-PLFLT C type remains for backwards compatibility, but eventually this
-will be deprecated and removed so users are currently encouraged not
-to use kind=plflt since it is no longer necessary.
+PLFLT C type remains for backwards compatibility, but this
+is strongly deprecated and will be removed eventually so users are currently encouraged not
+to use kind=plflt and instead use whatever single or double precision
+is best for their needs.
+
+FIXME.  Replace all use of plflt by example_flt in
+the examples and set this type in the demolib code to be kind(1.0d0)
+with commentary it could be kind(1.0) instead.
 
 2.4 Supply old Fortran binding and examples option
 
@@ -143,10 +148,31 @@ be your first guide concerning how to use the new Fortran binding).
 2.5 Backwards incompatibilites introduced by the new Fortran binding
 
 The rewritten Fortran binding does have a significant number of
-backwards incompatible API changes we have decided to introduce at
+backwards-incompatible API changes we have decided to introduce at
 this time to improve consistency and simplicity as much as possible.
+As always, the examples are your best documentation on how to
+use this new Fortran API.  But for those experienced with the
+old API, here is the list of changes.
 
-(i) Only the redacted form of API (with all redundant dimension
+(i) The new Fortran binding only maps C routines that have return
+values to Fortran functions and C routines with no return values to
+Fortran subroutines.  The strict application of this rule means that
+plparseopts, plsetopt, and (FIXME) plGetCursor have been changed from
+Fortran subroutines to Fortran functions.  This requires changes to
+users' code similar to the following:
+
+call plparseopts(...)
+
+changed to 
+
+integer :: plplarseopts_rc
+[...]
+plparseopts_rc = plparseopts(...)
+
+which will now allow our Fortran users to respond to error conditions
+for plparseopts, plsetopt, and plGetCursor.
+
+(ii) Only the redacted form of API (with all redundant dimension
 arguments removed) is supported.  In order to comply strictly with
 this rule the list of functions that have been changed from
 non-redacted to redacted form is the following:
@@ -154,22 +180,26 @@ non-redacted to redacted form is the following:
 pllegend (drop redundant nlegend argument), and
 plpat (drop redundant nlin argument).
 
-(ii) Multiple arrays in a redacted argument list should
-have identical sizes for dimensions that are designed for the same
-purpose.  This rule is automatically enforced for our 4 languages
-(Python, Java, Lua, and Octave) where the binding has been created by
-swig, and now we enforce this same rule for the Fortran case.  For
-example, pllegend has 14 arrays in its argument list, and we now
-calculate nlegend from one of them, and check the remainder of those
-arrays all have that identical size.  (The old Fortran binding was
-much sloppier about this.)
+(iii) Multiple arrays in a redacted argument list should have
+identical sizes for dimensions that are designed for the same purpose.
+This rule is automatically enforced for our 4 languages (Python, Java,
+Lua, and Octave) where the binding has been created by swig, and now
+we enforce this same rule for the Fortran case.  For example, pllegend
+has 14 arrays in its argument list, and we now calculate nlegend from
+one of them, and check the remainder of those arrays all have that
+identical size.  (The old Fortran binding was much sloppier about
+this.)  For those cases where you are using static or allocatable
+arrays of too large a size, it is straightforward to comply with this
+consistency rule by taking the appropriate array slice in the argument
+list, e.g., "text_colors(1:nlegend), text(1:nlegend)" in the pllegend
+argument list.
 
 FIXME.  Still haven't looked systematically at this following
 what is done in bindings/swig-support/plplotcapi.i.  Ultimately, there
 should be a complete list of functions here where the API has
 been changed because of this.
 
-(iii) Fortran logical arguments are strictly used for all cases where
+(iv) Fortran logical arguments are strictly used for all cases where
 the corresponding C argument is PLBOOL.  In order to comply strictly
 with this rule, the list of functions whose arguments have changed
 from integer to logical or functions where an extra signature with
@@ -180,7 +210,7 @@ plarc (last argument),
 plspal1 (last argument), and
 plconfigtime (fifth argument).
 
-(iv) For those rare cases where the actual real precision
+(v) For those rare cases where the actual real precision
 cannot be automatically specified by the user via the precision of the
 real arguments which are used for a call to a subroutine or function,
 then the only choice we supply is the double precision one regardless
@@ -192,18 +222,18 @@ of Fortran callback functions that are used as arguments
 for plstransform and pllabelfunc, and the
 pre-defined real parameters PL_NOTSET, PL_PI, and PL_TWOPI.
 
-(v) The experimental and far from uniform support for the kind=plint and
+(vi) The experimental and far from uniform support for the kind=plint and
 kind=plunicode Fortran integer types has now been removed.  Instead,
 ordinary default kind integers are used for the Fortran types
 corresponding to the PLINT and PLUNICODE C types.
 
-(vi) Support for a single integer argument for plstransform that is
+(vii) Support for a single integer argument for plstransform that is
 unused is dropped because calling plstransform with no arguments
 has exactly the same effect.
 
-(vii) A rectangular logical argument for all variants of plshade and
+(viii) A rectangular logical argument for all variants of plshade and
 plshades has been added to give the same control of this argument to
-Fortran users that is currently experienced by C users.
+Fortran users that is currently available to C users.
 
 2.5 Remove "c_" prefix from our C API
 

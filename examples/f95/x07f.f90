@@ -31,11 +31,12 @@ program x07f
         2000, 2100, 2200, 2300, 2400, &
         2500, 2600, 2700, 2800, 2900  /)
 
+    integer :: plparseopts_rc
     real(kind=plflt), dimension(1:1) ::  x, y
 
 !   Process command-line arguments
 
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !   Full sized page for display
 

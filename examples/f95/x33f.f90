@@ -81,6 +81,7 @@
 
       integer, parameter :: COLORBAR_CAPS = 4
       integer            :: colorbar_cap_options(COLORBAR_CAPS)
+      integer :: plparseopts_rc
       character(len=100) :: colorbar_cap_option_labels(COLORBAR_CAPS)
 
 !     Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
@@ -177,7 +178,7 @@
 
 !     Parse and process command line arguments
 
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !     Initialize plplot
       call plinit

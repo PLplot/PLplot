@@ -29,11 +29,12 @@
       parameter( xdim = 99, XPTS = 35, ydim = 100, YPTS = 46 )
 
       integer i,  j
+      integer :: plparseopts_rc
       real(kind=plflt)  xx, yy
       real(kind=plflt)  z(xdim, ydim), zmin, zmax
 
 !      Process command-line arguments
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !      Set up color map 1 (but comment out because this makes
 !      no difference for the current cmap0 plshade calls in plot1 and plot2.)

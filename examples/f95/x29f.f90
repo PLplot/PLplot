@@ -28,13 +28,14 @@
      ! issues with single precision.  Therefore, cannot use plflt if that happens
      ! to refer to single-precision.
      integer, parameter :: double = kind(1.0d0)
+     integer :: plparseopts_rc
      
      real(kind=double), parameter :: PI = double_PI
 
    real(kind=double), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
    common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
-   call plparseopts(PL_PARSE_FULL)
+   plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
    call plinit()
 

@@ -53,12 +53,13 @@ program x08f
     real(kind=plflt)   :: az(2)  = (/30.0_plflt,-30.0_plflt/)
     integer            :: rosen
     integer, parameter :: nlevel = 10
+    integer :: plparseopts_rc
     real(kind=plflt)   :: zmin, zmax, step, clevel(nlevel)
 
     real(kind=plflt)   :: dx, dy
 
 !   Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     rosen = 0
 

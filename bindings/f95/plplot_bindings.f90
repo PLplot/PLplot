@@ -1003,7 +1003,8 @@ subroutine plmkstrm( strm )
     call interface_plmkstrm( int(strm,kind=private_plint) )
 end subroutine plmkstrm
 
-subroutine plparseopts(mode)
+function plparseopts(mode)
+  integer :: plparseopts !function type
   integer, intent(in) :: mode
 
   integer :: iargs_local, numargs_local
@@ -1015,25 +1016,28 @@ subroutine plparseopts(mode)
   type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
 
   interface
-     subroutine interface_plparseopts( argc, argv, mode ) bind(c,name='c_plparseopts')
+     function interface_plparseopts( argc, argv, mode ) bind(c,name='c_plparseopts')
        import :: c_ptr
        import :: private_plint
        implicit none
+       integer(kind=private_plint) :: interface_plparseopts !function type
        integer(kind=private_plint), value, intent(in) :: mode
        ! The C routine changes both argc and argv
        integer(kind=private_plint), intent(inout) :: argc
        type(c_ptr), dimension(*), intent(inout) :: argv
-     end subroutine interface_plparseopts
+     end function  interface_plparseopts
   end interface
 
   numargs_local = command_argument_count()
   if (numargs_local < 0) then
      !       This actually happened historically on a badly linked Cygwin platform.
      write(error_unit,'(a)') 'f95 plparseopts ERROR: negative number of arguments'
+     plparseopts = 1
      return
   endif
   if(numargs_local > maxargs_local) then
      write(error_unit,'(a)') 'f95 plparseopts ERROR: too many arguments'
+     plparseopts = 1
      return
   endif
   do iargs_local = 0, numargs_local
@@ -1049,9 +1053,9 @@ subroutine plparseopts(mode)
   ! this vector and the array, and I have checked with valgrind that there are
   ! no memory management issues with this approach.
   numargsp1_inout = int(numargs_local+1, kind=private_plint)
-  call interface_plparseopts( numargsp1_inout, &
-       cstring_address_arg_inout, int(mode, kind=private_plint))
-end subroutine plparseopts
+  plparseopts = int(interface_plparseopts( numargsp1_inout, &
+       cstring_address_arg_inout, int(mode, kind=private_plint)))
+end function  plparseopts
 
 subroutine plpat( inc, del )
     integer, dimension(:), intent(in) :: inc, del
@@ -1103,12 +1107,8 @@ subroutine plpsty( patt )
     call interface_plpsty( int(patt,kind=private_plint) )
 end subroutine plpsty
 
-! Return type is not part of the disambiguation so must provide two
-! explicitly named versions where we use the convention that the
-! double-precision version has no name suffix (which ~99 per cent of
-! users will use) and the single-precision version has a "_single"
-! suffix for those who are strict (for some strange reason) about
-! keeping all double precision values out of their Fortran code.
+! Return type is not part of the disambiguation so we provide
+! one explicit double-precision version rather than both types.
 function plrandd()
 
   real(kind=private_double) :: plrandd !function type
@@ -1123,21 +1123,6 @@ function plrandd()
 
     plrandd = real(interface_plrandd(), kind=private_double)
 end function plrandd
-
-function plrandd_single()
-
-  real(kind=private_single) :: plrandd_single !function type
-
-    interface
-        function interface_plrandd() bind(c,name='c_plrandd')
-            import :: private_plflt
-            implicit none
-            real(kind=private_plflt) :: interface_plrandd !function type
-        end function interface_plrandd
-    end interface
-
-    plrandd_single = real(interface_plrandd(), kind=private_single)
-end function plrandd_single
 
 subroutine plreplot()
     interface
@@ -1313,19 +1298,23 @@ subroutine plsesc( esc )
     call interface_plsesc( int(esc,kind=private_plint) )
 end subroutine plsesc
 
-subroutine plsetopt_impl( opt, optarg )
-   character(len=*), intent(in) :: opt, optarg
+function plsetopt_impl( opt, optarg )
+  integer :: plsetopt_impl !function type
+  character(len=*), intent(in) :: opt, optarg
+  
 
    interface
-       subroutine interface_plsetopt( opt, optarg ) bind(c,name='c_plsetopt')
+       function interface_plsetopt( opt, optarg ) bind(c,name='c_plsetopt')
+           import :: private_plint 
            implicit none
+           integer(kind=private_plint) :: interface_plsetopt !function type
            character(len=1), dimension(*), intent(in) :: opt, optarg
-       end subroutine interface_plsetopt
+       end function interface_plsetopt
    end interface
 
-   call interface_plsetopt( trim(opt)//c_null_char, trim(optarg)//c_null_char )
+   plsetopt_impl = int(interface_plsetopt( trim(opt)//c_null_char, trim(optarg)//c_null_char ))
 
-end subroutine plsetopt_impl
+end function plsetopt_impl
 
 subroutine plsfam( fam, num, bmax )
     integer, intent(in) :: fam, num, bmax

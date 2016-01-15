@@ -45,9 +45,10 @@
       integer, dimension(ncragareas)     :: cragareas
       integer, dimension(9)              :: majorroads     = (/ 33, 48, 71, 83, 89, 90, 101, 102, 111 /)
       integer                            :: i
+      integer :: plparseopts_rc
 
 !      Process command-line arguments
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 ! Longitude (x) and latitude (y)
 

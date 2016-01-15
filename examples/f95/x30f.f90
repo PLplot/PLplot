@@ -46,9 +46,10 @@ program x30f
 
   integer i, j
   integer icol, r, g, b
+  integer :: plparseopts_rc
   real(kind=plflt) :: a
 
-  call plparseopts(PL_PARSE_FULL)
+  plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
   call plinit()
 

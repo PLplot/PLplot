@@ -32,10 +32,11 @@ program x01f
    logical, parameter :: locate_mode = .false.
    type(PLGraphicsIn) :: gin
    integer :: PLK_Escape
+   integer :: plparseopts_rc
    data PLK_Escape /Z'1B'/
 
 !  Process command-line arguments
-   call plparseopts(PL_PARSE_FULL)
+   plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !  Print plplot version
    call plgver(version)

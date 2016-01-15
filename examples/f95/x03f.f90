@@ -28,8 +28,9 @@ program x03f
     real(kind=plflt), dimension(0:360) :: x0, y0, x, y
     real(kind=plflt) :: dtr, theta, dx, dy, offset
     integer :: i
+    integer :: plparseopts_rc
 !    Process command-line arguments
-    call plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !   Set orientation to portrait - note not all device drivers
 !   support this, in particular most interactive drivers do not.

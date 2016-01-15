@@ -48,12 +48,13 @@
       integer label_opts(NUM_LABELS)
 
       integer i, j
+      integer :: plparseopts_rc
 !      dummy to fill argument list with something not currently used.
       character(len=1) defined
       real(kind=plflt) tr(6)
 
 !      Process command-line arguments
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
 !      Load color palettes
       call plspal0('cmap0_black_on_white.pal')

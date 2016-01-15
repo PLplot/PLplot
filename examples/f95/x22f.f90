@@ -31,6 +31,7 @@
       real(kind=double) common_max
 
       integer narr
+      integer :: plparseopts_rc
       logical fill
       parameter (narr=6)
       real(kind=plflt) arrow_x(narr),arrow_y(narr), &
@@ -47,7 +48,7 @@
       data arrow2_y/0._plflt, 0._plflt, 0.2_plflt, 0._plflt, -0.2_plflt, 0._plflt/
 
 !      Process command-line arguments
-      call plparseopts(PL_PARSE_FULL)
+      plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
       call plinit
 
