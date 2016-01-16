@@ -84,7 +84,16 @@ if(ENABLE_f95)
     @ONLY
     )
 
-  set(plplotf95_LIB_SRCS plplot_bindings.f90
+  set(plplotf95_LIB_SRCS
+    plplot.f90
+    # The "single" and "double" here refer to user's real precision
+    # rather than the actual PLFLT single or double precision so
+    # we need to build both of these modules.
+    plplot_single.f90
+    plplot_double.f90
+    # Every other PLplot module depends on these so must be kept
+    # in a separate file.
+    plplot_small_modules.f90
     )
 
   if(WIN32_AND_NOT_CYGWIN AND BUILD_SHARED_LIBS AND NOT MINGW)
