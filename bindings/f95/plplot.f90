@@ -49,76 +49,413 @@ module plplot
     private :: character_array_to_c
 !
     ! Interfaces that do not depend on the real kind or which
-    ! have optional real components (e.g., plsvect) that generate
-    ! an ambiguous interface if implemented with plplot_single and plplot_double
+    ! generate an ambiguous interface (e.g., plslabelfunc, plstransform) if
+    ! implemented with plplot_single and plplot_double.
 !
     interface pl_setcontlabelformat
         module procedure pl_setcontlabelformat_impl
     end interface pl_setcontlabelformat
     private :: pl_setcontlabelformat_impl
 
+    interface pladv
+       module procedure pladv_impl
+    end interface pladv
+    private :: pladv_impl
+
+    interface plbop
+       module procedure plbop_impl
+    end interface plbop
+    private :: plbop_impl
+
+    interface plclear
+       module procedure plclear_impl
+    end interface plclear
+    private :: plclear_impl
+
+    interface plcol0
+       module procedure plcol0_impl
+    end interface plcol0
+    private :: plcol0_impl
+
+    interface plcpstrm
+       module procedure plcpstrm_impl
+    end interface plcpstrm
+    private :: plcpstrm_impl
+
+    interface plend1
+       module procedure plend1_impl
+    end interface plend1
+    private :: plend1_impl
+
+    interface plend
+       module procedure plend_impl
+    end interface plend
+    private :: plend_impl
+
+    interface pleop
+       module procedure pleop_impl
+    end interface pleop
+    private :: pleop_impl
+
+    interface plfamadv
+       module procedure plfamadv_impl
+    end interface plfamadv
+    private :: plfamadv_impl
+
+    interface plflush
+       module procedure plflush_impl
+    end interface plflush
+    private :: plflush_impl
+
+    interface plfont
+       module procedure plfont_impl
+    end interface plfont
+    private :: plfont_impl
+
+    interface plfontld
+       module procedure plfontld_impl
+    end interface plfontld
+    private :: plfontld_impl
+
+    interface plgcol0
+       module procedure plgcol0_impl
+    end interface plgcol0
+    private :: plgcol0_impl
+
+    interface plgcolbg
+       module procedure plgcolbg_impl
+    end interface plgcolbg
+    private :: plgcolbg_impl
+
+    interface plgcompression
+       module procedure plgcompression_impl
+    end interface plgcompression
+    private :: plgcompression_impl
+
+    interface plgdev
+       module procedure plgdev_impl
+    end interface plgdev
+    private :: plgdev_impl
+
+    interface plgdrawmode
+       module procedure plgdrawmode_impl
+    end interface plgdrawmode
+    private :: plgdrawmode_impl
+
+    interface plgfam
+       module procedure plgfam_impl
+    end interface plgfam
+    private :: plgfam_impl
+
     interface plgfci
         module procedure plgfci_impl
     end interface plgfci
     private :: plgfci_impl
+
+    interface plgfnam
+       module procedure plgfnam_impl
+    end interface plgfnam
+    private :: plgfnam_impl
+
+    interface plgfont
+       module procedure plgfont_impl
+    end interface plgfont
+    private :: plgfont_impl
+
+    interface plglevel
+       module procedure plglevel_impl
+    end interface plglevel
+    private :: plglevel_impl
+
+    interface plgra
+       module procedure plgra_impl
+    end interface plgra
+    private :: plgra_impl
+
+    interface plgstrm
+       module procedure plgstrm_impl
+    end interface plgstrm
+    private :: plgstrm_impl
+
+    interface plgver
+       module procedure plgver_impl
+    end interface plgver
+    private :: plgver_impl
+
+    interface plgxax
+       module procedure plgxax_impl
+    end interface plgxax
+    private :: plgxax_impl
+
+    interface plgyax
+       module procedure plgyax_impl
+    end interface plgyax
+    private :: plgyax_impl
+
+    interface plgzax
+       module procedure plgzax_impl
+    end interface plgzax
+    private :: plgzax_impl
+
+    interface plinit
+       module procedure plinit_impl
+    end interface plinit
+    private :: plinit_impl
+
+    interface pllab
+       module procedure pllab_impl
+    end interface pllab
+    private :: pllab_impl
+
+    interface pllsty
+       module procedure pllsty_impl
+    end interface pllsty
+    private :: pllsty_impl
+
+    interface plmkstrm
+       module procedure plmkstrm_impl
+    end interface plmkstrm
+    private :: plmkstrm_impl
+
+    interface plparseopts
+       module procedure plparseopts_impl
+    end interface plparseopts
+    private :: plparseopts_impl
+
+    interface plpat
+       module procedure plpat_impl
+    end interface plpat
+    private :: plpat_impl
+
+    interface plprec
+       module procedure plprec_impl
+    end interface plprec
+    private :: plprec_impl
+
+    interface plpsty
+       module procedure plpsty_impl
+    end interface plpsty
+    private :: plpsty_impl
+
+    interface plrandd
+       module procedure plrandd_impl
+    end interface plrandd
+    private :: plrandd_impl
+
+    interface plreplot
+       module procedure plreplot_impl
+    end interface plreplot
+    private :: plreplot_impl
+
+    interface plscmap0
+       module procedure plscmap0_impl
+    end interface plscmap0
+    private :: plscmap0_impl
+
+    interface plscmap0n
+       module procedure plscmap0n_impl
+    end interface plscmap0n
+    private :: plscmap0n_impl
 
     interface plscmap1
        module procedure plscmap1_impl
     end interface plscmap1
     private :: plscmap1_impl
 
+    interface plscmap1n
+       module procedure plscmap1n_impl
+    end interface plscmap1n
+    private :: plscmap1n_impl
+
+    interface plscol0
+       module procedure plscol0_impl
+    end interface plscol0
+    private :: plscol0_impl
+
+    interface plscolbg
+       module procedure plscolbg_impl
+    end interface plscolbg
+    private :: plscolbg_impl
+
+    interface plscolor
+       module procedure plscolor_impl
+    end interface plscolor
+    private :: plscolor_impl
+
+    interface plscompression
+       module procedure plscompression_impl
+    end interface plscompression
+    private :: plscompression_impl
+
+    interface plsdev
+       module procedure plsdev_impl
+    end interface plsdev
+    private :: plsdev_impl
+
+    interface plsdrawmode
+       module procedure plsdrawmode_impl
+    end interface plsdrawmode
+    private :: plsdrawmode_impl
+
+    interface plseed
+       module procedure plseed_impl
+    end interface plseed
+    private :: plseed_impl
+
+    interface plsesc
+       module procedure plsesc_impl
+    end interface plsesc
+    private :: plsesc_impl
+
     interface plsetopt
         module procedure plsetopt_impl
     end interface plsetopt
     private :: plsetopt_impl
+
+    interface plsfam
+       module procedure plsfam_impl
+    end interface plsfam
+    private :: plsfam_impl
 
     interface plsfci
         module procedure plsfci_impl
     end interface plsfci
     private :: plsfci_impl
 
+    interface plsfnam
+       module procedure plsfnam_impl
+    end interface plsfnam
+    private :: plsfnam_impl
+
+    interface plsfont
+       module procedure plsfont_impl
+    end interface plsfont
+    private :: plsfont_impl
+
     interface plslabelfunc
-        module procedure plslabelfunc_null
         ! Only provide double-precison versions because of
         ! disambiguation problems with the corresponding
         ! single-precision versions.
-        module procedure plslabelfunc_double
         module procedure plslabelfunc_data_double
+        module procedure plslabelfunc_double
+        module procedure plslabelfunc_null
     end interface plslabelfunc
-    private :: plslabelfunc_null
-    private :: plslabelfunc_double
     private :: plslabelfunc_data_double
+    private :: plslabelfunc_double
+    private :: plslabelfunc_null
 
-    interface plstyl
-        module procedure plstyl_scalar
-        module procedure plstyl_n_array
-        module procedure plstyl_array
-    end interface plstyl
-    private :: plstyl_scalar, plstyl_n_array, plstyl_array
+    interface plsmem
+       module procedure plsmem_impl
+    end interface plsmem
+    private :: plsmem_impl
+
+    interface plsmema
+       module procedure plsmema_impl
+    end interface plsmema
+    private :: plsmema_impl
+
+    interface plsori
+       module procedure plsori_impl
+    end interface plsori
+    private :: plsori_impl
+
+    interface plspal0
+       module procedure plspal0_impl
+    end interface plspal0
+    private :: plspal0_impl
+
+    interface plspal1
+       module procedure plspal1_impl
+    end interface plspal1
+    private :: plspal1_impl
+
+    interface plspause
+       module procedure plspause_impl
+    end interface plspause
+    private :: plspause_impl
+
+    interface plsstrm
+       module procedure plsstrm_impl
+    end interface plsstrm
+    private :: plsstrm_impl
+
+    interface plssub
+       module procedure plssub_impl
+    end interface plssub
+    private :: plssub_impl
+
+    interface plstar
+       module procedure plstar_impl
+    end interface plstar
+    private :: plstar_impl
+
+    interface plstart
+       module procedure plstart_impl
+    end interface plstart
+    private :: plstart_impl
 
     interface plstransform
-        module procedure plstransform_null
         ! Only provide double-precison versions because of
         ! disambiguation problems with the corresponding
         ! single-precision versions.
-        module procedure plstransform_double
         module procedure plstransform_data_double
+        module procedure plstransform_double
+        module procedure plstransform_null
     end interface plstransform
-    private :: plstransform_null
-    private :: plstransform_double
     private :: plstransform_data_double
+    private :: plstransform_double
+    private :: plstransform_null
+
+    interface plstripd
+       module procedure plstripd_impl
+    end interface plstripd
+    private :: plstripd_impl
+
+    interface plstyl
+        module procedure plstyl_array
+        module procedure plstyl_n_array
+        module procedure plstyl_scalar
+    end interface plstyl
+    private :: plstyl_array
+    private :: plstyl_n_array
+    private :: plstyl_scalar
 
     interface plsvect
+       module procedure plsvect_double
        module procedure plsvect_none
        module procedure plsvect_single
-       module procedure plsvect_double
     end interface plsvect
-    private :: plsvect_none, plsvect_single, plsvect_double
+    private :: plsvect_double, plsvect_none, plsvect_single
+
+    interface plsxax
+       module procedure plsxax_impl
+    end interface plsxax
+    private :: plsxax_impl
+
+    interface plsyax
+       module procedure plsyax_impl
+    end interface plsyax
+    private :: plsyax_impl
+
+    interface plszax
+       module procedure plszax_impl
+    end interface plszax
+    private :: plszax_impl
+
+    interface pltext
+       module procedure pltext_impl
+    end interface pltext
+    private :: pltext_impl
 
     interface pltimefmt
         module procedure pltimefmt_impl
     end interface pltimefmt
     private :: pltimefmt_impl
+
+    interface plvsta
+       module procedure plvsta_impl
+    end interface plvsta
+    private :: plvsta_impl
 
     interface plxormod
         module procedure plxormod_impl
@@ -164,7 +501,7 @@ subroutine pl_setcontlabelformat_impl( lexp, sigdig )
    call interface_pl_setcontlabelformat( int(lexp,kind=private_plint), int(sigdig,kind=private_plint) )
 end subroutine pl_setcontlabelformat_impl
 
-subroutine pladv( sub )
+subroutine pladv_impl( sub )
     integer, intent(in) :: sub
     interface
         subroutine interface_pladv( sub ) bind( c, name = 'c_pladv' )
@@ -175,25 +512,25 @@ subroutine pladv( sub )
     end interface
 
     call interface_pladv( int(sub,kind=private_plint) )
-end subroutine pladv
+  end subroutine pladv_impl
 
-subroutine plbop()
+subroutine plbop_impl()
     interface
         subroutine interface_plbop() bind(c,name='c_plbop')
         end subroutine interface_plbop
      end interface
      call interface_plbop()
-end subroutine plbop
+   end subroutine plbop_impl
 
-subroutine plclear()
+subroutine plclear_impl()
     interface
         subroutine interface_plclear() bind(c,name='c_plclear')
         end subroutine interface_plclear
      end interface
      call interface_plclear()
-end subroutine plclear
+   end subroutine plclear_impl
 
-subroutine plcol0( icol )
+subroutine plcol0_impl( icol )
     integer, intent(in) :: icol
     interface
         subroutine interface_plcol0( icol ) bind(c, name = 'c_plcol0' )
@@ -204,9 +541,9 @@ subroutine plcol0( icol )
     end interface
 
     call interface_plcol0( int(icol,kind=private_plint) )
-end subroutine plcol0
+  end subroutine plcol0_impl
 
-subroutine plcpstrm( iplsr, flags )
+subroutine plcpstrm_impl( iplsr, flags )
   integer, intent(in) :: iplsr
   logical, intent(in) :: flags
     interface
@@ -219,49 +556,49 @@ subroutine plcpstrm( iplsr, flags )
     end interface
 
     call interface_plcpstrm( int(iplsr,kind=private_plint), int(merge(1,0,flags),kind=private_plbool) )
-end subroutine plcpstrm
+  end subroutine plcpstrm_impl
 
-subroutine plend()
-    interface
-        subroutine interface_plend() bind( c, name = 'c_plend' )
-        end subroutine interface_plend
-     end interface
-     call interface_plend()
-   end subroutine plend
-
-subroutine plend1()
+subroutine plend1_impl()
     interface
         subroutine interface_plend1() bind( c, name = 'c_plend1' )
         end subroutine interface_plend1
      end interface
      call interface_plend1()
-end subroutine plend1
+   end subroutine plend1_impl
 
-subroutine pleop()
+subroutine plend_impl()
+    interface
+        subroutine interface_plend() bind( c, name = 'c_plend' )
+        end subroutine interface_plend
+     end interface
+     call interface_plend()
+   end subroutine plend_impl
+
+subroutine pleop_impl()
     interface
         subroutine interface_pleop() bind( c, name = 'c_pleop' )
         end subroutine interface_pleop
      end interface
      call interface_pleop()
-end subroutine pleop
+   end subroutine pleop_impl
 
-subroutine plfamadv()
+subroutine plfamadv_impl()
     interface
         subroutine interface_plfamadv() bind( c, name = 'c_plfamadv' )
         end subroutine interface_plfamadv
      end interface
      call interface_plfamadv()
-end subroutine plfamadv
+   end subroutine plfamadv_impl
 
-subroutine plflush()
+subroutine plflush_impl()
     interface
         subroutine interface_plflush() bind( c, name = 'c_plflush' )
         end subroutine interface_plflush
      end interface
      call interface_plflush()
-end subroutine plflush
+   end subroutine plflush_impl
 
-subroutine plfont( font )
+subroutine plfont_impl( font )
     integer, intent(in) :: font
     interface
         subroutine interface_plfont( font ) bind( c, name = 'c_plfont' )
@@ -272,9 +609,9 @@ subroutine plfont( font )
     end interface
 
     call interface_plfont( int(font,kind=private_plint) )
-end subroutine plfont
+  end subroutine plfont_impl
 
-subroutine plfontld( charset )
+subroutine plfontld_impl( charset )
     integer, intent(in) :: charset
     interface
         subroutine interface_plfontld( charset ) bind( c, name = 'c_plfontld' )
@@ -285,9 +622,9 @@ subroutine plfontld( charset )
     end interface
 
     call interface_plfontld( int(charset,kind=private_plint) )
-end subroutine plfontld
+  end subroutine plfontld_impl
 
-subroutine plgcol0( icol, r, g, b )
+subroutine plgcol0_impl( icol, r, g, b )
     integer, intent(in) :: icol
     integer, intent(out) :: r, g, b
 
@@ -306,9 +643,9 @@ subroutine plgcol0( icol, r, g, b )
     r = int(r_out)
     g = int(g_out)
     b = int(b_out)
-end subroutine plgcol0
+  end subroutine plgcol0_impl
 
-subroutine plgcolbg( r, g, b )
+subroutine plgcolbg_impl( r, g, b )
     integer, intent(out) :: r, g, b
 
     integer(kind=private_plint) :: r_out, g_out, b_out
@@ -325,9 +662,9 @@ subroutine plgcolbg( r, g, b )
     r = int(r_out)
     g = int(g_out)
     b = int(b_out)
-end subroutine plgcolbg
+  end subroutine plgcolbg_impl
 
-subroutine plgcompression( compression )
+subroutine plgcompression_impl( compression )
     integer, intent(out) :: compression
 
     integer(kind=private_plint) :: compression_out
@@ -342,9 +679,9 @@ subroutine plgcompression( compression )
 
     call interface_plgcompression( compression_out )
     compression = int(compression_out)
-end subroutine plgcompression
+  end subroutine plgcompression_impl
 
-subroutine plgdev(dev)
+subroutine plgdev_impl(dev)
     character*(*), intent(out) :: dev
 
     character(len=1), dimension(100) :: dev_out
@@ -358,11 +695,11 @@ subroutine plgdev(dev)
 
     call interface_plgdev( dev_out )
     call copystring2f( dev, dev_out )
-end subroutine plgdev
+  end subroutine plgdev_impl
 
-function plgdrawmode()
+function plgdrawmode_impl()
 
-    integer :: plgdrawmode !function type
+    integer :: plgdrawmode_impl !function type
 
     interface
         function interface_plgdrawmode() bind(c,name='c_plgdrawmode')
@@ -372,10 +709,10 @@ function plgdrawmode()
         end function interface_plgdrawmode
     end interface
 
-    plgdrawmode = int(interface_plgdrawmode())
-end function plgdrawmode
+    plgdrawmode_impl = int(interface_plgdrawmode())
+end function plgdrawmode_impl
 
-subroutine plgfam( fam, num, bmax )
+subroutine plgfam_impl( fam, num, bmax )
     integer, intent(out) :: fam, num, bmax
 
     integer(kind=private_plint) :: fam_out, num_out, bmax_out
@@ -392,7 +729,7 @@ subroutine plgfam( fam, num, bmax )
     fam  = int(fam_out)
     num  = int(num_out)
     bmax = int(bmax_out)
-end subroutine plgfam
+  end subroutine plgfam_impl
 
 subroutine plgfci_impl( fci )
     integer, intent(out) :: fci
@@ -409,9 +746,9 @@ subroutine plgfci_impl( fci )
 
     call interface_plgfci( fci_out )
     fci  = int(fci_out)
-end subroutine plgfci_impl
+  end subroutine plgfci_impl
 
-subroutine plgfnam( fnam )
+subroutine plgfnam_impl( fnam )
     character*(*), intent(out) :: fnam
 
     character(len=1), dimension(100) :: fnam_out
@@ -425,9 +762,9 @@ subroutine plgfnam( fnam )
 
     call interface_plgfnam( fnam_out )
     call copystring2f( fnam, fnam_out )
-end subroutine plgfnam
+  end subroutine plgfnam_impl
 
-subroutine plgfont( family, style, weight )
+subroutine plgfont_impl( family, style, weight )
     integer, intent(out) :: family, style, weight
 
     integer(kind=private_plint) :: family_out, style_out, weight_out
@@ -444,9 +781,9 @@ subroutine plgfont( family, style, weight )
     family = int(family_out)
     style  = int(style_out)
     weight = int(weight_out)
-end subroutine plgfont
+  end subroutine plgfont_impl
 
-subroutine plglevel( level )
+subroutine plglevel_impl( level )
     integer, intent(out) :: level
 
     integer(kind=private_plint) :: level_out
@@ -461,17 +798,17 @@ subroutine plglevel( level )
 
     call interface_plglevel( level_out )
     level = int(level_out)
-end subroutine plglevel
+  end subroutine plglevel_impl
 
-subroutine plgra()
+subroutine plgra_impl()
     interface
         subroutine interface_plgra() bind( c, name = 'c_plgra' )
         end subroutine interface_plgra
      end interface
      call interface_plgra()
-end subroutine plgra
+   end subroutine plgra_impl
 
-subroutine plgstrm( strm )
+subroutine plgstrm_impl( strm )
     integer, intent(out) :: strm
 
     integer(kind=private_plint) :: strm_out
@@ -486,9 +823,9 @@ subroutine plgstrm( strm )
 
     call interface_plgstrm( strm_out )
     strm = int(strm_out)
-end subroutine plgstrm
+  end subroutine plgstrm_impl
 
-subroutine plgver(ver)
+subroutine plgver_impl(ver)
     character*(*), intent(out) :: ver
 
     character(len=1), dimension(100) :: ver_out
@@ -502,9 +839,9 @@ subroutine plgver(ver)
 
     call interface_plgver( ver_out )
     call copystring2f( ver, ver_out )
-end subroutine plgver
+  end subroutine plgver_impl
 
-subroutine plgxax( digmax, digits )
+subroutine plgxax_impl( digmax, digits )
     integer, intent(out) :: digmax, digits
 
     integer(kind=private_plint) :: digmax_out, digits_out
@@ -520,9 +857,9 @@ subroutine plgxax( digmax, digits )
     call interface_plgxax( digmax_out, digits_out )
     digmax = int(digmax_out)
     digits = int(digits_out)
-end subroutine plgxax
+  end subroutine plgxax_impl
 
-subroutine plgyax( digmax, digits )
+subroutine plgyax_impl( digmax, digits )
     integer, intent(out) :: digmax, digits
 
     integer(kind=private_plint) :: digmax_out, digits_out
@@ -538,9 +875,9 @@ subroutine plgyax( digmax, digits )
     call interface_plgyax( digmax_out, digits_out )
     digmax = int(digmax_out)
     digits = int(digits_out)
-end subroutine plgyax
+  end subroutine plgyax_impl
 
-subroutine plgzax( digmax, digits )
+subroutine plgzax_impl( digmax, digits )
     integer, intent(out) :: digmax, digits
 
     integer(kind=private_plint) :: digmax_out, digits_out
@@ -556,17 +893,17 @@ subroutine plgzax( digmax, digits )
     call interface_plgzax( digmax_out, digits_out )
     digmax = int(digmax_out)
     digits = int(digits_out)
-end subroutine plgzax
+  end subroutine plgzax_impl
 
-subroutine plinit()
+subroutine plinit_impl()
     interface
         subroutine interface_plinit() bind( c, name = 'c_plinit' )
         end subroutine interface_plinit
      end interface
      call interface_plinit()
-end subroutine plinit
+   end subroutine plinit_impl
 
-subroutine pllab( xlab, ylab, title )
+subroutine pllab_impl( xlab, ylab, title )
    character(len=*), intent(in) :: xlab, ylab, title
 
    interface
@@ -578,9 +915,9 @@ subroutine pllab( xlab, ylab, title )
 
    call interface_pllab( trim(xlab)//c_null_char, trim(ylab)//c_null_char, trim(title)//c_null_char )
 
-end subroutine pllab
+ end subroutine pllab_impl
 
-subroutine pllsty( lin )
+subroutine pllsty_impl( lin )
     integer, intent(in) :: lin
     interface
         subroutine interface_pllsty( lin ) bind( c, name = 'c_pllsty' )
@@ -591,9 +928,9 @@ subroutine pllsty( lin )
     end interface
 
     call interface_pllsty( int(lin,kind=private_plint) )
-end subroutine pllsty
+  end subroutine pllsty_impl
 
-subroutine plmkstrm( strm )
+subroutine plmkstrm_impl( strm )
     integer, intent(in) :: strm
     interface
         subroutine interface_plmkstrm( strm ) bind( c, name = 'c_plmkstrm' )
@@ -604,10 +941,10 @@ subroutine plmkstrm( strm )
     end interface
 
     call interface_plmkstrm( int(strm,kind=private_plint) )
-end subroutine plmkstrm
+  end subroutine plmkstrm_impl
 
-function plparseopts(mode)
-  integer :: plparseopts !function type
+function plparseopts_impl(mode)
+  integer :: plparseopts_impl !function type
   integer, intent(in) :: mode
 
   integer :: iargs_local, numargs_local
@@ -635,12 +972,12 @@ function plparseopts(mode)
   if (numargs_local < 0) then
      !       This actually happened historically on a badly linked Cygwin platform.
      write(error_unit,'(a)') 'f95 plparseopts ERROR: negative number of arguments'
-     plparseopts = 1
+     plparseopts_impl = 1
      return
   endif
   if(numargs_local > maxargs_local) then
      write(error_unit,'(a)') 'f95 plparseopts ERROR: too many arguments'
-     plparseopts = 1
+     plparseopts_impl = 1
      return
   endif
   do iargs_local = 0, numargs_local
@@ -656,11 +993,11 @@ function plparseopts(mode)
   ! this vector and the array, and I have checked with valgrind that there are
   ! no memory management issues with this approach.
   numargsp1_inout = int(numargs_local+1, kind=private_plint)
-  plparseopts = int(interface_plparseopts( numargsp1_inout, &
+  plparseopts_impl = int(interface_plparseopts( numargsp1_inout, &
        cstring_address_arg_inout, int(mode, kind=private_plint)))
-end function  plparseopts
+end function plparseopts_impl
 
-subroutine plpat( inc, del )
+subroutine plpat_impl( inc, del )
     integer, dimension(:), intent(in) :: inc, del
 
     integer(kind=private_plint) :: nlin_local
@@ -682,9 +1019,9 @@ subroutine plpat( inc, del )
 
     call interface_plpat( nlin_local, int(inc,kind=private_plint), int(del,kind=private_plint) )
 
-end subroutine plpat
+  end subroutine plpat_impl
 
-subroutine plprec( setp, prec )
+subroutine plprec_impl( setp, prec )
     integer, intent(in) :: setp, prec
     interface
         subroutine interface_plprec( setp, prec ) bind( c, name = 'c_plprec' )
@@ -695,9 +1032,9 @@ subroutine plprec( setp, prec )
     end interface
 
     call interface_plprec( int(setp,kind=private_plint), int(prec,kind=private_plint) )
-end subroutine plprec
+  end subroutine plprec_impl
 
-subroutine plpsty( patt )
+subroutine plpsty_impl( patt )
     integer, intent(in) :: patt
     interface
         subroutine interface_plpsty( patt ) bind( c, name = 'c_plpsty' )
@@ -708,13 +1045,13 @@ subroutine plpsty( patt )
     end interface
 
     call interface_plpsty( int(patt,kind=private_plint) )
-end subroutine plpsty
+  end subroutine plpsty_impl
 
 ! Return type is not part of the disambiguation so we provide
 ! one explicit double-precision version rather than both types.
-function plrandd()
+function plrandd_impl()
 
-  real(kind=private_double) :: plrandd !function type
+  real(kind=private_double) :: plrandd_impl !function type
 
     interface
         function interface_plrandd() bind(c,name='c_plrandd')
@@ -724,18 +1061,18 @@ function plrandd()
         end function interface_plrandd
     end interface
 
-    plrandd = real(interface_plrandd(), kind=private_double)
-end function plrandd
+    plrandd_impl = real(interface_plrandd(), kind=private_double)
+end function plrandd_impl
 
-subroutine plreplot()
+subroutine plreplot_impl()
     interface
         subroutine interface_plreplot() bind(c,name='c_plreplot')
         end subroutine interface_plreplot
      end interface
      call interface_plreplot()
-end subroutine plreplot
+   end subroutine plreplot_impl
 
-subroutine plscmap0( r, g, b )
+subroutine plscmap0_impl( r, g, b )
     integer, dimension(:), intent(in) :: r, g, b
 
     interface
@@ -749,9 +1086,9 @@ subroutine plscmap0( r, g, b )
 
     call interface_plscmap0( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
                      size(r,kind=private_plint) )
-end subroutine plscmap0
+  end subroutine plscmap0_impl
 
-subroutine plscmap0n( n )
+subroutine plscmap0n_impl( n )
     integer, intent(in) :: n
     interface
         subroutine interface_plscmap0n( n ) bind( c, name = 'c_plscmap0n' )
@@ -762,7 +1099,7 @@ subroutine plscmap0n( n )
     end interface
 
     call interface_plscmap0n( int(n,kind=private_plint) )
-end subroutine plscmap0n
+  end subroutine plscmap0n_impl
 
 subroutine plscmap1_impl( r, g, b )
     integer, dimension(:), intent(in) :: r, g, b
@@ -780,7 +1117,7 @@ subroutine plscmap1_impl( r, g, b )
          size(r,kind=private_plint) )
 end subroutine plscmap1_impl
 
-subroutine plscmap1n( n )
+subroutine plscmap1n_impl( n )
     integer, intent(in) :: n
     interface
         subroutine interface_plscmap1n( n ) bind( c, name = 'c_plscmap1n' )
@@ -791,9 +1128,9 @@ subroutine plscmap1n( n )
     end interface
 
     call interface_plscmap1n( int(n,kind=private_plint) )
-end subroutine plscmap1n
+  end subroutine plscmap1n_impl
 
-subroutine plscol0( icol, r, g, b )
+subroutine plscol0_impl( icol, r, g, b )
     integer, intent(in) :: icol, r, g, b
     interface
         subroutine interface_plscol0( icol, r, g, b ) bind( c, name = 'c_plscol0' )
@@ -805,9 +1142,9 @@ subroutine plscol0( icol, r, g, b )
 
     call interface_plscol0( int(icol,kind=private_plint), &
                     int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint) )
-end subroutine plscol0
+  end subroutine plscol0_impl
 
-subroutine plscolbg( r, g, b )
+subroutine plscolbg_impl( r, g, b )
     integer, intent(in) :: r, g, b
     interface
         subroutine interface_plscolbg( r, g, b ) bind( c, name = 'c_plscolbg' )
@@ -818,10 +1155,10 @@ subroutine plscolbg( r, g, b )
     end interface
 
     call interface_plscolbg( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint) )
-end subroutine plscolbg
+  end subroutine plscolbg_impl
 
 
-subroutine plscolor( color )
+subroutine plscolor_impl( color )
     integer, intent(in) :: color
     interface
         subroutine interface_plscolor( color ) bind( c, name = 'c_plscolor' )
@@ -832,9 +1169,9 @@ subroutine plscolor( color )
     end interface
 
     call interface_plscolor( int(color,kind=private_plint) )
-end subroutine plscolor
+  end subroutine plscolor_impl
 
-subroutine plscompression( compression )
+subroutine plscompression_impl( compression )
     integer, intent(in) :: compression
     interface
         subroutine interface_plscompression( compression ) bind( c, name = 'c_plscompression' )
@@ -845,9 +1182,9 @@ subroutine plscompression( compression )
     end interface
 
     call interface_plscompression( int(compression,kind=private_plint) )
-end subroutine plscompression
+  end subroutine plscompression_impl
 
-subroutine plsdev( devname )
+subroutine plsdev_impl( devname )
    character(len=*), intent(in) :: devname
 
    interface
@@ -859,9 +1196,9 @@ subroutine plsdev( devname )
 
    call interface_plsdev( trim(devname)//c_null_char )
 
-end subroutine plsdev
+ end subroutine plsdev_impl
 
-subroutine plsdrawmode( mode )
+subroutine plsdrawmode_impl( mode )
     integer, intent(in) :: mode
     interface
         subroutine interface_plsdrawmode( mode ) bind( c, name = 'c_plsdrawmode' )
@@ -872,9 +1209,9 @@ subroutine plsdrawmode( mode )
     end interface
 
     call interface_plsdrawmode( int(mode,kind=private_plint) )
-end subroutine plsdrawmode
+  end subroutine plsdrawmode_impl
 
-subroutine plseed( s )
+subroutine plseed_impl( s )
     integer, intent(in) :: s
     interface
         subroutine interface_plseed( s ) bind( c, name = 'c_plseed' )
@@ -885,10 +1222,10 @@ subroutine plseed( s )
     end interface
 
     call interface_plseed( int(s,kind=private_plint) )
-end subroutine plseed
+  end subroutine plseed_impl
 
 ! TODO: character-version
-subroutine plsesc( esc )
+subroutine plsesc_impl( esc )
     integer, intent(in) :: esc
     interface
         subroutine interface_plsesc( esc ) bind( c, name = 'c_plsesc' )
@@ -899,7 +1236,7 @@ subroutine plsesc( esc )
     end interface
 
     call interface_plsesc( int(esc,kind=private_plint) )
-end subroutine plsesc
+  end subroutine plsesc_impl
 
 function plsetopt_impl( opt, optarg )
   integer :: plsetopt_impl !function type
@@ -919,7 +1256,7 @@ function plsetopt_impl( opt, optarg )
 
 end function plsetopt_impl
 
-subroutine plsfam( fam, num, bmax )
+subroutine plsfam_impl( fam, num, bmax )
     integer, intent(in) :: fam, num, bmax
     interface
         subroutine interface_plsfam( fam, num, bmax ) bind( c, name = 'c_plsfam' )
@@ -930,7 +1267,7 @@ subroutine plsfam( fam, num, bmax )
     end interface
 
     call interface_plsfam( int(fam,kind=private_plint), int(num,kind=private_plint), int(bmax,kind=private_plint) )
-end subroutine plsfam
+  end subroutine plsfam_impl
 
 subroutine plsfci_impl( fci )
     integer, intent(in) :: fci
@@ -947,7 +1284,7 @@ subroutine plsfci_impl( fci )
 
 end subroutine plsfci_impl
 
-subroutine plsfnam( fnam )
+subroutine plsfnam_impl( fnam )
    character(len=*), intent(in) :: fnam
 
    interface
@@ -959,9 +1296,9 @@ subroutine plsfnam( fnam )
 
    call interface_plsfnam( trim(fnam)//c_null_char )
 
-end subroutine plsfnam
+ end subroutine plsfnam_impl
 
-subroutine plsfont( family, style, weight )
+subroutine plsfont_impl( family, style, weight )
     integer, intent(in) :: family, style, weight
     interface
         subroutine interface_plsfont( family, style, weight ) bind( c, name = 'c_plsfont' )
@@ -972,36 +1309,7 @@ subroutine plsfont( family, style, weight )
     end interface
 
     call interface_plsfont( int(family,kind=private_plint), int(style,kind=private_plint), int(weight,kind=private_plint) )
-end subroutine plsfont
-
-subroutine plslabelfunc_null
-
-    interface
-        subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-            import :: c_funptr, c_ptr
-            type(c_funptr), value, intent(in) :: proc
-            type(c_ptr), value, intent(in) :: data
-        end subroutine interface_plslabelfunc
-    end interface
-
-    call interface_plslabelfunc( c_null_funptr, c_null_ptr )
-end subroutine plslabelfunc_null
-
-! Only provide double-precison version because of disambiguation
-! problems with the corresponding single-precision version.
-subroutine plslabelfunc_double( proc )
-    procedure(pllabeler_proc_double) :: proc
-    interface
-        subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-            import :: c_funptr, c_ptr
-            type(c_funptr), value, intent(in) :: proc
-            type(c_ptr), value, intent(in) :: data
-        end subroutine interface_plslabelfunc
-    end interface
-
-    pllabeler_double => proc
-    call interface_plslabelfunc( c_funloc(pllabelerf2c_double), c_null_ptr )
-end subroutine plslabelfunc_double
+  end subroutine plsfont_impl
 
 ! Only provide double-precison version because of disambiguation
 ! problems with the corresponding single-precision version.
@@ -1020,11 +1328,40 @@ subroutine plslabelfunc_data_double( proc, data )
     call interface_plslabelfunc( c_funloc(pllabelerf2c_data_double), data )
 end subroutine plslabelfunc_data_double
 
+! Only provide double-precison version because of disambiguation
+! problems with the corresponding single-precision version.
+subroutine plslabelfunc_double( proc )
+    procedure(pllabeler_proc_double) :: proc
+    interface
+        subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
+            import :: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plslabelfunc
+    end interface
+
+    pllabeler_double => proc
+    call interface_plslabelfunc( c_funloc(pllabelerf2c_double), c_null_ptr )
+end subroutine plslabelfunc_double
+
+subroutine plslabelfunc_null
+
+    interface
+        subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
+            import :: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plslabelfunc
+    end interface
+
+    call interface_plslabelfunc( c_null_funptr, c_null_ptr )
+end subroutine plslabelfunc_null
+
 ! Probably would be better to define this in redacted form, but it is not documented that
 ! way, and the python interface also does not use redacted form.  So leave it for now.
 ! I (AWI) followed advice in <http://stackoverflow.com/questions/10755896/fortran-how-to-store-value-255-into-one-byte>
 ! for the type statement for plotmem
-subroutine plsmem( maxx, maxy, plotmem )
+subroutine plsmem_impl( maxx, maxy, plotmem )
     integer, intent(in) :: maxx, maxy
     character(kind=c_char), dimension(:, :, :), target, intent(in) :: plotmem
     interface
@@ -1050,13 +1387,13 @@ subroutine plsmem( maxx, maxy, plotmem )
         return
      endif
     call interface_plsmem( int(maxx,kind=private_plint), int(maxy,kind=private_plint),  c_loc(plotmem))
-end subroutine plsmem
+  end subroutine plsmem_impl
 
 ! Probably would be better to define this in redacted form, but it is not documented that
 ! way, and the python interface also does not use redacted form.  So leave it for now.
 ! I (AWI) followed advice in <http://stackoverflow.com/questions/10755896/fortran-how-to-store-value-255-into-one-byte>
 ! for the type statement for plotmem
-subroutine plsmema( maxx, maxy, plotmem )
+subroutine plsmema_impl( maxx, maxy, plotmem )
     integer, intent(in) :: maxx, maxy
     character(kind=c_char), dimension(:, :, :), target, intent(in) :: plotmem
     interface
@@ -1082,9 +1419,9 @@ subroutine plsmema( maxx, maxy, plotmem )
         return
      endif
     call interface_plsmema( int(maxx,kind=private_plint), int(maxy,kind=private_plint),  c_loc(plotmem))
-end subroutine plsmema
+  end subroutine plsmema_impl
 
-subroutine plsori( rot )
+subroutine plsori_impl( rot )
     integer, intent(in) :: rot
     interface
         subroutine interface_plsori( rot ) bind( c, name = 'c_plsori' )
@@ -1095,9 +1432,9 @@ subroutine plsori( rot )
     end interface
 
     call interface_plsori( int(rot,kind=private_plint) )
-end subroutine plsori
+  end subroutine plsori_impl
 
-subroutine plspal0( filename )
+subroutine plspal0_impl( filename )
   character(len=*), intent(in) :: filename
 
    interface
@@ -1109,9 +1446,9 @@ subroutine plspal0( filename )
 
    call interface_plspal0( trim(filename)//c_null_char )
 
-end subroutine plspal0
+ end subroutine plspal0_impl
 
-subroutine plspal1( filename, interpolate )
+subroutine plspal1_impl( filename, interpolate )
   character(len=*), intent(in) :: filename
   logical, intent(in) :: interpolate
 
@@ -1126,9 +1463,9 @@ subroutine plspal1( filename, interpolate )
 
    call interface_plspal1( trim(filename)//c_null_char, int( merge(1,0,interpolate),kind=private_plbool) )
 
-end subroutine plspal1
+ end subroutine plspal1_impl
 
-subroutine plspause( pause )
+subroutine plspause_impl( pause )
     logical, intent(in) :: pause
 
     interface
@@ -1140,9 +1477,9 @@ subroutine plspause( pause )
     end interface
 
    call interface_plspause( int( merge(1,0,pause),kind=private_plbool) )
-end subroutine plspause
+ end subroutine plspause_impl
 
-subroutine plsstrm( strm )
+subroutine plsstrm_impl( strm )
     integer, intent(in) :: strm
     interface
         subroutine interface_plsstrm( strm ) bind( c, name = 'c_plsstrm' )
@@ -1153,9 +1490,9 @@ subroutine plsstrm( strm )
     end interface
 
     call interface_plsstrm( int(strm,kind=private_plint) )
-end subroutine plsstrm
+  end subroutine plsstrm_impl
 
-subroutine plssub( nx, ny )
+subroutine plssub_impl( nx, ny )
     integer, intent(in) :: nx, ny
     interface
         subroutine interface_plssub( nx, ny ) bind( c, name = 'c_plssub' )
@@ -1166,9 +1503,9 @@ subroutine plssub( nx, ny )
     end interface
 
     call interface_plssub( int(nx,kind=private_plint), int(ny,kind=private_plint) )
-end subroutine plssub
+  end subroutine plssub_impl
 
-subroutine plstar( nx, ny )
+subroutine plstar_impl( nx, ny )
     integer, intent(in) :: nx, ny
     interface
         subroutine interface_plstar( nx, ny ) bind( c, name = 'c_plstar' )
@@ -1179,9 +1516,9 @@ subroutine plstar( nx, ny )
     end interface
 
     call interface_plstar( int(nx,kind=private_plint), int(ny,kind=private_plint) )
-end subroutine plstar
+  end subroutine plstar_impl
 
-subroutine plstart( devname, nx, ny )
+subroutine plstart_impl( devname, nx, ny )
     integer, intent(in) :: nx, ny
     character(len=*), intent(in) :: devname
     interface
@@ -1194,36 +1531,7 @@ subroutine plstart( devname, nx, ny )
     end interface
 
     call interface_plstart( trim(devname)//c_null_char, int(nx,kind=private_plint), int(ny,kind=private_plint) )
-end subroutine plstart
-
-subroutine plstransform_null
-
-    interface
-        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-            import :: c_funptr, c_ptr
-            type(c_funptr), value, intent(in) :: proc
-            type(c_ptr), value, intent(in) :: data
-        end subroutine interface_plstransform
-    end interface
-
-    call interface_plstransform( c_null_funptr, c_null_ptr )
-end subroutine plstransform_null
-
-! Only provide double-precison version because of disambiguation
-! problems with the corresponding single-precision version.
-subroutine plstransform_double( proc )
-    procedure(pltransform_proc_double) :: proc
-    interface
-        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-            import :: c_funptr, c_ptr
-            type(c_funptr), value, intent(in) :: proc
-            type(c_ptr), value, intent(in) :: data
-        end subroutine interface_plstransform
-    end interface
-
-    pltransform_double => proc
-    call interface_plstransform( c_funloc(pltransformf2c_double), c_null_ptr )
-end subroutine plstransform_double
+  end subroutine plstart_impl
 
 ! Only provide double-precison version because of disambiguation
 ! problems with the corresponding single-precision version.
@@ -1242,7 +1550,35 @@ subroutine plstransform_data_double( proc, data )
     call interface_plstransform( c_funloc(pltransformf2c_data_double), data )
 end subroutine plstransform_data_double
 
-subroutine plstripd( id )
+! Only provide double-precison version because of disambiguation
+! problems with the corresponding single-precision version.
+subroutine plstransform_double( proc )
+    procedure(pltransform_proc_double) :: proc
+    interface
+        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
+            import :: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plstransform
+    end interface
+
+    pltransform_double => proc
+    call interface_plstransform( c_funloc(pltransformf2c_double), c_null_ptr )
+end subroutine plstransform_double
+
+subroutine plstransform_null
+    interface
+        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
+            import :: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plstransform
+    end interface
+
+    call interface_plstransform( c_null_funptr, c_null_ptr )
+end subroutine plstransform_null
+
+subroutine plstripd_impl( id )
     integer, intent(in) :: id
     interface
         subroutine interface_plstripd( id ) bind( c, name = 'c_plstripd' )
@@ -1253,13 +1589,7 @@ subroutine plstripd( id )
     end interface
 
     call interface_plstripd( int(id,kind=private_plint) )
-end subroutine plstripd
-
-subroutine plstyl_scalar( n, mark, space )
-    integer, intent(in) :: n, mark, space
-
-    call plstyl_n_array( n, (/ mark /), (/ space /) )
-end subroutine plstyl_scalar
+  end subroutine plstripd_impl
 
 subroutine plstyl_array( mark, space )
     integer, dimension(:), intent(in) :: mark, space
@@ -1281,6 +1611,12 @@ subroutine plstyl_n_array( n, mark, space )
 
     call interface_plstyl( int(n,kind=private_plint), int(mark,kind=private_plint), int(space,kind=private_plint) )
 end subroutine plstyl_n_array
+
+subroutine plstyl_scalar( n, mark, space )
+    integer, intent(in) :: n, mark, space
+
+    call plstyl_n_array( n, (/ mark /), (/ space /) )
+end subroutine plstyl_scalar
 
 subroutine plsvect_double( arrowx, arrowy, fill )
   logical, intent(in) :: fill
@@ -1351,7 +1687,7 @@ subroutine plsvect_single( arrowx, arrowy, fill )
           npts_local, int(merge(1,0,fill), kind=private_plbool) )
 end subroutine plsvect_single
 
-subroutine plsxax( digmax, digits )
+subroutine plsxax_impl( digmax, digits )
     integer, intent(in) :: digmax, digits
     interface
         subroutine interface_plsxax( digmax, digits ) bind( c, name = 'c_plsxax' )
@@ -1362,9 +1698,9 @@ subroutine plsxax( digmax, digits )
     end interface
 
     call interface_plsxax( int(digmax,kind=private_plint), int(digits,kind=private_plint) )
-end subroutine plsxax
+  end subroutine plsxax_impl
 
-subroutine plsyax( digmax, digits )
+subroutine plsyax_impl( digmax, digits )
     integer, intent(in) :: digmax, digits
     interface
         subroutine interface_plsyax( digmax, digits ) bind( c, name = 'c_plsyax' )
@@ -1375,9 +1711,9 @@ subroutine plsyax( digmax, digits )
     end interface
 
     call interface_plsyax( int(digmax,kind=private_plint), int(digits,kind=private_plint) )
-end subroutine plsyax
+  end subroutine plsyax_impl
 
-subroutine plszax( digmax, digits )
+subroutine plszax_impl( digmax, digits )
     integer, intent(in) :: digmax, digits
     interface
         subroutine interface_plszax( digmax, digits ) bind( c, name = 'c_plszax' )
@@ -1388,15 +1724,15 @@ subroutine plszax( digmax, digits )
     end interface
 
     call interface_plszax( int(digmax,kind=private_plint), int(digits,kind=private_plint) )
-end subroutine plszax
+  end subroutine plszax_impl
 
-subroutine pltext()
+subroutine pltext_impl()
     interface
         subroutine interface_pltext() bind(c,name='c_pltext')
         end subroutine interface_pltext
      end interface
      call interface_pltext()
-end subroutine pltext
+   end subroutine pltext_impl
 
 subroutine pltimefmt_impl( fmt )
    character(len=*), intent(in) :: fmt
@@ -1412,13 +1748,13 @@ subroutine pltimefmt_impl( fmt )
 
 end subroutine pltimefmt_impl
 
-subroutine plvsta()
+subroutine plvsta_impl()
     interface
         subroutine interface_plvsta() bind(c,name='c_plvsta')
         end subroutine interface_plvsta
      end interface
      call interface_plvsta()
-end subroutine plvsta
+   end subroutine plvsta_impl
 
 subroutine plxormod_impl( mode, status )
   logical, intent(in) :: mode
