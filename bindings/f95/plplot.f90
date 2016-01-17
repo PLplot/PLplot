@@ -223,6 +223,17 @@ module plplot
     private :: plmap_single
     private :: plmap_single_null
 
+    interface plmeridians
+        module procedure plmeridians_double
+        module procedure plmeridians_double_null
+        module procedure plmeridians_single
+        module procedure plmeridians_single_null
+    end interface plmeridians
+    private :: plmeridians_double
+    private :: plmeridians_double_null
+    private :: plmeridians_single
+    private :: plmeridians_single_null
+
     interface plmkstrm
        module procedure plmkstrm_impl
     end interface plmkstrm
@@ -1022,6 +1033,84 @@ subroutine plmap_single_null( name, minx, maxx, miny, maxy )
        real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
        real(miny, kind=private_plflt), real(maxy, kind=private_plflt) )
 end subroutine plmap_single_null
+
+subroutine plmeridians_double( proc, dlong, dlat, minlong, maxlong, minlat, maxlat )
+  procedure(plmapform_proc_double) :: proc
+  real(kind=private_double), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+  
+  interface
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       real(kind=private_plflt), value, intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+     end subroutine interface_plmeridians
+  end interface
+
+  plmapform_double => proc
+
+  call interface_plmeridians( c_funloc(plmapformf2c_double), &
+       real(dlong, kind=private_plflt), real(dlat, kind=private_plflt), &
+       real(minlong, kind=private_plflt), real(maxlong, kind=private_plflt), &
+       real(minlat, kind=private_plflt), real(maxlat, kind=private_plflt) )
+end subroutine plmeridians_double
+
+subroutine plmeridians_double_null( dlong, dlat, minlong, maxlong, minlat, maxlat )
+  real(kind=private_double), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+
+  interface
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       real(kind=private_plflt), value, intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+     end subroutine interface_plmeridians
+  end interface
+  
+  call interface_plmeridians( c_null_funptr, &
+       real(dlong, kind=private_plflt), real(dlat, kind=private_plflt), &
+       real(minlong, kind=private_plflt), real(maxlong, kind=private_plflt), &
+       real(minlat, kind=private_plflt), real(maxlat, kind=private_plflt) )
+end subroutine plmeridians_double_null
+
+subroutine plmeridians_single( proc, dlong, dlat, minlong, maxlong, minlat, maxlat )
+  procedure(plmapform_proc_single) :: proc
+  real(kind=private_single), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+  
+  interface
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       real(kind=private_plflt), value, intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+     end subroutine interface_plmeridians
+  end interface
+
+  plmapform_single => proc
+
+  call interface_plmeridians( c_funloc(plmapformf2c_single), &
+       real(dlong, kind=private_plflt), real(dlat, kind=private_plflt), &
+       real(minlong, kind=private_plflt), real(maxlong, kind=private_plflt), &
+       real(minlat, kind=private_plflt), real(maxlat, kind=private_plflt) )
+end subroutine plmeridians_single
+
+subroutine plmeridians_single_null( dlong, dlat, minlong, maxlong, minlat, maxlat )
+  real(kind=private_single), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+
+  interface
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       real(kind=private_plflt), value, intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
+     end subroutine interface_plmeridians
+  end interface
+  
+  call interface_plmeridians( c_null_funptr, &
+       real(dlong, kind=private_plflt), real(dlat, kind=private_plflt), &
+       real(minlong, kind=private_plflt), real(maxlong, kind=private_plflt), &
+       real(minlat, kind=private_plflt), real(maxlat, kind=private_plflt) )
+end subroutine plmeridians_single_null
 
 subroutine plmkstrm_impl( strm )
     integer, intent(in) :: strm

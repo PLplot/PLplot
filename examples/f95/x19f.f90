@@ -93,9 +93,9 @@
       call plmap(mapform19, 'globe', minx, maxx, miny, maxy)
 
       call pllsty(2)
- !     call plmeridians(mapform19,10.0_plflt, 10.0_plflt, &
-!              0.0_plflt, 360.0_plflt, -10.0_plflt, &
-!              80.0_plflt)
+      call plmeridians(mapform19,10.0_plflt, 10.0_plflt, &
+           0.0_plflt, 360.0_plflt, -10.0_plflt, &
+           80.0_plflt)
 
 ! Polar, Northern hemisphere, this time with a PLplot-wide transform
 
@@ -112,9 +112,9 @@
       call plmap('globe', minx, maxx, miny, maxy )
 
       call pllsty( 2 )
-      !call plmeridians(10.0_plflt, 10.0_plflt, &
-!           0.0_plflt, 360.0_plflt, -10.0_plflt, &
-!           80.0_plflt )
+      call plmeridians(10.0_plflt, 10.0_plflt, &
+           0.0_plflt, 360.0_plflt, -10.0_plflt, &
+           80.0_plflt )
 
       ! Show Baltimore, MD on the map
       call plcol0( 2 )
