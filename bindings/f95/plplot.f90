@@ -212,6 +212,17 @@ module plplot
     end interface pllsty
     private :: pllsty_impl
 
+    interface plmap
+        module procedure plmap_double
+        module procedure plmap_double_null
+        module procedure plmap_single
+        module procedure plmap_single_null
+    end interface plmap
+    private :: plmap_double
+    private :: plmap_double_null
+    private :: plmap_single
+    private :: plmap_single_null
+
     interface plmkstrm
        module procedure plmkstrm_impl
     end interface plmkstrm
@@ -929,6 +940,88 @@ subroutine pllsty_impl( lin )
 
     call interface_pllsty( int(lin,kind=private_plint) )
   end subroutine pllsty_impl
+
+subroutine plmap_double( proc, name, minx, maxx, miny, maxy )
+  procedure(plmapform_proc_double) :: proc
+  character*(*), intent(in) :: name
+  real(kind=private_double), intent(in) :: minx, maxx, miny, maxy
+  
+  interface
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+     end subroutine interface_plmap
+  end interface
+
+  plmapform_double => proc
+
+  call interface_plmap( c_funloc(plmapformf2c_double), trim(name)//c_null_char, &
+       real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+       real(miny, kind=private_plflt), real(maxy, kind=private_plflt) )
+end subroutine plmap_double
+
+subroutine plmap_double_null( name, minx, maxx, miny, maxy )
+  character*(*), intent(in) :: name
+  real(kind=private_double), intent(in) :: minx, maxx, miny, maxy
+
+  interface
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+     end subroutine interface_plmap
+  end interface
+  
+  call interface_plmap( c_null_funptr, trim(name)//c_null_char, &
+       real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+       real(miny, kind=private_plflt), real(maxy, kind=private_plflt) )
+end subroutine plmap_double_null
+
+subroutine plmap_single( proc, name, minx, maxx, miny, maxy )
+  procedure(plmapform_proc_single) :: proc
+  character*(*), intent(in) :: name
+  real(kind=private_single), intent(in) :: minx, maxx, miny, maxy
+  
+  interface
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+     end subroutine interface_plmap
+  end interface
+
+  plmapform_single => proc
+
+  call interface_plmap( c_funloc(plmapformf2c_single), trim(name)//c_null_char, &
+       real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+       real(miny, kind=private_plflt), real(maxy, kind=private_plflt) )
+end subroutine plmap_single
+
+subroutine plmap_single_null( name, minx, maxx, miny, maxy )
+  character*(*), intent(in) :: name
+  real(kind=private_single), intent(in) :: minx, maxx, miny, maxy
+
+  interface
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+       import :: c_funptr, private_plflt
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+     end subroutine interface_plmap
+  end interface
+  
+  call interface_plmap( c_null_funptr, trim(name)//c_null_char, &
+       real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+       real(miny, kind=private_plflt), real(maxy, kind=private_plflt) )
+end subroutine plmap_single_null
 
 subroutine plmkstrm_impl( strm )
     integer, intent(in) :: strm

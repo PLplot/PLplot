@@ -23,7 +23,7 @@
 !--------------------------------------------------------------------------
 
       program x19f
-      use plplot, doublePI => PL_PI
+      use plplot, double_PI => PL_PI
       implicit none
       real(kind=plflt), parameter :: PI = double_PI
 
@@ -90,12 +90,12 @@
 
       call plenv(-75._plflt, 75._plflt, -75._plflt, &
               75._plflt, 1, -1)
-      call plmap(mapform19,'globe', minx, maxx, miny, maxy)
+      call plmap(mapform19, 'globe', minx, maxx, miny, maxy)
 
       call pllsty(2)
-      call plmeridians(mapform19,10.0_plflt, 10.0_plflt, &
-              0.0_plflt, 360.0_plflt, -10.0_plflt, &
-              80.0_plflt)
+ !     call plmeridians(mapform19,10.0_plflt, 10.0_plflt, &
+!              0.0_plflt, 360.0_plflt, -10.0_plflt, &
+!              80.0_plflt)
 
 ! Polar, Northern hemisphere, this time with a PLplot-wide transform
 
@@ -112,9 +112,9 @@
       call plmap('globe', minx, maxx, miny, maxy )
 
       call pllsty( 2 )
-      call plmeridians(10.0_plflt, 10.0_plflt, &
-           0.0_plflt, 360.0_plflt, -10.0_plflt, &
-           80.0_plflt )
+      !call plmeridians(10.0_plflt, 10.0_plflt, &
+!           0.0_plflt, 360.0_plflt, -10.0_plflt, &
+!           80.0_plflt )
 
       ! Show Baltimore, MD on the map
       call plcol0( 2 )
@@ -135,7 +135,8 @@
 
       subroutine map_transform(x, y, xt, yt)
 
-      ! These callback arguments must have exactly these attributes.
+      ! These callback arguments must have exactly these attributes
+      ! because of disambiguation issues.
       real(kind=double), intent(in) :: x, y
       real(kind=double), intent(out) :: xt, yt
 
@@ -153,27 +154,80 @@
 ! x(), y() are the coordinates to be plotted.
 !--------------------------------------------------------------------------
 
-      subroutine mapform19(n, x, y)
+      subroutine mapform19(x, y)
 
-      integer n
-      real(kind=plflt)    x(n)
-      real(kind=plflt)    y(n)
+      real(kind=plflt), dimension(:), intent(inout) :: x, y
 
-      integer i
-      real(kind=plflt)    xp, yp, radius
+      real(kind=plflt), dimension(:), allocatable :: radius
 
-      do i = 1,n
-         radius = 90.0_plflt - y(i)
-         xp = radius * cos(x(i) * PI / 180.0_plflt)
-         yp = radius * sin(x(i) * PI / 180.0_plflt)
-         x(i) = xp
-         y(i) = yp
-      enddo
+      allocate(radius(size(x)))
+
+      ! evaluate x last so RHS's do not get overwritten too soon
+      radius = 90.0_plflt - y
+      y = radius*sin(x*PI/180.0_plflt)
+      x = radius*cos(x*PI/180.0_plflt)
       end subroutine mapform19
 
-!     "Normalize" longitude values so that they always fall between
-!      -180.0 and 180.0
+!
+! A custom axis labeling function for longitudes and latitudes.
+!
+      subroutine geolocation_labeler(axis, value, label)
+      integer, intent(in) :: axis
+      ! These callback arguments must have exactly these attributes
+      ! because of disambiguation issues.
+      real(kind=double), intent(in) :: value
+      character(len=*), intent(out) :: label
+
+      integer :: length
+      character(len=5) direction_label
+      real(kind=plflt) :: label_val, normalize_longitude, value_plflt
+
+      label_val = 0.0_plflt
+      value_plflt = real(value, kind=plflt)
+
+      length = len(label)
+
+      if (axis .eq. 2) then
+         label_val = value_plflt
+         if (label_val .gt. 0.0_plflt) then
+            direction_label = ' N'
+         else if (label_val .lt. 0.0_plflt) then
+            direction_label = ' S'
+         else
+            direction_label = 'Eq'
+         endif
+      else if (axis .eq. 1) then
+         label_val = normalize_longitude(value_plflt)
+         if (label_val .gt. 0.0_plflt) then
+            direction_label = ' E'
+         else if (label_val .lt. 0.0_plflt) then
+            direction_label = ' W'
+         else
+            direction_label = ''
+         endif
+      endif
+      if (axis .eq. 2 .and. value_plflt .eq. 0.0_plflt) then
+!     A special case for the equator
+         label = direction_label
+      else if (abs(label_val) .lt. 10.0_plflt) then
+         write(label,'(I1.1,A2)') iabs(int(label_val)),direction_label
+      else if (abs(label_val) .lt. 100.0_plflt) then
+         write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
+      else
+        write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
+     endif
+      end subroutine geolocation_labeler
+
+      end program x19f
+
+      !FIXME.  How does a callback get access to another routine within the same contains block
+      ! Having normalize_longitude be an external procedure seems to be the only (ugly) possibility
+
+      !     "Normalize" longitude values so that they always fall between
+      !      -180.0 and 180.0
       function normalize_longitude(lon)
+        use plplot, only: plflt
+        implicit none
       real(kind=plflt) :: normalize_longitude
       real(kind=plflt) :: lon, times
 
@@ -188,53 +242,3 @@
         endif
       endif
       end function normalize_longitude
-!
-! A custom axis labeling function for longitudes and latitudes.
-!
-      subroutine geolocation_labeler(axis, value, label)
-      integer, intent(in) :: axis
-      real(kind=plflt), intent(in) :: value
-      character(len=*), intent(out) :: label
-
-      integer :: length
-      character(len=5) direction_label
-      real(kind=plflt) :: label_val = 0.0_plflt
-
-      length = len(label)
-
-      if (axis .eq. 2) then
-         label_val = value
-         if (label_val .gt. 0.0_plflt) then
-            direction_label = ' N'
-         else if (label_val .lt. 0.0_plflt) then
-            direction_label = ' S'
-         else
-            direction_label = 'Eq'
-         endif
-      else if (axis .eq. 1) then
-         !FIXME.  How does a callback get access to another routine within the same contains block?
-         ! The only way I know to fix this is to make normalize_longitude a separate routine outside
-         ! the x22f program.  But that is pretty ugly.
-!         label_val = normalize_longitude(value)
-         label_val = value !temporary until a fix for the above can be found.
-         if (label_val .gt. 0.0_plflt) then
-            direction_label = ' E'
-         else if (label_val .lt. 0.0_plflt) then
-            direction_label = ' W'
-         else
-            direction_label = ''
-         endif
-      endif
-      if (axis .eq. 2 .and. value .eq. 0.0_plflt) then
-!     A special case for the equator
-         label = direction_label
-      else if (abs(label_val) .lt. 10.0_plflt) then
-         write(label,'(I1.1,A2)') iabs(int(label_val)),direction_label
-      else if (abs(label_val) .lt. 100.0_plflt) then
-         write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
-      else
-        write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
-     endif
-      end subroutine geolocation_labeler
-
-      end program x19f

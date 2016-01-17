@@ -45,7 +45,7 @@ set(f95_STRING_INDICES
   "16a"
   "17"
   "18"
-#temporary  "19"
+  "19"
   "20"
   "21"
   "22"
