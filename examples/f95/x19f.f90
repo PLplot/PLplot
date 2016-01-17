@@ -129,6 +129,114 @@
       ! For Fortran, this is how the global transform is cleared.
       call plstransform
 
+      ! An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
+      ! These were chosen because they provide shapefiles for small grid boxes which
+      ! are easilly manageable for this demo.
+
+      call pllsty( 1 )
+
+      minx = 240570._plflt
+      maxx = 621109._plflt
+      miny = 87822._plflt
+      maxy = 722770._plflt
+      call plscol0( 0, 255, 255, 255 )
+      call plscol0( 1, 0, 0, 0 )
+      call plscol0( 2, 150, 150, 150 )
+      call plscol0( 3, 0, 50, 200 )
+      call plscol0( 4, 50, 50, 50 )
+      call plscol0( 5, 150, 0, 0 )
+      call plscol0( 6, 100, 100, 255 )
+
+      minx = 265000._plflt
+      maxx = 270000._plflt
+      miny = 145000._plflt
+      maxy = 150000._plflt
+      call plscol0( 0, 255, 255, 255 )  !white
+      call plscol0( 1, 0, 0, 0 )        !black
+      call plscol0( 2, 255, 200, 0 )    !yelow for sand
+      call plscol0( 3, 60, 230, 60 )    !green for woodland
+      call plscol0( 4, 210, 120, 60 )   !brown for contours
+      call plscol0( 5, 150, 0, 0 )      !red for major roads
+      call plscol0( 6, 180, 180, 255 )  !pale blue for water
+      call plscol0( 7, 100, 100, 100 )  !pale grey for shingle or boulders
+      call plscol0( 8, 100, 100, 100 )  !dark grey for custom polygons - generally crags
+
+
+      call plcol0( 1 )
+      call plenv( minx, maxx, miny, maxy, 1, -1 )
+      call pllab( "", "", "Martinhoe CP, Exmoor National Park, UK (shapelib only)" )
+
+
+      ! Beach
+      call plcol0( 2 )
+      call plmapfill( "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, beachareas )
+
+      ! Woodland
+      call plcol0( 3 )
+      do i = 1, nwoodlandareas
+          woodlandareas(i) = i + 217
+      enddo
+      call plmapfill( "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas )
+
+      ! Shingle or boulders
+      call plcol0( 7 )
+      call plmapfill( "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas )
+
+      ! Crags
+      call plcol0( 8 )
+      do i = 1, ncragareas
+          cragareas(i) = i + 324
+      enddo
+      call plmapfill( "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas )
+
+      ! draw contours, we need to separate contours from high/low coastline
+      ! draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );
+      call plcol0( 4 )
+      call plmapline( "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy )
+
+      ! draw the sea and surface water
+      call plwidth( 0.0_plflt )
+      call plcol0( 6 )
+      call plmapfill( "ss/ss64ne_Water_Area", minx, maxx, miny, maxy )
+      call plwidth( 2.0_plflt )
+      call plmapfill( "ss/ss64ne_Water_Line", minx, maxx, miny, maxy )
+
+      ! draw the roads, first with black and then thinner with colour to give an
+      ! an outlined appearance
+      call plwidth( 5.0_plflt )
+      call plcol0( 1 )
+      call plmapline( "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy )
+      call plwidth( 3.0_plflt )
+      call plcol0( 0 )
+      call plmapline( "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy )
+      call plcol0( 5 )
+      call plmapline( "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads )
+
+      ! draw buildings
+      call plwidth( 1.0_plflt )
+      call plcol0( 1 )
+      call plmapfill( "ss/ss64ne_Building_Area", minx, maxx, miny, maxy )
+
+      ! labels
+      call plsfci( int(z'00000100') )
+      call plschr( 0._plflt, 0.8_plflt )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
+      call plschr( 0._plflt, 0.7_plflt );
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Heale\nDown", minx, maxx, miny, maxy, 13 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "South\nDown", minx, maxx, miny, maxy, 34 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Woody Bay", minx, maxx, miny, maxy, 211 )
+      call plschr( 0._plflt, 0.6_plflt );
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Mill Wood", minx, maxx, miny, maxy, 16 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Heale Wood", minx, maxx, miny, maxy, 17 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 1.0_plflt, "Bodley", minx, maxx, miny, maxy, 31 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.0_plflt, "Martinhoe", minx, maxx, miny, maxy, 37 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+!              "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 )
+!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+!              "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 )
+
       call plend()
 
       contains
