@@ -245,6 +245,17 @@ module plplot
     private :: plmapline_single
     private :: plmapline_single_null
 
+    interface plmapstring
+        module procedure plmapstring_double
+        module procedure plmapstring_double_null
+        module procedure plmapstring_single
+        module procedure plmapstring_single_null
+    end interface plmapstring
+    private :: plmapstring_double
+    private :: plmapstring_double_null
+    private :: plmapstring_single
+    private :: plmapstring_single_null
+
     interface plmeridians
         module procedure plmeridians_double
         module procedure plmeridians_double_null
@@ -980,7 +991,8 @@ subroutine plmap_double( proc, name, minx, maxx, miny, maxy )
   real(kind=private_double), intent(in) :: minx, maxx, miny, maxy
   
   interface
-     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) &
+          bind(c, name = 'c_plmap' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1001,7 +1013,8 @@ subroutine plmap_double_null( name, minx, maxx, miny, maxy )
   real(kind=private_double), intent(in) :: minx, maxx, miny, maxy
 
   interface
-     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) &
+          bind(c, name = 'c_plmap' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1021,7 +1034,8 @@ subroutine plmap_single( proc, name, minx, maxx, miny, maxy )
   real(kind=private_single), intent(in) :: minx, maxx, miny, maxy
   
   interface
-     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) &
+          bind(c, name = 'c_plmap' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1042,7 +1056,8 @@ subroutine plmap_single_null( name, minx, maxx, miny, maxy )
   real(kind=private_single), intent(in) :: minx, maxx, miny, maxy
 
   interface
-     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) bind(c, name = 'c_plmap' )
+     subroutine interface_plmap( proc, name, minx, maxx, miny, maxy ) &
+          bind(c, name = 'c_plmap' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1063,7 +1078,8 @@ subroutine plmapfill_double( proc, name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
 
   interface
-     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapfill' )
+     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapfill' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1095,7 +1111,8 @@ subroutine plmapfill_double_null( name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
 
   interface
-     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapfill' )
+     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapfill' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1126,7 +1143,8 @@ subroutine plmapfill_single( proc, name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
   
   interface
-     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapfill' )
+     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapfill' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1158,7 +1176,8 @@ subroutine plmapfill_single_null( name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
 
   interface
-     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapfill' )
+     subroutine interface_plmapfill( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapfill' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1189,7 +1208,8 @@ subroutine plmapline_double( proc, name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
   
   interface
-     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapline' )
+     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapline' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1221,7 +1241,8 @@ subroutine plmapline_double_null( name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
 
   interface
-     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapline' )
+     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapline' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1252,7 +1273,8 @@ subroutine plmapline_single( proc, name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
   
   interface
-     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapline' )
+     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapline' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1284,7 +1306,8 @@ subroutine plmapline_single_null( name, minx, maxx, miny, maxy, plotentries )
   integer, dimension(:), optional, target, intent(in) :: plotentries
 
   interface
-     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) bind(c, name = 'c_plmapline' )
+     subroutine interface_plmapline( proc, name, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapline' )
        import :: c_funptr, private_plflt, c_ptr, private_plint
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1308,12 +1331,151 @@ subroutine plmapline_single_null( name, minx, maxx, miny, maxy, plotentries )
   endif
 end subroutine plmapline_single_null
 
+subroutine plmapstring_double( proc, name, string, minx, maxx, miny, maxy, plotentries )
+  procedure(plmapform_proc_double) :: proc
+  character*(*), intent(in) :: name, string
+  real(kind=private_double), intent(in) :: minx, maxx, miny, maxy
+  integer, dimension(:), optional, target, intent(in) :: plotentries
+  
+  interface
+     subroutine interface_plmapstring( proc, name, string, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapstring' )
+       import :: c_funptr, private_plflt, c_ptr, private_plint
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name, string
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+       type(c_ptr), value, intent(in) :: plotentries
+       integer(kind=private_plint), value, intent(in) :: nplotentries
+     end subroutine interface_plmapstring
+  end interface
+
+  plmapform_double => proc
+
+  if ( present(plotentries) ) then
+     call interface_plmapstring( c_funloc(plmapformf2c_double), &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_loc(plotentries), size(plotentries, kind=private_plint) )
+  else
+     call interface_plmapstring( c_funloc(plmapformf2c_double), &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_null_ptr, 0_private_plint )
+  endif
+end subroutine plmapstring_double
+
+subroutine plmapstring_double_null( name, string, minx, maxx, miny, maxy, plotentries )
+  character*(*), intent(in) :: name, string
+  real(kind=private_double), intent(in) :: minx, maxx, miny, maxy
+  integer, dimension(:), optional, target, intent(in) :: plotentries
+
+  interface
+     subroutine interface_plmapstring( proc, name, string, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapstring' )
+       import :: c_funptr, private_plflt, c_ptr, private_plint
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name, string
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+       type(c_ptr), value, intent(in) :: plotentries
+       integer(kind=private_plint), value, intent(in) :: nplotentries
+     end subroutine interface_plmapstring
+  end interface
+  
+  if ( present(plotentries) ) then
+     call interface_plmapstring( c_null_funptr, &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_loc(plotentries), size(plotentries, kind=private_plint) )
+  else
+     call interface_plmapstring( c_null_funptr, &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_null_ptr, 0_private_plint )
+  endif
+end subroutine plmapstring_double_null
+
+subroutine plmapstring_single( proc, name, string, minx, maxx, miny, maxy, plotentries )
+  procedure(plmapform_proc_single) :: proc
+  character*(*), intent(in) :: name, string
+  real(kind=private_single), intent(in) :: minx, maxx, miny, maxy
+  integer, dimension(:), optional, target, intent(in) :: plotentries
+  
+  interface
+     subroutine interface_plmapstring( proc, name, string, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapstring' )
+       import :: c_funptr, private_plflt, c_ptr, private_plint
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name, string
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+       type(c_ptr), value, intent(in) :: plotentries
+       integer(kind=private_plint), value, intent(in) :: nplotentries
+     end subroutine interface_plmapstring
+  end interface
+
+  plmapform_single => proc
+
+  if ( present(plotentries) ) then
+     call interface_plmapstring( c_funloc(plmapformf2c_single), &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_loc(plotentries), size(plotentries, kind=private_plint) )
+  else
+     call interface_plmapstring( c_funloc(plmapformf2c_single), &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_null_ptr, 0_private_plint )
+  endif
+end subroutine plmapstring_single
+
+subroutine plmapstring_single_null( name, string, minx, maxx, miny, maxy, plotentries )
+  character*(*), intent(in) :: name, string
+  real(kind=private_single), intent(in) :: minx, maxx, miny, maxy
+  integer, dimension(:), optional, target, intent(in) :: plotentries
+
+  interface
+     subroutine interface_plmapstring( proc, name, string, minx, maxx, miny, maxy, plotentries, nplotentries ) &
+          bind(c, name = 'c_plmapstring' )
+       import :: c_funptr, private_plflt, c_ptr, private_plint
+       implicit none
+       type(c_funptr), value, intent(in) :: proc
+       character(len=1), dimension(*), intent(in) :: name, string
+       real(kind=private_plflt), value, intent(in) :: minx, maxx, miny, maxy
+       type(c_ptr), value, intent(in) :: plotentries
+       integer(kind=private_plint), value, intent(in) :: nplotentries
+     end subroutine interface_plmapstring
+  end interface
+  
+  if ( present(plotentries) ) then
+     call interface_plmapstring( c_null_funptr, &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_loc(plotentries), size(plotentries, kind=private_plint) )
+  else
+     call interface_plmapstring( c_null_funptr, &
+          trim(name)//c_null_char, trim(string)//c_null_char, &
+          real(minx, kind=private_plflt), real(maxx, kind=private_plflt), &
+          real(miny, kind=private_plflt), real(maxy, kind=private_plflt), &
+          c_null_ptr, 0_private_plint )
+  endif
+end subroutine plmapstring_single_null
+
 subroutine plmeridians_double( proc, dlong, dlat, minlong, maxlong, minlat, maxlat )
   procedure(plmapform_proc_double) :: proc
   real(kind=private_double), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
   
   interface
-     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) &
+          bind(c, name = 'c_plmeridians' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1333,7 +1495,8 @@ subroutine plmeridians_double_null( dlong, dlat, minlong, maxlong, minlat, maxla
   real(kind=private_double), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
 
   interface
-     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) &
+          bind(c, name = 'c_plmeridians' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1352,7 +1515,8 @@ subroutine plmeridians_single( proc, dlong, dlat, minlong, maxlong, minlat, maxl
   real(kind=private_single), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
   
   interface
-     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) &
+          bind(c, name = 'c_plmeridians' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
@@ -1372,7 +1536,8 @@ subroutine plmeridians_single_null( dlong, dlat, minlong, maxlong, minlat, maxla
   real(kind=private_single), intent(in) :: dlong, dlat, minlong, maxlong, minlat, maxlat
 
   interface
-     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) bind(c, name = 'c_plmeridians' )
+     subroutine interface_plmeridians( proc, dlong, dlat, minlong, maxlong, minlat, maxlat ) &
+          bind(c, name = 'c_plmeridians' )
        import :: c_funptr, private_plflt
        implicit none
        type(c_funptr), value, intent(in) :: proc
