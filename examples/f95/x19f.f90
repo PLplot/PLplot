@@ -220,22 +220,32 @@
       ! labels
       call plsfci( int(z'00000100') )
       call plschr( 0._plflt, 0.8_plflt )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
       call plschr( 0._plflt, 0.7_plflt );
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Heale\nDown", minx, maxx, miny, maxy, 13 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "South\nDown", minx, maxx, miny, maxy, 34 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Martinhoe\nCommon", minx, maxx, miny, maxy, 42 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Woody Bay", minx, maxx, miny, maxy, 211 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "Heale"//achar(10)//"Down", minx, maxx, miny, maxy, 13 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "South"//achar(10)//"Down", minx, maxx, miny, maxy, 34 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "Martinhoe"//achar(10)//"Common", minx, maxx, miny, maxy, 42 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "Woody Bay", minx, maxx, miny, maxy, 211 )
       call plschr( 0._plflt, 0.6_plflt );
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Mill Wood", minx, maxx, miny, maxy, 16 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Heale Wood", minx, maxx, miny, maxy, 17 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 1.0_plflt, "Bodley", minx, maxx, miny, maxy, 31 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.0_plflt, "Martinhoe", minx, maxx, miny, maxy, 37 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
-!              "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 )
-!      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
-!              "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "Mill Wood", minx, maxx, miny, maxy, 16 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "Heale Wood", minx, maxx, miny, maxy, 17 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 1.0_plflt, &
+           "Bodley", minx, maxx, miny, maxy, 31 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.0_plflt, &
+           "Martinhoe", minx, maxx, miny, maxy, 37 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "Woolhanger"//achar(10)//"Common", minx, maxx, miny, maxy, 60 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "West Ilkerton"//achar(10)//"Common", minx, maxx, miny, maxy, 61 )
+      call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+           "Caffyns"//achar(10)//"Heanton"//achar(10)//"Down", minx, maxx, miny, maxy, 62 )
 
       call plend()
 

@@ -235,6 +235,26 @@ has exactly the same effect.
 plshades has been added to give the same control of this argument to
 Fortran users that is currently available to C users.
 
+(ix) The old support for translating any "\n" characters in Fortran
+character string arguments to "char(10)" has now been removed.
+Instead, a user should use achar(10) (not char(10) which may not give
+you the desired line feed character on certain platforms) to do this
+job instead. So if the old character string argument was
+
+"Heale\nDown"
+
+that should be replaced by
+
+"Heale"//achar(10)//"Down"
+
+(Compare examples/old_f95/x19f.f90 with examples/f95/x19f.f90.)  The
+net result of the achar(10) method is that the Fortran character
+string is reliably on all platforms translated at the C level to
+"Heale\nDown" (where in this case "\n" has a special character meaning
+of linefeed unlike the Fortran case.  After that, how our device
+drivers currently interpret that special C character for linefeed is
+idiosyncratic to each of our device drivers.)
+
 2.5 Remove "c_" prefix from our C API
 
 See 2.3 for why this simplification is possible.
