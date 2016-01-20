@@ -35,218 +35,310 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<chapter id="fortran95">
-  <title>Fortran Language</title>
-  <para>
-    The Fortran binding to PLplot takes full advantage of the <literal>ISO_C_BINDING</literal> feature of
-    the Fortran 2003 standard, which is supported by all current compilers.  The advantage
-    of this is that the entire binding is now written in Fortran, so that there is only
-    one library that you need to link against.  Furthermore, the binding defines
-    routines for both single and double precision.  A program can therefore use
-    single and double precision variables and only one version of the PLplot library is
-    required.  There are a few limitations, however, which are discussed below.
-  </para>
-  <para>
-    Note: in this chapter <quote>Fortran</quote> stands for <quote>Fortran as defined by the Fortran 2003 standard</quote>. Older
-    versions of PLplot supported FORTRAN 77, but the binding for this 40 years old version has been
-    abandoned for quite a few years now.  As we now use features from the Fortran 2003 standard,
-    it is no longer appropriate to refer to the language as Fortran 95.
-  </para>
-  <para>
-    Because the PLplot kernel is written in C, standard C syntax is used in the
-    description of each PLplot function.  Thus to understand this manual it is
-    helpful to know a little about C, but fortunately the translation is very
-    easy and can be summarized here.  As an example, the routine
-    &plline; call from C would look like:
-    <programlisting>
-      plline(n,x,y);
-    </programlisting>
-    The argument <literal>n</literal> is the number of points that make
-    up the line and the arguments <literal>x</literal> and <literal>y</literal>
-    are arrays of floating-point numbers containing the x- and y-coordinates of the
-    points.
-  </para>
-  <para>
-    In C you need to specify the array dimensions explicitly, whereas in
-    Fortran (from Fortran 90 onwards) the array dimension can be implicit, which leads to less
-    mistakes. The interface to <literal>plline</literal> therefore looks
-    like this:
-    <programlisting>
-      integer, parameter :: wp = &lt;the kind for single precision reals or double precision reals&gt;
+<chapter id="fortran95"> <title>Fortran Language</title>
 
-      interface
-        subroutine plline(x,y)
-          real(wp), dimension(:) :: x, y
-        end subroutine plline
-      end interface
-    </programlisting>
+<para>The new implemention of the Fortran binding of PLplot takes full
+advantage of the <literal>ISO_C_BINDING</literal> feature of the
+Fortran 2003 standard, which is supported by all current compilers.
+The advantage of this approach is that the entire binding is now
+written in Fortran, so that there is only one library that calling
+programs need to link against.  Furthermore, the binding defines
+overloaded routines for the case of either single- or double-precision
+arguments supplied by the calling programme regardless of the floating-point
+precision of the underlying C library.  That makes this binding much
+easier to use than our previous implementation of the Fortran binding
+where calling routines were forced to use the same floating-point precision that was
+configured for the underlying PLplot C library.</para>
+  
+<para> Note: in this chapter <quote>Fortran</quote> stands for
+<quote>Fortran as defined by the Fortran 2003 standard</quote>.  Older
+versions of PLplot supported FORTRAN 77, but the binding for this 40
+years old version has been abandoned for quite a few years now.  As we
+now use features from the Fortran 2003 standard, it is no longer
+appropriate to refer to the language as Fortran 95.  </para>
 
-  </para>
-  <para>
-    The limitation is that the same precision must be used for both the <literal>x</literal> and
-    <literal>y</literal> arrays, just they should have the same size.  The compiler takes care of
-    invoking the right version of the <literal>plline</literal> routines.  This is true in general:
-    all <literal>real</literal> arguments to a PLplot subroutine should be either single precision
-    or double precision.
-  </para>
-  <para>
-    Note that this <quote>duality</quote> applies only to the <literal>real</literal> arguments, not
-    to <literal>integer</literal>, <literal>logical</literal> or <literal>character string</literal>
-    arguments.
-  </para>
-  <para>
-    To help with the interpretation of the C API, here is a short overview of how C data types correspond
-    to Fortran
-    data types:
-    <informaltable frame="none" pgwide="0">
-      <tgroup align="center" cols="2">
-	<colspec colnum="1" align="center" colwidth="1*"/>
-	<colspec colnum="2" align="center" colwidth="1*"/>
-	<tbody>
-	  <row>
-	    <entry>PLFLT</entry><entry>real(kind=plflt)</entry>
-	  </row>
-	  <row>
-	    <entry>PLINT</entry><entry>integer</entry>
-	  </row>
-	  <row>
-	    <entry>PLBOOL</entry><entry>logical</entry>
-	  </row>
-	  <row>
-	    <entry>char *</entry><entry>character</entry>
-	  </row>
-	  <row>
-	    <entry>PLFLT *</entry><entry>real(kind=plflt) or real(kind=plflt), dimension(:)</entry>
-	  </row>
-	  <row>
-	    <entry>PLFLT **</entry><entry>real(kind=plflt), dimension(:,:)</entry>
-	  </row>
-	  <row>
-	    <entry><literal>"string"</literal></entry><entry><literal>'string'</literal></entry>
-	  </row>
-	  <row>
-	    <entry>array[0]</entry><entry>array(1)</entry>
-	  </row>
-	</tbody>
+<para>We illustrate the implementation of our Fortran binding with the
+<literal>plstring</literal> example.  The C API for that routine is thoroughly
+documented in <xref linkend="plstring"/>, but the summary of that C
+API which best serves our purposes here is
+<programlisting>
+void plstring( PLINT n, const PLFLT *x, const PLFLT *y, const char *string );
+</programlisting>
+The arguments <literal>n</literal>, <literal>x</literal>,
+<literal>y</literal>, and <literal>string</literal> represent the
+number of times the string is plotted, the arrays of length
+<literal>n</literal> which contain the <literal>x, y</literal> values where that string is plotted, and
+the NULL-terminated C string that contains the ordinary (not
+wide) characters in the UTF-8 encoding of a unicode glyph to be
+plotted.  The PLplot <literal>PLINT</literal> type is normally defined
+as the C fundamental type <literal>int32_t</literal>, and the PLplot
+<literal>PLFLT</literal> type is defined to be one of the two C
+fundamental types <literal>float</literal> or
+<literal>double</literal> depending on how the C PLplot library
+is configured.</para>
+
+<para>Here is an example of one fairly typical Fortran call of <literal>plstring</literal>.
+<programlisting>
+program test_plplot
+    use plplot
+    implicit none
+    integer, parameter :: my_real  = kind(1.0)
+    real(kind=my_real), dimension(6) :: x, y
+    ...
+    x = ...
+    y = ...
+    ...
+    call plstring(x,y,"+")
+    ...
+end program test_plplot    
+</programlisting>
+where for this particular case <literal>x</literal> and <literal>y</literal> are arrays with 6
+elements defined and the points are to be plotted using the ascii "+"
+symbol (although if you are using a unicode-aware PLplot device, then
+you can try many other unicode possibilities for the symbol such as
+the U+22C5 DOT OPERATOR, "⋅").  Note that our Fortran binding
+implementation below allows use of the the kind(1.0d0) choice of
+my_real precision as well.</para>
+
+<para>The <literal>plstring</literal>-relevant parts of the <literal>plplot</literal> module used above are
+<programlisting>
+module plplot
+    ...
+    use plplot_single
+    use plplot_double
+    ...  
+end module plplot
+</programlisting>
+The redacted part of the <literal>plplot</literal> module implements the interfaces to
+the PLplot C library routines that happen to have no floating-point
+arguments very similarly to the way that the <literal>plplot_single</literal> and
+<literal>plplot_double</literal> modules interface the PLplot C routines like &plstring;
+that do include floating-point arguments.  The <literal>plstring</literal>-relevant parts of the
+<literal>plplot_single</literal> module are
+<programlisting>
+module plplot_single
+    ...
+    integer, parameter :: wp = private_single
+    ...
+    interface plstring
+        module procedure plstring_impl
+    end interface plstring
+    private :: plstring_impl
+    ...
+contains
+    ...
+    subroutine plstring_impl( x, y, string )
+
+       real(kind=wp), dimension (:), intent(in) :: x, y
+       character(len=*), intent(in) :: string
+
+       integer(kind=private_plint) :: n_local
+
+       interface
+           subroutine interface_plstring( n, x, y, string ) bind(c,name='c_plstring')
+               import :: private_plint, private_plflt
+               implicit none
+               integer(kind=private_plint), value, intent(in) :: n
+               real(kind=private_plflt), dimension(*), intent(in) :: x, y
+               character(len=1), dimension(*), intent(in) :: string
+           end subroutine interface_plstring
+       end interface
+
+       n_local = size(x, kind=private_plint)
+       if(n_local /= size(y, kind=private_plint) ) then
+           write(error_unit,*) "f95 plstring ERROR: inconsistent array sizes not allowed for x and y"
+           return
+       end if
+
+       call interface_plstring( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &amp;
+           trim(string)//c_null_char )
+    end subroutine plstring_impl
+    ...  
+end module plplot_single
+</programlisting>
+The <literal>plstring</literal>-relevant parts of the <literal>plplot_double</literal> module are defined
+identically (in fact that identicality is guaranteed by using the
+same included file to define the identical parts) except for
+<programlisting>
+    integer, parameter :: wp = private_double
+</programlisting>
+</para>
+
+<para>Here are some notes on the above implementation of our Fortran
+binding for <literal>plstring</literal>.  The
+<literal>plplot_single</literal> and <literal>plplot_double</literal>
+modules implement two versions of the Fortran
+<literal>plstring</literal> subroutine which are identical except one
+subroutine has floating-point arguments with a kind value of
+<literal>wp = private_single = kind(1.0)</literal> and one subroutine
+has floating-point arguments with kind value of <literal>wp =
+private_double = kind(1.0d0)</literal>.  The result is the Fortran
+compiler automatically chooses the correct overloaded version of
+<literal>plstring</literal> that corresponds to the precision of the
+floating-point arguments used by the program (e.g., like
+<literal>plplot_test</literal> above) that is being compiled.  The
+intrinsic function <literal>size()</literal> is used to determine the
+size of arrays and allows checking that their dimensions are
+consistent with each other when the C implementation uses a common
+size for the arrays (as in the <literal>plstring</literal> case).  The
+intrinsic function <literal>real()</literal> is used to convert
+floating-point data between the type used by the calling routine and
+the type used by the underlying PLplot C library, and the intrinsic
+function <literal>int()</literal> (not used in the above example) is
+used for similarly converting integer data.  The intrinsic function
+<literal>trim()</literal> and the iso_c_binding parameter c_null_char
+are used to help convert a Fortran character string into a
+NULL-terminated C string.  Also note the above interface block
+defining <literal>subroutine interface_plstring</literal> is the
+Fortran representation of the exact C API of &plstring;. </para>
+
+<para> Here is a table summarizing how C data types correspond to
+Fortran data types in the arguments of functions defined by our
+Fortran binding.  Consult the Fortran code in
+<filename>bindings/f95/*</filename> for further details of how the
+conversion is done between our private Fortran types that are
+equivalent to the corresponding C types, and the public Fortran types
+that are available for Fortran function arguments in our Fortran
+binding.  Note the <literal>my_flt</literal> kind value used in this
+table is not provided by our Fortran binding.  Instead it merely
+indicates that the calling routine (e.g., the
+<literal>test_plplot</literal> example routine above) has the choice
+of either <literal>kind(1.0)</literal> or
+<literal>kind(1.0d0)</literal> for the kind values of the
+floating-point arguments of the PLplot functions defined by our
+Fortran binding.
+    <informaltable frame="all" colsep="1" rowsep="1" pgwide="0">
+      <tgroup align="left" cols="3">
+        <colspec colnum="1" align="left" colwidth="1*"/>
+        <colspec colnum="2" align="left" colwidth="1*"/>
+        <colspec colnum="3" align="left" colwidth="1*"/>
+        <thead>
+          <row>
+            <entry>C type</entry><entry>Private Fortran type</entry><entry>Public Fortran type</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>PLFLT</entry><entry>real(kind=private_plflt)</entry><entry>real(kind=my_flt)</entry>
+          </row>
+          <row>
+            <entry>PLFLT *</entry><entry>real(kind=private_plflt), dimension(*)</entry><entry>real(kind=my_flt), dimension(:)</entry>
+          </row>
+          <row>
+            <entry>PLFLT * *</entry><entry>type(c_ptr), dimension(*)</entry><entry>real(kind=my_flt), dimension(:, :)</entry>
+          </row>
+          <row>
+            <entry>PLINT</entry><entry>integer(kind=private_plint)</entry><entry>integer</entry>
+          </row>
+          <row>
+            <entry>PLINT *</entry><entry>integer(kind=private_plint), dimension(*)</entry><entry>integer, dimension(:)</entry>
+          </row>
+          <row>
+            <entry>PLBOOL</entry><entry>integer(kind=private_plbool)</entry><entry>logical</entry>
+          </row>
+          <row>
+            <entry>char *</entry><entry>character(len=1), dimension(*)</entry><entry>character(len=*)</entry>
+          </row>
+        </tbody>
       </tgroup>
     </informaltable>
-    In C there are two ways to pass a variable --- by value (the default) or by
-    reference (pointer), whereas in Fortran this difference is not visible in the
-    call, only in the interface definition via the <literal>value</literal> attribute.
-    Therefore when you see references in the text to <emphasis>either</emphasis> an ordinary
-    argument or a pointer argument (e.g.  <literal>*data</literal>), you simply use an
-    ordinary Fortran variable or array name.  The interfacing
-    routines take care of any transformations that may be necessary.
-  </para>
-  <para>
-    The PLplot library comes with a set of Fortran interface routines that
-    allow the same call semantics (usually) regardless of whether calling
-    from C or Fortran.  In some cases, the Fortran interface uses
-    implicit array dimensions, so that it has fewer arguments than the C
-    counterpart.
-  </para>
-  <para>
-    These <quote>stub</quote> routines handle transforming the data
-    from the normal Fortran representation to that typically used in C.  Just to give
-    an impression, here is an explanation of one such routine:
-  </para>
-  <para>
-    In the Fortran program there might be a call to <literal>plpoin</literal>:
-    <programlisting>
-      real(kind=pllft), dimension(6) :: x, y
-      x = ...
-      y = ...
-      call plpoin(x,y,9)
-    </programlisting>
-    where <literal>x</literal> and <literal>y</literal> are arrays with 6 elements and the points are to be
-    plotted using symbol 9. The routine <literal>plpoin_impl</literal>, which is the actual routine called,
-    is implemented as follows:
-    <programlisting>
-    subroutine plpoin_impl( x, y, code )
-      integer, intent(in) :: code
-      real(kind=wp), dimension(:), intent(in) :: x, y
+In C there are two ways to pass a variable --- by value (the default)
+or by reference (pointer), whereas in Fortran this difference is not
+visible in the call, only in the interface definition via the
+<literal>value</literal> attribute.  Therefore when you see references
+in the documentation of our C API to <emphasis>either</emphasis> an
+ordinary argument or a pointer argument (e.g.
+<literal>*data</literal>), you simply use an ordinary Fortran variable
+or array name.  The new Fortran binding automatically takes care of
+any conversion that may be necessary.  </para>
 
-      interface
-        subroutine interface_plpoin( n, x, y, code ) bind(c,name='c_plpoin')
-          import :: private_plint, private_plflt
-          implicit none
-          integer(kind=private_plint), value, intent(in) :: n, code
-          real(kind=private_plflt), dimension(*), intent(in) :: x, y
-        end subroutine interface_plpoin
-      end interface
+<para>In sum, the <literal>plstring</literal> example above
+illustrates the way our Fortran binding makes the PLplot C API
+conveniently accessible from Fortran while letting the C binding and
+overloading features of the Fortran compiler hide the complexities of
+the name mangling that occurs.  Developers interested in further
+details (e.g., all the different argument conversions that are done)
+concerning our new Fortran binding should consult the Fortran modules
+defined in <filename>bindings/f95*</filename>, but we highly recommend
+users interested in <emphasis>how to use</emphasis> our Fortran
+binding should primarily consult the Fortran examples in
+<filename>examples/f95/x??f.f90</filename>.  Those examples are all known to work well with our new
+Fortran binding.</para>
 
-       call interface_plpoin( size(x,kind=private_plint), real(x,kind=private_plflt), &amp;
-                              real(y,kind=private_plflt), int(code,kind=private_plint) )
-    end subroutine plpoin_impl
-    </programlisting>
-    The size of the arrays, that is the number of points to be plotted, is passed on via the
-    <literal>size()</literal> intrinsic function.  The intrinsic function <literal>real()</literal>
-    is used to convert the data in the arrays <literal>x</literal> and <literal>y</literal> to
-    the precision actually used by the C library (represented as <literal>private_plflt</literal>).
-    And finally, the intrinsic function <literal>int()</literal> is used to do the same for
-    the integer argument.
-  </para>
-  <para>
-    Since the <literal>code</literal> argument to the routine <literal>interface_plpoin</literal>
-    has the <literal>value</literal> attribute, the C routine gets the value, not the memory address
-    of the argument.
-  </para>
-  <para>
-    In the above code the kind <literal>wp</literal> is either the single precision kind or the double
-    precision kind:
-    <programlisting>
-    module plplot_single
-      ...
-      integer, parameter :: wp = private_single
-      private :: wp
-
-      interface plpoin
-        module procedure plpoin_impl
-    contains
-      ...
-    subroutine plpoin_impl( x, y, code )
-      ...
-    end subroutine plpoin_impl
-    end module plplot_single
-    </programlisting>
-    And similarly for the double precision version.
-  </para>
-  <para>
-    In this way the PLplot API has been made accessible from Fortran.  The C binding features of the
-    compiler hide the complexities of the name mangling that occurs.
-  </para>
-  <para>
-    There are a few limitations and exceptions that one must be aware of with regards to the dual
-    precision interface:
+<para>There are a few limitations concerning our treatment of
+floating-point values that one must be aware of with regards to the
+new Fortran binding:
     <itemizedlist>
       <listitem><para>
-        The <literal>plrandd()</literal> function takes no arguments, so the Fortran rules cannot distinguish
-        between a version returning a single-precision value and one returning a double-precision value.
-        For this reason only a double-precision version is available, though you can use
-        <literal>plrandd_single()</literal> explicitly for single-precision random numbers.
+        The Fortran standard dictates that compilers cannot disambiguate
+        overloaded functions based on the type of their return value.  This
+        means that the &plrandd; function cannot be
+        disambiguated because it has no arguments.  For this reason we have
+        decided to provide only one version of this function that
+        returns a double-precision random value.
       </para></listitem>
       <listitem><para>
-        For the various callback routines, <literal>pltransform()</literal>
-        and <literal>pllabelfunc()</literal>, only the double-precision version is made available. The
-        reason for this is a technical one. The current Fortran standard does not distinguish procedure
-        arguments based on their argument list. Therefore it is not possible to define the routine
-        <literal>plstransform</literal> in two versions.
+        The Fortran standard dictates that compilers cannot disambiguate overloaded
+        routines based on the types of arguments to callback routines that appear
+        as arguments to those routines.  This means that the &plstransform;
+        and &plslabelfunc; routines cannot be disambiguated because
+        they have no <emphasis>direct</emphasis> floating-point arguments.  For this reason we have decided to provide
+        only one version of <literal>plstransform</literal> that has as the first argument a
+        version of the <literal>transform_coordinate</literal> callback with double-precision arguments
+        and only one version of <literal>plslabelfunc</literal> that has as the first argument a
+        version of the <literal>label_func</literal> callback with double-precision arguments.
       </para></listitem>
       <listitem><para>
-        PLplot defines a small number of auxiliary real parameters, PL_PI, PL_TWOPI and PL_NOTSET.
-        To use these in the correct precision, define a local parameter (see for instance example x31f):
+        The new Fortran binding provides three auxiliary floating-point parameters,
+        PL_PI, PL_TWOPI and PL_NOTSET which are all defined in double precision.
+        If the calling routine requires single precision instead it should define a local parameter as in
+        the following code fragment:
         <programlisting>
-        use plplot
-        real(kind=myprec), parameter :: NOTSET = PL_NOTSET
-        </programlisting>
-        These parameters are defined as double precision.
+    use plplot
+    ...
+    integer, parameter :: my_flt = kind(1.0)
+    real(kind=my_flt), parameter :: my_NOTSET = PL_NOTSET
+	</programlisting>
       </para></listitem>
     </itemizedlist>
-  </para>
-  <para>
-    For more information on calling PLplot from Fortran 95, please see the
-    example Fortran 95 programs (<filename>/examples/f95/x??f.f</filename>)
-    distributed
-    with PLplot.
-  </para>
+</para>
+
+<para>Users should be aware that the new Fortran binding for PLplot strictly enforces the following interfacing rules:
+    <itemizedlist>
+      <listitem><para>The new Fortran binding interfaces Fortran functions with
+      C routines if and only if that routine provides a return value and interfaces Fortran subroutines
+      with C routines if and only if that routine does not provide a return value.  For example, this rule means
+      that the C &plparseopts; routine that returns an error code must be invoked at the
+      Fortran level similarly to the following:
+      <programlisting>
+    integer :: plplarseopts_rc
+    ...
+    plparseopts_rc = plparseopts(...)
+      </programlisting>
+      Of course, this rule means it is possible for Fortran routines invoking functions like plparseopts to respond properly
+      to error conditions returned by the corresponding C routine.
+      </para></listitem>
+      <listitem><para> Only the redacted form of Fortran API (with all redundant dimension
+      arguments removed) is supported.</para></listitem>
+      <listitem><para>If the C API for the function being interfaced
+      includes a size value corresponding to identical sizes of
+      dimension(s) of multiple array arguments. then the sizes of the
+      corresponding dimensions of the Fortran arrays must also be identical.
+      In the event that the calling routine has specified static or allocatable
+      arrays whose relevant defined areas are smaller than their size, use the
+      normal Fortran rules for array slicing to specify completely defined arrays
+      with consistent sizes that comply with this interfacing rule.
+      </para></listitem>
+      <listitem><para>Fortran logical arguments are used for all cases where
+      the corresponding C argument is <literal>PLBOOL</literal>.</para></listitem>
+      <listitem><para>All floating-point arguments for a given function call
+      must have consistent kind values (either <literal>kind(1.0)</literal>
+      or <literal>kind(1.0.d0)</literal>).</para></listitem>
+    </itemizedlist>
+</para>
+
+<para>In all cases the best source for figuring out how to call PLplot
+routines from Fortran is the the example Fortran programs in
+<filename>/examples/f95/x??f.f90</filename>.  Those examples are all known to
+work well with the new Fortran binding.</para>
 </chapter>

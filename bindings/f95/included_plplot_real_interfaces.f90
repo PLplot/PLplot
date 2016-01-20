@@ -509,7 +509,7 @@
     private :: plwind_impl
 
 
-contains
+  contains
 
 ! Private utility routine that depends on real precision:
   subroutine matrix_to_c( array, carray, caddress )
@@ -3377,32 +3377,32 @@ subroutine plstring3_impl( x, y, z, string )
        trim(string)//c_null_char )
 end subroutine plstring3_impl
 
-subroutine plstring_impl( x, y, string )
+    subroutine plstring_impl( x, y, string )
 
-  real(kind=wp), dimension (:), intent(in) :: x, y
-  character(len=*), intent(in) :: string
+       real(kind=wp), dimension (:), intent(in) :: x, y
+       character(len=*), intent(in) :: string
 
-  integer(kind=private_plint) :: n_local
+       integer(kind=private_plint) :: n_local
 
-  interface
-     subroutine interface_plstring( n, x, y, string ) bind(c,name='c_plstring')
-       import :: private_plint, private_plflt
-       implicit none
-       integer(kind=private_plint), value, intent(in) :: n
-       real(kind=private_plflt), dimension(*), intent(in) :: x, y
-       character(len=1), dimension(*), intent(in) :: string
-     end subroutine interface_plstring
-  end interface
+       interface
+           subroutine interface_plstring( n, x, y, string ) bind(c,name='c_plstring')
+               import :: private_plint, private_plflt
+               implicit none
+               integer(kind=private_plint), value, intent(in) :: n
+               real(kind=private_plflt), dimension(*), intent(in) :: x, y
+               character(len=1), dimension(*), intent(in) :: string
+           end subroutine interface_plstring
+       end interface
 
-  n_local = size(x, kind=private_plint)
-  if(n_local /= size(y, kind=private_plint) ) then
-     write(error_unit,*) "f95 plstring ERROR: inconsistent array sizes not allowed for x and y"
-     return
-  end if
+       n_local = size(x, kind=private_plint)
+       if(n_local /= size(y, kind=private_plint) ) then
+           write(error_unit,*) "f95 plstring ERROR: inconsistent array sizes not allowed for x and y"
+           return
+       end if
 
-  call interface_plstring( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
-       trim(string)//c_null_char )
-end subroutine plstring_impl
+       call interface_plstring( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
+           trim(string)//c_null_char )
+    end subroutine plstring_impl
 
 subroutine plstripa_impl( id, pen, x, y )
 
