@@ -133,8 +133,5 @@ if(ENABLE_f95)
     )
 
   # Configure pkg-config *.pc file corresponding to libplplotf95
-  # FIXME.  Until plGetCursor direct link can be fixed, need -lplplot to be 7th (public) argument
-  # rather than sixth (private) argument
-  # pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "-lplplot" "")
-  pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "" "-lplplot")
+  pkg_config_file("f95" "F95" " F95 binding" "plplotf95" "-I\"${F95_MOD_DIR}\"" "-lplplot" "")
 endif(ENABLE_f95)

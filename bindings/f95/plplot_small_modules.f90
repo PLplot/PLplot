@@ -94,15 +94,30 @@ module plplot_graphics
      real(kind=private_plflt)    :: wX, wY         ! world coordinates of pointer
   end type PLGraphicsIn
 
-  interface
-     subroutine plGetCursor( gin ) bind(c,name='plGetCursor')
-       use iso_c_binding, only:  c_ptr
-       import :: PLGraphicsIn
-       implicit none
-       type(PLGraphicsIn), intent(out) :: gin
-     end subroutine plGetCursor
-  end interface
+  interface plGetCursor
+     module procedure plGetCursor_impl
+  end interface plGetCursor
+  private :: plGetCursor_impl
 
+contains
+
+  function plGetCursor_impl( gin )
+    type(PLGraphicsIn), intent(out) :: gin
+    integer :: plGetCursor_impl  !function type
+    
+    interface
+       function interface_plGetCursor( gin ) bind(c,name='plGetCursor')
+         use iso_c_binding, only:  c_ptr
+         import :: PLGraphicsIn, private_plint
+         implicit none
+         integer(kind=private_plint) :: interface_plGetCursor !function type
+         type(PLGraphicsIn), intent(out) :: gin
+       end function interface_plGetCursor
+    end interface
+
+    plGetCursor_impl = int(interface_plGetCursor( gin ))
+  end function plGetCursor_impl
+  
 end module plplot_graphics
 
 ! The bind(c) attribute exposes the pltr routine which ought to be private

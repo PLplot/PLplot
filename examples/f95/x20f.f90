@@ -99,6 +99,7 @@
       logical nosombrero
       logical nointeractive
       character(len=80) f_name
+      integer :: plgetcursor_rc
 
 !
 !     Bugs in plimage():
@@ -549,7 +550,7 @@
          do while (.true.)
 
             call plxormod(.false., st)
-            call plgetcursor(gin)
+            plgetcursor_rc = plgetcursor(gin)
             call plxormod(.true., st)
 
             if (gin%button .eq. 1) then
