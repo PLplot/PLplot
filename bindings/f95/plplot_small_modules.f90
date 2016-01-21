@@ -74,78 +74,6 @@ module plplot_types
   end type PLcGrid
 end module plplot_types
 
-module plplot_graphics
-  use plplot_types, only: private_plint, private_plflt
-  implicit none
-  private :: private_plint, private_plflt
-
-  ! This derived type is a direct equivalent of the C struct.
-  ! There is no advantage in distinguishing different versions
-  ! with different precision.
-  type, bind(c) :: PLGraphicsIn
-     integer(kind=private_plint) :: type           ! of event (CURRENTLY UNUSED)
-     integer(kind=private_plint) :: state          ! key or button mask
-     integer(kind=private_plint) :: keysym         ! key selected
-     integer(kind=private_plint) :: button         ! mouse button selected
-     integer(kind=private_plint) :: subwindow      ! subwindow (alias subpage, alias subplot) number
-     character(len=16)           :: string         ! translated string
-     integer(kind=private_plint) :: pX, pY         ! absolute device coordinates of pointer
-     real(kind=private_plflt)    :: dX, dY         ! relative device coordinates of pointer
-     real(kind=private_plflt)    :: wX, wY         ! world coordinates of pointer
-  end type PLGraphicsIn
-
-  interface plGetCursor
-     module procedure plGetCursor_impl
-  end interface plGetCursor
-  private :: plGetCursor_impl
-
-contains
-
-  function plGetCursor_impl( gin )
-    type(PLGraphicsIn), intent(out) :: gin
-    integer :: plGetCursor_impl  !function type
-    
-    interface
-       function interface_plGetCursor( gin ) bind(c,name='plGetCursor')
-         use iso_c_binding, only:  c_ptr
-         import :: PLGraphicsIn, private_plint
-         implicit none
-         integer(kind=private_plint) :: interface_plGetCursor !function type
-         type(PLGraphicsIn), intent(out) :: gin
-       end function interface_plGetCursor
-    end interface
-
-    plGetCursor_impl = int(interface_plGetCursor( gin ))
-  end function plGetCursor_impl
-  
-end module plplot_graphics
-
-! The bind(c) attribute exposes the pltr routine which ought to be private
-module plplot_private_exposed
-    use iso_c_binding, only: c_ptr
-    use plplot_types, only: private_plflt
-    implicit none
-    private :: c_ptr, private_plflt
-contains
-subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
-   real(kind=private_plflt), value, intent(in) :: x, y
-   real(kind=private_plflt), intent(out) :: tx, ty
-   real(kind=private_plflt), dimension(*), intent(in) :: tr
-
-   tx = tr(1) * x + tr(2) * y + tr(3)
-   ty = tr(4) * x + tr(5) * y + tr(6)
-end subroutine plplot_private_pltr
-
-subroutine plplot_private_pltr0f( x, y, tx, ty, data ) bind(c)
-   real(kind=private_plflt), value, intent(in) :: x, y
-   real(kind=private_plflt), intent(out) :: tx, ty
-   type(c_ptr), value, intent(in) :: data
-
-   tx = x + 1.0_private_plflt
-   ty = y + 1.0_private_plflt
-end subroutine plplot_private_pltr0f
-end module plplot_private_exposed
-
 module plplot_private_utilities
   use iso_c_binding, only: c_ptr, c_null_char, c_loc
   implicit none
@@ -182,4 +110,136 @@ module plplot_private_utilities
 
   end subroutine character_array_to_c
 
+  subroutine copystring2f( fstring, cstring )
+    character(len=*), intent(out) :: fstring
+    character(len=1), dimension(:), intent(in) :: cstring
+    
+    integer :: i_local
+    
+    fstring = ' '
+    do i_local = 1,min(len(fstring),size(cstring))
+       if ( cstring(i_local) /= c_null_char ) then
+          fstring(i_local:i_local) = cstring(i_local)
+       else
+          exit
+       endif
+    enddo
+    
+  end subroutine copystring2f
 end module plplot_private_utilities
+
+module plplot_graphics
+  use plplot_types, only: private_plint, private_plflt, private_double
+  use plplot_private_utilities, only: copystring2f
+  implicit none
+  private :: private_plint, private_plflt, private_double
+
+  ! This is a public derived Fortran type that contains all the
+  ! information in private_PLGraphicsIn below, but in standard
+  ! Fortran form rather than C form.
+  type :: PLGraphicsIn
+     integer                   :: type           ! of event (CURRENTLY UNUSED)
+     integer                   :: state          ! key or button mask
+     integer                   :: keysym         ! key selected
+     integer                   :: button         ! mouse button selected
+     integer                   :: subwindow      ! subwindow (alias subpage, alias subplot) number
+     character(len=16)         :: string         ! Fortran character string
+     integer                   :: pX, pY         ! absolute device coordinates of pointer
+     real(kind=private_double) :: dX, dY         ! relative device coordinates of pointer
+     real(kind=private_double) :: wX, wY         ! world coordinates of pointer
+  end type PLGraphicsIn
+
+  interface plGetCursor
+     module procedure plGetCursor_impl
+  end interface plGetCursor
+  private :: plGetCursor_impl
+
+contains
+
+  function plGetCursor_impl( gin )
+
+  ! According to a gfortran build error message the combination of bind(c) and
+  ! private attributes is not allowed for a derived type so to keep
+  ! private_PLGraphicsIn actually private declare it inside the function
+  ! rather than before the contains.
+
+  ! This derived type is a direct equivalent of the C struct because
+  ! of the bind(c) attribute and interoperable nature of all the
+  ! types. (See <https://gcc.gnu.org/onlinedocs/gfortran/Derived-Types-and-struct.html> for
+  ! further discussion.)
+
+  ! Note the good alignment (offset is a multiple of 8 bytes) of the
+  ! trailing dX, dY, wX, and wY for the case when private_plflt refers
+  ! to double precision.
+  type, bind(c) :: private_PLGraphicsIn
+     integer(kind=private_plint)     :: type           ! of event (CURRENTLY UNUSED)
+     integer(kind=private_plint)     :: state          ! key or button mask
+     integer(kind=private_plint)     :: keysym         ! key selected
+     integer(kind=private_plint)     :: button         ! mouse button selected
+     integer(kind=private_plint)     :: subwindow      ! subwindow (alias subpage, alias subplot) number
+     character(len=1), dimension(16) :: string         ! NULL-terminated character string
+     integer(kind=private_plint)     :: pX, pY         ! absolute device coordinates of pointer
+     real(kind=private_plflt)        :: dX, dY         ! relative device coordinates of pointer
+     real(kind=private_plflt)        :: wX, wY         ! world coordinates of pointer
+  end type private_PLGraphicsIn
+
+
+    type(PLGraphicsIn), intent(out) :: gin
+    integer :: plGetCursor_impl  !function type
+    
+    type(private_PLGraphicsIn) :: gin_out
+
+    interface
+       function interface_plGetCursor( gin ) bind(c,name='plGetCursor')
+         use iso_c_binding, only:  c_ptr
+         import :: private_PLGraphicsIn, private_plint
+         implicit none
+         integer(kind=private_plint) :: interface_plGetCursor !function type
+         type(private_PLGraphicsIn), intent(out) :: gin
+       end function interface_plGetCursor
+    end interface
+
+    plGetCursor_impl = int(interface_plGetCursor( gin_out ))
+    ! Copy all gin_out elements to corresponding gin elements with
+    ! appropriate type conversions.
+    gin%type = int(gin_out%type)
+    gin%state = int(gin_out%state)
+    gin%keysym = int(gin_out%keysym)
+    gin%button = int(gin_out%button)
+    gin%subwindow = int(gin_out%subwindow)
+    call copystring2f( gin%string, gin_out%string )
+    gin%pX = int(gin_out%pX)
+    gin%pY = int(gin_out%pY)
+    gin%dX = real(gin_out%dX, kind=private_double)
+    gin%dY = real(gin_out%dY, kind=private_double)
+    gin%wX = real(gin_out%wX, kind=private_double)
+    gin%wY = real(gin_out%wY, kind=private_double)
+  end function plGetCursor_impl
+  
+end module plplot_graphics
+
+! The bind(c) attribute exposes the pltr routine which ought to be private
+module plplot_private_exposed
+    use iso_c_binding, only: c_ptr
+    use plplot_types, only: private_plflt
+    implicit none
+    private :: c_ptr, private_plflt
+contains
+subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
+   real(kind=private_plflt), value, intent(in) :: x, y
+   real(kind=private_plflt), intent(out) :: tx, ty
+   real(kind=private_plflt), dimension(*), intent(in) :: tr
+
+   tx = tr(1) * x + tr(2) * y + tr(3)
+   ty = tr(4) * x + tr(5) * y + tr(6)
+end subroutine plplot_private_pltr
+
+subroutine plplot_private_pltr0f( x, y, tx, ty, data ) bind(c)
+   real(kind=private_plflt), value, intent(in) :: x, y
+   real(kind=private_plflt), intent(out) :: tx, ty
+   type(c_ptr), value, intent(in) :: data
+
+   tx = x + 1.0_private_plflt
+   ty = y + 1.0_private_plflt
+end subroutine plplot_private_pltr0f
+end module plplot_private_exposed

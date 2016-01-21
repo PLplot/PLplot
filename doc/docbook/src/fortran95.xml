@@ -265,9 +265,8 @@ binding should primarily consult the Fortran examples in
 <filename>examples/f95/x??f.f90</filename>.  Those examples are all known to work well with our new
 Fortran binding.</para>
 
-<para>There are a few limitations concerning our treatment of
-floating-point values that one must be aware of with regards to the
-new Fortran binding:
+<para>Users should be aware that there are a few cases with our new Fortran binding where we provide
+double-precision floating-point entities but no equivalent single-precision floating-point alternative.
     <itemizedlist>
       <listitem><para>
         The Fortran standard dictates that compilers cannot disambiguate
@@ -278,15 +277,40 @@ new Fortran binding:
         returns a double-precision random value.
       </para></listitem>
       <listitem><para>
-        The Fortran standard dictates that compilers cannot disambiguate overloaded
-        routines based on the types of arguments to callback routines that appear
-        as arguments to those routines.  This means that the &plstransform;
-        and &plslabelfunc; routines cannot be disambiguated because
-        they have no <emphasis>direct</emphasis> floating-point arguments.  For this reason we have decided to provide
-        only one version of <literal>plstransform</literal> that has as the first argument a
-        version of the <literal>transform_coordinate</literal> callback with double-precision arguments
-        and only one version of <literal>plslabelfunc</literal> that has as the first argument a
-        version of the <literal>label_func</literal> callback with double-precision arguments.
+        The Fortran standard dictates that compilers cannot disambiguate
+        overloaded routines based on the types of arguments to callback
+        routines that appear as arguments to those routines.  This means that
+        the &plstransform; and &plslabelfunc; routines cannot be disambiguated
+        because they have no <emphasis>direct</emphasis> floating-point
+        arguments.  For this reason we have decided that for the case where
+        <literal>plstransform</literal> uses a
+        <literal>transform_coordinate</literal> callback as its first
+        argument, that callback will be allowed to only have double-precision
+        arguments.  And similarly for <literal>plslabelfunc</literal> and the
+        <literal>label_func</literal> callback with double-precision
+        arguments.
+      </para></listitem>
+      <listitem><para>
+        The new Fortran binding defines a derived <literal>PLGraphicsIn</literal> type as follows:
+        <programlisting>
+  type :: PLGraphicsIn
+     integer                   :: type           ! of event (CURRENTLY UNUSED)
+     integer                   :: state          ! key or button mask
+     integer                   :: keysym         ! key selected
+     integer                   :: button         ! mouse button selected
+     integer                   :: subwindow      ! subwindow (alias subpage, alias subplot) number
+     character(len=16)         :: string         ! Fortran character string
+     integer                   :: pX, pY         ! absolute device coordinates of pointer
+     real(kind=private_double) :: dX, dY         ! relative device coordinates of pointer
+     real(kind=private_double) :: wX, wY         ! world coordinates of pointer
+  end type PLGraphicsIn
+        </programlisting>
+        This is the type that should be used for the argument of the Fortran
+        <literal>plGetCursor</literal> routine.  We provide no alternative
+        <literal>plGetCursor</literal> routine whose argument is similar to
+        <literal>PLGraphicsIn</literal> but with single-precision
+        <literal>dX</literal>, <literal>dY</literal>, <literal>wX</literal>,
+        and <literal>wY</literal> components.
       </para></listitem>
       <listitem><para>
         The new Fortran binding provides three auxiliary floating-point parameters,
@@ -298,7 +322,7 @@ new Fortran binding:
     ...
     integer, parameter :: my_flt = kind(1.0)
     real(kind=my_flt), parameter :: my_NOTSET = PL_NOTSET
-	</programlisting>
+        </programlisting>
       </para></listitem>
     </itemizedlist>
 </para>

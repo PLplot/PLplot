@@ -30,7 +30,7 @@ module plplot
     use plplot_graphics
     use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     use iso_fortran_env, only: error_unit
-    use plplot_private_utilities, only: character_array_to_c
+    use plplot_private_utilities, only: character_array_to_c, copystring2f
     implicit none
     ! For backwards compatibility define plflt, but use of this
     ! parameter is deprecated since any real precision should work
@@ -529,26 +529,6 @@ module plplot
     private :: plxormod_impl
 
 contains
-
-!
-! Private utilities
-!
-subroutine copystring2f( fstring, cstring )
-    character(len=*), intent(out) :: fstring
-    character(len=1), dimension(:), intent(in) :: cstring
-
-    integer :: i_local
-
-    fstring = ' '
-    do i_local = 1,min(len(fstring),size(cstring))
-        if ( cstring(i_local) /= c_null_char ) then
-            fstring(i_local:i_local) = cstring(i_local)
-        else
-            exit
-        endif
-    enddo
-
-end subroutine copystring2f
 
 !
 ! Interface routines
