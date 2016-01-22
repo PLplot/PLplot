@@ -8,7 +8,7 @@ ecit1000 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmitt10.pfb
 tcrm0800 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmr8.pfb
 ecrm0600 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmr8.pfb
 ectt0900 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmtt9.pfb
-ecti1000 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmti10.pfb 
+ecti1000 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmti10.pfb
 ecbx1000 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmbx10.pfb
 ecrb1000 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmbx10.pfb
 ecrm0800 "@EC_PDFTEX@Encoding ReEncodeFont"<@EC_PDFTEX@.enc <cmr8.pfb

@@ -1,7 +1,7 @@
 <!-- -*-  mode: nxml -*- -->
 <!--
     cplus.xml: "A C++ Interface for PLplot" chapter
-    
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
@@ -36,7 +36,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="cplusplus">
   <title>A C++ Interface for PLplot</title>
-  
+
   <para>
     PLplot has long had C and Fortran bindings, presenting a fairly
     conventional API to the applications programmer.  Recently (1994
@@ -50,7 +50,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="cplusplus-motivation">
     <title>Motivation for the C++ Interface</title>
-    
+
     <para>
       PLplot has a fairly complex C API.  There are lots of functions, and
       several facilities have multiple entry points with similar names but
@@ -74,8 +74,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Besides the 2-d API functions, there is also the multiple output
       stream capability of PLplot.  Anyone who knows C++ well, and who has
       used multiple output streams in PLplot, has probably noticed striking
-      similarities between the PLplot <literal>PLStream</literal> pointer and the C++ 
-      <literal>this</literal> pointer.  Although multiple output streams have not been 
+      similarities between the PLplot <literal>PLStream</literal> pointer and the C++
+      <literal>this</literal> pointer.  Although multiple output streams have not been
       widely used in PLplot applications in the past, the availability of
       the plframe Tk widget, and the extended wish concept, is making it
       much more attractive to use multiple output streams.
@@ -122,7 +122,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	purpose is provide a specific, object based encapsulation of the
 	concept of a PLplot output stream.  Any output produced using a
 	<literal>plstream</literal> object, will go to the PLplot output stream associated with
-	that object, regardless of what stream may have been active before.  
+	that object, regardless of what stream may have been active before.
       </para>
 
       <para>
@@ -254,13 +254,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         for <literal>plshades</literal>. The user may specify their own callbacks or
         may use the callbacks provided by Plplot. If using Plplot callbacks the user
         has two options. They may use the appropriate C functions as described in the
-        C API, however this will require direct linkage of the user's executable to 
-        the C library as well as the C++ library, which would otherwise not be 
+        C API, however this will require direct linkage of the user's executable to
+        the C library as well as the C++ library, which would otherwise not be
         necessary when using shared libraries. To avoid linking of the C library
         the user may instead utilise the functions within the <literal>plcallback
-        </literal> namespace. The <literal>plcallback</literal> namespace provides 
-        <literal>fill</literal>, <literal>tr0</literal>, <literal>tr1</literal>, 
-        <literal>tr2</literal>, and <literal>tr2p</literal> callbacks which mirror 
+        </literal> namespace. The <literal>plcallback</literal> namespace provides
+        <literal>fill</literal>, <literal>tr0</literal>, <literal>tr1</literal>,
+        <literal>tr2</literal>, and <literal>tr2p</literal> callbacks which mirror
         the functionality of the appropriate C functions.
       </para>
     </sect2>

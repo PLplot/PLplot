@@ -1,6 +1,6 @@
 <!--
     plplotdoc-print.dsl.in: DSSSL customization for the PDF/PS PLplot docs
-        
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
@@ -34,7 +34,7 @@
 -->
 
 <!DOCTYPE style-sheet PUBLIC "@DSSSL_DTD_PUBID@" [
-<!ENTITY dbstyle 
+<!ENTITY dbstyle
   PUBLIC "@DB_SS_PRINT_PUBID@"
   CDATA DSSSL>
 ]>
@@ -66,7 +66,7 @@
 (define %footnote-ulinks% #t)
 (define bop-footnotes #t)
 
-(element funcprototype 
+(element funcprototype
   (make paragraph
     first-line-start-indent: %para-indent-firstpara%
     space-before: %para-sep%
@@ -89,8 +89,8 @@
          (info (info-element))
          (exp-children (if (node-list-empty? info)
                            (empty-node-list)
-                           (expand-children (children info) 
-                                            (list (normalize "bookbiblio") 
+                           (expand-children (children info)
+                                            (list (normalize "bookbiblio")
                                                   (normalize "bibliomisc")
                                                   (normalize "biblioset")))))
          (parent-titles (select-elements (children sect) (normalize "title")))
@@ -125,7 +125,7 @@
         ;; SimpleSects are never AUTO numbered...they aren't hierarchical
         (if (string=? (element-label (current-node)) "")
             (empty-sosofo)
-            (literal (element-label (current-node)) 
+            (literal (element-label (current-node))
                      (gentext-label-title-sep (gi sect))))
         (element-title-sosofo (current-node)))
       (with-mode section-title-mode

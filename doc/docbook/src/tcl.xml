@@ -1,7 +1,7 @@
 <!-- -*-  mode: nxml -*- -->
 <!--
     tcl.xml: "Using PLplot from Tcl" chapter
-    
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
@@ -272,7 +272,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       exceptions to this rule, generally resulting from the complexity of
       the argument types which are passed to some functions in the C API.
       Those exceptional functions are described below, all others work in
-      the obvious way (analogous to the examples above).  
+      the obvious way (analogous to the examples above).
     </para>
 
     <para>
@@ -312,13 +312,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       applicability for PLplot, the extraction time is excessive and
       burdensome.  You could use Tcl arrays, but the storage overhead is
       astronomical and the lookup time, while better than list manipulation,
-      is still prohibitive.  
+      is still prohibitive.
     </para>
 
     <para>
       To cope with this, a Tcl Matrix extension was created for the
       purpose of making it feasible to work with large collections of
-      numbers in Tcl, in a way which is storage efficient, reasonably 
+      numbers in Tcl, in a way which is storage efficient, reasonably
       efficient for accesses from Tcl, and reasonably compatible with
       practices used in compiled code.
     </para>
@@ -334,7 +334,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<literal>int</literal> or
 	contractions thereof.  Next follow a variable number of size arguments
 	which determine the size of the matrix in each of its dimensions.  For
-	example: 
+	example:
       </para>
       <programlisting>
 	matrix x f 100
@@ -444,10 +444,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
       <programlisting>
 	pltcl> x info
-	4 
+	4
 	pltcl> matrix y i 8 10
 	pltcl> y info
-	8 10 
+	8 10
       </programlisting>
 
     </sect2>
@@ -526,7 +526,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>
 	There are other things you can do too, see the definitions of the
 	<literal>TclMatFloat</literal> and <literal>TclMatInt</literal> classes in
-	<filename>tclMatrix.h</filename>. 
+	<filename>tclMatrix.h</filename>.
       </para>
 
     </sect2>
@@ -552,7 +552,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <para>
 	The way to register matrix extension subcommands is to call
-	<literal>Tcl_MatrixInstallXtnsn</literal>: 
+	<literal>Tcl_MatrixInstallXtnsn</literal>:
       </para>
       <programlisting>
 	typedef int (*tclMatrixXtnsnProc) ( tclMatrix *pm, Tcl_Interp *interp,
@@ -615,7 +615,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <para>
 	Your imagination is your only limit for what you can do with this.
-	You could add an FFT subcommand, matrix math, BLAS, whatever.  
+	You could add an FFT subcommand, matrix math, BLAS, whatever.
       </para>
     </sect2>
   </sect1>
@@ -663,7 +663,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<literal>ny</literal>.  However, to
 	simplify processing, they must be supplied or omitted as a set (all of
 	them, or none of them).  <literal>clevel</literal> is supplied as a 1-d Tcl
-	matrix, and so <literal>nlevel</literal> can be omitted.  
+	matrix, and so <literal>nlevel</literal> can be omitted.
       </para>
 
       <para>
@@ -757,7 +757,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	of this interface to contouring from Tcl.  Note in particular,
 	<literal>x09_polar</literal> which does a polar contour without doing anything
 	complicated in the way of setup, and without getting a pacman as the
-	output. 
+	output.
       </para>
 
     </sect2>
@@ -863,7 +863,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       So, the point is, do your heavy numerical calculations in a compiled language, and
       feel free to use Tcl for the plotting, if you want to.  You can of
       course mix it up so that some plotting is done from Tcl and some from
-      a compiled language.  
+      a compiled language.
     </para>
   </sect1>
 </chapter>

@@ -1,7 +1,7 @@
 <!-- -*-  mode: nxml -*- -->
 <!--
     os_notes.xml: "Notes for each Operating System that We Support" chapter
-    
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Rafael Laboissiere
     Copyright (C) 1999, 2000, 2001, 2002, 2003, 2007  Alan W. Irwin
@@ -37,7 +37,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="os-notes">
   <title>Notes for each Operating System that We Support</title>
-  
+
   <para>
     The purpose of this Chapter is to present notes for each operating system
     that we support. Currently, those are all operating systems supported by
@@ -75,10 +75,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
     </sect2>
-    <sect2> 
-      <title>Linux/Unix Building of C Programmes that Use the 
-      Installed PLplot Libraries</title> 
-      
+    <sect2>
+      <title>Linux/Unix Building of C Programmes that Use the
+      Installed PLplot Libraries</title>
+
       <para> This is incomplete.  For now follow what is done to build
       our installed examples (see "make &gt;&amp; make_examples.out above) using
       pkg-config.  NEEDS DOCUMENTATION.
@@ -130,7 +130,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <title>Mac OS X Configure and Build</title>
       <para>
 	The build process for Mac OS X follows the same basic steps
-	used Linux and Unix platforms.  
+	used Linux and Unix platforms.
       </para>
       <para>
 	The following steps will configure and build PLplot on Mac OS

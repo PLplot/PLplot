@@ -129,7 +129,7 @@ if(
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
       )
   endif(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
-  
+
   if(ONSGMLS)
     set(VALIDATE_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/validate.out)
 
@@ -150,7 +150,7 @@ else(
 
   # Include this file in what is copied back from build tree to source tree
   # for the custom top-level prebuild_dist target.
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/static_built_files 
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
     "static_built_files\n"
     )
 
@@ -175,9 +175,9 @@ else(
     )
   # For parallel builds to work must have all file dependency chains of
   # targets independent of each other.  Thus, since several targets
-  # need plplot-symbols.txt, must create the target 
+  # need plplot-symbols.txt, must create the target
   # docbook_plplot-symbols_txt and have the targets depend on that target
-  # rather than have each target file depend directly on 
+  # rather than have each target file depend directly on
   # ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt.
   add_custom_target(
     docbook_plplot-symbols_txt
@@ -206,7 +206,7 @@ else(
   file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
     "plplot-structs.txt\n"
     )
-  
+
   # Custom command for validating xml file
   # This one different from alternative above used in PREBUILT_DOC case
   # because this one has dependencies which have to be built first.
@@ -235,10 +235,10 @@ else(
       # Custom commands for building info version of documentation
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-clean.xml
-	COMMAND ${PERL_EXECUTABLE} 
+	COMMAND ${PERL_EXECUTABLE}
 	${BINDIR}/info-clean.pl ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-info.xml > ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-clean.xml
 	DEPENDS
-	${SOURCE_FILES} 
+	${SOURCE_FILES}
 	${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-info.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
 	)
@@ -272,7 +272,7 @@ else(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
 	COMMAND ${CMAKE_COMMAND}
 	-E remove -f ${INFO_TMPDIR}/*
-	COMMAND ${MAKEINFO} 
+	COMMAND ${MAKEINFO}
 	--force -o ${INFO_TMPDIR}/${PLPLOTDOC}.info ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}.texi
 	COMMAND ${CMAKE_COMMAND}
 	-E chdir ${INFO_TMPDIR} ls |cat > ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
@@ -282,7 +282,7 @@ else(
 	)
 
       add_custom_target(
-	info ALL 
+	info ALL
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${INFO_MANIFEST}
 	)
       list(APPEND docbook_targets_LIST info)
@@ -320,7 +320,7 @@ else(
 	)
 
       add_custom_target(
-	man ALL 
+	man ALL
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${MAN_MANIFEST}
 	)
       list(APPEND docbook_targets_LIST man)
@@ -364,14 +364,14 @@ else(
 	  COMMAND mv ${HTML_TMPDIR}/* ${CMAKE_CURRENT_BINARY_DIR}
 	  COMMAND ${CMAKE_COMMAND} -E remove_directory ${HTML_TMPDIR}
 	  DEPENDS
-	  ${SOURCE_FILES} 
+	  ${SOURCE_FILES}
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
 	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
 	  ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_HTML}
 	  )
 	add_custom_target(
 	  html ALL
-	  DEPENDS 
+	  DEPENDS
 	  ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}
 	  )
 	list(APPEND docbook_targets_LIST html)
@@ -411,13 +411,13 @@ else(
 	    COMMAND ${XMLTO} -vv --with-dblatex dvi ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.dvi ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
 	    DEPENDS
-	    ${SOURCE_FILES} 
+	    ${SOURCE_FILES}
 	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
 	    )
 	  add_custom_target(
-	    dvi_target ALL 
-	    DEPENDS 
+	    dvi_target ALL
+	    DEPENDS
 	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
 	    )
 
@@ -429,8 +429,8 @@ else(
 	    docbook_plplot-structs_txt
 	    )
 	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	  "${BASE}.dvi\n"
-	  )
+	    "${BASE}.dvi\n"
+	    )
 	endif(BUILD_DVI)
 
 	if(DOCBOOK_DBLATEX_BACKEND)
@@ -438,15 +438,15 @@ else(
 	    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	    COMMAND ${DBLATEX} --xsl-user=${CMAKE_CURRENT_SOURCE_DIR}/dblatex_stylesheet.xsl --backend=xetex --type=pdf -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    DEPENDS
-	    ${SOURCE_FILES} 
+	    ${SOURCE_FILES}
 	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
 	    ${CMAKE_CURRENT_SOURCE_DIR}/dblatex_stylesheet.xsl
             VERBATIM
 	    )
 	  add_custom_target(
-	    pdf_target ALL 
-	    DEPENDS 
+	    pdf_target ALL
+	    DEPENDS
 	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	    )
 	  # These files used for more than one target.  Therefore must
@@ -462,7 +462,7 @@ else(
 	    )
 
 	  add_custom_target(
-	    print ALL 
+	    print ALL
 	    )
 	  list(APPEND docbook_targets_LIST print)
 	  add_dependencies(print pdf_target)
@@ -479,16 +479,16 @@ else(
 	      )
 	    
 	    add_custom_target(
-	      ps_target ALL 
-	      DEPENDS 
+	      ps_target ALL
+	      DEPENDS
 	      ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
 	      )
 	    add_dependencies(ps_target pdf_target)
-	  add_dependencies(print ps_target)
+	    add_dependencies(print ps_target)
 	    
-	  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
-	    "${BASE}.ps.gz\n"
-	    )
+	    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/static_built_files
+	      "${BASE}.ps.gz\n"
+	      )
 	  endif(0)
 	else(DOCBOOK_DBLATEX_BACKEND)
 	  add_custom_command(
@@ -499,14 +499,14 @@ else(
 	    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.ps ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps
 	    COMMAND ${GZIP} -f ${BASE}.ps
 	    DEPENDS
-	    ${SOURCE_FILES} 
+	    ${SOURCE_FILES}
 	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
 	    VERBATIM
 	    )
 	  add_custom_target(
-	    ps_target ALL 
-	    DEPENDS 
+	    ps_target ALL
+	    DEPENDS
 	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
 	    )
 	  # These files used for more than one target.  Therefore must
@@ -527,14 +527,14 @@ else(
 	    COMMAND env DESTDIR= ${XMLTO} -vv --with-fop -x ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} pdf ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    COMMAND ${CMAKE_COMMAND} -E rename ${CMAKE_CURRENT_BINARY_DIR}/plplotdoc-print.pdf ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	    DEPENDS
-	    ${SOURCE_FILES} 
+	    ${SOURCE_FILES}
 	    ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	    ${CMAKE_CURRENT_SOURCE_DIR}/inline-print_xsl.ent
             VERBATIM
 	    )
 	  add_custom_target(
-	    pdf_target ALL 
-	    DEPENDS 
+	    pdf_target ALL
+	    DEPENDS
 	    ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	    )
 	  # These files used for more than one target.  Therefore must
@@ -550,7 +550,7 @@ else(
 	    )
 
 	  add_custom_target(
-	    print ALL 
+	    print ALL
 	    )
 	  list(APPEND docbook_targets_LIST print)
 	  add_dependencies(print ps_target pdf_target)
@@ -582,7 +582,7 @@ else(
 	  COMMAND ${PERL_EXECUTABLE}
 	  -pi -e 's/&\#13;//g' `cat ${CMAKE_CURRENT_BINARY_DIR}/${HTML_MANIFEST}`
 	  DEPENDS
-	  ${SOURCE_FILES} 
+	  ${SOURCE_FILES}
 	  ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-html.xml
 	  ${CMAKE_CURRENT_SOURCE_DIR}/inline-html.ent
 	  )
@@ -626,7 +626,7 @@ else(
 
 	execute_process(
 	  COMMAND
-	  ${CMAKE_COMMAND} -E copy_if_different 
+	  ${CMAKE_COMMAND} -E copy_if_different
 	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
 	  ${CMAKE_CURRENT_BINARY_DIR}/jadetex.cfg
 	  )
@@ -635,8 +635,8 @@ else(
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
 	  COMMAND ${OPENJADE} -b utf-8
-	  ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT} 
-	  -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
+	  ${SGML_CATALOGS} -d ${CMAKE_CURRENT_BINARY_DIR}/${STYLESHEET_PRINT}
+	  -t tex -o ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
 	  ${XML_DECL} ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-print.xml
 	  DEPENDS
 	  ${SOURCE_FILES}
@@ -651,29 +651,29 @@ else(
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	  COMMAND ${PDFJADETEX} ${BASE}.jadetex
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-pdf.aux \; 
-	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-pdf.aux \;
+	  ${PDFJADETEX} ${BASE}.jadetex \;
 	  fi
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-pdf.aux \; 
-	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-pdf.aux \;
+	  ${PDFJADETEX} ${BASE}.jadetex \;
 	  fi
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-pdf.aux \; 
-	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-pdf.aux \;
+	  ${PDFJADETEX} ${BASE}.jadetex \;
 	  fi
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-pdf.aux \; 
-	  ${PDFJADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-pdf.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-pdf.aux \;
+	  ${PDFJADETEX} ${BASE}.jadetex \;
 	  fi
-	  DEPENDS 
-	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
+	  DEPENDS
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
+	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
 	  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
 	  )
 
@@ -683,29 +683,29 @@ else(
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
 	  COMMAND ${JADETEX} ${BASE}.jadetex
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-dvi.aux \; 
-	  ${JADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-dvi.aux \;
+	  ${JADETEX} ${BASE}.jadetex \;
 	  fi
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-dvi.aux \; 
-	  ${JADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-dvi.aux \;
+	  ${JADETEX} ${BASE}.jadetex \;
 	  fi
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-dvi.aux \; 
-	  ${JADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-dvi.aux \;
+	  ${JADETEX} ${BASE}.jadetex \;
 	  fi
-	  COMMAND 
-	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then 
-	  cp -pf ${BASE}.aux prior-dvi.aux \; 
-	  ${JADETEX} ${BASE}.jadetex \; 
+	  COMMAND
+	  if ! cmp ${BASE}.aux prior-dvi.aux 2>/dev/null \; then
+	  cp -pf ${BASE}.aux prior-dvi.aux \;
+	  ${JADETEX} ${BASE}.jadetex \;
 	  fi
-	  DEPENDS 
-	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex 
-	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg 
+	  DEPENDS
+	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.jadetex
+	  ${CMAKE_CURRENT_SOURCE_DIR}/jadetex.cfg
 	  ${CMAKE_CURRENT_BINARY_DIR}/pdftex.map
 	  )
 
@@ -713,12 +713,12 @@ else(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
 	  COMMAND ${DVIPS} ${BASE}.dvi
 	  COMMAND ${GZIP} -f ${BASE}.ps
-	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi 
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
 	  )
 
 	add_custom_target(
-	  dvi_target ALL 
-	  DEPENDS 
+	  dvi_target ALL
+	  DEPENDS
 	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.dvi
 	  )
 	# These files used for more than one target.  Therefore must
@@ -733,8 +733,8 @@ else(
 	  "${BASE}.dvi\n"
 	  )
 	add_custom_target(
-	  ps_target ALL 
-	  DEPENDS 
+	  ps_target ALL
+	  DEPENDS
 	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz
 	  )
 	# These files used for more than one target.  Therefore must
@@ -752,8 +752,8 @@ else(
 	  "${BASE}.ps.gz\n"
 	  )
 	add_custom_target(
-	  pdf_target ALL 
-	  DEPENDS 
+	  pdf_target ALL
+	  DEPENDS
 	  ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf
 	  )
 	# These files used for more than one target.  Therefore must
@@ -771,7 +771,7 @@ else(
 	  "${BASE}.pdf\n"
 	  )
 	add_custom_target(
-	  print ALL 
+	  print ALL
 	  )
 	list(APPEND docbook_targets_LIST print)
 	add_dependencies(print dvi_target ps_target pdf_target)
@@ -873,9 +873,9 @@ if(BUILD_PRINT OR PREBUILT_DOC)
   endif(BUILD_DVI)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.pdf DESTINATION ${DOC_DIR})
   if(NOT DOCBOOK_XML_BACKEND)
-      install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz DESTINATION ${DOC_DIR})
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${BASE}.ps.gz DESTINATION ${DOC_DIR})
   endif(NOT DOCBOOK_XML_BACKEND)
-      
+
 endif(BUILD_PRINT OR PREBUILT_DOC)
 
 # Everything below here has to do with the custom target www-install
@@ -966,7 +966,7 @@ if((BUILD_DOC OR PREBUILT_DOC) AND (WWW_USER AND WWW_GROUP AND WWW_HOST AND WWW_
     ${CMAKE_CURRENT_SOURCE_DIR}/../COPYING
     )
 
-  add_custom_target(www-uninstall 
+  add_custom_target(www-uninstall
     COMMAND ${RSH_COMMAND} rm -rf ${WWW_DIR}/htdocs/docbook-manual
     )
 

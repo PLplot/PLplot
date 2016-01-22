@@ -162,7 +162,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>
 	This library grew out of a discussion with Steve Schwartz of the QSAS
 	Support Team, Cluster Science Centre, Imperial College and our mutual
-	frustrations with the poor time conversion capabilities of 
+	frustrations with the poor time conversion capabilities of
 	POSIX-compliant computer operating systems.  For such systems, the
 	continuous time variable is often stored internally as a 32-bit
 	integer containing the number of seconds since 1970.  This gives a
@@ -199,7 +199,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	equivalent Linux C library gmtime and timegm routines on a 64-bit
 	platform.  These tests were done for a number of epochs including every
 	year from -5000000 to 5000000 for critical dates in the year (January
-	1, February 28, February 29, March 1, and December 31).  These extensive 
+	1, February 28, February 29, March 1, and December 31).  These extensive
 	tests give some confidence that the formal conversion from broken-down
 	to continuous time (and vice versa) should be reliable for the
 	qsastime library on all 32-bit and 64-bit platforms.

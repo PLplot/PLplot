@@ -38,9 +38,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="advanced">
   <title>Advanced Use of PLplot</title>
-  
+
   <para> In this chapter, we describe advanced use of PLplot. </para>
-  
+
   <sect1 id="arguments">
     <title>Command Line Arguments</title>
 
@@ -55,7 +55,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       command line arguments recognized by PLplot are given by the -h
       option:
     </para>
-    
+
     <para>
       <screen>
 	<prompt>%</prompt> <userinput>x01c -h</userinput>
@@ -114,9 +114,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
   </sect1>
-  
+
   <sect1 id="output-devices">
-    <title>Output Devices</title> 
+    <title>Output Devices</title>
     <para>
       PLplot supports a variety of output devices, via a set of device drivers.
       Each driver is required to emulate a small set of low-level graphics
@@ -146,8 +146,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      The device drivers for PLplot terminal output at present are given in 
-      <xref linkend="tab_dev1"/> while 
+      The device drivers for PLplot terminal output at present are given in
+      <xref linkend="tab_dev1"/> while
       drivers for file output are given in
       <xref linkend="tab_dev2"/>.
       The driver for OS/2 PM is available separately.  See the section on OS/2 in
@@ -212,7 +212,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <sect2 id="driver-functions">
-      <title>Driver Functions</title> 
+      <title>Driver Functions</title>
 
       <para> A dispatch table is used to direct function calls to whatever driver
       is chosen at run-time.  Below are listed the names of each entry in the
@@ -296,13 +296,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       pl_eop() and pl_tidy(). It is recommended that when adding new functions to
       only a certain driver, the escape function be used.  Otherwise it is
       necessary to add a null routine to all the other drivers to handle the new
-      function. 
+      function.
       </para>
 
     </sect2>
 
     <sect2 id="metafiles-plrender">
-      <title>PLplot Metafiles and Plrender</title> 
+      <title>PLplot Metafiles and Plrender</title>
 
       <para>
 	The PLplot metafile is a way to store and transport your graphical data for
@@ -310,7 +310,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	in binary format in order to speed access and keep storage costs
 	reasonable.  All data is stored in device-independent format (written as a
 	stream of bytes); the resulting file is about as portable as a tektronix
-	vector graphics file and only slightly larger. 
+	vector graphics file and only slightly larger.
       </para>
 
       <para>
@@ -320,9 +320,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<function>plrender</function>, verifies that the input file is indeed a valid PLplot metafile,
 	and that it <quote>understands</quote> the format the metafile is written in.
 	<function>plrender</function> is part of the PLplot package and should be built at the time of
-	building PLplot, and then put into your search path.  It is capable of 
+	building PLplot, and then put into your search path.  It is capable of
 	high speed rendering of the graphics file, especially if the output device
-	can accept commands at a high rate (e.g. X windows). 
+	can accept commands at a high rate (e.g. X windows).
       </para>
 
       <para>
@@ -343,7 +343,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</itemizedlist>
       </para>
 
-      <para> 
+      <para>
 	Each command is written as a single byte, possibly followed by
 	additional data bytes.  The <literal>NEW_COLOR</literal> and
 	<literal>NEW_WIDTH</literal> commands each write 2 data bytes, the
@@ -358,7 +358,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	(opcode) followed by an arbitrary number of data bytes depending on the
 	value of the opcode. Note that any data written must be in device
 	independent form to maintain the transportability of the metafile so
-	floating point numbers are not allowed. 
+	floating point numbers are not allowed.
       </para>
 
       <para>
@@ -455,7 +455,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<literal>-px</literal> and <literal>-py</literal> options are
 	not so useful at present, because everything is scaled down by the
 	specified factor --- resulting in labels that are too small (future
-	versions of <function>plrender</function> might allow changing the label size as well). 
+	versions of <function>plrender</function> might allow changing the label size as well).
       </para>
 
       <para>
@@ -465,7 +465,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
 
     <sect2 id="familying">
-      <title>Family File Output</title> 
+      <title>Family File Output</title>
 
       <para>
 	When sending PLplot to a file, the user has the option of generating a
@@ -511,7 +511,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	to, one can detect when a new member file is started.  This information
 	might be used in various ways; for example you could spawn a process to
 	automatically plrender each metafile after it is closed (perhaps during a
-	long simulation run) and send it off to be printed. 
+	long simulation run) and send it off to be printed.
       </para>
 
       <para> <function>plrender</function> has several options for dealing with
@@ -529,11 +529,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
 
     <sect2 id="interactive-devices">
-      <title>Interactive Output Devices</title> 
+      <title>Interactive Output Devices</title>
 
       <para>
 	Here we shall discuss briefly some of the more common interactive output
-	devices.  
+	devices.
       </para>
 
       <para>
@@ -572,7 +572,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	<screen>
 	  <prompt>%</prompt> <userinput>pltek</userinput>
-	  Usage: pltek filename 
+	  Usage: pltek filename
 	  At the prompt, the following replies are recognized:
 	  h,?    Give this help message.
 	  q     Quit program.
@@ -601,11 +601,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	If this variable is not set (or is empty), a list of valid output
 	devices is given and the user is prompted for a choice.  For example:
       </para>
-      
+
       <para>
 	<screen>
 	  <prompt>%</prompt> <userinput>x01c</userinput>
-	  
+	
 	  Plotting Options:
 	  &lt; 1> xwin       X-Window (Xlib)
 	  &lt; 2> tk         Tcl/TK Window
@@ -628,7 +628,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  Enter device number or keyword: <!--
 	  --></screen>
       </para>
-      
+
       <para>
 	Either the device number or a device keyword is accepted.  Specifying
 	the device by keyword is preferable in aliases or scripts since the
@@ -754,7 +754,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>Any bitmap driver in the PLplot family should be able to use fonts
     (TrueType and others) that are rendered by the FreeType library just as long
     as the device supports setting an individual pixel. Note that drivers
-    interact with FreeType using the support routines 
+    interact with FreeType using the support routines
     <literal>plD_FreeType_init</literal>,
     <literal>plD_render_freetype_text</literal>,
     <literal>plD_FreeType_Destroy</literal>,
@@ -817,7 +817,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</programlisting>
       </para>
 
-      <para>This initialization routine is called at the end of 
+      <para>This initialization routine is called at the end of
       <literal>plD_init_png_Dev(PLStream *pls)</literal> in the
       <filename>gd.c</filename> driver:</para>
 
@@ -906,8 +906,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       coordinates, and to do this we need to know how big in the Y dimension the
       page is, and whether we have to invert the page or leave it alone.</para>
 
-      <para> <itemizedlist> 
-	<listitem><para>FT->ymax specifies the size of the page</para></listitem> 
+      <para> <itemizedlist>
+	<listitem><para>FT->ymax specifies the size of the page</para></listitem>
 	<listitem><para>FT->invert_y=1 tells us to invert the
 	y-coordinates, FT->invert_y=0 will not invert the coordinates.
       </para></listitem> </itemizedlist></para>
@@ -994,7 +994,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </sect1>
 
   <sect1 id="viewport_window">
-    <title>View Surfaces, (Sub-)Pages, Viewports and Windows</title> 
+    <title>View Surfaces, (Sub-)Pages, Viewports and Windows</title>
 
     <para>There is a whole hierarchy of coordinate systems associated with
     any PLplot graph.  At the lowest level a device provides a view surface
@@ -1013,7 +1013,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     variables involved. These coordinates are called <emphasis>world
     coordinates</emphasis>, and may have any floating-point value
     representable by the computer.)</para>
-    
+
     <para>Although the usual choice is to have one viewport per subpage, and
     one window per viewport, each subpage can have more than one (possibly
     overlapping) viewport defined, and each viewport can have more than one
@@ -1056,7 +1056,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	defined to run from 0.0 to 1.0 along each edge of the subpage.  Thus
 	for example,
       </para>
-      
+
       <para>
 	<programlisting>    plvpor(0.0, 0.5, 0.5, 1.0);</programlisting>
       </para>
@@ -1099,7 +1099,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	margin around it within the current subpage, the following sequence
 	of calls may be used:
       </para>
-      
+
       <para>
 	<programlisting>    plgspa(xmin, xmax, ymin, ymax);
 	plsvpa(10.0, xmax-xmin-10.0, 10.0, ymax-ymin-10.0);</programlisting>
@@ -1128,7 +1128,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
     </sect2>
-    
+
     <sect2 id="windows">
       <title>Defining the Window</title>
 
@@ -1143,7 +1143,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	V<subscript>CE</subscript> &leq; 12.0&nbsp;V, we would call the
 	function &plwind; as follows:
       </para>
-      
+
       <para>
 	<programlisting>    plwind(0.0, 12.0, 0.0, 10.0);</programlisting>
       </para>
@@ -1162,7 +1162,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
     </sect2>
-    
+
     <sect2 id="annotation">
       <title>Annotating the Viewport</title>
 
@@ -1177,7 +1177,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	the major divisions based upon the data range specified to &plwind;.
 	This is done using the following statement
       </para>
-      
+
       <para>
 	<programlisting>    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);</programlisting>
       </para>
@@ -1195,7 +1195,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	routine &plmtex; which can be used for plotting labels at any point
 	relative to the viewport.  For our example, we may use
       </para>
-      
+
       <para>
 	<programlisting>    pllab("V#dCE#u (Volts)", "I#dC#u (mA)", "TRANSISTOR CHARACTERISTICS");</programlisting>
       </para>
@@ -1267,7 +1267,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
     </sect2>
-    
+
     <sect2 id="standard-window">
       <title>Setting up a Standard Window</title>
 
@@ -1348,7 +1348,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
   </sect1>
-  
+
   <sect1 id="fill-pattern">
     <title>Setting the Area Fill Pattern</title>
 
@@ -1362,7 +1362,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       between -900 and 900).  Thus to specify an area fill pattern
       consisting of horizontal lines spaced 2&nbsp;mm apart use:
     </para>
-    
+
     <para>
       <programlisting>    *inc = 0;
       *del = 2000;
@@ -1394,7 +1394,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
   </sect1>
-  
+
   <sect1 id="color">
     <title>Setting Color</title>
 
@@ -1599,7 +1599,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       s[3] = 1;
 
       c_plscmap1l(0, 4, i, h, l, s, NULL);
-      }</programlisting> 
+      }</programlisting>
       </para>
 
       <para> Finally, &plscmap1; is an additional method of setting the map1
@@ -1611,12 +1611,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
       <programlisting>    for (i=0;i&lt;n_col;i++)
       rr[i] = gg[i] = bb[i] = i*256/n_col;
-      plscmap1(rr,gg,bb,n_col);</programlisting> 
+      plscmap1(rr,gg,bb,n_col);</programlisting>
       </para>
 
     </sect2>
   </sect1>
-  
+
   <sect1 id="characters">
     <title>Setting Character Attributes</title>
 
@@ -1769,9 +1769,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<para>
 	  The TrueType fontnames corresponding to the 30 possible
 	  valid FCIs can be specified using cmake options. The defaults for the
-	  30 cmake variables PL_FREETYPE_FONT[_MODIFIER] (where FONT is one of 
+	  30 cmake variables PL_FREETYPE_FONT[_MODIFIER] (where FONT is one of
 	  MONO, SANS, SCRIPT, SERIF or SYMBOL and the optional MODIFIER is one
-	  of BOLD, BOLD_ITALIC, BOLD_OBLIQUE, ITALIC or OBLIQUE) are documented 
+	  of BOLD, BOLD_ITALIC, BOLD_OBLIQUE, ITALIC or OBLIQUE) are documented
 	  in cmake/modules/freetype.cmake. On Windows these defaults use standard
 	  Windows font files. On all other platforms default font file names
 	  are taken from fonts available from the ttf-freefont font
@@ -2143,7 +2143,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <listitem>
 	    <para>
 	      <literal>#(nnn)</literal>: Hershey character nnn (1 to 4
-	      decimal digits) 
+	      decimal digits)
 	    </para>
 	  </listitem>
 	  <listitem>
@@ -2185,7 +2185,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para>
 	Sections of text can have an underline or overline appended.  For
 	example, the string S̅(f̲r̲e̲q̲) is obtained by specifying
-	<literal>"#+S#+(#-freq#-)"</literal>. 
+	<literal>"#+S#+(#-freq#-)"</literal>.
       </para>
 
       <para>
@@ -2337,7 +2337,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </tbody>
 	</tgroup>
       </table>
-      
+
       <para>
 	The escape sequences <literal>#fn</literal>,
 	<literal>#fr</literal>, <literal>#fi</literal>,
@@ -2433,7 +2433,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
     </sect2>
-    
+
     <sect2 id="character-size">
       <title>Character size adjustment</title>
 
@@ -2554,7 +2554,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <literal>y</literal> &leq; +7.0, and 0.0 &leq; <literal>z</literal>
       &leq; 8.0, we could use the following statements:
     </para>
-    
+
     <para>
       <programlisting>    xmin2d = -2.5;
       xmax2d =  2.5;
@@ -2619,12 +2619,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       coordinate axes.  The routine &plbox3; thus combines the functions of
       box drawing and labelling.
     </para>
-    
+
   </sect1>
-  
+
   <sect1 id="contour-plots">
     <title>Contour and Shade Plots</title>
-    
+
     <para>
       Several routines are available in PLplot which perform a contour or
       shade plot of data stored in a two-dimensional array.  The contourer
@@ -2635,7 +2635,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       to draw the distinction between the C and Fortran 95
       interfaces so these are handled in turn.
     </para>
-    
+
     <sect2 id="contour-plots-c">
       <title>Contour Plots from C</title>
 
@@ -2664,7 +2664,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  </funcprototype>
 	</funcsynopsis>
       </para>
-      
+
       <para>
 	where <literal>z</literal> is the two-dimensional array of size
 	<literal>nx</literal> by <literal>ny</literal> containing samples
@@ -2687,27 +2687,27 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	index.  Before these can be drawn in the current window (see <xref
 	linkend="windows"/>), it is necessary to convert from these array
 	indices into world coordinates.  This is done by passing a pointer
-	<literal>pltr</literal> to a user-defined transformation function 
-	to &plcont;.  For C use of &plcont; (and &plshade;, see next subsection) 
+	<literal>pltr</literal> to a user-defined transformation function
+	to &plcont;.  For C use of &plcont; (and &plshade;, see next subsection)
 	we have included directly in
 	the PLplot library the following transformation routines:
 	&pltr0; (identity transformation or you can
 	enter a NULL argument to get the same effect); &pltr1;
 	(linear interpolation in singly dimensioned coordinate arrays);
 	and  &pltr2; (linear interpolation in doubly dimensioned coordinate
-	arrays).  Examples of the use of these transformation 
+	arrays).  Examples of the use of these transformation
 	routines are given in <filename>examples/c/x09c.c</filename>,
 	<filename>examples/c/x14c.c</filename>, and
 	<filename>examples/c/x16c.c</filename>.  These same three examples
-	also demonstrate a user-defined transformation function 
-	<literal>mypltr</literal> which is capable of 
+	also demonstrate a user-defined transformation function
+	<literal>mypltr</literal> which is capable of
 	arbitrary translation, rotation, and/or shear. By defining other
 	transformation subroutines, it is possible to draw contours wrapped
 	around polar grids etc.
       </para>
 
     </sect2>
-    
+
     <sect2 id="shade-plots-c">
       <title>Shade Plots from C</title>
       <para>
@@ -2715,26 +2715,26 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<filename>examples/c/x??c.c</filename>.
       </para>
     </sect2>
-    
+
     <sect2 id="contour-plots-f95">
       <title>Contour Plots from the Fortran 95 interface</title>
       <para>
 	NEEDS DOCUMENTATION.  Follow the plcont usage (with a variety
-	of overloaded forms available with different arguments) in 
+	of overloaded forms available with different arguments) in
 	<filename>examples/f95/x??f.f90</filename>.
       </para>
     </sect2>
-    
+
     <sect2 id="shade-plots-f95">
       <title>Shade Plots from the Fortran 95 interface</title>
       <para>
-	NEEDS DOCUMENTATION.  Follow the plshade and plshades usage 
+	NEEDS DOCUMENTATION.  Follow the plshade and plshades usage
 	(with a variety
 	of overloaded forms available with different arguments) in
 	<filename>examples/f95/x??f.f90</filename>.
       </para>
     </sect2>
-    
+
   </sect1>
 
   <sect1 id="legends">
@@ -2770,5 +2770,5 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       two PLplot functions.
     </para>
   </sect1>
-    
+
 </chapter>

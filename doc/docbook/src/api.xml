@@ -46,14 +46,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     function that should be available across all PLplot language bindings.
     This common API between the various languages constitutes the
     most important part of the PLplot API that programmers need to know.
-    Note that in C, these common API routines have a special 
-    <quote>c_</quote> prefix name assigned to them in 
+    Note that in C, these common API routines have a special
+    <quote>c_</quote> prefix name assigned to them in
     <filename>plplot.h</filename>.
   </para>
 
   <para>
     What follows is a list of all common API functions of the latest
-    PLplot version with their arguments except for obsolete/deprecated API 
+    PLplot version with their arguments except for obsolete/deprecated API
     functions which are listed in <xref linkend="API-OBSOLETE"/>. The
     following information is provided for each function:
     <orderedlist>
@@ -79,10 +79,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </listitem>
       <listitem>
 	<para>
-	  The redacted argument form of the function, currently used 
-	  by the programming languages Fortran95, Python, Java and 
-	  Perl, as well as any language specific variations that 
-	  might occur on the general calling scheme described in 
+	  The redacted argument form of the function, currently used
+	  by the programming languages Fortran95, Python, Java and
+	  Perl, as well as any language specific variations that
+	  might occur on the general calling scheme described in
 	  the following paragraph.
 	</para>
       </listitem>
@@ -93,13 +93,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</para>
       </listitem>
     </orderedlist>
-    Additional PLplot API specialized for each language binding is 
+    Additional PLplot API specialized for each language binding is
     documented in <xref linkend="API-C"/> and subsequent chapters.
   </para>
 
   <para>
     The general calling scheme for the other languages supported
-    by PLplot is as follows, using the function 
+    by PLplot is as follows, using the function
     <function>plline</function> as an example.
     <itemizedlist>
       <listitem>
@@ -367,10 +367,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       Draw a possibly filled arc centered at
       <literal><parameter>x</parameter></literal>,
-      <literal><parameter>y</parameter></literal> with semimajor axis 
-      <literal><parameter>a</parameter></literal> and semiminor axis 
-      <literal><parameter>b</parameter></literal>, starting at 
-      <literal><parameter>angle1</parameter></literal> and ending at 
+      <literal><parameter>y</parameter></literal> with semimajor axis
+      <literal><parameter>a</parameter></literal> and semiminor axis
+      <literal><parameter>b</parameter></literal>, starting at
+      <literal><parameter>angle1</parameter></literal> and ending at
       <literal><parameter>angle2</parameter></literal>.
     </para>
 
@@ -466,7 +466,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -576,8 +576,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>d</literal>: Plot labels as date / time. 
-		  Values are assumed to be seconds since the epoch 
+		  <literal>d</literal>: Plot labels as date / time.
+		  Values are assumed to be seconds since the epoch
 		  (as used by gmtime).
 		</para>
 	      </listitem>
@@ -745,7 +745,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -888,7 +888,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -1016,8 +1016,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>d</literal>: Plot labels as date / time. 
-		  Values are assumed to be seconds since the epoch 
+		  <literal>d</literal>: Plot labels as date / time.
+		  Values are assumed to be seconds since the epoch
 		  (as used by gmtime).
 		</para>
 	      </listitem>
@@ -1185,7 +1185,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -1261,8 +1261,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>d</literal>: Plot labels as date / time. 
-		  Values are assumed to be seconds since the epoch 
+		  <literal>d</literal>: Plot labels as date / time.
+		  Values are assumed to be seconds since the epoch
 		  (as used by gmtime).
 		</para>
 	      </listitem>
@@ -1444,8 +1444,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      </listitem>
 	      <listitem>
 		<para>
-		  <literal>e</literal>: Plot labels as date / time. 
-		  Values are assumed to be seconds since the epoch 
+		  <literal>e</literal>: Plot labels as date / time.
+		  Values are assumed to be seconds since the epoch
 		  (as used by gmtime).  Note this suboption is interpreted
                   the same as the <literal>d</literal> suboption for
                   <literal><parameter>xopt</parameter></literal> and
@@ -1453,7 +1453,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                   it has to be identified as <literal>e</literal> for
                   <literal><parameter>zopt</parameter></literal> since
                   <literal>d</literal> has already been used for the
-                  different purpose above. 
+                  different purpose above.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -1565,7 +1565,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -1609,7 +1609,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </funcsynopsis>
     </para>
     <para>
-      Calculate broken-down time; 
+      Calculate broken-down time;
       <literal><parameter>year</parameter></literal>,
       <literal><parameter>month</parameter></literal>,
       <literal><parameter>day</parameter></literal>,
@@ -1713,7 +1713,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -1852,7 +1852,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -1898,7 +1898,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -2312,7 +2312,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    The cmap1 color of the high-end color bar cap, if it is drawn 
+	    The cmap1 color of the high-end color bar cap, if it is drawn
 	    (<literal>PL_COLORBAR_CAP_HIGH</literal>).
 	  </para>
 	</listitem>
@@ -2475,7 +2475,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plcolorbar(p_colorbar_width, p_colorbar_height, 
+      Redacted form: <function>plcolorbar(p_colorbar_width, p_colorbar_height,
       opt, position, x, y, x_length, y_length, bg_color,
       bb_color, bb_style, low_cap_color, high_cap_color, cont_color, cont_width, label_opts, labels, axis_opts, ticks, sub_ticks, values)</function>
     </para>
@@ -2536,7 +2536,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    That is, for this special case broken-down time is
 	    calculated with the proleptic Gregorian calendar with no
 	    leap seconds inserted, and the continuous time is defined
-            as the number of seconds since the Unix epoch of 
+            as the number of seconds since the Unix epoch of
 	    1970-01-01T00:00:00Z.
 	  </para>
 	</listitem>
@@ -2692,7 +2692,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -2850,7 +2850,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    Note that unlike &plshades; and similar PLplot functions
 	    which have a <literal><parameter>pltr</parameter></literal>
 	    argument, plcont requires that a transformation function be
-	    provided in the C interface.  Leaving 
+	    provided in the C interface.  Leaving
 	    <literal><parameter>pltr</parameter></literal> NULL will result
 	    in an error.
 	  </para>
@@ -3103,7 +3103,7 @@ time is specified by the following parameters:
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -3147,7 +3147,7 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      By default, PLplot's interactive devices (Xwin, TK, etc.) 
+      By default, PLplot's interactive devices (Xwin, TK, etc.)
       go into a wait state after a call to plend
       or other functions which trigger the end of a plot page.
       To avoid this, use the &plspause; function.
@@ -3438,37 +3438,37 @@ time is specified by the following parameters:
 	      <listitem>
 		<para>
 		  <literal>40</literal>: same as 0 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>41</literal>: same as 1 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>42</literal>: same as 2 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>43</literal>: same as 3 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>50</literal>: same as 0 except date / time
-		  <literal>y</literal> labels. 
+		  <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>51</literal>: same as 1 except date / time
-		  <literal>y</literal> labels. 
+		  <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -3480,25 +3480,25 @@ time is specified by the following parameters:
 	      <listitem>
 		<para>
 		  <literal>53</literal>: same as 3 except date / time
-		  <literal>y</literal> labels. 
+		  <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>60</literal>: same as 0 except date / time
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>61</literal>: same as 1 except date / time
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>62</literal>: same as 2 except date / time
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -3791,37 +3791,37 @@ time is specified by the following parameters:
 	      <listitem>
 		<para>
 		  <literal>40</literal>: same as 0 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>41</literal>: same as 1 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>42</literal>: same as 2 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>43</literal>: same as 3 except date / time
-		  <literal>x</literal> labels. 
+		  <literal>x</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>50</literal>: same as 0 except date / time
-		  <literal>y</literal> labels. 
+		  <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>51</literal>: same as 1 except date / time
-		  <literal>y</literal> labels. 
+		  <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -3833,25 +3833,25 @@ time is specified by the following parameters:
 	      <listitem>
 		<para>
 		  <literal>53</literal>: same as 3 except date / time
-		  <literal>y</literal> labels. 
+		  <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>60</literal>: same as 0 except date / time
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>61</literal>: same as 1 except date / time
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
 		<para>
 		  <literal>62</literal>: same as 2 except date / time
-		  <literal>x</literal> and <literal>y</literal> labels. 
+		  <literal>x</literal> and <literal>y</literal> labels.
 		</para>
 	      </listitem>
 	      <listitem>
@@ -4011,7 +4011,7 @@ time is specified by the following parameters:
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -4118,7 +4118,7 @@ time is specified by the following parameters:
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -4200,7 +4200,7 @@ time is specified by the following parameters:
       <literal><parameter>n</parameter></literal> points
       <literal>(<parameter>x</parameter>[i],
       <parameter>y</parameter>[i])</literal> using the pattern defined by
-      &plpsty; or &plpat;.  The default fill style is a solid fill. 
+      &plpsty; or &plpat;.  The default fill style is a solid fill.
       The routine will automatically close the
       polygon between the last and first vertices.  If multiple closed
       polygons are passed in <literal><parameter>x</parameter></literal>
@@ -4340,7 +4340,7 @@ time is specified by the following parameters:
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -4745,8 +4745,8 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Returns 8-bit RGB values (0-255) and double alpha transparency value (0.0 - 1.0) for 
-      given color from cmap0 (see <xref linkend="color-map-0"/>).  Values 
+      Returns 8-bit RGB values (0-255) and double alpha transparency value (0.0 - 1.0) for
+      given color from cmap0 (see <xref linkend="color-map-0"/>).  Values
       are negative if an invalid color id is given.
     </para>
 
@@ -4888,7 +4888,7 @@ time is specified by the following parameters:
 
   <sect1 id="plgcolbga" renderas="sect3">
     <title>
-      <function>plgcolbga</function>:  Returns the background color (cmap0[0]) 
+      <function>plgcolbga</function>:  Returns the background color (cmap0[0])
       by 8-bit RGB value and double alpha transparency value
     </title>
 
@@ -5538,7 +5538,7 @@ device support!)
 	  <para>
 	    Pointer to variable with the current font style. The available
 	    values are given by the PL_FCI_* constants in
-	    plplot.h. Current options are PL_FCI_UPRIGHT, PL_FCI_ITALIC 
+	    plplot.h. Current options are PL_FCI_UPRIGHT, PL_FCI_ITALIC
 	    and PL_FCI_OBLIQUE. If
 	    p_style is NULL then the font style is not returned.
 	  </para>
@@ -6124,7 +6124,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -6398,7 +6398,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -6490,7 +6490,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -6954,7 +6954,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -7112,7 +7112,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -7230,7 +7230,7 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: 
+      Redacted form:
       <itemizedlist>
 	<listitem>
 	  <para>
@@ -7643,8 +7643,8 @@ device support!)
 	    inward/outward from the standard corner positions or standard
 	    top or bottom positions if the
 	    <literal>PL_POSITION_INSIDE</literal>/<literal>PL_POSITION_OUTSIDE</literal>
-	    bit is set in <literal><parameter>position</parameter></literal>. 
-	    For the standard left or right positions, the 
+	    bit is set in <literal><parameter>position</parameter></literal>.
+	    For the standard left or right positions, the
 	    direction of motion is toward positive Y.
 	  </para>
 	</listitem>
@@ -7871,7 +7871,7 @@ device support!)
 	<listitem>
 	  <para>
 	    Array of nlegend scales (units of fraction of character height) for
-	    the height of the discrete colored boxes 
+	    the height of the discrete colored boxes
 	    (<parameter>PL_LEGEND_COLOR_BOX</parameter>).
 	  </para>
 	</listitem>
@@ -7907,7 +7907,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Array of nlegend line styles (plsty indices) 
+	    Array of nlegend line styles (plsty indices)
 	    (<parameter>PL_LEGEND_LINE</parameter>).
 	  </para>
 	</listitem>
@@ -7931,7 +7931,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Array of nlegend cmap0 symbol colors 
+	    Array of nlegend cmap0 symbol colors
 	    (<parameter>PL_LEGEND_SYMBOL</parameter>).
 	  </para>
 	</listitem>
@@ -7943,7 +7943,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Array of nlegend scale values for the symbol height 
+	    Array of nlegend scale values for the symbol height
 	    (<parameter>PL_LEGEND_SYMBOL</parameter>).
 	  </para>
 	</listitem>
@@ -7967,7 +7967,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Array of nlegend symbols (plpoin indices) 
+	    Array of nlegend symbols (plpoin indices)
 	    (<parameter>PL_LEGEND_SYMBOL</parameter>).
 	  </para>
 	</listitem>
@@ -7975,17 +7975,17 @@ device support!)
     </variablelist>
 
     <para>
-      Redacted form: <function>pllegend(p_legend_width, p_legend_height, 
+      Redacted form: <function>pllegend(p_legend_width, p_legend_height,
       opt, position, x, y, plot_width,
       bg_color, bb_color, bb_style,
       nrow, ncolumn,
-      opt_array, 
+      opt_array,
       text_offset, text_scale, text_spacing, test_justification,
-      text_colors, text, 
+      text_colors, text,
       box_colors, box_patterns,
       box_scales, box_line_widths,
       line_colors, line_styles, line_widths,
-      symbol_colors, symbol_scales, 
+      symbol_colors, symbol_scales,
       symbol_numbers, symbols)</function>
     </para>
 
@@ -8306,7 +8306,7 @@ device support!)
 
     <para>
       Plots continental outlines or shapefile data in world coordinates.
-      A demonstration of how to use this function to create different 
+      A demonstration of how to use this function to create different
       projections can be found in examples/c/x19c. Plplot is provided with
       basic coastal outlines and USA state borders. These can be used
       irrespective of whether Shapefile support is built into Plplot.
@@ -8316,7 +8316,7 @@ device support!)
       element with a line. Shapefiles have become a popular standard for
       geographical data and data in this format can be easily found from
       a number of online sources. Shapefile data is actually provided as
-      three or more files with the same filename, but different extensions. 
+      three or more files with the same filename, but different extensions.
       The .shp and .shx files are required for plotting Shapefile data with
       Plplot.
     </para>
@@ -8330,7 +8330,7 @@ device support!)
         <listitem>
           <para>
             A user supplied function to transform the original map data
-            coordinates to a new coordinate system. The Plplot supplied 
+            coordinates to a new coordinate system. The Plplot supplied
             map data is provided as latitudes and longitudes; other
             Shapefile data may be provided in other coordinate systems
             as can be found in their .prj plain text files. For example,
@@ -8338,7 +8338,7 @@ device support!)
             latitude coordinate to a polar stereographic projection.
             Initially, x[0]..[n-1] are the original x coordinates (longitudes
             for the Plplot suplied data) and y[0]..y[n-1]
-            are the corresponding y coordinates (latitudes for the Plplot 
+            are the corresponding y coordinates (latitudes for the Plplot
             supplied data).  After the call to mapform(), x[]
             and y[] should be replaced by the corresponding plot coordinates.
             If no transform is desired, mapform can be replaced by NULL.
@@ -8352,9 +8352,9 @@ device support!)
         </term>
         <listitem>
           <para>
-            A character string which determines the type of map plotted. This is 
-            either one of the Plplot built in maps or the file name of a set of 
-            Shapefile files without the file extensions. For the Plplot built in 
+            A character string which determines the type of map plotted. This is
+            either one of the Plplot built in maps or the file name of a set of
+            Shapefile files without the file extensions. For the Plplot built in
             maps the possible values are:
             <itemizedlist>
               <listitem>

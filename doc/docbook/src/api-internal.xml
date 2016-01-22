@@ -40,12 +40,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <title>Internal C functions in PLplot</title>
 
   <para>
-    The purpose of this chapter is to document the API for every internal 
+    The purpose of this chapter is to document the API for every internal
     C function in PLplot (other than language bindings) that
     is <emphasis>not</emphasis> part of the common API that has already been
-    documented in <xref linkend="API"/> or elsewhere. The functions documented 
-    here are internal plplot functions. They are not intended for external use 
-    and may change between releases. 
+    documented in <xref linkend="API"/> or elsewhere. The functions documented
+    here are internal plplot functions. They are not intended for external use
+    and may change between releases.
   </para>
 
   <para>

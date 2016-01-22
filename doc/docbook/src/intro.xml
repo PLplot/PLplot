@@ -41,8 +41,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>The PLplot Plotting Library</title>
 
     <para> PLplot is a library of C functions that are useful for making
-    scientific plots from programs written in C, C++, Fortran95, Java, Octave, 
-    Perl, Python, and Tcl/Tk. The PLplot project is being developed by a world-wide 
+    scientific plots from programs written in C, C++, Fortran95, Java, Octave,
+    Perl, Python, and Tcl/Tk. The PLplot project is being developed by a world-wide
     team who interact via the facilities provided by SourceForge (<ulink
     url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>)
     </para>
@@ -52,19 +52,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     plots, mesh plots, bar charts and pie charts. Multiple graphs (of the same
     or different sizes) may be placed on a single page with multiple lines in
     each graph. Different line styles, widths and colors are supported. A
-    virtually infinite number of distinct area fill patterns may be used. 
+    virtually infinite number of distinct area fill patterns may be used.
     There is full unicode support in the PLplot library, and most of the
     display drivers are capable of displaying any of the millions(?) of
     characters in the unicode standard. Those driver that are not unicode
-    enabled can still display almost 1000 characters in the extended character set. 
-    This includes four different fonts, the Greek alphabet and a host of 
-    mathematical, musical, and other symbols. A variety of output devices and 
-    file formats are supported including a metafile format which can be 
-    subsequently rendered to any device/file.  New devices and file formats can 
-    be easily added by writing a driver routine. For example, we have recently 
-    added a postscript driver with TrueType font support (PSTTF), a SVG file 
-    driver and a PDF file driver. A wxWidgets interactive driver is currently 
-    in development. 
+    enabled can still display almost 1000 characters in the extended character set.
+    This includes four different fonts, the Greek alphabet and a host of
+    mathematical, musical, and other symbols. A variety of output devices and
+    file formats are supported including a metafile format which can be
+    subsequently rendered to any device/file.  New devices and file formats can
+    be easily added by writing a driver routine. For example, we have recently
+    added a postscript driver with TrueType font support (PSTTF), a SVG file
+    driver and a PDF file driver. A wxWidgets interactive driver is currently
+    in development.
     </para>
 
     <para>
@@ -229,9 +229,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       in the description of each PLplot function. If you have difficulty
       interpreting the call syntax as described in this manual, please refer
       to part III, Language Bindings. This manual includes:
-      C (<xref linkend="c"/>), 
-      C++ (<xref linkend="cplusplus"/>), 
-      Fortran 95 (<xref linkend="fortran95"/>), 
+      C (<xref linkend="c"/>),
+      C++ (<xref linkend="cplusplus"/>),
+      Fortran 95 (<xref linkend="fortran95"/>),
       Java (???),
       Tcl (<xref linkend="tcl"/>),
       Perl (<xref linkend="perl"/>) and
@@ -253,8 +253,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
     <para>
       Most of the output devices supported by PLplot are listed in
-      <xref linkend="x-drivers"/> and <xref linkend="output-drivers"/>, 
-      along with description of the device driver--PLplot interface, 
+      <xref linkend="x-drivers"/> and <xref linkend="output-drivers"/>,
+      along with description of the device driver--PLplot interface,
       metafile output, family files, and vt100/tek4010 emulators.
     </para>
   </sect1>
@@ -275,7 +275,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Library General Public License for more details.
 
       You should have received a copy of the GNU Library General Public
-      License along with this library; if not, write to the Free Software 
+      License along with this library; if not, write to the Free Software
       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
     </programlisting>
     <para>

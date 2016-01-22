@@ -1,7 +1,7 @@
 <!-- -*-  mode: nxml -*- -->
 <!--
     drivers.xml: "The PLplot X Driver Family" chapter
-    
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
@@ -39,8 +39,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <title>The PLplot Display Driver Family</title>
 
   <para>
-    Drivers that provide screen displays are described in this chapter.  
-    Each of the drivers has a list of options, and these may be set as 
+    Drivers that provide screen displays are described in this chapter.
+    Each of the drivers has a list of options, and these may be set as
     outlined in <xref linkend="arguments" />.
   </para>
 
@@ -50,21 +50,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="xwin-driver">
     <title>The Xwin Driver (X-Windows)</title>
-    
-    <para> 
+
+    <para>
       The Xwin driver draws plots in an X-window.  Although some of the
       newer features are not supported, it remains the reference driver
       for PLplot.
     </para>
 
     <para>
-      Plots are displayed one page at a time.  The pager is advanced by 
+      Plots are displayed one page at a time.  The pager is advanced by
       pressing the Enter key, and may only be advanced in the forward
       direction.
-    </para> 
+    </para>
 
     <para>
-      Anti-aliasing is not supported, and the Xwin driver is not 
+      Anti-aliasing is not supported, and the Xwin driver is not
       unicode-enabled.
     </para>
 
@@ -96,8 +96,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="tk-driver">
     <title>The Tk Driver</title>
-    
-    <para> 
+
+    <para>
       is the prototype of a whole new interaction paradigm.  See next
       chapter.
     </para>
@@ -109,13 +109,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="aqt-driver">
     <title>The AquaTerm Driver (Mac OS X)</title>
-    
-    <para> 
-      The AquaTerm driver is a Mac OS X specific driver that is used with 
+
+    <para>
+      The AquaTerm driver is a Mac OS X specific driver that is used with
       the AquaTerm Graphics Terminal. It is unicode enabled. Text, lines
       and shades are anti-aliased.
     </para>
-    
+
     <para>
       There are no options...
     </para>
@@ -128,9 +128,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>The wxWidgets Driver (Linux, Mac OS X, Windows)</title>
 
     <para>
-      The basic wxWidgets driver's features and user interface are described 
-      in the section called 'Driver Basics'. The file 
-      drivers/README.wxwidgets describes how you can use the PLplot library 
+      The basic wxWidgets driver's features and user interface are described
+      in the section called 'Driver Basics'. The file
+      drivers/README.wxwidgets describes how you can use the PLplot library
       within your wxWidgets application.
     </para>
 
@@ -138,18 +138,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <title>wxWidgets Driver Basics</title>
 
       <para>
-	The wxWidgets driver plots in a Frame provided by the wxWidgets 
-	library. The driver is quite complete but lacks many of the GUI 
-	features of the TK driver. All plots are available at once 
-	an one can switch between all plots by pressing Alt-n. The 
-	application can be quit with Alt-x. These functions are also 
-	available in the menu. After the last plot one will advance again 
-	to the first plot. Anti-aliasing is supported and and the wxWidgets 
-	driver is unicode enabled. It is also possible to address the 
-	wxWidgets driver from within a wxWidgets application - this is 
+	The wxWidgets driver plots in a Frame provided by the wxWidgets
+	library. The driver is quite complete but lacks many of the GUI
+	features of the TK driver. All plots are available at once
+	an one can switch between all plots by pressing Alt-n. The
+	application can be quit with Alt-x. These functions are also
+	available in the menu. After the last plot one will advance again
+	to the first plot. Anti-aliasing is supported and and the wxWidgets
+	driver is unicode enabled. It is also possible to address the
+	wxWidgets driver from within a wxWidgets application - this is
 	described in the next section.
       </para>
-      
+
       <para>
 	The available driver options (used with the
 	<parameter>-drvopt</parameter> command-line argument) are:
@@ -164,13 +164,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
       <para>
-	The text option toggles between TrueType and Hershey fonts. The 
-	Hershey fonts provide a reference implementation for text 
+	The text option toggles between TrueType and Hershey fonts. The
+	Hershey fonts provide a reference implementation for text
 	representation in PLplot.
       </para>
 
       <para>
-	The smooth option will turn on or off text smoothing for True 
+	The smooth option will turn on or off text smoothing for True
 	Type fonts. This will increase the time for a plot considerably.
       </para>
     </sect2>
@@ -184,8 +184,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <title>The PLplot Output Driver Family</title>
 
   <para>
-    Drivers which produce output files are described in this chapter.  
-    Each of the drivers has a list of options, and these may be set as 
+    Drivers which produce output files are described in this chapter.
+    Each of the drivers has a list of options, and these may be set as
     outlined in <xref linkend="arguments" />.
   </para>
 
@@ -195,10 +195,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="gd-driver">
     <title>The GD Driver</title>
-    
-    <para> 
-      The GD driver produces png, jpeg, and gif images, using devices by 
-      the same name.  The GD driver is unicode enabled.  Text is 
+
+    <para>
+      The GD driver produces png, jpeg, and gif images, using devices by
+      the same name.  The GD driver is unicode enabled.  Text is
       anti-aliased, but lines and shades are not.
     </para>
 
@@ -209,12 +209,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  optimize: Optimize PNG palette when possible
 	</para></listitem>
 	<listitem><para>
-	  def_black15: Define idx 15 as black. If the background is 
-	  "whiteish" (from "-bg" option), force index 15 (traditionally 
+	  def_black15: Define idx 15 as black. If the background is
+	  "whiteish" (from "-bg" option), force index 15 (traditionally
 	  white) to be "black"
 	</para></listitem>
 	<listitem><para>
-	  swp_red15: Swap index 1 (usually red) and 1 (usually white); 
+	  swp_red15: Swap index 1 (usually red) and 1 (usually white);
 	  always done after "black15"; quite useful for quick changes to
 	  web pages
 	</para></listitem>
@@ -235,15 +235,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="pdf-driver">
     <title>The PDF Driver</title>
-    
+
     <para>
-      A basic version of a pdf driver has been added to PLplot. This driver 
+      A basic version of a pdf driver has been added to PLplot. This driver
       is based on the libharu library see:
       <ulink url="http://libharu.org/">
 	libharu.org</ulink>.
-	At present only the Hershey fonts are used and there is no support for 
-	pdf or ttf fonts. Compression of the pdf output is not enabled and the 
-	paper size can't be chosen. All these issues will be addressed in 
+	At present only the Hershey fonts are used and there is no support for
+	pdf or ttf fonts. Compression of the pdf output is not enabled and the
+	paper size can't be chosen. All these issues will be addressed in
 	later releases.
     </para>
 
@@ -259,17 +259,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="postscript-driver">
     <title>The PostScript Driver</title>
-    
-    <para> 
+
+    <para>
       The PostScript driver produces publication-quality PostScript
-      output.  The driver provides two devices: the ps device for 
+      output.  The driver provides two devices: the ps device for
       black-and-white plots, and the psc device for color plots.
     </para>
 
     <para>
       This driver is unicode enabled, and PostScript Type I fonts are used.
       Type I fonts do not have all of the available unicode symbols
-      represented.  For this reason, Hershey fonts are used for drawing 
+      represented.  For this reason, Hershey fonts are used for drawing
       symbols by default, unless specified otherwise using the driver options.
     </para>
 
@@ -296,11 +296,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="truetype-postscript-driver">
     <title>The TrueType PostScript Driver</title>
-    
+
     <para>
-      This is a PostScript driver that supports TrueType fonts. This 
-      allows access to a far greater range of fonts and characters than 
-      is possible using Type 1 PostScript fonts 
+      This is a PostScript driver that supports TrueType fonts. This
+      allows access to a far greater range of fonts and characters than
+      is possible using Type 1 PostScript fonts
       (see <xref linkend="postscript-driver"/>).
       It is the driver to use for generating publication quality output
       using PLplot. The driver provides two devices: the ps-ttf device
@@ -308,17 +308,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      The driver requires the LASi (v1.0.5), pango and pangoft2 libraries 
-      to work. The pango and pangoft2 libraries are widely distributed 
-      with most Linux distributions and give the psttf driver full complex 
-      text layout (CTL) capability (see 
+      The driver requires the LASi (v1.0.5), pango and pangoft2 libraries
+      to work. The pango and pangoft2 libraries are widely distributed
+      with most Linux distributions and give the psttf driver full complex
+      text layout (CTL) capability (see
       <ulink url="http://plplot.sourceforge.net/examples.php?demo=24">
       http://plplot.sourceforge.net/examples.php?demo=24</ulink>
-      for an example of this capability).  The LASi library is not part of 
-      most distributions at this time. The source code can be downloaded 
-      from http://www.unifont.org/lasi/. The library is small and easy to 
-      build and install.  Make sure you use LASi-1.0.5.  The psttf device 
-      driver uses new capabilities in this version of LASi and no longer 
+      for an example of this capability).  The LASi library is not part of
+      most distributions at this time. The source code can be downloaded
+      from http://www.unifont.org/lasi/. The library is small and easy to
+      build and install.  Make sure you use LASi-1.0.5.  The psttf device
+      driver uses new capabilities in this version of LASi and no longer
       works with LASi-1.0.4.
     </para>
 
@@ -345,8 +345,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="latex-postscript-driver">
     <title>The LaTeX PostScript Driver</title>
-    
-    <para> 
+
+    <para>
       This is a PostScript device driver that writes out its results in two
       files.  (1) The encapsulated postscript (EPS) file contains all the
       postscript commands for rendering the plot without characters, and (2)
@@ -354,9 +354,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       and renders the plot characters using LaTeX commands (and LaTeX
       fonts!) in alignment with the EPS file to produce a combined result.
     </para>
-    
+
     <para>
-      
+
       Suppose you create the EPS and LaTeX files with the following command:
       <userinput>./x01c -dev pstex -o x01c.eps</userinput>.  The EPS file
       is then stored in <filename>x01c.eps</filename> and the LaTeX fragment
@@ -364,7 +364,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       you may use the generated files with the <filename>x01c.tex</filename>
       LaTeX code that follows:
     </para>
-    
+
     <para>
       <programlisting>\documentclass{article}
       \usepackage[dvips]{graphicx}
@@ -396,11 +396,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <title>The SVG Driver</title>
 
     <para>
-      The SVG driver produces Scalable Vector Graphics files that are 
+      The SVG driver produces Scalable Vector Graphics files that are
       compliant with the SVG 1.1 specification as defined here:
       http://www.w3.org/Graphics/SVG/. The driver is unicode enabled
       and both text and lines are anti-aliased. As SVG is just an
-      XML based graphics language, the visual quality of the resulting 
+      XML based graphics language, the visual quality of the resulting
       plot will depend on the SVG rendering engine that is used and
       what fonts that are available to it.
     </para>

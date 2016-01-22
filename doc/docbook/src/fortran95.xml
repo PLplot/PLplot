@@ -97,8 +97,8 @@ elements defined and the points are to be plotted using the ascii "+"
 symbol (although if you are using a unicode-aware PLplot device, then
 you can try many other unicode possibilities for the symbol such as
 the U+22C5 DOT OPERATOR, "⋅").  Note that our Fortran binding
-implementation below allows use of the kind(1.0d0) choice of
-my_real precision as well.</para>
+implementation below allows use of the <literal>kind(1.0d0)</literal> choice of
+<literal>my_real</literal> precision as well.</para>
 
 <para>The <literal>plstring</literal>-relevant parts of the <literal>plplot</literal> module used above are
 <programlisting>
@@ -186,7 +186,7 @@ floating-point data between the type used by the calling routine and
 the type used by the underlying PLplot C library, and the intrinsic
 function <literal>int()</literal> (not used in the above example) is
 used for similarly converting integer data.  The intrinsic function
-<literal>trim()</literal> and the <literal>ISO_C_BIDING</literal>
+<literal>trim()</literal> and the <literal>ISO_C_BINDING</literal>
 parameter <literal>c_null_char</literal> are used to help convert
 a Fortran character string into a NULL-terminated C string.
 Also note the above interface block defining
@@ -220,25 +220,25 @@ Fortran binding.
         </thead>
         <tbody>
           <row>
-            <entry>PLFLT</entry><entry>real(kind=private_plflt)</entry><entry>real(kind=my_flt)</entry>
+            <entry><literal>PLFLT</literal></entry><entry><literal>real(kind=private_plflt)</literal></entry><entry><literal>real(kind=my_flt)</literal></entry>
           </row>
           <row>
-            <entry>PLFLT *</entry><entry>real(kind=private_plflt), dimension(*)</entry><entry>real(kind=my_flt), dimension(:)</entry>
+            <entry><literal>PLFLT *</literal></entry><entry><literal>real(kind=private_plflt), dimension(*)</literal></entry><entry><literal>real(kind=my_flt), dimension(:)</literal></entry>
           </row>
           <row>
-            <entry>PLFLT * *</entry><entry>type(c_ptr), dimension(*)</entry><entry>real(kind=my_flt), dimension(:, :)</entry>
+            <entry><literal>PLFLT **</literal></entry><entry><literal>type(c_ptr), dimension(*)</literal></entry><entry><literal>real(kind=my_flt), dimension(:, :)</literal></entry>
           </row>
           <row>
-            <entry>PLINT</entry><entry>integer(kind=private_plint)</entry><entry>integer</entry>
+            <entry><literal>PLINT</literal></entry><entry><literal>integer(kind=private_plint)</literal></entry><entry><literal>integer</literal></entry>
           </row>
           <row>
-            <entry>PLINT *</entry><entry>integer(kind=private_plint), dimension(*)</entry><entry>integer, dimension(:)</entry>
+            <entry><literal>PLINT *</literal></entry><entry><literal>integer(kind=private_plint), dimension(*)</literal></entry><entry><literal>integer, dimension(:)</literal></entry>
           </row>
           <row>
-            <entry>PLBOOL</entry><entry>integer(kind=private_plbool)</entry><entry>logical</entry>
+            <entry><literal>PLBOOL</literal></entry><entry><literal>integer(kind=private_plbool)</literal></entry><entry><literal>logical</literal></entry>
           </row>
           <row>
-            <entry>char *</entry><entry>character(len=1), dimension(*)</entry><entry>character(len=*)</entry>
+            <entry><literal>char *</literal></entry><entry><literal>character(len=1), dimension(*)</literal></entry><entry><literal>character(len=*)</literal></entry>
           </row>
         </tbody>
       </tgroup>
@@ -288,8 +288,7 @@ double-precision floating-point entities but no equivalent single-precision floa
         <literal>transform_coordinate</literal> callback as its first
         argument, that callback will be allowed to only have double-precision
         arguments.  And similarly for <literal>plslabelfunc</literal> and the
-        <literal>label_func</literal> callback with double-precision
-        arguments.
+        <literal>label_func</literal> callback.
       </para></listitem>
       <listitem><para>
         The new Fortran binding defines a derived <literal>PLGraphicsIn</literal> type as follows:

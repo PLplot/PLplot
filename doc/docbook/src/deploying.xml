@@ -129,8 +129,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <listitem>
 	<para>
 	  Build the application(s) on the build machine using either the
-	  make or cmake based build system in 
-	  /usr/local/plplot/share/plplotX.Y.Z/examples where X.Y.Z is 
+	  make or cmake based build system in
+	  /usr/local/plplot/share/plplotX.Y.Z/examples where X.Y.Z is
 	  the plplot version, and copy the resulting executable(s) to the users'
 	  machines.  Since the PLplot install location is consistent on all
 	  machines, the application should work the same way on all
@@ -256,7 +256,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <listitem>
 	<para>
 	  Most UNIX, BSD and Linux systems use an environment variable
-	  <envar>LD_LIBRARY_PATH</envar> which indicates 
+	  <envar>LD_LIBRARY_PATH</envar> which indicates
 	  directories where shared libraries can be found. Some use
 	  <envar>SHLIB_PATH</envar>, like HPUX.
 	</para>
@@ -280,7 +280,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <para>
     In the <emphasis>third</emphasis> (default) case, the PLplot fonts and
-    maps are found as in the <emphasis>first</emphasis> case, and the 
+    maps are found as in the <emphasis>first</emphasis> case, and the
     shared libraries are found as in the <emphasis>second</emphasis> case,
     but in addition the separated dynamic devices have to be found as well.
   </para>

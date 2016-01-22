@@ -107,7 +107,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    then the chances are high that no backwards incompatibilities
 	    have been introduced.  If new functions has been added, then
 	    the library soname will be kept, although the soversion
-	    strings in <filename>cmake/module/plplot_version.cmake</filename> 
+	    strings in <filename>cmake/module/plplot_version.cmake</filename>
 	    must be changed following the instructions in that file.
 	  </para>
 	</listitem>

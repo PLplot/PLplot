@@ -343,7 +343,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  procedure Simple_Example is
     x, y : Real_Vector(-10 .. 10);
  begin
-    for i in x&apos;range loop 
+    for i in x&apos;range loop
        x(i) := Long_Float(i);
        y(i) := x(i)**2;
     end loop;
@@ -795,7 +795,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </sect2>
     <sect2>
       <title>GNAT for OS X</title>
-      <para>A web site for OS X users is at <ulink url="http://www.macada.org/macada/Welcome.html">www.macada.org</ulink>. 
+      <para>A web site for OS X users is at <ulink url="http://www.macada.org/macada/Welcome.html">www.macada.org</ulink>.
       Although rather dated, the mailing list is still active. Assistance can be
       found at other places on the web including the usenet comp.lang.ada.</para>
     </sect2>

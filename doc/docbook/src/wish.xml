@@ -1,7 +1,7 @@
 <!-- -*-  mode: nxml -*- -->
 <!--
     wish.xml: "Building an Extended WISH" chapter
-    
+
     Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
     Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
     Copyright (C) 2003  Joao Cardoso
@@ -36,7 +36,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="extended-wish">
   <title>Building an Extended WISH</title>
-  
+
   <para>
     Beginning with PLplot 5.0, a new and powerful paradigm for interaction
     with PLplot is introduced.  This new paradigm consists of an
@@ -55,7 +55,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="intro-tcl">
     <title>Introduction to Tcl</title>
-    
+
     <para>
       The Tool Command Language, or just Tcl (pronounced
       <quote>tickle</quote>) is an embeddable script language which can be
@@ -75,7 +75,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <sect2 id="motivation-tcl">
       <title>Motivation for Tcl</title>
-      
+
       <para>
 	The central observation which led Ousterhout to create Tcl was the
 	realization that many applications require the use of some sort of
@@ -95,10 +95,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	be a spectacular understatement.
       </para>
     </sect2>
-    
+
     <sect2 id="capabilities-tcl">
       <title>Capabilities of Tcl</title>
-      
+
       <para>
 	The mechanics of using Tcl are very straightforward.  Basically you
 	just have to include the file <filename>tcl.h</filename>, issue
@@ -107,7 +107,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	Then just link against <filename>libtcl.a</filename> and off you
 	go.
       </para>
-      
+
       <para>
 	Having done this, you have essentially created a shell.  That is, your
 	program can now execute shell scripts in the Tcl language.  Tcl
@@ -116,7 +116,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	define your own subroutines as Tcl procedures which effectively
 	become new keywords.
       </para>
-      
+
       <para>
 	But the real power of this approach is to add new commands to the
 	interpreter which are realized by compiled C code in your
@@ -125,7 +125,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	interpreter comes across a specific keyword of your choosing in
 	the shell scripts it executes.
       </para>
-      
+
       <para>
 	This facility allows you with tremendous ease, to endow your
 	application with a powerful, robust and full featured macro
@@ -135,10 +135,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	essentially shell programming via script editing.
       </para>
     </sect2>
-    
+
     <sect2 id="acquiring-tcl">
       <title>Acquiring Tcl</title>
-      
+
       <para>
 	There are several important sources of info and code for Tcl.
 	Definitely get the book mentioned above, and the source code for the
@@ -146,7 +146,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	url="http://www.tcl.tk/software/tcltk/download.html">The Tcl developer
 	Xchange</ulink>.
       </para>
-      
+
       <para>
 	Additionally there is a newsgroup, <literal>comp.lang.tcl</literal>
 	which is well read, and an excellent place for people to get
@@ -173,10 +173,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
     </sect2>
   </sect1>
-  
+
   <sect1 id="introduction-tk">
     <title>Introduction to Tk</title>
-    
+
     <para>
       As mentioned above, Tcl is designed to be extensible.  The first and
       most basic Tcl extension is Tk, an X11 toolkit.  Tk provides the same
@@ -186,7 +186,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       are seldom needed&mdash;the vast majority of useful Tk applications
       can be coded using Tcl scripts.
     </para>
-    
+
     <para>
       If it has not become obvious already, it is worth noting at this
       point that Tcl is one example of a family of languages known
@@ -197,7 +197,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       available in a basic HLL.  Consider, for example, the basic
       <quote>Hello World!</quote> application written in Tcl/Tk.
     </para>
-    
+
     <para>
       <programlisting>
 	#!/usr/local/bin/wish -f
@@ -206,7 +206,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	pack .hello<!--
 	--></programlisting>
     </para>
-    
+
     <para>
       That's it!  That's all there is to it.  If you have ever programmed X
       using a traditional toolkit such as Athena or Motif, you can
@@ -215,7 +215,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       you would need to use a standard toolkit, or you can go write the
       same program in one of the usual toolkits and see for yourself...
     </para>
-    
+
     <para>
       We cannot hope to provide a thorough introduction to Tk programming
       in this section.  Instead, we will just say that immensely complex
@@ -226,13 +226,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       a tiny fraction of the time it takes to do the same work in a
       conventional toolkit.  Literally minutes versus days.
     </para>
-    
+
     <para>
       Tk provides widgets for labels, buttons, radio buttons, frames with
       or without borders, menubars, pull downs, toplevels, canvases, edit
       boxes, scroll bars, etc.
     </para>
-    
+
     <para>
       A look at the interface provided by the PLplot Tk driver
       should help give you a better idea of what you can do with this
@@ -242,10 +242,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       news, etc.  The list is endless and growing fast...
     </para>
   </sect1>
-  
+
   <sect1 id="introduction-itcl">
     <title>Introduction to [incr Tcl]</title>
-    
+
     <para>
       Another extremely powerful and popular extension to Tcl is [incr
       Tcl].  [incr Tcl] is to Tcl what C++ is to C.  The analogy is very
@@ -256,27 +256,27 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Essentially if you know how C++ relates to C, and if you know Tcl,
       then you understand the programming model provided by Itcl.
     </para>
-    
+
     <para>
       In particular, you can use Itcl to implement new widgets which are
       composed of more basic Tk widgets.  A file selector is an example.
       Using Tk, one can build up a very nice file selector comprised of
       more basic Tk widgets such as entries, listboxes, scrollbars, etc.
     </para>
-    
+
     <para>
       But what if you need two file selectors?  You have to do it all
       again.  Or what if you need two different kinds of file selectors,
       you get to do it again and add some incremental code.
     </para>
-    
+
     <para>
       This is exactly the sort of thing object orientation is intended to
       assist.  Using Itcl you can create an <literal>itcl_class
       FileSelector</literal> and then you can instantiate them freely as
       easily as:
     </para>
-    
+
     <para>
       <programlisting>
 	FileSelector .fs1
@@ -294,23 +294,23 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Tcl/Tk community for designing and implementing megawidgets, and
       [incr Tcl] is the most popular enabling technology.
     </para>
-    
+
     <para>
       In particular, it is the enabling technology which is employed for
       the construction of the PLplot Tcl extensions, described below.
     </para>
   </sect1>
-  
+
   <sect1 id="extensions-tcl">
     <title>PLplot Extensions to Tcl</title>
-    
+
     <para>
       Following the paradigm described above, PLplot provides extensions to
       Tcl as well, designed to allow the use of PLplot from Tcl/Tk
       programs.  Essentially the idea here is to allow PLplot programmers
       to achieve two goals:
     </para>
-    
+
     <itemizedlist>
       <listitem>
 	<para>
@@ -325,7 +325,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</para>
       </listitem>
     </itemizedlist>
-    
+
     <para>
       For instance, prior to PLplot 5.0, if a programmer wanted to use
       PLplot in a Tcl/Tk application, the best he could manage was to call
@@ -334,7 +334,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       other words, there was no integration, and the result was pretty
       sloppy.
     </para>
-    
+
     <para>
       With PLplot 5.0, there is now a supported Tcl interface to PLplot
       functionality.  This is provided through a <quote>family</quote> of
@@ -353,7 +353,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       Actually, there's the update/init business&mdash;need to clear that up.
     </para>
-    
+
     <para>
       The <literal>PLWin</literal> class then mirrors much of the PLplot C
       API, so that a user can generate plots in the PLplot widget entirely
@@ -361,10 +361,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       demo,
     </para>
   </sect1>
-  
+
   <sect1 id="custom-extensions-tcl">
     <title>Custom Extensions to Tcl</title>
-    
+
     <para>
       By this point, you should have a pretty decent understanding of the
       underlying philosophy of Tcl and Tk, and the whole concept of
@@ -378,7 +378,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <command>plserver</command> program, described in an earlier chapter,
       could just as easily have been called <command>plwish</command>.
     </para>
-    
+
     <para>
       In any event, as exciting and useful as these standalone, extended
       windowing shells may be, they are ultimately only the beginning of
@@ -390,10 +390,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       introduction to the process of constructing your own WISH.  After
       that, you're on your own...
     </para>
-    
+
     <sect2 id="wish-construction">
       <title>WISH Construction</title>
-      
+
       <para>
 	The standard way to make your own WISH, as supported by the Tcl/Tk
 	system, is to take a boilerplate file,
@@ -401,7 +401,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	extensions you will be requiring, add some commands to the
 	interpreter, and link it all together.
       </para>
-      
+
       <para>
 	Here for example is the important part of the
 	<filename>tk02</filename> demo, extracted from the file
@@ -409,7 +409,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	WISH definition file for the <filename>tk02</filename> demo.
 	Comments and other miscellany are omitted.
       </para>
-      
+
       <para>
 	<programlisting>
 	  #include "tk.h"
@@ -477,7 +477,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  /* ... myPlotCmd, etc ... */<!--
 	  --></programlisting>
       </para>
-      
+
       <para>
 	The calls to <literal>Tcl_Init()</literal> and
 	<literal>Tk_Init()</literal> are in every WISH.  To make an
@@ -488,17 +488,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	interpreter, associating them with functions in your code using
 	<literal>Tcl_CreateCommand()</literal> as shown.
       </para>
-      
+
       <para>
 	In particular, PLplot has a number of [incr Tcl] classes in its Tcl
 	library.  If you want to be able to use those in your WISH, you
 	need to include the initialization of [incr Tcl].
       </para>
     </sect2>
-    
+
     <sect2 id="wish-linking">
       <title>WISH Linking</title>
-      
+
       <para>
 	Having constructed your <literal>Tcl_AppInit()</literal> function,
 	you now merely need to link this file with your own private files
@@ -506,28 +506,28 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<literal>Tcl_CreateCommand()</literal> (and any they depend on),
 	against the Tcl, Tk and extension libraries you are using.
       </para>
-      
+
       <para>
 	<programlisting>
 	  cc -c tkAppInit.c
 	  cc -c mycommands.c
-	  cc -o my_wish tkAppInit.o mycommands.o 
+	  cc -o my_wish tkAppInit.o mycommands.o
 	  -lplplotftk -ltcl -ltk -litcl -lX11 -lm<!--
 	  --></programlisting>
       </para>
 
-      <para>      
+      <para>
 	Add any needed <literal>-L</literal> options as needed.
       </para>
-      
+
       <para>
 	Voila!  You have made a wish.
       </para>
     </sect2>
-    
+
     <sect2 id="wish-programming">
       <title>WISH Programming</title>
-      
+
       <para>
 	Now you are ready to put the genie to work.  The basic plan here is
 	to write shell scripts which use your new application specific
@@ -535,7 +535,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	interfaces to control and utilize the facilities made available in
 	your extensions.
       </para>
-      
+
       <para>
 	Effectively this just comes down to writing Tcl/Tk code, embellished
 	as appropriate with calls to the extension commands you registered.
