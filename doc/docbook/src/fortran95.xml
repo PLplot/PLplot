@@ -49,7 +49,7 @@ precision of the underlying C library.  That makes this binding much
 easier to use than our previous implementation of the Fortran binding
 where calling routines were forced to use the same floating-point precision that was
 configured for the underlying PLplot C library.</para>
-  
+
 <para> Note: in this chapter <quote>Fortran</quote> stands for
 <quote>Fortran as defined by the Fortran 2003 standard</quote>.  Older
 versions of PLplot supported FORTRAN 77, but the binding for this 40
@@ -90,14 +90,14 @@ program test_plplot
     ...
     call plstring(x,y,"+")
     ...
-end program test_plplot    
+end program test_plplot
 </programlisting>
 where for this particular case <literal>x</literal> and <literal>y</literal> are arrays with 6
 elements defined and the points are to be plotted using the ascii "+"
 symbol (although if you are using a unicode-aware PLplot device, then
 you can try many other unicode possibilities for the symbol such as
 the U+22C5 DOT OPERATOR, "⋅").  Note that our Fortran binding
-implementation below allows use of the the kind(1.0d0) choice of
+implementation below allows use of the kind(1.0d0) choice of
 my_real precision as well.</para>
 
 <para>The <literal>plstring</literal>-relevant parts of the <literal>plplot</literal> module used above are
@@ -106,7 +106,7 @@ module plplot
     ...
     use plplot_single
     use plplot_double
-    ...  
+    ...
 end module plplot
 </programlisting>
 The redacted part of the <literal>plplot</literal> module implements the interfaces to
@@ -153,7 +153,7 @@ contains
        call interface_plstring( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &amp;
            trim(string)//c_null_char )
     end subroutine plstring_impl
-    ...  
+    ...
 end module plplot_single
 </programlisting>
 The <literal>plstring</literal>-relevant parts of the <literal>plplot_double</literal> module are defined
@@ -176,7 +176,7 @@ private_double = kind(1.0d0)</literal>.  The result is the Fortran
 compiler automatically chooses the correct overloaded version of
 <literal>plstring</literal> that corresponds to the precision of the
 floating-point arguments used by the program (e.g., like
-<literal>plplot_test</literal> above) that is being compiled.  The
+<literal>test_plplot</literal> above) that is being compiled.  The
 intrinsic function <literal>size()</literal> is used to determine the
 size of arrays and allows checking that their dimensions are
 consistent with each other when the C implementation uses a common
@@ -186,10 +186,11 @@ floating-point data between the type used by the calling routine and
 the type used by the underlying PLplot C library, and the intrinsic
 function <literal>int()</literal> (not used in the above example) is
 used for similarly converting integer data.  The intrinsic function
-<literal>trim()</literal> and the iso_c_binding parameter c_null_char
-are used to help convert a Fortran character string into a
-NULL-terminated C string.  Also note the above interface block
-defining <literal>subroutine interface_plstring</literal> is the
+<literal>trim()</literal> and the <literal>ISO_C_BIDING</literal>
+parameter <literal>c_null_char</literal> are used to help convert
+a Fortran character string into a NULL-terminated C string.
+Also note the above interface block defining
+<literal>subroutine interface_plstring</literal> is the
 Fortran representation of the exact C API of &plstring;. </para>
 
 <para> Here is a table summarizing how C data types correspond to
@@ -314,9 +315,9 @@ double-precision floating-point entities but no equivalent single-precision floa
       </para></listitem>
       <listitem><para>
         The new Fortran binding provides three auxiliary floating-point parameters,
-        PL_PI, PL_TWOPI and PL_NOTSET which are all defined in double precision.
-        If the calling routine requires single precision instead it should define a local parameter as in
-        the following code fragment:
+        <literal>PL_PI</literal>, <literal>PL_TWOPI</literal> and <literal>PL_NOTSET</literal> which are
+        all defined in double precision. If the calling routine requires single precision instead it
+        should define a local parameter as in the following code fragment:
         <programlisting>
     use plplot
     ...
