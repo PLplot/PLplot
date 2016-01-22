@@ -27,10 +27,10 @@ program x06f
 
     character (len=3) :: text
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!   Full sized page for display
+    !   Full sized page for display
     call plinit()
 
     do kind_font = 1,2
@@ -44,17 +44,17 @@ program x06f
 
             call plcol0(2)
 
-!           Set up viewport and window
+            !           Set up viewport and window
 
             call plvpor(0.1_plflt, 1.0_plflt, 0.1_plflt, 0.9_plflt)
             call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.3_plflt)
 
-!           Draw the grid using plbox
+            !           Draw the grid using plbox
 
             call plbox('bcg', 0.1_plflt, 0, 'bcg', 0.1_plflt, 0)
             call plcol0(15)
 
-!           Write the digits below the frame
+            !           Write the digits below the frame
 
             do i=0,9
                 write (text,'(i1)') i
@@ -64,18 +64,18 @@ program x06f
             k=0
             do i=0,12
 
-!               Write the digits to the left of the frame
+                !               Write the digits to the left of the frame
 
                 write (text,'(i0)') 10*i
 
                 call plmtex('lv', 1.0_plflt, (1.0_plflt-(2*i+1)/26.0_plflt), &
-                   1.0_plflt, text)
+                       1.0_plflt, text)
 
                 do j=0,9
                     x=0.1_plflt*j+0.05_plflt
                     y=1.25_plflt-0.1_plflt*i
 
-!                   Display the symbols
+                    !                   Display the symbols
                     if (k < 128) call plpoin(x,y,k)
 
                     k=k+1
@@ -84,11 +84,11 @@ program x06f
             enddo
 
             if (kind_font==1) then
-               call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
-                  'PLplot Example 6 - plpoin symbols (compact)')
+                call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+                       'PLplot Example 6 - plpoin symbols (compact)')
             else
-               call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
-                  'PLplot Example 6 - plpoin symbols (extended)')
+                call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+                       'PLplot Example 6 - plpoin symbols (extended)')
             endif
         enddo
     enddo

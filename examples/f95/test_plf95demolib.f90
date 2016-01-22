@@ -7,10 +7,10 @@ program test_plf95demolib
     real, dimension(10)   :: value
     integer               :: i
     integer, dimension(4) :: start = (/  0,  0,  1,  2 /), &
-                             stop  = (/ 10, 10, 11, 22 /), &
-                             step  = (/  1,  2,  1,  2 /), &
-                             expected_size = &
-                                     (/ 10,  5, 10, 10 /)
+           stop  = (/ 10, 10, 11, 22 /), &
+           step  = (/  1,  2,  1,  2 /), &
+           expected_size = &
+           (/ 10,  5, 10, 10 /)
     integer               :: sz
 
     ! Function arange:
@@ -35,4 +35,4 @@ program test_plf95demolib
             endif
         endif
     enddo
-end program
+end program test_plf95demolib

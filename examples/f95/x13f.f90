@@ -26,26 +26,26 @@ program x13f
     integer            ::  i, j, dthet, theta0, theta1, theta
     integer :: plparseopts_rc
     character(len=20), dimension(5) :: text = &
-         (/ 'Maurice ', 'Geoffrey', 'Alan    ', 'Rafael  ', 'Vince   '/)
+           (/ 'Maurice ', 'Geoffrey', 'Alan    ', 'Rafael  ', 'Vince   '/)
     real(kind=plflt)   :: per(5) = &
-         (/ 10._plflt , 32._plflt , 12._plflt , 30._plflt , 16._plflt /)
+           (/ 10._plflt , 32._plflt , 12._plflt , 30._plflt , 16._plflt /)
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!   Ask user to specify the output device.
+    !   Ask user to specify the output device.
     call plinit()
 
     call pladv(0)
-!   Ensure window has aspect ratio of one so circle is
-!   plotted as a circle.
+    !   Ensure window has aspect ratio of one so circle is
+    !   plotted as a circle.
     call plvasp(1.0_plflt)
     call plwind(0._plflt, 10._plflt, 0._plflt, 10._plflt)
-!   call plenv( 0._plflt, 10._plflt, 0._plflt, 10._plflt, 1, -2 )
+    !   call plenv( 0._plflt, 10._plflt, 0._plflt, 10._plflt, 1, -2 )
     call plcol0(2)
 
-!   n.b. all theta quantities scaled by 2*pi/500 to be integers to avoid
-!   floating point logic problems.
+    !   n.b. all theta quantities scaled by 2*pi/500 to be integers to avoid
+    !   floating point logic problems.
     theta0 = 0
     dthet = 1
 
@@ -54,8 +54,8 @@ program x13f
         x(j+1) = 5._plflt
         y(j+1) = 5._plflt
         j = j + 1
-!       n.b. the theta quantities multiplied by 2*pi/500 afterward so
-!       in fact per is interpreted as a percentage.
+        !       n.b. the theta quantities multiplied by 2*pi/500 afterward so
+        !       in fact per is interpreted as a percentage.
         theta1 = int(theta0 + 5*per(i+1))
         if (i .eq. 4) theta1 = 500
         do theta = theta0, theta1, dthet
@@ -74,7 +74,7 @@ program x13f
         dx = 0.25_plflt * cos(just)
         dy = 0.25_plflt * sin(just)
         if ((theta0  + theta1) .lt. 250 .or. &
-            (theta0 + theta1) .gt. 750) then
+               (theta0 + theta1) .gt. 750) then
             just = 0._plflt
         else
             just = 1._plflt

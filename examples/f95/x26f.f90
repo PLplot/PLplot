@@ -67,74 +67,74 @@
 
 program x26f
 
-  use plplot, double_PI => PL_PI
-  implicit none
+    use plplot, double_PI => PL_PI
+    implicit none
 
-  real(kind=plflt), parameter :: PI = double_PI
-  integer, parameter :: nolangs = 2
-  integer, parameter :: nlegend = 2
+    real(kind=plflt), parameter :: PI = double_PI
+    integer, parameter :: nolangs = 2
+    integer, parameter :: nlegend = 2
 
-  character(len=80) x_label(nolangs)
-  character(len=80) y_label(nolangs)
-  character(len=80) legend_text(2,nolangs)
-  character(len=80) alty_label(nolangs)
-  character(len=80) title_label(nolangs)
-  character(len=80) line_label(nolangs)
+    character(len=80) x_label(nolangs)
+    character(len=80) y_label(nolangs)
+    character(len=80) legend_text(2,nolangs)
+    character(len=80) alty_label(nolangs)
+    character(len=80) title_label(nolangs)
+    character(len=80) line_label(nolangs)
 
-  integer      i, j
-  integer :: plparseopts_rc
+    integer      i, j
+    integer :: plparseopts_rc
 
-  data (x_label(i) ,i=1,nolangs) / &
-       'Frequency', &
-       'Частота'/
+    data (x_label(i) ,i=1,nolangs) / &
+           'Frequency', &
+           'Частота'/
 
-  data (y_label(i) ,i=1,nolangs) / &
-       'Amplitude (dB)', &
-       'Амплитуда (dB)'/
+    data (y_label(i) ,i=1,nolangs) / &
+           'Amplitude (dB)', &
+           'Амплитуда (dB)'/
 
-  data (alty_label(i) ,i=1,nolangs) / &
-       'Phase shift (degrees)', &
-       'Фазовый сдвиг (градусы)'/
+    data (alty_label(i) ,i=1,nolangs) / &
+           'Phase shift (degrees)', &
+           'Фазовый сдвиг (градусы)'/
 
-  ! Short rearranged versions of y_label and alty_label.
-  data ((legend_text(j,i), j=1, nlegend), i=1,nolangs) / &
-      'Amplitude',          'Phase shift'              , &
-      'Амплитуда', 'Фазовый сдвиг' /
+    ! Short rearranged versions of y_label and alty_label.
+    data ((legend_text(j,i), j=1, nlegend), i=1,nolangs) / &
+           'Amplitude',          'Phase shift'              , &
+           'Амплитуда', 'Фазовый сдвиг' /
 
-  data (title_label(i) ,i=1,nolangs) / &
-      'Single Pole Low-Pass Filter', &
-      'Однополюсный Низко-Частотный Фильтр'/
+    data (title_label(i) ,i=1,nolangs) / &
+           'Single Pole Low-Pass Filter', &
+           'Однополюсный Низко-Частотный Фильтр'/
 
-  data (line_label(i) ,i=1,nolangs) / &
-       '-20 dB/decade', &
-       '-20 dB/десяток'/
+    data (line_label(i) ,i=1,nolangs) / &
+           '-20 dB/decade', &
+           '-20 dB/десяток'/
 
-  !  Parse and process command line arguments
+    !  Parse and process command line arguments
 
-  plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-  !  Initialize plplot
+    !  Initialize plplot
 
-  call plinit()
-  call plfont(2)
+    call plinit()
+    call plfont(2)
 
-  !  Make log plots using two different styles.
+    !  Make log plots using two different styles.
 
-  do i = 1,nolangs
-     call plot1(nlegend, 0, x_label(i), y_label(i), alty_label(i), &
-          legend_text(:,i), title_label(i), line_label(i))
-  end do
-  call plend()
+    do i = 1,nolangs
+        call plot1(nlegend, 0, x_label(i), y_label(i), alty_label(i), &
+               legend_text(:,i), title_label(i), line_label(i))
+    end do
+    call plend()
 
 end program x26f
 
-  ! --------------------------------------------------------------------------
-  !  plot1
-  !
-  !  Log-linear plot.
-  ! --------------------------------------------------------------------------
+! --------------------------------------------------------------------------
+!  plot1
+!
+!  Log-linear plot.
+! --------------------------------------------------------------------------
 
-  subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
+subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
        legend_text, title_label, line_label )
 
     use plplot, double_PI => PL_PI
@@ -169,10 +169,10 @@ end program x26f
 
     f0 = 1.0
     do i = 1,101
-       freql(i) = -2.0_plflt + (i-1) / 20.0_plflt
-       freq     = 10.0_plflt ** freql(i)
-       ampl(i)  = 20.0_plflt * log10(1.0_plflt / sqrt(1.0_plflt + (freq/f0)**2))
-       phase(i) = -(180.0_plflt / PI) * atan(freq / f0)
+        freql(i) = -2.0_plflt + (i-1) / 20.0_plflt
+        freq     = 10.0_plflt ** freql(i)
+        ampl(i)  = 20.0_plflt * log10(1.0_plflt / sqrt(1.0_plflt + (freq/f0)**2))
+        phase(i) = -(180.0_plflt / PI) * atan(freq / f0)
     end do
     call plvpor(0.15_plflt, 0.85_plflt, 0.1_plflt, 0.9_plflt)
     call plwind(-2.0_plflt, 3.0_plflt, -80.0_plflt, 0.0_plflt)
@@ -181,10 +181,10 @@ end program x26f
 
     call plcol0(1)
     if ( type .eq. 0 ) then
-       call plbox("bclnst", 0.0_plflt, 0, "bnstv", 0.0_plflt, 0)
+        call plbox("bclnst", 0.0_plflt, 0, "bnstv", 0.0_plflt, 0)
     endif
     if ( type .eq. 1 ) then
-       call plbox("bcfghlnst", 0.0_plflt, 0, "bcghnstv", 0.0_plflt, 0)
+        call plbox("bcfghlnst", 0.0_plflt, 0, "bcghnstv", 0.0_plflt, 0)
     endif
 
     !  Plot ampl vs freq
@@ -205,14 +205,14 @@ end program x26f
     !  For the gridless case, put phase vs freq on same plot
 
     if (type .eq. 0) then
-       call plcol0(1)
-       call plwind(-2.0_plflt, 3.0_plflt, -100.0_plflt, 0.0_plflt)
-       call plbox("", 0.0_plflt, 0, "cmstv", 30.0_plflt, 3)
-       call plcol0(3)
-       call plline(freql, phase)
-       call plstring(freql, phase, "#(728)")
-       call plcol0(3)
-       call plmtex("r", 5.0_plflt, 0.5_plflt, 0.5_plflt, alty_label)
+        call plcol0(1)
+        call plwind(-2.0_plflt, 3.0_plflt, -100.0_plflt, 0.0_plflt)
+        call plbox("", 0.0_plflt, 0, "cmstv", 30.0_plflt, 3)
+        call plcol0(3)
+        call plline(freql, phase)
+        call plstring(freql, phase, "#(728)")
+        call plcol0(3)
+        call plmtex("r", 5.0_plflt, 0.5_plflt, 0.5_plflt, alty_label)
     endif
 
     !  Draw a legend
@@ -227,7 +227,7 @@ end program x26f
     !     symbols(1) work on defined values which makes valgrind
     !     happier (even if that transformed string is not used inside the
     !     C version of pllegend)
-     symbols(1) = ""
+    symbols(1) = ""
 
     !     note from the above opt_array the first symbol (and box) indices
     !     do not have to be specified
@@ -251,14 +251,14 @@ end program x26f
 
     call plscol0a( 15, 32, 32, 32, 0.70_plflt )
     call pllegend( legend_width, legend_height, &
-        PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, 0, &
-        0.0_plflt, 0.0_plflt, 0.10_plflt, 15, &
-        1, 1, 0, 0, &
-        opt_array, &
-        1.0_plflt, 1.0_plflt, 2.0_plflt, &
-        1.0_plflt, text_colors, legend_text, &
-        box_colors, box_patterns, box_scales, box_line_widths, &
-        line_colors, line_styles, line_widths, &
-        symbol_colors, symbol_scales, symbol_numbers, symbols )
+           PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, 0, &
+           0.0_plflt, 0.0_plflt, 0.10_plflt, 15, &
+           1, 1, 0, 0, &
+           opt_array, &
+           1.0_plflt, 1.0_plflt, 2.0_plflt, &
+           1.0_plflt, text_colors, legend_text, &
+           box_colors, box_patterns, box_scales, box_line_widths, &
+           line_colors, line_styles, line_widths, &
+           symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-  end subroutine plot1
+end subroutine plot1

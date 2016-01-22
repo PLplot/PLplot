@@ -27,8 +27,8 @@ program x08f
     real(kind=plflt), parameter :: PI = double_PI
     integer :: i, j, k, ifshade
 
-!   xdim is the leading dimension of z, xpts <= xdim is the leading
-!   dimension of z that is defined.
+    !   xdim is the leading dimension of z, xpts <= xdim is the leading
+    !   dimension of z that is defined.
     integer, parameter :: xdim=99, ydim=100, xpts=35, ypts=45
     real(kind=plflt)   :: x(xdim), y(ydim), z(xdim,ypts), xx, yy, r
     real(kind=plflt)   :: zlimited(xdim,ypts)
@@ -47,8 +47,8 @@ program x08f
     real(kind=plflt)            :: square_root
 
     character (len=80) :: title(2) = &
-        (/'#frPLplot Example 8 - Alt=60, Az=30 ', &
-          '#frPLplot Example 8 - Alt=40, Az=-30'/)
+           (/'#frPLplot Example 8 - Alt=60, Az=30 ', &
+           '#frPLplot Example 8 - Alt=40, Az=-30'/)
     real(kind=plflt)   :: alt(2) = (/60.0_plflt, 40.0_plflt/)
     real(kind=plflt)   :: az(2)  = (/30.0_plflt,-30.0_plflt/)
     integer            :: rosen
@@ -58,14 +58,14 @@ program x08f
 
     real(kind=plflt)   :: dx, dy
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     rosen = 0
 
-!   x(1:xpts) = (arange(0,xpts) - (xpts-1)/2.0_plflt) / ((xpts-1)/2.0_plflt)
-!   y(1:ypts) = (arange(0,ypts) - (ypts-1)/2.0_plflt) / ((ypts-1)/2.0_plflt)
-!
+    !   x(1:xpts) = (arange(0,xpts) - (xpts-1)/2.0_plflt) / ((xpts-1)/2.0_plflt)
+    !   y(1:ypts) = (arange(0,ypts) - (ypts-1)/2.0_plflt) / ((ypts-1)/2.0_plflt)
+    !
 
     dx = 2.0_plflt / (xpts - 1)
     dy = 2.0_plflt / (ypts - 1)
@@ -137,102 +137,102 @@ program x08f
             call plcol0(1)
             if (rosen ==1) then
                 call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, -1.5_plflt, &
-                         1.5_plflt, -0.5_plflt, 1.5_plflt, zmin, zmax, alt(k),az(k))
+                       1.5_plflt, -0.5_plflt, 1.5_plflt, zmin, zmax, alt(k),az(k))
             else
                 call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, -1.0_plflt, &
-                         1.0_plflt, -1.0_plflt, 1.0_plflt, zmin, zmax, alt(k),az(k))
+                       1.0_plflt, -1.0_plflt, 1.0_plflt, zmin, zmax, alt(k),az(k))
             endif
             call plbox3('bnstu','x axis', 0.0_plflt, 0, &
-                     'bnstu', 'y axis', 0.0_plflt, 0, &
-                     'bcdmnstuv','z axis', 0.0_plflt, 0)
+                   'bnstu', 'y axis', 0.0_plflt, 0, &
+                   'bcdmnstuv','z axis', 0.0_plflt, 0)
             call plcol0(2)
 
             select case (ifshade)
-                case( 0 )
-                    ! diffuse light surface plot
-                    call cmap1_init(1)
-                    call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
-                             0, clevel(nlevel:1))
+            case( 0 )
+                ! diffuse light surface plot
+                call cmap1_init(1)
+                call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
+                       0, clevel(nlevel:1))
 
-                case( 1 )
-                    ! magnitude colored plot
-                    call cmap1_init(0)
-                    call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
-                             MAG_COLOR, clevel(nlevel:1))
+            case( 1 )
+                ! magnitude colored plot
+                call cmap1_init(0)
+                call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
+                       MAG_COLOR, clevel(nlevel:1))
 
-                case( 2 )
-                    ! magnitude colored plot with faceted squares
-                    call cmap1_init(0)
-                    call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
-                             ior(MAG_COLOR, FACETED), clevel(nlevel:1))
+            case( 2 )
+                ! magnitude colored plot with faceted squares
+                call cmap1_init(0)
+                call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
+                       ior(MAG_COLOR, FACETED), clevel(nlevel:1))
 
-                case( 3 )
-                    ! magnitude colored plot with contours
-                    call cmap1_init(0)
-                    call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
-                             ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)), clevel)
+            case( 3 )
+                ! magnitude colored plot with contours
+                call cmap1_init(0)
+                call plsurf3d(x(:xpts), y(:ypts), z(:xpts,:ypts), &
+                       ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)), clevel)
 
-                case( 4 )
-                    ! magnitude colored plot with contours and index limits
-                    call cmap1_init(0)
-                    call plsurf3dl(x(:xpts), y(:ypts), zlimited(:xpts,:ypts), &
-                             ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)), clevel, &
-                             indexxmin, indexxmax, indexymin, indexymax )
-                case default
-                    stop 'x08f: bad logic'
+            case( 4 )
+                ! magnitude colored plot with contours and index limits
+                call cmap1_init(0)
+                call plsurf3dl(x(:xpts), y(:ypts), zlimited(:xpts,:ypts), &
+                       ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)), clevel, &
+                       indexxmin, indexxmax, indexymin, indexymax )
+            case default
+                stop 'x08f: bad logic'
             end select
-         enddo
+        enddo
     enddo
     call plend
 contains
 
-!----------------------------------------------------------------------------
+    !----------------------------------------------------------------------------
     subroutine cmap1_init(gray)
 
-!   For gray.eq.1, basic grayscale variation from half-dark
-!   to light.  Otherwise, hue variations around the front of the
-!   colour wheel from blue to green to red with constant lightness
-!   and saturation.
+        !   For gray.eq.1, basic grayscale variation from half-dark
+        !   to light.  Otherwise, hue variations around the front of the
+        !   colour wheel from blue to green to red with constant lightness
+        !   and saturation.
 
-    integer          :: gray
-    real(kind=plflt) :: i(0:1), h(0:1), l(0:1), s(0:1)
+        integer          :: gray
+        real(kind=plflt) :: i(0:1), h(0:1), l(0:1), s(0:1)
 
-!   left boundary
-    i(0) = 0._plflt
-!   right boundary
-    i(1) = 1._plflt
-    if (gray == 1) then
-!       hue -- low: red (arbitrary if s=0)
-        h(0) = 0.0_plflt
-!       hue -- high: red (arbitrary if s=0)
-        h(1) = 0.0_plflt
-!       lightness -- low: half-dark
-        l(0) = 0.5_plflt
-!       lightness -- high: light
-        l(1) = 1.0_plflt
-!       minimum saturation
-        s(0) = 0.0_plflt
-!       minimum saturation
-        s(1) = 0.0_plflt
-    else
-!       This combination of hues ranges from blue to cyan to green to yellow
-!       to red (front of colour wheel) with constant lightness = 0.6
-!       and saturation = 0.8.
+        !   left boundary
+        i(0) = 0._plflt
+        !   right boundary
+        i(1) = 1._plflt
+        if (gray == 1) then
+            !       hue -- low: red (arbitrary if s=0)
+            h(0) = 0.0_plflt
+            !       hue -- high: red (arbitrary if s=0)
+            h(1) = 0.0_plflt
+            !       lightness -- low: half-dark
+            l(0) = 0.5_plflt
+            !       lightness -- high: light
+            l(1) = 1.0_plflt
+            !       minimum saturation
+            s(0) = 0.0_plflt
+            !       minimum saturation
+            s(1) = 0.0_plflt
+        else
+            !       This combination of hues ranges from blue to cyan to green to yellow
+            !       to red (front of colour wheel) with constant lightness = 0.6
+            !       and saturation = 0.8.
 
-!       hue -- low: blue
-        h(0) = 240._plflt
-!       hue -- high: red
-        h(1) = 0.0_plflt
-!       lightness -- low:
-        l(0) = 0.6_plflt
-!       lightness -- high:
-        l(1) = 0.6_plflt
-!       saturation
-        s(0) = 0.8_plflt
-!       minimum saturation
-        s(1) = 0.8_plflt
-    endif
-    call plscmap1n(256)
-    call plscmap1l(.false., i, h, l, s)
-end subroutine cmap1_init
+            !       hue -- low: blue
+            h(0) = 240._plflt
+            !       hue -- high: red
+            h(1) = 0.0_plflt
+            !       lightness -- low:
+            l(0) = 0.6_plflt
+            !       lightness -- high:
+            l(1) = 0.6_plflt
+            !       saturation
+            s(0) = 0.8_plflt
+            !       minimum saturation
+            s(1) = 0.8_plflt
+        endif
+        call plscmap1n(256)
+        call plscmap1l(.false., i, h, l, s)
+    end subroutine cmap1_init
 end program x08f

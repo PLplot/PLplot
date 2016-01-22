@@ -18,395 +18,395 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-      program x16f
-      use plplot, double_PI => PL_PI
-      implicit none
-      real(kind=plflt), parameter :: PI = double_PI
-      real(kind=plflt) xx, yy, argx, argy, distort, r, t
-      integer NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
-      parameter(NLEVEL = 20)
-!      xdim and ydim are the static dimensions of the 2D arrays while
-!      NX and NY are the defined area.
-      parameter(xdim=99, NX = 35)
-      parameter(ydim=100, NY = 46)
-      parameter(PERIMETERPTS = 100)
-      real(kind=plflt) clevel(NLEVEL), shedge(NLEVEL+1), &
-        z(xdim,ydim), w(xdim,ydim), xg1(xdim), yg1(ydim), &
-        xg2(xdim,ydim), yg2(xdim,ydim), zmin, zmax, &
-        px(PERIMETERPTS), py(PERIMETERPTS)
-      integer cont_color
-      real(kind=plflt) fill_width, cont_width
-      real(kind=plflt) colorbar_width, colorbar_height
-      integer NUM_AXES, NUM_LABELS
-      parameter(NUM_AXES=1, NUM_LABELS=1)
-      character(len=20) :: axis_opts(NUM_AXES)
-      integer num_values(NUM_AXES)
-      real(kind=plflt) values(NUM_AXES,NLEVEL+1)
-      real(kind=plflt) axis_ticks(NUM_AXES)
-      integer axis_subticks(NUM_AXES)
-      character(len=100) :: labels(NUM_LABELS)
-      integer label_opts(NUM_LABELS)
+program x16f
+    use plplot, double_PI => PL_PI
+    implicit none
+    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=plflt) xx, yy, argx, argy, distort, r, t
+    integer NLEVEL, NX, NY, PERIMETERPTS, xdim, ydim
+    parameter(NLEVEL = 20)
+    !      xdim and ydim are the static dimensions of the 2D arrays while
+    !      NX and NY are the defined area.
+    parameter(xdim=99, NX = 35)
+    parameter(ydim=100, NY = 46)
+    parameter(PERIMETERPTS = 100)
+    real(kind=plflt) clevel(NLEVEL), shedge(NLEVEL+1), &
+           z(xdim,ydim), w(xdim,ydim), xg1(xdim), yg1(ydim), &
+           xg2(xdim,ydim), yg2(xdim,ydim), zmin, zmax, &
+           px(PERIMETERPTS), py(PERIMETERPTS)
+    integer cont_color
+    real(kind=plflt) fill_width, cont_width
+    real(kind=plflt) colorbar_width, colorbar_height
+    integer NUM_AXES, NUM_LABELS
+    parameter(NUM_AXES=1, NUM_LABELS=1)
+    character(len=20) :: axis_opts(NUM_AXES)
+    integer num_values(NUM_AXES)
+    real(kind=plflt) values(NUM_AXES,NLEVEL+1)
+    real(kind=plflt) axis_ticks(NUM_AXES)
+    integer axis_subticks(NUM_AXES)
+    character(len=100) :: labels(NUM_LABELS)
+    integer label_opts(NUM_LABELS)
 
-      integer i, j
-      integer :: plparseopts_rc
-!      dummy to fill argument list with something not currently used.
-      character(len=1) defined
-      real(kind=plflt) tr(6)
+    integer i, j
+    integer :: plparseopts_rc
+    !      dummy to fill argument list with something not currently used.
+    character(len=1) defined
+    real(kind=plflt) tr(6)
 
-!      Process command-line arguments
-      plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    !      Process command-line arguments
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!      Load color palettes
-      call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_gray.pal', .true.)
+    !      Load color palettes
+    call plspal0('cmap0_black_on_white.pal')
+    call plspal1('cmap1_gray.pal', .true.)
 
-!      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
-      call plscmap0n(3)
+    !      Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
+    call plscmap0n(3)
 
-!      Initialize plplot
+    !      Initialize plplot
 
-      call plinit()
-!      Set up transformation matrix
+    call plinit()
+    !      Set up transformation matrix
 
-      tr(1) = 2._plflt/(NX-1)
-      tr(2) = 0._plflt
-      tr(3) = -1._plflt
-      tr(4) = 0._plflt
-      tr(5) = 2._plflt/(NY-1)
-      tr(6) = -1._plflt
+    tr(1) = 2._plflt/(NX-1)
+    tr(2) = 0._plflt
+    tr(3) = -1._plflt
+    tr(4) = 0._plflt
+    tr(5) = 2._plflt/(NY-1)
+    tr(6) = -1._plflt
 
-!      Calculate the data matrices.
-      do i=1,NX
+    !      Calculate the data matrices.
+    do i=1,NX
         xx = real(i-1-(NX/2),kind=plflt)/real(NX/2,kind=plflt)
         do j=1,NY
-          yy = real(j-1-(NY/2),kind=plflt)/real(NY/2,kind=plflt) - 1.0_plflt
-          z(i,j) = - sin(7._plflt*xx) * cos(7._plflt*yy) + xx*xx - yy*yy
-          w(i,j) = - cos(7._plflt*xx) * sin(7._plflt*yy) + 2._plflt*xx*yy
+            yy = real(j-1-(NY/2),kind=plflt)/real(NY/2,kind=plflt) - 1.0_plflt
+            z(i,j) = - sin(7._plflt*xx) * cos(7._plflt*yy) + xx*xx - yy*yy
+            w(i,j) = - cos(7._plflt*xx) * sin(7._plflt*yy) + 2._plflt*xx*yy
         enddo
-      enddo
+    enddo
 
-      call a2mnmx(z, NX, NY, zmin, zmax, xdim)
-      do i = 1, NLEVEL
+    call a2mnmx(z, NX, NY, zmin, zmax, xdim)
+    do i = 1, NLEVEL
         clevel(i) = zmin + (zmax - zmin) * (i - 0.5_plflt) / real(NLEVEL,kind=plflt)
-      enddo
-      do i = 1, NLEVEL+1
+    enddo
+    do i = 1, NLEVEL+1
         shedge(i) = zmin + (zmax - zmin) * real(i-1,kind=plflt) / real(NLEVEL,kind=plflt)
-      enddo
+    enddo
 
-!      Build the 1-d coord arrays.
-      distort = 0.4_plflt
-      do i=1,NX
+    !      Build the 1-d coord arrays.
+    distort = 0.4_plflt
+    do i=1,NX
         xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(NX-1,kind=plflt)
         xg1(i) = xx + distort*cos(0.5_plflt*PI*xx)
-      enddo
+    enddo
 
-      do j=1,NY
+    do j=1,NY
         yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(NY-1,kind=plflt)
         yg1(j) = yy - distort*cos(0.5_plflt*PI*yy)
-      enddo
+    enddo
 
-!      Build the 2-d coord arrays.
-      do i=1,NX
+    !      Build the 2-d coord arrays.
+    do i=1,NX
         xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(NX-1,kind=plflt)
         argx = 0.5_plflt*PI*xx
         do j=1,NY
-          yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(NY-1,kind=plflt)
-          argy = 0.5_plflt*PI*yy
-          xg2(i,j) = xx + distort*cos(argx)*cos(argy)
-          yg2(i,j) = yy - distort*cos(argx)*cos(argy)
+            yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(NY-1,kind=plflt)
+            argy = 0.5_plflt*PI*yy
+            xg2(i,j) = xx + distort*cos(argx)*cos(argy)
+            yg2(i,j) = yy - distort*cos(argx)*cos(argy)
         enddo
-      enddo
+    enddo
 
-!      Plot using transform of index range to xmin, xmax, ymin, ymax
-      call pladv(0)
-      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-      call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+    !      Plot using transform of index range to xmin, xmax, ymin, ymax
+    call pladv(0)
+    call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
+    call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
 
-      call plpsty(0)
+    call plpsty(0)
 
-      fill_width = 2
-      cont_color = 0
-      cont_width = 0
-      axis_opts(1) = 'bcvtm'
-      axis_ticks(1) = 0.0_plflt
-      axis_subticks(1) = 0
-      label_opts(1) = PL_COLORBAR_LABEL_BOTTOM
-      labels(1) = 'Magnitude'
+    fill_width = 2
+    cont_color = 0
+    cont_width = 0
+    axis_opts(1) = 'bcvtm'
+    axis_ticks(1) = 0.0_plflt
+    axis_subticks(1) = 0
+    label_opts(1) = PL_COLORBAR_LABEL_BOTTOM
+    labels(1) = 'Magnitude'
 
-      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
-        1._plflt, &
-        shedge, fill_width, &
-        cont_color, cont_width, .true. )
+    call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
+           1._plflt, &
+           shedge, fill_width, &
+           cont_color, cont_width, .true. )
 
-      ! Smaller text
-      call  plschr( 0.0_plflt, 0.75_plflt )
-      ! Small ticks on the vertical axis
-      call plsmaj( 0.0_plflt, 0.5_plflt )
-      call plsmin( 0.0_plflt, 0.5_plflt )
+    ! Smaller text
+    call  plschr( 0.0_plflt, 0.75_plflt )
+    ! Small ticks on the vertical axis
+    call plsmaj( 0.0_plflt, 0.5_plflt )
+    call plsmin( 0.0_plflt, 0.5_plflt )
 
-      num_values(1) = NLEVEL + 1;
-      values(1,:)   = shedge;
-      call plcolorbar( colorbar_width, colorbar_height, &
-            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
-            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
-            0.0_plflt, 0.0_plflt, &
-            cont_color, cont_width, &
-            label_opts, labels, &
-            axis_opts, &
-            axis_ticks, axis_subticks, &
-            num_values, values )
+    num_values(1) = NLEVEL + 1;
+    values(1,:)   = shedge;
+    call plcolorbar( colorbar_width, colorbar_height, &
+           ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+           0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+           0.0_plflt, 0.0_plflt, &
+           cont_color, cont_width, &
+           label_opts, labels, &
+           axis_opts, &
+           axis_ticks, axis_subticks, &
+           num_values, values )
 
-      ! Reset text and tick sizes
-      call plschr( 0.0_plflt, 1.0_plflt )
-      call plsmaj( 0.0_plflt, 1.0_plflt )
-      call plsmin( 0.0_plflt, 1.0_plflt )
+    ! Reset text and tick sizes
+    call plschr( 0.0_plflt, 1.0_plflt )
+    call plsmaj( 0.0_plflt, 1.0_plflt )
+    call plsmin( 0.0_plflt, 1.0_plflt )
 
-      call plcol0(1)
-      call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
-      call plcol0(2)
-      call pllab('distance', 'altitude', 'Bogon density')
+    call plcol0(1)
+    call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+    call plcol0(2)
+    call pllab('distance', 'altitude', 'Bogon density')
 
-!      Plot using 1d coordinate transform
+    !      Plot using 1d coordinate transform
 
-      call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_blue_yellow.pal', .true.)
-      call plscmap0n(3)
+    call plspal0('cmap0_black_on_white.pal')
+    call plspal1('cmap1_blue_yellow.pal', .true.)
+    call plscmap0n(3)
 
-      call pladv(0)
-      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-      call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+    call pladv(0)
+    call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
+    call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
 
-      call plpsty(0)
+    call plpsty(0)
 
-      fill_width = 2
-      cont_color = 0
-      cont_width = 0
-      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
-        1._plflt, &
-        shedge, fill_width, &
-        cont_color, cont_width, .true., xg1(:NX), yg1(:NY))
+    fill_width = 2
+    cont_color = 0
+    cont_width = 0
+    call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
+           1._plflt, &
+           shedge, fill_width, &
+           cont_color, cont_width, .true., xg1(:NX), yg1(:NY))
 
-      ! Smaller text
-      call  plschr( 0.0_plflt, 0.75_plflt )
-      ! Small ticks on the vertical axis
-      call plsmaj( 0.0_plflt, 0.5_plflt )
-      call plsmin( 0.0_plflt, 0.5_plflt )
+    ! Smaller text
+    call  plschr( 0.0_plflt, 0.75_plflt )
+    ! Small ticks on the vertical axis
+    call plsmaj( 0.0_plflt, 0.5_plflt )
+    call plsmin( 0.0_plflt, 0.5_plflt )
 
-      num_values(1) = NLEVEL + 1;
-      values(1,:)   = shedge;
-      call plcolorbar( colorbar_width, colorbar_height, &
-            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
-            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
-            0.0_plflt, 0.0_plflt, &
-            cont_color, cont_width, &
-            label_opts, labels, &
-            axis_opts, &
-            axis_ticks, axis_subticks, &
-            num_values, values )
+    num_values(1) = NLEVEL + 1;
+    values(1,:)   = shedge;
+    call plcolorbar( colorbar_width, colorbar_height, &
+           ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+           0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+           0.0_plflt, 0.0_plflt, &
+           cont_color, cont_width, &
+           label_opts, labels, &
+           axis_opts, &
+           axis_ticks, axis_subticks, &
+           num_values, values )
 
-      ! Reset text and tick sizes
-      call plschr( 0.0_plflt, 1.0_plflt )
-      call plsmaj( 0.0_plflt, 1.0_plflt )
-      call plsmin( 0.0_plflt, 1.0_plflt )
+    ! Reset text and tick sizes
+    call plschr( 0.0_plflt, 1.0_plflt )
+    call plsmaj( 0.0_plflt, 1.0_plflt )
+    call plsmin( 0.0_plflt, 1.0_plflt )
 
-      call plcol0(1)
-      call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
-      call plcol0(2)
-      call pllab('distance', 'altitude', 'Bogon density')
+    call plcol0(1)
+    call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+    call plcol0(2)
+    call pllab('distance', 'altitude', 'Bogon density')
 
-!      Plot using 2d coordinate transform
+    !      Plot using 2d coordinate transform
 
-      call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_blue_red.pal', .true.)
-      call plscmap0n(3)
+    call plspal0('cmap0_black_on_white.pal')
+    call plspal1('cmap1_blue_red.pal', .true.)
+    call plscmap0n(3)
 
-      call pladv(0)
-      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-      call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+    call pladv(0)
+    call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
+    call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
 
-      call plpsty(0)
+    call plpsty(0)
 
-      fill_width = 2
-      cont_color = 0
-      cont_width = 0
-      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
-        1._plflt, &
-        shedge, fill_width, &
-        cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
+    fill_width = 2
+    cont_color = 0
+    cont_width = 0
+    call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
+           1._plflt, &
+           shedge, fill_width, &
+           cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
 
-      ! Smaller text
-      call  plschr( 0.0_plflt, 0.75_plflt )
-      ! Small ticks on the vertical axis
-      call plsmaj( 0.0_plflt, 0.5_plflt )
-      call plsmin( 0.0_plflt, 0.5_plflt )
+    ! Smaller text
+    call  plschr( 0.0_plflt, 0.75_plflt )
+    ! Small ticks on the vertical axis
+    call plsmaj( 0.0_plflt, 0.5_plflt )
+    call plsmin( 0.0_plflt, 0.5_plflt )
 
-      num_values(1) = NLEVEL + 1;
-      values(1,:)   = shedge;
-      call plcolorbar( colorbar_width, colorbar_height, &
-            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
-            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
-            0.0_plflt, 0.0_plflt, &
-            cont_color, cont_width, &
-            label_opts, labels, &
-            axis_opts, &
-            axis_ticks, axis_subticks, &
-            num_values, values )
+    num_values(1) = NLEVEL + 1;
+    values(1,:)   = shedge;
+    call plcolorbar( colorbar_width, colorbar_height, &
+           ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+           0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+           0.0_plflt, 0.0_plflt, &
+           cont_color, cont_width, &
+           label_opts, labels, &
+           axis_opts, &
+           axis_ticks, axis_subticks, &
+           num_values, values )
 
-      ! Reset text and tick sizes
-      call plschr( 0.0_plflt, 1.0_plflt )
-      call plsmaj( 0.0_plflt, 1.0_plflt )
-      call plsmin( 0.0_plflt, 1.0_plflt )
+    ! Reset text and tick sizes
+    call plschr( 0.0_plflt, 1.0_plflt )
+    call plsmaj( 0.0_plflt, 1.0_plflt )
+    call plsmin( 0.0_plflt, 1.0_plflt )
 
-      call plcol0(1)
-      call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
-      call plcol0(2)
-      call plcont(w, 1, nx, 1, ny, clevel, xg2, yg2)
-      call pllab('distance', 'altitude', &
-        'Bogon density, with streamlines')
+    call plcol0(1)
+    call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+    call plcol0(2)
+    call plcont(w, 1, nx, 1, ny, clevel, xg2, yg2)
+    call pllab('distance', 'altitude', &
+           'Bogon density, with streamlines')
 
-!      Plot using 2d coordinate transform and plshades contours.
-      call plspal0('')
-      call plspal1('', .true. )
-      call plscmap0n(3)
+    !      Plot using 2d coordinate transform and plshades contours.
+    call plspal0('')
+    call plspal1('', .true. )
+    call plscmap0n(3)
 
-      call pladv(0)
-      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-      call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+    call pladv(0)
+    call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
+    call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
 
-      call plpsty(0)
+    call plpsty(0)
 
-      fill_width = 2
-      cont_color = 2
-      cont_width = 3
-      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
-        1._plflt, &
-        shedge, fill_width, &
-        cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
+    fill_width = 2
+    cont_color = 2
+    cont_width = 3
+    call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
+           1._plflt, &
+           shedge, fill_width, &
+           cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
 
-      ! Smaller text
-      call  plschr( 0.0_plflt, 0.75_plflt )
-      ! Small ticks on the vertical axis
-      call plsmaj( 0.0_plflt, 0.5_plflt )
-      call plsmin( 0.0_plflt, 0.5_plflt )
+    ! Smaller text
+    call  plschr( 0.0_plflt, 0.75_plflt )
+    ! Small ticks on the vertical axis
+    call plsmaj( 0.0_plflt, 0.5_plflt )
+    call plsmin( 0.0_plflt, 0.5_plflt )
 
-      num_values(1) = NLEVEL + 1;
-      values(1,:)   = shedge;
-      call plcolorbar( colorbar_width, colorbar_height, &
-            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
-            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
-            0.0_plflt, 0.0_plflt, &
-            2, 3._plflt, &
-            label_opts, labels, &
-            axis_opts, &
-            axis_ticks, axis_subticks, &
-            num_values, values )
+    num_values(1) = NLEVEL + 1;
+    values(1,:)   = shedge;
+    call plcolorbar( colorbar_width, colorbar_height, &
+           ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+           0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+           0.0_plflt, 0.0_plflt, &
+           2, 3._plflt, &
+           label_opts, labels, &
+           axis_opts, &
+           axis_ticks, axis_subticks, &
+           num_values, values )
 
-      ! Reset text and tick sizes
-      call plschr( 0.0_plflt, 1.0_plflt )
-      call plsmaj( 0.0_plflt, 1.0_plflt )
-      call plsmin( 0.0_plflt, 1.0_plflt )
+    ! Reset text and tick sizes
+    call plschr( 0.0_plflt, 1.0_plflt )
+    call plsmaj( 0.0_plflt, 1.0_plflt )
+    call plsmin( 0.0_plflt, 1.0_plflt )
 
-      call plcol0(1)
-      call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
-      call plcol0(2)
-      call pllab('distance', 'altitude', 'Bogon density')
+    call plcol0(1)
+    call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+    call plcol0(2)
+    call pllab('distance', 'altitude', 'Bogon density')
 
-!      Example with polar coordinates.
-      call plspal0('cmap0_black_on_white.pal')
-      call plspal1('cmap1_gray.pal', .true. )
-      call plscmap0n(3)
+    !      Example with polar coordinates.
+    call plspal0('cmap0_black_on_white.pal')
+    call plspal1('cmap1_gray.pal', .true. )
+    call plscmap0n(3)
 
-      call pladv(0)
-      call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-      call plwind(-1._plflt, 1._plflt, -1._plflt, 1._plflt)
+    call pladv(0)
+    call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
+    call plwind(-1._plflt, 1._plflt, -1._plflt, 1._plflt)
 
-      call plpsty(0)
+    call plpsty(0)
 
-!      Build new coordinate matrices.
-      do i = 1, NX
+    !      Build new coordinate matrices.
+    do i = 1, NX
         r = real(i-1,kind=plflt)/real(NX-1,kind=plflt)
         do j = 1, NY
-          t = (2._plflt*PI/real(NY-1,kind=plflt))*real(j-1,kind=plflt)
-          xg2(i,j) = r*cos(t)
-          yg2(i,j) = r*sin(t)
-          z(i,j) = exp(-r*r)*cos(5._plflt*PI*r)*cos(5._plflt*t)
+            t = (2._plflt*PI/real(NY-1,kind=plflt))*real(j-1,kind=plflt)
+            xg2(i,j) = r*cos(t)
+            yg2(i,j) = r*sin(t)
+            z(i,j) = exp(-r*r)*cos(5._plflt*PI*r)*cos(5._plflt*t)
         enddo
-      enddo
+    enddo
 
-!      Need a new shedge to go along with the new data set.
-      call a2mnmx(z, NX, NY, zmin, zmax, xdim)
-      do i = 1, NLEVEL+1
+    !      Need a new shedge to go along with the new data set.
+    call a2mnmx(z, NX, NY, zmin, zmax, xdim)
+    do i = 1, NLEVEL+1
         shedge(i) = zmin + (zmax - zmin) * real(i-1,kind=plflt) / real(NLEVEL,kind=plflt)
-      enddo
+    enddo
 
-!      Now we can shade the interior region.
-      fill_width = 2
-      cont_color = 0
-      cont_width = 0
-      call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
-        1._plflt, &
-        shedge, fill_width, &
-        cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
+    !      Now we can shade the interior region.
+    fill_width = 2
+    cont_color = 0
+    cont_width = 0
+    call plshades(z(:NX,:NY), defined, -1._plflt, 1._plflt, -1._plflt, &
+           1._plflt, &
+           shedge, fill_width, &
+           cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
 
-      ! Smaller text
-      call  plschr( 0.0_plflt, 0.75_plflt )
-      ! Small ticks on the vertical axis
-      call plsmaj( 0.0_plflt, 0.5_plflt )
-      call plsmin( 0.0_plflt, 0.5_plflt )
+    ! Smaller text
+    call  plschr( 0.0_plflt, 0.75_plflt )
+    ! Small ticks on the vertical axis
+    call plsmaj( 0.0_plflt, 0.5_plflt )
+    call plsmin( 0.0_plflt, 0.5_plflt )
 
-      num_values(1) = NLEVEL + 1;
-      values(1,:)   = shedge;
-      call plcolorbar( colorbar_width, colorbar_height, &
-            ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
-            0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
-            0.0_plflt, 0.0_plflt, &
-            cont_color, cont_width, &
-            label_opts, labels, &
-            axis_opts, &
-            axis_ticks, axis_subticks, &
-            num_values, values )
+    num_values(1) = NLEVEL + 1;
+    values(1,:)   = shedge;
+    call plcolorbar( colorbar_width, colorbar_height, &
+           ior(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0, &
+           0.005_plflt, 0.0_plflt, 0.0375_plflt, 0.875_plflt, 0, 1, 1, &
+           0.0_plflt, 0.0_plflt, &
+           cont_color, cont_width, &
+           label_opts, labels, &
+           axis_opts, &
+           axis_ticks, axis_subticks, &
+           num_values, values )
 
-      ! Reset text and tick sizes
-      call plschr( 0.0_plflt, 1.0_plflt )
-      call plsmaj( 0.0_plflt, 1.0_plflt )
-      call plsmin( 0.0_plflt, 1.0_plflt )
+    ! Reset text and tick sizes
+    call plschr( 0.0_plflt, 1.0_plflt )
+    call plsmaj( 0.0_plflt, 1.0_plflt )
+    call plsmin( 0.0_plflt, 1.0_plflt )
 
-!      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
-      do i = 1, PERIMETERPTS
+    !      Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
+    do i = 1, PERIMETERPTS
         t = (2._plflt*PI/real(PERIMETERPTS-1,kind=plflt))*real(i-1,kind=plflt)
         px(i) = cos(t)
         py(i) = sin(t)
-      enddo
+    enddo
 
-      call plcol0(1)
-      call plline(px, py)
+    call plcol0(1)
+    call plline(px, py)
 
-!      And label the plot.
-      call plcol0(2)
-      call pllab( '', '',  'Tokamak Bogon Instability' )
+    !      And label the plot.
+    call plcol0(2)
+    call pllab( '', '',  'Tokamak Bogon Instability' )
 
-      call plend
+    call plend
 
-      contains
-      
-!----------------------------------------------------------------------------
-!      Subroutine a2mnmx
-!      Minimum and the maximum elements of a 2-d array.
+contains
 
-      subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
-      use plplot
-      implicit none
+    !----------------------------------------------------------------------------
+    !      Subroutine a2mnmx
+    !      Minimum and the maximum elements of a 2-d array.
 
-      integer   i, j, nx, ny, xdim
-      real(kind=plflt)    f(xdim, ny), fmin, fmax
+    subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
+        use plplot
+        implicit none
 
-      fmax = f(1, 1)
-      fmin = fmax
-      do j = 1, ny
-        do  i = 1, nx
-          fmax = max(fmax, f(i, j))
-          fmin = min(fmin, f(i, j))
+        integer   i, j, nx, ny, xdim
+        real(kind=plflt)    f(xdim, ny), fmin, fmax
+
+        fmax = f(1, 1)
+        fmin = fmax
+        do j = 1, ny
+            do  i = 1, nx
+                fmax = max(fmax, f(i, j))
+                fmin = min(fmin, f(i, j))
+            enddo
         enddo
-      enddo
     end subroutine a2mnmx
-  end program x16f
+end program x16f

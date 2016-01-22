@@ -29,37 +29,37 @@ module plf95demolib
         module procedure arange_plflt_1
         module procedure arange_plflt_2
         module procedure arange_plflt_3
-    end interface
+    end interface arange
 
 contains
 
-! Function to return an arithmetic series (modelled after the Numpy
-! function of the same name)
-!
-function arange_plflt_1( start, stop, step )
-    integer, intent(in) :: start, stop, step
+    ! Function to return an arithmetic series (modelled after the Numpy
+    ! function of the same name)
+    !
+    function arange_plflt_1( start, stop, step )
+        integer, intent(in) :: start, stop, step
 
-    real(kind=plflt), dimension((stop-start)/step) :: arange_plflt_1
+        real(kind=plflt), dimension((stop-start)/step) :: arange_plflt_1
 
-    integer             :: i
+        integer             :: i
 
-    arange_plflt_1 = (/ (real(i, plflt), i = start, stop-step, step) /)
-end function arange_plflt_1
+        arange_plflt_1 = (/ (real(i, plflt), i = start, stop-step, step) /)
+    end function arange_plflt_1
 
-function arange_plflt_2( start, stop )
-    integer, intent(in) :: start, stop
+    function arange_plflt_2( start, stop )
+        integer, intent(in) :: start, stop
 
-    real(kind=plflt), dimension((stop-start)) :: arange_plflt_2
+        real(kind=plflt), dimension((stop-start)) :: arange_plflt_2
 
-    arange_plflt_2 = arange_plflt_1( start, stop, 1 )
-end function arange_plflt_2
+        arange_plflt_2 = arange_plflt_1( start, stop, 1 )
+    end function arange_plflt_2
 
-function arange_plflt_3( stop )
-    integer, intent(in) :: stop
+    function arange_plflt_3( stop )
+        integer, intent(in) :: stop
 
-    real(kind=plflt), dimension(stop-1) :: arange_plflt_3
+        real(kind=plflt), dimension(stop-1) :: arange_plflt_3
 
-    arange_plflt_3 = arange_plflt_1( 0, stop, 1 )
-end function arange_plflt_3
+        arange_plflt_3 = arange_plflt_1( 0, stop, 1 )
+    end function arange_plflt_3
 
 end module plf95demolib

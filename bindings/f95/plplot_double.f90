@@ -38,7 +38,7 @@ module plplot_double
     private :: character_array_to_c
     private :: wp
 
-! Interfaces for wp-precision callbacks
+    ! Interfaces for wp-precision callbacks
 
     abstract interface
         subroutine plmapform_proc_double( x, y )
@@ -90,9 +90,9 @@ module plplot_double
 
     include 'included_plplot_real_interfaces.f90'
 
-! plflt-precision callback routines that are called from C and which wrap a call to wp-precision Fortran routines.
+    ! plflt-precision callback routines that are called from C and which wrap a call to wp-precision Fortran routines.
 
-  subroutine plmapformf2c_double( n, x, y ) bind(c, name = 'plplot_private_plmapform2c_double')
+    subroutine plmapformf2c_double( n, x, y ) bind(c, name = 'plplot_private_plmapform2c_double')
         integer(kind=private_plint), value, intent(in) :: n
         real(kind=private_plflt), dimension(n), intent(inout) :: x, y
 
@@ -109,37 +109,37 @@ module plplot_double
     end subroutine plmapformf2c_double
 
     subroutine pllabelerf2c_double( axis, value, label, length, data ) bind(c, name = 'plplot_private_pllabeler2c_double')
-      integer(kind=private_plint), value, intent(in) :: axis, length
-      real(kind=private_plflt), value, intent(in) :: value
-      character(len=1), dimension(*), intent(out) :: label
-      type(c_ptr), intent(in) :: data
+        integer(kind=private_plint), value, intent(in) :: axis, length
+        real(kind=private_plflt), value, intent(in) :: value
+        character(len=1), dimension(*), intent(out) :: label
+        type(c_ptr), intent(in) :: data
 
-      character(len=:), allocatable :: label_out
-      integer :: trimmed_length
+        character(len=:), allocatable :: label_out
+        integer :: trimmed_length
 
-      allocate(character(length) :: label_out)
-      call pllabeler_double( int(axis), real(value,kind=wp), label_out )
-      trimmed_length = min(length,len_trim(label_out) + 1)
-      label(1:trimmed_length) = transfer(trim(label_out(1:length))//c_null_char, " ", trimmed_length)
-      deallocate(label_out)
+        allocate(character(length) :: label_out)
+        call pllabeler_double( int(axis), real(value,kind=wp), label_out )
+        trimmed_length = min(length,len_trim(label_out) + 1)
+        label(1:trimmed_length) = transfer(trim(label_out(1:length))//c_null_char, " ", trimmed_length)
+        deallocate(label_out)
     end subroutine pllabelerf2c_double
 
     subroutine pllabelerf2c_data_double( axis, value, label, length, data ) bind(c, name = 'plplot_private_pllabeler2c_data_double')
-      integer(kind=private_plint), value, intent(in) :: axis, length
-      real(kind=private_plflt), value, intent(in) :: value
-      character(len=1), dimension(*), intent(out) :: label
-      type(c_ptr), intent(in) :: data
+        integer(kind=private_plint), value, intent(in) :: axis, length
+        real(kind=private_plflt), value, intent(in) :: value
+        character(len=1), dimension(*), intent(out) :: label
+        type(c_ptr), intent(in) :: data
 
-      character(len=:), allocatable :: label_out
-      allocate(character(length) :: label_out)
+        character(len=:), allocatable :: label_out
+        allocate(character(length) :: label_out)
 
-      call pllabeler_data_double( int(axis), real(value,kind=wp), label_out, data )
-      label(1:length) = trim(label_out)//c_null_char
+        call pllabeler_data_double( int(axis), real(value,kind=wp), label_out, data )
+        label(1:length) = trim(label_out)//c_null_char
 
-      deallocate(label_out)
+        deallocate(label_out)
     end subroutine pllabelerf2c_data_double
 
-  subroutine pltransformf2c_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_double')
+    subroutine pltransformf2c_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_double')
         real(kind=private_plflt), value, intent(in) :: x, y
         real(kind=private_plflt), intent(out) :: tx, ty
         type(c_ptr), value, intent(in) :: data
@@ -151,7 +151,7 @@ module plplot_double
         ty = ty_out
     end subroutine pltransformf2c_double
 
-  subroutine pltransformf2c_data_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_data_double')
+    subroutine pltransformf2c_data_double( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_data_double')
         real(kind=private_plflt), value, intent(in) :: x, y
         real(kind=private_plflt), intent(out) :: tx, ty
         type(c_ptr), value, intent(in) :: data

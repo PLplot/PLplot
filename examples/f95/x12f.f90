@@ -31,7 +31,7 @@ program x12f
     real(kind=plflt) :: green(5) = (/1.0_plflt, 0.5_plflt, 0.5_plflt, 0.5_plflt, 1.0_plflt/)
     real(kind=plflt) :: blue(5)  = (/1.0_plflt, 1.0_plflt, 0.5_plflt, 0.25_plflt, 0.0_plflt/)
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     call plinit()
@@ -48,7 +48,7 @@ program x12f
     call plscmap1l(.true.,pos,red,green,blue)
 
     do i = 0, 9
-!       call plcol0(i + 1)
+        !       call plcol0(i + 1)
         call plcol1(real(i,kind=plflt)/9.0_plflt)
         call plpsty(0)
         call plfbox( 1980._plflt+i, y0(i+1) )
@@ -58,24 +58,24 @@ program x12f
         call plmtex( 'b', 1._plflt, (i+1)*0.1_plflt-0.05_plflt, 0.5_plflt, string )
     enddo
 
-!    Don't forget to call PLEND to finish off!
+    !    Don't forget to call PLEND to finish off!
     call plend
 contains
 
-subroutine plfbox(x0, y0)
-    real(kind=plflt) x0, y0, x(4), y(4)
+    subroutine plfbox(x0, y0)
+        real(kind=plflt) x0, y0, x(4), y(4)
 
-    x(1) = x0
-    y(1) = 0._plflt
-    x(2) = x0
-    y(2) = y0
-    x(3) = x0+1._plflt
-    y(3) = y0
-    x(4) = x0+1._plflt
-    y(4) = 0._plflt
-    call plfill(x, y)
-    call plcol0(1)
-    call pllsty(1)
-    call plline(x, y)
-end subroutine plfbox
+        x(1) = x0
+        y(1) = 0._plflt
+        x(2) = x0
+        y(2) = y0
+        x(3) = x0+1._plflt
+        y(3) = y0
+        x(4) = x0+1._plflt
+        y(4) = 0._plflt
+        call plfill(x, y)
+        call plcol0(1)
+        call pllsty(1)
+        call plline(x, y)
+    end subroutine plfbox
 end program x12f

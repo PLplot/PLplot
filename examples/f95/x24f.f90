@@ -45,128 +45,128 @@
 
 
 program x24f
-  use plplot
-  implicit none
+    use plplot
+    implicit none
 
-  integer i, j
-  integer red(7)
-  integer green(7)
-  integer blue(7)
-  integer :: plparseopts_rc
+    integer i, j
+    integer red(7)
+    integer green(7)
+    integer blue(7)
+    integer :: plparseopts_rc
 
-  real(kind=plflt)  px(4)
-  real(kind=plflt)  py(4)
-  real(kind=plflt)  sx(12)
-  real(kind=plflt)  sy(12)
+    real(kind=plflt)  px(4)
+    real(kind=plflt)  py(4)
+    real(kind=plflt)  sx(12)
+    real(kind=plflt)  sy(12)
 
-  character(len=30) peace(12)
+    character(len=30) peace(12)
 
-  data (red(i) ,i=1,7)   / 240, 204, 204, 204,   0,  39, 125 /
-  data (green(i) ,i=1,7) / 240,   0, 125, 204, 204,  80,   0 /
-  data (blue(i) ,i=1,7)  / 240,   0,   0,   0,   0, 204, 125 /
+    data (red(i) ,i=1,7)   / 240, 204, 204, 204,   0,  39, 125 /
+    data (green(i) ,i=1,7) / 240,   0, 125, 204, 204,  80,   0 /
+    data (blue(i) ,i=1,7)  / 240,   0,   0,   0,   0, 204, 125 /
 
-  data (px(i) ,i=1,4) / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt /
-  data (py(i) ,i=1,4) / 0.0_plflt, 0.25_plflt, 0.25_plflt, 0.0_plflt /
+    data (px(i) ,i=1,4) / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt /
+    data (py(i) ,i=1,4) / 0.0_plflt, 0.25_plflt, 0.25_plflt, 0.0_plflt /
 
-  data (sx(i) ,i=1,12) / &
-       0.16374, &
-       0.15844, &
-       0.15255, &
-       0.17332, &
-       0.50436, &
-       0.51721, &
-       0.49520, &
-       0.48713, &
-       0.83976, &
-       0.81688, &
-       0.82231, &
-       0.82647/
-
-
-  data (sy(i) ,i=1,12) / &
-       0.125, &
-       0.375, &
-       0.625, &
-       0.875, &
-       0.125, &
-       0.375, &
-       0.625, &
-       0.875, &
-       0.125, &
-       0.375, &
-       0.625, &
-       0.875/
+    data (sx(i) ,i=1,12) / &
+           0.16374, &
+           0.15844, &
+           0.15255, &
+           0.17332, &
+           0.50436, &
+           0.51721, &
+           0.49520, &
+           0.48713, &
+           0.83976, &
+           0.81688, &
+           0.82231, &
+           0.82647/
 
 
-  !  Taken from http://www.columbia.edu/~fdc/pace/
+    data (sy(i) ,i=1,12) / &
+           0.125, &
+           0.375, &
+           0.625, &
+           0.875, &
+           0.125, &
+           0.375, &
+           0.625, &
+           0.875, &
+           0.125, &
+           0.375, &
+           0.625, &
+           0.875/
 
-  !  Mandarin
-  peace(1) = '#<0x00>和平'
 
-  !  Hindi
-  peace(2) = '#<0x20>शांति'
+    !  Taken from http://www.columbia.edu/~fdc/pace/
 
-  !  English
-  peace(3) = '#<0x10>Peace'
+    !  Mandarin
+    peace(1) = '#<0x00>和平'
 
-  !  Hebrew
-  peace(4) = '#<0x10>שלום'
+    !  Hindi
+    peace(2) = '#<0x20>शांति'
 
-  !  Russian
-  peace(5) = '#<0x10>Мир'
+    !  English
+    peace(3) = '#<0x10>Peace'
 
-  !  German
-  peace(6) = '#<0x10>Friede'
+    !  Hebrew
+    peace(4) = '#<0x10>שלום'
 
-  !  Korean
-  peace(7) = '#<0x30>평화'
+    !  Russian
+    peace(5) = '#<0x10>Мир'
 
-  !  French
-  peace(8) = '#<0x10>Paix'
+    !  German
+    peace(6) = '#<0x10>Friede'
 
-  !  Spanish
-  peace(9) = '#<0x10>Paz'
+    !  Korean
+    peace(7) = '#<0x30>평화'
 
-  !  Arabic
-  peace(10) = '#<0x10>ﺳﻼم'
+    !  French
+    peace(8) = '#<0x10>Paix'
 
-  !  Turkish
-  peace(11) = '#<0x10>Barış'
+    !  Spanish
+    peace(9) = '#<0x10>Paz'
 
-  !  Kurdish
-  peace(12) = '#<0x10>Hasîtî'
+    !  Arabic
+    peace(10) = '#<0x10>ﺳﻼم'
 
-  plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    !  Turkish
+    peace(11) = '#<0x10>Barış'
 
-  call plinit()
+    !  Kurdish
+    peace(12) = '#<0x10>Hasîtî'
 
-  call pladv(0)
-  call plvpor (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-  call plwind (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-  call plcol0 (0)
-  call plbox ('', 1.0_plflt, 0, '', 1.0_plflt, 0)
+    plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-  call plscmap0n (7)
-  call plscmap0 (red, green, blue)
+    call plinit()
 
-  call plschr (0.0_plflt, 4.0_plflt)
-  call plfont (1)
+    call pladv(0)
+    call plvpor (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
+    call plwind (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
+    call plcol0 (0)
+    call plbox ('', 1.0_plflt, 0, '', 1.0_plflt, 0)
 
-  do i = 1,4
+    call plscmap0n (7)
+    call plscmap0 (red, green, blue)
 
-     call plcol0 (i)
-     call plfill (px, py)
+    call plschr (0.0_plflt, 4.0_plflt)
+    call plfont (1)
 
-     do j = 1,4
-        py (j) = py (j) + 1.0_plflt / 4.0_plflt
-     enddo
-  enddo
+    do i = 1,4
 
-  call plcol0 (0)
-  do i = 1,12
-     call plptex (sx (i), sy (i), 1.0_plflt, 0.0_plflt, 0.5_plflt, peace (i))
-  enddo
+        call plcol0 (i)
+        call plfill (px, py)
 
-  call plend()
+        do j = 1,4
+            py (j) = py (j) + 1.0_plflt / 4.0_plflt
+        enddo
+    enddo
+
+    call plcol0 (0)
+    do i = 1,12
+        call plptex (sx (i), sy (i), 1.0_plflt, 0.0_plflt, 0.5_plflt, peace (i))
+    enddo
+
+    call plend()
 
 end program x24f

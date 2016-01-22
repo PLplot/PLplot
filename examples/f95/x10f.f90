@@ -24,7 +24,7 @@ program x10f
     implicit none
     integer :: plparseopts_rc
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     call plinit()
@@ -38,7 +38,7 @@ program x10f
     call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
     call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0 )
     call plptex(0.5_plflt, 0.5_plflt, 1.0_plflt, 0.0_plflt, &
-             0.5_plflt, 'BOX at (50,150,50,100)' )
+           0.5_plflt, 'BOX at (50,150,50,100)' )
 
     call plend
 

@@ -38,7 +38,7 @@ module plplot_single
     private :: character_array_to_c
     private :: wp
 
-! Interfaces for wp-precision callbacks
+    ! Interfaces for wp-precision callbacks
 
     abstract interface
         subroutine plmapform_proc_single( x, y )
@@ -90,9 +90,9 @@ module plplot_single
 
     include 'included_plplot_real_interfaces.f90'
 
-! plflt-precision callback routines that are called from C and which wrap a call to wp-precision Fortran routines.
+    ! plflt-precision callback routines that are called from C and which wrap a call to wp-precision Fortran routines.
 
-  subroutine plmapformf2c_single( n, x, y ) bind(c, name = 'plplot_private_plmapform2c_single')
+    subroutine plmapformf2c_single( n, x, y ) bind(c, name = 'plplot_private_plmapform2c_single')
         integer(kind=private_plint), value, intent(in) :: n
         real(kind=private_plflt), dimension(n), intent(inout) :: x, y
 
@@ -109,33 +109,33 @@ module plplot_single
     end subroutine plmapformf2c_single
 
     subroutine pllabelerf2c_single( axis, value, label, length, data ) bind(c, name = 'plplot_private_pllabeler2c_single')
-      integer(kind=private_plint), value, intent(in) :: axis, length
-      real(kind=private_plflt), value, intent(in) :: value
-      character(len=1), dimension(*), intent(out) :: label
-      type(c_ptr), intent(in) :: data
+        integer(kind=private_plint), value, intent(in) :: axis, length
+        real(kind=private_plflt), value, intent(in) :: value
+        character(len=1), dimension(*), intent(out) :: label
+        type(c_ptr), intent(in) :: data
 
-      character(len=:), allocatable :: label_out
-      allocate(character(length) :: label_out)
+        character(len=:), allocatable :: label_out
+        allocate(character(length) :: label_out)
 
-      call pllabeler_single( int(axis), real(value,kind=wp), label_out )
-      label(1:length) = trim(label_out)//c_null_char
+        call pllabeler_single( int(axis), real(value,kind=wp), label_out )
+        label(1:length) = trim(label_out)//c_null_char
 
-      deallocate(label_out)
+        deallocate(label_out)
     end subroutine pllabelerf2c_single
 
     subroutine pllabelerf2c_data_single( axis, value, label, length, data ) bind(c, name = 'plplot_private_pllabeler2c_data_single')
-      integer(kind=private_plint), value, intent(in) :: axis, length
-      real(kind=private_plflt), value, intent(in) :: value
-      character(len=1), dimension(*), intent(out) :: label
-      type(c_ptr), intent(in) :: data
+        integer(kind=private_plint), value, intent(in) :: axis, length
+        real(kind=private_plflt), value, intent(in) :: value
+        character(len=1), dimension(*), intent(out) :: label
+        type(c_ptr), intent(in) :: data
 
-      character(len=:), allocatable :: label_out
-      allocate(character(length) :: label_out)
+        character(len=:), allocatable :: label_out
+        allocate(character(length) :: label_out)
 
-      call pllabeler_data_single( int(axis), real(value,kind=wp), label_out, data )
-      label(1:length) = trim(label_out)//c_null_char
+        call pllabeler_data_single( int(axis), real(value,kind=wp), label_out, data )
+        label(1:length) = trim(label_out)//c_null_char
 
-      deallocate(label_out)
+        deallocate(label_out)
     end subroutine pllabelerf2c_data_single
 
     subroutine pltransformf2c_single( x, y, tx, ty, data ) bind(c, name = 'plplot_private_pltransform2c_single')

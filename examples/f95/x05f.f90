@@ -28,13 +28,13 @@ program x04f
     integer :: plparseopts_rc
     real(kind=plflt) :: data(NPTS), delta
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!   Initialize plplot
+    !   Initialize plplot
     call plinit()
 
-!   Fill up data points
+    !   Fill up data points
     delta = 2.0_plflt * PI / real(NPTS,kind=plflt)
     data = sin(delta*arange(0, NPTS))
 
@@ -42,7 +42,7 @@ program x04f
     call plhist(data, -1.1_plflt, 1.1_plflt, 44, 0)
     call plcol0(2)
     call pllab('#frValue','#frFrequency', &
-      '#frPLplot Example 5 - Probability function of Oscillator')
+           '#frPLplot Example 5 - Probability function of Oscillator')
 
     call plend
 end program x04f

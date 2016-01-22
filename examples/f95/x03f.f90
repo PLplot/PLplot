@@ -29,60 +29,60 @@ program x03f
     real(kind=plflt) :: dtr, theta, dx, dy, offset
     integer :: i
     integer :: plparseopts_rc
-!    Process command-line arguments
+    !    Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!   Set orientation to portrait - note not all device drivers
-!   support this, in particular most interactive drivers do not.
+    !   Set orientation to portrait - note not all device drivers
+    !   support this, in particular most interactive drivers do not.
     call plsori(1)
 
     dtr = PI/180.0_plflt
     x0 = cos(dtr * arange(0,361))
     y0 = sin(dtr * arange(0,361))
 
-!    Initialize PLplot
+    !    Initialize PLplot
 
     call plinit()
 
-!    Set up viewport and window, but do not draw box
+    !    Set up viewport and window, but do not draw box
 
     call plenv(-1.3_plflt, 1.3_plflt, -1.3_plflt, 1.3_plflt, 1, -2)
-!   Draw circles for polar grid
+    !   Draw circles for polar grid
     do i = 1,10
-      call plarc(0.0_plflt, 0.0_plflt, 0.1_plflt*i, 0.1_plflt*i, &
-           0.0_plflt, 360.0_plflt, 0.0_plflt, .false.)
+        call plarc(0.0_plflt, 0.0_plflt, 0.1_plflt*i, 0.1_plflt*i, &
+               0.0_plflt, 360.0_plflt, 0.0_plflt, .false.)
     enddo
     call plcol0(2)
     do i = 0,11
-      theta = 30.0_plflt*i
-      dx = cos(dtr*theta)
-      dy = sin(dtr*theta)
+        theta = 30.0_plflt*i
+        dx = cos(dtr*theta)
+        dy = sin(dtr*theta)
 
-!      Draw radial spokes for polar grid
+        !      Draw radial spokes for polar grid
 
-      call pljoin(0.0_plflt, 0.0_plflt, dx, dy)
-      write (text,'(i3)') nint(theta)
+        call pljoin(0.0_plflt, 0.0_plflt, dx, dy)
+        write (text,'(i3)') nint(theta)
 
-!      Write labels for angle
+        !      Write labels for angle
 
-      text = adjustl(text)
+        text = adjustl(text)
 
-      if (theta .lt. 9.99) then
-         offset = 0.45
-      elseif (theta .lt. 99.9) then
-         offset = 0.30
-      else
-         offset = 0.15
-      endif
-!      Slightly off zero to avoid floating point logic flips at
-!      90 and 270 deg.
-      if (dx >= -0.00001_plflt) then
-        call plptex(dx, dy, dx, dy, -offset, text)
-      else
-        call plptex(dx, dy, -dx, -dy, 1._plflt+offset, text)
-      end if
+        if (theta .lt. 9.99) then
+            offset = 0.45
+        elseif (theta .lt. 99.9) then
+            offset = 0.30
+        else
+            offset = 0.15
+        endif
+        !      Slightly off zero to avoid floating point logic flips at
+        !      90 and 270 deg.
+        if (dx >= -0.00001_plflt) then
+            call plptex(dx, dy, dx, dy, -offset, text)
+        else
+            call plptex(dx, dy, -dx, -dy, 1._plflt+offset, text)
+        end if
     enddo
-!    Draw the graph
+    !    Draw the graph
 
     x = x0 * sin(5.0_plflt * dtr * arange(0,361))
     y = y0 * sin(5.0_plflt * dtr * arange(0,361))
@@ -92,9 +92,9 @@ program x03f
 
     call plcol0(4)
     call plmtex('t', 2.0_plflt, 0.5_plflt, 0.5_plflt, &
-      '#frPLplot Example 3 - r(#gh)=sin 5#gh')
+           '#frPLplot Example 3 - r(#gh)=sin 5#gh')
 
-!    Close the plot at end
+    !    Close the plot at end
 
     call plend
 end program x03f

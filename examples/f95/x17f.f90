@@ -38,78 +38,78 @@ program x17f
     logical            :: pl_errcode
     character(len=80)  :: errmsg
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!   plplot initialization
+    !   plplot initialization
 
-!   If db is used the plot is much more smooth. However, because of the
-!   async X behaviour, one does not have a real-time scripcharter.
-!
-!   call plsetopt('db', '')
-!   call plsetopt('np', '')
+    !   If db is used the plot is much more smooth. However, because of the
+    !   async X behaviour, one does not have a real-time scripcharter.
+    !
+    !   call plsetopt('db', '')
+    !   call plsetopt('np', '')
 
-!   User sets up plot completely except for window and data
-!   Eventually settings in place when strip chart is created will be
-!   remembered so that multiple strip charts can be used simultaneously.
+    !   User sets up plot completely except for window and data
+    !   Eventually settings in place when strip chart is created will be
+    !   remembered so that multiple strip charts can be used simultaneously.
 
 
-!   Specify some reasonable defaults for ymin and ymax
-!   The plot will grow automatically if needed (but not shrink)
+    !   Specify some reasonable defaults for ymin and ymax
+    !   The plot will grow automatically if needed (but not shrink)
 
     ymin = -0.1_plflt
     ymax = 0.1_plflt
 
-!    Specify initial tmin and tmax -- this determines length of window.
-!    Also specify maximum jump in t
-!    This can accomodate adaptive timesteps
+    !    Specify initial tmin and tmax -- this determines length of window.
+    !    Also specify maximum jump in t
+    !    This can accomodate adaptive timesteps
 
     tmin = 0._plflt
     tmax = 10._plflt
-!   percentage of plot to jump
+    !   percentage of plot to jump
     tjump = 0.3_plflt
 
-!   Axes options same as plbox.
-!   Only automatic tick generation and label placement allowed
-!   Eventually I'll make this fancier
+    !   Axes options same as plbox.
+    !   Only automatic tick generation and label placement allowed
+    !   Eventually I'll make this fancier
 
     colbox = 1
     collab = 3
-!   pens color and line style
+    !   pens color and line style
     styline = (/ 2, 3, 4, 5 /)
     colline = (/ 2, 3, 4, 5 /)
 
-!   pens legend
+    !   pens legend
     legline = (/ 'sum    ', 'sin    ', 'sin*noi', 'sin+noi' /)
 
-!   legend position
+    !   legend position
     xlab = 0._plflt
     ylab = 0.25_plflt
 
-!   autoscale y
+    !   autoscale y
     autoy = .true.
-!   don't scrip, accumulate
+    !   don't scrip, accumulate
     acc = .true.
 
-!   Initialize plplot
+    !   Initialize plplot
 
     call plinit()
 
     call pladv(0)
     call plvsta()
 
-!   Register our error variables with PLplot
-!   From here on, we're handling all errors here
+    !   Register our error variables with PLplot
+    !   From here on, we're handling all errors here
 
-!   TODO: call plsError(&pl_errcode, errmsg)
+    !   TODO: call plsError(&pl_errcode, errmsg)
 
     call plstripc(id1, 'bcnst', 'bcnstv', &
-        tmin, tmax, tjump, ymin, ymax, &
-        xlab, ylab, &
-        autoy, acc, &
-        colbox, collab, &
-        colline, styline, legline, &
-        't', '', 'Strip chart demo')
+           tmin, tmax, tjump, ymin, ymax, &
+           xlab, ylab, &
+           autoy, acc, &
+           colbox, collab, &
+           colline, styline, legline, &
+           't', '', 'Strip chart demo')
 
     pl_errcode = .false.
     if ( pl_errcode ) then
@@ -117,17 +117,17 @@ program x17f
         stop
     endif
 
-!   Let plplot handle errors from here on
+    !   Let plplot handle errors from here on
 
-!   TODO: call plsError(NULL, NULL)
+    !   TODO: call plsError(NULL, NULL)
 
-!   autoscale y
+    !   autoscale y
     autoy = .false.
-!   accumulate
+    !   accumulate
     acc = .true.
 
-!   This is to represent a loop over time
-!   Let's try a random walk process
+    !   This is to represent a loop over time
+    !   Let's try a random walk process
 
     y1 = 0.0_plflt
     y2 = 0.0_plflt
@@ -136,12 +136,12 @@ program x17f
     dt = 0.1_plflt
 
     do n = 0,nsteps-1
-!       wait a little (10 ms) to simulate time elapsing.  gfortran
-!       sleep has resolution of 1 sec so the call below is commented
-!       out because it is like watching paint dry.  In any case, I
-!       like the resulting speedier output when you drop sleep
-!       altogether from this loop.
-!       call sleep(1)
+        !       wait a little (10 ms) to simulate time elapsing.  gfortran
+        !       sleep has resolution of 1 sec so the call below is commented
+        !       out because it is like watching paint dry.  In any case, I
+        !       like the resulting speedier output when you drop sleep
+        !       altogether from this loop.
+        !       call sleep(1)
 
         t = real(n,kind=plflt) * dt
         noise = plrandd() - 0.5_plflt
@@ -150,8 +150,8 @@ program x17f
         y3 = y2 * noise
         y4 = y2 + noise/3._plflt
 
-!       There is no need for all pens to have the same number of
-!       points or beeing equally time spaced.
+        !       There is no need for all pens to have the same number of
+        !       points or beeing equally time spaced.
 
         if ( mod(n,2) .ne. 0 ) then
             call plstripa(id1, 0, t, y1)
@@ -165,11 +165,11 @@ program x17f
         if ( mod(n,5) .ne. 0 ) then
             call plstripa(id1, 3, t, y4)
         endif
-!       use_ double buffer (-db on command line)
-!       call pleop()
+        !       use_ double buffer (-db on command line)
+        !       call pleop()
     enddo
 
-!   Destroy strip chart and it's memory
+    !   Destroy strip chart and it's memory
 
     call plstripd(id1)
     call plend()

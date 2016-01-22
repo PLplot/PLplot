@@ -26,19 +26,19 @@ program x07f
 
     integer :: i, j, k, l
     integer, dimension(20) :: base = &
-        (/    0,  100,    0,  100,  200,  &
-        500,  600,  700,  800,  900, &
-        2000, 2100, 2200, 2300, 2400, &
-        2500, 2600, 2700, 2800, 2900  /)
+           (/    0,  100,    0,  100,  200,  &
+           500,  600,  700,  800,  900, &
+           2000, 2100, 2200, 2300, 2400, &
+           2500, 2600, 2700, 2800, 2900  /)
 
     integer :: plparseopts_rc
     real(kind=plflt), dimension(1:1) ::  x, y
 
-!   Process command-line arguments
+    !   Process command-line arguments
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!   Full sized page for display
+    !   Full sized page for display
 
     call plinit()
     call plfontld(0)
@@ -64,7 +64,7 @@ program x07f
         do i=0,9
             write (text,'(i1)') i
             call plmtex('b', 1.5_plflt, (0.1_plflt*i+0.05_plflt), &
-                     0.5_plflt, text)
+                   0.5_plflt, text)
         enddo
 
         k=0
@@ -75,24 +75,24 @@ program x07f
             write (text,'(i0)') base(l)+10*i
 
             call plmtex('lv', 1.0_plflt, (0.95_plflt-0.1_plflt*i), &
-                     1.0_plflt, text)
+                   1.0_plflt, text)
             do j=0,9
                 x=0.1_plflt*j+0.05_plflt
                 y=0.95_plflt-0.1_plflt*i
 
-               ! Display the symbols
+                ! Display the symbols
 
-               call plsym(x,y,base(l)+k)
-               k=k+1
+                call plsym(x,y,base(l)+k)
+                k=k+1
             enddo
         enddo
 
         if (l<=2) then
             call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
-                     'PLplot Example 7 - PLSYM symbols (compact)')
+                   'PLplot Example 7 - PLSYM symbols (compact)')
         else
             call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
-                      'PLplot Example 7 - PLSYM symbols (extended)')
+                   'PLplot Example 7 - PLSYM symbols (extended)')
         endif
     enddo
 

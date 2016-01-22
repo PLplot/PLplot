@@ -42,10 +42,10 @@ program x18f
     integer, dimension(NPTS) :: ia = (/(i,i=1,NPTS)/)
     integer :: plparseopts_rc
 
-!   Process command-line arguments
+    !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-!   Initialize plplot
+    !   Initialize plplot
 
     call plinit()
 
@@ -53,13 +53,13 @@ program x18f
         call test_poly(k, alt(k), az(k))
     enddo
 
-!   From the mind of a sick and twisted physicist...
+    !   From the mind of a sick and twisted physicist...
 
     z = -1._plflt + 2._plflt * real(ia-1,kind=plflt) / real(NPTS,kind=plflt)
 
-!   Pick one ...
+    !   Pick one ...
 
-!   r = 1. - real(ia-1,kind=plflt) / real(NPTS,kind=plflt)
+    !   r = 1. - real(ia-1,kind=plflt) / real(NPTS,kind=plflt)
     r = z
 
     x = r * cos( 2._plflt * PI * 6._plflt * real(ia-1,kind=plflt) / real(NPTS,kind=plflt) )
@@ -71,12 +71,12 @@ program x18f
         call plwind(-1.0_plflt, 1.0_plflt, -0.9_plflt, 1.1_plflt)
         call plcol0(1)
         call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, &
-            -1.0_plflt, 1.0_plflt, -1.0_plflt,  &
-            1.0_plflt, -1.0_plflt, 1.0_plflt, &
-            alt(k), az(k))
+               -1.0_plflt, 1.0_plflt, -1.0_plflt,  &
+               1.0_plflt, -1.0_plflt, 1.0_plflt, &
+               alt(k), az(k))
         call plbox3('bnstu', 'x axis', 0.0_plflt, 0, &
-            'bnstu', 'y axis', 0.0_plflt, 0, &
-            'bcdmnstuv', 'z axis', 0.0_plflt, 0)
+               'bnstu', 'y axis', 0.0_plflt, 0, &
+               'bcdmnstuv', 'z axis', 0.0_plflt, 0)
 
         call plcol0(2)
 
@@ -95,71 +95,71 @@ program x18f
     call plend()
 contains
 
-subroutine test_poly(k, alt, az)
-    integer          :: k
-    real(kind=plflt) :: alt, az
+    subroutine test_poly(k, alt, az)
+        integer          :: k
+        real(kind=plflt) :: alt, az
 
-    real(kind=plflt) :: x(5), y(5), z(5)
-    integer          :: i, j
-    logical          :: draw(4,4) = &
-        reshape( &
-            (/  .true., .true., .true., .true., &
-                .true., .false., .true., .false., &
-                .false., .true., .false., .true., &
-                .true., .true., .false., .false. /), (/4,4/) )
-    integer, dimension(0:20)          :: ia = (/(j,j=0,20)/)
-    real(kind=plflt), dimension(0:20) :: theta, phi
+        real(kind=plflt) :: x(5), y(5), z(5)
+        integer          :: i, j
+        logical          :: draw(4,4) = &
+               reshape( &
+               (/  .true., .true., .true., .true., &
+               .true., .false., .true., .false., &
+               .false., .true., .false., .true., &
+               .true., .true., .false., .false. /), (/4,4/) )
+        integer, dimension(0:20)          :: ia = (/(j,j=0,20)/)
+        real(kind=plflt), dimension(0:20) :: theta, phi
 
-    theta = TWOPI * ia /20._plflt
-    phi   = PI * ia / 20.1_plflt
+        theta = TWOPI * ia /20._plflt
+        phi   = PI * ia / 20.1_plflt
 
-    call pladv(0)
-    call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt)
-    call plwind(-1.0_plflt, 1.0_plflt, -0.9_plflt, 1.1_plflt)
-    call plcol0(1)
-    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, &
-        -1.0_plflt, 1.0_plflt, -1.0_plflt, &
-        1.0_plflt,  -1.0_plflt, 1.0_plflt, &
-        alt, az)
-    call plbox3('bnstu', 'x axis', 0.0_plflt, 0, &
-        'bnstu', 'y axis', 0.0_plflt, 0, &
-        'bcdmnstuv', 'z axis', 0.0_plflt, 0)
+        call pladv(0)
+        call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt)
+        call plwind(-1.0_plflt, 1.0_plflt, -0.9_plflt, 1.1_plflt)
+        call plcol0(1)
+        call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, &
+               -1.0_plflt, 1.0_plflt, -1.0_plflt, &
+               1.0_plflt,  -1.0_plflt, 1.0_plflt, &
+               alt, az)
+        call plbox3('bnstu', 'x axis', 0.0_plflt, 0, &
+               'bnstu', 'y axis', 0.0_plflt, 0, &
+               'bcdmnstuv', 'z axis', 0.0_plflt, 0)
 
-    call plcol0(2)
+        call plcol0(2)
 
 
-!    x = r sin(phi) cos(theta)
-!    y = r sin(phi) sin(theta)
-!    z = r cos(phi)
-!    r = 1 :=)
+        !    x = r sin(phi) cos(theta)
+        !    y = r sin(phi) sin(theta)
+        !    z = r cos(phi)
+        !    r = 1 :=)
 
-    do i=0,19
-        do j=0,19
-            x(1) = sin( phi(j) ) * cos( theta(i) )
-            y(1) = sin( phi(j) ) * sin( theta(i) )
-            z(1) = cos( phi(j) )
+        do i=0,19
+            do j=0,19
+                x(1) = sin( phi(j) ) * cos( theta(i) )
+                y(1) = sin( phi(j) ) * sin( theta(i) )
+                z(1) = cos( phi(j) )
 
-            x(2) = sin( phi(j+1) ) * cos( theta(i) )
-            y(2) = sin( phi(j+1) ) * sin( theta(i) )
-            z(2) = cos( phi(j+1) )
+                x(2) = sin( phi(j+1) ) * cos( theta(i) )
+                y(2) = sin( phi(j+1) ) * sin( theta(i) )
+                z(2) = cos( phi(j+1) )
 
-            x(3) = sin( phi(j+1) ) * cos( theta(i+1) )
-            y(3) = sin( phi(j+1) ) * sin( theta(i+1) )
-            z(3) = cos( phi(j+1) )
+                x(3) = sin( phi(j+1) ) * cos( theta(i+1) )
+                y(3) = sin( phi(j+1) ) * sin( theta(i+1) )
+                z(3) = cos( phi(j+1) )
 
-            x(4) = sin( phi(j) ) * cos( theta(i+1) )
-            y(4) = sin( phi(j) ) * sin( theta(i+1) )
-            z(4) = cos( phi(j) )
+                x(4) = sin( phi(j) ) * cos( theta(i+1) )
+                y(4) = sin( phi(j) ) * sin( theta(i+1) )
+                z(4) = cos( phi(j) )
 
-            x(5) = sin( phi(j) ) * cos( theta(i) )
-            y(5) = sin( phi(j) ) * sin( theta(i) )
-            z(5) = cos( phi(j) )
+                x(5) = sin( phi(j) ) * cos( theta(i) )
+                y(5) = sin( phi(j) ) * sin( theta(i) )
+                z(5) = cos( phi(j) )
 
-            call plpoly3(x, y, z, draw(:,k), .true.)
+                call plpoly3(x, y, z, draw(:,k), .true.)
+            enddo
         enddo
-    enddo
 
-    call plcol0(3)
-    call plmtex('t', 1.0_plflt, 0.5_plflt, 0.5_plflt, 'unit radius sphere' )
-end subroutine test_poly
+        call plcol0(3)
+        call plmtex('t', 1.0_plflt, 0.5_plflt, 0.5_plflt, 'unit radius sphere' )
+    end subroutine test_poly
 end program x18f
