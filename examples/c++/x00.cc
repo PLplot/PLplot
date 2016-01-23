@@ -29,7 +29,7 @@ using namespace std;
 
 class x00 {
 public:
-    x00( int, const char ** );
+    x00( int, char ** );
 
 private:
     // Class data
@@ -40,7 +40,7 @@ private:
 
 const int x00::NSIZE = 101;
 
-x00::x00( int argc, const char **argv )
+x00::x00( int argc, char **argv )
 {
     PLFLT x[NSIZE], y[NSIZE];
     PLFLT xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
@@ -74,7 +74,7 @@ x00::x00( int argc, const char **argv )
     delete pls;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x00 *x = new x00( argc, argv );
     delete x;

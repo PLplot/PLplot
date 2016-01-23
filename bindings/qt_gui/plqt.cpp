@@ -1653,7 +1653,7 @@ void plsetqtdev( QtExtWidget* widget )
 
 void plsetqtdev( QtExtWidget* widget, int argc, char** argv )
 {
-    plparseopts( &argc, (const char **) argv, PL_PARSE_FULL );
+    plparseopts( &argc, argv, PL_PARSE_FULL );
     plsc->dev = (void *) widget;
     widget->setPLStream( plsc );
 }

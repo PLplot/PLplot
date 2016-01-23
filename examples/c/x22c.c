@@ -406,7 +406,7 @@ potential( void )
 }
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLINT narr, fill;
 

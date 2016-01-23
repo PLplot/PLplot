@@ -40,7 +40,7 @@ using namespace std;
 
 class x33 {
 public:
-    x33( int, const char ** );
+    x33( int, char ** );
 
 private:
     // Class data
@@ -306,7 +306,7 @@ x33::plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLFL
 
 #define MAX_NLEGEND    7
 
-x33::x33( int argc, const char **argv )
+x33::x33( int argc, char **argv )
 {
     int        i, k;
     PLINT      opt;
@@ -888,7 +888,7 @@ x33::x33( int argc, const char **argv )
     delete pls;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x33 *x = new x33( argc, argv );
 

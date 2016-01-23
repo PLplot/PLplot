@@ -1090,7 +1090,7 @@ mod PLINT
 st  PLINT&
 
 ###############################################################################
-# The rest are kept in as reminders to how Tcl API might be improved
+# The rest are kept in as reminders of how the Tcl API might be improved
 
 # Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 # plfcont, with a particular choice for f2eval and f2eval_data.
@@ -1200,7 +1200,7 @@ st  PLINT&
 
 # Merge user option table into internal info structure.
 
-# int
+# PLINT
 # plMergeOpts(PLOptionTable *options, char *name, char **notes);
 
 # Set the strings used in usage and syntax messages.
@@ -1210,7 +1210,7 @@ st  PLINT&
 
 # Process input strings, treating them as an option and argument pair.
 
-# int
+# PLINT
 # plsetopt(char *opt, char *optarg);
 
 # Print usage & syntax message.
@@ -1235,7 +1235,7 @@ st  PLINT&
 
 # Return full pathname for given file if executable
 
-# int
+# PLINT
 # plFindName(char *p);
 
 # Looks for the specified executable file according to usual search path.
@@ -1251,10 +1251,10 @@ st  PLINT&
 
 # Wait for graphics input event and translate to world coordinates
 
-# int
+# PLINT
 # plGetCursor(PLGraphicsIn *gin);
 
 # Translates relative device coordinates to world coordinates.
 
-# int
+# PLINT
 # plTranslateCursor(PLGraphicsIn *gin);

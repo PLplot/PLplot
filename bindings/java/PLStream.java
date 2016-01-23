@@ -707,10 +707,10 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.plsurf3dl( x, y, z, opt, clevel, ixstart, indexymin, indexymax );
     }
 
-    public void parseopts( String[] argv, int mode )
+    public int parseopts( String[] argv, int mode )
     {
-        if ( set_stream() == -1 ) return;
-        plplotjavac.plparseopts( argv, mode );
+        if ( set_stream() == -1 ) return 0;
+        return plplotjavac.plparseopts( argv, mode );
     }
 
     public void pat( int[] inc, int[] del )
@@ -946,10 +946,10 @@ public class PLStream implements plplotjavacConstants {
         plplotjavac.plsesc( esc );
     }
 
-    public void setopt( String opt, String optarg )
+    public int setopt( String opt, String optarg )
     {
-        if ( set_stream() == -1 ) return;
-        plplotjavac.plsetopt( opt, optarg );
+        if ( set_stream() == -1 ) return 0;
+        return plplotjavac.plsetopt( opt, optarg );
     }
 
     public void sfam( int fam, int num, int bmax )

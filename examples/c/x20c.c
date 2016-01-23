@@ -87,7 +87,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 }
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLFLT               x[XDIM], y[YDIM], **z, **r;
     PLFLT               xi, yi, xe, ye;

@@ -30,7 +30,7 @@ using namespace std;
 
 class x16 {
 public:
-    x16( int, const char ** );
+    x16( int, char ** );
 
 private:
     // Class data
@@ -133,7 +133,7 @@ PLINT zdefined( PLFLT x, PLFLT y )
     return z < 0.4 || z > 0.6;
 }
 
-x16::x16( int argc, const char ** argv )
+x16::x16( int argc, char ** argv )
 {
     int         i, j;
     PLFLT       x, y, argx, argy, distort, r, t, zmin, zmax;
@@ -558,7 +558,7 @@ x16::x16( int argc, const char ** argv )
     delete pls;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x16 *x = new x16( argc, argv );
 

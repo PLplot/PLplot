@@ -121,7 +121,7 @@ geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPoint
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char **argv )
+main( int argc, char **argv )
 {
     PLFLT       minx, maxx, miny, maxy;
     PLFLT       x, y;

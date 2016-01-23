@@ -34,7 +34,7 @@ using namespace std;
 
 class x23 {
 public:
-    x23( int, const char ** );
+    x23( int, char ** );
 
 private:
     plstream          *pls;
@@ -239,7 +239,7 @@ const char* x23::weight[] = {
     "bold",
 };
 
-x23::x23( int argc, const char *argv[] )
+x23::x23( int argc, char *argv[] )
 {
     PLFLT xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
     PLFLT chardef, charht, deltax, deltay, x, y;
@@ -435,7 +435,7 @@ x23::x23( int argc, const char *argv[] )
     delete pls;
 }
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x23 *x = new x23( argc, argv );
 

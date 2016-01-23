@@ -1398,7 +1398,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
 
 // Process options list using current options info.
-%typemap( in, checkfn = "lua_istable" ) ( int *p_argc, const char **argv )
+%typemap( in, checkfn = "lua_istable" ) ( int *p_argc, char **argv )
 {
     int i, n;
 
@@ -1439,7 +1439,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     }
     $2[n] = NULL;
 }
-%typemap ( freearg ) ( int *p_argc, const char **argv )
+%typemap ( freearg ) ( int *p_argc, char **argv )
 {
     LUA_FREE_ARRAY( $2 );
 }

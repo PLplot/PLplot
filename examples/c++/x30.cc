@@ -32,7 +32,7 @@ using namespace std;
 
 class x30 {
 public:
-    x30( int, const char ** );
+    x30( int, char ** );
 
 private:
     plstream      *pls;
@@ -67,7 +67,7 @@ PLFLT x30::gcoord[] = { 0.0, 0.0 };
 PLFLT x30::bcoord[] = { 0.0, 0.0 };
 PLFLT x30::acoord[] = { 0.0, 1.0 };
 
-x30::x30( int argc, const char *argv[] )
+x30::x30( int argc, char *argv[] )
 {
     int   i, j;
     PLINT icol, r, g, b;
@@ -180,7 +180,7 @@ x30::x30( int argc, const char *argv[] )
     delete pls;
 }
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x30 *x = new x30( argc, argv );
 

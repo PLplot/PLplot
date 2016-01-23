@@ -375,7 +375,7 @@ ProcessFile( int argc, char **argv )
 // Since we aren't using full parsing, plparseopts() will stop when it hits
 // a non-flag item
 
-    if ( plparseopts( &argc, (const char **) argv, 0 ) )
+    if ( plparseopts( &argc, argv, 0 ) )
         exit( 1 );
 
 // Any remaining flags are illegal.
@@ -424,7 +424,7 @@ ProcessFile( int argc, char **argv )
     {
         argv[i] = myargv[i];
     }
-    (void) plparseopts( &argc, (const char **) argv, 0 );
+    plparseopts( &argc, argv, 0 );
 
 // Miscellaneous housekeeping
 

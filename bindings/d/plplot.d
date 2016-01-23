@@ -53,7 +53,7 @@ private PLFLT** convert_array( PLFLT[][] a )
 }
 
 // Process options list using current options info.
-int plparseopts( char[][] args, PLINT mode )
+PLINT plparseopts( char[][] args, PLINT mode )
 {
     char*[] c_args = new char*[args.length];
     foreach ( size_t i, char[] arg; args )
@@ -972,13 +972,13 @@ void pltimefmt( string fmt )
 // Command line parsing utilities
 
 // Merge user option table into internal info structure.
-//int  plMergeOpts(PLOptionTable *options, char *name, char **notes);
+//PLINT  plMergeOpts(PLOptionTable *options, char *name, char **notes);
 
 // Set the strings used in usage and syntax messages.
 //void  plSetUsage(char *program_string, char *usage_string);
 
 // Process input strings, treating them as an option and argument pair.
-int plsetopt( string opt, string optarg )
+PLINT plsetopt( string opt, string optarg )
 {
     return c_plsetopt( toStringz( opt ), toStringz( optarg ) );
 }
@@ -992,7 +992,7 @@ int plsetopt( string opt, string optarg )
 //void  pl_cmd(PLINT op, void *ptr);
 
 // Return full pathname for given file if executable
-//int  plFindName(char *p);
+//PLINT  plFindName(char *p);
 
 // Looks for the specified executable file according to usual search path.
 //char * plFindCommand(char *fn);
@@ -1014,12 +1014,10 @@ void plMinMax2dGrid( PLFLT[][] f, out PLFLT fmax, out PLFLT fmin )
 }
 
 // Wait for graphics input event and translate to world coordinates
-//int  plGetCursor(PLGraphicsIn *gin);
+//PLINT  plGetCursor(PLGraphicsIn *gin);
 
 // Translates relative device coordinates to world coordinates.
-//int  plTranslateCursor(PLGraphicsIn *gin);
-
-
+//PLINT  plTranslateCursor(PLGraphicsIn *gin);
 
 extern ( C ) :
 
@@ -2389,17 +2387,17 @@ void plResetOpts();
 
 // Merge user option table into internal info structure.
 
-int  plMergeOpts( PLOptionTable *options, const char *name, const char **notes );
+PLINT  plMergeOpts( PLOptionTable *options, const char *name, const char **notes );
 
 // Set the strings used in usage and syntax messages.
 
 void  plSetUsage( const char *program_string, const char *usage_string );
 
 // Process input strings, treating them as an option and argument pair.
-int c_plsetopt( const char *opt, const char *optarg );
+PLINT c_plsetopt( const char *opt, const char *optarg );
 
 // Process options list using current options info.
-int c_plparseopts( int *p_argc, const char **argv, PLINT mode );
+PLINT c_plparseopts( int *p_argc, char **argv, PLINT mode );
 
 // Print usage & syntax message.
 
@@ -2417,7 +2415,7 @@ void  pl_cmd( PLINT op, void *ptr );
 
 // Return full pathname for given file if executable
 
-int  plFindName( char *p );
+PLINT  plFindName( char *p );
 
 // Looks for the specified executable file according to usual search path.
 
@@ -2451,9 +2449,9 @@ void plMinMax2dGrid( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
 
 // Wait for graphics input event and translate to world coordinates
 
-int  plGetCursor( PLGraphicsIn *gin );
+PLINT  plGetCursor( PLGraphicsIn *gin );
 
 // Translates relative device coordinates to world coordinates.
 
-int  plTranslateCursor( PLGraphicsIn *gin );
+PLINT  plTranslateCursor( PLGraphicsIn *gin );
 

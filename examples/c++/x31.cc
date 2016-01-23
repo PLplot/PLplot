@@ -28,7 +28,7 @@ using namespace std;
 
 class x31 {
 public:
-    x31( int, const char** );
+    x31( int, char ** );
     int status;
 
 private:
@@ -41,7 +41,7 @@ private:
 // Demonstrates absolute positioning of graphs on a page.
 //--------------------------------------------------------------------------
 
-x31::x31( int argc, const char *argv[] )
+x31::x31( int argc, char *argv[] )
 {
     PLFLT xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax;
     PLFLT xmid, ymid, wx, wy;
@@ -288,7 +288,7 @@ x31::x31( int argc, const char *argv[] )
     delete pls;
 }
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     int status;
 

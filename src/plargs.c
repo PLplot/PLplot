@@ -107,9 +107,9 @@
 
 // Support functions
 
-static int  ParseOpt( int *, const char ***, int *, const char ***, PLOptionTable * );
-static int  ProcessOpt( const char *, PLOptionTable *, int *, const char ***, int * );
-static int  GetOptarg( const char **, int *, const char ***, int * );
+static int  ParseOpt( int *, char ***, int *, char ***, PLOptionTable * );
+static int  ProcessOpt( char *, PLOptionTable *, int *, char ***, int * );
+static int  GetOptarg( char **, int *, char ***, int * );
 static void Help( void );
 static void Syntax( void );
 
@@ -757,14 +757,14 @@ plSetOpt( const char * opt, const char *opt_arg )
 }
 #endif //#ifdef PL_DEPRECATED
 
-int
+PLINT
 c_plsetopt( const char * opt, const char *opt_arg )
 {
-    int        mode = 0, argc = 2, status;
-    const char *argv[3];
+    int  mode = 0, argc = 2, status;
+    char *argv[3];
 
-    argv[0] = opt;
-    argv[1] = opt_arg;
+    argv[0] = (char *) opt;
+    argv[1] = (char *) opt_arg;
     argv[2] = NULL;
     mode    =
         PL_PARSE_QUIET |
@@ -791,7 +791,7 @@ c_plsetopt( const char * opt, const char *opt_arg )
 //!
 //--------------------------------------------------------------------------
 
-int
+PLINT
 plMergeOpts( PLOptionTable *options, const char *name, const char **notes )
 {
     PLOptionTable *tab;
@@ -873,11 +873,11 @@ plResetOpts( void )
 //!
 //--------------------------------------------------------------------------
 
-int
-c_plparseopts( int *p_argc, const char **argv, PLINT mode )
+PLINT
+c_plparseopts( int *p_argc, char **argv, PLINT mode )
 {
-    const char **argsave, **argend;
-    int        i, myargc, myargcsave, status = 0;
+    char **argsave, **argend;
+    int  i, myargc, myargcsave, status = 0;
 
 
 // Initialize
@@ -1049,11 +1049,11 @@ c_plparseopts( int *p_argc, const char **argv, PLINT mode )
 //--------------------------------------------------------------------------
 
 static int
-ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_argsave,
+ParseOpt( int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
           PLOptionTable *option_table )
 {
     PLOptionTable *tab;
-    const char    *opt;
+    char          *opt;
 
 // Only handle actual flags and their arguments
 
@@ -1109,11 +1109,11 @@ ParseOpt( int *p_myargc, const char ***p_argv, int *p_argc, const char ***p_args
 //--------------------------------------------------------------------------
 
 static int
-ProcessOpt( const char * opt, PLOptionTable *tab, int *p_myargc, const char ***p_argv,
+ProcessOpt( char * opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
             int *p_argc )
 {
-    int        need_arg, res;
-    const char *opt_arg = NULL;
+    int  need_arg, res;
+    char *opt_arg = NULL;
 
 // Get option argument if necessary
 
@@ -1207,7 +1207,7 @@ ProcessOpt( const char * opt, PLOptionTable *tab, int *p_myargc, const char ***p
 
         // Set var (can be NULL initially) to point to opt_arg string
 
-        *(const char **) tab->var = opt_arg;
+        *(char **) tab->var = opt_arg;
         break;
 
     default:
@@ -1238,7 +1238,7 @@ ProcessOpt( const char * opt, PLOptionTable *tab, int *p_myargc, const char ***p
 //--------------------------------------------------------------------------
 
 static int
-GetOptarg( const char **popt_arg, int *p_myargc, const char ***p_argv, int *p_argc )
+GetOptarg( char **popt_arg, int *p_myargc, char ***p_argv, int *p_argc )
 {
     int result = 0;
 

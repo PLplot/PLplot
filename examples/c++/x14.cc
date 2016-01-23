@@ -30,7 +30,7 @@ using namespace std;
 
 class x14 {
 public:
-    x14( int, const char ** );
+    x14( int, char ** );
     void plot1( plstream * );
     void plot2( plstream * );
     void plot3( plstream * );
@@ -80,7 +80,7 @@ static PLFLT clevel[11] =
 // This version sends the output of the first 4 plots (one page) to two
 // independent streams.
 //--------------------------------------------------------------------------
-x14::x14( int argc, const char ** argv )
+x14::x14( int argc, char ** argv )
 {
     int digmax;
 
@@ -438,7 +438,7 @@ void x14::plot5( plstream *pls )
 }
 
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x14 *x = new x14( argc, argv );
 

@@ -37,7 +37,7 @@
 
 class x24 {
 public:
-    x24( int, const char ** );
+    x24( int, char ** );
 
 private:
     plstream          *pls;
@@ -116,7 +116,7 @@ const char* x24::peace[] = {
     "#<0x10>Hasîtî",
 };
 
-x24::x24( int argc, const char *argv[] )
+x24::x24( int argc, char *argv[] )
 {
     int i, j;
 
@@ -154,7 +154,7 @@ x24::x24( int argc, const char *argv[] )
     delete pls;
 }
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x24 *x = new x24( argc, argv );
 

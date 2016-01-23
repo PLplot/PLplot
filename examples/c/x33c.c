@@ -302,7 +302,7 @@ plcolorbar_example( const char *palette, int kind_i, PLINT cont_color, PLFLT con
 #define MAX_NLEGEND    7
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int        i, k;
     PLINT      opt;

@@ -46,7 +46,7 @@ void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int digmax;
 

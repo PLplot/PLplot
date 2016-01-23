@@ -33,7 +33,7 @@ using namespace std;
 
 class x27 {
 public:
-    x27( int, const char ** );
+    x27( int, char ** );
     void cycloid( void );
     void spiro( PLFLT data[], int fill );
     PLINT gcd( PLINT a, PLINT b );
@@ -51,7 +51,7 @@ private:
 //   - series of epitrochoids and hypotrochoids
 //--------------------------------------------------------------------------
 
-x27::x27( int argc, const char ** argv )
+x27::x27( int argc, char ** argv )
 {
     // R, r, p, N
     // R and r should be integers to give correct termination of the
@@ -263,7 +263,7 @@ x27::arcs()
 }
 
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x27 *x = new x27( argc, argv );
 

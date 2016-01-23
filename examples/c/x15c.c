@@ -29,7 +29,7 @@ static void     cmap1_init2( void );
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int   i, j;
     PLFLT xx, yy;

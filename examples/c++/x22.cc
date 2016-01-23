@@ -51,7 +51,7 @@ transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 
 class x22 {
 public:
-    x22( int, const char ** );
+    x22( int, char ** );
 
 private:
     void circulation();
@@ -338,7 +338,7 @@ x22::f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
 }
 
 
-x22::x22( int argc, const char ** argv )
+x22::x22( int argc, char ** argv )
 {
     PLINT narr;
     bool  fill;
@@ -406,7 +406,7 @@ x22::x22( int argc, const char ** argv )
     delete pls;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x22 *x = new x22( argc, argv );
     delete x;

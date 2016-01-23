@@ -29,7 +29,7 @@ using namespace std;
 
 class x29 {
 public:
-    x29( int, const char** );
+    x29( int, char ** );
 
 private:
     plstream *pls;
@@ -62,7 +62,7 @@ private:
 //
 //--------------------------------------------------------------------------
 
-x29::x29( int argc, const char *argv[] )
+x29::x29( int argc, char *argv[] )
 {
     pls = new plstream();
 
@@ -382,7 +382,7 @@ x29::plot4()
     }
 }
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x29 *x = new x29( argc, argv );
 

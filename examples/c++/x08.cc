@@ -30,7 +30,7 @@ using namespace std;
 
 class x08 {
 public:
-    x08( int, const char** );
+    x08( int, char ** );
     void cmap1_init( int );
 
 private:
@@ -147,7 +147,7 @@ void x08::cmap1_init( int gray )
 // Does a series of 3-d plots for a given data set, with different viewing
 // options in each plot.
 
-x08::x08( int argc, const char **argv )
+x08::x08( int argc, char **argv )
 {
     int       i, j, k;
     const int LEVELS = 10;
@@ -314,7 +314,7 @@ x08::x08( int argc, const char **argv )
 }
 
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x08 *x = new x08( argc, argv );
 

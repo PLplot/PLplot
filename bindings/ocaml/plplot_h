@@ -831,7 +831,7 @@ plClearOpts(void);
  void
 plResetOpts(void);
 
- int
+ PLINT
 plMergeOpts(PLOptionTable *options, const char *name, const char **notes);
 
  void
@@ -844,11 +844,11 @@ plSetUsage(const char *program_string, const char *usage_string);
 c_plsetopt(const char *opt, const char *optarg);
 
 /*
- int
+ PLINT
 plSetOpt(const char *opt, const char *optarg);
 
- int
-c_plparseopts(int *p_argc, const char **argv, PLINT mode);
+ PLINT
+c_plparseopts(int *p_argc, char **argv, PLINT mode);
 
  void
 plOptUsage(void);
@@ -865,7 +865,7 @@ plgesc(char *p_esc);
  void
 pl_cmd(PLINT op, void *ptr);
 
- int
+ PLINT
 plFindName(char *p);
 
  char *
@@ -891,10 +891,10 @@ plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
 plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
 
 /*
- int
+ PLINT
 plGetCursor(PLGraphicsIn *gin);
 
- int
+ PLINT
 plTranslateCursor(PLGraphicsIn *gin);
 
 */

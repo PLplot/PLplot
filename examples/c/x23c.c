@@ -214,7 +214,7 @@ static const char*weight[] = {
 };
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLFLT     xmin, xmax, ymin, ymax, ycharacter_scale, yoffset;
     PLFLT     chardef, charht, deltax, deltay, x, y;

@@ -648,11 +648,18 @@ int translate_parse_option( int parse_option )
     return translated_option;
 }
 
-// Copy a string array
+// Copy to a const string array
 #define INIT_STRING_ARRAY( o )         \
     int o ## _length;                  \
     o ## _length = Wosize_val( o );    \
     const char *c_ ## o[o ## _length]; \
+    for ( i = 0; i < o ## _length; i++ ) { c_ ## o[i] = String_val( Field( o, i ) ); }
+
+// Copy to a non-const string array
+#define INIT_NC_STRING_ARRAY( o )      \
+    int o ## _length;                  \
+    o ## _length = Wosize_val( o );    \
+    char *c_ ## o[o ## _length]; \
     for ( i = 0; i < o ## _length; i++ ) { c_ ## o[i] = String_val( Field( o, i ) ); }
 
 // Copy an int array, o, of n element to the C array c
@@ -692,11 +699,11 @@ int lor_ml_list( value list, ML_VARIANT_FUNC variant_f )
 value ml_plparseopts( value argv, value parse_method )
 {
     CAMLparam2( argv, parse_method );
-    int i;
-    int result;
-    int combined_parse_method;
+    int   i;
+    PLINT result;
+    int   combined_parse_method;
     // Make a copy of the command line argument strings
-    INIT_STRING_ARRAY( argv )
+    INIT_NC_STRING_ARRAY( argv )
 
     // OR the elements of the parse_method list together
     combined_parse_method = lor_ml_list( parse_method, translate_parse_option );

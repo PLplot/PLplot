@@ -24,7 +24,7 @@
 #define NSIZE    101
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLFLT x[NSIZE], y[NSIZE];
     PLFLT xmin = 0., xmax = 1., ymin = 0., ymax = 100.;

@@ -286,7 +286,7 @@ static void potential( void )
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int          i, j;
     PLFLT        xx, yy, argx, argy, distort;

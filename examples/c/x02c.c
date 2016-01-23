@@ -15,7 +15,7 @@ void demo2( void );
 void draw_windows( int nw, int cmap0_offset );
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
 // Parse and process command line arguments
     (void) plparseopts( &argc, argv, PL_PARSE_FULL );

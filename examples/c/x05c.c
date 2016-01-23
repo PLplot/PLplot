@@ -12,7 +12,7 @@
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int   i;
     PLFLT data[NPTS], delta;

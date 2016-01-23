@@ -24,13 +24,13 @@
 
 class x25 {
 public:
-    x25( int, const char ** );
+    x25( int, char ** );
 
 private:
     plstream *pls;
 };
 
-x25::x25( int argc, const char *argv[] )
+x25::x25( int argc, char *argv[] )
 {
     int   i, j, k;
     int   npts = 0;
@@ -139,7 +139,7 @@ x25::x25( int argc, const char *argv[] )
     delete pls;
 }
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x25 *x = new x25( argc, argv );
 

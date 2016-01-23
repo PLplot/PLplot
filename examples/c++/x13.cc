@@ -33,7 +33,7 @@ static int       per[] = { 10, 32, 12, 30, 16 };
 
 class x13 {
 public:
-    x13( int, const char ** );
+    x13( int, char ** );
 
 private:
     // Class data
@@ -41,7 +41,7 @@ private:
 };
 
 
-x13::x13( int argc, const char ** argv )
+x13::x13( int argc, char ** argv )
 {
     int   i, j, dthet, theta0, theta1, theta;
     PLFLT just, dx, dy;
@@ -111,7 +111,7 @@ x13::x13( int argc, const char ** argv )
     delete pls;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x13 *x = new x13( argc, argv );
 

@@ -2263,7 +2263,7 @@ plResetOpts( void );
 
 // Merge user option table into internal info structure.
 
-PLDLLIMPEXP int
+PLDLLIMPEXP PLINT
 plMergeOpts( PLOptionTable *options, const char *name, const char **notes );
 
 // Set the strings used in usage and syntax messages.
@@ -2275,7 +2275,7 @@ plSetUsage( const char *program_string, const char *usage_string );
 // The first is for the external API, the second the work routine declared
 // here for backward compatibilty.
 
-PLDLLIMPEXP int
+PLDLLIMPEXP PLINT
 c_plsetopt( const char *opt, const char *optarg );
 
 #ifdef PL_DEPRECATED
@@ -2287,8 +2287,8 @@ plSetOpt( const char *opt, const char *optarg );
 
 // Process options list using current options info.
 
-PLDLLIMPEXP int
-c_plparseopts( int *p_argc, const char **argv, PLINT mode );
+PLDLLIMPEXP PLINT
+c_plparseopts( int *p_argc, char **argv, PLINT mode );
 
 // Print usage & syntax message.
 
@@ -2319,7 +2319,7 @@ pl_cmd( PLINT op, void *ptr );
 
 // Return full pathname for given file if executable
 
-PLDLLIMPEXP int
+PLDLLIMPEXP PLINT
 plFindName( char *p );
 
 // Looks for the specified executable file according to usual search path.
@@ -2362,12 +2362,12 @@ plMinMax2dGrid( const PLFLT * const *f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *
 
 // Wait for graphics input event and translate to world coordinates
 
-PLDLLIMPEXP int
+PLDLLIMPEXP PLINT
 plGetCursor( PLGraphicsIn *gin );
 
 // Translates relative device coordinates to world coordinates.
 
-PLDLLIMPEXP int
+PLDLLIMPEXP PLINT
 plTranslateCursor( PLGraphicsIn *gin );
 
 // Set the pointer to the data used in driver initialisation

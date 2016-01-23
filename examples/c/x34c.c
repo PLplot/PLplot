@@ -43,7 +43,7 @@ void draw_page( PLINT mode, const char *title );
 // main
 //--------------------------------------------------------------------------
 
-int main( int argc, const char *argv[] )
+int main( int argc, char *argv[] )
 {
     PLINT mode;
     PLINT i;

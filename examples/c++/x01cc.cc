@@ -146,7 +146,7 @@ public:
 
 class x01cc {
 public:
-    x01cc( int, const char** );
+    x01cc( int, char ** );
     void plot1();
     void plot2();
 
@@ -349,7 +349,7 @@ void x01cc::plot2()
     pls->line( 65, x, y );
 }
 
-x01cc::x01cc( int argc, const char **argv )
+x01cc::x01cc( int argc, char **argv )
 {
     pls = new plstream();
 
@@ -369,7 +369,7 @@ x01cc::x01cc( int argc, const char **argv )
 // Finally!
 //--------------------------------------------------------------------------
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x01cc *x = new x01cc( argc, argv );
 

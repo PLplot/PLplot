@@ -42,7 +42,7 @@ static PLFLT  acoord[] = { 0.0, 1.0 };
 static PLBOOL rev[] = { 0, 0 };
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int   i, j;
     PLINT icol, r, g, b;

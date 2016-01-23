@@ -28,7 +28,7 @@ using namespace std;
 
 class x28 {
 public:
-    x28( int, const char** );
+    x28( int, char ** );
 
 private:
     plstream         *pls;
@@ -54,7 +54,7 @@ const int x28::NSHEAR      = 8;
 //--------------------------------------------------------------------------
 
 
-x28::x28( int argc, const char *argv[] )
+x28::x28( int argc, char *argv[] )
 {
     PLFLT *x, *y, **z,
            xmin     = 0., xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
@@ -429,7 +429,7 @@ x28::x28( int argc, const char *argv[] )
 }
 
 
-int main( int argc, const char **argv )
+int main( int argc, char **argv )
 {
     x28 *x = new x28( argc, argv );
 

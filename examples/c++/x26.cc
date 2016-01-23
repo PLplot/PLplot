@@ -106,7 +106,7 @@ static const char *line_label[] = {
 
 class x26 {
 public:
-    x26( int, const char ** );
+    x26( int, char ** );
     void plot1( int, const char*, const char*, const char*, const char**, const char*, const char* );
 
 private:
@@ -115,7 +115,7 @@ private:
 };
 
 
-x26::x26( int argc, const char ** argv )
+x26::x26( int argc, char ** argv )
 {
     int i;
 
@@ -267,7 +267,7 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
 }
 
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x26 *x = new x26( argc, argv );
 

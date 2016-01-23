@@ -11057,7 +11057,7 @@ device support!)
       <funcsynopsis>
         <funcprototype>
           <funcdef>
-            int
+            PLINT
             <function>plparseopts</function>
           </funcdef>
           <paramdef>
@@ -11092,7 +11092,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>argv</parameter>
-          (<literal>const char **</literal>, input)
+          (<literal>char **</literal>, input)
         </term>
         <listitem>
           <para>
@@ -14939,7 +14939,7 @@ device support!)
       <funcsynopsis>
         <funcprototype>
           <funcdef>
-            int
+            PLINT
             <function>plsetopt</function>
           </funcdef>
           <paramdef>

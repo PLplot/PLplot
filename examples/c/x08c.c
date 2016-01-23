@@ -128,7 +128,7 @@ static PLOptionTable options[] = {
 #define LEVELS    10
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int      i, j, k;
     PLFLT    *x, *y, **z, *z_row_major, *z_col_major;

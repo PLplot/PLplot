@@ -5,7 +5,7 @@
 
 #include <plplot.h>
 
-int main( int argc, const char *argv[] )
+int main( int argc, char *argv[] )
 {
     cairo_surface_t *cairoSurface;
     cairo_t         *cairoContext;

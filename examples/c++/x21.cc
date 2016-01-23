@@ -34,7 +34,7 @@ using namespace std;
 
 class x21 {
 public:
-    x21( int, const char ** );
+    x21( int, char ** );
 
 private:
     void create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts );
@@ -162,7 +162,7 @@ PLOptionTable x21::options[] = {
     }                           // long syntax
 };
 
-x21::x21( int argc, const char ** argv )
+x21::x21( int argc, char ** argv )
 {
     PLFLT      *x, *y, *z, *clev;
     PLFLT      *xg, *yg, **zg;
@@ -433,7 +433,7 @@ void x21::free_data( PLFLT *x, PLFLT *y, PLFLT *z )
     delete[] z;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x21 *x = new x21( argc, argv );
 

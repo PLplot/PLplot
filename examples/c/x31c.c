@@ -24,7 +24,7 @@
 #include "plcdemos.h"
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLFLT xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax;
     PLFLT xmid, ymid, wx, wy;

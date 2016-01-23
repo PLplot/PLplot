@@ -596,7 +596,7 @@ public:
 
 // Process options list using current options info.
 
-    int parseopts( int *p_argc, const char **argv, PLINT mode );
+    PLINT parseopts( int *p_argc, char **argv, PLINT mode );
 
 // Set fill pattern directly.
 
@@ -638,7 +638,7 @@ public:
 
 // Get the world coordinates associated with device coordinates
 
-    void translatecursor( PLGraphicsIn *gin );
+    PLINT translatecursor( PLGraphicsIn *gin );
 
 // Replays contents of plot buffer to current device/file.
 
@@ -1143,7 +1143,7 @@ public:
 
 // Merge user option table into internal info structure.
 
-    int MergeOpts( PLOptionTable *options, const char *name, const char **notes );
+    PLINT MergeOpts( PLOptionTable *options, const char *name, const char **notes );
 
 // Set the strings used in usage and syntax messages.
 
@@ -1151,7 +1151,7 @@ public:
 
 // Process input strings, treating them as an option and argument pair.
 
-    int setopt( const char *opt, const char *optarg );
+    PLINT setopt( const char *opt, const char *optarg );
 
 // This version is for backward compatibility only - don't use in new code
 
@@ -1185,7 +1185,7 @@ public:
 
 // Return full pathname for given file if executable
 
-    int  FindName( char *p );
+    PLINT  FindName( char *p );
 
 // Looks for the specified executable file according to usual search path.
 
@@ -1227,7 +1227,7 @@ public:
 
 // Wait for graphics input event and translate to world coordinates
 
-    int GetCursor( PLGraphicsIn *plg );
+    PLINT GetCursor( PLGraphicsIn *plg );
 
 // Deprecated versions of methods which use PLINT instead of bool
     void svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, PLINT fill );

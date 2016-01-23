@@ -292,7 +292,7 @@ plstream::plstream ( PLS::stream_id sid, PLINT strm /*=0*/ )
     switch ( sid )
     {
     case PLS::Next:
-//	throw( "plstream ctor option not implemented." );
+//      throw( "plstream ctor option not implemented." );
         break;
 
     case PLS::Current:
@@ -304,7 +304,7 @@ plstream::plstream ( PLS::stream_id sid, PLINT strm /*=0*/ )
         break;
 
     default:
-//	throw( "plstream ctor option not implemented." );
+//      throw( "plstream ctor option not implemented." );
         break;
     }
 }
@@ -1306,7 +1306,7 @@ void plstream::plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 
 // Process options list using current options info.
 
-int plstream::parseopts( int *p_argc, const char **argv, PLINT mode )
+PLINT plstream::parseopts( int *p_argc, char **argv, PLINT mode )
 {
     set_stream();
 
@@ -1426,11 +1426,11 @@ void plstream::ptex3( PLFLT wx, PLFLT wy, PLFLT wz,
 
 // Get the world coordinates associated with device coordinates
 
-void plstream::translatecursor( PLGraphicsIn *gin )
+PLINT plstream::translatecursor( PLGraphicsIn *gin )
 {
     set_stream();
 
-    plTranslateCursor( gin );
+    return plTranslateCursor( gin );
 }
 
 // Replays contents of plot buffer to current device/file.
@@ -2638,8 +2638,8 @@ void plstream::ResetOpts()
 
 // Merge user option table into internal info structure.
 
-int plstream::MergeOpts( PLOptionTable *options, const char *name,
-                         const char **notes )
+PLINT plstream::MergeOpts( PLOptionTable *options, const char *name,
+                           const char **notes )
 {
     set_stream();
 
@@ -2657,14 +2657,14 @@ void plstream::SetUsage( char *program_string, char *usage_string )
 
 // Process input strings, treating them as an option and argument pair.
 
-int plstream::setopt( const char *opt, const char *optarg )
+PLINT plstream::setopt( const char *opt, const char *optarg )
 {
     set_stream();
 
     return ::plsetopt( opt, optarg );
 }
 
-// Depreciated version - use setopt instead.
+// Deprecated version - use setopt instead.
 #ifdef PL_DEPRECATED
 int plstream::SetOpt( const char *opt, const char *optarg )
 {
@@ -2724,7 +2724,7 @@ void plstream::cmd( PLINT op, void *ptr )
 
 // Return full pathname for given file if executable
 
-int plstream::FindName( char *p )
+PLINT plstream::FindName( char *p )
 {
     set_stream();
 
@@ -2818,7 +2818,7 @@ void plstream::rgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l,
 
 // Wait for right button mouse event and translate to world coordinates
 
-int plstream::GetCursor( PLGraphicsIn *gin )
+PLINT plstream::GetCursor( PLGraphicsIn *gin )
 {
     set_stream();
 

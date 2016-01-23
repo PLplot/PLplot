@@ -36,12 +36,30 @@ CONTENTS
 2.6 Remove "c_" prefix from our C API
 
 3. PLplot testing
-
 ________________________________________________________________
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Octal interpretation removed from numerical escape sequences in text
+1.1 Backwards incompatibilities introduced for our C (and other) API.
+
+We recently discovered that the second (argv) argument of plparseopts
+was changed by that routine so accordingly we have dropped the
+inappropriate "const" attribute from the type of that argument.
+
+The return type has been change from int to PLINT (which is normally
+defined by "typedef int32_t PLINT;" for plparseopts, plsetopt,
+plMergeOpts, plFindName, plGetCursor, and plTranslateCursor.
+
+Where appropriate all these changes have been propagated to our language
+bindings.
+
+1.2 Backwards incompatibilities in Fortran
+
+The new implementation of the Fortran binding has introduced a
+significant number of backwards incompatibilities.  See 2.5 below for
+the details.
+
+1.3 Octal interpretation removed from numerical escape sequences in text
 
 The undocumented feature where leading 0's in numerical escape
 sequences meant the whole number was interpreted as octal rather than
@@ -51,13 +69,6 @@ but all other number strings starting with 0 are interpreted as
 decimal rather than octal.  Thus, the decimal interpretation of
 "#(0123)" and "#(123)" is now identical, and there are no errors
 introduced by leading-zero decimal escape sequences such as "#(0855)".
-
-1.2 Backwards incompatibilities in Fortran
-
-The new implementation of the Fortran binding has introduced a
-significant number of backwards incompatibilities.  See 2.5 below for
-the details.
-
 ________________________________________________________________
 
 2. Improvements relative to the previous release

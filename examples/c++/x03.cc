@@ -30,7 +30,7 @@ using namespace std;
 
 class x03 {
 public:
-    x03( int, const char ** );
+    x03( int, char ** );
 
 private:
     // Class data
@@ -38,7 +38,7 @@ private:
 };
 
 
-x03::x03( int argc, const char ** argv )
+x03::x03( int argc, char ** argv )
 {
     int   i;
     char  text[4];
@@ -139,7 +139,7 @@ x03::x03( int argc, const char ** argv )
     delete pls;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x03 *x = new x03( argc, argv );
 

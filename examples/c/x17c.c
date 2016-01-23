@@ -26,7 +26,7 @@ static char  errmsg[160];
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLINT           id1, n, autoy, acc, nsteps = 1000;
     PLFLT           y1, y2, y3, y4, ymin, ymax, xlab, ylab;

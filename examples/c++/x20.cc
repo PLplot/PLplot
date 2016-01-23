@@ -32,7 +32,7 @@ using namespace std;
 
 class x20 {
 public:
-    x20( int, const char ** );
+    x20( int, char ** );
     void save_plot( const char * );
     void gray_cmap( PLINT );
     int read_img( const char *, PLFLT ***, int *, int *, int * );
@@ -127,7 +127,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
     *ty = y;
 }
 
-x20::x20( int argc, const char ** argv )
+x20::x20( int argc, char ** argv )
 {
     PLFLT *x = new PLFLT[XDIM];
     PLFLT               *y = new PLFLT[YDIM];
@@ -503,7 +503,7 @@ void x20::gray_cmap( PLINT num_col )
     pls->scmap1l( true, 2, pos, r, g, b, NULL );
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x20 *x = new x20( argc, argv );
 

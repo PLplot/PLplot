@@ -211,7 +211,7 @@ const char *TclGetStartupScriptFileName( void )
 //
 
 int PLDLLEXPORT
-pltclMain( int argc, const char **argv, char * PL_UNUSED( RcFileName ) /* OBSOLETE */,
+pltclMain( int argc, char **argv, char * PL_UNUSED( RcFileName ) /* OBSOLETE */,
            int ( *appInitProc )( Tcl_Interp *interp ) )
 {
     Tcl_Obj     *resultPtr;
@@ -234,7 +234,7 @@ pltclMain( int argc, const char **argv, char * PL_UNUSED( RcFileName ) /* OBSOLE
     sprintf( usage, "\nUsage:\n        %s [filename] [options]\n", argv[0] );
     plSetUsage( NULL, usage );
     plMergeOpts( options, "pltcl options", pltcl_notes );
-    (void) plparseopts( &argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
+    plparseopts( &argc, argv, PL_PARSE_FULL | PL_PARSE_SKIP );
 
     //
     // Make (remaining) command-line arguments available in the Tcl variables

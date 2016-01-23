@@ -2,7 +2,7 @@
 
 //
 //Copyright (C) 2002  Gary Bishop
-//Copyright (C) 2004  Alan W. Irwin
+//Copyright (C) 2004-2016  Alan W. Irwin
 //Copyright (C) 2004  Andrew Ross
 //
 //This file is part of PLplot.
@@ -1589,7 +1589,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 // End of all code associated with special call-back functions.
 
 // Process options list using current options info.
-%typemap ( in ) ( int *p_argc, const char **argv ) ( int tmp )
+%typemap ( in ) ( int *p_argc, char **argv ) ( int tmp )
 {
     int i;
     if ( !PyList_Check( $input ) )
@@ -1614,7 +1614,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     $2[i] = 0;
 }
 
-%typemap ( freearg ) ( int *p_argc, const char **argv )
+%typemap ( freearg ) ( int *p_argc, char **argv )
 {
     if ( $2 )
         free( $2 );

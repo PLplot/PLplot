@@ -49,7 +49,7 @@ AppInit( Tcl_Interp *interp );
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char **argv )
+main( int argc, char **argv )
 {
     exit( pltclMain( argc, argv, NULL, AppInit ) );
 }

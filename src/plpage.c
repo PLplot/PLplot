@@ -240,7 +240,7 @@ c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax )
 //! @return 0 if no translation to world coordinates is possible.
 //! @see PLGraphicsIn
 //!
-int
+PLINT
 plGetCursor( PLGraphicsIn *plg )
 {
     plP_esc( PLESC_GETC, plg );
@@ -255,7 +255,7 @@ plGetCursor( PLGraphicsIn *plg )
 //! @param plg Pointer to PLGraphicsIn
 //! @return 0 if no translation to world coordinates is possible.
 //!
-int
+PLINT
 plTranslateCursor( PLGraphicsIn *plg )
 {
     int window;

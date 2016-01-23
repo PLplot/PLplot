@@ -320,7 +320,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       <funcsynopsis>
 	<funcprototype>
-	  <funcdef>int
+	  <funcdef>PLINT
 	    <function>plGetCursor</function>
 	  </funcdef>
 	  <paramdef><parameter>gin</parameter></paramdef>
@@ -420,7 +420,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       <funcsynopsis>
 	<funcprototype>
-	  <funcdef>int
+	  <funcdef>PLINT
 	    <function>plMergeOpts</function>
 	  </funcdef>
 	  <paramdef><parameter>options</parameter></paramdef>
@@ -619,7 +619,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="plResetOpts" renderas="sect3">
     <title>
-      <function>plMergeOpts</function>: Reset internal option table
+      <function>plResetOpts</function>: Reset internal option table
       info structure.
     </title>
 
@@ -1158,7 +1158,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       <funcsynopsis>
         <funcprototype>
-          <funcdef>
+          <funcdef>PLINT
             <function>plTranslateCursor</function>
           </funcdef>
           <paramdef>

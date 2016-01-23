@@ -10,7 +10,7 @@
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int   i, j, k;
     int   npts = 0;

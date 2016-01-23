@@ -1954,11 +1954,11 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     for ( i = 0; i < size; i++ )
     {
         jstring    j_string   = (jstring) ( *jenv )->GetObjectArrayElement( jenv, $input, i );
-        const char * c_string = (char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
+        const char * c_string = (const char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
 // Commented out version straight from swig documentation, but I think
 // it is wrong.
 //    $2[i] = malloc(strlen((c_string)+1)*sizeof(const char *));
-        $2[i] = malloc( ( strlen( c_string ) + 1 ) * sizeof ( const char * ) );
+        $2[i] = malloc( ( strlen( c_string ) + 1 ) * sizeof ( char * ) );
         strcpy( $2[i], c_string );
         ( *jenv )->ReleaseStringUTFChars( jenv, j_string, c_string );
         ( *jenv )->DeleteLocalRef( jenv, j_string );
@@ -1978,15 +1978,15 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( $2 );
 }
 
-%typemap ( jni ) ( char *legline[4] ) "jobjectArray"
-%typemap ( jtype ) ( char *legline[4] ) "String[]"
-%typemap ( jstype ) ( char *legline[4] ) "String[]"
-%typemap ( javain ) ( char *legline[4] ) "$javainput"
-%typemap ( javaout ) ( char *legline[4] )
+%typemap ( jni ) ( const char *legline[4] ) "jobjectArray"
+%typemap ( jtype ) ( const char *legline[4] ) "String[]"
+%typemap ( jstype ) ( const char *legline[4] ) "String[]"
+%typemap ( javain ) ( const char *legline[4] ) "$javainput"
+%typemap ( javaout ) ( const char *legline[4] )
 {
     return $jnicall;
 }
-%typemap ( in ) ( char *legline[4] )
+%typemap ( in ) ( const char *legline[4] )
 {
     int i    = 0;
     int size = ( *jenv )->GetArrayLength( jenv, $input );
@@ -2000,7 +2000,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     for ( i = 0; i < 4; i++ )
     {
         jstring    j_string   = (jstring) ( *jenv )->GetObjectArrayElement( jenv, $input, i );
-        const char * c_string = (char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
+        const char * c_string = (const char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
         $1[i] = malloc( ( strlen( c_string ) + 1 ) * sizeof ( const char * ) );
         strcpy( $1[i], c_string );
         ( *jenv )->ReleaseStringUTFChars( jenv, j_string, c_string );
@@ -2009,7 +2009,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // This cleans up the memory we malloc'd before the function call
-%typemap ( freearg ) ( char *legline[4] )
+%typemap ( freearg ) ( const char *legline[4] )
 {
     int i;
     for ( i = 0; i < 4; i++ )
@@ -2033,7 +2033,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         for ( i = 0; i < Alen; i++ )
         {
             jstring    j_string   = (jstring) ( *jenv )->GetObjectArrayElement( jenv, $input, i );
-            const char * c_string = (char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
+            const char * c_string = (const char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
             $1[i] = malloc( ( strlen( c_string ) + 1 ) * sizeof ( const char * ) );
             strcpy( $1[i], c_string );
             ( *jenv )->ReleaseStringUTFChars( jenv, j_string, c_string );
@@ -2079,7 +2079,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         for ( i = 0; i < Alen; i++ )
         {
             jstring    j_string   = (jstring) ( *jenv )->GetObjectArrayElement( jenv, $input, i );
-            const char * c_string = (char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
+            const char * c_string = (const char *) ( *jenv )->GetStringUTFChars( jenv, j_string, 0 );
             $2[i] = malloc( ( strlen( c_string ) + 1 ) * sizeof ( const char * ) );
             strcpy( $2[i], c_string );
             ( *jenv )->ReleaseStringUTFChars( jenv, j_string, c_string );

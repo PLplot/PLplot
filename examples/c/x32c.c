@@ -36,7 +36,7 @@ plcircle( PLFLT x, PLFLT y );
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int          i;
     char         string[20];

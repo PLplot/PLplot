@@ -2343,7 +2343,7 @@ done:
 }
 
 //--------------------------------------------------------------------------
-// int plFindName
+// PLINR plFindName
 //
 //! Authors: Paul Dubois (LLNL), others?
 //! This function is in the public domain.
@@ -2365,7 +2365,7 @@ done:
 //--------------------------------------------------------------------------
 
 #ifdef __unix
-int
+PLINT
 plFindName( char *p )
 {
     ssize_t     n;
@@ -2418,7 +2418,7 @@ plFindName( char *p )
 }
 
 #else
-int
+PLINT
 plFindName( char *p )
 {
     return 1;

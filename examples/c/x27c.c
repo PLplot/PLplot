@@ -38,7 +38,7 @@ void arcs( void );
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     // R, r, p, N
     // R and r should be integers to give correct termination of the

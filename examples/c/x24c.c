@@ -104,7 +104,7 @@ static const char* peace[] = {
 };
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int i, j;
 

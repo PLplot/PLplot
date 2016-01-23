@@ -30,7 +30,7 @@ using namespace std;
 
 class x15 {
 public:
-    x15( int, const char ** );
+    x15( int, char ** );
     void plot1( PLFLT * *, PLFLT, PLFLT );
     void plot2( PLFLT * *, PLFLT, PLFLT );
     void plot3();
@@ -47,7 +47,7 @@ const int x15::  XPTS = 35;
 const int x15::  YPTS = 46;
 
 
-x15::x15( int argc, const char ** argv )
+x15::x15( int argc, char ** argv )
 {
     int   i, j;
 
@@ -216,7 +216,7 @@ void x15::plot3()
 }
 
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x15 *x = new x15( argc, argv );
 

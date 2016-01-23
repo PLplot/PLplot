@@ -21,7 +21,7 @@ extern "C" {
 // Main program for a Tcl-based shell that reads Tcl commands from stdin.
 
 PLDLLIMPEXP_TCLTK int
-pltclMain( int argc, const char **argv, char *RcFileName,
+pltclMain( int argc, char **argv, char *RcFileName,
            int ( *AppInit )( Tcl_Interp *interp ) );
 
 // tclAPI.c

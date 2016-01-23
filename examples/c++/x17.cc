@@ -40,7 +40,7 @@ using namespace std;
 
 class x17 {
 public:
-    x17( int, const char ** );
+    x17( int, char ** );
 
 private:
     // Class data
@@ -54,7 +54,7 @@ public:
 PLINT x17::pl_errcode   = 0;
 char  x17:: errmsg[160] = "";
 
-x17::x17( int argc, const char ** argv )
+x17::x17( int argc, char ** argv )
 {
     PLINT           id1, n, nsteps = 1000;
     bool            autoy, acc;
@@ -195,7 +195,7 @@ x17::x17( int argc, const char ** argv )
     delete pls;
 }
 
-int main( int argc, const char ** argv )
+int main( int argc, char ** argv )
 {
     x17 *x = new x17( argc, argv );
 

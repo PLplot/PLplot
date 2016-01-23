@@ -10,7 +10,7 @@
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     char  text[10];
     int   i, j, k, kind_font, font, maxfont;

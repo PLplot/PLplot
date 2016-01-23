@@ -149,7 +149,7 @@ cmap1_init( void )
 PLFLT xm, xM, ym, yM;
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLFLT      *x, *y, *z, *clev;
     PLFLT      *xg, *yg, **zg;

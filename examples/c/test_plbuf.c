@@ -63,7 +63,7 @@ void plot3( void );
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     PLINT cur_strm, new_strm;
     char  ver[80];

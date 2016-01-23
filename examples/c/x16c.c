@@ -124,7 +124,7 @@ zdefined( PLFLT x, PLFLT y )
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     int        i, j;
     PLFLT      x, y, argx, argy, distort, r, t;

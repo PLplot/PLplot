@@ -53,7 +53,7 @@ void plot4( void );
 //--------------------------------------------------------------------------
 
 int
-main( int argc, const char *argv[] )
+main( int argc, char *argv[] )
 {
     // Parse command line arguments
     plparseopts( &argc, argv, PL_PARSE_FULL );
