@@ -52,6 +52,8 @@
 # ENABLE_qt		  - ON means the plplot_qt library is enabled.
 # ENABLE_pyqt4		  - ON means the plplot_pyqt4 Python extension module
 # 			    is enabled.
+# ENABLE_pyqt5		  - ON means the plplot_pyqt5 Python extension module
+# 			    is enabled.
 # ENABLE_smoke            - ON means the smoke plplotqt library is enabled.
 # SIP_EXECUTABLE	  - full path for sip
 # PYQT_SIP_DIR		  - sip system directory
@@ -60,10 +62,12 @@
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_qt "Enable Qt bindings" OFF)
   option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
+  option(ENABLE_pyqt5 "Enable pyqt5 Python extension module" OFF)
   option(ENABLE_smoke "Enable smoke Qt bindings" OFF)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_qt "Enable Qt bindings" ON)
   option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
+  option(ENABLE_pyqt5 "Enable pyqt5 Python extension module" ON)
   # Still experimental so this should default to OFF, but the user
   # has the option to turn it ON.
   option(ENABLE_smoke "Enable smoke Qt bindings" OFF)
@@ -293,6 +297,14 @@ if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
 endif(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
 
+if(ENABLE_pyqt5 AND NOT PLPLOT_USE_QT5)
+  message(STATUS
+    "WARNING: PLPLOT_USE_QT5 is OFF so "
+    "setting ENABLE_pyqt5 to OFF."
+    )
+  set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
+endif(ENABLE_pyqt5 AND NOT PLPLOT_USE_QT5)
+
 if(ENABLE_qt)
   set(qt_gui_true "")
 else(ENABLE_qt)
@@ -318,16 +330,17 @@ if(ANY_QT_DEVICE)
   endif(ENABLE_DYNDRIVERS)
 endif(ANY_QT_DEVICE)
 
-if(ENABLE_pyqt4)
+if(ENABLE_pyqt4 OR ENABLE_pyqt5)
   find_program(SIP_EXECUTABLE sip)
-  message(STATUS "pyqt4: SIP_EXECUTABLE = ${SIP_EXECUTABLE}")
+  message(STATUS "pyqt: SIP_EXECUTABLE = ${SIP_EXECUTABLE}")
   if(NOT SIP_EXECUTABLE)
     message(STATUS
-      "WARNING: sip not found so setting ENABLE_pyqt4 to OFF."
+      "WARNING: sip not found so setting ENABLE_pyqt4 / ENABLE_pyqt5 to OFF."
       )
     set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+    set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
   endif(NOT SIP_EXECUTABLE)
-endif(ENABLE_pyqt4)
+endif(ENABLE_pyqt4 OR ENABLE_pyqt5)
 
 if(ENABLE_pyqt4)
   execute_process(
@@ -364,6 +377,26 @@ if(ENABLE_pyqt4)
     set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
   endif(PYQT_SIP_FLAGS_ERR)
 endif(ENABLE_pyqt4)
+
+if(ENABLE_pyqt5)
+  execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt5.QtCore import PYQT_CONFIGURATION; print PYQT_CONFIGURATION['sip_flags']"
+    OUTPUT_VARIABLE PYQT_SIP_FLAGS
+    RESULT_VARIABLE PYQT_SIP_FLAGS_ERR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  # Must change from blank-delimited string to CMake list so that sip
+  # COMMAND will work properly with these flags later on.
+  string(REGEX REPLACE " " ";" PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}")
+  message(STATUS "pyqt5: PYQT_SIP_FLAGS = ${PYQT_SIP_FLAGS}")
+
+  if(PYQT_SIP_FLAGS_ERR)
+    message(STATUS
+      "WARNING: could not find sip flags so setting ENABLE_pyqt5 to OFF."
+      )
+    set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
+  endif(PYQT_SIP_FLAGS_ERR)
+endif(ENABLE_pyqt5)
 
 if(ENABLE_smoke)
   find_package(Smoke QUIET COMPONENTS QtCore QtGui)

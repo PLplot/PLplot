@@ -443,4 +443,8 @@ extern PLDLLIMPEXP_QT_DATA( MasterHandler ) handler;
 #define initplplot_pyqt4    PLDLLIMPEXP_PYQT4 initplplot_pyqt4
 #endif
 
+#if defined ( plplot_pyqt5_EXPORTS )
+#define initplplot_pyqt5    PLDLLIMPEXP_PYQT5 initplplot_pyqt5
+#endif
+
 #endif

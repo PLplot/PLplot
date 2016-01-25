@@ -125,6 +125,14 @@ if(ENABLE_pyqt4)
     )
 endif(ENABLE_pyqt4)
 
+if(ENABLE_pyqt5)
+  set(
+    python_SCRIPTS
+    ${python_SCRIPTS}
+    pyqt5_example.py
+    )
+endif(ENABLE_pyqt5)
+
 # This list contains python modules which are not executable on their own and
 # data files that should be installed in the examples/python directory.
 
