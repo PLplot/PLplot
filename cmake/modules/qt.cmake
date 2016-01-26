@@ -272,6 +272,22 @@ if(NOT ANY_QT_DEVICE AND ENABLE_qt)
   set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
 endif(NOT ANY_QT_DEVICE AND ENABLE_qt)
 
+if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
+  message(STATUS
+    "WARNING: PLPLOT_USE_QT5 is ON so "
+    "setting ENABLE_pyqt4 to OFF."
+    )
+  set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
+endif(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
+
+if(ENABLE_pyqt5 AND NOT PLPLOT_USE_QT5)
+  message(STATUS
+    "WARNING: PLPLOT_USE_QT5 is OFF so "
+    "setting ENABLE_pyqt5 to OFF."
+    )
+  set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
+endif(ENABLE_pyqt5 AND NOT PLPLOT_USE_QT5)
+
 if(ENABLE_pyqt4 AND NOT ENABLE_python)
   message(STATUS
     "WARNING: ENABLE_python is OFF so "
@@ -305,22 +321,6 @@ if(ENABLE_pyqt5 AND NOT PLD_extqt)
   set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
 endif(ENABLE_pyqt5 AND NOT PLD_extqt)
 
-
-if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
-  message(STATUS
-    "WARNING: PLPLOT_USE_QT5 is ON so "
-    "setting ENABLE_pyqt4 to OFF."
-    )
-  set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
-endif(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
-
-if(ENABLE_pyqt5 AND NOT PLPLOT_USE_QT5)
-  message(STATUS
-    "WARNING: PLPLOT_USE_QT5 is OFF so "
-    "setting ENABLE_pyqt5 to OFF."
-    )
-  set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
-endif(ENABLE_pyqt5 AND NOT PLPLOT_USE_QT5)
 
 if(ENABLE_qt)
   set(qt_gui_true "")
