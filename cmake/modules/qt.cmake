@@ -280,6 +280,15 @@ if(ENABLE_pyqt4 AND NOT ENABLE_python)
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
 endif(ENABLE_pyqt4 AND NOT ENABLE_python)
 
+if(ENABLE_pyqt5 AND NOT ENABLE_python)
+  message(STATUS
+    "WARNING: ENABLE_python is OFF so "
+    "setting ENABLE_pyqt5 to OFF."
+    )
+  set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
+endif(ENABLE_pyqt5 AND NOT ENABLE_python)
+
+
 if(ENABLE_pyqt4 AND NOT PLD_extqt)
   message(STATUS
     "WARNING: PLD_extqt is OFF so "
@@ -288,7 +297,15 @@ if(ENABLE_pyqt4 AND NOT PLD_extqt)
   set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
 endif(ENABLE_pyqt4 AND NOT PLD_extqt)
 
-## FIXME if/when there is a way to make pyqt work with Qt5.
+if(ENABLE_pyqt5 AND NOT PLD_extqt)
+  message(STATUS
+    "WARNING: PLD_extqt is OFF so "
+    "setting ENABLE_pyqt5 to OFF."
+    )
+  set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
+endif(ENABLE_pyqt5 AND NOT PLD_extqt)
+
+
 if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
   message(STATUS
     "WARNING: PLPLOT_USE_QT5 is ON so "
@@ -357,6 +374,34 @@ if(ENABLE_pyqt4)
     set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
   endif(PYQT_SIP_DIR_ERR)
 endif(ENABLE_pyqt4)
+
+if(ENABLE_pyqt5)
+
+  # Hope that the .sip files are in the standard place as PyQt5
+  # does not provide a way to determine where they are.
+  execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print sys.prefix"
+    OUTPUT_VARIABLE PYQT_SIP_DIR
+    RESULT_VARIABLE PYQT_SIP_DIR_ERR
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+  # FIXME: What about OS-X?
+  if (WIN32 AND NOT CYGWIN)
+    # FIXME: This is almost surely wrong.
+    set(PYQT_SIP_DIR "${PYQT_SIP_DIR}/sip/PyQt5/")
+  else (WIN32 AND NOT CYGWIN)
+    set(PYQT_SIP_DIR "${PYQT_SIP_DIR}/share/sip/PyQt5/")
+  endif (WIN32 AND NOT CYGWIN)
+  
+  message(STATUS "pyqt5: PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
+  if(PYQT_SIP_DIR_ERR OR NOT EXISTS "${PYQT_SIP_DIR}/QtWidgets/QtWidgetsmod.sip")
+    message(STATUS
+      "WARNING: could not find sip directory so setting ENABLE_pyqt5 to OFF."
+      )
+    set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
+  endif(PYQT_SIP_DIR_ERR OR NOT EXISTS "${PYQT_SIP_DIR}/QtWidgets/QtWidgetsmod.sip")
+endif(ENABLE_pyqt5)
 
 if(ENABLE_pyqt4)
   execute_process(

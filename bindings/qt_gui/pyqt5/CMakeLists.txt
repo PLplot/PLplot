@@ -47,8 +47,7 @@ if(ENABLE_pyqt5)
   
   add_custom_command(
     OUTPUT ${plplot_pyqt5_HDR} ${plplot_pyqt5_SRC}
-    #COMMAND ${SIP_EXECUTABLE} -c . -b plplot_pyqt5.sbf -I${PYQT_SIP_DIR} ${PYQT_SIP_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt5.sip
-    COMMAND ${SIP_EXECUTABLE} -c . -b plplot_pyqt5.sbf -I/usr/share/sip/PyQt5/ ${PYQT_SIP_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt5.sip    
+    COMMAND ${SIP_EXECUTABLE} -c . -b plplot_pyqt5.sbf -I${PYQT_SIP_DIR} ${PYQT_SIP_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt5.sip
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt5.sip
     )
   add_custom_target(generate_pyqt5_source
@@ -90,6 +89,8 @@ if(ENABLE_pyqt5)
     )
   add_dependencies(plplot_pyqt5 generate_pyqt5_source)
 
+  # FIXME: Does this do anything important? It did not work so I
+  #        just commented it out without any apparent side effects.
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
   #set_qt_target_properties(plplot_pyqt5)
 
