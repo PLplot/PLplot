@@ -656,10 +656,10 @@ int translate_parse_option( int parse_option )
     for ( i = 0; i < o ## _length; i++ ) { c_ ## o[i] = String_val( Field( o, i ) ); }
 
 // Copy to a non-const string array
-#define INIT_NC_STRING_ARRAY( o )      \
-    int o ## _length;                  \
-    o ## _length = Wosize_val( o );    \
-    char *c_ ## o[o ## _length]; \
+#define INIT_NC_STRING_ARRAY( o )   \
+    int o ## _length;               \
+    o ## _length = Wosize_val( o ); \
+    char *c_ ## o[o ## _length];    \
     for ( i = 0; i < o ## _length; i++ ) { c_ ## o[i] = String_val( Field( o, i ) ); }
 
 // Copy an int array, o, of n element to the C array c
