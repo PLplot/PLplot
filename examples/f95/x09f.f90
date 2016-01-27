@@ -18,6 +18,17 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !   Does several contour plots using different coordinate mappings.
 
 program x09f
@@ -25,8 +36,8 @@ program x09f
     use plf95demolib
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
-    real(kind=plflt), parameter :: TWOPI = double_TWOPI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: TWOPI = double_TWOPI
     integer i, j
 
     !   xdim and ydim are the absolute static dimensions.
@@ -35,47 +46,47 @@ program x09f
     integer, parameter :: xdim=99, ydim=100, nptsx=35, nptsy=46
     integer :: plparseopts_rc
 
-    real(kind=plflt)   :: z(xdim, ydim), w(xdim, ydim), &
+    real(kind=pl_test_flt)   :: z(xdim, ydim), w(xdim, ydim), &
            xg1(xdim), yg1(ydim), &
            xg2(xdim, ydim), yg2(xdim, ydim)
-    real(kind=plflt)   :: xc(nptsx), yc(nptsy)
-    real(kind=plflt)   :: xx, yy, argx, argy, distort
-    real(kind=plflt)   :: tr(6)
+    real(kind=pl_test_flt)   :: xc(nptsx), yc(nptsy)
+    real(kind=pl_test_flt)   :: xx, yy, argx, argy, distort
+    real(kind=pl_test_flt)   :: tr(6)
 
-    real(kind=plflt)   :: clevel(11) = &
-           (/ -1._plflt, -0.8_plflt, -0.6_plflt, -0.4_plflt, -0.2_plflt, &
-           0._plflt,  0.2_plflt,  0.4_plflt,  0.6_plflt,  0.8_plflt, 1._plflt /)
+    real(kind=pl_test_flt)   :: clevel(11) = &
+           (/ -1._pl_test_flt, -0.8_pl_test_flt, -0.6_pl_test_flt, -0.4_pl_test_flt, -0.2_pl_test_flt, &
+           0._pl_test_flt,  0.2_pl_test_flt,  0.4_pl_test_flt,  0.6_pl_test_flt,  0.8_pl_test_flt, 1._pl_test_flt /)
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-    tr = (/ 2._plflt/real(nptsx-1,kind=plflt), 0.0_plflt, -1.0_plflt, &
-           0.0_plflt, 2._plflt/real(nptsy-1,kind=plflt), -1.0_plflt /)
+    tr = (/ 2._pl_test_flt/real(nptsx-1,kind=pl_test_flt), 0.0_pl_test_flt, -1.0_pl_test_flt, &
+           0.0_pl_test_flt, 2._pl_test_flt/real(nptsy-1,kind=pl_test_flt), -1.0_pl_test_flt /)
 
     !   Calculate the data matrices.
-    xc = (arange(0,nptsx) - (nptsx/2)) / real(nptsx/2,kind=plflt)
-    yc = (arange(0,nptsy) - (nptsy/2)) / real(nptsy/2,kind=plflt) - 1.0_plflt
+    xc = (arange(0,nptsx) - (nptsx/2)) / real(nptsx/2,kind=pl_test_flt)
+    yc = (arange(0,nptsy) - (nptsy/2)) / real(nptsy/2,kind=pl_test_flt) - 1.0_pl_test_flt
 
     do i=1,nptsx
         do j=1,nptsy
             z(i,j) = xc(i)**2 - yc(j)**2
-            w(i,j) = 2._plflt*xc(i)*yc(j)
+            w(i,j) = 2._pl_test_flt*xc(i)*yc(j)
         enddo
     enddo
 
     !   Build the 1-d coord arrays.
-    distort = 0.4_plflt
+    distort = 0.4_pl_test_flt
 
-    xg1(1:nptsx) = coord_function( arange(0,nptsx) / real(nptsx-1,kind=plflt),  distort )
-    yg1(1:nptsy) = coord_function( arange(0,nptsy) / real(nptsy-1,kind=plflt), -distort )
+    xg1(1:nptsx) = coord_function( arange(0,nptsx) / real(nptsx-1,kind=pl_test_flt),  distort )
+    yg1(1:nptsy) = coord_function( arange(0,nptsy) / real(nptsy-1,kind=pl_test_flt), -distort )
 
     !   Build the 2-d coord arrays.
     do i=1,nptsx
-        xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(nptsx-1,kind=plflt)
-        argx = 0.5_plflt*PI*xx
+        xx = -1._pl_test_flt + real(i-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsx-1,kind=pl_test_flt)
+        argx = 0.5_pl_test_flt*PI*xx
         do j=1,nptsy
-            yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(nptsy-1,kind=plflt)
-            argy = 0.5_plflt*PI*yy
+            yy = -1._pl_test_flt + real(j-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
+            argy = 0.5_pl_test_flt*PI*yy
             xg2(i,j) = xx + distort*cos(argx)*cos(argy)
             yg2(i,j) = yy - distort*cos(argx)*cos(argy)
         enddo
@@ -85,8 +96,8 @@ program x09f
 
     !   Plot using identity transform
     call pl_setcontlabelformat(4, 3)
-    call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 1)
-    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
+    call pl_setcontlabelparam(0.006_pl_test_flt, 0.3_pl_test_flt, 0.1_pl_test_flt, 1)
+    call plenv(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, 0, 0)
     call plcol0(2)
     call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, tr)
     call plstyl(1, 1500, 1500)
@@ -95,10 +106,10 @@ program x09f
     call plstyl(0, 1500, 1500)
     call plcol0(1)
     call pllab('X Coordinate', 'Y Coordinate', 'Streamlines of flow')
-    call pl_setcontlabelparam(0.006_plflt, 0.3_plflt, 0.1_plflt, 0)
+    call pl_setcontlabelparam(0.006_pl_test_flt, 0.3_pl_test_flt, 0.1_pl_test_flt, 0)
 
     !   Plot using 1d coordinate transform
-    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
+    call plenv(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, 0, 0)
     call plcol0(2)
     call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, xg1(1:nptsx), yg1(1:nptsy))
     call plstyl(1, 1500, 1500)
@@ -109,7 +120,7 @@ program x09f
     call pllab('X Coordinate', 'Y Coordinate', 'Streamlines of flow')
 
     !   Plot using 2d coordinate transform
-    call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
+    call plenv(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, 0, 0)
     call plcol0(2)
     call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, xg2(1:nptsx,1:nptsy), yg2(1:nptsx,1:nptsy))
     call plstyl(1, 1500, 1500)
@@ -128,14 +139,14 @@ contains
     !----------------------------------------------------------------------------
     !   Auxiliary function to compute the coordinates
 
-    elemental real(kind=plflt) function coord_function( coord, factor )
-        real(kind=plflt), intent(in) :: coord
-        real(kind=plflt), intent(in) :: factor
+    elemental real(kind=pl_test_flt) function coord_function( coord, factor )
+        real(kind=pl_test_flt), intent(in) :: coord
+        real(kind=pl_test_flt), intent(in) :: factor
 
-        real(kind=plflt)             :: tcoord
+        real(kind=pl_test_flt)             :: tcoord
 
-        tcoord         = -1.0_plflt + coord * 2.0_plflt
-        coord_function = tcoord + factor*cos(0.5_plflt*PI*tcoord)
+        tcoord         = -1.0_pl_test_flt + coord * 2.0_pl_test_flt
+        coord_function = tcoord + factor*cos(0.5_pl_test_flt*PI*tcoord)
     end function coord_function
 
     !----------------------------------------------------------------------------
@@ -150,15 +161,15 @@ contains
         integer, parameter :: ydim=100, THETAPTS = 40
         integer, parameter :: NLEVEL=10
         integer            :: i,j
-        real(kind=plflt)   :: xg(xdim, ydim),  yg(xdim, ydim), &
+        real(kind=pl_test_flt)   :: xg(xdim, ydim),  yg(xdim, ydim), &
                z(xdim, ydim), px(PERIMETERPTS), py(PERIMETERPTS), &
                lev(NLEVEL), r, theta, delta
 
-        call plenv(-1._plflt, 1._plflt, -1._plflt, 1._plflt, 0, -2)
+        call plenv(-1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, 0, -2)
         call plcol0(1)
 
         !   perimeter.
-        delta = 2._plflt*PI/(PERIMETERPTS-1)
+        delta = 2._pl_test_flt*PI/(PERIMETERPTS-1)
         px = cos(delta*arange(0, PERIMETERPTS))
         py = sin(delta*arange(0, PERIMETERPTS))
 
@@ -166,9 +177,9 @@ contains
 
         !   create data to be contoured.
         do j = 1, THETAPTS
-            theta = (2._plflt*PI/real(THETAPTS-1,kind=plflt))*real(j-1,kind=plflt)
+            theta = (2._pl_test_flt*PI/real(THETAPTS-1,kind=pl_test_flt))*real(j-1,kind=pl_test_flt)
             do i = 1, RPTS
-                r = (i-1)/real(RPTS-1,kind=plflt)
+                r = (i-1)/real(RPTS-1,kind=pl_test_flt)
                 xg(i,j) = r*cos(theta)
                 yg(i,j) = r*sin(theta)
                 z(i,j) = r
@@ -176,7 +187,7 @@ contains
         enddo
 
         !   create contour values.
-        lev = 0.05_plflt + 0.10_plflt * arange(0,nlevel)
+        lev = 0.05_pl_test_flt + 0.10_pl_test_flt * arange(0,nlevel)
 
         !   plot the (polar) contours.
         call plcol0(2)
@@ -193,7 +204,7 @@ contains
                nlevel, ilevgt, ilevlt, nlevlt, nlevgt, &
                ncollin, ncolbox, ncollab, &
                nxsub, nysub
-        real(kind=plflt) :: r, theta, rmax, x0, &
+        real(kind=pl_test_flt) :: r, theta, rmax, x0, &
                y0, xmin, xmax, eps, q1, d1, &
                ymin, ymax, &
                q1i, d1i, q2, d2, q2i, d2i, div1, div1i, div2, div2i, &
@@ -205,10 +216,10 @@ contains
         !    2D arrays that are defined.
         integer, parameter :: xdim=99, NCX=40, ydim=100, NCY=64, NPLT=100
 
-        real(kind=plflt)   :: z(xdim, ydim), ztmp(xdim, ydim+1)
-        real(kind=plflt)   :: xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)
+        real(kind=pl_test_flt)   :: z(xdim, ydim), ztmp(xdim, ydim+1)
+        real(kind=pl_test_flt)   :: xg(xdim, ydim+1), yg(xdim, ydim+1), xtm(NPLT), ytm(NPLT)
 
-        real(kind=plflt)   :: clevel(20)
+        real(kind=pl_test_flt)   :: clevel(20)
         character(len=8)   :: xopt, yopt
 
         nx = NCX
@@ -223,9 +234,9 @@ contains
         !    Tack on extra cell in theta to handle periodicity.
 
         do i = 1, nx
-            r = i - 0.5_plflt
+            r = i - 0.5_pl_test_flt
             do j = 1, ny
-                theta = TWOPI/real(ny-1,kind=plflt) * (j-0.5_plflt)
+                theta = TWOPI/real(ny-1,kind=pl_test_flt) * (j-0.5_pl_test_flt)
                 xg(i,j) = r * cos(theta)
                 yg(i,j) = r * sin(theta)
             enddo
@@ -239,24 +250,24 @@ contains
         ymin = minval( yg(1:nx,1:ny) )
 
         rmax = r
-        x0 = (xmin + xmax)/2._plflt
-        y0 = (ymin + ymax)/2._plflt
+        x0 = (xmin + xmax)/2._pl_test_flt
+        y0 = (ymin + ymax)/2._pl_test_flt
 
         !    Potential inside a conducting cylinder (or sphere) by method of images.
         !    Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
         !    Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
         !    Also put in smoothing term at small distances.
 
-        eps = 2._plflt
+        eps = 2._pl_test_flt
 
-        q1 = 1._plflt
-        d1 = r/4._plflt
+        q1 = 1._pl_test_flt
+        d1 = r/4._pl_test_flt
 
         q1i = - q1*r/d1
         d1i = r**2/d1
 
-        q2 = -1._plflt
-        d2 = r/4._plflt
+        q2 = -1._pl_test_flt
+        d2 = r/4._pl_test_flt
 
         q2i = - q2*r/d2
         d2i = r**2/d2
@@ -284,8 +295,8 @@ contains
         !   Set up contour levels.
 
         nlevel = 20
-        dz = abs(zmax - zmin)/real(nlevel,kind=plflt)
-        clevel(1:nlevel) = zmin + (arange(1,nlevel+1) - 0.5_plflt) * dz
+        dz = abs(zmax - zmin)/real(nlevel,kind=pl_test_flt)
+        clevel(1:nlevel) = zmin + (arange(1,nlevel+1) - 0.5_pl_test_flt) * dz
 
         !   Split contours into two parts, z > 0, and z < 0.
         !   Dashed contours will be at levels 'ilevlt' through 'ilevlt+nlevlt'.
@@ -296,7 +307,7 @@ contains
         !   elements
 
         ilevlt = 1
-        nlevlt = count( clevel(1:nlevel) <= 0.0_plflt )
+        nlevlt = count( clevel(1:nlevel) <= 0.0_pl_test_flt )
         ilevgt = ilevlt + nlevlt
         nlevgt = nlevel - nlevlt
 
@@ -312,20 +323,20 @@ contains
         !   Scale window to user coordinates.
         !   Make a bit larger so the boundary doesn't get clipped.
 
-        eps = 0.05_plflt
+        eps = 0.05_pl_test_flt
         xpmin = xmin - abs(xmin)*eps
         xpmax = xmax + abs(xmax)*eps
         ypmin = ymin - abs(ymin)*eps
         ypmax = ymax + abs(ymax)*eps
 
-        call plvpas(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt, 1.0_plflt )
+        call plvpas(0.1_pl_test_flt, 0.9_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt, 1.0_pl_test_flt )
         call plwind(xpmin, xpmax, ypmin, ypmax)
 
         xopt = ' '
         yopt = ' '
-        xtick = 0._plflt
+        xtick = 0._pl_test_flt
         nxsub = 0
-        ytick = 0._plflt
+        ytick = 0._pl_test_flt
         nysub = 0
 
         call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)

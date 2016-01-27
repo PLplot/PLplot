@@ -107,7 +107,7 @@ if(CORE_BUILD)
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-  install(FILES ${f95_SRCS}
+  install(FILES ${f95_SRCS} README_precision
     DESTINATION ${DATA_DIR}/examples/f95
     )
 

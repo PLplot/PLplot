@@ -18,15 +18,26 @@
 !    License along with PLplot; if not, write to the Free Software
 !    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x03f
     use plplot, double_PI => PL_PI
     use plf95demolib
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
     character (len=3) :: text
-    real(kind=plflt), dimension(0:360) :: x0, y0, x, y
-    real(kind=plflt) :: dtr, theta, dx, dy, offset
+    real(kind=pl_test_flt), dimension(0:360) :: x0, y0, x, y
+    real(kind=pl_test_flt) :: dtr, theta, dx, dy, offset
     integer :: i
     integer :: plparseopts_rc
     !    Process command-line arguments
@@ -36,7 +47,7 @@ program x03f
     !   support this, in particular most interactive drivers do not.
     call plsori(1)
 
-    dtr = PI/180.0_plflt
+    dtr = PI/180.0_pl_test_flt
     x0 = cos(dtr * arange(0,361))
     y0 = sin(dtr * arange(0,361))
 
@@ -46,21 +57,21 @@ program x03f
 
     !    Set up viewport and window, but do not draw box
 
-    call plenv(-1.3_plflt, 1.3_plflt, -1.3_plflt, 1.3_plflt, 1, -2)
+    call plenv(-1.3_pl_test_flt, 1.3_pl_test_flt, -1.3_pl_test_flt, 1.3_pl_test_flt, 1, -2)
     !   Draw circles for polar grid
     do i = 1,10
-        call plarc(0.0_plflt, 0.0_plflt, 0.1_plflt*i, 0.1_plflt*i, &
-               0.0_plflt, 360.0_plflt, 0.0_plflt, .false.)
+        call plarc(0.0_pl_test_flt, 0.0_pl_test_flt, 0.1_pl_test_flt*i, 0.1_pl_test_flt*i, &
+               0.0_pl_test_flt, 360.0_pl_test_flt, 0.0_pl_test_flt, .false.)
     enddo
     call plcol0(2)
     do i = 0,11
-        theta = 30.0_plflt*i
+        theta = 30.0_pl_test_flt*i
         dx = cos(dtr*theta)
         dy = sin(dtr*theta)
 
         !      Draw radial spokes for polar grid
 
-        call pljoin(0.0_plflt, 0.0_plflt, dx, dy)
+        call pljoin(0.0_pl_test_flt, 0.0_pl_test_flt, dx, dy)
         write (text,'(i3)') nint(theta)
 
         !      Write labels for angle
@@ -76,22 +87,22 @@ program x03f
         endif
         !      Slightly off zero to avoid floating point logic flips at
         !      90 and 270 deg.
-        if (dx >= -0.00001_plflt) then
+        if (dx >= -0.00001_pl_test_flt) then
             call plptex(dx, dy, dx, dy, -offset, text)
         else
-            call plptex(dx, dy, -dx, -dy, 1._plflt+offset, text)
+            call plptex(dx, dy, -dx, -dy, 1._pl_test_flt+offset, text)
         end if
     enddo
     !    Draw the graph
 
-    x = x0 * sin(5.0_plflt * dtr * arange(0,361))
-    y = y0 * sin(5.0_plflt * dtr * arange(0,361))
+    x = x0 * sin(5.0_pl_test_flt * dtr * arange(0,361))
+    y = y0 * sin(5.0_pl_test_flt * dtr * arange(0,361))
 
     call plcol0(3)
     call plline(x,y)
 
     call plcol0(4)
-    call plmtex('t', 2.0_plflt, 0.5_plflt, 0.5_plflt, &
+    call plmtex('t', 2.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
            '#frPLplot Example 3 - r(#gh)=sin 5#gh')
 
     !    Close the plot at end

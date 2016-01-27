@@ -22,6 +22,17 @@
 !  along with PLplot; if not, write to the Free Software
 !  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !
 
 !
@@ -70,7 +81,7 @@ program x26f
     use plplot, double_PI => PL_PI
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
     integer, parameter :: nolangs = 2
     integer, parameter :: nlegend = 2
 
@@ -140,13 +151,13 @@ subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
     use plplot, double_PI => PL_PI
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
     integer type, nlegend
     character(*) x_label, y_label, alty_label, title_label, line_label
 
     integer i
-    real(kind=plflt)  freql(101), ampl(101), phase(101)
-    real(kind=plflt)  f0, freq
+    real(kind=pl_test_flt)  freql(101), ampl(101), phase(101)
+    real(kind=pl_test_flt)  f0, freq
 
     character(*) legend_text(nlegend)
 
@@ -154,14 +165,14 @@ subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
     integer          text_colors(nlegend)
     integer          line_colors(nlegend)
     integer          line_styles(nlegend)
-    real(kind=plflt) line_widths(nlegend)
+    real(kind=pl_test_flt) line_widths(nlegend)
     integer          symbol_numbers(nlegend)
     integer          symbol_colors(nlegend)
-    real(kind=plflt) symbol_scales(nlegend)
+    real(kind=pl_test_flt) symbol_scales(nlegend)
     character(len=20) symbols(nlegend)
     integer          box_colors(nlegend), box_patterns(nlegend)
-    real(kind=plflt) box_scales(nlegend), box_line_widths(nlegend)
-    real(kind=plflt) legend_width, legend_height
+    real(kind=pl_test_flt) box_scales(nlegend), box_line_widths(nlegend)
+    real(kind=pl_test_flt) legend_width, legend_height
 
     call pladv(0)
 
@@ -169,22 +180,22 @@ subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
 
     f0 = 1.0
     do i = 1,101
-        freql(i) = -2.0_plflt + (i-1) / 20.0_plflt
-        freq     = 10.0_plflt ** freql(i)
-        ampl(i)  = 20.0_plflt * log10(1.0_plflt / sqrt(1.0_plflt + (freq/f0)**2))
-        phase(i) = -(180.0_plflt / PI) * atan(freq / f0)
+        freql(i) = -2.0_pl_test_flt + (i-1) / 20.0_pl_test_flt
+        freq     = 10.0_pl_test_flt ** freql(i)
+        ampl(i)  = 20.0_pl_test_flt * log10(1.0_pl_test_flt / sqrt(1.0_pl_test_flt + (freq/f0)**2))
+        phase(i) = -(180.0_pl_test_flt / PI) * atan(freq / f0)
     end do
-    call plvpor(0.15_plflt, 0.85_plflt, 0.1_plflt, 0.9_plflt)
-    call plwind(-2.0_plflt, 3.0_plflt, -80.0_plflt, 0.0_plflt)
+    call plvpor(0.15_pl_test_flt, 0.85_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt)
+    call plwind(-2.0_pl_test_flt, 3.0_pl_test_flt, -80.0_pl_test_flt, 0.0_pl_test_flt)
 
     !  Try different axis and labelling styles.
 
     call plcol0(1)
     if ( type .eq. 0 ) then
-        call plbox("bclnst", 0.0_plflt, 0, "bnstv", 0.0_plflt, 0)
+        call plbox("bclnst", 0.0_pl_test_flt, 0, "bnstv", 0.0_pl_test_flt, 0)
     endif
     if ( type .eq. 1 ) then
-        call plbox("bcfghlnst", 0.0_plflt, 0, "bcghnstv", 0.0_plflt, 0)
+        call plbox("bcfghlnst", 0.0_pl_test_flt, 0, "bcghnstv", 0.0_pl_test_flt, 0)
     endif
 
     !  Plot ampl vs freq
@@ -192,27 +203,27 @@ subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
     call plcol0(2)
     call plline(freql, ampl)
     call plcol0(2)
-    call plptex(1.6_plflt, -30.0_plflt, 1.0_plflt, -20.0_plflt, 0.5_plflt, line_label)
+    call plptex(1.6_pl_test_flt, -30.0_pl_test_flt, 1.0_pl_test_flt, -20.0_pl_test_flt, 0.5_pl_test_flt, line_label)
 
     !  Put labels on
 
     call plcol0(1)
-    call plmtex("b", 3.2_plflt, 0.5_plflt, 0.5_plflt, x_label)
-    call plmtex("t", 2.0_plflt, 0.5_plflt, 0.5_plflt, title_label)
+    call plmtex("b", 3.2_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, x_label)
+    call plmtex("t", 2.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, title_label)
     call plcol0(2)
-    call plmtex("l", 5.0_plflt, 0.5_plflt, 0.5_plflt, y_label)
+    call plmtex("l", 5.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, y_label)
 
     !  For the gridless case, put phase vs freq on same plot
 
     if (type .eq. 0) then
         call plcol0(1)
-        call plwind(-2.0_plflt, 3.0_plflt, -100.0_plflt, 0.0_plflt)
-        call plbox("", 0.0_plflt, 0, "cmstv", 30.0_plflt, 3)
+        call plwind(-2.0_pl_test_flt, 3.0_pl_test_flt, -100.0_pl_test_flt, 0.0_pl_test_flt)
+        call plbox("", 0.0_pl_test_flt, 0, "cmstv", 30.0_pl_test_flt, 3)
         call plcol0(3)
         call plline(freql, phase)
         call plstring(freql, phase, "#(728)")
         call plcol0(3)
-        call plmtex("r", 5.0_plflt, 0.5_plflt, 0.5_plflt, alty_label)
+        call plmtex("r", 5.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, alty_label)
     endif
 
     !  Draw a legend
@@ -249,14 +260,14 @@ subroutine plot1( nlegend, type, x_label, y_label, alty_label, &
     !     (note: number of legend entries determined from size of
     !     opt_array)
 
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
     call pllegend( legend_width, legend_height, &
            PL_LEGEND_BACKGROUND + PL_LEGEND_BOUNDING_BOX, 0, &
-           0.0_plflt, 0.0_plflt, 0.10_plflt, 15, &
+           0.0_pl_test_flt, 0.0_pl_test_flt, 0.10_pl_test_flt, 15, &
            1, 1, 0, 0, &
            opt_array, &
-           1.0_plflt, 1.0_plflt, 2.0_plflt, &
-           1.0_plflt, text_colors, legend_text, &
+           1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt, &
+           1.0_pl_test_flt, text_colors, legend_text, &
            box_colors, box_patterns, box_scales, box_line_widths, &
            line_colors, line_styles, line_widths, &
            symbol_colors, symbol_scales, symbol_numbers, symbols )

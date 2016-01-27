@@ -18,6 +18,16 @@
 !     along with PLplot; if not, write to the Free Software
 !     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
 !
 !     This example designed just for devices (e.g., the cairo-related and
 !     qt-related devices) where the best choice of glyph is automatically
@@ -47,25 +57,25 @@ program x33f
     integer            :: text_colors(MAX_NLEGEND)
     integer            :: box_colors(MAX_NLEGEND)
     integer            :: box_patterns(MAX_NLEGEND)
-    real(kind=plflt)   :: box_scales(MAX_NLEGEND)
-    real(kind=plflt)   :: box_line_widths(MAX_NLEGEND)
+    real(kind=pl_test_flt)   :: box_scales(MAX_NLEGEND)
+    real(kind=pl_test_flt)   :: box_line_widths(MAX_NLEGEND)
     integer            :: line_colors(MAX_NLEGEND)
     integer            :: line_styles(MAX_NLEGEND)
-    real(kind=plflt)   :: line_widths(MAX_NLEGEND)
+    real(kind=pl_test_flt)   :: line_widths(MAX_NLEGEND)
     integer            :: symbol_numbers(MAX_NLEGEND), symbol_colors(MAX_NLEGEND)
-    real(kind=plflt)   :: symbol_scales(MAX_NLEGEND)
+    real(kind=pl_test_flt)   :: symbol_scales(MAX_NLEGEND)
     character(len=200) :: text(MAX_NLEGEND)
     character(len=20)  :: symbols(MAX_NLEGEND)
-    real(kind=plflt)   :: legend_width, legend_height, x, y, xstart, ystart
-    real(kind=plflt)   :: max_height, text_scale
+    real(kind=pl_test_flt)   :: legend_width, legend_height, x, y, xstart, ystart
+    real(kind=pl_test_flt)   :: max_height, text_scale
     integer            :: opt_base, nrow, ncolumn
 
     integer            :: position_options(16)
     character(len=3)   :: special_symbols(5)
 
-    real(kind=plflt)   :: values_small(2)
-    real(kind=plflt)   :: values_uneven(9)
-    real(kind=plflt)   :: values_even(9)
+    real(kind=pl_test_flt)   :: values_small(2)
+    real(kind=pl_test_flt)   :: values_uneven(9)
+    real(kind=pl_test_flt)   :: values_even(9)
 
     integer, parameter :: COLORBAR_KINDS = 4
     integer            :: colorbar_option_kinds(COLORBAR_KINDS)
@@ -92,22 +102,22 @@ program x33f
            '✽',             &
            '✦'              /
 
-    data values_small   / -1.0_plflt, 1.0_plflt /
+    data values_small   / -1.0_pl_test_flt, 1.0_pl_test_flt /
     data values_uneven &
-           / -1.0_plflt, 2.0_plflt, 2.6_plflt, 3.4_plflt, &
-           6.0_plflt, 7.0_plflt, 8.0_plflt, 9.0_plflt, &
-           10.0_plflt /
+           / -1.0_pl_test_flt, 2.0_pl_test_flt, 2.6_pl_test_flt, 3.4_pl_test_flt, &
+           6.0_pl_test_flt, 7.0_pl_test_flt, 8.0_pl_test_flt, 9.0_pl_test_flt, &
+           10.0_pl_test_flt /
     data values_even &
-           / -2.0_plflt, -1.0_plflt, 0.0_plflt, 1.0_plflt, &
-           2.0_plflt, 3.0_plflt, 4.0_plflt, 5.0_plflt, &
-           6.0_plflt /
+           / -2.0_pl_test_flt, -1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt, &
+           2.0_pl_test_flt, 3.0_pl_test_flt, 4.0_pl_test_flt, 5.0_pl_test_flt, &
+           6.0_pl_test_flt /
 
-    real(kind=plflt) :: small_factor
+    real(kind=pl_test_flt) :: small_factor
 
-    ! The factor of 1.e-200 is the standard one, but if plflt is
+    ! The factor of 1.e-200 is the standard one, but if pl_test_flt is
     ! single precision that will underflow so adopt a
     ! larger factor which is 1.e10*minimum positive real.
-    small_factor = max(1.e-200_plflt, 1.e10_plflt*tiny(1._plflt))
+    small_factor = max(1.e-200_pl_test_flt, 1.e10_pl_test_flt*tiny(1._pl_test_flt))
 
     values_small = small_factor*values_small
     values_uneven = small_factor*values_uneven
@@ -185,13 +195,13 @@ program x33f
 
     !     First page illustrating the 16 standard positions.
     call pladv( 0 )
-    call plvpor( 0.25_plflt, 0.75_plflt, 0.25_plflt, 0.75_plflt )
-    call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    call plbox( 'bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0 )
+    call plvpor( 0.25_pl_test_flt, 0.75_pl_test_flt, 0.25_pl_test_flt, 0.75_pl_test_flt )
+    call plwind( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+    call plbox( 'bc', 0.0_pl_test_flt, 0, 'bc', 0.0_pl_test_flt, 0 )
     call plsfont( PL_FCI_SANS, -1, -1 )
-    call plmtex( 't', 8.0_plflt, 0.5_plflt, 0.5_plflt, &
+    call plmtex( 't', 8.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
            'The 16 standard legend positions with' )
-    call plmtex( 't', 6.0_plflt, 0.5_plflt, 0.5_plflt, &
+    call plmtex( 't', 6.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
            'the same (0.05) offset in x and y' )
 
     nlegend = 1
@@ -201,13 +211,13 @@ program x33f
     opt_array(1)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
     line_styles(1)    = 1
     line_widths(1)    = 1
-    symbol_scales(1)  = 1._plflt
+    symbol_scales(1)  = 1._pl_test_flt
     symbol_numbers(1) = 4
     symbols(1)        = "#(728)"
 
     !     Use monotype fonts so that all legends are the same size.
     call plsfont( PL_FCI_MONO, -1, -1 )
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     do k = 1,16
         position = position_options(k)
@@ -218,10 +228,10 @@ program x33f
         write( text(1), '(i2.2)' ) k-1
 
         call pllegend( legend_width, legend_height, opt, position, &
-               0.05_plflt, 0.05_plflt,                                &
-               0.1_plflt, 15, 1, 1, 0, 0,                             &
-               opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt, &
-               1._plflt, text_colors(1:nlegend), text(1:nlegend),     &
+               0.05_pl_test_flt, 0.05_pl_test_flt,                                &
+               0.1_pl_test_flt, 15, 1, 1, 0, 0,                             &
+               opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt, &
+               1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend),     &
                box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
                line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
                symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend)  )
@@ -231,13 +241,13 @@ program x33f
     !     data.
 
     call pladv( 0 )
-    call plvpor( 0.25_plflt, 0.75_plflt, 0.25_plflt, 0.75_plflt )
-    call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    call plbox( 'bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0 )
+    call plvpor( 0.25_pl_test_flt, 0.75_pl_test_flt, 0.25_pl_test_flt, 0.75_pl_test_flt )
+    call plwind( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+    call plbox( 'bc', 0.0_pl_test_flt, 0, 'bc', 0.0_pl_test_flt, 0 )
     call plsfont( PL_FCI_SANS, -1, -1 )
-    call plmtex( 't', 8.0_plflt, 0.5_plflt, 0.5_plflt, &
+    call plmtex( 't', 8.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
            'The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,' )
-    call plmtex( 't', 6.0_plflt, 0.5_plflt, 0.5_plflt, &
+    call plmtex( 't', 6.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
            'and position for the same legend data' )
 
     nlegend = 7
@@ -250,7 +260,7 @@ program x33f
         opt_array(k)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
         line_styles(k)    = 1
         line_widths(k)    = 1
-        symbol_scales(k)  = 1._plflt
+        symbol_scales(k)  = 1._pl_test_flt
         symbol_numbers(k) = 2
         symbols(k)        = "#(728)"
         write( text(k), '(i2.2)' ) k-1
@@ -262,102 +272,102 @@ program x33f
     !     Use monotype fonts so that all legends are the same size.
 
     call plsfont( PL_FCI_MONO, -1, -1 )
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     position = PL_POSITION_TOP + PL_POSITION_OUTSIDE
     opt     = opt_base
-    x       = 0._plflt
-    y       = 0.1_plflt
+    x       = 0._pl_test_flt
+    y       = 0.1_pl_test_flt
     nrow    = 1
     ncolumn = nlegend
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
-           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-           1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.05_pl_test_flt, 15, 1, 1, nrow, ncolumn,                         &
+           opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt,       &
+           1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
     position = PL_POSITION_BOTTOM + PL_POSITION_OUTSIDE
     opt     = opt_base
-    x       = 0._plflt
-    y       = 0.1_plflt
+    x       = 0._pl_test_flt
+    y       = 0.1_pl_test_flt
     nrow    = 1
     ncolumn = nlegend
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
-           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-           1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.05_pl_test_flt, 15, 1, 1, nrow, ncolumn,                         &
+           opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt,       &
+           1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
     position = PL_POSITION_LEFT + PL_POSITION_OUTSIDE
     opt     = opt_base
-    x       = 0.1_plflt
-    y       = 0._plflt
+    x       = 0.1_pl_test_flt
+    y       = 0._pl_test_flt
     nrow    = nlegend
     ncolumn = 1
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
-           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-           1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.05_pl_test_flt, 15, 1, 1, nrow, ncolumn,                         &
+           opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt,       &
+           1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
     position = PL_POSITION_RIGHT + PL_POSITION_OUTSIDE
     opt     = opt_base
-    x       = 0.1_plflt
-    y       = 0._plflt
+    x       = 0.1_pl_test_flt
+    y       = 0._pl_test_flt
     nrow    = nlegend
     ncolumn = 1
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
-           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-           1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.05_pl_test_flt, 15, 1, 1, nrow, ncolumn,                         &
+           opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt,       &
+           1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
     position = PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_INSIDE
     opt     = opt_base
-    x       = 0._plflt
-    y       = 0._plflt
+    x       = 0._pl_test_flt
+    y       = 0._pl_test_flt
     nrow    = 6
     ncolumn = 2
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
-           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-           1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.05_pl_test_flt, 15, 1, 1, nrow, ncolumn,                         &
+           opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt,       &
+           1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
     position = PL_POSITION_RIGHT + PL_POSITION_TOP + PL_POSITION_INSIDE
     opt     = opt_base + PL_LEGEND_ROW_MAJOR
-    x       = 0._plflt
-    y       = 0._plflt
+    x       = 0._pl_test_flt
+    y       = 0._pl_test_flt
     nrow    = 6
     ncolumn = 2
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
-           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-           1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.05_pl_test_flt, 15, 1, 1, nrow, ncolumn,                         &
+           opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt,       &
+           1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
 
     position = PL_POSITION_BOTTOM + PL_POSITION_INSIDE
     opt     = opt_base + PL_LEGEND_ROW_MAJOR
-    x       = 0._plflt
-    y       = 0._plflt
+    x       = 0._pl_test_flt
+    y       = 0._pl_test_flt
     nrow    = 3
     ncolumn = 3
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.05_plflt, 15, 1, 1, nrow, ncolumn,                         &
-           opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 2.0_plflt,       &
-           1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.05_pl_test_flt, 15, 1, 1, nrow, ncolumn,                         &
+           opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 2.0_pl_test_flt,       &
+           1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -365,14 +375,14 @@ program x33f
     !     Third page demonstrating legend alignment
 
     call pladv( 0 )
-    call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt )
-    call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
+    call plvpor( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 0.9_pl_test_flt )
+    call plwind( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
     call plsfont( PL_FCI_SANS, -1, -1 )
-    call plmtex( 't', 2.0_plflt, 0.5_plflt, 0.5_plflt, &
+    call plmtex( 't', 2.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
            'Demonstrate legend alignment' )
 
-    x        = 0.1_plflt
-    y        = 0.1_plflt
+    x        = 0.1_pl_test_flt
+    y        = 0.1_pl_test_flt
     nturn    = 5
     nlegend  = 0
     position = PL_POSITION_TOP + PL_POSITION_LEFT + PL_POSITION_SUBPAGE
@@ -396,7 +406,7 @@ program x33f
             opt_array(k)      = PL_LEGEND_LINE + PL_LEGEND_SYMBOL
             line_styles(k)    = 1
             line_widths(k)    = 1
-            symbol_scales(k)  = 1._plflt
+            symbol_scales(k)  = 1._pl_test_flt
             symbol_numbers(k) = 2
             symbols(k)        = "#(728)"
             write( text(k), '(i2.2)' ) k-1
@@ -408,16 +418,16 @@ program x33f
         !         Use monotype fonts so that all legends are the same size.
 
         call plsfont( PL_FCI_MONO, -1, -1 )
-        call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+        call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
         nrow    = MIN( 3, nlegend )
         ncolumn = 0
 
         call pllegend( legend_width, legend_height, opt, position, &
                x, y,                                                  &
-               0.025_plflt, 15, 1, 1, nrow, ncolumn,                  &
-               opt_array(1:nlegend), 1.0_plflt, 1.0_plflt, 1.5_plflt, &
-               1._plflt, text_colors(1:nlegend), text(1:nlegend), &
+               0.025_pl_test_flt, 15, 1, 1, nrow, ncolumn,                  &
+               opt_array(1:nlegend), 1.0_pl_test_flt, 1.0_pl_test_flt, 1.5_pl_test_flt, &
+               1._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
                box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
                line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
                symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -425,7 +435,7 @@ program x33f
         if ( i .eq. nturn ) then
             position = PL_POSITION_TOP + PL_POSITION_RIGHT + PL_POSITION_SUBPAGE
             opt = opt_base
-            x   = 1._plflt - x
+            x   = 1._pl_test_flt - x
             y   = y + legend_height
         else
             x = x + legend_width
@@ -435,18 +445,18 @@ program x33f
 
     !     Fourth page illustrating various kinds of legends
 
-    max_height = 0._plflt
-    xstart     = 0.0_plflt
-    ystart     = 0.1_plflt
+    max_height = 0._pl_test_flt
+    xstart     = 0.0_pl_test_flt
+    ystart     = 0.1_pl_test_flt
     x          = xstart
     y          = ystart
-    text_scale = 0.90_plflt
+    text_scale = 0.90_pl_test_flt
     call pladv( 0 )
-    call plvpor( 0.0_plflt, 1._plflt, 0.0_plflt, 0.90_plflt )
-    call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    !       call plbox('bc', 0.0, 0, 'bc', 0.0_plflt, 0)
+    call plvpor( 0.0_pl_test_flt, 1._pl_test_flt, 0.0_pl_test_flt, 0.90_pl_test_flt )
+    call plwind( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+    !       call plbox('bc', 0.0, 0, 'bc', 0.0_pl_test_flt, 0)
     call plsfont( PL_FCI_SANS, -1, -1 )
-    call plmtex( 't', 2.0_plflt, 0.5_plflt, 0.5_plflt, &
+    call plmtex( 't', 2.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
            'Demonstrate Various Kinds of Legends' )
 
     nlegend = 5
@@ -468,7 +478,7 @@ program x33f
     text_colors(2)     = 2
     box_colors(2)      = 2
     box_patterns(2)    = 0
-    box_scales(2)      = 0.8_plflt
+    box_scales(2)      = 0.8_pl_test_flt
     box_line_widths(2) = 1
 
     opt_array(3) = PL_LEGEND_LINE
@@ -498,12 +508,12 @@ program x33f
     symbols(5)        = special_symbols(3)
 
     opt = opt_base
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -523,12 +533,12 @@ program x33f
 
     opt = opt_base
     x   = x + legend_width
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -548,12 +558,12 @@ program x33f
 
     opt = opt_base
     x   = x + legend_width
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -567,7 +577,7 @@ program x33f
         text_colors(i)     = i
         box_colors(i)      = i
         box_patterns(i)    = 0
-        box_scales(i)      = 0.8_plflt
+        box_scales(i)      = 0.8_pl_test_flt
         box_line_widths(i) = 1
     enddo
 
@@ -577,13 +587,13 @@ program x33f
 
     x          = xstart
     y          = y + max_height
-    max_height = 0._plflt
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt)
+    max_height = 0._pl_test_flt
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt)
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -597,18 +607,18 @@ program x33f
         text_colors(i)     = 2
         box_colors(i)      = 2
         box_patterns(i)    = i - 1
-        box_scales(i)      = 0.8_plflt
+        box_scales(i)      = 0.8_pl_test_flt
         box_line_widths(i) = 1
     enddo
 
     opt = opt_base
     x   = x + legend_width
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -622,18 +632,18 @@ program x33f
         text_colors(i)     = 2
         box_colors(i)      = 2
         box_patterns(i)    = 3
-        box_scales(i)      = 0.8_plflt
+        box_scales(i)      = 0.8_pl_test_flt
         box_line_widths(i) = i
     enddo
 
     opt = opt_base
     x   = x + legend_width
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -656,13 +666,13 @@ program x33f
 
     x          = xstart
     y          = y + max_height
-    max_height = 0._plflt
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    max_height = 0._pl_test_flt
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -681,12 +691,12 @@ program x33f
 
     opt = opt_base
     x   = x + legend_width
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -705,12 +715,12 @@ program x33f
 
     opt = opt_base
     x   = x + legend_width
-    call plscol0a( 15, 32, 32, 32, 0.70_plflt )
+    call plscol0a( 15, 32, 32, 32, 0.70_pl_test_flt )
 
     call pllegend( legend_width, legend_height, opt, position, x, y, &
-           0.1_plflt, 15, 1, 1, 0, 0,                                   &
-           opt_array(1:nlegend), 1.0_plflt, text_scale, 2.0_plflt,      &
-           0._plflt, text_colors(1:nlegend), text(1:nlegend), &
+           0.1_pl_test_flt, 15, 1, 1, 0, 0,                                   &
+           opt_array(1:nlegend), 1.0_pl_test_flt, text_scale, 2.0_pl_test_flt,      &
+           0._pl_test_flt, text_colors(1:nlegend), text(1:nlegend), &
            box_colors(1:nlegend), box_patterns(1:nlegend), box_scales(1:nlegend), box_line_widths(1:nlegend), &
            line_colors(1:nlegend), line_styles(1:nlegend), line_widths(1:nlegend), &
            symbol_colors(1:nlegend), symbol_scales(1:nlegend), symbol_numbers(1:nlegend), symbols(1:nlegend) )
@@ -722,18 +732,18 @@ program x33f
     call plscolbg( 70, 185, 70 )
     ! Cut out the greatest and smallest bits of the color spectrum to
     ! leave colors for the end caps.
-    call plscmap1_range( 0.01_plflt, 0.99_plflt )
+    call plscmap1_range( 0.01_pl_test_flt, 0.99_pl_test_flt )
 
     ! We can only test image and gradient colorbars with two element arrays
     do i = 2,COLORBAR_KINDS-1
-        call plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0._plflt, 2, values_small )
+        call plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0._pl_test_flt, 2, values_small )
     enddo
     ! Test shade colorbars with larger arrays
     do i = 0,1
-        call plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2._plflt, 9, values_even )
+        call plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2._pl_test_flt, 9, values_even )
     enddo
     do i = 0,1
-        call plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0._plflt, 9, values_uneven )
+        call plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0._pl_test_flt, 9, values_uneven )
     enddo
 
     call plend()
@@ -747,25 +757,25 @@ contains
         implicit none
 
         integer  :: kind_i, label_i, cap_i, cont_color, n_values
-        real(kind=plflt)   :: cont_width
-        real(kind=plflt), dimension(:)   :: values
+        real(kind=pl_test_flt)   :: cont_width
+        real(kind=pl_test_flt), dimension(:)   :: values
 
         ! Parameters for the colorbars on this page
         integer            :: position_i, position, opt
-        real(kind=plflt)   :: x, y, x_length, y_length;
-        real(kind=plflt)   :: ticks(1)
+        real(kind=pl_test_flt)   :: x, y, x_length, y_length;
+        real(kind=pl_test_flt)   :: ticks(1)
         integer            :: sub_ticks(1)
-        real(kind=plflt)   :: low_cap_color, high_cap_color
+        real(kind=pl_test_flt)   :: low_cap_color, high_cap_color
         logical            :: vertical, ifn
         character(len=20)  :: axis_opts(1)
         integer            :: label_opts(1)
         character(len=200) :: labels(1)
         character(len=200) :: title
-        real(kind=plflt)   :: colorbar_width, colorbar_height
+        real(kind=pl_test_flt)   :: colorbar_width, colorbar_height
         integer            :: n_values_array(1);
-        real(kind=plflt), allocatable, dimension(:,:) :: values_array
+        real(kind=pl_test_flt), allocatable, dimension(:,:) :: values_array
 
-        ticks(1) = 0.0_plflt
+        ticks(1) = 0.0_pl_test_flt
         sub_ticks(1) = 0
         label_opts(1) = 0
 
@@ -773,8 +783,8 @@ contains
         allocate(values_array(1,n_values))
         values_array(1,:) = values(:)
 
-        low_cap_color  = 0.0_plflt;
-        high_cap_color = 1.0_plflt;
+        low_cap_color  = 0.0_pl_test_flt;
+        high_cap_color = 1.0_pl_test_flt;
 
         ! Start a new page
         call pladv( 0 )
@@ -792,26 +802,26 @@ contains
 
             ! Set the offset position on the page
             if (vertical .eqv. .true.) then
-                x        = 0.0_plflt
-                y        = 0.0_plflt
-                x_length = 0.05_plflt
-                y_length = 0.5_plflt
+                x        = 0.0_pl_test_flt
+                y        = 0.0_pl_test_flt
+                x_length = 0.05_pl_test_flt
+                y_length = 0.5_pl_test_flt
             else
-                x        = 0.0_plflt
-                y        = 0.0_plflt
-                x_length = 0.5_plflt
-                y_length = 0.05_plflt
+                x        = 0.0_pl_test_flt
+                y        = 0.0_pl_test_flt
+                x_length = 0.5_pl_test_flt
+                y_length = 0.05_pl_test_flt
             endif
 
             ! Set appropriate labelling options.
             if (ifn .eqv. .true.) then
-                if ( cont_color .eq. 0 .or. cont_width .eq. 0._plflt ) then
+                if ( cont_color .eq. 0 .or. cont_width .eq. 0._pl_test_flt ) then
                     axis_opts(1) = "uwtivn"
                 else
                     axis_opts(1) = "uwxvn"
                 endif
             else
-                if ( cont_color .eq. 0 .or. cont_width .eq. 0._plflt ) then
+                if ( cont_color .eq. 0 .or. cont_width .eq. 0._pl_test_flt ) then
                     axis_opts(1) = "uwtivm"
                 else
                     axis_opts(1) = "uwxvm"
@@ -822,15 +832,15 @@ contains
                    ', ', trim(colorbar_label_option_labels(label_i+1))
 
             ! Smaller text
-            call plschr( 0.0_plflt, 0.75_plflt )
+            call plschr( 0.0_pl_test_flt, 0.75_pl_test_flt )
             ! Small ticks on the vertical axis
-            call plsmaj( 0.0_plflt, 0.5_plflt )
-            call plsmin( 0.0_plflt, 0.5_plflt )
+            call plsmaj( 0.0_pl_test_flt, 0.5_pl_test_flt )
+            call plsmin( 0.0_pl_test_flt, 0.5_pl_test_flt )
 
-            call plvpor( 0.20_plflt, 0.80_plflt, 0.20_plflt, 0.80_plflt )
-            call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
+            call plvpor( 0.20_pl_test_flt, 0.80_pl_test_flt, 0.20_pl_test_flt, 0.80_pl_test_flt )
+            call plwind( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
             ! Set interesting background colour.
-            call plscol0a( 15, 0, 0, 0, 0.20_plflt )
+            call plscol0a( 15, 0, 0, 0, 0.20_pl_test_flt )
             call plcolorbar( colorbar_width, colorbar_height, &
                    ior(opt, ior(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)), position, &
                    x, y, x_length, y_length, &
@@ -842,18 +852,18 @@ contains
                    n_values_array, values_array )
 
             ! Reset text and tick sizes
-            call plschr( 0.0_plflt, 1.0_plflt )
-            call plsmaj( 0.0_plflt, 1.0_plflt )
-            call plsmin( 0.0_plflt, 1.0_plflt )
+            call plschr( 0.0_pl_test_flt, 1.0_pl_test_flt )
+            call plsmaj( 0.0_pl_test_flt, 1.0_pl_test_flt )
+            call plsmin( 0.0_pl_test_flt, 1.0_pl_test_flt )
         enddo
 
 
         ! Draw a page title
         write(title, '(3A)') trim(colorbar_option_kind_labels(kind_i+1)), ' - ', &
                trim(colorbar_cap_option_labels(cap_i+1))
-        call plvpor( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-        call plwind( 0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-        call plptex( 0.5_plflt, 0.5_plflt, 0.0_plflt, 0.0_plflt, 0.5_plflt, title )
+        call plvpor( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+        call plwind( 0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+        call plptex( 0.5_pl_test_flt, 0.5_pl_test_flt, 0.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, title )
 
         deallocate(values_array)
 
@@ -862,8 +872,8 @@ contains
     subroutine plcolorbar_example( palette, kind_i, cont_color, cont_width, n_values, values )
         character(*) :: palette
         integer  :: kind_i, label_i, cap_i, cont_color, n_values
-        real(kind=plflt)   :: cont_width
-        real(kind=plflt), dimension(:)   :: values
+        real(kind=pl_test_flt)   :: cont_width
+        real(kind=pl_test_flt), dimension(:)   :: values
 
         ! Load the color palette
         call plspal1( palette, .true. )

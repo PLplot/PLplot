@@ -20,6 +20,17 @@
 !   along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !
 !   In Debian, run like this:
 !
@@ -54,10 +65,10 @@ program x24f
     integer blue(7)
     integer :: plparseopts_rc
 
-    real(kind=plflt)  px(4)
-    real(kind=plflt)  py(4)
-    real(kind=plflt)  sx(12)
-    real(kind=plflt)  sy(12)
+    real(kind=pl_test_flt)  px(4)
+    real(kind=pl_test_flt)  py(4)
+    real(kind=pl_test_flt)  sx(12)
+    real(kind=pl_test_flt)  sy(12)
 
     character(len=30) peace(12)
 
@@ -65,8 +76,8 @@ program x24f
     data (green(i) ,i=1,7) / 240,   0, 125, 204, 204,  80,   0 /
     data (blue(i) ,i=1,7)  / 240,   0,   0,   0,   0, 204, 125 /
 
-    data (px(i) ,i=1,4) / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt /
-    data (py(i) ,i=1,4) / 0.0_plflt, 0.25_plflt, 0.25_plflt, 0.0_plflt /
+    data (px(i) ,i=1,4) / 0.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt /
+    data (py(i) ,i=1,4) / 0.0_pl_test_flt, 0.25_pl_test_flt, 0.25_pl_test_flt, 0.0_pl_test_flt /
 
     data (sx(i) ,i=1,12) / &
            0.16374, &
@@ -141,15 +152,15 @@ program x24f
     call plinit()
 
     call pladv(0)
-    call plvpor (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-    call plwind (0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
+    call plvpor (0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt)
+    call plwind (0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt)
     call plcol0 (0)
-    call plbox ('', 1.0_plflt, 0, '', 1.0_plflt, 0)
+    call plbox ('', 1.0_pl_test_flt, 0, '', 1.0_pl_test_flt, 0)
 
     call plscmap0n (7)
     call plscmap0 (red, green, blue)
 
-    call plschr (0.0_plflt, 4.0_plflt)
+    call plschr (0.0_pl_test_flt, 4.0_pl_test_flt)
     call plfont (1)
 
     do i = 1,4
@@ -158,13 +169,13 @@ program x24f
         call plfill (px, py)
 
         do j = 1,4
-            py (j) = py (j) + 1.0_plflt / 4.0_plflt
+            py (j) = py (j) + 1.0_pl_test_flt / 4.0_pl_test_flt
         enddo
     enddo
 
     call plcol0 (0)
     do i = 1,12
-        call plptex (sx (i), sy (i), 1.0_plflt, 0.0_plflt, 0.5_plflt, peace (i))
+        call plptex (sx (i), sy (i), 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, peace (i))
     enddo
 
     call plend()

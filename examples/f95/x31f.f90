@@ -19,6 +19,17 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !--------------------------------------------------------------------------
 ! main
 !
@@ -29,23 +40,23 @@ program x31f
     use plplot, double_PL_NOTSET => PL_NOTSET
 
     implicit none
-    real(kind=plflt), parameter :: NOTSET = double_PL_NOTSET
+    real(kind=pl_test_flt), parameter :: NOTSET = double_PL_NOTSET
 
-    real(kind=plflt) xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
-    real(kind=plflt) xmid, ymid, wx, wy
-    real(kind=plflt) mar, aspect, jx, jy, ori
+    real(kind=pl_test_flt) xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
+    real(kind=pl_test_flt) xmid, ymid, wx, wy
+    real(kind=pl_test_flt) mar, aspect, jx, jy, ori
     integer win, level2, digmax, digits, compression1, compression2
-    real(kind=plflt) xp0, yp0, xp1, yp1, xp2, yp2
+    real(kind=pl_test_flt) xp0, yp0, xp1, yp1, xp2, yp2
     integer xleng0, yleng0, xoff0, yoff0, xleng1, yleng1, xoff1, yoff1
     integer xleng2, yleng2, xoff2, yoff2
     integer fam0, num0, bmax0, fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
-    real(kind=plflt) a
+    real(kind=pl_test_flt) a
     integer r1(2), g1(2), b1(2)
     data r1 /0, 255/
     data g1 /255, 0/
     data b1 /0, 0/
-    real(kind=plflt) a1(2)
-    data a1 /1.0_plflt, 1.0_plflt/
+    real(kind=pl_test_flt) a1(2)
+    data a1 /1.0_pl_test_flt, 1.0_pl_test_flt/
     character(len=256) fnam
     integer stderr
     integer status
@@ -79,8 +90,8 @@ program x31f
     !     Test setting / getting page parameters before plinit
     !     Save values set by plparseopts to be restored later.
     call plgpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
-    xp1 = 200._plflt
-    yp1 = 200._plflt
+    xp1 = 200._pl_test_flt
+    yp1 = 200._pl_test_flt
     xleng1 = 400
     yleng1 = 200
     xoff1 = 10
@@ -134,24 +145,24 @@ program x31f
     endif
 
     call pladv(0)
-    call plvpor(0.01_plflt, 0.99_plflt, 0.02_plflt, 0.49_plflt)
+    call plvpor(0.01_pl_test_flt, 0.99_pl_test_flt, 0.02_pl_test_flt, 0.49_pl_test_flt)
     call plgvpd(xmin, xmax, ymin, ymax)
     write(*,'(A,4F9.6)') 'plvpor: xmin, xmax, ymin, ymax =',  &
            xmin, xmax, ymin, ymax
-    if (xmin .ne. 0.01_plflt .or. xmax .ne. 0.99_plflt .or. &
-           ymin .ne. 0.02_plflt .or. ymax .ne. 0.49_plflt) then
+    if (xmin .ne. 0.01_pl_test_flt .or. xmax .ne. 0.99_pl_test_flt .or. &
+           ymin .ne. 0.02_pl_test_flt .or. ymax .ne. 0.49_pl_test_flt) then
         write(stderr,*) 'plgvpd test failed'
         status = 1
     endif
     xmid = 0.5*(xmin+xmax)
     ymid = 0.5*(ymin+ymax)
 
-    call plwind(0.2_plflt, 0.3_plflt, 0.4_plflt, 0.5_plflt)
+    call plwind(0.2_pl_test_flt, 0.3_pl_test_flt, 0.4_pl_test_flt, 0.5_pl_test_flt)
     call plgvpw(xmin, xmax, ymin, ymax)
     write(*,'(A,4F9.6)') 'plwind: xmin, xmax, ymin, ymax =', &
            xmin, xmax, ymin, ymax
-    if (xmin .ne. 0.2_plflt .or. xmax .ne. 0.3_plflt .or. &
-           ymin .ne. 0.4_plflt .or. ymax .ne. 0.5_plflt) then
+    if (xmin .ne. 0.2_pl_test_flt .or. xmax .ne. 0.3_pl_test_flt .or. &
+           ymin .ne. 0.4_pl_test_flt .or. ymax .ne. 0.5_pl_test_flt) then
         write(stderr,*) 'plgvpw test failed',xmin,xmax,ymin,ymax
         status = 1
     endif
@@ -160,7 +171,7 @@ program x31f
     call plcalc_world(xmid,ymid,wx,wy,win)
     write(*,'(A,2F9.6,I2)') 'world parameters: wx, wy, win =',  &
            wx, wy, win
-    if (abs(wx-0.25_plflt).gt.1.0d-5 .or. abs(wy-0.45_plflt).gt.1.0d-5) then
+    if (abs(wx-0.25_pl_test_flt).gt.1.0d-5 .or. abs(wy-0.45_pl_test_flt).gt.1.0d-5) then
         write(stderr,*) 'plcalc_world test failed'
         status = 1
     endif
@@ -205,41 +216,41 @@ program x31f
         status = 1
     endif
 
-    call plsdidev(0.05_plflt, NOTSET, 0.1_plflt, 0.2_plflt)
+    call plsdidev(0.05_pl_test_flt, NOTSET, 0.1_pl_test_flt, 0.2_pl_test_flt)
     call plgdidev(mar, aspect, jx, jy)
     write(*,'(A,4F9.6)') 'device-space window parameters: '// &
            'mar, aspect, jx, jy =', mar, aspect, jx, jy
-    if (mar .ne. 0.05_plflt .or. jx .ne. 0.1_plflt .or. jy .ne. 0.2_plflt) then
+    if (mar .ne. 0.05_pl_test_flt .or. jx .ne. 0.1_pl_test_flt .or. jy .ne. 0.2_pl_test_flt) then
         write(stderr,*) 'plgdidev test failed'
         status = 1
     endif
 
-    call plsdiori(1.0_plflt)
+    call plsdiori(1.0_pl_test_flt)
     call plgdiori(ori)
     write(*,'(A,F9.6)') 'ori parameter =', ori
-    if (ori .ne. 1.0_plflt) then
+    if (ori .ne. 1.0_pl_test_flt) then
         write(stderr,*) 'plgdiori test failed'
         status = 1
     endif
 
-    call plsdiplt(0.1_plflt, 0.2_plflt, 0.9_plflt, 0.8_plflt)
+    call plsdiplt(0.1_pl_test_flt, 0.2_pl_test_flt, 0.9_pl_test_flt, 0.8_pl_test_flt)
     call plgdiplt(xmin, ymin, xmax, ymax)
     write(*,'(A,4F9.6)') 'plot-space window parameters: '// &
            'xmin, ymin, xmax, ymax =', xmin, ymin, xmax, ymax
-    if (xmin .ne. 0.1_plflt .or. xmax .ne. 0.9_plflt .or. &
-           ymin .ne. 0.2_plflt .or. ymax .ne. 0.8_plflt) then
+    if (xmin .ne. 0.1_pl_test_flt .or. xmax .ne. 0.9_pl_test_flt .or. &
+           ymin .ne. 0.2_pl_test_flt .or. ymax .ne. 0.8_pl_test_flt) then
         write(stderr,*) 'plgdiplt test failed'
         status = 1
     endif
 
-    call plsdiplz(0.1_plflt, 0.1_plflt, 0.9_plflt, 0.9_plflt)
+    call plsdiplz(0.1_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt, 0.9_pl_test_flt)
     call plgdiplt(zxmin, zymin, zxmax, zymax)
     write(*,'(A,4F9.6)') 'zoomed plot-space window parameters: '// &
            'xmin, ymin, xmax, ymax =', zxmin, zymin, zxmax, zymax
-    if ( abs(zxmin -(xmin + (xmax-xmin)*0.1_plflt)) .gt. 1.0d-5 .or. &
-           abs(zxmax -(xmin+(xmax-xmin)*0.9_plflt)) .gt. 1.0d-5 .or. &
-           abs(zymin -(ymin+(ymax-ymin)*0.1_plflt)) .gt. 1.0d-5 .or. &
-           abs(zymax -(ymin+(ymax-ymin)*0.9_plflt)) .gt. 1.0d-5 ) then
+    if ( abs(zxmin -(xmin + (xmax-xmin)*0.1_pl_test_flt)) .gt. 1.0d-5 .or. &
+           abs(zxmax -(xmin+(xmax-xmin)*0.9_pl_test_flt)) .gt. 1.0d-5 .or. &
+           abs(zymin -(ymin+(ymax-ymin)*0.1_pl_test_flt)) .gt. 1.0d-5 .or. &
+           abs(zymax -(ymin+(ymax-ymin)*0.9_pl_test_flt)) .gt. 1.0d-5 ) then
         write(stderr,*) 'plsdiplz test failed'
         status = 1
     endif
@@ -252,11 +263,11 @@ program x31f
         status = 1
     endif
 
-    call plscolbga(20,30,40,0.5_plflt)
+    call plscolbga(20,30,40,0.5_pl_test_flt)
     call plgcolbga(r, g, b, a)
     write(*,'(A,3I3,F9.6)') 'background/transparency colour '// &
            'parameters: r, g, b, a =', r, g, b, a
-    if (r.ne.20 .or. g.ne.30 .or. b.ne.40 .or. a.ne.0.5_plflt) then
+    if (r.ne.20 .or. g.ne.30 .or. b.ne.40 .or. a.ne.0.5_pl_test_flt) then
         write(stderr,*) 'plgcolbga test failed'
         status = 1
     endif

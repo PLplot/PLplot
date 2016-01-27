@@ -1,7 +1,6 @@
-!      Demonstrates multiple windows and color map 0
-!
 !      Copyright (C) 2011  Arjen Markus
 !      Copyright (C) 2005  Andrew Ross
+!      Copyright (C) 2016  Alan W. Irwin
 !
 !      This file is part of PLplot.
 !
@@ -19,6 +18,17 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !      Module containing auxiliary routines for the demo programs
 
 module plf95demolib
@@ -26,9 +36,9 @@ module plf95demolib
     implicit none
 
     interface arange
-        module procedure arange_plflt_1
-        module procedure arange_plflt_2
-        module procedure arange_plflt_3
+        module procedure arange_3
+        module procedure arange_2
+        module procedure arange_1
     end interface arange
 
 contains
@@ -36,30 +46,30 @@ contains
     ! Function to return an arithmetic series (modelled after the Numpy
     ! function of the same name)
     !
-    function arange_plflt_1( start, stop, step )
+    function arange_3( start, stop, step )
         integer, intent(in) :: start, stop, step
 
-        real(kind=plflt), dimension((stop-start)/step) :: arange_plflt_1
+        real(kind=pl_test_flt), dimension((stop-start)/step) :: arange_3
 
         integer             :: i
 
-        arange_plflt_1 = (/ (real(i, plflt), i = start, stop-step, step) /)
-    end function arange_plflt_1
+        arange_3 = (/ (real(i, pl_test_flt), i = start, stop-step, step) /)
+    end function arange_3
 
-    function arange_plflt_2( start, stop )
+    function arange_2( start, stop )
         integer, intent(in) :: start, stop
 
-        real(kind=plflt), dimension((stop-start)) :: arange_plflt_2
+        real(kind=pl_test_flt), dimension((stop-start)) :: arange_2
 
-        arange_plflt_2 = arange_plflt_1( start, stop, 1 )
-    end function arange_plflt_2
+        arange_2 = arange_3( start, stop, 1 )
+    end function arange_2
 
-    function arange_plflt_3( stop )
+    function arange_1( stop )
         integer, intent(in) :: stop
 
-        real(kind=plflt), dimension(stop-1) :: arange_plflt_3
+        real(kind=pl_test_flt), dimension(stop-1) :: arange_1
 
-        arange_plflt_3 = arange_plflt_1( 0, stop, 1 )
-    end function arange_plflt_3
+        arange_1 = arange_3( 0, stop, 1 )
+    end function arange_1
 
 end module plf95demolib

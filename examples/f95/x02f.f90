@@ -19,6 +19,17 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x02f
     use plplot
     implicit none
@@ -69,8 +80,8 @@ contains
         integer, dimension(tablesize) :: r, g, b
         integer :: i
 
-        real(kind=plflt), parameter :: lmin = 0.15_plflt, lmax = 0.85_plflt
-        real(kind=plflt) h, l, s, r1, g1, b1
+        real(kind=pl_test_flt), parameter :: lmin = 0.15_pl_test_flt, lmax = 0.85_pl_test_flt
+        real(kind=pl_test_flt) h, l, s, r1, g1, b1
 
         call plbop
 
@@ -84,11 +95,11 @@ contains
             !   saturation	[0., 1.]	magnitude
 
             !   Vary hue uniformly from left to right
-            h = (360._plflt/10._plflt)*mod(i,10)
+            h = (360._pl_test_flt/10._pl_test_flt)*mod(i,10)
             !   Vary lightness uniformly from top to bottom, between min and max
-            l = lmin + (lmax - lmin) * (i / 10) / 9._plflt
+            l = lmin + (lmax - lmin) * (i / 10) / 9._pl_test_flt
             !   Use_ max saturation
-            s = 1._plflt
+            s = 1._pl_test_flt
 
             call plhlsrgb(h, l, s, r1, g1, b1)
 
@@ -118,10 +129,10 @@ contains
 
         integer :: nw, cmap0_offset
         integer :: i,j
-        real(kind=plflt) :: vmin, vmax, xj
+        real(kind=pl_test_flt) :: vmin, vmax, xj
         character (len=3) :: text
 
-        call plschr(0.0_plflt, 3.5_plflt)
+        call plschr(0.0_pl_test_flt, 3.5_pl_test_flt)
         call plfont(4)
 
         do i=0,nw-1
@@ -129,19 +140,19 @@ contains
             write (text,'(i0)') i
 
             call pladv(0)
-            vmin = 0.1_plflt
-            vmax = 0.9_plflt
+            vmin = 0.1_pl_test_flt
+            vmax = 0.9_pl_test_flt
             do j=1,3
                 xj = j
                 call plwidth(xj)
                 call plvpor(vmin,vmax,vmin,vmax)
-                call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
-                call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0)
-                vmin = vmin + 0.1_plflt
-                vmax = vmax - 0.1_plflt
+                call plwind(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt)
+                call plbox('bc', 0.0_pl_test_flt, 0, 'bc', 0.0_pl_test_flt, 0)
+                vmin = vmin + 0.1_pl_test_flt
+                vmax = vmax - 0.1_pl_test_flt
             enddo
-            call plwidth(1._plflt)
-            call plptex(0.5_plflt, 0.5_plflt, 1.0_plflt, 0.0_plflt, 0.5_plflt, text)
+            call plwidth(1._pl_test_flt)
+            call plptex(0.5_pl_test_flt, 0.5_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, text)
         enddo
 
     end subroutine draw_windows

@@ -16,6 +16,17 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !--------------------------------------------------------------------------
 ! main
 !
@@ -25,12 +36,12 @@
 program x19f
     use plplot, double_PI => PL_PI
     implicit none
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
 
     integer, parameter :: double = kind(1.0d0)
 
-    real(kind=plflt)    minx, maxx, miny, maxy
-    real(kind=plflt), dimension(1:1) :: x, y
+    real(kind=pl_test_flt)    minx, maxx, miny, maxy
+    real(kind=pl_test_flt), dimension(1:1) :: x, y
 
     !     Variables for the shapelib example
     integer, parameter                 :: nbeachareas    = 2
@@ -52,16 +63,16 @@ program x19f
 
     ! Longitude (x) and latitude (y)
 
-    miny = -70._plflt
-    maxy = 80._plflt
+    miny = -70._pl_test_flt
+    maxy = 80._pl_test_flt
 
     call plinit()
 
     ! Cartesian plots
     ! Most of world
 
-    minx = -170._plflt
-    maxx = minx+360._plflt
+    minx = -170._pl_test_flt
+    maxx = minx+360._pl_test_flt
 
     ! Setup a custom latitude and longitude-based scaling function.
     call plslabelfunc(geolocation_labeler)
@@ -73,8 +84,8 @@ program x19f
 
     ! The Americas
 
-    minx = 190._plflt
-    maxx = 340._plflt
+    minx = 190._pl_test_flt
+    maxx = 340._pl_test_flt
 
     call plcol0(1)
     call plenv(minx, maxx, miny, maxy, 1, 70)
@@ -85,46 +96,46 @@ program x19f
 
     ! Polar, Northern hemisphere
 
-    minx = 0._plflt
-    maxx = 360._plflt
+    minx = 0._pl_test_flt
+    maxx = 360._pl_test_flt
 
-    call plenv(-75._plflt, 75._plflt, -75._plflt, &
-           75._plflt, 1, -1)
+    call plenv(-75._pl_test_flt, 75._pl_test_flt, -75._pl_test_flt, &
+           75._pl_test_flt, 1, -1)
     call plmap(mapform19, 'globe', minx, maxx, miny, maxy)
 
     call pllsty(2)
-    call plmeridians(mapform19,10.0_plflt, 10.0_plflt, &
-           0.0_plflt, 360.0_plflt, -10.0_plflt, &
-           80.0_plflt)
+    call plmeridians(mapform19,10.0_pl_test_flt, 10.0_pl_test_flt, &
+           0.0_pl_test_flt, 360.0_pl_test_flt, -10.0_pl_test_flt, &
+           80.0_pl_test_flt)
 
     ! Polar, Northern hemisphere, this time with a PLplot-wide transform
 
-    minx = 0._plflt
-    maxx = 360._plflt
+    minx = 0._pl_test_flt
+    maxx = 360._pl_test_flt
 
     call plstransform( map_transform )
 
     call pllsty( 1 )
-    call plenv( -75._plflt, 75._plflt, -75._plflt, &
-           75._plflt, 1, -1 )
+    call plenv( -75._pl_test_flt, 75._pl_test_flt, -75._pl_test_flt, &
+           75._pl_test_flt, 1, -1 )
     ! No need to set the map transform here as the global
     ! transform will be used.
     call plmap('globe', minx, maxx, miny, maxy )
 
     call pllsty( 2 )
-    call plmeridians(10.0_plflt, 10.0_plflt, &
-           0.0_plflt, 360.0_plflt, -10.0_plflt, &
-           80.0_plflt )
+    call plmeridians(10.0_pl_test_flt, 10.0_pl_test_flt, &
+           0.0_pl_test_flt, 360.0_pl_test_flt, -10.0_pl_test_flt, &
+           80.0_pl_test_flt )
 
     ! Show Baltimore, MD on the map
     call plcol0( 2 )
-    call plssym( 0.0_plflt, 2.0_plflt )
-    x=-76.6125_plflt
-    y=39.2902778_plflt
+    call plssym( 0.0_pl_test_flt, 2.0_pl_test_flt )
+    x=-76.6125_pl_test_flt
+    y=39.2902778_pl_test_flt
     call plpoin( x, y, 18 )
-    call plssym( 0.0_plflt, 1.0_plflt )
-    call plptex( -76.6125_plflt, 43.0_plflt, 0.0_plflt, &
-           0.0_plflt, 0.0_plflt, 'Baltimore, MD' )
+    call plssym( 0.0_pl_test_flt, 1.0_pl_test_flt )
+    call plptex( -76.6125_pl_test_flt, 43.0_pl_test_flt, 0.0_pl_test_flt, &
+           0.0_pl_test_flt, 0.0_pl_test_flt, 'Baltimore, MD' )
 
     ! For Fortran, this is how the global transform is cleared.
     call plstransform
@@ -135,10 +146,10 @@ program x19f
 
     call pllsty( 1 )
 
-    minx = 240570._plflt
-    maxx = 621109._plflt
-    miny = 87822._plflt
-    maxy = 722770._plflt
+    minx = 240570._pl_test_flt
+    maxx = 621109._pl_test_flt
+    miny = 87822._pl_test_flt
+    maxy = 722770._pl_test_flt
     call plscol0( 0, 255, 255, 255 )
     call plscol0( 1, 0, 0, 0 )
     call plscol0( 2, 150, 150, 150 )
@@ -147,10 +158,10 @@ program x19f
     call plscol0( 5, 150, 0, 0 )
     call plscol0( 6, 100, 100, 255 )
 
-    minx = 265000._plflt
-    maxx = 270000._plflt
-    miny = 145000._plflt
-    maxy = 150000._plflt
+    minx = 265000._pl_test_flt
+    maxx = 270000._pl_test_flt
+    miny = 145000._pl_test_flt
+    maxy = 150000._pl_test_flt
     call plscol0( 0, 255, 255, 255 )  !white
     call plscol0( 1, 0, 0, 0 )        !black
     call plscol0( 2, 255, 200, 0 )    !yelow for sand
@@ -195,56 +206,56 @@ program x19f
     call plmapline( "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy )
 
     ! draw the sea and surface water
-    call plwidth( 0.0_plflt )
+    call plwidth( 0.0_pl_test_flt )
     call plcol0( 6 )
     call plmapfill( "ss/ss64ne_Water_Area", minx, maxx, miny, maxy )
-    call plwidth( 2.0_plflt )
+    call plwidth( 2.0_pl_test_flt )
     call plmapfill( "ss/ss64ne_Water_Line", minx, maxx, miny, maxy )
 
     ! draw the roads, first with black and then thinner with colour to give an
     ! an outlined appearance
-    call plwidth( 5.0_plflt )
+    call plwidth( 5.0_pl_test_flt )
     call plcol0( 1 )
     call plmapline( "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy )
-    call plwidth( 3.0_plflt )
+    call plwidth( 3.0_pl_test_flt )
     call plcol0( 0 )
     call plmapline( "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy )
     call plcol0( 5 )
     call plmapline( "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads )
 
     ! draw buildings
-    call plwidth( 1.0_plflt )
+    call plwidth( 1.0_pl_test_flt )
     call plcol0( 1 )
     call plmapfill( "ss/ss64ne_Building_Area", minx, maxx, miny, maxy )
 
     ! labels
     call plsfci( int(z'00000100') )
-    call plschr( 0._plflt, 0.8_plflt )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plschr( 0._pl_test_flt, 0.8_pl_test_flt )
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "MARTINHOE CP", minx, maxx, miny, maxy, 202 )
-    call plschr( 0._plflt, 0.7_plflt );
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plschr( 0._pl_test_flt, 0.7_pl_test_flt );
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "Heale"//achar(10)//"Down", minx, maxx, miny, maxy, 13 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "South"//achar(10)//"Down", minx, maxx, miny, maxy, 34 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "Martinhoe"//achar(10)//"Common", minx, maxx, miny, maxy, 42 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "Woody Bay", minx, maxx, miny, maxy, 211 )
-    call plschr( 0._plflt, 0.6_plflt );
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plschr( 0._pl_test_flt, 0.6_pl_test_flt );
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "Mill Wood", minx, maxx, miny, maxy, 16 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "Heale Wood", minx, maxx, miny, maxy, 17 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 1.0_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt, &
            "Bodley", minx, maxx, miny, maxy, 31 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.0_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.0_pl_test_flt, &
            "Martinhoe", minx, maxx, miny, maxy, 37 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "Woolhanger"//achar(10)//"Common", minx, maxx, miny, maxy, 60 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "West Ilkerton"//achar(10)//"Common", minx, maxx, miny, maxy, 61 )
-    call plmaptex( "ss/ss64ne_General_Text", 1.0_plflt, 0.0_plflt, 0.5_plflt, &
+    call plmaptex( "ss/ss64ne_General_Text", 1.0_pl_test_flt, 0.0_pl_test_flt, 0.5_pl_test_flt, &
            "Caffyns"//achar(10)//"Heanton"//achar(10)//"Down", minx, maxx, miny, maxy, 62 )
 
     call plend()
@@ -258,11 +269,11 @@ contains
         real(kind=double), intent(in) :: x, y
         real(kind=double), intent(out) :: xt, yt
 
-        real(kind=plflt) :: radius
+        real(kind=pl_test_flt) :: radius
 
-        radius = 90.0_plflt - y
-        xt = radius * cos(x * PI / 180.0_plflt)
-        yt = radius * sin(x * PI / 180.0_plflt)
+        radius = 90.0_pl_test_flt - y
+        xt = radius * cos(x * PI / 180.0_pl_test_flt)
+        yt = radius * sin(x * PI / 180.0_pl_test_flt)
     end subroutine map_transform
     !--------------------------------------------------------------------------
     ! mapform19
@@ -274,16 +285,16 @@ contains
 
     subroutine mapform19(x, y)
 
-        real(kind=plflt), dimension(:), intent(inout) :: x, y
+        real(kind=pl_test_flt), dimension(:), intent(inout) :: x, y
 
-        real(kind=plflt), dimension(:), allocatable :: radius
+        real(kind=pl_test_flt), dimension(:), allocatable :: radius
 
         allocate(radius(size(x)))
 
         ! evaluate x last so RHS's do not get overwritten too soon
-        radius = 90.0_plflt - y
-        y = radius*sin(x*PI/180.0_plflt)
-        x = radius*cos(x*PI/180.0_plflt)
+        radius = 90.0_pl_test_flt - y
+        y = radius*sin(x*PI/180.0_pl_test_flt)
+        x = radius*cos(x*PI/180.0_pl_test_flt)
     end subroutine mapform19
 
     !
@@ -298,38 +309,38 @@ contains
 
         integer :: length
         character(len=5) direction_label
-        real(kind=plflt) :: label_val, normalize_longitude, value_plflt
+        real(kind=pl_test_flt) :: label_val, normalize_longitude, value_pl_test_flt
 
-        label_val = 0.0_plflt
-        value_plflt = real(value, kind=plflt)
+        label_val = 0.0_pl_test_flt
+        value_pl_test_flt = real(value, kind=pl_test_flt)
 
         length = len(label)
 
         if (axis .eq. 2) then
-            label_val = value_plflt
-            if (label_val .gt. 0.0_plflt) then
+            label_val = value_pl_test_flt
+            if (label_val .gt. 0.0_pl_test_flt) then
                 direction_label = ' N'
-            else if (label_val .lt. 0.0_plflt) then
+            else if (label_val .lt. 0.0_pl_test_flt) then
                 direction_label = ' S'
             else
                 direction_label = 'Eq'
             endif
         else if (axis .eq. 1) then
-            label_val = normalize_longitude(value_plflt)
-            if (label_val .gt. 0.0_plflt) then
+            label_val = normalize_longitude(value_pl_test_flt)
+            if (label_val .gt. 0.0_pl_test_flt) then
                 direction_label = ' E'
-            else if (label_val .lt. 0.0_plflt) then
+            else if (label_val .lt. 0.0_pl_test_flt) then
                 direction_label = ' W'
             else
                 direction_label = ''
             endif
         endif
-        if (axis .eq. 2 .and. value_plflt .eq. 0.0_plflt) then
+        if (axis .eq. 2 .and. value_pl_test_flt .eq. 0.0_pl_test_flt) then
             !     A special case for the equator
             label = direction_label
-        else if (abs(label_val) .lt. 10.0_plflt) then
+        else if (abs(label_val) .lt. 10.0_pl_test_flt) then
             write(label,'(I1.1,A2)') iabs(int(label_val)),direction_label
-        else if (abs(label_val) .lt. 100.0_plflt) then
+        else if (abs(label_val) .lt. 100.0_pl_test_flt) then
             write(label,'(I2.1,A2)') iabs(int(label_val)),direction_label
         else
             write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
@@ -344,19 +355,19 @@ end program x19f
 !     "Normalize" longitude values so that they always fall between
 !      -180.0 and 180.0
 function normalize_longitude(lon)
-    use plplot, only: plflt
+    use plplot, only: pl_test_flt
     implicit none
-    real(kind=plflt) :: normalize_longitude
-    real(kind=plflt) :: lon, times
+    real(kind=pl_test_flt) :: normalize_longitude
+    real(kind=pl_test_flt) :: lon, times
 
-    if ((lon .ge. -180.0_plflt) .and. (lon .le. 180.0_plflt)) then
+    if ((lon .ge. -180.0_pl_test_flt) .and. (lon .le. 180.0_pl_test_flt)) then
         normalize_longitude = lon
     else
-        times = floor ((abs(lon) + 180.0_plflt) / 360.0_plflt)
-        if (lon .lt. 0.0_plflt) then
-            normalize_longitude = lon + 360.0_plflt * times
+        times = floor ((abs(lon) + 180.0_pl_test_flt) / 360.0_pl_test_flt)
+        if (lon .lt. 0.0_pl_test_flt) then
+            normalize_longitude = lon + 360.0_pl_test_flt * times
         else
-            normalize_longitude = lon - 360.0_plflt * times
+            normalize_longitude = lon - 360.0_pl_test_flt * times
         endif
     endif
 end function normalize_longitude

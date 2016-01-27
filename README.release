@@ -33,7 +33,6 @@ CONTENTS
 2.3 Rewrite the Fortran binding
 2.4 Supply old Fortran binding and examples option
 2.5 Backwards incompatibilites introduced by the new Fortran binding
-2.6 Remove "c_" prefix from our C API
 
 3. PLplot testing
 ________________________________________________________________
@@ -106,30 +105,31 @@ effort.
 
 (iii) Linking issues are simplified.  (nm --undefined-only shows that
 the Fortran examples only need to be linked to libplplotf95 and not
-libplplotf95c or libplplot)
+libplplot)
 
-(iv) The "c_" prefixes on our C API that were required to avoid
+(iv) Support for kind=plflt for those who just want to adopt in their
+own code the same Fortran floating-point precision as in our C
+libraries remains, but this is no longer necessary.  Instead, users
+are encouraged to use either kind(1.0) or kind(1.0d0) for the
+floating-point arguments in calls to PLplot routines, and our new
+Fortran binding automatically does the appropriate conversions to the
+floating-point precision of our C libraries using modern Fortran's
+overloading mechanism.
+
+N.B. plflt is now replaced in our examples by pl_test_flt, and that
+latter parameter is made available by the plplot module as a
+convenience to our Fortran developers to test that either kind(1.0) or
+kind(1.0d0) works well for our examples regardless of the
+floating-point precision used in our C libraries.  But users are
+strongly discouraged from using this test parameter for their own code
+because we make no guarantees concerning its value, and instead they
+should make their own decision about whether to adopt kind(1.0) or
+kind(1.0d0) for the floating-point arguments for a given call to a
+PLplot routine.  See further remarks in examples/f95/README_precision.
+
+(v) Once support for bindings/old_f95 and examples/old_f95
+(see 2.4 below) has been dropped, the "c_" prefixes on our C API that were required to avoid
 nameclashes with the Fortran versions of the routines can be dropped.
-See 2.4 for more details about this simplification.
-
-(v) The Fortran user will no longer be forced to use one particular
-Fortran real precision that agrees with however PLFLT was configured
-(which can be double or single precision depending on how the PLplot
-library build was configured). Instead, they can conveniently use
-single precision or double precision (even mixed in the same code so
-long as a given PLplot call has consistent real precision), and our
-new Fortran binding does the appropriate conversions to PLFLT using
-modern Fortran's overloading mechanism.
-
-N.B. support for kind=plflt Fortran real type corresponding to the
-PLFLT C type remains for backwards compatibility, but this
-is strongly deprecated and will be removed eventually so users are currently encouraged not
-to use kind=plflt and instead use whatever single or double precision
-is best for their needs.
-
-FIXME.  Replace all use of plflt by example_flt in
-the examples and set this type in the demolib code to be kind(1.0d0)
-with commentary it could be kind(1.0) instead.
 
 2.4 Supply old Fortran binding and examples option
 
@@ -168,7 +168,7 @@ old API, here is the list of changes.
 (i) The new Fortran binding only maps C routines that have return
 values to Fortran functions and C routines with no return values to
 Fortran subroutines.  The strict application of this rule means that
-plparseopts, plsetopt, and (FIXME) plGetCursor have been changed from
+plparseopts, plsetopt, and plGetCursor have been changed from
 Fortran subroutines to Fortran functions.  This requires changes to
 users' code similar to the following:
 
@@ -193,17 +193,17 @@ plpat (drop redundant nlin argument).
 
 (iii) Multiple arrays in a redacted argument list should have
 identical sizes for dimensions that are designed for the same purpose.
-This rule is automatically enforced for our 4 languages (Python, Java,
-Lua, and Octave) where the binding has been created by swig, and now
-we enforce this same rule for the Fortran case.  For example, pllegend
-has 14 arrays in its argument list, and we now calculate nlegend from
-one of them, and check the remainder of those arrays all have that
-identical size.  (The old Fortran binding was much sloppier about
-this.)  For those cases where you are using static or allocatable
-arrays of too large a size, it is straightforward to comply with this
-consistency rule by taking the appropriate array slice in the argument
-list, e.g., "text_colors(1:nlegend), text(1:nlegend)" in the pllegend
-argument list.
+This rule is enforced for most languages where we provide bindings and
+now we enforce this same rule for the Fortran case.  For example,
+pllegend has 14 arrays in its argument list, and we now calculate
+nlegend from one of them, and check the remainder of those arrays all
+have that identical size.  (The old Fortran binding was much sloppier
+about this.)  For those cases where you are using static or
+allocatable arrays which are larger than the subsets of the array
+indices which have values assigned, it is straightforward to comply
+with this consistency rule by taking the appropriate array slice in
+the argument list, e.g., "text_colors(1:nlegend), text(1:nlegend)" in
+the pllegend argument list.
 
 FIXME.  Still haven't looked systematically at this following
 what is done in bindings/swig-support/plplotcapi.i.  Ultimately, there
@@ -221,17 +221,21 @@ plarc (last argument),
 plspal1 (last argument), and
 plconfigtime (fifth argument).
 
-(v) For those rare cases where the actual real precision
+(v) For those rare cases where the actual floating-point precision
 cannot be automatically specified by the user via the precision of the
-real arguments which are used for a call to a subroutine or function,
-then the only choice we supply is the double precision one regardless
-of the underlying precision of the C plplot library.
+floating-point arguments which are used for a call to a subroutine or
+function, then the only choice we supply is the double precision
+(kind(1.0d0)) one regardless of the underlying precision of the C
+plplot library.
 
-The instances of this issue are the real return value of the function
-plrandd, real elements of the defined type PLGraphicsIn, real arguments
-of Fortran callback functions that are used as arguments
-for plstransform and pllabelfunc, and the
-pre-defined real parameters PL_NOTSET, PL_PI, and PL_TWOPI.
+The instances of this issue are the floating-point return value of the
+function plrandd, floating-point elements of the defined type
+PLGraphicsIn, floating-point arguments of Fortran callback functions
+that are used as arguments for plstransform and pllabelfunc, and the
+pre-defined floating-point parameters PL_NOTSET, PL_PI, and PL_TWOPI.
+To see how each of these cases should be handled by users please
+consult examples/f95/README_precision and the Fortran examples
+in that directory.
 
 (vi) The experimental and far from uniform support for the kind=plint and
 kind=plunicode Fortran integer types has now been removed.  Instead,
@@ -265,22 +269,6 @@ string is reliably on all platforms translated at the C level to
 of linefeed unlike the Fortran case.  After that, how our device
 drivers currently interpret that special C character for linefeed is
 idiosyncratic to each of our device drivers.)
-
-2.5 Remove "c_" prefix from our C API
-
-See 2.3 for why this simplification is possible.
-
-FIXME. This change has not been done yet, but if/when it is done more
-details should be added here such as, for example replacing
-
-#define    plcol0                   c_plcol0
-
-with
-
-#define c_plcol0 plcol0
-
-where the latter is only there to assure backwards compatibility
-for those who are still using the prefixed names for our C API.
 
 ________________________________________________________________
 

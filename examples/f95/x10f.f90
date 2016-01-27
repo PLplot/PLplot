@@ -19,6 +19,17 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x10f
     use plplot
     implicit none
@@ -30,15 +41,15 @@ program x10f
     call plinit()
 
     call pladv(0)
-    call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0 )
+    call plvpor(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+    call plwind(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+    call plbox('bc', 0.0_pl_test_flt, 0, 'bc', 0.0_pl_test_flt, 0 )
 
-    call plsvpa(50.0_plflt, 150.0_plflt, 50.0_plflt, 100.0_plflt )
-    call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt )
-    call plbox('bc', 0.0_plflt, 0, 'bc', 0.0_plflt, 0 )
-    call plptex(0.5_plflt, 0.5_plflt, 1.0_plflt, 0.0_plflt, &
-           0.5_plflt, 'BOX at (50,150,50,100)' )
+    call plsvpa(50.0_pl_test_flt, 150.0_pl_test_flt, 50.0_pl_test_flt, 100.0_pl_test_flt )
+    call plwind(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt )
+    call plbox('bc', 0.0_pl_test_flt, 0, 'bc', 0.0_pl_test_flt, 0 )
+    call plptex(0.5_pl_test_flt, 0.5_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, &
+           0.5_pl_test_flt, 'BOX at (50,150,50,100)' )
 
     call plend
 

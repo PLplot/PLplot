@@ -18,13 +18,24 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 
 program x28f
     use plplot, double_PI => PL_PI
 
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
     integer, parameter :: XPTS = 2
     integer, parameter :: YPTS = 2
     integer, parameter :: NREVOLUTION = 16
@@ -87,9 +98,10 @@ program x28f
     ! Page 1: Demonstrate inclination and shear capability pattern.
 
     call pladv(0)
-    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
-    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
-    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, zmin, zmax, 20._plflt, 45._plflt)
+    call plvpor(-0.15_pl_test_flt, 1.15_pl_test_flt, -0.05_pl_test_flt, 1.05_pl_test_flt)
+    call plwind(-1.2_pl_test_flt, 1.2_pl_test_flt, -0.8_pl_test_flt, 1.5_pl_test_flt)
+    call plw3d(1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, &
+           xmin, xmax, ymin, ymax, zmin, zmax, 20._pl_test_flt, 45._pl_test_flt)
 
     call plcol0(2)
     call plbox3("b",   "", xmax-xmin, 0, &
@@ -97,9 +109,9 @@ program x28f
            "bcd", "", zmax-zmin, 0)
 
     ! z = zmin.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     do i = 1,NREVOLUTION
-        omega = 2.*PI*((i-1)/real(NREVOLUTION,kind=plflt))
+        omega = 2.*PI*((i-1)/real(NREVOLUTION,kind=pl_test_flt))
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         x_inclination = 0.5*xrange*cos_omega
@@ -112,13 +124,13 @@ program x28f
                xmid, ymid, zmin, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.0_plflt, "  revolution")
+               0.0_pl_test_flt, "  revolution")
     enddo
 
     ! x = xmax.
-    call plschr(0._plflt, 1.0_plflt)
+    call plschr(0._pl_test_flt, 1.0_pl_test_flt)
     do i = 1,NREVOLUTION
-        omega = 2.*PI*((i-1)/real(NREVOLUTION,kind=plflt))
+        omega = 2.*PI*((i-1)/real(NREVOLUTION,kind=pl_test_flt))
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         x_inclination = 0.
@@ -131,13 +143,13 @@ program x28f
                xmax, ymid, zmid, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.0_plflt, "  revolution")
+               0.0_pl_test_flt, "  revolution")
     enddo
 
     ! y = ymax.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     do i = 1,NREVOLUTION
-        omega = 2.*PI*(i-1)/real(NREVOLUTION,kind=plflt)
+        omega = 2.*PI*(i-1)/real(NREVOLUTION,kind=pl_test_flt)
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         x_inclination = 0.5*xrange*cos_omega
@@ -150,7 +162,7 @@ program x28f
                xmid, ymax, zmid, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.0_plflt, "  revolution")
+               0.0_pl_test_flt, "  revolution")
     enddo
 
     ! Draw minimal 3D grid to finish defining the 3D box.
@@ -158,10 +170,10 @@ program x28f
 
     ! Page 2: Demonstrate rotation of string around its axis.
     call pladv(0)
-    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
-    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
-    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, &
-           zmin, zmax, 20._plflt, 45._plflt)
+    call plvpor(-0.15_pl_test_flt, 1.15_pl_test_flt, -0.05_pl_test_flt, 1.05_pl_test_flt)
+    call plwind(-1.2_pl_test_flt, 1.2_pl_test_flt, -0.8_pl_test_flt, 1.5_pl_test_flt)
+    call plw3d(1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, xmin, xmax, ymin, ymax, &
+           zmin, zmax, 20._pl_test_flt, 45._pl_test_flt)
 
     call plcol0(2)
     call plbox3("b",   "", xmax-xmin, 0, &
@@ -169,63 +181,63 @@ program x28f
            "bcd", "", zmax-zmin, 0)
 
     ! y = ymax.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
     x_shear = 0.
     do i = 1,NROTATION
-        omega = 2.*PI*(i-1)/real(NROTATION,kind=plflt)
+        omega = 2.*PI*(i-1)/real(NROTATION,kind=pl_test_flt)
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         y_shear = 0.5*yrange*sin_omega
         z_shear = 0.5*zrange*cos_omega
-        zs        = zsmax - dzsrot * real(i-1,kind=plflt)
+        zs        = zsmax - dzsrot * real(i-1,kind=pl_test_flt)
         call plptex3( &
                xmid, ymax, zs, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.5_plflt, "rotation for y = y#dmax#u")
+               0.5_pl_test_flt, "rotation for y = y#dmax#u")
     enddo
 
     ! x = xmax.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     x_inclination = 0.0
     y_inclination = -1.0
     z_inclination = 0.0
     y_shear = 0.0
     do i = 1,NROTATION
-        omega = 2.*PI*((i-1)/real(NROTATION,kind=plflt))
+        omega = 2.*PI*((i-1)/real(NROTATION,kind=pl_test_flt))
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         x_shear = 0.5*xrange*sin_omega
         z_shear = 0.5*zrange*cos_omega
-        zs        = zsmax - dzsrot * real(i-1,kind=plflt)
+        zs        = zsmax - dzsrot * real(i-1,kind=pl_test_flt)
         call plptex3( &
                xmax, ymid, zs, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.5_plflt, "rotation for x = x#dmax#u")
+               0.5_pl_test_flt, "rotation for x = x#dmax#u")
     enddo
 
     ! z = zmin.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
     x_shear = 0.
     do i = 1,NROTATION
-        omega = 2.*PI*((i-1)/real(NROTATION,kind=plflt))
+        omega = 2.*PI*((i-1)/real(NROTATION,kind=pl_test_flt))
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         y_shear = 0.5*yrange*cos_omega
         z_shear = 0.5*zrange*sin_omega
-        ys        = ysmax - dysrot * real(i-1,kind=plflt)
+        ys        = ysmax - dysrot * real(i-1,kind=pl_test_flt)
         call plptex3( &
                xmid, ys, zmin, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.5_plflt, "rotation for z = z#dmin#u")
+               0.5_pl_test_flt, "rotation for z = z#dmin#u")
     enddo
     ! Draw minimal 3D grid to finish defining the 3D box.
     call plmesh(x, y, z, DRAW_LINEXY)
@@ -236,10 +248,10 @@ program x28f
     ! would be domega = 0.)
     domega = 0.05
     call pladv(0)
-    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
-    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
-    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, &
-           zmin, zmax, 20._plflt, 45._plflt)
+    call plvpor(-0.15_pl_test_flt, 1.15_pl_test_flt, -0.05_pl_test_flt, 1.05_pl_test_flt)
+    call plwind(-1.2_pl_test_flt, 1.2_pl_test_flt, -0.8_pl_test_flt, 1.5_pl_test_flt)
+    call plw3d(1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, xmin, xmax, ymin, ymax, &
+           zmin, zmax, 20._pl_test_flt, 45._pl_test_flt)
 
     call plcol0(2)
     call plbox3("b",   "", xmax-xmin, 0, &
@@ -247,79 +259,80 @@ program x28f
            "bcd", "", zmax-zmin, 0)
 
     ! y = ymax.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
     y_shear = 0.
     do i = 1,NSHEAR
-        omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=plflt))
+        omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=pl_test_flt))
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         x_shear = 0.5*xrange*sin_omega
         z_shear = 0.5*zrange*cos_omega
-        zs        = zsmax - dzsshear * real(i-1,kind=plflt)
+        zs        = zsmax - dzsshear * real(i-1,kind=pl_test_flt)
         call plptex3( &
                xmid, ymax, zs, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.5_plflt, "shear for y = y#dmax#u")
+               0.5_pl_test_flt, "shear for y = y#dmax#u")
     enddo
 
     ! x = xmax.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     x_inclination = 0.
     y_inclination = -1.
     z_inclination = 0.
     x_shear = 0.
     do i = 1,NSHEAR
-        omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=plflt))
+        omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=pl_test_flt))
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         y_shear = -0.5*yrange*sin_omega
         z_shear = 0.5*zrange*cos_omega
-        zs        = zsmax - dzsshear * real(i-1,kind=plflt)
+        zs        = zsmax - dzsshear * real(i-1,kind=pl_test_flt)
         call plptex3( &
                xmax, ymid, zs, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.5_plflt, "shear for x = x#dmax#u")
+               0.5_pl_test_flt, "shear for x = x#dmax#u")
     enddo
 
     ! z = zmin.
-    call plschr(0.0_plflt, 1.0_plflt)
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
     z_shear = 0.
     do i = 1,NSHEAR
-        omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=plflt))
+        omega = domega + 2.*PI*((i-1)/real(NSHEAR,kind=pl_test_flt))
         sin_omega = sin(omega)
         cos_omega = cos(omega)
         y_shear = 0.5*yrange*cos_omega
         x_shear = 0.5*xrange*sin_omega
-        ys        = ysmax - dysshear * real(i-1,kind=plflt)
+        ys        = ysmax - dysshear * real(i-1,kind=pl_test_flt)
         call plptex3( &
                xmid, ys, zmin, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.5_plflt, "shear for z = z#dmin#u")
+               0.5_pl_test_flt, "shear for z = z#dmin#u")
     enddo
     ! Draw minimal 3D grid to finish defining the 3D box.
     call plmesh(x, y, z, DRAW_LINEXY)
 
     ! Page 4: Demonstrate drawing a string on a 3D path.
     call pladv(0)
-    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
-    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
-    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, zmin, zmax, 40._plflt, -30._plflt)
+    call plvpor(-0.15_pl_test_flt, 1.15_pl_test_flt, -0.05_pl_test_flt, 1.05_pl_test_flt)
+    call plwind(-1.2_pl_test_flt, 1.2_pl_test_flt, -0.8_pl_test_flt, 1.5_pl_test_flt)
+    call plw3d(1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, &
+           xmin, xmax, ymin, ymax, zmin, zmax, 40._pl_test_flt, -30._pl_test_flt)
 
     call plcol0(2)
     call plbox3("b",   "", xmax-xmin, 0, &
            "b",   "", ymax-ymin, 0, &
            "bcd", "", zmax-zmin, 0)
 
-    call plschr(0.0_plflt, 1.2_plflt)
+    call plschr(0.0_pl_test_flt, 1.2_pl_test_flt)
     ! domega controls the spacing between the various characters of the
     ! string and also the maximum value of omega for the given number
     ! of characters in pstring.
@@ -350,7 +363,7 @@ program x28f
                xpos, ypos, zpos, &
                x_inclination, y_inclination, z_inclination, &
                x_shear, y_shear, z_shear, &
-               0.5_plflt, p1string)
+               0.5_pl_test_flt, p1string)
         omega = omega + domega
     enddo
     ! Draw minimal 3D grid to finish defining the 3D box.
@@ -358,28 +371,29 @@ program x28f
 
     ! Page 5: Demonstrate plmtex3 axis labelling capability
     call pladv(0)
-    call plvpor(-0.15_plflt, 1.15_plflt, -0.05_plflt, 1.05_plflt)
-    call plwind(-1.2_plflt, 1.2_plflt, -0.8_plflt, 1.5_plflt)
-    call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, xmin, xmax, ymin, ymax, zmin, zmax, 20._plflt, 45._plflt)
+    call plvpor(-0.15_pl_test_flt, 1.15_pl_test_flt, -0.05_pl_test_flt, 1.05_pl_test_flt)
+    call plwind(-1.2_pl_test_flt, 1.2_pl_test_flt, -0.8_pl_test_flt, 1.5_pl_test_flt)
+    call plw3d(1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, &
+           xmin, xmax, ymin, ymax, zmin, zmax, 20._pl_test_flt, 45._pl_test_flt)
 
     call plcol0(2)
     call plbox3("b",   "", xmax-xmin, 0, &
            "b",   "", ymax-ymin, 0, &
            "bcd", "", zmax-zmin, 0)
 
-    call plschr(0.0_plflt, 1.0_plflt)
-    call plmtex3("xp", 3.0_plflt, 0.5_plflt, 0.5_plflt, "Arbitrarily displaced")
-    call plmtex3("xp", 4.5_plflt, 0.5_plflt, 0.5_plflt, "primary X-axis label")
-    call plmtex3("xs", -2.5_plflt, 0.5_plflt, 0.5_plflt, "Arbitrarily displaced")
-    call plmtex3("xs", -1.0_plflt, 0.5_plflt, 0.5_plflt, "secondary X-axis label")
-    call plmtex3("yp", 3.0_plflt, 0.5_plflt, 0.5_plflt, "Arbitrarily displaced")
-    call plmtex3("yp", 4.5_plflt, 0.5_plflt, 0.5_plflt, "primary Y-axis label")
-    call plmtex3("ys", -2.5_plflt, 0.5_plflt, 0.5_plflt, "Arbitrarily displaced")
-    call plmtex3("ys", -1.0_plflt, 0.5_plflt, 0.5_plflt, "secondary Y-axis label")
-    call plmtex3("zp", 4.5_plflt, 0.5_plflt, 0.5_plflt, "Arbitrarily displaced")
-    call plmtex3("zp", 3.0_plflt, 0.5_plflt, 0.5_plflt, "primary Z-axis label")
-    call plmtex3("zs", -2.5_plflt, 0.5_plflt, 0.5_plflt, "Arbitrarily displaced")
-    call plmtex3("zs", -1.0_plflt, 0.5_plflt, 0.5_plflt, "secondary Z-axis label")
+    call plschr(0.0_pl_test_flt, 1.0_pl_test_flt)
+    call plmtex3("xp", 3.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "Arbitrarily displaced")
+    call plmtex3("xp", 4.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "primary X-axis label")
+    call plmtex3("xs", -2.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "Arbitrarily displaced")
+    call plmtex3("xs", -1.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "secondary X-axis label")
+    call plmtex3("yp", 3.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "Arbitrarily displaced")
+    call plmtex3("yp", 4.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "primary Y-axis label")
+    call plmtex3("ys", -2.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "Arbitrarily displaced")
+    call plmtex3("ys", -1.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "secondary Y-axis label")
+    call plmtex3("zp", 4.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "Arbitrarily displaced")
+    call plmtex3("zp", 3.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "primary Z-axis label")
+    call plmtex3("zs", -2.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "Arbitrarily displaced")
+    call plmtex3("zs", -1.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, "secondary Z-axis label")
     ! Draw minimal 3D grid to finish defining the 3D box.
     call plmesh(x, y, z, DRAW_LINEXY)
 

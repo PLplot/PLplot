@@ -32,11 +32,19 @@ module plplot
     use iso_fortran_env, only: error_unit
     use plplot_private_utilities, only: character_array_to_c, copystring2f
     implicit none
-    ! For backwards compatibility define plflt, but use of this
-    ! parameter is deprecated since any real precision should work
-    ! for users so long as the precision of the real arguments
-    ! of a given call to a PLplot routine are identical.
+    ! We will continue to define plflt for those of our users who are
+    ! content to simply follow in their own Fortran code the
+    ! floating-point precision of our C libraries, but our users no
+    ! longer need to use of this parameter.  Instead, kind(1.0) or
+    ! kind(1.0d0) floating-point precision should work for users so
+    ! long as the precision of the floating-point arguments of a given
+    ! call to a PLplot routine are identical.
     integer, parameter :: plflt = private_plflt
+    ! The following parameter is provided as a convenience to PLplot
+    ! developers to allow them to test any combination of
+    ! floating-point precision of our C libraries and the
+    ! floating-point precision (pl_test_flt) of our Fortran examples.
+    integer, parameter :: pl_test_flt = private_plflt
     integer(kind=private_plint), parameter :: maxlen = 320
     character(len=1), parameter :: PL_END_OF_STRING = achar(0)
     include 'included_plplot_parameters.f90'

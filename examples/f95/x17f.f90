@@ -16,6 +16,17 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 
 !--------------------------------------------------------------------------
 !      main program
@@ -24,13 +35,13 @@
 program x17f
     use plplot, double_PI => PL_PI
     implicit none
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
 
     integer            :: id1, n
     integer, parameter :: nsteps = 1000
     logical            :: autoy, acc
-    real(kind=plflt)   :: y1, y2, y3, y4, ymin, ymax, xlab, ylab
-    real(kind=plflt)   :: t, tmin, tmax, tjump, dt, noise
+    real(kind=pl_test_flt)   :: y1, y2, y3, y4, ymin, ymax, xlab, ylab
+    real(kind=pl_test_flt)   :: t, tmin, tmax, tjump, dt, noise
     integer            :: colbox, collab, colline(4), styline(4)
     integer :: plparseopts_rc
     character(len=20)  :: legline(4)
@@ -57,17 +68,17 @@ program x17f
     !   Specify some reasonable defaults for ymin and ymax
     !   The plot will grow automatically if needed (but not shrink)
 
-    ymin = -0.1_plflt
-    ymax = 0.1_plflt
+    ymin = -0.1_pl_test_flt
+    ymax = 0.1_pl_test_flt
 
     !    Specify initial tmin and tmax -- this determines length of window.
     !    Also specify maximum jump in t
     !    This can accomodate adaptive timesteps
 
-    tmin = 0._plflt
-    tmax = 10._plflt
+    tmin = 0._pl_test_flt
+    tmax = 10._pl_test_flt
     !   percentage of plot to jump
-    tjump = 0.3_plflt
+    tjump = 0.3_pl_test_flt
 
     !   Axes options same as plbox.
     !   Only automatic tick generation and label placement allowed
@@ -83,8 +94,8 @@ program x17f
     legline = (/ 'sum    ', 'sin    ', 'sin*noi', 'sin+noi' /)
 
     !   legend position
-    xlab = 0._plflt
-    ylab = 0.25_plflt
+    xlab = 0._pl_test_flt
+    ylab = 0.25_pl_test_flt
 
     !   autoscale y
     autoy = .true.
@@ -129,11 +140,11 @@ program x17f
     !   This is to represent a loop over time
     !   Let's try a random walk process
 
-    y1 = 0.0_plflt
-    y2 = 0.0_plflt
-    y3 = 0.0_plflt
-    y4 = 0.0_plflt
-    dt = 0.1_plflt
+    y1 = 0.0_pl_test_flt
+    y2 = 0.0_pl_test_flt
+    y3 = 0.0_pl_test_flt
+    y4 = 0.0_pl_test_flt
+    dt = 0.1_pl_test_flt
 
     do n = 0,nsteps-1
         !       wait a little (10 ms) to simulate time elapsing.  gfortran
@@ -143,12 +154,12 @@ program x17f
         !       altogether from this loop.
         !       call sleep(1)
 
-        t = real(n,kind=plflt) * dt
-        noise = plrandd() - 0.5_plflt
+        t = real(n,kind=pl_test_flt) * dt
+        noise = plrandd() - 0.5_pl_test_flt
         y1 = y1 + noise
-        y2 = sin(t*PI/18._plflt)
+        y2 = sin(t*PI/18._pl_test_flt)
         y3 = y2 * noise
-        y4 = y2 + noise/3._plflt
+        y4 = y2 + noise/3._pl_test_flt
 
         !       There is no need for all pens to have the same number of
         !       points or beeing equally time spaced.

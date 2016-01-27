@@ -18,6 +18,17 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x01f
     use plplot, double_PI => PL_PI
     use :: iso_fortran_env, only: stdout => output_unit
@@ -25,8 +36,8 @@ program x01f
 
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
-    real(plflt) :: xscale, yscale, xoff, yoff
+    real(kind=pl_test_flt), parameter :: PI = double_PI
+    real(pl_test_flt) :: xscale, yscale, xoff, yoff
     character(len=80) :: version
     integer :: digmax
     logical, parameter :: locate_mode = .false.
@@ -49,10 +60,10 @@ program x01f
     !  Set up the data
     !  Original case
 
-    xscale = 6._plflt
-    yscale = 1._plflt
-    xoff = 0._plflt
-    yoff = 0._plflt
+    xscale = 6._pl_test_flt
+    yscale = 1._pl_test_flt
+    xoff = 0._pl_test_flt
+    yoff = 0._pl_test_flt
 
     !  Do a plot
 
@@ -60,9 +71,9 @@ program x01f
 
     !  Set up the data
 
-    xscale = 1._plflt
-    yscale = 0.0014_plflt
-    yoff = 0.0185_plflt
+    xscale = 1._pl_test_flt
+    yscale = 0.0014_pl_test_flt
+    yoff = 0.0185_pl_test_flt
 
     !  Do a plot
 
@@ -103,10 +114,10 @@ contains
     !======================================================================
     subroutine plot1()
 
-        real(plflt), dimension(1:60) :: x, y
-        real(plflt) :: xmin, xmax, ymin, ymax
+        real(pl_test_flt), dimension(1:60) :: x, y
+        real(pl_test_flt) :: xmin, xmax, ymin, ymax
 
-        x = xoff + xscale * arange(1,size(x)+1) / real(size(x),plflt)
+        x = xoff + xscale * arange(1,size(x)+1) / real(size(x),pl_test_flt)
         y = yoff + yscale * x ** 2
 
         xmin = minval(x)
@@ -140,7 +151,7 @@ contains
     !======================================================================
     subroutine plot2()
 
-        real(plflt), dimension(1:100) :: x, y
+        real(pl_test_flt), dimension(1:100) :: x, y
 
         !
         !   Set up the viewport and window using PLENV. The range in X is
@@ -149,22 +160,22 @@ contains
         !   (axis = 1).
 
         call plcol0(1)
-        call plenv(-2.0_plflt, 10.0_plflt, -0.4_plflt, 1.2_plflt, 0, 1 )
+        call plenv(-2.0_pl_test_flt, 10.0_pl_test_flt, -0.4_pl_test_flt, 1.2_pl_test_flt, 0, 1 )
         call plcol0(2)
         call pllab( '(x)', 'sin(x)/x', '#frPLplot Example 1 - Sinc Function' )
 
         !   Fill up the arrays
 
 
-        x = ( arange(size(x)) - 19 ) / 6.0_plflt
-        y = merge( sin(x) / x, 1.0_plflt, x /= 0.0_plflt )
+        x = ( arange(size(x)) - 19 ) / 6.0_pl_test_flt
+        y = merge( sin(x) / x, 1.0_pl_test_flt, x /= 0.0_pl_test_flt )
 
         !   Draw the line
 
         call plcol0(3)
-        call plwidth(2._plflt)
+        call plwidth(2._pl_test_flt)
         call plline( x, y )
-        call plwidth(1._plflt)
+        call plwidth(1._pl_test_flt)
 
     end subroutine plot2
 
@@ -175,7 +186,7 @@ contains
         !   For the final graph we wish to override the default tick intervals,
         !   and so do not use_ PLENV
 
-        real(plflt), dimension(1:101) :: x, y
+        real(pl_test_flt), dimension(1:101) :: x, y
 
         call pladv(0)
 
@@ -183,26 +194,26 @@ contains
         !   Y range from -1.2 to 1.2.
 
         call plvsta()
-        call plwind( 0.0_plflt, 360.0_plflt, -1.2_plflt, 1.2_plflt )
+        call plwind( 0.0_pl_test_flt, 360.0_pl_test_flt, -1.2_pl_test_flt, 1.2_pl_test_flt )
 
         !   Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
         call plcol0(1)
-        call plbox( 'bcnst', 60.0_plflt, 2, 'bcnstv', 0.2_plflt, 2 )
+        call plbox( 'bcnst', 60.0_pl_test_flt, 2, 'bcnstv', 0.2_pl_test_flt, 2 )
 
         !   Superimpose a dashed line grid, with 1.5 mm marks and spaces. With
         !   only a single mark and space element, we do not need arrays
 
         call plstyl( 1, 1500, 1500 )
         call plcol0(2)
-        call plbox( 'g', 30.0_plflt, 0, 'g', 0.2_plflt, 0 )
+        call plbox( 'g', 30.0_pl_test_flt, 0, 'g', 0.2_pl_test_flt, 0 )
         call plstyl( 0, 0, 0 )
 
         call plcol0(3)
         call pllab( 'Angle (degrees)', 'sine', '#frPLplot Example 1 - Sine function' )
 
-        x = 3.6_plflt * arange(size(x))
-        y = sin( x * PI/180.0_plflt )
+        x = 3.6_pl_test_flt * arange(size(x))
+        y = sin( x * PI/180.0_pl_test_flt )
 
         call plcol0(4)
         call plline( x, y )

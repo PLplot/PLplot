@@ -18,17 +18,28 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x13f
     use plplot, double_PI => PL_PI
     implicit none
-    real(kind=plflt), parameter :: PI = double_PI
-    real(kind=plflt)   :: just, dx, dy, x(500), y(500)
+    real(kind=pl_test_flt), parameter :: PI = double_PI
+    real(kind=pl_test_flt)   :: just, dx, dy, x(500), y(500)
     integer            ::  i, j, dthet, theta0, theta1, theta
     integer :: plparseopts_rc
     character(len=20), dimension(5) :: text = &
            (/ 'Maurice ', 'Geoffrey', 'Alan    ', 'Rafael  ', 'Vince   '/)
-    real(kind=plflt)   :: per(5) = &
-           (/ 10._plflt , 32._plflt , 12._plflt , 30._plflt , 16._plflt /)
+    real(kind=pl_test_flt)   :: per(5) = &
+           (/ 10._pl_test_flt , 32._pl_test_flt , 12._pl_test_flt , 30._pl_test_flt , 16._pl_test_flt /)
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
@@ -39,9 +50,9 @@ program x13f
     call pladv(0)
     !   Ensure window has aspect ratio of one so circle is
     !   plotted as a circle.
-    call plvasp(1.0_plflt)
-    call plwind(0._plflt, 10._plflt, 0._plflt, 10._plflt)
-    !   call plenv( 0._plflt, 10._plflt, 0._plflt, 10._plflt, 1, -2 )
+    call plvasp(1.0_pl_test_flt)
+    call plwind(0._pl_test_flt, 10._pl_test_flt, 0._pl_test_flt, 10._pl_test_flt)
+    !   call plenv( 0._pl_test_flt, 10._pl_test_flt, 0._pl_test_flt, 10._pl_test_flt, 1, -2 )
     call plcol0(2)
 
     !   n.b. all theta quantities scaled by 2*pi/500 to be integers to avoid
@@ -51,16 +62,16 @@ program x13f
 
     do i = 0, 4
         j = 0
-        x(j+1) = 5._plflt
-        y(j+1) = 5._plflt
+        x(j+1) = 5._pl_test_flt
+        y(j+1) = 5._pl_test_flt
         j = j + 1
         !       n.b. the theta quantities multiplied by 2*pi/500 afterward so
         !       in fact per is interpreted as a percentage.
         theta1 = int(theta0 + 5*per(i+1))
         if (i .eq. 4) theta1 = 500
         do theta = theta0, theta1, dthet
-            x(j+1) = 5 + 3*cos((2._plflt*pi/500._plflt)*theta)
-            y(j+1) = 5 + 3*sin((2._plflt*pi/500._plflt)*theta)
+            x(j+1) = 5 + 3*cos((2._pl_test_flt*pi/500._pl_test_flt)*theta)
+            y(j+1) = 5 + 3*sin((2._pl_test_flt*pi/500._pl_test_flt)*theta)
             j = j + 1
         enddo
 
@@ -70,22 +81,22 @@ program x13f
         call plcol0(1)
         call plline(x(:j), y(:j))
 
-        just = (2._plflt*pi/500._plflt)*(theta0 + theta1) / 2._plflt
-        dx = 0.25_plflt * cos(just)
-        dy = 0.25_plflt * sin(just)
+        just = (2._pl_test_flt*pi/500._pl_test_flt)*(theta0 + theta1) / 2._pl_test_flt
+        dx = 0.25_pl_test_flt * cos(just)
+        dy = 0.25_pl_test_flt * sin(just)
         if ((theta0  + theta1) .lt. 250 .or. &
                (theta0 + theta1) .gt. 750) then
-            just = 0._plflt
+            just = 0._pl_test_flt
         else
-            just = 1._plflt
+            just = 1._pl_test_flt
         endif
-        call plptex( x(j/2+1)+dx, y(j/2+1)+dy, 1._plflt, 0._plflt, just, text(i+1) )
+        call plptex( x(j/2+1)+dx, y(j/2+1)+dy, 1._pl_test_flt, 0._pl_test_flt, just, text(i+1) )
         theta0 = theta - dthet
     enddo
 
     call plfont(2)
-    call plschr( 0._plflt, 1.3_plflt)
-    call plptex( 5._plflt, 9._plflt, 1._plflt, 0._plflt, 0.5_plflt, 'Percentage of Sales' )
+    call plschr( 0._pl_test_flt, 1.3_pl_test_flt)
+    call plptex( 5._pl_test_flt, 9._pl_test_flt, 1._pl_test_flt, 0._pl_test_flt, 0.5_pl_test_flt, 'Percentage of Sales' )
 
     call plend
 end program x13f

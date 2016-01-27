@@ -18,6 +18,17 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x12f
     use plplot
     implicit none
@@ -25,11 +36,11 @@ program x12f
     character(len=20) :: string
     integer :: i
     integer :: plparseopts_rc
-    real(kind=plflt) :: y0(10)
-    real(kind=plflt) :: pos(5)   = (/0.0_plflt, 0.25_plflt, 0.5_plflt, 0.75_plflt, 1.0_plflt/)
-    real(kind=plflt) :: red(5)   = (/0.0_plflt, 0.25_plflt, 0.5_plflt, 1.0_plflt, 1.0_plflt/)
-    real(kind=plflt) :: green(5) = (/1.0_plflt, 0.5_plflt, 0.5_plflt, 0.5_plflt, 1.0_plflt/)
-    real(kind=plflt) :: blue(5)  = (/1.0_plflt, 1.0_plflt, 0.5_plflt, 0.25_plflt, 0.0_plflt/)
+    real(kind=pl_test_flt) :: y0(10)
+    real(kind=pl_test_flt) :: pos(5)   = (/0.0_pl_test_flt, 0.25_pl_test_flt, 0.5_pl_test_flt, 0.75_pl_test_flt, 1.0_pl_test_flt/)
+    real(kind=pl_test_flt) :: red(5)   = (/0.0_pl_test_flt, 0.25_pl_test_flt, 0.5_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt/)
+    real(kind=pl_test_flt) :: green(5) = (/1.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, 1.0_pl_test_flt/)
+    real(kind=pl_test_flt) :: blue(5)  = (/1.0_pl_test_flt, 1.0_pl_test_flt, 0.5_pl_test_flt, 0.25_pl_test_flt, 0.0_pl_test_flt/)
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
@@ -38,8 +49,8 @@ program x12f
 
     call pladv(0)
     call plvsta
-    call plwind( 1980._plflt, 1990._plflt, 0._plflt, 35._plflt )
-    call plbox( 'bc', 1._plflt, 0, 'bcnv', 10._plflt, 0 )
+    call plwind( 1980._pl_test_flt, 1990._pl_test_flt, 0._pl_test_flt, 35._pl_test_flt )
+    call plbox( 'bc', 1._pl_test_flt, 0, 'bcnv', 10._pl_test_flt, 0 )
     call plcol0(2)
     call pllab( 'Year', 'Widget Sales (millions)', '#frPLplot Example 12' )
 
@@ -49,13 +60,14 @@ program x12f
 
     do i = 0, 9
         !       call plcol0(i + 1)
-        call plcol1(real(i,kind=plflt)/9.0_plflt)
+        call plcol1(real(i,kind=pl_test_flt)/9.0_pl_test_flt)
         call plpsty(0)
-        call plfbox( 1980._plflt+i, y0(i+1) )
+        call plfbox( 1980._pl_test_flt+i, y0(i+1) )
         write (string, '(i0)') int(y0(i+1))
-        call plptex( 1980._plflt+i+0.5_plflt, y0(i+1)+1._plflt, 1._plflt, 0._plflt, 0.5_plflt, string )
+        call plptex( 1980._pl_test_flt+i+0.5_pl_test_flt, y0(i+1)+1._pl_test_flt, &
+               1._pl_test_flt, 0._pl_test_flt, 0.5_pl_test_flt, string )
         write (string, '(i0)')1980+i
-        call plmtex( 'b', 1._plflt, (i+1)*0.1_plflt-0.05_plflt, 0.5_plflt, string )
+        call plmtex( 'b', 1._pl_test_flt, (i+1)*0.1_pl_test_flt-0.05_pl_test_flt, 0.5_pl_test_flt, string )
     enddo
 
     !    Don't forget to call PLEND to finish off!
@@ -63,16 +75,16 @@ program x12f
 contains
 
     subroutine plfbox(x0, y0)
-        real(kind=plflt) x0, y0, x(4), y(4)
+        real(kind=pl_test_flt) x0, y0, x(4), y(4)
 
         x(1) = x0
-        y(1) = 0._plflt
+        y(1) = 0._pl_test_flt
         x(2) = x0
         y(2) = y0
-        x(3) = x0+1._plflt
+        x(3) = x0+1._pl_test_flt
         y(3) = y0
-        x(4) = x0+1._plflt
-        y(4) = 0._plflt
+        x(4) = x0+1._pl_test_flt
+        y(4) = 0._pl_test_flt
         call plfill(x, y)
         call plcol0(1)
         call pllsty(1)

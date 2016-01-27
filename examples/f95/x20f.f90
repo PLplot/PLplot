@@ -18,6 +18,17 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !
 !      plimage demo
 !
@@ -71,26 +82,26 @@ program x20f
 
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
     integer, parameter          :: XDIM = 260, YDIM = 220
-    real(kind=plflt), parameter :: XDIMR = XDIM, YDIMR = YDIM
+    real(kind=pl_test_flt), parameter :: XDIMR = XDIM, YDIMR = YDIM
 
-    real(kind=plflt) ::  x(XDIM), y(YDIM), z(XDIM,YDIM), r(XDIM,YDIM)
-    real(kind=plflt) ::  xi, yi, xe, ye
+    real(kind=pl_test_flt) ::  x(XDIM), y(YDIM), z(XDIM,YDIM), r(XDIM,YDIM)
+    real(kind=pl_test_flt) ::  xi, yi, xe, ye
     integer i, j
-    real(kind=plflt)  width_r, height_r
+    real(kind=pl_test_flt)  width_r, height_r
 
     !
     !     Dimensions taken from "lena.pgm"
     !
     integer width, height, num_col
     integer :: plparseopts_rc
-    real(kind=plflt), dimension(:,:), pointer :: img_f
-    real(kind=plflt), dimension(:,:), pointer :: xg, yg
-    real(kind=plflt), dimension(:), pointer :: xg1, yg1
-    real(kind=plflt) :: img_max, img_min
+    real(kind=pl_test_flt), dimension(:,:), pointer :: img_f
+    real(kind=pl_test_flt), dimension(:,:), pointer :: xg, yg
+    real(kind=pl_test_flt), dimension(:), pointer :: xg1, yg1
+    real(kind=pl_test_flt) :: img_max, img_min
 
-    real(kind=plflt) :: x0, y0, dy, stretch
+    real(kind=pl_test_flt) :: x0, y0, dy, stretch
 
     !
     !     Parameters from command-line
@@ -127,57 +138,57 @@ program x20f
 
     !     View image border pixels
     if (dbg) then
-        call plenv(1._plflt, XDIMR, 1._plflt, YDIMR, 1, 1)
+        call plenv(1._pl_test_flt, XDIMR, 1._pl_test_flt, YDIMR, 1, 1)
 
-        z = 0.0_plflt
+        z = 0.0_pl_test_flt
 
         !         Build a one pixel square border, for diagnostics
         do i = 1,XDIM
             !             Right
-            z(i,YDIM) = 1._plflt
+            z(i,YDIM) = 1._pl_test_flt
             !             Left
-            z(i,1)    = 1._plflt
+            z(i,1)    = 1._pl_test_flt
         enddo
 
         do i = 1,YDIM
             !             Top
-            z(1,i)    = 1._plflt
+            z(1,i)    = 1._pl_test_flt
             !             Bottom
-            z(XDIM,i) = 1._plflt
+            z(XDIM,i) = 1._pl_test_flt
         enddo
 
         call pllab('...around a blue square.',' '//PL_END_OF_STRING, &
                'A red border should appear...')
 
-        call plimage(z, 1._plflt, XDIMR, 1._plflt, YDIMR, 0._plflt, 0._plflt, &
-               1._plflt, XDIMR, 1._plflt, YDIMR)
+        call plimage(z, 1._pl_test_flt, XDIMR, 1._pl_test_flt, YDIMR, 0._pl_test_flt, 0._pl_test_flt, &
+               1._pl_test_flt, XDIMR, 1._pl_test_flt, YDIMR)
     endif
 
     !     Sombrero-like demo
     if (.not. nosombrero) then
         !         draw a yellow plot box, useful for diagnostics! :(
         call plcol0(2)
-        call plenv(0._plflt, 2._plflt*PI, 0.0_plflt, 3._plflt*PI, 1, -1)
+        call plenv(0._pl_test_flt, 2._pl_test_flt*PI, 0.0_pl_test_flt, 3._pl_test_flt*PI, 1, -1)
 
         do i=1,XDIM
-            x(i) = real(i-1,kind=plflt)*2._plflt*PI/real(XDIM-1,kind=plflt)
+            x(i) = real(i-1,kind=pl_test_flt)*2._pl_test_flt*PI/real(XDIM-1,kind=pl_test_flt)
         enddo
         do i=1,YDIM
-            y(i) = real(i-1,kind=plflt)*3._plflt*PI/real(YDIM-1,kind=plflt)
+            y(i) = real(i-1,kind=pl_test_flt)*3._pl_test_flt*PI/real(YDIM-1,kind=pl_test_flt)
         enddo
 
         do i=1,XDIM
             do j=1,YDIM
-                r(i,j) = sqrt(x(i)*x(i)+y(j)*y(j))+0.001_plflt
+                r(i,j) = sqrt(x(i)*x(i)+y(j)*y(j))+0.001_pl_test_flt
                 z(i,j) = sin(r(i,j)) / (r(i,j))
             enddo
         enddo
 
         call pllab('No, an amplitude clipped "sombrero"', '', &
                'Saturn?')
-        call plptex(2._plflt, 2._plflt, 3._plflt, 4._plflt, 0._plflt, 'Transparent image')
-        call plimage(z, 0._plflt, 2._plflt*PI, 0.0_plflt, 3._plflt*PI, &
-               0.05_plflt, 1._plflt, 0._plflt, 2._plflt*PI, 0._plflt, 3._plflt*PI)
+        call plptex(2._pl_test_flt, 2._pl_test_flt, 3._pl_test_flt, 4._pl_test_flt, 0._pl_test_flt, 'Transparent image')
+        call plimage(z, 0._pl_test_flt, 2._pl_test_flt*PI, 0.0_pl_test_flt, 3._pl_test_flt*PI, &
+               0.05_pl_test_flt, 1._pl_test_flt, 0._pl_test_flt, 2._pl_test_flt*PI, 0._pl_test_flt, 3._pl_test_flt*PI)
 
         !         Save the plot
         if (f_name .ne. ' ') then
@@ -203,9 +214,9 @@ program x20f
     call gray_cmap(num_col)
 
     !     Display Lena
-    width_r  = real(width,kind=plflt)
-    height_r = real(height,kind=plflt)
-    call plenv(1._plflt, width_r, 1._plflt, height_r, 1, -1)
+    width_r  = real(width,kind=pl_test_flt)
+    height_r = real(height,kind=pl_test_flt)
+    call plenv(1._pl_test_flt, width_r, 1._pl_test_flt, height_r, 1, -1)
 
     if (.not. nointeractive) then
         call pllab('Set and drag Button 1 to (re)set selection, Butto'// &
@@ -214,15 +225,15 @@ program x20f
         call pllab('',' '//PL_END_OF_STRING,'Lena...')
     endif
 
-    call plimage(img_f, 1._plflt, width_r, 1._plflt, &
-           height_r, 0._plflt, 0._plflt, 1._plflt, width_r, 1._plflt, height_r)
+    call plimage(img_f, 1._pl_test_flt, width_r, 1._pl_test_flt, &
+           height_r, 0._pl_test_flt, 0._pl_test_flt, 1._pl_test_flt, width_r, 1._pl_test_flt, height_r)
 
     !     Selection/expansion demo
     if (.not. nointeractive) then
-        xi = 200.0_plflt
-        xe = 330.0_plflt
-        yi = 280.0_plflt
-        ye = 220.0_plflt
+        xi = 200.0_pl_test_flt
+        xe = 330.0_pl_test_flt
+        yi = 280.0_pl_test_flt
+        ye = 220.0_pl_test_flt
 
         if (get_clip(xi, xe, yi, ye)) then
             call plend()
@@ -248,15 +259,15 @@ program x20f
         call pladv(0)
 
         !         Display selection only
-        call plimage(img_f, 1._plflt, width_r, 1._plflt, &
-               height_r, 0._plflt, 0._plflt, xi, xe, ye, yi)
+        call plimage(img_f, 1._pl_test_flt, width_r, 1._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, xi, xe, ye, yi)
 
         call plspause(.true.)
 
         !         Zoom in selection
         call plenv(xi, xe, ye, yi, 1, -1)
-        call plimage(img_f, 1._plflt, width_r, 1._plflt, &
-               height_r, 0._plflt, 0._plflt, xi, xe, ye, yi)
+        call plimage(img_f, 1._pl_test_flt, width_r, 1._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, xi, xe, ye, yi)
     endif
 
     !     Base the dynamic range on the image contents.
@@ -264,15 +275,15 @@ program x20f
     call a2mnmx(img_f,width,height,img_min,img_max,width)
 
     call plcol0(2)
-    call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+    call plenv(0._pl_test_flt, width_r, 0._pl_test_flt, height_r, 1, -1)
     call pllab("", "", "Reduced dynamic range image example")
-    call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
-           height_r, 0._plflt, 0._plflt, img_min + img_max * 0.25_plflt, &
-           img_max - img_max * 0.25_plflt)
+    call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+           height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
+           img_max - img_max * 0.25_pl_test_flt)
 
     !     Draw a distorted version of the original image, showing its
     !     full dynamic range.
-    call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+    call plenv(0._pl_test_flt, width_r, 0._pl_test_flt, height_r, 1, -1)
     call pllab("", "", "Distorted image example")
 
     !     Populate the 2-d grids used for the distortion
@@ -280,49 +291,49 @@ program x20f
     !     since the coordinates are for the corner of each pixel.
     allocate( xg(width+1,height+1) )
     allocate( yg(width+1,height+1) )
-    x0 = 0.5_plflt*width_r
-    y0 = 0.5_plflt*height_r
-    dy = 0.5_plflt*height_r
-    stretch = 0.5_plflt
+    x0 = 0.5_pl_test_flt*width_r
+    y0 = 0.5_pl_test_flt*height_r
+    dy = 0.5_pl_test_flt*height_r
+    stretch = 0.5_pl_test_flt
     do i=1,width+1
         do j=1,height+1
-            xg(i,j) = x0 + (x0-real(i-1,kind=plflt))*(1.0_plflt - stretch* &
-                   cos((real(j-1,kind=plflt)-y0)/dy*PI*0.5_plflt))
-            yg(i,j) = real(j-1,kind=plflt)
+            xg(i,j) = x0 + (x0-real(i-1,kind=pl_test_flt))*(1.0_pl_test_flt - stretch* &
+                   cos((real(j-1,kind=pl_test_flt)-y0)/dy*PI*0.5_pl_test_flt))
+            yg(i,j) = real(j-1,kind=pl_test_flt)
         enddo
     enddo
-    call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
-           height_r, 0._plflt, 0._plflt, img_min, img_max, xg, yg)
+    call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+           height_r, 0._pl_test_flt, 0._pl_test_flt, img_min, img_max, xg, yg)
 
     if(.false.) then
         ! Two test pages to compare undistorted results plotted with
         ! doubly dimensioned xg, yg, versus singly dimensioned xg1, yg1
-        call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+        call plenv(0._pl_test_flt, width_r, 0._pl_test_flt, height_r, 1, -1)
         call pllab("", "", "Undistorted image example")
 
         do i=1,width+1
             do j=1,height+1
-                xg(i,j) = real(i-1,kind=plflt)
-                yg(i,j) = real(j-1,kind=plflt)
+                xg(i,j) = real(i-1,kind=pl_test_flt)
+                yg(i,j) = real(j-1,kind=pl_test_flt)
             enddo
         enddo
-        call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
-               height_r, 0._plflt, 0._plflt, img_min, img_max, xg, yg)
+        call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, img_min, img_max, xg, yg)
 
-        call plenv(0._plflt, width_r, 0._plflt, height_r, 1, -1)
+        call plenv(0._pl_test_flt, width_r, 0._pl_test_flt, height_r, 1, -1)
         call pllab("", "", "Undistorted image example")
 
         allocate( xg1(width+1) )
         allocate( yg1(height+1) )
         do i=1,width+1
-            xg1(i) = real(i-1,kind=plflt)
+            xg1(i) = real(i-1,kind=pl_test_flt)
         enddo
         do j=1,height+1
-            yg1(j) = real(j-1,kind=plflt)
+            yg1(j) = real(j-1,kind=pl_test_flt)
         enddo
 
-        call plimagefr(img_f, 0._plflt, width_r, 0._plflt, &
-               height_r, 0._plflt, 0._plflt, img_min, img_max, xg1, yg1)
+        call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, img_min, img_max, xg1, yg1)
 
         deallocate(xg1, yg1)
     end if
@@ -363,7 +374,7 @@ contains
 
         character(*), intent(in)                  :: fname
         integer, intent(out)                      :: width, height
-        real(kind=plflt), dimension(:,:), pointer :: img_f
+        real(kind=pl_test_flt), dimension(:,:), pointer :: img_f
         integer      num_col
 
         character, dimension(8) :: img
@@ -476,7 +487,7 @@ contains
                 if ( pixel <= h*w ) then
                     i     = 1 + mod(pixel-1,w)
                     j     = 1 + (pixel-1)/w
-                    img_f(i,h-j+1) = real(ichar(img(b),kind=plflt))
+                    img_f(i,h-j+1) = real(ichar(img(b),kind=pl_test_flt))
                 endif
             enddo
             if ( pixel < h*w ) then
@@ -524,12 +535,12 @@ contains
     !     Get selection square interactively
     logical function get_clip(xi, xe, yi, ye)
 
-        real(kind=plflt) xi, xe, yi, ye
+        real(kind=pl_test_flt) xi, xe, yi, ye
 
         type(PLGraphicsIn) :: gin
-        real(kind=plflt) :: xxi, yyi, xxe, yye, t
+        real(kind=pl_test_flt) :: xxi, yyi, xxe, yye, t
         logical st, start
-        real(kind=plflt) sx(5), sy(5)
+        real(kind=pl_test_flt) sx(5), sy(5)
 
         integer PLK_Return
         data PLK_Return / Z'0D' /
@@ -631,7 +642,7 @@ contains
     subroutine gray_cmap(num_col)
 
         integer num_col
-        real(kind=plflt) r(2), g(2), b(2), pos(2)
+        real(kind=pl_test_flt) r(2), g(2), b(2), pos(2)
         logical rev(2)
 
         r(1) = 0.0
@@ -661,7 +672,7 @@ contains
         implicit none
 
         integer   i, j, nx, ny, xdim
-        real(kind=plflt)    f(xdim, ny), fmin, fmax
+        real(kind=pl_test_flt)    f(xdim, ny), fmin, fmax
 
         fmax = f(1, 1)
         fmin = fmax

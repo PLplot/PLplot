@@ -18,20 +18,31 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x08f
     use plplot, double_PI => PL_PI
     use plf95demolib
 
     implicit none
 
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
     integer :: i, j, k, ifshade
 
     !   xdim is the leading dimension of z, xpts <= xdim is the leading
     !   dimension of z that is defined.
     integer, parameter :: xdim=99, ydim=100, xpts=35, ypts=45
-    real(kind=plflt)   :: x(xdim), y(ydim), z(xdim,ypts), xx, yy, r
-    real(kind=plflt)   :: zlimited(xdim,ypts)
+    real(kind=pl_test_flt)   :: x(xdim), y(ydim), z(xdim,ypts), xx, yy, r
+    real(kind=pl_test_flt)   :: zlimited(xdim,ypts)
     integer, parameter :: indexxmin = 1
     integer, parameter :: indexxmax = xpts
     integer            :: indexymin(xpts), indexymax(xpts)
@@ -40,47 +51,47 @@ program x08f
     ! x0, y0 correspond to the exact floating point centre of the index
     ! range.
     ! Note: using the Fortran convention of starting indices at 1
-    real(kind=plflt), parameter :: x0 = 0.5_plflt * ( xpts + 1 )
-    real(kind=plflt), parameter :: a  = 0.9_plflt * ( x0 - 1.0_plflt )
-    real(kind=plflt), parameter :: y0 = 0.5_plflt * ( ypts + 1 )
-    real(kind=plflt), parameter :: b  = 0.7_plflt * ( y0 - 1.0_plflt )
-    real(kind=plflt)            :: square_root
+    real(kind=pl_test_flt), parameter :: x0 = 0.5_pl_test_flt * ( xpts + 1 )
+    real(kind=pl_test_flt), parameter :: a  = 0.9_pl_test_flt * ( x0 - 1.0_pl_test_flt )
+    real(kind=pl_test_flt), parameter :: y0 = 0.5_pl_test_flt * ( ypts + 1 )
+    real(kind=pl_test_flt), parameter :: b  = 0.7_pl_test_flt * ( y0 - 1.0_pl_test_flt )
+    real(kind=pl_test_flt)            :: square_root
 
     character (len=80) :: title(2) = &
            (/'#frPLplot Example 8 - Alt=60, Az=30 ', &
            '#frPLplot Example 8 - Alt=40, Az=-30'/)
-    real(kind=plflt)   :: alt(2) = (/60.0_plflt, 40.0_plflt/)
-    real(kind=plflt)   :: az(2)  = (/30.0_plflt,-30.0_plflt/)
+    real(kind=pl_test_flt)   :: alt(2) = (/60.0_pl_test_flt, 40.0_pl_test_flt/)
+    real(kind=pl_test_flt)   :: az(2)  = (/30.0_pl_test_flt,-30.0_pl_test_flt/)
     integer            :: rosen
     integer, parameter :: nlevel = 10
     integer :: plparseopts_rc
-    real(kind=plflt)   :: zmin, zmax, step, clevel(nlevel)
+    real(kind=pl_test_flt)   :: zmin, zmax, step, clevel(nlevel)
 
-    real(kind=plflt)   :: dx, dy
+    real(kind=pl_test_flt)   :: dx, dy
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     rosen = 0
 
-    !   x(1:xpts) = (arange(0,xpts) - (xpts-1)/2.0_plflt) / ((xpts-1)/2.0_plflt)
-    !   y(1:ypts) = (arange(0,ypts) - (ypts-1)/2.0_plflt) / ((ypts-1)/2.0_plflt)
+    !   x(1:xpts) = (arange(0,xpts) - (xpts-1)/2.0_pl_test_flt) / ((xpts-1)/2.0_pl_test_flt)
+    !   y(1:ypts) = (arange(0,ypts) - (ypts-1)/2.0_pl_test_flt) / ((ypts-1)/2.0_pl_test_flt)
     !
 
-    dx = 2.0_plflt / (xpts - 1)
-    dy = 2.0_plflt / (ypts - 1)
+    dx = 2.0_pl_test_flt / (xpts - 1)
+    dy = 2.0_pl_test_flt / (ypts - 1)
 
     do i = 1,xpts
-        x(i) = -1.0_plflt + (i-1) * dx
+        x(i) = -1.0_pl_test_flt + (i-1) * dx
     enddo
 
     do j = 1,ypts
-        y(j) = -1.0_plflt + (j-1) * dy
+        y(j) = -1.0_pl_test_flt + (j-1) * dy
     enddo
 
     if ( rosen == 1 ) then
-        x = 1.5_plflt * x
-        y = y + 0.5_plflt
+        x = 1.5_pl_test_flt * x
+        y = y + 0.5_pl_test_flt
     endif
 
     do i=1,xpts
@@ -88,31 +99,31 @@ program x08f
         do j=1,ypts
             yy = y(j)
             if (rosen == 1) then
-                z(i,j) = (1._plflt - xx)**2 + 100._plflt*(yy - xx**2)**2
+                z(i,j) = (1._pl_test_flt - xx)**2 + 100._pl_test_flt*(yy - xx**2)**2
 
                 ! The log argument may be zero for just the right grid.
-                if (z(i,j) > 0._plflt) then
+                if (z(i,j) > 0._pl_test_flt) then
                     z(i,j) = log(z(i,j))
                 else
-                    z(i,j) = -5._plflt
+                    z(i,j) = -5._pl_test_flt
                 endif
             else
                 ! Sombrero function
                 r = sqrt(xx**2 + yy**2)
-                z(i,j) = exp(-r**2) * cos(2.0_plflt*PI*r)
+                z(i,j) = exp(-r**2) * cos(2.0_pl_test_flt*PI*r)
             endif
         enddo
     enddo
 
-    zlimited = huge(1.0_plflt)
+    zlimited = huge(1.0_pl_test_flt)
     do i = indexxmin, indexxmax
         square_root = sqrt( 1. - min( 1., (( i - x0 ) / a) ** 2 ) )
         ! Add 0.5 to find nearest integer and therefore preserve symmetry
         ! with regard to lower and upper bound of y range.
-        indexymin(i) = max( 1, int( 0.5_plflt + y0 - b * square_root ) )
+        indexymin(i) = max( 1, int( 0.5_pl_test_flt + y0 - b * square_root ) )
         ! indexymax calculated with the convention that it is 1
         ! greater than highest valid index.
-        indexymax(i) = min( ypts, 1 + int( 0.5_plflt + y0 + b * square_root ) )
+        indexymax(i) = min( ypts, 1 + int( 0.5_pl_test_flt + y0 + b * square_root ) )
 
         do j = indexymin(i),indexymax(i)
             zlimited(i,j) = z(i,j)
@@ -126,25 +137,25 @@ program x08f
     clevel = zmin + step * arange(1,nlevel+1)
 
     call plinit()
-    call pllightsource(1._plflt, 1._plflt, 1._plflt)
+    call pllightsource(1._pl_test_flt, 1._pl_test_flt, 1._pl_test_flt)
     do k=1,2
         do ifshade = 0, 4
             call pladv(0)
-            call plvpor(0.0_plflt, 1.0_plflt, 0.0_plflt, 0.9_plflt )
-            call plwind(-1.0_plflt, 1.0_plflt, -0.9_plflt, 1.1_plflt )
+            call plvpor(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 0.9_pl_test_flt )
+            call plwind(-1.0_pl_test_flt, 1.0_pl_test_flt, -0.9_pl_test_flt, 1.1_pl_test_flt )
             call plcol0(3)
-            call plmtex('t', 1.0_plflt, 0.5_plflt, 0.5_plflt, title(k))
+            call plmtex('t', 1.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, title(k))
             call plcol0(1)
             if (rosen ==1) then
-                call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, -1.5_plflt, &
-                       1.5_plflt, -0.5_plflt, 1.5_plflt, zmin, zmax, alt(k),az(k))
+                call plw3d(1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, -1.5_pl_test_flt, &
+                       1.5_pl_test_flt, -0.5_pl_test_flt, 1.5_pl_test_flt, zmin, zmax, alt(k),az(k))
             else
-                call plw3d(1.0_plflt, 1.0_plflt, 1.0_plflt, -1.0_plflt, &
-                       1.0_plflt, -1.0_plflt, 1.0_plflt, zmin, zmax, alt(k),az(k))
+                call plw3d(1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, &
+                       1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, zmin, zmax, alt(k),az(k))
             endif
-            call plbox3('bnstu','x axis', 0.0_plflt, 0, &
-                   'bnstu', 'y axis', 0.0_plflt, 0, &
-                   'bcdmnstuv','z axis', 0.0_plflt, 0)
+            call plbox3('bnstu','x axis', 0.0_pl_test_flt, 0, &
+                   'bnstu', 'y axis', 0.0_pl_test_flt, 0, &
+                   'bcdmnstuv','z axis', 0.0_pl_test_flt, 0)
             call plcol0(2)
 
             select case (ifshade)
@@ -195,42 +206,42 @@ contains
         !   and saturation.
 
         integer          :: gray
-        real(kind=plflt) :: i(0:1), h(0:1), l(0:1), s(0:1)
+        real(kind=pl_test_flt) :: i(0:1), h(0:1), l(0:1), s(0:1)
 
         !   left boundary
-        i(0) = 0._plflt
+        i(0) = 0._pl_test_flt
         !   right boundary
-        i(1) = 1._plflt
+        i(1) = 1._pl_test_flt
         if (gray == 1) then
             !       hue -- low: red (arbitrary if s=0)
-            h(0) = 0.0_plflt
+            h(0) = 0.0_pl_test_flt
             !       hue -- high: red (arbitrary if s=0)
-            h(1) = 0.0_plflt
+            h(1) = 0.0_pl_test_flt
             !       lightness -- low: half-dark
-            l(0) = 0.5_plflt
+            l(0) = 0.5_pl_test_flt
             !       lightness -- high: light
-            l(1) = 1.0_plflt
+            l(1) = 1.0_pl_test_flt
             !       minimum saturation
-            s(0) = 0.0_plflt
+            s(0) = 0.0_pl_test_flt
             !       minimum saturation
-            s(1) = 0.0_plflt
+            s(1) = 0.0_pl_test_flt
         else
             !       This combination of hues ranges from blue to cyan to green to yellow
             !       to red (front of colour wheel) with constant lightness = 0.6
             !       and saturation = 0.8.
 
             !       hue -- low: blue
-            h(0) = 240._plflt
+            h(0) = 240._pl_test_flt
             !       hue -- high: red
-            h(1) = 0.0_plflt
+            h(1) = 0.0_pl_test_flt
             !       lightness -- low:
-            l(0) = 0.6_plflt
+            l(0) = 0.6_pl_test_flt
             !       lightness -- high:
-            l(1) = 0.6_plflt
+            l(1) = 0.6_pl_test_flt
             !       saturation
-            s(0) = 0.8_plflt
+            s(0) = 0.8_pl_test_flt
             !       minimum saturation
-            s(1) = 0.8_plflt
+            s(1) = 0.8_pl_test_flt
         endif
         call plscmap1n(256)
         call plscmap1l(.false., i, h, l, s)

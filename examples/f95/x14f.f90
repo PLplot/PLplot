@@ -19,6 +19,17 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 ! Plots several simple functions from other example programs.
 !
 ! This version sends the output of the first 4 plots (one page) to two
@@ -36,11 +47,11 @@ program x14f
 
     integer :: fam, num, bmax
 
-    real(kind=plflt), dimension(101) ::  x, y
-    real(kind=plflt), dimension(6) ::  xs, ys
-    real(kind=plflt)  :: xscale, yscale, xoff, yoff
+    real(kind=pl_test_flt), dimension(101) ::  x, y
+    real(kind=pl_test_flt), dimension(6) ::  xs, ys
+    real(kind=pl_test_flt)  :: xscale, yscale, xoff, yoff
     common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
-    real(kind=plflt) :: xp0, yp0
+    real(kind=pl_test_flt) :: xp0, yp0
     integer :: xleng0, yleng0, xoff0, yoff0
     integer :: plparseopts_rc, plsetopt_rc
     logical :: valid_geometry
@@ -101,21 +112,21 @@ program x14f
 
     call plsstrm(0)
 
-    xscale = 6._plflt
-    yscale = 1._plflt
-    xoff = 0._plflt
-    yoff = 0._plflt
+    xscale = 6._pl_test_flt
+    yscale = 1._pl_test_flt
+    xoff = 0._pl_test_flt
+    yoff = 0._pl_test_flt
     call plot1()
 
     !      Set up the data & plot
 
-    xscale = 1._plflt
+    xscale = 1._pl_test_flt
     yscale = 1.d+6
     call plot1()
 
     !      Set up the data & plot
 
-    xscale = 1._plflt
+    xscale = 1._pl_test_flt
     yscale = 1.d-6
     digmax = 2
     call plsyax(digmax, 0)
@@ -123,9 +134,9 @@ program x14f
 
     !      Set up the data & plot
 
-    xscale = 1._plflt
-    yscale = 0.0014_plflt
-    yoff = 0.0185_plflt
+    xscale = 1._pl_test_flt
+    yscale = 0.0014_pl_test_flt
+    yoff = 0.0185_pl_test_flt
     digmax = 5
     call plsyax(digmax, 0)
     call plot1()
@@ -166,14 +177,14 @@ contains
         use plplot
         implicit none
 
-        real(kind=plflt), dimension(101) :: x, y
-        real(kind=plflt), dimension(6) :: xs, ys
-        real(kind=plflt) :: xscale, yscale, xoff, yoff, xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt), dimension(101) :: x, y
+        real(kind=pl_test_flt), dimension(6) :: xs, ys
+        real(kind=pl_test_flt) :: xscale, yscale, xoff, yoff, xmin, xmax, ymin, ymax
         integer :: i
         common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
         do i = 1, 60
-            x(i) = xoff + xscale * real(i,kind=plflt)/60.0_plflt
+            x(i) = xoff + xscale * real(i,kind=pl_test_flt)/60.0_pl_test_flt
             y(i) = yoff + yscale * x(i)**2
         enddo
 
@@ -214,9 +225,9 @@ contains
     subroutine plot2()
         use plplot
         implicit none
-        real(kind=plflt), dimension(101) :: x, y
-        real(kind=plflt), dimension(6) :: xs, ys
-        real(kind=plflt) :: xscale, yscale, xoff, yoff
+        real(kind=pl_test_flt), dimension(101) :: x, y
+        real(kind=pl_test_flt), dimension(6) :: xs, ys
+        real(kind=pl_test_flt) :: xscale, yscale, xoff, yoff
         integer :: i
         common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
 
@@ -228,7 +239,7 @@ contains
         !      (axis = 1).
 
         call plcol0(1)
-        call plenv(-2.0_plflt, 10.0_plflt, -0.4_plflt, 1.2_plflt, 0, 1 )
+        call plenv(-2.0_pl_test_flt, 10.0_pl_test_flt, -0.4_pl_test_flt, 1.2_pl_test_flt, 0, 1 )
         call plcol0(2)
         call pllab( '(x)', 'sin(x)/x', &
                '#frPLplot Example 1 - Sinc Function' )
@@ -236,9 +247,9 @@ contains
         !      Fill up the arrays
 
         do i = 1, 100
-            x(i) = (i-20.0_plflt)/6.0_plflt
-            y(i) = 1.0_plflt
-            if (x(i) .ne. 0.0_plflt) y(i) = sin(x(i)) / x(i)
+            x(i) = (i-20.0_pl_test_flt)/6.0_pl_test_flt
+            y(i) = 1.0_pl_test_flt
+            if (x(i) .ne. 0.0_pl_test_flt) y(i) = sin(x(i)) / x(i)
         enddo
         !      Draw the line
 
@@ -256,10 +267,10 @@ contains
 
         use plplot, double_PI => PL_PI
         implicit none
-        real(kind=plflt), parameter :: PI = double_PI
-        real(kind=plflt), dimension(101) ::  x, y
-        real(kind=plflt), dimension(6) :: xs, ys
-        real(kind=plflt) :: xscale, yscale, xoff, yoff
+        real(kind=pl_test_flt), parameter :: PI = double_PI
+        real(kind=pl_test_flt), dimension(101) ::  x, y
+        real(kind=pl_test_flt), dimension(6) :: xs, ys
+        real(kind=pl_test_flt) :: xscale, yscale, xoff, yoff
         integer :: i
         common /plotdat/ x, y, xs, ys, xscale, yscale, xoff, yoff
         call pladv(0)
@@ -268,19 +279,19 @@ contains
         !      Y range from -1.2 to 1.2.
 
         call plvsta()
-        call plwind( 0.0_plflt, 360.0_plflt, -1.2_plflt, 1.2_plflt )
+        call plwind( 0.0_pl_test_flt, 360.0_pl_test_flt, -1.2_pl_test_flt, 1.2_pl_test_flt )
 
         !      Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
         call plcol0(1)
-        call plbox( 'bcnst', 60.0_plflt, 2, 'bcnstv', 0.2_plflt, 2 )
+        call plbox( 'bcnst', 60.0_pl_test_flt, 2, 'bcnstv', 0.2_pl_test_flt, 2 )
 
         !      Superimpose a dashed line grid, with 1.5 mm marks and spaces. With
         !      only a single mark and space element, we do not need arrays
 
         call plstyl( 1, 1500, 1500 )
         call plcol0(2)
-        call plbox( 'g', 30.0_plflt, 0, 'g', 0.2_plflt, 0 )
+        call plbox( 'g', 30.0_pl_test_flt, 0, 'g', 0.2_pl_test_flt, 0 )
         call plstyl( 0, 0, 0 )
 
         call plcol0(3)
@@ -288,8 +299,8 @@ contains
                '#frPLplot Example 1 - Sine function' )
 
         do i = 1, 101
-            x(i) = 3.6_plflt * (i-1)
-            y(i) = sin( x(i) * PI/180.0_plflt )
+            x(i) = 3.6_pl_test_flt * (i-1)
+            y(i) = sin( x(i) * PI/180.0_pl_test_flt )
         enddo
 
         call plcol0(4)
@@ -303,25 +314,25 @@ contains
 
         use plplot, double_PI => PL_PI
         implicit none
-        real(kind=plflt), parameter :: PI = double_PI
+        real(kind=pl_test_flt), parameter :: PI = double_PI
         character(len=3) :: text
-        real(kind=plflt), dimension(0:360) :: x0, y0, x, y
-        real(kind=plflt) :: dtr, theta, dx, dy, r
+        real(kind=pl_test_flt), dimension(0:360) :: x0, y0, x, y
+        real(kind=pl_test_flt) :: dtr, theta, dx, dy, r
         integer :: i, j
 
-        dtr = PI/180.0_plflt
+        dtr = PI/180.0_pl_test_flt
         do i=0,360
-            x0(i) = cos(dtr * real(i,kind=plflt))
-            y0(i) = sin(dtr * real(i,kind=plflt))
+            x0(i) = cos(dtr * real(i,kind=pl_test_flt))
+            y0(i) = sin(dtr * real(i,kind=pl_test_flt))
         enddo
 
         !      Set up viewport and window, but do not draw box
 
-        call plenv(-1.3_plflt, 1.3_plflt, -1.3_plflt, 1.3_plflt, 1, -2)
+        call plenv(-1.3_pl_test_flt, 1.3_pl_test_flt, -1.3_pl_test_flt, 1.3_pl_test_flt, 1, -2)
         do i = 1,10
             do j = 0,360
-                x(j) = 0.1_plflt*i*x0(j)
-                y(j) = 0.1_plflt*i*y0(j)
+                x(j) = 0.1_pl_test_flt*i*x0(j)
+                y(j) = 0.1_pl_test_flt*i*y0(j)
             enddo
 
             !        Draw circles for polar grid
@@ -330,13 +341,13 @@ contains
         enddo
         call plcol0(2)
         do i = 0,11
-            theta = 30.0_plflt*i
+            theta = 30.0_pl_test_flt*i
             dx = cos(dtr*theta)
             dy = sin(dtr*theta)
 
             !        Draw radial spokes for polar grid
 
-            call pljoin(0.0_plflt, 0.0_plflt, dx, dy)
+            call pljoin(0.0_pl_test_flt, 0.0_pl_test_flt, dx, dy)
             write (text,'(i3)') nint(theta)
 
             !        Write labels for angle
@@ -344,16 +355,16 @@ contains
             text = text(nsp(text):)
             !        Slightly off zero to avoid floating point logic flips at
             !        90 and 270 deg.
-            if (dx.ge.-0.00001_plflt) then
-                call plptex(dx, dy, dx, dy, -0.15_plflt, text)
+            if (dx.ge.-0.00001_pl_test_flt) then
+                call plptex(dx, dy, dx, dy, -0.15_pl_test_flt, text)
             else
-                call plptex(dx, dy, -dx, -dy, 1.15_plflt, text)
+                call plptex(dx, dy, -dx, -dy, 1.15_pl_test_flt, text)
             end if
         enddo
         !      Draw the graph
 
         do i=0,360
-            r = sin(dtr*real(5*i,kind=plflt))
+            r = sin(dtr*real(5*i,kind=pl_test_flt))
             x(i) = x0(i) * r
             y(i) = y0(i) * r
         enddo
@@ -361,7 +372,7 @@ contains
         call plline(x,y)
 
         call plcol0(4)
-        call plmtex('t', 2.0_plflt, 0.5_plflt, 0.5_plflt, &
+        call plmtex('t', 2.0_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                '#frPLplot Example 3 - r(#gh)=sin 5#gh')
 
         !      Flush the plot at end
@@ -394,67 +405,67 @@ contains
 
         use plplot, double_PI => PL_PI
         implicit none
-        real(kind=plflt), parameter :: PI = double_PI
+        real(kind=pl_test_flt), parameter :: PI = double_PI
         integer :: i, j, nptsx, nptsy, xdim, ydim
         !      xdim and ydim are the absolute static dimensions.
         !      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
         !      arrays that is actually used.
         parameter (xdim=99, ydim=100, nptsx=35,nptsy=46)
 
-        real(kind=plflt), dimension(xdim,ydim) ::  z, w, xg2, yg2
-        real(kind=plflt), dimension(11) :: clevel
-        real(kind=plflt), dimension(xdim) ::  xg1
-        real(kind=plflt), dimension(ydim) :: yg1
-        real(kind=plflt) :: xx, yy, argx, argy, distort
-        real(kind=plflt), dimension(6) :: tr
+        real(kind=pl_test_flt), dimension(xdim,ydim) ::  z, w, xg2, yg2
+        real(kind=pl_test_flt), dimension(11) :: clevel
+        real(kind=pl_test_flt), dimension(xdim) ::  xg1
+        real(kind=pl_test_flt), dimension(ydim) :: yg1
+        real(kind=pl_test_flt) :: xx, yy, argx, argy, distort
+        real(kind=pl_test_flt), dimension(6) :: tr
 
-        data clevel /-1._plflt, -0.8_plflt, -0.6_plflt, -0.4_plflt, &
-               -0.2_plflt, &
-               0._plflt, 0.2_plflt, 0.4_plflt, 0.6_plflt ,0.8_plflt, 1._plflt/
+        data clevel /-1._pl_test_flt, -0.8_pl_test_flt, -0.6_pl_test_flt, -0.4_pl_test_flt, &
+               -0.2_pl_test_flt, &
+               0._pl_test_flt, 0.2_pl_test_flt, 0.4_pl_test_flt, 0.6_pl_test_flt ,0.8_pl_test_flt, 1._pl_test_flt/
 
-        tr(1) = 2._plflt/real(nptsx-1,kind=plflt)
-        tr(2) = 0.0_plflt
-        tr(3) = -1.0_plflt
-        tr(4) = 0.0_plflt
-        tr(5) = 2._plflt/real(nptsy-1,kind=plflt)
-        tr(6) = -1.0_plflt
+        tr(1) = 2._pl_test_flt/real(nptsx-1,kind=pl_test_flt)
+        tr(2) = 0.0_pl_test_flt
+        tr(3) = -1.0_pl_test_flt
+        tr(4) = 0.0_pl_test_flt
+        tr(5) = 2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
+        tr(6) = -1.0_pl_test_flt
 
         !      Calculate the data matrices.
         do i=1,nptsx
-            xx = real(i-1-(nptsx/2),kind=plflt)/real(nptsx/2,kind=plflt)
+            xx = real(i-1-(nptsx/2),kind=pl_test_flt)/real(nptsx/2,kind=pl_test_flt)
             do j=1,nptsy
-                yy = real(j-1-(nptsy/2),kind=plflt)/real(nptsy/2,kind=plflt) - 1.0_plflt
+                yy = real(j-1-(nptsy/2),kind=pl_test_flt)/real(nptsy/2,kind=pl_test_flt) - 1.0_pl_test_flt
                 z(i,j) = xx*xx - yy*yy
-                w(i,j) = 2._plflt*xx*yy
+                w(i,j) = 2._pl_test_flt*xx*yy
             enddo
         enddo
 
         !      Build the 1-d coord arrays.
-        distort = 0.4_plflt
+        distort = 0.4_pl_test_flt
         do i=1,nptsx
-            xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(nptsx-1,kind=plflt)
-            xg1(i) = xx + distort*cos(0.5_plflt*PI*xx)
+            xx = -1._pl_test_flt + real(i-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsx-1,kind=pl_test_flt)
+            xg1(i) = xx + distort*cos(0.5_pl_test_flt*PI*xx)
         enddo
 
         do j=1,nptsy
-            yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(nptsy-1,kind=plflt)
-            yg1(j) = yy - distort*cos(0.5_plflt*PI*yy)
+            yy = -1._pl_test_flt + real(j-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
+            yg1(j) = yy - distort*cos(0.5_pl_test_flt*PI*yy)
         enddo
 
         !      Build the 2-d coord arrays.
         do i=1,nptsx
-            xx = -1._plflt + real(i-1,kind=plflt)*2._plflt/real(nptsx-1,kind=plflt)
-            argx = 0.5_plflt*PI*xx
+            xx = -1._pl_test_flt + real(i-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsx-1,kind=pl_test_flt)
+            argx = 0.5_pl_test_flt*PI*xx
             do j=1,nptsy
-                yy = -1._plflt + real(j-1,kind=plflt)*2._plflt/real(nptsy-1,kind=plflt)
-                argy = 0.5_plflt*PI*yy
+                yy = -1._pl_test_flt + real(j-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
+                argy = 0.5_pl_test_flt*PI*yy
                 xg2(i,j) = xx + distort*cos(argx)*cos(argy)
                 yg2(i,j) = yy - distort*cos(argx)*cos(argy)
             enddo
         enddo
 
         !      Plot using identity transform
-        call plenv(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, 0, 0)
+        call plenv(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, 0, 0)
         call plcol0(2)
         call plcont(z,1,nptsx,1,nptsy,clevel,tr)
         call plstyl(1,1500,1500)

@@ -20,6 +20,17 @@
 !   along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !
 ! --------------------------------------------------------------------------
 ! main
@@ -35,21 +46,21 @@ program x25f
     integer          :: i, j, k
     integer          :: npts
     integer :: plparseopts_rc
-    real(kind=plflt) :: xextreme(2,10)
-    real(kind=plflt) :: yextreme(2,10)
-    real(kind=plflt) :: x0(10)
-    real(kind=plflt) :: y0(10)
+    real(kind=pl_test_flt) :: xextreme(2,10)
+    real(kind=pl_test_flt) :: yextreme(2,10)
+    real(kind=pl_test_flt) :: x0(10)
+    real(kind=pl_test_flt) :: y0(10)
 
     data ( xextreme(1,i), xextreme(2,i), yextreme(1,i), yextreme(2,i), i=1,9) / &
-           -120.0_plflt,      120.0_plflt,     -120.0_plflt,      120.0_plflt, &
-           -120.0_plflt,      120.0_plflt,       20.0_plflt,      120.0_plflt, &
-           -120.0_plflt,      120.0_plflt,      -20.0_plflt,      120.0_plflt, &
-           -80.0_plflt,       80.0_plflt,      -20.0_plflt,      120.0_plflt, &
-           -220.0_plflt,     -120.0_plflt,     -120.0_plflt,      120.0_plflt, &
-           -20.0_plflt,       20.0_plflt,     -120.0_plflt,      120.0_plflt, &
-           -20.0_plflt,       20.0_plflt,      -20.0_plflt,       20.0_plflt, &
-           -80.0_plflt,       80.0_plflt,      -80.0_plflt,       80.0_plflt, &
-           20.0_plflt,      120.0_plflt,     -120.0_plflt,      120.0_plflt/
+           -120.0_pl_test_flt,      120.0_pl_test_flt,     -120.0_pl_test_flt,      120.0_pl_test_flt, &
+           -120.0_pl_test_flt,      120.0_pl_test_flt,       20.0_pl_test_flt,      120.0_pl_test_flt, &
+           -120.0_pl_test_flt,      120.0_pl_test_flt,      -20.0_pl_test_flt,      120.0_pl_test_flt, &
+           -80.0_pl_test_flt,       80.0_pl_test_flt,      -20.0_pl_test_flt,      120.0_pl_test_flt, &
+           -220.0_pl_test_flt,     -120.0_pl_test_flt,     -120.0_pl_test_flt,      120.0_pl_test_flt, &
+           -20.0_pl_test_flt,       20.0_pl_test_flt,     -120.0_pl_test_flt,      120.0_pl_test_flt, &
+           -20.0_pl_test_flt,       20.0_pl_test_flt,      -20.0_pl_test_flt,       20.0_pl_test_flt, &
+           -80.0_pl_test_flt,       80.0_pl_test_flt,      -80.0_pl_test_flt,       80.0_pl_test_flt, &
+           20.0_pl_test_flt,      120.0_pl_test_flt,     -120.0_pl_test_flt,      120.0_pl_test_flt/
 
     npts = 0
 
@@ -67,74 +78,74 @@ program x25f
 
             select case ( j )
             case ( 1 ) !  Polygon 1: a diamond
-                x0(1) =    0.0_plflt
-                y0(1) = -100.0_plflt
-                x0(2) = -100.0_plflt
-                y0(2) =    0.0_plflt
-                x0(3) =    0.0_plflt
-                y0(3) =  100.0_plflt
-                x0(4) =  100.0_plflt
-                y0(4) =    0.0_plflt
+                x0(1) =    0.0_pl_test_flt
+                y0(1) = -100.0_pl_test_flt
+                x0(2) = -100.0_pl_test_flt
+                y0(2) =    0.0_pl_test_flt
+                x0(3) =    0.0_pl_test_flt
+                y0(3) =  100.0_pl_test_flt
+                x0(4) =  100.0_pl_test_flt
+                y0(4) =    0.0_pl_test_flt
                 npts = 4
 
             case( 2 )
                 !  Polygon 1: a diamond - reverse direction
-                x0(4) =    0.0_plflt
-                y0(4) = -100.0_plflt
-                x0(3) = -100.0_plflt
-                y0(3) =    0.0_plflt
-                x0(2) =    0.0_plflt
-                y0(2) =  100.0_plflt
-                x0(1) =  100.0_plflt
-                y0(1) =    0.0_plflt
+                x0(4) =    0.0_pl_test_flt
+                y0(4) = -100.0_pl_test_flt
+                x0(3) = -100.0_pl_test_flt
+                y0(3) =    0.0_pl_test_flt
+                x0(2) =    0.0_pl_test_flt
+                y0(2) =  100.0_pl_test_flt
+                x0(1) =  100.0_pl_test_flt
+                y0(1) =    0.0_pl_test_flt
                 npts = 4
 
             case( 3 )
                 !  Polygon 2: a square with punctures
-                x0(1)  = -100.0_plflt
-                y0(1)  = -100.0_plflt
-                x0(2)  = -100.0_plflt
-                y0(2)  =  -80.0_plflt
-                x0(3)  =   80.0_plflt
-                y0(3)  =    0.0_plflt
-                x0(4)  = -100.0_plflt
-                y0(4)  =   80.0_plflt
-                x0(5)  = -100.0_plflt
-                y0(5)  =  100.0_plflt
-                x0(6)  =  -80.0_plflt
-                y0(6)  =  100.0_plflt
-                x0(7)  =    0.0_plflt
-                y0(7)  =   80.0_plflt
-                x0(8)  =   80.0_plflt
-                y0(8)  =  100.0_plflt
-                x0(9)  =  100.0_plflt
-                y0(9)  =  100.0_plflt
-                x0(10) =  100.0_plflt
-                y0(10) = -100.0_plflt
+                x0(1)  = -100.0_pl_test_flt
+                y0(1)  = -100.0_pl_test_flt
+                x0(2)  = -100.0_pl_test_flt
+                y0(2)  =  -80.0_pl_test_flt
+                x0(3)  =   80.0_pl_test_flt
+                y0(3)  =    0.0_pl_test_flt
+                x0(4)  = -100.0_pl_test_flt
+                y0(4)  =   80.0_pl_test_flt
+                x0(5)  = -100.0_pl_test_flt
+                y0(5)  =  100.0_pl_test_flt
+                x0(6)  =  -80.0_pl_test_flt
+                y0(6)  =  100.0_pl_test_flt
+                x0(7)  =    0.0_pl_test_flt
+                y0(7)  =   80.0_pl_test_flt
+                x0(8)  =   80.0_pl_test_flt
+                y0(8)  =  100.0_pl_test_flt
+                x0(9)  =  100.0_pl_test_flt
+                y0(9)  =  100.0_pl_test_flt
+                x0(10) =  100.0_pl_test_flt
+                y0(10) = -100.0_pl_test_flt
                 npts = 10
 
             case( 4 )
                 !  Polygon 2: a square with punctures - reversed direction
-                x0(10) = -100.0_plflt
-                y0(10) = -100.0_plflt
-                x0(9)  = -100.0_plflt
-                y0(9)  =  -80.0_plflt
-                x0(8)  =   80.0_plflt
-                y0(8)  =    0.0_plflt
-                x0(7)  = -100.0_plflt
-                y0(7)  =   80.0_plflt
-                x0(6)  = -100.0_plflt
-                y0(6)  =  100.0_plflt
-                x0(5)  =  -80.0_plflt
-                y0(5)  =  100.0_plflt
-                x0(4)  =    0.0_plflt
-                y0(4)  =   80.0_plflt
-                x0(3)  =   80.0_plflt
-                y0(3)  =  100.0_plflt
-                x0(2)  =  100.0_plflt
-                y0(2)  =  100.0_plflt
-                x0(1)  =  100.0_plflt
-                y0(1)  = -100.0_plflt
+                x0(10) = -100.0_pl_test_flt
+                y0(10) = -100.0_pl_test_flt
+                x0(9)  = -100.0_pl_test_flt
+                y0(9)  =  -80.0_pl_test_flt
+                x0(8)  =   80.0_pl_test_flt
+                y0(8)  =    0.0_pl_test_flt
+                x0(7)  = -100.0_pl_test_flt
+                y0(7)  =   80.0_pl_test_flt
+                x0(6)  = -100.0_pl_test_flt
+                y0(6)  =  100.0_pl_test_flt
+                x0(5)  =  -80.0_pl_test_flt
+                y0(5)  =  100.0_pl_test_flt
+                x0(4)  =    0.0_pl_test_flt
+                y0(4)  =   80.0_pl_test_flt
+                x0(3)  =   80.0_pl_test_flt
+                y0(3)  =  100.0_pl_test_flt
+                x0(2)  =  100.0_pl_test_flt
+                y0(2)  =  100.0_pl_test_flt
+                x0(1)  =  100.0_pl_test_flt
+                y0(1)  = -100.0_pl_test_flt
                 npts = 10
             end select
 
@@ -144,13 +155,13 @@ program x25f
                 call plwind(xextreme(1,i), xextreme(2,i), yextreme(1,i), yextreme(2,i))
 
                 call plcol0(2)
-                call plbox('bc', 1.0_plflt, 0, 'bcnv', 10.0_plflt, 0)
+                call plbox('bc', 1.0_pl_test_flt, 0, 'bcnv', 10.0_pl_test_flt, 0)
                 call plcol0(1)
                 call plpsty(0)
                 if(k.eq.1) then
                     call plfill(x0(1:npts),y0(1:npts))
                 else
-                    call plgradient(x0(1:npts),y0(1:npts),45._plflt)
+                    call plgradient(x0(1:npts),y0(1:npts),45._pl_test_flt)
                 endif
                 call plcol0(2)
                 call pllsty(1)

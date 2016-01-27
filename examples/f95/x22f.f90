@@ -19,13 +19,24 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !      Does several contour plots using different coordinate mappings.
 
 program x22f
     use plplot, double_PI => PL_PI
     use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
     implicit none
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
 
     integer, parameter :: double = kind(1.0d0)
     real(kind=double) common_max
@@ -34,7 +45,7 @@ program x22f
     integer :: plparseopts_rc
     logical fill
     parameter (narr=6)
-    real(kind=plflt) arrow_x(narr),arrow_y(narr), &
+    real(kind=pl_test_flt) arrow_x(narr),arrow_y(narr), &
            arrow2_x(narr),arrow2_y(narr)
 
     type callback_data_type
@@ -42,10 +53,10 @@ program x22f
         real(kind=double) max
     end type callback_data_type
 
-    data arrow_x/-0.5_plflt, 0.5_plflt, 0.3_plflt, 0.5_plflt, 0.3_plflt, 0.5_plflt/
-    data arrow_y/0._plflt, 0._plflt, 0.2_plflt, 0._plflt, -0.2_plflt, 0._plflt/
-    data arrow2_x/-0.5_plflt, 0.3_plflt, 0.3_plflt, 0.5_plflt, 0.3_plflt, 0.3_plflt/
-    data arrow2_y/0._plflt, 0._plflt, 0.2_plflt, 0._plflt, -0.2_plflt, 0._plflt/
+    data arrow_x/-0.5_pl_test_flt, 0.5_pl_test_flt, 0.3_pl_test_flt, 0.5_pl_test_flt, 0.3_pl_test_flt, 0.5_pl_test_flt/
+    data arrow_y/0._pl_test_flt, 0._pl_test_flt, 0.2_pl_test_flt, 0._pl_test_flt, -0.2_pl_test_flt, 0._pl_test_flt/
+    data arrow2_x/-0.5_pl_test_flt, 0.3_pl_test_flt, 0.3_pl_test_flt, 0.5_pl_test_flt, 0.3_pl_test_flt, 0.3_pl_test_flt/
+    data arrow2_y/0._pl_test_flt, 0._pl_test_flt, 0.2_pl_test_flt, 0._pl_test_flt, -0.2_pl_test_flt, 0._pl_test_flt/
 
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
@@ -84,23 +95,23 @@ contains
         integer i, j, nx, ny
         parameter (nx=20, ny=20)
 
-        real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
+        real(kind=pl_test_flt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
 
-        real(kind=plflt) dx, dy, xmin, xmax, ymin, ymax
-        real(kind=plflt) xx, yy, scaling
+        real(kind=pl_test_flt) dx, dy, xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt) xx, yy, scaling
 
-        dx = 1.0_plflt
-        dy = 1.0_plflt
+        dx = 1.0_pl_test_flt
+        dy = 1.0_pl_test_flt
 
-        xmin = -real(nx,kind=plflt)/2.0_plflt*dx
-        xmax = real(nx,kind=plflt)/2.0_plflt*dx
-        ymin = -real(ny,kind=plflt)/2.0_plflt*dy
-        ymax = real(ny,kind=plflt)/2.0_plflt*dy
+        xmin = -real(nx,kind=pl_test_flt)/2.0_pl_test_flt*dx
+        xmax = real(nx,kind=pl_test_flt)/2.0_pl_test_flt*dx
+        ymin = -real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
+        ymax = real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
 
         do i=1,nx
-            xx = (real(i,kind=plflt)-nx/2.0_plflt-0.5_plflt)*dx
+            xx = (real(i,kind=pl_test_flt)-nx/2.0_pl_test_flt-0.5_pl_test_flt)*dx
             do j=1,ny
-                yy = (real(j,kind=plflt)-ny/2.0_plflt-0.5_plflt)*dy
+                yy = (real(j,kind=pl_test_flt)-ny/2.0_pl_test_flt-0.5_pl_test_flt)*dy
                 xg(i,j) = xx
                 yg(i,j) = yy
                 u(i,j) = yy
@@ -112,7 +123,7 @@ contains
         call pllab('(x)', '(y)',  &
                '#frPLplot Example 22 - circulation')
         call plcol0(2)
-        scaling = 0.0_plflt
+        scaling = 0.0_pl_test_flt
         call plvect(u,v,scaling,xg,yg)
         call plcol0(1)
 
@@ -126,34 +137,34 @@ contains
 
         character(len=80) :: title
 
-        real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
+        real(kind=pl_test_flt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
 
-        real(kind=plflt) dx, dy, xmin, xmax, ymin, ymax
-        real(kind=plflt) xx, yy, Q, b, dbdx, scaling
+        real(kind=pl_test_flt) dx, dy, xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt) xx, yy, Q, b, dbdx, scaling
 
-        dx = 1.0_plflt
-        dy = 1.0_plflt
+        dx = 1.0_pl_test_flt
+        dy = 1.0_pl_test_flt
 
-        xmin = -real(nx,kind=plflt)/2.0_plflt*dx
-        xmax = real(nx,kind=plflt)/2.0_plflt*dx
-        ymin = -real(ny,kind=plflt)/2.0_plflt*dy
-        ymax = real(ny,kind=plflt)/2.0_plflt*dy
+        xmin = -real(nx,kind=pl_test_flt)/2.0_pl_test_flt*dx
+        xmax = real(nx,kind=pl_test_flt)/2.0_pl_test_flt*dx
+        ymin = -real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
+        ymax = real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
 
-        Q = 2.0_plflt
+        Q = 2.0_pl_test_flt
         do i=1,nx
-            xx = (real(i,kind=plflt)-real(nx,kind=plflt)/2.0_plflt-0.5_plflt)*dx
+            xx = (real(i,kind=pl_test_flt)-real(nx,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dx
             do j=1,ny
-                yy = (real(j,kind=plflt)-real(ny,kind=plflt)/2.0_plflt-0.5_plflt)*dy
+                yy = (real(j,kind=pl_test_flt)-real(ny,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dy
                 xg(i,j) = xx
                 yg(i,j) = yy
-                b = ymax/4.0_plflt*(3.0_plflt-cos(PI*xx/xmax))
+                b = ymax/4.0_pl_test_flt*(3.0_pl_test_flt-cos(PI*xx/xmax))
                 if (abs(yy).lt.b) then
-                    dbdx = ymax/4.0_plflt*sin(PI*xx/xmax)*PI/xmax*yy/b
+                    dbdx = ymax/4.0_pl_test_flt*sin(PI*xx/xmax)*PI/xmax*yy/b
                     u(i,j) = Q*ymax/b
                     v(i,j) = u(i,j)*dbdx
                 else
-                    u(i,j) = 0.0_plflt
-                    v(i,j) = 0.0_plflt
+                    u(i,j) = 0.0_pl_test_flt
+                    v(i,j) = 0.0_pl_test_flt
                 endif
             enddo
         enddo
@@ -162,7 +173,7 @@ contains
         write(title,'(A,I0,A)') '#frPLplot Example 22 - constriction (arrow style ', astyle,')'
         call pllab('(x)', '(y)', title)
         call plcol0(2)
-        scaling = -1.0_plflt
+        scaling = -1.0_pl_test_flt
         call plvect(u,v,scaling,xg,yg)
         call plcol0(1)
 
@@ -181,7 +192,7 @@ contains
         real(kind=double), intent(out) :: xt, yt
 
         xt = x
-        yt = y / 4.0_plflt * ( 3.0_plflt - cos( PI * x / common_max ) )
+        yt = y / 4.0_pl_test_flt * ( 3.0_pl_test_flt - cos( PI * x / common_max ) )
     end subroutine transform
 
     ! Variant of transform that carries a generic data argument.
@@ -196,7 +207,7 @@ contains
         call c_f_pointer(data, d)
 
         xt = x
-        yt = y / 4.0_plflt * ( 3.0_plflt - cos( PI * x / d%max ) )
+        yt = y / 4.0_pl_test_flt * ( 3.0_pl_test_flt - cos( PI * x / d%max ) )
     end subroutine transform_data
 
     ! Vector plot of flow through a constricted pipe
@@ -206,22 +217,22 @@ contains
         integer i, j, nx, ny, nc, nseg
         parameter (nx=20, ny=20, nc=11, nseg=20)
 
-        real(kind=plflt) dx, dy, xx, yy
-        real(kind=plflt) xmin, xmax, ymin, ymax
-        real(kind=plflt) Q, b, scaling
-        real(kind=plflt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
-        real(kind=plflt) clev(nc);
+        real(kind=pl_test_flt) dx, dy, xx, yy
+        real(kind=pl_test_flt) xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt) Q, b, scaling
+        real(kind=pl_test_flt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
+        real(kind=pl_test_flt) clev(nc);
         character(len=1) defined
 
         type(callback_data_type), target :: data
 
-        dx = 1.0_plflt
-        dy = 1.0_plflt
+        dx = 1.0_pl_test_flt
+        dy = 1.0_pl_test_flt
 
-        xmin = -real(nx,kind=plflt)/2.0_plflt*dx
-        xmax = real(nx,kind=plflt)/2.0_plflt*dx
-        ymin = -real(ny,kind=plflt)/2.0_plflt*dy
-        ymax = real(ny,kind=plflt)/2.0_plflt*dy
+        xmin = -real(nx,kind=pl_test_flt)/2.0_pl_test_flt*dx
+        xmax = real(nx,kind=pl_test_flt)/2.0_pl_test_flt*dx
+        ymin = -real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
+        ymax = real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
         common_max = ymax
         data%max = common_max
 
@@ -232,32 +243,32 @@ contains
             call plstransform( transform_data, c_loc(data))
         endif
 
-        Q = 2.0_plflt
+        Q = 2.0_pl_test_flt
         do i=1,nx
-            xx = (real(i,kind=plflt)-real(nx,kind=plflt)/2.0_plflt-0.5_plflt)*dx
+            xx = (real(i,kind=pl_test_flt)-real(nx,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dx
             do j=1,ny
-                yy = (real(j,kind=plflt)-real(ny,kind=plflt)/2.0_plflt-0.5_plflt)*dy
+                yy = (real(j,kind=pl_test_flt)-real(ny,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dy
                 xg(i,j) = xx
                 yg(i,j) = yy
-                b = ymax/4.0_plflt*(3.0_plflt-cos(PI*xx/xmax))
+                b = ymax/4.0_pl_test_flt*(3.0_pl_test_flt-cos(PI*xx/xmax))
                 u(i,j) = Q*ymax/b
-                v(i,j) = 0.0_plflt
+                v(i,j) = 0.0_pl_test_flt
             enddo
         enddo
 
         do i=1,nc
-            clev(i) = Q + real(i-1,kind=plflt) * Q / ( real(nc,kind=plflt) - 1.0_plflt )
+            clev(i) = Q + real(i-1,kind=pl_test_flt) * Q / ( real(nc,kind=pl_test_flt) - 1.0_pl_test_flt )
         enddo
 
         call plenv(xmin, xmax, ymin, ymax, 0, 0)
         call pllab('(x)', '(y)', &
                '#frPLplot Example 22 - constriction with plstransform')
         call plcol0(2)
-        call plshades(u, defined, xmin + dx / 2.0_plflt, &
-               xmax - dx / 2.0_plflt, &
-               ymin + dy / 2.0_plflt, ymax - dy / 2.0_plflt, &
-               clev, 0.0_plflt, 1, 1.0_plflt, .false. )
-        scaling = -1.0_plflt
+        call plshades(u, defined, xmin + dx / 2.0_pl_test_flt, &
+               xmax - dx / 2.0_pl_test_flt, &
+               ymin + dy / 2.0_pl_test_flt, ymax - dy / 2.0_pl_test_flt, &
+               clev, 0.0_pl_test_flt, 1, 1.0_pl_test_flt, .false. )
+        scaling = -1.0_pl_test_flt
         call plvect(u,v,scaling,xg,yg)
         call plpath(nseg, xmin, ymax, xmax, ymax)
         call plpath(nseg, xmin, ymin, xmax, ymin)
@@ -272,36 +283,36 @@ contains
         integer i, j, nr, ntheta, nper, nlevel
         parameter (nr=20, ntheta=20, nper=100, nlevel=10)
 
-        real(kind=plflt) u(nr, ntheta), v(nr, ntheta), z(nr, ntheta)
-        real(kind=plflt) xg(nr,ntheta), yg(nr,ntheta)
-        real(kind=plflt) clevel(nlevel), px(nper), py(nper)
+        real(kind=pl_test_flt) u(nr, ntheta), v(nr, ntheta), z(nr, ntheta)
+        real(kind=pl_test_flt) xg(nr,ntheta), yg(nr,ntheta)
+        real(kind=pl_test_flt) clevel(nlevel), px(nper), py(nper)
 
-        real(kind=plflt) xmin, xmax, ymin, ymax, zmin, zmax, rmax
-        real(kind=plflt) xx, yy, r, theta, scaling, dz
+        real(kind=pl_test_flt) xmin, xmax, ymin, ymax, zmin, zmax, rmax
+        real(kind=pl_test_flt) xx, yy, r, theta, scaling, dz
 
-        real(kind=plflt) eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
-        real(kind=plflt) div1, div1i, div2, div2i
+        real(kind=pl_test_flt) eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
+        real(kind=pl_test_flt) div1, div1i, div2, div2i
 
-        rmax = real(nr,kind=plflt)
+        rmax = real(nr,kind=pl_test_flt)
 
-        eps = 2.0_plflt
+        eps = 2.0_pl_test_flt
 
-        q1 = 1.0_plflt
-        d1 = rmax/4.0_plflt
+        q1 = 1.0_pl_test_flt
+        d1 = rmax/4.0_pl_test_flt
 
         q1i = - q1*rmax/d1
-        d1i = rmax**2.0_plflt/d1
+        d1i = rmax**2.0_pl_test_flt/d1
 
-        q2 = -1.0_plflt
-        d2 = rmax/4.0_plflt
+        q2 = -1.0_pl_test_flt
+        d2 = rmax/4.0_pl_test_flt
 
         q2i = - q2*rmax/d2
-        d2i = rmax**2.0_plflt/d2
+        d2i = rmax**2.0_pl_test_flt/d2
 
         do i = 1, nr
-            r = 0.5 + real(i-1,kind=plflt)
+            r = 0.5 + real(i-1,kind=pl_test_flt)
             do j = 1, ntheta
-                theta = 2.*PI/real(ntheta-1,kind=plflt)*(real(j,kind=plflt)-0.5)
+                theta = 2.*PI/real(ntheta-1,kind=pl_test_flt)*(real(j,kind=pl_test_flt)-0.5)
                 xx = r*cos(theta)
                 yy = r*sin(theta)
                 xg(i,j) = xx
@@ -329,9 +340,9 @@ contains
                '#frPLplot Example 22 - potential gradient vector plot')
 
         !     plot contours of the potential
-        dz = abs(zmax - zmin)/real(nlevel,kind=plflt)
+        dz = abs(zmax - zmin)/real(nlevel,kind=pl_test_flt)
         do i = 1, nlevel
-            clevel(i) = zmin + (i-0.5_plflt)*dz
+            clevel(i) = zmin + (i-0.5_pl_test_flt)*dz
         enddo
         call plcol0(3)
         call pllsty(2)
@@ -340,12 +351,12 @@ contains
         call plcol0(1)
 
         call plcol0(2)
-        scaling = 25.0_plflt
+        scaling = 25.0_pl_test_flt
         call plvect(u,v,scaling,xg,yg)
         call plcol0(1)
 
         do i=1,nper
-            theta = 2.0_plflt*PI/real(nper-1,kind=plflt)*real(i,kind=plflt)
+            theta = 2.0_pl_test_flt*PI/real(nper-1,kind=pl_test_flt)*real(i,kind=pl_test_flt)
             px(i) = rmax*cos(theta)
             py(i) = rmax*sin(theta)
         enddo
@@ -361,7 +372,7 @@ contains
     subroutine a2mnmx(f, nx, ny, fmin, fmax, xdim)
 
         integer   i, j, nx, ny, xdim
-        real(kind=plflt)    f(xdim, ny), fmin, fmax
+        real(kind=pl_test_flt)    f(xdim, ny), fmin, fmax
 
         fmax = f(1, 1)
         fmin = fmax

@@ -18,12 +18,23 @@
 !   License along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x06f
     use plplot
     implicit none
     integer :: i, j, k, font, kind_font, maxfont
     integer :: plparseopts_rc
-    real(kind=plflt), dimension(1:1) :: x, y
+    real(kind=pl_test_flt), dimension(1:1) :: x, y
 
     character (len=3) :: text
 
@@ -46,19 +57,19 @@ program x06f
 
             !           Set up viewport and window
 
-            call plvpor(0.1_plflt, 1.0_plflt, 0.1_plflt, 0.9_plflt)
-            call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.3_plflt)
+            call plvpor(0.1_pl_test_flt, 1.0_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt)
+            call plwind(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.3_pl_test_flt)
 
             !           Draw the grid using plbox
 
-            call plbox('bcg', 0.1_plflt, 0, 'bcg', 0.1_plflt, 0)
+            call plbox('bcg', 0.1_pl_test_flt, 0, 'bcg', 0.1_pl_test_flt, 0)
             call plcol0(15)
 
             !           Write the digits below the frame
 
             do i=0,9
                 write (text,'(i1)') i
-                call plmtex('b', 1.5_plflt, (0.1_plflt*i+0.05_plflt), 0.5_plflt, text)
+                call plmtex('b', 1.5_pl_test_flt, (0.1_pl_test_flt*i+0.05_pl_test_flt), 0.5_pl_test_flt, text)
             enddo
 
             k=0
@@ -68,12 +79,12 @@ program x06f
 
                 write (text,'(i0)') 10*i
 
-                call plmtex('lv', 1.0_plflt, (1.0_plflt-(2*i+1)/26.0_plflt), &
-                       1.0_plflt, text)
+                call plmtex('lv', 1.0_pl_test_flt, (1.0_pl_test_flt-(2*i+1)/26.0_pl_test_flt), &
+                       1.0_pl_test_flt, text)
 
                 do j=0,9
-                    x=0.1_plflt*j+0.05_plflt
-                    y=1.25_plflt-0.1_plflt*i
+                    x=0.1_pl_test_flt*j+0.05_pl_test_flt
+                    y=1.25_pl_test_flt-0.1_pl_test_flt*i
 
                     !                   Display the symbols
                     if (k < 128) call plpoin(x,y,k)
@@ -84,10 +95,10 @@ program x06f
             enddo
 
             if (kind_font==1) then
-                call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+                call plmtex('t', 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                        'PLplot Example 6 - plpoin symbols (compact)')
             else
-                call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+                call plmtex('t', 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                        'PLplot Example 6 - plpoin symbols (extended)')
             endif
         enddo

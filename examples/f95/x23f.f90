@@ -20,19 +20,30 @@
 !   along with PLplot; if not, write to the Free Software
 !   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 !
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 !
 
 program x23f
     use plplot
     implicit none
 
-    real(kind=plflt) xmin, xmax, ymin, ymax, ycharacter_scale, yoffset
-    real(kind=plflt) chardef, charht, deltax, deltay, x, y
+    real(kind=pl_test_flt) xmin, xmax, ymin, ymax, ycharacter_scale, yoffset
+    real(kind=pl_test_flt) chardef, charht, deltax, deltay, x, y
     integer i, j, page, length, slice
     character(len=20) cmdString
     integer fci_old
     integer ifamily, istyle, iweight
-    real(kind=plflt) dy
+    real(kind=pl_test_flt) dy
     integer family_index, style_index, weight_index
     ! Must be big enough to contain the prefix strings, the font-changing
     ! commands, and the "The quick brown..." string.
@@ -247,30 +258,30 @@ program x23f
 
         !        Set up viewport and window
 
-        call plvpor(0.02_plflt, 0.98_plflt, 0.02_plflt, 0.90_plflt)
-        call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
+        call plvpor(0.02_pl_test_flt, 0.98_pl_test_flt, 0.02_pl_test_flt, 0.90_pl_test_flt)
+        call plwind(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt)
         call plgspa(xmin, xmax, ymin, ymax)
-        call plschr(0._plflt, 0.8_plflt)
-        ycharacter_scale = (1.0_plflt - 0.0_plflt)/(ymax-ymin)
+        call plschr(0._pl_test_flt, 0.8_pl_test_flt)
+        ycharacter_scale = (1.0_pl_test_flt - 0.0_pl_test_flt)/(ymax-ymin)
 
         !        Factor should be 0.5, but heuristically it turns out to be larger.
 
         call plgchr(chardef, charht)
-        yoffset = 1.0_plflt*charht*ycharacter_scale
+        yoffset = 1.0_pl_test_flt*charht*ycharacter_scale
 
         !        Draw the grid using plbox
 
         call plcol0(2)
-        deltax = 1.0_plflt/nxcells(page)
-        deltay = 1.0_plflt/nycells(page)
+        deltax = 1.0_pl_test_flt/nxcells(page)
+        deltay = 1.0_pl_test_flt/nycells(page)
         call plbox("bcg", deltax, 0, "bcg", deltay, 0)
         call plcol0(15)
         length=hi(page)-lo(page)
         slice = 1
         do j=nycells(page),0,-1
-            y = (j-0.5_plflt)*deltay
+            y = (j-0.5_pl_test_flt)*deltay
             do i=1,nxcells(page)
-                x  = (i-0.5_plflt)*deltax
+                x  = (i-0.5_pl_test_flt)*deltax
                 if (slice .le. length) then
                     if (page .eq. 1) then
                         write(cmdString, '("#",a)') Greek(slice)
@@ -289,16 +300,16 @@ program x23f
                         !                     lowercase display of command as corresponding C example.
                         call lowercase23(cmdString)
                     endif
-                    call plptex(x,y+yoffset,1._plflt,0._plflt,0.5_plflt, &
+                    call plptex(x,y+yoffset,1._pl_test_flt,0._pl_test_flt,0.5_pl_test_flt, &
                            cmdString(2:20))
-                    call plptex(x,y-yoffset,1._plflt,0._plflt,0.5_plflt, &
+                    call plptex(x,y-yoffset,1._pl_test_flt,0._pl_test_flt,0.5_pl_test_flt, &
                            cmdString)
                 endif
                 slice = slice + 1
             enddo
         enddo
-        call plschr(0._plflt, 1.0_plflt)
-        call plmtex("t", 1.5_plflt, 0.5_plflt, 0.5_plflt, title(page))
+        call plschr(0._pl_test_flt, 1.0_pl_test_flt)
+        call plmtex("t", 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, title(page))
     enddo
 
     !     Demonstrate methods of getting the current fonts
@@ -309,34 +320,34 @@ program x23f
            trim(family(ifamily+1))//' '//trim(style(istyle+1))//' '//trim(weight(iweight+1))
 
     do page=11,15
-        dy = 0.030_plflt
+        dy = 0.030_pl_test_flt
 
         call pladv(0)
-        call plvpor(0.02_plflt, 0.98_plflt, 0.02_plflt, 0.90_plflt)
-        call plwind(0.0_plflt, 1.0_plflt, 0.0_plflt, 1.0_plflt)
+        call plvpor(0.02_pl_test_flt, 0.98_pl_test_flt, 0.02_pl_test_flt, 0.90_pl_test_flt)
+        call plwind(0.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt)
         call plsfci(0)
         if (page == 11) then
-            call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+            call plmtex('t', 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                    '#<0x10>PLplot Example 23 - '// &
                    'Set Font with plsfci')
         elseif (page == 12) then
-            call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+            call plmtex('t', 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                    '#<0x10>PLplot Example 23 - '// &
                    'Set Font with plsfont')
         elseif(page == 13) then
-            call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+            call plmtex('t', 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                    '#<0x10>PLplot Example 23 - '// &
                    'Set Font with ##<0x8nnnnnnn> construct')
         elseif(page == 14) then
-            call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+            call plmtex('t', 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                    '#<0x10>PLplot Example 23 - '// &
                    'Set Font with ##<0xmn> constructs')
         elseif(page == 15) then
-            call plmtex('t', 1.5_plflt, 0.5_plflt, 0.5_plflt, &
+            call plmtex('t', 1.5_pl_test_flt, 0.5_pl_test_flt, 0.5_pl_test_flt, &
                    '#<0x10>PLplot Example 23 - '// &
                    'Set Font with ##<FCI COMMAND STRING/> constructs')
         endif
-        call plschr(0._plflt, 0.75_plflt)
+        call plschr(0._pl_test_flt, 0.75_pl_test_flt)
         do i=0,fci_combinations-1
             family_index = mod(i,5)
             style_index = mod(i/5,3)
@@ -386,10 +397,10 @@ program x23f
                        trim(weight(weight_index+1))//'/>'// &
                        'The quick brown fox jumps over the lazy dog'
             endif
-            call plptex (0._plflt, 1._plflt - (i+0.5_plflt)*dy, 1._plflt, &
-                   0._plflt, 0._plflt, string)
+            call plptex (0._pl_test_flt, 1._pl_test_flt - (i+0.5_pl_test_flt)*dy, 1._pl_test_flt, &
+                   0._pl_test_flt, 0._pl_test_flt, string)
         enddo
-        call plschr(0._plflt, 1.0_plflt)
+        call plschr(0._pl_test_flt, 1.0_pl_test_flt)
     enddo
     !     Restore defaults
 

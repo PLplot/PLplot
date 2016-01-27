@@ -19,6 +19,17 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x16af
     use plplot
     implicit none
@@ -56,17 +67,17 @@ contains
         !      NX and NY are the defined area.
         parameter (xdim = 99, NX = 35, ydim = 100, NY = 46, NCONTR = 14)
 
-        real(kind=plflt)    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
-        real(kind=plflt)    xmin, xmax, ymin, ymax, zmin, zmax, x, y
-        real(kind=plflt)    shade_min, shade_max, sh_color
+        real(kind=pl_test_flt)    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
+        real(kind=pl_test_flt)    xmin, xmax, ymin, ymax, zmin, zmax, x, y
+        real(kind=pl_test_flt)    shade_min, shade_max, sh_color
         integer   i, j, sh_cmap
         integer   min_color, max_color
-        real(kind=plflt)    sh_width, min_width, max_width
+        real(kind=pl_test_flt)    sh_width, min_width, max_width
 
-        xmin = -1._plflt
-        ymin = -1._plflt
-        xmax =  1._plflt
-        ymax =  1._plflt
+        xmin = -1._pl_test_flt
+        ymin = -1._pl_test_flt
+        xmax =  1._pl_test_flt
+        ymax =  1._pl_test_flt
 
         !      Set up for plshade call
 
@@ -79,43 +90,43 @@ contains
         !      Set up data arrays
 
         do i = 1, NX
-            x = (i - 1 - (NX/2)) / real(NX/2,kind=plflt)
+            x = (i - 1 - (NX/2)) / real(NX/2,kind=pl_test_flt)
             do j = 1, NY
-                y = (j - 1 - (NY/2)) / real(NY/2,kind=plflt) - 1.0_plflt
-                z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1_plflt)
+                y = (j - 1 - (NY/2)) / real(NY/2,kind=pl_test_flt) - 1.0_pl_test_flt
+                z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1_pl_test_flt)
                 w(i,j) = 2*x*y
             enddo
         enddo
 
         call a2mnmx(z, NX, NY, zmin, zmax, xdim)
         do  i = 1, NCONTR
-            clevel(i) = zmin + (zmax - zmin) * (i + 0.5_plflt) / &
-                   real(NCONTR,kind=plflt)
+            clevel(i) = zmin + (zmax - zmin) * (i + 0.5_pl_test_flt) / &
+                   real(NCONTR,kind=pl_test_flt)
         enddo
 
         !      Plot using identity transform
 
         call pladv(0)
-        call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-        call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+        call plvpor(0.1_pl_test_flt, 0.9_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt)
+        call plwind(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt)
 
         do i = 1, NCONTR
-            shade_min = zmin + (zmax - zmin) * real(i - 1,kind=plflt) / &
-                   real(NCONTR,kind=plflt)
-            shade_max = zmin + (zmax - zmin) * real(i,kind=plflt)     / &
-                   real(NCONTR,kind=plflt)
-            sh_color = real(i - 1,kind=plflt) / real(NCONTR - 1,kind=plflt)
+            shade_min = zmin + (zmax - zmin) * real(i - 1,kind=pl_test_flt) / &
+                   real(NCONTR,kind=pl_test_flt)
+            shade_max = zmin + (zmax - zmin) * real(i,kind=pl_test_flt)     / &
+                   real(NCONTR,kind=pl_test_flt)
+            sh_color = real(i - 1,kind=pl_test_flt) / real(NCONTR - 1,kind=pl_test_flt)
             sh_width = 2
             call plpsty(0)
             call plshade(z(:NX,:NY), ' ', &
-                   -1._plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
+                   -1._pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
                    min_color, min_width, max_color, max_width, .true. )
         enddo
 
         call plcol0(1)
-        call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+        call plbox('bcnst', 0.0_pl_test_flt, 0, 'bcnstv', 0.0_pl_test_flt, 0)
         call plcol0(2)
         call pllab('distance', 'altitude', 'Bogon flux')
 
@@ -127,31 +138,31 @@ contains
 
         use plplot, double_TWOPI => PL_TWOPI
         implicit none
-        real(kind=plflt), parameter :: TWOPI = double_TWOPI
+        real(kind=pl_test_flt), parameter :: TWOPI = double_TWOPI
         integer   xdim, ydim, NX, NY, NCONTR, NBDRY
         !      xdim and ydim are the static dimensions of the 2D arrays while
         !      NX and NY are the defined area.
         parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
         parameter (NCONTR = 14, NBDRY=200)
 
-        real(kind=plflt)    z(xdim, ydim), ztmp(xdim, ydim+1)
-        real(kind=plflt)    xg(xdim, ydim+1), yg(xdim, ydim+1), &
+        real(kind=pl_test_flt)    z(xdim, ydim), ztmp(xdim, ydim+1)
+        real(kind=pl_test_flt)    xg(xdim, ydim+1), yg(xdim, ydim+1), &
                xtm(NBDRY), ytm(NBDRY)
-        real(kind=plflt)    clevel(NCONTR)
-        real(kind=plflt)    xmin, xmax, ymin, ymax, zmin, zmax
-        real(kind=plflt)    xpmin, xpmax, ypmin, ypmax
-        real(kind=plflt)    r, theta, rmax, x0, y0
-        real(kind=plflt)    eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
-        real(kind=plflt)    div1, div1i, div2, div2i
+        real(kind=pl_test_flt)    clevel(NCONTR)
+        real(kind=pl_test_flt)    xmin, xmax, ymin, ymax, zmin, zmax
+        real(kind=pl_test_flt)    xpmin, xpmax, ypmin, ypmax
+        real(kind=pl_test_flt)    r, theta, rmax, x0, y0
+        real(kind=pl_test_flt)    eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i
+        real(kind=pl_test_flt)    div1, div1i, div2, div2i
 
-        real(kind=plflt)    shade_min, shade_max, sh_color
-        real(kind=plflt)    xtick, ytick
+        real(kind=pl_test_flt)    shade_min, shade_max, sh_color
+        real(kind=pl_test_flt)    xtick, ytick
         integer   nxsub, nysub
         integer   ncolbox, ncollab
         integer   i, j, kx, lx, ky, ly
         integer   sh_cmap
         integer   min_color, max_color
-        real(kind=plflt) sh_width, min_width, max_width
+        real(kind=pl_test_flt) sh_width, min_width, max_width
         character(len=8) xopt, yopt
 
         !      Set up for plshade call
@@ -171,9 +182,9 @@ contains
         !      Tack on extra cell in theta to handle periodicity.
 
         do i = 1, NX
-            r = i - 0.5_plflt
+            r = i - 0.5_pl_test_flt
             do j = 1, NY
-                theta = TWOPI/real(NY,kind=plflt) * (j-0.5_plflt)
+                theta = TWOPI/real(NY,kind=pl_test_flt) * (j-0.5_pl_test_flt)
                 xg(i,j) = r * cos(theta)
                 yg(i,j) = r * sin(theta)
             enddo
@@ -184,24 +195,24 @@ contains
         call a2mnmx(yg, NX, NY, ymin, ymax, xdim)
 
         rmax = r
-        x0 = (xmin + xmax)/2._plflt
-        y0 = (ymin + ymax)/2._plflt
+        x0 = (xmin + xmax)/2._pl_test_flt
+        y0 = (ymin + ymax)/2._pl_test_flt
 
         !      Potential inside a conducting cylinder (or sphere) by method of images.
         !      Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
         !      Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
         !      Also put in smoothing term at small distances.
 
-        eps = 2._plflt
+        eps = 2._pl_test_flt
 
-        q1 = 1._plflt
-        d1 = r/4._plflt
+        q1 = 1._pl_test_flt
+        d1 = r/4._pl_test_flt
 
         q1i = - q1*r/d1
         d1i = r**2/d1
 
-        q2 = -1._plflt
-        d2 = r/4._plflt
+        q2 = -1._pl_test_flt
+        d2 = r/4._pl_test_flt
 
         q2i = - q2*r/d2
         d2i = r**2/d2
@@ -231,7 +242,7 @@ contains
         !      Set up contour levels.
 
         do i = 1, NCONTR
-            clevel(i) = zmin + (i-0.5_plflt)*abs(zmax - zmin)/real(NCONTR,kind=plflt)
+            clevel(i) = zmin + (i-0.5_pl_test_flt)*abs(zmax - zmin)/real(NCONTR,kind=pl_test_flt)
         enddo
 
         !      Advance graphics frame and get ready to plot.
@@ -245,20 +256,20 @@ contains
         !      Scale window to user coordinates.
         !      Make a bit larger so the boundary does not get clipped.
 
-        eps = 0.05_plflt
+        eps = 0.05_pl_test_flt
         xpmin = xmin - abs(xmin)*eps
         xpmax = xmax + abs(xmax)*eps
         ypmin = ymin - abs(ymin)*eps
         ypmax = ymax + abs(ymax)*eps
 
-        call plvpas(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt, 1.0_plflt)
+        call plvpas(0.1_pl_test_flt, 0.9_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt, 1.0_pl_test_flt)
         call plwind(xpmin, xpmax, ypmin, ypmax)
 
         xopt = ' '
         yopt = ' '
-        xtick = 0._plflt
+        xtick = 0._pl_test_flt
         nxsub = 0
-        ytick = 0._plflt
+        ytick = 0._pl_test_flt
         nysub = 0
 
         call plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
@@ -266,16 +277,16 @@ contains
         !      Call plotter once for z < 0 (dashed), once for z > 0 (solid lines).
 
         do i = 1, NCONTR
-            shade_min = zmin + (zmax - zmin) * real(i - 1,kind=plflt) / &
-                   real(NCONTR,kind=plflt)
-            shade_max = zmin + (zmax - zmin) * real(i,kind=plflt)     / &
-                   real(NCONTR,kind=plflt)
-            sh_color = real(i - 1,kind=plflt) / real(NCONTR - 1,kind=plflt)
+            shade_min = zmin + (zmax - zmin) * real(i - 1,kind=pl_test_flt) / &
+                   real(NCONTR,kind=pl_test_flt)
+            shade_max = zmin + (zmax - zmin) * real(i,kind=pl_test_flt)     / &
+                   real(NCONTR,kind=pl_test_flt)
+            sh_color = real(i - 1,kind=pl_test_flt) / real(NCONTR - 1,kind=pl_test_flt)
             sh_width = 2
             call plpsty(0)
 
             call plshade(z(:NX,:NY), ' ', &
-                   -1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt, &
+                   -1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
                    min_color, min_width, max_color, max_width, &
@@ -285,7 +296,7 @@ contains
         !      Draw boundary.
 
         do i = 1, NBDRY
-            theta = (TWOPI)/(NBDRY-1) * real(i-1,kind=plflt)
+            theta = (TWOPI)/(NBDRY-1) * real(i-1,kind=pl_test_flt)
             xtm(i) = x0 + rmax * cos(theta)
             ytm(i) = y0 + rmax * sin(theta)
         enddo
@@ -307,7 +318,7 @@ contains
         implicit none
 
         integer   i, j, nx, ny, xdim
-        real(kind=plflt)    f(xdim, ny), fmin, fmax
+        real(kind=pl_test_flt)    f(xdim, ny), fmin, fmax
 
         fmax = f(1, 1)
         fmin = fmax

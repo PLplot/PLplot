@@ -20,28 +20,39 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x21f
     use plplot, double_PI => PL_PI
     implicit none
-    real(kind=plflt), parameter :: PI = double_PI
+    real(kind=pl_test_flt), parameter :: PI = double_PI
 
     integer pts, xp, yp, nl, knn_order, randn, rosen
-    real(kind=plflt) threshold, wmin
+    real(kind=pl_test_flt) threshold, wmin
     parameter (pts = 500)
     parameter (xp = 25)
     parameter (yp = 20)
     parameter (nl = 16)
     parameter (knn_order = 20)
-    parameter (threshold = 1.001_plflt)
-    parameter (wmin = -1e3_plflt)
+    parameter (threshold = 1.001_pl_test_flt)
+    parameter (wmin = -1e3_pl_test_flt)
     parameter (randn = 0)
     parameter (rosen = 0)
 
-    real(kind=plflt) xmin, xmax, ymin, ymax
+    real(kind=pl_test_flt) xmin, xmax, ymin, ymax
 
-    real(kind=plflt) x(pts), y(pts), z(pts), clev(nl)
-    real(kind=plflt) xg(xp), yg(yp), zg(xp,yp)
-    real(kind=plflt) zmin, zmax, lzmin, lzmax
+    real(kind=pl_test_flt) x(pts), y(pts), z(pts), clev(nl)
+    real(kind=pl_test_flt) xg(xp), yg(yp), zg(xp,yp)
+    real(kind=pl_test_flt) zmin, zmax, lzmin, lzmax
     integer i, j, k
     integer alg
     character(len=80) title(6)
@@ -52,28 +63,28 @@ program x21f
            '3NN Linear Interpolation', &
            '4NN Around Inv. Dist. Weighted'/
 
-    real(kind=plflt) opt(6)
-    data opt /0._plflt, 0._plflt, 0._plflt, 0._plflt, 0._plflt, 0._plflt/
+    real(kind=pl_test_flt) opt(6)
+    data opt /0._pl_test_flt, 0._pl_test_flt, 0._pl_test_flt, 0._pl_test_flt, 0._pl_test_flt, 0._pl_test_flt/
 
-    real(kind=plflt) xt, yt
+    real(kind=pl_test_flt) xt, yt
 
-    real(kind=plflt) r
+    real(kind=pl_test_flt) r
     integer ii, jj
     integer :: plparseopts_rc
-    real(kind=plflt) dist, d
+    real(kind=pl_test_flt) dist, d
 
     character(len=1) defined
 
-    xmin = -0.2_plflt
-    ymin = -0.2_plflt
-    xmax = 0.6_plflt
-    ymax = 0.6_plflt
+    xmin = -0.2_pl_test_flt
+    ymin = -0.2_pl_test_flt
+    xmax = 0.6_pl_test_flt
+    ymax = 0.6_pl_test_flt
 
     !      call plMergeOpts(options, "x21c options", NULL);
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     opt(3) = wmin
-    opt(4) = real(knn_order,kind=plflt)
+    opt(4) = real(knn_order,kind=pl_test_flt)
     opt(5) = threshold
 
     ! Initialize plplot
@@ -91,14 +102,14 @@ program x21f
             x(i) = xt + xmin
             y(i) = yt + ymin
         else
-            x(i) = sqrt(-2._plflt*log(xt)) * cos(2._plflt*PI*yt) + xmin
-            y(i) = sqrt(-2._plflt*log(xt)) * sin(2._plflt*PI*yt) + ymin
+            x(i) = sqrt(-2._pl_test_flt*log(xt)) * cos(2._pl_test_flt*PI*yt) + xmin
+            y(i) = sqrt(-2._pl_test_flt*log(xt)) * sin(2._pl_test_flt*PI*yt) + ymin
         endif
         if (rosen.eq.0) then
             r = sqrt(x(i)*x(i) + y(i)*y(i))
-            z(i) = exp(-r*r)*cos(2._plflt*PI*r)
+            z(i) = exp(-r*r)*cos(2._pl_test_flt*PI*r)
         else
-            z(i) = log((1._plflt-x(i))**2 + 100._plflt*(y(i)-x(i)**2)**2)
+            z(i) = log((1._pl_test_flt-x(i))**2 + 100._pl_test_flt*(y(i)-x(i)**2)**2)
         endif
     enddo
 
@@ -110,10 +121,10 @@ program x21f
     enddo
 
     do i=1,xp
-        xg(i) = xmin + (xmax-xmin)*(i-1._plflt)/(xp-1._plflt)
+        xg(i) = xmin + (xmax-xmin)*(i-1._pl_test_flt)/(xp-1._pl_test_flt)
     enddo
     do i=1,yp
-        yg(i) = ymin + (ymax-ymin)*(i-1._plflt)/(yp-1._plflt)
+        yg(i) = ymin + (ymax-ymin)*(i-1._pl_test_flt)/(yp-1._pl_test_flt)
     enddo
 
     call plcol0(1)
@@ -163,8 +174,8 @@ program x21f
                         if (myisnan(zg(i,j))) then
                             !     average (IDW) over the 8 neighbors
 
-                            zg(i,j) = 0._plflt
-                            dist = 0._plflt
+                            zg(i,j) = 0._pl_test_flt
+                            dist = 0._pl_test_flt
 
                             ii=i-1
                             do while ((ii.le.i+1).and.(ii.le.xp))
@@ -173,9 +184,9 @@ program x21f
                                     if ((ii.ge.1) .and. (jj.ge.1) .and. &
                                            (.not.myisnan(zg(ii,jj))) ) then
                                         if (abs(ii-i) + abs(jj-j) .eq. 1) then
-                                            d = 1._plflt
+                                            d = 1._pl_test_flt
                                         else
-                                            d = 1.4142_plflt
+                                            d = 1.4142_pl_test_flt
                                         endif
                                         zg(i,j) = zg(i,j) + zg(ii,jj)/(d*d)
                                         dist = dist + d
@@ -184,7 +195,7 @@ program x21f
                                 enddo
                                 ii = ii+1
                             enddo
-                            if (dist.ne.0._plflt) then
+                            if (dist.ne.0._pl_test_flt) then
                                 zg(i,j) = zg(i,j) / dist
                             else
                                 zg(i,j) = zmin
@@ -199,8 +210,8 @@ program x21f
             lzmin = min(lzmin, zmin)
             lzmax = max(lzmax, zmax)
 
-            lzmin = lzmin - 0.01_plflt
-            lzmax = lzmax + 0.01_plflt
+            lzmin = lzmin - 0.01_pl_test_flt
+            lzmax = lzmax + 0.01_pl_test_flt
 
             call plcol0(1)
             call pladv(alg)
@@ -208,21 +219,21 @@ program x21f
             if (k.eq.1) then
 
                 do i=1,nl
-                    clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
+                    clev(i) = lzmin + (lzmax-lzmin)/(nl-1._pl_test_flt)*(i-1._pl_test_flt)
                 enddo
                 call plenv0(xmin, xmax, ymin, ymax, 2, 0)
                 call plcol0(15)
                 call pllab("X", "Y", title(alg))
                 call plshades(zg, defined, xmin, xmax, ymin, &
-                       ymax, clev, 1._plflt, 0, 1._plflt, .true. )
+                       ymax, clev, 1._pl_test_flt, 0, 1._pl_test_flt, .true. )
                 call plcol0(2)
             else
 
                 do i = 1,nl
-                    clev(i) = lzmin + (lzmax-lzmin)/(nl-1._plflt)*(i-1._plflt)
+                    clev(i) = lzmin + (lzmax-lzmin)/(nl-1._pl_test_flt)*(i-1._pl_test_flt)
                 enddo
-                call plvpor(0._plflt, 1._plflt, 0._plflt, 0.9_plflt)
-                call plwind(-1.1_plflt, 0.75_plflt, -0.65_plflt, 1.20_plflt)
+                call plvpor(0._pl_test_flt, 1._pl_test_flt, 0._pl_test_flt, 0.9_pl_test_flt)
+                call plwind(-1.1_pl_test_flt, 0.75_pl_test_flt, -0.65_pl_test_flt, 1.20_pl_test_flt)
                 !
                 !     For the comparison to be fair, all plots should have the
                 !     same z values, but to get the max/min of the data generated
@@ -231,11 +242,11 @@ program x21f
                 !     plw3d(1., 1., 1., xmin, xmax, ymin, ymax, zmin, zmax, 30, -60);
                 !
 
-                call plw3d(1._plflt, 1._plflt, 1._plflt, xmin, xmax, ymin, ymax,  &
-                       lzmin, lzmax, 30._plflt, -40._plflt)
-                call plbox3("bntu", "X", 0._plflt, 0, &
-                       "bntu", "Y", 0._plflt, 0, &
-                       "bcdfntu", "Z", 0.5_plflt, 0)
+                call plw3d(1._pl_test_flt, 1._pl_test_flt, 1._pl_test_flt, xmin, xmax, ymin, ymax,  &
+                       lzmin, lzmax, 30._pl_test_flt, -40._pl_test_flt)
+                call plbox3("bntu", "X", 0._pl_test_flt, 0, &
+                       "bntu", "Y", 0._pl_test_flt, 0, &
+                       "bcdfntu", "Z", 0.5_pl_test_flt, 0)
                 call plcol0(15)
                 call pllab("", "", title(alg))
                 call plot3dc(xg, yg, zg, ior(ior(DRAW_LINEXY, &
@@ -251,19 +262,19 @@ contains
     subroutine cmap1_init
         use plplot
         implicit none
-        real(kind=plflt) i(2), h(2), l(2), s(2)
+        real(kind=pl_test_flt) i(2), h(2), l(2), s(2)
 
-        i(1) = 0._plflt
-        i(2) = 1._plflt
+        i(1) = 0._pl_test_flt
+        i(2) = 1._pl_test_flt
 
-        h(1) = 240._plflt
-        h(2) = 0._plflt
+        h(1) = 240._pl_test_flt
+        h(2) = 0._pl_test_flt
 
-        l(1) = 0.6_plflt
-        l(2) = 0.6_plflt
+        l(1) = 0.6_pl_test_flt
+        l(2) = 0.6_pl_test_flt
 
-        s(1) = 0.8_plflt
-        s(2) = 0.8_plflt
+        s(1) = 0.8_pl_test_flt
+        s(2) = 0.8_pl_test_flt
 
         call plscmap1n(256)
         call plscmap1l(.false., i, h, l, s)
@@ -279,7 +290,7 @@ contains
         implicit none
 
         integer   i, j, nx, ny, xdim
-        real(kind=plflt) f(xdim, ny), fmin, fmax
+        real(kind=pl_test_flt) f(xdim, ny), fmin, fmax
 
         fmax = f(1, 1)
         fmin = fmax

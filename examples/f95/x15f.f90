@@ -19,6 +19,17 @@
 !      License along with PLplot; if not, write to the Free Software
 !      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+!     N.B. the pl_test_flt parameter used in this code is only
+!     provided by the plplot module to allow convenient developer
+!     testing of either kind(1.0) or kind(1.0d0) floating-point
+!     precision regardless of the floating-point precision of the
+!     PLplot C libraries.  We do not guarantee the value of this test
+!     parameter so it should not be used by users, and instead user
+!     code should replace the pl_test_flt parameter by whatever
+!     kind(1.0) or kind(1.0d0) precision is most convenient for them.
+!     For further details on floating-point precision issues please
+!     consult README_precision in this directory.
+!
 program x15f
     use plplot
     implicit none
@@ -30,8 +41,8 @@ program x15f
 
     integer i,  j
     integer :: plparseopts_rc
-    real(kind=plflt)  xx, yy
-    real(kind=plflt)  z(xdim, ydim), zmin, zmax
+    real(kind=pl_test_flt)  xx, yy
+    real(kind=pl_test_flt)  z(xdim, ydim), zmin, zmax
 
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
@@ -48,10 +59,10 @@ program x15f
     !      Set up data array
 
     do i = 1,XPTS
-        xx = real(i-1 - (XPTS / 2),kind=plflt) / real(XPTS / 2,kind=plflt)
+        xx = real(i-1 - (XPTS / 2),kind=pl_test_flt) / real(XPTS / 2,kind=pl_test_flt)
         do j = 1,YPTS
-            yy = real(j-1 - (YPTS / 2),kind=plflt) / real(YPTS / 2,kind=plflt) - 1.0_plflt
-            z(i,j) = xx*xx - yy*yy + (xx - yy)/(xx*xx+yy*yy + 0.1_plflt)
+            yy = real(j-1 - (YPTS / 2),kind=pl_test_flt) / real(YPTS / 2,kind=pl_test_flt) - 1.0_pl_test_flt
+            z(i,j) = xx*xx - yy*yy + (xx - yy)/(xx*xx+yy*yy + 0.1_pl_test_flt)
         enddo
     enddo
 
@@ -74,34 +85,34 @@ contains
     subroutine cmap1_init1()
         use plplot
         implicit none
-        real(kind=plflt)   i(4), h(4), l(4), s(4)
+        real(kind=pl_test_flt)   i(4), h(4), l(4), s(4)
 
-        i(1) = 0.0_plflt    ! left boundary
-        i(2) = 0.45_plflt   ! just before center
-        i(3) = 0.55_plflt   ! just after center
-        i(4) = 1.0_plflt    ! right boundary
+        i(1) = 0.0_pl_test_flt    ! left boundary
+        i(2) = 0.45_pl_test_flt   ! just before center
+        i(3) = 0.55_pl_test_flt   ! just after center
+        i(4) = 1.0_pl_test_flt    ! right boundary
 
-        h(1) = 260.0_plflt  ! hue -- low: blue-violet
-        h(2) = 260.0_plflt  ! only change as we go over vertex
-        h(3) = 20.0_plflt   ! hue -- high: red
-        h(4) = 20.0_plflt   ! keep fixed
+        h(1) = 260.0_pl_test_flt  ! hue -- low: blue-violet
+        h(2) = 260.0_pl_test_flt  ! only change as we go over vertex
+        h(3) = 20.0_pl_test_flt   ! hue -- high: red
+        h(4) = 20.0_pl_test_flt   ! keep fixed
 
 
-        l(1) = 0.5_plflt    ! lightness -- low
-        l(2) = 0.0_plflt    ! lightness -- center
-        l(3) = 0.0_plflt    ! lightness -- center
-        l(4) = 0.5_plflt    ! lightness -- high
+        l(1) = 0.5_pl_test_flt    ! lightness -- low
+        l(2) = 0.0_pl_test_flt    ! lightness -- center
+        l(3) = 0.0_pl_test_flt    ! lightness -- center
+        l(4) = 0.5_pl_test_flt    ! lightness -- high
 
         !     call plscolbg(255,255,255)
-        !     l(1) = 0.5_plflt    ! lightness -- low
-        !     l(2) = 1.0_plflt    ! lightness -- center
-        !     l(3) = 1.0_plflt    ! lightness -- center
-        !     l(4) = 0.5_plflt    ! lightness -- high
+        !     l(1) = 0.5_pl_test_flt    ! lightness -- low
+        !     l(2) = 1.0_pl_test_flt    ! lightness -- center
+        !     l(3) = 1.0_pl_test_flt    ! lightness -- center
+        !     l(4) = 0.5_pl_test_flt    ! lightness -- high
 
-        s(1) = 1.0_plflt    ! maximum saturation
-        s(2) = 1.0_plflt    ! maximum saturation
-        s(3) = 1.0_plflt    ! maximum saturation
-        s(4) = 1.0_plflt    ! maximum saturation
+        s(1) = 1.0_pl_test_flt    ! maximum saturation
+        s(2) = 1.0_pl_test_flt    ! maximum saturation
+        s(3) = 1.0_pl_test_flt    ! maximum saturation
+        s(4) = 1.0_pl_test_flt    ! maximum saturation
 
         call plscmap1l(.false., i, h, l, s)
     end subroutine cmap1_init1
@@ -115,34 +126,34 @@ contains
     subroutine cmap1_init2()
         use plplot
         implicit none
-        real(kind=plflt) i(4), h(4), l(4), s(4)
+        real(kind=pl_test_flt) i(4), h(4), l(4), s(4)
 
-        i(1) = 0.0_plflt    ! left boundary
-        i(2) = 0.45_plflt   ! just before center
-        i(3) = 0.55_plflt   ! just after center
-        i(4) = 1.0_plflt    ! right boundary
+        i(1) = 0.0_pl_test_flt    ! left boundary
+        i(2) = 0.45_pl_test_flt   ! just before center
+        i(3) = 0.55_pl_test_flt   ! just after center
+        i(4) = 1.0_pl_test_flt    ! right boundary
 
-        h(1) = 260.0_plflt  ! hue -- low: blue-violet
-        h(2) = 260.0_plflt  ! only change as we go over vertex
-        h(3) = 20.0_plflt   ! hue -- high: red
-        h(4) = 20.0_plflt   ! keep fixed
+        h(1) = 260.0_pl_test_flt  ! hue -- low: blue-violet
+        h(2) = 260.0_pl_test_flt  ! only change as we go over vertex
+        h(3) = 20.0_pl_test_flt   ! hue -- high: red
+        h(4) = 20.0_pl_test_flt   ! keep fixed
 
 
-        l(1) = 0.6_plflt    ! lightness -- low
-        l(2) = 0.0_plflt    ! lightness -- center
-        l(3) = 0.0_plflt    ! lightness -- center
-        l(4) = 0.6_plflt    ! lightness -- high
+        l(1) = 0.6_pl_test_flt    ! lightness -- low
+        l(2) = 0.0_pl_test_flt    ! lightness -- center
+        l(3) = 0.0_pl_test_flt    ! lightness -- center
+        l(4) = 0.6_pl_test_flt    ! lightness -- high
 
         !     call plscolbg(255,255,255)
-        !     l(1) = 0.5_plflt    ! lightness -- low
-        !     l(2) = 1.0_plflt    ! lightness -- center
-        !     l(3) = 1.0_plflt    ! lightness -- center
-        !     l(4) = 0.5_plflt    ! lightness -- high
+        !     l(1) = 0.5_pl_test_flt    ! lightness -- low
+        !     l(2) = 1.0_pl_test_flt    ! lightness -- center
+        !     l(3) = 1.0_pl_test_flt    ! lightness -- center
+        !     l(4) = 0.5_pl_test_flt    ! lightness -- high
 
-        s(1) = 1.0_plflt    ! maximum saturation
-        s(2) = 0.5_plflt    ! maximum saturation
-        s(3) = 0.5_plflt    ! maximum saturation
-        s(4) = 1.0_plflt    ! maximum saturation
+        s(1) = 1.0_pl_test_flt    ! maximum saturation
+        s(2) = 0.5_pl_test_flt    ! maximum saturation
+        s(3) = 0.5_pl_test_flt    ! maximum saturation
+        s(4) = 1.0_pl_test_flt    ! maximum saturation
 
         call plscmap1l(.false., i, h, l, s)
     end subroutine cmap1_init2
@@ -158,13 +169,13 @@ contains
         implicit none
 
         integer xdim, XPTS, YPTS
-        real(kind=plflt)  z(xdim,YPTS), zmin, zmax
+        real(kind=pl_test_flt)  z(xdim,YPTS), zmin, zmax
 
         character(len=1) undefined
-        real(kind=plflt)  shade_min, shade_max, sh_color
+        real(kind=pl_test_flt)  shade_min, shade_max, sh_color
         integer sh_cmap
         integer min_color, max_color
-        real(kind=plflt) sh_width, min_width, max_width
+        real(kind=pl_test_flt) sh_width, min_width, max_width
 
         sh_cmap   = 0
         min_color = 0
@@ -173,13 +184,13 @@ contains
         max_width = 0
 
         call pladv(0)
-        call plvpor( 0.1_plflt, 0.9_plflt,  0.1_plflt, 0.9_plflt)
-        call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+        call plvpor( 0.1_pl_test_flt, 0.9_pl_test_flt,  0.1_pl_test_flt, 0.9_pl_test_flt)
+        call plwind(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt)
 
         !      Plot using identity transform
 
-        shade_min = zmin + (zmax-zmin)*0.4_plflt
-        shade_max = zmin + (zmax-zmin)*0.6_plflt
+        shade_min = zmin + (zmax-zmin)*0.4_pl_test_flt
+        shade_max = zmin + (zmax-zmin)*0.6_pl_test_flt
         sh_color  = 7
         sh_width  = 2
         min_color = 9
@@ -191,13 +202,13 @@ contains
 
         !      Use_ plshade0 instead of plshade1 - identity mapping
         call plshade(z(:XPTS,:YPTS), undefined, &
-               -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
+               -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                shade_min, shade_max, &
                sh_cmap, sh_color, sh_width, &
                min_color, min_width, max_color, max_width, .true. )
 
         call plcol0(1)
-        call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+        call plbox('bcnst', 0.0_pl_test_flt, 0, 'bcnstv', 0.0_pl_test_flt, 0)
         call plcol0(2)
         call pllab('distance', 'altitude', 'Bogon flux')
 
@@ -215,13 +226,13 @@ contains
         implicit none
 
         integer xdim, XPTS, YPTS
-        real(kind=plflt)  z(xdim,YPTS), zmin, zmax
+        real(kind=pl_test_flt)  z(xdim,YPTS), zmin, zmax
 
         character(len=1) undefined
-        real(kind=plflt)  shade_min, shade_max, sh_color
+        real(kind=pl_test_flt)  shade_min, shade_max, sh_color
         integer sh_cmap
         integer min_color, max_color
-        real(kind=plflt) sh_width, min_width, max_width
+        real(kind=pl_test_flt) sh_width, min_width, max_width
         integer i, j
 
         integer nlin(10), inc(2,10), del(2,10)
@@ -244,26 +255,26 @@ contains
         sh_width  = 2
 
         call pladv(0)
-        call plvpor( 0.1_plflt, 0.9_plflt,  0.1_plflt, 0.9_plflt)
-        call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
+        call plvpor( 0.1_pl_test_flt, 0.9_pl_test_flt,  0.1_pl_test_flt, 0.9_pl_test_flt)
+        call plwind(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt)
 
         !      Plot using identity transform
 
         do  i = 1,10
-            shade_min = zmin + (zmax - zmin) * (i-1) / 10.0_plflt
-            shade_max = zmin + (zmax - zmin) * i / 10.0_plflt
+            shade_min = zmin + (zmax - zmin) * (i-1) / 10.0_pl_test_flt
+            shade_max = zmin + (zmax - zmin) * i / 10.0_pl_test_flt
             sh_color = i+5
             call plpat( inc(1:nlin(i),i),del(1:nlin(i),i))
             !        Use_ plshade0 instead of plshade1 - identity mapping
             call plshade(z(:XPTS,:YPTS), undefined, &
-                   -1._plflt, 1._plflt, -1._plflt, 1._plflt, &
+                   -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
                    min_color, min_width, max_color, max_width, .true. )
         enddo
 
         call plcol0(1)
-        call plbox('bcnst', 0.0_plflt, 0, 'bcnstv', 0.0_plflt, 0)
+        call plbox('bcnst', 0.0_pl_test_flt, 0, 'bcnstv', 0.0_pl_test_flt, 0)
         call plcol0(2)
         call pllab('distance', 'altitude', 'Bogon flux')
 
@@ -279,25 +290,25 @@ contains
         use plplot
         implicit none
 
-        real(kind=plflt) xx1(5), xx2(5), yy1(5), yy2(5), zz1(5), zz2(5)
-        data xx1 / -1.0_plflt, 1.0_plflt, 1.0_plflt, -1.0_plflt, -1.0_plflt/
-        data xx2 / -1.0_plflt, 1.0_plflt, 1.0_plflt, -1.0_plflt, -1.0_plflt/
-        data yy1 /1.0_plflt, 1.0_plflt, 0.0_plflt, 0.0_plflt, 1.0_plflt/
-        data yy2 / -1.0_plflt, -1.0_plflt, 0.0_plflt, 0.0_plflt, -1.0_plflt/
-        data zz1 / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt, 0.0_plflt/
-        data zz2 / 0.0_plflt, 0.0_plflt, 1.0_plflt, 1.0_plflt, 0.0_plflt/
+        real(kind=pl_test_flt) xx1(5), xx2(5), yy1(5), yy2(5), zz1(5), zz2(5)
+        data xx1 / -1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, -1.0_pl_test_flt/
+        data xx2 / -1.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, -1.0_pl_test_flt/
+        data yy1 /1.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt/
+        data yy2 / -1.0_pl_test_flt, -1.0_pl_test_flt, 0.0_pl_test_flt, 0.0_pl_test_flt, -1.0_pl_test_flt/
+        data zz1 / 0.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt/
+        data zz2 / 0.0_pl_test_flt, 0.0_pl_test_flt, 1.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt/
 
         call pladv(0)
-        call plvpor(0.1_plflt, 0.9_plflt, 0.1_plflt, 0.9_plflt)
-        call plwind(-1.0_plflt, 1.0_plflt, -1.0_plflt, 1.0_plflt)
-        call plw3d(1._plflt, 1._plflt, 1._plflt, -1.0_plflt, 1.0_plflt, &
-               -1.0_plflt, 1.0_plflt, 0.0_plflt,1.5_plflt, 30._plflt, -40._plflt)
+        call plvpor(0.1_pl_test_flt, 0.9_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt)
+        call plwind(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt)
+        call plw3d(1._pl_test_flt, 1._pl_test_flt, 1._pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, &
+               -1.0_pl_test_flt, 1.0_pl_test_flt, 0.0_pl_test_flt,1.5_pl_test_flt, 30._pl_test_flt, -40._pl_test_flt)
 
         !     Plot using identity transform
 
         call plcol0(1)
-        call plbox3("bntu", "X", 0.0_plflt, 0, "bntu", "Y", 0.0_plflt, 0, &
-               "bcdfntu", "Z", 0.5_plflt, 0)
+        call plbox3("bntu", "X", 0.0_pl_test_flt, 0, "bntu", "Y", 0.0_pl_test_flt, 0, &
+               "bcdfntu", "Z", 0.5_pl_test_flt, 0)
         call plcol0(2)
         call pllab("","","3-d polygon filling")
 
@@ -320,7 +331,7 @@ contains
         implicit none
 
         integer   i, j, nx, ny, xdim
-        real(kind=plflt)    f(xdim, ny), fmin, fmax
+        real(kind=pl_test_flt)    f(xdim, ny), fmin, fmax
 
         fmax = f(1, 1)
         fmin = fmax
