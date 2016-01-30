@@ -831,11 +831,11 @@ proc x33 {{w loopback}} {
         matrix values_small  f 2
         matrix values_uneven f 9
         matrix values_even   f 9
-        foreach i {0 1} v {-1.0e-200 1.0e-200 } {
+        foreach i {0 1} v {-1.0e-20 1.0e-20 } {
             values_small $i = $v
         }
-        foreach i {0 1 2 3 4 5 6 7 8} vu {-1.0e-200 2.0e-200 2.6e-200 3.4e-200 6.0e-200 7.0e-200 8.0e-200 9.0e-200 10.0e-200 } \
-                                      ve {-2.0e-200 -1.0e-200 0.0e-200 1.0e-200 2.0e-200 3.0e-200 4.0e-200 5.0e-200 6.0e-200 } {
+        foreach i {0 1 2 3 4 5 6 7 8} vu {-1.0e-20 2.0e-20 2.6e-20 3.4e-20 6.0e-20 7.0e-20 8.0e-20 9.0e-20 10.0e-20 } \
+                                      ve {-2.0e-20 -1.0e-20 0.0e-20 1.0e-20 2.0e-20 3.0e-20 4.0e-20 5.0e-20 6.0e-20 } {
             values_uneven $i = $vu
             values_even $i = $ve
         }

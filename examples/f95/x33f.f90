@@ -112,12 +112,7 @@ program x33f
            2.0_pl_test_flt, 3.0_pl_test_flt, 4.0_pl_test_flt, 5.0_pl_test_flt, &
            6.0_pl_test_flt /
 
-    real(kind=pl_test_flt) :: small_factor
-
-    ! The factor of 1.e-200 is the standard one, but if pl_test_flt is
-    ! single precision that will underflow so adopt a
-    ! larger factor which is 1.e10*minimum positive real.
-    small_factor = max(1.e-200_pl_test_flt, 1.e10_pl_test_flt*tiny(1._pl_test_flt))
+    real(kind=pl_test_flt), parameter :: small_factor = 1.e-20_pl_test_flt
 
     values_small = small_factor*values_small
     values_uneven = small_factor*values_uneven

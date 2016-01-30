@@ -90,15 +90,15 @@
           '✽',             &
           '✦'              /
 
-      data values_small   / -1.0e-200_plflt, 1.0e-200_plflt /
+      data values_small   / -1.0e-20_plflt, 1.0e-20_plflt /
       data values_uneven &
-      / -1.0e-200_plflt, 2.0e-200_plflt, 2.6e-200_plflt, 3.4e-200_plflt, &
-      6.0e-200_plflt, 7.0e-200_plflt, 8.0e-200_plflt, 9.0e-200_plflt, &
-      10.0e-200_plflt /
+      / -1.0e-20_plflt, 2.0e-20_plflt, 2.6e-20_plflt, 3.4e-20_plflt, &
+      6.0e-20_plflt, 7.0e-20_plflt, 8.0e-20_plflt, 9.0e-20_plflt, &
+      10.0e-20_plflt /
       data values_even &
-      / -2.0e-200_plflt, -1.0e-200_plflt, 0.0e-200_plflt, 1.0e-200_plflt, &
-      2.0e-200_plflt, 3.0e-200_plflt, 4.0e-200_plflt, 5.0e-200_plflt, &
-      6.0e-200_plflt /
+      / -2.0e-20_plflt, -1.0e-20_plflt, 0.0e-20_plflt, 1.0e-20_plflt, &
+      2.0e-20_plflt, 3.0e-20_plflt, 4.0e-20_plflt, 5.0e-20_plflt, &
+      6.0e-20_plflt /
 
       position_options(1) = PL_POSITION_LEFT + PL_POSITION_TOP + PL_POSITION_OUTSIDE
       position_options(2) = PL_POSITION_TOP + PL_POSITION_OUTSIDE

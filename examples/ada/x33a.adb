@@ -865,11 +865,11 @@ begin -- main
     if colorbar then
         -- Color bar examples
         declare
-            values_small : Real_Vector(0 .. 1)  := (-1.0e-200, 1.0e-200);
-            values_uneven : Real_Vector(0 .. 8) := (-1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 
-                6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200);
-            values_even : Real_Vector(0 .. 8)   := (-2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 
-                2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200);
+            values_small : Real_Vector(0 .. 1)  := (-1.0e-20, 1.0e-20);
+            values_uneven : Real_Vector(0 .. 8) := (-1.0e-20, 2.0e-20, 2.6e-20, 3.4e-20, 
+                6.0e-20, 7.0e-20, 8.0e-20, 9.0e-20, 10.0e-20);
+            values_even : Real_Vector(0 .. 8)   := (-2.0e-20, -1.0e-20, 0.0e-20, 1.0e-20, 
+                2.0e-20, 3.0e-20, 4.0e-20, 5.0e-20, 6.0e-20);
         begin
             -- Use unsaturated green background colour to contrast with black caps.
             plscolbg(70, 185, 70);
