@@ -1,4 +1,4 @@
-// Copyright (C) 2008 Alan W. Irwin
+// Copyright (C) 2008-2016 Alan W. Irwin
 // Copyright (C) 2008 Andrew Ross
 //
 // set/get tester
@@ -26,8 +26,10 @@
 int
 main( int argc, char *argv[] )
 {
+    PLFLT xmin0, xmax0, ymin0, ymax0, zxmin0, zxmax0, zymin0, zymax0;
     PLFLT xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax;
     PLFLT xmid, ymid, wx, wy;
+    PLFLT mar0, aspect0, jx0, jy0, ori0;
     PLFLT mar, aspect, jx, jy, ori;
     PLINT win, level2, digmax, digits, compression1, compression2;
     PLFLT xp0, yp0;
@@ -39,6 +41,8 @@ main( int argc, char *argv[] )
     PLINT fam0, num0, bmax0;
     PLINT fam1, num1, bmax1;
     PLINT fam2, num2, bmax2;
+    PLINT r0, g0, b0;
+    PLFLT a0;
     PLINT r, g, b;
     PLFLT a;
     PLINT r1[] = { 0, 255 };
@@ -131,10 +135,15 @@ main( int argc, char *argv[] )
     }
 
     pladv( 0 );
-    plvpor( 0.01, 0.99, 0.02, 0.49 );
+
+    xmin0 = 0.01;
+    xmax0 = 0.99;
+    ymin0 = 0.02;
+    ymax0 = 0.49;
+    plvpor( xmin0, xmax0, ymin0, ymax0 );
     plgvpd( &xmin, &xmax, &ymin, &ymax );
     printf( "plvpor: xmin, xmax, ymin, ymax = %f %f %f %f\n", xmin, xmax, ymin, ymax );
-    if ( xmin != 0.01 || xmax != 0.99 || ymin != 0.02 || ymax != 0.49 )
+    if ( xmin != xmin0 || xmax != xmax0 || ymin != ymin0 || ymax != ymax0 )
     {
         fputs( "plgvpd test failed\n", stderr );
         status = 1;
@@ -142,10 +151,14 @@ main( int argc, char *argv[] )
     xmid = 0.5 * ( xmin + xmax );
     ymid = 0.5 * ( ymin + ymax );
 
-    plwind( 0.2, 0.3, 0.4, 0.5 );
+    xmin0 = 0.2;
+    xmax0 = 0.3;
+    ymin0 = 0.4;
+    ymax0 = 0.5;
+    plwind( xmin0, xmax0, ymin0, ymax0 );
     plgvpw( &xmin, &xmax, &ymin, &ymax );
     printf( "plwind: xmin, xmax, ymin, ymax = %f %f %f %f\n", xmin, xmax, ymin, ymax );
-    if ( xmin != 0.2 || xmax != 0.3 || ymin != 0.4 || ymax != 0.5 )
+    if ( xmin != xmin0 || xmax != xmax0 || ymin != ymin0 || ymax != ymax0 )
     {
         fputs( "plgvpw test failed\n", stderr );
         status = 1;
@@ -205,58 +218,78 @@ main( int argc, char *argv[] )
         status = 1;
     }
 
-    plsdidev( 0.05, PL_NOTSET, 0.1, 0.2 );
+    mar0    = 0.05;
+    aspect0 = PL_NOTSET;
+    jx0     = 0.1;
+    jy0     = 0.2;
+    plsdidev( mar0, aspect0, jx0, jy0 );
     plgdidev( &mar, &aspect, &jx, &jy );
     printf( "device-space window parameters: mar, aspect, jx, jy = %f %f %f %f\n", mar, aspect, jx, jy );
-    if ( mar != 0.05 || jx != 0.1 || jy != 0.2 )
+    if ( mar != mar0 || jx != jx0 || jy != jy0 )
     {
         fputs( "plgdidev test failed\n", stderr );
         status = 1;
     }
 
-    plsdiori( 1.0 );
+    ori0 = 1.0;
+    plsdiori( ori0 );
     plgdiori( &ori );
     printf( "ori parameter = %f\n", ori );
-    if ( ori != 1.0 )
+    if ( ori != ori0 )
     {
         fputs( "plgdiori test failed\n", stderr );
         status = 1;
     }
 
-    plsdiplt( 0.1, 0.2, 0.9, 0.8 );
+    xmin0 = 0.1;
+    ymin0 = 0.2;
+    xmax0 = 0.9;
+    ymax0 = 0.8;
+    plsdiplt( xmin0, ymin0, xmax0, ymax0 );
     plgdiplt( &xmin, &ymin, &xmax, &ymax );
     printf( "plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n", xmin, ymin, xmax, ymax );
-    if ( xmin != 0.1 || xmax != 0.9 || ymin != 0.2 || ymax != 0.8 )
+    if ( xmin != xmin0 || ymin != ymin0 || xmax != xmax0 || ymax != ymax0 )
     {
         fputs( "plgdiplt test failed\n", stderr );
         status = 1;
     }
 
-    plsdiplz( 0.1, 0.1, 0.9, 0.9 );
+    zxmin0 = 0.1;
+    zymin0 = 0.1;
+    zxmax0 = 0.9;
+    zymax0 = 0.9;
+    plsdiplz( zxmin0, zymin0, zxmax0, zymax0 );
     plgdiplt( &zxmin, &zymin, &zxmax, &zymax );
     printf( "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n", zxmin, zymin, zxmax, zymax );
-    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * 0.1 ) ) > 1.0E-5 ||
-         fabs( zxmax - ( xmin + ( xmax - xmin ) * 0.9 ) ) > 1.0E-5 ||
-         fabs( zymin - ( ymin + ( ymax - ymin ) * 0.1 ) ) > 1.0E-5 ||
-         fabs( zymax - ( ymin + ( ymax - ymin ) * 0.9 ) ) > 1.0E-5 )
+    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * zxmin0 ) ) > 1.0E-5 ||
+         fabs( zymin - ( ymin + ( ymax - ymin ) * zymin0 ) ) > 1.0E-5 ||
+         fabs( zxmax - ( xmin + ( xmax - xmin ) * zxmax0 ) ) > 1.0E-5 ||
+         fabs( zymax - ( ymin + ( ymax - ymin ) * zymax0 ) ) > 1.0E-5 )
     {
         fputs( "plsdiplz test failed\n", stderr );
         status = 1;
     }
 
-    plscolbg( 10, 20, 30 );
+    r0 = 10;
+    g0 = 20;
+    b0 = 30;
+    plscolbg( r0, g0, b0 );
     plgcolbg( &r, &g, &b );
     printf( "background colour parameters: r, g, b = %d %d %d\n", r, g, b );
-    if ( r != 10 || g != 20 || b != 30 )
+    if ( r != r0 || g != g0 || b != b0 )
     {
         fputs( "plgcolbg test failed\n", stderr );
         status = 1;
     }
 
-    plscolbga( 20, 30, 40, 0.5 );
+    r0 = 20;
+    g0 = 30;
+    b0 = 40;
+    a0 = 0.5;
+    plscolbga( r0, g0, b0, a0 );
     plgcolbga( &r, &g, &b, &a );
     printf( "background/transparency colour parameters: r, g, b, a = %d %d %d %f\n", r, g, b, a );
-    if ( r != 20 || g != 30 || b != 40 || a != 0.5 )
+    if ( r != r0 || g != g0 || b != b0 || a != a0 )
     {
         fputs( "plgcolbga test failed\n", stderr );
         status = 1;

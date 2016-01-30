@@ -1,5 +1,5 @@
 (*
-  Copyright (C) 2008 Alan W. Irwin
+  Copyright (C) 2008-2016 Alan W. Irwin
   Copyright (C) 2008 Andrew Ross
   Copyright (C) 2008 Hezekiah M. Carty
 
@@ -116,25 +116,34 @@ let () =
   failed_if (level2 <> PL_INITIALIZED) "plglevel test failed.\n";
 
   pladv 0;
-  plvpor 0.01 0.99 0.02 0.49;
+
+  let xmin0 = 0.01 in
+  let xmax0 = 0.99 in
+  let ymin0 = 0.02 in
+  let ymax0 = 0.49 in
+  plvpor xmin0 xmax0 ymin0 ymax0;
   let xmin, xmax, ymin, ymax = plgvpd () in
   printf
     "plvpor: xmin, xmax, ymin, ymax = %f %f %f %f\n"
     xmin xmax ymin ymax;
   failed_if
-    (xmin <> 0.01 || xmax <> 0.99 || ymin <> 0.02 || ymax <> 0.49)
+    (xmin <> xmin0 || xmax <> xmax0 || ymin <> ymin0 || ymax <> ymax0)
     "plgvpd test failed\n";
 
   let xmid = 0.5 *. (xmin +. xmax) in
   let ymid = 0.5 *. (ymin +. ymax) in
 
-  plwind 0.2 0.3 0.4 0.5;
+  let xmin0 = 0.2 in
+  let xmax0 = 0.3 in
+  let ymin0 = 0.4 in
+  let ymax0 = 0.5 in
+  plwind xmin0 xmax0 ymin0 ymax0;
   let xmin, xmax, ymin, ymax = plgvpw () in
   printf
     "plwind: xmin, xmax, ymin, ymax = %f %f %f %f\n"
     xmin xmax ymin ymax;
   failed_if
-    (xmin <> 0.2 || xmax <> 0.3 || ymin <> 0.4 || ymax <> 0.5)
+    (xmin <> xmin0 || xmax <> xmax0 || ymin <> ymin0 || ymax <> ymax0)
     "plgvpw test failed\n";
 
   (* Get world coordinates for middle of viewport *)
@@ -176,53 +185,73 @@ let () =
   printf "z axis parameters: digmax, digits = %d %d\n" digmax digits;
   failed_if (digmax <> 5) "plgzax test failed\n";
 
-  plsdidev 0.05 (-42.0) 0.1 0.2;
+  let mar0 = 0.05 in
+  let aspect0 = (-42.0) in
+  let jx0 = 0.1 in
+  let jy0 = 0.2 in
+  plsdidev mar0 aspect0 jx0 jy0;
   let mar, aspect, jx, jy = plgdidev () in
   printf
     "device-space window parameters: mar, aspect, jx, jy = %f %f %f %f\n"
     mar aspect jx jy;
   failed_if
-    (mar <> 0.05 || jx <> 0.1 || jy <> 0.2)
+    (mar <> mar0 || jx <> jx0 || jy <> jy0)
     "plgdidev test failed\n";
 
-  plsdiori 1.0;
+  let ori0 = 1.0 in
+  plsdiori ori0;
   let ori = plgdiori () in
   printf "ori parameter = %f\n" ori;
-  failed_if (ori <> 1.0) "plgdiori test failed\n";
+  failed_if (ori <> ori0) "plgdiori test failed\n";
 
-  plsdiplt 0.1 0.2 0.9 0.8;
+  let xmin0 = 0.1 in
+  let ymin0 = 0.2 in
+  let xmax0 = 0.9 in
+  let ymax0 = 0.8 in
+  plsdiplt xmin0 ymin0 xmax0 ymax0;
   let xmin, ymin, xmax, ymax = plgdiplt () in
   printf
     "plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n"
     xmin ymin xmax ymax;
   failed_if
-    (xmin <> 0.1 || xmax <> 0.9 || ymin <> 0.2 || ymax <> 0.8)
+    (xmin <> xmin0 || ymin <> ymin0 || xmax <> xmax0 || ymax <> ymax0)
     "plgdiplt test failed\n";
 
-  plsdiplz 0.1 0.1 0.9 0.9;
+  let zxmin0 = 0.1 in
+  let zymin0 = 0.1 in
+  let zxmax0 = 0.9 in
+  let zymax0 = 0.9 in
+  plsdiplz zxmin0 zymin0 zxmax0 zymax0;
   let zxmin, zymin, zxmax, zymax = plgdiplt () in
   printf
     "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n"
     zxmin zymin zxmax zymax;
   failed_if (
-    abs_float (zxmin -. (xmin +. (xmax -. xmin) *. 0.1)) > 1.0E-5 || 
-    abs_float (zxmax -. (xmin +. (xmax -. xmin) *. 0.9)) > 1.0E-5 || 
-    abs_float (zymin -. (ymin +. (ymax -. ymin) *. 0.1)) > 1.0E-5 || 
-    abs_float (zymax -. (ymin +. (ymax -. ymin) *. 0.9)) > 1.0E-5
+    abs_float (zxmin -. (xmin +. (xmax -. xmin) *. zxmin0)) > 1.0E-5 || 
+    abs_float (zymin -. (ymin +. (ymax -. ymin) *. zymin0)) > 1.0E-5 || 
+    abs_float (zxmax -. (xmin +. (xmax -. xmin) *. zxmax0)) > 1.0E-5 || 
+    abs_float (zymax -. (ymin +. (ymax -. ymin) *. zymax0)) > 1.0E-5
   ) "plsdiplz test failed\n";
 
-  plscolbg 10 20 30;
+  let r0 = 10 in
+  let g0 = 20 in
+  let b0 = 30 in
+  plscolbg r0 g0 b0;
   let r, g, b = plgcolbg () in
   printf "background colour parameters: r, g, b = %d %d %d\n" r g b;
-  failed_if (r <> 10 || g <> 20 || b <> 30) "plgcolbg test failed\n";
+  failed_if (r <> r0 || g <> g0 || b <> b0) "plgcolbg test failed\n";
 
-  plscolbga 20 30 40 0.5;
+  let r0 = 20 in
+  let g0 = 30 in
+  let b0 = 40 in
+  let a0 = 0.5 in
+  plscolbga r0 g0 b0 a0;
   let r, g, b, a = plgcolbga () in
   printf
     "background/transparency colour parameters: r, g, b, a = %d %d %d %f\n"
     r g b a;
   failed_if
-    (r <> 20 || g <> 30 || b <> 40 || a <> 0.5)
+    (r <> r0 || g <> g0 || b <> b0 || a <> a0)
     "plgcolbga test failed\n";
 
   plend ();

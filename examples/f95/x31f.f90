@@ -42,14 +42,19 @@ program x31f
     implicit none
     real(kind=pl_test_flt), parameter :: NOTSET = double_PL_NOTSET
 
+    real(kind=pl_test_flt) xmin0, xmax0, ymin0, ymax0, zxmin0, zxmax0, zymin0, zymax0
     real(kind=pl_test_flt) xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
     real(kind=pl_test_flt) xmid, ymid, wx, wy
+    real(kind=pl_test_flt) mar0, aspect0, jx0, jy0, ori0
     real(kind=pl_test_flt) mar, aspect, jx, jy, ori
     integer win, level2, digmax, digits, compression1, compression2
     real(kind=pl_test_flt) xp0, yp0, xp1, yp1, xp2, yp2
     integer xleng0, yleng0, xoff0, yoff0, xleng1, yleng1, xoff1, yoff1
     integer xleng2, yleng2, xoff2, yoff2
-    integer fam0, num0, bmax0, fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
+    integer fam0, num0, bmax0, fam1, num1, bmax1, fam2, num2, bmax2
+    integer r0, g0, b0
+    real(kind=pl_test_flt) a0
+    integer r, g, b
     real(kind=pl_test_flt) a
     integer r1(2), g1(2), b1(2)
     data r1 /0, 255/
@@ -145,24 +150,30 @@ program x31f
     endif
 
     call pladv(0)
-    call plvpor(0.01_pl_test_flt, 0.99_pl_test_flt, 0.02_pl_test_flt, 0.49_pl_test_flt)
+    xmin0 = 0.01_pl_test_flt
+    xmax0 = 0.99_pl_test_flt
+    ymin0 = 0.02_pl_test_flt
+    ymax0 = 0.49_pl_test_flt
+    call plvpor(xmin0, xmax0, ymin0, ymax0)
     call plgvpd(xmin, xmax, ymin, ymax)
     write(*,'(A,4F9.6)') 'plvpor: xmin, xmax, ymin, ymax =',  &
            xmin, xmax, ymin, ymax
-    if (xmin .ne. 0.01_pl_test_flt .or. xmax .ne. 0.99_pl_test_flt .or. &
-           ymin .ne. 0.02_pl_test_flt .or. ymax .ne. 0.49_pl_test_flt) then
+    if (xmin .ne. xmin0 .or. xmax .ne. xmax0 .or. ymin .ne. ymin0 .or. ymax .ne. ymax0) then
         write(stderr,*) 'plgvpd test failed'
         status = 1
     endif
     xmid = 0.5*(xmin+xmax)
     ymid = 0.5*(ymin+ymax)
 
-    call plwind(0.2_pl_test_flt, 0.3_pl_test_flt, 0.4_pl_test_flt, 0.5_pl_test_flt)
+    xmin0 = 0.2_pl_test_flt
+    xmax0 = 0.3_pl_test_flt
+    ymin0 = 0.4_pl_test_flt
+    ymax0 = 0.5_pl_test_flt
+    call plwind(xmin0, xmax0, ymin0, ymax0)
     call plgvpw(xmin, xmax, ymin, ymax)
     write(*,'(A,4F9.6)') 'plwind: xmin, xmax, ymin, ymax =', &
            xmin, xmax, ymin, ymax
-    if (xmin .ne. 0.2_pl_test_flt .or. xmax .ne. 0.3_pl_test_flt .or. &
-           ymin .ne. 0.4_pl_test_flt .or. ymax .ne. 0.5_pl_test_flt) then
+    if (xmin .ne. xmin0 .or. xmax .ne. xmax0 .or. ymin .ne. ymin0 .or. ymax .ne. ymax0) then
         write(stderr,*) 'plgvpw test failed',xmin,xmax,ymin,ymax
         status = 1
     endif
@@ -216,58 +227,77 @@ program x31f
         status = 1
     endif
 
-    call plsdidev(0.05_pl_test_flt, NOTSET, 0.1_pl_test_flt, 0.2_pl_test_flt)
+    mar0 = 0.05_pl_test_flt
+    aspect0 = NOTSET
+    jx0 = 0.1_pl_test_flt
+    jy0 = 0.2_pl_test_flt
+    call plsdidev(mar0, aspect0, jx0, jy0)
     call plgdidev(mar, aspect, jx, jy)
     write(*,'(A,4F9.6)') 'device-space window parameters: '// &
            'mar, aspect, jx, jy =', mar, aspect, jx, jy
-    if (mar .ne. 0.05_pl_test_flt .or. jx .ne. 0.1_pl_test_flt .or. jy .ne. 0.2_pl_test_flt) then
+    if (mar .ne. mar0 .or. jx .ne. jx0 .or. jy .ne. jy0) then
         write(stderr,*) 'plgdidev test failed'
         status = 1
     endif
 
-    call plsdiori(1.0_pl_test_flt)
+    ori0 = 1.0_pl_test_flt
+    call plsdiori(ori0)
     call plgdiori(ori)
     write(*,'(A,F9.6)') 'ori parameter =', ori
-    if (ori .ne. 1.0_pl_test_flt) then
+    if (ori .ne. ori0) then
         write(stderr,*) 'plgdiori test failed'
         status = 1
     endif
 
-    call plsdiplt(0.1_pl_test_flt, 0.2_pl_test_flt, 0.9_pl_test_flt, 0.8_pl_test_flt)
+    xmin0 = 0.1_pl_test_flt
+    ymin0 = 0.2_pl_test_flt
+    xmax0 = 0.9_pl_test_flt
+    ymax0 = 0.8_pl_test_flt
+    call plsdiplt(xmin0, ymin0, xmax0, ymax0)
     call plgdiplt(xmin, ymin, xmax, ymax)
     write(*,'(A,4F9.6)') 'plot-space window parameters: '// &
            'xmin, ymin, xmax, ymax =', xmin, ymin, xmax, ymax
-    if (xmin .ne. 0.1_pl_test_flt .or. xmax .ne. 0.9_pl_test_flt .or. &
-           ymin .ne. 0.2_pl_test_flt .or. ymax .ne. 0.8_pl_test_flt) then
+    if (xmin .ne. xmin0 .or. ymin .ne. ymin0 .or. xmax .ne. xmax0 .or. ymax .ne. ymax0) then
         write(stderr,*) 'plgdiplt test failed'
         status = 1
     endif
 
-    call plsdiplz(0.1_pl_test_flt, 0.1_pl_test_flt, 0.9_pl_test_flt, 0.9_pl_test_flt)
+    zxmin0 = 0.1_pl_test_flt
+    zymin0 = 0.1_pl_test_flt
+    zxmax0 = 0.9_pl_test_flt
+    zymax0 = 0.9_pl_test_flt
+    call plsdiplz(zxmin0, zymin0, zxmax0, zymax0)
     call plgdiplt(zxmin, zymin, zxmax, zymax)
     write(*,'(A,4F9.6)') 'zoomed plot-space window parameters: '// &
            'xmin, ymin, xmax, ymax =', zxmin, zymin, zxmax, zymax
-    if ( abs(zxmin -(xmin + (xmax-xmin)*0.1_pl_test_flt)) .gt. 1.0d-5 .or. &
-           abs(zxmax -(xmin+(xmax-xmin)*0.9_pl_test_flt)) .gt. 1.0d-5 .or. &
-           abs(zymin -(ymin+(ymax-ymin)*0.1_pl_test_flt)) .gt. 1.0d-5 .or. &
-           abs(zymax -(ymin+(ymax-ymin)*0.9_pl_test_flt)) .gt. 1.0d-5 ) then
+    if ( abs(zxmin -(xmin + (xmax-xmin)*zxmin0)) .gt. 1.0d-5 .or. &
+           abs(zymin -(ymin+(ymax-ymin)*zymin0)) .gt. 1.0d-5 .or. &
+           abs(zxmax -(xmin+(xmax-xmin)*zxmax0)) .gt. 1.0d-5 .or. &
+           abs(zymax -(ymin+(ymax-ymin)*zymax0)) .gt. 1.0d-5 ) then
         write(stderr,*) 'plsdiplz test failed'
         status = 1
     endif
 
-    call plscolbg(10,20,30)
+    r0 = 10
+    g0 = 20
+    b0 = 30
+    call plscolbg(r0, g0, b0)
     call plgcolbg(r, g, b)
     write(*,'(A,3I3)') 'background colour parameters: r, g, b =', r, g, b
-    if (r .ne. 10 .or. g .ne. 20 .or. b .ne. 30) then
+    if (r .ne. r0 .or. g .ne. g0 .or. b .ne. b0) then
         write(stderr,*) 'plgcolbg test failed'
         status = 1
     endif
 
-    call plscolbga(20,30,40,0.5_pl_test_flt)
+    r0 = 20
+    g0 = 30
+    b0 = 40
+    a0 = 0.5_pl_test_flt
+    call plscolbga(r0, g0, b0, a0)
     call plgcolbga(r, g, b, a)
     write(*,'(A,3I3,F9.6)') 'background/transparency colour '// &
            'parameters: r, g, b, a =', r, g, b, a
-    if (r.ne.20 .or. g.ne.30 .or. b.ne.40 .or. a.ne.0.5_pl_test_flt) then
+    if (r .ne. r0 .or. g .ne. g0 .or. b .ne. b0 .or. a .ne. a0) then
         write(stderr,*) 'plgcolbga test failed'
         status = 1
     endif

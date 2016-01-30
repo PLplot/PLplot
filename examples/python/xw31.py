@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright (C) 2008 Alan W. Irwin
+#  Copyright (C) 2008-2016 Alan W. Irwin
 
 #  Set/get tester.
 #
@@ -104,19 +104,21 @@ def main():
         status = 1
 
     pladv(0)
-    plvpor(0.01, 0.99, 0.02, 0.49)
+    xmin0, xmax0, ymin0, ymax0 = (0.01, 0.99, 0.02, 0.49)
+    plvpor(xmin0, xmax0, ymin0, ymax0)
     (xmin, xmax, ymin, ymax) = plgvpd()
     sys.stdout.write("plvpor: xmin, xmax, ymin, ymax = %f %f %f %f\n" % (xmin, xmax, ymin, ymax))
-    if xmin != 0.01 or xmax != 0.99 or ymin != 0.02 or ymax != 0.49:
+    if xmin != xmin0 or xmax != xmax0 or ymin != ymin0 or ymax != ymax0:
         sys.stderr.write("plgvpd test failed\n")
         status = 1
     xmid = 0.5*(xmin+xmax)
     ymid = 0.5*(ymin+ymax)
 
-    plwind(0.2, 0.3, 0.4, 0.5)
+    xmin0, xmax0, ymin0, ymax0 = (0.2, 0.3, 0.4, 0.5)
+    plwind(xmin0, xmax0, ymin0, ymax0)
     (xmin, xmax, ymin, ymax) = plgvpw()
     sys.stdout.write("plwind: xmin, xmax, ymin, ymax = %f %f %f %f\n" % (xmin, xmax, ymin, ymax))
-    if xmin != 0.2 or xmax != 0.3 or ymin != 0.4 or ymax != 0.5:
+    if xmin != xmin0 or xmax != xmax0 or ymin != ymin0 or ymax != ymax0:
         sys.stderr.write("plgvpw test failed\n")
         status = 1
 
@@ -159,45 +161,51 @@ def main():
         sys.stderr.write("plgzax test failed\n")
         status = 1
 
-    plsdidev(0.05, PL_NOTSET, 0.1, 0.2)
+    (mar0, aspect0, jx0, jy0) = (0.05, PL_NOTSET, 0.1, 0.2)
+    plsdidev(mar0, aspect0, jx0, jy0)
     (mar, aspect, jx, jy) = plgdidev()
     sys.stdout.write("device-space window parameters: mar, aspect, jx, jy = %f %f %f %f\n" % (mar, aspect, jx, jy))
-    if mar != 0.05 or jx != 0.1 or jy != 0.2:
+    if mar != mar0 or jx != jx0 or jy != jy0:
         sys.stderr.write("plgdidev test failed\n")
         status = 1
 
-    plsdiori(1.0)
+    ori0 = 1.0
+    plsdiori(ori0)
     ori = plgdiori()
     sys.stdout.write("ori parameter = %f\n" % ori)
-    if ori != 1.0 :
+    if ori != ori0:
         sys.stderr.write("plgdiori test failed\n")
         status = 1
 
-    plsdiplt(0.1, 0.2, 0.9, 0.8)
+    (xmin0, ymin0, xmax0, ymax0) = (0.1, 0.2, 0.9, 0.8)
+    plsdiplt(xmin0, ymin0, xmax0, ymax0)
     (xmin, ymin, xmax, ymax) = plgdiplt()
     sys.stdout.write("plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n" % (xmin, ymin, xmax, ymax))
-    if xmin != 0.1 or xmax != 0.9 or ymin != 0.2 or ymax != 0.8:
+    if xmin != xmin0 or ymin != ymin0 or xmax != xmax0 or ymax != ymax0:
         sys.stderr.write("plgdiplt test failed\n")
         status = 1
 
-    plsdiplz(0.1, 0.1, 0.9, 0.9)
+    (zxmin0, zymin0, zxmax0, zymax0) = (0.1, 0.1, 0.9, 0.9)
+    plsdiplz(zxmin0, zymin0, zxmax0, zymax0)
     (zxmin, zymin, zxmax, zymax) = plgdiplt()
     sys.stdout.write("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n" % (zxmin, zymin, zxmax, zymax))
-    if abs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0E-5 or abs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0E-5 or abs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0E-5 or abs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0E-5 :
+    if abs(zxmin -(xmin + (xmax-xmin)*zxmin0)) > 1.0E-5 or abs(zymin -(ymin+(ymax-ymin)*zymin0)) > 1.0E-5 or abs(zxmax -(xmin+(xmax-xmin)*zxmax0)) > 1.0E-5 or abs(zymax -(ymin+(ymax-ymin)*zymax0)) > 1.0E-5 :
         sys.stderr.write("plsdiplz test failed\n")
         status = 1
 
-    plscolbg(10,20,30)
+    (r0, g0, b0) = (10, 20, 30)
+    plscolbg(r0, g0, b0)
     (r, g, b) = plgcolbg()
     sys.stdout.write("background colour parameters: r, g, b = %d %d %d\n" % (r, g, b))
-    if r != 10 or g != 20 or b != 30:
+    if r != r0 or g != g0 or b != b0:
         sys.stderr.write("plgcolbg test failed\n")
         status = 1
 
-    plscolbga(20, 30, 40, 0.5)
+    (r0, g0, b0, a0) = (20, 30, 40, 0.5)
+    plscolbga(r0, g0, b0, a0)
     (r, g, b, a) = plgcolbga()
     sys.stdout.write("background/transparency colour parameters: r, g, b, a = %d %d %d %f\n" % (r, g, b, a))
-    if r != 20 or g != 30 or b != 40 or a != 0.5:
+    if r != r0 or g != g0 or b != b0 or a != a0:
         sys.stderr.write("plgcolbga test failed\n")
         status = 1
 

@@ -76,20 +76,28 @@ proc x31 {{w loopback}} {
     }
 
     $w cmd pladv 0
-    $w cmd plvpor 0.01 0.99 0.02 0.49
+    set xmin0 0.01
+    set xmax0 0.99
+    set ymin0 0.02
+    set ymax0 0.49
+    $w cmd plvpor $xmin0 $xmax0 $ymin0 $ymax0
     $w cmd plgvpd xmin xmax ymin ymax
     puts [ format "plvpor: xmin, xmax, ymin, ymax = %f %f %f %f" $xmin $xmax $ymin $ymax ]
-    if {$xmin != 0.01 || $xmax != 0.99 || $ymin != 0.02 || $ymax != 0.49} {
+    if {$xmin != $xmin0 || $xmax != $xmax0 || $ymin != $ymin0 || $ymax != $ymax0} {
         puts stderr "plgvpd test failed"
         set status 1
     }
     set xmid [ expr {0.5*($xmin+$xmax)} ]
     set ymid [ expr {0.5*($ymin+$ymax)} ]
 
-    $w cmd plwind 0.2 0.3 0.4 0.5
+    set xmin0 0.2
+    set xmax0 0.3
+    set ymin0 0.4
+    set ymax0 0.5
+    $w cmd plwind $xmin0 $xmax0 $ymin0 $ymax0
     $w cmd plgvpw xmin xmax ymin ymax
     puts [ format "plwind: xmin, xmax, ymin, ymax = %f %f %f %f" $xmin $xmax $ymin $ymax ]
-    if {$xmin != 0.2 || $xmax != 0.3 || $ymin != 0.4 || $ymax != 0.5} {
+    if {$xmin != $xmin0 || $xmax != $xmax0 || $ymin != $ymin0 || $ymax != $ymax0} {
         puts stderr "plgvpw test failed"
         set status 1
     }
@@ -137,50 +145,70 @@ proc x31 {{w loopback}} {
 	set status 1
     }
 
-    $w cmd plsdidev 0.05 [expr {$::PLPLOT::PL_NOTSET}] 0.1 0.2
+    set mar0 0.05
+    set aspect0 [expr {$::PLPLOT::PL_NOTSET}]
+    set jx0 0.1
+    set jy0 0.2
+    $w cmd plsdidev $mar0 $aspect0 $jx0 $jy0
     $w cmd plgdidev mar aspect jx jy
     puts [ format "device-space window parameters: mar, aspect, jx, jy = %f %f %f %f" $mar $aspect $jx $jy ]
-    if {$mar != 0.05 || $jx != 0.1 || $jy != 0.2} {
+    if {$mar != $mar0 || $jx != $jx0 || $jy != $jy0} {
 	puts stderr "plgdidev test failed"
 	set status 1
     }
 
-    $w cmd plsdiori 1.0
+    set ori0 1.0
+    $w cmd plsdiori $ori0
     $w cmd plgdiori ori
     puts [ format "ori parameter = %f" $ori ]
-    if {$ori != 1.0 } {
+    if {$ori != $ori0 } {
 	puts stderr "plgdiori test failed"
 	set status 1
     }
 
-    $w cmd plsdiplt 0.1 0.2 0.9 0.8
+    set xmin0 0.1
+    set ymin0 0.2
+    set xmax0 0.9
+    set ymax0 0.8
+    $w cmd plsdiplt $xmin0 $ymin0 $xmax0 $ymax0
     $w cmd plgdiplt xmin ymin xmax ymax
     puts [ format "plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f" $xmin $ymin $xmax $ymax ]
-    if {$xmin != 0.1 || $xmax != 0.9 || $ymin != 0.2 || $ymax != 0.8} {
+    if {$xmin != $xmin0 || $ymin != $ymin0 || $xmax != $xmax0 || $ymax != $ymax0} {
 	puts stderr "plgdiplt test failed"
 	set status 1
     }
 
-    $w cmd plsdiplz 0.1 0.1 0.9 0.9
+    set zxmin0 0.1
+    set zymin0 0.1
+    set zxmax0 0.9
+    set zymax0 0.9
+    $w cmd plsdiplz $zxmin0 $zymin0 $zxmax0 $zymax0
     $w cmd plgdiplt zxmin zymin zxmax zymax
     puts [ format "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f" $zxmin $zymin $zxmax $zymax ]
-    if {abs($zxmin -($xmin + ($xmax-$xmin)*0.1)) > 1.0E-5 || abs($zxmax -($xmin+($xmax-$xmin)*0.9)) > 1.0E-5 || abs($zymin -($ymin+($ymax-$ymin)*0.1)) > 1.0E-5 || abs($zymax -($ymin+($ymax-$ymin)*0.9)) > 1.0E-5 } {
+    if {abs($zxmin -($xmin + ($xmax-$xmin)*$zxmin0)) > 1.0E-5 || abs($zymin -($ymin+($ymax-$ymin)*$zymin0)) > 1.0E-5 || abs($zxmax -($xmin+($xmax-$xmin)*$zxmax0)) > 1.0E-5 || abs($zymax -($ymin+($ymax-$ymin)*$zymax0)) > 1.0E-5 } {
 	puts stderr "plsdiplz test failed"
 	set status 1
     }
 
-    $w cmd plscolbg 10 20 30
+    set r0 10
+    set g0 20
+    set b0 30
+    $w cmd plscolbg $r0 $g0 $b0
     $w cmd plgcolbg r g b
     puts [ format "background colour parameters: r, g, b = %d %d %d" $r $g $b ]
-    if {$r != 10 || $g != 20 || $b != 30} {
+    if {$r != $r0 || $g != $g0 || $b != $b0} {
 	puts stderr "plgcolbg test failed"
 	set status 1
     }
 
-    $w cmd plscolbga 20 30 40 0.5
+    set r0 20
+    set g0 30
+    set b0 40
+    set a0 0.5
+    $w cmd plscolbga $r0 $g0 $b0 $a0
     $w cmd plgcolbga r g b a
     puts [ format "background/transparency colour parameters: r, g, b, a = %d %d %d %f" $r $g $b $a ]
-    if {$r != 20 || $g != 30 || $b != 40 || $a != 0.5} {
+    if {$r != $r0 || $g != $g0 || $b != $b0 || $a != $a0} {
 	puts stderr "plgcolbga test failed"
 	set status 1
     }

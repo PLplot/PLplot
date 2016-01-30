@@ -47,16 +47,18 @@ use
 -- that matching text is created.
 
 procedure xthick31a is
+    xmin0, xmax0, ymin0, ymax0, zxmin0, zxmax0, zymin0, zymax0 : Long_Float;
     xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax : Long_Float;
     xmid, ymid, wx, wy : Long_Float;
+    mar0, aspect0, jx0, jy0, ori0 : Long_Float;
     mar, aspect, jx, jy, ori : Long_Float;
     win, level2, digmax, digit, compression1, compression2 : Integer;
     xp0, yp0, xp1, yp1, xp2, yp2 : Long_Float;
     xleng0, yleng0, xoff0, yoff0 : Integer;
     xleng1, yleng1, xoff1, yoff1, xleng2, yleng2, xoff2, yoff2 : Integer;
-    num0, bmax0, num1, bmax1, num2, bmax2, r, g, b : Integer;
+    num0, bmax0, num1, bmax1, num2, bmax2, r0, g0, b0, r, g, b : Integer;
     fam0, fam1, fam2 : Boolean;
-    a : Long_Float;
+    a0, a : Long_Float;
     r1 : Integer_0_255_Array(0 .. 1) := (0, 255);
     g1 : Integer_0_255_Array(0 .. 1) := (0, 255);
     b1 : Integer_0_255_Array(0 .. 1) := (0,   0);
@@ -165,18 +167,27 @@ begin
     end if;
 
     Advance_To_Subpage(Next_Subpage);
-    Set_Viewport_Normalized(0.01, 0.99, 0.02, 0.49);
+    
+    xmin0 := 0.01;
+    xmax0 := 0.99;
+    ymin0 := 0.02;
+    ymax0 := 0.49;
+    Set_Viewport_Normalized(xmin0, xmax0, ymin0, ymax0);
     Get_Viewport_Normalized(xmin, xmax, ymin, ymax);
     Put_Line("plvpor: xmin, xmax, ymin, ymax = "
         & PF(xmin) & " " & PF(xmax) & " " & PF(ymin) & " " & PF(ymax));
-    if xmin /= 0.01 or xmax /= 0.99 or ymin /= 0.02 or ymax /= 0.49 then
+    if xmin /= xmin0 or xmax /= xmax0 or ymin /= ymin0 or ymax /= ymax0 then
         Put_Line(Standard_Error, "Get_Viewport_Normalized test failed");
         status := 1;
     end if;
     xmid := 0.5 * (xmin + xmax);
     ymid := 0.5 * (ymin + ymax);
 
-    Set_Viewport_World(0.2, 0.3, 0.4, 0.5);
+    xmin0 := 0.2;
+    xmax0 := 0.3;
+    ymin0 := 0.4;
+    ymax0 := 0.5;
+    Set_Viewport_World(xmin0, xmax0, ymin0, ymax0);
     Get_Viewport_World(xmin, xmax, ymin, ymax);
     Put_Line("plwind: xmin, xmax, ymin, ymax = "
         & PF(xmin) & " " & PF(xmax) & " " & PF(ymin) & " " & PF(ymax));
@@ -235,41 +246,54 @@ begin
         status := 1;
     end if;
 
-    Set_Device_Window_Parameters(0.05, PL_NOTSET, 0.1, 0.2);
+    mar0 := 0.05;
+    aspect0 := PL_NOTSET;
+    jx0 := 0.1;
+    jy0 := 0.2;
+    Set_Device_Window_Parameters(mar0, aspect0, jx0, jy0);
     Get_Device_Window_Parameters(mar, aspect, jx, jy);
     Put_Line("device-space window parameters: mar, aspect, jx, jy = "
         & PF(mar) & " " & PF(aspect) & " " & PF(jx) & " " & PF(jy));
-    if mar /= 0.05 or jx /= 0.1 or jy /= 0.2 then
+    if mar /= mar0 or jx /= jx0 or jy /= jy0 then
         Put_Line(Standard_Error, "Get_Device_Window_Parameters test failed");
         status := 1;
     end if;
 
-    Set_Plot_Orientation(1.0);
+    ori0 := 1.0;
+    Set_Plot_Orientation(ori0);
     Get_Plot_Orientation(ori);
     Put_Line("ori parameter = " & PF(ori));
-    if ori /= 1.0 then
+    if ori /= ori0 then
         Put_Line(Standard_Error, "Get_Plot_Orientation test failed");
         status := 1;
     end if;
 
-    Set_Device_Window_Extrema(0.1, 0.2, 0.9, 0.8);
+    xmin0 := 0.1;
+    ymin0 := 0.2;
+    xmax0 := 0.9;
+    ymax0 := 0.8;
+    Set_Device_Window_Extrema(xmin0, ymin0, xmax0, ymax0);
     Get_Device_Window_Extrema(xmin, ymin, xmax, ymax);
     Put_Line("plot-space window parameters: xmin, ymin, xmax, ymax = "
         & PF(xmin) & " " & PF(ymin) & " " & PF(xmax) & " " & PF(ymax));
-    if xmin /= 0.1 or xmax /= 0.9 or ymin /= 0.2 or ymax /= 0.8 then
+    if xmin /= xmin0 or ymin /= ymin0 or xmax /= xmax0 or ymax /= ymax0 then
         Put_Line(Standard_Error, "Get_Device_Window_Extrema test failed");
         status := 1;
     end if;
 
-    Set_Zoom(0.1, 0.1, 0.9, 0.9);
+    zxmin0 := 0.1;
+    zymin0 := 0.1;
+    zxmax0 := 0.9;
+    zymax0 := 0.9;
+    Set_Zoom(zxmin0, zymin0, zxmax0, zymax0);
     Get_Device_Window_Extrema(zxmin, zymin, zxmax, zymax);
     Put_Line("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = "
         & PF(zxmin) & " " & PF(zymin) & " " & PF(zxmax) & " " & PF(zymax));
     if
-        abs(zxmin - (xmin + (xmax - xmin) * 0.1)) > 1.0E-5 or
-        abs(zxmax - (xmin + (xmax - xmin) * 0.9)) > 1.0E-5 or
-        abs(zymin - (ymin + (ymax - ymin) * 0.1)) > 1.0E-5 or
-        abs(zymax - (ymin + (ymax - ymin) * 0.9)) > 1.0E-5
+        abs(zxmin - (xmin + (xmax - xmin) * zxmin0)) > 1.0E-5 or
+        abs(zymin - (ymin + (ymax - ymin) * zymin0)) > 1.0E-5 or
+        abs(zxmax - (xmin + (xmax - xmin) * zxmax0)) > 1.0E-5 or
+        abs(zymax - (ymin + (ymax - ymin) * zymax0)) > 1.0E-5
     then
         Put_Line(Standard_Error, "Set_Zoom test failed");
         status := 1;
@@ -284,11 +308,15 @@ begin
         status := 1;
     end if;
 
-    Set_Background_Color_RGB_And_Alpha(20, 30, 40, 0.5);
+    r0 := 20;
+    g0 := 30;
+    b0 := 40;
+    a0 := 0.5;
+    Set_Background_Color_RGB_And_Alpha(r0, g0, b0, a0);
     Get_Background_Color_RGB_And_Alpha(r, g, b, a);
     Put_Line("background/transparency colour parameters: r, g, b, a ="
         & Integer'image(r) & Integer'image(g) & Integer'image(b) & " " & PF(a));
-    if r /= 20 or g /= 30 or b /= 40 or a /= 0.5 then
+    if r /= r0 or g /= g0 or b /= b0 or a /= a0 then
         Put_Line(Standard_Error, "Get_Background_Color_RGBa test failed");
         status := 1;
     end if;

@@ -1,4 +1,5 @@
 // Copyright (C) 2009 Werner Smekal
+// Copyright (C) 2008-2016 Alan W. Irwin
 //
 // set/get tester
 //
@@ -122,11 +123,16 @@ int main( char[][] args )
     }
 
     pladv( 0 );
-    plvpor( 0.01, 0.99, 0.02, 0.49 );
+
+    PLFLT xmin0 = 0.01;
+    PLFLT xmax0 = 0.99;
+    PLFLT ymin0 = 0.02;
+    PLFLT ymax0 = 0.49;
+    plvpor( xmin0, xmax0, ymin0, ymax0 );
     PLFLT xmin, xmax, ymin, ymax;
     plgvpd( &xmin, &xmax, &ymin, &ymax );
     writefln( "plvpor: xmin, xmax, ymin, ymax = %f %f %f %f", xmin, xmax, ymin, ymax );
-    if ( xmin != 0.01 || xmax != 0.99 || ymin != 0.02 || ymax != 0.49 )
+    if ( xmin != xmin0 || xmax != xmax0 || ymin != ymin0 || ymax != ymax0 )
     {
         derr.writefln( "plgvpd test failed" );
         status = 1;
@@ -134,10 +140,14 @@ int main( char[][] args )
     PLFLT xmid = 0.5 * ( xmin + xmax );
     PLFLT ymid = 0.5 * ( ymin + ymax );
 
-    plwind( 0.2, 0.3, 0.4, 0.5 );
+    xmin0 = 0.2;
+    xmax0 = 0.3;
+    ymin0 = 0.4;
+    ymax0 = 0.5;
+    plwind( xmin0, xmax0, ymin0, ymax0 );
     plgvpw( &xmin, &xmax, &ymin, &ymax );
     writefln( "plwind: xmin, xmax, ymin, ymax = %f %f %f %f", xmin, xmax, ymin, ymax );
-    if ( xmin != 0.2 || xmax != 0.3 || ymin != 0.4 || ymax != 0.5 )
+    if ( xmin != xmin0 || xmax != xmax0 || ymin != ymin0 || ymax != ymax0 )
     {
         derr.writefln( "plgvpw test failed" );
         status = 1;
@@ -197,63 +207,84 @@ int main( char[][] args )
         status = 1;
     }
 
-    plsdidev( 0.05, PL_NOTSET, 0.1, 0.2 );
+    PLFLT mar0    = 0.05;
+    PLFLT aspect0 = PL_NOTSET;
+    PLFLT jx0     = 0.1;
+    PLFLT jy0     = 0.2;
+    plsdidev( mar0, aspect0, jx0, jy0 );
     PLFLT mar, aspect, jx, jy;
     plgdidev( &mar, &aspect, &jx, &jy );
     writefln( "device-space window parameters: mar, aspect, jx, jy = %f %f %f %f", mar, aspect, jx, jy );
-    if ( mar != 0.05 || jx != 0.1 || jy != 0.2 )
+    if ( mar != mar0 || jx != jx0 || jy != jy0 )
     {
         derr.writefln( "plgdidev test failed" );
         status = 1;
     }
 
-    plsdiori( 1.0 );
+    PLFLT ori0 = 1.0;
+    plsdiori( ori0 );
     PLFLT ori;
     plgdiori( &ori );
     writefln( "ori parameter = %f", ori );
-    if ( ori != 1.0 )
+    if ( ori != ori0 )
     {
         derr.writefln( "plgdiori test failed" );
         status = 1;
     }
 
-    plsdiplt( 0.1, 0.2, 0.9, 0.8 );
+    xmin0 = 0.1;
+    ymin0 = 0.2;
+    xmax0 = 0.9;
+    ymax0 = 0.8;
+    plsdiplt( xmin0, ymin0, xmax0, ymax0 );
     plgdiplt( &xmin, &ymin, &xmax, &ymax );
     writefln( "plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f", xmin, ymin, xmax, ymax );
-    if ( xmin != 0.1 || xmax != 0.9 || ymin != 0.2 || ymax != 0.8 )
+    if ( xmin != xmin0 || ymin != ymin0 || xmax != xmax0 || ymax != ymax0 )
     {
         derr.writefln( "plgdiplt test failed" );
         status = 1;
     }
 
-    plsdiplz( 0.1, 0.1, 0.9, 0.9 );
+    PLFLT zxmin0 = 0.1;
+    PLFLT zymin0 = 0.1;
+    PLFLT zxmax0 = 0.9;
+    PLFLT zymax0 = 0.9;
+    plsdiplz( zxmin0, zymin0, zxmax0, zymax0 );
     PLFLT zxmin, zymin, zxmax, zymax;
     plgdiplt( &zxmin, &zymin, &zxmax, &zymax );
     writefln( "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f", zxmin, zymin, zxmax, zymax );
-    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * 0.1 ) ) > 1.0E-5 ||
-         fabs( zxmax - ( xmin + ( xmax - xmin ) * 0.9 ) ) > 1.0E-5 ||
-         fabs( zymin - ( ymin + ( ymax - ymin ) * 0.1 ) ) > 1.0E-5 ||
-         fabs( zymax - ( ymin + ( ymax - ymin ) * 0.9 ) ) > 1.0E-5 )
+    if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * zxmin0 ) ) > 1.0E-5 ||
+         fabs( zymin - ( ymin + ( ymax - ymin ) * zymin0 ) ) > 1.0E-5 ||
+         fabs( zxmax - ( xmin + ( xmax - xmin ) * zxmax0 ) ) > 1.0E-5 ||
+         fabs( zymax - ( ymin + ( ymax - ymin ) * zymax0 ) ) > 1.0E-5 )
     {
         derr.writefln( "plsdiplz test failed" );
         status = 1;
     }
 
-    plscolbg( 10, 20, 30 );
+    PLINT r0 = 10;
+    PLINT g0 = 20;
+    PLINT b0 = 30;
+    plscolbg( r0, g0, b0 );
     PLINT r, g, b;
     plgcolbg( &r, &g, &b );
     writefln( "background colour parameters: r, g, b = %d %d %d", r, g, b );
-    if ( r != 10 || g != 20 || b != 30 )
+    if ( r != r0 || g != g0 || b != b0 )
     {
         derr.writefln( "plgcolbg test failed" );
         status = 1;
     }
 
-    plscolbga( 20, 30, 40, 0.5 );
+    r0 = 20;
+    g0 = 30;
+    b0 = 40;
+    PLFLT a0 = 0.5;
+
+    plscolbga( r0, g0, b0, a0 );
     PLFLT a;
     plgcolbga( &r, &g, &b, &a );
     writefln( "background/transparency colour parameters: r, g, b, a = %d %d %d %f", r, g, b, a );
-    if ( r != 20 || g != 30 || b != 40 || a != 0.5 )
+    if ( r != r0 || g != g0 || b != b0 || a != a0 )
     {
         derr.writefln( "plgcolbga test failed" );
         status = 1;

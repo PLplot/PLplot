@@ -1,5 +1,6 @@
 --[[
   Copyright (C) 2008 Werner Smekal
+  Copyright (C) 2008-2016 Alan W. Irwin
 
   set/get tester
 
@@ -105,20 +106,29 @@ if level2~=1 then
 end
 
 pl.adv(0)
-pl.vpor(0.01, 0.99, 0.02, 0.49)
+
+xmin0 = 0.01
+xmax0 = 0.99
+ymin0 = 0.02
+ymax0 = 0.49
+pl.vpor(xmin0, xmax0, ymin0, ymax0)
 xmin, xmax, ymin, ymax = pl.gvpd()
 print(string.format("plvpor: xmin, xmax, ymin, ymax = %f %f %f %f", xmin, xmax, ymin, ymax))
-if xmin~=0.01 or xmax~=0.99 or ymin~=0.02 or ymax~=0.49 then
+if xmin~=xmin0 or xmax~=xmax0 or ymin~=ymin0 or ymax~=ymax0 then
   io.stderr:write("plgvpd test failed\n")
   status = 1
 end
 xmid = 0.5*(xmin+xmax)
 ymid = 0.5*(ymin+ymax)
 
-pl.wind(0.2, 0.3, 0.4, 0.5)
+xmin0 = 0.2
+xmax0 = 0.3
+ymin0 = 0.4
+ymax0 = 0.5
+pl.wind(xmin0, xmax0, ymin0, ymax0)
 xmin, xmax, ymin, ymax = pl.gvpw()
 print(string.format("plwind: xmin, xmax, ymin, ymax = %f %f %f %f", xmin, xmax, ymin, ymax))
-if xmin~=0.2 or xmax~=0.3 or ymin~=0.4 or ymax~=0.5 then
+if xmin~=xmin0 or xmax~=xmax0 or ymin~=ymin0 or ymax~=ymax0 then
   io.stderr:write("plgvpw test failed\n")
   status = 1
 end
@@ -170,53 +180,73 @@ if digmax~=5 then
   status = 1
 end
 
-pl.sdidev(0.05, pl.PL_NOTSET, 0.1, 0.2)
+mar0 = 0.05
+aspect0 = pl.PL_NOTSET
+jx0 = 0.1
+jy0 = 0.2
+pl.sdidev(mar0, aspect0, jx0, jy0)
 mar, aspect, jx, jy = pl.gdidev()
 print(string.format("device-space window parameters: mar, aspect, jx, jy = %f %f %f %f" , mar, aspect, jx, jy))
-if mar~=0.05 or jx~=0.1 or jy~=0.2 then
+if mar~=mar0 or jx~=jx0 or jy~=jy0 then
   io.stderr:write("plgdidev test failed\n")
   status = 1
 end
 
-pl.sdiori(1.0)
+ori0 = 1.0
+pl.sdiori(ori0)
 ori = pl.gdiori()
 print(string.format("ori parameter = %f", ori))
-if ori~=1.0 then
+if ori~=ori0 then
   io.stderr:write("plgdiori test failed\n")
   status = 1
 end
 
-pl.sdiplt(0.1, 0.2, 0.9, 0.8)
+xmin0 = 0.1
+ymin0 = 0.2
+xmax0 = 0.9
+ymax0 = 0.8
+pl.sdiplt(xmin0, ymin0, xmax0, ymax0)
 xmin, ymin, xmax, ymax = pl.gdiplt()
 print(string.format("plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f", xmin, ymin, xmax, ymax))
-if xmin~=0.1 or xmax~=0.9 or ymin~=0.2 or ymax~=0.8 then
+if xmin~=xmin0 or ymin~=ymin0 or xmax~=xmax0 or ymax~=ymax0 then
   io.stderr:write("plgdiplt test failed\n")
   status = 1
 end
 
-pl.sdiplz(0.1, 0.1, 0.9, 0.9)
+zxmin0 = 0.1
+zymin0 = 0.1
+zxmax0 = 0.9
+zymax0 = 0.9
+pl.sdiplz(zxmin0, zymin0, zxmax0, zymax0)
 zxmin, zymin, zxmax, zymax = pl.gdiplt()
 print(string.format("zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f", zxmin, zymin, zxmax, zymax))
-if math.abs(zxmin -(xmin + (xmax-xmin)*0.1)) > 1.0e-5 or 
-   math.abs(zxmax -(xmin+(xmax-xmin)*0.9)) > 1.0e-5 or 
-   math.abs(zymin -(ymin+(ymax-ymin)*0.1)) > 1.0e-5 or 
-   math.abs(zymax -(ymin+(ymax-ymin)*0.9)) > 1.0e-5 then
+if math.abs(zxmin -(xmin + (xmax-xmin)*zxmin0)) > 1.0e-5 or 
+   math.abs(zymin -(ymin + (ymax-ymin)*zymin0)) > 1.0e-5 or 
+   math.abs(zxmax -(xmin + (xmax-xmin)*zxmax0)) > 1.0e-5 or 
+   math.abs(zymax -(ymin + (ymax-ymin)*zymax0)) > 1.0e-5 then
   io.stderr:write("plsdiplz test failed\n")
   status = 1
 end
 
-pl.scolbg(10, 20, 30)
+r0 = 10
+g0 = 20
+b0 = 30
+pl.scolbg(r0, g0, b0)
 r, g, b = pl.gcolbg()
 print(string.format("background colour parameters: r, g, b = %d %d %d", r, g, b))
-if r~=10 or g~=20 or b~=30 then 
+if r~=r0 or g~=g0 or b~=b0 then 
   io.stderr:write("plgcolbg test failed\n")
   status = 1
 end
 
-pl.scolbga(20, 30, 40, 0.5)
+r0 = 20
+g0 = 30
+b0 = 40
+a0 = 0.5
+pl.scolbga(r0, g0, b0, a0)
 r, g, b, a = pl.gcolbga()
 print(string.format("background/transparency colour parameters: r, g, b, a = %d %d %d %f", r, g, b, a))
-if r~=20 or g~=30 or b~=40 or a~=0.5 then
+if r~=r0 or g~=g0 or b~=b0 or a~=a0 then
   io.stderr:write("plgcolbga test failed\n")
   status = 1
 end

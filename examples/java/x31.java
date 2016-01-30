@@ -1,7 +1,7 @@
 //   set/get tester
 //
 // Copyright (C) 2008 Andrew Ross
-// Copyright (C) 2008-2014 Alan W. Irwin
+// Copyright (C) 2008-2016 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -36,11 +36,18 @@ class x31 {
         double       ymin[]  = new double[1], ymax[] = new double[1];
         double       zxmin[] = new double[1], zxmax[] = new double[1];
         double       zymin[] = new double[1], zymax[] = new double[1];
+        double       xmin0, xmax0;
+        double       ymin0, ymax0;
+        double       zxmin0, zxmax0;
+        double       zymin0, zymax0;
         double       xmid, ymid;
-        double       wx[]           = new double[1], wy[] = new double[1];
-        double       mar[]          = new double[1], aspect[] = new double[1];
-        double       jx[]           = new double[1], jy[] = new double[1];
-        double       ori[]          = new double[1];
+        double       wx[]  = new double[1], wy[] = new double[1];
+        double       mar[] = new double[1], aspect[] = new double[1];
+        double       jx[]  = new double[1], jy[] = new double[1];
+        double       mar0, aspect0;
+        double       jx0, jy0;
+        double       ori[] = new double[1];
+        double       ori0;
         int          win[]          = new int[1], level2[] = new int[1];
         int          digmax[]       = new int[1], digits[] = new int[1];
         int          compression1[] = new int[1], compression2[] = new int[1];
@@ -58,11 +65,13 @@ class x31 {
         int          fam2[] = new int[1], num2[] = new int[1], bmax2[] = new int[1];
         int          r[]    = new int[1], g[] = new int[1], b[] = new int[1];
         double       a[]    = new double[1];
-        int          r1[]   = { 0, 255 };
-        int          g1[]   = { 255, 0 };
-        int          b1[]   = { 0, 0 };
-        double       a1[]   = { 1.0, 1.0 };
-        StringBuffer fnam   = new StringBuffer( 256 );
+        int          r0, g0, b0;
+        double       a0;
+        int          r1[] = { 0, 255 };
+        int          g1[] = { 255, 0 };
+        int          b1[] = { 0, 0 };
+        double       a1[] = { 1.0, 1.0 };
+        StringBuffer fnam = new StringBuffer( 256 );
         int          status;
 
         // Create NumberFormat to format floating point numbers
@@ -158,10 +167,15 @@ class x31 {
         }
 
         pls.adv( 0 );
-        pls.vpor( 0.01, 0.99, 0.02, 0.49 );
+
+        xmin0 = 0.01;
+        xmax0 = 0.99;
+        ymin0 = 0.02;
+        ymax0 = 0.49;
+        pls.vpor( xmin0, xmax0, ymin0, ymax0 );
         pls.gvpd( xmin, xmax, ymin, ymax );
         System.out.println( "plvpor: xmin, xmax, ymin, ymax = " + nf.format( xmin[0] ) + " " + nf.format( xmax[0] ) + " " + nf.format( ymin[0] ) + " " + nf.format( ymax[0] ) );
-        if ( xmin[0] != 0.01 || xmax[0] != 0.99 || ymin[0] != 0.02 || ymax[0] != 0.49 )
+        if ( xmin[0] != xmin0 || xmax[0] != xmax0 || ymin[0] != ymin0 || ymax[0] != ymax0 )
         {
             System.err.println( "plgvpd test failed" );
             status = 1;
@@ -169,10 +183,14 @@ class x31 {
         xmid = 0.5 * ( xmin[0] + xmax[0] );
         ymid = 0.5 * ( ymin[0] + ymax[0] );
 
-        pls.wind( 0.2, 0.3, 0.4, 0.5 );
+        xmin0 = 0.2;
+        xmax0 = 0.3;
+        ymin0 = 0.4;
+        ymax0 = 0.5;
+        pls.wind( xmin0, xmax0, ymin0, ymax0 );
         pls.gvpw( xmin, xmax, ymin, ymax );
         System.out.println( "plwind: xmin, xmax, ymin, ymax = " + nf.format( xmin[0] ) + " " + nf.format( xmax[0] ) + " " + nf.format( ymin[0] ) + " " + nf.format( ymax[0] ) );
-        if ( xmin[0] != 0.2 || xmax[0] != 0.3 || ymin[0] != 0.4 || ymax[0] != 0.5 )
+        if ( xmin[0] != xmin0 || xmax[0] != xmax0 || ymin[0] != ymin0 || ymax[0] != ymax0 )
         {
             System.err.println( "plgvpw test failed" );
             status = 1;
@@ -232,58 +250,78 @@ class x31 {
             status = 1;
         }
 
-        pls.sdidev( 0.05, PL_NOTSET, 0.1, 0.2 );
+        mar0    = 0.05;
+        aspect0 = PL_NOTSET;
+        jx0     = 0.1;
+        jy0     = 0.2;
+        pls.sdidev( mar0, aspect0, jx0, jy0 );
         pls.gdidev( mar, aspect, jx, jy );
         System.out.println( "device-space window parameters: mar, aspect, jx, jy = " + nf.format( mar[0] ) + " " + nf.format( aspect[0] ) + " " + nf.format( jx[0] ) + " " + nf.format( jy[0] ) );
-        if ( mar[0] != 0.05 || jx[0] != 0.1 || jy[0] != 0.2 )
+        if ( mar[0] != mar0 || jx[0] != jx0 || jy[0] != jy0 )
         {
             System.err.println( "plgdidev test failed" );
             status = 1;
         }
 
-        pls.sdiori( 1.0 );
+        ori0 = 1.0;
+        pls.sdiori( ori0 );
         pls.gdiori( ori );
         System.out.println( "ori parameter = " + nf.format( ori[0] ) );
-        if ( ori[0] != 1.0 )
+        if ( ori[0] != ori0 )
         {
             System.err.println( "plgdiori test failed" );
             status = 1;
         }
 
-        pls.sdiplt( 0.1, 0.2, 0.9, 0.8 );
+        xmin0 = 0.1;
+        ymin0 = 0.2;
+        xmax0 = 0.9;
+        ymax0 = 0.8;
+        pls.sdiplt( xmin0, ymin0, xmax0, ymax0 );
         pls.gdiplt( xmin, ymin, xmax, ymax );
         System.out.println( "plot-space window parameters: xmin, ymin, xmax, ymax = " + nf.format( xmin[0] ) + " " + nf.format( ymin[0] ) + " " + nf.format( xmax[0] ) + " " + nf.format( ymax[0] ) );
-        if ( xmin[0] != 0.1 || xmax[0] != 0.9 || ymin[0] != 0.2 || ymax[0] != 0.8 )
+        if ( xmin[0] != xmin0 || ymin[0] != ymin0 || xmax[0] != xmax0 || ymax[0] != ymax0 )
         {
             System.err.println( "plgdiplt test failed" );
             status = 1;
         }
 
-        pls.sdiplz( 0.1, 0.1, 0.9, 0.9 );
+        zxmin0 = 0.1;
+        zymin0 = 0.1;
+        zxmax0 = 0.9;
+        zymax0 = 0.9;
+        pls.sdiplz( zxmin0, zymin0, zxmax0, zymax0 );
         pls.gdiplt( zxmin, zymin, zxmax, zymax );
         System.out.println( "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = " + nf.format( zxmin[0] ) + " " + nf.format( zymin[0] ) + " " + nf.format( zxmax[0] ) + " " + nf.format( zymax[0] ) );
-        if ( Math.abs( zxmin[0] - ( xmin[0] + ( xmax[0] - xmin[0] ) * 0.1 ) ) > 1.0E-5 ||
-             Math.abs( zxmax[0] - ( xmin[0] + ( xmax[0] - xmin[0] ) * 0.9 ) ) > 1.0E-5 ||
-             Math.abs( zymin[0] - ( ymin[0] + ( ymax[0] - ymin[0] ) * 0.1 ) ) > 1.0E-5 ||
-             Math.abs( zymax[0] - ( ymin[0] + ( ymax[0] - ymin[0] ) * 0.9 ) ) > 1.0E-5 )
+        if ( Math.abs( zxmin[0] - ( xmin[0] + ( xmax[0] - xmin[0] ) * zxmin0 ) ) > 1.0E-5 ||
+             Math.abs( zymin[0] - ( ymin[0] + ( ymax[0] - ymin[0] ) * zymin0 ) ) > 1.0E-5 ||
+             Math.abs( zxmax[0] - ( xmin[0] + ( xmax[0] - xmin[0] ) * zxmax0 ) ) > 1.0E-5 ||
+             Math.abs( zymax[0] - ( ymin[0] + ( ymax[0] - ymin[0] ) * zymax0 ) ) > 1.0E-5 )
         {
             System.err.println( "plsdiplz test failed" );
             status = 1;
         }
 
-        pls.scolbg( 10, 20, 30 );
+        r0 = 10;
+        g0 = 20;
+        b0 = 30;
+        pls.scolbg( r0, g0, b0 );
         pls.gcolbg( r, g, b );
         System.out.println( "background colour parameters: r, g, b = " + r[0] + " " + g[0] + " " + b[0] );
-        if ( r[0] != 10 || g[0] != 20 || b[0] != 30 )
+        if ( r[0] != r0 || g[0] != g0 || b[0] != b0 )
         {
             System.err.println( "plgcolbg test failed" );
             status = 1;
         }
 
-        pls.scolbga( 20, 30, 40, 0.5 );
+        r0 = 20;
+        g0 = 30;
+        b0 = 40;
+        a0 = 0.5;
+        pls.scolbga( r0, g0, b0, a0 );
         pls.gcolbga( r, g, b, a );
         System.out.println( "background/transparency colour parameters: r, g, b, a = " + r[0] + " " + g[0] + " " + b[0] + " " + nf.format( a[0] ) );
-        if ( r[0] != 20 || g[0] != 30 || b[0] != 40 || a[0] != 0.5 )
+        if ( r[0] != r0 || g[0] != g0 || b[0] != b0 || a[0] != a0 )
         {
             System.err.println( "plgcolbga test failed" );
             status = 1;
