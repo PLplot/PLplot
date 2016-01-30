@@ -89,11 +89,11 @@ x28::x28( int argc, char *argv[] )
     pls->Alloc2dGrid( &z, XPTS, YPTS );
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = xmin + (double) i * ( xmax - xmin ) / (double) ( XPTS - 1 );
+        x[i] = xmin + (PLFLT) i * ( xmax - xmin ) / (PLFLT) ( XPTS - 1 );
     }
 
     for ( j = 0; j < YPTS; j++ )
-        y[j] = ymin + (double) j * ( ymax - ymin ) / (double) ( YPTS - 1 );
+        y[j] = ymin + (PLFLT) j * ( ymax - ymin ) / (PLFLT) ( YPTS - 1 );
 
     for ( i = 0; i < XPTS; i++ )
     {

@@ -103,7 +103,7 @@ x30::x30( int argc, char *argv[] )
         // Get a color, change its transparency and
         // set it as the current color.
         pls->gcol0a( icol, r, g, b, a );
-        pls->scol0a( icol, r, g, b, 1.0 - (double) i / 9.0 );
+        pls->scol0a( icol, r, g, b, 1.0 - (PLFLT) i / 9.0 );
         pls->col0( icol );
 
         // Draw the rectangle

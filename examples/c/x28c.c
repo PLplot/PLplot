@@ -68,11 +68,11 @@ int main( int argc, char *argv[] )
     plAlloc2dGrid( &z, XPTS, YPTS );
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = xmin + (double) i * ( xmax - xmin ) / (double) ( XPTS - 1 );
+        x[i] = xmin + (PLFLT) i * ( xmax - xmin ) / (PLFLT) ( XPTS - 1 );
     }
 
     for ( j = 0; j < YPTS; j++ )
-        y[j] = ymin + (double) j * ( ymax - ymin ) / (double) ( YPTS - 1 );
+        y[j] = ymin + (PLFLT) j * ( ymax - ymin ) / (PLFLT) ( YPTS - 1 );
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -337,7 +337,7 @@ int main( int argc, char *argv[] )
     // domega controls the spacing between the various characters of the
     // string and also the maximum value of omega for the given number
     // of characters in *pstring.
-    domega = 2. * M_PI / (double) strlen( pstring );
+    domega = 2. * M_PI / (PLFLT) strlen( pstring );
     omega  = 0.;
     // 3D function is a helix of the given radius and pitch
     radius = 0.5;

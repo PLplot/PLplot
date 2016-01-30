@@ -246,7 +246,7 @@ x22::potential()
     // Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
     // Also put in smoothing term at small distances.
 
-    rmax = (double) nr;
+    rmax = (PLFLT) nr;
 
     eps = 2.;
 
@@ -254,33 +254,33 @@ x22::potential()
     d1 = rmax / 4.;
 
     q1i = -q1 * rmax / d1;
-    d1i = pow( (double) rmax, 2. ) / d1;
+    d1i = pow( rmax, 2. ) / d1;
 
     q2 = -1.;
     d2 = rmax / 4.;
 
     q2i = -q2 * rmax / d2;
-    d2i = pow( (double) rmax, 2. ) / d2;
+    d2i = pow( rmax, 2. ) / d2;
 
     for ( i = 0; i < nr; i++ )
     {
-        r = 0.5 + (double) i;
+        r = 0.5 + (PLFLT) i;
         for ( j = 0; j < ntheta; j++ )
         {
-            theta           = 2. * M_PI / ( ntheta - 1 ) * ( 0.5 + (double) j );
+            theta           = 2. * M_PI / ( ntheta - 1 ) * ( 0.5 + (PLFLT) j );
             x               = r * cos( theta );
             y               = r * sin( theta );
             cgrid2.xg[i][j] = x;
             cgrid2.yg[i][j] = y;
-            div1            = sqrt( pow( (double) ( x - d1 ), 2. ) + pow( (double) ( y - d1 ), 2. ) + pow( (double) eps, 2. ) );
-            div1i           = sqrt( pow( (double) ( x - d1i ), 2. ) + pow( (double) ( y - d1i ), 2. ) + pow( (double) eps, 2. ) );
-            div2            = sqrt( pow( (double) ( x - d2 ), 2. ) + pow( (double) ( y + d2 ), 2. ) + pow( (double) eps, 2. ) );
-            div2i           = sqrt( pow( (double) ( x - d2i ), 2. ) + pow( (double) ( y + d2i ), 2. ) + pow( (double) eps, 2. ) );
+            div1            = sqrt( pow( ( x - d1 ), 2. ) + pow( ( y - d1 ), 2. ) + pow( eps, 2. ) );
+            div1i           = sqrt( pow( ( x - d1i ), 2. ) + pow( ( y - d1i ), 2. ) + pow( eps, 2. ) );
+            div2            = sqrt( pow( ( x - d2 ), 2. ) + pow( ( y + d2 ), 2. ) + pow( eps, 2. ) );
+            div2i           = sqrt( pow( ( x - d2i ), 2. ) + pow( ( y + d2i ), 2. ) + pow( eps, 2. ) );
             z[i][j]         = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
-            u[i][j]         = -q1 * ( x - d1 ) / pow( (double) div1, 3. ) - q1i * ( x - d1i ) / pow( (double) div1i, 3.0 )
-                              - q2 * ( x - d2 ) / pow( (double) div2, 3. ) - q2i * ( x - d2i ) / pow( (double) div2i, 3. );
-            v[i][j] = -q1 * ( y - d1 ) / pow( (double) div1, 3. ) - q1i * ( y - d1i ) / pow( (double) div1i, 3.0 )
-                      - q2 * ( y + d2 ) / pow( (double) div2, 3. ) - q2i * ( y + d2i ) / pow( (double) div2i, 3. );
+            u[i][j]         = -q1 * ( x - d1 ) / pow( div1, 3. ) - q1i * ( x - d1i ) / pow( div1i, 3.0 )
+                              - q2 * ( x - d2 ) / pow( div2, 3. ) - q2i * ( x - d2i ) / pow( div2i, 3. );
+            v[i][j] = -q1 * ( y - d1 ) / pow( div1, 3. ) - q1i * ( y - d1i ) / pow( div1i, 3.0 )
+                      - q2 * ( y + d2 ) / pow( div2, 3. ) - q2i * ( y + d2i ) / pow( div2i, 3. );
         }
     }
 
@@ -291,10 +291,10 @@ x22::potential()
     pls->env( xmin, xmax, ymin, ymax, 0, 0 );
     pls->lab( "(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot" );
     // Plot contours of the potential
-    dz = ( zmax - zmin ) / (double) nlevel;
+    dz = ( zmax - zmin ) / (PLFLT) nlevel;
     for ( i = 0; i < nlevel; i++ )
     {
-        clevel[i] = zmin + ( (double) i + 0.5 ) * dz;
+        clevel[i] = zmin + ( (PLFLT) i + 0.5 ) * dz;
     }
     pls->col0( 3 );
     pls->lsty( 2 );
@@ -310,7 +310,7 @@ x22::potential()
     // Plot the perimeter of the cylinder
     for ( i = 0; i < nper; i++ )
     {
-        theta = ( 2. * M_PI / ( nper - 1 ) ) * (double) i;
+        theta = ( 2. * M_PI / ( nper - 1 ) ) * (PLFLT) i;
         px[i] = rmax * cos( theta );
         py[i] = rmax * sin( theta );
     }

@@ -328,7 +328,7 @@ potential( void )
     // Also put in smoothing term at small distances.
     //
 
-    rmax = (double) nr;
+    rmax = (PLFLT) nr;
 
     eps = 2.;
 
@@ -346,10 +346,10 @@ potential( void )
 
     for ( i = 0; i < nr; i++ )
     {
-        r = 0.5 + (double) i;
+        r = 0.5 + (PLFLT) i;
         for ( j = 0; j < ntheta; j++ )
         {
-            theta           = 2. * M_PI / ( ntheta - 1 ) * ( 0.5 + (double) j );
+            theta           = 2. * M_PI / ( ntheta - 1 ) * ( 0.5 + (PLFLT) j );
             x               = r * cos( theta );
             y               = r * sin( theta );
             cgrid2.xg[i][j] = x;
@@ -373,10 +373,10 @@ potential( void )
     plenv( xmin, xmax, ymin, ymax, 0, 0 );
     pllab( "(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot" );
     // Plot contours of the potential
-    dz = ( zmax - zmin ) / (double) nlevel;
+    dz = ( zmax - zmin ) / (PLFLT) nlevel;
     for ( i = 0; i < nlevel; i++ )
     {
-        clevel[i] = zmin + ( (double) i + 0.5 ) * dz;
+        clevel[i] = zmin + ( (PLFLT) i + 0.5 ) * dz;
     }
     plcol0( 3 );
     pllsty( 2 );
@@ -392,7 +392,7 @@ potential( void )
     // Plot the perimeter of the cylinder
     for ( i = 0; i < nper; i++ )
     {
-        theta = ( 2. * M_PI / ( nper - 1 ) ) * (double) i;
+        theta = ( 2. * M_PI / ( nper - 1 ) ) * (PLFLT) i;
         px[i] = rmax * cos( theta );
         py[i] = rmax * sin( theta );
     }

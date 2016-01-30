@@ -12,7 +12,7 @@ void geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PL
 void
 map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer PL_UNUSED( data ) )
 {
-    double radius;
+    PLFLT radius;
 
     radius = 90.0 - y;
     *xt    = radius * cos( x * M_PI / 180.0 );
@@ -30,8 +30,8 @@ map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer PL_UNUSED( data
 void
 mapform19( PLINT n, PLFLT *x, PLFLT *y )
 {
-    int    i;
-    double xp, yp;
+    int   i;
+    PLFLT xp, yp;
     for ( i = 0; i < n; i++ )
     {
         map_transform( x[i], y[i], &xp, &yp, NULL );

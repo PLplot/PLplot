@@ -27,7 +27,7 @@ main( int argc, char *argv[] )
 
 // Fill up data points
 
-    delta = 2.0 * M_PI / (double) NPTS;
+    delta = 2.0 * M_PI / (PLFLT) NPTS;
     for ( i = 0; i < NPTS; i++ )
         data[i] = sin( i * delta );
 

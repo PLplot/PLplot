@@ -213,7 +213,7 @@ x08::x08( int argc, char **argv )
             yy = y[j];
             if ( rosen )
             {
-                z[i][j] = pow( (double) ( 1. - xx ), 2. ) + 100 * pow( (double) ( yy - pow( (double) xx, 2. ) ), 2. );
+                z[i][j] = pow( ( 1. - xx ), 2. ) + 100 * pow( ( yy - pow( xx, 2. ) ), 2. );
                 // The log argument might be zero for just the right grid.
                 if ( z[i][j] > 0. )
                     z[i][j] = log( z[i][j] );
@@ -242,7 +242,7 @@ x08::x08( int argc, char **argv )
 
     for ( i = indexxmin; i < indexxmax; i++ )
     {
-        square_root = sqrt( 1. - MIN( 1., pow( ( (PLFLT) i - x0 ) / a, 2. ) ) );
+        square_root = sqrt( 1. - MIN( 1., pow( ( i - x0 ) / a, 2. ) ) );
         // Add 0.5 to find nearest integer and therefore preserve symmetry
         // with regard to lower and upper bound of y range.
         indexymin[i] = MAX( 0, (PLINT) ( 0.5 + y0 - b * square_root ) );

@@ -69,7 +69,7 @@ static void polar( void )
 //Perimeter
     for ( i = 0; i < PERIMETERPTS; i++ )
     {
-        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (double) i;
+        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (PLFLT) i;
         px[i] = cos( t );
         py[i] = sin( t );
     }
@@ -84,10 +84,10 @@ static void polar( void )
 
     for ( i = 0; i < RPTS; i++ )
     {
-        r = i / (double) ( RPTS - 1 );
+        r = i / (PLFLT) ( RPTS - 1 );
         for ( j = 0; j < THETAPTS; j++ )
         {
-            theta           = ( 2. * M_PI / (double) ( THETAPTS - 1 ) ) * (double) j;
+            theta           = ( 2. * M_PI / (PLFLT) ( THETAPTS - 1 ) ) * (PLFLT) j;
             cgrid2.xg[i][j] = r * cos( theta );
             cgrid2.yg[i][j] = r * sin( theta );
             z[i][j]         = r;
@@ -96,7 +96,7 @@ static void polar( void )
 
     for ( i = 0; i < 10; i++ )
     {
-        lev[i] = 0.05 + 0.10 * (double) i;
+        lev[i] = 0.05 + 0.10 * (PLFLT) i;
     }
 
     plcol0( 2 );
@@ -158,10 +158,10 @@ static void potential( void )
 
     for ( i = 0; i < PRPTS; i++ )
     {
-        r = 0.5 + (double) i;
+        r = 0.5 + (PLFLT) i;
         for ( j = 0; j < PTHETAPTS; j++ )
         {
-            theta           = ( 2. * M_PI / (double) ( PTHETAPTS - 1 ) ) * ( 0.5 + (double) j );
+            theta           = ( 2. * M_PI / (PLFLT) ( PTHETAPTS - 1 ) ) * ( 0.5 + (PLFLT) j );
             cgrid2.xg[i][j] = r * cos( theta );
             cgrid2.yg[i][j] = r * sin( theta );
         }
@@ -218,12 +218,12 @@ static void potential( void )
 //        xmin, xmax, ymin, ymax, zmin, zmax);
 
     // Positive and negative contour levels.
-    dz        = ( zmax - zmin ) / (double) PNLEVEL;
+    dz        = ( zmax - zmin ) / (PLFLT) PNLEVEL;
     nlevelneg = 0;
     nlevelpos = 0;
     for ( i = 0; i < PNLEVEL; i++ )
     {
-        clevel2 = zmin + ( (double) i + 0.5 ) * dz;
+        clevel2 = zmin + ( (PLFLT) i + 0.5 ) * dz;
         if ( clevel2 <= 0. )
             clevelneg[nlevelneg++] = clevel2;
         else
@@ -262,7 +262,7 @@ static void potential( void )
     // Draw outer boundary
     for ( i = 0; i < PPERIMETERPTS; i++ )
     {
-        t     = ( 2. * M_PI / ( PPERIMETERPTS - 1 ) ) * (double) i;
+        t     = ( 2. * M_PI / ( PPERIMETERPTS - 1 ) ) * (PLFLT) i;
         px[i] = x0 + rmax * cos( t );
         py[i] = y0 + rmax * sin( t );
     }
@@ -312,10 +312,10 @@ main( int argc, char *argv[] )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        xx = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
+        xx = (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
         for ( j = 0; j < YPTS; j++ )
         {
-            yy      = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
+            yy      = (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 ) - 1.0;
             z[i][j] = xx * xx - yy * yy;
             w[i][j] = 2 * xx * yy;
         }

@@ -168,7 +168,7 @@ x17::x17( int argc, char ** argv )
         }
 # endif
 #endif
-        t     = (double) n * dt;
+        t     = (PLFLT) n * dt;
         noise = pls->randd() - 0.5;
         y1    = y1 + noise;
         y2    = sin( t * M_PI / 18. );

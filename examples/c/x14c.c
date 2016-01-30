@@ -408,10 +408,10 @@ plot5( void )
 
     for ( i = 0; i < XPTS; i++ )
     {
-        xx = (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
+        xx = (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
         for ( j = 0; j < YPTS; j++ )
         {
-            yy      = (double) ( j - ( YPTS / 2 ) ) / (double) ( YPTS / 2 ) - 1.0;
+            yy      = (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 ) - 1.0;
             z[i][j] = xx * xx - yy * yy;
             w[i][j] = 2 * xx * yy;
         }

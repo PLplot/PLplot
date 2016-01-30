@@ -286,8 +286,8 @@ x31::x31( int argc, char *argv[] )
     cout << "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = " << zxmin << " " << zymin << " " << zxmax << " " << zymax << endl;
     if ( fabs( zxmin - ( xmin + ( xmax - xmin ) * zxmin0 ) ) > 1.0E-5 ||
          fabs( zymin - ( ymin + ( ymax - ymin ) * zymin0 ) ) > 1.0E-5 ||
-	 fabs( zxmax - ( xmin + ( xmax - xmin ) * zxmax0 ) ) > 1.0E-5 ||
-	 fabs( zymax - ( ymin + ( ymax - ymin ) * zymax0 ) ) > 1.0E-5 )
+         fabs( zxmax - ( xmin + ( xmax - xmin ) * zxmax0 ) ) > 1.0E-5 ||
+         fabs( zymax - ( ymin + ( ymax - ymin ) * zymax0 ) ) > 1.0E-5 )
     {
         cerr << "plsdiplz test failed" << endl;
         status = 1;

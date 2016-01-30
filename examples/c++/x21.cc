@@ -25,7 +25,7 @@
 
 // Need for some Mac OSX systems with broken <cmath> header
 #ifdef PL_BROKEN_ISNAN_CXX
-extern "C" int isnan( double );
+extern "C" int isnan( PLFLT );
 #endif
 
 #ifdef PL_USE_NAMESPACE
@@ -420,7 +420,7 @@ void x21::create_data( PLFLT **xi, PLFLT **yi, PLFLT **zi, PLINT pts )
         }
         else
         {
-            *z = log( pow( (double) ( 1. - *x ), 2. ) + 100. * pow( (double) ( *y - pow( (double) *x, 2. ) ), 2. ) );
+            *z = log( pow( ( 1. - *x ), 2. ) + 100. * pow( ( *y - pow( *x, 2. ) ), 2. ) );
         }
         x++; y++; z++;
     }

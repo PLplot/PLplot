@@ -350,7 +350,7 @@ x29::plot4()
 
         for ( i = 0; i < npts; i++ )
         {
-            x[i] = xmin + i * ( xmax - xmin ) / ( (double) ( npts - 1 ) );
+            x[i] = xmin + i * ( xmax - xmin ) / ( (PLFLT) ( npts - 1 ) );
             pls->configtime( scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0. );
             tai = x[i];
             pls->btime( tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai );

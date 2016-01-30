@@ -76,7 +76,7 @@ main( int argc, char *argv[] )
         // Get a color, change its transparency and
         // set it as the current color.
         plgcol0a( icol, &r, &g, &b, &a );
-        plscol0a( icol, r, g, b, 1.0 - (double) i / 9.0 );
+        plscol0a( icol, r, g, b, 1.0 - (PLFLT) i / 9.0 );
         plcol0( icol );
 
         // Draw the rectangle

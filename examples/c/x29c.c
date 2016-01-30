@@ -340,7 +340,7 @@ plot4( void )
 
         for ( i = 0; i < npts; i++ )
         {
-            xx[i] = xmin + i * ( xmax - xmin ) / ( (double) ( npts - 1 ) );
+            xx[i] = xmin + i * ( xmax - xmin ) / ( (PLFLT) ( npts - 1 ) );
             plconfigtime( scale, offset1, offset2, 0x0, 0, 0, 0, 0, 0, 0, 0. );
             tai = xx[i];
             plbtime( &tai_year, &tai_month, &tai_day, &tai_hour, &tai_min, &tai_sec, tai );

@@ -88,11 +88,11 @@ main( int argc, char *argv[] )
     plAlloc2dGrid( &z, XPTS, YPTS );
     for ( i = 0; i < XPTS; i++ )
     {
-        x[i] = 3. * (double) ( i - ( XPTS / 2 ) ) / (double) ( XPTS / 2 );
+        x[i] = 3. * (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
     }
 
     for ( i = 0; i < YPTS; i++ )
-        y[i] = 3. * (double) ( i - ( YPTS / 2 ) ) / (double) ( YPTS / 2 );
+        y[i] = 3. * (PLFLT) ( i - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 );
 
     for ( i = 0; i < XPTS; i++ )
     {

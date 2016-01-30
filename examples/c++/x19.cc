@@ -40,7 +40,7 @@ private:
 void
 map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer /* data */ )
 {
-    double radius;
+    PLFLT radius;
 
     radius = 90.0 - y;
     *xt    = radius * cos( x * M_PI / 180.0 );
@@ -58,8 +58,8 @@ map_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer /* data */ )
 void
 mapform19( PLINT n, PLFLT *x, PLFLT *y )
 {
-    int    i;
-    double xp, yp, radius;
+    int   i;
+    PLFLT xp, yp, radius;
     for ( i = 0; i < n; i++ )
     {
         radius = 90.0 - y[i];

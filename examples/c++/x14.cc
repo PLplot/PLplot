@@ -211,7 +211,7 @@ void x14::plot1( plstream *pls )
     for ( i = 0; i < 60; i++ )
     {
         x[i] = xoff + xscale * ( i + 1 ) / 60.0;
-        y[i] = yoff + yscale * pow( (double) x[i], 2. );
+        y[i] = yoff + yscale * pow( x[i], 2. );
     }
 
     xmin = x[0];
@@ -413,10 +413,10 @@ void x14::plot5( plstream *pls )
 
     for ( i = 0; i < xpts; i++ )
     {
-        xx = (double) ( i - ( xpts / 2 ) ) / (double) ( xpts / 2 );
+        xx = (PLFLT) ( i - ( xpts / 2 ) ) / (PLFLT) ( xpts / 2 );
         for ( j = 0; j < ypts; j++ )
         {
-            yy      = (double) ( j - ( ypts / 2 ) ) / (double) ( ypts / 2 ) - 1.0;
+            yy      = (PLFLT) ( j - ( ypts / 2 ) ) / (PLFLT) ( ypts / 2 ) - 1.0;
             z[i][j] = xx * xx - yy * yy;
             w[i][j] = 2 * xx * yy;
         }

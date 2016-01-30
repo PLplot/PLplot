@@ -248,7 +248,7 @@ main( int argc, char *argv[] )
 #endif
     for ( i = indexxmin; i < indexxmax; i++ )
     {
-        square_root = sqrt( 1. - MIN( 1., pow( ( (PLFLT) i - x0 ) / a, 2. ) ) );
+        square_root = sqrt( 1. - MIN( 1., pow( ( i - x0 ) / a, 2. ) ) );
         // Add 0.5 to find nearest integer and therefore preserve symmetry
         // with regard to lower and upper bound of y range.
         indexymin[i] = MAX( 0, (PLINT) ( 0.5 + y0 - b * square_root ) );

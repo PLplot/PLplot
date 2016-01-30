@@ -197,10 +197,10 @@ main( int argc, char *argv[] )
 
     for ( i = 0; i < nx; i++ )
     {
-        x = (double) ( i - ( nx / 2 ) ) / (double) ( nx / 2 );
+        x = (PLFLT) ( i - ( nx / 2 ) ) / (PLFLT) ( nx / 2 );
         for ( j = 0; j < ny; j++ )
         {
-            y = (double) ( j - ( ny / 2 ) ) / (double) ( ny / 2 ) - 1.0;
+            y = (PLFLT) ( j - ( ny / 2 ) ) / (PLFLT) ( ny / 2 ) - 1.0;
 
             z[i][j] = -sin( 7. * x ) * cos( 7. * y ) + x * x - y * y;
             w[i][j] = -cos( 7. * x ) * sin( 7. * y ) + 2 * x * y;
@@ -541,7 +541,7 @@ main( int argc, char *argv[] )
 // Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
     for ( i = 0; i < PERIMETERPTS; i++ )
     {
-        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (double) i;
+        t     = ( 2. * M_PI / ( PERIMETERPTS - 1 ) ) * (PLFLT) i;
         px[i] = cos( t );
         py[i] = sin( t );
     }
