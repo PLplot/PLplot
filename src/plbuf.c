@@ -173,6 +173,10 @@ plbuf_bop( PLStream *pls )
     plbuf_state( pls, PLSTATE_FILL );
     plbuf_state( pls, PLSTATE_CHR );
     plbuf_state( pls, PLSTATE_SYM );
+
+    //pls->difilt may also be set pre plinit() and is used
+    //in plbop for text scaling.
+    wr_data( pls, &pls->difilt, sizeof ( pls->difilt ) );
 }
 
 //--------------------------------------------------------------------------
@@ -766,6 +770,9 @@ rdbuf_bop( PLStream *pls )
     {
         plP_state( PLSTATE_COLOR1 );
     }
+
+    //read DI
+    rd_data( pls, &( pls->difilt ), sizeof( pls->difilt ) );
 
     plP_bop();
 }
