@@ -405,11 +405,14 @@ fi
 status=0
 
 if [ "@WIN32@" = "1" ] ; then
- critical_examples="14 17 29"
  exesuffix=".exe"
 else
- critical_examples="14 17 29"
  exesuffix=
+fi
+if [ "@PL_DOUBLE@" = "OFF" ] ; then
+ critical_examples="14 17"
+else
+ critical_examples="14 17 29"
 fi
 export critical_examples exesuffix
 for i in $FRONT_END ; do
