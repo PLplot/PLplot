@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Hezekiah M. Carty
-# Copyright (C) 2009-2015 Alan W. Irwin
+# Copyright (C) 2009-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -19,20 +19,20 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining Ada bindings configuration options
+# Module for determining OCaml binding configuration options
 
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_ocaml "Enable OCaml bindings" OFF)
+  option(ENABLE_ocaml "Enable OCaml binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_ocaml "Enable OCaml bindings" ON)
+  option(ENABLE_ocaml "Enable OCaml binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-option(ENABLE_ocaml_static "Enable OCaml bindings for the static build case" OFF)
+option(ENABLE_ocaml_static "Enable OCaml binding for the static build case" OFF)
 
 if(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
     message(STATUS "WARNING:"
-      "Static build with ENABLE_ocaml_static false.  Therefore, disabling ocaml bindings")
-    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+      "Static build with ENABLE_ocaml_static false.  Therefore, disabling OCaml binding")
+    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
 endif(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
@@ -42,14 +42,20 @@ if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
 
+if(ENABLE_ocaml AND NOT PL_DOUBLE)
+  message(STATUS "WARNING: "
+    "Only single-precision floating point. Disabling Ocaml binding because of run-time errors in this case.")
+  set(ENABLE_ocaml OFF CACHE BOOL "Enable Ocaml binding" FORCE)
+endif(ENABLE_ocaml AND NOT PL_DOUBLE)
+
 if(ENABLE_ocaml)
   find_program(OCAMLC NAMES ocamlc.opt ocamlc)
   if (OCAMLC)
     message(STATUS "OCAMLC = ${OCAMLC}")
   else (OCAMLC)
     message(STATUS "WARNING:"
-      "ocamlc not found. Disabling ocaml bindings")
-    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+      "The ocamlc application not found. Disabling OCaml binding")
+    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif (OCAMLC)
 endif(ENABLE_ocaml)
 
@@ -59,8 +65,8 @@ if(ENABLE_ocaml)
     message(STATUS "CAMLIDL = ${CAMLIDL}")
   else (CAMLIDL)
     message(STATUS "WARNING:"
-      "camlidl not found. Disabling ocaml bindings")
-    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+      "The camlidl application not found. Disabling OCaml binding")
+    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif (CAMLIDL)
 endif(ENABLE_ocaml)
 
@@ -70,8 +76,8 @@ if(ENABLE_ocaml)
     message(STATUS "OCAMLMKLIB = ${OCAMLMKLIB}")
   else (OCAMLMKLIB)
     message(STATUS "WARNING:"
-      "ocamlmklib not found. Disabling ocaml bindings")
-    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+      "The ocamlmklib application not found. Disabling OCaml binding")
+    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif (OCAMLMKLIB)
 endif(ENABLE_ocaml)
 
@@ -85,7 +91,7 @@ if(ENABLE_ocaml)
     message(STATUS "OCAMLOPT = ${OCAMLOPT}")
   else (OCAMLOPT)
     message(STATUS "WARNING:"
-      "ocamlopt not found. Disabling native code OCaml bindings")
+      "The ocamlopt application not found. Disabling native code OCaml binding")
   endif (OCAMLOPT)
 endif(ENABLE_ocaml)
 
@@ -95,7 +101,7 @@ if(ENABLE_ocaml)
     message(STATUS "OCAMLFIND = ${OCAMLFIND}")
   else (OCAMLFIND)
     message(STATUS "WARNING:"
-      "ocamlfind not found.")
+      "The ocamlfind application not found.")
   endif (OCAMLFIND)
 endif(ENABLE_ocaml)
 
@@ -105,7 +111,7 @@ if(ENABLE_ocaml AND BUILD_DOC)
     message(STATUS "OCAMLDOC = ${OCAMLDOC}")
   else (OCAMLDOC)
     message(STATUS "WARNING:"
-      "ocamldoc not found. Disabling OCaml API documentation generation")
+      "The ocamldoc application not found. Disabling OCaml API documentation generation")
   endif (OCAMLDOC)
 endif(ENABLE_ocaml AND BUILD_DOC)
 
@@ -132,8 +138,8 @@ if(ENABLE_ocaml)
     message(STATUS "CAMLIDL_LIB_DIR = ${CAMLIDL_LIB_DIR}")
   else(CAMLIDL_LIB_DIR)
     message(STATUS "WARNING:"
-      "camlidl library not found. Disabling ocaml bindings")
-    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml bindings" FORCE)
+      "The camlidl library not found. Disabling OCaml binding")
+    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif(CAMLIDL_LIB_DIR)
 
   # Installation follows the Debian ocaml policy for want of a better
@@ -159,7 +165,7 @@ if(ENABLE_ocaml)
       message(STATUS "OCAML = ${OCAML}")
     else (OCAML)
       message(STATUS "WARNING:"
-	"ocaml not found. Disabling generation of generated_plplot_h.inc")
+	"The ocaml application not found. Disabling generation of generated_plplot_h.inc")
       set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
     endif (OCAML)
   endif(GENERATE_PLPLOT_H_INC)

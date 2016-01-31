@@ -30,7 +30,7 @@
 #                           wxwidgets libraries.
 # DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case
 # 			    when ENABLE_DYNDRIVERS OFF.
-# Find wxWidgets needed for driver and bindings
+# Find wxWidgets needed for driver and binding
 
 if(PLD_wxwidgets OR PLD_wxpng)
   if(NOT CMAKE_CXX_COMPILER_WORKS)
@@ -146,7 +146,7 @@ if(PLD_wxwidgets OR PLD_wxpng)
 	  ${AGG_LIBRARIES}
 	  )
       else(HAVE_AGG)
-	message(STATUS "WARNING: old wxwidgets driver and bindings components depending on AGG library have been dropped.")
+	message(STATUS "WARNING: old wxwidgets driver and binding components depending on AGG library have been dropped.")
       endif(HAVE_AGG)
       set(
 	wxwidgets_COMPILE_FLAGS
@@ -186,9 +186,9 @@ if(PLD_wxwidgets OR PLD_wxpng)
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_wxwidgets "Enable wxwidgets bindings" OFF)
+  option(ENABLE_wxwidgets "Enable wxwidgets binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_wxwidgets "Enable wxwidgets bindings" ON)
+  option(ENABLE_wxwidgets "Enable wxwidgets binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
@@ -196,7 +196,7 @@ if(ENABLE_wxwidgets AND NOT ENABLE_cxx)
   message(STATUS "WARNING: C++ binding is disabled so "
     "setting ENABLE_wxwidgets to OFF."
     )
-  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
+  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets binding" FORCE)
 endif(ENABLE_wxwidgets AND NOT ENABLE_cxx)
 
 if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
@@ -204,7 +204,7 @@ if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
     "WARNING: PLD_wxwidgets is OFF so "
     "setting ENABLE_wxwidgets to OFF."
     )
-  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets bindings" FORCE)
+  set(ENABLE_wxwidgets OFF CACHE BOOL "Enable wxwidgets binding" FORCE)
 endif(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 
 if(ENABLE_wxwidgets)

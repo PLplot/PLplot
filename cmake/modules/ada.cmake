@@ -17,19 +17,25 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining Ada bindings configuration options
+# Module for determining Ada binding configuration options
 
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_ada "Enable Ada bindings" OFF)
+  option(ENABLE_ada "Enable Ada binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_ada "Enable Ada bindings" ON)
+  option(ENABLE_ada "Enable Ada binding" ON)
 endif(DEFAULT_NO_BINDINGS)
+
+if(ENABLE_ada AND NOT PL_DOUBLE)
+  message(STATUS "WARNING: "
+    "Only single-precision floating point. Disabling Ada binding because of run-time errors in this case.")
+  set(ENABLE_ada OFF CACHE BOOL "Enable Ada binding" FORCE)
+endif(ENABLE_ada AND NOT PL_DOUBLE)
 
 if(ENABLE_ada AND NOT PLPLOT_Ada_COMPILER_WORKS)
   workaround_9220(Ada PLPLOT_Ada_COMPILER_WORKS)
   if(NOT PLPLOT_Ada_COMPILER_WORKS)
-    message(STATUS "WARNING: no working Ada compiler so disabling Ada bindings and examples.")
-    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+    message(STATUS "WARNING: no working Ada compiler so disabling Ada binding and examples.")
+    set(ENABLE_ada OFF CACHE BOOL "Enable Ada binding" FORCE)
   endif(NOT PLPLOT_Ada_COMPILER_WORKS)
 endif(ENABLE_ada AND NOT PLPLOT_Ada_COMPILER_WORKS)
 
@@ -37,8 +43,8 @@ if(ENABLE_ada)
   # Find and check Ada compiler
   enable_language(Ada OPTIONAL)
   if(NOT CMAKE_Ada_COMPILER_WORKS)
-    message(STATUS "WARNING: no working Ada compiler so disabling Ada bindings and examples.")
-    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+    message(STATUS "WARNING: no working Ada compiler so disabling Ada binding and examples.")
+    set(ENABLE_ada OFF CACHE BOOL "Enable Ada binding" FORCE)
   endif(NOT CMAKE_Ada_COMPILER_WORKS)
 endif(ENABLE_ada)
 
@@ -52,8 +58,8 @@ if(ENABLE_ada)
   find_library(GNAT_LIB NAMES gnat gnat-${GNATVERSION} gnat-${GNATMAJVERSION})
   if(NOT GNAT_LIB)
     message(STATUS "WARNING: "
-      "gnat library not found. Disabling ada bindings")
-    set(ENABLE_ada OFF CACHE BOOL "Enable Ada bindings" FORCE)
+      "gnat library not found. Disabling Ada binding")
+    set(ENABLE_ada OFF CACHE BOOL "Enable Ada binding" FORCE)
   else(NOT GNAT_LIB)
     message(STATUS "FOUND gnat library ${GNAT_LIB}")
   endif(NOT GNAT_LIB)

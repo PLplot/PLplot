@@ -19,38 +19,38 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining Lua bindings configuration options
+# Module for determining Lua binding configuration options
 
-# Options to enable Lua bindings
+# Options to enable Lua binding
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_lua "Enable Lua bindings" OFF)
+  option(ENABLE_lua "Enable Lua binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_lua "Enable Lua bindings" ON)
+  option(ENABLE_lua "Enable Lua binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_lua AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
-    "Lua requires shared libraries. Disabling Lua bindings")
-  set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+    "Lua requires shared libraries. Disabling Lua binding")
+  set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
 endif(ENABLE_lua AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_lua AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
-    "swig not found. Disabling Lua bindings")
-  set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+    "swig not found. Disabling Lua binding")
+  set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
 endif(ENABLE_lua AND NOT SWIG_FOUND)
 
 if(ENABLE_lua)
   if(${SWIG_VERSION} VERSION_LESS "1.3.35")
-    message(STATUS "WARNING: swig version too old for Lua bindings.   Disabling Lua bindings.")
-    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+    message(STATUS "WARNING: swig version too old for Lua binding.   Disabling Lua binding.")
+    set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
   endif(${SWIG_VERSION} VERSION_LESS "1.3.35")
 endif(ENABLE_lua)
 
 if(ENABLE_lua AND NOT PL_DOUBLE)
   message(STATUS "WARNING: "
-    "only single precision floating point. Disabling Lua bindings")
-  set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+    "Only single-precision floating point. Disabling Lua binding")
+  set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
 endif(ENABLE_lua AND NOT PL_DOUBLE)
 
 if(ENABLE_lua)
@@ -61,8 +61,8 @@ if(ENABLE_lua)
   find_package(Lua)
   if(NOT LUA_FOUND)
     message(STATUS "WARNING: "
-      "Lua library and/or header not found. Disabling Lua bindings")
-    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+      "Lua library and/or header not found. Disabling Lua binding")
+    set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
   endif(NOT LUA_FOUND)
 endif(ENABLE_lua)
 
@@ -70,8 +70,8 @@ if(ENABLE_lua)
   find_program(LUA_EXECUTABLE lua)
   if(NOT LUA_EXECUTABLE)
     message(STATUS "WARNING: "
-      "Lua executable not found. Disabling Lua bindings")
-    set(ENABLE_lua OFF CACHE BOOL "Enable Lua bindings" FORCE)
+      "Lua executable not found. Disabling Lua binding")
+    set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
   endif(NOT LUA_EXECUTABLE)
 endif(ENABLE_lua)
 

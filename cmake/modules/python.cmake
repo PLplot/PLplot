@@ -17,33 +17,33 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining Python bindings configuration options
+# Module for determining Python binding configuration options
 
-# Options to enable Python bindings
+# Options to enable Python binding
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_python "Enable Python bindings" OFF)
+  option(ENABLE_python "Enable Python binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_python "Enable Python bindings" ON)
+  option(ENABLE_python "Enable Python binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 find_program(SED_EXECUTABLE sed)
 
 if(ENABLE_python AND NOT SED_EXECUTABLE)
   message(STATUS "WARNING: "
-    "Python bindings fixup requires sed which was not found. Disabling Python bindings")
-  set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+    "Python binding fixup requires sed which was not found. Disabling Python binding")
+  set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
 endif(ENABLE_python AND NOT SED_EXECUTABLE)
 
 if(ENABLE_python AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
-    "Python requires shared libraries. Disabling Python bindings")
-  set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+    "Python requires shared libraries. Disabling Python binding")
+  set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
 endif(ENABLE_python AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_python AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
-    "swig not found. Disabling Python bindings")
-  set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+    "swig not found. Disabling Python binding")
+  set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
 endif(ENABLE_python AND NOT SWIG_FOUND)
 
 if(ENABLE_python)
@@ -51,8 +51,8 @@ if(ENABLE_python)
   find_package(PythonInterp)
   if(NOT PYTHONINTERP_FOUND)
     message(STATUS "WARNING: "
-      "Python interpreter not found. Disabling Python bindings")
-    set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+      "Python interpreter not found. Disabling Python binding")
+    set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
   endif(NOT PYTHONINTERP_FOUND)
 endif(ENABLE_python)
 
@@ -63,8 +63,8 @@ if(ENABLE_python)
   find_package(PythonLibs)
   if(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
     message(STATUS "WARNING: "
-      "Python library and/or header not found. Disabling Python bindings")
-    set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+      "Python library and/or header not found. Disabling Python binding")
+    set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
   endif(NOT PYTHON_LIBRARIES OR NOT PYTHON_INCLUDE_PATH)
 endif(ENABLE_python)
 
@@ -96,8 +96,8 @@ if(ENABLE_python)
 
   if(NOT NUMPY_INCLUDE_PATH)
     message(STATUS "WARNING: "
-	"NumPy header not found. Disabling Python bindings")
-    set(ENABLE_python OFF CACHE BOOL "Enable Python bindings" FORCE)
+	"NumPy header not found. Disabling Python binding")
+    set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
   endif(NOT NUMPY_INCLUDE_PATH)
 endif(ENABLE_python)
 

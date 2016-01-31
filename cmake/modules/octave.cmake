@@ -17,37 +17,43 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining octave bindings configuration options
+# Module for determining Octave binding configuration options
 
-# Options to enable Octave bindings
+# Options to enable Octave binding
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_octave "Enable Octave bindings" OFF)
+  option(ENABLE_octave "Enable Octave binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_octave "Enable Octave bindings" ON)
+  option(ENABLE_octave "Enable Octave binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_octave AND NOT CMAKE_CXX_COMPILER_WORKS)
   message(STATUS "WARNING: "
-    "Octave requires working C++ compiler to build.  Disabling octave bindings")
-  set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "Octave requires working C++ compiler to build.  Disabling Octave binding")
+  set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
 endif(ENABLE_octave AND NOT CMAKE_CXX_COMPILER_WORKS)
 
 if(ENABLE_octave AND NOT SWIG_FOUND)
   message(STATUS "WARNING: "
-    "swig not found. Disabling Octave bindings")
-  set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "swig not found. Disabling Octave binding")
+  set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
 endif(ENABLE_octave AND NOT SWIG_FOUND)
 
 if(ENABLE_octave AND NOT BUILD_SHARED_LIBS)
   message(STATUS "WARNING: "
-    "Octave requires shared libraries. Disabling octave bindings")
-  set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "Octave requires shared libraries. Disabling Octave binding")
+  set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
 endif(ENABLE_octave AND NOT BUILD_SHARED_LIBS)
+
+if(ENABLE_octave AND NOT PL_DOUBLE)
+  message(STATUS "WARNING: "
+    "Only single-precision floating point. Disabling Octave binding because of build errors in this case.")
+  set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
+endif(ENABLE_octave AND NOT PL_DOUBLE)
 
 if(ENABLE_octave AND NOT PERL_FOUND)
   message(STATUS "WARNING: "
-    "The octave build requires perl. Disabling octave bindings")
-  set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "The Octave build requires perl. Disabling Octave binding")
+  set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
 endif(ENABLE_octave AND NOT PERL_FOUND)
 
 if(ENABLE_octave)
@@ -56,8 +62,8 @@ if(ENABLE_octave)
     message(STATUS "OCTAVE = ${OCTAVE}")
   else(OCTAVE)
     message(STATUS "WARNING: "
-    "octave not found. Disabling octave bindings")
-    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "The octave command not found. Disabling Octave binding")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
   endif(OCTAVE)
 endif(ENABLE_octave)
 
@@ -67,8 +73,8 @@ if(ENABLE_octave)
     message(STATUS "MKOCTFILE = ${MKOCTFILE}")
   else(MKOCTFILE)
     message(STATUS "WARNING: "
-    "mkoctfile not found. Disabling octave bindings")
-    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "The mkoctfile command not found. Disabling Octave binding")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
   endif(MKOCTFILE)
 endif(ENABLE_octave)
 
@@ -78,8 +84,8 @@ if(ENABLE_octave)
     message(STATUS "OCTAVE_CONFIG = ${OCTAVE_CONFIG}")
   else(OCTAVE_CONFIG)
     message(STATUS "WARNING: "
-    "octave-config not found. Disabling octave bindings")
-    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "The octave-config command not found. Disabling Octave binding")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
   endif(OCTAVE_CONFIG)
 endif(ENABLE_octave)
 
@@ -95,8 +101,8 @@ if(ENABLE_octave)
   if(return_code)
     message(STATUS "OCTAVE_ERROR = ${OCTAVE_ERROR}")
     message(STATUS "WARNING: "
-    "${OCTAVE_CONFIG} -p VERSION generates an error (non-zero return code).  Disabling octave bindings")
-    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "${OCTAVE_CONFIG} -p VERSION generates an error (non-zero return code).  Disabling Octave binding")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
   endif(return_code)
 endif(ENABLE_octave)
 
@@ -104,8 +110,8 @@ if(ENABLE_octave)
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
   if(${OCTAVE_VERSION} VERSION_LESS "3.2.0")
     message(STATUS "WARNING: "
-    "plplot require octave version 3.2 or greater. Disabling octave bindings")
-    set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+    "PLplot requires Octave version 3.2 or greater. Disabling Octave binding")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
   elseif(NOT ${OCTAVE_VERSION} VERSION_LESS "4")
     message(STATUS "WARNING: Octave-4 has been found which is likely to lead to build errors for PLplot.")
     option(TRY_OCTAVE4 "Experimentally try Octave-4 if it is found" OFF)
@@ -113,10 +119,10 @@ if(ENABLE_octave)
       message(STATUS "WARNING: TRY_OCTAVE4 = ${TRY_OCTAVE4} so experimentally trying Octave-4")
     else(TRY_OCTAVE4)
       message(STATUS
-  "WARNING: Disabling octave bindings. If you want to use that component of PLplot you
+  "WARNING: Disabling Octave binding. If you want to use that component of PLplot you
    should try installing Octave-3 (which works well with PLplot) or else try the
    experimental cmake option -DTRY_OCTAVE4=ON")
-      set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+      set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
     endif(TRY_OCTAVE4)
   endif(${OCTAVE_VERSION} VERSION_LESS "3.2.0")
 endif(ENABLE_octave)
@@ -196,13 +202,13 @@ if(ENABLE_octave)
 	)
       else(OCTAVE_INCLUDE_PATH_EXTERNAL)
 	message(STATUS "WARNING: "
-	  "Required external octave header, hdf5.h, that is typically part of the libhdf5-dev package, has not found. Disabling octave bindings")
-	set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+	  "Required external Octave header, hdf5.h, that is typically part of the libhdf5-dev package, has not found. Disabling Octave binding")
+	set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
       endif(OCTAVE_INCLUDE_PATH_EXTERNAL)
     else(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
       message(STATUS "WARNING: "
-      "octave headers and/or library not found. Disabling octave bindings")
-      set(ENABLE_octave OFF CACHE BOOL "Enable Octave bindings" FORCE)
+      "The Octave headers and/or library not found. Disabling Octave binding")
+      set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
     endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES) 
   endif(NOT DEFINED OCTAVE_INCLUDE_PATH)
   message(STATUS "OCTAVE_LIBRARIES = ${OCTAVE_LIBRARIES}")

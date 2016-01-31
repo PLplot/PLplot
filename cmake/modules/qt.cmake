@@ -60,17 +60,17 @@
 # PYQT_SIP_FLAGS	  - sip command flags
 
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_qt "Enable Qt bindings" OFF)
+  option(ENABLE_qt "Enable Qt binding" OFF)
   option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" OFF)
   option(ENABLE_pyqt5 "Enable pyqt5 Python extension module" OFF)
-  option(ENABLE_smoke "Enable smoke Qt bindings" OFF)
+  option(ENABLE_smoke "Enable smoke Qt binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_qt "Enable Qt bindings" ON)
+  option(ENABLE_qt "Enable Qt binding" ON)
   option(ENABLE_pyqt4 "Enable pyqt4 Python extension module" ON)
   option(ENABLE_pyqt5 "Enable pyqt5 Python extension module" ON)
   # Still experimental so this should default to OFF, but the user
   # has the option to turn it ON.
-  option(ENABLE_smoke "Enable smoke Qt bindings" OFF)
+  option(ENABLE_smoke "Enable smoke Qt binding" OFF)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_qt)
@@ -227,9 +227,9 @@ if(ENABLE_qt)
       filter_rpath(qt_RPATH)
       #message("qt_LIBRARY_DIR = ${qt_LIBRARY_DIR}")
     else(QT4_FOUND)
-      message(STATUS "WARNING: Suitable Qt4 development environment not found so disabling Qt bindings."
+      message(STATUS "WARNING: Suitable Qt4 development environment not found so disabling Qt binding."
 	)
-      set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
+      set(ENABLE_qt OFF CACHE BOOL "Enable Qt binding" FORCE)
     endif(QT4_FOUND)
   endif(NOT PLPLOT_USE_QT5)
 endif(ENABLE_qt)
@@ -269,7 +269,7 @@ if(NOT ANY_QT_DEVICE AND ENABLE_qt)
     "WARNING: ANY_QT_DEVICE is OFF so "
     "setting ENABLE_qt to OFF."
     )
-  set(ENABLE_qt OFF CACHE BOOL "Enable Qt bindings" FORCE)
+  set(ENABLE_qt OFF CACHE BOOL "Enable Qt binding" FORCE)
 endif(NOT ANY_QT_DEVICE AND ENABLE_qt)
 
 if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)

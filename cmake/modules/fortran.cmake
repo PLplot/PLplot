@@ -20,22 +20,22 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining F95 bindings configuration options
+# Module for determining F95 binding configuration options
 
 option(PL_DEPRECATED_f95 "Use deprecated version of Fortran 95 binding and examples" OFF)
 
-# Options to enable Fortran bindings
+# Options to enable Fortran binding
 if(DEFAULT_NO_BINDINGS)
-  option(ENABLE_f95 "Enable f95 bindings" OFF)
+  option(ENABLE_f95 "Enable f95 binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  option(ENABLE_f95 "Enable f95 bindings" ON)
+  option(ENABLE_f95 "Enable f95 binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_f95 AND NOT PLPLOT_Fortran_COMPILER_WORKS)
   workaround_9220(Fortran PLPLOT_Fortran_COMPILER_WORKS)
   if(NOT PLPLOT_Fortran_COMPILER_WORKS)
-    message(STATUS "WARNING: no working Fortran compiler so disabling Fortran bindings and examples.")
-    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+    message(STATUS "WARNING: no working Fortran compiler so disabling f95 binding and examples.")
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 binding" FORCE)
   endif(NOT PLPLOT_Fortran_COMPILER_WORKS)
 endif(ENABLE_f95 AND NOT PLPLOT_Fortran_COMPILER_WORKS)
 
@@ -43,8 +43,8 @@ if(ENABLE_f95)
   # Find and check Fortran compiler.
   enable_language(Fortran OPTIONAL)
   if(NOT CMAKE_Fortran_COMPILER_WORKS)
-    message(STATUS "WARNING: no working Fortran compiler so disabling Fortran bindings and examples.")
-    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+    message(STATUS "WARNING: no working Fortran compiler so disabling f95 binding and examples.")
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 binding" FORCE)
   endif(NOT CMAKE_Fortran_COMPILER_WORKS)
 endif(ENABLE_f95)
 
@@ -52,9 +52,9 @@ if(ENABLE_f95)
   # Don't compile Fortran 95 binding if compiler doesn't support it
   if(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
     message(STATUS "WARNING: "
-    "fortran compiler does not support f90/95. Disabling f95 bindings"
+    "fortran compiler does not support f90/95. Disabling f95 binding"
     )
-    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 bindings" FORCE)
+    set(ENABLE_f95 OFF CACHE BOOL "Enable f95 binding" FORCE)
   endif(ENABLE_f95 AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
 
   # Set installation location for f95 modules.

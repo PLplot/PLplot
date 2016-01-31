@@ -19,20 +19,20 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining C++ bindings configuration options
+# Module for determining C++ binding configuration options
 
-# Option to enable C++ bindings
+# Option to enable C++ binding
 if(DEFAULT_NO_BINDINGS)
-  OPTION(ENABLE_cxx "Enable C++ bindings" OFF)
+  OPTION(ENABLE_cxx "Enable C++ binding" OFF)
 else(DEFAULT_NO_BINDINGS)
-  OPTION(ENABLE_cxx "Enable C++ bindings" ON)
+  OPTION(ENABLE_cxx "Enable C++ binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
 if(NOT PLPLOT_CXX_COMPILER_WORKS)
   workaround_9220(CXX PLPLOT_CXX_COMPILER_WORKS)
   if(NOT PLPLOT_CXX_COMPILER_WORKS)
-    message(STATUS "WARNING: no working C++ compiler so disabling C++ bindings and examples.")
-    set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
+    message(STATUS "WARNING: no working C++ compiler so disabling C++ binding and examples.")
+    set(ENABLE_cxx OFF CACHE BOOL "Enable C++ binding" FORCE)
   endif(NOT PLPLOT_CXX_COMPILER_WORKS)
 endif(NOT PLPLOT_CXX_COMPILER_WORKS)
 
@@ -41,8 +41,8 @@ if(PLPLOT_CXX_COMPILER_WORKS)
   enable_language(CXX OPTIONAL)
   
   if(NOT CMAKE_CXX_COMPILER_WORKS)
-    message(STATUS "No working C++ compiler found so disabling C++ bindings and examples.")
-    set(ENABLE_cxx OFF CACHE BOOL "Enable C++ bindings" FORCE)
+    message(STATUS "No working C++ compiler found so disabling C++ binding and examples.")
+    set(ENABLE_cxx OFF CACHE BOOL "Enable C++ binding" FORCE)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
 endif(PLPLOT_CXX_COMPILER_WORKS)
 
