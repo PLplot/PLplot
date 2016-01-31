@@ -749,9 +749,9 @@ def main():
     max_height = max(max_height, legend_height)
 
     # Color bar examples
-    values_small  = [ -1.0e-200, 1.0e-200 ]
-    values_uneven = [ -1.0e-200, 2.0e-200, 2.6e-200, 3.4e-200, 6.0e-200, 7.0e-200, 8.0e-200, 9.0e-200, 10.0e-200 ]
-    values_even   = [ -2.0e-200, -1.0e-200, 0.0e-200, 1.0e-200, 2.0e-200, 3.0e-200, 4.0e-200, 5.0e-200, 6.0e-200 ]
+    values_small  = [ -1.0e-20, 1.0e-20 ]
+    values_uneven = [ -1.0e-20, 2.0e-20, 2.6e-20, 3.4e-20, 6.0e-20, 7.0e-20, 8.0e-20, 9.0e-20, 10.0e-20 ]
+    values_even   = [ -2.0e-20, -1.0e-20, 0.0e-20, 1.0e-20, 2.0e-20, 3.0e-20, 4.0e-20, 5.0e-20, 6.0e-20 ]
 
     # Use unsaturated green background colour to contrast with black caps.
     plscolbg( 70, 185, 70 )
