@@ -2948,7 +2948,7 @@ plranddCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
     else
     {
-        Tcl_SetObjResult( interp, Tcl_NewDoubleObj( plrandd() ) );
+        Tcl_SetObjResult( interp, Tcl_NewDoubleObj( (double) plrandd() ) );
         return TCL_OK;
     }
 }
@@ -3720,51 +3720,53 @@ plmapCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLINT idxname;
 
     return_code = TCL_OK;
-    if ( argc < 6 || argc > 7 )
-    {
-        Tcl_AppendResult( interp, "bogus syntax for plmap, see doc.",
-            (char *) NULL );
-        return TCL_ERROR;
-    }
-
     if ( argc == 6 )
     {
         transform      = 0;
-        idxname        = 1;
         transform_name = NULL;
-        minlong        = atof( argv[2] );
-        maxlong        = atof( argv[3] );
-        minlat         = atof( argv[4] );
-        maxlat         = atof( argv[5] );
+        idxname        = 1;
     }
-    else
+    else if ( argc == 7 )
     {
-        transform = 1;
-        idxname   = 2;
-        minlong   = atof( argv[3] );
-        maxlong   = atof( argv[4] );
-        minlat    = atof( argv[5] );
-        maxlat    = atof( argv[6] );
-
-        tcl_interp     = interp;
+        transform      = 1;
         transform_name = argv[1];
         if ( strlen( transform_name ) == 0 )
         {
             transform = 0;
         }
-    }
+        idxname = 2;
 
-    if ( transform && idxname == 2 )
-    {
-        plmap( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat );
+        tcl_interp = interp;
     }
     else
     {
-        // No transformation given
-        plmap( NULL, argv[idxname], minlong, maxlong, minlat, maxlat );
+        return_code = TCL_ERROR;
     }
 
-    plflush();
+    if ( return_code == TCL_ERROR )
+    {
+        Tcl_AppendResult( interp, "bogus syntax for plmap, see doc.",
+            (char *) NULL );
+    }
+    else
+    {
+        minlong = atof( argv[idxname + 1] );
+        maxlong = atof( argv[idxname + 2] );
+        minlat  = atof( argv[idxname + 3] );
+        maxlat  = atof( argv[idxname + 4] );
+        if ( transform && idxname == 2 )
+        {
+            plmap( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat );
+        }
+        else
+        {
+            // No transformation given
+            plmap( NULL, argv[idxname], minlong, maxlong, minlat, maxlat );
+        }
+
+        plflush();
+    }
+
     return return_code;
 }
 
@@ -3824,19 +3826,14 @@ static int
 plmapfillCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
               int argc, const char *argv[] )
 {
-    PLFLT minlong, maxlong, minlat, maxlat;
-    PLINT transform;
-    PLINT idxname;
-    PLINT *entries;
-    PLINT nentries;
+    PLFLT  minlong, maxlong, minlat, maxlat;
+    PLINT  transform;
+    PLINT  idxname;
+    PLINT  *entries;
+    PLINT  nentries;
+    double dminlong;
 
     return_code = TCL_OK;
-    if ( argc < 6 || argc > 8 )
-    {
-        Tcl_AppendResult( interp, "bogus syntax for plmapfill, see doc.",
-            (char *) NULL );
-        return TCL_ERROR;
-    }
 
     nentries = 0;
     entries  = NULL;
@@ -3847,22 +3844,18 @@ plmapfillCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         transform      = 0;
         idxname        = 1;
         transform_name = NULL;
-        minlong        = atof( argv[2] );
-        maxlong        = atof( argv[3] );
-        minlat         = atof( argv[4] );
-        maxlat         = atof( argv[5] );
         break;
 
     case 7:     // Transform OR plotentries, not both - ambiguity
-                // Heuristic: transformation name is either a name or empty. Therefore, if
-                // the first argument is a number, a list of plotentries is given (not a matrix)
+                // Transformation name is either a name or empty
+                // string or missing. So the argument pattern is
+                // either one or two non-numeric strings, then a
+                // numeric string.  In the former case all argument
+                // indices are offset by one and a list (not a matrix)
+                // of plotentries is given as the last argument.
 
         transform = 1;
         idxname   = 2;
-        minlong   = atof( argv[3] );
-        maxlong   = atof( argv[4] );
-        minlat    = atof( argv[5] );
-        maxlat    = atof( argv[6] );
 
         tcl_interp     = interp;
         transform_name = argv[1];
@@ -3872,38 +3865,47 @@ plmapfillCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
         else
         {
-            if ( Tcl_GetDouble( interp, argv[2], &minlong ) == TCL_OK )
+            if ( Tcl_GetDouble( interp, argv[2], &dminlong ) == TCL_OK )
             {
                 transform = 0;
-                minlong   = atof( argv[2] );
-                maxlong   = atof( argv[3] );
-                minlat    = atof( argv[4] );
-                maxlat    = atof( argv[5] );
                 idxname   = 1;
                 entries   = GetEntries( interp, argv[6], &nentries );
+                if ( !entries )
+                    return_code = TCL_ERROR;
             }
         }
         break;
 
     case 8:     // Transform, plotentries
-        transform = 1;
-        entries   = GetEntries( interp, argv[7], &nentries );
-        idxname   = 2;
-        minlong   = atof( argv[3] );
-        maxlong   = atof( argv[4] );
-        minlat    = atof( argv[5] );
-        maxlat    = atof( argv[6] );
-
-        tcl_interp     = interp;
+        transform      = 1;
         transform_name = argv[1];
         if ( strlen( transform_name ) == 0 )
         {
             transform = 0;
         }
+
+        idxname = 2;
+
+        entries = GetEntries( interp, argv[7], &nentries );
+        if ( !entries )
+            return_code = TCL_ERROR;
+        tcl_interp = interp;
+        break;
+    default:
+        return_code = TCL_ERROR;
     }
 
-    if ( entries != NULL )
+    if ( return_code == TCL_ERROR )
     {
+        Tcl_AppendResult( interp, "bogus syntax for plmapfill, see doc.",
+            (char *) NULL );
+    }
+    else
+    {
+        minlong = atof( argv[idxname + 1] );
+        maxlong = atof( argv[idxname + 2] );
+        minlat  = atof( argv[idxname + 3] );
+        maxlat  = atof( argv[idxname + 4] );
         if ( transform && idxname == 2 )
         {
             plmapfill( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
@@ -3915,9 +3917,10 @@ plmapfillCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
 
         free( entries );
+
+        plflush();
     }
 
-    plflush();
     return return_code;
 }
 
@@ -3935,19 +3938,14 @@ static int
 plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
               int argc, const char *argv[] )
 {
-    PLFLT minlong, maxlong, minlat, maxlat;
-    PLINT transform;
-    PLINT idxname;
-    PLINT *entries;
-    PLINT nentries;
+    PLFLT  minlong, maxlong, minlat, maxlat;
+    PLINT  transform;
+    PLINT  idxname;
+    PLINT  *entries;
+    PLINT  nentries;
+    double dminlong;
 
     return_code = TCL_OK;
-    if ( argc < 6 || argc > 8 )
-    {
-        Tcl_AppendResult( interp, "bogus syntax for plmapline, see doc.",
-            (char *) NULL );
-        return TCL_ERROR;
-    }
 
     nentries = 0;
     entries  = NULL;
@@ -3956,24 +3954,20 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     {
     case 6:     // No transform, no plotentries
         transform      = 0;
-        idxname        = 1;
         transform_name = NULL;
-        minlong        = atof( argv[2] );
-        maxlong        = atof( argv[3] );
-        minlat         = atof( argv[4] );
-        maxlat         = atof( argv[5] );
+        idxname        = 1;
         break;
 
     case 7:     // Transform OR plotentries, not both - ambiguity
-                // Heuristic: transformation name is either a name or empty. Therefore, if
-                // the first argument is a number, a list of plotentries is given (not a matrix)
+                // Transformation name is either a name or empty
+                // string or missing. So the argument pattern is
+                // either one or two non-numeric strings, then a
+                // numeric string.  In the former case all argument
+                // indices are offset by one and a list (not a matrix)
+                // of plotentries is given as the last argument.
 
         transform = 1;
         idxname   = 2;
-        minlong   = atof( argv[3] );
-        maxlong   = atof( argv[4] );
-        minlat    = atof( argv[5] );
-        maxlat    = atof( argv[6] );
 
         tcl_interp     = interp;
         transform_name = argv[1];
@@ -3983,38 +3977,48 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
         else
         {
-            if ( Tcl_GetDouble( interp, argv[2], &minlong ) == TCL_OK )
+            if ( Tcl_GetDouble( interp, argv[2], &dminlong ) == TCL_OK )
             {
                 transform = 0;
-                minlong   = atof( argv[2] );
-                maxlong   = atof( argv[3] );
-                minlat    = atof( argv[4] );
-                maxlat    = atof( argv[5] );
                 idxname   = 1;
                 entries   = GetEntries( interp, argv[6], &nentries );
+                if ( !entries )
+                    return_code = TCL_ERROR;
             }
         }
         break;
 
     case 8:     // Transform, plotentries
-        transform = 1;
-        entries   = GetEntries( interp, argv[7], &nentries );
-        idxname   = 2;
-        minlong   = atof( argv[3] );
-        maxlong   = atof( argv[4] );
-        minlat    = atof( argv[5] );
-        maxlat    = atof( argv[6] );
-
-        tcl_interp     = interp;
+        transform      = 1;
         transform_name = argv[1];
         if ( strlen( transform_name ) == 0 )
         {
             transform = 0;
         }
+
+        idxname = 2;
+
+        tcl_interp = interp;
+        entries    = GetEntries( interp, argv[7], &nentries );
+        if ( !entries )
+            return_code = TCL_ERROR;
+        break;
+
+    default:
+        return_code = TCL_ERROR;
     }
 
-    if ( entries != NULL )
+    if ( return_code == TCL_ERROR )
     {
+        Tcl_AppendResult( interp, "bogus syntax for plmapline, see doc.",
+            (char *) NULL );
+    }
+    else
+    {
+        minlong = atof( argv[idxname + 1] );
+        maxlong = atof( argv[idxname + 2] );
+        minlat  = atof( argv[idxname + 3] );
+        maxlat  = atof( argv[idxname + 45] );
         if ( transform && idxname == 2 )
         {
             plmapline( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
@@ -4026,9 +4030,10 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
 
         free( entries );
+
+        plflush();
     }
 
-    plflush();
     return return_code;
 }
 
@@ -4052,6 +4057,7 @@ plmapstringCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLINT      *entries;
     PLINT      nentries;
     const char *string;
+    double     dminlong;
 
     return_code = TCL_OK;
     if ( argc < 7 || argc > 9 )
@@ -4070,24 +4076,18 @@ plmapstringCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         transform      = 0;
         idxname        = 1;
         transform_name = NULL;
-        string         = argv[2];
-        minlong        = atof( argv[3] );
-        maxlong        = atof( argv[4] );
-        minlat         = atof( argv[5] );
-        maxlat         = atof( argv[6] );
         break;
 
     case 8:     // Transform OR plotentries, not both - ambiguity
-                // Heuristic: transformation name is either a name or empty. Therefore, if
-                // the first argument is a number, a list of plotentries is given (not a matrix)
+                // Transformation name is either a name or empty
+                // string or missing. So the argument pattern is
+                // either one or two non-numeric strings, then a
+                // numeric string.  In the former case all argument
+                // indices are offset by one and a list (not a matrix)
+                // of plotentries is given as the last argument.
 
         transform = 1;
         idxname   = 2;
-        string    = argv[3];
-        minlong   = atof( argv[4] );
-        maxlong   = atof( argv[5] );
-        minlat    = atof( argv[6] );
-        maxlat    = atof( argv[7] );
 
         tcl_interp     = interp;
         transform_name = argv[1];
@@ -4097,38 +4097,41 @@ plmapstringCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
         else
         {
-            if ( Tcl_GetDouble( interp, argv[3], &minlong ) == TCL_OK )
+            if ( Tcl_GetDouble( interp, argv[3], &dminlong ) == TCL_OK )
             {
                 transform = 0;
                 idxname   = 1;
-                string    = argv[2];
-                minlong   = atof( argv[3] );
-                maxlong   = atof( argv[4] );
-                minlat    = atof( argv[5] );
-                maxlat    = atof( argv[6] );
                 entries   = GetEntries( interp, argv[7], &nentries );
+                if ( !entries )
+                    return_code = TCL_ERROR;
             }
         }
         break;
 
     case 9:     // Transform, plotentries
-        transform = 1;
-        entries   = GetEntries( interp, argv[8], &nentries );
-        idxname   = 2;
-        string    = argv[3];
-        minlong   = atof( argv[4] );
-        maxlong   = atof( argv[5] );
-        minlat    = atof( argv[6] );
-        maxlat    = atof( argv[7] );
-
-        tcl_interp     = interp;
+        transform      = 1;
         transform_name = argv[1];
         if ( strlen( transform_name ) == 0 )
         {
             transform = 0;
         }
+
+        idxname = 2;
+
+        tcl_interp = interp;
+        entries    = GetEntries( interp, argv[8], &nentries );
+        if ( !entries )
+            return_code = TCL_ERROR;
+        break;
+    default:
+        return_code = TCL_ERROR;
     }
 
+    string  = argv[idxname + 1];
+    minlong = atof( argv[idxname + 2] );
+    maxlong = atof( argv[idxname + 3] );
+    minlat  = atof( argv[idxname + 4] );
+    maxlat  = atof( argv[idxname + 5] );
     if ( entries != NULL )
     {
         if ( transform && idxname == 2 )
@@ -4169,97 +4172,60 @@ plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLINT      *entries;
     PLINT      nentries;
     const char *text;
+    double     dminlong;
 
     return_code = TCL_OK;
-    if ( argc < 10 || argc > 12 )
+    // N.B. plotentries is always required for the plmaptex case so no ambiguity below.
+    switch ( argc )
+    {
+    case 11:     // No transformation.
+
+        // For this case, argv[2] must be translatable into a double-precision number.
+        if ( Tcl_GetDouble( interp, argv[2], &dminlong ) == TCL_OK )
+        {
+            transform = 0;
+            idxname   = 1;
+            entries   = GetEntries( interp, argv[10], &nentries );
+            if ( !entries )
+                return_code = TCL_ERROR;
+        }
+        else
+            return_code = TCL_ERROR;
+        break;
+
+    case 12:     // Transform
+        transform      = 1;
+        transform_name = argv[1];
+        if ( strlen( transform_name ) == 0 )
+        {
+            transform = 0;
+        }
+        idxname = 2;
+
+        entries = GetEntries( interp, argv[11], &nentries );
+        if ( !entries )
+            return_code = TCL_ERROR;
+        tcl_interp = interp;
+        break;
+    default:
+        return_code = TCL_ERROR;
+    }
+
+    if ( return_code == TCL_ERROR )
     {
         Tcl_AppendResult( interp, "bogus syntax for plmaptex, see doc.",
             (char *) NULL );
-        return TCL_ERROR;
     }
-
-    nentries = 0;
-    entries  = NULL;
-
-    switch ( argc )
+    else
     {
-    case 10:     // No transform, no plotentries
-        transform      = 0;
-        idxname        = 1;
-        transform_name = NULL;
-        dx             = atof( argv[2] );
-        dy             = atof( argv[3] );
-        just           = atof( argv[4] );
-        text           = argv[5];
-        minlong        = atof( argv[6] );
-        maxlong        = atof( argv[7] );
-        minlat         = atof( argv[8] );
-        maxlat         = atof( argv[9] );
-        break;
-
-    case 11:     // Transform OR plotentries, not both - ambiguity
-                 // Heuristic: transformation name is either a name or empty. Therefore, if
-                 // the first argument is a number, a list of plotentries is given (not a matrix)
-
-        transform = 1;
-        idxname   = 2;
-        dx        = atof( argv[3] );
-        dy        = atof( argv[4] );
-        just      = atof( argv[5] );
-        text      = argv[6];
-        minlong   = atof( argv[7] );
-        maxlong   = atof( argv[8] );
-        minlat    = atof( argv[9] );
-        maxlat    = atof( argv[10] );
-
-        tcl_interp     = interp;
-        transform_name = argv[1];
-        if ( strlen( transform_name ) == 0 )
-        {
-            transform = 0;
-        }
-        else
-        {
-            if ( Tcl_GetDouble( interp, argv[2], &minlong ) == TCL_OK )
-            {
-                transform = 0;
-                idxname   = 1;
-                dx        = atof( argv[2] );
-                dy        = atof( argv[3] );
-                just      = atof( argv[4] );
-                text      = argv[5];
-                minlong   = atof( argv[6] );
-                maxlong   = atof( argv[7] );
-                minlat    = atof( argv[8] );
-                maxlat    = atof( argv[9] );
-                entries   = GetEntries( interp, argv[10], &nentries );
-            }
-        }
-        break;
-
-    case 12:     // Transform, plotentries
-        transform = 1;
-        entries   = GetEntries( interp, argv[11], &nentries );
-        idxname   = 2;
-        dx        = atof( argv[3] );
-        dy        = atof( argv[4] );
-        just      = atof( argv[5] );
-        text      = argv[6];
-        minlong   = atof( argv[7] );
-        maxlong   = atof( argv[8] );
-        minlat    = atof( argv[9] );
-        maxlat    = atof( argv[10] );
-
-        tcl_interp     = interp;
-        transform_name = argv[1];
-        if ( strlen( transform_name ) == 0 )
-        {
-            transform = 0;
-        }
-    }
-
-    if ( entries != NULL )
-    {
+        dx      = atof( argv[idxname + 1] );
+        dy      = atof( argv[idxname + 2] );
+        just    = atof( argv[idxname + 3] );
+        text    = argv[idxname + 4];
+        minlong = atof( argv[idxname + 5] );
+        maxlong = atof( argv[idxname + 6] );
+        minlat  = atof( argv[idxname + 7] );
+        maxlat  = atof( argv[idxname + 8] );
         if ( transform && idxname == 2 )
         {
             plmaptex( &mapform, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
@@ -4271,9 +4237,9 @@ plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
 
         free( entries );
+        plflush();
     }
 
-    plflush();
     return return_code;
 }
 
@@ -4365,14 +4331,14 @@ Tcl_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer PL_UNUSED( data
     double  dx, dy;
 
 // Set Tcl x to x
-    objx = Tcl_NewDoubleObj( x );
+    objx = Tcl_NewDoubleObj( (double) x );
     Tcl_IncrRefCount( objx );
     Tcl_SetVar2Ex( tcl_xform_interp,
         "_##_x", NULL, objx, 0 );
     Tcl_DecrRefCount( objx );
 
 // Set Tcl y to y
-    objy = Tcl_NewDoubleObj( y );
+    objy = Tcl_NewDoubleObj( (double) y );
     Tcl_IncrRefCount( objy );
     Tcl_SetVar2Ex( tcl_xform_interp,
         "_##_y", NULL, objy, 0 );
@@ -4981,12 +4947,13 @@ static int *argv_to_ints( Tcl_Interp *interp, const char *list_numbers, int *num
     return array;
 }
 
-static double *argv_to_doubles( Tcl_Interp *interp, const char *list_numbers, int *number )
+static PLFLT *argv_to_PLFLTs( Tcl_Interp *interp, const char *list_numbers, int *number )
 {
     int     i, retcode;
-    double  *array;
+    PLFLT   *array;
     Tcl_Obj *list;
     Tcl_Obj *elem;
+    double  ddata;
 
     list = Tcl_NewStringObj( list_numbers, ( -1 ) );
 
@@ -4998,11 +4965,12 @@ static double *argv_to_doubles( Tcl_Interp *interp, const char *list_numbers, in
     }
     else
     {
-        array = (double *) malloc( sizeof ( double ) * (size_t) ( *number ) );
+        array = (PLFLT *) malloc( sizeof ( PLFLT ) * (size_t) ( *number ) );
         for ( i = 0; i < ( *number ); i++ )
         {
             Tcl_ListObjIndex( interp, list, i, &elem );
-            Tcl_GetDoubleFromObj( interp, elem, &array[i] );
+            Tcl_GetDoubleFromObj( interp, elem, &ddata );
+            array[i] = (PLFLT) ddata;
         }
     }
     return array;
@@ -5101,13 +5069,13 @@ pllegendCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     text            = argv_to_chars( interp, argv[17], &number_texts );
     box_colors      = argv_to_ints( interp, argv[18], &dummy );
     box_patterns    = argv_to_ints( interp, argv[19], &dummy );
-    box_scales      = argv_to_doubles( interp, argv[20], &dummy );
-    box_line_widths = argv_to_doubles( interp, argv[21], &dummy );
+    box_scales      = argv_to_PLFLTs( interp, argv[20], &dummy );
+    box_line_widths = argv_to_PLFLTs( interp, argv[21], &dummy );
     line_colors     = argv_to_ints( interp, argv[22], &dummy );
     line_styles     = argv_to_ints( interp, argv[23], &dummy );
-    line_widths     = argv_to_doubles( interp, argv[24], &dummy );
+    line_widths     = argv_to_PLFLTs( interp, argv[24], &dummy );
     symbol_colors   = argv_to_ints( interp, argv[25], &dummy );
-    symbol_scales   = argv_to_doubles( interp, argv[26], &dummy );
+    symbol_scales   = argv_to_PLFLTs( interp, argv[26], &dummy );
     symbol_numbers  = argv_to_ints( interp, argv[27], &dummy );
     symbols         = argv_to_chars( interp, argv[28], &dummy );
 
@@ -5163,8 +5131,8 @@ pllegendCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         free( symbols );
     }
 
-    data[0] = Tcl_NewDoubleObj( legend_width );
-    data[1] = Tcl_NewDoubleObj( legend_height );
+    data[0] = Tcl_NewDoubleObj( (double) legend_width );
+    data[1] = Tcl_NewDoubleObj( (double) legend_height );
     Tcl_SetObjResult( interp, Tcl_NewListObj( 2, data ) );
 
     return TCL_OK;
@@ -5236,7 +5204,7 @@ plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     label_opts   = argv_to_ints( interp, argv[14], &n_label_opts );
     labels       = argv_to_chars( interp, argv[15], &n_labels );
     axis_opts    = argv_to_chars( interp, argv[16], &n_axis_opts );
-    ticks        = argv_to_doubles( interp, argv[17], &n_ticks );
+    ticks        = argv_to_PLFLTs( interp, argv[17], &n_ticks );
     sub_ticks    = argv_to_ints( interp, argv[18], &n_sub_ticks );
     list_vectors = Tcl_NewStringObj( argv[19], ( -1 ) );
 
@@ -5316,8 +5284,8 @@ plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
     Tcl_DecrRefCount( list_vectors );
 
-    data[0] = Tcl_NewDoubleObj( colorbar_width );
-    data[1] = Tcl_NewDoubleObj( colorbar_height );
+    data[0] = Tcl_NewDoubleObj( (double) colorbar_width );
+    data[1] = Tcl_NewDoubleObj( (double) colorbar_height );
     Tcl_SetObjResult( interp, Tcl_NewListObj( 2, data ) );
 
     return TCL_OK;
