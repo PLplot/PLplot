@@ -1,6 +1,6 @@
 # cmake/modules/TestFortranIsnan.cmake
 #
-# Fortran bindings - check is isnan function is available
+# Fortran binding - check is isnan function is available
 #
 # Copyright (C) 2008  Andrew Ross
 #
