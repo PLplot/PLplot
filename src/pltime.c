@@ -25,7 +25,9 @@
 void
 c_plbtime( PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT ctime )
 {
-    btimeqsas( year, month, day, hour, min, sec, ctime, plsc->qsasconfig );
+    double qsas_sec;
+    btimeqsas( year, month, day, hour, min, &qsas_sec, ctime, plsc->qsasconfig );
+    *sec = (PLFLT) qsas_sec;
 }
 
 // Configure transformation between continuous and broken-down time (and
@@ -51,8 +53,10 @@ c_plconfigtime( PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOO
 void
 c_plctime( PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime )
 {
-    int ret;
-    ret = ctimeqsas( year, month, day, hour, min, sec, ctime, plsc->qsasconfig );
+    int    ret;
+    double qsas_ctime;
+    ret    = ctimeqsas( year, month, day, hour, min, sec, &qsas_ctime, plsc->qsasconfig );
+    *ctime = (PLFLT) qsas_ctime;
     if ( ret )
         plabort( "plctime: ctimeqsas detected error" );
 }

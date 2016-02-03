@@ -184,20 +184,36 @@ let plot3 () =
   ()
 
 let plot4 () =
-  (* TAI-UTC (seconds) as a function of time.
-     Use Besselian epochs as the continuous time interval just to prove
-     this does not introduce any issues. *)
+  (* TAI-UTC (seconds) as a function of time. *)
 
-  (* Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-   * B = 1900. + (JD -2415020.31352)/365.242198781
-   * ==> (as calculated with aid of "bc -l" command)
-   * B = (MJD + 678940.364163900)/365.242198781
-   * ==>
-   * MJD = B*365.24219878 - 678940.364163900 *)
+  (* Continuous time unit is Besselian years from whatever epoch is
+   * chosen below.  Could change to seconds (or days) from the
+   * epoch, but then would have to adjust xlabel_step below. *)
   let scale = 365.242198781 in
-  let offset1 = -678940.0 in
-  let offset2 = -0.3641639 in
-  plconfigtime scale offset1 offset2 0x0 false 0 0 0 0 0 0.0;
+  (* MJD epoch (see <https://en.wikipedia.org/wiki/Julian_day>).
+   * This is only set for illustrative purposes, and is overwritten
+   * below for the time-representation reasons given in the
+   * discussion below. *)
+  let epoch_year  = ref 1858 in
+  let epoch_month = ref 11 in
+  let epoch_day   = ref 17 in
+  let epoch_hour  = ref 0 in
+  let epoch_min   = ref 0 in
+  let epoch_sec   = ref 0. in
+  (* To illustrate the time-representation issues of using the MJD
+   * epoch, in 1985, MJD was roughly 46000 days which corresponds to
+   * 4e9 seconds.  Thus, for the -DPL_DOUBLE=ON case where PLFLT is
+   * a double which can represent continuous time to roughly 16
+   * decimal digits of precision the time-representation error is
+   * roughly ~400 nanoseconds.  Therefore the MJD epoch would be
+   * acceptable for the plots below in the -DPL_DOUBLE=ON case.
+   * However, that epoch is obviously not acceptable for the
+   * -DPL_DOUBLE=OFF case where PLFLT is a float which can represent
+   * continuous time to only ~7 decimal digits of precision
+   * corresponding to a time representation error of 400 seconds (!)
+   * in 1985.  For this reason, we do not use the MJD epoch below
+   * and instead choose the best epoch for each case to minimize
+   * time-representation issues. *)
 
   let xmin = ref 0.0 in
   let xmax = ref 0.0 in
@@ -214,6 +230,14 @@ let plot4 () =
     let () =
       match kind with
       | 0 ->
+          (* Choose midpoint to maximize time-representation precision. *)
+          epoch_year  := 1985;
+          epoch_month := 0;
+          epoch_day   := 2;
+          epoch_hour  := 0;
+          epoch_min   := 0;
+          epoch_sec   := 0.;
+          plconfigtime scale 0. 0. 0x0 true !epoch_year !epoch_month !epoch_day !epoch_hour !epoch_min !epoch_sec;
           xmin := plctime 1950 0 2 0 0 0.0;
           xmax := plctime 2020 0 2 0 0 0.0;
           npts := 70 * 12 + 1;
@@ -226,6 +250,14 @@ let plot4 () =
           xlabel_step := 10.0;
       | 1
       | 2 ->
+          (* Choose midpoint to maximize time-representation precision. *)
+          epoch_year  := 1961;
+          epoch_month := 7;
+          epoch_day   := 1;
+          epoch_hour  := 0;
+          epoch_min   := 0;
+          epoch_sec   := 1.64757;
+          plconfigtime scale 0. 0. 0x0 true !epoch_year !epoch_month !epoch_day !epoch_hour !epoch_min !epoch_sec;
           xmin := plctime 1961 7 1 0 0 (1.64757 -. 0.20);
           xmax := plctime 1961 7 1 0 0 (1.64757 +. 0.20);
           npts := 1001;
@@ -244,6 +276,14 @@ let plot4 () =
           )
       | 3
       | 4 ->
+          (* Choose midpoint to maximize time-representation precision. *)
+          epoch_year  := 1963;
+          epoch_month := 10;
+          epoch_day   := 1;
+          epoch_hour  := 0;
+          epoch_min   := 0;
+          epoch_sec   := 2.6972788;
+          plconfigtime scale 0. 0. 0x0 true !epoch_year !epoch_month !epoch_day !epoch_hour !epoch_min !epoch_sec;
           xmin := plctime 1963 10 1 0 0 (2.6972788 -. 0.20);
           xmax := plctime 1963 10 1 0 0 (2.6972788 +. 0.20);
           npts := 1001;
@@ -262,6 +302,14 @@ let plot4 () =
           )
       | 5
       | 6 ->
+          (* Choose midpoint to maximize time-representation precision. *)
+          epoch_year  := 2009;
+          epoch_month := 0;
+          epoch_day   := 1;
+          epoch_hour  := 0;
+          epoch_min   := 0;
+          epoch_sec   := 34.;
+          plconfigtime scale 0. 0. 0x0 true !epoch_year !epoch_month !epoch_day !epoch_hour !epoch_min !epoch_sec;
           xmin := plctime 2009 0 1 0 0 (34.0 -. 5.0);
           xmax := plctime 2009 0 1 0 0 (34.0 +. 5.0);
           npts := 1001;
@@ -284,35 +332,35 @@ let plot4 () =
     let x = Array.make 1001 0.0 in
     let y = Array.make 1001 0.0 in
 
+    (* Printf.printf "%s%d\n" "npts = " !npts; *)
     for i = 0 to !npts - 1 do
       x.(i) <-
         !xmin +. float_of_int i *. (!xmax -. !xmin) /. (float_of_int (!npts - 1));
-      plconfigtime scale offset1 offset2 0x0 false 0 0 0 0 0 0.0;
       let tai = x.(i) in
-      (* The "full" calls to plbtime are commented out to avoid OCaml
-         compilation warnings. *)
-      (*
-      let tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec =
-        plbtime tai
-      in
-      *)
-      ignore (plbtime tai);
-      plconfigtime scale offset1 offset2 0x2 false 0 0 0 0 0 0.0;
-      let utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec =
-        plbtime tai
-      in
-      plconfigtime scale offset1 offset2 0x0 false 0 0 0 0 0 0.0;
+      (*Printf.printf "%g\n" tai; *)
+      plconfigtime scale 0. 0. 0x0 true !epoch_year !epoch_month !epoch_day !epoch_hour !epoch_min !epoch_sec;
+      let tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec = plbtime tai in
+      (* Calculate residual using tai as the epoch to nearly maximize time-representation precision. *)
+      plconfigtime scale 0. 0. 0x0 true tai_year tai_month tai_day tai_hour tai_min tai_sec;
+      (* Calculate continuous tai with new epoch. *)
+      let tai_new = plctime tai_year tai_month tai_day tai_hour tai_min tai_sec in
+      (* Calculate broken-down utc (with leap seconds inserted) from continuous tai with new epoch. *)
+      plconfigtime scale 0. 0. 0x2 true tai_year tai_month tai_day tai_hour tai_min tai_sec;
+      let utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec = plbtime tai_new in
+      (* Calculate continuous utc from broken-down utc using same epoch as for the continuous tai. *)
+      plconfigtime scale 0. 0. 0x0 true tai_year tai_month tai_day tai_hour tai_min tai_sec;
       let utc = plctime utc_year utc_month utc_day utc_hour utc_min utc_sec in
-      y.(i) <- (tai -. utc) *. scale *. 86400.0;
+      (* Convert residuals to seconds. *)
+      y.(i) <- (tai_new -. utc) *. scale *. 86400.0;
     done;
 
     pladv 0;
     plvsta ();
     plwind !xmin !xmax !ymin !ymax;
     plcol0 1;
-    plconfigtime scale offset1 offset2
+    plconfigtime scale 0. 0.
       (if !if_TAI_time_format then 0x0 else 0x2)
-      false 0 0 0 0 0 0.0;
+    true !epoch_year !epoch_month !epoch_day !epoch_hour !epoch_min !epoch_sec;
     pltimefmt !time_format;
     plbox "bcnstd" !xlabel_step 0 "bcnstv" 0.0 0;
     plcol0 3;
@@ -328,13 +376,6 @@ let plot4 () =
 (*--------------------------------------------------------------------------*\
  * Draws several plots which demonstrate the use of date / time formats for
  * the axis labels.
- * Time formatting is done using the system strftime routine. See the
- * documentation of this for full details of the available formats.
- *
- * 1) Plotting temperature over a day (using hours / minutes)
- * 2) Plotting
- *
- * Note: Times are stored as seconds since the epoch (usually 1st Jan 1970).
 \*--------------------------------------------------------------------------*)
 let () =
   (* Parse command line arguments *)
@@ -354,4 +395,3 @@ let () =
   (* Don't forget to call plend() to finish off! *)
   plend();
   ()
-

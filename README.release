@@ -23,8 +23,9 @@ CONTENTS
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Octal interpretation removed from numerical escape sequences in text
-1.2 Backwards incompatibilities in Fortran
+1.1 Backwards incompatibilities introduced for our C (and other) API
+1.2 Backwards incompatibilities for our Fortran binding
+1.3 Octal interpretation removed from numerical escape sequences in text
 
 2. Improvements relative to the previous release
 
@@ -33,13 +34,14 @@ CONTENTS
 2.3 Rewrite the Fortran binding
 2.4 Supply old Fortran binding and examples option
 2.5 Backwards incompatibilites introduced by the new Fortran binding
+2.6 Examples reworked for the -DPL_DOUBLE=OFF case
 
 3. PLplot testing
 ________________________________________________________________
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Backwards incompatibilities introduced for our C (and other) API.
+1.1 Backwards incompatibilities introduced for our C (and other) API
 
 We recently discovered that the second (argv) argument of plparseopts
 was changed by that routine so accordingly we have dropped the
@@ -52,7 +54,7 @@ plMergeOpts, plFindName, plGetCursor, and plTranslateCursor.
 Where appropriate all these changes have been propagated to our language
 bindings.
 
-1.2 Backwards incompatibilities in Fortran
+1.2 Backwards incompatibilities for our Fortran binding
 
 The new implementation of the Fortran binding has introduced a
 significant number of backwards incompatibilities.  See 2.5 below for
@@ -127,9 +129,12 @@ should make their own decision about whether to adopt kind(1.0) or
 kind(1.0d0) for the floating-point arguments for a given call to a
 PLplot routine.  See further remarks in examples/f95/README_precision.
 
-(v) Once support for bindings/old_f95 and examples/old_f95
-(see 2.4 below) has been dropped, the "c_" prefixes on our C API that were required to avoid
-nameclashes with the Fortran versions of the routines can be dropped.
+(v) Once support for bindings/old_f95 and examples/old_f95 (see 2.4
+below) has been dropped, the "c_" prefixes on our C API that were
+required to avoid nameclashes with the Fortran versions are no
+longer required for that reason.  If it turns out no other
+binding requires these prefixes then we potentially could
+remove them which would be a welcome simplification.
 
 2.4 Supply old Fortran binding and examples option
 
@@ -270,6 +275,35 @@ of linefeed unlike the Fortran case.  After that, how our device
 drivers currently interpret that special C character for linefeed is
 idiosyncratic to each of our device drivers.)
 
+2.6 Examples reworked for the -DPL_DOUBLE=OFF case
+
+N.B. Many of our supported languages do not currently work for
+-DPL_DOUBLE=OFF so the changes below for many of our examples cannot
+be tested for that case.  However, all these changes are worthwhile
+style changes in their own right that have been thoroughly tested for
+the (default) -DPL_DOUBLE=ON case.
+
+* Example 29 has been changed for all our supported languages to be
+  much more careful of adopted epoch to maximize the
+  time-representation precision.  This is a good illustration of how
+  to use epochs correctly for our users, and also allowed this example
+  to give good results (as opposed to errors) for the -DPL_DOUBLE=OFF
+  case.
+
+* Example 31 has been changed for all our supported languages to use
+  variables rather than constants for arguments of most calls
+  (specifically all calls with floating-point arguments) to PLplot
+  routines.  Use of variables rather than constants is generally
+  better form in any case (via the self-description associated with
+  well-chosen variable names), but this change also dealt with
+  -DPL_DOUBLE=OFF errors for this example in a natural way for C, C++,
+  and likely other languages as well.
+
+* Example 33 has been changed for all our supported languages to
+  replace the former scaling factor of 1.e-200 by 1.e-20.  This solved
+  an issue with the -DPL_DOUBLE=OFF case where the former scaling
+  factor underflowed, and those uniformly zeroed results in turn
+  caused PLplot run-time errors.
 ________________________________________________________________
 
 3. PLplot testing

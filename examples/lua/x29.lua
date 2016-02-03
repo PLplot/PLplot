@@ -175,25 +175,50 @@ end
 
 function plot4() 
   -- TAI-UTC (seconds) as a function of time.
-  -- Use Besselian epochs as the continuous time interval just to prove
-  -- this does not introduce any issues.
   
   x = {}
   y = {}
 
-  -- Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-  -- B = 1900. + (JD -2415020.31352)/365.242198781 
-  -- ==> (as calculated with aid of "bc -l" command)
-  -- B = (MJD + 678940.364163900)/365.242198781
-  -- ==>
-  -- MJD = B*365.24219878 - 678940.364163900
+  -- Continuous time unit is Besselian years from whatever epoch is
+  -- chosen below.  Could change to seconds (or days) from the
+  -- epoch, but then would have to adjust xlabel_step below.
   scale = 365.242198781
-  offset1 = -678940
-  offset2 = -0.3641639
-  pl.configtime(scale, offset1, offset2, 0, 0, 0, 0, 0, 0, 0, 0.)
+  -- MJD epoch (see <https://en.wikipedia.org/wiki/Julian_day>).
+  -- This is only set for illustrative purposes, and is overwritten
+  -- below for the time-representation reasons given in the
+  -- discussion below.
+  epoch_year  = 1858
+  epoch_month = 11
+  epoch_day   = 17
+  epoch_hour  = 0
+  epoch_min   = 0
+  epoch_sec   = 0.
+
+  -- To illustrate the time-representation issues of using the MJD
+  -- epoch, in 1985, MJD was roughly 46000 days which corresponds to
+  -- 4e9 seconds.  Thus, for the -DPL_DOUBLE=ON case where PLFLT is
+  -- a double which can represent continuous time to roughly 16
+  -- decimal digits of precision the time-representation error is
+  -- roughly ~400 nanoseconds.  Therefore the MJD epoch would be
+  -- acceptable for the plots below in the -DPL_DOUBLE=ON case.
+  -- However, that epoch is obviously not acceptable for the
+  -- -DPL_DOUBLE=OFF case where PLFLT is a float which can represent
+  -- continuous time to only ~7 decimal digits of precision
+  -- corresponding to a time representation error of 400 seconds (!)
+  -- in 1985.  For this reason, we do not use the MJD epoch below
+  -- and instead choose the best epoch for each case to minimize
+  -- time-representation issues.
 
   for kind = 0, 6 do
     if kind == 0 then
+      -- Choose midpoint to maximize time-representation precision.
+      epoch_year  = 1985
+      epoch_month = 0
+      epoch_day   = 2
+      epoch_hour  = 0
+      epoch_min   = 0
+      epoch_sec   = 0.
+      pl.configtime(scale, 0., 0., 0, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec)
       xmin = pl.ctime(1950, 0, 2, 0, 0, 0)
       xmax = pl.ctime(2020, 0, 2, 0, 0, 0)
       npts = 70*12 + 1
@@ -206,6 +231,14 @@ function plot4()
       xlabel_step = 10
     end
     if kind==1 or kind==2 then
+      -- Choose midpoint to maximize time-representation precision.
+      epoch_year  = 1961
+      epoch_month = 7
+      epoch_day   = 1
+      epoch_hour  = 0
+      epoch_min   = 0
+      epoch_sec   = 1.64757
+      pl.configtime(scale, 0., 0., 0, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec)
       xmin = pl.ctime(1961, 7, 1, 0, 0, 1.64757-0.20)
       xmax = pl.ctime(1961, 7, 1, 0, 0, 1.64757+0.20)
       npts = 1001
@@ -223,6 +256,14 @@ function plot4()
       end
     end
     if kind==3 or kind==4 then
+      -- Choose midpoint to maximize time-representation precision.
+      epoch_year  = 1963
+      epoch_month = 10
+      epoch_day   = 1
+      epoch_hour  = 0
+      epoch_min   = 0
+      epoch_sec   = 2.6972788
+      pl.configtime(scale, 0., 0., 0, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec)
       xmin = pl.ctime(1963, 10, 1, 0, 0, 2.6972788-0.20)
       xmax = pl.ctime(1963, 10, 1, 0, 0, 2.6972788+0.20)
       npts = 1001
@@ -240,6 +281,14 @@ function plot4()
       end
     end
     if kind==5 or kind==6 then
+      -- Choose midpoint to maximize time-representation precision.
+      epoch_year  = 2009
+      epoch_month = 0
+      epoch_day   = 1
+      epoch_hour  = 0
+      epoch_min   = 0
+      epoch_sec   = 34.
+      pl.configtime(scale, 0., 0., 0, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec)
       xmin = pl.ctime(2009, 0, 1, 0, 0, 34-5)
       xmax = pl.ctime(2009, 0, 1, 0, 0, 34+5)
       npts = 1001
@@ -259,13 +308,20 @@ function plot4()
 
     for i = 1, npts do 
       x[i] = xmin + (i-1)*(xmax-xmin)/(npts-1)
-      pl.configtime(scale, offset1, offset2, 0, 0, 0, 0, 0, 0, 0, 0)
       tai = x[i]
+      pl.configtime(scale, 0., 0., 0, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec)
       tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec = pl.btime(tai)
-      pl.configtime(scale, offset1, offset2, 2, 0, 0, 0, 0, 0, 0, 0)
+      -- Calculate residual using tai as the epoch to nearly maximize time-representation precision.
+      pl.configtime(scale, 0., 0., 0, 1, tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec)
+      -- Calculate continuous tai with new epoch.
+      tai = pl.ctime(tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec)
+      -- Calculate broken-down utc (with leap seconds inserted) from continuous tai with new epoch.
+      pl.configtime(scale, 0., 0., 2, 1, tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec)
       utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec = pl.btime(tai)
-      pl.configtime(scale, offset1, offset2, 0, 0, 0, 0, 0, 0, 0, 0.)
+      -- Calculate continuous utc from broken-down utc using same epoch as for the continuous tai.
+      pl.configtime(scale, 0., 0., 0, 1, tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec)
       utc = pl.ctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec)
+      -- Convert residuals to seconds.
       y[i]=(tai-utc)*scale*86400.
     end
 
@@ -274,9 +330,9 @@ function plot4()
     pl.wind(xmin, xmax, ymin, ymax)
     pl.col0(1)
     if if_TAI_time_format ~= 0 then
-      pl.configtime(scale, offset1, offset2, 0, 0, 0, 0, 0, 0, 0, 0)
+      pl.configtime(scale, 0., 0., 0, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec)
     else
-      pl.configtime(scale, offset1, offset2, 2, 0, 0, 0, 0, 0, 0, 0)
+      pl.configtime(scale, 0., 0., 2, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec)
     end
     pl.timefmt(time_format)
     pl.box("bcnstd", xlabel_step, 0, "bcnstv", 0., 0)

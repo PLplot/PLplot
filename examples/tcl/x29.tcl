@@ -208,29 +208,51 @@ proc x29_plot3 {{w loopback}} {
 
 proc x29_plot4 {{w loopback}} {
     # TAI-UTC (seconds) as a function of time.
-    # Use Besselian epochs as the continuous time interval just to prove
-    # this does not introduce any issues.
-
-    # Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-    # B = 1900. + (JD -2415020.31352)/365.242198781
-    # ==> (as calculated with aid of "bc -l" command)
-    # B = (MJD + 678940.364163900)/365.242198781
-    # ==>
-    # MJD = B*365.24219878 - 678940.364163900
 
     set ::tcl_precision 17
 
-    set scale 365.242198781
-    set offset1 -678940.0
-    set offset2 -0.3641639
+    # Continuous time unit is Besselian years from whatever epoch is
+    # chosen below.  Could change to seconds (or days) from the
+    # epoch, but then would have to adjust xlabel_step below.
+    set scale  365.242198781
+    # MJD epoch (see <https://en.wikipedia.org/wiki/Julian_day>).
+    # This is only set for illustrative purposes, and is overwritten
+    # below for the time-representation reasons given in the
+    # discussion below.
+    set epoch_year 1858
+    set epoch_month 11
+    set epoch_day 17
+    set epoch_hour 0
+    set epoch_min 0
+    set epoch_sec 0.
+    # To illustrate the time-representation issues of using the MJD
+    # epoch, in 1985, MJD was roughly 46000 days which corresponds to
+    # 4e9 seconds.  Thus, for the -DPL_DOUBLE=ON case where PLFLT is
+    # a double which can represent continuous time to roughly 16
+    # decimal digits of precision the time-representation error is
+    # roughly ~400 nanoseconds.  Therefore the MJD epoch would be
+    # acceptable for the plots below in the -DPL_DOUBLE=ON case.
+    # However, that epoch is obviously not acceptable for the
+    # -DPL_DOUBLE=OFF case where PLFLT is a float which can represent
+    # continuous time to only ~7 decimal digits of precision
+    # corresponding to a time representation error of 400 seconds (!)
+    # in 1985.  For this reason, we do not use the MJD epoch below
+    # and instead choose the best epoch for each case to minimize
+    # time-representation issues.
 
     matrix x f 1001
     matrix y f 1001	
 
-    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
-
     for {set kind 0} {$kind < 7} {incr kind} {
 	if {$kind == 0} {
+	    # Choose midpoint to maximize time-representation precision.
+	    set epoch_year 1985
+	    set epoch_month 0
+	    set epoch_day 2
+	    set epoch_hour 0
+	    set epoch_min 0
+	    set epoch_sec 0.
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $epoch_year $epoch_month $epoch_day $epoch_hour $epoch_min $epoch_sec
 	    $w cmd plctime 1950 0 2 0 0 0. xmin
 	    $w cmd plctime 2020 0 2 0 0 0. xmax
 	    set npts [expr {70*12 + 1}]
@@ -242,6 +264,14 @@ proc x29_plot4 {{w loopback}} {
 	    set xtitle "Year"
 	    set xlabel_step 10.
 	} elseif {$kind == 1 || $kind == 2} {
+	    # Choose midpoint to maximize time-representation precision.
+	    set epoch_year 1961
+	    set epoch_month 7
+	    set epoch_day 1
+	    set epoch_hour 0
+	    set epoch_min 0
+	    set epoch_sec 1.64757
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $epoch_year $epoch_month $epoch_day $epoch_hour $epoch_min $epoch_sec
 	    $w cmd plctime 1961 7 1 0 0 [expr {1.64757-0.20}] xmin
 	    $w cmd plctime 1961 7 1 0 0 [expr {1.64757+0.20}] xmax
 	    set npts 1001
@@ -258,6 +288,14 @@ proc x29_plot4 {{w loopback}} {
 		set xtitle "Seconds (TAI) labelled with corresponding UTC"
 	    }
 	} elseif {$kind == 3 || $kind == 4} {
+	    # Choose midpoint to maximize time-representation precision.
+	    set epoch_year 1963
+	    set epoch_month 10
+	    set epoch_day 1
+	    set epoch_hour 0
+	    set epoch_min 0
+	    set epoch_sec 2.6972788
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $epoch_year $epoch_month $epoch_day $epoch_hour $epoch_min $epoch_sec
 	    $w cmd plctime 1963 10 1 0 0 [expr {2.6972788-.20}] xmin
 	    $w cmd plctime 1963 10 1 0 0 [expr {2.6972788+.20}] xmax
 	    set npts 1001
@@ -274,6 +312,14 @@ proc x29_plot4 {{w loopback}} {
 		set xtitle "Seconds (TAI) labelled with corresponding UTC"
 	    }
 	} elseif {$kind == 5 || $kind == 6} {
+	    # Choose midpoint to maximize time-representation precision.
+	    set epoch_year 2009
+	    set epoch_month 0
+	    set epoch_day 1
+	    set epoch_hour 0
+	    set epoch_min 0
+	    set epoch_sec 34.
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $epoch_year $epoch_month $epoch_day $epoch_hour $epoch_min $epoch_sec
 	    $w cmd plctime 2009 0 1 0 0 [expr {34.-5.}] xmin
 	    $w cmd plctime 2009 0 1 0 0 [expr {34.+5.}] xmax
 	    set npts 1001
@@ -294,12 +340,19 @@ proc x29_plot4 {{w loopback}} {
 	for {set i 0} {$i<$npts} {incr i} {
 	    set tai [expr {$xmin + $i*($xmax-$xmin)/double($npts-1)}]
 	    x $i = $tai
-	    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $epoch_year $epoch_month $epoch_day $epoch_hour $epoch_min $epoch_sec
 	    $w cmd plbtime tai_year tai_month tai_day tai_hour tai_min tai_sec $tai
-	    $w cmd plconfigtime $scale $offset1 $offset2 2 0 0 0 0 0 0 0.
+	    # Calculate residual using tai as the epoch to nearly maximize time-representation precision.
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $tai_year $tai_month $tai_day $tai_hour $tai_min $tai_sec
+	    # Calculate continuous tai with new epoch.
+	    $w cmd plctime $tai_year $tai_month $tai_day $tai_hour $tai_min $tai_sec tai
+	    # Calculate broken-down utc (with leap seconds inserted) from continuous tai with new epoch.
+	    $w cmd plconfigtime $scale 0. 0. 2 1 $tai_year $tai_month $tai_day $tai_hour $tai_min $tai_sec
 	    $w cmd plbtime utc_year utc_month utc_day utc_hour utc_min utc_sec $tai
-	    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
+	    # Calculate continuous utc from broken-down utc using same epoch as for the continuous tai.
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $tai_year $tai_month $tai_day $tai_hour $tai_min $tai_sec
 	    $w cmd plctime $utc_year $utc_month $utc_day $utc_hour $utc_min $utc_sec utc
+	    #Convert residuals to seconds.
 	    set yy [expr {($tai-$utc)*$scale*86400.}]
 	    y $i = $yy
 	}
@@ -309,9 +362,9 @@ proc x29_plot4 {{w loopback}} {
 	$w cmd plwind $xmin $xmax $ymin $ymax
 	$w cmd plcol0 1
 	if {$if_TAI_time_format == 1} {
-	    $w cmd plconfigtime $scale $offset1 $offset2 0 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale 0. 0. 0 1 $epoch_year $epoch_month $epoch_day $epoch_hour $epoch_min $epoch_sec
 	} else {
-	    $w cmd plconfigtime $scale $offset1 $offset2 2 0 0 0 0 0 0 0.
+	    $w cmd plconfigtime $scale 0. 0. 2 1 $epoch_year $epoch_month $epoch_day $epoch_hour $epoch_min $epoch_sec
 	}
 	$w cmd pltimefmt $time_format
 	$w cmd plbox "bcnstd" $xlabel_step 0 "bcnstv" 0. 0

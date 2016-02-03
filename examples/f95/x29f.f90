@@ -32,19 +32,15 @@
 !
 
 program x29f
-    use plplot, double_PI => PL_PI
+    use plplot
     implicit none
 
-    ! This example _requires_ double precision to work because of time representation
-    ! issues with single precision.  Therefore, cannot use pl_test_flt if that happens
-    ! to refer to single-precision.
     integer, parameter :: double = kind(1.0d0)
     integer :: plparseopts_rc
 
-    real(kind=double), parameter :: PI = double_PI
+    real(kind=double), parameter :: PI = PL_PI
 
-    real(kind=double), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
-    common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
+    real(kind=pl_test_flt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
@@ -69,36 +65,35 @@ contains
 
     subroutine plot1()
 
-        real(kind=double), parameter :: PI = double_PI
-        real(kind=double), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
-        common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
         integer :: i, npts
-        real(kind=double) :: xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt) :: xmin, xmax, ymin, ymax
 
         parameter(npts = 73)
-        parameter(xmin = 0.0_double)
-        parameter(xmax = 60.0_double*60.0_double*24.0_double)
-        parameter(ymin = 10.0_double)
-        parameter(ymax = 20.0_double)
+        parameter(xmin = 0.0_pl_test_flt)
+        parameter(xmax = 60.0_pl_test_flt*60.0_pl_test_flt*24.0_pl_test_flt)
+        parameter(ymin = 10.0_pl_test_flt)
+        parameter(ymax = 20.0_pl_test_flt)
 
         do i = 1,npts
-            x(i) = xmax*(real(i-1,kind=double)/real(npts,kind=double))
-            y(i) = 15.0_double - 5.0_double*cos(2.0_double*PI*real(i-1,kind=double)/real(npts,kind=double))
+            x(i) = xmax*(real(i-1,kind=pl_test_flt)/real(npts,kind=pl_test_flt))
+            y(i) = 15.0_pl_test_flt - 5.0_pl_test_flt* &
+                   cos(2.0_pl_test_flt*PI*real(i-1,kind=pl_test_flt)/ &
+                   real(npts,kind=pl_test_flt))
             !     Set x error bars to +/- 5 minute
-            xerr1(i) = x(i)-60.0_double*5.0_double
-            xerr2(i) = x(i)+60.0_double*5.0_double
+            xerr1(i) = x(i)-60.0_pl_test_flt*5.0_pl_test_flt
+            xerr2(i) = x(i)+60.0_pl_test_flt*5.0_pl_test_flt
             !     Set y error bars to +/- 0.1 deg C
-            yerr1(i) = y(i)-0.1_double
-            yerr2(i) = y(i)+0.1_double
+            yerr1(i) = y(i)-0.1_pl_test_flt
+            yerr2(i) = y(i)+0.1_pl_test_flt
         enddo
 
         call pladv(0)
 
         !     Rescale major ticks marks by 0.5
-        call plsmaj(0.0_double,0.5_double)
+        call plsmaj(0.0_pl_test_flt,0.5_pl_test_flt)
         !     Rescale minor ticks and error bar marks by 0.5
-        call plsmin(0.0_double,0.5_double)
+        call plsmin(0.0_pl_test_flt,0.5_pl_test_flt)
 
         call plvsta()
         call plwind(xmin, xmax, ymin, ymax)
@@ -107,8 +102,8 @@ contains
         call plcol0(1)
         !     Set time format to be hours:minutes
         call pltimefmt("%H:%M")
-        call plbox("bcnstd", 3.0_double*60.0_double*60.0_double, 3, "bcnstv", &
-               1.0_double, 5)
+        call plbox("bcnstd", 3.0_pl_test_flt*60.0_pl_test_flt*60.0_pl_test_flt, 3, "bcnstv", &
+               1.0_pl_test_flt, 5)
 
         call plcol0(3)
         call pllab("Time (hours:mins)", "Temperature (degC)", &
@@ -123,8 +118,8 @@ contains
         call plerry(x(1:npts), yerr1(1:npts), yerr2(1:npts))
 
         !     Rescale major / minor tick marks back to default
-        call plsmin(0.0_double,1.0_double)
-        call plsmaj(0.0_double,1.0_double)
+        call plsmin(0.0_pl_test_flt,1.0_pl_test_flt)
+        call plsmaj(0.0_pl_test_flt,1.0_pl_test_flt)
 
     end subroutine plot1
 
@@ -133,21 +128,18 @@ contains
     !
     subroutine plot2()
 
-        real(kind=double), parameter :: PI = double_PI
         integer ::  j, npts
-        real(kind=double) :: xmin, xmax, ymin, ymax
-        real(kind=double) :: lat, p, d
-        real(kind=double), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
-        common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
+        real(kind=pl_test_flt) :: xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt) :: lat, p, d
 
 
         ! Latitude for London
-        parameter (lat = 51.5_double)
+        parameter (lat = 51.5_pl_test_flt)
 
         parameter (npts = 365)
 
-        parameter(xmin = 0.0_double)
-        parameter(xmax = npts*60.0_double*60.0_double*24.0_double)
+        parameter(xmin = 0.0_pl_test_flt)
+        parameter(xmax = npts*60.0_pl_test_flt*60.0_pl_test_flt*24.0_pl_test_flt)
         parameter(ymin = 0)
         parameter(ymax = 24)
 
@@ -155,12 +147,12 @@ contains
         !     "A Model Comparison for Daylength as a Function of Latitude and
         !     Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
         do j=1,npts
-            x(j) = (j-1)*60.0_double*60.0_double*24.0_double
-            p = asin(0.39795_double*cos(0.2163108_double + 2.0_double* &
-                   atan(0.9671396_double*tan(0.00860_double*(j-187)))))
-            d = 24.0_double - (24.0_double/PI)* &
-                   acos( (sin(0.8333_double*PI/180.0_double) + &
-                   sin(lat*PI/180.0_double)*sin(p)) / (cos(lat*PI/180.0_double)* &
+            x(j) = (j-1)*60.0_pl_test_flt*60.0_pl_test_flt*24.0_pl_test_flt
+            p = asin(0.39795_pl_test_flt*cos(0.2163108_pl_test_flt + 2.0_pl_test_flt* &
+                   atan(0.9671396_pl_test_flt*tan(0.00860_pl_test_flt*(j-187)))))
+            d = 24.0_pl_test_flt - (24.0_pl_test_flt/PI)* &
+                   acos( (sin(0.8333_pl_test_flt*PI/180.0_pl_test_flt) + &
+                   sin(lat*PI/180.0_pl_test_flt)*sin(p)) / (cos(lat*PI/180.0_pl_test_flt)* &
                    cos(p)) )
             y(j) = d
         enddo
@@ -188,15 +180,9 @@ contains
     !
     subroutine plot3()
 
-        real(kind=double), parameter :: PI = double_PI
         integer :: i, npts
-        real(kind=double) :: xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt) :: xmin, xmax, ymin, ymax
         integer :: tstart
-        !      real(kind=double) :: toff
-        real(kind=double), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
-        common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
-
-        !     integer tm(9)
 
         parameter (npts = 62)
 
@@ -206,15 +192,16 @@ contains
         !     result corresponding to 2005-12-01.
         tstart = 1133395200
 
-        xmin = real(tstart,kind=double)
-        xmax = xmin + npts*60.0_double*60.0_double*24.0_double
-        ymin = 0.0_double
-        ymax = 5.0_double
+        xmin = real(tstart,kind=pl_test_flt)
+        xmax = xmin + npts*60.0_pl_test_flt*60.0_pl_test_flt*24.0_pl_test_flt
+        ymin = 0.0_pl_test_flt
+        ymax = 5.0_pl_test_flt
 
         do i=1,npts
-            x(i) = xmin + real(i-1,kind=double)*60.0_double*60.0_double*24.0_double
-            y(i) = 1.0_double + sin( 2.0_double*PI*real(i-1,kind=double)/7.0_double) + &
-                   exp( real(min(i-1,npts+1-i),kind=double) / 31.0_double)
+            x(i) = xmin + real(i-1,kind=pl_test_flt)*60.0_pl_test_flt*60.0_pl_test_flt*24.0_pl_test_flt
+            y(i) = 1.0_pl_test_flt + &
+                   sin( 2.0_pl_test_flt*PI*real(i-1,kind=pl_test_flt)/7.0_pl_test_flt) + &
+                   exp( real(min(i-1,npts+1-i),kind=pl_test_flt) / 31.0_pl_test_flt)
         enddo
         call pladv(0)
 
@@ -226,8 +213,8 @@ contains
         !     equivalent to %f for C99 compliant implementations of strftime.
         call pltimefmt("%Y-%m-%d")
         !     Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
-        call plbox("bcnstd", 14.0_double*24.0_double*60.0_double*60.0_double,14, &
-               "bcnstv", 1.0_double, 4)
+        call plbox("bcnstd", 14.0_pl_test_flt*24.0_pl_test_flt*60.0_pl_test_flt*60.0_pl_test_flt,14, &
+               "bcnstv", 1.0_pl_test_flt, 4)
 
         call plcol0(3)
         call pllab("Date", "Hours of television watched", &
@@ -236,7 +223,7 @@ contains
 
         call plcol0(4)
 
-        call plssym(0.0_double, 0.5_double)
+        call plssym(0.0_pl_test_flt, 0.5_pl_test_flt)
         call plpoin(x(1:npts), y(1:npts), 2)
         call plline(x(1:npts), y(1:npts))
 
@@ -247,56 +234,93 @@ contains
     !
     subroutine plot4()
         !     TAI-UTC (seconds) as a function of time.
-        !     Use Besselian epochs as the continuous time interval just to prove
-        !     this does not introduce any issues.
 
-        real(kind=double) :: scale, offset1, offset2
-        real(kind=double) :: xmin, xmax, ymin, ymax, xlabel_step
+        real(kind=pl_test_flt) :: scale
+        real(kind=pl_test_flt) :: xmin, xmax, ymin, ymax, xlabel_step
         integer :: k, npts = 0, i
         logical :: if_TAI_time_format = .false.
         character(len=10) :: time_format
         character(len=100) :: title_suffix
         character(len=100) :: xtitle
         character(len=100) :: title
-        real(kind=double) :: x(1001), y(1001)
+        real(kind=pl_test_flt) :: x(1001), y(1001)
+        integer :: epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min
+        real(kind=pl_test_flt) :: epoch_sec
         integer :: tai_year, tai_month, tai_day, tai_hour, tai_min
-        real(kind=double) :: tai_sec, tai
+        real(kind=pl_test_flt) :: tai_sec, tai
         integer :: utc_year, utc_month, utc_day, utc_hour, utc_min
-        real(kind=double) :: utc_sec, utc
+        real(kind=pl_test_flt) :: utc_sec, utc
 
-        !     Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-        !     B = 1900. + (JD -2415020.31352)/365.242198781
-        !     ==> (as calculated with aid of "bc -l" command)
-        !     B = (MJD + 678940.364163900)/365.242198781
-        !     ==>
-        !     MJD = B*365.24219878 - 678940.364163900
-        scale = 365.242198781_double
-        offset1 = -678940.0_double
-        offset2 = -0.3641639_double
-        call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, 0, 0, &
-               0, 0._double)
+        ! Continuous time unit is Besselian years from whatever epoch is
+        ! chosen below.  Could change to seconds (or days) from the
+        ! epoch, but then would have to adjust xlabel_step below.
+        scale = 365.242198781_pl_test_flt
+        ! MJD epoch (see <https://en.wikipedia.org/wiki/Julian_day>).
+        ! This is only set for illustrative purposes, and is overwritten
+        ! below for the time-representation reasons given in the
+        ! discussion below.
+        epoch_year  = 1858
+        epoch_month = 11
+        epoch_day   = 17
+        epoch_hour  = 0
+        epoch_min   = 0
+        epoch_sec   = 0._pl_test_flt
+        ! To illustrate the time-representation issues of using the
+        ! MJD epoch, in 1985, MJD was roughly 46000 days which
+        ! corresponds to 4e9 seconds.  Thus, for the case where
+        ! pl_test_flt corresponds to double precision which can
+        ! represent continuous time to roughly 16 decimal digits of
+        ! precision, the time-representation error is roughly ~400
+        ! nanoseconds.  Therefore the MJD epoch would be acceptable
+        ! for the plots below when pl_test_flt corresponds to double
+        ! precision.  However, that epoch is obviously not acceptable
+        ! for the case where pl_test_flt corresponds to single
+        ! precision which can represent continuous time to only ~7
+        ! decimal digits of precision corresponding to a time
+        ! representation error of 400 seconds (!)  in 1985.  For this
+        ! reason, we do not use the MJD epoch below and instead choose
+        ! the best epoch for each case to minimize time-representation
+        ! issues.
 
         do k = 0,6
             if (k .eq. 0) then
-                call plctime(1950,0,2,0,0,0._double,xmin)
-                call plctime(2020,0,2,0,0,0._double,xmax)
+                ! Choose midpoint to maximize time-representation precision.
+                epoch_year  = 1985
+                epoch_month = 0
+                epoch_day   = 2
+                epoch_hour  = 0
+                epoch_min   = 0
+                epoch_sec   = 0._pl_test_flt
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec )
+                call plctime(1950,0,2,0,0,0._pl_test_flt,xmin)
+                call plctime(2020,0,2,0,0,0._pl_test_flt,xmax)
                 npts = 70*12 + 1
-                ymin = 0.0_double
-                ymax = 36.0_double
+                ymin = 0.0_pl_test_flt
+                ymax = 36.0_pl_test_flt
                 time_format="%Y%"
                 if_TAI_time_format = .true.
                 title_suffix = "from 1950 to 2020"
                 xtitle =  "Year"
-                xlabel_step = 10.0_double
+                xlabel_step = 10.0_pl_test_flt
             elseif ((k .eq. 1) .or. (k .eq. 2)) then
-                call plctime(1961,7,1,0,0,1.64757_double-.20_double, xmin)
-                call plctime(1961,7,1,0,0,1.64757_double+.20_double, xmax)
+                ! Choose midpoint to maximize time-representation precision.
+                epoch_year  = 1961
+                epoch_month = 7
+                epoch_day   = 1
+                epoch_hour  = 0
+                epoch_min   = 0
+                epoch_sec   = 1.64757_pl_test_flt
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec )
+                call plctime(1961,7,1,0,0,1.64757_pl_test_flt-.20_pl_test_flt, xmin)
+                call plctime(1961,7,1,0,0,1.64757_pl_test_flt+.20_pl_test_flt, xmax)
                 npts = 1001
-                ymin = 1.625_double
-                ymax = 1.725_double
+                ymin = 1.625_pl_test_flt
+                ymax = 1.725_pl_test_flt
                 time_format = "%S%2%"
                 title_suffix = "near 1961-08-01 (TAI)"
-                xlabel_step = 0.05_double/(scale*86400.0_double)
+                xlabel_step = 0.05_pl_test_flt/(scale*86400.0_pl_test_flt)
                 if (k .eq. 1) then
                     if_TAI_time_format = .true.
                     xtitle = "Seconds (TAI)"
@@ -305,14 +329,23 @@ contains
                     xtitle = "Seconds (TAI) labelled with corresponding UTC"
                 endif
             elseif ((k .eq. 3) .or. (k .eq. 4)) then
-                call plctime(1963,10,1,0,0,2.6972788_double-.20_double, xmin)
-                call plctime(1963,10,1,0,0,2.6972788_double+.20_double, xmax)
+                ! Choose midpoint to maximize time-representation precision.
+                epoch_year  = 1963
+                epoch_month = 10
+                epoch_day   = 1
+                epoch_hour  = 0
+                epoch_min   = 0
+                epoch_sec   = 2.6972788_pl_test_flt
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec )
+                call plctime(1963,10,1,0,0,2.6972788_pl_test_flt-.20_pl_test_flt, xmin)
+                call plctime(1963,10,1,0,0,2.6972788_pl_test_flt+.20_pl_test_flt, xmax)
                 npts = 1001
-                ymin = 2.55_double
-                ymax = 2.75_double
+                ymin = 2.55_pl_test_flt
+                ymax = 2.75_pl_test_flt
                 time_format = "%S%2%"
                 title_suffix = "near 1963-11-01 (TAI)"
-                xlabel_step = 0.05_double/(scale*86400.0_double)
+                xlabel_step = 0.05_pl_test_flt/(scale*86400.0_pl_test_flt)
                 if (k .eq. 3) then
                     if_TAI_time_format = .true.
                     xtitle = "Seconds (TAI)"
@@ -321,14 +354,23 @@ contains
                     xtitle = "Seconds (TAI) labelled with corresponding UTC"
                 endif
             elseif ((k .eq. 5) .or. (k .eq. 6)) then
-                call plctime(2009,0,1,0,0,34._double-5._double,xmin)
-                call plctime(2009,0,1,0,0,34._double+5._double,xmax)
+                ! Choose midpoint to maximize time-representation precision.
+                epoch_year  = 2009
+                epoch_month = 0
+                epoch_day   = 1
+                epoch_hour  = 0
+                epoch_min   = 0
+                epoch_sec   = 34._pl_test_flt
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec )
+                call plctime(2009,0,1,0,0,34._pl_test_flt-5._pl_test_flt,xmin)
+                call plctime(2009,0,1,0,0,34._pl_test_flt+5._pl_test_flt,xmax)
                 npts = 1001
-                ymin = 32.5_double
-                ymax = 34.5_double
+                ymin = 32.5_pl_test_flt
+                ymax = 34.5_pl_test_flt
                 time_format = "%S%2%"
                 title_suffix = "near 2009-01-01 (TAI)"
-                xlabel_step = 1._double/(scale*86400._double)
+                xlabel_step = 1._pl_test_flt/(scale*86400._pl_test_flt)
                 if (k .eq. 5) then
                     if_TAI_time_format = .true.
                     xtitle = "Seconds (TAI)"
@@ -339,21 +381,27 @@ contains
             endif
 
             do i=0,npts-1
-                x(i+1) = xmin + i*(xmax-xmin)/(real(npts-1,kind=double))
-                call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, 0, &
-                       0, 0, 0._double)
+                x(i+1) = xmin + i*(xmax-xmin)/(real(npts-1,kind=pl_test_flt))
                 tai = x(i+1)
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec )
                 call plbtime(tai_year, tai_month, tai_day, tai_hour, &
                        tai_min, tai_sec, tai)
-                call plconfigtime(scale, offset1, offset2, 2, .false., 0, 0, &
-                       0, 0, 0, 0._double)
-                call plbtime(utc_year, utc_month, utc_day, utc_hour, &
-                       utc_min, utc_sec, tai)
-                call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, &
-                       0, 0, 0, 0._double)
-                call plctime(utc_year, utc_month, utc_day, utc_hour, &
-                       utc_min, utc_sec, utc)
-                y(i+1)=(tai-utc)*scale*86400._double
+                ! Calculate residual using tai as the epoch to nearly maximize time-representation precision.
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec)
+                ! Calculate continuous tai with new epoch.
+                call plctime( tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai)
+                ! Calculate broken-down utc (with leap seconds inserted) from continuous tai with new epoch.
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 2, .true., &
+                       tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec)
+                call plbtime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, tai)
+                ! Calculate continuous utc from broken-down utc using same epoch as for the continuous tai.
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec)
+                call plctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, utc)
+                ! Convert residuals to seconds.
+                y(i+1)=(tai-utc)*scale*86400._pl_test_flt
             enddo
 
             call pladv(0)
@@ -361,14 +409,14 @@ contains
             call plwind(xmin, xmax, ymin, ymax)
             call plcol0(1)
             if (if_TAI_time_format) then
-                call plconfigtime(scale, offset1, offset2, 0, .false., 0, 0, &
-                       0, 0, 0, 0._double)
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 0, .true., &
+                       epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec )
             else
-                call plconfigtime(scale, offset1, offset2, 2, .false., 0, 0, &
-                       0, 0, 0, 0._double)
+                call plconfigtime(scale, 0._pl_test_flt, 0._pl_test_flt, 2, .true., &
+                       epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec )
             endif
             call pltimefmt(time_format)
-            call plbox("bcnstd", xlabel_step, 0, "bcnstv", 0._double, 0)
+            call plbox("bcnstd", xlabel_step, 0, "bcnstv", 0._pl_test_flt, 0)
             call plcol0(3)
             title = "@frPLplot Example 29 - TAI-UTC "// &
                    trim(title_suffix)

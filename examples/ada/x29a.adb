@@ -44,10 +44,6 @@ use
 -- 1) Plotting temperature over a day (using hours / minutes)
 -- 2) Plotting
 --
--- Note: We currently use the default call for plconfigtime (done in
--- plinit) which means continuous times are interpreted as seconds since
--- 1970-01-01, but that may change in future, more extended versions of
--- this example.
 --------------------------------------------------------------------------------
 
 -- NOTE: The Ada user is reminded that Ada.Calendar is very capable and complete.
@@ -202,10 +198,8 @@ procedure x29a is
 
     procedure plot4 is 
         -- TAI-UTC (seconds) as a function of time.
-        -- Use Besselian epochs as the continuous time interval just to prove
-        -- this does not introduce any issues.
 
-        scale, offset1, offset2 : Long_Float;  
+        Scale : Long_Float;  
         xmin, xmax, ymin, ymax, xlabel_step : Long_Float;
         npts : Integer;
         if_TAI_time_format : Boolean;
@@ -214,24 +208,52 @@ procedure x29a is
         xtitle : Unbounded_String := To_Unbounded_String("");
         title : Unbounded_String := To_Unbounded_String("");
         x, y : Real_Vector(0 .. 1000);
+        epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min : Integer;
+        epoch_sec : Long_Float;
         tai_year, tai_month, tai_day, tai_hour, tai_min : Integer;
         tai_sec, tai : Long_Float;
         utc_year, utc_month, utc_day, utc_hour, utc_min : Integer;
         utc_sec, utc : Long_Float;
     begin
-        -- Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-        -- B = 1900. + (JD -2415020.31352)/365.242198781 
-        -- => (as calculated with aid of "bc -l" command)
-        -- B = (MJD + 678940.364163900)/365.242198781
-        -- =>
-        -- MJD = B*365.24219878 - 678940.364163900
+        -- Continuous time unit is Besselian years from whatever epoch is
+        -- chosen below.  Could change to seconds (or days) from the
+        -- epoch, but then would have to adjust xlabel_step below.
         scale := 365.242198781;
-        offset1 := -678940.0;
-        offset2 := -0.3641639;
-        plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
+	-- MJD epoch (see <https://en.wikipedia.org/wiki/Julian_day>).
+	-- This is only set for illustrative purposes, and is overwritten
+	-- below for the time-representation reasons given in the
+	-- discussion below.
+	epoch_year  := 1858;
+	epoch_month := 11;
+	epoch_day   := 17;
+	epoch_hour  := 0;
+	epoch_min   := 0;
+	epoch_sec   := 0.0;
+	-- To illustrate the time-representation issues of using the MJD
+	-- epoch, in 1985, MJD was roughly 46000 days which corresponds to
+	-- 4e9 seconds.  Thus, for the -DPL_DOUBLE=ON case where PLFLT is
+	-- a double which can represent continuous time to roughly 16
+	-- decimal digits of precision the time-representation error is
+	-- roughly ~400 nanoseconds.  Therefore the MJD epoch would be
+	-- acceptable for the plots below in the -DPL_DOUBLE=ON case.
+	-- However, that epoch is obviously not acceptable for the
+	-- -DPL_DOUBLE=OFF case where PLFLT is a float which can represent
+	-- continuous time to only ~7 decimal digits of precision
+	-- corresponding to a time representation error of 400 seconds (!)
+	-- in 1985.  For this reason, we do not use the MJD epoch below
+	-- and instead choose the best epoch for each case to minimize
+	-- time-representation issues.
 
         for kind in 0 .. 6 loop
-            if kind = 0 then
+	    if kind = 0 then
+	        -- Choose midpoint to maximize time-representation precision.
+	        epoch_year  := 1985;
+		epoch_month := 0;
+		epoch_day   := 2;
+		epoch_hour  := 0;
+		epoch_min   := 0;
+		epoch_sec   := 0.0;
+	        plconfigtime(scale, 0.0, 0.0, 0, True, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec);
                 plctime(1950, 0, 2, 0, 0, 0.0, xmin);
                 plctime(2020, 0, 2, 0, 0, 0.0, xmax);
                 npts := 70 * 12 + 1;
@@ -243,6 +265,14 @@ procedure x29a is
                 xtitle := To_Unbounded_String("Year");
                 xlabel_step := 10.0;
             elsif kind = 1 or kind = 2 then
+	        -- Choose midpoint to maximize time-representation precision.
+	        epoch_year  := 1961;
+		epoch_month := 7;
+		epoch_day   := 1;
+		epoch_hour  := 0;
+		epoch_min   := 0;
+		epoch_sec   := 1.64757;
+	        plconfigtime(scale, 0.0, 0.0, 0, True, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec);
                 plctime(1961, 7, 1, 0, 0, 1.64757 - 0.20, xmin);
                 plctime(1961, 7, 1, 0, 0, 1.64757 + 0.20, xmax);
                 npts := 1001;
@@ -259,6 +289,14 @@ procedure x29a is
                     xtitle := To_Unbounded_String("Seconds (TAI) labelled with corresponding UTC");
                 end if;
             elsif kind = 3 or kind = 4 then
+	        -- Choose midpoint to maximize time-representation precision.
+	        epoch_year  := 1963;
+		epoch_month := 10;
+		epoch_day   := 1;
+		epoch_hour  := 0;
+		epoch_min   := 0;
+		epoch_sec   := 2.6972788;
+	        plconfigtime(scale, 0.0, 0.0, 0, True, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec);
                 plctime(1963, 10, 1, 0, 0, 2.6972788 - 0.20, xmin);
                 plctime(1963, 10, 1, 0, 0, 2.6972788 + 0.20, xmax);
                 npts := 1001;
@@ -275,6 +313,14 @@ procedure x29a is
                     xtitle := To_Unbounded_String("Seconds (TAI) labelled with corresponding UTC");
                 end if;
             elsif kind = 5 or kind = 6 then
+	        -- Choose midpoint to maximize time-representation precision.
+	        epoch_year  := 2009;
+		epoch_month := 0;
+		epoch_day   := 1;
+		epoch_hour  := 0;
+		epoch_min   := 0;
+		epoch_sec   := 34.0;
+	        plconfigtime(scale, 0.0, 0.0, 0, True, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec);
                 plctime(2009, 0, 1, 0, 0, 34.0 - 5.0, xmin);
                 plctime(2009, 0, 1, 0, 0, 34.0 + 5.0, xmax);
                 npts := 1001;
@@ -294,13 +340,20 @@ procedure x29a is
 
             for i in 0 .. npts - 1 loop
                 x(i) := xmin + Long_Float(i) * (xmax - xmin) / (Long_Float(npts - 1));
-                plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
                 tai := x(i);
+	        plconfigtime(scale, 0.0, 0.0, 0, True, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec);
                 plbtime(tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai);
-                plconfigtime(scale, offset1, offset2, 2, False, 0, 0, 0, 0, 0, 0.0);
+		-- Calculate residual using tai as the epoch to nearly maximize time-representation precision.
+	        plconfigtime(scale, 0.0, 0.0, 0, True, tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec);
+		-- Calculate continuous tai with new epoch.
+                plctime(tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai);
+		-- Calculate broken-down utc (with leap seconds inserted) from continuous tai with new epoch.
+	        plconfigtime(scale, 0.0, 0.0, 2, True, tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec);
                 plbtime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, tai);
-                plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
+		-- Calculate continuous utc from broken-down utc using same epoch as for the continuous tai.
+	        plconfigtime(scale, 0.0, 0.0, 0, True, tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec);
                 plctime(utc_year, utc_month, utc_day, utc_hour, utc_min, utc_sec, utc);
+		-- Convert residuals to seconds.
                 y(i) := (tai - utc) * scale * 86400.0;
             end loop;
 
@@ -309,9 +362,9 @@ procedure x29a is
             plwind(xmin, xmax, ymin, ymax);
             plcol0(1);
             if if_TAI_time_format then
-                plconfigtime(scale, offset1, offset2, 0, False, 0, 0, 0, 0, 0, 0.0);
+	        plconfigtime(scale, 0.0, 0.0, 0, True, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec);
             else
-                plconfigtime(scale, offset1, offset2, 2, False, 0, 0, 0, 0, 0, 0.0);
+	        plconfigtime(scale, 0.0, 0.0, 2, True, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec);
             end if;
             pltimefmt(To_String(time_format));
             plbox("bcnstd", xlabel_step, 0, "bcnstv", 0.0, 0);
