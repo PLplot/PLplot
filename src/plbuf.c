@@ -772,7 +772,7 @@ rdbuf_bop( PLStream *pls )
     }
 
     //read DI
-    rd_data( pls, &( pls->difilt ), sizeof( pls->difilt ) );
+    rd_data( pls, &( pls->difilt ), sizeof ( pls->difilt ) );
 
     plP_bop();
 }

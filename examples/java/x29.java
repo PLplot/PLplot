@@ -252,15 +252,15 @@ class x29 {
         double  x[];
         double  y[];
         int     epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min;
-        double epoch_sec;
-        int    tai_year[]    = new int[1], tai_month[] = new int[1],
-               tai_day[]     = new int[1], tai_hour[] = new int[1],
-               tai_min[]     = new int[1];
-        double tai_sec[]     = new double[1], tai[] = new double[1];
-        int    utc_year[]    = new int[1], utc_month[] = new int[1],
-               utc_day[]     = new int[1], utc_hour[] = new int[1],
-               utc_min[]     = new int[1];
-        double utc_sec[]     = new double[1], utc[] = new double[1];
+        double  epoch_sec;
+        int     tai_year[] = new int[1], tai_month[] = new int[1],
+                tai_day[]  = new int[1], tai_hour[] = new int[1],
+                tai_min[]  = new int[1];
+        double tai_sec[]   = new double[1], tai[] = new double[1];
+        int    utc_year[]  = new int[1], utc_month[] = new int[1],
+               utc_day[]   = new int[1], utc_hour[] = new int[1],
+               utc_min[]   = new int[1];
+        double utc_sec[]   = new double[1], utc[] = new double[1];
 
         // Continuous time unit is Besselian years from whatever epoch is
         // chosen below.  Could change to seconds (or days) from the
@@ -406,8 +406,8 @@ class x29 {
             y = new double[npts];
             for ( i = 0; i < npts; i++ )
             {
-                x[i] = xmin[0] + i * ( xmax[0] - xmin[0] ) / ( npts - 1 );
-                tai[0]  = x[i];
+                x[i]   = xmin[0] + i * ( xmax[0] - xmin[0] ) / ( npts - 1 );
+                tai[0] = x[i];
                 pls.configtime( scale, 0., 0., 0x0, true, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec );
                 pls.btime( tai_year, tai_month, tai_day, tai_hour, tai_min, tai_sec, tai[0] );
                 // Calculate residual using tai as the epoch to nearly maximize time-representation precision.
