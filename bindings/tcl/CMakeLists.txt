@@ -36,6 +36,10 @@ if(ENABLE_tcl)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     )
 
+  # check_plplotcapi_defines should be done first since
+  # ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
+  # might be changed as a result of that check.
+  add_dependencies(check_tcl_parameters check_plplotcapi_defines)
   add_dependencies(check_all check_tcl_parameters)
 
   include_directories(

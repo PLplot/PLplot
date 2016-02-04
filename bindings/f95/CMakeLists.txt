@@ -67,7 +67,10 @@ if(ENABLE_f95)
     cmp ${CMAKE_CURRENT_SOURCE_DIR}/included_plplot_parameters.f90
     ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_parameters.f90_compare
     )
-
+  # check_plplotcapi_defines should be done first since
+  # ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
+  # might be changed as a result of that check.
+  add_dependencies(check_f95_parameters check_plplotcapi_defines)
   add_dependencies(check_all check_f95_parameters)
 
   # Configure the Fortran source file that specifies the

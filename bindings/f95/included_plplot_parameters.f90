@@ -1,11 +1,11 @@
-    !     Do not edit this generated file.  Instead, check its consistency
-    !     with the #defines in bindings/swig-support/plplotcapi.i using
-    !     the (Unix) target "check_f95_parameters".  If that target
-    !     reports an inconsistency (via a cmp message) between the
-    !     generated included_plplot_parameters.f90_compare file in the
-    !     build tree and included_plplot_parameters.f90 in the source
-    !     tree, then copy included_plplot_parameters.f90_compare on top of
-    !     included_plplot_parameters.f90 and check in that result.
+    ! Do not edit this generated file.  Instead, check its consistency
+    ! with the #defines in bindings/swig-support/plplotcapi.i using the
+    ! (Unix) target "check_f95_parameters".  If that target reports an
+    ! inconsistency (via a cmp message) between the generated
+    ! plplot_parameters.inc_compare file in the build tree and
+    ! plplot_parameters.inc in the source tree, then copy
+    ! plplot_parameters.inc_compare on top of plplot_parameters.inc and
+    ! check in that result.
 
     integer, parameter :: PLESC_SET_RGB = 1 ! obsolete
     integer, parameter :: PLESC_ALLOC_NCOL = 2 ! obsolete
@@ -33,7 +33,7 @@
     integer, parameter :: PLESC_DEV2PLCOL = 24 ! convert device color to PLColor
     integer, parameter :: PLESC_SETBGFG = 25 ! set BG, FG colors
     integer, parameter :: PLESC_DEVINIT = 26 ! alternate device initialization
-    integer, parameter :: PLESC_GETBACKEND = 27 ! get used backend of (wxWidgets) driver
+    integer, parameter :: PLESC_GETBACKEND = 27 ! get used backend of (wxWidgets) driver - no longer used
     integer, parameter :: PLESC_BEGIN_TEXT = 28 ! get ready to draw a line of text
     integer, parameter :: PLESC_TEXT_CHAR = 29 ! render a character of text
     integer, parameter :: PLESC_CONTROL_CHAR = 30 ! handle a text control character (super/subscript, etc.)
@@ -44,6 +44,10 @@
     integer, parameter :: PLESC_GRADIENT = 35 ! render a gradient
     integer, parameter :: PLESC_MODESET = 36 ! set drawing mode
     integer, parameter :: PLESC_MODEGET = 37 ! get drawing mode
+    integer, parameter :: PLESC_FIXASPECT = 38 ! set or unset fixing the aspect ratio of the plot
+    integer, parameter :: PLESC_IMPORT_BUFFER = 39 ! set the contents of the buffer to a specified byte string
+    integer, parameter :: PLESC_APPEND_BUFFER = 40 ! append the given byte string to the buffer
+    integer, parameter :: PLESC_FLUSH_REMAINING_BUFFER = 41 ! flush the remaining buffer e.g. after new data was appended
     integer, parameter :: PLTEXT_FONTCHANGE = 0 ! font change in the text stream
     integer, parameter :: PLTEXT_SUPERSCRIPT = 1 ! superscript in the text stream
     integer, parameter :: PLTEXT_SUBSCRIPT = 2 ! subscript in the text stream
@@ -97,6 +101,19 @@
     integer, parameter :: PL_FCI_MEDIUM = 0
     integer, parameter :: PL_FCI_BOLD = 1
     integer, parameter :: PL_MAXKEY = 16
+    integer, parameter :: PL_MASK_SHIFT = 1 ! ( 1 << 0 )
+    integer, parameter :: PL_MASK_CAPS = 2 ! ( 1 << 1 )
+    integer, parameter :: PL_MASK_CONTROL = 4 ! ( 1 << 2 )
+    integer, parameter :: PL_MASK_ALT = 8 ! ( 1 << 3 )
+    integer, parameter :: PL_MASK_NUM = 1*16 ! ( 1 << 4 )
+    integer, parameter :: PL_MASK_ALTGR = 2*16 !  ( 1 << 5 )
+    integer, parameter :: PL_MASK_WIN = 4*16 ! ( 1 << 6 )
+    integer, parameter :: PL_MASK_SCROLL = 8*16 ! ( 1 << 7 )
+    integer, parameter :: PL_MASK_BUTTON1 = 1*16*16 ! ( 1 << 8 )
+    integer, parameter :: PL_MASK_BUTTON2 = 2*16*16 ! ( 1 << 9 )
+    integer, parameter :: PL_MASK_BUTTON3 = 4*16*16 ! ( 1 << 10 )
+    integer, parameter :: PL_MASK_BUTTON4 = 8*16*16 ! ( 1 << 11 )
+    integer, parameter :: PL_MASK_BUTTON5 = 1*16*16*16 ! ( 1 << 12 )
     integer, parameter :: PL_MAXWINDOWS = 64 ! Max number of windows/page tracked
     real(kind=private_double), parameter :: PL_NOTSET = -42.0_private_double
     real(kind=private_double), parameter :: PL_PI = 3.1415926535897932384_private_double

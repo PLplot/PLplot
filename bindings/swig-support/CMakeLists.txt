@@ -51,7 +51,7 @@ endif(PERL_XML_DOM AND PERL_XML_PARSER)
 add_custom_target(
   check_plplotcapi_defines
   COMMAND ${CMAKE_COMMAND} -E echo "Check that numerical #defines in bindings/swig-support/plplotcapi.i are consistent with the numerical #defines in include/plplot.h"
-  COMMAND ${CMAKE_COMMAND} -E echo "An error for this target implies the numerical #defines section of bindings/swig-support/plplotcapi.i needs updating following the directions in that file"
+  COMMAND ${CMAKE_COMMAND} -E echo "If this target cannot be built, update the numerical #defines section of bindings/swig-support/plplotcapi.i following the directions in that file"
   COMMAND ${CMAKE_COMMAND} -E remove -f
   ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
   COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_SOURCE_DIR}/include/plplot.h | grep -v plotsh3d > ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
