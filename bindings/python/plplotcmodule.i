@@ -682,13 +682,13 @@ typedef PLINT          PLBOOL;
     // list and this ArrayY.
     dims[0] = Xlen;
     dims[1] = Ylen;
-    array   = PyArray_SimpleNew( 2, dims, NPY_FLOAT64 );
+    array   = PyArray_SimpleNew( 2, dims, NPY_PLFLT );
     if ( !array )
         return NULL;
     size = Ylen;
-    $3   = (double **) malloc( sizeof ( double * ) * (size_t) Xlen );
+    $3   = (PLFLT **) malloc( sizeof ( double * ) * (size_t) Xlen );
     for ( i = 0; i < Xlen; i++ )
-        $3[i] = ( (double *) PyArray_DATA( (PyArrayObject *) array ) + i * size );
+        $3[i] = ( (PLFLT *) PyArray_DATA( (PyArrayObject *) array ) + i * size );
 }
 %typemap ( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT **OutMatrixCk )
 {

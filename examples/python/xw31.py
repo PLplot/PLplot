@@ -213,8 +213,9 @@ def main():
     # Restore defaults
     #plcol0(1)
 
-    if status != 0 :
-        sys.exit(status)
+    # Do not exit with status code on one of these failures
+    #if status != 0 :
+    #    sys.exit(status)
 
 main()
 # Terminate plplot

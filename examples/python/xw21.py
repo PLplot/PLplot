@@ -119,6 +119,9 @@ def main():
         pladv(0)
         for alg in range(1,7):
             zg = plgriddata(x, y, z, xg, yg, alg, opt[alg-1])
+#            for i in range(xp):
+#                for j in range(yp):
+#                    print("zg[%d,%d] = %g" % (i, j, zg[i][j]))
 
             if alg == GRID_CSA or alg == GRID_DTLI or alg == GRID_NNLI or alg == GRID_NNI:
                 for i in range(xp):
