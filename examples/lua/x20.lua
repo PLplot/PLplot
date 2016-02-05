@@ -121,15 +121,6 @@ img_f = {}
 cgrid2 = {}
 
   
--- Bugs in plimage():
--- + at high magnifications, the left and right edge are ragged, try
---   ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-     
--- Bugs in x20c.c:
--- + if the window is resized after a selection is made on "lena", when
-  --making a new selection the old one will re-appear.
-  
-
 -- Parse and process command line arguments 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
@@ -191,12 +182,12 @@ if nosombrero==0 then
   end
 end
 
--- read Lena image 
+-- read Chloe image 
 -- Note we try two different locations to cover the case where this
 -- examples is being run from the test_c.sh script 
-status, img_f, width, height, num_col = read_img("lena.pgm")
+status, img_f, width, height, num_col = read_img("Chloe.pgm")
 if status~=0 then 
-  status, img_f, width, height, num_col = read_img("../lena.pgm")
+  status, img_f, width, height, num_col = read_img("../Chloe.pgm")
   if status~=0 then 
     pl.abort("No such file")
     pl.plend()
@@ -207,23 +198,23 @@ end
 -- set gray colormap 
 gray_cmap(num_col)
 
--- display Lena 
+-- display Chloe 
 pl.env(1, width, 1, height, 1, -1)
 
 if nointeractive==0 then
-  pl.lab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...")
+  pl.lab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Chloe...")
 else
-  pl.lab(""," ","Lena...")
+  pl.lab(""," ","Chloe...")
 end
 
 pl.image(img_f, 1, width, 1, height, 0, 0, 1, width, 1, height)
 
 -- selection/expansion demo 
 if nointeractive==0 then
-  xi = 200
-  xe = 330
-  yi = 280
-  ye = 220
+  xi = 25
+  xe = 130
+  yi = 235
+  ye = 125
 
   status, xi, xe, yi, ye = get_clip(xi, xe, yi, ye)
   if status~=0 then  -- get selection rectangle 

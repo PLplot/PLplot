@@ -81,7 +81,6 @@ set(examples_octave
   x31c.m
   x33c.m
   plplot_octave_demo.m
-  lena.img
   )
 
 if(BUILD_TEST)
@@ -114,10 +113,6 @@ endif(BUILD_TEST)
 
 if(CORE_BUILD)
   install(FILES ${examples_octave} DESTINATION ${DATA_DIR}/examples/octave)
-
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.img
-    DESTINATION ${DATA_DIR}/examples
-    )
   install(FILES CMakeLists.txt 
     DESTINATION ${DATA_DIR}/examples/octave
     )

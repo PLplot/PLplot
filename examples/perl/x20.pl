@@ -111,15 +111,15 @@ EOT
       if $f_name;
   }
 
-  # read Lena image
+  # read Chloe image
 
-  my $lena = "lena.pgm";
-  my ($img_f, $width, $height, $num_col) = read_img ($lena);
+  my $Chloe = "Chloe.pgm";
+  my ($img_f, $width, $height, $num_col) = read_img ($Chloe);
   if ($width == 0 && $height == 0) {
-    my $lena = "../lena.pgm";
-    ($img_f, $width, $height, $num_col) = read_img ($lena);
+    my $Chloe = "../Chloe.pgm";
+    ($img_f, $width, $height, $num_col) = read_img ($Chloe);
     if ($width == 0 && $height == 0) {
-      die "Cannot find image file $lena";
+      die "Cannot find image file $Chloe";
     }
   }
 
@@ -127,23 +127,23 @@ EOT
 
   gray_cmap ($num_col);
 
-  # display Lena
+  # display Chloe
 
   plenv (1, $width, 1, $height, 1, -1);
 
   pllab (((not $nointeractive)
           ? "Set and drag Button 1 to (re)set selection, Button 2 to finish."
-          : ""), " ", "Lena...");
+          : ""), " ", "Chloe...");
 
   plimage ($img_f, 1, $width, 1, $height, 0, 0, 1, $width, 1, $height);
 
   # selection/expansion demo
 
   if (not $nointeractive) {
-    $xi = 200;
-    $xe = 330;
-    $yi = 280;
-    $ye = 220;
+    $xi = 25;
+    $xe = 130;
+    $yi = 235;
+    $ye = 125;
 
     if (get_clip (\$xi, \$xe, \$yi, \$ye)) { # get selection rectangle
       plend ();

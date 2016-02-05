@@ -51,7 +51,7 @@ procedure xthick20a is
     z, r : Real_Matrix(0 .. XDIM - 1, 0 .. YDIM - 1);
     xi, yi, xe, ye : Long_Float; 
     width, height, num_col : Integer;
-    img_f : Real_Matrix(0 .. 398, 0 .. 485); -- Lena is width 399, height 486.
+    img_f : Real_Matrix(0 .. 310, 0 .. 239); -- Chloe is width 311, height 240.
     img_min, img_max : Long_Float;
     Get_Clip_Return : Integer;
     type stretch_data is
@@ -72,26 +72,26 @@ procedure xthick20a is
     is
         type Byte is mod 2 ** 8;
         A_Byte : Byte;
-        package Lena_IO is new Ada.Sequential_IO(Byte);
-        use Lena_IO;
-        Input_File : Lena_IO.File_Type;
+        package Chloe_IO is new Ada.Sequential_IO(Byte);
+        use Chloe_IO;
+        Input_File : Chloe_IO.File_Type;
     begin
         -- Naive grayscale binary ppm reading. If you know how to, improve it.
         -- Mine is naiver than yours.
-        -- lena.pgm has 133 bytes of header followed by 399 * 486 bytes of 8-bit pixels.
-        Lena_IO.Open(Input_File, In_File, fname);
+        -- Chloe.pgm has 15 bytes of header followed by 311 * 240 bytes of 8-bit pixels.
+        Chloe_IO.Open(Input_File, In_File, fname);
         
-        for i in 1 .. 133 loop
-            Lena_IO.Read(Input_File, A_Byte);
+        for i in 1 .. 15 loop
+            Chloe_IO.Read(Input_File, A_Byte);
         end loop;
         
-        width  := 399; -- columns
-        height := 486; -- rows
+        width  := 311; -- columns
+        height := 240; -- rows
         num_col := 255; -- number of colors
         
         for j in img_f'range(2) loop
             for i in img_f'range(1) loop
-                Lena_IO.Read(Input_File, A_Byte);
+                Chloe_IO.Read(Input_File, A_Byte);
                 img_f(i, height - j - 1) := Long_Float(A_Byte); -- Flip image up-down.
             end loop;
         end loop;
@@ -244,14 +244,6 @@ procedure xthick20a is
     end mypltr;
 
 begin
-    --  Bugs in Draw_Image_Color_Map_1_Automatic():
-    -- -at high magnifications, the left and right edge are ragged. Try
-    -- ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5.
-     
-    -- Bugs in x20c.c:
-    -- -if the window is resized after a selection is made on "lena", when
-    -- making a new selection the old one will re-appear.
- 
 
     -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
@@ -322,19 +314,19 @@ begin
         end if;
     end if;
 
-    -- Read the Lena image.
+    -- Read the Chloe image.
     -- Note we try two different locations to cover the case where this
     -- examples is being run from the test_c.sh script.
     begin
-        read_img("./lena.pgm", img_f, width, height, num_col);
+        read_img("./Chloe.pgm", img_f, width, height, num_col);
     exception
         when NAME_ERROR =>
             null;
         begin
-            read_img("../lena.pgm", img_f, width, height, num_col);
+            read_img("../Chloe.pgm", img_f, width, height, num_col);
         exception
             when NAME_ERROR =>
-                Put_Line("Failed to open lena.pgm. Aborting.");
+                Put_Line("Failed to open Chloe.pgm. Aborting.");
                 End_PLplot;
                 return;
         end; -- second exception block
@@ -343,13 +335,13 @@ begin
     -- Set gray colormap.
     gray_cmap(num_col);
 
-    -- Display Lena.
+    -- Display Chloe.
     Set_Environment(1.0, Long_Float(width), 1.0, Long_Float(height), Justified, Box);
 
     if nointeractive = 0 then
-        Write_Labels("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
+        Write_Labels("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Chloe...");
     else
-        Write_Labels(""," ","Lena...");
+        Write_Labels(""," ","Chloe...");
     end if;
 
     Draw_Image_Color_Map_1_Automatic(img_f, 1.0, Long_Float(width), 1.0, Long_Float(height), 0.0, 0.0, 1.0, 
@@ -357,10 +349,10 @@ begin
 
     -- Selection/expansion demo
     if nointeractive = 0 then
-        xi := 200.0;
-        xe := 330.0;
-        yi := 280.0;
-        ye := 220.0;
+        xi := 25.0;
+        xe := 130.0;
+        yi := 235.0;
+        ye := 125.0;
 
         get_clip(xi, xe, yi, ye, Get_Clip_Return); -- get selection rectangle
         if Get_Clip_Return /= 0 then

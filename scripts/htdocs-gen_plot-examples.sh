@@ -77,8 +77,8 @@ export cexamples_dir=`pwd`
 make
 popd
 
-# hack, x20c needs lena in the current directory
-$CP examples/c/lena.pgm .
+# hack, x20c needs Chloe in the current directory
+$CP examples/Chloe.pgm .
 
 for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 \
     23 24 25 26 27 28 29 30 31 32 33; do
@@ -175,7 +175,7 @@ for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 
 done
 
 # remove hack
-rm -f lena.pgm
+rm -f Chloe.pgm
 
 # create the tarball
 TARBALL=htdocs-plot-demos.tgz

@@ -26,7 +26,8 @@ function p17(fg)
   title "Click and Drag button 1 to select";
   xlabel "Button 2 to restart and button 3 to finish";
   ylabel "";
-  [img, map]= imread (file_in_loadpath ("lena.img"));
+  file_pgm = imread (file_in_loadpath ("Chloe.pgm"));
+  [img, map]= gray2ind (file_pgm, 255);
   colormap(map);
   plimage (img);
   if (!nargin)
@@ -38,7 +39,7 @@ function p17(fg)
     if (y1 == y2) 
       y2 = y1+1;
     end
-    title "Lena";
+    title "Chloe";
     xlabel "";
     plimage (img, x1, x2, y1, y2);
   endif

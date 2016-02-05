@@ -22,7 +22,7 @@
 ## Preliminary! see p17.m
 ##
 ## ex:
-##   [img, map] = loadimage("default.img"); # "lena.img" can also be used
+##   [img, map] = loadimage("default.img"); # "Chloe.img" can also be used
 ##   colormap(map);
 ##   plimage(img);
 

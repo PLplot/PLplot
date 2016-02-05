@@ -92,7 +92,7 @@ program x20f
     real(kind=pl_test_flt)  width_r, height_r
 
     !
-    !     Dimensions taken from "lena.pgm"
+    !     Dimensions taken from "Chloe.pgm"
     !
     integer width, height, num_col
     integer :: plparseopts_rc
@@ -112,16 +112,6 @@ program x20f
     character(len=80) f_name
     integer :: plgetcursor_rc
 
-    !
-    !     Bugs in plimage():
-    !      -at high magnifications, the left and right edge are ragged, try
-    !         ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-    !
-    !     Bugs in x20c.c:
-    !      -if the window is resized after a selection is made on 'lena', when
-    !       making a new selection the old one will re-appear.
-    !
-    !
     !     Parse and process command line arguments
     !
     !      call plMergeOpts(options, 'x20c options', NULL)
@@ -197,12 +187,12 @@ program x20f
     endif
 
     !
-    !     Read Lena image
+    !     Read Chloe image
     !     Note we try two different locations to cover the case where this
     !     example is being run from the test_c.sh script
     !
-    if (.not. read_img('lena.pgm', img_f, width, height, num_col)) then
-        if (.not. read_img('../lena.pgm', img_f, width, height, num_col)) then
+    if (.not. read_img('Chloe.pgm', img_f, width, height, num_col)) then
+        if (.not. read_img('../Chloe.pgm', img_f, width, height, num_col)) then
             !C            call plabort('No such file')
             write(*,*) 'Image could not be read'
             call plend()
@@ -213,16 +203,16 @@ program x20f
     !     Set gray colormap
     call gray_cmap(num_col)
 
-    !     Display Lena
+    !     Display Chloe
     width_r  = real(width,kind=pl_test_flt)
     height_r = real(height,kind=pl_test_flt)
     call plenv(1._pl_test_flt, width_r, 1._pl_test_flt, height_r, 1, -1)
 
     if (.not. nointeractive) then
         call pllab('Set and drag Button 1 to (re)set selection, Butto'// &
-               'n 2 to finish.',' '//PL_END_OF_STRING,'Lena...')
+               'n 2 to finish.',' '//PL_END_OF_STRING,'Chloe...')
     else
-        call pllab('',' '//PL_END_OF_STRING,'Lena...')
+        call pllab('',' '//PL_END_OF_STRING,'Chloe...')
     endif
 
     call plimage(img_f, 1._pl_test_flt, width_r, 1._pl_test_flt, &
@@ -230,10 +220,10 @@ program x20f
 
     !     Selection/expansion demo
     if (.not. nointeractive) then
-        xi = 200.0_pl_test_flt
-        xe = 330.0_pl_test_flt
-        yi = 280.0_pl_test_flt
-        ye = 220.0_pl_test_flt
+        xi = 25.0_pl_test_flt
+        xe = 130.0_pl_test_flt
+        yi = 235.0_pl_test_flt
+        ye = 125.0_pl_test_flt
 
         if (get_clip(xi, xe, yi, ye)) then
             call plend()

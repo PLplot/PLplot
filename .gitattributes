@@ -11,8 +11,7 @@
 # but just to make sure it doesn't misclassify a file as text when
 # it is binary, use specific rules below.
 
-# Various formats for Lena images
-*.img -text
+# Chloe image in Portable Gray Map binary form
 *.pgm -text
 
 # Binary graphical formats in the www subdirectory tree

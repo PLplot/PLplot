@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -433,27 +433,16 @@ if(SH_EXECUTABLE)
   endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
 
   if(BUILD_TEST)
-    # Make a copy of lena.pgm to the test subdirectory of the build
+    # Make a copy of Chloe.pgm to the test subdirectory of the build
     # tree so that example 20 will run from there.
     add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Chloe.pgm
       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-      ${CMAKE_SOURCE_DIR}/examples/lena.pgm
-      ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
-      DEPENDS ${CMAKE_SOURCE_DIR}/examples/lena.pgm
+      ${CMAKE_SOURCE_DIR}/examples/Chloe.pgm
+      ${CMAKE_CURRENT_BINARY_DIR}/Chloe.pgm
+      DEPENDS ${CMAKE_SOURCE_DIR}/examples/Chloe.pgm
       )
-    add_custom_target(lena_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm)
-    if(ENABLE_octave)
-      # Also need a copy of lena.img for the octave bindings
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/lena.img
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	${CMAKE_SOURCE_DIR}/examples/octave/lena.img
-	${CMAKE_CURRENT_BINARY_DIR}/lena.img
-	DEPENDS ${CMAKE_SOURCE_DIR}/examples/octave/lena.img
-	)
-      add_custom_target(lena_octave_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/lena.img)
-    endif(ENABLE_octave)
+    add_custom_target(Chloe_file ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/Chloe.pgm)
 
     # Implement custom target to remove all examples output files
     # created by ctest in a convenient way. Use special directory to

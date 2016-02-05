@@ -99,15 +99,21 @@ main( int argc, char *argv[] )
     PLcGrid2            cgrid2;
     PLFLT               xx, yy;
 
-    //
     // Bugs in plimage():
     // -at high magnifications, the left and right edge are ragged, try
     //    ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
+    // AWI comment as of 2016-02-04.  This bug appears to no longer exist.
+
     //
     // Bugs in x20c.c:
-    // -if the window is resized after a selection is made on "lena", when
+    // -if the window is resized after a selection is made on "Chloe", when
     //  making a new selection the old one will re-appear.
-    //
+
+    //  AWI comment as of 2016-02-04.  I confirm that both the old
+    // and new selection areas are outlined, but only the new one
+    // is actually used for the selection so this is relatively harmless
+    // for this application.  Nevertheless, it should be looked into as a
+    // likely rendering issue with plbuf.
 
     // Parse and process command line arguments
 
@@ -175,14 +181,14 @@ main( int argc, char *argv[] )
 
     plFree2dGrid( z, XDIM, YDIM );
 
-    // read Lena image
+    // read Chloe image
     // Note we try three different locations to cover the case where this
     // examples is being run from the test_c.sh script or directly on Windows
-    if ( read_img( "lena.pgm", &img_f, &width, &height, &num_col ) )
+    if ( read_img( "Chloe.pgm", &img_f, &width, &height, &num_col ) )
     {
-        if ( read_img( "../lena.pgm", &img_f, &width, &height, &num_col ) )
+        if ( read_img( "../Chloe.pgm", &img_f, &width, &height, &num_col ) )
         {
-            if ( read_img( "../../lena.pgm", &img_f, &width, &height, &num_col ) )
+            if ( read_img( "../../Chloe.pgm", &img_f, &width, &height, &num_col ) )
             {
                 fprintf( stderr, "No such file" );
                 plend();
@@ -194,13 +200,13 @@ main( int argc, char *argv[] )
     // set gray colormap
     gray_cmap( num_col );
 
-    // display Lena
+    // display Chloe
     plenv( 1., width, 1., height, 1, -1 );
 
     if ( !nointeractive )
-        pllab( "Set and drag Button 1 to (re)set selection, Button 2 to finish.", " ", "Lena..." );
+        pllab( "Set and drag Button 1 to (re)set selection, Button 2 to finish.", " ", "Chloe..." );
     else
-        pllab( "", " ", "Lena..." );
+        pllab( "", " ", "Chloe..." );
 
     plimage( (const PLFLT * const *) img_f, width, height, 1., width, 1., height, 0., 0.,
         1., width, 1., height );
@@ -210,8 +216,8 @@ main( int argc, char *argv[] )
     // selection/expansion demo
     if ( !nointeractive )
     {
-        xi = 200.; xe = 330.;
-        yi = 280.; ye = 220.;
+        xi = 25.; xe = 130.;
+        yi = 235.; ye = 125.;
 
         if ( get_clip( &xi, &xe, &yi, &ye ) ) // get selection rectangle
         {

@@ -254,11 +254,15 @@ if(CORE_BUILD)
     
   endif(USE_RPATH)
 
-  # Install lena.pgm in installed examples directory so that all implementations
+  # Install Chloe.pgm in installed examples directory so that all implementations
   # of example 20 in the various examples subdirectories can conveniently
   # access this file.
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm
-    DESTINATION ${DATA_DIR}/examples
+  install(
+    FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Chloe.pgm
+    ${CMAKE_CURRENT_SOURCE_DIR}/README.Chloe
+    DESTINATION
+    ${DATA_DIR}/examples
     )
 
 endif(CORE_BUILD)
@@ -541,13 +545,13 @@ else(WORKAROUND_FILE_GENERATE_BUG)
 endif(WORKAROUND_FILE_GENERATE_BUG)
 
 if(BUILD_TEST)
-  # lena.pgm needed in build tree for the examples that are run from there.
+  # Chloe.pgm needed in build tree for the examples that are run from there.
   # Done at cmake time without dependencies because cannot see how this
   # file will ever change on short time scales.
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_SOURCE_DIR}/lena.pgm 
-    ${CMAKE_CURRENT_BINARY_DIR}/lena.pgm
+    ${CMAKE_CURRENT_SOURCE_DIR}/Chloe.pgm 
+    ${CMAKE_CURRENT_BINARY_DIR}/Chloe.pgm
     )
 
   find_program(VALGRIND_EXECUTABLE valgrind)

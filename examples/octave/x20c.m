@@ -15,14 +15,6 @@ function ix20c
   ydim = 220;
 
 
-  ## Bugs in plimage():
-  ##  -at high magnifications, the left and right edge are ragged, try
-  ##  ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-  ##   
-  ## Bugs in x20c.c:
-  ##  -if the window is resized after a selection is made on "lena", when
-  ##   making a new selection the old one will re-appear.
-
   ## Parse and process command line arguments
 
   ##  plMergeOpts(options, "x20c options", NULL);
@@ -73,11 +65,11 @@ function ix20c
     endif
   endif
 
-  ## read Lena image
-  if (exist("lena.pgm","file"))
-    [ret, img, width, height, num_col] = read_img("lena.pgm");
-  elseif (exist("../lena.pgm","file"))
-    [ret, img, width, height, num_col] = read_img("../lena.pgm");
+  ## read Chloe image
+  if (exist("Chloe.pgm","file"))
+    [ret, img, width, height, num_col] = read_img("Chloe.pgm");
+  elseif (exist("../Chloe.pgm","file"))
+    [ret, img, width, height, num_col] = read_img("../Chloe.pgm");
   else
     printf("Error: No such file\n");
     plend1;
@@ -87,13 +79,13 @@ function ix20c
   ## set gray colormap
   gray_cmap(num_col);
 
-  ## display Lena
+  ## display Chloe
   plenv(1., width, 1., height, 1, -1);
 
   if (!exist("nointeractive","var"))
-    pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...");
+    pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Chloe...");
   else
-    pllab(""," ","Lena...");
+    pllab(""," ","Chloe...");
   endif
   
   pplimage(img, 1.0, width, 1.0, height, 0.0, 0.0, 1.0, width, 1.0, height);
@@ -240,8 +232,8 @@ function [ret, xi, xe, yi, ye] = get_clip
   sy = zeros(5,1);
   st = plxormod(1); ## enter xor mode to draw a selection rectangle
 
-  xi = 200.; xe = 330.;
-  yi = 280.; ye = 220.;
+  xi = 25.; xe = 130.;
+  yi = 235.; ye = 125.;
 
   keysym = 0;
 

@@ -112,16 +112,6 @@ class x20 {
         double xg[][], yg[][];
 
 
-        //
-        // Bugs in plimage():
-        // -at high magnifications, the left and right edge are ragged, try
-        // ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-        //
-        // Bugs in x20c.c:
-        // -if the window is resized after a selection is made on "lena", when
-        // making a new selection the old one will re-appear.
-        //
-
         // plplot initialization
 
         // Parse and process command line arguments.
@@ -183,10 +173,10 @@ class x20 {
         }
 
 
-        // read Lena image
-        if ( ( img_f = read_img( "lena.pgm", n ) ) == null )
+        // read Chloe image
+        if ( ( img_f = read_img( "Chloe.pgm", n ) ) == null )
         {
-            if ( ( img_f = read_img( "../lena.pgm", n ) ) == null )
+            if ( ( img_f = read_img( "../Chloe.pgm", n ) ) == null )
             {
                 System.out.println( "File error - aborting" );
                 pls.end();
@@ -200,13 +190,13 @@ class x20 {
         // set gray colormap
         gray_cmap( num_col );
 
-        // display Lena
+        // display Chloe
         pls.env( 1., width, 1., height, 1, -1 );
 
         if ( !nointeractive )
-            pls.lab( "Set and drag Button 1 to (re)set selection, Button 2 to finish.", " ", "Lena..." );
+            pls.lab( "Set and drag Button 1 to (re)set selection, Button 2 to finish.", " ", "Chloe..." );
         else
-            pls.lab( "", " ", "Lena..." );
+            pls.lab( "", " ", "Chloe..." );
 
         pls.image( img_f, 1., width, 1., height, 0., 0.,
             1., width, 1., height );
@@ -214,8 +204,8 @@ class x20 {
         // selection/expansion demo
         if ( !nointeractive )
         {
-            xi[0] = 200.; xe[0] = 330.;
-            yi[0] = 280.; ye[0] = 220.;
+            xi[0] = 25.; xe[0] = 130.;
+            yi[0] = 235.; ye[0] = 125.;
 
             if ( get_clip( xi, xe, yi, ye ) )   // get selection rectangle
             {

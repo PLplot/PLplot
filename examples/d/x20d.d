@@ -38,16 +38,6 @@ int main( char[][] args )
     const int XDIM = 260;
     const int YDIM = 220;
 
-    //
-    // Bugs in plimage():
-    // -at high magnifications, the left and right edge are ragged, try
-    //    ./x20c -dev xwin -wplt 0.3,0.3,0.6,0.6 -ori 0.5
-    //
-    // Bugs in x20c.c:
-    // -if the window is resized after a selection is made on "lena", when
-    //  making a new selection the old one will re-appear.
-    //
-
     // Parse and process command line arguments
     // plMergeOpts(options, "x20c options", NULL);
     plparseopts( args, PL_PARSE_FULL );
@@ -119,14 +109,14 @@ int main( char[][] args )
             save_plot( f_name );
     }
 
-    // read Lena image
+    // read Chloe image
     // Note we try two different locations to cover the case where this
     // examples is being run from the test_c.sh script
     int       width, height, num_col;
     PLFLT[][] img_f;
-    if ( read_img( "lena.pgm", img_f, width, height, num_col ) )
+    if ( read_img( "Chloe.pgm", img_f, width, height, num_col ) )
     {
-        if ( read_img( "../lena.pgm", img_f, width, height, num_col ) )
+        if ( read_img( "../Chloe.pgm", img_f, width, height, num_col ) )
         {
             stderr.writeln( "No such file" );
             plend();
@@ -137,13 +127,13 @@ int main( char[][] args )
     // set gray colormap
     gray_cmap( num_col );
 
-    // display Lena
+    // display Chloe
     plenv( 1.0, cast(PLFLT) width, 1.0, cast(PLFLT) height, 1, -1 );
 
     if ( !nointeractive )
-        pllab( "Set and drag Button 1 to (re)set selection, Button 2 to finish.", " ", "Lena..." );
+        pllab( "Set and drag Button 1 to (re)set selection, Button 2 to finish.", " ", "Chloe..." );
     else
-        pllab( "", " ", "Lena..." );
+        pllab( "", " ", "Chloe..." );
 
     plimage( img_f, 1.0, width, 1.0, height, 0.0, 0.0,
         1.0, width, 1.0, height );
@@ -151,10 +141,10 @@ int main( char[][] args )
     // selection/expansion demo
     if ( !nointeractive )
     {
-        PLFLT xi = 200.0;
-        PLFLT xe = 330.0;
-        PLFLT yi = 280.0;
-        PLFLT ye = 220.0;
+        PLFLT xi = 25.0;
+        PLFLT xe = 130.0;
+        PLFLT yi = 235.0;
+        PLFLT ye = 125.0;
 
         if ( get_clip( xi, xe, yi, ye ) ) // get selection rectangle
         {

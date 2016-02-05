@@ -222,12 +222,12 @@ def main():
         if (f_name != ""):
             save_plot(f_name)
 
-    # Read Lena image
+    # Read Chloe image
     # Note: we try two different locations to cover the case where
     # this example is being run from the test_c.sh script
-    [err, img, width, height, num_col] = read_img("lena.pgm")
+    [err, img, width, height, num_col] = read_img("Chloe.pgm")
     if (err):
-        [err, img, width, height, num_col] = read_img("../lena.pgm")
+        [err, img, width, height, num_col] = read_img("../Chloe.pgm")
         if (err):
             plabort("No such file")
             plend()
@@ -236,22 +236,22 @@ def main():
     # Set gray colormap
     gray_cmap(num_col)
 
-    # Display Lena
+    # Display Chloe
     plenv(1., width, 1., height, 1, -1)
 
     if (not nointeractive):
-        pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Lena...")
+        pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Chloe...")
     else:
-        pllab(""," ","Lena...")
+        pllab(""," ","Chloe...")
 
     plimage(img, 1., width, 1., height, 0., 0., 1., width, 1., height)
 
     # selection/expansion demo
     if (not nointeractive): 
-        xi = 200.
-        xe = 330.
-        yi = 280.
-        ye = 220.
+        xi = 25.
+        xe = 130.
+        yi = 235.
+        ye = 125.
 
         [err, xi, xe, yi, ye] = get_clip(xi, xe, yi, ye)
         if (err):

@@ -146,16 +146,16 @@ let () =
       | None -> ()
   in
 
-  (* read Lena image *)
+  (* read Chloe image *)
   (* Note we try two different locations to cover the case where this
    * examples is being run from the test_ocaml.sh script *)
   let img_f, width, height, num_col =
     try
-      read_img "lena.pgm"
+      read_img "Chloe.pgm"
     with
       _ -> (
         try
-          read_img "../lena.pgm"
+          read_img "../Chloe.pgm"
         with
           Invalid_argument _ ->
             plend ();
@@ -169,18 +169,18 @@ let () =
   (* set gray colormap *)
   gray_cmap num_col;
 
-  (* display Lena *)
+  (* display Chloe *)
   plenv 1.0 width 1.0 height 1 (-1);
 
-  pllab "Set and drag Button 1 to (re)set selection, Button 2 to finish." " " "Lena...";
+  pllab "Set and drag Button 1 to (re)set selection, Button 2 to finish." " " "Chloe...";
 
   plimage img_f 1.0 width 1.0 height 0.0 0.0 1.0 width 1.0 height;
 
   (* selection/expansion demo *)
-  let xi = 200.0 in
-  let xe = 330.0 in
-  let yi = 280.0 in
-  let ye = 220.0 in
+  let xi = 25.0 in
+  let xe = 130.0 in
+  let yi = 235.0 in
+  let ye = 125.0 in
 
   plspause false;
   pladv 0;
