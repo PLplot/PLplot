@@ -1,4 +1,6 @@
-The PLplot package may be distributed under the following terms:
+Aside from the exceptions explicitly noted below in the "Other
+Copyrights" sections, all files in the PLplot package may be
+distributed under the following terms:
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -15,9 +17,10 @@ The PLplot package may be distributed under the following terms:
     Foundation, Inc. 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 The text of this license is given in the file COPYING.LIB in the
-distribution directory.  Exceptions are noted below.
+distribution directory.
 
-The intent behind distributing PLplot under the LGPL is to ensure that it
+The intent behind distributing the vast majority of
+PLplot files under the LGPL is to ensure that it
 continues to evolve in a positive way, while remaining freely
 distributable.  The package is considered a "library" even though there
 are associated programs, such as plrender, pltek, plserver, and pltcl.
@@ -30,19 +33,22 @@ code must remain freely available, including any modifications you make to
 it (if you distribute a program based on the modified library).  Please
 read the full license for more info.
 
+Other Copyrights
+___________________________________________________________________________
 
-Additional Copyrights
----------------------
-
-The octave front end which links to the PLplot library (but not vice versa),
-and which is otherwise independent of PLplot is copyright under the GPL
-license (see COPYING).
+The octave binding which links to the PLplot library (but not vice
+versa) and the Octave examples (except for x00c.m, x20c.m, x21c.m,
+x23c.m, x24c.m, x25c.m, x26c.m, x27c.m, x28c.m, x29c.m, x30c.m,
+x31c.m, and x33c.m which are copyright under the default LGPL license
+stated above) are copyright under the terms of the GNU General Public
+License as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+___________________________________________________________________________
 
 The startup code used in argument handling (utils/plrender.c and
 src/plargs.c) is partially derived from "xterm.c" of the X11R5
 distribution, and its copyright is reproduced here:
 
-******************************************************************************
 Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts,
 and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
@@ -63,7 +69,7 @@ ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
 WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
 ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 SOFTWARE.
-******************************************************************************
+___________________________________________________________________________
 
 The documentation files are distributed under the following license terms:
 
@@ -75,8 +81,6 @@ Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 
 License terms:
-
-  ===========================================================================
 
     Redistribution and use in source (XML DocBook) and "compiled" forms
     (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -104,20 +108,14 @@ License terms:
     WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
     OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
     EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+___________________________________________________________________________
 
-  ===========================================================================
-
-
-The files in the subdirectory data/ss contain Ordnance Survey data © Crown
-copyright and database right 2014 distributed under the Open Government Licence
-available from
+The files in the subdirectory data/ss contain Ordnance Survey data Â©
+Crown copyright and database right 2014 distributed under the Open
+Government Licence available from
 http://www.ordnancesurvey.co.uk/oswebsite/opendata/docs/os-opendata-licence.pdf
-
+___________________________________________________________________________
 
 Any file that is explicitly marked as "public domain" is free from any
 restriction on distribution.  
-
-Any file that has a explicit copyright notice may be distributed under
-the terms of both the LGPL and whatever stated conditions accompany the
-copyright.
-
+___________________________________________________________________________
