@@ -1,11 +1,21 @@
 /*
-Copyright: Darren Hester 2006, http://www.designsbydarren.com
+
+Copyright (C) 2008-2016 Alan W. Irwin 
+Copyright (C) 2008-2016 Werner Smekal
+
 License: Released Under the "Creative Commons License", 
-http://creativecommons.org/licenses/by-nc/2.5/
-The original theme was called fruitopia, 
-http://www.oswd.org/design/preview/id/3181, but there have been substantial
-modifications for our needs and also to make it easy to configure it
-with CMake.
+<http://creativecommons.org/licenses/by-nc/2.5/> in
+accordance with the copyright license of the original
+css theme.
+
+That original css theme <http://www.oswd.org/design/preview/id/3181>
+was called fruitopia.  It was designed by Darren Hester,
+<http://www.designsbydarren.com> and distributed under the above
+license.  We downloaded that theme in 2008 and have substantially
+modified it since to make it easy to configure it with CMake (most
+notably to configure both a "liquid" [appearance scales with page
+size] and "static" [appearance is fixed regardless of page size] form
+of this theme).
 */
 
 body {
