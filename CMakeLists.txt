@@ -54,10 +54,11 @@ set(
 # locations could run into find trouble.  So it is not a showstopper
 # regression, but still it makes any bug report specified for that
 # range of CMake versions somewhat suspect in case the error reported
-# is a result of this find regression.  For this reason we adopt 3.3.2
-# as our minimum CMake version below except for Linux and Cygwin where
-# the minimum version is 3.0.2, and we warn of find issue if
-# the actual version is in the range from 3.2.0 through 3.3.1.
+# is a result of this find regression.  For that reason we adopt 3.3.2
+# or later (now bumped to 3.4.3) for our minimum version below except
+# for Linux and Cygwin where the minimum version is 3.0.2, and for
+# those latter platforms we warn of potential find issues if the
+# actual version is in the range from 3.2.0 through 3.3.1.
 
 # Adapted method suggested by Brad King for using
 # different minimum versions for different platforms.
@@ -73,7 +74,7 @@ if(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 else(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
   # Latest CMake version as of 2015-11 for all platforms
   # other than Cygwin or Linux.
-  cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+  cmake_minimum_required(VERSION 3.4.3 FATAL_ERROR)
   # Keep policy consistent for all platforms.
   cmake_policy(VERSION 3.0.2)
 endif(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")

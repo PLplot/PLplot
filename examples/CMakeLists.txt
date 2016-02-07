@@ -415,9 +415,9 @@ else(CORE_BUILD)
    a compromised find ability that was fixed in 3.3.2.  Please upgrade to 3.3.2 or greater.")
     endif(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
   else(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    # Latest CMake version as of 2015-11 for all platforms
+    # Latest CMake version as of 2016-02 for all platforms
     # other than Cygwin or Linux.
-    cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+    cmake_minimum_required(VERSION 3.4.3 FATAL_ERROR)
     # Keep policy consistent for all platforms.
     cmake_policy(VERSION 3.0.2)
   endif(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
