@@ -189,31 +189,38 @@ which will now allow our Fortran users to respond to error conditions
 for plparseopts, plsetopt, and plGetCursor.
 
 (ii) Only the redacted form of API (with all redundant dimension
-arguments removed) is supported.  In order to comply strictly with
-this rule the list of functions that have been changed from
-non-redacted to redacted form is the following:
+arguments removed) is supported.  The following set of functions
+has been affected by the strict application of this rule:
 
-pllegend (drop redundant nlegend argument), and
-plpat (drop redundant nlin argument).
+pllegend (drop redundant nlegend argument),
+
+plpat (drop redundant nlin argument),
+
+plsurf3dcl (drop redundant indexxmax argument),
+
+plstyl (drop all overloaded versions other than the redacted one.  N.B. use
+zero-sized arrays to indicate that plstyl should restore the default continuous
+line style.)
 
 (iii) Multiple arrays in a redacted argument list should have
 identical sizes for dimensions that are designed for the same purpose.
-This rule is enforced for most languages where we provide bindings and
-now we enforce this same rule for the Fortran case.  For example,
-pllegend has 14 arrays in its argument list, and we now calculate
-nlegend from one of them, and check the remainder of those arrays all
-have that identical size.  (The old Fortran binding was much sloppier
-about this.)  For those cases where you are using static or
-allocatable arrays which are larger than the subsets of the array
-indices which have values assigned, it is straightforward to comply
-with this consistency rule by taking the appropriate array slice in
-the argument list, e.g., "text_colors(1:nlegend), text(1:nlegend)" in
-the pllegend argument list.
+This rule has been enforced for many years for most languages where we
+provide bindings and now we have enforced this same rule for the
+Fortran case.  (The old Fortran binding was much sloppier about this.)
+For those cases where you are using static or allocatable arrays which
+are larger than the subsets of the array indices which have values
+assigned, it is straightforward to comply with this consistency rule
+by taking the appropriate array slice in the argument list, e.g.,
+"text_colors(1:nlegend), text(1:nlegend)" in the pllegend argument
+list.
 
-FIXME.  Still haven't looked systematically at this following
-what is done in bindings/swig-support/plplotcapi.i.  Ultimately, there
-should be a complete list of functions here where the API has
-been changed because of this.
+The list of Fortran PLplot routines where this rule is enforced has
+been implemented following the rules implied for our swig-generated
+bindings by bindings/swig-support/plplotcapi.i (e.g., the Array and
+ArrayCk arguments).
+
+The complete list of those array size rules for our Fortran binding
+are given at bindings/f95/README_array_sizes.
 
 (iv) Fortran logical arguments are strictly used for all cases where
 the corresponding C argument is PLBOOL.  In order to comply strictly
@@ -274,6 +281,10 @@ string is reliably on all platforms translated at the C level to
 of linefeed unlike the Fortran case.  After that, how our device
 drivers currently interpret that special C character for linefeed is
 idiosyncratic to each of our device drivers.)
+
+(x) The index arguments (i.e., the last 3 arguments) of plot3dcl and plsurf3dl have
+been changed from one-based indexing to zero-based indexing to be consistent
+with C and also all our other bindings.
 
 2.6 Examples reworked for the -DPL_DOUBLE=OFF case
 

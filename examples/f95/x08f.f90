@@ -186,9 +186,16 @@ program x08f
             case( 4 )
                 ! magnitude colored plot with contours and index limits
                 call cmap1_init(0)
+                ! N.B. indexxmin, indexymin, and indexymax are
+                ! calculated above using one-based indexing, but must
+                ! substract one from all of them below to convert to
+                ! zero-based indexing.  Zero-based indexing is assumed
+                ! for those 3 arguments by the Fortran binding to make
+                ! that binding consistent with the rest of our
+                ! bindings and our core C code in this regard.
                 call plsurf3dl(x(:xpts), y(:ypts), zlimited(:xpts,:ypts), &
                        ior(MAG_COLOR, ior(SURF_CONT, BASE_CONT)), clevel, &
-                       indexxmin, indexxmax, indexymin, indexymax )
+                       indexxmin-1, indexymin-1, indexymax-1 )
             case default
                 stop 'x08f: bad logic'
             end select

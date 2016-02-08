@@ -204,10 +204,10 @@ contains
         !   Superimpose a dashed line grid, with 1.5 mm marks and spaces. With
         !   only a single mark and space element, we do not need arrays
 
-        call plstyl( 1, 1500, 1500 )
+        call plstyl( (/1500/), (/1500/) )
         call plcol0(2)
         call plbox( 'g', 30.0_pl_test_flt, 0, 'g', 0.2_pl_test_flt, 0 )
-        call plstyl( 0, 0, 0 )
+        call plstyl( (/integer ::/), (/integer ::/) )
 
         call plcol0(3)
         call pllab( 'Angle (degrees)', 'sine', '#frPLplot Example 1 - Sine function' )

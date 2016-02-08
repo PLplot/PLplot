@@ -486,13 +486,9 @@ module plplot
     private :: plstripd_impl
 
     interface plstyl
-        module procedure plstyl_array
-        module procedure plstyl_n_array
-        module procedure plstyl_scalar
+        module procedure plstyl_impl
     end interface plstyl
-    private :: plstyl_array
-    private :: plstyl_n_array
-    private :: plstyl_scalar
+    private :: plstyl_impl
 
     interface plsvect
         module procedure plsvect_double
@@ -1805,6 +1801,8 @@ contains
     subroutine plscmap0_impl( r, g, b )
         integer, dimension(:), intent(in) :: r, g, b
 
+        integer(kind=private_plint) :: n_local
+
         interface
             subroutine interface_plscmap0( r, g, b, n ) bind(c,name='c_plscmap0')
                 import :: private_plint
@@ -1814,8 +1812,14 @@ contains
             end subroutine interface_plscmap0
         end interface
 
+        n_local = size(r,kind=private_plint)
+        if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) ) then
+            write(error_unit,*) "f95 plscmap0 ERROR: inconsistent sizes for r, g, and/or b"
+            return
+        end if
+
         call interface_plscmap0( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
-               size(r,kind=private_plint) )
+               n_local )
     end subroutine plscmap0_impl
 
     subroutine plscmap0n_impl( n )
@@ -1834,6 +1838,8 @@ contains
     subroutine plscmap1_impl( r, g, b )
         integer, dimension(:), intent(in) :: r, g, b
 
+        integer(kind=private_plint) :: n_local
+
         interface
             subroutine interface_plscmap1( r, g, b,  n ) bind(c,name='c_plscmap1')
                 import :: private_plint
@@ -1843,8 +1849,14 @@ contains
             end subroutine interface_plscmap1
         end interface
 
+        n_local = size(r,kind=private_plint)
+        if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) ) then
+            write(error_unit,*) "f95 plscmap1 ERROR: inconsistent sizes for r, g, and/or b"
+            return
+        end if
+
         call interface_plscmap1( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
-               size(r,kind=private_plint) )
+               n_local )
     end subroutine plscmap1_impl
 
     subroutine plscmap1n_impl( n )
@@ -2321,15 +2333,11 @@ contains
         call interface_plstripd( int(id,kind=private_plint) )
     end subroutine plstripd_impl
 
-    subroutine plstyl_array( mark, space )
+    subroutine plstyl_impl( mark, space )
         integer, dimension(:), intent(in) :: mark, space
 
-        call plstyl_n_array( size(mark), mark, space )
-    end subroutine plstyl_array
+        integer(kind=private_plint) :: n_local
 
-    subroutine plstyl_n_array( n, mark, space )
-        integer, intent(in) :: n
-        integer, dimension(:), intent(in) :: mark, space
         interface
             subroutine interface_plstyl( n, mark, space ) bind( c, name = 'c_plstyl' )
                 import :: private_plint
@@ -2339,14 +2347,14 @@ contains
             end subroutine interface_plstyl
         end interface
 
-        call interface_plstyl( int(n,kind=private_plint), int(mark,kind=private_plint), int(space,kind=private_plint) )
-    end subroutine plstyl_n_array
+        n_local = size(mark,kind=private_plint)
+        if( n_local /= size(space, kind=private_plint) ) then
+            write(error_unit,*) "f95 plstyl ERROR: inconsistent sizes for mark and space"
+            return
+        end if
 
-    subroutine plstyl_scalar( n, mark, space )
-        integer, intent(in) :: n, mark, space
-
-        call plstyl_n_array( n, (/ mark /), (/ space /) )
-    end subroutine plstyl_scalar
+        call interface_plstyl( n_local, int(mark,kind=private_plint), int(space,kind=private_plint) )
+    end subroutine plstyl_impl
 
     subroutine plsvect_double( arrowx, arrowy, fill )
         logical, intent(in) :: fill

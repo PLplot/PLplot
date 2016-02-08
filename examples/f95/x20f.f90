@@ -633,7 +633,7 @@ contains
 
         integer num_col
         real(kind=pl_test_flt) r(2), g(2), b(2), pos(2)
-        logical rev(2)
+        logical rev(1)
 
         r(1) = 0.0
         g(1) = 0.0
@@ -645,7 +645,6 @@ contains
         pos(1) = 0.0
         pos(2) = 1.0
         rev(1) = .false.
-        rev(2) = .false.
 
         call plscmap1n(num_col)
         call plscmap1l(.true., pos, r, g, b, rev)

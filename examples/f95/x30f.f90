@@ -40,7 +40,7 @@ program x30f
     integer, dimension(4) ::  red, green, blue
     real(kind=pl_test_flt), dimension (4) :: alpha, px, py
     real(kind=pl_test_flt), dimension (2) :: pos, rcoord, gcoord, bcoord, acoord
-    logical, dimension(2) :: rev
+    logical, dimension(1) :: rev
 
     data red   / 0, 255, 0, 0 /
     data green / 0, 0, 255, 0 /
@@ -53,7 +53,7 @@ program x30f
     data gcoord / 0.0_pl_test_flt, 0.0_pl_test_flt /
     data bcoord / 0.0_pl_test_flt, 0.0_pl_test_flt /
     data acoord / 0.0_pl_test_flt, 1.0_pl_test_flt /
-    data rev / .false. , .false. /
+    data rev / .false. /
 
     integer i, j
     integer icol, r, g, b

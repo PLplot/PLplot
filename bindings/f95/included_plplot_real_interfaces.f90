@@ -592,6 +592,8 @@ contains
         real(kind=wp), dimension(:), intent(in) :: x, y
         integer, intent(in) :: center
 
+        integer(kind=private_plint) :: sz_local
+
         interface
             subroutine interface_plbin( sz, x, y, center ) bind(c,name='c_plbin')
                 import :: private_plint, private_plflt
@@ -601,7 +603,12 @@ contains
             end subroutine interface_plbin
         end interface
 
-        call interface_plbin( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+        sz_local = size(x,kind=private_plint)
+        if( sz_local /= size(y,kind=private_plint) ) then
+            write(error_unit,*) "f95 plbin ERROR: inconsistent sizes for x and y"
+            return
+        end if
+        call interface_plbin( sz_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
                int(center,kind=private_plint) )
     end subroutine plbin_impl
 
@@ -778,7 +785,7 @@ contains
 
         n_labels_local = size(label_opts)
         if( n_labels_local /= size(labels) ) then
-            write(error_unit,*) "f95 plcolorbar ERROR: inconsistent array sizes not allowed for the following arrays:"
+            write(error_unit,*) "f95 plcolorbar ERROR: inconsistent sizes for the following arrays:"
             write(error_unit,*) "label_opts"
             write(error_unit,*) "labels"
             return
@@ -791,7 +798,7 @@ contains
                n_axes_local /= size(n_values) .or. &
                n_axes_local /= size(values,1) &
                ) then
-            write(error_unit,*) "f95 plcolorbar ERROR: inconsistent array sizes not allowed for the following arrays:"
+            write(error_unit,*) "f95 plcolorbar ERROR: inconsistent sizes for the following arrays:"
             write(error_unit,*) "axis_opts"
             write(error_unit,*) "ticks"
             write(error_unit,*) "sub_ticks"
@@ -1244,7 +1251,7 @@ contains
     subroutine plerrx_impl( xmin, xmax, y )
         real(kind=wp), dimension(:), intent(in) :: xmin, xmax, y
 
-        integer(kind=private_plint) n
+        integer(kind=private_plint) :: n_local
 
         interface
             subroutine interface_plerrx( n, xmin, xmax, y ) bind( c, name='c_plerrx')
@@ -1255,19 +1262,19 @@ contains
             end subroutine interface_plerrx
         end interface
 
-        n = size(y,kind=private_plint)
-        if( n /= size(xmin, kind=private_plint) .or. n /= size(xmax, kind=private_plint) ) then
+        n_local = size(y,kind=private_plint)
+        if( n_local /= size(xmin, kind=private_plint) .or. n_local /= size(xmax, kind=private_plint) ) then
             write(error_unit,*) "f95 plerrx ERROR: inconsistent sizes for xmin, xmax, and/or y"
             return
         end if
 
-        call interface_plerrx( n, real(xmin,private_plflt), real(xmax,private_plflt), real(y,private_plflt) )
+        call interface_plerrx( n_local, real(xmin,private_plflt), real(xmax,private_plflt), real(y,private_plflt) )
     end subroutine plerrx_impl
 
     subroutine plerry_impl( x, ymin, ymax )
         real(kind=wp), dimension(:), intent(in) :: x, ymin, ymax
 
-        integer(kind=private_plint) n
+        integer(kind=private_plint) n_local
 
         interface
             subroutine interface_plerry( n, x, ymin, ymax ) bind( c, name='c_plerry')
@@ -1278,17 +1285,19 @@ contains
             end subroutine interface_plerry
         end interface
 
-        n = size(x,kind=private_plint)
-        if( n /= size(ymin, kind=private_plint) .or. n /= size(ymax, kind=private_plint) ) then
+        n_local = size(x,kind=private_plint)
+        if( n_local /= size(ymin, kind=private_plint) .or. n_local /= size(ymax, kind=private_plint) ) then
             write(error_unit,*) "f95 plerry ERROR: inconsistent sizes for x, ymin, and/or ymax"
             return
         end if
 
-        call interface_plerry( n, real(x,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt) )
+        call interface_plerry( n_local, real(x,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt) )
     end subroutine plerry_impl
 
     subroutine plfill3_impl( x, y, z )
         real(kind=wp), dimension(:), intent(in) :: x, y, z
+
+        integer(kind=private_plint) :: n_local
 
         interface
             subroutine interface_plfill3( n, x, y, z ) bind( c, name='c_plfill3')
@@ -1299,12 +1308,20 @@ contains
             end subroutine interface_plfill3
         end interface
 
-        call interface_plfill3( size(x,kind=private_plint), &
+        n_local = size(x,kind=private_plint)
+        if( n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) ) then
+            write(error_unit,*) "f95 plfill3 ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
+        call interface_plfill3( n_local, &
                real(x,private_plflt), real(y,private_plflt) , real(z,private_plflt) )
     end subroutine plfill3_impl
 
     subroutine plfill_impl( x, y )
         real(kind=wp), dimension(:), intent(in) :: x, y
+
+        integer(kind=private_plint) :: n_local
 
         interface
             subroutine interface_plfill( n, x, y ) bind( c, name='c_plfill')
@@ -1315,7 +1332,13 @@ contains
             end subroutine interface_plfill
         end interface
 
-        call interface_plfill( size(x,kind=private_plint), real(x,private_plflt), real(y,private_plflt) )
+        n_local = size(x,kind=private_plint)
+        if( n_local /= size(y, kind=private_plint) ) then
+            write(error_unit,*) "f95 plfill ERROR: inconsistent sizes for x and y"
+            return
+        end if
+
+        call interface_plfill( n_local, real(x,private_plflt), real(y,private_plflt) )
     end subroutine plfill_impl
 
     subroutine plgchr_impl( chrdef, chrht )
@@ -1490,6 +1513,8 @@ contains
         real(kind=wp), dimension(:), intent(in) :: x, y
         real(kind=wp), intent(in) :: angle
 
+        integer(kind=private_plint) :: sz_local
+
         interface
             subroutine interface_plgradient( sz, x, y, angle ) bind(c,name='c_plgradient')
                 import :: private_plint, private_plflt
@@ -1500,7 +1525,13 @@ contains
             end subroutine interface_plgradient
         end interface
 
-        call interface_plgradient( size(x,kind=private_plint), &
+        sz_local = size(x,kind=private_plint)
+        if( sz_local /= size(y, kind=private_plint) ) then
+            write(error_unit,*) "f95 plgradient ERROR: inconsistent sizes for x and y"
+            return
+        end if
+
+        call interface_plgradient( sz_local, &
                real(x,kind=private_plflt), real(y,kind=private_plflt), &
                real(angle,kind=private_plflt) )
     end subroutine plgradient_impl
@@ -1988,7 +2019,7 @@ contains
                nlegend_local /= size(symbol_numbers) .or. &
                nlegend_local /= size(symbols) &
                ) then
-            write(error_unit,*) "f95 pllegend ERROR: inconsistent array sizes not allowed for the following arrays:"
+            write(error_unit,*) "f95 pllegend ERROR: inconsistent sizes for the following arrays:"
             write(error_unit,*) "opt_array"
             write(error_unit,*) "text_colors"
             write(error_unit,*) "text"
@@ -2051,6 +2082,8 @@ contains
     subroutine plline3_impl( x, y, z )
         real(kind=wp), dimension(:), intent(in) :: x, y, z
 
+        integer(kind=private_plint) :: sz_local
+
         interface
             subroutine interface_plline3( sz, x, y, z ) bind(c,name='c_plline3')
                 import :: private_plint, private_plflt
@@ -2060,12 +2093,20 @@ contains
             end subroutine interface_plline3
         end interface
 
-        call interface_plline3( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+        sz_local = size(x,kind=private_plint)
+        if( sz_local /= size(y, kind=private_plint) .or. sz_local /= size(z, kind=private_plint) ) then
+            write(error_unit,*) "f95 plline3 ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
+        call interface_plline3( sz_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
                real(z,kind=private_plflt) )
     end subroutine plline3_impl
 
     subroutine plline_impl( x, y )
         real(kind=wp), dimension(:), intent(in) :: x, y
+
+        integer(kind=private_plint) :: sz_local
 
         interface
             subroutine interface_plline( sz, x, y ) bind(c,name='c_plline')
@@ -2076,7 +2117,13 @@ contains
             end subroutine interface_plline
         end interface
 
-        call interface_plline( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt) )
+        sz_local = size(x,kind=private_plint)
+        if( sz_local /= size(y, kind=private_plint) ) then
+            write(error_unit,*) "f95 plline ERROR: inconsistent sizes for x and y"
+            return
+        end if
+
+        call interface_plline( sz_local, real(x,kind=private_plflt), real(y,kind=private_plflt) )
     end subroutine plline_impl
 
     subroutine plmesh_impl( x, y, z, opt )
@@ -2086,6 +2133,8 @@ contains
 
         real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
         type(c_ptr), dimension(:), allocatable :: zaddress_local
+
+        integer(kind=private_plint) :: nx_local, ny_local
 
         interface
             subroutine interface_plmesh( x, y, zaddress, nx, ny, opt ) bind(c,name='c_plmesh')
@@ -2098,10 +2147,18 @@ contains
             end subroutine interface_plmesh
         end interface
 
+        nx_local = size(x,kind=private_plint)
+        ny_local = size(y,kind=private_plint)
+
+        if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
+            write(error_unit,*) "f95 plmesh ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
         call matrix_to_c( z, zz_local, zaddress_local )
 
         call interface_plmesh( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local, &
-               size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint))
+               nx_local, ny_local, int(opt,kind=private_plint))
 
     end subroutine plmesh_impl
 
@@ -2112,6 +2169,8 @@ contains
 
         real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
         type(c_ptr), dimension(:), allocatable :: zaddress_local
+
+        integer(kind=private_plint) :: nx_local, ny_local
 
         interface
             subroutine interface_plmeshc( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plmeshc')
@@ -2124,10 +2183,18 @@ contains
             end subroutine interface_plmeshc
         end interface
 
+        nx_local = size(x,kind=private_plint)
+        ny_local = size(y,kind=private_plint)
+
+        if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
+            write(error_unit,*) "f95 plmeshc ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
         call matrix_to_c( z, zz_local, zaddress_local )
 
         call interface_plmeshc( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local, &
-               size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+               nx_local, ny_local, int(opt,kind=private_plint), &
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint) )
 
     end subroutine plmeshc_impl
@@ -2175,6 +2242,7 @@ contains
         real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
         type(c_ptr), dimension(:), allocatable :: zaddress_local
 
+        integer(kind=private_plint) :: nx_local, ny_local
 
         interface
             subroutine interface_plot3d( x, y, zaddress, nx, ny, opt, side ) bind(c,name='c_plot3d')
@@ -2188,10 +2256,18 @@ contains
             end subroutine interface_plot3d
         end interface
 
+        nx_local = size(x,kind=private_plint)
+        ny_local = size(y,kind=private_plint)
+
+        if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
+            write(error_unit,*) "f95 plot3d ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
         call matrix_to_c( z, zz_local, zaddress_local )
 
         call interface_plot3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local,  &
-               size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+               nx_local, ny_local, int(opt,kind=private_plint), &
                int(merge(1,0,side),kind=private_plbool) )
 
     end subroutine plot3d_impl
@@ -2204,6 +2280,8 @@ contains
         real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
         type(c_ptr), dimension(:), allocatable :: zaddress_local
 
+        integer(kind=private_plint) :: nx_local, ny_local
+
         interface
             subroutine interface_plot3dc( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plot3dc')
                 import :: c_ptr
@@ -2215,23 +2293,33 @@ contains
             end subroutine interface_plot3dc
         end interface
 
+        nx_local = size(x,kind=private_plint)
+        ny_local = size(y,kind=private_plint)
+
+        if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
+            write(error_unit,*) "f95 plot3dc ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
         call matrix_to_c( z, zz_local, zaddress_local )
 
         call interface_plot3dc( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local,  &
-               size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+               nx_local, ny_local, int(opt,kind=private_plint), &
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint) )
 
     end subroutine plot3dc_impl
 
-    subroutine plot3dcl_impl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin, indexymax )
+    subroutine plot3dcl_impl( x, y, z, opt, clevel, indexxmin, indexymin, indexymax )
         integer, intent(in) :: opt
         real(kind=wp), dimension(:), intent(in) :: x, y, clevel
         real(kind=wp), dimension(:,:), intent(in) :: z
-        integer, intent(in) :: indexxmin, indexxmax
+        integer, intent(in) :: indexxmin
         integer, dimension(:), intent(in) :: indexymin, indexymax
 
         real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
         type(c_ptr), dimension(:), allocatable :: zaddress_local
+
+        integer(kind=private_plint) :: nx_local, ny_local, indexxmax_local
 
         interface
             subroutine interface_plot3dcl( x, y, zaddress, nx, ny, opt, clevel, nlevel, &
@@ -2246,13 +2334,27 @@ contains
             end subroutine interface_plot3dcl
         end interface
 
+        nx_local = size(x,kind=private_plint)
+        ny_local = size(y,kind=private_plint)
+
+        if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
+            write(error_unit,*) "f95 plot3dcl ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
+        indexxmax_local = size(indexymin)
+        if( indexxmax_local /= size(indexymax, kind=private_plint) ) then
+            write(error_unit,*) "f95 plot3dcl ERROR: inconsistent sizes for indexymin and indeyxmax"
+            return
+        end if
+
         call matrix_to_c( z, zz_local, zaddress_local )
 
         call interface_plot3dcl( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local, &
-               size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+               nx_local, ny_local, int(opt,kind=private_plint), &
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
-               int(indexxmin-1,kind=private_plint), int(indexxmax-1,kind=private_plint), &
-               int(indexymin-1,kind=private_plint), int(indexymax-1,kind=private_plint) )
+               int(indexxmin,kind=private_plint), indexxmax_local, &
+               int(indexymin,kind=private_plint), int(indexymax,kind=private_plint) )
 
     end subroutine plot3dcl_impl
 
@@ -2277,6 +2379,8 @@ contains
         integer, intent(in) :: code
         real(kind=wp), dimension(:), intent(in) :: x, y, z
 
+        integer(kind=private_plint) :: n_local
+
         interface
             subroutine interface_plpoin3( n, x, y, z, code ) bind(c,name='c_plpoin3')
                 import :: private_plint, private_plflt
@@ -2286,13 +2390,21 @@ contains
             end subroutine interface_plpoin3
         end interface
 
-        call interface_plpoin3( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+        n_local = size(x,kind=private_plint)
+        if( n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) ) then
+            write(error_unit,*) "f95 plpoin3 ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
+        call interface_plpoin3( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
                real(z,kind=private_plflt), int(code,kind=private_plint) )
     end subroutine plpoin3_impl
 
     subroutine plpoin_impl( x, y, code )
         integer, intent(in) :: code
         real(kind=wp), dimension(:), intent(in) :: x, y
+
+        integer(kind=private_plint) :: n_local
 
         interface
             subroutine interface_plpoin( n, x, y, code ) bind(c,name='c_plpoin')
@@ -2303,7 +2415,13 @@ contains
             end subroutine interface_plpoin
         end interface
 
-        call interface_plpoin( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+        n_local = size(x,kind=private_plint)
+        if( n_local /= size(y, kind=private_plint) ) then
+            write(error_unit,*) "f95 plpoin ERROR: inconsistent sizes for x and y"
+            return
+        end if
+
+        call interface_plpoin( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
                int(code,kind=private_plint) )
     end subroutine plpoin_impl
 
@@ -2311,6 +2429,8 @@ contains
         logical, intent(in) :: ifcc
         logical, dimension(:), intent(in) :: draw
         real(kind=wp), dimension(:), intent(in) :: x, y, z
+
+        integer(kind=private_plint) :: n_local
 
         interface
             subroutine interface_plpoly3( n, x, y, z, draw, ifcc ) bind(c,name='c_plpoly3')
@@ -2323,7 +2443,14 @@ contains
             end subroutine interface_plpoly3
         end interface
 
-        call interface_plpoly3( size(x,kind=private_plint), &
+        n_local = size(x,kind=private_plint)
+        if( n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) .or. &
+               n_local /= size(draw, kind=private_plint) + 1 ) then
+            write(error_unit,*) "f95 plpoly3 ERROR: inconsistent sizes for x, y, z, and/or draw"
+            return
+        end if
+
+        call interface_plpoly3( n_local, &
                real(x,kind=private_plflt), real(y,kind=private_plflt), real(z,kind=private_plflt), &
                int(merge(1,0,draw),kind=private_plbool), int(merge(1,0,ifcc),kind=private_plbool) )
     end subroutine plpoly3_impl
@@ -2408,6 +2535,8 @@ contains
         integer, dimension(:), intent(in) :: r, g, b
         real(kind=wp), dimension(:), intent(in) :: a
 
+        integer(kind=private_plint) :: n_local
+
         interface
             subroutine interface_plscmap0a( r, g, b, a, n ) bind(c,name='c_plscmap0a')
                 import :: private_plint, private_plflt
@@ -2418,8 +2547,15 @@ contains
             end subroutine interface_plscmap0a
         end interface
 
+        n_local = size(r,kind=private_plint)
+        if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) .or. &
+               n_local /= size(a, kind=private_plint) ) then
+            write(error_unit,*) "f95 plscmap0a ERROR: inconsistent sizes for r, g, b, and/or a"
+            return
+        end if
+
         call interface_plscmap0a( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
-               real(a,kind=private_plflt), size(r,kind=private_plint) )
+               real(a,kind=private_plflt), n_local )
     end subroutine plscmap0a_impl
 
     subroutine plscmap1_range_impl( chrdef, chrht )
@@ -2440,6 +2576,8 @@ contains
         integer, dimension(:), intent(in) :: r, g, b
         real(kind=wp), dimension(:), intent(in) :: a
 
+        integer(kind=private_plint) :: n_local
+
         interface
             subroutine interface_plscmap1a( r, g, b, a, n ) bind(c,name='c_plscmap1a')
                 import :: private_plint, private_plflt
@@ -2450,8 +2588,15 @@ contains
             end subroutine interface_plscmap1a
         end interface
 
+        n_local = size(r,kind=private_plint)
+        if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) .or. &
+               n_local /= size(a, kind=private_plint) ) then
+            write(error_unit,*) "f95 plscmap1a ERROR: inconsistent sizes for r, g, b, and/or a"
+            return
+        end if
+
         call interface_plscmap1a( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
-               real(a,kind=private_plflt), size(r,kind=private_plint) )
+               real(a,kind=private_plflt), n_local )
     end subroutine plscmap1a_impl
 
     subroutine plscmap1l_impl( rgbtype, intensity, coord1, coord2, coord3, alt_hue_path)
@@ -2459,6 +2604,7 @@ contains
         real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3
         logical, dimension(:), optional, intent(in) :: alt_hue_path
 
+        integer(kind=private_plint) :: npts_local
         integer(kind=private_plbool), dimension(:), allocatable, target :: ialt_hue_path_local
 
         interface
@@ -2475,17 +2621,33 @@ contains
             end subroutine interface_plscmap1l
         end interface
 
+        npts_local = size(intensity,kind=private_plint)
         if ( present(alt_hue_path) ) then
+            if( npts_local /= size(coord1, kind=private_plint) .or. &
+                   npts_local /= size(coord2, kind=private_plint) .or. &
+                   npts_local /= size(coord3, kind=private_plint) .or. &
+                   npts_local /= size(alt_hue_path, kind=private_plint) + 1 ) then
+                write(error_unit,*) "f95 plscmap1l ERROR: inconsistent sizes for &
+                       &intensity, coord1, coord2, coord3, and/or alt_hue_path"
+                return
+            end if
             allocate( ialt_hue_path_local(size(alt_hue_path)) )
             ialt_hue_path_local = int(merge(1,0,alt_hue_path),kind=private_plbool)
 
-            call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
+            call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), npts_local, &
                    real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                    real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                    c_loc(ialt_hue_path_local) )
             deallocate( ialt_hue_path_local )
         else
-            call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
+            if( npts_local /= size(coord1, kind=private_plint) .or. &
+                   npts_local /= size(coord2, kind=private_plint) .or. &
+                   npts_local /= size(coord3, kind=private_plint) ) then
+                write(error_unit,*) "f95 plscmap1l ERROR: inconsistent sizes for &
+                       &intensity, coord1, coord2, and/or coord3"
+                return
+            end if
+            call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), npts_local, &
                    real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                    real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                    c_null_ptr )
@@ -2497,6 +2659,7 @@ contains
         real(kind=wp), dimension(:), intent(in) :: intensity, coord1, coord2, coord3, alpha
         logical, dimension(:), optional, intent(in) :: alt_hue_path
 
+        integer(kind=private_plint) :: npts_local
         integer(kind=private_plbool), dimension(:), allocatable, target :: ialt_hue_path_local
 
         interface
@@ -2513,17 +2676,35 @@ contains
             end subroutine interface_plscmap1la
         end interface
 
+        npts_local = size(intensity, kind=private_plint)
         if ( present(alt_hue_path) ) then
+            if( npts_local /= size(coord1, kind=private_plint) .or. &
+                   npts_local /= size(coord2, kind=private_plint) .or. &
+                   npts_local /= size(coord3, kind=private_plint) .or. &
+                   npts_local /= size(alpha, kind=private_plint) .or. &
+                   npts_local /= size(alt_hue_path, kind=private_plint) + 1 ) then
+                write(error_unit,*) "f95 plscmap1la ERROR: inconsistent sizes for &
+                       &intensity, coord1, coord2, coord3, alpha, and/or alt_hue_path"
+                return
+            end if
             allocate( ialt_hue_path_local(size(alt_hue_path)) )
             ialt_hue_path_local = int(merge(1,0,alt_hue_path),kind=private_plbool)
 
-            call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
+            call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plbool), npts_local, &
                    real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                    real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                    real(alpha,kind=private_plflt), c_loc(ialt_hue_path_local) )
             deallocate(ialt_hue_path_local)
         else
-            call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plbool), size(intensity,kind=private_plint), &
+            if( npts_local /= size(coord1, kind=private_plint) .or. &
+                   npts_local /= size(coord2, kind=private_plint) .or. &
+                   npts_local /= size(coord3, kind=private_plint) .or. &
+                   npts_local /= size(alpha, kind=private_plint) ) then
+                write(error_unit,*) "f95 plscmap1la ERROR: inconsistent sizes for &
+                       &intensity, coord1, coord2, coord3, and/or alpha"
+                return
+            end if
+            call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plbool), npts_local, &
                    real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
                    real(coord2,kind=private_plflt), real(coord3,kind=private_plflt), &
                    real(alpha,kind=private_plflt), c_null_ptr )
@@ -3376,7 +3557,7 @@ contains
 
         n_local = size(x, kind=private_plint)
         if(n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) ) then
-            write(error_unit,*) "f95 plstring3 ERROR: inconsistent array sizes not allowed for x, y, and z"
+            write(error_unit,*) "f95 plstring3 ERROR: inconsistent sizes for x, y, and/or z"
             return
         end if
 
@@ -3403,7 +3584,7 @@ contains
 
         n_local = size(x, kind=private_plint)
         if(n_local /= size(y, kind=private_plint) ) then
-            write(error_unit,*) "f95 plstring ERROR: inconsistent array sizes not allowed for x and y"
+            write(error_unit,*) "f95 plstring ERROR: inconsistent sizes for x and y"
             return
         end if
 
@@ -3505,6 +3686,8 @@ contains
         real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
         type(c_ptr), dimension(:), allocatable :: zaddress_local
 
+        integer(kind=private_plint) :: nx_local, ny_local
+
         interface
             subroutine interface_plsurf3d( x, y, zaddress, nx, ny, opt, clevel, nlevel ) bind(c,name='c_plsurf3d')
                 import :: c_ptr
@@ -3516,23 +3699,33 @@ contains
             end subroutine interface_plsurf3d
         end interface
 
+        nx_local = size(x,kind=private_plint)
+        ny_local = size(y,kind=private_plint)
+
+        if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
+            write(error_unit,*) "f95 plsurf3d ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
         call matrix_to_c( z, zz_local, zaddress_local )
 
         call interface_plsurf3d( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local,  &
-               size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+               nx_local, ny_local, int(opt,kind=private_plint), &
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint) )
 
     end subroutine plsurf3d_impl
 
-    subroutine plsurf3dl_impl( x, y, z, opt, clevel, indexxmin, indexxmax, indexymin, indexymax )
+    subroutine plsurf3dl_impl( x, y, z, opt, clevel, indexxmin, indexymin, indexymax )
         integer, intent(in) :: opt
         real(kind=wp), dimension(:), intent(in) :: x, y, clevel
         real(kind=wp), dimension(:,:), intent(in) :: z
-        integer, intent(in) :: indexxmin, indexxmax
+        integer, intent(in) :: indexxmin
         integer, dimension(:), intent(in) :: indexymin, indexymax
 
         real(kind=private_plflt), dimension(:,:), allocatable :: zz_local
         type(c_ptr), dimension(:), allocatable :: zaddress_local
+
+        integer(kind=private_plint) :: nx_local, ny_local, indexxmax_local
 
         interface
             subroutine interface_plsurf3dl( x, y, zaddress, nx, ny, opt, clevel, nlevel, &
@@ -3547,13 +3740,26 @@ contains
             end subroutine interface_plsurf3dl
         end interface
 
+        nx_local = size(x,kind=private_plint)
+        ny_local = size(y,kind=private_plint)
+        if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
+            write(error_unit,*) "f95 plsurf3dl ERROR: inconsistent sizes for x, y, and/or z"
+            return
+        end if
+
+        indexxmax_local = size(indexymin)
+        if( indexxmax_local /= size(indexymax, kind=private_plint) ) then
+            write(error_unit,*) "f95 plsurf3dl ERROR: inconsistent sizes for indexymin and indeyxmax"
+            return
+        end if
+
         call matrix_to_c( z, zz_local, zaddress_local )
 
         call interface_plsurf3dl( real(x,kind=private_plflt), real(y,kind=private_plflt), zaddress_local, &
-               size(x,kind=private_plint), size(y,kind=private_plint), int(opt,kind=private_plint), &
+               nx_local, ny_local, int(opt,kind=private_plint), &
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
-               int(indexxmin-1,kind=private_plint), int(indexxmax-1,kind=private_plint), &
-               int(indexymin-1,kind=private_plint), int(indexymax-1,kind=private_plint) )
+               int(indexxmin,kind=private_plint), indexxmax_local, &
+               int(indexymin,kind=private_plint), int(indexymax,kind=private_plint) )
 
     end subroutine plsurf3dl_impl
 
@@ -3576,6 +3782,8 @@ contains
         integer, intent(in) :: code
         real(kind=wp), dimension(:), intent(in) :: x, y
 
+        integer(kind=private_plint) :: n_local
+
         interface
             subroutine interface_plsym( n, x, y, code ) bind(c,name='c_plsym')
                 import :: private_plint, private_plflt
@@ -3585,7 +3793,13 @@ contains
             end subroutine interface_plsym
         end interface
 
-        call interface_plsym( size(x,kind=private_plint), real(x,kind=private_plflt), real(y,kind=private_plflt), &
+        n_local = size(x, kind=private_plint)
+        if(n_local /= size(y, kind=private_plint) ) then
+            write(error_unit,*) "f95 plsym ERROR: inconsistent sizes for x and y"
+            return
+        end if
+
+        call interface_plsym( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
                int(code,kind=private_plint) )
     end subroutine plsym_impl
 
@@ -3607,6 +3821,7 @@ contains
         real(kind=wp), dimension(:,:), intent(in) :: u, v
         real(kind=wp), intent(in) :: scale
 
+        integer(kind=private_plint) :: nx_in, ny_in
         real(kind=private_plflt), dimension(:,:), allocatable, target :: u_in, v_in
         type(PLfGrid), target :: fgrid1, fgrid2
 
@@ -3653,19 +3868,26 @@ contains
             end subroutine interface_plfvect
         end interface
 
-        allocate( u_in(size(u,1),size(u,2)) )
-        allocate( v_in(size(v,1),size(v,2)) )
+        nx_in = size(u,1,kind=private_plint)
+        ny_in = size(u,2,kind=private_plint)
+        if( nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
+            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
+            return
+        end if
+
+        allocate( u_in(nx_in,ny_in) )
+        allocate( v_in(nx_in,ny_in) )
         u_in = u
         v_in = v
         fgrid1%f  = c_loc(u_in)
-        fgrid1%nx = size(u,1)
-        fgrid1%ny = size(u,2)
+        fgrid1%nx = nx_in
+        fgrid1%ny = ny_in
         fgrid2%f  = c_loc(v_in)
-        fgrid2%nx = size(v,1)
-        fgrid2%ny = size(v,2)
+        fgrid2%nx = nx_in
+        fgrid2%ny = ny_in
 
-        call interface_plfvect( plf2evalr, fgrid1, fgrid2, size(u,1,kind=private_plint), &
-               size(u,2,kind=private_plint), real(scale,kind=private_plflt), plplot_private_pltr0f, &
+        call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
+               real(scale,kind=private_plflt), plplot_private_pltr0f, &
                c_null_ptr )
     end subroutine plvectors_0
 
@@ -3734,14 +3956,13 @@ contains
 
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
-
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
-            write(error_unit,*) "f95 plvectors_1 ERROR: inconsistent sizes for u and v"
+            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
             return
         end if
 
         if(nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
-            write(error_unit,*) "f95 plvectors_1 ERROR: inconsistent sizes for u, xg, and/or yg"
+            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u, xg, and/or yg"
             return
         end if
 
@@ -3836,16 +4057,15 @@ contains
 
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
-
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
-            write(error_unit,*) "f95 plvectors_2 ERROR: inconsistent sizes for u and v"
+            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
             return
         end if
 
         if( &
                nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
                nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plvectors_2 ERROR: inconsistent sizes for u, xg, and/or yg"
+            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u, xg, and/or yg"
             return
         end if
 
@@ -3878,6 +4098,7 @@ contains
         real(kind=wp), intent(in) :: scale
         real(kind=wp), dimension(:), intent(in) :: tr
 
+        integer(kind=private_plint) :: nx_in, ny_in
         real(kind=private_plflt), dimension(:,:), allocatable, target :: u_in, v_in
         real(kind=private_plflt), dimension(6), target :: tr_in
         type(PLfGrid), target :: fgrid1, fgrid2
@@ -3924,21 +4145,28 @@ contains
             end subroutine interface_plfvect
         end interface
 
-        allocate( u_in(size(u,1),size(u,2)) )
-        allocate( v_in(size(v,1),size(v,2)) )
+        nx_in = size(u,1,kind=private_plint)
+        ny_in = size(u,2,kind=private_plint)
+        if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
+            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
+            return
+        end if
+
+        allocate( u_in(nx_in,ny_in) )
+        allocate( v_in(nx_in,ny_in) )
         u_in = u
         v_in = v
         fgrid1%f  = c_loc(u_in)
-        fgrid1%nx = size(u,1)
-        fgrid1%ny = size(u,2)
+        fgrid1%nx = nx_in
+        fgrid1%ny = ny_in
         fgrid2%f  = c_loc(v_in)
-        fgrid2%nx = size(v,1)
-        fgrid2%ny = size(v,2)
+        fgrid2%nx = nx_in
+        fgrid2%ny = ny_in
 
         tr_in = tr(1:6)
 
-        call interface_plfvect( plf2evalr, fgrid1, fgrid2, size(u,1,kind=private_plint), &
-               size(u,2,kind=private_plint), real(scale,kind=private_plflt), plplot_private_pltr, tr_in )
+        call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
+               real(scale,kind=private_plflt), plplot_private_pltr, tr_in )
     end subroutine plvectors_tr
 
     subroutine plvpas_impl( xmin, xmax, ymin, ymax, aspect )
