@@ -1,7 +1,7 @@
 # examples/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -409,18 +409,18 @@ else(CORE_BUILD)
   cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
   cmake_policy(VERSION 3.0.2)
   project(installed_plplot_examples NONE)
-  if(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     if(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
       message(STATUS "WARNING: CMAKE_VERSION = ${CMAKE_VERSION} is in the range from 3.2 through 3.3.1 which has
    a compromised find ability that was fixed in 3.3.2.  Please upgrade to 3.3.2 or greater.")
     endif(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
-  else(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Latest CMake version as of 2016-02 for all platforms
-    # other than Cygwin or Linux.
-    cmake_minimum_required(VERSION 3.4.3 FATAL_ERROR)
+    # other than Linux.
+    cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
     # Keep policy consistent for all platforms.
     cmake_policy(VERSION 3.0.2)
-  endif(CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
   # It is a fatal error if no working C compiler is available to build
   # the PLplot core C library and core C examples.  All other compilers
