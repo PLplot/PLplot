@@ -35,16 +35,17 @@ OPTIONS:
   option).
   [--do_clean_as_you_go (yes/no, defaults to yes)]
 
-  The next four control how the builds and tests are done.
+  The next five options control the tools used for the configurations, builds, and tests.
+  [--cmake_command (defaults to cmake)]
   [--generator_string (defaults to 'Unix Makefiles')]
-  [--ctest_command (defaults to 'ctest -j4')]
-  [--build_command (defaults to 'make -j4')]
-
-  The next four control what kind of builds and tests are done.
   [--cmake_added_options (defaults to none, but can be used to specify any
                           combination of white-space-separated cmake options
                           to, e.g., refine what parts of the PLplot software are
                           built and tested)]
+  [--build_command (defaults to 'make -j4')]
+  [--ctest_command (defaults to 'ctest -j4')]
+
+  The next three options control which of the three principal PLplot configurations are tested.
   [--do_shared (yes/no, defaults to yes)]
   [--do_nondynamic (yes/no, defaults to yes)]
   [--do_static (yes/no, defaults to yes)]
@@ -178,16 +179,16 @@ Each of the steps in this comprehensive test may take a while...."
 	PATH=$BUILD_TREE/dll:$PATH_SAVE
     fi
 
-    # Process $cmake_added_options into $* to be used on the cmake command
+    # Process $cmake_added_options into $* to be used on the ${cmake_command} command
     # line below.
     set -- $cmake_added_options
-    echo_tee "cmake in the build tree"
-    cmake "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
-	$* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
-        "$SOURCE_TREE" >& "$output"
+    echo_tee "${cmake_command} in the build tree"
+    ${cmake_command} "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
+		     $* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
+		     "$SOURCE_TREE" >& "$output"
     cmake_rc=$?
     if [ "$cmake_rc" -ne 0 ] ; then
-	echo_tee "ERROR: cmake in the build tree failed"
+	echo_tee "ERROR: ${cmake_command} in the build tree failed"
 	collect_exit 1
     fi
 
@@ -281,11 +282,11 @@ Each of the steps in this comprehensive test may take a while...."
 		cd "$INSTALL_BUILD_TREE"
 		output="$OUTPUT_TREE"/installed_cmake.out
 		rm -f "$output"
-		echo_tee "cmake in the installed examples build tree"
-		cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+		echo_tee "${cmake_command} in the installed examples build tree"
+		${cmake_command} -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
 		cmake_rc=$?
 		if [ "$cmake_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: cmake in the installed examples build tree failed"
+		    echo_tee "ERROR: ${cmake_command} in the installed examples build tree failed"
 		    collect_exit 1
 		fi
 		if [ "$do_test_noninteractive" = "yes" ] ; then
@@ -399,11 +400,11 @@ Each of the steps in this comprehensive test may take a while...."
 		cd "$INSTALL_BUILD_TREE"
 		output="$OUTPUT_TREE"/installed_cmake.out
 		rm -f "$output"
-		echo_tee "cmake in the installed examples build tree"
-		cmake -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+		echo_tee "${cmake_command} in the installed examples build tree"
+		${cmake_command} -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
 		cmake_rc=$?
 		if [ "$cmake_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: cmake in the installed examples build tree failed"
+		    echo_tee "ERROR: ${cmake_command} in the installed examples build tree failed"
 		    collect_exit 1
 		fi
 		if [ "$do_test_interactive" = "yes" ] ; then
@@ -483,6 +484,7 @@ prefix="${SOURCE_TREE}/../comprehensive_test_disposeable"
 do_clean_first=yes
 do_clean_as_you_go=yes
 
+cmake_command="cmake"
 generator_string="Unix Makefiles"
 ctest_command="ctest -j4"
 build_command="make -j4"
@@ -531,6 +533,10 @@ while test $# -gt 0; do
 		    usage 1 1>&2
 		    ;;
 	    esac
+	    ;;
+        --cmake_command)
+	    cmake_command=$2
+	    shift
 	    ;;
         --generator_string)
 	    generator_string=$2
@@ -736,13 +742,13 @@ echo_tee "Summary of options used for these tests
 
 --do_clean_as_you_go $do_clean_as_you_go
 
---generator_string \"$generator_string"\"
-echo_tee "
---ctest_command \"$ctest_command\"
---build_command \"$build_command\"
---traditional_build_command \"$traditional_build_command\"
-
+--cmake_command \"$cmake_command\"
+--generator_string \"$generator_string\"
 --cmake_added_options \"$cmake_added_options\"
+--build_command \"$build_command\"
+  (derived) traditional_build_command \"$traditional_build_command\"
+--ctest_command \"$ctest_command\"
+
 --do_shared $do_shared
 --do_nondynamic $do_nondynamic
 --do_static $do_static
