@@ -156,7 +156,7 @@ for lang in c++ f95 java octave python tcl perl ada adathick ocaml lua d plrende
 	    break
 	  fi
     done
-    if [ "$EXAMPLES_EXIST" == "yes" ] ; then
+    if [ "$EXAMPLES_EXIST" = "yes" ] ; then
 	  for index in ${INDEX_LIST} ; do
 	    if [ ! -f x${xsuffix_c}${index}c${firstpage}.${device} ] ; then
                  echo "C example ${index} is missing"

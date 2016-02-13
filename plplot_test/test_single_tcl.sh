@@ -24,7 +24,7 @@
 # any of the first, through 18th examples.
 number=$1
 shortnumber=$number
-if test ${number:0:1} == "0"; then shortnumber=${number:1:1}; fi
+if test ${number:0:1} = "0"; then shortnumber=${number:1:1}; fi
 ./pltcl -dev psc -o x$number\t.ps <<EOF
 plinit
 source tcldemos.tcl

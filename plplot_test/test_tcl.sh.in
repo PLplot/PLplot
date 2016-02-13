@@ -30,7 +30,7 @@ PLATFORM=@PLATFORM@
 PLTCL_DIR="@PLTCL_DIR@"
 # Escape blanks anywhere in fullpathname.
 PLTCL_DIR=${PLTCL_DIR// /\\ } 
-if [ "$PLATFORM" == "CYGWIN" -o "$PLATFORM" == "MSYS" -o "$PLATFORM" == "MINGW" ] ; then
+if [ "$PLATFORM" = "CYGWIN" -o "$PLATFORM" = "MSYS" -o "$PLATFORM" = "MINGW" ] ; then
     # Convert from "<drive_letter>:/" to "/<drive_letter>/" form.
     re='^([a-zA-Z]):/(.*)'
     if [[ $PLTCL_DIR =~ $re ]] ; then
@@ -39,12 +39,12 @@ if [ "$PLATFORM" == "CYGWIN" -o "$PLATFORM" == "MSYS" -o "$PLATFORM" == "MINGW" 
 fi
 
 PATH=$PLTCL_DIR:$PATH
-if [ "$PLATFORM" == "MSVC" ] ; then
+if [ "$PLATFORM" = "MSVC" ] ; then
     cp test_tcl_caller.bat "$tcldir"
 fi
 lang="t"
 
-if [ "$PLATFORM" == "CYGWIN" -o "$PLATFORM" == "MSYS" -o "$PLATFORM" == "MINGW" ] ; then
+if [ "$PLATFORM" = "CYGWIN" -o "$PLATFORM" = "MSYS" -o "$PLATFORM" = "MINGW" ] ; then
     cd "${OUTPUT_DIR}"
     # On the above Windows platforms (but apparently not MSVC) this
     # sed stanza is needed to converts from leading slash form to
