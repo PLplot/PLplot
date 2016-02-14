@@ -19,7 +19,8 @@ static int
     }
 
     if ( (!%isref% && %ndefs% && (argc < (1 + %nargs% - %ndefs%))) ||
-         (!%isref% && !%ndefs% && (argc != (%nargs% + 1))) ||
+         ( (!%isref% && !%ndefs% && (argc != (%nargs% + 1))) &&
+           (!%isref% && %nredacted% && (argc != (%nargs% + 1 - %nredacted%))) ) ||
          ( %isref% && (argc != 1) && (argc != (%nargs% + 1))) ) {
 	Tcl_AppendResult( interp, "wrong # args: should be \"",
 			  "%cmd% %args%", "\"",
@@ -28,6 +29,8 @@ static int
     }
 
 <getargs>
+
+<consistency>
 
 <plcmd>
 

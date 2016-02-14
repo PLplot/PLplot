@@ -78,12 +78,12 @@ proc plot1 {w} {
     # plot the data points
 
     $w cmd plcol0 4
-    $w cmd plpoin 6 x1 y1 9
+    $w cmd plpoin x1 y1 9
 
     # draw the line through the data
 
     $w cmd plcol0 3
-    $w cmd plline $npts x y
+    $w cmd plline x y
 }
 
 # This is supposed to work just like the plot2() in x01c.c
@@ -96,8 +96,8 @@ proc plot2 {w} {
 
 # Fill up the array
 
-    matrix x1 f 101
-    matrix y1 f 101
+    matrix x1 f 100
+    matrix y1 f 100
 
     for {set i 0} {$i < 100} {incr i} {
 	set x [expr ($i - 19.)/6.]
@@ -108,7 +108,7 @@ proc plot2 {w} {
 
     $w cmd plcol0 3
     $w cmd plwidth 2
-    $w cmd plline 100 x1 y1
+    $w cmd plline x1 y1
     $w cmd plwidth 1
 }
 
@@ -154,5 +154,5 @@ proc plot3 {w} {
     }
 
     $w cmd plcol0 4
-    $w cmd plline 101 x y
+    $w cmd plline x y
 }

@@ -62,10 +62,12 @@ nysub	PLINT
 # Plot a histogram using x to store data values and y to store frequencies
 
 pltclcmd plbin void
-nbin	PLINT
+nbin	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 center	PLINT
+!consistency {nbin <= sz(x) && sz(x) == sz(y)} {Length of the two vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {Both vectors must be of type float}
 
 # Start new page.  Should only be used with pleop().
 
@@ -218,18 +220,22 @@ pltclcmd pleop void
 # Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i))
 
 pltclcmd plerrx void
-n	PLINT
+n	PLINT = sz(y)
 xmin	PLFLT *
 xmax	PLFLT *
 y	PLFLT *
+!consistency {n <= sz(y) && sz(xmin) == sz(xmax) && sz(xmin) == sz(y)} {Length of the three vectors must be equal}
+!consistency {type(xmin) == TYPE_FLOAT && type(xmax) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {All vectors must be of type float}
 
 # Plot vertical error bars (x,ymin(i)) to (x(i),ymax(i))
 
 pltclcmd plerry void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 ymin	PLFLT *
 ymax	PLFLT *
+!consistency {n <= sz(x) && sz(ymin) == sz(ymax) && sz(ymin) == sz(x)} {Length of the three vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(ymin) == TYPE_FLOAT && type(ymax) == TYPE_FLOAT} {All vectors must be of type float}
 
 # Advance to the next family file on the next new page
 
@@ -238,17 +244,21 @@ pltclcmd plfamadv void
 # Pattern fills the polygon bounded by the input points.
 
 pltclcmd plfill void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
+!consistency {n <= sz(x) && sz(x) == sz(y)} {Length of the two vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {Both vectors must be of type float}
 
 # Pattern fills the 3d polygon bounded by the input points.
 
 pltclcmd plfill3 void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 z	PLFLT *
+!consistency {n <= sz(x) && sz(x) == sz(y) && sz(x) == sz(z)} {Length of the three vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT && type(z) == TYPE_FLOAT} {All vectors must be of type float}
 
 # Flushes the output stream.  Use sparingly, if at all.
 
@@ -390,10 +400,12 @@ pltclcmd plgra void
 # Draw gradient in polygon.
 
 pltclcmd plgradient void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 angle	PLFLT
+!consistency {n <= sz(x) && sz(x) == sz(y)} {Length of the two vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {Both vectors must be of type float}
 
 # Get subpage boundaries in absolute coordinates.
 
@@ -455,12 +467,14 @@ digits	PLINT&
 # pltclgen not able to handle Tcl Matrices yet.
 
 pltclcmd plhist void
-n	PLINT
+n	PLINT = sz(data)
 data	PLFLT *
 datmin	PLFLT
 datmax	PLFLT
 nbin	PLINT
 oldwin	PLINT
+!consistency {n <= sz(data)} {Length of the vector must be at least n}
+!consistency {type(data) == TYPE_FLOAT} {The vector must be of type float}
 
 # Set current color (map 0) by hue, lightness, and saturation.
 
@@ -510,18 +524,22 @@ z	PLFLT
 # which we don't have...
 
 pltclcmd plline void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
+!consistency {n <= sz(x) && sz(x) == sz(y)} {Length of the two vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {Both vectors must be of type float}
 
 # Draws a line in 3 space.
 # pltclgen...
 
 pltclcmd plline3 void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 z	PLFLT *
+!consistency {n <= sz(x) && sz(x) == sz(y) && sz(x) == sz(z)} {Length of the three vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT && type(z) == TYPE_FLOAT} {All vectors must be of type float}
 
 # Set line style.
 
@@ -554,9 +572,11 @@ text	const char *
 # Set fill pattern directly.
 
 pltclcmd plpat void
-nlin	PLINT
+nlin	PLINT = sz(inc)
 inc	PLINT *
 del	PLINT *
+!consistency {nlin <= sz(inc) && sz(inc) == sz(del)} {Length of the two vectors must be equal}
+!consistency {type(inc) == TYPE_INT && type(del) == TYPE_INT} {Both vectors must be of type int}
 
 # Draw a line connecting two points, accounting for coordinate transforms
 
@@ -572,29 +592,36 @@ y2      PLFLT
 # which we don't have...
 
 pltclcmd plpoin void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 code	PLINT
+!consistency {n <= sz(x) && sz(x) == sz(y)} {Length of the two vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {Both vectors must be of type float}
 
 # Draws a series of points in 3 space.
 
 pltclcmd plpoin3 void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 z	PLFLT *
 code	PLINT
+!consistency {n <= sz(x) && sz(x) == sz(y) && sz(x) == sz(z)} {Length of the three vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT && type(z) == TYPE_FLOAT} {All vectors must be of type float}
 
 # Draws a polygon in 3 space.
 
 pltclcmd plpoly3 void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 z	PLFLT *
 draw	PLINT *
 ifcc	PLINT
+!consistency {n <= sz(x) && sz(x) == sz(y) && sz(x) == sz(z) && sz(x) == sz(draw)} {Length of all vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT && type(z) == TYPE_FLOAT} {The three coordinate vectors must be of type float}
+!consistency {type(draw) == TYPE_INT} {The draw vectors must be of type int}
 
 # Set the floating point precision (in number of places) in numeric labels.
 
@@ -678,7 +705,9 @@ pltclcmd plscmap0 void
 r	PLINT *
 g	PLINT *
 b	PLINT *
-ncol0	PLINT
+ncol0	PLINT = sz(r)
+!consistency {ncol0 <= sz(r) && sz(r) == sz(g) && sz(r) == sz(b)} {Length of all vectors must be equal}
+!consistency {type(r) == TYPE_INT && type(g) == TYPE_INT && type(b) == TYPE_INT} {All vectors must be of type int}
 
 # Set color map 0 colors by 8 bit RGB values and alpha values.
 
@@ -687,7 +716,10 @@ r	PLINT *
 g	PLINT *
 b	PLINT *
 a	PLFLT *
-ncol0	PLINT
+ncol0	PLINT = sz(r)
+!consistency {ncol0 <= sz(r) && sz(r) == sz(g) && sz(r) == sz(b) && sz(r) == sz(a)} {Length of all vectors must be equal}
+!consistency {type(r) == TYPE_INT && type(g) == TYPE_INT && type(b) == TYPE_INT} {The RGB vectors must be of type int}
+!consistency {type(a) == TYPE_FLOAT} {The alpha vector must be of type float}
 
 # Set number of colors in cmap 0.
 
@@ -700,7 +732,9 @@ pltclcmd plscmap1 void
 r	PLINT *
 g	PLINT *
 b	PLINT *
-ncol1	PLINT
+ncol1	PLINT = sz(r)
+!consistency {ncol1 <= sz(r) && sz(r) == sz(g) && sz(r) == sz(b)} {Length of all vectors must be equal}
+!consistency {type(r) == TYPE_INT && type(g) == TYPE_INT && type(b) == TYPE_INT} {The RGB vectors must be of type int}
 
 # Set color map 1 colors by 8 bit RGB values and alpha values.
 
@@ -709,19 +743,24 @@ r	PLINT *
 g	PLINT *
 b	PLINT *
 a	PLFLT *
-ncol1	PLINT
+ncol1	PLINT = sz(r)
+!consistency {ncol1 <= sz(r) && sz(r) == sz(g) && sz(r) == sz(b) && sz(r) == sz(a)} {Length of all vectors must be equal}
+!consistency {type(r) == TYPE_INT && type(g) == TYPE_INT && type(b) == TYPE_INT && type(a) == TYPE_FLOAT} {The RGB vectors must be of type int}
 
 # Set color map 1 colors using a piece-wise linear relationship between
 # intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
 
 pltclcmd plscmap1l void
 itype		PLINT
-npts		PLINT
+npts		PLINT = sz(intensity)
 intensity	PLFLT *
 coord1		PLFLT *
 coord2		PLFLT *
 coord3		PLFLT *
 alt_hue_path		PLINT *
+!consistency {npts <= sz(intensity) && sz(intensity) == sz(coord1) && sz(intensity) == sz(coord2) && sz(intensity) == sz(coord3) && sz(intensity) == sz(alt_hue_path)} {Length of all vectors must be equal}
+!consistency {type(intensity) == TYPE_FLOAT && type(coord1) == TYPE_FLOAT && type(coord2) == TYPE_FLOAT && type(coord3) == TYPE_FLOAT} {The coordinate vectors must be of type float}
+!consistency {type(alt_hue_path) == TYPE_INT} {The alt_hue_path vector must be of type int}
 
 # Set color map 1 colors using a piece-wise linear relationship between
 # intensity [0,1] (cmap 1 index) and position in HLS or RGB color space.
@@ -729,13 +768,16 @@ alt_hue_path		PLINT *
 
 pltclcmd plscmap1la void
 itype		PLINT
-npts		PLINT
+npts		PLINT = sz(intensity)
 intensity	PLFLT *
 coord1		PLFLT *
 coord2		PLFLT *
 coord3		PLFLT *
 a		PLFLT *
 alt_hue_path		PLINT *
+!consistency {npts <= sz(intensity) && sz(intensity) == sz(coord1) && sz(intensity) == sz(coord2) && sz(intensity) == sz(coord3) && sz(intensity) == sz(alt_hue_path) && sz(intensity) == sz(a)} {Length of all vectors must be equal}
+!consistency {type(intensity) == TYPE_FLOAT && type(coord1) == TYPE_FLOAT && type(coord2) == TYPE_FLOAT && type(coord3) == TYPE_FLOAT && type(a) == TYPE_FLOAT} {The coordinate vectors must be of type float}
+!consistency {type(alt_hue_path) == TYPE_INT} {The alt_hue_path vector must be of type int}
 
 # Set number of colors in cmap 1.
 
@@ -947,19 +989,23 @@ ny		PLINT
 # Plot the same string at a series of locations (x(i),y(i))
 
 pltclcmd plstring void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 string	const char *
+!consistency {n <= sz(x) && sz(x) == sz(y)} {Length of both vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {Both vectors must be of type float}
 
 # Plot the same string at a series of 3D locations (x(i),y(i),z(i))
 
 pltclcmd plstring3 void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 z	PLFLT *
 string	const char *
+!consistency {n <= sz(x) && sz(x) == sz(y) && sz(x) == sz(z)} {Length of all vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT && type(z) == TYPE_FLOAT} {All vectors must be of type float}
 
 # Add data to the strip chart
 
@@ -977,9 +1023,11 @@ id		PLINT
 # Set up a new line style.
 
 pltclcmd plstyl void
-nms	PLINT
+nms	PLINT = sz(mark)
 mark	PLINT *
 space	PLINT *
+!consistency {nms <= sz(mark) && sz(mark) == sz(space)} {Length of both vectors must be equal}
+!consistency {type(mark) == TYPE_INT && type(space) == TYPE_INT} {Both vectors must be of type int}
 
 # Sets the edges of the viewport to the specified absolute coordinates.
 
@@ -1006,10 +1054,12 @@ digits	PLINT	Def: 0
 # which we don't have...
 
 pltclcmd plsym void
-n	PLINT
+n	PLINT = sz(x)
 x	PLFLT *
 y	PLFLT *
 code	PLINT
+!consistency {n <= sz(x) && sz(x) == sz(y)} {Length of both vectors must be equal}
+!consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT} {Both vectors must be of type float}
 
 # Set z axis labeling parameters.
 
@@ -1090,7 +1140,7 @@ mod PLINT
 st  PLINT&
 
 ###############################################################################
-# The rest are kept in as reminders of how the Tcl API might be improved
+# The rest are kept in as reminders to how Tcl API might be improved
 
 # Draws a contour plot from data in f(nx,ny).  Is just a front-end to
 # plfcont, with a particular choice for f2eval and f2eval_data.
@@ -1200,7 +1250,7 @@ st  PLINT&
 
 # Merge user option table into internal info structure.
 
-# PLINT
+# int
 # plMergeOpts(PLOptionTable *options, char *name, char **notes);
 
 # Set the strings used in usage and syntax messages.
@@ -1210,7 +1260,7 @@ st  PLINT&
 
 # Process input strings, treating them as an option and argument pair.
 
-# PLINT
+# int
 # plsetopt(char *opt, char *optarg);
 
 # Print usage & syntax message.
@@ -1235,7 +1285,7 @@ st  PLINT&
 
 # Return full pathname for given file if executable
 
-# PLINT
+# int
 # plFindName(char *p);
 
 # Looks for the specified executable file according to usual search path.
@@ -1251,10 +1301,10 @@ st  PLINT&
 
 # Wait for graphics input event and translate to world coordinates
 
-# PLINT
+# int
 # plGetCursor(PLGraphicsIn *gin);
 
 # Translates relative device coordinates to world coordinates.
 
-# PLINT
+# int
 # plTranslateCursor(PLGraphicsIn *gin);
