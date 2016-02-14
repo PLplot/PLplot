@@ -112,7 +112,7 @@
 // Note for the case when ENABLE_DYNDRIVERS is not defined, the
 // libplplot build specifically includes the plplottcltk code (see
 // cmake/modules/tk.cmake).
-#if defined ( plplottcltk_Main_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
+#if defined ( plplottcltk_Main_EXPORTS ) || defined ( plplottcltk_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
   #define PLDLLIMPEXP_TCLTK    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLEXPORT type
 #else
