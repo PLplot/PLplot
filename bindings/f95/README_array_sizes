@@ -1,8 +1,9 @@
-This file presents the complete list of rules for arrays sizes that is
-enforced for the Fortran bindings.  These rules were derived from the
-rules implied for our swig-generated bindings in
-bindings/swig-support/plplotcapi.i (i.e., anything to do with a "Ck"
-argument such as the Array and ArrayCk arguments).
+This file presents the complete list of rules for arrays sizes that
+are enforced in a user-friendly way for the Fortran bindings by
+emitting a warning message when these rules are not followed.  These
+rules were derived from the rules implied for our swig-generated
+bindings in bindings/swig-support/plplotcapi.i (i.e., anything to do
+with a "Ck" argument such as the Array and ArrayCk arguments).
 
 plbin( x, y, center )
 -- x and y must have identical sizes;

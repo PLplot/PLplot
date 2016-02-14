@@ -1697,12 +1697,12 @@ contains
         numargs_local = command_argument_count()
         if (numargs_local < 0) then
             !       This actually happened historically on a badly linked Cygwin platform.
-            write(error_unit,'(a)') 'f95 plparseopts ERROR: negative number of arguments'
+            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plparseopts: negative number of arguments'
             plparseopts_impl = 1
             return
         endif
         if(numargs_local > maxargs_local) then
-            write(error_unit,'(a)') 'f95 plparseopts ERROR: too many arguments'
+            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plparseopts: too many arguments'
             plparseopts_impl = 1
             return
         endif
@@ -1739,8 +1739,7 @@ contains
 
         nlin_local = size(inc, kind=private_plint)
         if(nlin_local /= size(del, kind=private_plint) ) then
-            write(0,*) "f95 plpat ERROR: sizes of inc and del are not consistent"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plpat: sizes of inc and del are not consistent"
         endif
 
         call interface_plpat( nlin_local, int(inc,kind=private_plint), int(del,kind=private_plint) )
@@ -1814,8 +1813,7 @@ contains
 
         n_local = size(r,kind=private_plint)
         if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) ) then
-            write(error_unit,*) "f95 plscmap0 ERROR: inconsistent sizes for r, g, and/or b"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plscmap0: inconsistent sizes for r, g, and/or b"
         end if
 
         call interface_plscmap0( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
@@ -1851,8 +1849,7 @@ contains
 
         n_local = size(r,kind=private_plint)
         if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) ) then
-            write(error_unit,*) "f95 plscmap1 ERROR: inconsistent sizes for r, g, and/or b"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plscmap1: inconsistent sizes for r, g, and/or b"
         end if
 
         call interface_plscmap1( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
@@ -2118,15 +2115,14 @@ contains
 
         ! We need a first dimension of 3 to have space for RGB
         if( 3 /= size(plotmem,1) ) then
-            write(0,*) "f95 plsmem ERROR: first dimension of plotmem is not 3"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsmem: first dimension of plotmem is not 3"
         endif
 
         ! Since not defined in redacted form, we at least check that
         ! maxx, and maxy are consistent with the second and third dimensions of plotmem.
         if( maxx /= size(plotmem,2) .or. maxy /= size(plotmem,3) ) then
-            write(0,*) "f95 plsmem ERROR: maxx and/or maxy not consistent with second and third plotmem dimensions"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsmem: maxx and/or maxy not &
+                   &consistent with second and third plotmem dimensions"
         endif
         call interface_plsmem( int(maxx,kind=private_plint), int(maxy,kind=private_plint),  c_loc(plotmem))
     end subroutine plsmem_impl
@@ -2150,15 +2146,14 @@ contains
 
         ! We need a first dimension of 4 to have space for RGBa
         if( 4 /= size(plotmem,1) ) then
-            write(0,*) "f95 plsmema ERROR: first dimension of plotmem is not 4"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsmema: first dimension of plotmem is not 4"
         endif
 
         ! Since not defined in redacted form, we at least check that
         ! maxx, and maxy are consistent with the second and third dimensions of plotmem.
         if( maxx /= size(plotmem,2) .or. maxy /= size(plotmem,3) ) then
-            write(0,*) "f95 plsmema ERROR: maxx and/or maxy not consistent with second and third plotmem dimensions"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsmema: maxx and/or maxy not &
+                   &consistent with second and third plotmem dimensions"
         endif
         call interface_plsmema( int(maxx,kind=private_plint), int(maxy,kind=private_plint),  c_loc(plotmem))
     end subroutine plsmema_impl
@@ -2349,8 +2344,7 @@ contains
 
         n_local = size(mark,kind=private_plint)
         if( n_local /= size(space, kind=private_plint) ) then
-            write(error_unit,*) "f95 plstyl ERROR: inconsistent sizes for mark and space"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plstyl: inconsistent sizes for mark and space"
         end if
 
         call interface_plstyl( n_local, int(mark,kind=private_plint), int(space,kind=private_plint) )
@@ -2374,8 +2368,7 @@ contains
 
         npts_local = size(arrowx, kind=private_plint)
         if(npts_local /= size(arrowy, kind=private_plint) ) then
-            write(0,*) "f95 plsvect ERROR: sizes of arrowx and arrowy are not consistent"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsvect: sizes of arrowx and arrowy are not consistent"
         end if
 
         call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &
@@ -2417,8 +2410,7 @@ contains
 
         npts_local = size(arrowx, kind=private_plint)
         if(npts_local /= size(arrowy, kind=private_plint) ) then
-            write(0,*) "f95 plsvect ERROR: sizes of arrowx and arrowy are not consistent"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsvect: sizes of arrowx and arrowy are not consistent"
         end if
 
         call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &

@@ -1,3 +1,4 @@
+
     !***********************************************************************
     !  included_plplot_real_interfaces.f90
     !
@@ -605,8 +606,7 @@ contains
 
         sz_local = size(x,kind=private_plint)
         if( sz_local /= size(y,kind=private_plint) ) then
-            write(error_unit,*) "f95 plbin ERROR: inconsistent sizes for x and y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plbin: inconsistent sizes for x and y"
         end if
         call interface_plbin( sz_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
                int(center,kind=private_plint) )
@@ -785,10 +785,9 @@ contains
 
         n_labels_local = size(label_opts)
         if( n_labels_local /= size(labels) ) then
-            write(error_unit,*) "f95 plcolorbar ERROR: inconsistent sizes for the following arrays:"
-            write(error_unit,*) "label_opts"
-            write(error_unit,*) "labels"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plcolorbar: inconsistent sizes for the following arrays:"
+            write(error_unit, "(a)") "label_opts"
+            write(error_unit, "(a)") "labels"
         end if
 
         n_axes_local = size(axis_opts)
@@ -798,17 +797,16 @@ contains
                n_axes_local /= size(n_values) .or. &
                n_axes_local /= size(values,1) &
                ) then
-            write(error_unit,*) "f95 plcolorbar ERROR: inconsistent sizes for the following arrays:"
-            write(error_unit,*) "axis_opts"
-            write(error_unit,*) "ticks"
-            write(error_unit,*) "sub_ticks"
-            write(error_unit,*) "n_values"
-            write(error_unit,*) "first dimension of values"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plcolorbar: inconsistent sizes for the following arrays:"
+            write(error_unit, "(a)") "axis_opts"
+            write(error_unit, "(a)") "ticks"
+            write(error_unit, "(a)") "sub_ticks"
+            write(error_unit, "(a)") "n_values"
+            write(error_unit, "(a)") "first dimension of values"
         end if
 
         if(maxval(n_values) > size(values,2) ) then
-            write(error_unit,*) "f95: plcolorbar ERROR: maximum of n_values > second dimension of values"
+            write(error_unit, "(a)") "Plplot Fortran Severe Warning: plcolorbar: maximum of n_values > second dimension of values"
             return
         end if
 
@@ -1002,8 +1000,7 @@ contains
         nx_in = size(z,1, kind=private_plint)
         ny_in = size(z,2, kind=private_plint)
         if(nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
-            write(error_unit,*) "f95 plcontour_1 ERROR: inconsistent sizes for z, xg, and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plcontour: inconsistent sizes for z, xg, and/or yg"
         end if
 
         allocate( z_in(nx_in, ny_in) )
@@ -1097,8 +1094,7 @@ contains
         if( &
                nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
                nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plcontour_2 ERROR: inconsistent sizes for z, xg and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plcontour: inconsistent sizes for z, xg and/or yg"
         end if
 
         allocate( z_in(nx_in, ny_in) )
@@ -1264,8 +1260,7 @@ contains
 
         n_local = size(y,kind=private_plint)
         if( n_local /= size(xmin, kind=private_plint) .or. n_local /= size(xmax, kind=private_plint) ) then
-            write(error_unit,*) "f95 plerrx ERROR: inconsistent sizes for xmin, xmax, and/or y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plerrx: inconsistent sizes for xmin, xmax, and/or y"
         end if
 
         call interface_plerrx( n_local, real(xmin,private_plflt), real(xmax,private_plflt), real(y,private_plflt) )
@@ -1287,8 +1282,7 @@ contains
 
         n_local = size(x,kind=private_plint)
         if( n_local /= size(ymin, kind=private_plint) .or. n_local /= size(ymax, kind=private_plint) ) then
-            write(error_unit,*) "f95 plerry ERROR: inconsistent sizes for x, ymin, and/or ymax"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plerry: inconsistent sizes for x, ymin, and/or ymax"
         end if
 
         call interface_plerry( n_local, real(x,private_plflt), real(ymin,private_plflt), real(ymax,private_plflt) )
@@ -1310,8 +1304,7 @@ contains
 
         n_local = size(x,kind=private_plint)
         if( n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) ) then
-            write(error_unit,*) "f95 plfill3 ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plfill3: inconsistent sizes for x, y, and/or z"
         end if
 
         call interface_plfill3( n_local, &
@@ -1334,8 +1327,7 @@ contains
 
         n_local = size(x,kind=private_plint)
         if( n_local /= size(y, kind=private_plint) ) then
-            write(error_unit,*) "f95 plfill ERROR: inconsistent sizes for x and y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plfill: inconsistent sizes for x and y"
         end if
 
         call interface_plfill( n_local, real(x,private_plflt), real(y,private_plflt) )
@@ -1527,8 +1519,7 @@ contains
 
         sz_local = size(x,kind=private_plint)
         if( sz_local /= size(y, kind=private_plint) ) then
-            write(error_unit,*) "f95 plgradient ERROR: inconsistent sizes for x and y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plgradient: inconsistent sizes for x and y"
         end if
 
         call interface_plgradient( sz_local, &
@@ -1565,8 +1556,7 @@ contains
         if( &
                npts_local /= size(y, kind=private_plint) .or. &
                npts_local /= size(z, kind=private_plint) ) then
-            write(error_unit,*) "f95 plgriddata ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plgriddata: inconsistent sizes for x, y, and/or z"
         end if
 
         nptsx_local = size(xg, kind=private_plint)
@@ -1575,10 +1565,9 @@ contains
         if( &
                nptsx_local /= size(zg, 1, kind=private_plint) .or. &
                nptsy_local /= size(zg, 2, kind=private_plint) ) then
-            write(error_unit,*) &
-                   "f95 plgriddata ERROR: inconsistent sizes for "// &
+            write(error_unit, "(a)") &
+                   "Plplot Fortran Warning: plgriddata: inconsistent sizes for "// &
                    "xg and first dimension of zg or yg and second dimension of zg"
-            return
         end if
 
         ! Prepare array areas to be written to by C version of plgriddata
@@ -1779,8 +1768,7 @@ contains
         nx_in = size(idata,1, kind=private_plint)
         ny_in = size(idata,2, kind=private_plint)
         if(nx_in + 1 /= size(xg, kind=private_plint) .or. ny_in + 1 /= size(yg, kind=private_plint) ) then
-            write(error_unit,*) "f95 plimagefr_impl_1 ERROR: inconsistent sizes for idata, xg, and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plimagefr: inconsistent sizes for idata, xg, and/or yg"
         end if
 
         allocate( xg_in(nx_in+1), yg_in(ny_in+1) )
@@ -1854,8 +1842,7 @@ contains
         if( &
                nx_in + 1 /= size(xg, 1, kind=private_plint) .or. ny_in + 1 /= size(xg, 2, kind=private_plint) .or. &
                nx_in + 1 /= size(yg, 1, kind=private_plint) .or. ny_in + 1 /= size(xg, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plimagefr_impl_2 ERROR: inconsistent sizes for idata, xg and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plimagefr: inconsistent sizes for idata, xg and/or yg"
         end if
 
         allocate( xg_in(nx_in+1,ny_in+1), yg_in(nx_in+1,ny_in+1) )
@@ -2019,22 +2006,21 @@ contains
                nlegend_local /= size(symbol_numbers) .or. &
                nlegend_local /= size(symbols) &
                ) then
-            write(error_unit,*) "f95 pllegend ERROR: inconsistent sizes for the following arrays:"
-            write(error_unit,*) "opt_array"
-            write(error_unit,*) "text_colors"
-            write(error_unit,*) "text"
-            write(error_unit,*) "box_colors"
-            write(error_unit,*) "box_patterns"
-            write(error_unit,*) "box_scales"
-            write(error_unit,*) "box_line_widths"
-            write(error_unit,*) "line_colors"
-            write(error_unit,*) "line_styles"
-            write(error_unit,*) "line_widths"
-            write(error_unit,*) "symbol_colors"
-            write(error_unit,*) "symbol_scales"
-            write(error_unit,*) "symbol_numbers"
-            write(error_unit,*) "symbols"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: pllegend: inconsistent sizes for the following arrays:"
+            write(error_unit, "(a)") "opt_array"
+            write(error_unit, "(a)") "text_colors"
+            write(error_unit, "(a)") "text"
+            write(error_unit, "(a)") "box_colors"
+            write(error_unit, "(a)") "box_patterns"
+            write(error_unit, "(a)") "box_scales"
+            write(error_unit, "(a)") "box_line_widths"
+            write(error_unit, "(a)") "line_colors"
+            write(error_unit, "(a)") "line_styles"
+            write(error_unit, "(a)") "line_widths"
+            write(error_unit, "(a)") "symbol_colors"
+            write(error_unit, "(a)") "symbol_scales"
+            write(error_unit, "(a)") "symbol_numbers"
+            write(error_unit, "(a)") "symbols"
         end if
 
         call character_array_to_c( cstring_text_local, cstring_address_text_local, text )
@@ -2095,8 +2081,7 @@ contains
 
         sz_local = size(x,kind=private_plint)
         if( sz_local /= size(y, kind=private_plint) .or. sz_local /= size(z, kind=private_plint) ) then
-            write(error_unit,*) "f95 plline3 ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plline3: inconsistent sizes for x, y, and/or z"
         end if
 
         call interface_plline3( sz_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
@@ -2119,8 +2104,7 @@ contains
 
         sz_local = size(x,kind=private_plint)
         if( sz_local /= size(y, kind=private_plint) ) then
-            write(error_unit,*) "f95 plline ERROR: inconsistent sizes for x and y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plline: inconsistent sizes for x and y"
         end if
 
         call interface_plline( sz_local, real(x,kind=private_plflt), real(y,kind=private_plflt) )
@@ -2151,8 +2135,7 @@ contains
         ny_local = size(y,kind=private_plint)
 
         if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plmesh ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plmesh: inconsistent sizes for x, y, and/or z"
         end if
 
         call matrix_to_c( z, zz_local, zaddress_local )
@@ -2187,8 +2170,7 @@ contains
         ny_local = size(y,kind=private_plint)
 
         if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plmeshc ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plmeshc: inconsistent sizes for x, y, and/or z"
         end if
 
         call matrix_to_c( z, zz_local, zaddress_local )
@@ -2260,8 +2242,7 @@ contains
         ny_local = size(y,kind=private_plint)
 
         if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plot3d ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plot3d: inconsistent sizes for x, y, and/or z"
         end if
 
         call matrix_to_c( z, zz_local, zaddress_local )
@@ -2297,8 +2278,7 @@ contains
         ny_local = size(y,kind=private_plint)
 
         if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plot3dc ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plot3dc: inconsistent sizes for x, y, and/or z"
         end if
 
         call matrix_to_c( z, zz_local, zaddress_local )
@@ -2338,14 +2318,12 @@ contains
         ny_local = size(y,kind=private_plint)
 
         if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plot3dcl ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plot3dcl: inconsistent sizes for x, y, and/or z"
         end if
 
         indexxmax_local = size(indexymin)
         if( indexxmax_local /= size(indexymax, kind=private_plint) ) then
-            write(error_unit,*) "f95 plot3dcl ERROR: inconsistent sizes for indexymin and indeyxmax"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plot3dcl: inconsistent sizes for indexymin and indeyxmax"
         end if
 
         call matrix_to_c( z, zz_local, zaddress_local )
@@ -2392,8 +2370,7 @@ contains
 
         n_local = size(x,kind=private_plint)
         if( n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) ) then
-            write(error_unit,*) "f95 plpoin3 ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plpoin3: inconsistent sizes for x, y, and/or z"
         end if
 
         call interface_plpoin3( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
@@ -2417,8 +2394,7 @@ contains
 
         n_local = size(x,kind=private_plint)
         if( n_local /= size(y, kind=private_plint) ) then
-            write(error_unit,*) "f95 plpoin ERROR: inconsistent sizes for x and y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plpoin: inconsistent sizes for x and y"
         end if
 
         call interface_plpoin( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
@@ -2446,8 +2422,7 @@ contains
         n_local = size(x,kind=private_plint)
         if( n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) .or. &
                n_local /= size(draw, kind=private_plint) + 1 ) then
-            write(error_unit,*) "f95 plpoly3 ERROR: inconsistent sizes for x, y, z, and/or draw"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plpoly3: inconsistent sizes for x, y, z, and/or draw"
         end if
 
         call interface_plpoly3( n_local, &
@@ -2550,8 +2525,7 @@ contains
         n_local = size(r,kind=private_plint)
         if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) .or. &
                n_local /= size(a, kind=private_plint) ) then
-            write(error_unit,*) "f95 plscmap0a ERROR: inconsistent sizes for r, g, b, and/or a"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plscmap0a: inconsistent sizes for r, g, b, and/or a"
         end if
 
         call interface_plscmap0a( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
@@ -2591,8 +2565,7 @@ contains
         n_local = size(r,kind=private_plint)
         if( n_local /= size(g, kind=private_plint) .or. n_local /= size(b, kind=private_plint) .or. &
                n_local /= size(a, kind=private_plint) ) then
-            write(error_unit,*) "f95 plscmap1a ERROR: inconsistent sizes for r, g, b, and/or a"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plscmap1a: inconsistent sizes for r, g, b, and/or a"
         end if
 
         call interface_plscmap1a( int(r,kind=private_plint), int(g,kind=private_plint), int(b,kind=private_plint), &
@@ -2627,9 +2600,8 @@ contains
                    npts_local /= size(coord2, kind=private_plint) .or. &
                    npts_local /= size(coord3, kind=private_plint) .or. &
                    npts_local /= size(alt_hue_path, kind=private_plint) + 1 ) then
-                write(error_unit,*) "f95 plscmap1l ERROR: inconsistent sizes for &
+                write(error_unit, "(a)") "Plplot Fortran Warning: plscmap1l: inconsistent sizes for &
                        &intensity, coord1, coord2, coord3, and/or alt_hue_path"
-                return
             end if
             allocate( ialt_hue_path_local(size(alt_hue_path)) )
             ialt_hue_path_local = int(merge(1,0,alt_hue_path),kind=private_plbool)
@@ -2643,9 +2615,8 @@ contains
             if( npts_local /= size(coord1, kind=private_plint) .or. &
                    npts_local /= size(coord2, kind=private_plint) .or. &
                    npts_local /= size(coord3, kind=private_plint) ) then
-                write(error_unit,*) "f95 plscmap1l ERROR: inconsistent sizes for &
+                write(error_unit, "(a)") "Plplot Fortran Warning: plscmap1l: inconsistent sizes for &
                        &intensity, coord1, coord2, and/or coord3"
-                return
             end if
             call interface_plscmap1l( int(merge(1,0,rgbtype),kind=private_plbool), npts_local, &
                    real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
@@ -2683,9 +2654,8 @@ contains
                    npts_local /= size(coord3, kind=private_plint) .or. &
                    npts_local /= size(alpha, kind=private_plint) .or. &
                    npts_local /= size(alt_hue_path, kind=private_plint) + 1 ) then
-                write(error_unit,*) "f95 plscmap1la ERROR: inconsistent sizes for &
+                write(error_unit, "(a)") "Plplot Fortran Warning: plscmap1la: inconsistent sizes for &
                        &intensity, coord1, coord2, coord3, alpha, and/or alt_hue_path"
-                return
             end if
             allocate( ialt_hue_path_local(size(alt_hue_path)) )
             ialt_hue_path_local = int(merge(1,0,alt_hue_path),kind=private_plbool)
@@ -2700,9 +2670,8 @@ contains
                    npts_local /= size(coord2, kind=private_plint) .or. &
                    npts_local /= size(coord3, kind=private_plint) .or. &
                    npts_local /= size(alpha, kind=private_plint) ) then
-                write(error_unit,*) "f95 plscmap1la ERROR: inconsistent sizes for &
+                write(error_unit, "(a)") "Plplot Fortran Warning: plscmap1la: inconsistent sizes for &
                        &intensity, coord1, coord2, coord3, and/or alpha"
-                return
             end if
             call interface_plscmap1la( int(merge(1,0,rgbtype),kind=private_plbool), npts_local, &
                    real(intensity,kind=private_plflt), real(coord1,kind=private_plflt), &
@@ -2958,8 +2927,7 @@ contains
         nx_in = size(z,1,kind=private_plint)
         ny_in = size(z,2,kind=private_plint)
         if(nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
-            write(error_unit,*) "f95 plshade_single_1 ERROR: inconsistent sizes for z, xg, and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plshade: inconsistent sizes for z, xg, and/or yg"
         end if
         allocate( xg_in(nx_in), yg_in(ny_in) )
         xg_in = xg
@@ -3059,8 +3027,7 @@ contains
         if( &
                nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
                nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plshade_single_2 ERROR: inconsistent sizes for z, xg and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plshade: inconsistent sizes for z, xg and/or yg"
         end if
         allocate( xg_in(nx_in, ny_in), yg_in(nx_in, ny_in) )
         xg_in = xg
@@ -3286,8 +3253,7 @@ contains
         ny_in = size(z,2, kind=private_plint)
         if( &
                nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
-            write(error_unit,*) "f95 plshades_multiple_1 ERROR: inconsistent sizes for z, xg and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plshades: inconsistent sizes for z, xg and/or yg"
         end if
         allocate( xg_in(nx_in), yg_in(ny_in) )
         xg_in = xg
@@ -3384,8 +3350,7 @@ contains
         if( &
                nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
                nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plshades_multiple_2 ERROR: inconsistent sizes for z, xg and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plshades: inconsistent sizes for z, xg and/or yg"
         end if
 
         allocate( xg_in(nx_in,ny_in), yg_in(nx_in,ny_in) )
@@ -3557,8 +3522,7 @@ contains
 
         n_local = size(x, kind=private_plint)
         if(n_local /= size(y, kind=private_plint) .or. n_local /= size(z, kind=private_plint) ) then
-            write(error_unit,*) "f95 plstring3 ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plstring3: inconsistent sizes for x, y, and/or z"
         end if
 
         call interface_plstring3( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), real(z,kind=private_plflt), &
@@ -3584,8 +3548,7 @@ contains
 
         n_local = size(x, kind=private_plint)
         if(n_local /= size(y, kind=private_plint) ) then
-            write(error_unit,*) "f95 plstring ERROR: inconsistent sizes for x and y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plstring: inconsistent sizes for x and y"
         end if
 
         call interface_plstring( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
@@ -3659,7 +3622,7 @@ contains
                n_pens_local /= 4 .or. &
                n_pens_local /= size(styline, kind=private_plint) .or. &
                n_pens_local /= size(legline, kind=private_plint) ) then
-            write(error_unit,*) "f95 plstripc ERROR: sizes of colline, styline, and/or legline are not 4"
+            write(error_unit, "(a)") "Plplot Fortran Severe Warning: plstripc: sizes of colline, styline, and/or legline are not 4"
             return
         endif
 
@@ -3703,8 +3666,7 @@ contains
         ny_local = size(y,kind=private_plint)
 
         if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plsurf3d ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsurf3d: inconsistent sizes for x, y, and/or z"
         end if
 
         call matrix_to_c( z, zz_local, zaddress_local )
@@ -3743,14 +3705,12 @@ contains
         nx_local = size(x,kind=private_plint)
         ny_local = size(y,kind=private_plint)
         if( nx_local /= size(z, 1, kind=private_plint) .or. ny_local /= size(z, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plsurf3dl ERROR: inconsistent sizes for x, y, and/or z"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsurf3dl: inconsistent sizes for x, y, and/or z"
         end if
 
         indexxmax_local = size(indexymin)
         if( indexxmax_local /= size(indexymax, kind=private_plint) ) then
-            write(error_unit,*) "f95 plsurf3dl ERROR: inconsistent sizes for indexymin and indeyxmax"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsurf3dl: inconsistent sizes for indexymin and indeyxmax"
         end if
 
         call matrix_to_c( z, zz_local, zaddress_local )
@@ -3795,8 +3755,7 @@ contains
 
         n_local = size(x, kind=private_plint)
         if(n_local /= size(y, kind=private_plint) ) then
-            write(error_unit,*) "f95 plsym ERROR: inconsistent sizes for x and y"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsym: inconsistent sizes for x and y"
         end if
 
         call interface_plsym( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &
@@ -3871,8 +3830,7 @@ contains
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if( nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
-            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u and v"
         end if
 
         allocate( u_in(nx_in,ny_in) )
@@ -3957,13 +3915,11 @@ contains
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
-            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u and v"
         end if
 
         if(nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
-            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u, xg, and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u, xg, and/or yg"
         end if
 
         allocate( u_in(nx_in, ny_in) )
@@ -4058,15 +4014,13 @@ contains
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
-            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u and v"
         end if
 
         if( &
                nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
                nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
-            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u, xg, and/or yg"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u, xg, and/or yg"
         end if
 
         allocate( u_in(nx_in, ny_in) )
@@ -4148,8 +4102,7 @@ contains
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
-            write(error_unit,*) "f95 plvect ERROR: inconsistent sizes for u and v"
-            return
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u and v"
         end if
 
         allocate( u_in(nx_in,ny_in) )

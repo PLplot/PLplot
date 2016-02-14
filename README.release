@@ -203,24 +203,25 @@ zero-sized arrays to indicate that plstyl should restore the default continuous
 line style.)
 
 (iii) Multiple arrays in a redacted argument list should have
-identical sizes for dimensions that are designed for the same purpose.
-This rule has been enforced for many years for most languages where we
-provide bindings and now we have enforced this same rule for the
-Fortran case.  (The old Fortran binding was much sloppier about this.)
-For those cases where you are using static or allocatable arrays which
-are larger than the subsets of the array indices which have values
-assigned, it is straightforward to comply with this consistency rule
-by taking the appropriate array slice in the argument list, e.g.,
-"text_colors(1:nlegend), text(1:nlegend)" in the pllegend argument
-list.
+consistent sizes for dimensions that are designed for the same
+purpose.  This rule has been enforced for many years for most
+languages where we provide bindings since if we take the size from an
+array that is inconsistently smaller because of user error, then part
+of the plot will be missing, and if we take the size from an array
+that is inconsistently larger because of user error, then access
+violations or memory management issues will be the result.  To warn of
+such potential issues for the Fortran case we now generate a warning
+when inconsistent array sizes are encountered.  For those cases which
+generate such warnings because the calling routine provides static or
+allocatable arrays which are larger than the subsets of the array
+indices which have values assigned, it is straightforward to comply
+with this consistency rule by taking the appropriate array slice in
+the argument list, e.g., "text_colors(1:nlegend), text(1:nlegend)" in
+the pllegend argument list.
 
-The list of Fortran PLplot routines where this rule is enforced has
-been implemented following the rules implied for our swig-generated
-bindings by bindings/swig-support/plplotcapi.i (e.g., the Array and
-ArrayCk arguments).
-
-The complete list of those array size rules for our Fortran binding
-are given at bindings/f95/README_array_sizes.
+The complete list of these adopted rules for consistently sized array
+arguments for our Fortran binding are given at
+bindings/f95/README_array_sizes.
 
 (iv) Fortran logical arguments are strictly used for all cases where
 the corresponding C argument is PLBOOL.  In order to comply strictly

@@ -146,8 +146,7 @@ contains
 
        n_local = size(x, kind=private_plint)
        if(n_local /= size(y, kind=private_plint) ) then
-           write(error_unit,*) "f95 plstring ERROR: inconsistent array sizes not allowed for x and y"
-           return
+           write(error_unit,"(a)") "Plplot Fortran Warning: plstring: inconsistent sizes for x and y"
        end if
 
        call interface_plstring( n_local, real(x,kind=private_plflt), real(y,kind=private_plflt), &amp;
@@ -180,7 +179,8 @@ floating-point arguments used by the program (e.g., like
 intrinsic function <literal>size()</literal> is used to determine the
 size of arrays and allows checking that their dimensions are
 consistent with each other when the C implementation uses a common
-size for the arrays (as in the <literal>plstring</literal> case).  The
+size for the arrays as in the <literal>plstring</literal> case. (See also,
+<filename>bindings/f95/README_array_sizes</filename>.)  The
 intrinsic function <literal>real()</literal> is used to convert
 floating-point data between the type used by the calling routine and
 the type used by the underlying PLplot C library, and the intrinsic
@@ -327,7 +327,7 @@ double-precision floating-point entities but no equivalent single-precision floa
     </itemizedlist>
 </para>
 
-<para>Users should be aware that the new Fortran binding for PLplot strictly enforces the following interfacing rules:
+<para>Users should be aware that the new Fortran binding for PLplot enforces the following interfacing rules:
     <itemizedlist>
       <listitem><para>The new Fortran binding interfaces Fortran functions with
       C routines if and only if that routine provides a return value and interfaces Fortran subroutines
@@ -345,12 +345,17 @@ double-precision floating-point entities but no equivalent single-precision floa
       <listitem><para> Only the redacted form of Fortran API (with all redundant dimension
       arguments removed) is supported.</para></listitem>
       <listitem><para>If the C API for the function being interfaced
-      includes a size value corresponding to identical sizes of
-      dimension(s) of multiple array arguments. then the sizes of the
-      corresponding dimensions of the Fortran arrays must also be identical.
-      In the event that the calling routine has specified static or allocatable
-      arrays whose relevant defined areas are smaller than their size, use the
-      normal Fortran rules for array slicing to specify completely defined arrays
+      includes a size value corresponding to identical sizes of dimension(s)
+      of multiple array arguments. then the sizes of the corresponding
+      dimensions of the Fortran arrays must also be identical.  The complete
+      list of these adopted rules for consistently sized array arguments for
+      our Fortran binding are given at <filename>bindings/f95/README_array_sizes</filename>.
+      These rules are enforced in a user-friendly way by issuing a run-time
+      warning whenever these rules have been violated.  For those cases which
+      generate such warnings because the calling
+      routine has specified static or allocatable arrays whose
+      relevant defined areas are smaller than their size, use the normal
+      Fortran rules for array slicing to specify completely defined arrays
       with consistent sizes that comply with this interfacing rule.
       </para></listitem>
       <listitem><para>Fortran logical arguments are used for all cases where
