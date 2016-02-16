@@ -53,7 +53,6 @@ static void
 CustomErrors( const char *message );
 #endif //HAVE_SAHOOKS
 
-#define MAP_FILE    ""
 #define OpenMap     OpenShapeFile
 #define CloseMap    SHPClose
 
@@ -201,13 +200,12 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 {
     int   i, j;
     char  *filename = NULL;
-    char  truncatedfilename[900];
     char  warning[1024];
     int   nVertices = 200;
     PLFLT minsectlon, maxsectlon, minsectlat, maxsectlat;
     PLFLT *bufx   = NULL, *bufy = NULL;
     int   bufsize = 0;
-    int   filenamelen;
+    size_t filenamelen;
     PLFLT **splitx             = NULL;
     PLFLT **splity             = NULL;
     int   *splitsectionlengths = NULL;
@@ -240,40 +238,26 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
     // read map outline
     //
 
-    //strip the .shp extension if a shapefile has been provided and add
-    //the needed map file extension if we are not using shapefile
+    //strip the .shp extension if a shapefile has been provided
     if ( strstr( name, ".shp" ) )
-        filenamelen = (int) ( name - strstr( name, ".shp" ) );
+        filenamelen = (strlen( name ) - 4) ;
     else
-        filenamelen = (int) strlen( name );
-    filename = (char *) malloc( filenamelen + strlen( MAP_FILE ) + 1 );
+        filenamelen = strlen( name );
+    filename = (char *) malloc( filenamelen + 1 );
     if ( !filename )
     {
-        plabort( "Could not allocate memory for concatenating map filename" );
+        plabort( "Could not allocate memory for map filename root" );
         return;
     }
     strncpy( filename, name, filenamelen );
     filename[ filenamelen ] = '\0';
-    strcat( filename, MAP_FILE );
 
-    //copy the filename to a fixed length array in case it is needed for warning messages
-    if ( strlen( filename ) < 899 )
-        strcpy( truncatedfilename, filename );
-    else
-    {
-        memcpy( truncatedfilename, filename, 896 );
-        truncatedfilename[896] = '.';
-        truncatedfilename[897] = '.';
-        truncatedfilename[898] = '.';
-        truncatedfilename[899] = '\0';
-    }
-
-    strcpy( warning, "Could not find " );
-    strcat( warning, filename );
-    strcat( warning, " file." );
     //Open the shp and shx file using shapelib
     if ( ( in = OpenShapeFile( filename ) ) == NULL )
     {
+        strcpy( warning, "Could not find " );
+	strcat( warning, filename );
+	strcat( warning, " file." );
         plabort( warning );
         free( filename );
         return;
