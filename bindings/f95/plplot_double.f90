@@ -39,14 +39,7 @@ module plplot_double
     private :: wp
 
     ! Interfaces for wp-precision callbacks
-
-    abstract interface
-        subroutine plmapform_proc_double( x, y )
-            import :: wp
-            real(kind=wp), dimension(:), intent(inout) :: x, y
-        end subroutine plmapform_proc_double
-    end interface
-    procedure(plmapform_proc_double), pointer :: plmapform_double
+    private :: plmapformf2c
 
     abstract interface
         subroutine pllabeler_proc_double( axis, value, label )
@@ -92,7 +85,7 @@ module plplot_double
 
     ! plflt-precision callback routines that are called from C and which wrap a call to wp-precision Fortran routines.
 
-    subroutine plmapformf2c_double( n, x, y ) bind(c, name = 'plplot_private_plmapform2c_double')
+    subroutine plmapformf2c( n, x, y ) bind(c, name = 'plplot_double_plmapformf2c')
         integer(kind=private_plint), value, intent(in) :: n
         real(kind=private_plflt), dimension(n), intent(inout) :: x, y
 
@@ -103,10 +96,10 @@ module plplot_double
         x_inout = real(x, kind=wp)
         y_inout = real(y, kind=wp)
 
-        call plmapform_double( x_inout, y_inout )
+        call plmapform( x_inout, y_inout )
         x = real(x_inout, kind=private_plflt)
         y = real(y_inout, kind=private_plflt)
-    end subroutine plmapformf2c_double
+    end subroutine plmapformf2c
 
     subroutine pllabelerf2c_double( axis, value, label, length, data ) bind(c, name = 'plplot_private_pllabeler2c_double')
         integer(kind=private_plint), value, intent(in) :: axis, length
