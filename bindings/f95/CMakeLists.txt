@@ -63,7 +63,6 @@ if(ENABLE_f95)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i >
     ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_parameters.f90_compare
     COMMAND
-    COMMAND
     cmp ${CMAKE_CURRENT_SOURCE_DIR}/included_plplot_parameters.f90
     ${CMAKE_CURRENT_BINARY_DIR}/included_plplot_parameters.f90_compare
     )
@@ -72,6 +71,48 @@ if(ENABLE_f95)
   # might be changed as a result of that check.
   add_dependencies(check_f95_parameters check_plplotcapi_defines)
   add_dependencies(check_all check_f95_parameters)
+
+  # Check consistency of plplotf95_ifort.def using Unix commands
+  # First write header of generated plplotf95_ifort.def file
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def_header
+    "; You should not normally edit this generated file.  Instead, check its consistency
+; with the symbols in the plplotf95 library using the
+; (Unix) target \"check_ifort_definitions_file\".  If that target reports an
+; inconsistency (via a cmp message) between the generated
+; plplotf95_ifort.def_compare file in the build tree and
+; plplotf95_ifort.def in the source tree, then copy that generated
+; plplotf95_ifort.def_compare on top of plplotf95_ifort.def and
+; check in that result.
+LIBRARY plplotf95.dll
+EXPORTS
+")
+
+  # Create a configurable file that contains the bash command to create plplotf95_ifort.def_compare
+  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def.sh.in
+    "nm --defined-only \$<TARGET_FILE:plplotf95> |tr '[:lower:]' '[:upper:]' |sed -f ${CMAKE_CURRENT_SOURCE_DIR}/generate_ifort_deffile.sed |sort --key=3 | cat ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def_header - >| ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def_compare
+")
+
+  # Configure that file (which contains the generator expression, $<TARGET_FILE:plplotf95>) :
+  configure_file_generate(
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def.sh.in
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def.sh
+  @ONLY
+)
+
+  add_custom_target(
+    check_ifort_definitions_file
+    ${CMAKE_COMMAND} -E echo "Check that bindings/f95/plplotf95_ifort.def is consistent with the symbols in the plplotf95 library"
+    COMMAND ${CMAKE_COMMAND} -E remove -f
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def_compare
+    COMMAND
+    bash ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def.sh
+    COMMAND
+    cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplotf95_ifort.def
+    ${CMAKE_CURRENT_BINARY_DIR}/plplotf95_ifort.def_compare
+    )
+
+  add_dependencies(check_ifort_definitions_file plplotf95)
+  add_dependencies(check_all check_ifort_definitions_file)
 
   # Configure the Fortran source file that specifies the
   # types used for PLplot.
