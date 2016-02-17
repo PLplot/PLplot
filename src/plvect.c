@@ -143,6 +143,13 @@ void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
     PLFLT **u, **v, **x, **y;
     PLFLT lscale, dx, dy, dxmin, dymin, umax, vmax;
 
+    if ( pltr == NULL )
+    {
+        // If pltr is undefined, abort with an error.
+        plabort( "plfvect: The pltr callback must be defined" );
+        return;
+    }
+
     plAlloc2dGrid( &u, nx, ny );
     plAlloc2dGrid( &v, nx, ny );
     plAlloc2dGrid( &x, nx, ny );
