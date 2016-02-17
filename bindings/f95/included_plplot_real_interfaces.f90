@@ -517,6 +517,12 @@
     end interface plsvpa
     private :: plsvpa_impl
 
+    ! Another variant defined in the plplot module.
+    interface plsvect
+        module procedure plsvect_impl
+    end interface plsvect
+    private :: plsvect_impl
+
     interface plsym
         module procedure plsym_impl
     end interface plsym
@@ -4131,6 +4137,32 @@ contains
         call interface_plsvpa( real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
                real(ymin,kind=private_plflt), real(ymax,kind=private_plflt) )
     end subroutine plsvpa_impl
+
+    ! Another variant defined in the plplot module.
+    subroutine plsvect_impl( arrowx, arrowy, fill )
+        logical, intent(in) :: fill
+        real(kind=wp), dimension(:), intent(in) :: arrowx, arrowy
+
+        integer(kind=private_plint) :: npts_local
+
+        interface
+            subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
+                import :: private_plint, private_plbool, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: npts
+                integer(kind=private_plbool), value, intent(in) :: fill
+                real(kind=private_plflt), dimension(*), intent(in) :: arrowx, arrowy
+            end subroutine interface_plsvect
+        end interface
+
+        npts_local = size(arrowx, kind=private_plint)
+        if(npts_local /= size(arrowy, kind=private_plint) ) then
+            write(error_unit, "(a)") "Plplot Fortran Warning: plsvect: sizes of arrowx and arrowy are not consistent"
+        end if
+
+        call interface_plsvect( real(arrowx, kind=private_plflt), real(arrowy, kind=private_plflt),  &
+               npts_local, int(merge(1,0,fill), kind=private_plbool) )
+    end subroutine plsvect_impl
 
     subroutine plsym_impl( x, y, code )
         integer, intent(in) :: code
