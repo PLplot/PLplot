@@ -198,24 +198,24 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
          PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
-    int   i, j;
-    char  *filename = NULL;
-    char  warning[1024];
-    int   nVertices = 200;
-    PLFLT minsectlon, maxsectlon, minsectlat, maxsectlat;
-    PLFLT *bufx   = NULL, *bufy = NULL;
-    int   bufsize = 0;
+    int    i, j;
+    char   *filename = NULL;
+    char   warning[1024];
+    int    nVertices = 200;
+    PLFLT  minsectlon, maxsectlon, minsectlat, maxsectlat;
+    PLFLT  *bufx   = NULL, *bufy = NULL;
+    int    bufsize = 0;
     size_t filenamelen;
-    PLFLT **splitx             = NULL;
-    PLFLT **splity             = NULL;
-    int   *splitsectionlengths = NULL;
-    int   nsplitsections;
-    PLFLT lastsplitpointx;
-    PLFLT lastsplitpointy;
-    PLFLT penultimatesplitpointx;
-    PLFLT penultimatesplitpointy;
-    char  islatlon     = 1;
-    int   appendresult = 0;
+    PLFLT  **splitx             = NULL;
+    PLFLT  **splity             = NULL;
+    int    *splitsectionlengths = NULL;
+    int    nsplitsections;
+    PLFLT  lastsplitpointx;
+    PLFLT  lastsplitpointy;
+    PLFLT  penultimatesplitpointx;
+    PLFLT  penultimatesplitpointy;
+    char   islatlon     = 1;
+    int    appendresult = 0;
 
 
     SHPHandle in;
@@ -240,7 +240,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 
     //strip the .shp extension if a shapefile has been provided
     if ( strstr( name, ".shp" ) )
-        filenamelen = (strlen( name ) - 4) ;
+        filenamelen = ( strlen( name ) - 4 );
     else
         filenamelen = strlen( name );
     filename = (char *) malloc( filenamelen + 1 );
@@ -256,8 +256,8 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
     if ( ( in = OpenShapeFile( filename ) ) == NULL )
     {
         strcpy( warning, "Could not find " );
-	strcat( warning, filename );
-	strcat( warning, " file." );
+        strcat( warning, filename );
+        strcat( warning, " file." );
         plabort( warning );
         free( filename );
         return;
