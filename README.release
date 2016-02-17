@@ -287,6 +287,17 @@ idiosyncratic to each of our device drivers.)
 been changed from one-based indexing to zero-based indexing to be consistent
 with C and also all our other bindings.
 
+(xi) For the plcont and plvect signatures without callback-related
+arguments (i.e., no trailing xg, yg, tr, or callback arguments), we
+now use pltr0 internally for the callback rather than pltr0f (which
+applies an offset of 1 unit in the way that input arguments were
+interpreted compared to pltr0).  The idea behind pltr0f was
+problematic since the index range being interpreted was always in the
+C code and has nothing to do with Fortran indices.  In any case, this
+is likely a "for the record" backwards incompatibility since these
+particular signatures for plcont and plvect were not documented, and
+were not used in any of our examples.
+
 2.6 Examples reworked for the -DPL_DOUBLE=OFF case
 
 N.B. Many of our supported languages do not currently work for

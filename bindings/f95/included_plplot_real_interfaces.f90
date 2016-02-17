@@ -4220,6 +4220,16 @@ contains
                 type(c_ptr), value, intent(in) :: data
             end function plf2evalr
         end interface
+        interface
+            subroutine pltr0( x, y, tx, ty, data ) bind(c, name = 'pltr0' )
+                import :: private_plflt
+                import :: c_ptr
+                implicit none
+                real(kind=private_plflt), value, intent(in) :: x, y
+                real(kind=private_plflt), intent(out) :: tx, ty
+                type(c_ptr), value, intent(in) :: data
+            end subroutine pltr0
+        end interface
 
         interface
             subroutine interface_plfvect( lookup, fgrid1, fgrid2, nx, ny, scale, transform, data ) bind(c, name = 'plfvect' )
@@ -4271,8 +4281,7 @@ contains
         fgrid2%ny = ny_in
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
-               real(scale,kind=private_plflt), plplot_private_pltr0f, &
-               c_null_ptr )
+               real(scale,kind=private_plflt), pltr0, c_null_ptr )
     end subroutine plvectors_0
 
     subroutine plvectors_1( u, v, scale, xg, yg )

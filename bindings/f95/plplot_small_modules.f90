@@ -234,12 +234,4 @@ contains
         ty = tr(4) * x + tr(5) * y + tr(6)
     end subroutine plplot_private_pltr
 
-    subroutine plplot_private_pltr0f( x, y, tx, ty, data ) bind(c)
-        real(kind=private_plflt), value, intent(in) :: x, y
-        real(kind=private_plflt), intent(out) :: tx, ty
-        type(c_ptr), value, intent(in) :: data
-
-        tx = x + 1.0_private_plflt
-        ty = y + 1.0_private_plflt
-    end subroutine plplot_private_pltr0f
 end module plplot_private_exposed
