@@ -150,15 +150,19 @@
     private :: plconfigtime_impl
 
     interface plcont
-        module procedure plcontour_0
-        module procedure plcontour_1
-        module procedure plcontour_2
-        module procedure plcontour_tr
+        module procedure plcont_impl_0
+        module procedure plcont_impl_1
+        module procedure plcont_impl_2
+        module procedure plcont_impl_tr
+        module procedure plcont_impl
+        module procedure plcont_impl_data
     end interface plcont
-    private :: plcontour_0
-    private :: plcontour_1
-    private :: plcontour_2
-    private :: plcontour_tr
+    private :: plcont_impl_0
+    private :: plcont_impl_1
+    private :: plcont_impl_2
+    private :: plcont_impl_tr
+    private :: plcont_impl
+    private :: plcont_impl_data
 
     interface plctime
         module procedure plctime_impl
@@ -279,8 +283,10 @@
         module procedure plimagefr_impl_1
         module procedure plimagefr_impl_2
         module procedure plimagefr_impl_null
+        module procedure plimagefr_impl
+        module procedure plimagefr_impl_data
     end interface plimagefr
-    private :: plimagefr_impl_1, plimagefr_impl_2, plimagefr_impl_null
+    private :: plimagefr_impl_1, plimagefr_impl_2, plimagefr_impl_null, plimagefr_impl, plimagefr_impl_data
 
     interface pljoin
         module procedure pljoin_impl
@@ -485,26 +491,34 @@
     private :: plsdiplz_impl
 
     interface plshade
-        module procedure plshade_single_0
-        module procedure plshade_single_1
-        module procedure plshade_single_2
-        module procedure plshade_single_tr
+        module procedure plshade_impl_0
+        module procedure plshade_impl_1
+        module procedure plshade_impl_2
+        module procedure plshade_impl_tr
+        module procedure plshade_impl
+        module procedure plshade_impl_data
     end interface plshade
-    private :: plshade_single_0
-    private :: plshade_single_1
-    private :: plshade_single_2
-    private :: plshade_single_tr
+    private :: plshade_impl_0
+    private :: plshade_impl_1
+    private :: plshade_impl_2
+    private :: plshade_impl_tr
+    private :: plshade_impl
+    private :: plshade_impl_data
 
     interface plshades
-        module procedure plshades_multiple_0
-        module procedure plshades_multiple_1
-        module procedure plshades_multiple_2
-        module procedure plshades_multiple_tr
+        module procedure plshades_impl_0
+        module procedure plshades_impl_1
+        module procedure plshades_impl_2
+        module procedure plshades_impl_tr
+        module procedure plshades_impl
+        module procedure plshades_impl_data
     end interface plshades
-    private :: plshades_multiple_0
-    private :: plshades_multiple_1
-    private :: plshades_multiple_2
-    private :: plshades_multiple_tr
+    private :: plshades_impl_0
+    private :: plshades_impl_1
+    private :: plshades_impl_2
+    private :: plshades_impl_tr
+    private :: plshades_impl
+    private :: plshades_impl_data
 
     interface plsmaj
         module procedure plsmaj_impl
@@ -578,15 +592,19 @@
     private :: plvasp_impl
 
     interface plvect
-        module procedure plvectors_0
-        module procedure plvectors_1
-        module procedure plvectors_2
-        module procedure plvectors_tr
+        module procedure plvect_impl_0
+        module procedure plvect_impl_1
+        module procedure plvect_impl_2
+        module procedure plvect_impl_tr
+        module procedure plvect_impl
+        module procedure plvect_impl_data
     end interface plvect
-    private :: plvectors_0
-    private :: plvectors_1
-    private :: plvectors_2
-    private :: plvectors_tr
+    private :: plvect_impl_0
+    private :: plvect_impl_1
+    private :: plvect_impl_2
+    private :: plvect_impl_tr
+    private :: plvect_impl
+    private :: plvect_impl_data
 
     interface plvpas
         module procedure plvpas_impl
@@ -961,7 +979,7 @@ contains
                int(hour, kind=private_plint), int(min, kind=private_plint), real(sec, kind=private_plflt) )
     end subroutine plconfigtime_impl
 
-    subroutine plcontour_0( z, kx, lx, ky, ly, clevel )
+    subroutine plcont_impl_0( z, kx, lx, ky, ly, clevel )
         integer, intent(in) :: kx, lx, ky, ly
         real(kind=wp), dimension(:,:), intent(in) :: z
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -1033,9 +1051,9 @@ contains
                kx, lx, ky, ly, real(clevel, kind=private_plflt), size(clevel,kind=private_plint), &
                pltr0, c_null_ptr )
         deallocate(z_in)
-    end subroutine plcontour_0
+    end subroutine plcont_impl_0
 
-    subroutine plcontour_1( z, kx, lx, ky, ly, clevel, xg, yg )
+    subroutine plcont_impl_1( z, kx, lx, ky, ly, clevel, xg, yg )
         integer, intent(in) :: kx, lx, ky, ly
         real(kind=wp), dimension(:,:), intent(in) :: z
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -1103,7 +1121,7 @@ contains
         nx_in = size(z,1, kind=private_plint)
         ny_in = size(z,2, kind=private_plint)
         if(nx_in /= size(xg, kind=private_plint) .or. ny_in /= size(yg, kind=private_plint) ) then
-            write(error_unit, "(a)") "Plplot Fortran Warning: plcontour: inconsistent sizes for z, xg, and/or yg"
+            write(error_unit, "(a)") "Plplot Fortran Warning: plcont: inconsistent sizes for z, xg, and/or yg"
         end if
 
         allocate( z_in(nx_in, ny_in) )
@@ -1123,9 +1141,9 @@ contains
         call interface_plfcont( plf2evalr, c_loc(fgrid_local), nx_in, ny_in, &
                kx, lx, ky, ly, real(clevel, kind=private_plflt), size(clevel,kind=private_plint), &
                pltr1, c_loc(cgrid_local) )
-    end subroutine plcontour_1
+    end subroutine plcont_impl_1
 
-    subroutine plcontour_2( z, kx, lx, ky, ly, clevel, xg, yg )
+    subroutine plcont_impl_2( z, kx, lx, ky, ly, clevel, xg, yg )
         integer, intent(in) :: kx, lx, ky, ly
         real(kind=wp), dimension(:,:), intent(in) :: z
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -1197,7 +1215,7 @@ contains
         if( &
                nx_in /= size(xg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) .or. &
                nx_in /= size(yg, 1, kind=private_plint) .or. ny_in /= size(xg, 2, kind=private_plint) ) then
-            write(error_unit, "(a)") "Plplot Fortran Warning: plcontour: inconsistent sizes for z, xg and/or yg"
+            write(error_unit, "(a)") "Plplot Fortran Warning: plcont: inconsistent sizes for z, xg and/or yg"
         end if
 
         allocate( z_in(nx_in, ny_in) )
@@ -1218,9 +1236,9 @@ contains
         call interface_plfcont( plf2evalr, c_loc(fgrid_local), nx_in, ny_in, &
                kx, lx, ky, ly, real(clevel, kind=private_plflt), size(clevel,kind=private_plint), &
                pltr2f, c_loc(cgrid_local) )
-    end subroutine plcontour_2
+    end subroutine plcont_impl_2
 
-    subroutine plcontour_tr( z, kx, lx, ky, ly, clevel, tr )
+    subroutine plcont_impl_tr( z, kx, lx, ky, ly, clevel, tr )
         integer, intent(in) :: kx, lx, ky, ly
         real(kind=wp), dimension(:,:), intent(in) :: z
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -1284,7 +1302,70 @@ contains
         call interface_plfcont( plf2evalr, c_loc(fgrid_local), size(z,1,kind=private_plint), size(z,2,kind=private_plint), &
                kx, lx, ky, ly, real(clevel, kind=private_plflt), size(clevel,kind=private_plint), &
                plplot_private_pltr, tr_in )
-    end subroutine plcontour_tr
+    end subroutine plcont_impl_tr
+
+    subroutine plcont_impl( z, kx, lx, ky, ly, clevel, proc )
+        integer, intent(in) :: kx, lx, ky, ly
+        real(kind=wp), dimension(:,:), intent(in) :: z
+        real(kind=wp), dimension(:), intent(in) :: clevel
+        procedure(pltransform_proc) :: proc
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
+        type(c_ptr), dimension(:), allocatable :: z_address_local
+
+        interface
+            subroutine interface_plcont( z, nx, ny, kx, lx, ky, ly, clevel, nlevel, proc, data ) &
+                   bind(c,name='c_plcont')
+                import :: c_funptr, c_ptr
+                import :: private_plint, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: nx, ny, kx, lx, ky, ly, nlevel
+                type(c_ptr), dimension(*), intent(in)  :: z
+                real(kind=private_plflt), dimension(*), intent(in) :: clevel
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+            end subroutine interface_plcont
+        end interface
+
+        call matrix_to_c( z, z_c_local, z_address_local )
+        pltransform => proc
+
+        call interface_plcont( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), &
+               kx, lx, ky, ly, real(clevel, kind=private_plflt), size(clevel,kind=private_plint), &
+               c_funloc(pltransformf2c), c_null_ptr )
+    end subroutine plcont_impl
+
+    subroutine plcont_impl_data( z, kx, lx, ky, ly, clevel, proc, data )
+        integer, intent(in) :: kx, lx, ky, ly
+        real(kind=wp), dimension(:,:), intent(in) :: z
+        real(kind=wp), dimension(:), intent(in) :: clevel
+        procedure(pltransform_proc_data) :: proc
+        type(c_ptr), intent(in) :: data
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
+        type(c_ptr), dimension(:), allocatable :: z_address_local
+
+        interface
+            subroutine interface_plcont( z, nx, ny, kx, lx, ky, ly, clevel, nlevel, proc, data ) &
+                   bind(c,name='c_plcont')
+                import :: c_funptr, c_ptr
+                import :: private_plint, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: nx, ny, kx, lx, ky, ly, nlevel
+                type(c_ptr), dimension(*), intent(in)  :: z
+                real(kind=private_plflt), dimension(*), intent(in) :: clevel
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+            end subroutine interface_plcont
+        end interface
+
+        call matrix_to_c( z, z_c_local, z_address_local )
+        pltransform_data => proc
+
+        call interface_plcont( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), &
+               kx, lx, ky, ly, real(clevel, kind=private_plflt), size(clevel,kind=private_plint), &
+               c_funloc(pltransformf2c_data), data )
+    end subroutine plcont_impl_data
 
     subroutine plctime_impl( year, month, day, hour, min, sec, ctime )
         integer, intent(in) :: year, month, day, hour, min
@@ -2002,6 +2083,79 @@ contains
                real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
                c_null_funptr, c_null_ptr )
     end subroutine plimagefr_impl_null
+
+    subroutine plimagefr_impl( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, proc )
+        real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+        real(kind=wp), dimension(:, :), intent(in) :: idata
+        procedure(pltransform_proc) :: proc
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: idata_local
+        type(c_ptr), dimension(:), allocatable :: idata_address_local
+
+        interface
+            subroutine interface_plimagefr( idata, nx, ny, &
+                   xmin, xmax, ymin, ymax, &
+                   zmin, zmax, valuemin, valuemax, proc, data ) bind(c,name='c_plimagefr')
+                import :: c_funptr, c_ptr
+                import :: private_plint, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: nx, ny
+                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+                type(c_ptr), dimension(*), intent(in) :: idata
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+            end subroutine interface_plimagefr
+        end interface
+
+        call matrix_to_c( idata, idata_local, idata_address_local )
+        pltransform => proc
+
+        call interface_plimagefr( &
+               idata_address_local, &
+               size(idata, 1, kind=private_plint), size(idata, 2, kind=private_plint), &
+               real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), &
+               real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
+               real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
+               real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
+               c_funloc(pltransformf2c), c_null_ptr )
+    end subroutine plimagefr_impl
+
+    subroutine plimagefr_impl_data( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, proc, data )
+        real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+        real(kind=wp), dimension(:, :), intent(in) :: idata
+        procedure(pltransform_proc_data) :: proc
+        type(c_ptr), intent(in) :: data
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: idata_local
+        type(c_ptr), dimension(:), allocatable :: idata_address_local
+
+        interface
+            subroutine interface_plimagefr( idata, nx, ny, &
+                   xmin, xmax, ymin, ymax, &
+                   zmin, zmax, valuemin, valuemax, proc, data ) bind(c,name='c_plimagefr')
+                import :: c_funptr, c_ptr
+                import :: private_plint, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: nx, ny
+                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+                type(c_ptr), dimension(*), intent(in) :: idata
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+            end subroutine interface_plimagefr
+        end interface
+
+        call matrix_to_c( idata, idata_local, idata_address_local )
+        pltransform_data => proc
+
+        call interface_plimagefr( &
+               idata_address_local, &
+               size(idata, 1, kind=private_plint), size(idata, 2, kind=private_plint), &
+               real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), &
+               real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
+               real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
+               real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
+               c_funloc(pltransformf2c_data), data )
+    end subroutine plimagefr_impl_data
 
     subroutine pljoin_impl( x1, y1, x2, y2 )
         real(kind=wp), intent(in) :: x1, y1, x2, y2
@@ -3235,7 +3389,7 @@ contains
                real(xmax,kind=private_plflt), real(ymax,kind=private_plflt) )
     end subroutine plsdiplz_impl
 
-    subroutine plshade_single_0( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_0( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3294,9 +3448,9 @@ contains
                int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool), c_null_ptr, c_null_ptr )
-    end subroutine plshade_single_0
+    end subroutine plshade_impl_0
 
-    subroutine plshade_single_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3390,9 +3544,9 @@ contains
                int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool), pltr1, c_loc(cgrid_local) )
-    end subroutine plshade_single_1
+    end subroutine plshade_impl_1
 
-    subroutine plshade_single_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3490,9 +3644,9 @@ contains
                int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool), pltr2f, c_loc(cgrid_local) )
-    end subroutine plshade_single_2
+    end subroutine plshade_impl_2
 
-    subroutine plshade_single_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, tr )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3562,9 +3716,136 @@ contains
                int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
                int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool), plplot_private_pltr, tr_in )
-    end subroutine plshade_single_tr
+    end subroutine plshade_impl_tr
 
-    subroutine plshades_multiple_0( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshade_impl( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+           min_color, min_width, max_color, max_width, rectangular, proc )
+        real(kind=wp), dimension(:,:), intent(in) :: z
+        character(len=*), intent(in) :: defined
+        real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
+        real(kind=wp), intent(in) :: sh_width, min_width, max_width
+        real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
+        integer, intent(in) :: sh_cmap, min_color, max_color
+        logical, intent(in) :: rectangular
+        procedure(pltransform_proc) :: proc
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
+        type(c_ptr), dimension(:), allocatable :: z_address_local
+
+        interface
+            subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
+                import :: private_plint, private_plflt
+                integer(kind=private_plint), value, intent(in) :: n
+                real(kind=private_plflt), dimension(*), intent(in) :: x, y
+            end subroutine fill
+        end interface
+
+        interface
+            subroutine interface_plshade( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
+                   shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+                   min_color, min_width, max_color, max_width, &
+                   fill, rectangular, proc, data ) bind(c, name = 'c_plshade' )
+                import :: c_ptr, c_funptr, c_null_ptr
+                import :: private_plint, private_plbool, private_plflt
+                implicit none
+                type(c_ptr), dimension(*), intent(in) :: a
+                integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color
+                integer(kind=private_plbool), value, intent(in) :: rectangular
+                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
+                real(kind=private_plflt), value, intent(in) :: sh_width, min_width, max_width
+                real(kind=private_plflt), value, intent(in) :: shade_min, shade_max, sh_color
+                type(c_ptr), value, intent(in) :: defined ! Not used in this case
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+                interface
+                    subroutine fill( n, x, y ) bind(c)
+                        import :: private_plint, private_plflt
+                        integer(kind=private_plint), value, intent(in) :: n
+                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
+                    end subroutine fill
+                end interface
+            end subroutine interface_plshade
+        end interface
+
+        call matrix_to_c( z, z_c_local, z_address_local )
+        pltransform => proc
+
+        call interface_plshade( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+               real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
+               real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
+               real(shade_min,kind=private_plflt), real(shade_max,kind=private_plflt), &
+               int(sh_cmap,kind=private_plint), real(sh_color,kind=private_plflt), &
+               real(sh_width,kind=private_plflt), &
+               int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
+               int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
+               fill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltransformf2c), c_null_ptr )
+    end subroutine plshade_impl
+
+    subroutine plshade_impl_data( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+           min_color, min_width, max_color, max_width, rectangular, proc, data )
+        real(kind=wp), dimension(:,:), intent(in) :: z
+        character(len=*), intent(in) :: defined
+        real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
+        real(kind=wp), intent(in) :: sh_width, min_width, max_width
+        real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
+        integer, intent(in) :: sh_cmap, min_color, max_color
+        logical, intent(in) :: rectangular
+        procedure(pltransform_proc_data) :: proc
+        type(c_ptr), intent(in) :: data
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
+        type(c_ptr), dimension(:), allocatable :: z_address_local
+
+        interface
+            subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
+                import :: private_plint, private_plflt
+                integer(kind=private_plint), value, intent(in) :: n
+                real(kind=private_plflt), dimension(*), intent(in) :: x, y
+            end subroutine fill
+        end interface
+
+        interface
+            subroutine interface_plshade( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
+                   shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+                   min_color, min_width, max_color, max_width, &
+                   fill, rectangular, proc, data ) bind(c, name = 'c_plshade' )
+                import :: c_ptr, c_funptr, c_null_ptr
+                import :: private_plint, private_plbool, private_plflt
+                implicit none
+                type(c_ptr), dimension(*), intent(in) :: a
+                integer(kind=private_plint), value, intent(in) :: nx, ny, sh_cmap, min_color, max_color
+                integer(kind=private_plbool), value, intent(in) :: rectangular
+                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
+                real(kind=private_plflt), value, intent(in) :: sh_width, min_width, max_width
+                real(kind=private_plflt), value, intent(in) :: shade_min, shade_max, sh_color
+                type(c_ptr), value, intent(in) :: defined ! Not used in this case
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+                interface
+                    subroutine fill( n, x, y ) bind(c)
+                        import :: private_plint, private_plflt
+                        integer(kind=private_plint), value, intent(in) :: n
+                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
+                    end subroutine fill
+                end interface
+            end subroutine interface_plshade
+        end interface
+
+        call matrix_to_c( z, z_c_local, z_address_local )
+        pltransform_data => proc
+
+        call interface_plshade( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+               real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
+               real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
+               real(shade_min,kind=private_plflt), real(shade_max,kind=private_plflt), &
+               int(sh_cmap,kind=private_plint), real(sh_color,kind=private_plflt), &
+               real(sh_width,kind=private_plflt), &
+               int(min_color,kind=private_plint), real(min_width,kind=private_plflt), &
+               int(max_color,kind=private_plint), real(max_width,kind=private_plflt), &
+               fill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltransformf2c_data), data )
+    end subroutine plshade_impl_data
+
+    subroutine plshades_impl_0( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3620,9 +3901,9 @@ contains
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool),  c_null_ptr, c_null_ptr )
-    end subroutine plshades_multiple_0
+    end subroutine plshades_impl_0
 
-    subroutine plshades_multiple_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3714,9 +3995,9 @@ contains
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool), pltr1, c_loc(cgrid_local) )
-    end subroutine plshades_multiple_1
+    end subroutine plshades_impl_1
 
-    subroutine plshades_multiple_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3812,9 +4093,9 @@ contains
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool), pltr2f, c_loc(cgrid_local) )
-    end subroutine plshades_multiple_2
+    end subroutine plshades_impl_2
 
-    subroutine plshades_multiple_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, tr )
         real(kind=wp), dimension(:,:), intent(in) :: z
         character(len=*), intent(in) :: defined
@@ -3881,7 +4162,128 @@ contains
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
                fill, int(merge(1,0,rectangular),kind=private_plbool), plplot_private_pltr, tr_in )
-    end subroutine plshades_multiple_tr
+    end subroutine plshades_impl_tr
+
+    subroutine plshades_impl( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+           rectangular, proc )
+        real(kind=wp), dimension(:,:), intent(in) :: z
+        character(len=*), intent(in) :: defined
+        real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
+        real(kind=wp), intent(in) :: fill_width, cont_width
+        real(kind=wp), dimension(:), intent(in) :: clevel
+        integer, intent(in) :: cont_color
+        logical, intent(in) :: rectangular
+        procedure(pltransform_proc) :: proc
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
+        type(c_ptr), dimension(:), allocatable :: z_address_local
+
+        interface
+            subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
+                import :: private_plint, private_plflt
+                integer(kind=private_plint), value, intent(in) :: n
+                real(kind=private_plflt), dimension(*), intent(in) :: x, y
+            end subroutine fill
+        end interface
+
+        interface
+            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
+                   clevel, nlevel, fill_width, cont_color, cont_width, &
+                   fill, rectangular, proc, data ) bind(c, name = 'c_plshades' )
+                import :: c_ptr, c_funptr, c_null_ptr
+                import :: private_plint, private_plbool, private_plflt
+                implicit none
+                type(c_ptr), dimension(*), intent(in)  :: a
+                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+                integer(kind=private_plbool), value, intent(in) :: rectangular
+                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
+                real(kind=private_plflt), dimension(*), intent(in) :: clevel
+                real(kind=private_plflt), value, intent(in) :: cont_width
+                type(c_ptr), value, intent(in) :: defined
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+                interface
+                    subroutine fill( n, x, y ) bind(c)
+                        import :: private_plint, private_plflt
+                        integer(kind=private_plint), value, intent(in) :: n
+                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
+                    end subroutine fill
+                end interface
+            end subroutine interface_plshades
+        end interface
+
+        call matrix_to_c( z, z_c_local, z_address_local )
+        pltransform => proc
+
+        call interface_plshades( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+               real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
+               real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
+               real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
+               real(fill_width,kind=private_plflt), &
+               int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
+               fill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltransformf2c), c_null_ptr )
+    end subroutine plshades_impl
+
+    subroutine plshades_impl_data( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+           rectangular, proc, data )
+        real(kind=wp), dimension(:,:), intent(in) :: z
+        character(len=*), intent(in) :: defined
+        real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
+        real(kind=wp), intent(in) :: fill_width, cont_width
+        real(kind=wp), dimension(:), intent(in) :: clevel
+        integer, intent(in) :: cont_color
+        logical, intent(in) :: rectangular
+        procedure(pltransform_proc_data) :: proc
+        type(c_ptr), intent(in) :: data
+
+        real(kind=private_plflt), dimension(:,:), allocatable :: z_c_local
+        type(c_ptr), dimension(:), allocatable :: z_address_local
+
+        interface
+            subroutine fill( n, x, y ) bind(c, name = 'c_plfill')
+                import :: private_plint, private_plflt
+                integer(kind=private_plint), value, intent(in) :: n
+                real(kind=private_plflt), dimension(*), intent(in) :: x, y
+            end subroutine fill
+        end interface
+
+        interface
+            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
+                   clevel, nlevel, fill_width, cont_color, cont_width, &
+                   fill, rectangular, proc, data ) bind(c, name = 'c_plshades' )
+                import :: c_ptr, c_funptr, c_null_ptr
+                import :: private_plint, private_plbool, private_plflt
+                implicit none
+                type(c_ptr), dimension(*), intent(in)  :: a
+                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+                integer(kind=private_plbool), value, intent(in) :: rectangular
+                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
+                real(kind=private_plflt), dimension(*), intent(in) :: clevel
+                real(kind=private_plflt), value, intent(in) :: cont_width
+                type(c_ptr), value, intent(in) :: defined
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+                interface
+                    subroutine fill( n, x, y ) bind(c)
+                        import :: private_plint, private_plflt
+                        integer(kind=private_plint), value, intent(in) :: n
+                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
+                    end subroutine fill
+                end interface
+            end subroutine interface_plshades
+        end interface
+
+        call matrix_to_c( z, z_c_local, z_address_local )
+        pltransform_data => proc
+
+        call interface_plshades( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+               real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
+               real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
+               real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
+               real(fill_width,kind=private_plflt), &
+               int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
+               fill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltransformf2c_data), data )
+    end subroutine plshades_impl_data
 
     subroutine plsmaj_impl( def, scale )
         real(kind=wp), intent(in) :: def, scale
@@ -4246,7 +4648,7 @@ contains
         call interface_plvasp( real(aspect,kind=private_plflt) )
     end subroutine plvasp_impl
 
-    subroutine plvectors_0( u, v, scale )
+    subroutine plvect_impl_0( u, v, scale )
         real(kind=wp), dimension(:,:), intent(in) :: u, v
         real(kind=wp), intent(in) :: scale
 
@@ -4326,9 +4728,9 @@ contains
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
                real(scale,kind=private_plflt), pltr0, c_null_ptr )
-    end subroutine plvectors_0
+    end subroutine plvect_impl_0
 
-    subroutine plvectors_1( u, v, scale, xg, yg )
+    subroutine plvect_impl_1( u, v, scale, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: u, v
         real(kind=wp), dimension(:), intent(in) :: xg, yg
         real(kind=wp), intent(in) :: scale
@@ -4423,9 +4825,9 @@ contains
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
                real(scale,kind=private_plflt), pltr1, cgrid_local )
-    end subroutine plvectors_1
+    end subroutine plvect_impl_1
 
-    subroutine plvectors_2( u, v, scale, xg, yg )
+    subroutine plvect_impl_2( u, v, scale, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: u, v
         real(kind=wp), dimension(:,:), intent(in) :: xg, yg
         real(kind=wp), intent(in) :: scale
@@ -4524,9 +4926,9 @@ contains
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
                real(scale,kind=private_plflt), pltr2f, cgrid_local )
-    end subroutine plvectors_2
+    end subroutine plvect_impl_2
 
-    subroutine plvectors_tr( u, v, scale, tr )
+    subroutine plvect_impl_tr( u, v, scale, tr )
         real(kind=wp), dimension(:,:), intent(in) :: u, v
         real(kind=wp), intent(in) :: scale
         real(kind=wp), dimension(:), intent(in) :: tr
@@ -4599,7 +5001,80 @@ contains
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
                real(scale,kind=private_plflt), plplot_private_pltr, tr_in )
-    end subroutine plvectors_tr
+    end subroutine plvect_impl_tr
+
+    subroutine plvect_impl( u, v, scale, proc )
+        real(kind=wp), dimension(:,:), intent(in) :: u, v
+        real(kind=wp), intent(in) :: scale
+        procedure(pltransform_proc) :: proc
+
+        integer(kind=private_plint) :: nx_in, ny_in
+        real(kind=private_plflt), dimension(:,:), allocatable :: u_local, v_local
+        type(c_ptr), dimension(:), allocatable :: u_address_local, v_address_local
+
+        interface
+            subroutine interface_plvect( u, v, nx, ny, scale, proc, data ) bind(c, name = 'c_plvect' )
+                import :: c_funptr, c_ptr
+                import :: private_plint, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: nx, ny
+                real(kind=private_plflt), value, intent(in) :: scale
+                type(c_ptr), dimension(*), intent(in) :: u, v
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+            end subroutine interface_plvect
+        end interface
+
+        nx_in = size(u,1,kind=private_plint)
+        ny_in = size(u,2,kind=private_plint)
+        if( nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u and v"
+        end if
+
+        call matrix_to_c( u, u_local, u_address_local )
+        call matrix_to_c( v, v_local, v_address_local )
+        pltransform => proc
+
+        call interface_plvect( u_address_local, v_address_local, nx_in, ny_in, &
+               real(scale,kind=private_plflt), c_funloc(pltransformf2c), c_null_ptr )
+    end subroutine plvect_impl
+
+    subroutine plvect_impl_data( u, v, scale, proc, data )
+        real(kind=wp), dimension(:,:), intent(in) :: u, v
+        real(kind=wp), intent(in) :: scale
+        procedure(pltransform_proc_data) :: proc
+        type(c_ptr), intent(in) :: data
+
+        integer(kind=private_plint) :: nx_in, ny_in
+        real(kind=private_plflt), dimension(:,:), allocatable :: u_local, v_local
+        type(c_ptr), dimension(:), allocatable :: u_address_local, v_address_local
+
+        interface
+            subroutine interface_plvect( u, v, nx, ny, scale, proc, data ) bind(c, name = 'c_plvect' )
+                import :: c_funptr, c_ptr
+                import :: private_plint, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: nx, ny
+                real(kind=private_plflt), value, intent(in) :: scale
+                type(c_ptr), dimension(*), intent(in) :: u, v
+                type(c_funptr), value, intent(in) :: proc
+                type(c_ptr), value, intent(in) :: data
+            end subroutine interface_plvect
+        end interface
+
+        nx_in = size(u,1,kind=private_plint)
+        ny_in = size(u,2,kind=private_plint)
+        if( nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
+            write(error_unit, "(a)") "Plplot Fortran Warning: plvect: inconsistent sizes for u and v"
+        end if
+
+        call matrix_to_c( u, u_local, u_address_local )
+        call matrix_to_c( v, v_local, v_address_local )
+        pltransform_data => proc
+
+        call interface_plvect( u_address_local, v_address_local, nx_in, ny_in, &
+               real(scale,kind=private_plflt), c_funloc(pltransformf2c_data), data )
+    end subroutine plvect_impl_data
 
     subroutine plvpas_impl( xmin, xmax, ymin, ymax, aspect )
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, aspect
