@@ -51,14 +51,10 @@ module plplot
     private :: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     private :: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     private :: copystring2f, maxlen
-    private :: pltransform_single
-    private :: pltransform_double
     private :: error_unit
     private :: character_array_to_c
     !
-    ! Interfaces that do not depend on the real kind or which
-    ! generate an ambiguous interface (e.g., plslabelfunc, plstransform) if
-    ! implemented with plplot_single and plplot_double.
+    ! Interfaces that do not depend on the real kind.
     !
     interface pl_setcontlabelformat
         module procedure pl_setcontlabelformat_impl
@@ -245,11 +241,6 @@ module plplot
     end interface plpsty
     private :: plpsty_impl
 
-    interface plrandd
-        module procedure plrandd_impl
-    end interface plrandd
-    private :: plrandd_impl
-
     interface plreplot
         module procedure plreplot_impl
     end interface plreplot
@@ -340,18 +331,6 @@ module plplot
     end interface plsfont
     private :: plsfont_impl
 
-    interface plslabelfunc
-        ! Only provide double-precison versions because of
-        ! disambiguation problems with the corresponding
-        ! single-precision versions.
-        module procedure plslabelfunc_data_double
-        module procedure plslabelfunc_double
-        module procedure plslabelfunc_null
-    end interface plslabelfunc
-    private :: plslabelfunc_data_double
-    private :: plslabelfunc_double
-    private :: plslabelfunc_null
-
     interface plsmem
         module procedure plsmem_impl
     end interface plsmem
@@ -401,18 +380,6 @@ module plplot
         module procedure plstart_impl
     end interface plstart
     private :: plstart_impl
-
-    interface plstransform
-        ! Only provide double-precison versions because of
-        ! disambiguation problems with the corresponding
-        ! single-precision versions.
-        module procedure plstransform_data_double
-        module procedure plstransform_double
-        module procedure plstransform_null
-    end interface plstransform
-    private :: plstransform_data_double
-    private :: plstransform_double
-    private :: plstransform_null
 
     interface plstripd
         module procedure plstripd_impl
@@ -1029,23 +996,6 @@ contains
         call interface_plpsty( int(patt,kind=private_plint) )
     end subroutine plpsty_impl
 
-    ! Return type is not part of the disambiguation so we provide
-    ! one explicit double-precision version rather than both types.
-    function plrandd_impl()
-
-        real(kind=private_double) :: plrandd_impl !function type
-
-        interface
-            function interface_plrandd() bind(c,name='c_plrandd')
-                import :: private_plflt
-                implicit none
-                real(kind=private_plflt) :: interface_plrandd !function type
-            end function interface_plrandd
-        end interface
-
-        plrandd_impl = real(interface_plrandd(), kind=private_double)
-    end function plrandd_impl
-
     subroutine plreplot_impl()
         interface
             subroutine interface_plreplot() bind(c,name='c_plreplot')
@@ -1307,52 +1257,6 @@ contains
         call interface_plsfont( int(family,kind=private_plint), int(style,kind=private_plint), int(weight,kind=private_plint) )
     end subroutine plsfont_impl
 
-    ! Only provide double-precison version because of disambiguation
-    ! problems with the corresponding single-precision version.
-    subroutine plslabelfunc_data_double( proc, data )
-        procedure(pllabeler_proc_data_double) :: proc
-        type(c_ptr), intent(in) :: data
-        interface
-            subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plslabelfunc
-        end interface
-
-        pllabeler_data_double => proc
-        call interface_plslabelfunc( c_funloc(pllabelerf2c_data_double), data )
-    end subroutine plslabelfunc_data_double
-
-    ! Only provide double-precison version because of disambiguation
-    ! problems with the corresponding single-precision version.
-    subroutine plslabelfunc_double( proc )
-        procedure(pllabeler_proc_double) :: proc
-        interface
-            subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plslabelfunc
-        end interface
-
-        pllabeler_double => proc
-        call interface_plslabelfunc( c_funloc(pllabelerf2c_double), c_null_ptr )
-    end subroutine plslabelfunc_double
-
-    subroutine plslabelfunc_null
-
-        interface
-            subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plslabelfunc
-        end interface
-
-        call interface_plslabelfunc( c_null_funptr, c_null_ptr )
-    end subroutine plslabelfunc_null
-
     ! Probably would be better to define this in redacted form, but it is not documented that
     ! way, and the python interface also does not use redacted form.  So leave it for now.
     ! I (AWI) followed advice in <http://stackoverflow.com/questions/10755896/fortran-how-to-store-value-255-into-one-byte>
@@ -1526,51 +1430,6 @@ contains
 
         call interface_plstart( trim(devname)//c_null_char, int(nx,kind=private_plint), int(ny,kind=private_plint) )
     end subroutine plstart_impl
-
-    ! Only provide double-precison version because of disambiguation
-    ! problems with the corresponding single-precision version.
-    subroutine plstransform_data_double( proc, data )
-        procedure(pltransform_proc_data_double) :: proc
-        type(c_ptr), intent(in) :: data
-        interface
-            subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plstransform
-        end interface
-
-        pltransform_data_double => proc
-        call interface_plstransform( c_funloc(pltransformf2c_data_double), data )
-    end subroutine plstransform_data_double
-
-    ! Only provide double-precison version because of disambiguation
-    ! problems with the corresponding single-precision version.
-    subroutine plstransform_double( proc )
-        procedure(pltransform_proc_double) :: proc
-        interface
-            subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plstransform
-        end interface
-
-        pltransform_double => proc
-        call interface_plstransform( c_funloc(pltransformf2c_double), c_null_ptr )
-    end subroutine plstransform_double
-
-    subroutine plstransform_null
-        interface
-            subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plstransform
-        end interface
-
-        call interface_plstransform( c_null_funptr, c_null_ptr )
-    end subroutine plstransform_null
 
     subroutine plstripd_impl( id )
         integer, intent(in) :: id

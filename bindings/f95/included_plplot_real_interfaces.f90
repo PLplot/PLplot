@@ -33,7 +33,8 @@
 
     private :: matrix_to_c
 
-    ! Interfaces for wp-precision callbacks
+    ! Private interfaces for wp-precision callbacks
+
     abstract interface
         subroutine plmapform_proc( x, y )
             import :: wp
@@ -41,8 +42,51 @@
         end subroutine plmapform_proc
     end interface
     procedure(plmapform_proc), pointer :: plmapform
+    private:: plmapform_proc, plmapform
 
-    private:: plmapform, plmapform_proc
+    abstract interface
+        subroutine pllabeler_proc( axis, value, label )
+            import :: wp
+            integer, intent(in) :: axis
+            real(kind=wp), intent(in) :: value
+            character(len=*), intent(out) :: label
+        end subroutine pllabeler_proc
+    end interface
+    procedure(pllabeler_proc), pointer :: pllabeler
+    private:: pllabeler_proc, pllabeler
+
+    abstract interface
+        subroutine pllabeler_proc_data( axis, value, label, data )
+            import :: wp, c_ptr
+            integer, intent(in) :: axis
+            real(kind=wp), intent(in) :: value
+            character(len=*), intent(out) :: label
+            type(c_ptr), intent(in) :: data
+        end subroutine pllabeler_proc_data
+    end interface
+    procedure(pllabeler_proc_data), pointer :: pllabeler_data
+    private:: pllabeler_proc_data, pllabeler_data
+
+    abstract interface
+        subroutine pltransform_proc( x, y, tx, ty )
+            import :: wp
+            real(kind=wp), intent(in) :: x, y
+            real(kind=wp), intent(out) :: tx, ty
+        end subroutine pltransform_proc
+    end interface
+    procedure(pltransform_proc), pointer :: pltransform
+    private:: pltransform_proc, pltransform
+
+    abstract interface
+        subroutine pltransform_proc_data( x, y, tx, ty, data )
+            import :: wp, c_ptr
+            real(kind=wp), intent(in) :: x, y
+            real(kind=wp), intent(out) :: tx, ty
+            type(c_ptr), intent(in) :: data
+        end subroutine pltransform_proc_data
+    end interface
+    procedure(pltransform_proc_data), pointer :: pltransform_data
+    private:: pltransform_proc_data, pltransform_data
 
     ! Interface blocks for module procedures
     ! These interface blocks are ordered by the names of the module procedures
