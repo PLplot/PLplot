@@ -283,11 +283,30 @@ of linefeed unlike the Fortran case.  After that, how our device
 drivers currently interpret that special C character for linefeed is
 idiosyncratic to each of our device drivers.)
 
-(x) The index arguments (i.e., the last 3 arguments) of plot3dcl and plsurf3dl have
-been changed from one-based indexing to zero-based indexing to be consistent
-with C and also all our other bindings.
+(x) The index arguments (i.e., the last 3 arguments) of plot3dcl and
+plsurf3dl have been changed from one-based indexing to zero-based
+indexing to be consistent with C and also all our other bindings.
 
-(xi) For the plcont and plvect signatures without callback-related
+(xi) For the plimagefr signature without callback-related arguments
+(i.e., no trailing xg, yg, tr, or callback arguments), we now use NULL
+internally for the C callback following what is done (both in the old
+and new binding) for the plshade and plshades signatures without
+callback-related arguments.  In all these different cases, the C
+library interprets the NULL callback as a signal to map the x and y
+index ranges to the world coordinates xmin, xmax, ymin, and ymax
+(which also appear in the argument lists for plshade, plshades, and
+plimagefr) without recourse to a callback.  The old Fortran binding
+used pltr0 rather than NULL for the plimagefr signature without
+callback-related arguments.  In retrospect we feel this was an error
+(since it meant xmin, xmax, ymin, and ymax were always ignored for the
+old Fortran plimagefr case).  Note, this distinction does not matter
+for our Fortran example 20 (the only place this particular signature
+of plimagefr is used in our examples) since xmin, xmax, ymin, and ymax
+correspond to the exact x and y ranges that pltr0 delivers.  But it
+does matter for other uses of this plimagefr signature which is
+why we are documenting this backwards incompatibility here.
+
+(xii) For the plcont and plvect signatures without callback-related
 arguments (i.e., no trailing xg, yg, tr, or callback arguments), we
 now use pltr0 internally for the callback rather than pltr0f (which
 applies an offset of 1 unit in the way that input arguments were
