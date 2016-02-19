@@ -34,6 +34,7 @@
 program x09f
     use plplot, double_PI => PL_PI, double_TWOPI => PL_TWOPI
     use plf95demolib
+    use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
     implicit none
 
     real(kind=pl_test_flt), parameter :: PI = double_PI
@@ -57,12 +58,25 @@ program x09f
            (/ -1._pl_test_flt, -0.8_pl_test_flt, -0.6_pl_test_flt, -0.4_pl_test_flt, -0.2_pl_test_flt, &
            0._pl_test_flt,  0.2_pl_test_flt,  0.4_pl_test_flt,  0.6_pl_test_flt,  0.8_pl_test_flt, 1._pl_test_flt /)
 
+    type mypltr_data_type
+        ! Only contains data required by the mypltr_data callback
+        real(kind=pl_test_flt), dimension(6) :: tr_data
+    end type mypltr_data_type
+
+    type(mypltr_data_type), target :: data
+
+    ! Use tr plcont callback?
+    logical, parameter :: tr_callback = .false.
+    ! Use pltr0 (identity transformation) callback? (only meaningful
+    ! if tr_callback is .false.).
+    logical, parameter :: identity_callback = .false.
+
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
     tr = (/ 2._pl_test_flt/real(nptsx-1,kind=pl_test_flt), 0.0_pl_test_flt, -1.0_pl_test_flt, &
            0.0_pl_test_flt, 2._pl_test_flt/real(nptsy-1,kind=pl_test_flt), -1.0_pl_test_flt /)
-
+    
     !   Calculate the data matrices.
     xc = (arange(0,nptsx) - (nptsx/2)) / real(nptsx/2,kind=pl_test_flt)
     yc = (arange(0,nptsy) - (nptsy/2)) / real(nptsy/2,kind=pl_test_flt) - 1.0_pl_test_flt
@@ -97,12 +111,31 @@ program x09f
     !   Plot using identity transform
     call pl_setcontlabelformat(4, 3)
     call pl_setcontlabelparam(0.006_pl_test_flt, 0.3_pl_test_flt, 0.1_pl_test_flt, 1)
-    call plenv(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, 0, 0)
+    if(.not. tr_callback .and. identity_callback) then
+        call plenv( &
+               real(0,kind=pl_test_flt), real(nptsx-1,kind=pl_test_flt), &
+               real(0,kind=pl_test_flt), real(nptsy-1,kind=pl_test_flt), 0, 0)
+    else
+        call plenv(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, 0, 0)
+    endif
     call plcol0(2)
-    call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, tr)
+    if(tr_callback) then
+        call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, tr)
+    elseif(identity_callback) then
+        call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel)
+    else
+        data%tr_data = tr
+        call plcont(z(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, mypltr_data, c_loc(data))
+    endif
     call plstyl( (/1500/), (/1500/) )
     call plcol0(3)
-    call plcont(w(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, tr)
+    if(tr_callback) then
+        call plcont(w(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, tr)
+    elseif(identity_callback) then
+        call plcont(w(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel)
+    else
+        call plcont(w(1:nptsx,1:nptsy), 1, nptsx, 1, nptsy, clevel, mypltr)
+    endif
     call plstyl( (/integer ::/), (/integer ::/) )
     call plcol0(1)
     call pllab('X Coordinate', 'Y Coordinate', 'Streamlines of flow')
@@ -148,6 +181,34 @@ contains
         tcoord         = -1.0_pl_test_flt + coord * 2.0_pl_test_flt
         coord_function = tcoord + factor*cos(0.5_pl_test_flt*PI*tcoord)
     end function coord_function
+
+    ! Callback function that relies on global tr.
+    subroutine mypltr( x, y, xt, yt )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+
+        xt = tr(1) * x + tr(2) * y + tr(3)
+        yt = tr(4) * x + tr(5) * y + tr(6)
+
+    end subroutine mypltr
+
+    ! Callback function that uses data argument to pass tr information.
+    subroutine mypltr_data( x, y, xt, yt, data )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+        type(c_ptr), intent(in) :: data
+
+        type(mypltr_data_type), pointer :: d
+        call c_f_pointer(data, d)
+
+        xt = d%tr_data(1) * x + d%tr_data(2) * y + d%tr_data(3)
+        yt = d%tr_data(4) * x + d%tr_data(5) * y + d%tr_data(6)
+
+    end subroutine mypltr_data
 
     !----------------------------------------------------------------------------
     !   polar contour plot example.
