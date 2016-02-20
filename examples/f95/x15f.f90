@@ -32,6 +32,8 @@
 !
 program x15f
     use plplot
+    use plf95demolib
+    use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
     implicit none
 
     integer  xdim, ydim, XPTS, YPTS
@@ -42,8 +44,43 @@ program x15f
     integer i,  j
     integer :: plparseopts_rc
     real(kind=pl_test_flt)  xx, yy
-    real(kind=pl_test_flt)  z(xdim, ydim), zmin, zmax
+    real(kind=pl_test_flt)  z(xdim, ydim), zmin, zmax, tr(6)
 
+    ! Global parameters to be used in mypltr callback
+    real(kind=pl_test_flt), parameter :: xmin = -1.0_pl_test_flt
+    real(kind=pl_test_flt), parameter :: xmax =  1.0_pl_test_flt
+    real(kind=pl_test_flt), parameter :: ymin = -1.0_pl_test_flt
+    real(kind=pl_test_flt), parameter :: ymax =  1.0_pl_test_flt
+
+    ! Use tr callback?
+    logical, parameter :: tr_callback = .false.
+
+    ! Use C pltr1 callback? (only meaningful
+    ! if tr_callback is .false.).
+    logical, parameter :: pltr1_callback = .false.
+
+    ! Use Fortran callback with no data? (only meaningful
+    ! if tr_callback and pltr1_callback are .false.).
+    logical, parameter :: mypltr_callback = .false.
+
+    type mypltr_data_type
+        ! Only contains data required by the mypltr_data callback
+        integer :: xpts_data, ypts_data
+        real(kind=pl_test_flt) :: xmin_data, xmax_data, ymin_data, ymax_data
+    end type mypltr_data_type
+
+    ! Global data type to be used in mypltr_data callback
+    type(mypltr_data_type), target :: data
+
+    data%xpts_data = XPTS
+    data%ypts_data = YPTS
+    data%xmin_data = xmin
+    data%xmax_data = xmax
+    data%ymin_data = ymin
+    data%ymax_data = ymax
+
+    tr = (/ (xmax-xmin)/real(XPTS-1,kind=pl_test_flt), 0.0_pl_test_flt, xmin, &
+           0.0_pl_test_flt, (ymax-ymin)/real(YPTS-1,kind=pl_test_flt), ymin /)
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
@@ -75,6 +112,34 @@ program x15f
     call plend()
 
 contains
+
+    ! Callback function that relies on global XPTS, YPTS, xmin, xmax, ymin, ymax
+    subroutine mypltr( x, y, xt, yt )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+
+        xt = xmin + ((xmax-xmin)/real(XPTS-1,kind=pl_test_flt))*x
+        yt = ymin + ((ymax-ymin)/real(YPTS-1,kind=pl_test_flt))*y
+
+    end subroutine mypltr
+
+    ! Callback function that uses data argument to pass required data.
+    subroutine mypltr_data( x, y, xt, yt, data )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+        type(c_ptr), intent(in) :: data
+
+        type(mypltr_data_type), pointer :: d
+        call c_f_pointer(data, d)
+
+        xt = d%xmin_data + ((d%xmax_data-d%xmin_data)/real(d%xpts_data-1,kind=pl_test_flt))*x
+        yt = d%ymin_data + ((d%ymax_data-d%ymin_data)/real(d%ypts_data-1,kind=pl_test_flt))*y
+
+    end subroutine mypltr_data
 
     ! -------------------------------------------------------------------------
     !      cmap1_init1
@@ -176,6 +241,7 @@ contains
         integer sh_cmap
         integer min_color, max_color
         real(kind=pl_test_flt) sh_width, min_width, max_width
+        real(kind=pl_test_flt), dimension(:), allocatable :: xg, yg
 
         sh_cmap   = 0
         min_color = 0
@@ -200,12 +266,33 @@ contains
 
         call plpsty(8)
 
-        !      Use_ plshade0 instead of plshade1 - identity mapping
-        call plshade(z(:XPTS,:YPTS), undefined, &
-               -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
-               shade_min, shade_max, &
-               sh_cmap, sh_color, sh_width, &
-               min_color, min_width, max_color, max_width, .true. )
+        if(tr_callback) then
+            call plshade(z(:XPTS,:YPTS), undefined, &
+                   -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
+                   shade_min, shade_max, &
+                   sh_cmap, sh_color, sh_width, &
+                   min_color, min_width, max_color, max_width, .true., tr )
+        elseif(pltr1_callback) then
+            xg = (2.0_pl_test_flt/real(XPTS-1,kind=pl_test_flt))*arange(0, XPTS) - 1.0_pl_test_flt
+            yg = (2.0_pl_test_flt/real(YPTS-1,kind=pl_test_flt))*arange(0, YPTS) - 1.0_pl_test_flt
+            call plshade(z(:XPTS,:YPTS), undefined, &
+                   -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
+                   shade_min, shade_max, &
+                   sh_cmap, sh_color, sh_width, &
+                   min_color, min_width, max_color, max_width, .true., xg, yg )
+        elseif(mypltr_callback) then
+            call plshade(z(:XPTS,:YPTS), undefined, &
+                   -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
+                   shade_min, shade_max, &
+                   sh_cmap, sh_color, sh_width, &
+                   min_color, min_width, max_color, max_width, .true., mypltr )
+        else
+            call plshade(z(:XPTS,:YPTS), undefined, &
+                   -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
+                   shade_min, shade_max, &
+                   sh_cmap, sh_color, sh_width, &
+                   min_color, min_width, max_color, max_width, .true., mypltr_data, c_loc(data))
+        endif
 
         call plcol0(1)
         call plbox('bcnst', 0.0_pl_test_flt, 0, 'bcnstv', 0.0_pl_test_flt, 0)
@@ -258,14 +345,11 @@ contains
         call plvpor( 0.1_pl_test_flt, 0.9_pl_test_flt,  0.1_pl_test_flt, 0.9_pl_test_flt)
         call plwind(-1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt)
 
-        !      Plot using identity transform
-
         do  i = 1,10
             shade_min = zmin + (zmax - zmin) * (i-1) / 10.0_pl_test_flt
             shade_max = zmin + (zmax - zmin) * i / 10.0_pl_test_flt
             sh_color = i+5
             call plpat( inc(1:nlin(i),i),del(1:nlin(i),i))
-            !        Use_ plshade0 instead of plshade1 - identity mapping
             call plshade(z(:XPTS,:YPTS), undefined, &
                    -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                    shade_min, shade_max, &
