@@ -67,7 +67,7 @@ contains
     function arange_1( stop )
         integer, intent(in) :: stop
 
-        real(kind=pl_test_flt), dimension(stop-1) :: arange_1
+        real(kind=pl_test_flt), dimension(stop) :: arange_1
 
         arange_1 = arange_3( 0, stop, 1 )
     end function arange_1

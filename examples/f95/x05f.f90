@@ -47,7 +47,7 @@ program x04f
 
     !   Fill up data points
     delta = 2.0_pl_test_flt * PI / real(NPTS,kind=pl_test_flt)
-    data = sin(delta*arange(0, NPTS))
+    data = sin(delta*arange(NPTS))
 
     call plcol0(1)
     call plhist(data, -1.1_pl_test_flt, 1.1_pl_test_flt, 44, 0)

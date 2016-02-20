@@ -48,8 +48,8 @@ program x03f
     call plsori(1)
 
     dtr = PI/180.0_pl_test_flt
-    x0 = cos(dtr * arange(0,361))
-    y0 = sin(dtr * arange(0,361))
+    x0 = cos(dtr * arange(361))
+    y0 = sin(dtr * arange(361))
 
     !    Initialize PLplot
 
@@ -95,8 +95,8 @@ program x03f
     enddo
     !    Draw the graph
 
-    x = x0 * sin(5.0_pl_test_flt * dtr * arange(0,361))
-    y = y0 * sin(5.0_pl_test_flt * dtr * arange(0,361))
+    x = x0 * sin(5.0_pl_test_flt * dtr * arange(361))
+    y = y0 * sin(5.0_pl_test_flt * dtr * arange(361))
 
     call plcol0(3)
     call plline(x,y)

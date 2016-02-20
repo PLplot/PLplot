@@ -54,8 +54,8 @@ program x11f
     !    Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-    x = 3._pl_test_flt * (arange(0,xpts) - (xpts/2)) / real(xpts/2,kind=pl_test_flt)
-    y = 3._pl_test_flt * (arange(0,ypts) - (ypts/2)) / real(ypts/2,kind=pl_test_flt)
+    x = 3._pl_test_flt * (arange(xpts) - (xpts/2)) / real(xpts/2,kind=pl_test_flt)
+    y = 3._pl_test_flt * (arange(ypts) - (ypts/2)) / real(ypts/2,kind=pl_test_flt)
 
     do i=1,xpts
         xx = x(i)

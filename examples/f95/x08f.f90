@@ -74,8 +74,8 @@ program x08f
 
     rosen = 0
 
-    !   x(1:xpts) = (arange(0,xpts) - (xpts-1)/2.0_pl_test_flt) / ((xpts-1)/2.0_pl_test_flt)
-    !   y(1:ypts) = (arange(0,ypts) - (ypts-1)/2.0_pl_test_flt) / ((ypts-1)/2.0_pl_test_flt)
+    !   x(1:xpts) = (arange(xpts) - (xpts-1)/2.0_pl_test_flt) / ((xpts-1)/2.0_pl_test_flt)
+    !   y(1:ypts) = (arange(ypts) - (ypts-1)/2.0_pl_test_flt) / ((ypts-1)/2.0_pl_test_flt)
     !
 
     dx = 2.0_pl_test_flt / (xpts - 1)

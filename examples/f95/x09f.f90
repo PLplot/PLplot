@@ -78,8 +78,8 @@ program x09f
            0.0_pl_test_flt, 2._pl_test_flt/real(nptsy-1,kind=pl_test_flt), -1.0_pl_test_flt /)
     
     !   Calculate the data matrices.
-    xc = (arange(0,nptsx) - (nptsx/2)) / real(nptsx/2,kind=pl_test_flt)
-    yc = (arange(0,nptsy) - (nptsy/2)) / real(nptsy/2,kind=pl_test_flt) - 1.0_pl_test_flt
+    xc = (arange(nptsx) - (nptsx/2)) / real(nptsx/2,kind=pl_test_flt)
+    yc = (arange(nptsy) - (nptsy/2)) / real(nptsy/2,kind=pl_test_flt) - 1.0_pl_test_flt
 
     do i=1,nptsx
         do j=1,nptsy
@@ -91,8 +91,8 @@ program x09f
     !   Build the 1-d coord arrays.
     distort = 0.4_pl_test_flt
 
-    xg1(1:nptsx) = coord_function( arange(0,nptsx) / real(nptsx-1,kind=pl_test_flt),  distort )
-    yg1(1:nptsy) = coord_function( arange(0,nptsy) / real(nptsy-1,kind=pl_test_flt), -distort )
+    xg1(1:nptsx) = coord_function( arange(nptsx) / real(nptsx-1,kind=pl_test_flt),  distort )
+    yg1(1:nptsy) = coord_function( arange(nptsy) / real(nptsy-1,kind=pl_test_flt), -distort )
 
     !   Build the 2-d coord arrays.
     do i=1,nptsx
@@ -231,8 +231,8 @@ contains
 
         !   perimeter.
         delta = 2._pl_test_flt*PI/(PERIMETERPTS-1)
-        px = cos(delta*arange(0, PERIMETERPTS))
-        py = sin(delta*arange(0, PERIMETERPTS))
+        px = cos(delta*arange(PERIMETERPTS))
+        py = sin(delta*arange(PERIMETERPTS))
 
         call plline(px, py)
 
@@ -248,7 +248,7 @@ contains
         enddo
 
         !   create contour values.
-        lev = 0.05_pl_test_flt + 0.10_pl_test_flt * arange(0,nlevel)
+        lev = 0.05_pl_test_flt + 0.10_pl_test_flt * arange(nlevel)
 
         !   plot the (polar) contours.
         call plcol0(2)
@@ -419,8 +419,8 @@ contains
         !   Draw boundary.
 
         delta = TWOPI/(NPLT-1)
-        xtm = x0 + rmax * cos(delta*arange(0,NPLT))
-        ytm = y0 + rmax * sin(delta*arange(0,NPLT))
+        xtm = x0 + rmax * cos(delta*arange(NPLT))
+        ytm = y0 + rmax * sin(delta*arange(NPLT))
 
         call plcol0(ncolbox)
         call plline(xtm, ytm)

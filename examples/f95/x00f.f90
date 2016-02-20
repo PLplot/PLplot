@@ -41,7 +41,7 @@ program x00f
     integer :: plparseopts_rc
 
     ! Prepare data to be plotted.
-    x = arange(0, NSIZE) / real(NSIZE-1,pl_test_flt)
+    x = arange(NSIZE) / real(NSIZE-1,pl_test_flt)
     y = ymax * x**2
 
     ! Or alternatively, using a DO-loop
