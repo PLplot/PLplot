@@ -31,6 +31,7 @@
 !
 program x16f
     use plplot, double_PI => PL_PI
+    use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
     implicit none
     real(kind=pl_test_flt), parameter :: PI = double_PI
     real(kind=pl_test_flt) xx, yy, argx, argy, distort, r, t
@@ -64,6 +65,42 @@ program x16f
     character(len=1) defined
     real(kind=pl_test_flt) tr(6)
 
+    ! Global parameters to be used in mypltr callback
+    real(kind=pl_test_flt), parameter :: xmin = -1.0_pl_test_flt
+    real(kind=pl_test_flt), parameter :: xmax =  1.0_pl_test_flt
+    real(kind=pl_test_flt), parameter :: ymin = -1.0_pl_test_flt
+    real(kind=pl_test_flt), parameter :: ymax =  1.0_pl_test_flt
+
+    ! Use no callback?
+    logical, parameter :: no_callback = .false.
+
+    ! Use tr callback? (only meaningful
+    ! if no_callback is .false.).
+    logical, parameter :: tr_callback = .false.
+
+    ! Use Fortran callback with no data? (only meaningful
+    ! if no_callback and tr_callback are .false.).
+    logical, parameter :: mypltr_callback = .false.
+
+    type mypltr_data_type
+        ! Only contains data required by the mypltr_data callback
+        integer :: xpts_data, ypts_data
+        real(kind=pl_test_flt) :: xmin_data, xmax_data, ymin_data, ymax_data
+    end type mypltr_data_type
+
+    ! Global data type to be used in mypltr_data callback
+    type(mypltr_data_type), target :: data
+
+    data%xpts_data = NX
+    data%ypts_data = NY
+    data%xmin_data = xmin
+    data%xmax_data = xmax
+    data%ymin_data = ymin
+    data%ymax_data = ymax
+
+    tr = (/ (xmax-xmin)/real(NX-1,kind=pl_test_flt), 0.0_pl_test_flt, xmin, &
+           0.0_pl_test_flt, (ymax-ymin)/real(NY-1,kind=pl_test_flt), ymin /)
+
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
@@ -77,14 +114,6 @@ program x16f
     !      Initialize plplot
 
     call plinit()
-    !      Set up transformation matrix
-
-    tr(1) = 2._pl_test_flt/(NX-1)
-    tr(2) = 0._pl_test_flt
-    tr(3) = -1._pl_test_flt
-    tr(4) = 0._pl_test_flt
-    tr(5) = 2._pl_test_flt/(NY-1)
-    tr(6) = -1._pl_test_flt
 
     !      Calculate the data matrices.
     do i=1,NX
@@ -144,10 +173,27 @@ program x16f
     label_opts(1) = PL_COLORBAR_LABEL_BOTTOM
     labels(1) = 'Magnitude'
 
-    call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
-           1._pl_test_flt, &
-           shedge, fill_width, &
-           cont_color, cont_width, .true. )
+    if(no_callback) then
+        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+               1._pl_test_flt, &
+               shedge, fill_width, &
+               cont_color, cont_width, .true. )
+    elseif(tr_callback) then
+        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+               1._pl_test_flt, &
+               shedge, fill_width, &
+               cont_color, cont_width, .true., tr )
+    elseif(mypltr_callback) then
+        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+               1._pl_test_flt, &
+               shedge, fill_width, &
+               cont_color, cont_width, .true., mypltr )
+    else
+        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+               1._pl_test_flt, &
+               shedge, fill_width, &
+               cont_color, cont_width, .true., mypltr_data, c_loc(data) )
+    endif
 
     ! Smaller text
     call  plschr( 0.0_pl_test_flt, 0.75_pl_test_flt )
@@ -399,6 +445,35 @@ program x16f
     call plend
 
 contains
+
+    ! Callback function that relies on global NX, NY, xmin, xmax, ymin, ymax
+    subroutine mypltr( x, y, xt, yt )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+
+        xt = xmin + ((xmax-xmin)/real(NX-1,kind=pl_test_flt))*x
+        yt = ymin + ((ymax-ymin)/real(NY-1,kind=pl_test_flt))*y
+
+    end subroutine mypltr
+
+    ! Callback function that uses data argument to pass required data.
+    subroutine mypltr_data( x, y, xt, yt, data )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+        type(c_ptr), intent(in) :: data
+
+        type(mypltr_data_type), pointer :: d
+        call c_f_pointer(data, d)
+
+        xt = d%xmin_data + ((d%xmax_data-d%xmin_data)/real(d%xpts_data-1,kind=pl_test_flt))*x
+        yt = d%ymin_data + ((d%ymax_data-d%ymin_data)/real(d%ypts_data-1,kind=pl_test_flt))*y
+
+    end subroutine mypltr_data
+
 
     !----------------------------------------------------------------------------
     !      Subroutine a2mnmx
