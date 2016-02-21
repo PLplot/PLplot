@@ -297,8 +297,8 @@ plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
 
     // dx and dy are the plot-coordinates pixel sizes for an untransformed
     // image
-    dx = ( xmax - xmin ) / (PLFLT) nx;
-    dy = ( ymax - ymin ) / (PLFLT) ny;
+    dx = ( xmax - xmin ) / (PLFLT) ( nx - 1 );
+    dy = ( ymax - ymin ) / (PLFLT) ( ny - 1 );
 
     plP_image( z, nx, ny, xmin, ymin, dx, dy, pltr, pltr_data );
 
@@ -387,12 +387,12 @@ plfimage( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
     {
         // dx and dy are the plot-coordinates pixel sizes for an untransformed
         // image
-        dx = ( xmax - xmin ) / (PLFLT) nx;
-        dy = ( ymax - ymin ) / (PLFLT) ny;
+        dx = ( xmax - xmin ) / (PLFLT) ( nx - 1 );
+        dy = ( ymax - ymin ) / (PLFLT) ( ny - 1 );
 
         // Pixel dimensions of the (Dxmin, Dymin) to (Dxmax, Dymax) box
-        nnx = (PLINT) ceil( ( Dxmax - Dxmin ) / dx );
-        nny = (PLINT) ceil( ( Dymax - Dymin ) / dy );
+        nnx = (PLINT) ceil( ( Dxmax - Dxmin ) / dx ) + 1;
+        nny = (PLINT) ceil( ( Dymax - Dymin ) / dy ) + 1;
 
         // Call plimagefr with the value -> color range mapped to the minimum
         // Offsets for the idata indices to select
