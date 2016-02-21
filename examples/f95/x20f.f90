@@ -79,6 +79,7 @@
 
 program x20f
     use plplot, double_PI => PL_PI
+    use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
 
     implicit none
 
@@ -111,6 +112,25 @@ program x20f
     logical nointeractive
     character(len=80) f_name
     integer :: plgetcursor_rc
+
+    ! Global parameters to be used in mypltr callback
+    real(kind=pl_test_flt) :: xmin, xmax, ymin, ymax
+
+    ! Use no callback?
+    logical, parameter :: no_callback = .false.
+
+    ! Use Fortran callback with no data? (only meaningful
+    ! if no_callback is .false.).
+    logical, parameter :: mypltr_callback = .false.
+
+    type mypltr_data_type
+        ! Only contains data required by the mypltr_data callback
+        integer :: xpts_data, ypts_data
+        real(kind=pl_test_flt) :: xmin_data, xmax_data, ymin_data, ymax_data
+    end type mypltr_data_type
+
+    ! Global data type to be used in mypltr_data callback
+    type(mypltr_data_type), target :: data
 
     !     Parse and process command line arguments
     !
@@ -200,12 +220,26 @@ program x20f
         endif
     endif
 
+    width_r  = real(width,kind=pl_test_flt)
+    height_r = real(height,kind=pl_test_flt)
+
+    ! Initialize callback data
+    xmin = 0.0_pl_test_flt
+    xmax = width_r
+    ymin = 0.0_pl_test_flt
+    ymax = height_r
+    
+    data%xpts_data = width
+    data%ypts_data = height
+    data%xmin_data = xmin
+    data%xmax_data = xmax
+    data%ymin_data = ymin
+    data%ymax_data = ymax
+
     !     Set gray colormap
     call gray_cmap(num_col)
 
     !     Display Chloe
-    width_r  = real(width,kind=pl_test_flt)
-    height_r = real(height,kind=pl_test_flt)
     call plenv(1._pl_test_flt, width_r, 1._pl_test_flt, height_r, 1, -1)
 
     if (.not. nointeractive) then
@@ -267,9 +301,19 @@ program x20f
     call plcol0(2)
     call plenv(0._pl_test_flt, width_r, 0._pl_test_flt, height_r, 1, -1)
     call pllab("", "", "Reduced dynamic range image example")
-    call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
-           height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
-           img_max - img_max * 0.25_pl_test_flt)
+    if(no_callback) then
+        call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
+               img_max - img_max * 0.25_pl_test_flt)
+    elseif(mypltr_callback) then
+        call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
+               img_max - img_max * 0.25_pl_test_flt, mypltr)
+    else
+        call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
+               img_max - img_max * 0.25_pl_test_flt, mypltr_data, c_loc(data))
+    endif
 
     !     Draw a distorted version of the original image, showing its
     !     full dynamic range.
@@ -335,7 +379,35 @@ program x20f
 
 contains
 
-    !     Determine the unit of length (of 8 or less) for direct-access files
+    ! Callback function that relies on global width, height, xmin, xmax, ymin, ymax
+    subroutine mypltr( x, y, xt, yt )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+
+        xt = xmin + ((xmax-xmin)/real(width-1,kind=pl_test_flt))*x
+        yt = ymin + ((ymax-ymin)/real(height-1,kind=pl_test_flt))*y
+
+    end subroutine mypltr
+
+    ! Callback function that uses data argument to pass required data.
+    subroutine mypltr_data( x, y, xt, yt, data )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+        type(c_ptr), intent(in) :: data
+
+        type(mypltr_data_type), pointer :: d
+        call c_f_pointer(data, d)
+
+        xt = d%xmin_data + ((d%xmax_data-d%xmin_data)/real(d%xpts_data-1,kind=pl_test_flt))*x
+        yt = d%ymin_data + ((d%ymax_data-d%ymin_data)/real(d%ypts_data-1,kind=pl_test_flt))*y
+
+    end subroutine mypltr_data
+
+!     Determine the unit of length (of 8 or less) for direct-access files
     subroutine bytes_in_rec( bytes )
         implicit none
         integer     bytes
