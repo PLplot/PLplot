@@ -283,10 +283,11 @@
         module procedure plimagefr_impl_1
         module procedure plimagefr_impl_2
         module procedure plimagefr_impl_null
+        module procedure plimagefr_impl_tr
         module procedure plimagefr_impl
         module procedure plimagefr_impl_data
     end interface plimagefr
-    private :: plimagefr_impl_1, plimagefr_impl_2, plimagefr_impl_null, plimagefr_impl, plimagefr_impl_data
+    private :: plimagefr_impl_1, plimagefr_impl_2, plimagefr_impl_null, plimagefr_impl_tr, plimagefr_impl, plimagefr_impl_data
 
     interface pljoin
         module procedure pljoin_impl
@@ -2083,6 +2084,54 @@ contains
                real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
                c_null_funptr, c_null_ptr )
     end subroutine plimagefr_impl_null
+
+    subroutine plimagefr_impl_tr( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, tr )
+        real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+        real(kind=wp), dimension(:, :), intent(in) :: idata
+        real(kind=wp), dimension(:), intent(in) :: tr
+
+        integer(kind=private_plint) :: nx_in, ny_in
+        real(kind=private_plflt), dimension(:,:), allocatable :: idata_local
+        type(c_ptr), dimension(:), allocatable :: idata_address_local
+        real(kind=private_plflt), dimension(6), target :: tr_in
+
+        interface
+            subroutine interface_plimagefr( idata, nx, ny, &
+                   xmin, xmax, ymin, ymax, &
+                   zmin, zmax, valuemin, valuemax, transform, tr ) bind(c,name='c_plimagefr')
+                import :: c_ptr
+                import :: private_plint, private_plflt
+                implicit none
+                integer(kind=private_plint), value, intent(in) :: nx, ny
+                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
+                type(c_ptr), dimension(*), intent(in) :: idata
+                real(kind=private_plflt), dimension(*), intent(in) :: tr
+                interface
+                    subroutine transform( x, y, tx, ty, data ) bind(c)
+                        import :: private_plflt, PLcGrid
+                        implicit none
+                        real(kind=private_plflt), value, intent(in) :: x, y
+                        real(kind=private_plflt), intent(out) :: tx, ty
+                        real(kind=private_plflt), dimension(*), intent(in) :: data
+                    end subroutine transform
+                end interface
+            end subroutine interface_plimagefr
+        end interface
+
+        nx_in = size(idata,1, kind=private_plint)
+        ny_in = size(idata,2, kind=private_plint)
+
+        call matrix_to_c( idata, idata_local, idata_address_local )
+        tr_in = tr(1:6)
+
+        call interface_plimagefr( &
+               idata_address_local, nx_in, ny_in, &
+               real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), &
+               real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
+               real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
+               real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
+               plplot_private_pltr, tr_in )
+    end subroutine plimagefr_impl_tr
 
     subroutine plimagefr_impl( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, proc )
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
