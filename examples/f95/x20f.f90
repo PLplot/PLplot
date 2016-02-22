@@ -112,6 +112,7 @@ program x20f
     logical nointeractive
     character(len=80) f_name
     integer :: plgetcursor_rc
+    real(kind=pl_test_flt) tr(6)
 
     ! Global parameters to be used in mypltr callback
     real(kind=pl_test_flt) :: xmin, xmax, ymin, ymax
@@ -119,8 +120,11 @@ program x20f
     ! Use no callback?
     logical, parameter :: no_callback = .false.
 
-    ! Use Fortran callback with no data? (only meaningful
-    ! if no_callback is .false.).
+    ! Use tr callback? (Only meaningful if no_callback is false.)
+    logical, parameter :: tr_callback = .false.
+
+    ! Use Fortran callback with no data? (Only meaningful
+    ! if no_callback and tr_callback are both .false.).
     logical, parameter :: mypltr_callback = .false.
 
     type mypltr_data_type
@@ -236,6 +240,9 @@ program x20f
     data%ymin_data = ymin
     data%ymax_data = ymax
 
+    tr = (/ (xmax-xmin)/real(width-1,kind=pl_test_flt), 0.0_pl_test_flt, xmin, &
+           0.0_pl_test_flt, (ymax-ymin)/real(height-1,kind=pl_test_flt), ymin /)
+
     !     Set gray colormap
     call gray_cmap(num_col)
 
@@ -305,6 +312,10 @@ program x20f
         call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
                height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
                img_max - img_max * 0.25_pl_test_flt)
+    elseif(tr_callback) then
+        call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
+               height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
+               img_max - img_max * 0.25_pl_test_flt, tr)
     elseif(mypltr_callback) then
         call plimagefr(img_f, 0._pl_test_flt, width_r, 0._pl_test_flt, &
                height_r, 0._pl_test_flt, 0._pl_test_flt, img_min + img_max * 0.25_pl_test_flt, &
