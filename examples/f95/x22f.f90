@@ -34,6 +34,7 @@
 
 program x22f
     use plplot, double_PI => PL_PI
+    use plf95demolib
     use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
     implicit none
     real(kind=pl_test_flt), parameter :: PI = double_PI
@@ -92,13 +93,12 @@ contains
     !     vector plot of the circulation around the origin
     subroutine circulation()
 
-        integer i, j, nx, ny
-        parameter (nx=20, ny=20)
+        integer, parameter :: nx=20, ny=20
 
-        real(kind=pl_test_flt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
+        real(kind=pl_test_flt), allocatable :: u(:,:), v(:,:), xg(:), yg(:)
 
-        real(kind=pl_test_flt) dx, dy, xmin, xmax, ymin, ymax
-        real(kind=pl_test_flt) xx, yy, scaling
+        real(kind=pl_test_flt) :: dx, dy, xmin, xmax, ymin, ymax
+        real(kind=pl_test_flt) :: scaling
 
         dx = 1.0_pl_test_flt
         dy = 1.0_pl_test_flt
@@ -108,16 +108,10 @@ contains
         ymin = -real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
         ymax = real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
 
-        do i=1,nx
-            xx = (real(i,kind=pl_test_flt)-nx/2.0_pl_test_flt-0.5_pl_test_flt)*dx
-            do j=1,ny
-                yy = (real(j,kind=pl_test_flt)-ny/2.0_pl_test_flt-0.5_pl_test_flt)*dy
-                xg(i,j) = xx
-                yg(i,j) = yy
-                u(i,j) = yy
-                v(i,j) = -xx
-            enddo
-        enddo
+        xg = (arange(nx) + (-nx/2.0_pl_test_flt+0.5_pl_test_flt))*dx
+        yg = (arange(ny) + (-ny/2.0_pl_test_flt+0.5_pl_test_flt))*dy
+        u = spread(yg,1,nx)
+        v = -spread(xg,2,ny)
 
         call plenv(xmin, xmax, ymin, ymax, 0, 0)
         call pllab('(x)', '(y)',  &
@@ -137,7 +131,8 @@ contains
 
         character(len=80) :: title
 
-        real(kind=pl_test_flt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
+        real(kind=pl_test_flt) :: u(nx, ny), v(nx, ny)
+        real(kind=pl_test_flt), allocatable :: xg(:), yg(:)
 
         real(kind=pl_test_flt) dx, dy, xmin, xmax, ymin, ymax
         real(kind=pl_test_flt) xx, yy, Q, b, dbdx, scaling
@@ -151,12 +146,13 @@ contains
         ymax = real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
 
         Q = 2.0_pl_test_flt
+
+        xg = (arange(nx) + (-nx/2.0_pl_test_flt+0.5_pl_test_flt))*dx
+        yg = (arange(ny) + (-ny/2.0_pl_test_flt+0.5_pl_test_flt))*dy
         do i=1,nx
-            xx = (real(i,kind=pl_test_flt)-real(nx,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dx
+            xx = xg(i)
             do j=1,ny
-                yy = (real(j,kind=pl_test_flt)-real(ny,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dy
-                xg(i,j) = xx
-                yg(i,j) = yy
+                yy = yg(j)
                 b = ymax/4.0_pl_test_flt*(3.0_pl_test_flt-cos(PI*xx/xmax))
                 if (abs(yy).lt.b) then
                     dbdx = ymax/4.0_pl_test_flt*sin(PI*xx/xmax)*PI/xmax*yy/b
@@ -214,14 +210,12 @@ contains
     ! with a coordinate transform
     subroutine constriction2()
 
-        integer i, j, nx, ny, nc, nseg
-        parameter (nx=20, ny=20, nc=11, nseg=20)
+        integer, parameter :: nx=20, ny=20, nc=11, nseg=20
 
-        real(kind=pl_test_flt) dx, dy, xx, yy
+        real(kind=pl_test_flt) dx, dy
         real(kind=pl_test_flt) xmin, xmax, ymin, ymax
-        real(kind=pl_test_flt) Q, b, scaling
-        real(kind=pl_test_flt) u(nx, ny), v(nx, ny), xg(nx,ny), yg(nx,ny)
-        real(kind=pl_test_flt) clev(nc);
+        real(kind=pl_test_flt) Q, scaling
+        real(kind=pl_test_flt), allocatable :: xg(:), yg(:), b(:), u(:,:), v(:,:), clev(:)
         character(len=1) defined
 
         type(callback_data_type), target :: data
@@ -244,21 +238,12 @@ contains
         endif
 
         Q = 2.0_pl_test_flt
-        do i=1,nx
-            xx = (real(i,kind=pl_test_flt)-real(nx,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dx
-            do j=1,ny
-                yy = (real(j,kind=pl_test_flt)-real(ny,kind=pl_test_flt)/2.0_pl_test_flt-0.5_pl_test_flt)*dy
-                xg(i,j) = xx
-                yg(i,j) = yy
-                b = ymax/4.0_pl_test_flt*(3.0_pl_test_flt-cos(PI*xx/xmax))
-                u(i,j) = Q*ymax/b
-                v(i,j) = 0.0_pl_test_flt
-            enddo
-        enddo
-
-        do i=1,nc
-            clev(i) = Q + real(i-1,kind=pl_test_flt) * Q / ( real(nc,kind=pl_test_flt) - 1.0_pl_test_flt )
-        enddo
+        xg = (arange(nx) + (-nx/2.0_pl_test_flt+0.5_pl_test_flt))*dx
+        yg = (arange(ny) + (-ny/2.0_pl_test_flt+0.5_pl_test_flt))*dy
+        b = Q*4.0_pl_test_flt/(3.0_pl_test_flt-cos(PI*xg/xmax))
+        u = spread(b,2,ny)
+        v = 0.0_pl_test_flt*u
+        clev = Q + arange(nc) * (Q/real(nc-1,kind=pl_test_flt))
 
         call plenv(xmin, xmax, ymin, ymax, 0, 0)
         call pllab('(x)', '(y)', &
