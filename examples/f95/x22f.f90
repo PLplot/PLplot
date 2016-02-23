@@ -59,11 +59,45 @@ program x22f
     data arrow2_x/-0.5_pl_test_flt, 0.3_pl_test_flt, 0.3_pl_test_flt, 0.5_pl_test_flt, 0.3_pl_test_flt, 0.3_pl_test_flt/
     data arrow2_y/0._pl_test_flt, 0._pl_test_flt, 0.2_pl_test_flt, 0._pl_test_flt, -0.2_pl_test_flt, 0._pl_test_flt/
 
+    real(kind=pl_test_flt) :: tr(6), xmin_global, xmax_global, ymin_global, ymax_global
+    integer :: nx_global, ny_global
+    type mypltr_data_type
+        ! Only contains data required by the mypltr_data callback
+        real(kind=pl_test_flt), dimension(6) :: tr_data
+    end type mypltr_data_type
+
+    type(mypltr_data_type), target :: data
+
+    ! Use tr plcont callback?
+    logical, parameter :: tr_callback = .false.
+    ! Use pltr0 (identity transformation) callback? (only meaningful
+    ! if tr_callback is .false.).
+    logical, parameter :: identity_callback = .false.
+    ! Use Fortran callback with no data? (only meaningful
+    ! if tr_callback and identity_callback are .false.).
+    logical, parameter :: mypltr_callback = .false.
+
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
-    call plinit
+    ! I believe tr must be declared and defined globally this way in
+    ! order for mypltr in circulation to work properly, and I would otherwise declare
+    ! and define tr locally in that routine.
 
+    ! Consistent with nx and ny in circulation.
+    nx_global = 20
+    ny_global = 20
+    
+    ! Must be consistent with actual ranges of xg and yg arrays in circulation
+    ! so these values not exactly the same as xmin, xmax, ymin, and ymax there.
+    xmin_global = - real(nx_global / 2, kind=pl_test_flt) + 0.5_pl_test_flt
+    xmax_global = xmin_global + real(nx_global-1, kind=pl_test_flt)
+    ymin_global = - real(ny_global / 2, kind=pl_test_flt) + 0.5_pl_test_flt
+    ymax_global = ymin_global + real(ny_global-1, kind=pl_test_flt)
+    tr = [(xmax_global-xmin_global)/real(nx_global-1,kind=pl_test_flt), 0.0_pl_test_flt, xmin_global, &
+           0.0_pl_test_flt, (ymax_global-ymin_global)/real(ny_global-1,kind=pl_test_flt), ymin_global ]
+
+    call plinit
 
     call circulation
 
@@ -90,6 +124,35 @@ program x22f
 
 
 contains
+
+    ! Callback function that relies on global tr.
+    subroutine mypltr( x, y, xt, yt )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+
+        xt = tr(1) * x + tr(2) * y + tr(3)
+        yt = tr(4) * x + tr(5) * y + tr(6)
+
+    end subroutine mypltr
+
+    ! Callback function that uses data argument to pass tr information.
+    subroutine mypltr_data( x, y, xt, yt, data )
+
+        ! These callback arguments must have exactly these attributes.
+        real(kind=pl_test_flt), intent(in) ::  x, y
+        real(kind=pl_test_flt), intent(out) :: xt, yt
+        type(c_ptr), intent(in) :: data
+
+        type(mypltr_data_type), pointer :: d
+        call c_f_pointer(data, d)
+
+        xt = d%tr_data(1) * x + d%tr_data(2) * y + d%tr_data(3)
+        yt = d%tr_data(4) * x + d%tr_data(5) * y + d%tr_data(6)
+
+    end subroutine mypltr_data
+
     !     vector plot of the circulation around the origin
     subroutine circulation()
 
@@ -113,12 +176,32 @@ contains
         u = spread(yg,1,nx)
         v = -spread(xg,2,ny)
 
-        call plenv(xmin, xmax, ymin, ymax, 0, 0)
+        if(.not. tr_callback .and. identity_callback) then
+            ! This scaling the same as if xmin, xmax, ymin, and ymax
+            ! replaced in plenv call below by actual minimum and maximum
+            ! xg and yg values.  So along with different tick marks you
+            ! will also get slightly different scaling with this alternative
+            ! compared to all other results.
+            call plenv( &
+                   real(0,kind=pl_test_flt), real(nx-1,kind=pl_test_flt), &
+                   real(0,kind=pl_test_flt), real(ny-1,kind=pl_test_flt), 0, 0)
+        else
+            call plenv(xmin, xmax, ymin, ymax, 0, 0)
+        endif
         call pllab('(x)', '(y)',  &
                '#frPLplot Example 22 - circulation')
         call plcol0(2)
         scaling = 0.0_pl_test_flt
-        call plvect(u,v,scaling,xg,yg)
+        if(tr_callback) then
+            call plvect(u,v,scaling,tr)
+        elseif(identity_callback) then
+            call plvect(u,v,scaling)
+        elseif(mypltr_callback) then
+            call plvect(u,v,scaling, mypltr)
+        else
+            data%tr_data = tr
+            call plvect(u,v,scaling, mypltr_data, c_loc(data))
+        endif
         call plcol0(1)
 
     end subroutine circulation
