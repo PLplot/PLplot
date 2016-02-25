@@ -35,6 +35,7 @@
 
 program x19f
     use plplot, double_PI => PL_PI
+    use iso_c_binding, only: c_ptr, c_loc, c_f_pointer
     implicit none
     real(kind=pl_test_flt), parameter :: PI = double_PI
 
@@ -57,6 +58,9 @@ program x19f
     integer, dimension(9)              :: majorroads     = (/ 33, 48, 71, 83, 89, 90, 101, 102, 111 /)
     integer                            :: i
     integer :: plparseopts_rc
+    type label_data_type
+        character(len=2), dimension(-1:1,2) :: label_data
+    end type label_data_type
 
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
@@ -289,8 +293,6 @@ contains
 
         real(kind=pl_test_flt), dimension(:), allocatable :: radius
 
-        allocate(radius(size(x)))
-
         ! evaluate x last so RHS's do not get overwritten too soon
         radius = 90.0_pl_test_flt - y
         y = radius*sin(x*PI/180.0_pl_test_flt)
@@ -298,7 +300,7 @@ contains
     end subroutine mapform19
 
     !
-    ! A custom axis labeling function for longitudes and latitudes.
+    ! A custom axis labeling callback function for longitudes and latitudes.
     !
     subroutine geolocation_labeler(axis, value, label)
         integer, intent(in) :: axis
@@ -307,35 +309,54 @@ contains
         real(kind=double), intent(in) :: value
         character(len=*), intent(out) :: label
 
+        type(label_data_type), target :: data
+
+        data%label_data(-1,1) = " W"
+        data%label_data(0,1) = ""
+        data%label_data(1,1) = " E"
+        data%label_data(-1,2) = " S"
+        data%label_data(0,2) = "Eq"
+        data%label_data(1,2) = " N"
+        call custom_labeler(axis, real(value,kind=pl_test_flt), label, c_loc(data))
+    end subroutine geolocation_labeler
+
+    ! This routine called by two different callbacks.
+    subroutine custom_labeler(axis, value, label, data)
+        integer, intent(in) :: axis
+        real(kind=pl_test_flt), intent(in) :: value
+        character(len=*), intent(out) :: label
+        type(c_ptr), intent(in) :: data
+
+        type(label_data_type), pointer :: d
         integer :: length
         character(len=5) direction_label
-        real(kind=pl_test_flt) :: label_val, normalize_longitude, value_pl_test_flt
+        real(kind=pl_test_flt) :: label_val
 
+        call c_f_pointer(data, d)
         label_val = 0.0_pl_test_flt
-        value_pl_test_flt = real(value, kind=pl_test_flt)
 
         length = len(label)
 
         if (axis .eq. 2) then
-            label_val = value_pl_test_flt
+            label_val = value
             if (label_val .gt. 0.0_pl_test_flt) then
-                direction_label = ' N'
+                direction_label = d%label_data(1,axis)
             else if (label_val .lt. 0.0_pl_test_flt) then
-                direction_label = ' S'
+                direction_label = d%label_data(-1,axis)
             else
-                direction_label = 'Eq'
+                direction_label = d%label_data(0,axis)
             endif
         else if (axis .eq. 1) then
-            label_val = normalize_longitude(value_pl_test_flt)
+            label_val = normalize_longitude(value)
             if (label_val .gt. 0.0_pl_test_flt) then
-                direction_label = ' E'
+                direction_label = d%label_data(1,axis)
             else if (label_val .lt. 0.0_pl_test_flt) then
-                direction_label = ' W'
+                direction_label = d%label_data(-1,axis)
             else
-                direction_label = ''
+                direction_label = d%label_data(0,axis)
             endif
         endif
-        if (axis .eq. 2 .and. value_pl_test_flt .eq. 0.0_pl_test_flt) then
+        if (axis .eq. 2 .and. value .eq. 0.0_pl_test_flt) then
             !     A special case for the equator
             label = direction_label
         else if (abs(label_val) .lt. 10.0_pl_test_flt) then
@@ -345,29 +366,23 @@ contains
         else
             write(label,'(I3.1,A2)') iabs(int(label_val)),direction_label
         endif
-    end subroutine geolocation_labeler
+    end subroutine custom_labeler
 
-end program x19f
+    !     "Normalize" longitude values so that they always fall between
+    !      -180.0 and 180.0
+    function normalize_longitude(lon)
+        real(kind=pl_test_flt) :: normalize_longitude
+        real(kind=pl_test_flt) :: lon, times
 
-!FIXME.  How does a callback get access to another routine within the same contains block
-! Having normalize_longitude be an external procedure seems to be the only (ugly) possibility
-
-!     "Normalize" longitude values so that they always fall between
-!      -180.0 and 180.0
-function normalize_longitude(lon)
-    use plplot, only: pl_test_flt
-    implicit none
-    real(kind=pl_test_flt) :: normalize_longitude
-    real(kind=pl_test_flt) :: lon, times
-
-    if ((lon .ge. -180.0_pl_test_flt) .and. (lon .le. 180.0_pl_test_flt)) then
-        normalize_longitude = lon
-    else
-        times = floor ((abs(lon) + 180.0_pl_test_flt) / 360.0_pl_test_flt)
-        if (lon .lt. 0.0_pl_test_flt) then
-            normalize_longitude = lon + 360.0_pl_test_flt * times
+        if ((lon .ge. -180.0_pl_test_flt) .and. (lon .le. 180.0_pl_test_flt)) then
+            normalize_longitude = lon
         else
-            normalize_longitude = lon - 360.0_pl_test_flt * times
+            times = floor ((abs(lon) + 180.0_pl_test_flt) / 360.0_pl_test_flt)
+            if (lon .lt. 0.0_pl_test_flt) then
+                normalize_longitude = lon + 360.0_pl_test_flt * times
+            else
+                normalize_longitude = lon - 360.0_pl_test_flt * times
+            endif
         endif
-    endif
-end function normalize_longitude
+    end function normalize_longitude
+end program x19f
