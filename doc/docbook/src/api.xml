@@ -8307,9 +8307,9 @@ device support!)
     <para>
       Plots continental outlines or shapefile data in world coordinates.
       A demonstration of how to use this function to create different
-      projections can be found in examples/c/x19c. Plplot is provided with
+      projections can be found in examples/c/x19c. PLplot is provided with
       basic coastal outlines and USA state borders. These can be used
-      irrespective of whether Shapefile support is built into Plplot.
+      irrespective of whether Shapefile support is built into PLplot.
       With Shapefile support this function can also be used with user
       Shapefiles, in which case it will plot the entire
       contents of a Shapefile joining each point of each Shapefile
@@ -8318,7 +8318,7 @@ device support!)
       a number of online sources. Shapefile data is actually provided as
       three or more files with the same filename, but different extensions.
       The .shp and .shx files are required for plotting Shapefile data with
-      Plplot.
+      PLplot.
     </para>
 
     <variablelist>
@@ -8330,15 +8330,15 @@ device support!)
         <listitem>
           <para>
             A user supplied function to transform the original map data
-            coordinates to a new coordinate system. The Plplot supplied
+            coordinates to a new coordinate system. The PLplot-supplied
             map data is provided as latitudes and longitudes; other
             Shapefile data may be provided in other coordinate systems
             as can be found in their .prj plain text files. For example,
             by using this transform we can change from a longitude,
             latitude coordinate to a polar stereographic projection.
             Initially, x[0]..[n-1] are the original x coordinates (longitudes
-            for the Plplot suplied data) and y[0]..y[n-1]
-            are the corresponding y coordinates (latitudes for the Plplot
+            for the PLplot-supplied data) and y[0]..y[n-1]
+            are the corresponding y coordinates (latitudes for the PLplot
             supplied data).  After the call to mapform(), x[]
             and y[] should be replaced by the corresponding plot coordinates.
             If no transform is desired, mapform can be replaced by NULL.
@@ -8353,8 +8353,8 @@ device support!)
         <listitem>
           <para>
             A character string which determines the type of map plotted. This is
-            either one of the Plplot built in maps or the file name of a set of
-            Shapefile files without the file extensions. For the Plplot built in
+            either one of the PLplot built in maps or the file name of a set of
+            Shapefile files without the file extensions. For the PLplot built in
             maps the possible values are:
             <itemizedlist>
               <listitem>
@@ -16286,7 +16286,7 @@ device support!)
         <listitem>
           <para>
             Routine used to fill the region.  Use &plfill;.  Future version of
-            plplot may have other fill routines.
+            PLplot may have other fill routines.
           </para>
         </listitem>
       </varlistentry>
