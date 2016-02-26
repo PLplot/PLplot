@@ -65,14 +65,15 @@ module plplot_single
         integer(kind=private_plint), value, intent(in) :: axis, length
         real(kind=private_plflt), value, intent(in) :: value
         character(len=1), dimension(*), intent(out) :: label
-        type(c_ptr), intent(in) :: data
+        type(c_ptr), value, intent(in) :: data
 
         character(len=:), allocatable :: label_out
+        integer :: trimmed_length
+
         allocate(character(length) :: label_out)
-
         call pllabeler( int(axis), real(value,kind=wp), label_out )
-        label(1:length) = trim(label_out)//c_null_char
-
+        trimmed_length = min(length,len_trim(label_out) + 1)
+        label(1:trimmed_length) = transfer(trim(label_out(1:length))//c_null_char, " ", trimmed_length)
         deallocate(label_out)
     end subroutine pllabelerf2c
 
@@ -80,14 +81,15 @@ module plplot_single
         integer(kind=private_plint), value, intent(in) :: axis, length
         real(kind=private_plflt), value, intent(in) :: value
         character(len=1), dimension(*), intent(out) :: label
-        type(c_ptr), intent(in) :: data
+        type(c_ptr), value, intent(in) :: data
 
         character(len=:), allocatable :: label_out
+        integer :: trimmed_length
+
         allocate(character(length) :: label_out)
-
         call pllabeler_data( int(axis), real(value,kind=wp), label_out, data )
-        label(1:length) = trim(label_out)//c_null_char
-
+        trimmed_length = min(length,len_trim(label_out) + 1)
+        label(1:trimmed_length) = transfer(trim(label_out(1:length))//c_null_char, " ", trimmed_length)
         deallocate(label_out)
     end subroutine pllabelerf2c_data
 

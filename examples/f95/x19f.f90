@@ -62,6 +62,11 @@ program x19f
         character(len=2), dimension(-1:1,2) :: label_data
     end type label_data_type
 
+    ! Whether to use no_label_data type of callback.
+    logical, parameter :: ifno_label_data = .false. 
+
+    type(label_data_type), target :: label_data
+
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
@@ -79,7 +84,17 @@ program x19f
     maxx = minx+360._pl_test_flt
 
     ! Setup a custom latitude and longitude-based scaling function.
-    call plslabelfunc(geolocation_labeler)
+    if(ifno_label_data) then
+        call plslabelfunc(geolocation_labeler)
+    else
+        label_data%label_data(-1,1) = " W"
+        label_data%label_data(0,1) = ""
+        label_data%label_data(1,1) = " E"
+        label_data%label_data(-1,2) = " S"
+        label_data%label_data(0,2) = "Eq"
+        label_data%label_data(1,2) = " N"
+        call plslabelfunc(geolocation_labeler_data, c_loc(label_data))
+    endif
 
     call plcol0(1)
     call plenv(minx, maxx, miny, maxy, 1, 70)
@@ -299,9 +314,7 @@ contains
         x = radius*cos(x*PI/180.0_pl_test_flt)
     end subroutine mapform19
 
-    !
     ! A custom axis labeling callback function for longitudes and latitudes.
-    !
     subroutine geolocation_labeler(axis, value, label)
         integer, intent(in) :: axis
         ! These callback arguments must have exactly these attributes
@@ -319,6 +332,19 @@ contains
         data%label_data(1,2) = " N"
         call custom_labeler(axis, real(value,kind=pl_test_flt), label, c_loc(data))
     end subroutine geolocation_labeler
+
+    ! Another custom axis labeling callback function for longitudes and latitudes.
+    subroutine geolocation_labeler_data(axis, value, label, data)
+        integer, intent(in) :: axis
+        ! These callback arguments must have exactly these attributes
+        ! because of disambiguation issues.
+        real(kind=double), intent(in) :: value
+        character(len=*), intent(out) :: label
+
+        type(c_ptr), intent(in) :: data
+
+        call custom_labeler(axis, real(value,kind=pl_test_flt), label, data)
+    end subroutine geolocation_labeler_data
 
     ! This routine called by two different callbacks.
     subroutine custom_labeler(axis, value, label, data)

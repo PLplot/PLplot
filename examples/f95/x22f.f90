@@ -77,6 +77,9 @@ program x22f
     ! if tr_callback and identity_callback are .false.).
     logical, parameter :: mypltr_callback = .false.
 
+    ! use plstransform callback without data?
+    logical, parameter :: ifno_transform_data = .false.
+
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
 
@@ -314,7 +317,7 @@ contains
         data%max = common_max
 
 
-        if(.false.) then
+        if(ifno_transform_data) then
             call plstransform( transform )
         else
             call plstransform( transform_data, c_loc(data))

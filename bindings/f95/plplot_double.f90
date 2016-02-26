@@ -110,7 +110,7 @@ module plplot_double
     ! problems with the corresponding single-precision version.
     subroutine plslabelfunc_impl_data( proc, data )
         procedure(pllabeler_proc_data) :: proc
-        type(c_ptr), intent(in) :: data
+        type(c_ptr), value, intent(in) :: data
         interface
             subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
                 import :: c_funptr, c_ptr
@@ -156,7 +156,7 @@ module plplot_double
     ! problems with the corresponding single-precision version.
     subroutine plstransform_impl_data( proc, data )
         procedure(pltransform_proc_data) :: proc
-        type(c_ptr), intent(in) :: data
+        type(c_ptr), value, intent(in) :: data
         interface
             subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
                 import :: c_funptr, c_ptr
@@ -219,7 +219,7 @@ module plplot_double
         integer(kind=private_plint), value, intent(in) :: axis, length
         real(kind=private_plflt), value, intent(in) :: value
         character(len=1), dimension(*), intent(out) :: label
-        type(c_ptr), intent(in) :: data
+        type(c_ptr), value, intent(in) :: data
 
         character(len=:), allocatable :: label_out
         integer :: trimmed_length
@@ -235,14 +235,15 @@ module plplot_double
         integer(kind=private_plint), value, intent(in) :: axis, length
         real(kind=private_plflt), value, intent(in) :: value
         character(len=1), dimension(*), intent(out) :: label
-        type(c_ptr), intent(in) :: data
+        type(c_ptr), value, intent(in) :: data
 
         character(len=:), allocatable :: label_out
+        integer :: trimmed_length
+
         allocate(character(length) :: label_out)
-
         call pllabeler_data( int(axis), real(value,kind=wp), label_out, data )
-        label(1:length) = trim(label_out)//c_null_char
-
+        trimmed_length = min(length,len_trim(label_out) + 1)
+        label(1:trimmed_length) = transfer(trim(label_out(1:length))//c_null_char, " ", trimmed_length)
         deallocate(label_out)
     end subroutine pllabelerf2c_data
 
