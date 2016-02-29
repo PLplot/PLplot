@@ -3933,7 +3933,7 @@ time is specified by the following parameters:
 
   <sect1 id="plerrx" renderas="sect3">
     <title>
-      <function>plerrx</function>: Draw x error bar
+      <function>plerrx</function>: Draw horizontal error bars
     </title>
 
     <para>
@@ -3951,13 +3951,13 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Draws a set of <literal><parameter>n</parameter></literal>
-      horizontal error bars, the
-      <literal>i</literal>'th error
-      bar extending from <literal><parameter>xmin</parameter>[i]</literal>
-      to <literal><parameter>xmax</parameter>[i]</literal> at y coordinate
-      <literal><parameter>y</parameter>[i]</literal>.  The terminals of the error bar are of length equal to the
-      minor tick length (settable using &plsmin;).
+      Draws a set of <literal><parameter>n</parameter></literal> horizontal
+      error bars, the <literal>i</literal>'th error bar extending from
+      <literal><parameter>xmin</parameter>[i]</literal> to
+      <literal><parameter>xmax</parameter>[i]</literal> at y coordinate
+      <literal><parameter>y</parameter>[i]</literal>.  The terminals of the
+      error bars are of length equal to the minor tick length (settable
+      using &plsmin;).
     </para>
 
     <variablelist>
@@ -3979,8 +3979,8 @@ time is specified by the following parameters:
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with x coordinates of
-	    left-hand endpoint of error bars.
+	    Pointer to array with x coordinates of the
+	    left-hand endpoints of the error bars.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -3991,8 +3991,8 @@ time is specified by the following parameters:
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with x coordinates of
-	    right-hand endpoint of error bars.
+	    Pointer to array with x coordinates of the
+	    right-hand endpoints of the error bars.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4004,7 +4004,7 @@ time is specified by the following parameters:
 	<listitem>
 	  <para>
 	    Pointer to array with y coordinates of
-	    error bar.
+	    the error bars.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4023,13 +4023,6 @@ time is specified by the following parameters:
 	    Perl/PDL: <function>plerrx(n, xmin, xmax, y)</function>
 	  </para>
 	</listitem>
-	<!--
-	    <listitem>
-	    <para>
-	    Python: Not available?
-	    </para>
-	    </listitem>
-	-->
       </itemizedlist>
     </para>
 
@@ -4041,7 +4034,7 @@ time is specified by the following parameters:
 
   <sect1 id="plerry" renderas="sect3">
     <title>
-      <function>plerry</function>: Draw y error bar
+      <function>plerry</function>: Draw vertical error bars
     </title>
 
     <para>
@@ -4064,7 +4057,7 @@ time is specified by the following parameters:
       <literal><parameter>ymin</parameter>[i]</literal> to
       <literal><parameter>ymax</parameter>[i]</literal> at x coordinate
       <literal><parameter>x</parameter>[i]</literal>.  The terminals of the
-      error bar are of length equal to the minor tick length (settable
+      error bars are of length equal to the minor tick length (settable
       using &plsmin;).
     </para>
 
@@ -4087,7 +4080,7 @@ time is specified by the following parameters:
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with x coordinates of error bars.
+	    Pointer to array with x coordinates of the error bars.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4098,7 +4091,7 @@ time is specified by the following parameters:
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with y coordinates of lower endpoint of error
+	    Pointer to array with y coordinates of the lower endpoints of the error
 	    bars.
 	  </para>
 	</listitem>
@@ -4110,8 +4103,8 @@ time is specified by the following parameters:
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to array with y coordinate of upper endpoint of error
-	    bar.
+	    Pointer to array with y coordinates of the upper endpoints of the error
+	    bars.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -4130,13 +4123,6 @@ time is specified by the following parameters:
 	    Perl/PDL: <function>plerry(n, x, ymin, ymax)</function>
 	  </para>
 	</listitem>
-	<!--
-	    <listitem>
-	    <para>
-	    Python: Not available?
-	    </para>
-	    </listitem>
-	-->
       </itemizedlist>
     </para>
 
