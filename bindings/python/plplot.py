@@ -1,4 +1,5 @@
-# Copyright 2002 Gary Bishop and Alan W. Irwin
+# Copyright 2002 Gary Bishop
+# Copyright 2002-2016 Alan W. Irwin
 # Copyright 2008 Andrew Ross
 # This file is part of PLplot.
 
@@ -339,8 +340,8 @@ def plimagefr(img, *args):
                  raise ValueError, "Specified wrap is not an integer"
             pltr_data = (xg, yg)
     else:
-        # default is identity transformation
-        pltr = pltr0
+        # default is NULL callback arguments.
+        pltr = None
         pltr_data = None
     if len(args) > 0:
         raise ValueError, "Too many arguments for plimagefr"

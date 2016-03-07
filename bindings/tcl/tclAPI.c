@@ -4693,7 +4693,7 @@ two-dimensional matrix - ", argv[11], (char *) NULL );
     else
     {
         c_plimagefr( (const PLFLT * const *) pidata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax,
-            valuemin, valuemax, pltr0, NULL );
+            valuemin, valuemax, NULL, NULL );
     }
 
     plFree2dGrid( pidata, nx, ny );

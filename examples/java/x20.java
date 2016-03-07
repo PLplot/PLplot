@@ -109,7 +109,7 @@ class x20 {
         double img_max;
         double maxmin[] = new double[2];
         double x0, y0, dy, stretch;
-        double xg[][], yg[][];
+        double deltax, deltay, xg[][], yg[][];
 
 
         // plplot initialization
@@ -256,12 +256,16 @@ class x20 {
         xg = new double[width + 1][height + 1];
         yg = new double[width + 1][height + 1];
 
+	// In order to mimic the NULL case, the following must be true.
+	// xg[i] = i*deltax; yg[j] = j*deltay, where
+	deltax = (double) width/(double)(width-1);
+	deltay = (double) height/(double)(height-1);
         for ( i = 0; i <= width; i++ )
         {
             for ( j = 0; j <= height; j++ )
             {
-                xg[i][j] = i;
-                yg[i][j] = j;
+                xg[i][j] = i*deltax;
+                yg[i][j] = j*deltay;
             }
         }
         // Draw a saturated version of the original image.  Only use
