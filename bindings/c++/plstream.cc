@@ -374,8 +374,7 @@ plstream::arc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
 
 void
 plstream::vect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
-                void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                PLPointer pltr_data )
+                PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -541,8 +540,7 @@ void plstream::configtime( PLFLT scale, PLFLT offset1, PLFLT offset2,
 
 void plstream::cont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
                      PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
-                     void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                     PLPointer pltr_data )
+                     PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -558,8 +556,7 @@ void plstream::fcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                       PLPointer f2eval_data,
                       PLINT nx, PLINT ny, PLINT kx, PLINT lx,
                       PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
-                      void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                      PLPointer pltr_data )
+                      PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -1116,7 +1113,7 @@ void plstream::lsty( PLINT lin )
 
 // Plot continental outline in world coordinates
 
-void plstream::map( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+void plstream::map( PLMAPFORM_callback mapform,
                     const char *name, PLFLT minx, PLFLT maxx,
                     PLFLT miny, PLFLT maxy )
 {
@@ -1127,7 +1124,7 @@ void plstream::map( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 // Plot map lines
 
-void plstream::mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+void plstream::mapline( PLMAPFORM_callback mapform, const char *name,
                         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                         const PLINT *plotentries, PLINT nplotentries )
 {
@@ -1138,7 +1135,7 @@ void plstream::mapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char
 
 // Plot map points
 
-void plstream::mapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+void plstream::mapstring( PLMAPFORM_callback mapform,
                           const char *name, const char *string,
                           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                           const PLINT *plotentries, PLINT nplotentries )
@@ -1150,7 +1147,7 @@ void plstream::mapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 // Plot map text
 
-void plstream::maptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+void plstream::maptex( PLMAPFORM_callback mapform,
                        const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
                        PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                        PLINT plotentry )
@@ -1162,7 +1159,7 @@ void plstream::maptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 // Plot map fills
 
-void plstream::mapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+void plstream::mapfill( PLMAPFORM_callback mapform,
                         const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
                         PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
@@ -1173,7 +1170,7 @@ void plstream::mapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 // Plot the latitudes and longitudes on the background.
 
-void plstream::meridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+void plstream::meridians( PLMAPFORM_callback mapform,
                           PLFLT dlong, PLFLT dlat,
                           PLFLT minlong, PLFLT maxlong,
                           PLFLT minlat, PLFLT maxlat )
@@ -1827,15 +1824,14 @@ void plstream::sfont( PLINT family, PLINT style, PLINT weight )
 
 void
 plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
-                 PLINT ( *defined )( PLFLT, PLFLT ),
+                 PLDEFINED_callback defined,
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
                  PLINT min_color, PLFLT min_width,
                  PLINT max_color, PLFLT max_width,
-                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
-                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                 PLPointer pltr_data )
+                 PLFILL_callback fill, bool rectangular,
+                 PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -1849,15 +1845,14 @@ plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
 // Deprecated version using PLINT instead of bool
 void
 plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
-                 PLINT ( *defined )( PLFLT, PLFLT ),
+                 PLDEFINED_callback defined,
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
                  PLINT min_color, PLFLT min_width,
                  PLINT max_color, PLFLT max_width,
-                 void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
-                 void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                 PLPointer pltr_data )
+                 PLFILL_callback fill, PLINT rectangular,
+                 PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -1870,13 +1865,12 @@ plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
 
 void
 plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
-                  PLINT ( *defined )( PLFLT, PLFLT ),
+                  PLDEFINED_callback defined,
                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                   const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
                   PLINT cont_color, PLFLT cont_width,
-                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
-                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                  PLPointer pltr_data )
+                  PLFILL_callback fill, bool rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -1888,13 +1882,12 @@ plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
 // Deprecated version using PLINT instead of bool
 void
 plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
-                  PLINT ( *defined )( PLFLT, PLFLT ),
+                  PLDEFINED_callback defined,
                   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                   const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
                   PLINT cont_color, PLFLT cont_width,
-                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
-                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                  PLPointer pltr_data )
+                  PLFILL_callback fill, PLINT rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -1964,15 +1957,14 @@ plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
 
 void
 plstream::shade1( const PLFLT *a, PLINT nx, PLINT ny,
-                  PLINT ( *defined )( PLFLT, PLFLT ),
+                  PLDEFINED_callback defined,
                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                   PLFLT shade_min, PLFLT shade_max,
                   PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
                   PLINT min_color, PLFLT min_width,
                   PLINT max_color, PLFLT max_width,
-                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
-                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                  PLPointer pltr_data )
+                  PLFILL_callback fill, bool rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -1987,15 +1979,14 @@ plstream::shade1( const PLFLT *a, PLINT nx, PLINT ny,
 // Deprecated version using PLINT not bool
 void
 plstream::shade1( const PLFLT *a, PLINT nx, PLINT ny,
-                  PLINT ( *defined )( PLFLT, PLFLT ),
+                  PLDEFINED_callback defined,
                   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
                   PLFLT shade_min, PLFLT shade_max,
                   PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
                   PLINT min_color, PLFLT min_width,
                   PLINT max_color, PLFLT max_width,
-                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
-                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                  PLPointer pltr_data )
+                  PLFILL_callback fill, PLINT rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -2018,9 +2009,8 @@ plstream::fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                   PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
                   PLINT min_color, PLFLT min_width,
                   PLINT max_color, PLFLT max_width,
-                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), bool rectangular,
-                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                  PLPointer pltr_data )
+                  PLFILL_callback fill, bool rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -2045,9 +2035,8 @@ plstream::fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                   PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
                   PLINT min_color, PLFLT min_width,
                   PLINT max_color, PLFLT max_width,
-                  void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
-                  void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                  PLPointer pltr_data )
+                  PLFILL_callback fill, PLINT rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 
@@ -2062,8 +2051,7 @@ plstream::fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 
 // Setup a user-provided custom labeling function
 
-void plstream::slabelfunc( void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer ),
-                           PLPointer label_data )
+void plstream::slabelfunc( PLLABEL_FUNC_callback label_func, PLPointer label_data )
 {
     set_stream();
 
@@ -2207,8 +2195,7 @@ void plstream::start( const char *devname, PLINT nx, PLINT ny )
 
 // Set the coordinate transform
 
-void plstream::stransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ),
-                           PLPointer coordinate_transform_data )
+void plstream::stransform( PLTRANSFORM_callback coordinate_transform, PLPointer coordinate_transform_data )
 {
     set_stream();
 
@@ -2311,8 +2298,7 @@ void plstream::image( const PLFLT * const *data, PLINT nx, PLINT ny,
 void plstream::imagefr( const PLFLT * const *data, PLINT nx, PLINT ny, PLFLT xmin, PLFLT xmax,
                         PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
                         PLFLT valuemin, PLFLT valuemax,
-                        void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-                        PLPointer pltr_data )
+                        PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
 

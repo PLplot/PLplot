@@ -2642,7 +2642,7 @@ plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *string, PLINT le
 //
 //--------------------------------------------------------------------------
 void
-c_plslabelfunc( void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer ), PLPointer label_data )
+c_plslabelfunc( PLLABEL_FUNC_callback label_func, PLPointer label_data )
 {
     plsc->label_func = label_func;
     plsc->label_data = label_data;

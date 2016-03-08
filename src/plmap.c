@@ -119,7 +119,7 @@ int appendfltptr( PLFLT ***array, size_t n, PLFLT *val )
 // projection wraps round longitudes, but a cylindrical projection does not.
 //Returns 1 if the mapform wraps or 0 if not.
 char
-checkwrap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), PLFLT lon, PLFLT lat )
+checkwrap( PLMAPFORM_callback mapform, PLFLT lon, PLFLT lat )
 {
     PLFLT x[] = { lon };
     PLFLT y[] = { lat };
@@ -141,7 +141,7 @@ checkwrap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), PLFLT lon, PLFLT lat )
 //Actually draw the map lines points and text.
 //--------------------------------------------------------------------------
 void
-drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
+drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
 {
     PLINT i;
 
@@ -194,7 +194,7 @@ drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT 
 //with shapefile support or if plotentries is null
 //--------------------------------------------------------------------------
 void
-drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+drawmap( PLMAPFORM_callback mapform, const char *name,
          PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
@@ -556,7 +556,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 
 
 //--------------------------------------------------------------------------
-// void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *name,
+// void plmap(PLMAPFORM_callback mapform, const char *name,
 //            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy);
 //
 // plot continental outline in world coordinates
@@ -596,7 +596,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 //--------------------------------------------------------------------------
 
 void
-plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+plmap( PLMAPFORM_callback mapform, const char *name,
        PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy )
 {
 #ifdef HAVE_SHAPELIB
@@ -608,7 +608,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 }
 
 //--------------------------------------------------------------------------
-// void plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+// void plmapline(PLMAPFORM_callback mapform,
 //		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
 //		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
 
@@ -625,7 +625,7 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 //be drawn as points using the plmaptex function.
 //--------------------------------------------------------------------------
 void
-plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+plmapline( PLMAPFORM_callback mapform, const char *name,
            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
            const PLINT *plotentries, PLINT nplotentries )
 {
@@ -638,7 +638,7 @@ plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 }
 
 //--------------------------------------------------------------------------
-// void plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+// void plmapstring(PLMAPFORM_callback mapform,
 //		const char *name, PLFLT just, const char *string,
 //		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
 //		const PLINT *plotentries, PLINT nplotentries);
@@ -647,7 +647,7 @@ plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 //has the same meaning as in plstring.
 //--------------------------------------------------------------------------
 void
-plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+plmapstring( PLMAPFORM_callback mapform,
              const char *name, const char *string,
              PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
              const PLINT *plotentries, PLINT nplotentries )
@@ -661,7 +661,7 @@ plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 }
 
 //--------------------------------------------------------------------------
-// void plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+// void plmaptex(PLMAPFORM_callback mapform,
 //		const char *name, PLFLT dx, PLFLT dy PLFLT just, const char *text,
 //		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
 //		PLINT plotentry);
@@ -670,7 +670,7 @@ plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //just and text have the same meaning as in plptex.
 //--------------------------------------------------------------------------
 void
-plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+plmaptex( PLMAPFORM_callback mapform,
           const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
           PLINT plotentry )
@@ -684,7 +684,7 @@ plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 }
 
 //--------------------------------------------------------------------------
-// void plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+// void plmapfill(PLMAPFORM_callback mapform,
 //		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
 //		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
 //
@@ -692,7 +692,7 @@ plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //plfill. Uses the pattern defined by plsty or plpat.
 //--------------------------------------------------------------------------
 void
-plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+plmapfill( PLMAPFORM_callback mapform,
            const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
            PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
 {
@@ -705,7 +705,7 @@ plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 }
 
 //--------------------------------------------------------------------------
-// void plmeridians(void (*mapform)(PLINT, PLFLT *, PLFLT *),
+// void plmeridians(PLMAPFORM_callback mapform,
 //		    PLFLT dlong, PLFLT dlat, PLFLT minx, PLFLT maxx,
 //		    PLFLT miny, PLFLT maxy);
 //
@@ -739,7 +739,7 @@ plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 #define NSEG    100
 
 void
-plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+plmeridians( PLMAPFORM_callback mapform,
              PLFLT dlong, PLFLT dlat,
              PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
 {

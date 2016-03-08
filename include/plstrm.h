@@ -531,7 +531,7 @@ typedef struct
 
 // Plot-wide coordinate transform
 
-    void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer );
+    PLTRANSFORM_callback coordinate_transform;
     PLPointer coordinate_transform_data;
 
 // Colormaps
@@ -693,7 +693,7 @@ typedef struct
     PLINT     xdigmax, ydigmax, zdigmax;
     PLINT     xdigits, ydigits, zdigits;
     char      *timefmt;
-    void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
+    PLLABEL_FUNC_callback label_func;
     PLPointer label_data;
 
 // Variables governing physical coordinate system

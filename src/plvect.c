@@ -133,11 +133,9 @@ plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale )
 // Routine to plot a vector array with arbitrary coordinate
 // and vector transformations
 //
-void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
-              PLPointer up, PLPointer vp,
+void plfvect( PLF2EVAL_callback getuv, PLPointer up, PLPointer vp,
               PLINT nx, PLINT ny, PLFLT scale,
-              void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-              PLPointer pltr_data )
+              PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     PLINT i, j, i1, j1;
     PLFLT **u, **v, **x, **y;
@@ -250,8 +248,7 @@ void plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
 
 void
 c_plvect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data )
+          PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     plfvect( plf2eval1, (PLPointer) u, (PLPointer) v,
         nx, ny, scale, pltr, pltr_data );

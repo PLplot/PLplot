@@ -90,8 +90,7 @@ RestoreWrite2BufferPixmap()
 void
 plimageslow( PLFLT *idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT ymin, PLFLT dx, PLFLT dy,
-             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-             PLPointer pltr_data )
+             PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     // Indices
     PLINT ix, iy, i;
@@ -194,8 +193,7 @@ void
 c_plimagefr( const PLFLT * const *idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
              PLFLT valuemin, PLFLT valuemax,
-             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-             PLPointer pltr_data )
+             PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     plfimagefr( plf2ops_c(), (PLPointer) idata, nx, ny,
         xmin, xmax, ymin, ymax, zmin, zmax,
@@ -206,8 +204,7 @@ void
 plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
             PLFLT valuemin, PLFLT valuemax,
-            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-            PLPointer pltr_data )
+            PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     PLINT ix, iy;
     PLFLT dx, dy;

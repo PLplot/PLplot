@@ -199,6 +199,14 @@ typedef PLINT    PLBOOL;
 // For passing user data, as with X's XtPointer
 typedef void*    PLPointer;
 
+// Callback-related typedefs
+typedef void ( *PLMAPFORM_callback )( PLINT n, PLFLT *x, PLFLT *y );
+typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT *xp, PLFLT *yp, PLPointer data);
+typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data);
+typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PLPointer data);
+typedef void ( *PLFILL_callback )( PLINT n, const PLFLT *x, const PLFLT *y );
+typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y);
+
 //--------------------------------------------------------------------------
 // Complex data types and other good stuff
 //--------------------------------------------------------------------------
@@ -937,8 +945,7 @@ c_plconfigtime( PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOO
 PLDLLIMPEXP void
 c_plcont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
           PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data );
+          PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 // Draws a contour plot using the function evaluator f2eval and data stored
 // by way of the f2eval_data pointer.  This allows arbitrary organizations
@@ -946,12 +953,10 @@ c_plcont( const PLFLT * const *f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 //
 
 PLDLLIMPEXP void
-plfcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-         PLPointer f2eval_data,
+plfcont( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
          PLINT ky, PLINT ly, const PLFLT *clevel, PLINT nlevel,
-         void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-         PLPointer pltr_data );
+         PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 // Copies state parameters from the reference stream to the current stream.
 
@@ -1331,20 +1336,20 @@ c_pllsty( PLINT lin );
 // Plot continental outline in world coordinates
 
 PLDLLIMPEXP void
-c_plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+c_plmap( PLMAPFORM_callback mapform, const char *name,
          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy );
 
 // Plot map outlines
 
 PLDLLIMPEXP void
-c_plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+c_plmapline( PLMAPFORM_callback mapform, const char *name,
              PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
              const PLINT *plotentries, PLINT nplotentries );
 
 // Plot map points
 
 PLDLLIMPEXP void
-c_plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+c_plmapstring( PLMAPFORM_callback mapform,
                const char *name, const char *string,
                PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
                const PLINT *plotentries, PLINT nplotentries );
@@ -1352,7 +1357,7 @@ c_plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 // Plot map text
 
 PLDLLIMPEXP void
-c_plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+c_plmaptex( PLMAPFORM_callback mapform,
             const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
             PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
             PLINT plotentry );
@@ -1360,14 +1365,14 @@ c_plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 // Plot map fills
 
 PLDLLIMPEXP void
-c_plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+c_plmapfill( PLMAPFORM_callback mapform,
              const char *name, PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
              const PLINT *plotentries, PLINT nplotentries );
 
 // Plot the latitudes and longitudes on the background.
 
 PLDLLIMPEXP void
-c_plmeridians( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
+c_plmeridians( PLMAPFORM_callback mapform,
                PLFLT dlong, PLFLT dlat,
                PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
 
@@ -1698,78 +1703,69 @@ c_plsfont( PLINT family, PLINT style, PLINT weight );
 // Shade region.
 
 PLDLLIMPEXP void
-c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            PLFLT shade_min, PLFLT shade_max,
            PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
            PLINT min_color, PLFLT min_width,
            PLINT max_color, PLFLT max_width,
-           void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLBOOL rectangular,
-           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-           PLPointer pltr_data );
+           PLFILL_callback fill, PLBOOL rectangular,
+           PLTRANSFORM_callback pltr,  PLPointer pltr_data );
 
 PLDLLIMPEXP void
-c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
             PLFLT shade_min, PLFLT shade_max,
             PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
             PLINT min_color, PLFLT min_width,
             PLINT max_color, PLFLT max_width,
-            void ( *fill )( const PLINT, const PLFLT *, const PLFLT * ), PLBOOL rectangular,
-            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-            PLPointer pltr_data );
+            PLFILL_callback fill, PLBOOL rectangular,
+            PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 PLDLLIMPEXP void
-c_plshades( const PLFLT * const *a, PLINT nx, PLINT ny, PLINT ( *defined )( PLFLT, PLFLT ),
+c_plshades( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
             const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
             PLINT cont_color, PLFLT cont_width,
-            void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLBOOL rectangular,
-            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-            PLPointer pltr_data );
+            PLFILL_callback fill, PLBOOL rectangular,
+            PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 PLDLLIMPEXP void
 plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-           PLINT ( *defined )( PLFLT, PLFLT ),
+           PLDEFINED_callback defined,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
            PLINT cont_color, PLFLT cont_width,
-           void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
-           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-           PLPointer pltr_data );
+           PLFILL_callback fill,  PLINT rectangular,
+           PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 PLDLLIMPEXP void
-plfshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-          PLPointer f2eval_data,
-          PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
-          PLPointer c2eval_data,
+plfshade( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
+          PLF2EVAL_callback c2eval, PLPointer c2eval_data,
           PLINT nx, PLINT ny,
           PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
           PLFLT shade_min, PLFLT shade_max,
           PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
           PLINT min_color, PLFLT min_width,
           PLINT max_color, PLFLT max_width,
-          void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLBOOL rectangular,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data );
+          PLFILL_callback fill, PLBOOL rectangular,
+          PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 PLDLLIMPEXP void
 plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-           PLINT ( *defined )( PLFLT, PLFLT ),
+           PLDEFINED_callback defined,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            PLFLT shade_min, PLFLT shade_max,
            PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
            PLINT min_color, PLFLT min_width,
            PLINT max_color, PLFLT max_width,
-           void ( *fill )( PLINT, const PLFLT *, const PLFLT * ), PLINT rectangular,
-           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-           PLPointer pltr_data );
+           PLFILL_callback fill, PLINT rectangular,
+           PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 // Setup a user-provided custom labeling function
 
 PLDLLIMPEXP void
-c_plslabelfunc( void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer ),
-                PLPointer label_data );
+c_plslabelfunc( PLLABEL_FUNC_callback label_func, PLPointer label_data );
 
 // Set up lengths of major tick marks.
 
@@ -1849,7 +1845,7 @@ c_plstart( const char *devname, PLINT nx, PLINT ny );
 // Set the coordinate transform
 
 PLDLLIMPEXP void
-c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
+c_plstransform( PLTRANSFORM_callback coordinate_transform, PLPointer coordinate_transform_data );
 
 // Prints out the same string repeatedly at the n points in world
 // coordinates given by the x and y arrays.  Supersedes plpoin and
@@ -1896,8 +1892,7 @@ PLDLLIMPEXP void
 c_plimagefr( const PLFLT * const *idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
              PLFLT valuemin, PLFLT valuemax,
-             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-             PLPointer pltr_data );
+	     PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 //
 // Like plimagefr, but uses an evaluator function to access image data from
@@ -1908,8 +1903,7 @@ PLDLLIMPEXP void
 plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
             PLFLT valuemin, PLFLT valuemax,
-            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-            PLPointer pltr_data );
+            PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 // plots a 2d image (or a matrix too large for plshade() ) - colors
 // automatically scaled
@@ -2018,19 +2012,16 @@ c_plvasp( PLFLT aspect );
 
 PLDLLIMPEXP void
 c_plvect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
-          void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-          PLPointer pltr_data );
+	  PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 //
 // Routine to plot a vector array with arbitrary coordinate
 // and vector transformations
 //
 PLDLLIMPEXP void
-plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
-         PLPointer up, PLPointer vp,
+plfvect( PLF2EVAL_callback getuv, PLPointer up, PLPointer vp,
          PLINT nx, PLINT ny, PLFLT scale,
-         void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-         PLPointer pltr_data );
+         PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 PLDLLIMPEXP void
 c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect );
