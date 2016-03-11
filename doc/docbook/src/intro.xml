@@ -102,7 +102,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     expanded ever since first by Geoffrey Furnish and Maurice Lebrun in
     the 1990's and later (after the project was registered at SourceForge
     on 2000-02-23) <ulink
-    url="http://plplot.sourceforge.net/credits.php">with a much-expanded
+    url="&PLplot-website;/credits.php">with a much-expanded
     development team.</ulink></para>
 
     <para>
@@ -125,7 +125,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <listitem><para>Cygwin on the Microsoft version of Windows</para></listitem>
       <listitem><para>MinGW-w64/MSYS2 on the Microsoft version of Windows</para></listitem>
     </itemizedlist>
-    <para>For each of the above platforms, PLplot can be built from <ulink url="http://plplot.sourceforge.net/downloads.php">source</ulink>, and for the Linux and Mac OS X platforms third-party binary packages for PLplot <ulink url="http://plplot.sourceforge.net/downloads.php#Binary_Packages">are available</ulink>.</para>
+    <para>For each of the above platforms, PLplot can be built from <ulink url="&PLplot-website;/downloads.php">source</ulink>, and for the Linux and Mac OS X platforms third-party binary packages for PLplot <ulink url="&PLplot-website;/downloads.php#Binary_Packages">are available</ulink>.</para>
   </sect2>
   <sect2 id="features-bindings">
     <title>Language Bindings</title>

@@ -312,8 +312,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       to work. The pango and pangoft2 libraries are widely distributed
       with most Linux distributions and give the psttf driver full complex
       text layout (CTL) capability (see
-      <ulink url="http://plplot.sourceforge.net/examples.php?demo=24">
-      http://plplot.sourceforge.net/examples.php?demo=24</ulink>
+      <ulink url="&PLplot-website;/examples.php?demo=24">
+      &PLplot-website;/examples.php?demo=24</ulink>
       for an example of this capability).  The LASi library is not part of
       most distributions at this time. The source code can be downloaded
       from http://www.unifont.org/lasi/. The library is small and easy to
