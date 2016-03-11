@@ -40,32 +40,37 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="plplot-plotting-library">
     <title>The PLplot Plotting Library</title>
 
-    <para> PLplot is a library of C functions that are useful for making
-    scientific plots from programs written in C, C++, Fortran95, Java, Octave,
-    Perl, Python, and Tcl/Tk. The PLplot project is being developed by a world-wide
-    team who interact via the facilities provided by SourceForge (<ulink
-    url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>)
-    </para>
+    <para>PLplot is a &features-cross-platform; software package for
+    creating scientific plots whose (<ulink
+    url="http://www.utf-8.com/">UTF-8</ulink>) plot symbols and text are
+    limited in practice only by what <ulink
+    url="http://www.utf-8.com/">Unicode</ulink>-aware system fonts are
+    installed on a user's computer. The PLplot software, which is
+    primarily licensed under <ulink
+    url="http://www.gnu.org/licenses/lgpl.html">the LGPL</ulink>, has a
+    clean architecture that is organized as a core C library, separate
+    language &features-bindings; for that library,
+    and separate device drivers that are dynamically
+    loaded by the core library which control how the plots are presented
+    in &features-noninteractive; and &features-interactive; plotting
+    contexts.</para>
 
-    <para> The PLplot library can be used to create standard x-y plots, semi-log
-    plots, log-log plots, contour plots, 3D plots, shade (gray-scale and color)
-    plots, mesh plots, bar charts and pie charts. Multiple graphs (of the same
-    or different sizes) may be placed on a single page with multiple lines in
-    each graph. Different line styles, widths and colors are supported. A
-    virtually infinite number of distinct area fill patterns may be used.
-    There is full unicode support in the PLplot library, and most of the
-    display drivers are capable of displaying any of the millions(?) of
-    characters in the unicode standard. Those driver that are not unicode
-    enabled can still display almost 1000 characters in the extended character set.
-    This includes four different fonts, the Greek alphabet and a host of
-    mathematical, musical, and other symbols. A variety of output devices and
-    file formats are supported including a metafile format which can be
-    subsequently rendered to any device/file.  New devices and file formats can
-    be easily added by writing a driver routine. For example, we have recently
-    added a postscript driver with TrueType font support (PSTTF), a SVG file
-    driver and a PDF file driver. A wxWidgets interactive driver is currently
-    in development.
-    </para>
+    <para>The PLplot core library can be used to create standard x-y
+    plots, semi-log plots, log-log plots, contour plots, 3D surface plots,
+    mesh plots, bar charts and pie charts. Multiple graphs (of the same or
+    different sizes) may be placed on a single page, and multiple pages
+    are allowed for those device formats that support them.</para>
+
+    <para> PLplot has core library support for plot symbols and text
+    specified by the user in the UTF-8 encoding of Unicode. This means for
+    our many Unicode-aware devices that plot symbols and text are only
+    limited by the collection of glyphs normally available via installed
+    system fonts. Furthermore, a large subset of our Unicode-aware devices
+    also support complex text layout (CTL) languages such as Arabic,
+    Hebrew, and Indic and Indic-derived CTL scripts such as Devanagari,
+    Thai, Lao, and Tibetan. Thus, for these PLplot devices essentially any
+    language that is supported by Unicode and installed system fonts can
+    be used to label plots.</para>
 
     <para>
       PLplot was originally developed by Sze Tan of the University of
@@ -92,72 +97,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </blockquote>
     </para>
 
-    <para>
-      The C version of PLplot was developed by Tony Richardson on a
-      Commodore Amiga.  In the process, several of the routines were
-      rewritten to improve efficiency and some new features added.  The
-      program structure was changed somewhat to make it easier to
-      incorporate new devices.  Additional features were added to allow
-      three-dimensional plotting and better access to low-level routines.
-    </para>
-    <para>
-      PLplot 5.0 is a continuation of our work on PLplot 4.0, which never
-      got widely distributed.  It became clear during the work on 4.0 that
-      in order to support an interactive driver under Unix (using Tcl/Tk),
-      many additions to the basic capabilities of the package were needed.
-      So without stopping to fully document and bug-fix the 4.0 additions,
-      work on 5.0 was begun.  The result is that a very capable
-      PLplot-based widget for the Tk toolkit has been written.  This widget
-      can manipulate the plot (zoom/pan, scale, orient, change colors), as
-      well dump it to any supported device.  There are help menus and user
-      customization options.  These are still in the process of being
-      documented.
-    </para>
-    <para>
-      Other changes include the introduction of a new color palette (cmap1)
-      for smooth color shaded images (typically for 2d or 3d plots &ndash;
-      in which color represents function intensity), support for color fill
-      plots, and lots more cool stuff.  The manual has been rewritten in
-      LaTeXinfo, so that there is now a printed version and an online
-      (info) version of the document.  The manual is still in a state of
-      flux and will be fleshed out in more detail in later updates.
-    </para>
-    <para>
-      Some of the improvements in PLplot 5.0 include: the addition of
-      several new routines to enhance usage from Fortran and design of a
-      portable C to Fortran interface.  Additional support was added for
-      coordinate mappings in contour plots and some bugs fixed.  New
-      labelling options were added.  The font handling code was made more
-      flexible and portable.  A portable PLplot metafile driver and
-      renderer was developed, allowing one to create a generic graphics
-      file and do the actual rendering later (even on a different
-      system).  The ability to create family output files was added.  The
-      internal code structure was dramatically reworked, with elimination
-      of global variables (for a more robust package), the drivers
-      rewritten to improve consistency, and the ability to maintain
-      multiple output streams added.  An XFig driver was added.  Other
-      contributions include Clair Nielsen's (LANL) X-window driver (very
-      nice for high-speed color graphics) and tektronix file viewer.  At
-      present, Maurice LeBrun and Geoff Furnish are the active developers
-      and maintainers of PLplot.
-    </para>
-    <para>
-      We have attempted to keep PLplot 5.0 backward compatible with
-      previous versions of PLplot.  However, some functions are now
-      obsolete, and many new ones have been added (e.g.  new contouring
-      functions, variable get/set routines, functions that affect label
-      appearance).  Codes written in C that use PLplot must be recompiled
-      including the new header file <filename>plplot.h</filename> before
-      linking to the new PLplot library.
-    </para>
-    <para>
-      PLplot is currently known to work on the following systems:
-      Unix/Linux, Mac OS-X and Windows XP. The Unix/Linux version is
-      the best supported of these possibilities.
-      The PLplot package is freely
-      distributable, but <emphasis>not</emphasis> in the public domain.
-      See <xref linkend="copyrights"/> for distribution criteria.
-    </para>
+    <para>The C version of PLplot was originally developed by Tony
+    Richardson on a Commodore Amiga.  That version has been improved and
+    expanded ever since first by Geoffrey Furnish and Maurice Lebrun in
+    the 1990's and later (after the project was registered at SourceForge
+    on 2000-02-23) <ulink
+    url="http://plplot.sourceforge.net/credits.php">with a much-expanded
+    development team.</ulink></para>
+
     <para>
       We welcome suggestions on how to improve this code, especially in
       the form of user-contributed enhancements or bug fixes.  If PLplot
@@ -166,46 +113,96 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       PLplot.  Please direct all communication to the general PLplot
       mailing list, plplot-general@lists.sourceforge.net.
     </para>
+  </sect1>
+  <sect1 id="features">
+  <title>Feature Summary</title>
+  <sect2 id="features-cross-platform">
+    <title>Cross Platform</title>
+    <para>PLplot is currently known to work on the following platforms:</para>
+    <itemizedlist>
+      <listitem><para>Linux, Mac OS X, and other Unices</para></listitem>
+      <listitem><para>MSVC IDE on the Microsoft version of Windows (Windows 2000 and later)</para></listitem>
+      <listitem><para>Cygwin on the Microsoft version of Windows</para></listitem>
+      <listitem><para>MinGW-w64/MSYS2 on the Microsoft version of Windows</para></listitem>
+    </itemizedlist>
+    <para>For each of the above platforms, PLplot can be built from <ulink url="http://plplot.sourceforge.net/downloads.php">source</ulink>, and for the Linux and Mac OS X platforms third-party binary packages for PLplot <ulink url="http://plplot.sourceforge.net/downloads.php#Binary_Packages">are available</ulink>.</para>
+  </sect2>
+  <sect2 id="features-bindings">
+    <title>Language Bindings</title>
+    <para>The language bindings of the C PLplot library are currently the following:</para>
+    <itemizedlist>
+      <listitem><para>Ada</para></listitem>
+      <listitem><para>C++</para></listitem>
+      <listitem><para>D</para></listitem>
+      <listitem><para>Fortran 95</para></listitem>
+      <listitem><para>Java</para></listitem>
+      <listitem><para><ulink url="http://common-lisp.net/project/cl-plplot/">Lisp</ulink></para></listitem>
+      <listitem><para>Lua</para></listitem>
+      <listitem><para>OCaml</para></listitem>
+      <listitem><para>Octave</para></listitem>
+      <listitem><para><ulink url="http://search.cpan.org/~dhunt/PDL-Graphics-PLplot">Perl/PDL</ulink></para></listitem>
+      <listitem><para>Python</para></listitem>
+      <listitem><para>Tcl/Tk</para></listitem>
+    </itemizedlist>
+  </sect2>
+  <sect2 id="features-noninteractive">
+    <title>Output File Formats</title>
+    <para>PLplot device drivers support the following plotting file formats:</para>
+    <itemizedlist>
+      <listitem><para>CGM</para></listitem>
+      <listitem><para>GIF</para></listitem>
+      <listitem><para>JPEG</para></listitem>
+      <listitem><para>PBM</para></listitem>
+      <listitem><para>PDF</para></listitem>
+      <listitem><para>PNG</para></listitem>
+      <listitem><para>PostScript</para></listitem>
+      <listitem><para>SVG</para></listitem>
+      <listitem><para>Xfig</para></listitem>
+    </itemizedlist>
+  </sect2>
+  <sect2 id="features-interactive">
+    <title>Interactive Platforms</title>
+    <para>PLplot device drivers support the following platforms that are suitable for interactive plotting:</para>
+    <itemizedlist>
+      <listitem><para>GDI</para></listitem>
+      <listitem><para>GTK+</para></listitem>
+      <listitem><para>PyQt</para></listitem>
+      <listitem><para>Qt</para></listitem>
+      <listitem><para>Tcl/Tk</para></listitem>
+      <listitem><para>wxWidgets</para></listitem>
+      <listitem><para>X</para></listitem>
+    </itemizedlist>
 
+  </sect2>
   </sect1>
   <sect1 id="acquiring-plplot">
-    <title>Getting a Copy of the PLplot Package</title>
+    <title>Obtaining Access to PLplot</title>
     <para>
-      At present, the only mechanism we are providing for distribution of
-      the PLplot is by electronic transmission over the Internet.  We
-      encourage others to make it available to users without Internet
-      access.  PLplot is a SourceForge project and may be obtained by
+      PLplot is a SourceForge project and may be obtained by
       the usual SourceForge file release and anonymous git repository access that is made
       available from links at
       <ulink url="http://sourceforge.net/projects/plplot">http://sourceforge.net/projects/plplot</ulink>.
     </para>
   </sect1>
   <sect1 id="installing">
-    <title>Installing and Using the PLplot Library</title>
+    <title>Installing PLplot</title>
     <para>
       The installation procedure is by necessity system specific;
       installation notes for each system are provided in
       <xref linkend="os-notes"/>.
-      The procedure requires that all of the routines be
-      compiled and they are then usually placed in a linkable
-      library.
     </para>
     <para>
-      After the library has been created, you can write your main program
-      to make the desired PLplot calls.  Example programs in C, C++,
-      Fortran95 and Java are included as a guide.
-      Plots generated from the example programs are shown
+      After PLplot has been configured, built, and installed, you can write code in
+      C or any of the languages that have PLplot bindings
+      to make the desired PLplot calls.  Example programs in all supported
+      languages are included with the PLplot software package.  The
+      installation of those examples includes both a CMake-based
+      build system and a more traditional (Makefile + pkg-config) build system
+      for building and linking the examples to help guide users
+      to build and link their own code for compiled languages or dynamically
+      load PLplot for scripting languages.
+      Plots generated from these example programs are shown
       <ulink url="http://&PLplot-website;/examples.php">here</ulink>.
-    </para>
-    <para>
-      You will then need to compile your program and link it with the
-      PLplot library(s).  See
-      <xref linkend="os-notes"/> for more details).
-    </para>
-    <para>
-      You can also use Tcl/Tk, Perl and Python scripts to generate plots
-      using the PLplot libraries.  Examples of these possibilities are
-      also included as a guide.
     </para>
   </sect1>
   <sect1 id="organization">
