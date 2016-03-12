@@ -416,7 +416,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </part>
 
   <part id="part_bindings">
-    <title> Language Bindings </title>
+    <title> Supported computer languages </title>
     &chap-ada;
     &chap-c;
     &chap-cplus;
