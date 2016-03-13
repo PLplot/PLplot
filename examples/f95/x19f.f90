@@ -63,7 +63,7 @@ program x19f
     end type label_data_type
 
     ! Whether to use no_label_data type of callback.
-    logical, parameter :: ifno_label_data = .false. 
+    logical, parameter :: ifno_label_data = .false.
 
     type(label_data_type), target :: label_data
 
@@ -309,6 +309,8 @@ contains
         real(kind=pl_test_flt), dimension(:), allocatable :: radius
 
         ! evaluate x last so RHS's do not get overwritten too soon
+        allocate( radius(size(x)) )
+
         radius = 90.0_pl_test_flt - y
         y = radius*sin(x*PI/180.0_pl_test_flt)
         x = radius*cos(x*PI/180.0_pl_test_flt)

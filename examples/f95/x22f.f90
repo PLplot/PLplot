@@ -90,7 +90,7 @@ program x22f
     ! Consistent with nx and ny in circulation.
     nx_global = 20
     ny_global = 20
-    
+
     ! Must be consistent with actual ranges of xg and yg arrays in circulation
     ! so these values not exactly the same as xmin, xmax, ymin, and ymax there.
     xmin_global = - real(nx_global / 2, kind=pl_test_flt) + 0.5_pl_test_flt
@@ -174,8 +174,11 @@ contains
         ymin = -real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
         ymax = real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
 
+        allocate( xg(nx), yg(ny) )
         xg = (arange(nx) + (-nx/2.0_pl_test_flt+0.5_pl_test_flt))*dx
         yg = (arange(ny) + (-ny/2.0_pl_test_flt+0.5_pl_test_flt))*dy
+
+        allocate( u(nx,ny), v(nx,ny) )
         u = spread(yg,1,nx)
         v = -spread(xg,2,ny)
 
@@ -232,6 +235,8 @@ contains
         ymax = real(ny,kind=pl_test_flt)/2.0_pl_test_flt*dy
 
         Q = 2.0_pl_test_flt
+
+        allocate( xg(nx), yg(ny) )
 
         xg = (arange(nx) + (-nx/2.0_pl_test_flt+0.5_pl_test_flt))*dx
         yg = (arange(ny) + (-ny/2.0_pl_test_flt+0.5_pl_test_flt))*dy
@@ -316,6 +321,10 @@ contains
         common_max = ymax
         data%max = common_max
 
+        allocate( b(nx) )
+        allocate( xg(nx), yg(ny) )
+        allocate( u(nx,ny), v(nx,ny) )
+        allocate( clev(nc) )
 
         if(ifno_transform_data) then
             call plstransform( transform )

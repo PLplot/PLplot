@@ -273,6 +273,7 @@ contains
                    sh_cmap, sh_color, sh_width, &
                    min_color, min_width, max_color, max_width, .true., tr )
         elseif(pltr1_callback) then
+            allocate( xg(XPTS), yg(YPTS) )
             xg = (2.0_pl_test_flt/real(XPTS-1,kind=pl_test_flt))*arange(XPTS) - 1.0_pl_test_flt
             yg = (2.0_pl_test_flt/real(YPTS-1,kind=pl_test_flt))*arange(YPTS) - 1.0_pl_test_flt
             call plshade(z(:XPTS,:YPTS), undefined, &
