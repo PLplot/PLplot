@@ -113,11 +113,11 @@ proc plot152 { w z zmin zmax } {
   matrix inc7 i 2 = {0, 450}
   matrix inc8 i 2 = {450, -450}
   matrix inc9 i 2 = {0, 900}
-  matrix del0 i 2 =  {2000, 2000}
-  matrix del1 i 2 = {2000, 2000}
-  matrix del2 i 2 = {2000, 2000}
-  matrix del3 i 2 = {2000, 2000}
-  matrix del4 i 2 = {2000, 2000}
+  matrix del0 i 1 = {2000}
+  matrix del1 i 1 = {2000}
+  matrix del2 i 1 = {2000}
+  matrix del3 i 1 = {2000}
+  matrix del4 i 1 = {2000}
   matrix del5 i 2 = {2000, 2000}
   matrix del6 i 2 = {2000, 2000}
   matrix del7 i 2 = {2000, 2000}
@@ -131,7 +131,9 @@ proc plot152 { w z zmin zmax } {
     set shade_min [expr {$zmin + ($zmax - $zmin)*$i/10.0} ]
     set shade_max [expr {$zmin + ($zmax - $zmin)*($i + 1)/10.0} ]
     set sh_color [expr {$i + 6}]
-    $w cmd plpat [nlin $i] inc$i del$i
+    $w cmd plpat inc$i del$i
+    # Alternatively:
+    # $w cmd plpat [nlin $i] inc$i del$i
     $w cmd plshade z -1. 1. -1. 1. $shade_min $shade_max \
       $sh_cmap $sh_color $sh_width \
       $min_color $min_width $max_color $max_width 1 "NULL"

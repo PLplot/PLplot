@@ -619,7 +619,8 @@ y	PLFLT *
 z	PLFLT *
 draw	PLINT *
 ifcc	PLINT
-!consistency {n <= sz(x) && sz(x) == sz(y) && sz(x) == sz(z) && sz(x) == sz(draw)} {Length of all vectors must be equal}
+!consistency {n <= sz(x) && sz(x) == sz(y) && sz(x) == sz(z) && sz(x)} {Length of vectors x, y and z must be equal}
+!consistency {sz(x) == sz(draw)+1} {Length of vector draw must be one less than that of vectors x, y and z}
 !consistency {type(x) == TYPE_FLOAT && type(y) == TYPE_FLOAT && type(z) == TYPE_FLOAT} {The three coordinate vectors must be of type float}
 !consistency {type(draw) == TYPE_INT} {The draw vectors must be of type int}
 
