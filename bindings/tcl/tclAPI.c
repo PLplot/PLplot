@@ -3950,6 +3950,7 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     nentries = 0;
     entries  = NULL;
 
+    fprintf(stderr, "plmapline: %d\n", argc);
     switch ( argc )
     {
     case 6:     // No transform, no plotentries
@@ -4000,6 +4001,7 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         tcl_interp = interp;
         entries    = GetEntries( interp, argv[7], &nentries );
+        fprintf(stderr, "plmapline: number entries %d\n", nentries);
         if ( !entries )
             return_code = TCL_ERROR;
         break;
@@ -4018,7 +4020,7 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         minlong = atof( argv[idxname + 1] );
         maxlong = atof( argv[idxname + 2] );
         minlat  = atof( argv[idxname + 3] );
-        maxlat  = atof( argv[idxname + 45] );
+        maxlat  = atof( argv[idxname + 4] );
         if ( transform && idxname == 2 )
         {
             plmapline( &mapform, argv[idxname], minlong, maxlong, minlat, maxlat, entries, nentries );
