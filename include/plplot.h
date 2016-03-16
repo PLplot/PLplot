@@ -201,11 +201,11 @@ typedef void*    PLPointer;
 
 // Callback-related typedefs
 typedef void ( *PLMAPFORM_callback )( PLINT n, PLFLT *x, PLFLT *y );
-typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT *xp, PLFLT *yp, PLPointer data);
-typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data);
-typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PLPointer data);
+typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT *xp, PLFLT *yp, PLPointer data );
+typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data );
+typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PLPointer data );
 typedef void ( *PLFILL_callback )( PLINT n, const PLFLT *x, const PLFLT *y );
-typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y);
+typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y );
 
 //--------------------------------------------------------------------------
 // Complex data types and other good stuff
@@ -1710,7 +1710,7 @@ c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback define
            PLINT min_color, PLFLT min_width,
            PLINT max_color, PLFLT max_width,
            PLFILL_callback fill, PLBOOL rectangular,
-           PLTRANSFORM_callback pltr,  PLPointer pltr_data );
+           PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 PLDLLIMPEXP void
 c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
@@ -1736,7 +1736,7 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
            PLINT cont_color, PLFLT cont_width,
-           PLFILL_callback fill,  PLINT rectangular,
+           PLFILL_callback fill, PLINT rectangular,
            PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 PLDLLIMPEXP void
@@ -1892,7 +1892,7 @@ PLDLLIMPEXP void
 c_plimagefr( const PLFLT * const *idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
              PLFLT valuemin, PLFLT valuemax,
-	     PLTRANSFORM_callback pltr, PLPointer pltr_data );
+             PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 //
 // Like plimagefr, but uses an evaluator function to access image data from
@@ -2012,7 +2012,7 @@ c_plvasp( PLFLT aspect );
 
 PLDLLIMPEXP void
 c_plvect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
-	  PLTRANSFORM_callback pltr, PLPointer pltr_data );
+          PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
 //
 // Routine to plot a vector array with arbitrary coordinate

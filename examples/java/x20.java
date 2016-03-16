@@ -256,16 +256,16 @@ class x20 {
         xg = new double[width + 1][height + 1];
         yg = new double[width + 1][height + 1];
 
-	// In order to mimic the NULL case, the following must be true.
-	// xg[i] = i*deltax; yg[j] = j*deltay, where
-	deltax = (double) width/(double)(width-1);
-	deltay = (double) height/(double)(height-1);
+        // In order to mimic the NULL case, the following must be true.
+        // xg[i] = i*deltax; yg[j] = j*deltay, where
+        deltax = (double) width / (double) ( width - 1 );
+        deltay = (double) height / (double) ( height - 1 );
         for ( i = 0; i <= width; i++ )
         {
             for ( j = 0; j <= height; j++ )
             {
-                xg[i][j] = i*deltax;
-                yg[i][j] = j*deltay;
+                xg[i][j] = i * deltax;
+                yg[i][j] = j * deltay;
             }
         }
         // Draw a saturated version of the original image.  Only use

@@ -200,7 +200,7 @@ void c_plshades( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback 
                  const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
                  PLINT cont_color, PLFLT cont_width,
                  PLFILL_callback fill, PLINT rectangular,
-		 PLTRANSFORM_callback pltr, PLPointer pltr_data )
+                 PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     plfshades( plf2ops_c(), (PLPointer) a, nx, ny, defined,
         xmin, xmax, ymin, ymax,

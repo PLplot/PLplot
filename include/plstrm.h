@@ -532,7 +532,7 @@ typedef struct
 // Plot-wide coordinate transform
 
     PLTRANSFORM_callback coordinate_transform;
-    PLPointer coordinate_transform_data;
+    PLPointer            coordinate_transform_data;
 
 // Colormaps
 
@@ -689,12 +689,12 @@ typedef struct
 
 // Variables governing numeric axis label appearance
 
-    PLINT     setpre, precis;
-    PLINT     xdigmax, ydigmax, zdigmax;
-    PLINT     xdigits, ydigits, zdigits;
-    char      *timefmt;
+    PLINT                 setpre, precis;
+    PLINT                 xdigmax, ydigmax, zdigmax;
+    PLINT                 xdigits, ydigits, zdigits;
+    char                  *timefmt;
     PLLABEL_FUNC_callback label_func;
-    PLPointer label_data;
+    PLPointer             label_data;
 
 // Variables governing physical coordinate system
 
