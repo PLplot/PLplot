@@ -45,6 +45,11 @@
 
 #include "tclgen.h"
 
+// Standardize error checking of Tcl_GetMatrixPtr calls with a macro
+#define CHECK_Tcl_GetMatrixPtr( result, interp, matName ) \
+    result = Tcl_GetMatrixPtr( interp, matName );         \
+    if ( result == NULL ) return TCL_ERROR;
+
 // PLplot/Tcl API handlers.  Prototypes must come before Cmds struct
 
 static int loopbackCmd( ClientData, Tcl_Interp *, int, const char ** );
@@ -931,9 +936,7 @@ plcontCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    matf = Tcl_GetMatrixPtr( interp, argv[1] );
-    if ( matf == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matf, interp, argv[1] );
 
     if ( matf->dim != 2 )
     {
@@ -997,9 +1000,7 @@ plcontCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    matclev = Tcl_GetMatrixPtr( interp, argv[0] );
-    if ( matclev == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matclev, interp, argv[0] );
     nclev = matclev->n[0];
 
     if ( matclev->dim != 1 )
@@ -1016,12 +1017,8 @@ plcontCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     {
         // There is a pltr spec, parse it.
         pltrname = argv[0];
-        mattrx   = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( mattrx == NULL )
-            return TCL_ERROR;
-        mattry = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( mattry == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( mattrx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( mattry, interp, argv[2] );
 
         argc -= 3, argv += 3;
     }
@@ -1267,9 +1264,7 @@ plsvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    matx = Tcl_GetMatrixPtr( interp, argv[1] );
-    if ( matx == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
 
     if ( matx->dim != 1 )
     {
@@ -1278,9 +1273,7 @@ plsvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
     npts = matx->n[0];
 
-    maty = Tcl_GetMatrixPtr( interp, argv[2] );
-    if ( maty == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
 
     if ( maty->dim != 1 )
     {
@@ -1331,9 +1324,7 @@ plvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    matu = Tcl_GetMatrixPtr( interp, argv[1] );
-    if ( matu == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matu, interp, argv[1] );
 
     if ( matu->dim != 2 )
     {
@@ -1359,9 +1350,7 @@ plvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
     }
 
-    matv = Tcl_GetMatrixPtr( interp, argv[2] );
-    if ( matv == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matv, interp, argv[2] );
 
     if ( matv->dim != 2 )
     {
@@ -1406,12 +1395,8 @@ plvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     {
         // There is a pltr spec, parse it.
         pltrname = argv[0];
-        mattrx   = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( mattrx == NULL )
-            return TCL_ERROR;
-        mattry = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( mattry == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( mattrx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( mattry, interp, argv[2] );
 
         argc -= 3, argv += 3;
     }
@@ -1664,15 +1649,9 @@ plmeshCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         ny  = atoi( argv[5] );
         opt = atoi( argv[6] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -1702,15 +1681,9 @@ plmeshCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     {
         opt = atoi( argv[4] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -1805,20 +1778,12 @@ plmeshcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         ny   = atoi( argv[5] );
         opt  = atoi( argv[6] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -1853,19 +1818,11 @@ plmeshcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         ny  = atoi( argv[5] );
         opt = atoi( argv[6] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -1902,15 +1859,9 @@ plmeshcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[6] );
         clev = NULL;
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -1941,15 +1892,9 @@ plmeshcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[4] );
         clev = NULL;
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2039,15 +1984,9 @@ plot3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[6] );
         side = atoi( argv[7] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2078,15 +2017,9 @@ plot3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[4] );
         side = atoi( argv[5] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2181,20 +2114,12 @@ plot3dcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         ny   = atoi( argv[5] );
         opt  = atoi( argv[6] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2229,19 +2154,11 @@ plot3dcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         ny  = atoi( argv[5] );
         opt = atoi( argv[6] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2278,15 +2195,9 @@ plot3dcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[6] );
         clev = NULL;
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2317,15 +2228,9 @@ plot3dcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[4] );
         clev = NULL;
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2420,20 +2325,12 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         ny   = atoi( argv[5] );
         opt  = atoi( argv[6] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2468,19 +2365,11 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         ny  = atoi( argv[5] );
         opt = atoi( argv[6] );
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2517,15 +2406,9 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[6] );
         clev = NULL;
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2556,15 +2439,9 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         opt  = atoi( argv[4] );
         clev = NULL;
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2665,10 +2542,8 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         indexxmin = atoi( argv[9] );
         indexxmax = atoi( argv[10] );
-        indexymin = Tcl_GetMatrixPtr( interp, argv[11] );
-        indexymax = Tcl_GetMatrixPtr( interp, argv[12] );
-        if ( indexymin == NULL || indexymin == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[11] );
+        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[12] );
         if ( indexymin->type != TYPE_INT ||
              indexymax->type != TYPE_INT )
         {
@@ -2676,20 +2551,12 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             return TCL_ERROR;
         }
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2729,10 +2596,8 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         indexxmin = atoi( argv[8] );
         indexxmax = atoi( argv[9] );
-        indexymin = Tcl_GetMatrixPtr( interp, argv[10] );
-        indexymax = Tcl_GetMatrixPtr( interp, argv[11] );
-        if ( indexymin == NULL || indexymin == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[10] );
+        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[11] );
         if ( indexymin->type != TYPE_INT ||
              indexymax->type != TYPE_INT )
         {
@@ -2740,19 +2605,11 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             return TCL_ERROR;
         }
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
-        matlev = Tcl_GetMatrixPtr( interp, argv[7] );
-        if ( matlev == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matlev, interp, argv[7] );
 
         if ( matx->type != TYPE_FLOAT ||
              maty->type != TYPE_FLOAT ||
@@ -2794,10 +2651,8 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         indexxmin = atoi( argv[7] );
         indexxmax = atoi( argv[8] );
-        indexymin = Tcl_GetMatrixPtr( interp, argv[9] );
-        indexymax = Tcl_GetMatrixPtr( interp, argv[10] );
-        if ( indexymin == NULL || indexymin == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[9] );
+        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[10] );
         if ( indexymin->type != TYPE_INT ||
              indexymax->type != TYPE_INT )
         {
@@ -2805,15 +2660,9 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             return TCL_ERROR;
         }
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -2849,10 +2698,8 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         indexxmin = atoi( argv[5] );
         indexxmax = atoi( argv[6] );
-        indexymin = Tcl_GetMatrixPtr( interp, argv[7] );
-        indexymax = Tcl_GetMatrixPtr( interp, argv[8] );
-        if ( indexymin == NULL || indexymin == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[7] );
+        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[8] );
         if ( indexymin->type != TYPE_INT ||
              indexymax->type != TYPE_INT )
         {
@@ -2860,15 +2707,9 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             return TCL_ERROR;
         }
 
-        matx = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( matx == NULL )
-            return TCL_ERROR;
-        maty = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( maty == NULL )
-            return TCL_ERROR;
-        matz = Tcl_GetMatrixPtr( interp, argv[3] );
-        if ( matz == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
+        CHECK_Tcl_GetMatrixPtr( matz, interp, argv[3] );
         matPtr = matz;          // For dumb indexer macro, grrrr.
 
         if ( matx->type != TYPE_FLOAT ||
@@ -3029,9 +2870,7 @@ plshadeCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    matz = Tcl_GetMatrixPtr( interp, argv[1] );
-    if ( matz == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matz, interp, argv[1] );
     if ( matz->dim != 2 )
     {
         Tcl_SetResult( interp, "Must plot a 2-d matrix.", TCL_STATIC );
@@ -3075,12 +2914,8 @@ plshadeCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     if ( argc >= 3 )
     {
         pltrname = argv[0];
-        mattrx   = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( mattrx == NULL )
-            return TCL_ERROR;
-        mattry = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( mattry == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( mattrx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( mattry, interp, argv[2] );
 
         argc -= 3, argv += 3;
     }
@@ -3350,9 +3185,7 @@ plshadesCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    matz = Tcl_GetMatrixPtr( interp, argv[1] );
-    if ( matz == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matz, interp, argv[1] );
     if ( matz->dim != 2 )
     {
         Tcl_SetResult( interp, "Must plot a 2-d matrix.", TCL_STATIC );
@@ -3381,9 +3214,7 @@ plshadesCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     ymin = atof( argv[4] );
     ymax = atof( argv[5] );
 
-    matclevel = Tcl_GetMatrixPtr( interp, argv[6] );
-    if ( matclevel == NULL )
-        return TCL_ERROR;
+    CHECK_Tcl_GetMatrixPtr( matclevel, interp, argv[6] );
     nlevel = matclevel->n[0];
     if ( matclevel->dim != 1 )
     {
@@ -3401,12 +3232,8 @@ plshadesCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     if ( argc >= 3 )
     {
         pltrname = argv[0];
-        mattrx   = Tcl_GetMatrixPtr( interp, argv[1] );
-        if ( mattrx == NULL )
-            return TCL_ERROR;
-        mattry = Tcl_GetMatrixPtr( interp, argv[2] );
-        if ( mattry == NULL )
-            return TCL_ERROR;
+        CHECK_Tcl_GetMatrixPtr( mattrx, interp, argv[1] );
+        CHECK_Tcl_GetMatrixPtr( mattry, interp, argv[2] );
 
         argc -= 3, argv += 3;
     }
@@ -3663,11 +3490,21 @@ mapform( PLINT n, PLFLT *x, PLFLT *y )
 
     sprintf( cmd, "%cx", (char) 1 );
     xPtr = Tcl_GetMatrixPtr( tcl_interp, cmd );
+    if ( xPtr == NULL )
+    {
+        return_code = TCL_ERROR;
+        free( cmd );
+        return;
+    }
+
     sprintf( cmd, "%cy", (char) 1 );
     yPtr = Tcl_GetMatrixPtr( tcl_interp, cmd );
-
-    if ( xPtr == NULL || yPtr == NULL )
-        return;                                 // Impossible, but still
+    if ( yPtr == NULL )
+    {
+        return_code = TCL_ERROR;
+        free( cmd );
+        return;
+    }
 
     for ( i = 0; i < n; i++ )
     {
@@ -3950,7 +3787,7 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     nentries = 0;
     entries  = NULL;
 
-    fprintf(stderr, "plmapline: %d\n", argc);
+    //fprintf(stderr, "plmapline: %d\n", argc);
     switch ( argc )
     {
     case 6:     // No transform, no plotentries
@@ -4001,7 +3838,7 @@ plmaplineCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         tcl_interp = interp;
         entries    = GetEntries( interp, argv[7], &nentries );
-        fprintf(stderr, "plmapline: number entries %d\n", nentries);
+        //fprintf(stderr, "plmapline: number entries %d\n", nentries);
         if ( !entries )
             return_code = TCL_ERROR;
         break;
@@ -4158,7 +3995,7 @@ plmapstringCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 //
 // Processes plmaptex Tcl command.
 // C version takes:
-//    transform_proc, string, minlong, maxlong, minlat, maxlat, entries, nentries
+//    transform_proc, string, minlong, maxlong, minlat, maxlat, plotentry
 //
 //  e.g. .p cmd plmaptex globe "Town" 0 360 -90 90
 //--------------------------------------------------------------------------
@@ -4171,8 +4008,7 @@ plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLFLT      dx, dy, just;
     PLINT      transform;
     PLINT      idxname;
-    PLINT      *entries;
-    PLINT      nentries;
+    PLINT      plotentry;
     const char *text;
     double     dminlong;
 
@@ -4187,9 +4023,6 @@ plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         {
             transform = 0;
             idxname   = 1;
-            entries   = GetEntries( interp, argv[10], &nentries );
-            if ( !entries )
-                return_code = TCL_ERROR;
         }
         else
             return_code = TCL_ERROR;
@@ -4203,11 +4036,6 @@ plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             transform = 0;
         }
         idxname = 2;
-
-        entries = GetEntries( interp, argv[11], &nentries );
-        if ( !entries )
-            return_code = TCL_ERROR;
-        tcl_interp = interp;
         break;
     default:
         return_code = TCL_ERROR;
@@ -4220,25 +4048,25 @@ plmaptexCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
     else
     {
-        dx      = atof( argv[idxname + 1] );
-        dy      = atof( argv[idxname + 2] );
-        just    = atof( argv[idxname + 3] );
-        text    = argv[idxname + 4];
-        minlong = atof( argv[idxname + 5] );
-        maxlong = atof( argv[idxname + 6] );
-        minlat  = atof( argv[idxname + 7] );
-        maxlat  = atof( argv[idxname + 8] );
+        dx        = atof( argv[idxname + 1] );
+        dy        = atof( argv[idxname + 2] );
+        just      = atof( argv[idxname + 3] );
+        text      = argv[idxname + 4];
+        minlong   = atof( argv[idxname + 5] );
+        maxlong   = atof( argv[idxname + 6] );
+        minlat    = atof( argv[idxname + 7] );
+        maxlat    = atof( argv[idxname + 8] );
+        plotentry = atoi( argv[idxname + 9] );
         if ( transform && idxname == 2 )
         {
-            plmaptex( &mapform, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
+            plmaptex( &mapform, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, plotentry );
         }
         else
         {
             // No transformation given
-            plmaptex( NULL, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, entries[0] );
+            plmaptex( NULL, argv[idxname], dx, dy, just, text, minlong, maxlong, minlat, maxlat, plotentry );
         }
 
-        free( entries );
         plflush();
     }
 
@@ -4442,51 +4270,48 @@ plgriddataCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    arrx = Tcl_GetMatrixPtr( interp, argv[1] );
-    arry = Tcl_GetMatrixPtr( interp, argv[2] );
-    arrz = Tcl_GetMatrixPtr( interp, argv[3] );
-
-    xcoord = Tcl_GetMatrixPtr( interp, argv[4] );
-    ycoord = Tcl_GetMatrixPtr( interp, argv[5] );
-
-    zvalue = Tcl_GetMatrixPtr( interp, argv[6] );
-
+    CHECK_Tcl_GetMatrixPtr( arrx, interp, argv[1] );
+    CHECK_Tcl_GetMatrixPtr( arry, interp, argv[2] );
+    CHECK_Tcl_GetMatrixPtr( arrz, interp, argv[3] );
+    CHECK_Tcl_GetMatrixPtr( xcoord, interp, argv[4] );
+    CHECK_Tcl_GetMatrixPtr( ycoord, interp, argv[5] );
+    CHECK_Tcl_GetMatrixPtr( zvalue, interp, argv[6] );
     sscanf( argv[7], "%d", &alg );
 
     sscanf( argv[8], "%lg", &value ); optalg = (PLFLT) value;
 
-    if ( arrx == NULL || arrx->dim != 1 )
+    if ( arrx->dim != 1 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 1 should be a \
 one-dimensional matrix - ", argv[1], (char *) NULL );
         return TCL_ERROR;
     }
-    if ( arry == NULL || arry->dim != 1 )
+    if ( arry->dim != 1 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 2 should be a \
 one-dimensional matrix - ", argv[2], (char *) NULL );
         return TCL_ERROR;
     }
-    if ( arrz == NULL || arrz->dim != 1 )
+    if ( arrz->dim != 1 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 3 should be a \
 one-dimensional matrix - ", argv[3], (char *) NULL );
         return TCL_ERROR;
     }
 
-    if ( xcoord == NULL || xcoord->dim != 1 )
+    if ( xcoord->dim != 1 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 4 should be a \
 one-dimensional matrix - ", argv[4], (char *) NULL );
         return TCL_ERROR;
     }
-    if ( ycoord == NULL || ycoord->dim != 1 )
+    if ( ycoord->dim != 1 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 5 should be a \
 one-dimensional matrix - ", argv[5], (char *) NULL );
         return TCL_ERROR;
     }
-    if ( zvalue == NULL || zvalue->dim != 2 )
+    if ( zvalue->dim != 2 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 6 should be a \
 two-dimensional matrix - ", argv[6], (char *) NULL );
@@ -4542,9 +4367,9 @@ plimageCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    zvalue = Tcl_GetMatrixPtr( interp, argv[1] );
+    CHECK_Tcl_GetMatrixPtr( zvalue, interp, argv[1] );
 
-    if ( zvalue == NULL || zvalue->dim != 2 )
+    if ( zvalue->dim != 2 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 1 should be a \
 two-dimensional matrix - ", argv[1], (char *) NULL );
@@ -4621,9 +4446,9 @@ plimagefrCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    zvalue = Tcl_GetMatrixPtr( interp, argv[1] );
+    CHECK_Tcl_GetMatrixPtr( zvalue, interp, argv[1] );
 
-    if ( zvalue == NULL || zvalue->dim != 2 )
+    if ( zvalue->dim != 2 )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 1 should be a \
 two-dimensional matrix - ", argv[1], (char *) NULL );
@@ -4634,17 +4459,17 @@ two-dimensional matrix - ", argv[1], (char *) NULL );
     yg = NULL;
     if ( argc == 12 )
     {
-        xg = Tcl_GetMatrixPtr( interp, argv[10] );
-        yg = Tcl_GetMatrixPtr( interp, argv[11] );
+        CHECK_Tcl_GetMatrixPtr( xg, interp, argv[10] );
+        CHECK_Tcl_GetMatrixPtr( yg, interp, argv[11] );
 
-        if ( xg == NULL || xg->dim != 2 )
+        if ( xg->dim != 2 )
         {
             Tcl_AppendResult( interp, argv[0], ": argument 10 should be a \
 two-dimensional matrix - ", argv[10], (char *) NULL );
             return TCL_ERROR;
         }
 
-        if ( yg == NULL || yg->dim != 2 )
+        if ( yg->dim != 2 )
         {
             Tcl_AppendResult( interp, argv[0], ": argument 11 should be a \
 two-dimensional matrix - ", argv[11], (char *) NULL );
@@ -4744,17 +4569,17 @@ plstripcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-    colMat   = Tcl_GetMatrixPtr( interp, argv[15] );
-    styleMat = Tcl_GetMatrixPtr( interp, argv[16] );
+    CHECK_Tcl_GetMatrixPtr( colMat, interp, argv[15] );
+    CHECK_Tcl_GetMatrixPtr( styleMat, interp, argv[16] );
 
-    if ( colMat == NULL || colMat->dim != 1 || colMat->idata == NULL )
+    if ( colMat->dim != 1 || colMat->idata == NULL )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 15 should be a \
 one-dimensional integer matrix - ", argv[15], (char *) NULL );
         return TCL_ERROR;
     }
 
-    if ( styleMat == NULL || styleMat->dim != 1 || styleMat->idata == NULL )
+    if ( styleMat->dim != 1 || styleMat->idata == NULL )
     {
         Tcl_AppendResult( interp, argv[0], ": argument 16 should be a \
 one-dimensional integer matrix - ", argv[16], (char *) NULL );
@@ -5239,8 +5064,8 @@ plcolorbarCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         for ( i = 0; i < n_vectors; i++ )
         {
             Tcl_ListObjIndex( interp, list_vectors, i, &vector );
-            vectorPtr = Tcl_GetMatrixPtr( interp, Tcl_GetStringFromObj( vector, &length ) );
-            if ( vectorPtr == NULL || vectorPtr->dim != 1 )
+            CHECK_Tcl_GetMatrixPtr( vectorPtr, interp, Tcl_GetStringFromObj( vector, &length ) );
+            if ( vectorPtr->dim != 1 )
             {
                 Tcl_AppendResult( interp, "element in list of vectors is not a vector.",
                     (char *) NULL );
