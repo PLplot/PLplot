@@ -30,7 +30,7 @@ endif(DEFAULT_NO_BINDINGS)
 option(ENABLE_ocaml_static "Enable OCaml binding for the static build case" OFF)
 
 if(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "Static build with ENABLE_ocaml_static false.  Therefore, disabling OCaml binding")
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
 endif(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
@@ -53,7 +53,7 @@ if(ENABLE_ocaml)
   if (OCAMLC)
     message(STATUS "OCAMLC = ${OCAMLC}")
   else (OCAMLC)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "The ocamlc application not found. Disabling OCaml binding")
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif (OCAMLC)
@@ -64,7 +64,7 @@ if(ENABLE_ocaml)
   if (CAMLIDL)
     message(STATUS "CAMLIDL = ${CAMLIDL}")
   else (CAMLIDL)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "The camlidl application not found. Disabling OCaml binding")
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif (CAMLIDL)
@@ -75,7 +75,7 @@ if(ENABLE_ocaml)
   if (OCAMLMKLIB)
     message(STATUS "OCAMLMKLIB = ${OCAMLMKLIB}")
   else (OCAMLMKLIB)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "The ocamlmklib application not found. Disabling OCaml binding")
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif (OCAMLMKLIB)
@@ -90,7 +90,7 @@ if(ENABLE_ocaml)
   if (OCAMLOPT)
     message(STATUS "OCAMLOPT = ${OCAMLOPT}")
   else (OCAMLOPT)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "The ocamlopt application not found. Disabling native code OCaml binding")
   endif (OCAMLOPT)
 endif(ENABLE_ocaml)
@@ -100,7 +100,7 @@ if(ENABLE_ocaml)
   if (OCAMLFIND)
     message(STATUS "OCAMLFIND = ${OCAMLFIND}")
   else (OCAMLFIND)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "The ocamlfind application not found.")
   endif (OCAMLFIND)
 endif(ENABLE_ocaml)
@@ -110,7 +110,7 @@ if(ENABLE_ocaml AND BUILD_DOC)
   if (OCAMLDOC)
     message(STATUS "OCAMLDOC = ${OCAMLDOC}")
   else (OCAMLDOC)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "The ocamldoc application not found. Disabling OCaml API documentation generation")
   endif (OCAMLDOC)
 endif(ENABLE_ocaml AND BUILD_DOC)
@@ -137,7 +137,7 @@ if(ENABLE_ocaml)
   if(CAMLIDL_LIB_DIR)
     message(STATUS "CAMLIDL_LIB_DIR = ${CAMLIDL_LIB_DIR}")
   else(CAMLIDL_LIB_DIR)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "The camlidl library not found. Disabling OCaml binding")
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif(CAMLIDL_LIB_DIR)
@@ -164,7 +164,7 @@ if(ENABLE_ocaml)
     if (OCAML)
       message(STATUS "OCAML = ${OCAML}")
     else (OCAML)
-      message(STATUS "WARNING:"
+      message(STATUS "WARNING: "
 	"The ocaml application not found. Disabling generation of generated_plplot_h.inc")
       set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
     endif (OCAML)
@@ -191,7 +191,7 @@ if(ENABLE_ocaml)
       ERROR_STRIP_TRAILING_WHITESPACE
       )
     if(output OR error)
-      message(STATUS "WARNING:"
+      message(STATUS "WARNING: "
 	"One or all of topfind, unix, or pcre components of ocaml are not installed.  Disabling generation of generated_plplot_h.inc")
       set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
     endif(output OR error)
@@ -233,24 +233,24 @@ if(ENABLE_ocaml)
 	    #message(STATUS "DEBUG: cairo linkflags = ${linkflags}")
 	    #message(STATUS "DEBUG: CAIRO_LINK_FLAGS = ${CAIRO_LINK_FLAGS}")
 	  else(linkflags)
-            message(STATUS "WARNING:"
+            message(STATUS "WARNING: "
             "pkg-config could not find cairo module.  Disabling Plcairo module")
 	  set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
 	  endif(linkflags)
 	else(PKG_CONFIG_EXECUTABLE)
-          message(STATUS "WARNING:"
+          message(STATUS "WARNING: "
             "pkg-config not found.  Disabling Plcairo module")
 	  set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
 	endif(PKG_CONFIG_EXECUTABLE)
       else(OCAML_HAS_CAIRO)
-        message(STATUS "WARNING:"
+        message(STATUS "WARNING: "
           "Cairo OCaml library not found.  Disabling Plcairo module")
       endif(OCAML_HAS_CAIRO)
 
       if(OCAML_HAS_CAIRO)
 	option(OCAML_HAS_GTK "OCaml has the cairo2.lablgtk2 package" ON)
       else(OCAML_HAS_CAIRO)
-        message(STATUS "WARNING:"
+        message(STATUS "WARNING: "
           "Cairo OCaml library not found.  Disabling lablgtk2 support")
 	set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo2.lablgtk2 package" FORCE)
       endif(OCAML_HAS_CAIRO)
@@ -285,13 +285,13 @@ if(ENABLE_ocaml)
       endif(OCAML_HAS_GTK)
     endif (PLD_extcairo)
   else(OCAMLFIND)
-    message(STATUS "WARNING:"
+    message(STATUS "WARNING: "
       "ocamlfind not available.  Disabling Plcairo module and lablgtk2 support")
     set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
     set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo2.lablgtk2 package" FORCE)
   endif(OCAMLFIND)
 else(ENABLE_ocaml)
-  message(STATUS "WARNING:"
+  message(STATUS "WARNING: "
     "ENABLE_ocaml is OFF so disabling Plcairo module and lablgtk2 support")
   set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
   set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo2.lablgtk2 package" FORCE)
