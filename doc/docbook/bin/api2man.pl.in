@@ -89,10 +89,10 @@ $date =~ s/\n.*//;
 $opening = ".\\\" This page was automatically generated.  Do not edit!\n.\\\" \n";
 $closing = "
 .SH AUTHORS
-Many developers (who are credited at http://@PLPLOT_WEBSITE@/credits.php)
+Many developers (who are credited at @PLPLOT_WEBSITE@/credits.php)
 have contributed to PLplot over its long history.
 .SH SEE ALSO
-PLplot documentation at http://@PLPLOT_WEBSITE@/documentation.php.
+PLplot documentation at @PLPLOT_WEBSITE@/documentation.php.
 ";
 $manifest = "";
 
