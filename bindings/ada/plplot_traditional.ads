@@ -48,6 +48,7 @@ package PLplot_Traditional is
     subtype Transformation_Data_Type   is Plplot_Thin.Transformation_Data_Type;
     subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;
     subtype Graphics_Input_Record_Type is Plplot_Thin.PLGraphicsIn;
+    -- subtype Data_Ops_2D_Type           is Plplot_Thin.PLf2ops_t; -- Manipulate 2D data
     
     -- "Rename" the unicode type for characters. 
     subtype Unicode is PLplot_Thin.PLUNICODE;
@@ -1312,7 +1313,7 @@ package PLplot_Traditional is
 
     -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
     -- possibly eliminate the need to pass array size as the first argument in 
-    -- the function poinetd to by Map_Form_Function_Pointer. Ditto for plmeridians.
+    -- the function pointed to by Map_Form_Function_Pointer. Ditto for plmeridians.
 
     -- plot continental outline in world coordinates
     procedure plmap
@@ -1320,6 +1321,71 @@ package PLplot_Traditional is
         Map_Kind                             : Map_Type;
         Minimum_Longitude, Maximum_Longitude : Long_Float;
         Minimum_Latitude,  Maximum_Latitude  : Long_Float);
+
+
+    -- Plot map fills.
+    procedure plmapfill
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : Integer_Array_1D);
+
+
+    -- Plot map fills: overload passes null pointer plotentries to emulate C, match documentaton.
+    procedure plmapfill
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : PLPointer);
+
+
+    -- Plot map fills: overload that doesn't use plotentries to emulate C, match documentaton.
+    procedure Plot_Shapefile_All
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float);
+
+
+    -- Plot map outlines.
+    procedure plmapline
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : Integer_Array_1D);
+
+
+    -- Plot map outlines: overload passes null pointer plotentries to emulate C, match documentaton.
+    procedure plmapline
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : PLPointer);
+
+
+    -- Plot map outlines: overload that doesn't use plotentries to emulate C, match documentaton.
+    procedure Plot_Shapefile_World_All
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float);
+
+
+    -- Plot map points.
+    procedure plmapstring
+       (Map_Form_Function_Pointer : Map_Form_Function_Pointer_Type; 
+        Shapefile_File_Name : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries : Integer_Array_1D);
+
+
+    -- Plot map text.
+    procedure plmaptex
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        dx, dy                     : Long_Float;
+        Justification              : Long_Float;
+        Text                       : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Which_Shapefile_String     : Integer);
 
 
     -- fix this See comment for plmap.
@@ -1924,6 +1990,22 @@ package PLplot_Traditional is
     -- first argument zero.
     procedure plstyl(Default_Continuous_Line : Integer);
 
+--==================================================================================================
+--==================================================================================================
+
+    -- s_plf2ops_c : Data_Ops_2D_Type :=
+    --    (Get => plf2ops_c_get'Access,
+    --     Set => plf2ops_c_set'Access,
+    --     Add => plf2ops_c_add'Access,
+    --     Sub => plf2ops_c_sub'Access,
+    --     Mul => plf2ops_c_mul'Access,
+    --     Div => plf2ops_c_div'Access,
+    --     Is_Nan => plf2ops_c_isnan'Access,
+    --     MinMax => plf2ops_c_minmax'Access,
+    --     F2Eval => plf2ops_c_f2eval'Access);
+--==================================================================================================
+--==================================================================================================
+
 
     -- Plots the 3d surface representation of the function z(x, y).
     procedure plsurf3d
@@ -1933,9 +2015,23 @@ package PLplot_Traditional is
         Contour_Levels : Real_Vector); -- levels at which to draw contours
 
 
-    -- Plots the 3d surface representation of the function z(x, y) with y
-    -- index limits.
-    -- plsurf3dl
+    -- -- Like plsurf3d, but uses an evaluator function to access z data from zp
+    -- procedure plfsurf3d
+    --    (x , y          : Real_Vector; -- surface definition points
+    --     z_Ops          : Data_Ops_2D_Type; -- operations on z
+    --     z              : Real_Matrix; -- height of surface at definition points
+    --     Options        : Integer;
+    --     Contour_Levels : Real_Vector); -- levels at which to draw contours
+
+
+    -- Plots the 3-d surface representation of the function z(x, y) with limits on x and y.
+    procedure plsurf3dl
+        (x, y                     : Real_Vector; -- surface definition points
+         z                        : Real_Matrix; -- height of surface at definition points
+         Options                  : Integer;
+         Contour_Levels           : Real_Vector; -- levels at which to draw contours
+         Index_x_Min, Index_x_Max : Integer;           -- limits on x
+         Index_y_Min, Index_y_Max : Integer_Array_1D); -- limits on y
 
 
     -- Sets the edges of the viewport to the specified absolute coordinates

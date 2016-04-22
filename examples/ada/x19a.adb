@@ -1,7 +1,7 @@
 --	Illustrates backdrop plotting of world, US maps.
 --	Contributed by Wesley Ebisuzaki.
 
--- Copyright (C) 2008, 2010 Jerry Bauck
+-- Copyright (C) 2008, 2010, 2016 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -40,12 +40,22 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 -- Shows two views of the world map.
 procedure x19a is
+    NL : Character := Character'Val(10); -- "New Line," replaces C's \n.
     minx, maxx, miny, maxy : Long_Float;
     x, y : Real_Vector(1 .. 1);
+
+    -- Variables for the shapelib example
+    nbeachareas : Integer := 2;
+    beachareas : Integer_Array_1D(0 .. 1) := (23, 24);
+    woodlandareas : Integer_Array_1D(0 .. 93);
+    nshingleareas : Integer := 22;
+    shingleareas : Integer_Array_1D := (0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217,
+        2424, 2425, 2426, 2427, 2428, 2491, 2577);
+    ncragareas : Integer := 2024;
+    cragareas : Integer_Array_1D(0 .. 2023);
+    majorroads : Integer_Array_1D  := (33, 48, 71, 83, 89, 90, 101, 102, 111);
 
     -- This spec is necessary in order to enforce C calling conventions, used 
     -- in the callback by intervening C code.
@@ -97,7 +107,6 @@ procedure x19a is
         end loop;
     end mapform19;
 
-
     -- This spec is necessary in order to enforce C calling conventions, used 
     -- in the callback by intervening C code.
     -- See Ada note above, for mapform19.
@@ -122,7 +131,6 @@ procedure x19a is
         direction_label : Unbounded_String;
         label_val : Long_Float;
 
-
         -- "Normalize" longitude values so that they always fall between -180.0 and 180.0.
         function normalize_longitude(lon : Long_Float) return Long_Float is
             times : Long_Float;
@@ -138,8 +146,7 @@ procedure x19a is
                 end if;
             end if;
         end normalize_longitude;
-        
-        
+
         -- Function to convert an unbounded string to a fixed-length C string with the 
         -- null terminator somewhere in the middle and spaces after. The result, of type
         -- Label_String_Type, is fixed to a length by C, currently at 41, and is 
@@ -266,6 +273,112 @@ begin
     Clear_Custom_Coordinate_Transform;
     -- or...
     -- plstransform(null, System.Null_Address);
+
+    -- An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
+    -- These were chosen because they provide shapefiles for small grid boxes which
+    -- are easilly manageable for this demo.
+    pllsty(1);
+    minx := 240570.0;
+    maxx := 621109.0;
+    miny := 87822.0;
+    maxy := 722770.0;
+    plscol0(0, 255, 255, 255);
+    plscol0(1, 0, 0, 0);
+    plscol0(2, 150, 150, 150);
+    plscol0(3, 0, 50, 200);
+    plscol0(4, 50, 50, 50);
+    plscol0(5, 150, 0, 0);
+    plscol0(6, 100, 100, 255);
+
+    minx := 265000.0;
+    maxx := 270000.0;
+    miny := 145000.0;
+    maxy := 150000.0;
+    plscol0(0, 255, 255, 255); --white
+    plscol0(1, 0, 0, 0);       --black
+    plscol0(2, 255, 200, 0);   --yelow for sand
+    plscol0(3, 60, 230, 60);   -- green for woodland
+    plscol0(4, 210, 120, 60);  --brown for contours
+    plscol0(5, 150, 0, 0);     --red for major roads
+    plscol0(6, 180, 180, 255); --pale blue for water
+    plscol0(7, 100, 100, 100); --pale grey for shingle or boulders
+    plscol0(8, 100, 100, 100); --dark grey for custom polygons - generally crags
+
+    plcol0(1);
+    plenv(minx, maxx, miny, maxy, 1, -1);
+    pllab("", "", "Martinhoe CP, Exmoor National Park, UK (shapelib only)");
+
+    --Beach
+    plcol0(2);
+    plmapfill(null, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, beachareas);
+
+    -- Woodland
+    plcol0(3);
+    for i in woodlandareas'range loop
+        woodlandareas(i) := i + 218;
+    end loop;
+    plmapfill(null, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas);
+
+    -- Shingle or boulders
+    plcol0(7);
+    plmapfill(null, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, shingleareas);
+
+    -- Crags
+    plcol0(8);
+    for i in 0 .. ncragareas - 1 loop
+        cragareas(i) := i + 325;
+    end loop;
+    plmapfill(null, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas);
+
+    -- Draw contour; we need to separate contours from high/low coastline.
+    -- draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy);
+    plcol0(4);
+    -- Ada note: Use overload permitting null address to be passed in plotentries slot.
+    plmapline(null, "ss/ss64ne_Height_Contours", minx, maxx, miny, maxy, System.Null_Address);
+
+    -- Draw the sea and surface water.
+    plwidth(0.0);
+    plcol0(6);
+    -- Ada note: Use overload permitting null address to be passed in plotentries slot.
+    plmapfill(null, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, System.Null_Address);
+    plwidth(2.0);
+    -- Ada note: Use another overload; this one doesn't have the plotentries slot.
+    Plot_Shapefile_All(null, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy);
+
+    -- Draw the roads, first with black and then thinner with colour to give an
+    -- an outlined appearance.
+    plwidth(5.0);
+    plcol0(1);
+    -- Ada note: Use another overload; this one doesn't have the plotentries slot.
+    Plot_Shapefile_World_All(null, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy);
+    plwidth(3.0);
+    plcol0(0);
+    plmapline(null, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, System.Null_Address);
+    plcol0(5);
+    plmapline(null, "ss/ss64ne_Road_Centreline", minx, maxx, miny, maxy, majorroads);
+
+    -- Draw buildings.
+    plwidth(1.0);
+    plcol0(1);
+    Plot_Shapefile_All(null, "ss/ss64ne_Building_Area", minx, maxx, miny, maxy);
+
+    -- Labels; NL is ASCII for new line, replacing C's \n.
+    plsfci(16#80000100#);
+    plschr(0.0, 0.8);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "MARTINHOE CP", minx, maxx, miny, maxy, 202);
+    plschr(0.0, 0.7);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale" & NL & "Down", minx, maxx, miny, maxy, 13);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "South" & NL & "Down", minx, maxx, miny, maxy, 34);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Martinhoe" & NL & "Common", minx, maxx, miny, maxy, 42);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woody Bay", minx, maxx, miny, maxy, 211);
+    plschr(0.0, 0.6);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Mill Wood", minx, maxx, miny, maxy, 16);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Heale Wood", minx, maxx, miny, maxy, 17);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 1.0, "Bodley", minx, maxx, miny, maxy, 31);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.0, "Martinhoe", minx, maxx, miny, maxy, 37);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger" & NL & "Common", minx, maxx, miny, maxy, 60);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton" & NL & "Common", minx, maxx, miny, maxy, 61);
+    plmaptex(null, "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns" & NL & "Heanton" & NL & "Down", minx, maxx, miny, maxy, 62);
 
     plend;
 end x19a;

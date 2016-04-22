@@ -248,7 +248,7 @@ package body PLplot_Thin is
     begin
         TD := Transformation_Data_Type_2_Address_Conversions.To_Pointer(pltr_data);
 
-        -- Ada converts floats to integers by rounding while C does so by 
+        -- Ada converts floats to integers by rounding while C does so, dangerously, by 
         -- truncation. There is no fool-proof way to fix that. Here, we simply 
         -- subtract 0.499999999999999 before doing the conversion. Subtracting 
         -- 0.5 results in index constraint errors being raised.

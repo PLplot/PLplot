@@ -2086,9 +2086,9 @@ package body PLplot_Traditional is
 
     -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
     -- possibly eliminate the need to pass array size as the first argument in 
-    -- the function poinetd to by Map_Form_Function_Pointer. Ditto for plmeridians.
+    -- the function pointed to by Map_Form_Function_Pointer. Ditto for plmeridians.
 
-    -- plot continental outline in world coordinates
+    -- Plot continental outline in world coordinates.
     procedure plmap
        (Map_Form_Function_Pointer            : Map_Form_Function_Pointer_Type;
         Map_Kind                             : Map_Type;
@@ -2120,6 +2120,103 @@ package body PLplot_Traditional is
         PLplot_Thin.plmap(Map_Form_Function_Pointer, To_C(To_String(Map_Kind_String), True), 
             Minimum_Longitude, Maximum_Longitude, Minimum_Latitude, Maximum_Latitude);
     end plmap;
+
+
+    -- Plot map fills.
+    procedure plmapfill
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : Integer_Array_1D) is
+    begin
+        PLplot_Thin.plmapfill(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, Plot_Entries'Length);
+    end plmapfill;
+
+
+    -- Plot map fills: overload passes null pointer plotentries to emulate C, match documentaton.
+    procedure plmapfill
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : PLPointer) is
+    begin
+        PLplot_Thin.plmapfill_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, 0);
+    end plmapfill;
+
+
+    -- Plot map fills: overload that doesn't use plotentries to emulate C, match documentaton.
+    procedure Plot_Shapefile_All
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float) is
+    begin
+        PLplot_Thin.plmapfill_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, System.Null_Address, 0);
+    end Plot_Shapefile_All;
+
+
+    -- Plot map outlines.
+    procedure plmapline
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : Integer_Array_1D) is
+    begin
+        PLplot_Thin.plmapline(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, Plot_Entries'Length);
+    end plmapline;
+
+
+    -- Plot map outlines: overload passes null pointer plotentries to emulate C, match documentaton.
+    procedure plmapline
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : PLPointer) is
+    begin
+        PLplot_Thin.plmapline_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, 0);
+    end plmapline;
+
+
+    -- Plot map outlines: overload that doesn't use plotentries to emulate C, match documentaton.
+    procedure Plot_Shapefile_World_All
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float) is
+    begin
+        PLplot_Thin.plmapline_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, System.Null_Address, 0);
+    end Plot_Shapefile_World_All;
+
+
+    -- Plot map points.
+    procedure plmapstring
+       (Map_Form_Function_Pointer : Map_Form_Function_Pointer_Type; 
+        Shapefile_File_Name : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries : Integer_Array_1D) is
+    begin
+        PLplot_Thin.plmapstring(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, Plot_Entries'Length);
+    end plmapstring;
+
+
+    -- Plot map text.
+    procedure plmaptex
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        dx, dy                     : Long_Float;
+        Justification              : Long_Float;
+        Text                       : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Which_Shapefile_String     : Integer) is
+    begin
+        Plplot_Thin.plmaptex(Map_Form_Function_Pointer, To_C(Shapefile_File_Name), dx, dy,
+            Justification, To_C(Text), Min_X, Max_X, Min_Y, Max_Y, Which_Shapefile_String);
+    end plmaptex;
 
 
     -- fix this See comment for plmap.
@@ -3228,9 +3325,32 @@ package body PLplot_Traditional is
     end plsurf3d;
 
 
-    -- Plots the 3d surface representation of the function z(x, y) with y
-    -- index limits.
-    -- plsurf3dl
+    -- -- Like plsurf3d, but uses an evaluator function to access z data from zp
+    -- procedure plfsurf3d
+    --    (x , y          : Real_Vector; -- surface definition points
+    --     z_Ops          : Data_Ops_2D_Type; -- operations on z
+    --     z              : Real_Matrix; -- height of surface at definition points
+    --     Options        : Integer;
+    --     Contour_Levels : Real_Vector) is -- levels at which to draw contours
+    -- begin
+    --     PLplot_Thin.plfsurf3d(x, y, z_Ops, Matrix_To_Pointers(z), x'Length, y'Length, Options,
+    --     Contour_Levels, Contour_Levels'Length);
+    -- end plfsurf3d;
+
+
+    -- Plots the 3-d surface representation of the function z(x, y) with limits on x and y.
+    procedure plsurf3dl
+       (x, y                     : Real_Vector; -- surface definition points
+        z                        : Real_Matrix; -- height of surface at definition points
+        Options                  : Integer;
+        Contour_Levels           : Real_Vector; -- levels at which to draw contours
+        Index_x_Min, Index_x_Max : Integer;             -- limits on x
+        Index_y_Min, Index_y_Max : Integer_Array_1D) is -- limits on y
+    begin
+        PLplot_Thin.plsurf3dl(x, y, Matrix_To_Pointers(z), x'Length, y'Length, Options,
+            Contour_Levels, Contour_Levels'Length, Index_x_Min, Index_x_Max,
+            Index_y_Min, Index_y_Max);
+    end plsurf3dl;
 
 
     -- Sets the edges of the viewport to the specified absolute coordinates

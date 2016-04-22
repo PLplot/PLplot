@@ -2162,7 +2162,7 @@ package body PLplot is
 
     -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
     -- possibly eliminate the need to pass array size as the first argument in 
-    -- the function poinetd to by Map_Form_Function_Pointer. Ditto for plmeridians.
+    -- the function pointed to by Map_Form_Function_Pointer. Ditto for plmeridians.
 
     -- plot continental outline in world coordinates
     -- plmap
@@ -2197,6 +2197,111 @@ package body PLplot is
         plmap(Map_Form_Function_Pointer, To_C(To_String(Map_Kind_String), True), 
             Minimum_Longitude, Maximum_Longitude, Minimum_Latitude, Maximum_Latitude);
     end Draw_Map;
+
+
+    -- Plot map fills.
+    -- plmapfill
+    procedure Plot_Shapefile
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : Integer_Array_1D) is
+    begin
+        plmapfill(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, Plot_Entries'Length);
+    end Plot_Shapefile;
+
+
+    -- Plot map fills: overload passes null pointer plotentries to emulate C, match documentaton.
+    -- plmapfill (alternate)
+    procedure Plot_Shapefile
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : PLPointer) is
+    begin
+        plmapfill_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, 0);
+    end Plot_Shapefile;
+
+
+    -- Plot map fills: overload that doesn't use plotentries to emulate C, match documentaton.
+    -- plmapfill (another alternate)
+    procedure Plot_Shapefile_All
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float) is
+    begin
+        plmapfill_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, System.Null_Address, 0);
+    end Plot_Shapefile_All;
+
+
+    -- Plot map outlines.
+    -- plmapline
+    procedure Plot_Shapefile_World
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : Integer_Array_1D) is
+    begin
+        plmapline(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, Plot_Entries'Length);
+    end Plot_Shapefile_World;
+
+
+    -- Plot map outlines: overload passes null pointer plotentries to emulate C, match documentaton.
+    -- plmapline (alternate)
+    procedure Plot_Shapefile_World
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries               : PLPointer) is
+    begin
+        plmapline_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, 0);
+    end Plot_Shapefile_World;
+
+
+    -- Plot map outlines: overload that doesn't use plotentries to emulate C, match documentaton.
+    -- plmapline (another alternate)
+    procedure Plot_Shapefile_World_All
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float) is
+    begin
+        plmapline_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, System.Null_Address, 0);
+    end Plot_Shapefile_World_All;
+
+
+    -- Plot map points.
+    -- plmapstring
+    procedure Draw_Shapefile_String
+       (Map_Form_Function_Pointer : Map_Form_Function_Pointer_Type; 
+        Shapefile_File_Name : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Plot_Entries : Integer_Array_1D) is
+    begin
+        PLplot_Thin.plmapstring(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
+            Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, Plot_Entries'Length);
+    end Draw_Shapefile_String;
+
+
+    -- Plot map text.
+    -- plmaptex
+    procedure Draw_Shapefile_Text_World
+       (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
+        Shapefile_File_Name        : String;
+        dx, dy                     : Long_Float;
+        Justification              : Long_Float;
+        Text                       : String;
+        Min_X, Max_X, Min_Y, Max_Y : Long_Float;
+        Which_Shapefile_String     : Integer) is
+    begin
+        plmaptex(Map_Form_Function_Pointer, To_C(Shapefile_File_Name), dx, dy,
+            Justification, To_C(Text), Min_X, Max_X, Min_Y, Max_Y, Which_Shapefile_String);
+    end Draw_Shapefile_Text_World;
 
 
     -- fix this See comment for plmap.
@@ -3384,9 +3489,20 @@ package body PLplot is
     end Shaded_Surface_3D;
 
 
-    -- Plots the 3d surface representation of the function z(x, y) with y
-    -- index limits.
+    -- Plots the 3-d surface representation of the function z(x, y) with limits on x and y.
     -- plsurf3dl
+    procedure Shaded_Surface_3D_Non_Rectangular
+       (x, y                     : Real_Vector; -- surface definition points
+        z                        : Real_Matrix; -- height of surface at definition points
+        Options                  : Integer;
+        Contour_Levels           : Real_Vector; -- levels at which to draw contours
+        Index_x_Min, Index_x_Max : Integer;           -- limits on x
+        Index_y_Min, Index_y_Max : Integer_Array_1D) is -- limits on y
+    begin
+        plsurf3dl(x, y, Matrix_To_Pointers(z), x'Length, y'Length, Options,
+            Contour_Levels, Contour_Levels'Length, Index_x_Min, Index_x_Max,
+            Index_y_Min, Index_y_Max);
+     end Shaded_Surface_3D_Non_Rectangular;
 
 
     -- Sets the edges of the viewport to the specified absolute coordinates

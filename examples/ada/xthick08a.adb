@@ -1,6 +1,6 @@
 -- 3-d plot demo.
 
--- Copyright (C) 2008 Jerry Bauck
+-- Copyright (C) 2008-2016 Jerry Bauck
 
 -- This file is part of PLplot.
 
@@ -19,38 +19,59 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 with
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot,
     PLplot_Auxiliary;
 use
+    Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot,
     PLplot_Auxiliary;
 
-
-
 procedure xthick08a is
-
+    -- These values must be odd, for the middle
+    -- of the index range to be an integer, and thus
+    -- to correspond to the exact floating point centre
+    -- of the sombrero.
     XPTS : Integer := 35;
-    YPTS : Integer := 46;
+    YPTS : Integer := 45;
     x : Real_Vector(0 .. XPTS - 1);
     y : Real_Vector(0 .. YPTS - 1);
     z : Real_Matrix(0 .. XPTS - 1, 0 .. YPTS - 1);
+    z_row_major : Real_Vector(0 .. XPTS * YPTS - 1); -- Guess at the actual dimensions since
+    z_col_major : Real_Vector(0 .. XPTS * YPTS - 1); -- C doesn't give a clue.
+    dx : Long_Float := 2.0 / Long_Float(XPTS - 1);
+    dy : Long_Float := 2.0 / Long_Float(YPTS - 1);
     xx, yy, r : Long_Float;
     zmin, zmax, step : Long_Float;
     LEVELS : Integer := 10;
     clevel: Real_Vector(0 .. LEVELS - 1);
     nlevel : Integer := LEVELS;
-    rosen : Boolean := True;
-    sombrero : Boolean := False;
-    alt : Real_Vector(0 .. 1) := (60.0, 20.0);
-    az  : Real_Vector(0 .. 1) := (30.0, 60.0);
-    title : array(0 .. 1) of String(1 .. 35) := 
-        ("#frPLplot Example 8 - Alt=60, Az=30", 
-         "#frPLplot Example 8 - Alt=20, Az=60");
 
+    indexxmin : Integer := 0;
+    indexxmax : Integer := XPTS;
+    indexymin : Integer_Array_1D(0 .. XPTS - 1);
+    indexymax : Integer_Array_1D(0 .. XPTS - 1);
+    zlimited : Real_Matrix(0 .. XPTS - 1, 0 .. YPTS - 1);
+    
+    -- Parameters of ellipse (in x, y index coordinates) that limits the data.
+    -- x0, y0 correspond to the exact floating point centre of the index range.
+    x0 : Long_Float := 0.5 * Long_Float(XPTS - 1);
+    a  : Long_Float := 0.9 * x0;
+    y0 : Long_Float := 0.5 * Long_Float(YPTS - 1);
+    b  : Long_Float := 0.7 * y0;
+    square_root : Long_Float;
+    
+    sombrero : Boolean := True; -- Edit this to choose sombrero or Rosenbrock function.
+    rosen : Boolean := not sombrero; -- Toggle Rosenbrock according to sombrero.
+    alt : Real_Vector(0 .. 1) := (60.0, 40.0);
+    az  : Real_Vector(0 .. 1) := (30.0, -30.0);
+    title : array(0 .. 1) of Unbounded_String := 
+        (TUB("#frPLplot Example 8 - Alt=60, Az=30"),
+         TUB("#frPLplot Example 8 - Alt=40, Az=-30"));
 
     ------------------------------------------------------------------------------
     -- cmap1_init1
@@ -90,31 +111,29 @@ procedure xthick08a is
 
         Set_Number_Of_Colors_In_Color_Map_1(256);
         Set_Color_Map_1_Piecewise(HLS, i, h, l, s, Alt_Hue_Path_None);
-
     end cmap1_init;
 
 begin
-
     -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
-    if sombrero then
-        rosen := False;
-    end if;
+    -- Chose sombrero or rosen in declarations, above.
 
     -- Initialize plplot
     Initialize_PLplot;
 
     for i in x'range loop
-        x(i) := Long_Float(i - XPTS / 2) / Long_Float(XPTS / 2);
+        -- x(i) := Long_Float(i - XPTS / 2) / Long_Float(XPTS / 2);
+        x(i) := -1.0 + Long_Float(i) * dx;
         if rosen then
             x(i) :=  x(i) * 1.5;
         end if;
     end loop;
 
-    for i in y'range loop
-        y(i) := Long_Float(i - YPTS / 2) / Long_Float(YPTS / 2);
+    for j in y'range loop
+        -- y(i) := Long_Float(i - YPTS / 2) / Long_Float(YPTS / 2);
+        y(j) := -1.0 + Long_Float(j) * dy;
         if rosen then
-            y(i) := y(i) + 0.5;
+            y(j) := y(j) + 0.5;
         end if;
     end loop;
 
@@ -124,18 +143,34 @@ begin
             yy := y(j);
             if rosen then
                 z(i, j) := (1.0 - xx) * (1.0 - xx) + 100.0 * (yy - (xx * xx)) * (yy - (xx * xx));
-                -- The log argument may be zero for just the right grid. 
+                -- The log argument might be zero for just the right grid. 
                 if z(i, j) > 0.0 then
                     z(i, j) := log(z(i, j));
                 else
                     z(i, j) := -5.0; -- -MAXFLOAT would mess-up up the scale
                 end if;
-            else -- Sombrero is True.
+            else -- Sombrero
                 r := sqrt(xx * xx + yy * yy);
                 z(i, j) := exp(-r * r) * cos(2.0 * pi * r);
             end if;
+            z_row_major(i * YPTS + j) := z(i, j);
+            z_col_major(i + XPTS * j) := z(i, j);
         end loop; -- j
     end loop; -- i
+
+    for i in indexxmin .. indexxmax - 1 loop
+        square_root := sqrt( 1.0 - Long_Float'Min(1.0, ((Long_Float(i) - x0) / a)**2));
+        -- Add 0.5 to find nearest integer and therefore preserve symmetry
+        -- with regard to lower and upper bound of y range.
+        -- Ada note: Trunc() is in plplot_auxiliary.adb.
+        indexymin(i) := Integer'Max(0, Trunc(0.5 + y0 - b * square_root ));
+        -- indexymax calculated with the convention that it is 1
+        -- greater than highest valid index.
+        indexymax(i) := Integer'Min(YPTS, 1 + Trunc(0.5 + y0 + b * square_root));
+        for j in indexymin(i) .. indexymax(i) - 1 loop
+            zlimited(i, j) := z(i, j);
+        end loop;
+    end loop;
 
     zmin := Matrix_Min(z);
     zmax := Matrix_Max(z);
@@ -147,12 +182,12 @@ begin
     Set_Light_Source(1.0, 1.0, 1.0);
 
     for k in alt'range loop
-        for ifshade in 0 .. 3 loop
+        for ifshade in 0 .. 4 loop
             Advance_To_Subpage(Next_Subpage);
             Set_Viewport_Normalized(0.0, 1.0, 0.0, 0.9);
             Set_Viewport_World(-1.0, 1.0, -0.9, 1.1);
             Set_Pen_Color(Green);
-            Write_Text_Viewport("t", 1.0, 0.5, 0.5, title(k));
+            Write_Text_Viewport("t", 1.0, 0.5, 0.5, To_String(title(k)));
             Set_Pen_Color(Red);
             if rosen then
                 Set_Up_3D(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax, alt(k), az(k));
@@ -174,13 +209,15 @@ begin
             elsif ifshade = 2 then --  magnitude colored plot with faceted squares
                 cmap1_init(False);
                 Shaded_Surface_3D(x, y, z, MAG_COLOR + FACETED, clevel);
-            else                    -- magnitude colored plot with contours
+            elsif ifshade = 3 then                    -- magnitude colored plot with contours
                 cmap1_init(False);
                 Shaded_Surface_3D(x, y, z, MAG_COLOR + SURF_CONT + BASE_CONT, clevel);
+            else -- magnitude colored plot with contours and index limits
+                cmap1_init(False);
+                Shaded_Surface_3D_Non_Rectangular(x, y, zlimited, MAG_COLOR + SURF_CONT + BASE_CONT,
+                    clevel, indexxmin, indexxmax, indexymin, indexymax );
             end if;
         end loop; -- ifshade
     end loop; -- k
-
     End_PLplot;
-
 end xthick08a;

@@ -31,7 +31,7 @@ package body PLplot_Auxiliary is
     -- away from zero, e.g. Inteter(±3.5) is ±4. But any completely reliable 
     -- conversion is probalby not possible; indeed, this one exactly emulates C
     -- when tested for values around ±2 to ±3. Both convert ±2.9999999999999997
-    -- to ±2 and ±2.9999999999999998 to ±3.
+    -- to ±2 and ±2.9999999999999998 to ±3 which is of course wrong. But that's C.
     function Trunc(a : Long_Float) return Integer is
     begin
         if a >= 0.0 then

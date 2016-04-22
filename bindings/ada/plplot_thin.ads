@@ -64,8 +64,8 @@ package PLplot_Thin is
     type PL_Bool_Array        is array (Integer range <>) of PLBOOL;
     subtype PLPointer         is System.Address; -- non-specific pointer to something
             
-    -- Types to pass 2D arrays (matrix) defined in Ada.Numerics.Generic_Real_Arrays
-    -- (and its instances) to C functions. Have only Long_Float capability for now.
+    -- Types to pass 2D arrays, Real_Matrix, defined in plplot_auxiliary.ads, to C functions. Have
+    -- only Long_Float capability for now. See function Matrix_To_Pointers for the conversion.
     type Long_Float_Pointer is access all Long_Float;
     type Long_Float_Pointer_Array is array (Integer range <>) of aliased Long_Float_Pointer;
 
@@ -159,8 +159,8 @@ package PLplot_Thin is
     -- http://groups.google.com/group/comp.lang.ada/browse_thread/thread/0e5a3abec221df39?hl=en#
     -- If the user needs to have a larger array, it will require making this 
     -- array longer, but we try to anticipate the most extreme situation here 
-    -- without being too wasteful. Note that the user will typically use only a 
-    -- portion of the array, beginning at index 0.
+    -- without being too wasteful. The user will typically use only a portion of
+    -- the array, beginning at index 0.
     subtype Map_Form_Constrained_Array is Real_Vector(0 .. 2000);
 
     -- Access-to-procedure type for plotting map outlines (continents).
@@ -389,32 +389,28 @@ package PLplot_Thin is
     -- dimensioned array.  The grid dimensions MUST be stored, with a maximum of 3
     -- dimensions assumed for now.
      
-
-    -- fix this  I don't think Ada needs this. If otherwise, set an object of 
-    -- type PLpointer to the 'Address attribute of the array.
-    -- type PLfGrid is
-    --    record
-    --        f          : PL_Float_Array;
-    --        nx, ny, nz : PLINT;
-    --    end record;
-
-    --
+    -- PLplot appears to not use this. The documentation is unclear what this it supposed to do and
+    -- thus it can't be ascertained how to dimension it.
+    -- typedef struct
+    -- {
+    --     const PLFLT *f;
+    --     PLINT       nx, ny, nz;
+    -- } PLfGrid;
+    
     -- PLfGrid2 is for passing (as an array of pointers) a 2d function array.  The
     -- grid dimensions are passed for possible bounds checking.
-     
 
-    -- fix this  I don't think Ada needs this since we use the procedure
-    -- Matrix_To_Pointers.
-    -- type PLfGrid2 is
-    --    record
-    --        f      : PL_Float_Array;
-    --        nx, ny : PLINt;
-    --    end record;
+    -- I don't think Ada needs this since we use the procedure Matrix_To_Pointers to connect an Ada
+    -- Real_Matrix to C's mess of pointers. It's just a matrix. But it's here if we need it.
+    type PLfGrid2(x_Last, y_Last : Natural) is
+        record
+            f : Real_Matrix(0 .. x_Last, 0 .. y_Last);
+            nx : Natural := x_Last + 1;
+            ny : Natural := y_Last + 1;
+        end record;
 
-    --
     -- NOTE: a PLfGrid3 is a good idea here but there is no way to exploit it yet
     -- so I'll leave it out for now.
-     
 
     -- PLcGrid is for passing (as a pointer to the first element) arbitrarily
     -- dimensioned coordinate transformation arrays.  The grid dimensions MUST be
@@ -432,6 +428,9 @@ package PLplot_Thin is
             ny : Natural := y_Last + 1;
             nz : Natural := z_Last + 1;
         end record;
+    
+    -- Provide Transformation_Data_Type as named in the documentation.
+    subtype PLcGrid is Transformation_Data_Type;
 
     -- PLcGrid2 is for passing (as arrays of pointers) 2d coordinate
     -- transformation arrays.  The grid dimensions are passed for possible bounds
@@ -446,6 +445,9 @@ package PLplot_Thin is
             nx : Natural := x_Last + 1;
             ny : Natural := y_Last + 1;
         end record;
+    
+    -- Provide Transformation_Data_Type_2 as named in the documentation.
+    subtype PLcGrid2 is Transformation_Data_Type_2;
 
 
     --NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it yet
@@ -537,13 +539,13 @@ package PLplot_Thin is
     pragma Import(C, plsvect, "c_plsvect");
     
     
--- Ada hack to accomodate the C API that allows this call in C
--- plsvect( NULL, NULL, 0, 0 );
--- to reset the arrow style to a default value.
+    -- Ada hack to accomodate the C API that allows this call in C
+    -- plsvect( NULL, NULL, 0, 0 );
+    -- to reset the arrow style to a default value.
    
-procedure
-plsvectdefault(arrowx : PLPointer; arrowy : PLPointer; npts : PLINT; fill : PLINT);
-pragma Import(C, plsvectdefault, "c_plsvect");
+    procedure
+    plsvectdefault(arrowx : PLPointer; arrowy : PLPointer; npts : PLINT; fill : PLINT);
+    pragma Import(C, plsvectdefault, "c_plsvect");
 
 
 
@@ -1164,6 +1166,60 @@ pragma Import(C, plsvectdefault, "c_plsvect");
     plmap(mapform : Map_Form_Function_Pointer_Type; Map_Kind_C_String : char_array;
              minlong : PLFLT; maxlong : PLFLT; minlat : PLFLT; maxlat : PLFLT);
     pragma Import(C, plmap, "c_plmap");
+
+
+    -- Plot map fills.
+
+    procedure
+    plmapfill(mapform : Map_Form_Function_Pointer_Type; Map_Kind_C_String : char_array;
+        minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
+        plotentries : PL_Integer_Array; nplotentries : PLINT);
+    pragma Import(C, plmapfill, "c_plmapfill");
+
+
+    -- Plot map fills: overload passes null pointer plotentries to emulate C, match documentaton.
+
+    procedure
+    plmapfill_Overload(mapform : Map_Form_Function_Pointer_Type; name : char_array;
+        minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
+        plotentries : PLPointer; nplotentries : PLINT);
+    pragma Import(C, plmapfill_Overload, "c_plmapfill");
+
+    -- Plot map outlines.
+
+    procedure
+    plmapline(mapform : Map_Form_Function_Pointer_Type; name : char_array;
+        minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
+        plotentries : PL_Integer_Array; nplotentries : PLINT);
+    pragma Import(C, plmapline, "c_plmapline");
+
+
+    -- Plot map outlines: overload passes null pointer plotentries to emulate C, match documentaton.
+
+    procedure
+    plmapline_Overload(mapform : Map_Form_Function_Pointer_Type; name : char_array;
+        minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
+        plotentries : PLPointer; nplotentries : PLINT);
+    pragma Import(C, plmapline_Overload, "c_plmapline");
+
+
+    -- Plot map points.
+
+    procedure
+    plmapstring(mapform : Map_Form_Function_Pointer_Type; name : char_array;
+        minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
+                   plotentries : PL_Integer_Array; nplotentries : PLINT);
+    pragma Import(C, plmapstring, "c_plmapstring");
+
+
+    -- Plot map text.
+
+    procedure
+    plmaptex(mapform : Map_Form_Function_Pointer_Type; name : char_array;
+        dx : PLFLT; dy : PLFLT; just : PLFLT; text : char_array;
+        minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
+        plotentry : PLINT);
+    pragma Import(C, plmaptex, "c_plmaptex");
 
 
     -- Plot the latitudes and longitudes on the background. 
@@ -1800,9 +1856,10 @@ pragma Import(C, plsvectdefault, "c_plsvect");
 
     procedure
     plimage(data : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT;
-         xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT; zmin : PLFLT; zmax : PLFLT;
-         Dxmin : PLFLT; Dxmax : PLFLT; Dymin : PLFLT; Dymax : PLFLT);
+        xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT; zmin : PLFLT; zmax : PLFLT;
+        Dxmin : PLFLT; Dxmax : PLFLT; Dymin : PLFLT; Dymax : PLFLT);
     pragma Import(C, plimage, "c_plimage");
+
 
     -- Set up a new line style 
 
@@ -1811,21 +1868,104 @@ pragma Import(C, plsvectdefault, "c_plsvect");
     pragma Import(C, plstyl, "c_plstyl");
 
 
+--==================================================================================================
+--==================================================================================================
+-- Begin inserting definitions and functions for new 3D plotting capability. April 13, 2016
+    
+    
+    
+    -- type Function_To_Manipulate_Matrix_A_Type is
+    --     access function (p : Real_Matrix; ix, iy : Integer)
+    --         return Long_Float;
+    -- pragma Convention(C, Function_To_Manipulate_Matrix_A_Type);
+    -- 
+    -- type Function_To_Manipulate_Matrix_B_Type is
+    --     access function (p : in out Real_Matrix; ix, iy : Integer; z : Long_Float)
+    --         return Long_Float;
+    -- pragma Convention(C, Function_To_Manipulate_Matrix_B_Type);
+    -- 
+    -- type Function_To_Manipulate_Matrix_C_Type is
+    --     access function (ix, iy : Integer; p : Real_Matrix) return Long_Float;-- Why not use A form?
+    -- pragma Convention(C, Function_To_Manipulate_Matrix_C_Type);
+    -- 
+    -- type Procedure_To_Manipulate_Matrix_Type is
+    --     access procedure (p : Real_Matrix; nx, ny : Integer; zmin, zmax : out Long_Float);
+    -- pragma Convention(C, Procedure_To_Manipulate_Matrix_Type);
+    -- 
+    -- type PLf2ops_t is
+    --     record
+    --         Get    : Function_To_Manipulate_Matrix_A_Type;
+    --         Set    : Function_To_Manipulate_Matrix_B_Type;
+    --         Add    : Function_To_Manipulate_Matrix_B_Type;
+    --         Sub    : Function_To_Manipulate_Matrix_B_Type;
+    --         Mul    : Function_To_Manipulate_Matrix_B_Type;
+    --         Div    : Function_To_Manipulate_Matrix_B_Type;
+    --         Is_Nan : Function_To_Manipulate_Matrix_A_Type;
+    --         MinMax : Procedure_To_Manipulate_Matrix_Type;
+    --         F2Eval : Function_To_Manipulate_Matrix_C_Type;
+    --     end record;
+    -- 
+    -- function plf2ops_c_get(p : Real_Matrix; ix, iy : Integer) return Long_Float;
+    -- pragma Import(C, plf2ops_c_get, "plf2ops_c_get");
+    -- 
+    -- function plf2ops_c_set(p : in out Real_Matrix; ix, iy : Integer; z : Long_Float) return Long_Float;
+    -- pragma Import(C, plf2ops_c_set, "plf2ops_c_set");
+    -- 
+    -- function plf2ops_c_add(p : in out Real_Matrix; ix, iy : Integer; z : Long_Float) return Long_Float;
+    -- pragma Import(C, plf2ops_c_add, "plf2ops_c_add");
+    -- 
+    -- function plf2ops_c_sub(p : in out Real_Matrix; ix, iy : Integer; z : Long_Float) return Long_Float;
+    -- pragma Import(C, plf2ops_c_sub, "plf2ops_c_sub");
+    -- 
+    -- function plf2ops_c_mul(p : in out Real_Matrix; ix, iy : Integer; z : Long_Float) return Long_Float;
+    -- pragma Import(C, plf2ops_c_mul, "plf2ops_c_mul");
+    -- 
+    -- function plf2ops_c_div(p : in out Real_Matrix; ix, iy : Integer; z : Long_Float) return Long_Float;
+    -- pragma Import(C, plf2ops_c_div, "plf2ops_c_div");
+    -- 
+    -- function plf2ops_c_isnan(p : Real_Matrix; ix, iy : Integer) return Long_Float;
+    -- pragma Import(C, plf2ops_c_isnan, "plf2ops_c_isnan");
+    -- 
+    -- procedure plf2ops_c_minmax(p : Real_Matrix; nx, ny : Integer; zmin, zmax : out Long_Float);
+    -- pragma Import (C, plf2ops_c_minmax, "plf2ops_c_minmax");
+    -- 
+    -- function plf2ops_c_f2eval(ix, iy : Integer; p : Real_Matrix) return Long_Float;
+    -- pragma Import(C, plf2ops_c_f2eval, "plf2ops_c_f2eval");
+    -- 
+
+
+
+
+
+
+--==================================================================================================
+--==================================================================================================
+
+
     -- Plots the 3d surface representation of the function z(x, y). 
 
     procedure
-    plsurf3d(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array; nx : PLINT; ny :  PLINT;
-           opt : PLINT; clevel : PL_Float_Array; nlevel : PLINT);
+    plsurf3d(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array;
+        nx : PLINT; ny :  PLINT; opt : PLINT; clevel : PL_Float_Array; nlevel : PLINT);
     pragma Import(C, plsurf3d, "c_plsurf3d");
 
 
-    -- Plots the 3d surface representation of the function z(x, y) with y
-    -- index limits. 
+    -- -- Like plsurf3d, but uses an evaluator function to access z data from zp
+    -- 
+    -- procedure
+    -- plfsurf3d(x : PL_Float_Array; y : PL_Float_Array; zops : PLf2ops_t;
+    --     zp : Long_Float_Pointer_Array; nx : PLINT; ny : PLINT; opt : PLINT;
+    --     clevel : PL_Float_Array; nlevel : PLINT);
+    -- pragma Import(C, plfsurf3d, "plfsurf3d");
+
+
+    -- Plots the 3-d surface representation of the function z(x, y) with limits on x and y.
 
     procedure
-    plsurf3dl(x : PL_Float_Array; y : PL_Float_Array; z : PL_Float_Array_2D; nx : PLINT; ny : PLINT;
-           opt : PLINT; clevel : PL_Float_Array; nlevel : PLINT;
-           ixstart : PLINT; ixn : PLINT; indexymin : out PLINT; indexymax : out PLINT);
+    plsurf3dl(x : PL_Float_Array; y : PL_Float_Array; z : Long_Float_Pointer_Array;
+        nx : PLINT; ny : PLINT; opt : PLINT; clevel : PL_Float_Array; nlevel : PLINT;
+        indexxmin : PLINT; indexxmax : PLINT;
+        indexymin : PL_Integer_Array; indexymax : PL_Integer_Array);
     pragma Import(C, plsurf3dl, "c_plsurf3dl");
 
 
