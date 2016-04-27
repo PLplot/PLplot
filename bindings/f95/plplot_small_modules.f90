@@ -43,15 +43,33 @@ module plplot_types
     ! C library.
     include 'included_plplot_configured_types.f90'
 
-    ! The idea here is to match the Fortran 4-byte integer with the
+    ! The idea here is to match the Fortran integer type with the
     ! corresponding C types for PLINT (normally int32_t), PLBOOL
     ! (currently typedefed to PLINT) and PLUNICODE (normally
-    ! uint32_t).  According to websites I have read, Fortran has no
-    ! unsigned integer types and using 4 here is safer than anything more
-    ! complicated.
-    integer, parameter :: private_plint  = 4
-    integer, parameter :: private_plbool  = 4
-    integer, parameter :: private_plunicode  = 4
+    ! uint32_t).  In the past we have used 4 for this purpose with
+    ! good success for both the gfortran and Intel compilers.  That
+    ! is, kind=4 corresponded to 4-byte integers for those compilers.
+    ! But kind=4 may not do that for other compilers so we are now
+    ! using a more standards-compliant approach as recommended by
+    ! Wadud Miah of the NAG group.
+
+    ! Ultimately we would like to move to using INT32 for this purpose
+    ! as defined by the ISO_FORTRAN_ENV module, but that only became
+    ! standard for Fortran 2008 and later, and as a result we are not
+    ! sure how many current Fortran compilers actually support INT32.
+    ! So for now, we use selected_int_kind(9) to pick the smallest
+    ! Fortran integer type that can represent integers from -10^9 to +
+    ! 10^9.  selected_int_kind was introduced for Fortran 95 so this
+    ! should result in the kind value that represents 4-byte integers
+    ! on all Fortran compilers that are compatible with that standard.
+    ! Thus, the only potential issue with this approach is if the
+    ! platform does not support 4-byte integers so the result would
+    ! correspond to a larger Fortran integer type or else fail, but
+    ! for such unlikely platforms, the PLplot C library is unlikely to
+    ! compile as well!
+    integer, parameter :: private_plint  = selected_int_kind(9)
+    integer, parameter :: private_plbool  = selected_int_kind(9)
+    integer, parameter :: private_plunicode  = selected_int_kind(9)
 
     ! Define parameters for specific real precisions, so that we can
     ! specify equivalent interfaces for all precisions (kinds)
