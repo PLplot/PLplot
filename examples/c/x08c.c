@@ -103,6 +103,7 @@ cmap1_init( int gray )
 
 
 static int           rosen;
+static int           if_plfsurf3d;
 
 static PLOptionTable options[] = {
     {
@@ -113,6 +114,15 @@ static PLOptionTable options[] = {
         PL_OPT_BOOL,
         "-rosen",
         "Use the log_e of the \"Rosenbrock\" function"
+    },
+    {
+        "if_plfsurf3d",
+        NULL,
+        NULL,
+        &if_plfsurf3d,
+        PL_OPT_BOOL,
+        "-if_plfsurf3d",
+        "Use C-only plfsurf3d API rather then usual cross-language plsurf3d API"
     },
     {
         NULL,                   // option
@@ -169,16 +179,19 @@ main( int argc, char *argv[] )
     y = (PLFLT *) calloc( YPTS, sizeof ( PLFLT ) );
 
     plAlloc2dGrid( &z, XPTS, YPTS );
-    z_row_major = (PLFLT *) malloc( XPTS * YPTS * sizeof ( PLFLT ) );
-    z_col_major = (PLFLT *) malloc( XPTS * YPTS * sizeof ( PLFLT ) );
-    if ( !z_row_major || !z_col_major )
-        plexit( "Memory allocation error" );
+    if ( if_plfsurf3d )
+    {
+        z_row_major = (PLFLT *) malloc( XPTS * YPTS * sizeof ( PLFLT ) );
+        z_col_major = (PLFLT *) malloc( XPTS * YPTS * sizeof ( PLFLT ) );
+        if ( !z_row_major || !z_col_major )
+            plexit( "Memory allocation error" );
 
-    grid_c.f         = z;
-    grid_row_major.f = (PLFLT **) z_row_major;
-    grid_col_major.f = (PLFLT **) z_col_major;
-    grid_c.nx        = grid_row_major.nx = grid_col_major.nx = XPTS;
-    grid_c.ny        = grid_row_major.ny = grid_col_major.ny = YPTS;
+        grid_c.f         = z;
+        grid_row_major.f = (PLFLT **) z_row_major;
+        grid_col_major.f = (PLFLT **) z_col_major;
+        grid_c.nx        = grid_row_major.nx = grid_col_major.nx = XPTS;
+        grid_c.ny        = grid_row_major.ny = grid_col_major.ny = YPTS;
+    }
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -216,8 +229,11 @@ main( int argc, char *argv[] )
                 z[i][j] = exp( -r * r ) * cos( 2.0 * M_PI * r );
             }
 
-            z_row_major[i * YPTS + j] = z[i][j];
-            z_col_major[i + XPTS * j] = z[i][j];
+            if ( if_plfsurf3d )
+            {
+                z_row_major[i * YPTS + j] = z[i][j];
+                z_col_major[i + XPTS * j] = z[i][j];
+            }
         }
     }
 
@@ -317,22 +333,34 @@ main( int argc, char *argv[] )
             if ( ifshade == 0 ) // diffuse light surface plot
             {
                 cmap1_init( 1 );
-                plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, XPTS, YPTS, 0, NULL, 0 );
+                if ( if_plfsurf3d )
+                    plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, XPTS, YPTS, 0, NULL, 0 );
+                else
+                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, 0, NULL, 0 );
             }
             else if ( ifshade == 1 ) // magnitude colored plot
             {
                 cmap1_init( 0 );
-                plfsurf3d( x, y, plf2ops_grid_c(), ( PLPointer ) & grid_c, XPTS, YPTS, MAG_COLOR, NULL, 0 );
+                if ( if_plfsurf3d )
+                    plfsurf3d( x, y, plf2ops_grid_c(), ( PLPointer ) & grid_c, XPTS, YPTS, MAG_COLOR, NULL, 0 );
+                else
+                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
             }
             else if ( ifshade == 2 ) //  magnitude colored plot with faceted squares
             {
                 cmap1_init( 0 );
-                plfsurf3d( x, y, plf2ops_grid_row_major(), ( PLPointer ) & grid_row_major, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
+                if ( if_plfsurf3d )
+                    plfsurf3d( x, y, plf2ops_grid_row_major(), ( PLPointer ) & grid_row_major, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
+                else
+                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
             }
             else if ( ifshade == 3 ) // magnitude colored plot with contours
             {
                 cmap1_init( 0 );
-                plfsurf3d( x, y, plf2ops_grid_col_major(), ( PLPointer ) & grid_col_major, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
+                if ( if_plfsurf3d )
+                    plfsurf3d( x, y, plf2ops_grid_col_major(), ( PLPointer ) & grid_col_major, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
+                else
+                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
             }
             else // magnitude colored plot with contours and index limits.
             {
@@ -347,8 +375,11 @@ main( int argc, char *argv[] )
     free( (void *) x );
     free( (void *) y );
     plFree2dGrid( z, XPTS, YPTS );
-    free( (void *) z_row_major );
-    free( (void *) z_col_major );
+    if ( if_plfsurf3d )
+    {
+        free( (void *) z_row_major );
+        free( (void *) z_col_major );
+    }
 
     plFree2dGrid( zlimited, XPTS, YPTS );
     free( (void *) indexymin );
