@@ -24,7 +24,7 @@
 !***********************************************************************
 
 module plplot_types
-    use iso_c_binding, only: c_ptr
+    use iso_c_binding, only: c_ptr, c_int32_t
     implicit none
     ! Specify Fortran types used by the various modules below.
 
@@ -53,23 +53,13 @@ module plplot_types
     ! using a more standards-compliant approach as recommended by
     ! Wadud Miah of the NAG group.
 
-    ! Ultimately we would like to move to using INT32 for this purpose
-    ! as defined by the ISO_FORTRAN_ENV module, but that only became
-    ! standard for Fortran 2008 and later, and as a result we are not
-    ! sure how many current Fortran compilers actually support INT32.
-    ! So for now, we use selected_int_kind(9) to pick the smallest
-    ! Fortran integer type that can represent integers from -10^9 to +
-    ! 10^9.  selected_int_kind was introduced for Fortran 95 so this
-    ! should result in the kind value that represents 4-byte integers
-    ! on all Fortran compilers that are compatible with that standard.
-    ! Thus, the only potential issue with this approach is if the
-    ! platform does not support 4-byte integers so the result would
-    ! correspond to a larger Fortran integer type or else fail, but
-    ! for such unlikely platforms, the PLplot C library is unlikely to
-    ! compile as well!
-    integer, parameter :: private_plint  = selected_int_kind(9)
-    integer, parameter :: private_plbool  = selected_int_kind(9)
-    integer, parameter :: private_plunicode  = selected_int_kind(9)
+    ! The kind c_int32_t defined in ISO_C_BINDING is meant to match the
+    ! C type int32_t, which is used for PLINT and PLBOOL. As there 
+    ! is no equivalent for unsigned integers in Fortran, we use this 
+    ! kind for PLUNICODE as well.
+    integer, parameter :: private_plint  = c_int32_t
+    integer, parameter :: private_plbool  = c_int32_t
+    integer, parameter :: private_plunicode  = c_int32_t
 
     ! Define parameters for specific real precisions, so that we can
     ! specify equivalent interfaces for all precisions (kinds)
