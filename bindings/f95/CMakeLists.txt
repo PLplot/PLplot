@@ -117,9 +117,9 @@ EXPORTS
   # Configure the Fortran source file that specifies the
   # types used for PLplot.
   if(PL_DOUBLE)
-    set(ONE_IN_DEFAULT_PRECISION "1.0d0")
+    set(FORTRAN_EQUIVALENT_PLFLT "c_double")
   else(PL_DOUBLE)
-    set(ONE_IN_DEFAULT_PRECISION "1.0")
+    set(FORTRAN_EQUIVALENT_PLFLT "c_float")
   endif(PL_DOUBLE)
 
   configure_file(

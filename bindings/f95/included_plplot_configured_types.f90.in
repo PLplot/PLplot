@@ -3,4 +3,4 @@
 
     ! Configured by CMake depending on the floating-point precision
     ! adopted for the core C PLplot library.
-    integer, parameter :: private_plflt  = kind(@ONE_IN_DEFAULT_PRECISION@)
+    integer, parameter :: private_plflt  = @FORTRAN_EQUIVALENT_PLFLT@

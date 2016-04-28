@@ -24,8 +24,10 @@
 !***********************************************************************
 
 module plplot_types
-    use iso_c_binding, only: c_ptr, c_int32_t
+    use iso_c_binding, only: c_ptr, c_int32_t, c_float, c_double
     implicit none
+    private :: c_ptr, c_int32_t, c_float, c_double
+
     ! Specify Fortran types used by the various modules below.
 
     ! N.B. It is those modules' responsibility to keep these precision values
@@ -38,7 +40,7 @@ module plplot_types
     ! PLplot.)
 
     ! This include file only defines the private_plflt parameter at the
-    ! moment which is configured to be either kind(1.0) or kind(1.0d0)
+    ! moment which is configured to be either c_float or c_double
     ! to agree with the configured real precision (PLFLT) of the PLplot
     ! C library.
     include 'included_plplot_configured_types.f90'
@@ -63,10 +65,8 @@ module plplot_types
 
     ! Define parameters for specific real precisions, so that we can
     ! specify equivalent interfaces for all precisions (kinds)
-    integer, parameter :: private_single  = kind(1.0)
-    integer, parameter :: private_double  = kind(1.0d0)
-
-    private :: c_ptr
+    integer, parameter :: private_single  = c_float
+    integer, parameter :: private_double  = c_double
 
     ! The PLfGrid and PLcGrid types transfer information about a multidimensional
     ! array to the plcontour/plshade family of routines.
