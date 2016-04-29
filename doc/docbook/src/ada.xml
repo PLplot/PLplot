@@ -667,6 +667,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       of Ada programmers: Reset_Vector_Arrow_Style and plsvect, both without
       arguments, both available in both bindings, and the latter an overload of
       the normal arrow-setting procedure.</para>
+      <para>The procedures <literal>Plot_Shapefile</literal> and
+      <literal>Plot_Shapefile_World</literal> (<literal>plmapfill
+      </literal>) and <literal>plmapline</literal> in the traditional binding)
+      are each provided an overloaded version allowing either an array of
+      integers or a null pointer to be passed for the last argument, so that the 
+      documentation makes sense. An additional related procedure is provided in
+      each case, <literal>Plot_Shapefile_All</literal> and <literal>
+      Plot_Shapefile_World_All</literal> (identically named in the traditional
+      binding) for the case when a null pointer would otherwise be passed, thus
+      allowing the Ada programmer a way to specify "plot all the Shapefile
+      elements" without having to conjure a null pointer. See Example 19.</para>
     </sect2>
   </sect1>
   <sect1 id="ada_c_flavor">
