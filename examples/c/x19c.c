@@ -68,8 +68,8 @@ normalize_longitude( PLFLT lon )
 void
 geolocation_labeler( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer PL_UNUSED( data ) )
 {
-    const char *direction_label = NULL;
-    PLFLT      label_val        = 0.0;
+    PLCHAR_VECTOR direction_label = NULL;
+    PLFLT         label_val       = 0.0;
 
     if ( axis == PL_Y_AXIS )
     {
@@ -260,7 +260,7 @@ main( int argc, char **argv )
     plcol0( 3 );
     for ( i = 0; i < nwoodlandareas; ++i )
         woodlandareas[i] = i + 218;
-    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (const PLINT *) woodlandareas, nwoodlandareas );
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (PLINT_VECTOR) woodlandareas, nwoodlandareas );
 
     //shingle or boulders
     plcol0( 7 );
@@ -270,7 +270,7 @@ main( int argc, char **argv )
     plcol0( 8 );
     for ( i = 0; i < ncragareas; ++i )
         cragareas[i] = i + 325;
-    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (const PLINT *) cragareas, ncragareas );
+    plmapfill( NULL, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, (PLINT_VECTOR) cragareas, ncragareas );
 
     //draw contours, we need to separate contours from high/low coastline
     //draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );

@@ -41,19 +41,19 @@ main( int argc, char *argv[] )
 void
 plot1( int type )
 {
-    int          i;
-    static PLFLT freql[101], ampl[101], phase[101];
-    PLFLT        f0, freq;
-    PLINT        nlegend;
-    const char   *text[2], *symbols[2];
-    PLINT        opt_array[2];
-    PLINT        text_colors[2];
-    PLINT        line_colors[2];
-    PLINT        line_styles[2];
-    PLFLT        line_widths[2];
-    PLINT        symbol_numbers[2], symbol_colors[2];
-    PLFLT        symbol_scales[2];
-    PLFLT        legend_width, legend_height;
+    int           i;
+    static PLFLT  freql[101], ampl[101], phase[101];
+    PLFLT         f0, freq;
+    PLINT         nlegend;
+    PLCHAR_VECTOR text[2], symbols[2];
+    PLINT         opt_array[2];
+    PLINT         text_colors[2];
+    PLINT         line_colors[2];
+    PLINT         line_styles[2];
+    PLFLT         line_widths[2];
+    PLINT         symbol_numbers[2], symbol_colors[2];
+    PLFLT         symbol_scales[2];
+    PLFLT         legend_width, legend_height;
 
     pladv( 0 );
 

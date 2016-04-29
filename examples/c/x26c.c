@@ -60,45 +60,45 @@
 
 #include "plcdemos.h"
 
-static const char *x_labels[] = {
+static PLCHAR_VECTOR x_labels[] = {
     "Frequency",
     "Частота",
     NULL
 };
 
-static const char *y_labels[] = {
+static PLCHAR_VECTOR y_labels[] = {
     "Amplitude (dB)",
     "Амплитуда (dB)",
     NULL
 };
 
-static const char *alty_labels[] = {
+static PLCHAR_VECTOR alty_labels[] = {
     "Phase shift (degrees)",
     "Фазовый сдвиг (градусы)",
     NULL
 };
 
 // Short rearranged versions of y_label and alty_label.
-static const char *legend_texts[][2] = {
+static PLCHAR_VECTOR legend_texts[][2] = {
     { "Amplitude", "Phase shift"   },
     { "Амплитуда", "Фазовый сдвиг" }
 };
 
-static const char *title_labels[] = {
+static PLCHAR_VECTOR title_labels[] = {
     "Single Pole Low-Pass Filter",
     "Однополюсный Низко-Частотный Фильтр",
     NULL
 };
 
-static const char *line_labels[] = {
+static PLCHAR_VECTOR line_labels[] = {
     "-20 dB/decade",
     "-20 dB/десяток",
     NULL
 };
 
-void plot1( int type, const char *x_label, const char *y_label,
-            const char *alty_label, const char * legend_text[],
-            const char *title_label, const char *line_label );
+void plot1( int type, PLCHAR_VECTOR x_label, PLCHAR_VECTOR y_label,
+            PLCHAR_VECTOR alty_label, PLCHAR_VECTOR legend_text[],
+            PLCHAR_VECTOR title_label, PLCHAR_VECTOR line_label );
 
 //--------------------------------------------------------------------------
 // main
@@ -140,22 +140,22 @@ main( int argc, char *argv[] )
 //--------------------------------------------------------------------------
 
 void
-plot1( int type, const char *x_label, const char *y_label, const char *alty_label,
-       const char * legend_text[], const char *title_label, const char *line_label )
+plot1( int type, PLCHAR_VECTOR x_label, PLCHAR_VECTOR y_label, PLCHAR_VECTOR alty_label,
+       PLCHAR_VECTOR legend_text[], PLCHAR_VECTOR title_label, PLCHAR_VECTOR line_label )
 {
-    int          i;
-    static PLFLT freql[101], ampl[101], phase[101];
-    PLFLT        f0, freq;
-    PLINT        nlegend = 2;
-    PLINT        opt_array[2];
-    PLINT        text_colors[2];
-    PLINT        line_colors[2];
-    PLINT        line_styles[2];
-    PLFLT        line_widths[2];
-    PLINT        symbol_numbers[2], symbol_colors[2];
-    PLFLT        symbol_scales[2];
-    const char   *symbols[2];
-    PLFLT        legend_width, legend_height;
+    int           i;
+    static PLFLT  freql[101], ampl[101], phase[101];
+    PLFLT         f0, freq;
+    PLINT         nlegend = 2;
+    PLINT         opt_array[2];
+    PLINT         text_colors[2];
+    PLINT         line_colors[2];
+    PLINT         line_styles[2];
+    PLFLT         line_widths[2];
+    PLINT         symbol_numbers[2], symbol_colors[2];
+    PLFLT         symbol_scales[2];
+    PLCHAR_VECTOR symbols[2];
+    PLFLT         legend_width, legend_height;
 
 
     pladv( 0 );

@@ -36,32 +36,32 @@ static PLFLT xlog[8] =
 // Static function prototypes
 
 static void
-plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
+plxybx( PLCHAR_VECTOR opt, PLCHAR_VECTOR label, PLINT axis, PLFLT wx1, PLFLT wy1,
         PLFLT wx2, PLFLT wy2, PLFLT vmin, PLFLT vmax,
         PLFLT tick, PLINT nsub, PLINT nolast, PLINT *digits );
 
 static void
-plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
+plzbx( PLCHAR_VECTOR opt, PLCHAR_VECTOR label, PLINT right, PLFLT dx, PLFLT dy,
        PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin, PLFLT vmax,
        PLFLT tick, PLINT nsub, PLINT *digits );
 
 static void
 plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
-        PLFLT disp, PLFLT pos, PLFLT just, const char *text );
+        PLFLT disp, PLFLT pos, PLFLT just, PLCHAR_VECTOR text );
 
 static void
-plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
-       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text );
+plztx( PLCHAR_VECTOR opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
+       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, PLCHAR_VECTOR text );
 
 static void
 plform( PLINT axis, PLFLT value, PLINT scale, PLINT prec, char *result, PLINT len, PLBOOL ll, PLBOOL lf, PLBOOL lo );
 
 static void
-grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
-          const char *yopt, PLFLT ytick1, PLINT nysub1 );
+grid_box( PLCHAR_VECTOR xopt, PLFLT xtick1, PLINT nxsub1,
+          PLCHAR_VECTOR yopt, PLFLT ytick1, PLINT nysub1 );
 
 static void
-label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 );
+label_box( PLCHAR_VECTOR xopt, PLFLT xtick1, PLCHAR_VECTOR yopt, PLFLT ytick1 );
 
 static void
 plP_default_label_log( PLINT axis, PLFLT value, char *string, PLINT len, void *data );
@@ -72,7 +72,7 @@ plP_default_label_log_fixed( PLINT axis, PLFLT value, char *string, PLINT len, v
 static void
 plP_default_label( PLINT axis, PLFLT value, char *string, PLINT len, void *data );
 
-static const char *
+static PLCHAR_VECTOR
 plgesc_string( void );
 
 //--------------------------------------------------------------------------
@@ -86,8 +86,8 @@ plgesc_string( void );
 //--------------------------------------------------------------------------
 
 void
-c_plbox( const char *xopt, PLFLT xtick, PLINT nxsub,
-         const char *yopt, PLFLT ytick, PLINT nysub )
+c_plbox( PLCHAR_VECTOR xopt, PLFLT xtick, PLINT nxsub,
+         PLCHAR_VECTOR yopt, PLFLT ytick, PLINT nysub )
 {
     c_plaxes( 0.0, 0.0, xopt, xtick, nxsub, yopt, ytick, nysub );
 }
@@ -133,8 +133,8 @@ c_plbox( const char *xopt, PLFLT xtick, PLINT nxsub,
 
 void
 c_plaxes( PLFLT x0, PLFLT y0,
-          const char *xopt, PLFLT xtick, PLINT nxsub,
-          const char *yopt, PLFLT ytick, PLINT nysub )
+          PLCHAR_VECTOR xopt, PLFLT xtick, PLINT nxsub,
+          PLCHAR_VECTOR yopt, PLFLT ytick, PLINT nysub )
 {
     PLBOOL lax, lbx, lcx, ldx, lgx, lix, llx, lsx, ltx, lux, lwx, lxx;
     PLBOOL lay, lby, lcy, ldy, lgy, liy, lly, lsy, lty, luy, lwy, lxy;
@@ -590,9 +590,9 @@ c_plaxes( PLFLT x0, PLFLT y0,
 //--------------------------------------------------------------------------
 
 void
-c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nxsub,
-          const char *yopt, const char *ylabel, PLFLT ytick, PLINT nysub,
-          const char *zopt, const char *zlabel, PLFLT ztick, PLINT nzsub )
+c_plbox3( PLCHAR_VECTOR xopt, PLCHAR_VECTOR xlabel, PLFLT xtick, PLINT nxsub,
+          PLCHAR_VECTOR yopt, PLCHAR_VECTOR ylabel, PLFLT ytick, PLINT nysub,
+          PLCHAR_VECTOR zopt, PLCHAR_VECTOR zlabel, PLFLT ztick, PLINT nzsub )
 {
     PLFLT dx, dy, tx, ty, ux, uy;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -782,7 +782,7 @@ c_plbox3( const char *xopt, const char *xlabel, PLFLT xtick, PLINT nxsub,
 //--------------------------------------------------------------------------
 
 static void
-plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
+plxybx( PLCHAR_VECTOR opt, PLCHAR_VECTOR label, PLINT axis, PLFLT wx1, PLFLT wy1,
         PLFLT wx2, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
         PLFLT tick, PLINT nsub, PLINT PL_UNUSED( nolast ), PLINT *digits )
 {
@@ -794,10 +794,10 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
     PLFLT       pos, tn, tp, temp, height, tick1, vmin, vmax;
 // Note that 'tspace' is the minimim distance away (in fractional number
 // of ticks) from the boundary that an X or Y numerical label can be drawn.
-    PLFLT      dwx, dwy, lambda, tcrit, tspace = 0.1;
-    const char * esc_string = plgesc_string();
-    PLFLT      tstart, factor;
-    const char *timefmt = NULL;
+    PLFLT         dwx, dwy, lambda, tcrit, tspace = 0.1;
+    PLCHAR_VECTOR esc_string = plgesc_string();
+    PLFLT         tstart, factor;
+    PLCHAR_VECTOR timefmt = NULL;
     vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
     vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
 
@@ -961,7 +961,7 @@ plxybx( const char *opt, const char *label, PLINT axis, PLFLT wx1, PLFLT wy1,
 
 static void
 plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
-        PLFLT disp, PLFLT pos, PLFLT just, const char *text )
+        PLFLT disp, PLFLT pos, PLFLT just, PLCHAR_VECTOR text )
 {
     PLINT x, y, refx, refy;
     PLFLT shift, cc, ss, wx, wy;
@@ -1032,20 +1032,20 @@ plxytx( PLFLT wx1, PLFLT wy1, PLFLT wx2, PLFLT wy2,
 //--------------------------------------------------------------------------
 
 static void
-plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
+plzbx( PLCHAR_VECTOR opt, PLCHAR_VECTOR label, PLINT right, PLFLT dx, PLFLT dy,
        PLFLT wx, PLFLT wy1, PLFLT wy2, PLFLT vmin_in, PLFLT vmax_in,
        PLFLT tick, PLINT nsub, PLINT *digits )
 {
-    static char string[STRING_LEN];
-    PLINT       lb, lc, ld, lf, li, ll, lm, ln, ls, lt, lu, lv, lo;
-    PLINT       i, mode, prec, scale;
-    PLINT       nsub1, lstring;
-    PLFLT       pos, tn, tp, temp, height, tick1;
-    PLFLT       dwy, lambda, diag, major, minor, xmajor, xminor;
-    PLFLT       ymajor, yminor, dxm, dym, vmin, vmax;
-    const char  * esc_string = plgesc_string();
-    PLFLT       tstart, factor;
-    const char  *timefmt = NULL;
+    static char   string[STRING_LEN];
+    PLINT         lb, lc, ld, lf, li, ll, lm, ln, ls, lt, lu, lv, lo;
+    PLINT         i, mode, prec, scale;
+    PLINT         nsub1, lstring;
+    PLFLT         pos, tn, tp, temp, height, tick1;
+    PLFLT         dwy, lambda, diag, major, minor, xmajor, xminor;
+    PLFLT         ymajor, yminor, dxm, dym, vmin, vmax;
+    PLCHAR_VECTOR esc_string = plgesc_string();
+    PLFLT         tstart, factor;
+    PLCHAR_VECTOR timefmt = NULL;
 
     vmin = ( vmax_in > vmin_in ) ? vmin_in : vmax_in;
     vmax = ( vmax_in > vmin_in ) ? vmax_in : vmin_in;
@@ -1229,8 +1229,8 @@ plzbx( const char *opt, const char *label, PLINT right, PLFLT dx, PLFLT dy,
 //--------------------------------------------------------------------------
 
 static void
-plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
-       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, const char *text )
+plztx( PLCHAR_VECTOR opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
+       PLFLT wy2, PLFLT disp, PLFLT pos, PLFLT just, PLCHAR_VECTOR text )
 {
     PLINT refx = 0, refy = 0, x = 0, y = 0, vert = 0;
     PLFLT shift, cc, ss, wy;
@@ -1298,8 +1298,8 @@ plztx( const char *opt, PLFLT dx, PLFLT dy, PLFLT wx, PLFLT wy1,
 //--------------------------------------------------------------------------
 
 static void
-grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
-          const char *yopt, PLFLT ytick1, PLINT nysub1 )
+grid_box( PLCHAR_VECTOR xopt, PLFLT xtick1, PLINT nxsub1,
+          PLCHAR_VECTOR yopt, PLFLT ytick1, PLINT nysub1 )
 {
     PLINT lgx, lhx, llx, ldx;
     PLINT lgy, lhy, lly, ldy;
@@ -1429,18 +1429,18 @@ grid_box( const char *xopt, PLFLT xtick1, PLINT nxsub1,
 //--------------------------------------------------------------------------
 
 static void
-label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
+label_box( PLCHAR_VECTOR xopt, PLFLT xtick1, PLCHAR_VECTOR yopt, PLFLT ytick1 )
 {
-    static char string[STRING_LEN];
-    PLBOOL      ldx, lfx, lix, llx, lmx, lnx, ltx, lox, lxx;
-    PLBOOL      ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy, lxy;
-    PLFLT       vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
-    PLFLT       tn, tp, offset;
-    PLFLT       factor, tstart;
-    const char  *timefmt = NULL;
-    PLFLT       default_mm, char_height_mm, height_mm;
-    PLFLT       string_length_mm = 0.0, pos_mm = 0.0;
+    static char   string[STRING_LEN];
+    PLBOOL        ldx, lfx, lix, llx, lmx, lnx, ltx, lox, lxx;
+    PLBOOL        ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy, lxy;
+    PLFLT         vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT         vpwxmin, vpwxmax, vpwymin, vpwymax;
+    PLFLT         tn, tp, offset;
+    PLFLT         factor, tstart;
+    PLCHAR_VECTOR timefmt = NULL;
+    PLFLT         default_mm, char_height_mm, height_mm;
+    PLFLT         string_length_mm = 0.0, pos_mm = 0.0;
 
     // Assume label data is for placement of exponents if no custom
     // label function is provided.
@@ -1450,8 +1450,8 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
     // -O3 -Wuninitialized warnings that are obvious false alarms from
     // the clarity of the code associated with the true or false
     // result for custom_exponent_placement.
-    PLFLT      pos          = 0.0, height = 0.0, just = 0.0;
-    const char * esc_string = plgesc_string();
+    PLFLT         pos        = 0.0, height = 0.0, just = 0.0;
+    PLCHAR_VECTOR esc_string = plgesc_string();
 
     plgchr( &default_mm, &char_height_mm );
 
@@ -1922,22 +1922,22 @@ label_box( const char *xopt, PLFLT xtick1, const char *yopt, PLFLT ytick1 )
 //--------------------------------------------------------------------------
 
 void
-label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const char *yopt, PLINT n_yticks, const PLFLT *yticks )
+label_box_custom( PLCHAR_VECTOR xopt, PLINT n_xticks, PLFLT_VECTOR xticks, PLCHAR_VECTOR yopt, PLINT n_yticks, PLFLT_VECTOR yticks )
 {
-    static char string[STRING_LEN];
-    PLBOOL      ldx, lfx, lix, llx, lmx, lnx, ltx, lox, lxx;
-    PLBOOL      ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy, lxy;
-    PLFLT       vpwxmi, vpwxma, vpwymi, vpwyma;
-    PLFLT       vpwxmin, vpwxmax, vpwymin, vpwymax;
-    PLFLT       tn, offset;
-    const char  *timefmt;
-    PLINT       i;
-    PLINT       xdigmax, xdigits, xdigmax_old, xdigits_old;
-    PLINT       ydigmax, ydigits, ydigmax_old, ydigits_old;
-    PLINT       lxmin, lxmax, lymin, lymax;
-    PLINT       pxmin, pxmax, pymin, pymax;
-    PLFLT       default_mm, char_height_mm, height_mm;
-    PLFLT       string_length_mm = 0.0, pos_mm = 0.0;
+    static char   string[STRING_LEN];
+    PLBOOL        ldx, lfx, lix, llx, lmx, lnx, ltx, lox, lxx;
+    PLBOOL        ldy, lfy, liy, lly, lmy, lny, lty, lvy, loy, lxy;
+    PLFLT         vpwxmi, vpwxma, vpwymi, vpwyma;
+    PLFLT         vpwxmin, vpwxmax, vpwymin, vpwymax;
+    PLFLT         tn, offset;
+    PLCHAR_VECTOR timefmt;
+    PLINT         i;
+    PLINT         xdigmax, xdigits, xdigmax_old, xdigits_old;
+    PLINT         ydigmax, ydigits, ydigmax_old, ydigits_old;
+    PLINT         lxmin, lxmax, lymin, lymax;
+    PLINT         pxmin, pxmax, pymin, pymax;
+    PLFLT         default_mm, char_height_mm, height_mm;
+    PLFLT         string_length_mm = 0.0, pos_mm = 0.0;
 
     // Assume label data is for placement of exponents if no custom
     // label function is provided.
@@ -1947,8 +1947,8 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
     // -O3 -Wuninitialized warnings that are obvious false alarms from
     // the clarity of the code associated with the true or false
     // result for custom_exponent_placement.
-    PLFLT      pos          = 0.0, height = 0.0, just = 0.0;
-    const char * esc_string = plgesc_string();
+    PLFLT         pos        = 0.0, height = 0.0, just = 0.0;
+    PLCHAR_VECTOR esc_string = plgesc_string();
 
     plgchr( &default_mm, &char_height_mm );
 
@@ -2500,7 +2500,7 @@ label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const c
 //--------------------------------------------------------------------------
 void plP_default_label_log( PLINT PL_UNUSED( axis ), PLFLT value, char *string, PLINT len, void * PL_UNUSED( data ) )
 {
-    const char * esc_string = plgesc_string();
+    PLCHAR_VECTOR esc_string = plgesc_string();
     // Exponential, i.e. 10^-1, 10^0, 10^1, etc
     snprintf( string, (size_t) len, "10%su%d", esc_string, (int) ROUND( value ) );
 }
@@ -2648,10 +2648,10 @@ c_plslabelfunc( PLLABEL_FUNC_callback label_func, PLPointer label_data )
     plsc->label_data = label_data;
 }
 
-static const char *
+static PLCHAR_VECTOR
 plgesc_string( void )
 {
-    static const char *esc_strings = { "!\0#\0$\0%\0&\0*\0@\0^\0~\0" };
+    static PLCHAR_VECTOR esc_strings = { "!\0#\0$\0%\0&\0*\0@\0^\0~\0" };
     int d;
     // Follow plgesc logic here which is to set the default escape
     // if plsc->esc is in its initial state.

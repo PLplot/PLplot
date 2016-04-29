@@ -24,20 +24,20 @@
 
 // Drawing modes to demonstrate
 #define NUM_MODES    3
-PLINT      drawing_modes[NUM_MODES] = {
+PLINT         drawing_modes[NUM_MODES] = {
     PL_DRAWMODE_DEFAULT,
     PL_DRAWMODE_REPLACE,
     PL_DRAWMODE_XOR
 };
 
-const char *drawing_mode_names[NUM_MODES] = {
+PLCHAR_VECTOR drawing_mode_names[NUM_MODES] = {
     "Default drawing mode",
     "Replace destination with source",
     "XOR drawing"
 };
 
 void initialize_colors( void );
-void draw_page( PLINT mode, const char *title );
+void draw_page( PLINT mode, PLCHAR_VECTOR title );
 
 //--------------------------------------------------------------------------
 // main
@@ -89,7 +89,7 @@ void initialize_colors( void )
     plscol0a( 3, 0, 0, 255, 0.3 );
 }
 
-void draw_page( PLINT mode, const char *title )
+void draw_page( PLINT mode, PLCHAR_VECTOR title )
 {
     PLFLT xs[3], ys[3];
     PLFLT over_x, over_y, over_r;

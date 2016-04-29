@@ -55,10 +55,12 @@ static PLFLT fc_minz, fc_maxz;
 
 static void plgrid3( PLFLT );
 static void plnxtv( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
-static void plside3( const PLFLT *, const PLFLT *, PLF2OPS, PLPointer, PLINT, PLINT, PLINT );
-static void plt3zz( PLINT, PLINT, PLINT, PLINT,
-                    PLINT, PLINT *, const PLFLT *, const PLFLT *, PLF2OPS, PLPointer,
-                    PLINT, PLINT, PLINT *, PLINT *, PLFLT* );
+static void
+plside3( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLINT opt );
+static void
+plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
+        PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+        PLINT *u, PLINT *v, PLFLT* c );
 static void plnxtvhi( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvlo( PLINT *, PLINT *, PLFLT*, PLINT, PLINT );
 static void plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n );
@@ -67,8 +69,8 @@ static void savehipoint( PLINT, PLINT );
 static void savelopoint( PLINT, PLINT );
 static void swaphiview( void );
 static void swaploview( void );
-static void myexit( const char * );
-static void myabort( const char * );
+static void myexit( PLCHAR_VECTOR );
+static void myabort( PLCHAR_VECTOR );
 static void freework( void );
 static int  plabv( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
 static void pl3cut( PLINT, PLINT, PLINT, PLINT, PLINT,
@@ -113,13 +115,13 @@ c_pllightsource( PLFLT x, PLFLT y, PLFLT z )
 //--------------------------------------------------------------------------
 
 void
-c_plmesh( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt )
+c_plmesh( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny, PLINT opt )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, NULL, 0 );
 }
 
 void
-plfmesh( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
+plfmesh( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
          PLINT nx, PLINT ny, PLINT opt )
 {
     plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, NULL, 0 );
@@ -145,15 +147,15 @@ plfmesh( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plmeshc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny, PLINT opt,
-           const PLFLT *clevel, PLINT nlevel )
+c_plmeshc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny, PLINT opt,
+           PLFLT_VECTOR clevel, PLINT nlevel )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | MESH, clevel, nlevel );
 }
 
 void
-plfmeshc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
-          PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
+plfmeshc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+          PLINT nx, PLINT ny, PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel )
 {
     plfplot3dc( x, y, zops, zp, nx, ny, opt | MESH, clevel, nlevel );
 }
@@ -321,16 +323,16 @@ shade_triangle( PLFLT x0, PLFLT y0, PLFLT z0,
 //--------------------------------------------------------------------------
 
 void
-c_plsurf3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
-            PLINT opt, const PLFLT *clevel, PLINT nlevel )
+c_plsurf3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny,
+            PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel )
 {
     plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
         opt, clevel, nlevel );
 }
 
 void
-plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
-           PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
+plfsurf3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+           PLINT nx, PLINT ny, PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel )
 {
     PLINT i;
     PLINT *indexymin = (PLINT *) malloc( (size_t) nx * sizeof ( PLINT ) );
@@ -384,18 +386,18 @@ plfsurf3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plsurf3dl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z, PLINT nx, PLINT ny,
-             PLINT opt, const PLFLT *clevel, PLINT nlevel,
-             PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax )
+c_plsurf3dl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny,
+             PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel,
+             PLINT indexxmin, PLINT indexxmax, PLINT_VECTOR indexymin, PLINT_VECTOR indexymax )
 {
     plfsurf3dl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
         opt, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
 }
 
 void
-plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-            PLINT opt, const PLFLT *clevel, PLINT nlevel,
-            PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax )
+plfsurf3dl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+            PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel,
+            PLINT indexxmin, PLINT indexxmax, PLINT_VECTOR indexymin, PLINT_VECTOR indexymax )
 {
     PLFLT      cxx, cxy, cyx, cyy, cyz;
     PLINT      i, j, k;
@@ -616,7 +618,7 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
             }
         }
         // Fill cont structure with contours.
-        cont_store( (const PLFLT * const *) zstore, nx, ny, indexxmin + 1, indexxmax, 1, ny,
+        cont_store( (PLFLT_MATRIX) zstore, nx, ny, indexxmin + 1, indexxmax, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         // Free the 2D input arrays to cont_store since not needed any more.
@@ -855,14 +857,14 @@ plfsurf3dl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx
 //--------------------------------------------------------------------------
 
 void
-c_plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
+c_plot3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z,
           PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
     plfplot3dc( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
 }
 
 void
-plfplot3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
+plfplot3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
            PLINT nx, PLINT ny, PLINT opt, PLBOOL side )
 {
     plfplot3dc( x, y, zops, zp, nx, ny, opt | ( side != 0 ? DRAW_SIDES : 0 ), NULL, 0 );
@@ -878,16 +880,16 @@ plfplot3d( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT * const*z,
+c_plot3dc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z,
            PLINT nx, PLINT ny, PLINT opt,
-           const PLFLT *clevel, PLINT nlevel )
+           PLFLT_VECTOR clevel, PLINT nlevel )
 {
     plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
 
 void
-plfplot3dc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
-            PLINT nx, PLINT ny, PLINT opt, const PLFLT *clevel, PLINT nlevel )
+plfplot3dc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+            PLINT nx, PLINT ny, PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel )
 {
     plfplot3dcl( x, y, zops, zp, nx, ny, opt, clevel, nlevel, 0, 0, NULL, NULL );
 }
@@ -916,10 +918,10 @@ plfplot3dc( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
 //--------------------------------------------------------------------------
 
 void
-c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
+c_plot3dcl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z,
             PLINT nx, PLINT ny, PLINT opt,
-            const PLFLT *clevel, PLINT nlevel,
-            PLINT indexxmin, PLINT indexxmax, const PLINT *indexymin, const PLINT *indexymax )
+            PLFLT_VECTOR clevel, PLINT nlevel,
+            PLINT indexxmin, PLINT indexxmax, PLINT_VECTOR indexymin, PLINT_VECTOR indexymax )
 {
     plfplot3dcl( x, y, plf2ops_c(), (PLPointer) z, nx, ny,
         opt, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
@@ -965,10 +967,10 @@ c_plot3dcl( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
 //--------------------------------------------------------------------------
 
 void
-plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
+plfplot3dcl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
              PLINT nx, PLINT ny, PLINT opt,
-             const PLFLT *clevel, PLINT nlevel,
-             PLINT PL_UNUSED( indexxmin ), PLINT PL_UNUSED( indexxmax ), const PLINT * PL_UNUSED( indexymin ), const PLINT * PL_UNUSED( indexymax ) )
+             PLFLT_VECTOR clevel, PLINT nlevel,
+             PLINT PL_UNUSED( indexxmin ), PLINT PL_UNUSED( indexxmax ), PLINT_VECTOR PL_UNUSED( indexymin ), PLINT_VECTOR PL_UNUSED( indexymax ) )
 {
     PLFLT cxx, cxy, cyx, cyy, cyz;
     PLINT init, ix, iy, color;
@@ -978,7 +980,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
     PLINT clipped = 0, base_cont = 0, side = 0;
     PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
     PLFLT *_x = NULL, *_y = NULL, **_z = NULL;
-    const PLFLT *x_modified, *y_modified;
+    PLFLT_VECTOR x_modified, y_modified;
     int i;
 
     pl3mode = 0;
@@ -1147,8 +1149,8 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         nx   = _nx;
         ny   = _ny;
         // Do not want to modify input x and y (const modifier)
-        x_modified = (const PLFLT *) _x;
-        y_modified = (const PLFLT *) _y;
+        x_modified = (PLFLT_VECTOR) _x;
+        y_modified = (PLFLT_VECTOR) _y;
     }
     else
     {
@@ -1323,7 +1325,7 @@ plfplot3dcl( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp,
         pl3upv = 0;
 
         // Fill cont structure with contours.
-        cont_store( (const PLFLT * const *) zstore, nx, ny, 1, nx, 1, ny,
+        cont_store( (PLFLT_MATRIX) zstore, nx, ny, 1, nx, 1, ny,
             clevel, nlevel, pltr2, (void *) &cgrid2, &cont );
 
         // Free the 2D input arrays to cont_store since not needed any more.
@@ -1618,7 +1620,7 @@ plGetAngleToLight( PLFLT* x, PLFLT* y, PLFLT* z )
 
 static void
 plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
-        const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+        PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
         PLINT *u, PLINT *v, PLFLT* c )
 {
     PLINT n = 0;
@@ -1700,7 +1702,7 @@ plt3zz( PLINT x0, PLINT y0, PLINT dx, PLINT dy, PLINT flag, PLINT *init,
 //--------------------------------------------------------------------------
 
 static void
-plside3( const PLFLT *x, const PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLINT opt )
+plside3( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny, PLINT opt )
 {
     PLINT i;
     PLFLT cxx, cxy, cyx, cyy, cyz;
@@ -2643,7 +2645,7 @@ freework( void )
 //--------------------------------------------------------------------------
 
 static void
-myexit( const char *msg )
+myexit( PLCHAR_VECTOR msg )
 {
     freework();
     plexit( msg );
@@ -2657,7 +2659,7 @@ myexit( const char *msg )
 //--------------------------------------------------------------------------
 
 static void
-myabort( const char *msg )
+myabort( PLCHAR_VECTOR msg )
 {
     freework();
     plabort( msg );

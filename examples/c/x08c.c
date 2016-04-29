@@ -29,7 +29,7 @@
 // (used for non-dynamic and static cases) for unknown reasons.  So
 // use private header instead to declare plexit (which does work).
 //PLDLLIMPEXP void
-//plexit( const char *errormsg );
+//plexit( PLCHAR_VECTOR errormsg );
 #include "plplotP.h"
 
 // These values must be odd, for the middle
@@ -43,7 +43,7 @@ static PLFLT alt[] = { 60.0, 40.0 };
 static PLFLT az[] = { 30.0, -30.0 };
 static void cmap1_init( int );
 
-static const char *title[] =
+static PLCHAR_VECTOR title[] =
 {
     "#frPLplot Example 8 - Alt=60, Az=30",
     "#frPLplot Example 8 - Alt=40, Az=-30",
@@ -141,9 +141,11 @@ int
 main( int argc, char *argv[] )
 {
     int      i, j, k;
-    PLFLT    *x, *y, **z, *z_row_major, *z_col_major;
-    PLFLT    dx = 2. / (PLFLT) ( XPTS - 1 );
-    PLFLT    dy = 2. / (PLFLT) ( YPTS - 1 );
+    PLFLT    *x, *y, **z;
+    // Shut up spurious undefined warnings from the compiler.
+    PLFLT    *z_row_major = NULL, *z_col_major = NULL;
+    PLFLT    dx           = 2. / (PLFLT) ( XPTS - 1 );
+    PLFLT    dy           = 2. / (PLFLT) ( YPTS - 1 );
     PLfGrid2 grid_c, grid_row_major, grid_col_major;
     PLFLT    xx, yy, r;
     PLINT    ifshade;
@@ -303,7 +305,7 @@ main( int argc, char *argv[] )
     }
 #endif
 
-    plMinMax2dGrid( (const PLFLT * const *) z, XPTS, YPTS, &zmax, &zmin );
+    plMinMax2dGrid( (PLFLT_MATRIX) z, XPTS, YPTS, &zmax, &zmin );
     step = ( zmax - zmin ) / ( nlevel + 1 );
     for ( i = 0; i < nlevel; i++ )
         clevel[i] = zmin + step + step * i;
@@ -336,7 +338,7 @@ main( int argc, char *argv[] )
                 if ( if_plfsurf3d )
                     plfsurf3d( x, y, plf2ops_c(), (PLPointer) z, XPTS, YPTS, 0, NULL, 0 );
                 else
-                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, 0, NULL, 0 );
+                    plsurf3d( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, 0, NULL, 0 );
             }
             else if ( ifshade == 1 ) // magnitude colored plot
             {
@@ -344,7 +346,7 @@ main( int argc, char *argv[] )
                 if ( if_plfsurf3d )
                     plfsurf3d( x, y, plf2ops_grid_c(), ( PLPointer ) & grid_c, XPTS, YPTS, MAG_COLOR, NULL, 0 );
                 else
-                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
+                    plsurf3d( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, MAG_COLOR, NULL, 0 );
             }
             else if ( ifshade == 2 ) //  magnitude colored plot with faceted squares
             {
@@ -352,7 +354,7 @@ main( int argc, char *argv[] )
                 if ( if_plfsurf3d )
                     plfsurf3d( x, y, plf2ops_grid_row_major(), ( PLPointer ) & grid_row_major, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
                 else
-                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
+                    plsurf3d( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, MAG_COLOR | FACETED, NULL, 0 );
             }
             else if ( ifshade == 3 ) // magnitude colored plot with contours
             {
@@ -360,12 +362,12 @@ main( int argc, char *argv[] )
                 if ( if_plfsurf3d )
                     plfsurf3d( x, y, plf2ops_grid_col_major(), ( PLPointer ) & grid_col_major, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
                 else
-                    plsurf3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
+                    plsurf3d( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel );
             }
             else // magnitude colored plot with contours and index limits.
             {
                 cmap1_init( 0 );
-                plsurf3dl( x, y, (const PLFLT * const *) zlimited, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
+                plsurf3dl( x, y, (PLFLT_MATRIX) zlimited, XPTS, YPTS, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, nlevel, indexxmin, indexxmax, indexymin, indexymax );
             }
         }
     }

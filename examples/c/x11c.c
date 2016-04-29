@@ -25,12 +25,12 @@
 #define YPTS      46            // Data points in y
 #define LEVELS    10
 
-static int        opt[] = { DRAW_LINEXY, DRAW_LINEXY };
+static int           opt[] = { DRAW_LINEXY, DRAW_LINEXY };
 
-static PLFLT      alt[] = { 33.0, 17.0 };
-static PLFLT      az[] = { 24.0, 115.0 };
+static PLFLT         alt[] = { 33.0, 17.0 };
+static PLFLT         az[] = { 24.0, 115.0 };
 
-static const char *title[4] =
+static PLCHAR_VECTOR title[4] =
 {
     "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
     "#frPLplot Example 11 - Alt=17, Az=115, Opt=3",
@@ -112,7 +112,7 @@ main( int argc, char *argv[] )
         }
     }
 
-    plMinMax2dGrid( (const PLFLT * const *) z, XPTS, YPTS, &zmax, &zmin );
+    plMinMax2dGrid( (PLFLT_MATRIX) z, XPTS, YPTS, &zmax, &zmin );
     step = ( zmax - zmin ) / ( nlevel + 1 );
     for ( i = 0; i < nlevel; i++ )
         clevel[i] = zmin + step + step * i;
@@ -135,19 +135,19 @@ main( int argc, char *argv[] )
 
             // wireframe plot
             if ( i == 0 )
-                plmesh( x, y, (const PLFLT * const *) z, XPTS, YPTS, opt[k] );
+                plmesh( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, opt[k] );
 
             // magnitude colored wireframe plot
             else if ( i == 1 )
-                plmesh( x, y, (const PLFLT * const *) z, XPTS, YPTS, opt[k] | MAG_COLOR );
+                plmesh( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, opt[k] | MAG_COLOR );
 
             // magnitude colored wireframe plot with sides
             else if ( i == 2 )
-                plot3d( x, y, (const PLFLT * const *) z, XPTS, YPTS, opt[k] | MAG_COLOR, 1 );
+                plot3d( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, opt[k] | MAG_COLOR, 1 );
 
             // magnitude colored wireframe plot with base contour
             else if ( i == 3 )
-                plmeshc( x, y, (const PLFLT * const *) z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
+                plmeshc( x, y, (PLFLT_MATRIX) z, XPTS, YPTS, opt[k] | MAG_COLOR | BASE_CONT,
                     clevel, nlevel );
 
             plcol0( 3 );

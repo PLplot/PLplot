@@ -419,10 +419,10 @@ plot5( void )
 
     plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     plcol0( 2 );
-    plcont( (const PLFLT * const *) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    plcont( (PLFLT_MATRIX) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
     plstyl( 1, &mark, &space );
     plcol0( 3 );
-    plcont( (const PLFLT * const *) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    plcont( (PLFLT_MATRIX) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
     plcol0( 1 );
     pllab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
     plflush();

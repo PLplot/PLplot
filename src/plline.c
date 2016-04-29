@@ -72,7 +72,7 @@ c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
 //--------------------------------------------------------------------------
 
 void
-c_plline( PLINT n, const PLFLT *x, const PLFLT *y )
+c_plline( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y )
 {
     if ( plsc->level < 3 )
     {
@@ -128,7 +128,7 @@ c_plpath( PLINT n, PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 )
 // This version adds clipping against the 3d bounding box specified in plw3d
 //--------------------------------------------------------------------------
 void
-c_plline3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z )
+c_plline3( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z )
 {
     int   i;
     PLFLT vmin[3], vmax[3], zscale;
@@ -263,7 +263,7 @@ c_plline3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z )
 //--------------------------------------------------------------------------
 
 void
-c_plpoly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const PLBOOL *draw, PLBOOL ifcc )
+c_plpoly3( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, PLBOOL_VECTOR draw, PLBOOL ifcc )
 {
     int   i;
     PLFLT vmin[3], vmax[3], zscale;
@@ -401,7 +401,7 @@ c_plpoly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const PLBOOL
 //--------------------------------------------------------------------------
 
 void
-c_plstyl( PLINT nms, const PLINT *mark, const PLINT *space )
+c_plstyl( PLINT nms, PLINT_VECTOR mark, PLINT_VECTOR space )
 {
     short int i;
     short int flag;
@@ -551,7 +551,7 @@ plP_draphy_poly( PLINT *x, PLINT *y, PLINT n )
 //--------------------------------------------------------------------------
 
 void
-plP_drawor_poly( const PLFLT *x, const PLFLT *y, PLINT n )
+plP_drawor_poly( PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT n )
 {
     PLINT i, j, ib, ilim;
     PLFLT xt, yt;

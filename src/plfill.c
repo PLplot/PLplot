@@ -88,7 +88,7 @@ static void
 buildlist( PLINT, PLINT, PLINT, PLINT, PLINT, PLINT, PLINT );
 
 static int
-notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp );
+notpointinpolygon( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y, PLINT xp, PLINT yp );
 
 static int
 circulation( PLINT *x, PLINT *y, PLINT npts );
@@ -98,18 +98,18 @@ static void
 fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                            PLINT fill_status,
                            void ( *fill )( short *, short *, PLINT ),
-                           const PLINT *x1, const PLINT *y1,
+                           PLINT_VECTOR x1, PLINT_VECTOR y1,
                            PLINT i1start, PLINT n1,
-                           const PLINT *x2, const PLINT *y2,
-                           const PLINT *if2, PLINT n2 );
+                           PLINT_VECTOR x2, PLINT_VECTOR y2,
+                           PLINT_VECTOR if2, PLINT n2 );
 
 static int
-positive_orientation( PLINT n, const PLINT *x, const PLINT *y );
+positive_orientation( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y );
 
 static int
 number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
-                  PLINT i1, PLINT n1, const PLINT *x1, const PLINT *y1,
-                  PLINT n2, const PLINT *x2, const PLINT *y2 );
+                  PLINT i1, PLINT n1, PLINT_VECTOR x1, PLINT_VECTOR y1,
+                  PLINT n2, PLINT_VECTOR x2, PLINT_VECTOR y2 );
 #endif
 
 static int
@@ -129,7 +129,7 @@ notcrossed( PLINT *xintersect, PLINT *yintersect,
 //--------------------------------------------------------------------------
 
 void
-c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
+c_plfill( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y )
 {
     PLINT _xpoly[PL_MAXPOLY], _ypoly[PL_MAXPOLY];
     PLINT *xpoly, *ypoly;
@@ -199,7 +199,7 @@ c_plfill( PLINT n, const PLFLT *x, const PLFLT *y )
 //--------------------------------------------------------------------------
 
 void
-c_plfill3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z )
+c_plfill3( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z )
 {
     PLFLT _tx[PL_MAXPOLY], _ty[PL_MAXPOLY], _tz[PL_MAXPOLY];
     PLFLT *tx, *ty, *tz;
@@ -1209,7 +1209,7 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
 
 // PLFLT wrapper for !notpointinpolygon.
 int
-plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp )
+plP_pointinpolygon( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT xp, PLFLT yp )
 {
     int i, return_value;
     PLINT *xint, *yint;
@@ -1255,7 +1255,7 @@ plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT xp, PLFLT yp 
 // Temporary until get rid of old code altogether.
 #define NEW_NOTPOINTINPOLYGON_CODE
 static int
-notpointinpolygon( PLINT n, const PLINT *x, const PLINT *y, PLINT xp, PLINT yp )
+notpointinpolygon( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y, PLINT xp, PLINT yp )
 {
 #ifdef NEW_NOTPOINTINPOLYGON_CODE
     int i, im1, ifnotcrossed;
@@ -1460,10 +1460,10 @@ void
 fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                            PLINT fill_status,
                            void ( *fill )( short *, short *, PLINT ),
-                           const PLINT *x1, const PLINT *y1,
+                           PLINT_VECTOR x1, PLINT_VECTOR y1,
                            PLINT i1start, PLINT n1,
-                           const PLINT *x2, const PLINT *y2,
-                           const PLINT *if2, PLINT n2 )
+                           PLINT_VECTOR x2, PLINT_VECTOR y2,
+                           PLINT_VECTOR if2, PLINT n2 )
 {
     PLINT i1, i1m1, i1start_new,
           i2, i2m1,
@@ -1477,7 +1477,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     *xsplit2, *ysplit2, *ifsplit2;
     PLINT ifill, nfill = 0,
           ifnotpolygon1inpolygon2, ifnotpolygon2inpolygon1;
-    const PLINT *xfiller, *yfiller;
+    PLINT_VECTOR xfiller, *yfiller;
     short *xfill, *yfill;
 
     if ( recursion_depth > MAX_RECURSION_DEPTH )
@@ -2032,7 +2032,7 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
 // the sum of the trapezoid areas have terms which are zero when calculated
 // with the telescoping rule so the final formula is quite simple.
 int
-positive_orientation( PLINT n, const PLINT *x, const PLINT *y )
+positive_orientation( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y )
 {
     PLINT i, im1;
     // Use PLFLT for all calculations to avoid integer overflows.  Also,
@@ -2073,8 +2073,8 @@ positive_orientation( PLINT n, const PLINT *x, const PLINT *y )
 
 int
 number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
-                  PLINT i1, PLINT n1, const PLINT *x1, const PLINT *y1,
-                  PLINT n2, const PLINT *x2, const PLINT *y2 )
+                  PLINT i1, PLINT n1, PLINT_VECTOR x1, PLINT_VECTOR y1,
+                  PLINT n2, PLINT_VECTOR x2, PLINT_VECTOR y2 )
 {
     int i1m1, i2, i2m1, ifnotcrossed;
     int ifxsort, ifascend, count_crossings = 0, status = 0;

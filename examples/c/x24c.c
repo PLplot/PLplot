@@ -76,7 +76,7 @@ static PLFLT sy[] = {
 
 // Taken from http://www.columbia.edu/~fdc/pace/
 
-static const char* peace[] = {
+static PLCHAR_VECTOR peace[] = {
     // Mandarin
     "#<0x00>和平",
     // Hindi

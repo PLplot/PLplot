@@ -63,7 +63,7 @@ c_plctime( PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec,
 
 // Set format for date / time labels.
 void
-c_pltimefmt( const char *fmt )
+c_pltimefmt( PLCHAR_VECTOR fmt )
 {
     if ( plsc->timefmt )
         free_mem( plsc->timefmt );

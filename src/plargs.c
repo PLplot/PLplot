@@ -115,67 +115,67 @@ static void Syntax( void );
 
 // Option handlers
 
-static int opt_h( const char *, const char *, void * );
-static int opt_v( const char *, const char *, void * );
-static int opt_verbose( const char *, const char *, void * );
-static int opt_debug( const char *, const char *, void * );
-static int opt_hack( const char *, const char *, void * );
-static int opt_dev( const char *, const char *, void * );
-static int opt_o( const char *, const char *, void * );
-static int opt_geo( const char *, const char *, void * );
-static int opt_a( const char *, const char *, void * );
-static int opt_jx( const char *, const char *, void * );
-static int opt_jy( const char *, const char *, void * );
-static int opt_mar( const char *, const char *, void * );
-static int opt_ori( const char *, const char *, void * );
-static int opt_freeaspect( const char *, const char *, void * );
-static int opt_portrait( const char *, const char *, void * );
-static int opt_width( const char *, const char *, void * );
-static int opt_bg( const char *, const char *, void * );
-static int opt_ncol0( const char *, const char *, void * );
-static int opt_ncol1( const char *, const char *, void * );
-static int opt_fam( const char *, const char *, void * );
-static int opt_fsiz( const char *, const char *, void * );
-static int opt_fbeg( const char *, const char *, void * );
-static int opt_finc( const char *, const char *, void * );
-static int opt_fflen( const char *, const char *, void * );
-static int opt_bufmax( const char *, const char *, void * );
-static int opt_nopixmap( const char *, const char *, void * );
-static int opt_db( const char *, const char *, void * );
-static int opt_np( const char *, const char *, void * );
-static int opt_px( const char *, const char *, void * );
-static int opt_py( const char *, const char *, void * );
-static int opt_wplt( const char *, const char *, void * );
-static int opt_drvopt( const char *, const char *, void * );
+static int opt_h( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_v( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_verbose( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_debug( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_hack( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_dev( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_o( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_geo( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_a( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_jx( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_jy( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_mar( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_ori( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_freeaspect( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_portrait( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_width( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_bg( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_ncol0( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_ncol1( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fam( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fsiz( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fbeg( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_finc( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fflen( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_bufmax( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_nopixmap( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_db( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_np( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_px( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_py( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_wplt( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_drvopt( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 
-static int opt_plserver( const char *, const char *, void * );
-static int opt_plwindow( const char *, const char *, void * );
-static int opt_auto_path( const char *, const char *, void * );
-static int opt_bufmax( const char *, const char *, void * );
-static int opt_server_name( const char *, const char *, void * );
-static int opt_tk_file( const char *, const char *, void * );
-static int opt_dpi( const char *, const char *, void * );
-static int opt_dev_compression( const char *, const char *, void * );
-static int opt_cmap0( const char *, const char *, void * );
-static int opt_cmap1( const char *, const char *, void * );
-static int opt_locale( const char *, const char *, void * );
-static int opt_eofill( const char *, const char *, void * );
+static int opt_plserver( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_plwindow( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_auto_path( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_bufmax( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_server_name( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_tk_file( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_dpi( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_dev_compression( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_cmap0( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_cmap1( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_locale( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_eofill( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 
-static int opt_mfo( const char *, const char *, void * );
-static int opt_mfi( const char *, const char *, void * );
+static int opt_mfo( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_mfi( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 
 // Global variables
 
-static const char *program = NULL;
-static const char *usage   = NULL;
+static PLCHAR_VECTOR program = NULL;
+static PLCHAR_VECTOR usage   = NULL;
 
-static int        mode_full;
-static int        mode_quiet;
-static int        mode_nodelete;
-static int        mode_showall;
-static int        mode_noprogram;
-static int        mode_nodash;
-static int        mode_skip;
+static int           mode_full;
+static int           mode_quiet;
+static int           mode_nodelete;
+static int           mode_showall;
+static int           mode_noprogram;
+static int           mode_nodash;
+static int           mode_skip;
 
 // Temporary buffer used for parsing
 
@@ -189,13 +189,13 @@ static char opttmp[OPTMAX];
 //! The table is defined as follows
 //!
 //! typedef struct {
-//!     const char *opt;
-//!     int  (*handler)	(const char *, const char *, void *);
+//!     PLCHAR_VECTOR opt;
+//!     int  (*handler)	(PLCHAR_VECTOR, PLCHAR_VECTOR, void *);
 //!     void *client_data;
 //!     void *var;
 //!     long mode;
-//!     const char *syntax;
-//!     const char *desc;
+//!     PLCHAR_VECTOR syntax;
+//!     PLCHAR_VECTOR desc;
 //! } PLOptionTable;
 //!
 //! where each entry has the following meaning:
@@ -678,7 +678,7 @@ static PLOptionTable ploption_table[] = {
     }                           // long syntax
 };
 
-static const char    *plplot_notes[] = {
+static PLCHAR_VECTOR plplot_notes[] = {
     "All parameters must be white-space delimited.  Some options are driver",
     "dependent.  Please see the PLplot reference document for more detail.",
     NULL
@@ -703,7 +703,7 @@ static const char    *plplot_notes[] = {
 typedef struct
 {
     PLOptionTable *options;
-    const char    *name;
+    PLCHAR_VECTOR name;
     const char    **notes;
 } PLOptionInfo;
 
@@ -751,14 +751,14 @@ static int       tables = 1;
 //--------------------------------------------------------------------------
 
 int
-plSetOpt( const char * opt, const char *opt_arg )
+plSetOpt( PLCHAR_VECTOR opt, PLCHAR_VECTOR opt_arg )
 {
     return ( c_plsetopt( opt, opt_arg ) );
 }
 #endif //#ifdef PL_DEPRECATED
 
 PLINT
-c_plsetopt( const char * opt, const char *opt_arg )
+c_plsetopt( PLCHAR_VECTOR opt, PLCHAR_VECTOR opt_arg )
 {
     int  mode = 0, argc = 2, status;
     char *argv[3];
@@ -792,7 +792,7 @@ c_plsetopt( const char * opt, const char *opt_arg )
 //--------------------------------------------------------------------------
 
 PLINT
-plMergeOpts( PLOptionTable *options, const char *name, const char **notes )
+plMergeOpts( PLOptionTable *options, PLCHAR_VECTOR name, PLCHAR_VECTOR *notes )
 {
     PLOptionTable *tab;
 
@@ -898,7 +898,7 @@ c_plparseopts( int *p_argc, char **argv, PLINT mode )
     if ( !mode_noprogram )
     {
         plsc->program = plstrdup( argv[0] );
-        program       = (const char *) plsc->program;
+        program       = (PLCHAR_VECTOR) plsc->program;
         --myargc; ++argv;
     }
     if ( myargc == 0 )
@@ -1284,7 +1284,7 @@ GetOptarg( char **popt_arg, int *p_myargc, char ***p_argv, int *p_argc )
 //--------------------------------------------------------------------------
 
 void
-plSetUsage( const char *program_string, const char *usage_string )
+plSetUsage( PLCHAR_VECTOR program_string, PLCHAR_VECTOR usage_string )
 {
     if ( program_string != NULL )
         program = program_string;
@@ -1601,7 +1601,7 @@ plP_FreeDrvOpts()
 //--------------------------------------------------------------------------
 
 static int
-opt_h( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_h( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     if ( !mode_quiet )
         Help();
@@ -1624,7 +1624,7 @@ opt_h( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * 
 //--------------------------------------------------------------------------
 
 static int
-opt_v( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_v( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     if ( !mode_quiet )
         fprintf( stderr, "PLplot library version: %s\n", PLPLOT_VERSION );
@@ -1647,7 +1647,7 @@ opt_v( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * 
 //--------------------------------------------------------------------------
 
 static int
-opt_verbose( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_verbose( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->verbose = 1;
     return 0;
@@ -1668,7 +1668,7 @@ opt_verbose( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), v
 //--------------------------------------------------------------------------
 
 static int
-opt_debug( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_debug( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->debug   = 1;
     plsc->verbose = 1;
@@ -1690,7 +1690,7 @@ opt_debug( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), voi
 //--------------------------------------------------------------------------
 
 static int
-opt_hack( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_hack( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->hack = 1;
     return 0;
@@ -1711,7 +1711,7 @@ opt_hack( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void
 //--------------------------------------------------------------------------
 
 static int
-opt_dev( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_dev( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdev( opt_arg );
     return 0;
@@ -1732,7 +1732,7 @@ opt_dev( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 
 static int
-opt_o( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_o( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsfnam( opt_arg );
     return 0;
@@ -1753,7 +1753,7 @@ opt_o( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cli
 //--------------------------------------------------------------------------
 
 static int
-opt_mar( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_mar( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( atof( opt_arg ), PL_NOTSET, PL_NOTSET, PL_NOTSET );
     return 0;
@@ -1774,7 +1774,7 @@ opt_mar( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 
 static int
-opt_a( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_a( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, atof( opt_arg ), PL_NOTSET, PL_NOTSET );
     return 0;
@@ -1795,7 +1795,7 @@ opt_a( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cli
 //--------------------------------------------------------------------------
 
 static int
-opt_jx( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_jx( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, PL_NOTSET, atof( opt_arg ), PL_NOTSET );
     return 0;
@@ -1816,7 +1816,7 @@ opt_jx( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 
 static int
-opt_jy( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_jy( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, PL_NOTSET, PL_NOTSET, atof( opt_arg ) );
     return 0;
@@ -1837,7 +1837,7 @@ opt_jy( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 
 static int
-opt_ori( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_ori( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdiori( atof( opt_arg ) );
     return 0;
@@ -1858,7 +1858,7 @@ opt_ori( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 
 static int
-opt_freeaspect( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_freeaspect( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->freeaspect = 1;
     return 0;
@@ -1893,7 +1893,7 @@ opt_freeaspect( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg )
 //--------------------------------------------------------------------------
 
 static int
-opt_portrait( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_portrait( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->portrait = 1;
     return 0;
@@ -1914,7 +1914,7 @@ opt_portrait( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), 
 //--------------------------------------------------------------------------
 
 static int
-opt_width( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_width( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     double width;
 
@@ -1951,13 +1951,13 @@ opt_width( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_bg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_bg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
-    const char *rgb;
-    char       *color_field, *alpha_field;
-    long       bgcolor;
-    PLINT      r, g, b;
-    PLFLT      a;
+    PLCHAR_VECTOR rgb;
+    char          *color_field, *alpha_field;
+    long          bgcolor;
+    PLINT         r, g, b;
+    PLFLT         a;
 
 // Strip off leading "#" (TK-ism) if present.
 
@@ -2034,7 +2034,7 @@ opt_bg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_ncol0( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->ncol0 = atoi( opt_arg );
     return 0;
@@ -2055,7 +2055,7 @@ opt_ncol0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_ncol1( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->ncol1 = atoi( opt_arg );
     return 0;
@@ -2076,7 +2076,7 @@ opt_ncol1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_wplt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_wplt( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     char  *field;
     PLFLT xl, yl, xr, yr;
@@ -2123,7 +2123,7 @@ opt_wplt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 
 static int
-opt_drvopt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_drvopt( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     char      t, *tt, *option, *value;
     int       fl = 0;
@@ -2213,7 +2213,7 @@ opt_drvopt( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_fam( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_fam( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsfam( 1, -1, -1 );
     return 0;
@@ -2243,7 +2243,7 @@ opt_fam( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void 
 //--------------------------------------------------------------------------
 
 static int
-opt_fsiz( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_fsiz( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     PLINT  bytemax;
     size_t len        = strlen( opt_arg );
@@ -2301,7 +2301,7 @@ opt_fsiz( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 
 static int
-opt_fbeg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_fbeg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->member = atoi( opt_arg );
 
@@ -2323,7 +2323,7 @@ opt_fbeg( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 
 static int
-opt_finc( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_finc( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->finc = atoi( opt_arg );
 
@@ -2345,7 +2345,7 @@ opt_finc( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 
 static int
-opt_fflen( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_fflen( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->fflen = atoi( opt_arg );
 
@@ -2367,7 +2367,7 @@ opt_fflen( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_np( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_np( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plspause( 0 );
     return 0;
@@ -2388,7 +2388,7 @@ opt_np( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void *
 //--------------------------------------------------------------------------
 
 static int
-opt_nopixmap( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_nopixmap( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->nopixmap = 1;
     return 0;
@@ -2409,7 +2409,7 @@ opt_nopixmap( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), 
 //--------------------------------------------------------------------------
 
 static int
-opt_db( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_db( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->db = 1;
     return 0;
@@ -2430,7 +2430,7 @@ opt_db( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void *
 //--------------------------------------------------------------------------
 
 static int
-opt_bufmax( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_bufmax( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->bufmax = atoi( opt_arg );
     return 0;
@@ -2451,7 +2451,7 @@ opt_bufmax( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_server_name( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_server_name( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->server_name = plstrdup( opt_arg );
     return 0;
@@ -2472,7 +2472,7 @@ opt_server_name( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_U
 //--------------------------------------------------------------------------
 
 static int
-opt_plserver( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_plserver( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->plserver = plstrdup( opt_arg );
     return 0;
@@ -2493,7 +2493,7 @@ opt_plserver( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 
 static int
-opt_plwindow( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_plwindow( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->plwindow = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
@@ -2518,7 +2518,7 @@ opt_plwindow( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 
 static int
-opt_auto_path( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_auto_path( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->auto_path = plstrdup( opt_arg );
     return 0;
@@ -2539,7 +2539,7 @@ opt_auto_path( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNU
 //--------------------------------------------------------------------------
 
 static int
-opt_px( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_px( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plssub( atoi( opt_arg ), -1 );
     return 0;
@@ -2560,7 +2560,7 @@ opt_px( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 
 static int
-opt_py( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_py( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plssub( -1, atoi( opt_arg ) );
     return 0;
@@ -2585,7 +2585,7 @@ opt_py( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( cl
 //--------------------------------------------------------------------------
 
 static int
-opt_geo( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_geo( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     int   numargs;
     PLFLT xdpi = 0., ydpi = 0.;
@@ -2678,7 +2678,7 @@ opt_geo( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 
 static int
-opt_tk_file( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_tk_file( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->tk_file = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
@@ -2708,7 +2708,7 @@ opt_tk_file( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSE
 //--------------------------------------------------------------------------
 
 static int
-opt_dpi( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_dpi( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     char  *field;
     PLFLT xdpi = 0., ydpi = 0.;
@@ -2756,7 +2756,7 @@ opt_dpi( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( c
 //--------------------------------------------------------------------------
 
 static int
-opt_dev_compression( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_dev_compression( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     PLINT comp = 0;
 
@@ -2785,7 +2785,7 @@ opt_dev_compression( const char * PL_UNUSED( opt ), const char *opt_arg, void * 
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_cmap0( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plspal0( opt_arg );
     return 0;
@@ -2805,7 +2805,7 @@ opt_cmap0( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED( client_data ) )
+opt_cmap1( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plspal1( opt_arg, TRUE );
     return 0;
@@ -2825,7 +2825,7 @@ opt_cmap1( const char * PL_UNUSED( opt ), const char *opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_locale( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_locale( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     char *locale;
     if ( ( locale = setlocale( LC_NUMERIC, "" ) ) )
@@ -2859,7 +2859,7 @@ opt_locale( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), vo
 //--------------------------------------------------------------------------
 
 static int
-opt_eofill( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
+opt_eofill( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->dev_eofill = 1;
     return 0;
@@ -2879,7 +2879,7 @@ opt_eofill( const char * PL_UNUSED( opt ), const char * PL_UNUSED( opt_arg ), vo
 //--------------------------------------------------------------------------
 
 static int
-opt_mfo( const char * PL_UNUSED( opt ), const char * opt_arg, void * PL_UNUSED( client_data ) )
+opt_mfo( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->mf_outfile = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
@@ -2904,7 +2904,7 @@ opt_mfo( const char * PL_UNUSED( opt ), const char * opt_arg, void * PL_UNUSED( 
 //--------------------------------------------------------------------------
 
 static int
-opt_mfi( const char * PL_UNUSED( opt ), const char * opt_arg, void * PL_UNUSED( client_data ) )
+opt_mfi( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->mf_infile = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {

@@ -90,7 +90,7 @@ static PLOptionTable options[] = {
     }                           // long syntax
 };
 
-const char           *notes[] = { "Make sure you get it right!", NULL };
+PLCHAR_VECTOR        notes[] = { "Make sure you get it right!", NULL };
 
 // Function prototypes
 

@@ -532,16 +532,16 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
             PLINT opt, PLINT position, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
-            PLINT nlegend, const PLINT *opt_array,
+            PLINT nlegend, PLINT_VECTOR opt_array,
             PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
             PLFLT text_justification,
-            const PLINT *text_colors, const char * const *text,
-            const PLINT *box_colors, const PLINT *box_patterns,
-            const PLFLT *box_scales, const PLFLT *box_line_widths,
-            const PLINT *line_colors, const PLINT *line_styles,
-            const PLFLT *line_widths,
-            const PLINT *symbol_colors, const PLFLT *symbol_scales,
-            const PLINT *symbol_numbers, const char * const *symbols )
+            PLINT_VECTOR text_colors, PLCHAR_MATRIX text,
+            PLINT_VECTOR box_colors, PLINT_VECTOR box_patterns,
+            PLFLT_VECTOR box_scales, PLFLT_VECTOR box_line_widths,
+            PLINT_VECTOR line_colors, PLINT_VECTOR line_styles,
+            PLFLT_VECTOR line_widths,
+            PLINT_VECTOR symbol_colors, PLFLT_VECTOR symbol_scales,
+            PLINT_VECTOR symbol_numbers, PLCHAR_MATRIX symbols )
 
 {
     // Legend position
@@ -930,10 +930,10 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 //! to be removed from string.
 
 static void
-remove_characters( char *string, const char *characters )
+remove_characters( char *string, PLCHAR_VECTOR characters )
 {
-    char       *src, *dst;
-    const char *ptr;
+    char          *src, *dst;
+    PLCHAR_VECTOR ptr;
     for ( src = dst = string; *src != '\0'; src++ )
     {
         ptr = characters;
@@ -1059,13 +1059,13 @@ draw_cap( PLBOOL if_edge, PLINT orientation, PLFLT xmin, PLFLT xmax,
 //! @param values As for plcolorbar.
 
 static void
-draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
-          PLFLT ticks, PLINT sub_ticks, PLINT n_values, const PLFLT *values )
+draw_box( PLBOOL if_bb, PLINT opt, PLCHAR_VECTOR axis_opts, PLBOOL if_edge,
+          PLFLT ticks, PLINT sub_ticks, PLINT n_values, PLFLT_VECTOR values )
 {
     // axis option strings.
-    const char *edge_string;
-    size_t     length_axis_opts = strlen( axis_opts );
-    char       *local_axis_opts;
+    PLCHAR_VECTOR edge_string;
+    size_t        length_axis_opts = strlen( axis_opts );
+    char          *local_axis_opts;
 
     // local_axis_opts is local version that can be modified from
     // const input version.
@@ -1135,7 +1135,7 @@ draw_box( PLBOOL if_bb, PLINT opt, const char *axis_opts, PLBOOL if_edge,
 //! PL_COLORBAR_LABEL_(RIGHT|TOP|LEFT|BOTTOM) bits in opt.
 
 static void
-draw_label( PLBOOL if_bb, PLINT opt, const char *label )
+draw_label( PLBOOL if_bb, PLINT opt, PLCHAR_VECTOR label )
 {
     // Justification of label text
     PLFLT just = 0.0;
@@ -1528,10 +1528,10 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
               PLINT bg_color, PLINT bb_color, PLINT bb_style,
               PLFLT low_cap_color, PLFLT high_cap_color,
               PLINT cont_color, PLFLT cont_width,
-              PLINT n_labels, const PLINT *label_opts, const char * const *labels,
-              PLINT n_axes, const char * const *axis_opts,
-              const PLFLT *ticks, const PLINT *sub_ticks,
-              const PLINT *n_values, const PLFLT * const *values )
+              PLINT n_labels, PLINT_VECTOR label_opts, PLCHAR_MATRIX labels,
+              PLINT n_axes, PLCHAR_MATRIX axis_opts,
+              PLFLT_VECTOR ticks, PLINT_VECTOR sub_ticks,
+              PLINT_VECTOR n_values, PLFLT_MATRIX values )
 {
     // Min and max values
     // Assumes that the values array is sorted from smallest to largest
@@ -2088,7 +2088,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
             }
         }
         // Draw the color bar
-        plimage( (const PLFLT * const *) color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
+        plimage( (PLFLT_MATRIX) color_data, ni, nj, wx_min, wx_max, wy_min, wy_max,
             min_value, max_value, wx_min, wx_max, wy_min, wy_max );
         plFree2dGrid( color_data, ni, nj );
     }
@@ -2177,7 +2177,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
         }
 
         // Draw the color bar
-        plshades( (const PLFLT * const *) color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
+        plshades( (PLFLT_MATRIX) color_data, ni, nj, NULL, wx_min, wx_max, wy_min, wy_max,
             values[0], n_steps, 0, cont_color, cont_width, plfill, TRUE,
             pltr1, (void *) ( &grid ) );
         plFree2dGrid( color_data, ni, nj );

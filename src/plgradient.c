@@ -27,7 +27,7 @@
 static int foo;
 // software fallback for gradient.
 static void
-plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle );
+plgradient_soft( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT angle );
 
 // define where plshades plots gradient for software fallback for
 // gradient.
@@ -49,7 +49,7 @@ gradient_defined( PLFLT x, PLFLT y );
 //--------------------------------------------------------------------------
 
 void
-c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
+c_plgradient( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT angle )
 {
     if ( plsc->level < 3 )
     {
@@ -175,7 +175,7 @@ c_plgradient( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
 //--------------------------------------------------------------------------
 
 void
-plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
+plgradient_soft( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT angle )
 {
     PLFLT xrot, xrot_min, xrot_max, cosangle, sinangle;
     PLFLT xmin, xmax, ymin, ymax;
@@ -251,7 +251,7 @@ plgradient_soft( PLINT n, const PLFLT *x, const PLFLT *y, PLFLT angle )
     for ( i = 0; i < NEDGE; i++ )
         edge[i] = (PLFLT) i / (PLFLT) ( NEDGE - 1 );
 
-    plshades( (const PLFLT * const *) z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
+    plshades( (PLFLT_MATRIX) z, NX, NY, gradient_defined, xmin, xmax, ymin, ymax,
         edge, NEDGE, 0, 0, 0, plfill, 1, NULL, NULL );
     free( (void *) edge );
     plFree2dGrid( z, NX, NY );

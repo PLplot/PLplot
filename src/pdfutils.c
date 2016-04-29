@@ -71,7 +71,7 @@ pdf_set( char *option, int value )
 //--------------------------------------------------------------------------
 
 PDFstrm *
-pdf_fopen( const char *filename, const char *mode )
+pdf_fopen( PLCHAR_VECTOR filename, PLCHAR_VECTOR mode )
 {
     PDFstrm *pdfs;
 
@@ -506,7 +506,7 @@ pdf_rdx( U_CHAR *x, long nitems, PDFstrm *pdfs )
 //--------------------------------------------------------------------------
 
 int
-pdf_wr_header( PDFstrm *pdfs, const char *header )
+pdf_wr_header( PDFstrm *pdfs, PLCHAR_VECTOR header )
 {
     int i;
 
@@ -571,7 +571,7 @@ pdf_rd_header( PDFstrm *pdfs, char *header )
 //--------------------------------------------------------------------------
 
 int
-pdf_wr_string( PDFstrm *pdfs, const char *string )
+pdf_wr_string( PDFstrm *pdfs, PLCHAR_VECTOR string )
 {
     int i;
 

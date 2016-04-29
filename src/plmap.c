@@ -46,11 +46,11 @@
 #include <shapefil.h>
 
 SHPHandle
-OpenShapeFile( const char *fn );
+OpenShapeFile( PLCHAR_VECTOR fn );
 
 #ifdef HAVE_SAHOOKS
 static void
-CustomErrors( const char *message );
+CustomErrors( PLCHAR_VECTOR message );
 #endif //HAVE_SAHOOKS
 
 #define OpenMap     OpenShapeFile
@@ -141,7 +141,7 @@ checkwrap( PLMAPFORM_callback mapform, PLFLT lon, PLFLT lat )
 //Actually draw the map lines points and text.
 //--------------------------------------------------------------------------
 void
-drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
+drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text )
 {
     PLINT i;
 
@@ -194,9 +194,9 @@ drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, PLFLT *x, PLFLT
 //with shapefile support or if plotentries is null
 //--------------------------------------------------------------------------
 void
-drawmap( PLMAPFORM_callback mapform, const char *name,
-         PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
-         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
+drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
+         PLFLT dx, PLFLT dy, int shapetype, PLFLT just, PLCHAR_VECTOR text,
+         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries )
 {
     int    i, j;
     char   *filename = NULL;
@@ -556,7 +556,7 @@ drawmap( PLMAPFORM_callback mapform, const char *name,
 
 
 //--------------------------------------------------------------------------
-// void plmap(PLMAPFORM_callback mapform, const char *name,
+// void plmap(PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
 //            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy);
 //
 // plot continental outline in world coordinates
@@ -596,7 +596,7 @@ drawmap( PLMAPFORM_callback mapform, const char *name,
 //--------------------------------------------------------------------------
 
 void
-plmap( PLMAPFORM_callback mapform, const char *name,
+plmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
        PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy )
 {
 #ifdef HAVE_SHAPELIB
@@ -609,8 +609,8 @@ plmap( PLMAPFORM_callback mapform, const char *name,
 
 //--------------------------------------------------------------------------
 // void plmapline(PLMAPFORM_callback mapform,
-//		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
-//		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
+//		PLCHAR_VECTOR name, PLFLT minx, PLFLT maxx, PLFLT miny,
+//		PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries);
 
 //New version of plmap which allows us to specify which items in a shapefile
 //we want to use. parameters are as above but with the plotentries being an
@@ -625,9 +625,9 @@ plmap( PLMAPFORM_callback mapform, const char *name,
 //be drawn as points using the plmaptex function.
 //--------------------------------------------------------------------------
 void
-plmapline( PLMAPFORM_callback mapform, const char *name,
+plmapline( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
-           const PLINT *plotentries, PLINT nplotentries )
+           PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 #ifdef HAVE_SHAPELIB
     drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, "", minx, maxx,
@@ -639,18 +639,18 @@ plmapline( PLMAPFORM_callback mapform, const char *name,
 
 //--------------------------------------------------------------------------
 // void plmapstring(PLMAPFORM_callback mapform,
-//		const char *name, PLFLT just, const char *string,
+//		PLCHAR_VECTOR name, PLFLT just, PLCHAR_VECTOR string,
 //		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
-//		const PLINT *plotentries, PLINT nplotentries);
+//		PLINT_VECTOR plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots symbols. The map equivalent of plstring. string
 //has the same meaning as in plstring.
 //--------------------------------------------------------------------------
 void
 plmapstring( PLMAPFORM_callback mapform,
-             const char *name, const char *string,
+             PLCHAR_VECTOR name, PLCHAR_VECTOR string,
              PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
-             const PLINT *plotentries, PLINT nplotentries )
+             PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 #ifdef HAVE_SHAPELIB
     drawmap( mapform, name, 1.0, 0.0, SHPT_POINT, 0.5, string, minx, maxx,
@@ -662,7 +662,7 @@ plmapstring( PLMAPFORM_callback mapform,
 
 //--------------------------------------------------------------------------
 // void plmaptex(PLMAPFORM_callback mapform,
-//		const char *name, PLFLT dx, PLFLT dy PLFLT just, const char *text,
+//		PLCHAR_VECTOR name, PLFLT dx, PLFLT dy PLFLT just, PLCHAR_VECTOR text,
 //		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
 //		PLINT plotentry);
 //
@@ -671,7 +671,7 @@ plmapstring( PLMAPFORM_callback mapform,
 //--------------------------------------------------------------------------
 void
 plmaptex( PLMAPFORM_callback mapform,
-          const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+          PLCHAR_VECTOR name, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text,
           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
           PLINT plotentry )
 {
@@ -685,16 +685,16 @@ plmaptex( PLMAPFORM_callback mapform,
 
 //--------------------------------------------------------------------------
 // void plmapfill(PLMAPFORM_callback mapform,
-//		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
-//		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
+//		PLCHAR_VECTOR name, PLFLT minx, PLFLT maxx, PLFLT miny,
+//		PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots a filled polygon. The map equivalent to
 //plfill. Uses the pattern defined by plsty or plpat.
 //--------------------------------------------------------------------------
 void
 plmapfill( PLMAPFORM_callback mapform,
-           const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
-           PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
+           PLCHAR_VECTOR name, PLFLT minx, PLFLT maxx, PLFLT miny,
+           PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 #ifdef HAVE_SHAPELIB
     drawmap( mapform, name, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minx, maxx,
@@ -825,7 +825,7 @@ plmeridians( PLMAPFORM_callback mapform,
 // Our thanks to Frank Warmerdam, the developer of shapelib for suggesting
 // this approach for quieting shapelib "Unable to open" error messages.
 static
-void CustomErrors( const char *message )
+void CustomErrors( PLCHAR_VECTOR message )
 {
     if ( strstr( message, "Unable to open" ) == NULL )
         fprintf( stderr, "%s\n", message );
@@ -833,7 +833,7 @@ void CustomErrors( const char *message )
 #endif
 
 SHPHandle
-OpenShapeFile( const char *fn )
+OpenShapeFile( PLCHAR_VECTOR fn )
 {
     SHPHandle file;
     char      *fs = NULL, *dn = NULL;

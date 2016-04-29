@@ -138,7 +138,7 @@ checkwrap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), PLFLT lon, PLFLT lat )
 //Actually draw the map lines points and text.
 //--------------------------------------------------------------------------
 void
-drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
+drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text )
 {
     PLINT i;
 
@@ -184,9 +184,9 @@ drawmapdata( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), int shapetype, PLINT 
 //with shapefile support or if plotentries is null
 //--------------------------------------------------------------------------
 void
-drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
-         PLFLT dx, PLFLT dy, int shapetype, PLFLT just, const char *text,
-         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
+drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), PLCHAR_VECTOR name,
+         PLFLT dx, PLFLT dy, int shapetype, PLFLT just, PLCHAR_VECTOR text,
+         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries )
 {
     int           i, j;
     char          *filename = NULL;
@@ -473,7 +473,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 
 
 //--------------------------------------------------------------------------
-// void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *name,
+// void plmap(void (*mapform)(PLINT, PLFLT *, PLFLT *), PLCHAR_VECTOR name,
 //            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy);
 //
 // plot continental outline in world coordinates
@@ -513,7 +513,7 @@ drawmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 //--------------------------------------------------------------------------
 
 void
-plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), PLCHAR_VECTOR name,
        PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy )
 {
     drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, NULL, minx, maxx,
@@ -522,8 +522,8 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 
 //--------------------------------------------------------------------------
 // void plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
-//		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
+//		PLCHAR_VECTOR name, PLFLT minx, PLFLT maxx, PLFLT miny,
+//		PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries);
 
 //New version of plmap which allows us to specify which items in a shapefile
 //we want to use. parameters are as above but with the plotentries being an
@@ -538,9 +538,9 @@ plmap( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 //be drawn as points using the plmaptex function.
 //--------------------------------------------------------------------------
 void
-plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
+plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), PLCHAR_VECTOR name,
            PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
-           const PLINT *plotentries, PLINT nplotentries )
+           PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 //    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, "", minx, maxx,
 //      miny, maxy, plotentries, nplotentries );
@@ -549,18 +549,18 @@ plmapline( void ( *mapform )( PLINT, PLFLT *, PLFLT * ), const char *name,
 
 //--------------------------------------------------------------------------
 // void plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *name, PLFLT just, const char *string,
+//		PLCHAR_VECTOR name, PLFLT just, PLCHAR_VECTOR string,
 //		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
-//		const PLINT *plotentries, PLINT nplotentries);
+//		PLINT_VECTOR plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots symbols. The map equivalent of plstring. string
 //has the same meaning as in plstring.
 //--------------------------------------------------------------------------
 void
 plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-             const char *name, const char *string,
+             PLCHAR_VECTOR name, PLCHAR_VECTOR string,
              PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
-             const PLINT *plotentries, PLINT nplotentries )
+             PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 //    drawmap( mapform, name, 1.0, 0.0, SHPT_POINT, 0.5, string, minx, maxx,
 //        miny, maxy, plotentries, nplotentries );
@@ -569,7 +569,7 @@ plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 //--------------------------------------------------------------------------
 // void plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *name, PLFLT dx, PLFLT dy PLFLT just, const char *text,
+//		PLCHAR_VECTOR name, PLFLT dx, PLFLT dy PLFLT just, PLCHAR_VECTOR text,
 //		PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
 //		PLINT plotentry);
 //
@@ -578,7 +578,7 @@ plmapstring( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 //--------------------------------------------------------------------------
 void
 plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-          const char *name, PLFLT dx, PLFLT dy, PLFLT just, const char *text,
+          PLCHAR_VECTOR name, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text,
           PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
           PLINT plotentry )
 {
@@ -589,16 +589,16 @@ plmaptex( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
 
 //--------------------------------------------------------------------------
 // void plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-//		const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
-//		PLFLT maxy, const PLINT *plotentries, PLINT nplotentries);
+//		PLCHAR_VECTOR name, PLFLT minx, PLFLT maxx, PLFLT miny,
+//		PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries);
 //
 //As per plmapline but plots a filled polygon. The map equivalent to
 //plfill. Uses the pattern defined by plsty or plpat.
 //--------------------------------------------------------------------------
 void
 plmapfill( void ( *mapform )( PLINT, PLFLT *, PLFLT * ),
-           const char *name, PLFLT minx, PLFLT maxx, PLFLT miny,
-           PLFLT maxy, const PLINT *plotentries, PLINT nplotentries )
+           PLCHAR_VECTOR name, PLFLT minx, PLFLT maxx, PLFLT miny,
+           PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 //    drawmap( mapform, name, 0.0, 0.0, SHPT_POLYGON, 0.0, NULL, minx, maxx,
 //        miny, maxy, plotentries, nplotentries );

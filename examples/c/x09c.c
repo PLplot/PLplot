@@ -100,7 +100,7 @@ static void polar( void )
     }
 
     plcol0( 2 );
-    plcont( (const PLFLT * const *) z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
+    plcont( (PLFLT_MATRIX) z, RPTS, THETAPTS, 1, RPTS, 1, THETAPTS, lev, 10,
         pltr2, (void *) &cgrid2 );
     plcol0( 1 );
     pllab( "", "", "Polar Contour Plot" );
@@ -247,7 +247,7 @@ static void potential( void )
     {
         // Negative contours
         pllsty( 2 );
-        plcont( (const PLFLT * const *) z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
+        plcont( (PLFLT_MATRIX) z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
             clevelneg, nlevelneg, pltr2, (void *) &cgrid2 );
     }
 
@@ -255,7 +255,7 @@ static void potential( void )
     {
         // Positive contours
         pllsty( 1 );
-        plcont( (const PLFLT * const *) z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
+        plcont( (PLFLT_MATRIX) z, PRPTS, PTHETAPTS, 1, PRPTS, 1, PTHETAPTS,
             clevelpos, nlevelpos, pltr2, (void *) &cgrid2 );
     }
 
@@ -367,10 +367,10 @@ main( int argc, char *argv[] )
     pl_setcontlabelparam( 0.006, 0.3, 0.1, 1 );
     plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     plcol0( 2 );
-    plcont( (const PLFLT * const *) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    plcont( (PLFLT_MATRIX) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
     plstyl( 1, &mark, &space );
     plcol0( 3 );
-    plcont( (const PLFLT * const *) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    plcont( (PLFLT_MATRIX) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
     plstyl( 0, &mark, &space );
     plcol0( 1 );
     pllab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
@@ -380,12 +380,12 @@ main( int argc, char *argv[] )
 
     plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     plcol0( 2 );
-    plcont( (const PLFLT * const *) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    plcont( (PLFLT_MATRIX) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         pltr1, (void *) &cgrid1 );
 
     plstyl( 1, &mark, &space );
     plcol0( 3 );
-    plcont( (const PLFLT * const *) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    plcont( (PLFLT_MATRIX) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         pltr1, (void *) &cgrid1 );
     plstyl( 0, &mark, &space );
     plcol0( 1 );
@@ -410,12 +410,12 @@ main( int argc, char *argv[] )
 
     plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
     plcol0( 2 );
-    plcont( (const PLFLT * const *) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    plcont( (PLFLT_MATRIX) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         pltr2, (void *) &cgrid2 );
 
     plstyl( 1, &mark, &space );
     plcol0( 3 );
-    plcont( (const PLFLT * const *) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
+    plcont( (PLFLT_MATRIX) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11,
         pltr2, (void *) &cgrid2 );
     plstyl( 0, &mark, &space );
     plcol0( 1 );

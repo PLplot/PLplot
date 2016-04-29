@@ -74,16 +74,16 @@
 char PLDLLIMPEXP * plplotLibDir = 0;
 
 static void
-color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, const char *name );
+color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, PLCHAR_VECTOR name );
 
 static void
 strcat_delim( char *dirspec );
 
 static int
-( *exit_handler )( const char *errormsg );
+( *exit_handler )( PLCHAR_VECTOR errormsg );
 
 static void
-( *abort_handler )( const char *errormsg );
+( *abort_handler )( PLCHAR_VECTOR errormsg );
 
 static void
 plcmap0_def( int imin, int imax );
@@ -98,7 +98,7 @@ static char *
 read_line( char *buffer, int length, FILE *fp );
 
 static void
-cmap0_palette_read( const char *filename,
+cmap0_palette_read( PLCHAR_VECTOR filename,
                     int *number_colors, unsigned int **r, unsigned int **g,
                     unsigned int **b, double **a );
 
@@ -431,7 +431,7 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha )
 //! @param ncol0 Total number of RGB values.
 
 void
-c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 )
+c_plscmap0( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLINT ncol0 )
 {
     int i;
 
@@ -473,7 +473,7 @@ c_plscmap0( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol0 )
 //! @param ncol0 Total number of RGBA values.
 
 void
-c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha, PLINT ncol0 )
+c_plscmap0a( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLFLT_VECTOR alpha, PLINT ncol0 )
 {
     int i;
 
@@ -515,7 +515,7 @@ c_plscmap0a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha,
 //! @param ncol1 Total number of RGB values.
 
 void
-c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 )
+c_plscmap1( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLINT ncol1 )
 {
     int i;
 
@@ -556,7 +556,7 @@ c_plscmap1( const PLINT *r, const PLINT *g, const PLINT *b, PLINT ncol1 )
 //! @param ncol1 Total number of RGBA values.
 
 void
-c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha, PLINT ncol1 )
+c_plscmap1a( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLFLT_VECTOR alpha, PLINT ncol1 )
 {
     int i;
 
@@ -638,8 +638,8 @@ c_plscmap1a( const PLINT *r, const PLINT *g, const PLINT *b, const PLFLT *alpha,
 //! for the associated interval.
 
 void
-c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
-             const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *alt_hue_path )
+c_plscmap1l( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
+             PLFLT_VECTOR coord1, PLFLT_VECTOR coord2, PLFLT_VECTOR coord3, PLINT_VECTOR alt_hue_path )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -724,8 +724,8 @@ c_plscmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
 //! for the associated interval.
 
 void
-c_plscmap1la( PLINT itype, PLINT npts, const PLFLT *intensity,
-              const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLFLT *alpha, const PLINT *alt_hue_path )
+c_plscmap1la( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
+              PLFLT_VECTOR coord1, PLFLT_VECTOR coord2, PLFLT_VECTOR coord3, PLFLT_VECTOR alpha, PLINT_VECTOR alt_hue_path )
 {
     int   n;
     PLFLT h, l, s, r, g, b;
@@ -991,7 +991,7 @@ c_plscmap0n( PLINT ncol0 )
 //! @param name The name of the color.
 
 void
-color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, const char *name )
+color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, PLCHAR_VECTOR name )
 {
     plsc->cmap0[i].r    = r;
     plsc->cmap0[i].g    = g;
@@ -1396,7 +1396,7 @@ read_line( char *buffer, int length, FILE *fp )
 //! @param a alpha value of each color in the palette file.
 
 void
-cmap0_palette_read( const char *filename,
+cmap0_palette_read( PLCHAR_VECTOR filename,
                     int *number_colors, unsigned int **r, unsigned int **g, unsigned int **b, double **a )
 {
     int  i, err = 0;
@@ -1545,7 +1545,7 @@ cmap0_palette_read( const char *filename,
 //! @param filename name of the cmap0 palette file.
 
 void
-c_plspal0( const char *filename )
+c_plspal0( PLCHAR_VECTOR filename )
 {
     int          i;
     unsigned int *r, *g, *b;
@@ -1601,7 +1601,7 @@ c_plspal0( const char *filename )
 //! @param interpolate interpolate between control points.
 
 void
-c_plspal1( const char *filename, PLBOOL interpolate )
+c_plspal1( PLCHAR_VECTOR filename, PLBOOL interpolate )
 {
     int          i;
     int          number_colors;
@@ -1850,7 +1850,7 @@ finish: plrestore_locale( save_locale );
 //! @param errormsg The error message.
 
 void
-plwarn( const char *errormsg )
+plwarn( PLCHAR_VECTOR errormsg )
 {
     int was_gfx = 0;
 
@@ -1881,7 +1881,7 @@ plwarn( const char *errormsg )
 //! @param errormsg The error message.
 
 void
-plabort( const char *errormsg )
+plabort( PLCHAR_VECTOR errormsg )
 {
     if ( abort_handler != NULL )
         ( *abort_handler )( errormsg );
@@ -1920,12 +1920,12 @@ plabort( const char *errormsg )
 //
 //! Sets an optional user abort handler.
 //!
-//! @param handler A function that takes a const char * argument that will
+//! @param handler A function that takes a PLCHAR_VECTOR argument that will
 //! be called in the event of a abort.
 //--------------------------------------------------------------------------
 
 void
-plsabort( void ( *handler )( const char * ) )
+plsabort( void ( *handler )( PLCHAR_VECTOR ) )
 {
     abort_handler = handler;
 }
@@ -1945,7 +1945,7 @@ plsabort( void ( *handler )( const char * ) )
 //--------------------------------------------------------------------------
 
 void
-plexit( const char *errormsg )
+plexit( PLCHAR_VECTOR errormsg )
 {
     int status = 1;
 
@@ -1969,12 +1969,12 @@ plexit( const char *errormsg )
 //
 //! Sets an optional user exit handler.
 //!
-//! @param handler A function that takes a const char * argument that will
+//! @param handler A function that takes a PLCHAR_VECTOR argument that will
 //! will be called in the event of a exit.
 //--------------------------------------------------------------------------
 
 void
-plsexit( int ( *handler )( const char * ) )
+plsexit( int ( *handler )( PLCHAR_VECTOR ) )
 {
     exit_handler = handler;
 }
@@ -2133,7 +2133,7 @@ pl_cmd( PLINT op, void *ptr )
 //--------------------------------------------------------------------------
 
 char *
-plFindCommand( const char *fn )
+plFindCommand( PLCHAR_VECTOR fn )
 {
     char *fs = NULL, *dn;
 
@@ -2216,7 +2216,7 @@ plFindCommand( const char *fn )
 //--------------------------------------------------------------------------
 
 FILE *
-plLibOpen( const char *fn )
+plLibOpen( PLCHAR_VECTOR fn )
 {
     FILE    *ret = NULL;
 
@@ -2250,7 +2250,7 @@ plLibOpen( const char *fn )
 //! @returns A open PDFstrm file pointer (if successful)
 //--------------------------------------------------------------------------
 PDFstrm *
-plLibOpenPdfstrm( const char *fn )
+plLibOpenPdfstrm( PLCHAR_VECTOR fn )
 {
     PDFstrm *file;
     char    *fs = NULL, *dn = NULL;
@@ -2440,7 +2440,7 @@ plFindName( char *p )
 //--------------------------------------------------------------------------
 
 void
-plGetName( const char *dir, const char *subdir, const char *filename, char **filespec )
+plGetName( PLCHAR_VECTOR dir, PLCHAR_VECTOR subdir, PLCHAR_VECTOR filename, char **filespec )
 {
     size_t lfilespec;
 
@@ -2687,7 +2687,7 @@ plP_getmember( PLStream *pls )
 //--------------------------------------------------------------------------
 
 void
-plP_sfnam( PLStream *pls, const char *fnam )
+plP_sfnam( PLStream *pls, PLCHAR_VECTOR fnam )
 {
     char   prefix[BUFFER_SIZE];
     char   * suffix;
@@ -2897,7 +2897,7 @@ plGinInit( PLGraphicsIn *gin )
 //--------------------------------------------------------------------------
 
 PLINT
-plGetInt( const char *s )
+plGetInt( PLCHAR_VECTOR s )
 {
     int  m;
     int  i = 0;
@@ -2932,7 +2932,7 @@ plGetInt( const char *s )
 //--------------------------------------------------------------------------
 
 PLFLT
-plGetFlt( const char *s )
+plGetFlt( PLCHAR_VECTOR s )
 {
     PLFLT  m;
     double m1;
@@ -2972,7 +2972,7 @@ plGetFlt( const char *s )
 //--------------------------------------------------------------------------
 
 char PLDLLIMPEXP *
-plstrdup( const char *src )
+plstrdup( PLCHAR_VECTOR src )
 {
     char *dest = (char *) malloc( ( strlen( src ) + 1 ) * sizeof ( char ) );
     if ( dest != NULL )
@@ -3000,7 +3000,7 @@ plstrdup( const char *src )
 //--------------------------------------------------------------------------
 
 int
-plsnprintf( char *buffer, int n, const char *format, ... )
+plsnprintf( char *buffer, int n, PLCHAR_VECTOR format, ... )
 {
     int     ret;
 
@@ -3032,7 +3032,7 @@ plsnprintf( char *buffer, int n, const char *format, ... )
 //--------------------------------------------------------------------------
 
 int
-plsnscanf( const char *buffer, int n, const char *format, ... )
+plsnscanf( PLCHAR_VECTOR buffer, int n, PLCHAR_VECTOR format, ... )
 {
     int     ret;
 

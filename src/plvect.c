@@ -35,7 +35,7 @@ static void plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale );
 //--------------------------------------------------------------------------
 
 void
-c_plsvect( const PLFLT *arrowx, const PLFLT *arrowy, PLINT npts, PLINT fill )
+c_plsvect( PLFLT_VECTOR arrowx, PLFLT_VECTOR arrowy, PLINT npts, PLINT fill )
 {
     int   i;
     PLFLT def_arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
@@ -247,7 +247,7 @@ void plfvect( PLF2EVAL_callback getuv, PLPointer up, PLPointer vp,
 }
 
 void
-c_plvect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
+c_plvect( PLFLT_MATRIX u, PLFLT_MATRIX v, PLINT nx, PLINT ny, PLFLT scale,
           PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     plfvect( plf2eval1, (PLPointer) u, (PLPointer) v,

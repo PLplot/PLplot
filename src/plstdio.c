@@ -239,18 +239,18 @@ get_tmpdir_list( PLINT max_ntmpdir_list, char ** tmpdir_list, PLINT maxcurrdir, 
 FILE *
 pl_create_tempfile( char **fname )
 {
-    FILE       *fd;
-    char       *tmpdir;
-    char       *template = NULL;
-    const char *tmpname  = "plplot_XXXXXX";
+    FILE          *fd;
+    char          *tmpdir;
+    char          *template = NULL;
+    PLCHAR_VECTOR tmpname   = "plplot_XXXXXX";
 #ifndef PL_HAVE_MKSTEMP
-    int        flags;
+    int           flags;
 #endif
-    PLINT      ntmpdir_list;
+    PLINT         ntmpdir_list;
 #define PL_MAXNTMPDIR_LIST    5
-    char       * tmpdir_list[PL_MAXNTMPDIR_LIST];
-    char       currdir[PLPLOT_MAX_PATH];
-    int        itmpdir;
+    char          * tmpdir_list[PL_MAXNTMPDIR_LIST];
+    char          currdir[PLPLOT_MAX_PATH];
+    int           itmpdir;
 
     ntmpdir_list = get_tmpdir_list( PL_MAXNTMPDIR_LIST, tmpdir_list, PLPLOT_MAX_PATH, currdir );
     for ( itmpdir = 0; itmpdir < ntmpdir_list; itmpdir++ )
@@ -347,18 +347,18 @@ pl_create_tempfifo( const char **p_fifoname, const char **p_dirname )
     plwarn( "Creating fifos not supported on this platform" );
     return NULL;
 #else
-    const char *tmpdir;
-    char       *template = NULL;
-    char       *dirname  = NULL;
-    const char *tmpname  = "plplot_dir_XXXXXX";
-    const char *fifoname = "plplot_fifo";
+    char          *tmpdir;
+    char          *template = NULL;
+    char          *dirname  = NULL;
+    PLCHAR_VECTOR tmpname   = "plplot_dir_XXXXXX";
+    PLCHAR_VECTOR fifoname  = "plplot_fifo";
 
-    PLINT      ntmpdir_list;
+    PLINT         ntmpdir_list;
 #define PL_MAXNTMPDIR_LIST    5
-    char       * tmpdir_list[PL_MAXNTMPDIR_LIST];
-    char       currdir[PLPLOT_MAX_PATH];
-    int        itmpdir;
-    int        mkfifo_rc;
+    char          * tmpdir_list[PL_MAXNTMPDIR_LIST];
+    char          currdir[PLPLOT_MAX_PATH];
+    int           itmpdir;
+    int           mkfifo_rc;
 
     ntmpdir_list = get_tmpdir_list( PL_MAXNTMPDIR_LIST, tmpdir_list, PLPLOT_MAX_PATH, currdir );
     for ( itmpdir = 0; itmpdir < ntmpdir_list; itmpdir++ )

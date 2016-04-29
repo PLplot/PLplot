@@ -151,19 +151,19 @@ PLFLT xm, xM, ym, yM;
 int
 main( int argc, char *argv[] )
 {
-    PLFLT      *x, *y, *z, *clev;
-    PLFLT      *xg, *yg, **zg;
-    PLFLT      zmin, zmax, lzm, lzM;
-    int        i, j, k;
-    PLINT      alg;
-    const char *title[] = { "Cubic Spline Approximation",
-                            "Delaunay Linear Interpolation",
-                            "Natural Neighbors Interpolation",
-                            "KNN Inv. Distance Weighted",
-                            "3NN Linear Interpolation",
-                            "4NN Around Inv. Dist. Weighted" };
+    PLFLT         *x, *y, *z, *clev;
+    PLFLT         *xg, *yg, **zg;
+    PLFLT         zmin, zmax, lzm, lzM;
+    int           i, j, k;
+    PLINT         alg;
+    PLCHAR_VECTOR title[] = { "Cubic Spline Approximation",
+                              "Delaunay Linear Interpolation",
+                              "Natural Neighbors Interpolation",
+                              "KNN Inv. Distance Weighted",
+                              "3NN Linear Interpolation",
+                              "4NN Around Inv. Dist. Weighted" };
 
-    PLFLT      opt[] = { 0., 0., 0., 0., 0., 0. };
+    PLFLT         opt[] = { 0., 0., 0., 0., 0., 0. };
 
     xm = ym = -0.2;
     xM = yM = 0.6;
@@ -275,7 +275,7 @@ main( int argc, char *argv[] )
                 }
             }
 
-            plMinMax2dGrid( (const PLFLT * const *) zg, xp, yp, &lzM, &lzm );
+            plMinMax2dGrid( (PLFLT_MATRIX) zg, xp, yp, &lzM, &lzm );
 
             lzm = MIN( lzm, zmin );
             lzM = MAX( lzM, zmax );
@@ -297,7 +297,7 @@ main( int argc, char *argv[] )
                 plenv0( xm, xM, ym, yM, 2, 0 );
                 plcol0( 15 );
                 pllab( "X", "Y", title[alg - 1] );
-                plshades( (const PLFLT * const *) zg, xp, yp, NULL, xm, xM, ym, yM,
+                plshades( (PLFLT_MATRIX) zg, xp, yp, NULL, xm, xM, ym, yM,
                     clev, nl, 1., 0, 1., plfill, 1, NULL, NULL );
                 plcol0( 2 );
             }
@@ -322,7 +322,7 @@ main( int argc, char *argv[] )
                     "bcdfntu", "Z", 0.5, 0 );
                 plcol0( 15 );
                 pllab( "", "", title[alg - 1] );
-                plot3dc( xg, yg, (const PLFLT * const *) zg, xp, yp, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev, nl );
+                plot3dc( xg, yg, (PLFLT_MATRIX) zg, xp, yp, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev, nl );
             }
         }
     }

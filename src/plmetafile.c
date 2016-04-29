@@ -130,7 +130,7 @@ static const struct _plm_format page_2005_header[] = {
 
 static struct _plm_version
 {
-    const char *identifier;
+    PLCHAR_VECTOR            identifier;
     const struct _plm_format *index_header;
     const struct _plm_format *device_header;
     const struct _plm_format *plot_header;

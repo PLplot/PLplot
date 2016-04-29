@@ -149,11 +149,11 @@ find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x );
 
 static void
 selected_polygon( PLFILL_callback fill, PLDEFINED_callback defined,
-                  const PLFLT *x, const PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 );
+                  PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 );
 
 static void
 exfill( PLFILL_callback fill, PLDEFINED_callback defined,
-        int n, const PLFLT *x, const PLFLT *y );
+        int n, PLFLT_VECTOR x, PLFLT_VECTOR y );
 
 static void
 big_recl( int *cond_code, register int ny, int dx, int dy,
@@ -195,9 +195,9 @@ plshade_int( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
 // (if cont_color <= 0 or cont_width <=0, no such contours are drawn).
 //--------------------------------------------------------------------------
 
-void c_plshades( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
+void c_plshades( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+                 PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
                  PLINT cont_color, PLFLT cont_width,
                  PLFILL_callback fill, PLINT rectangular,
                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
@@ -227,7 +227,7 @@ void
 plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
            PLDEFINED_callback defined,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-           const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+           PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
            PLINT cont_color, PLFLT cont_width,
            PLFILL_callback fill, PLINT rectangular,
            PLTRANSFORM_callback pltr, PLPointer pltr_data )
@@ -309,7 +309,7 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 // via a (PLFLT **), and is column-dominant (normal C ordering).
 //--------------------------------------------------------------------------
 
-void c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
+void c_plshade( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                 PLFLT shade_min, PLFLT shade_max,
                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
@@ -336,7 +336,7 @@ void c_plshade( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback d
 // via a (PLFLT *), and is column-dominant (normal C ordering).
 //--------------------------------------------------------------------------
 
-void c_plshade1( const PLFLT *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
+void c_plshade1( PLFLT_VECTOR a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
                  PLFLT shade_min, PLFLT shade_max,
                  PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
@@ -875,7 +875,7 @@ find_interval( PLFLT a0, PLFLT a1, PLINT c0, PLINT c1, PLFLT *x )
 
 static void
 selected_polygon( PLFILL_callback fill, PLDEFINED_callback defined,
-                  const PLFLT *x, const PLFLT *y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 )
+                  PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT v1, PLINT v2, PLINT v3, PLINT v4 )
 {
     register PLINT n = 0;
     PLFLT          xx[4], yy[4];
@@ -952,7 +952,7 @@ bisect( PLDEFINED_callback defined, PLINT niter,
 
 static void
 exfill( PLFILL_callback fill, PLDEFINED_callback defined,
-        int n, const PLFLT *x, const PLFLT *y )
+        int n, PLFLT_VECTOR x, PLFLT_VECTOR y )
 {
     if ( n < 3 )
     {
@@ -1020,7 +1020,7 @@ exfill( PLFILL_callback fill, PLDEFINED_callback defined,
         }
 
         if ( count >= 3 )
-            ( *fill )( count, (const PLFLT *) xx, (const PLFLT *) yy );
+            ( *fill )( count, (PLFLT_VECTOR) xx, (PLFLT_VECTOR) yy );
 
         free( xx );
         free( yy );

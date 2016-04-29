@@ -230,8 +230,8 @@ extern PLDLLIMPEXP_DATA( PLStream * ) plsc;
 #else // !PL_HAVE_SNPRINTF
 // declare dummy functions which just call the unsafe
 // functions ignoring the size of the string
-int plsnprintf( char *buffer, int n, const char *format, ... );
-int plsnscanf( const char *buffer, int n, const char *format, ... );
+int plsnprintf( char *buffer, int n, PLCHAR_VECTOR format, ... );
+int plsnscanf( PLCHAR_VECTOR buffer, int n, PLCHAR_VECTOR format, ... );
   #define snprintf    plsnprintf
   #define snscanf     plsnscanf
 #endif // PL_HAVE_SNPRINTF
@@ -521,8 +521,8 @@ plP_affine_yskew( PLFLT *affine_vector, PLFLT angle );
 PLDLLIMPEXP void
 plP_affine_multiply(
     PLFLT *affine_vectorA,
-    const PLFLT *affine_vectorB,
-    const PLFLT *affine_vectorC );
+    PLFLT_VECTOR affine_vectorB,
+    PLFLT_VECTOR affine_vectorC );
 
 // Determines interval between numeric labels
 
@@ -532,7 +532,7 @@ pldtik( PLFLT vmin, PLFLT vmax, PLFLT *tick, PLINT *nsubt, PLBOOL ld );
 // Writes numeric labels on side(s) of box in custom locations
 
 void
-label_box_custom( const char *xopt, PLINT n_xticks, const PLFLT *xticks, const char *yopt, PLINT n_yticks, const PLFLT *yticks );
+label_box_custom( PLCHAR_VECTOR xopt, PLINT n_xticks, PLFLT_VECTOR xticks, PLCHAR_VECTOR yopt, PLINT n_yticks, PLFLT_VECTOR yticks );
 
 // Determine factor to convert date / time in seconds to more natural
 // units
@@ -587,7 +587,7 @@ plfill_soft( short *x, short *y, PLINT npts );
 // error message and tries to clean up as much as possible.
 
 PLDLLIMPEXP void
-plexit( const char *errormsg );
+plexit( PLCHAR_VECTOR errormsg );
 
 // Just a front-end to exit().
 
@@ -597,12 +597,12 @@ pl_exit( void );
 // A handy way to issue warnings, if need be.
 
 PLDLLIMPEXP void
-plwarn( const char *errormsg );
+plwarn( PLCHAR_VECTOR errormsg );
 
 // Same as plwarn(), but appends ", aborting plot" to the error message
 
 PLDLLIMPEXP void
-plabort( const char *errormsg );
+plabort( PLCHAR_VECTOR errormsg );
 
 // Loads either the standard or extended font.
 
@@ -617,7 +617,7 @@ plfontrel( void );
 // A replacement for strdup(), which isn't portable.
 
 PLDLLIMPEXP char *
-plstrdup( const char *src );
+plstrdup( PLCHAR_VECTOR src );
 
 // Bin up cmap 1 space and assign colors to make inverse mapping easy.
 
@@ -634,7 +634,7 @@ plstik( PLFLT mx, PLFLT my, PLFLT dx, PLFLT dy );
 // (refx,refy).
 
 void
-plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string );
+plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, PLCHAR_VECTOR string );
 
 // Draws a tick parallel to x.
 
@@ -671,7 +671,7 @@ plP_script_scale( PLBOOL ifupper, PLINT *level,
 
 void
 plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
-          PLINT refx, PLINT refy, const char *string );
+          PLINT refx, PLINT refy, PLCHAR_VECTOR string );
 
 // Save LC_NUMERIC locale string, then set "C" locale to protect
 // parts of PLplot which absolutely demand the LC_NUMERIC "C" locale.
@@ -743,10 +743,10 @@ typedef struct
 
 typedef struct
 {
-    const char *opt;     // a string with the name of the option
-    PLINT      type;     // the type of the variable to be set, see bellow the available types
-    void       *var_ptr; // a pointer to the variable to be set
-    const char *hlp_msg; // help message of the option
+    PLCHAR_VECTOR opt;      // a string with the name of the option
+    PLINT         type;     // the type of the variable to be set, see bellow the available types
+    void          *var_ptr; // a pointer to the variable to be set
+    PLCHAR_VECTOR hlp_msg;  // help message of the option
 } DrvOpt;
 
 // the available variable types, DrvOpt.type, for driver specific options
@@ -787,9 +787,9 @@ typedef struct cont_level
 } CONT_LEVEL;
 
 void
-cont_store( const PLFLT * const *f, PLINT nx, PLINT ny,
+cont_store( PLFLT_MATRIX f, PLINT nx, PLINT ny,
             PLINT kx, PLINT lx, PLINT ky, PLINT ly,
-            const PLFLT *clevel, PLINT nlevel,
+            PLFLT_VECTOR clevel, PLINT nlevel,
             void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
             PLPointer pltr_data,
             CONT_LEVEL **contour );
@@ -891,7 +891,7 @@ plP_draphy_poly( PLINT *x, PLINT *y, PLINT n );
 // Draw polyline in world coordinates.
 
 void
-plP_drawor_poly( const PLFLT *x, const PLFLT *y, PLINT n );
+plP_drawor_poly( PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT n );
 
 // Sets up physical limits of plotting device.
 
@@ -916,22 +916,22 @@ plP_gtimefmt( void );
 // Computes the length of a string in mm, including escape sequences.
 
 PLFLT
-plstrl( const char *string );
+plstrl( PLCHAR_VECTOR string );
 
 // Similar to strpos, but searches for occurence of string str2.
 
 PLINT
-plP_stindex( const char *str1, const char *str2 );
+plP_stindex( PLCHAR_VECTOR str1, PLCHAR_VECTOR str2 );
 
 // Searches string str for first occurence of character chr.
 
 PLDLLIMPEXP PLINT
-plP_strpos( const char *str, int chr );
+plP_strpos( PLCHAR_VECTOR str, int chr );
 
 // Searches string str for character chr (case insensitive).
 
 PLBOOL
-plP_stsearch( const char *str, int chr );
+plP_stsearch( PLCHAR_VECTOR str, int chr );
 
 // Conversion functions
 
@@ -1057,7 +1057,7 @@ plRotationShear( PLFLT *xFormMatrix, PLFLT *rotation, PLFLT *shear, PLFLT *strid
 
 // Test whether a point is in a polygon.
 int
-plP_pointinpolygon( PLINT n, const PLFLT *x, const PLFLT *y,
+plP_pointinpolygon( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y,
                     PLFLT xp, PLFLT yp );
 
 // Driver calls
@@ -1144,7 +1144,7 @@ plP_wait( void );
 // Return file pointer to lib file.
 
 FILE *
-plLibOpen( const char *fn );
+plLibOpen( PLCHAR_VECTOR fn );
 
 // Does required startup initialization of library.
 

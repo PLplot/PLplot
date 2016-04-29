@@ -38,7 +38,7 @@
 //--------------------------------------------------------------------------
 
 void
-c_plhist( PLINT n, const PLFLT *data, PLFLT datmin, PLFLT datmax,
+c_plhist( PLINT n, PLFLT_VECTOR data, PLFLT datmin, PLFLT datmax,
           PLINT nbin, PLINT flags )
 {
     PLINT i, bin;
@@ -122,7 +122,7 @@ c_plhist( PLINT n, const PLFLT *data, PLFLT datmin, PLFLT datmax,
 //--------------------------------------------------------------------------
 
 void
-c_plbin( PLINT nbin, const PLFLT *x, const PLFLT *y, PLINT flags )
+c_plbin( PLINT nbin, PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT flags )
 {
     PLINT i;
     PLFLT xmin, xmax, vpwxmi, vpwxma, vpwymi, vpwyma;

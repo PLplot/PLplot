@@ -183,8 +183,8 @@ plP_affine_yskew( PLFLT *affine_vector, PLFLT angle )
 void
 plP_affine_multiply(
     PLFLT *affine_vectorA,
-    const PLFLT *affine_vectorB,
-    const PLFLT *affine_vectorC )
+    PLFLT_VECTOR affine_vectorB,
+    PLFLT_VECTOR affine_vectorC )
 {
     int   i;
     PLFLT result[NAFFINE];

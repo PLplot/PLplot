@@ -290,7 +290,7 @@ c_pllsty( PLINT lin )
 //--------------------------------------------------------------------------
 
 void
-c_plpat( PLINT nlin, const PLINT *inc, const PLINT *del )
+c_plpat( PLINT nlin, PLINT_VECTOR inc, PLINT_VECTOR del )
 {
     PLINT i;
 

@@ -32,7 +32,7 @@ main( int argc, char *argv[] )
     PLFLT           y1, y2, y3, y4, ymin, ymax, xlab, ylab;
     PLFLT           t, tmin, tmax, tjump, dt, noise;
     PLINT           colbox, collab, colline[4], styline[4];
-    const char      *legline[4];
+    PLCHAR_VECTOR   legline[4];
 #ifdef PL_HAVE_NANOSLEEP
     struct timespec ts;
 #endif

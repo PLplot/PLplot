@@ -93,7 +93,7 @@ lt_dlhandle lt_dlopenext( char* dllname )
 //!
 //! @returns Not much.. A string containing "No error information."
 //!
-const char* lt_dlerror()
+PLCHAR_VECTOR lt_dlerror()
 {
     strncpy( errortext, "No error information", 512 );
 
@@ -108,7 +108,7 @@ const char* lt_dlerror()
 //!
 //! @returns A pointer to the symbol requested.
 //!
-void* lt_dlsym( lt_dlhandle dlhandle, const char* symbol )
+void* lt_dlsym( lt_dlhandle dlhandle, PLCHAR_VECTOR symbol )
 {
     if ( dlhandle->hinstLib )
     {

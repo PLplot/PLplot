@@ -9,7 +9,7 @@
 // Copyright (C) 2004, 2005  Rafael Laboissiere
 // Copyright (C) 2004, 2006  Andrew Ross
 // Copyright (C) 2004  Andrew Roach
-// Copyright (C) 2005-2015 Alan W. Irwin
+// Copyright (C) 2005-2016 Alan W. Irwin
 // Copyright (C) 2005  Thomas J. Duck
 //
 // This file is part of PLplot.
@@ -88,10 +88,10 @@
 #include <errno.h>
 
 int
-text2num( const char *text, char end, PLUNICODE *num );
+text2num( PLCHAR_VECTOR text, char end, PLUNICODE *num );
 
 int
-text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower );
+text2fci( PLCHAR_VECTOR text, unsigned char *hexdigit, unsigned char *hexpower );
 
 //--------------------------------------------------------------------------
 // Driver Interface
@@ -555,7 +555,7 @@ plP_gradient( short *x, short *y, PLINT npts )
 //    and should be more robust to invalid control strings.
 //--------------------------------------------------------------------------
 
-int text2num( const char *text, char end, PLUNICODE *num )
+int text2num( PLCHAR_VECTOR text, char end, PLUNICODE *num )
 {
     char *endptr;
     // This special base logic required to _avoid_ interpretation of
@@ -594,11 +594,11 @@ int text2num( const char *text, char end, PLUNICODE *num )
 //    impossible value, and the function returns 0.
 //--------------------------------------------------------------------------
 
-int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower )
+int text2fci( PLCHAR_VECTOR text, unsigned char *hexdigit, unsigned char *hexpower )
 {
     typedef struct
     {
-        const char    *ptext;
+        PLCHAR_VECTOR ptext;
         unsigned char hexdigit;
         unsigned char hexpower;
     }
@@ -636,7 +636,7 @@ int text2fci( const char *text, unsigned char *hexdigit, unsigned char *hexpower
 }
 
 static
-void alternate_unicode_processing( const char * string, EscText * args )
+void alternate_unicode_processing( PLCHAR_VECTOR string, EscText * args )
 {
     size_t        i, len;
     char          esc;
@@ -866,11 +866,11 @@ void alternate_unicode_processing( const char * string, EscText * args )
 
         if ( skip == 0 )
         {
-            PLUNICODE  unichar = 0;
+            PLUNICODE     unichar = 0;
 #ifdef HAVE_LIBUNICODE
-            const char * ptr = unicode_get_utf8( string + i, &unichar );
+            PLCHAR_VECTOR ptr = unicode_get_utf8( string + i, &unichar );
 #else
-            const char * ptr = utf8_to_ucs4( string + i, &unichar );
+            PLCHAR_VECTOR ptr = utf8_to_ucs4( string + i, &unichar );
 #endif
             if ( ptr == NULL )
             {
@@ -906,7 +906,7 @@ void alternate_unicode_processing( const char * string, EscText * args )
 }
 
 static
-void encode_unicode( const char * string, EscText *args )
+void encode_unicode( PLCHAR_VECTOR string, EscText *args )
 {
     char          esc;
     PLINT         ig;
@@ -1118,11 +1118,11 @@ void encode_unicode( const char * string, EscText *args )
 
         if ( skip == 0 )
         {
-            PLUNICODE  unichar = 0;
+            PLUNICODE     unichar = 0;
 #ifdef HAVE_LIBUNICODE
-            const char * ptr = unicode_get_utf8( string + i, &unichar );
+            PLCHAR_VECTOR ptr = unicode_get_utf8( string + i, &unichar );
 #else
-            const char * ptr = utf8_to_ucs4( string + i, &unichar );
+            PLCHAR_VECTOR ptr = utf8_to_ucs4( string + i, &unichar );
 #endif
             if ( ptr == NULL )
             {
@@ -1160,7 +1160,7 @@ static PLUNICODE unicode_buffer_static[1024];
 
 void
 plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
-          PLINT refx, PLINT refy, const char *string )
+          PLINT refx, PLINT refy, PLCHAR_VECTOR string )
 {
     size_t len;
 
@@ -1232,8 +1232,8 @@ plP_text( PLINT base, PLFLT just, PLFLT *xform, PLINT x, PLINT y,
 }
 
 // convert utf8 string to ucs4 unichar
-static const char *
-utf8_to_ucs4( const char *ptr, PLUNICODE *unichar )
+static PLCHAR_VECTOR
+utf8_to_ucs4( PLCHAR_VECTOR ptr, PLUNICODE *unichar )
 {
     char tmp;
     int  isFirst = 1;
@@ -2278,7 +2278,7 @@ c_plstar( PLINT nx, PLINT ny )
 //--------------------------------------------------------------------------
 
 void
-c_plstart( const char *devname, PLINT nx, PLINT ny )
+c_plstart( PLCHAR_VECTOR devname, PLINT nx, PLINT ny )
 {
     pllib_init();
 
@@ -2947,10 +2947,10 @@ int plInBuildTree()
 
 #ifdef ENABLE_DYNDRIVERS
 
-const char*
+PLCHAR_VECTOR
 plGetDrvDir()
 {
-    const char* drvdir;
+    PLCHAR_VECTOR drvdir;
 
 // Get drivers directory in PLPLOT_DRV_DIR or DRV_DIR,
 //  on this order
@@ -3003,14 +3003,14 @@ plInitDispatchTable()
     int n;
 
 #ifdef ENABLE_DYNDRIVERS
-    char         buf[BUFFER2_SIZE];
-    const char   * drvdir;
-    char         *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
-    int          seq;
-    int          i, j, driver_found, done = 0;
-    FILE         *fp_drvdb   = NULL;
-    DIR          * dp_drvdir = NULL;
-    struct dirent* entry;
+    char          buf[BUFFER2_SIZE];
+    PLCHAR_VECTOR drvdir;
+    char          *devnam, *devdesc, *devtype, *driver, *tag, *seqstr;
+    int           seq;
+    int           i, j, driver_found, done = 0;
+    FILE          *fp_drvdb   = NULL;
+    DIR           * dp_drvdir = NULL;
+    struct dirent * entry;
     // lt_dlhandle dlhand;
 
     // Make sure driver counts are zeroed
@@ -3616,7 +3616,7 @@ c_plssub( PLINT nx, PLINT ny )
 // Set the device (keyword) name
 
 void
-c_plsdev( const char *devname )
+c_plsdev( PLCHAR_VECTOR devname )
 {
     if ( plsc->level > 0 )
     {
@@ -3806,7 +3806,7 @@ c_plgfnam( char *fnam )
 // Set the output file name.
 
 void
-c_plsfnam( const char *fnam )
+c_plsfnam( PLCHAR_VECTOR fnam )
 {
     plP_sfnam( plsc, fnam );
 }
@@ -3851,10 +3851,10 @@ plP_gprec( PLINT *p_setp, PLINT *p_prec )
     *p_prec = plsc->precis;
 }
 
-const char *
+PLCHAR_VECTOR
 plP_gtimefmt()
 {
-    return (const char *) plsc->timefmt;
+    return (PLCHAR_VECTOR) plsc->timefmt;
 }
 
 //

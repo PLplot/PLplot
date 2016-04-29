@@ -608,12 +608,12 @@ FT_PlotChar( PLStream *pls, FT_Data *FT, FT_GlyphSlot slot,
 
 void plD_FreeType_init( PLStream *pls )
 {
-    FT_Data    *FT;
-    char       *a;
+    FT_Data       *FT;
+    char          *a;
 // font paths and file names can be long so leave generous (1024) room
-    char       font_dir[PLPLOT_MAX_PATH];
+    char          font_dir[PLPLOT_MAX_PATH];
     // N.B. must be in exactly same order as TrueTypeLookup
-    const char *env_font_names[N_TrueTypeLookup] = {
+    PLCHAR_VECTOR env_font_names[N_TrueTypeLookup] = {
         "PLPLOT_FREETYPE_SANS_FONT",
         "PLPLOT_FREETYPE_SERIF_FONT",
         "PLPLOT_FREETYPE_MONO_FONT",
@@ -645,7 +645,7 @@ void plD_FreeType_init( PLStream *pls )
         "PLPLOT_FREETYPE_SCRIPT_BOLD_OBLIQUE_FONT",
         "PLPLOT_FREETYPE_SYMBOL_BOLD_OBLIQUE_FONT"
     };
-    short      i;
+    short         i;
 
 #if defined ( MSDOS ) || defined ( WIN32 )
     static char *default_font_names[] = { "arial.ttf", "times.ttf", "timesi.ttf", "arial.ttf",
@@ -656,7 +656,7 @@ void plD_FreeType_init( PLStream *pls )
     strncpy( WINDIR_PATH, b, PLPLOT_MAX_PATH - 1 );
     WINDIR_PATH[PLPLOT_MAX_PATH - 1] = '\0';
 #else
-    const char *default_unix_font_dir = PL_FREETYPE_FONT_DIR;
+    PLCHAR_VECTOR default_unix_font_dir = PL_FREETYPE_FONT_DIR;
 #endif
 
 
@@ -775,7 +775,7 @@ void plD_FreeType_init( PLStream *pls )
         else
         {
             strncpy( FT->font_name[i], font_dir, PLPLOT_MAX_PATH - 1 );
-            strncat( FT->font_name[i], (const char *) TrueTypeLookup[i].pfont, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ) );
+            strncat( FT->font_name[i], (PLCHAR_VECTOR) TrueTypeLookup[i].pfont, PLPLOT_MAX_PATH - 1 - strlen( FT->font_name[i] ) );
         }
         FT->font_name[i][PLPLOT_MAX_PATH - 1] = '\0';
 
@@ -825,7 +825,7 @@ void FT_SetFace( PLStream *pls, PLUNICODE fci )
 
     if ( fci != FT->fci )
     {
-        const char *font_name = plP_FCI2FontName( fci, FontLookup, N_TrueTypeLookup );
+        PLCHAR_VECTOR font_name = plP_FCI2FontName( fci, FontLookup, N_TrueTypeLookup );
         if ( font_name == NULL )
         {
             if ( FT->fci == PL_FCI_IMPOSSIBLE )

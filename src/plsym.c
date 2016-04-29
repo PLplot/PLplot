@@ -64,7 +64,7 @@ int hershey2unicode( int in );
 // Static function prototypes
 
 static void
-pldeco( short int **sym, PLINT *length, const char *text );
+pldeco( short int **sym, PLINT *length, PLCHAR_VECTOR text );
 
 static void
 plchar( signed char *xygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline,
@@ -95,7 +95,7 @@ plhrsh2( PLINT ch, PLINT x, PLINT y );
 //--------------------------------------------------------------------------
 
 void
-c_plstring( PLINT n, const PLFLT *x, const PLFLT *y, const char *string )
+c_plstring( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLCHAR_VECTOR string )
 {
     PLINT i;
     for ( i = 0; i < n; i++ )
@@ -115,7 +115,7 @@ c_plstring( PLINT n, const PLFLT *x, const PLFLT *y, const char *string )
 //--------------------------------------------------------------------------
 
 void
-c_plsym( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
+c_plsym( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT code )
 {
     PLINT i;
     PLFLT xt, yt;
@@ -159,7 +159,7 @@ c_plsym( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
 //--------------------------------------------------------------------------
 
 void
-c_plpoin( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
+c_plpoin( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT code )
 {
     PLINT i, sym, ifont = plsc->cfont;
     PLFLT xt, yt;
@@ -222,7 +222,7 @@ c_plpoin( PLINT n, const PLFLT *x, const PLFLT *y, PLINT code )
 //--------------------------------------------------------------------------
 
 void
-c_plpoin3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT code )
+c_plpoin3( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, PLINT code )
 {
     PLINT i, sym, ifont = plsc->cfont;
     PLFLT u, v;
@@ -298,7 +298,7 @@ c_plpoin3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, PLINT code )
 //--------------------------------------------------------------------------
 
 void
-c_plstring3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const char * string )
+c_plstring3( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, PLCHAR_VECTOR string )
 {
     PLINT i;
     PLFLT u, v;
@@ -528,7 +528,7 @@ plhrsh2( PLINT ch, PLINT x, PLINT y )
 //--------------------------------------------------------------------------
 
 void
-c_pllab( const char *xlabel, const char *ylabel, const char *tlabel )
+c_pllab( PLCHAR_VECTOR xlabel, PLCHAR_VECTOR ylabel, PLCHAR_VECTOR tlabel )
 {
     if ( plsc->level < 2 )
     {
@@ -573,8 +573,8 @@ c_pllab( const char *xlabel, const char *ylabel, const char *tlabel )
 //--------------------------------------------------------------------------
 
 void
-c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
-          const char *text )
+c_plmtex( PLCHAR_VECTOR side, PLFLT disp, PLFLT pos, PLFLT just,
+          PLCHAR_VECTOR text )
 {
     PLINT clpxmi, clpxma, clpymi, clpyma;
     PLINT vert, refx, refy, x, y;
@@ -713,7 +713,7 @@ c_plmtex( const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 //--------------------------------------------------------------------------
 
 void
-c_plptex( PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
+c_plptex( PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text )
 {
     PLINT x, y, refx, refy;
     PLFLT xdv, ydv, xmm, ymm, refxmm, refymm, shift, cc, ss;
@@ -789,7 +789,7 @@ c_plptex( PLFLT wx, PLFLT wy, PLFLT dx, PLFLT dy, PLFLT just, const char *text )
 //--------------------------------------------------------------------------
 
 void
-plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, const char *string )
+plstr( PLINT base, PLFLT *xform, PLINT refx, PLINT refy, PLCHAR_VECTOR string )
 {
     short int   *symbol;
     signed char *vxygrid = 0;
@@ -955,7 +955,7 @@ plchar( signed char *vxygrid, PLFLT *xform, PLINT base, PLINT oline, PLINT uline
 //--------------------------------------------------------------------------
 
 PLFLT
-plstrl( const char *string )
+plstrl( PLCHAR_VECTOR string )
 {
     short int   *symbol;
     signed char *vxygrid = 0;
@@ -1085,7 +1085,7 @@ plcvec( PLINT ch, signed char **xygr )
 //--------------------------------------------------------------------------
 
 static void
-pldeco( short int **symbol, PLINT *length, const char *text )
+pldeco( short int **symbol, PLINT *length, PLCHAR_VECTOR text )
 {
     PLINT     ch, ifont = plsc->cfont, ig, j = 0, lentxt = (PLINT) strlen( text );
     char      test, esc;
@@ -1195,7 +1195,7 @@ pldeco( short int **symbol, PLINT *length, const char *text )
 //--------------------------------------------------------------------------
 
 PLINT
-plP_strpos( const char *str, int chr )
+plP_strpos( PLCHAR_VECTOR str, int chr )
 {
     char *temp;
 
@@ -1212,7 +1212,7 @@ plP_strpos( const char *str, int chr )
 //--------------------------------------------------------------------------
 
 PLINT
-plP_stindex( const char *str1, const char *str2 )
+plP_stindex( PLCHAR_VECTOR str1, PLCHAR_VECTOR str2 )
 {
     PLINT base, str1ind, str2ind;
 
@@ -1235,7 +1235,7 @@ plP_stindex( const char *str1, const char *str2 )
 //--------------------------------------------------------------------------
 
 PLBOOL
-plP_stsearch( const char *str, int chr )
+plP_stsearch( PLCHAR_VECTOR str, int chr )
 {
     if ( strchr( str, chr ) )
         return TRUE;
@@ -1526,7 +1526,7 @@ int plhershey2unicode( int in )
 //  index is not present the returned value is NULL.
 //--------------------------------------------------------------------------
 
-const char *
+PLCHAR_VECTOR
 plP_FCI2FontName( PLUNICODE fci,
                   const FCI_to_FontName_Table lookup[], const int nlookup )
 {
@@ -1546,7 +1546,7 @@ plP_FCI2FontName( PLUNICODE fci,
             // We have found it!
             // fci == lookup[jmid].fci
             //
-            return (const char *) ( lookup[jmid].pfont );
+            return (PLCHAR_VECTOR) ( lookup[jmid].pfont );
     }
     // jlo is invalid or it is valid and fci > lookup[jlo].Unicode.
     // jhi is invalid or it is valid and fci < lookup[jhi].Unicode.
@@ -1589,7 +1589,7 @@ plP_FCI2FontName( PLUNICODE fci,
 //--------------------------------------------------------------------------
 
 void
-c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text )
+c_plmtex3( PLCHAR_VECTOR side, PLFLT disp, PLFLT pos, PLFLT just, PLCHAR_VECTOR text )
 {
     // local storage
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
@@ -1962,7 +1962,7 @@ c_plmtex3( const char *side, PLFLT disp, PLFLT pos, PLFLT just, const char *text
 
 void
 c_plptex3( PLFLT wx, PLFLT wy, PLFLT wz, PLFLT dx, PLFLT dy, PLFLT dz,
-           PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, const char *text )
+           PLFLT sx, PLFLT sy, PLFLT sz, PLFLT just, PLCHAR_VECTOR text )
 {
     PLFLT xpc, ypc, xrefpc, yrefpc, xdpc, ydpc, xspc, yspc, ld, ls, cp, shift;
     PLFLT x_o, y_o, z_o, x_dx, y_dy, z_dz;
