@@ -282,10 +282,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       declared therein, separate from the Ada 2005 declarations. This allows the
       widest compatibility and does not require an Ada 2005 compiler. However,
       many users will want to gain the benefit of the built-in declarations of
-      2005. This is easily done: Read the short comments in
+      Ada 2005. This is easily done: Read the short comments in
       <literal>PLplot_Auxiliary.ads</literal> on how to comment-out two lines and
       uncomment three lines. Either configuration will compile correctly, but
-      depending on the Cmake configuration to expose a 2005 compiler in the later
+      depending on the Cmake configuration to expose an Ada 2005 compiler in the later
       case. (Note that at some points in the documentation, Ada 2005 is referred
       to as Ada 2007, including some Cmake flags.)</para>
       <para>This policy was changed in SVN version 11153. Before this, the
