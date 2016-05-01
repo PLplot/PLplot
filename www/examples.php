@@ -166,8 +166,8 @@ filled).
 		<p>Select language to see the source code</p>
 		<form class="codeform" action="examples.php" method="get">
 		<input type="hidden" name="demo" value="$demo_str" />
-		<input type="submit" name="lbind" value="Ada(thick)" />
-		<input type="submit" name="lbind" value="Ada(thin)" />
+		<input type="submit" name="lbind" value="Ada(Standard)" />
+		<input type="submit" name="lbind" value="Ada(Traditional)" />
 		<input type="submit" name="lbind" value="C" />
 		<input type="submit" name="lbind" value="C++" />
 		<input type="submit" name="lbind" value="D" />
@@ -182,8 +182,8 @@ filled).
 END;
 
 	  switch($lbind) {
-	  case ("Ada(thick)"):    $fname = "xthick" . $demo_str . "a.adb.txt"; break;
-	  case ("Ada(thin)"):    $fname = "x" . $demo_str . "a.adb.txt"; break;
+	  case ("Ada(Standard)"):    $fname = "xthick" . $demo_str . "a.adb.txt"; break;
+	  case ("Ada(Traditional)"):    $fname = "x" . $demo_str . "a.adb.txt"; break;
 	  case ("C"):      $fname = "x" . $demo_str . "c.c.txt"; break;
 	  case ("C++"):$fname = "x" . $demo_str . ".cc.txt"; break;
 	  case ("D"):$fname = "x" . $demo_str . "d.d.txt"; break;
