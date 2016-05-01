@@ -31,8 +31,8 @@ with
     Ada.Strings.Fixed,
     Ada.Calendar,
     System,
-    PLplot_Traditional,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Traditional;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
@@ -40,10 +40,8 @@ use
     Ada.Strings,
     Ada.Strings.Fixed,
     Ada.Calendar,
-    PLplot_Traditional,
-    PLplot_Auxiliary;
-
-
+    PLplot_Auxiliary,
+    PLplot_Traditional;
 
 procedure x21a is
     pts : Integer := 500;

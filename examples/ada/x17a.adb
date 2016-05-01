@@ -33,8 +33,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x17a is
     autoy, acc : Boolean;
     pl_errcode : Integer := 0;

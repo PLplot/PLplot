@@ -31,8 +31,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x30a is
     red   : Integer_Array_1D(0 .. 3) := (  0, 255,   0,   0);
     green : Integer_Array_1D(0 .. 3) := (  0,   0, 255,   0);

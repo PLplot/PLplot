@@ -39,7 +39,7 @@ use
     Ada.Strings.Unbounded,
     Interfaces.C;
 
-package body PLplot is    
+package body PLplot_Standard is    
 
 --------------------------------------------------------------------------------
 --        High-Level subroutines for thick binding                            --
@@ -3814,4 +3814,4 @@ begin -- package body for PLplot
     -- the 16 default colors of color map 0.
     Make_Snapshot_Of_Color_Map_0(Default_Red_Components, Default_Green_Components, Default_Blue_Components);
 
-end PLplot;
+end PLplot_Standard;

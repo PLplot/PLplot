@@ -20,12 +20,10 @@
 
 with
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 -- Test program for filling polygons and proper clipping
 procedure xthick25a is

@@ -22,12 +22,12 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 
 ------------------------------------------------------------------------------
 -- Generates two kinds of plots:

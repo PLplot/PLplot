@@ -23,15 +23,13 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     System,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 procedure xthick30a is
     red   : Integer_Array_1D(0 .. 3) := (  0, 255,   0,   0);

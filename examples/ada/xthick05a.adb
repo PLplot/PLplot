@@ -23,14 +23,12 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 procedure xthick05a is
     NPTS : constant Integer := 2047;

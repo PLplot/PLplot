@@ -33,8 +33,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x06a is
 
     k, maxfont : Integer;

@@ -32,7 +32,7 @@ use
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
     PLplot_Traditional;
-    
+
 procedure x04a is
 
     procedure plot1(Plot_Type : Integer) is

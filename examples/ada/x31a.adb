@@ -40,8 +40,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 -- This example mostly outputs text. As part of the PLplot testing regime, we
 -- require that the text output match that of the C version, x31c.c, exactly.
 -- Therefore, certain extra measures were made in this Ada version to assure

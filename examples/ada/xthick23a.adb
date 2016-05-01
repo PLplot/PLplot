@@ -28,7 +28,7 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Text_IO,
     Ada.Integer_Text_IO,
@@ -38,9 +38,7 @@ use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 procedure xthick23a is
 

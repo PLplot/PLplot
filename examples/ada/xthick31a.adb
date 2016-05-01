@@ -27,7 +27,7 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Text_IO,
     Ada.Long_Float_Text_IO,
@@ -37,9 +37,7 @@ use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 -- This example mostly outputs text. As part of the PLplot testing regime, we
 -- require that the text output match that of the C version, x31c.c, exactly.

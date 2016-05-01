@@ -31,8 +31,8 @@ with
     Ada.Strings.Fixed,
     Ada.Calendar,
     System,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
@@ -40,10 +40,8 @@ use
     Ada.Strings,
     Ada.Strings.Fixed,
     Ada.Calendar,
-    PLplot,
-    PLplot_Auxiliary;
-
-
+    PLplot_Auxiliary,
+    PLplot_Standard;
 
 procedure xthick21a is
     pts : Integer := 500;

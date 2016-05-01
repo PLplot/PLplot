@@ -30,8 +30,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x05a is
     NPTS : constant Integer := 2047;
     data : Real_Vector(0 .. NPTS - 1);

@@ -23,14 +23,14 @@ with
     System.Address_To_Access_Conversions,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     System,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 
 procedure xthick22a is
     -- Pairs of points making the line segments used to plot the user defined arrow 

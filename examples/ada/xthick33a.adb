@@ -34,13 +34,13 @@ with
     Ada.Strings,
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Strings.Unbounded,
     Ada.Strings,
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 
 ----------------------------------------------------------------------------
 -- Demonstrate most Create_Legend capability including unicode symbols.

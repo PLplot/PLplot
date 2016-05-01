@@ -25,16 +25,14 @@ with
     Ada.Strings,
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 procedure xthick03a is
     dtr, theta, dx, dy, r, offset : Long_Float;

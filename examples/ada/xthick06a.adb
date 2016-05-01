@@ -24,16 +24,14 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Strings,
     Ada.Strings.Fixed,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 procedure xthick06a is
 

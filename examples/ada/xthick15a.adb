@@ -26,15 +26,13 @@ with
     Ada.Numerics,
     System,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
-
-
+    PLplot_Auxiliary,
+    PLplot_Standard;
 
 procedure xthick15a is
     XPTS : constant Integer := 35; -- Data points in x

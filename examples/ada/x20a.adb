@@ -25,18 +25,16 @@ with
     Ada.Sequential_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot_Traditional,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Traditional;
 use
     Ada.Text_IO,
     Interfaces.C,
     System,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot_Traditional,
-    PLplot_Auxiliary;
-
-
+    PLplot_Auxiliary,
+    PLplot_Traditional;
 
 procedure x20a is
 

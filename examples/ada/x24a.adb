@@ -25,8 +25,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x24a is
     red   : Integer_Array_1D(0 .. 6) := (240, 204, 204, 204,   0,  39, 125);
     green : Integer_Array_1D(0 .. 6) := (240,   0, 125, 204, 204,  80,   0);

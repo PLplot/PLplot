@@ -22,14 +22,14 @@ with
     Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 use
     Ada.Strings.Unbounded,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 
 procedure xthick08a is
     -- These values must be odd, for the middle

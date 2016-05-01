@@ -30,7 +30,7 @@ use
     PLplot_Auxiliary,
     Ada.Strings.Unbounded;
 
-package PLplot is
+package PLplot_Standard is
 
     -- Used with Set_Device_Window_Parameters.
     PL_NOTSET : Long_Float renames PLplot_Thin.PL_NOTSET;
@@ -2348,4 +2348,4 @@ package PLplot is
     -- Wait for graphics input event and translate to world coordinates.
     procedure Get_Cursor(Graphics_Input : out Graphics_Input_Record_Type);
 
-end PLplot;
+end PLplot_Standard;

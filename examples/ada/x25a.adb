@@ -25,8 +25,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 -- Test program for filling polygons and proper clipping
 procedure x25a is
     npts : Integer := 0;

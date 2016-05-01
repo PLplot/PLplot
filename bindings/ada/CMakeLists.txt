@@ -21,8 +21,8 @@
 if(ENABLE_ada)
 
   set(SOURCE_LIST
-    plplot.adb
-    plplot.ads
+    plplot_standard.adb
+    plplot_standard.ads
     plplot_thin.adb
     plplot_thin.ads
     plplot_traditional.adb
@@ -41,7 +41,7 @@ if(ENABLE_ada)
     ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/plplotada.dir
     )
   set(ALI_LIST
-    ${ALI_PREFIX}/plplot.ali
+    ${ALI_PREFIX}/plplot_standard.ali
     ${ALI_PREFIX}/plplot_thin.ali
     ${ALI_PREFIX}/plplot_traditional.ali
     ${ALI_PREFIX}/plplot_auxiliary.ali
@@ -56,7 +56,7 @@ if(ENABLE_ada)
   # immediately return with a return code of 3.
   if(MINGW)
     list(APPEND ALI_LIST
-      ${ALI_PREFIX}/plplot.o
+      ${ALI_PREFIX}/plplot_standard.o
       ${ALI_PREFIX}/plplot_thin.o
       ${ALI_PREFIX}/plplot_traditional.o
       ${ALI_PREFIX}/plplot_auxiliary.o

@@ -22,16 +22,14 @@ with
     System,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     System,
-    PLplot,
-    PLplot_Auxiliary;
-
-
+    PLplot_Auxiliary,
+    PLplot_Standard;
 
     --------------------------------------------------------------------------
     -- Does several contour plots using different coordinate mappings.

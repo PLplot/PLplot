@@ -41,8 +41,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 ------------------------------------------------------------------------------
 -- Plots several simple functions from other example programs.
 --

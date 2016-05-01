@@ -40,8 +40,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x23a is
 
     Greek : array(0 .. 47) of String(1 .. 3) := (

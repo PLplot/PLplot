@@ -34,8 +34,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x03a is
     dtr, theta, dx, dy, r, offset : Long_Float;
     x0, y0 : Real_Vector(0..360);

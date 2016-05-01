@@ -24,17 +24,14 @@ with
     Ada.Strings,
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
-    PLplot;
-
+    PLplot_Standard;
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings,
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 ------------------------------------------------------------------------------
 -- Demonstrates multiple windows and color map 0 palette, both default and

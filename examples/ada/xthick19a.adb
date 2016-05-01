@@ -28,7 +28,7 @@ with
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Unbounded,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Text_IO,
     Interfaces.C,
@@ -38,7 +38,7 @@ use
     Ada.Numerics.Long_Elementary_Functions,
     Ada.Strings.Unbounded,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 
 -- Shows two views of the world map.
 procedure xthick19a is

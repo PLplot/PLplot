@@ -29,8 +29,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 -- Demonstrates plotting text in 3D.
 procedure x28a is
     -- Choose these values to correspond to tick marks.

@@ -26,6 +26,7 @@ CONTENTS
 1.1 Backwards incompatibilities introduced for our C (and other) API
 1.2 Backwards incompatibilities for our Fortran binding
 1.3 Octal interpretation removed from numerical escape sequences in text
+1.4 Backwards incompatibilities for one of our Ada thick bindings
 
 2. Improvements relative to the previous release
 
@@ -35,6 +36,7 @@ CONTENTS
 2.4 Supply old Fortran binding and examples option
 2.5 Backwards incompatibilites introduced by the new Fortran binding
 2.6 Examples reworked for the -DPL_DOUBLE=OFF case
+2.7 Backwards incompatibilities introduced for one of our Ada thick bindings
 
 3. PLplot testing
 ________________________________________________________________
@@ -70,6 +72,13 @@ but all other number strings starting with 0 are interpreted as
 decimal rather than octal.  Thus, the decimal interpretation of
 "#(0123)" and "#(123)" is now identical, and there are no errors
 introduced by leading-zero decimal escape sequences such as "#(0855)".
+
+1.4 Backwards incompatibilities for one of our Ada thick bindings
+
+A backwards-incompatible change has been introduced into one of
+our Ada thick bindings (see 2.7 for details).  This change requires all those whose code
+referred to the "PLplot" binding in their with and use statements to
+change those references to "PLplot_Standard".
 ________________________________________________________________
 
 2. Improvements relative to the previous release
@@ -346,6 +355,17 @@ the (default) -DPL_DOUBLE=ON case.
   an issue with the -DPL_DOUBLE=OFF case where the former scaling
   factor underflowed, and those uniformly zeroed results in turn
   caused PLplot run-time errors.
+
+2.7 Backwards incompatibilities introduced for one of our Ada thick bindings
+
+Using PLplot "traditional" and PLplot "standard" to name our two thick
+user-visible Ada bindings has long been documented in our DocBook
+documention for our Ada bindings.  That is a good naming convention
+since the names of these bindings nicely complement each other.  Our
+existing Ada thick "PLplot_Traditional" binding implementation already
+follows this naming convention, and we have now changed to this same
+naming convention for our other thick binding by renaming it from
+"PLplot" to "PLplot_Standard".
 ________________________________________________________________
 
 3. PLplot testing

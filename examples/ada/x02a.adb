@@ -25,7 +25,6 @@ with
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
     PLplot_Traditional;
-
 use
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
@@ -33,8 +32,6 @@ use
     Ada.Strings.Fixed,
     PLplot_Auxiliary,
     PLplot_Traditional;
-
-
 
 ------------------------------------------------------------------------------
 -- Demonstrates multiple windows and color map 0 palette, both default and

@@ -29,8 +29,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 procedure x10a is
 begin   
     -- Parse and process command line arguments    

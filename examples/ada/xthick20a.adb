@@ -25,18 +25,16 @@ with
     Ada.Sequential_IO,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
+    PLplot_Auxiliary,
+    PLplot_Standard;
 use
     Ada.Text_IO,
     Interfaces.C,
     System,
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
-    PLplot,
-    PLplot_Auxiliary;
-
-
+    PLplot_Auxiliary,
+    PLplot_Standard;
 
 procedure xthick20a is
 

@@ -30,7 +30,7 @@ with
     Ada.Numerics,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     Ada.Text_IO,
     Ada.Numerics,
@@ -39,9 +39,7 @@ use
     Ada.Strings.Unbounded,
     Ada.Numerics.Long_Elementary_Functions,
     PLplot_Auxiliary,
-    PLplot;
-
-
+    PLplot_Standard;
 
 ------------------------------------------------------------------------------
 -- Plots several simple functions from other example programs.

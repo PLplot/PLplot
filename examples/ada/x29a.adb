@@ -31,8 +31,6 @@ use
     PLplot_Auxiliary,
     PLplot_Traditional;
 
-
-
 --------------------------------------------------------------------------------
 -- Draws several plots which demonstrate the use of date / time formats for
 -- the axis labels.

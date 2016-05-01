@@ -26,10 +26,10 @@
 
 with
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 use
     PLplot_Auxiliary,
-    PLplot;
+    PLplot_Standard;
 
 procedure xthick00a is
     x, y : Real_Vector(0 .. 100);
