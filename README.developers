@@ -19,6 +19,25 @@ platforms git is available from the msysGit project.  In all cases, it
 is highly recommended that git is run from the command line rather
 than from a GUI.
 
+Furthermore, our general advice is to ignore non-standard extensions
+to git such as git-lfs since they are not needed, and a lean git means
+there is less to go wrong.
+
+In fact, before we formulated this advice one of our developers
+installed and used git-lfs (from Macports) inadvertently with the
+result that a .git/hooks/pre-push shell script was run to execute
+git-lfs before each of his pushes, and his local git configuration was
+changed. He reverted back to the lean git that is also available from
+Macports by the following measures (which may be useful to others who
+have inadvertently installed git-lfs):
+
+"I did git lfs uninstall and it cleaned up the lines it had added to
+~/.gitconfig. I also uninstalled git-lfs from my MacPorts stuff.  Then
+I got a fresh clone."
+
+As expected (since git-lfs adds nothing that is truly needed for PLplot git
+needs) that lean git command-line environment has been working well for him.
+
 PLplot currently uses the rebase git workflow 
 [described here](http://kevinold.com/2013/04/17/my-git-workflow.html).
 
