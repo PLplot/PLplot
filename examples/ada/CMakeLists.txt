@@ -58,45 +58,14 @@ set(ada_STRING_INDICES
   "30"
   "31"
   "33"
-  "thick00"
-  "thick01"
-  "thick02"
-  "thick03"
-  "thick04"
-  "thick05"
-  "thick06"
-  "thick07"
-  "thick08"
-  "thick09"
-  "thick10"
-  "thick11"
-  "thick12"
-  "thick13"
-  "thick14"
-  "thick15"
-  "thick16"
-  "thick17"
-  "thick18"
-  "thick19"
-  "thick20"
-  "thick21"
-  "thick22"
-  "thick23"
-  "thick24"
-  "thick25"
-  "thick26"
-  "thick27"
-  "thick28"
-  "thick29"
-  "thick30"
-  "thick31"
-  "thick33"
   )
 
 if(CORE_BUILD)
   set(ada_SRCS)
   foreach(STRING_INDEX ${ada_STRING_INDICES})
-    set(SOURCE_FILE x${STRING_INDEX}a.adb)
+    set(SOURCE_FILE xtraditional${STRING_INDEX}a.adb)
+    list(APPEND ada_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
+    set(SOURCE_FILE xstandard${STRING_INDEX}a.adb)
     list(APPEND ada_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
   endforeach(STRING_INDEX ${ada_STRING_INDICES})
 
@@ -141,25 +110,27 @@ if(BUILD_TEST)
   endif(CORE_BUILD)
 
   foreach(STRING_INDEX ${ada_STRING_INDICES})
-    set(TARGET_NAME x${STRING_INDEX}a)
-    set(SOURCE_FILE x${STRING_INDEX}a.adb)
-    set(adasrcfile ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
-
-    # Note due to limitations of the Ada language support for CMake,
-    # the nominal source file for add_executable is compiled (which is
-    # why a real file has to be specified), but otherwise it is
-    # ignored except for its .adb suffix which identifies the Ada
-    # language.  The actual source file name for the internal gnatmake
-    # command that creates the executable is constructed from
-    # <TARGET>.adb.  Since no directory can be specified from this
-    # construction (don't ask), you must specify the directory of
-    # <TARGET>.adb with a -aI option (see above comment of adalinkflags).
-    add_executable(${TARGET_NAME} ${adasrcfile})
-    
-    set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS ${adalinkflags})
-    target_link_libraries(${TARGET_NAME} plplotada plplot)
-    set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ada ${TARGET_NAME})
-    list(APPEND ada_extra_clean_files "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.o;${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.ali")
+    foreach(BINDING traditional standard)
+      set(TARGET_NAME x${BINDING}${STRING_INDEX}a)
+      set(SOURCE_FILE ${TARGET_NAME}.adb)
+      set(adasrcfile ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
+      
+      # Note due to limitations of the Ada language support for CMake,
+      # the nominal source file for add_executable is compiled (which is
+      # why a real file has to be specified), but otherwise it is
+      # ignored except for its .adb suffix which identifies the Ada
+      # language.  The actual source file name for the internal gnatmake
+      # command that creates the executable is constructed from
+      # <TARGET>.adb.  Since no directory can be specified from this
+      # construction (don't ask), you must specify the directory of
+      # <TARGET>.adb with a -aI option (see above comment of adalinkflags).
+      add_executable(${TARGET_NAME} ${adasrcfile})
+      
+      set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS ${adalinkflags})
+      target_link_libraries(${TARGET_NAME} plplotada plplot)
+      set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ada ${TARGET_NAME})
+      list(APPEND ada_extra_clean_files "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.o;${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.ali")
+    endforeach(BINDING traditional standard)
   endforeach(STRING_INDEX ${ada_STRING_INDICES})
 
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ada_extra_clean_files}")

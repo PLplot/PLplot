@@ -19,8 +19,10 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
--- This program uses Ada-specific extensions to PLplot to create similar
--- results as xtraditional00a.adb and xstandard00a.adb but with less effort.
+-- See x00_easy_a.adb for an easier way to generate similar results using
+-- Ada-specific extensions to PLplot.
+
+-- See x00a.adb for a version of this program that uses traditional plplot names.
 
 with
     PLplot_Auxiliary,
@@ -29,7 +31,7 @@ use
     PLplot_Auxiliary,
     PLplot_Standard;
 
-procedure x00_easy_a is
+procedure xstandard00a is
     x, y : Real_Vector(0 .. 100);
     x_Min, y_Min : Long_Float := 0.0;
     x_Max : Long_Float := 1.0;
@@ -41,15 +43,24 @@ begin
         y(i) := y_Max * x(i)**2;
     end loop;
 
-    -- -- Initialize plplot.
-     Initialize_PLplot;
+    -- Parse and process command line arguments.
+    Parse_Command_Line_Arguments(Parse_Full); 
 
-    -- Make the plot.
-    Simple_Plot(x, y, 
-        X_Label => "x", 
-        Y_Label => "y=100 x#u2#d", 
+    -- Initialize plplot.
+    Initialize_PLplot;
+
+    -- Create a labelled box to hold the plot.
+    Set_Environment(x_Min, x_Max, y_Min, y_Max, 
+        Justification => Not_Justified, 
+        Axis_Style    => Linear_Box_Plus);
+    Write_Labels
+       (X_Label     => "x", 
+        Y_Label     => "y=100 x#u2#d",
         Title_Label => "Simple PLplot demo of a 2D line plot");
+
+    -- Plot the data that was prepared above.
+    Draw_Curve(x, y);
 
     -- Close PLplot library.
     End_PLplot;
-end x00_easy_a;
+end xstandard00a;

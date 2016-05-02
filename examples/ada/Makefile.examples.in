@@ -2,7 +2,7 @@
 ###
 ### Process this file with configure to produce Makefile.examples
 ###
-# Copyright (C) 2002-2015  Alan W. Irwin
+# Copyright (C) 2002-2016  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 # Copyright (C) 2004  Andrew Ross
 #
@@ -37,72 +37,72 @@ PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
 RPATHCMD = @RPATHCMD@
 
 EXECUTABLES_list = \
-	x00a$(EXEEXT) \
-	x01a$(EXEEXT) \
-	x02a$(EXEEXT) \
-	x03a$(EXEEXT) \
-	x04a$(EXEEXT) \
-	x05a$(EXEEXT) \
-	x06a$(EXEEXT) \
-	x07a$(EXEEXT) \
-	x08a$(EXEEXT) \
-	x09a$(EXEEXT) \
-	x10a$(EXEEXT) \
-	x11a$(EXEEXT) \
-	x12a$(EXEEXT) \
-	x13a$(EXEEXT) \
-	x14a$(EXEEXT) \
-	x15a$(EXEEXT) \
-	x16a$(EXEEXT) \
-	x17a$(EXEEXT) \
-	x18a$(EXEEXT) \
-	x19a$(EXEEXT) \
-	x20a$(EXEEXT) \
-	x21a$(EXEEXT) \
-	x22a$(EXEEXT) \
-	x23a$(EXEEXT) \
-	x24a$(EXEEXT) \
-	x25a$(EXEEXT) \
-	x26a$(EXEEXT) \
-	x27a$(EXEEXT) \
-	x28a$(EXEEXT) \
-	x29a$(EXEEXT) \
-	x30a$(EXEEXT) \
-	x31a$(EXEEXT) \
-	x33a$(EXEEXT) \
-	xthick00a$(EXEEXT) \
-	xthick01a$(EXEEXT) \
-	xthick02a$(EXEEXT) \
-	xthick03a$(EXEEXT) \
-	xthick04a$(EXEEXT) \
-	xthick05a$(EXEEXT) \
-	xthick06a$(EXEEXT) \
-	xthick07a$(EXEEXT) \
-	xthick08a$(EXEEXT) \
-	xthick09a$(EXEEXT) \
-	xthick10a$(EXEEXT) \
-	xthick11a$(EXEEXT) \
-	xthick12a$(EXEEXT) \
-	xthick13a$(EXEEXT) \
-	xthick14a$(EXEEXT) \
-	xthick15a$(EXEEXT) \
-	xthick16a$(EXEEXT) \
-	xthick17a$(EXEEXT) \
-	xthick18a$(EXEEXT) \
-	xthick19a$(EXEEXT) \
-	xthick20a$(EXEEXT) \
-	xthick21a$(EXEEXT) \
-	xthick22a$(EXEEXT) \
-	xthick23a$(EXEEXT) \
-	xthick24a$(EXEEXT) \
-	xthick25a$(EXEEXT) \
-	xthick26a$(EXEEXT) \
-	xthick27a$(EXEEXT) \
-	xthick28a$(EXEEXT) \
-	xthick29a$(EXEEXT) \
-	xthick30a$(EXEEXT) \
-	xthick31a$(EXEEXT) \
-	xthick33a$(EXEEXT)
+	xtraditional00a$(EXEEXT) \
+	xtraditional01a$(EXEEXT) \
+	xtraditional02a$(EXEEXT) \
+	xtraditional03a$(EXEEXT) \
+	xtraditional04a$(EXEEXT) \
+	xtraditional05a$(EXEEXT) \
+	xtraditional06a$(EXEEXT) \
+	xtraditional07a$(EXEEXT) \
+	xtraditional08a$(EXEEXT) \
+	xtraditional09a$(EXEEXT) \
+	xtraditional10a$(EXEEXT) \
+	xtraditional11a$(EXEEXT) \
+	xtraditional12a$(EXEEXT) \
+	xtraditional13a$(EXEEXT) \
+	xtraditional14a$(EXEEXT) \
+	xtraditional15a$(EXEEXT) \
+	xtraditional16a$(EXEEXT) \
+	xtraditional17a$(EXEEXT) \
+	xtraditional18a$(EXEEXT) \
+	xtraditional19a$(EXEEXT) \
+	xtraditional20a$(EXEEXT) \
+	xtraditional21a$(EXEEXT) \
+	xtraditional22a$(EXEEXT) \
+	xtraditional23a$(EXEEXT) \
+	xtraditional24a$(EXEEXT) \
+	xtraditional25a$(EXEEXT) \
+	xtraditional26a$(EXEEXT) \
+	xtraditional27a$(EXEEXT) \
+	xtraditional28a$(EXEEXT) \
+	xtraditional29a$(EXEEXT) \
+	xtraditional30a$(EXEEXT) \
+	xtraditional31a$(EXEEXT) \
+	xtraditional33a$(EXEEXT) \
+	xstandard00a$(EXEEXT) \
+	xstandard01a$(EXEEXT) \
+	xstandard02a$(EXEEXT) \
+	xstandard03a$(EXEEXT) \
+	xstandard04a$(EXEEXT) \
+	xstandard05a$(EXEEXT) \
+	xstandard06a$(EXEEXT) \
+	xstandard07a$(EXEEXT) \
+	xstandard08a$(EXEEXT) \
+	xstandard09a$(EXEEXT) \
+	xstandard10a$(EXEEXT) \
+	xstandard11a$(EXEEXT) \
+	xstandard12a$(EXEEXT) \
+	xstandard13a$(EXEEXT) \
+	xstandard14a$(EXEEXT) \
+	xstandard15a$(EXEEXT) \
+	xstandard16a$(EXEEXT) \
+	xstandard17a$(EXEEXT) \
+	xstandard18a$(EXEEXT) \
+	xstandard19a$(EXEEXT) \
+	xstandard20a$(EXEEXT) \
+	xstandard21a$(EXEEXT) \
+	xstandard22a$(EXEEXT) \
+	xstandard23a$(EXEEXT) \
+	xstandard24a$(EXEEXT) \
+	xstandard25a$(EXEEXT) \
+	xstandard26a$(EXEEXT) \
+	xstandard27a$(EXEEXT) \
+	xstandard28a$(EXEEXT) \
+	xstandard29a$(EXEEXT) \
+	xstandard30a$(EXEEXT) \
+	xstandard31a$(EXEEXT) \
+	xstandard33a$(EXEEXT)
 		 
 all: $(EXECUTABLES_list)
 
