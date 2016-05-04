@@ -1291,7 +1291,7 @@ make test_interactive
 
 
 but the build system for the installed examples cannot configure anything
-with those device drivers so we don't bother to retreive them from the
+with those device drivers so we don't bother to retrieve them from the
 core build system or output them here.
 
 Noninteractive bindings:
