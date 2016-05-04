@@ -4,7 +4,7 @@
 # source tree (except those listed below) to discover which of those
 # files have any character with the eighth (parity) bit set.
 
-# Copyright (C) 2010-2014 Alan W. Irwin
+# Copyright (C) 2010-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -31,9 +31,9 @@ To make this so please run
 
 make parity_bit_check
 
-in the build tree and put the utils subdirectory of that build tree
-where parity_bit_check will be built by the above command on your
-PATH."
+in the build tree and put the absolute (not relative) location of the
+utils subdirectory of that build tree where parity_bit_check has been
+built by the above command on your PATH."
     exit 1
 fi
 
@@ -49,12 +49,16 @@ SCRIPT_PATH="$(pwd)"
 # is located.
 SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
 
-#List of all files in source tree other than .svn ones....
+# Must be in top directory of git working directory or outside that
+# working directory completely in order for "git checkout-index" to
+# work.
+cd $SOURCE_TREE
+
+# Copy all files in working directory tree of local git repository of PLplot
 rm -rf /tmp/parity_bit_check
-svn --quiet export ${SOURCE_TREE} /tmp/parity_bit_check
+git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index --all --prefix=/tmp/parity_bit_check/
 cd /tmp/parity_bit_check
 find -type f >| /tmp/temporary_source_tree_list
-
 for FILE in $(grep -v -f "$SOURCE_TREE"/scripts/parity_bit_check.exclude /tmp/temporary_source_tree_list); do
     parity_bit_check <$FILE
     parity_bit_check_rc=$?
