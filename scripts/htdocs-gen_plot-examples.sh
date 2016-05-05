@@ -131,8 +131,8 @@ for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 
     # page number is two digits or more.
     mv *${exe}.*[0-9][0-9].png $EXDIR/demo${exe}
     for f in \
-	examples/ada/x${exe}a.adb \
-	examples/ada/xthick${exe}a.adb \
+	examples/ada/xstandard${exe}a.adb \
+	examples/ada/xtraditional${exe}a.adb \
         examples/c/x${exe}c.c \
 	examples/c++/x${exe}.cc \
 	examples/d/x${exe}d.d \

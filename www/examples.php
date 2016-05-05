@@ -182,8 +182,8 @@ filled).
 END;
 
 	  switch($lbind) {
-	  case ("Ada(Standard)"):    $fname = "xthick" . $demo_str . "a.adb.txt"; break;
-	  case ("Ada(Traditional)"):    $fname = "x" . $demo_str . "a.adb.txt"; break;
+	  case ("Ada(Standard)"):    $fname = "xstandard" . $demo_str . "a.adb.txt"; break;
+	  case ("Ada(Traditional)"):    $fname = "xtraditional" . $demo_str . "a.adb.txt"; break;
 	  case ("C"):      $fname = "x" . $demo_str . "c.c.txt"; break;
 	  case ("C++"):$fname = "x" . $demo_str . ".cc.txt"; break;
 	  case ("D"):$fname = "x" . $demo_str . "d.d.txt"; break;
