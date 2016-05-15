@@ -157,6 +157,8 @@ Each of the steps in this comprehensive test may take a while...."
 
     PATH_SAVE=$PATH
     mkdir -p "$OUTPUT_TREE"
+    # Clean start with nonexistent install tree and empty build tree(s).
+    rm -rf "$INSTALL_TREE"
     rm -rf "$BUILD_TREE"
     mkdir -p "$BUILD_TREE"
     if [ "$do_test_install_tree" = "yes" ] ; then
