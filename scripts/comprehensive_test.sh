@@ -141,21 +141,19 @@ The location below is the top-level directory of the build tree used
 for the CMake-based build and test of the installed examples.
 INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE"
 
-    # Use OSTYPE variable to discover if it is a Windows platform or not.
-    if [[ "$OSTYPE" =~ ^cygwin ]]; then
-	ANY_WINDOWS_PLATFORM="true"
-    elif [[ "$OSTYPE" =~ ^msys ]]; then
-	ANY_WINDOWS_PLATFORM="true"
-    elif [[ "$OSTYPE" =~ ^win ]]; then
-	ANY_WINDOWS_PLATFORM="true"
-    else
-	ANY_WINDOWS_PLATFORM="false"
-    fi
     echo_tee "
 This variable specifies whether any windows platform has been detected
-ANY_WINDOWS_PLATFORM=$ANY_WINDOWS_PLATFORM
+ANY_WINDOWS_PLATFORM=$ANY_WINDOWS_PLATFORM"
 
+    echo_tee "
 Each of the steps in this comprehensive test may take a while...."
+
+    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$IF_MANIPULATE_DYLD_LIBRARY_PATH" = "true" ] ; then
+	# This is Mac OS X platform and printenv is available.
+	DYLD_LIBRARY_PATH_SAVE=$(printenv | grep DYLD_LIBRARY_PATH)
+	# Trim "DYLD_LIBRARY_PATH=" prefix from result.
+	DYLD_LIBRARY_PATH_SAVE=${DYLD_LIBRARY_PATH_SAVE#DYLD_LIBRARY_PATH=}
+    fi
 
     PATH_SAVE=$PATH
     mkdir -p "$OUTPUT_TREE"
@@ -278,6 +276,16 @@ Each of the steps in this comprehensive test may take a while...."
 		cd $current_dir
 	    fi
 
+	    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$IF_MANIPULATE_DYLD_LIBRARY_PATH" = "true" ] ; then
+		echo_tee "Prepend $INSTALL_TREE/lib to the original DYLD_LIBRARY_PATH"
+		if [ -z "$DYLD_LIBRARY_PATH_SAVE" ] ; then
+		    export DYLD_LIBRARY_PATH=$INSTALL_TREE/lib
+		else
+		    export DYLD_LIBRARY_PATH=$INSTALL_TREE/lib:$DYLD_LIBRARY_PATH_SAVE
+		fi
+		echo_tee "The result is DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
+	    fi
+
 	    if [ "$do_test_install_tree" = "yes" ] ; then
 		cd "$INSTALL_BUILD_TREE"
 		output="$OUTPUT_TREE"/installed_cmake.out
@@ -396,6 +404,16 @@ Each of the steps in this comprehensive test may take a while...."
 		cd $current_dir
 	    fi
 
+	    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$IF_MANIPULATE_DYLD_LIBRARY_PATH" = "true" ] ; then
+		echo_tee "Prepend $INSTALL_TREE/lib to the original DYLD_LIBRARY_PATH"
+		if [ -z "$DYLD_LIBRARY_PATH_SAVE" ] ; then
+		    export DYLD_LIBRARY_PATH=$INSTALL_TREE/lib
+		else
+		    export DYLD_LIBRARY_PATH=$INSTALL_TREE/lib:$DYLD_LIBRARY_PATH_SAVE
+		fi
+		echo_tee "The result is DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
+	    fi
+
 	    if [ "$do_test_install_tree" = "yes" ] ; then
 		cd "$INSTALL_BUILD_TREE"
 		output="$OUTPUT_TREE"/installed_cmake.out
@@ -457,8 +475,19 @@ Each of the steps in this comprehensive test may take a while...."
 	fi
     fi
 
-    echo_tee "Restore PATH to the original PATH"
+    echo_tee "Restore PATH to its original form"
     PATH=$PATH_SAVE
+    if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$IF_MANIPULATE_DYLD_LIBRARY_PATH" = "true" ] ; then
+	echo_tee "Restore DYLD_LIBRARY_PATH to its original form"
+	if [ -z "$DYLD_LIBRARY_PATH_SAVE" ] ; then
+	    # For this case no environment variable existed originally.
+	    export -n DYLD_LIBRARY_PATH=
+	else
+	    # For this case the environment variable existed and was equal to DYLD_LIBRARY_PATH_SAVE.
+	    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH_SAVE
+	fi
+	echo_tee "The result is DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH"
+    fi    
 }
 
 # Start of actual script after functions are defined.
@@ -792,9 +821,45 @@ if [ "$do_clean_first" = "yes" ] ; then
     rm -rf $prefix/shared $prefix/nondynamic $prefix/static
 fi
 
+# Discover if it is a Windows platform or not.
+if [[ "$OSTYPE" =~ ^cygwin ]]; then
+    ANY_WINDOWS_PLATFORM="true"
+elif [[ "$OSTYPE" =~ ^msys ]]; then
+    ANY_WINDOWS_PLATFORM="true"
+elif [[ "$OSTYPE" =~ ^win ]]; then
+    ANY_WINDOWS_PLATFORM="true"
+else
+    ANY_WINDOWS_PLATFORM="false"
+fi
+
+# Discover if it is a Mac OS X platform or not.
+if [[ "$OSTYPE" =~ ^darwin ]]; then
+    ANY_MAC_OSX_PLATFORM="true"
+else
+    ANY_MAC_OSX_PLATFORM="false"
+fi
+    
 hash printenv
 hash_rc=$?
 if [ "$hash_rc" -ne 0 ] ; then
+    HAS_PRINTENV=false
+else
+    HAS_PRINTENV=true
+fi
+
+if [ "$ANY_MAC_OSX_PLATFORM" = "true" ] ; then
+    if [ "$HAS_PRINTENV" = "true" ] ; then
+    IF_MANIPULATE_DYLD_LIBRARY_PATH=true
+    else
+	echo_tee "WARNING: printenv not on PATH for Mac OS X platform so will not be able to"
+	echo_tee "correctly manipulate the DYLD_LIBRARY_PATH environment variable for that platform"
+	IF_MANIPULATE_DYLD_LIBRARY_PATH=false
+    fi
+else
+    IF_MANIPULATE_DYLD_LIBRARY_PATH=false
+fi
+
+if [ "$HAS_PRINTENV" = "false" ] ; then
     echo_tee "WARNING: printenv not on PATH so not collecting environment variables in $ENVIRONMENT_LOG"
     rm -f $ENVIRONMENT_LOG
 else
