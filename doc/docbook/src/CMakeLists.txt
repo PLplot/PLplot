@@ -239,6 +239,7 @@ else(
 	${BINDIR}/info-clean.pl ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-info.xml > ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-clean.xml
 	DEPENDS
 	${SOURCE_FILES}
+	${BINDIR}/info-clean.pl
 	${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-info.xml
 	${CMAKE_CURRENT_SOURCE_DIR}/inline-info.ent
 	)
