@@ -2,15 +2,21 @@
 <!--
 plplotdoc.xml.in: Master file for the PLplot documentation
 
-Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
-Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
-Copyright (C) 2003  Joao Cardoso
-Copyright (C) 2004  Andrew Roach
-Copyright (C) 2004  Andrew Ross
-Copyright (C) 2004  Arjen Markus
-Copyright (C) 2005  Thomas J. Duck
-Copyright (C) 2009  Hezekiah M. Carty
+Copyright (C) 1994 Maurice J. LeBrun and Geoffrey Furnish
+Copyright (C) 2000-2005 Rafael Laboissiere
+Copyright (C) 2000-2016 Alan W. Irwin
+Copyright (C) 2001-2003 Joao Cardoso
+Copyright (C) 2004 Andrew Roach
+Copyright (C) 2004-2013 Andrew Ross
+Copyright (C) 2004-2016 Arjen Markus
+Copyright (C) 2005 Thomas J. Duck
+Copyright (C) 2005-2010 Hazen Babcock
+Copyright (C) 2008 Werner Smekal
+Copyright (C) 2008-2016 Jerry Bauck
+Copyright (C) 2009-2014 Hezekiah M. Carty
+Copyright (C) 2014-2015 Phil Rosenberg
+Copyright (C) 2015 Jim Dishaw
+
 
 Redistribution and use in source (XML DocBook) and "compiled" forms
 (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -280,16 +286,15 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <book id="plplot-docbook">
   <bookinfo>
-    <title>The PLplot Plotting Library</title>
+    <title>Documentation of the PLplot plotting software</title>
     <titleabbrev role="texinfo-file">plplotdoc</titleabbrev>
     <abstract role="texinfo-node">
-      <para>The PLplot Plotting Library</para>
+      <para>This reference contains complete user documentation for the PLplot plotting software</para>
     </abstract>
     <subjectset scheme="texinfo-directory">
       <subject><subjectterm>Scientific Visualization</subjectterm></subject>
     </subjectset>
     <abbrev>DocBook</abbrev>
-    <subtitle>Programmer's Reference Manual</subtitle>
     <releaseinfo>Version &Project-Version;</releaseinfo>
     <authorgroup>
       <author>
@@ -298,35 +303,37 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<surname>LeBrun</surname>
       </author>
       <author>
-	<firstname>Geoff</firstname>
+	<firstname>Geoffrey</firstname>
 	<surname>Furnish</surname>
-	<affiliation>
-	  <orgname>
-	    University of Texas at Austin
-	  </orgname>
-	  <orgdiv>
-	    Institute for Fusion Studies
-	  </orgdiv>
-	</affiliation>
       </author>
+    <collab><collabname>Rafael Laboissi&egrave;re</collabname></collab>
+    <collab><collabname>Alan W. Irwin</collabname></collab>
+    <collab><collabname>Joao Cardoso</collabname></collab>
+    <collab><collabname>Andrew Roach</collabname></collab>
+    <collab><collabname>Andrew Ross</collabname></collab>
+    <collab><collabname>Arjen Markus</collabname></collab>
+    <collab><collabname>Thomas J. Duck</collabname></collab>
+    <collab><collabname>Hazen Babcock</collabname></collab>
+    <collab><collabname>Werner Smekal</collabname></collab>
+    <collab><collabname>Jerry Bauck</collabname></collab>
+    <collab><collabname>Hezekiah M. Carty</collabname></collab>
+    <collab><collabname>Phil Rosenberg</collabname></collab>
+    <collab><collabname>Jim Dishaw</collabname></collab>
     </authorgroup>
-    <address>
-      <email></email>
-    </address>
     <copyright>
       <year>1994</year>
-      <holder>Geoffrey Furnish, Maurice LeBrun</holder>
+      <holder>Maurice J. LeBrun, Geoffrey Furnish</holder>
     </copyright>
     <copyright>
-      <year>1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009</year>
-      <holder>Alan W. Irwin</holder>
-    </copyright>
-    <copyright>
-      <year>1999, 2000, 2001, 2002, 2003, 2004</year>
+      <year>2000-2005</year>
       <holder>Rafael Laboissi&egrave;re</holder>
     </copyright>
     <copyright>
-      <year>2003</year>
+      <year>2000-2016</year>
+      <holder>Alan W. Irwin</holder>
+    </copyright>
+    <copyright>
+      <year>2001-2003</year>
       <holder>Joao Cardoso</holder>
     </copyright>
     <copyright>
@@ -334,11 +341,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <holder>Andrew Roach</holder>
     </copyright>
     <copyright>
-      <year>2004,2008</year>
+      <year>2004-2013</year>
       <holder>Andrew Ross</holder>
     </copyright>
     <copyright>
-      <year>2004</year>
+      <year>2004-2016</year>
       <holder>Arjen Markus</holder>
     </copyright>
     <copyright>
@@ -346,8 +353,28 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <holder>Thomas J. Duck</holder>
     </copyright>
     <copyright>
-      <year>2008, 2009</year>
+      <year>2005-2010</year>
+      <holder>Hazen Babcock</holder>
+    </copyright>
+    <copyright>
+      <year>2008</year>
+      <holder>Werner Smekal</holder>
+    </copyright>
+    <copyright>
+      <year>2008-2016</year>
+      <holder>Jerry Bauck</holder>
+    </copyright>
+    <copyright>
+      <year>2009-2014</year>
       <holder>Hezekiah M. Carty</holder>
+    </copyright>
+    <copyright>
+      <year>2014-2015</year>
+      <holder>Phil Rosenberg</holder>
+    </copyright>
+    <copyright>
+      <year>2015</year>
+      <holder>Jim Dishaw</holder>
     </copyright>
 
     <legalnotice>
