@@ -76,7 +76,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-libraries SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/libraries.xml">
 <!ENTITY plplot-symbols SYSTEM "plplot-symbols.txt">
 <!ENTITY plplot-structs SYSTEM "plplot-structs.txt">
-<!ENTITY chap-os-notes SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/os_notes.xml">
 <!ENTITY features-cross-platform '<link linkend="features-cross-platform">cross-platform</link>'>
 <!ENTITY features-bindings '<link linkend="features-bindings">bindings</link>'>
 <!ENTITY features-noninteractive '<link linkend="features-noninteractive">noninteractive</link>'>
@@ -465,7 +464,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-api-compat;
     &chap-api-obsolete;
     &chap-api-internal;
-    &chap-os-notes;
     &chap-libraries;
   </part>
 </book>
