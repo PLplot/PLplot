@@ -181,7 +181,7 @@ sub process_node {
   return $ret;
 }
 
-$p = new XML::DOM::Parser;
+$p = new XML::DOM::Parser(ErrorContext => 2);
 $sects = $p->parse ($api)->getElementsByTagName ("sect1");
 my $ns = $sects->getLength;
 $titles = "";
