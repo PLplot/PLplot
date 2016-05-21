@@ -81,15 +81,25 @@ that
 /usr/share/texlive/texmf-dist/fonts/truetype/public/gnu-freefont/FreeSerif.ttf is in the "texlive-fonts-extra" Debian package
 /usr/share/texlive/texmf-dist/fonts/truetype/public/gnu-freefont/FreeMono.ttf is in the "texlive-fonts-extra" Debian package
 
-With these in place the documentation should build with the apropriate
-CMake flag set on Debian and other Debian-based distros such as
-Ubuntu.
+With these in place the documentation should build with the
+appropriate cmake -DBUILD_DOC=ON option set on Debian and other
+Debian-based distros such as Ubuntu.
+
+N.B. For what it is worth, the deprecated (because you achieve better
+UTF-8 results without this option which is equivalent to setting
+-DDOCBOOK_DBLATEX_BACKEND=ON) -DDOCBOOK_DBLATEX_BACKEND=OFF cmake
+option still works on Debian.  However, there are substantial errors
+to start until you address fairly obscure warning messages concerning
+PassiveTeX and fop by installing the "xmltex" and "fop" packages.  It
+is notable that the "fop" package has large numbers of dependencies.
+Those are, or course, automatically installed by Debian, but I don't
+know the situation for other Linux distros.
 
 PLplot developers have no recent experience with rpm-based Linux
 distros, but Orion Poplawski (the Fedora packager for PLplot and a lot
 of other free software) has recently had success building the PLplot
 documentation on Fedora.  We presume he used command-line rpm tools
-similar to Debian's apt-file or else usrf generic rpm-finding software
+similar to Debian's apt-file or else used generic rpm-finding software
 such as <http://www.rpmfind.net/linux/RPM/> to search rpm packages
 for particular filenames similar to the above.  Presumably a
 similar situation would apply for other rpm-based distros such
@@ -130,7 +140,7 @@ your Windows fonts directory) and add this to the local.conf file or you can
 copy them to /usr/share/fonts/OTF in which case a local.conf file is not
 needed.
 Finally run fc-cache to update the fontconfig cache. Now the documentation
-should build with the apropriate CMake flag set.
+should build with the apropriate cmake -DBUILD_DOC=ON option set.
 
 
 The DocBook Back-end Tool Chains

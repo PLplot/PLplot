@@ -1,7 +1,7 @@
 # cmake/modules/docbook.cmake
 #
 # Copyright (C) 2006  Andrew Ross
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2016  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -67,22 +67,10 @@ else(ONSGMLS AND ENV_FOR_ONSGMLS)
   set(ONSGMLS NOTFOUND)
 endif(ONSGMLS AND ENV_FOR_ONSGMLS)
 
-# This option is used for the BUILD_DOC case below and elsewhere and also
-# for the PREBUILT_DOC case elsewhere (when stylesheet.css is configured).
-# option(DOCBOOK_XML_BACKEND "Use DocBook XML/XSLT backend tools to generate our documentation from DocBook source" ON)
-
-# N.B., DOCBOOK_XML_BACKEND ON is mandatory now rather than an option
-# which effectively disables the old SGML/DSSSL backend tools that
-# were deprecated but still available for 5.9.10 and which were the
-# default for releases prior to 5.9.10.
-set(DOCBOOK_XML_BACKEND ON CACHE BOOL "" FORCE)
-
-
 # Check for required programs and perl libraries.
 if(BUILD_DOC)
 
-  # The info backend is implemented only with perl and XML/XSLT regardless of
-  # DOCBOOK_XML_BACKEND.
+  # Configure the info backend which is implemented using perl and XML/XSLT tools.
   find_program(DB2X_TEXIXML db2x_texixml)
   if(NOT DB2X_TEXIXML)
     message(STATUS "WARNING: db2x_texixml not found")
@@ -105,8 +93,7 @@ if(BUILD_DOC)
     )
   endif(PERL_FOUND AND DB2X_TEXIXML AND DB2X_XSLTPROC AND MAKEINFO)
 
-  # The man backend is implemented only with perl and XML regardless of
-  # DOCBOOK_XML_BACKEND.
+  # Configure the man backend which is implemented using perl and XML tools
   if(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
     set(BUILD_MAN ON)
   else(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
@@ -117,216 +104,71 @@ if(BUILD_DOC)
     )
   endif(PERL_FOUND AND PERL_XML_PARSER AND PERL_XML_DOM)
 
-  if(DOCBOOK_XML_BACKEND)
+  # Configure the html backend which is implemented using xmlto.
+  # The xml tool does its own warnings at run time when components are
+  # missing so don't bother with looking for missing components at
+  # cmake time.
+  find_program(XMLTO xmlto)
+  if(NOT XMLTO)
+    message(STATUS "WARNING: xmlto not found")
+  endif(NOT XMLTO)
 
-    # For this case never build dvi form of documentation.
-    set(BUILD_DVI OFF CACHE BOOL "Build dvi form of documentation" FORCE)
+  if(XMLTO)
+    set(BUILD_HTML ON)
+  else(XMLTO)
+    message(STATUS
+      "WARNING: xmlto script is not installed so not building html documentation"
+      )
+    set(BUILD_HTML OFF)
+  endif(XMLTO)
 
-    # For this case use xmlto for just html
-    # (DOCBOOK_DBLATEX_BACKEND=ON) or both html and print
-    # (DOCBOOK_DBLATEX_BACKEND=OFF).  The xml tool does its own
-    # warnings at run time when components are missing so don't bother
-    # with looking for missing components at cmake time.
-    find_program(XMLTO xmlto)
-    if(NOT XMLTO)
-      message(STATUS "WARNING: xmlto not found")
-    endif(NOT XMLTO)
+  option(DOCBOOK_DBLATEX_BACKEND "Use \"dblatex --backend=xetex\" XML/XSLT backend tool to generate our print documentation from DocBook source" ON)
+  
 
-    if(XMLTO)
-      set(BUILD_HTML ON)
-    else(XMLTO)
-      message(STATUS
-	"WARNING: xmlto script is not installed so not building html documentation"
-	)
-      set(BUILD_HTML OFF)
-    endif(XMLTO)
-
-    # Deal with configuration of build of print documentation.
-
-    # For this case never build dvi form of print documentation.
-    set(BUILD_DVI OFF CACHE BOOL "Build dvi form of documentation" FORCE)
-
-    find_program(GZIP gzip)
-    if(GZIP)
+  if(DOCBOOK_DBLATEX_BACKEND)
+    # For this default case configure the PDF-only print backend using dblatex and xelatex.
+    find_program(DBLATEX dblatex)
+    if(DBLATEX)
       set(BUILD_PRINT ON)
-    else(GZIP)
-      message(STATUS "WARNING: gzip not found so not building print documentation")
+    else(DBLATEX)
+      message(STATUS "WARNING: dblatex not found so not building print documentation")
       set(BUILD_PRINT OFF)
-    endif(GZIP)
+    endif(DBLATEX)
 
     if(BUILD_PRINT)
-      option(DOCBOOK_DBLATEX_BACKEND "Use \"dblatex --backend=xetex\" XML/XSLT backend tool to generate our print documentation from DocBook source" ON)
-      
-      if(DOCBOOK_DBLATEX_BACKEND)
-	find_program(DBLATEX dblatex)
-	if(NOT DBLATEX)
-	  message(STATUS "WARNING: dblatex not found so not building print documentation")
-	  set(BUILD_PRINT OFF)
-	endif(NOT DBLATEX)
-
-	if(BUILD_PRINT)
-	  # Note that the "dblatex --backend=xetex" command must have
-          # some sort of xetex or xelatex python dependency.  I
-          # haven't tracked down those details, but it is likely that
-          # the xelatex is called as part of that processing (or if
-          # not some dependency of xelatex is called) so if xelatex is
-          # present it is likely that "dblatex --backend=xetex" will
-          # work.
-	  find_program(XELATEX xelatex)
-	  if(NOT XELATEX)
-	    message(STATUS "WARNING: xelatex not found so not building print documentation")
-	    set(BUILD_PRINT OFF)
-	  endif(NOT XELATEX)
-	endif(BUILD_PRINT)
-
-	if(BUILD_PRINT)
-	  # Need pdf2ps to provide PostScript from the PDF results.
-	  find_program(PDF2PS pdf2ps)
-	  if(NOT PDF2PS)
-	    message(STATUS "WARNING: pdf2ps not found so not building print documentation")
-	    set(BUILD_PRINT OFF)
-	  endif(NOT PDF2PS)
-	endif(BUILD_PRINT)
-
-      endif(DOCBOOK_DBLATEX_BACKEND)
+      # Note that the "dblatex --backend=xetex" command must have
+      # some sort of xetex or xelatex python dependency.  I
+      # haven't tracked down those details, but it is likely that
+      # the xelatex is called as part of that processing (or if
+      # not some dependency of xelatex is called) so if xelatex is
+      # present it is likely that "dblatex --backend=xetex" will
+      # work.
+      find_program(XELATEX xelatex)
+      if(NOT XELATEX)
+	message(STATUS "WARNING: xelatex not found so not building print documentation")
+	set(BUILD_PRINT OFF)
+      endif(NOT XELATEX)
     endif(BUILD_PRINT)
 
-  else(DOCBOOK_XML_BACKEND)
-    # Deprecated SGML/DSSSL backends to generate html and print documentation.
-
-    # These JADELOG and EC_PDFTEX variables used during course of
-    # SGML/DSSSL builds
-    set(JADELOG "jadeout.log")
-
-    # EC_PDFTEX needed to configure pdftex.map which is used in general for
-    # the documentation build.  The specific location in
-    # /usr/share/texmf/dvips/base is used in Debian sarge and may cover other
-    # distributions which still use tetex.
-    find_file(EC_ENC_NAME EC.enc /usr/share/texmf/dvips/base)
-    if(EC_ENC_NAME)
-      # Value appropriate for tetex
-      set(EC_PDFTEX EC)
-    else(EC_ENC_NAME)
-      # Value appropriate for texlive
-      set(EC_PDFTEX ec)
-    endif(EC_ENC_NAME)
-
-    # Find programmes required for SGML/DSSSL builds.
-    find_program(OPENJADE openjade)
-    if(NOT OPENJADE)
-      message(STATUS "WARNING: openjade not found")
-    endif(NOT OPENJADE)
-    find_program(JADETEX jadetex)
-    if(NOT JADETEX)
-      message(STATUS "WARNING: jadetex not found")
-    endif(NOT JADETEX)
-    find_program(PDFJADETEX pdfjadetex)
-    if(NOT PDFJADETEX)
-      message(STATUS "WARNING: pdfjadetex not found")
-    endif(NOT PDFJADETEX)
-    find_program(DVIPS dvips)
-    if(NOT DVIPS)
-      message(STATUS "WARNING: dvips not found")
-    endif(NOT DVIPS)
-    find_program(GZIP gzip)
-    if(NOT GZIP)
-      message(STATUS "WARNING: gzip not found")
-    endif(NOT GZIP)
-
-    # These DSSSL stylesheets needed for SGML/DSSSL builds.
-    set(DSSSL_DTD_PUBID "-//James Clark//DTD DSSSL Style Sheet//EN")
-    set(DB_SS_HTML_PUBID "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN")
-    set(DB_SS_PRINT_PUBID "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN")
-
-    # Check public identifiers
-    include(CheckDTD)
-
-    CheckDTD(HAVE_DSSSL_DTD  
-      "DSSSL Style Sheet DTD" 
-      "" 
-      "" 
-      "" 
-      "[<!ELEMENT book - O (#PCDATA)>]" 
-      "sgml" 
-      "\"${DSSSL_DTD_PUBID}\"" 
-      "style-sheet.dtd" 
-      "jade"
-      )
-
-    CheckDTD(HAVE_HTML_SS
-      "DocBook HTML Stylesheet"
-      "[<!ENTITY dbstyle PUBLIC \"${DB_SS_HTML_PUBID}\" CDATA DSSSL>]"
-      "use=\"docbook\""
-      "<external-specification id=\"docbook\" document=\"dbstyle\">"
-      "[<!ELEMENT book - O (#PCDATA)>]"
-      "sgml"
-      "\"${DB_SS_HTML_PUBID}\""
-      "html/docbook.dsl"
-      "docbook-stylesheets"
-      )
-
-    CheckDTD(HAVE_PRINT_SS
-      "DocBook Print Stylesheet"
-      "[<!ENTITY dbstyle PUBLIC \"${DB_SS_PRINT_PUBID}\" CDATA DSSSL>]"
-      "use=\"docbook\""
-      "<external-specification id=\"docbook\" document=\"dbstyle\">"
-      "[<!ELEMENT book - O (#PCDATA)>]"
-      "tex"
-      "\"${DB_SS_PRINT_PUBID}\""
-      "print/docbook.dsl"
-      "docbook-stylesheets"
-      )
-
-    CheckDTD(HAVE_DB_DTD
-      "DocBook DTD"
-      ""
-      ""
-      ""
-      "PUBLIC \"${DOCBOOK_DTD_PUBID}\""
-      "sgml"
-      "\"${DOCBOOK_DTD_PUBID}\""
-      "docbookx.dtd"
-      "docbook-xml (DTD version 3.1.3)"
-      )
-
-    if(OPENJADE) 
-      if(HAVE_DSSSL_DTD AND HAVE_HTML_SS AND HAVE_DB_DTD)
-	set(BUILD_HTML ON)
-      else(HAVE_DSSSL_DTD AND HAVE_HTML_SS AND HAVE_DB_DTD)
-	set(BUILD_HTML OFF)
-	message(STATUS
-	  "WARNING: Not building html documentation - "
-	  "dtd files / style sheets are missing"
-	  )
-      endif(HAVE_DSSSL_DTD AND HAVE_HTML_SS AND HAVE_DB_DTD)
-    else(OPENJADE) 
-      set(BUILD_HTML OFF)
+  else(DOCBOOK_DBLATEX_BACKEND)
+    # For this non-default case configure the PDF and compressed PostScript print backend
+    # using xmlto and gzip.
+    if(XMLTO)
+      set(BUILD_PRINT ON)
+    else(XMLTO)
       message(STATUS
-	"WARNING: Not building html documentation - "
-	"required programs are missing"
+	"WARNING: xmlto script is not installed so not building print documentation"
 	)
-    endif(OPENJADE)
-
-    if(OPENJADE AND JADETEX AND PDFJADETEX AND DVIPS AND GZIP)
-      if(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
-	set(BUILD_PRINT ON)
-	set(BUILD_DVI ON CACHE BOOL "Build dvi form of documentation" FORCE)
-      else(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
-	set(BUILD_PRINT OFF)
-	message(STATUS
-	  "WARNING: Not building print documentation - "
-	  "dtd files / style sheets are missing"
-	  )
-      endif(HAVE_DSSSL_DTD AND HAVE_PRINT_SS AND HAVE_DB_DTD)
-    else(OPENJADE AND JADETEX AND PDFJADETEX AND DVIPS AND GZIP)
       set(BUILD_PRINT OFF)
-      message(STATUS
-	"WARNING: Not building print documentation - "
-	"required programs are missing"
-	)
-    endif(OPENJADE AND JADETEX AND PDFJADETEX AND DVIPS AND GZIP)
-
-  endif(DOCBOOK_XML_BACKEND)
+    endif(XMLTO)
+    if(BUILD_PRINT)
+      find_program(GZIP gzip)
+      if(NOT GZIP)
+	message(STATUS "WARNING: gzip not found so not building print documentation")
+	set(BUILD_PRINT OFF)
+      endif(NOT GZIP)
+    endif(BUILD_PRINT)
+  endif(DOCBOOK_DBLATEX_BACKEND)
 endif(BUILD_DOC)
 
 # The "BASE" variables needed for www/documentation.php.in configuration and
