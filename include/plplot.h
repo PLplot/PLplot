@@ -1887,7 +1887,7 @@ c_plstripc( PLINT *id, PLCHAR_VECTOR xspec, PLCHAR_VECTOR yspec,
             PLFLT xlpos, PLFLT ylpos,
             PLBOOL y_ascl, PLBOOL acc,
             PLINT colbox, PLINT collab,
-            const PLINT colline[], const PLINT styline[], const char *legline[],
+            PLINT_VECTOR colline, PLINT_VECTOR styline, PLCHAR_MATRIX legline,
             PLCHAR_VECTOR labx, PLCHAR_VECTOR laby, PLCHAR_VECTOR labtop );
 
 // Deletes and releases memory used by a stripchart.

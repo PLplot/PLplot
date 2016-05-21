@@ -68,7 +68,7 @@ c_plstripc( PLINT *id, PLCHAR_VECTOR xspec, PLCHAR_VECTOR yspec,
             PLFLT xlpos, PLFLT ylpos,
             PLINT y_ascl, PLINT acc,
             PLINT colbox, PLINT collab,
-            PLINT_VECTOR colline, PLINT_VECTOR styline, PLCHAR_VECTOR legline[],
+            PLINT_VECTOR colline, PLINT_VECTOR styline, PLCHAR_MATRIX legline,
             PLCHAR_VECTOR labx, PLCHAR_VECTOR laby, PLCHAR_VECTOR labtop )
 {
     int i;
