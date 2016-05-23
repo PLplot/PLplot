@@ -28,6 +28,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include "ltdl_win32.h"
+#include "plplot.h"
 
 // (static) pointer to the last handle, which contains a pointer
 // to a possible previous handle
