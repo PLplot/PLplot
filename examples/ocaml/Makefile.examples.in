@@ -21,13 +21,6 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# WARNING: For the case of a static PLplot build and where C++ code is
-# included in the resulting libplplot.a archive (i.e., when any of the
-# C++ qt, psttf, and wxwidgets device drivers are enabled) the builds
-# below will be incomplete (i.e., they will require -L and -l flags
-# for the special C++ compiler library associated with the particular
-# C++ compiler being used [e.g., libstdc++ for g++]).
-
 SHELL = @SH_EXECUTABLE@
 OCAMLC = @OCAML_EXAMPLE_COMPILER@
 EXEEXT = @EXEEXT@
