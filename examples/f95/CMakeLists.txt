@@ -61,12 +61,21 @@ set(f95_STRING_INDICES
   "33"
   )
 
+# plf95demos.inc, which is included by x21f.f90, is located
+# in ${CMAKE_CURRENT_BINARY_DIR} for the core build tree and
+# in ${CMAKE_CURRENT_SOURCE_DIR} for the installed examples.
+# Note, some Fortran compilers (e.g., nagfor) by default do not look for included
+# files in the location of the source file when the build is occurring in
+# a different directory.  To solve this issue in general
+# always specify the location of plf95demos.inc using
+# ${CMAKE_CURRENT_BINARY_DIR} or ${CMAKE_CURRENT_SOURCE_DIR}
+# as appropriate.
 if(CORE_BUILD)
   # For CMake-2.6.0 and above, the module files are created by
   # default during the library build in the bindings/f95 directory.
-  include_directories(${CMAKE_BINARY_DIR}/bindings/f95)
+  include_directories(${CMAKE_BINARY_DIR}/bindings/f95 ${CMAKE_CURRENT_BINARY_DIR})
 else(CORE_BUILD)
-  include_directories(${INCLUDE_DIR} ${F95_MOD_DIR})
+  include_directories(${INCLUDE_DIR} ${F95_MOD_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 endif(CORE_BUILD)
 
 if(CORE_BUILD)

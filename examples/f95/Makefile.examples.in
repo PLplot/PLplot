@@ -70,10 +70,14 @@ all: $(EXECUTABLES_list)
 clean:
 	rm -f $(EXECUTABLES_list)
 
-# target_link_libraries(x${STRING_INDEX}f95 plf95demolib plplotf95 plplotf95c)
-# Note, the corresponding *.pc file lists both plplotf95 and plplotf95c as PUBLIC
-# libraries.
+# target_link_libraries(x${STRING_INDEX}f95 plf95demolib plplotf95
+# plplotf95c) Note, the corresponding *.pc file lists both plplotf95
+# and plplotf95c as PUBLIC libraries.  Note, some Fortran compilers
+# (e.g., nagfor) by default do not look for included files (e.g.,
+# plf95demos.inc included by x21f.f90) in the location of the source
+# file when the build is occurring in a different directory so must
+# specify an extra -I option for that.
 .f90$(EXEEXT):
-	$(F95) @MODULESINCCMD@ $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-f95) -lplf95demolib
+	$(F95) @MODULESINCCMD@ $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-f95) -lplf95demolib -I"@DATA_DIR@"/examples/f95
 
 .SUFFIXES: .f90 $(EXEEXT)
