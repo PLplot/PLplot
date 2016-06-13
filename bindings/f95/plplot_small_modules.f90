@@ -228,15 +228,19 @@ end module plplot_graphics
 
 ! The bind(c) attribute exposes the pltr routine which ought to be private
 module plplot_private_exposed
-    use iso_c_binding, only: c_ptr
+    use iso_c_binding, only: c_ptr, c_f_pointer
     use plplot_types, only: private_plflt
     implicit none
     private :: c_ptr, private_plflt
 contains
-    subroutine plplot_private_pltr( x, y, tx, ty, tr ) bind(c)
+    subroutine plplot_private_pltr( x, y, tx, ty, tr_in ) bind(c)
         real(kind=private_plflt), value, intent(in) :: x, y
         real(kind=private_plflt), intent(out) :: tx, ty
-        real(kind=private_plflt), dimension(*), intent(in) :: tr
+        type(c_ptr), value, intent(in) :: tr_in
+
+        real(kind=private_plflt), dimension(:), pointer :: tr
+
+        call c_f_pointer( tr_in, tr, [6] )
 
         tx = tr(1) * x + tr(2) * y + tr(3)
         ty = tr(4) * x + tr(5) * y + tr(6)
