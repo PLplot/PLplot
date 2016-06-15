@@ -26,7 +26,7 @@ F95 = @FC@
 EXEEXT = @EXEEXT@
 
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATHCMD = @RPATHCMD@
+FORTRAN_RPATHCMD = @FORTRAN_RPATHCMD@
 
 EXECUTABLES_list = \
 		 x00f$(EXEEXT) \
@@ -78,6 +78,6 @@ clean:
 # file when the build is occurring in a different directory so must
 # specify an extra -I option for that.
 .f90$(EXEEXT):
-	$(F95) @MODULESINCCMD@ $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-f95) -lplf95demolib -I"@DATA_DIR@"/examples/f95
+	$(F95) @MODULESINCCMD@ $< -o $@ $(FORTRAN_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-f95) -lplf95demolib -I"@DATA_DIR@"/examples/f95
 
 .SUFFIXES: .f90 $(EXEEXT)
