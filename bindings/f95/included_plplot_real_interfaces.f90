@@ -1086,7 +1086,6 @@ contains
                 implicit none
                 real(kind=private_plflt), value, intent(in) :: x, y
                 real(kind=private_plflt), intent(out) :: tx, ty
-              ! type(PLcGrid), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
             end subroutine pltr1
         end interface
@@ -1117,7 +1116,6 @@ contains
                         implicit none
                         real(kind=private_plflt), value, intent(in) :: x, y
                         real(kind=private_plflt), intent(out) :: tx, ty
-                      ! type(PLcGrid), intent(in) :: data
                         type(c_ptr), value, intent(in) :: data
                     end subroutine transform
                 end interface
@@ -1275,7 +1273,6 @@ contains
                 type(c_ptr), value, intent(in) :: grid
                 real(kind=private_plflt), dimension(*), intent(in) :: clevel
                 type(c_ptr), value, intent(in) :: data
-               ! real(kind=private_plflt), dimension(*), intent(in) :: data
                 interface
                     function lookup( ix, iy, data ) bind(c)
                         import :: c_ptr
@@ -1292,7 +1289,6 @@ contains
                         implicit none
                         real(kind=private_plflt), value, intent(in) :: x, y
                         real(kind=private_plflt), intent(out) :: tx, ty
-                       ! real(kind=private_plflt), dimension(*), intent(in) :: data
                         type(c_ptr), value, intent(in) :: data
                     end subroutine transform
                 end interface
@@ -1930,7 +1926,6 @@ contains
                 implicit none
                 real(kind=private_plflt), value, intent(in) :: x, y
                 real(kind=private_plflt), intent(out) :: tx, ty
-              ! type(PLcGrid), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
             end subroutine pltr1
         end interface
@@ -1939,23 +1934,23 @@ contains
             subroutine interface_plimagefr( idata, nx, ny, &
                    xmin, xmax, ymin, ymax, &
                    zmin, zmax, valuemin, valuemax, transform, data ) bind(c,name='c_plimagefr')
-                import :: c_ptr, c_funptr
-                import :: private_plint, private_plflt, PLcGrid
+                import :: c_ptr
+                import :: private_plint, private_plflt
                 implicit none
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
                 type(c_ptr), dimension(*), intent(in) :: idata
                 type(c_ptr), value, intent(in) :: data
-                type(c_funptr), value, intent(in) :: transform
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt, PLcGrid
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in) :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         type(PLcGrid), intent(in) :: data
-              !     end subroutine transform
-              ! end interface
+                interface
+                    subroutine transform( x, y, tx, ty, data ) bind(c)
+                        import :: private_plflt
+                        import :: c_ptr
+                        implicit none
+                        real(kind=private_plflt), value, intent(in) :: x, y
+                        real(kind=private_plflt), intent(out) :: tx, ty
+                        type(c_ptr), value, intent(in) :: data
+                    end subroutine transform
+                end interface
             end subroutine interface_plimagefr
         end interface
 
@@ -1981,7 +1976,7 @@ contains
                real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
                real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
                real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
-               c_funloc(pltr1), c_loc(cgrid_local) )
+               pltr1, c_loc(cgrid_local) )
     end subroutine plimagefr_impl_1
 
     ! Uses pltr2 C callback.
@@ -2011,24 +2006,23 @@ contains
             subroutine interface_plimagefr( idata, nx, ny, &
                    xmin, xmax, ymin, ymax, &
                    zmin, zmax, valuemin, valuemax, transform, data ) bind(c,name='c_plimagefr')
-                import :: c_ptr, c_funptr
+                import :: c_ptr
                 import :: private_plint, private_plflt
                 implicit none
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
                 type(c_ptr), dimension(*), intent(in) :: idata
                 type(c_ptr), value, intent(in) :: data
-                type(c_funptr), value, intent(in) :: transform
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt
-              !         import :: c_ptr
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in) :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         type(c_ptr), value, intent(in) :: data
-              !     end subroutine transform
-              ! end interface
+                interface
+                    subroutine transform( x, y, tx, ty, data ) bind(c)
+                        import :: private_plflt
+                        import :: c_ptr
+                        implicit none
+                        real(kind=private_plflt), value, intent(in) :: x, y
+                        real(kind=private_plflt), intent(out) :: tx, ty
+                        type(c_ptr), value, intent(in) :: data
+                    end subroutine transform
+                end interface
             end subroutine interface_plimagefr
         end interface
 
@@ -2056,7 +2050,7 @@ contains
                real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
                real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
                real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
-               c_funloc(pltr2f), c_loc(cgrid_local) )
+               pltr2f, c_loc(cgrid_local) )
     end subroutine plimagefr_impl_2
 
     ! Uses NULL C callback and NULL associated data (which has a special meaning at
@@ -2069,39 +2063,27 @@ contains
         type(c_ptr), dimension(:), allocatable :: idata_address_local
 
         interface
-            subroutine interface_plimagefr( idata, nx, ny, &
+            subroutine interface_plimagefr_null( idata, nx, ny, &
                    xmin, xmax, ymin, ymax, &
-                   zmin, zmax, valuemin, valuemax, transform, data ) bind(c,name='c_plimagefr')
-                import :: c_funptr, c_ptr
-                import :: private_plint, private_plflt, PLcGrid
+                   zmin, zmax, valuemin, valuemax) bind(c,name='plimagefr_null')
+                import :: c_ptr
+                import :: private_plint, private_plflt
                 implicit none
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
                 type(c_ptr), dimension(*), intent(in) :: idata
-                type(c_ptr), value, intent(in) :: data
-                type(c_funptr), value, intent(in) :: transform
-               !interface
-               !    subroutine transform( x, y, tx, ty, data ) bind(c)
-               !        import :: private_plflt, PLcGrid
-               !        implicit none
-               !        real(kind=private_plflt), value, intent(in) :: x, y
-               !        real(kind=private_plflt), intent(out) :: tx, ty
-               !        type(PLcGrid), intent(in) :: data
-               !    end subroutine transform
-               !end interface
-            end subroutine interface_plimagefr
+            end subroutine interface_plimagefr_null
         end interface
 
         call matrix_to_c( idata, idata_local, idata_address_local )
 
-        call interface_plimagefr( &
+        call interface_plimagefr_null( &
                idata_address_local, &
                size(idata, 1, kind=private_plint), size(idata, 2, kind=private_plint), &
                real(xmin, kind=private_plflt), real(xmax, kind=private_plflt), &
                real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
                real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
-               real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
-               c_null_funptr, c_null_ptr )
+               real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt) )
     end subroutine plimagefr_impl_null
 
     subroutine plimagefr_impl_tr( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, tr )
@@ -2117,25 +2099,24 @@ contains
         interface
             subroutine interface_plimagefr( idata, nx, ny, &
                    xmin, xmax, ymin, ymax, &
-                   zmin, zmax, valuemin, valuemax, transform, tr ) bind(c,name='c_plimagefr')
-                import :: c_ptr, c_funptr
-                import :: private_plint, private_plflt, PLcGrid
+                   zmin, zmax, valuemin, valuemax, transform, data ) bind(c,name='c_plimagefr')
+                import :: c_ptr
+                import :: private_plint, private_plflt
                 implicit none
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
                 type(c_ptr), dimension(*), intent(in) :: idata
-                type(c_ptr), value, intent(in) :: tr
-              !  real(kind=private_plflt), dimension(*), intent(in) :: tr
-                type(c_funptr), value, intent(in) :: transform
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt, PLcGrid
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in) :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         real(kind=private_plflt), dimension(*), intent(in) :: data
-              !     end subroutine transform
-              ! end interface
+                type(c_ptr), value, intent(in) :: data
+                interface
+                    subroutine transform( x, y, tx, ty, data ) bind(c)
+                        import :: private_plflt
+                        import :: c_ptr
+                        implicit none
+                        real(kind=private_plflt), value, intent(in) :: x, y
+                        real(kind=private_plflt), intent(out) :: tx, ty
+                        type(c_ptr), value, intent(in) :: data
+                    end subroutine transform
+                end interface
             end subroutine interface_plimagefr
         end interface
 
@@ -2151,7 +2132,7 @@ contains
                real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
                real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
                real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
-               c_funloc(plplot_private_pltr), c_loc(tr_in) )
+               plplot_private_pltr, c_loc(tr_in) )
     end subroutine plimagefr_impl_tr
 
     subroutine plimagefr_impl( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, proc )
@@ -2165,15 +2146,24 @@ contains
         interface
             subroutine interface_plimagefr( idata, nx, ny, &
                    xmin, xmax, ymin, ymax, &
-                   zmin, zmax, valuemin, valuemax, proc, data ) bind(c,name='c_plimagefr')
-                import :: c_funptr, c_ptr
+                   zmin, zmax, valuemin, valuemax, transform, data ) bind(c,name='c_plimagefr')
+                import :: c_ptr
                 import :: private_plint, private_plflt
                 implicit none
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
                 type(c_ptr), dimension(*), intent(in) :: idata
-                type(c_funptr), value, intent(in) :: proc
                 type(c_ptr), value, intent(in) :: data
+                interface
+                    subroutine transform( x, y, tx, ty, data ) bind(c)
+                        import :: private_plflt
+                        import :: c_ptr
+                        implicit none
+                        real(kind=private_plflt), value, intent(in) :: x, y
+                        real(kind=private_plflt), intent(out) :: tx, ty
+                        type(c_ptr), value, intent(in) :: data
+                    end subroutine transform
+                end interface
             end subroutine interface_plimagefr
         end interface
 
@@ -2187,7 +2177,7 @@ contains
                real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
                real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
                real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
-               c_funloc(pltransformf2c), c_null_ptr )
+               pltransformf2c, c_null_ptr )
     end subroutine plimagefr_impl
 
     subroutine plimagefr_impl_data( idata, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax, proc, data )
@@ -2202,15 +2192,24 @@ contains
         interface
             subroutine interface_plimagefr( idata, nx, ny, &
                    xmin, xmax, ymin, ymax, &
-                   zmin, zmax, valuemin, valuemax, proc, data ) bind(c,name='c_plimagefr')
-                import :: c_funptr, c_ptr
+                   zmin, zmax, valuemin, valuemax, transform, data ) bind(c,name='c_plimagefr')
+                import :: c_ptr
                 import :: private_plint, private_plflt
                 implicit none
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
                 type(c_ptr), dimension(*), intent(in) :: idata
-                type(c_funptr), value, intent(in) :: proc
                 type(c_ptr), value, intent(in) :: data
+                interface
+                    subroutine transform( x, y, tx, ty, data ) bind(c)
+                        import :: private_plflt
+                        import :: c_ptr
+                        implicit none
+                        real(kind=private_plflt), value, intent(in) :: x, y
+                        real(kind=private_plflt), intent(out) :: tx, ty
+                        type(c_ptr), value, intent(in) :: data
+                    end subroutine transform
+                end interface
             end subroutine interface_plimagefr
         end interface
 
@@ -2224,7 +2223,7 @@ contains
                real(ymin, kind=private_plflt), real(ymax, kind=private_plflt), &
                real(zmin, kind=private_plflt), real(zmax, kind=private_plflt), &
                real(valuemin, kind=private_plflt), real(valuemax, kind=private_plflt), &
-               c_funloc(pltransformf2c_data), data )
+               pltransformf2c_data, data )
     end subroutine plimagefr_impl_data
 
     subroutine pljoin_impl( x1, y1, x2, y2 )
@@ -3551,7 +3550,6 @@ contains
                 implicit none
                 real(kind=private_plflt), value, intent(in) :: x, y
                 real(kind=private_plflt), intent(out) :: tx, ty
-              ! type(PLcGrid), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
             end subroutine pltr1
         end interface
@@ -3756,7 +3754,6 @@ contains
                 real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax
                 real(kind=private_plflt), value, intent(in) :: sh_width, min_width, max_width
                 real(kind=private_plflt), value, intent(in) :: shade_min, shade_max, sh_color
-              ! real(kind=private_plflt), dimension(*), intent(in) :: tr
                 type(c_ptr), value, intent(in) :: tr
                 type(c_ptr), value, intent(in) :: defined ! Not used in this case
                 type(c_funptr), value, intent(in) :: transform
@@ -4009,7 +4006,6 @@ contains
                 implicit none
                 real(kind=private_plflt), value, intent(in) :: x, y
                 real(kind=private_plflt), intent(out) :: tx, ty
-              ! type(PLcGrid), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
             end subroutine pltr1
         end interface
@@ -4210,7 +4206,6 @@ contains
                 real(kind=private_plflt), dimension(*), intent(in) :: clevel
                 real(kind=private_plflt), value, intent(in) :: cont_width
                 type(c_ptr), value, intent(in) :: tr
-              ! real(kind=private_plflt), dimension(*), intent(in) :: tr
                 type(c_ptr), value, intent(in) :: defined ! Not used in this case
                 type(c_funptr), value, intent(in) :: transform
                 interface
@@ -4839,7 +4834,6 @@ contains
                 implicit none
                 real(kind=private_plflt), value, intent(in) :: x, y
                 real(kind=private_plflt), intent(out) :: tx, ty
-              ! type(PLcGrid), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
             end subroutine pltr1
         end interface
@@ -4852,7 +4846,6 @@ contains
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 type(PLfGrid), intent(in) :: fgrid1, fgrid2
                 real(kind=private_plflt), value, intent(in) :: scale
-              ! type(PLcGrid), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
                 interface
                     function lookup( ix, iy, data ) bind(c)
@@ -4952,7 +4945,6 @@ contains
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 type(PLfGrid), intent(in) :: fgrid1, fgrid2
                 real(kind=private_plflt), value, intent(in) :: scale
-              ! type(PLcGrid), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
                 interface
                     function lookup( ix, iy, data ) bind(c)
@@ -5043,7 +5035,6 @@ contains
                 integer(kind=private_plint), value, intent(in) :: nx, ny
                 type(PLfGrid), intent(in) :: fgrid1, fgrid2
                 real(kind=private_plflt), value, intent(in) :: scale
-              ! real(kind=private_plflt), dimension(*), intent(in) :: data
                 type(c_ptr), value, intent(in) :: data
                 interface
                     function lookup( ix, iy, data ) bind(c)

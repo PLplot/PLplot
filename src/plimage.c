@@ -159,6 +159,51 @@ grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny )
 }
 
 //--------------------------------------------------------------------------
+// plimagefr_null
+//
+// arguments are
+//   idata: array containing image data
+//   nx: dimension of the array in the X axis.
+//   ny: dimension of the  array in the Y axis
+//   The array data is indexed like data[ix][iy]
+//
+//   xmin, xmax, ymin, ymax:
+//       data[0][0] corresponds to (xmin,ymin)
+//       data[nx-1][ny-1] to (xmax,ymax)
+//
+//   zmin, zmax:
+//       only data within bounds zmin <= data <= zmax will be
+//       plotted. If zmin == zmax, all data will be ploted.
+//
+//   valuemin, valuemax:
+//       The minimum and maximum values to use for value -> color
+//       mappings.  A value in idata of valuemin or less will have
+//       color 0.0 and a value in idata of valuemax or greater will
+//       have color 1.0.  Values between valuemin and valuemax will
+//       map linearly to to the colors between 0.0 and 1.0.
+//       If you do not want to display values outside of the
+//       (valuemin -> valuemax) range, then set zmin = valuemin and
+//       zmax = valuemax.
+//       This allows for multiple plots to use the same color scale
+//       with a consistent value -> color mapping, regardless of the
+//       image content.
+//
+//--------------------------------------------------------------------------
+
+// N.B. This routine only needed by the Fortran interface to distinguish
+// the case where pltr and pltr_data are NULL.  So don't put declaration in
+// header which might encourage others to use this in some other context.
+PLDLLIMPEXP void
+plimagefr_null( PLFLT_MATRIX idata, PLINT nx, PLINT ny,
+             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+		PLFLT valuemin, PLFLT valuemax )
+{
+    plfimagefr( plf2ops_c(), (PLPointer) idata, nx, ny,
+        xmin, xmax, ymin, ymax, zmin, zmax,
+	valuemin, valuemax, NULL, NULL );
+}
+
+//--------------------------------------------------------------------------
 // plimagefr
 //
 // arguments are
