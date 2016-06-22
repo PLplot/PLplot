@@ -182,6 +182,24 @@ plshade_int( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
              PLFILL_callback fill, PLINT rectangular,
              PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
+// N.B. This routine only needed by the Fortran interface to distinguish
+// the case where pltr and pltr_data are NULL.  So don't put declaration in
+// header which might encourage others to use this in some other context.
+PLDLLIMPEXP void
+plshades_null( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
+                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                 PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
+                 PLINT cont_color, PLFLT cont_width,
+	       PLFILL_callback fill, PLINT rectangular )
+{
+    plfshades( plf2ops_c(), (PLPointer) a, nx, ny, defined,
+        xmin, xmax, ymin, ymax,
+        clevel, nlevel, fill_width,
+        cont_color, cont_width,
+        fill, rectangular,
+        NULL, NULL );
+}
+
 //--------------------------------------------------------------------------
 // plshades()
 //

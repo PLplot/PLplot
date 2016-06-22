@@ -625,6 +625,67 @@
     private :: plshades_impl
     private :: plshades_impl_data
 
+    interface
+        subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
+               clevel, nlevel, fill_width, cont_color, cont_width, &
+               fill, rectangular, transform, data ) bind(c, name = 'c_plshades' )
+            import :: c_ptr, c_funptr, c_null_ptr
+            import :: private_plint, private_plbool, private_plflt, PLcGrid
+            implicit none
+            type(c_ptr), dimension(*), intent(in)  :: a
+            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+            integer(kind=private_plbool), value, intent(in) :: rectangular
+            real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
+            real(kind=private_plflt), dimension(*), intent(in) :: clevel
+            real(kind=private_plflt), value, intent(in) :: cont_width
+            type(c_ptr), value, intent(in) :: data
+            type(c_ptr), value, intent(in) :: defined ! Not used in this case
+            interface
+                subroutine fill( n, x, y ) bind(c)
+                    import :: private_plint, private_plflt
+                    integer(kind=private_plint), value, intent(in) :: n
+                    real(kind=private_plflt), dimension(*), intent(in) :: x, y
+                end subroutine fill
+            end interface
+            interface
+                subroutine transform( x, y, tx, ty, data ) bind(c)
+                    import :: private_plflt
+                    import :: c_ptr
+                    implicit none
+                    real(kind=private_plflt), value, intent(in) :: x, y
+                    real(kind=private_plflt), intent(out) :: tx, ty
+                    type(c_ptr), value, intent(in) :: data
+                end subroutine transform
+            end interface
+        end subroutine interface_plshades
+    end interface
+    private :: interface_plshades
+
+    interface
+        subroutine interface_plshades_null( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
+               clevel, nlevel, fill_width, cont_color, cont_width, &
+               fill, rectangular ) bind(c, name = 'plshades_null' )
+            import :: c_ptr, c_funptr, c_null_ptr
+            import :: private_plint, private_plbool, private_plflt, PLcGrid
+            implicit none
+            type(c_ptr), dimension(*), intent(in)  :: a
+            integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
+            integer(kind=private_plbool), value, intent(in) :: rectangular
+            real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
+            real(kind=private_plflt), dimension(*), intent(in) :: clevel
+            real(kind=private_plflt), value, intent(in) :: cont_width
+            type(c_ptr), value, intent(in) :: defined ! Not used in this case
+            interface
+                subroutine fill( n, x, y ) bind(c)
+                    import :: private_plint, private_plflt
+                    integer(kind=private_plint), value, intent(in) :: n
+                    real(kind=private_plflt), dimension(*), intent(in) :: x, y
+                end subroutine fill
+            end interface
+        end subroutine interface_plshades_null
+    end interface
+    private :: interface_plshades_null
+
     interface plsmaj
         module procedure plsmaj_impl
     end interface plsmaj
@@ -3717,41 +3778,15 @@ contains
             end subroutine interface_plfill
         end interface
 
-        interface
-            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
-                   clevel, nlevel, fill_width, cont_color, cont_width, &
-                   fill, rectangular, transform, data ) bind(c, name = 'c_plshades' )
-                import :: c_ptr, c_funptr, c_null_ptr
-                import :: private_plint, private_plbool, private_plflt
-                implicit none
-                type(c_ptr), dimension(*), intent(in)  :: a
-                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
-                integer(kind=private_plbool), value, intent(in) :: rectangular
-                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
-                real(kind=private_plflt), dimension(*), intent(in) :: clevel
-                real(kind=private_plflt), value, intent(in) :: cont_width
-                type(c_ptr), value, intent(in) :: data ! Not used in this case
-                type(c_ptr), value, intent(in) :: defined ! Not used in this case
-                type(c_funptr), value, intent(in) :: transform ! Not used in this case
-                interface
-                    subroutine fill( n, x, y ) bind(c)
-                        import :: private_plint, private_plflt
-                        integer(kind=private_plint), value, intent(in) :: n
-                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
-                    end subroutine fill
-                end interface
-            end subroutine interface_plshades
-        end interface
-
         call matrix_to_c( z, z_c_local, z_address_local )
 
-        call interface_plshades( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
+        call interface_plshades_null( z_address_local, size(z,1,kind=private_plint), size(z,2,kind=private_plint), c_null_ptr, &
                real(xmin,kind=private_plflt), real(xmax,kind=private_plflt), &
                real(ymin,kind=private_plflt), real(ymax,kind=private_plflt), &
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool),  c_null_funptr, c_null_ptr )
+               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool) )
     end subroutine plshades_impl_0
 
     subroutine plshades_impl_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -3789,41 +3824,6 @@ contains
             end subroutine pltr1
         end interface
 
-        interface
-            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
-                   clevel, nlevel, fill_width, cont_color, cont_width, &
-                   fill, rectangular, transform, data ) bind(c, name = 'c_plshades' )
-                import :: c_ptr, c_funptr, c_null_ptr
-                import :: private_plint, private_plbool, private_plflt, PLcGrid
-                implicit none
-                type(c_ptr), dimension(*), intent(in)  :: a
-                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
-                integer(kind=private_plbool), value, intent(in) :: rectangular
-                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
-                real(kind=private_plflt), dimension(*), intent(in) :: clevel
-                real(kind=private_plflt), value, intent(in) :: cont_width
-                type(c_ptr), value, intent(in) :: data
-                type(c_ptr), value, intent(in) :: defined ! Not used in this case
-                type(c_funptr), value, intent(in) :: transform
-                interface
-                    subroutine fill( n, x, y ) bind(c)
-                        import :: private_plint, private_plflt
-                        integer(kind=private_plint), value, intent(in) :: n
-                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
-                    end subroutine fill
-                end interface
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt, PLcGrid
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in)  :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         type(PLcGrid), intent(in) :: data
-              !     end subroutine transform
-              ! end interface
-            end subroutine interface_plshades
-        end interface
-
         call matrix_to_c( z, z_c_local, z_address_local )
 
         nx_in = size(z,1, kind=private_plint)
@@ -3846,7 +3846,7 @@ contains
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltr1), c_loc(cgrid_local) )
+               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), pltr1, c_loc(cgrid_local) )
     end subroutine plshades_impl_1
 
     subroutine plshades_impl_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -3885,42 +3885,6 @@ contains
             end subroutine pltr2f
         end interface
 
-        interface
-            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
-                   clevel, nlevel, fill_width, cont_color, cont_width, &
-                   fill, rectangular, transform, data ) bind(c, name = 'c_plshades' )
-                import :: c_ptr, c_funptr, c_null_ptr
-                import :: private_plint, private_plbool, private_plflt
-                implicit none
-                type(c_ptr), dimension(*), intent(in)  :: a
-                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
-                integer(kind=private_plbool), value, intent(in) :: rectangular
-                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
-                real(kind=private_plflt), dimension(*), intent(in) :: clevel
-                real(kind=private_plflt), value, intent(in) :: cont_width
-                type(c_ptr), value, intent(in) :: data
-                type(c_ptr), value, intent(in) :: defined ! Not used in this case
-                type(c_funptr), value, intent(in) :: transform
-                interface
-                    subroutine fill( n, x, y ) bind(c)
-                        import :: private_plint, private_plflt
-                        integer(kind=private_plint), value, intent(in) :: n
-                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
-                    end subroutine fill
-                end interface
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt
-              !         import :: c_ptr
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in) :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         type(c_ptr), value, intent(in) :: data
-              !     end subroutine transform
-              ! end interface
-            end subroutine interface_plshades
-        end interface
-
         call matrix_to_c( z, z_c_local, z_address_local )
 
         nx_in = size(z,1, kind=private_plint)
@@ -3945,7 +3909,7 @@ contains
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltr2f), c_loc(cgrid_local) )
+               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), pltr2f, c_loc(cgrid_local) )
     end subroutine plshades_impl_2
 
     subroutine plshades_impl_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -3971,41 +3935,6 @@ contains
             end subroutine interface_plfill
         end interface
 
-        interface
-            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
-                   clevel, nlevel, fill_width, cont_color, cont_width, &
-                   fill, rectangular, transform, tr ) bind(c, name = 'c_plshades' )
-                import :: c_ptr, c_funptr, c_null_ptr
-                import :: private_plint, private_plbool, private_plflt
-                implicit none
-                type(c_ptr), dimension(*), intent(in)  :: a
-                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
-                integer(kind=private_plbool), value, intent(in) :: rectangular
-                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
-                real(kind=private_plflt), dimension(*), intent(in) :: clevel
-                real(kind=private_plflt), value, intent(in) :: cont_width
-                type(c_ptr), value, intent(in) :: tr
-                type(c_ptr), value, intent(in) :: defined ! Not used in this case
-                type(c_funptr), value, intent(in) :: transform
-                interface
-                    subroutine fill( n, x, y ) bind(c)
-                        import :: private_plint, private_plflt
-                        integer(kind=private_plint), value, intent(in) :: n
-                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
-                    end subroutine fill
-                end interface
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in)  :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         real(kind=private_plflt), dimension(*), intent(in) :: data
-              !     end subroutine transform
-              ! end interface
-            end subroutine interface_plshades
-        end interface
-
         call matrix_to_c( z, z_c_local, z_address_local )
         tr_in = tr(1:6)
 
@@ -4015,7 +3944,7 @@ contains
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(plplot_private_pltr), c_loc(tr_in) )
+               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), plplot_private_pltr, c_loc(tr_in) )
     end subroutine plshades_impl_tr
 
     subroutine plshades_impl( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -4040,32 +3969,6 @@ contains
             end subroutine interface_plfill
         end interface
 
-        interface
-            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
-                   clevel, nlevel, fill_width, cont_color, cont_width, &
-                   fill, rectangular, proc, data ) bind(c, name = 'c_plshades' )
-                import :: c_ptr, c_funptr, c_null_ptr
-                import :: private_plint, private_plbool, private_plflt
-                implicit none
-                type(c_ptr), dimension(*), intent(in)  :: a
-                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
-                integer(kind=private_plbool), value, intent(in) :: rectangular
-                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
-                real(kind=private_plflt), dimension(*), intent(in) :: clevel
-                real(kind=private_plflt), value, intent(in) :: cont_width
-                type(c_ptr), value, intent(in) :: defined
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-                interface
-                    subroutine fill( n, x, y ) bind(c)
-                        import :: private_plint, private_plflt
-                        integer(kind=private_plint), value, intent(in) :: n
-                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
-                    end subroutine fill
-                end interface
-            end subroutine interface_plshades
-        end interface
-
         call matrix_to_c( z, z_c_local, z_address_local )
         pltransform => proc
 
@@ -4075,7 +3978,7 @@ contains
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltransformf2c), c_null_ptr )
+               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), pltransformf2c, c_null_ptr )
     end subroutine plshades_impl
 
     subroutine plshades_impl_data( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
@@ -4101,32 +4004,6 @@ contains
             end subroutine interface_plfill
         end interface
 
-        interface
-            subroutine interface_plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax, &
-                   clevel, nlevel, fill_width, cont_color, cont_width, &
-                   fill, rectangular, proc, data ) bind(c, name = 'c_plshades' )
-                import :: c_ptr, c_funptr, c_null_ptr
-                import :: private_plint, private_plbool, private_plflt
-                implicit none
-                type(c_ptr), dimension(*), intent(in)  :: a
-                integer(kind=private_plint), value, intent(in) :: nx, ny, cont_color, nlevel
-                integer(kind=private_plbool), value, intent(in) :: rectangular
-                real(kind=private_plflt), value, intent(in) :: xmin, xmax, ymin, ymax, fill_width
-                real(kind=private_plflt), dimension(*), intent(in) :: clevel
-                real(kind=private_plflt), value, intent(in) :: cont_width
-                type(c_ptr), value, intent(in) :: defined
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-                interface
-                    subroutine fill( n, x, y ) bind(c)
-                        import :: private_plint, private_plflt
-                        integer(kind=private_plint), value, intent(in) :: n
-                        real(kind=private_plflt), dimension(*), intent(in) :: x, y
-                    end subroutine fill
-                end interface
-            end subroutine interface_plshades
-        end interface
-
         call matrix_to_c( z, z_c_local, z_address_local )
         pltransform_data => proc
 
@@ -4136,7 +4013,7 @@ contains
                real(clevel,kind=private_plflt), size(clevel,kind=private_plint), &
                real(fill_width,kind=private_plflt), &
                int(cont_color,kind=private_plint), real(cont_width,kind=private_plflt), &
-               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), c_funloc(pltransformf2c_data), data )
+               interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), pltransformf2c_data, data )
     end subroutine plshades_impl_data
 
     subroutine plsmaj_impl( def, scale )
