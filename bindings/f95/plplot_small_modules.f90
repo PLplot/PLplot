@@ -199,7 +199,6 @@ contains
 
         interface
             function interface_plGetCursor( gin ) bind(c,name='plGetCursor')
-                use iso_c_binding, only:  c_ptr
                 import :: private_PLGraphicsIn, private_plint
                 implicit none
                 integer(kind=private_plint) :: interface_plGetCursor !function type

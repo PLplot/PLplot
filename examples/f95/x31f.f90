@@ -73,6 +73,7 @@ program x31f
     !     Parse and process command line arguments
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !     Test setting / getting familying parameters before plinit
     call plgfam(fam0, num0, bmax0)

@@ -80,33 +80,33 @@ program x24f
     data (py(i) ,i=1,4) / 0.0_pl_test_flt, 0.25_pl_test_flt, 0.25_pl_test_flt, 0.0_pl_test_flt /
 
     data (sx(i) ,i=1,12) / &
-           0.16374, &
-           0.15844, &
-           0.15255, &
-           0.17332, &
-           0.50436, &
-           0.51721, &
-           0.49520, &
-           0.48713, &
-           0.83976, &
-           0.81688, &
-           0.82231, &
-           0.82647/
+           0.16374_pl_test_flt, &
+           0.15844_pl_test_flt, &
+           0.15255_pl_test_flt, &
+           0.17332_pl_test_flt, &
+           0.50436_pl_test_flt, &
+           0.51721_pl_test_flt, &
+           0.49520_pl_test_flt, &
+           0.48713_pl_test_flt, &
+           0.83976_pl_test_flt, &
+           0.81688_pl_test_flt, &
+           0.82231_pl_test_flt, &
+           0.82647_pl_test_flt/
 
 
     data (sy(i) ,i=1,12) / &
-           0.125, &
-           0.375, &
-           0.625, &
-           0.875, &
-           0.125, &
-           0.375, &
-           0.625, &
-           0.875, &
-           0.125, &
-           0.375, &
-           0.625, &
-           0.875/
+           0.125_pl_test_flt, &
+           0.375_pl_test_flt, &
+           0.625_pl_test_flt, &
+           0.875_pl_test_flt, &
+           0.125_pl_test_flt, &
+           0.375_pl_test_flt, &
+           0.625_pl_test_flt, &
+           0.875_pl_test_flt, &
+           0.125_pl_test_flt, &
+           0.375_pl_test_flt, &
+           0.625_pl_test_flt, &
+           0.875_pl_test_flt/
 
 
     !  Taken from http://www.columbia.edu/~fdc/pace/
@@ -148,6 +148,7 @@ program x24f
     peace(12) = '#<0x10>Hasîtî'
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     call plinit()
 

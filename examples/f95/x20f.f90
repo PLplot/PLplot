@@ -145,6 +145,7 @@ program x20f
     nointeractive  = .false.
     f_name         = ' '
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !     Initialize plplot
 

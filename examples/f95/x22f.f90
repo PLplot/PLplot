@@ -82,6 +82,7 @@ program x22f
 
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     ! I believe tr must be declared and defined globally this way in
     ! order for mypltr in circulation to work properly, and I would otherwise declare

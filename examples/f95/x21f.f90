@@ -82,6 +82,7 @@ program x21f
 
     !      call plMergeOpts(options, "x21c options", NULL);
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     opt(3) = wmin
     opt(4) = real(knn_order,kind=pl_test_flt)

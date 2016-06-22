@@ -71,6 +71,7 @@ program x08f
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     rosen = 0
 
@@ -117,7 +118,7 @@ program x08f
 
     zlimited = huge(1.0_pl_test_flt)
     do i = indexxmin, indexxmax
-        square_root = sqrt( 1. - min( 1., (( i - x0 ) / a) ** 2 ) )
+        square_root = sqrt( 1.0_pl_test_flt - min( 1.0_pl_test_flt, (( i - x0 ) / a) ** 2 ) )
         ! Add 0.5 to find nearest integer and therefore preserve symmetry
         ! with regard to lower and upper bound of y range.
         indexymin(i) = max( 1, int( 0.5_pl_test_flt + y0 - b * square_root ) )

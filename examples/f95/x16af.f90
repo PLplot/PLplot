@@ -37,6 +37,7 @@ program x16af
 
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     call plscmap0n(3)
 
@@ -67,17 +68,12 @@ contains
         !      NX and NY are the defined area.
         parameter (xdim = 99, NX = 35, ydim = 100, NY = 46, NCONTR = 14)
 
-        real(kind=pl_test_flt)    z(xdim, ydim), w(xdim, ydim), clevel(NCONTR)
-        real(kind=pl_test_flt)    xmin, xmax, ymin, ymax, zmin, zmax, x, y
+        real(kind=pl_test_flt)    z(xdim, ydim)
+        real(kind=pl_test_flt)    zmin, zmax, x, y
         real(kind=pl_test_flt)    shade_min, shade_max, sh_color
         integer   i, j, sh_cmap
         integer   min_color, max_color
         real(kind=pl_test_flt)    sh_width, min_width, max_width
-
-        xmin = -1._pl_test_flt
-        ymin = -1._pl_test_flt
-        xmax =  1._pl_test_flt
-        ymax =  1._pl_test_flt
 
         !      Set up for plshade call
 
@@ -94,15 +90,10 @@ contains
             do j = 1, NY
                 y = (j - 1 - (NY/2)) / real(NY/2,kind=pl_test_flt) - 1.0_pl_test_flt
                 z(i,j) = x*x - y*y + (x - y) / (x*x + y*y + 0.1_pl_test_flt)
-                w(i,j) = 2*x*y
             enddo
         enddo
 
         call a2mnmx(z, NX, NY, zmin, zmax, xdim)
-        do  i = 1, NCONTR
-            clevel(i) = zmin + (zmax - zmin) * (i + 0.5_pl_test_flt) / &
-                   real(NCONTR,kind=pl_test_flt)
-        enddo
 
         !      Plot using identity transform
 
@@ -145,10 +136,9 @@ contains
         parameter (xdim = 99, NX = 40, ydim = 100, NY = 64)
         parameter (NCONTR = 14, NBDRY=200)
 
-        real(kind=pl_test_flt)    z(xdim, ydim), ztmp(xdim, ydim+1)
+        real(kind=pl_test_flt)    z(xdim, ydim)
         real(kind=pl_test_flt)    xg(xdim, ydim+1), yg(xdim, ydim+1), &
                xtm(NBDRY), ytm(NBDRY)
-        real(kind=pl_test_flt)    clevel(NCONTR)
         real(kind=pl_test_flt)    xmin, xmax, ymin, ymax, zmin, zmax
         real(kind=pl_test_flt)    xpmin, xpmax, ypmin, ypmax
         real(kind=pl_test_flt)    r, theta, rmax, x0, y0
@@ -159,7 +149,7 @@ contains
         real(kind=pl_test_flt)    xtick, ytick
         integer   nxsub, nysub
         integer   ncolbox, ncollab
-        integer   i, j, kx, lx, ky, ly
+        integer   i, j
         integer   sh_cmap
         integer   min_color, max_color
         real(kind=pl_test_flt) sh_width, min_width, max_width
@@ -172,11 +162,6 @@ contains
         min_width = 0
         max_color = 0
         max_width = 0
-
-        kx = 1
-        lx = NX
-        ky = 1
-        ly = NY
 
         !      Set up r-theta grids
         !      Tack on extra cell in theta to handle periodicity.
@@ -229,21 +214,7 @@ contains
             enddo
         enddo
 
-        !      Tack on extra cell in theta to handle periodicity.
-
-        do i = 1, NX
-            do j = 1, NY
-                ztmp(i,j) = z(i,j)
-            enddo
-            ztmp(i, NY+1) = z(i, 1)
-        enddo
         call a2mnmx(z, NX, NY, zmin, zmax, xdim)
-
-        !      Set up contour levels.
-
-        do i = 1, NCONTR
-            clevel(i) = zmin + (i-0.5_pl_test_flt)*abs(zmax - zmin)/real(NCONTR,kind=pl_test_flt)
-        enddo
 
         !      Advance graphics frame and get ready to plot.
 

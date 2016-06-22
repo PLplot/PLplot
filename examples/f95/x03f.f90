@@ -42,6 +42,7 @@ program x03f
     integer :: plparseopts_rc
     !    Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !   Set orientation to portrait - note not all device drivers
     !   support this, in particular most interactive drivers do not.

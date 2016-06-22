@@ -73,6 +73,7 @@ program x09f
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     tr = (/ 2._pl_test_flt/real(nptsx-1,kind=pl_test_flt), 0.0_pl_test_flt, -1.0_pl_test_flt, &
            0.0_pl_test_flt, 2._pl_test_flt/real(nptsy-1,kind=pl_test_flt), -1.0_pl_test_flt /)

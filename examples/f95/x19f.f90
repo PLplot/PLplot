@@ -69,6 +69,7 @@ program x19f
 
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     ! Longitude (x) and latitude (y)
 
@@ -356,14 +357,11 @@ contains
         type(c_ptr), intent(in) :: data
 
         type(label_data_type), pointer :: d
-        integer :: length
         character(len=5) direction_label
         real(kind=pl_test_flt) :: label_val
 
         call c_f_pointer(data, d)
         label_val = 0.0_pl_test_flt
-
-        length = len(label)
 
         if (axis .eq. 2) then
             label_val = value

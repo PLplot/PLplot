@@ -43,6 +43,7 @@ program x29f
     real(kind=pl_test_flt), dimension(365) :: x, y, xerr1, xerr2, yerr1, yerr2
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     call plinit()
 

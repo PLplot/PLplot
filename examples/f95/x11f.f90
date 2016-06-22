@@ -30,11 +30,10 @@
 !     consult README_precision in this directory.
 !
 program x11f
-    use plplot, double_PI => PL_PI
+    use plplot
     use plf95demolib
     implicit none
 
-    real(kind=pl_test_flt), parameter :: PI = double_PI
     integer, parameter :: xpts=35, ypts=46
     integer            :: i, j, k, ifshade
 
@@ -53,6 +52,7 @@ program x11f
 
     !    Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     x = 3._pl_test_flt * (arange(xpts) - (xpts/2)) / real(xpts/2,kind=pl_test_flt)
     y = 3._pl_test_flt * (arange(ypts) - (ypts/2)) / real(ypts/2,kind=pl_test_flt)

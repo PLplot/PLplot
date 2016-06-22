@@ -83,6 +83,7 @@ program x15f
            0.0_pl_test_flt, (ymax-ymin)/real(YPTS-1,kind=pl_test_flt), ymin /)
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !      Set up color map 1 (but comment out because this makes
     !      no difference for the current cmap0 plshade calls in plot1 and plot2.)

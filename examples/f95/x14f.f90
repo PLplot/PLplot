@@ -61,6 +61,7 @@ program x14f
 
     !      Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !      If valid geometry specified on command line, use it for both streams.
     call plgpage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
@@ -72,6 +73,7 @@ program x14f
         call plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
     else
         plsetopt_rc = plsetopt( 'geometry', geometry_master)
+        if(plsetopt_rc .ne. 0) stop "plsetopt error"
     endif
 
     call plssub(2, 2)
@@ -390,7 +392,7 @@ contains
         implicit none
 
         character*(*) text
-        integer l, len
+        integer l
 
         l = len(text)
         nsp = 1
@@ -412,10 +414,8 @@ contains
         !      arrays that is actually used.
         parameter (xdim=99, ydim=100, nptsx=35,nptsy=46)
 
-        real(kind=pl_test_flt), dimension(xdim,ydim) ::  z, w, xg2, yg2
+        real(kind=pl_test_flt), dimension(xdim,ydim) ::  z, w
         real(kind=pl_test_flt), dimension(11) :: clevel
-        real(kind=pl_test_flt), dimension(xdim) ::  xg1
-        real(kind=pl_test_flt), dimension(ydim) :: yg1
         real(kind=pl_test_flt) :: xx, yy, argx, argy, distort
         real(kind=pl_test_flt), dimension(6) :: tr
 
@@ -444,12 +444,10 @@ contains
         distort = 0.4_pl_test_flt
         do i=1,nptsx
             xx = -1._pl_test_flt + real(i-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsx-1,kind=pl_test_flt)
-            xg1(i) = xx + distort*cos(0.5_pl_test_flt*PI*xx)
         enddo
 
         do j=1,nptsy
             yy = -1._pl_test_flt + real(j-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
-            yg1(j) = yy - distort*cos(0.5_pl_test_flt*PI*yy)
         enddo
 
         !      Build the 2-d coord arrays.
@@ -459,8 +457,6 @@ contains
             do j=1,nptsy
                 yy = -1._pl_test_flt + real(j-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
                 argy = 0.5_pl_test_flt*PI*yy
-                xg2(i,j) = xx + distort*cos(argx)*cos(argy)
-                yg2(i,j) = yy - distort*cos(argx)*cos(argy)
             enddo
         enddo
 

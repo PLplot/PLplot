@@ -43,6 +43,7 @@ program x13f
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !   Ask user to specify the output device.
     call plinit()

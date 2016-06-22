@@ -78,10 +78,9 @@
 
 program x26f
 
-    use plplot, double_PI => PL_PI
+    use plplot
     implicit none
 
-    real(kind=pl_test_flt), parameter :: PI = double_PI
     integer, parameter :: nolangs = 2
     integer, parameter :: nlegend = 2
 
@@ -123,6 +122,7 @@ program x26f
     !  Parse and process command line arguments
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !  Initialize plplot
 

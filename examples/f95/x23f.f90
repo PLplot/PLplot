@@ -250,6 +250,7 @@ program x23f
            "bold" /
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     call plinit()
 
@@ -413,7 +414,7 @@ contains
     subroutine lowercase23(string)
         implicit none
         character*(*) string
-        integer i, len, iascii
+        integer i, iascii
         do i = 1, len(string)
             iascii = iachar(string(i:i))
             if(65.le.iascii.and.iascii.le.90) then

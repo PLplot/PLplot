@@ -184,6 +184,7 @@ program x33f
     !     Parse and process command line arguments
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !     Initialize plplot
     call plinit

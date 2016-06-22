@@ -40,6 +40,7 @@ program x06f
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     !   Full sized page for display
     call plinit()

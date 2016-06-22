@@ -61,6 +61,7 @@ program x30f
     real(kind=pl_test_flt) :: a
 
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
+    if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
     call plinit()
 
