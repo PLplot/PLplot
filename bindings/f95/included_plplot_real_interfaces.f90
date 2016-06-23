@@ -772,6 +772,61 @@
     private :: plvect_impl
     private :: plvect_impl_data
 
+    interface
+        subroutine interface_plfvect( lookup, fgrid1, fgrid2, nx, ny, scale, transform, data ) bind(c, name = 'plfvect' )
+            import :: c_ptr, c_funptr
+            import :: private_plint, private_plflt, PLfGrid, PLcGrid
+            implicit none
+            integer(kind=private_plint), value, intent(in) :: nx, ny
+            type(PLfGrid), intent(in) :: fgrid1, fgrid2
+            real(kind=private_plflt), value, intent(in) :: scale
+            type(c_ptr), value, intent(in) :: data ! Not used in this case
+            interface
+                function lookup( ix, iy, data ) bind(c)
+                    import :: c_ptr
+                    import :: private_plint, private_plflt
+                    implicit none
+                    real(kind=private_plflt) :: lookup
+                    integer(kind=private_plint), value, intent(in) :: ix, iy
+                    type(c_ptr), value, intent(in) :: data
+                end function lookup
+            end interface
+            interface
+                subroutine transform( x, y, tx, ty, data ) bind(c)
+                    import :: private_plflt
+                    import :: c_ptr
+                    implicit none
+                    real(kind=private_plflt), value, intent(in) :: x, y
+                    real(kind=private_plflt), intent(out) :: tx, ty
+                    type(c_ptr), value, intent(in) :: data
+                end subroutine transform
+            end interface
+        end subroutine interface_plfvect
+    end interface
+    private :: interface_plfvect
+
+    interface
+        subroutine interface_plvect( u, v, nx, ny, scale, transform, data ) bind(c, name = 'c_plvect' )
+            import :: c_funptr, c_ptr
+            import :: private_plint, private_plflt
+            implicit none
+            integer(kind=private_plint), value, intent(in) :: nx, ny
+            real(kind=private_plflt), value, intent(in) :: scale
+            type(c_ptr), dimension(*), intent(in) :: u, v
+            type(c_ptr), value, intent(in) :: data
+            interface
+                subroutine transform( x, y, tx, ty, data ) bind(c)
+                    import :: private_plflt
+                    import :: c_ptr
+                    implicit none
+                    real(kind=private_plflt), value, intent(in) :: x, y
+                    real(kind=private_plflt), intent(out) :: tx, ty
+                    type(c_ptr), value, intent(in) :: data
+                end subroutine transform
+        end interface
+    end subroutine interface_plvect
+    end interface
+
     interface plvpas
         module procedure plvpas_impl
     end interface plvpas
@@ -4408,39 +4463,6 @@ contains
             end subroutine pltr0
         end interface
 
-        interface
-            subroutine interface_plfvect( lookup, fgrid1, fgrid2, nx, ny, scale, transform, data ) bind(c, name = 'plfvect' )
-                import :: c_ptr, c_funptr
-                import :: private_plint, private_plflt, PLfGrid, PLcGrid
-                implicit none
-                integer(kind=private_plint), value, intent(in) :: nx, ny
-                type(PLfGrid), intent(in) :: fgrid1, fgrid2
-                real(kind=private_plflt), value, intent(in) :: scale
-                type(c_ptr), value, intent(in) :: data ! Not used in this case
-                interface
-                    function lookup( ix, iy, data ) bind(c)
-                        import :: c_ptr
-                        import :: private_plint, private_plflt
-                        implicit none
-                        real(kind=private_plflt) :: lookup
-                        integer(kind=private_plint), value, intent(in) :: ix, iy
-                        type(c_ptr), value, intent(in) :: data
-                    end function lookup
-                end interface
-                type(c_funptr), value, intent(in) :: transform
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt, PLcGrid
-              !         import :: c_ptr
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in)  :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         type(c_ptr), value, intent(in) :: data
-              !     end subroutine transform
-              ! end interface
-            end subroutine interface_plfvect
-        end interface
-
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if( nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
@@ -4459,7 +4481,7 @@ contains
         fgrid2%ny = ny_in
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
-               real(scale,kind=private_plflt), c_funloc(pltr0), c_null_ptr )
+               real(scale,kind=private_plflt), pltr0, c_null_ptr )
     end subroutine plvect_impl_0
 
     subroutine plvect_impl_1( u, v, scale, xg, yg )
@@ -4494,38 +4516,6 @@ contains
             end subroutine pltr1
         end interface
 
-        interface
-            subroutine interface_plfvect( lookup, fgrid1, fgrid2, nx, ny, scale, transform, data ) bind(c, name = 'plfvect' )
-                import :: c_ptr, c_funptr
-                import :: private_plint, private_plflt, PLfGrid, PLcGrid
-                implicit none
-                integer(kind=private_plint), value, intent(in) :: nx, ny
-                type(PLfGrid), intent(in) :: fgrid1, fgrid2
-                real(kind=private_plflt), value, intent(in) :: scale
-                type(c_ptr), value, intent(in) :: data
-                interface
-                    function lookup( ix, iy, data ) bind(c)
-                        import :: c_ptr
-                        import :: private_plflt, private_plint
-                        implicit none
-                        real(kind=private_plflt) :: lookup
-                        integer(kind=private_plint), value, intent(in) :: ix, iy
-                        type(c_ptr), value, intent(in) :: data
-                    end function lookup
-                end interface
-                type(c_funptr), value, intent(in) :: transform
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt, PLcGrid
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in)  :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         type(PLcGrid), intent(in) :: data
-              !     end subroutine transform
-              ! end interface
-            end subroutine interface_plfvect
-        end interface
-
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
@@ -4557,7 +4547,7 @@ contains
         cgrid_local%yg = c_loc(yg_in)
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
-               real(scale,kind=private_plflt), c_funloc(pltr1), c_loc(cgrid_local) )
+               real(scale,kind=private_plflt), pltr1, c_loc(cgrid_local) )
     end subroutine plvect_impl_1
 
     subroutine plvect_impl_2( u, v, scale, xg, yg )
@@ -4593,39 +4583,6 @@ contains
             end subroutine pltr2f
         end interface
 
-        interface
-            subroutine interface_plfvect( lookup, fgrid1, fgrid2, nx, ny, scale, transform, data ) bind(c, name = 'plfvect' )
-                import :: c_ptr, c_funptr
-                import :: private_plint, private_plflt, PLfGrid, PLcGrid
-                implicit none
-                integer(kind=private_plint), value, intent(in) :: nx, ny
-                type(PLfGrid), intent(in) :: fgrid1, fgrid2
-                real(kind=private_plflt), value, intent(in) :: scale
-                type(c_ptr), value, intent(in) :: data
-                interface
-                    function lookup( ix, iy, data ) bind(c)
-                        import :: c_ptr
-                        import :: private_plint, private_plflt
-                        implicit none
-                        real(kind=private_plflt) :: lookup
-                        integer(kind=private_plint), value, intent(in) :: ix, iy
-                        type(c_ptr), value, intent(in) :: data
-                    end function lookup
-                end interface
-                type(c_funptr), value, intent(in) :: transform
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt
-              !         import :: c_ptr
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in) :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         type(c_ptr), value, intent(in) :: data
-              !     end subroutine transform
-              ! end interface
-            end subroutine interface_plfvect
-        end interface
-
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
@@ -4659,7 +4616,7 @@ contains
         cgrid_local%yg = c_loc(yg_in)
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
-               real(scale,kind=private_plflt), c_funloc(pltr2f), c_loc(cgrid_local) )
+               real(scale,kind=private_plflt), pltr2f, c_loc(cgrid_local) )
     end subroutine plvect_impl_2
 
     subroutine plvect_impl_tr( u, v, scale, tr )
@@ -4683,38 +4640,6 @@ contains
             end function plf2evalr
         end interface
 
-        interface
-            subroutine interface_plfvect( lookup, fgrid1, fgrid2, nx, ny, scale, transform, data ) bind(c, name = 'plfvect' )
-                import :: c_ptr, c_funptr
-                import :: private_plint, private_plflt, PLfGrid, PLcGrid
-                implicit none
-                integer(kind=private_plint), value, intent(in) :: nx, ny
-                type(PLfGrid), intent(in) :: fgrid1, fgrid2
-                real(kind=private_plflt), value, intent(in) :: scale
-                type(c_ptr), value, intent(in) :: data
-                interface
-                    function lookup( ix, iy, data ) bind(c)
-                        import :: c_ptr
-                        import :: private_plint, private_plflt
-                        implicit none
-                        real(kind=private_plflt) :: lookup
-                        integer(kind=private_plint), value, intent(in) :: ix, iy
-                        type(c_ptr), value, intent(in) :: data
-                    end function lookup
-                end interface
-                type(c_funptr), value, intent(in) :: transform
-              ! interface
-              !     subroutine transform( x, y, tx, ty, data ) bind(c)
-              !         import :: private_plflt, PLcGrid
-              !         implicit none
-              !         real(kind=private_plflt), value, intent(in)  :: x, y
-              !         real(kind=private_plflt), intent(out) :: tx, ty
-              !         real(kind=private_plflt), dimension(*), intent(in) :: data
-              !     end subroutine transform
-              ! end interface
-            end subroutine interface_plfvect
-        end interface
-
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if(nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
@@ -4735,7 +4660,7 @@ contains
         tr_in = tr(1:6)
 
         call interface_plfvect( plf2evalr, fgrid1, fgrid2, nx_in, ny_in, &
-               real(scale,kind=private_plflt), c_funloc(plplot_private_pltr), c_loc(tr_in) )
+               real(scale,kind=private_plflt), plplot_private_pltr, c_loc(tr_in) )
     end subroutine plvect_impl_tr
 
     subroutine plvect_impl( u, v, scale, proc )
@@ -4746,19 +4671,6 @@ contains
         integer(kind=private_plint) :: nx_in, ny_in
         real(kind=private_plflt), dimension(:,:), allocatable :: u_local, v_local
         type(c_ptr), dimension(:), allocatable :: u_address_local, v_address_local
-
-        interface
-            subroutine interface_plvect( u, v, nx, ny, scale, proc, data ) bind(c, name = 'c_plvect' )
-                import :: c_funptr, c_ptr
-                import :: private_plint, private_plflt
-                implicit none
-                integer(kind=private_plint), value, intent(in) :: nx, ny
-                real(kind=private_plflt), value, intent(in) :: scale
-                type(c_ptr), dimension(*), intent(in) :: u, v
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plvect
-        end interface
 
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
@@ -4771,7 +4683,7 @@ contains
         pltransform => proc
 
         call interface_plvect( u_address_local, v_address_local, nx_in, ny_in, &
-               real(scale,kind=private_plflt), c_funloc(pltransformf2c), c_null_ptr )
+               real(scale,kind=private_plflt), pltransformf2c, c_null_ptr )
     end subroutine plvect_impl
 
     subroutine plvect_impl_data( u, v, scale, proc, data )
@@ -4784,19 +4696,6 @@ contains
         real(kind=private_plflt), dimension(:,:), allocatable :: u_local, v_local
         type(c_ptr), dimension(:), allocatable :: u_address_local, v_address_local
 
-        interface
-            subroutine interface_plvect( u, v, nx, ny, scale, proc, data ) bind(c, name = 'c_plvect' )
-                import :: c_funptr, c_ptr
-                import :: private_plint, private_plflt
-                implicit none
-                integer(kind=private_plint), value, intent(in) :: nx, ny
-                real(kind=private_plflt), value, intent(in) :: scale
-                type(c_ptr), dimension(*), intent(in) :: u, v
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plvect
-        end interface
-
         nx_in = size(u,1,kind=private_plint)
         ny_in = size(u,2,kind=private_plint)
         if( nx_in /= size(v,1,kind=private_plint) .or. ny_in /= size(v,2,kind=private_plint) ) then
@@ -4808,7 +4707,7 @@ contains
         pltransform_data => proc
 
         call interface_plvect( u_address_local, v_address_local, nx_in, ny_in, &
-               real(scale,kind=private_plflt), c_funloc(pltransformf2c_data), data )
+               real(scale,kind=private_plflt), pltransformf2c_data, data )
     end subroutine plvect_impl_data
 
     subroutine plvpas_impl( xmin, xmax, ymin, ymax, aspect )
