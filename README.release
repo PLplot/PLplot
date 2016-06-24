@@ -145,6 +145,25 @@ longer required for that reason.  If it turns out no other
 binding requires these prefixes then we potentially could
 remove them which would be a welcome simplification.
 
+We have achieved good test results for gfortran, ifort, and nagfor
+with this new Fortran binding.  However, one known downside of this
+new binding is it generates some ~50 "marked PRIVATE" warning messages
+when building the plplotf95 target with the gfortran Fortran compiler.
+A typical example of such a warning message is
+
+Warning: Symbol 'interface_plcont' at (1) is marked PRIVATE but has been given the binding label 'c_plcont'
+
+It appears these warnings (which do not occur if using the ifort or
+nagfor Fortran compilers) are due to a gfortran bug (see
+<https://gcc.gnu.org/bugzilla/show_bug.cgi?id=49111> and
+<https://gcc.gnu.org/bugzilla/show_bug.cgi?id=64861>), i.e., they are
+spurious warnings concerning completely valid use of the private
+attribute for interface blocks describing C routines.  There appear to
+be no known negative consequences of this gfortran bug other than the
+spurious warnings themselves.  Until this gfortran bug is fixed, these
+~50 "marked PRIVATE" warnings should just be ignored for those using
+gfortran.
+
 2.4 Supply old Fortran binding and examples option
 
 Because the new Fortran binding is not completely compatible with the
