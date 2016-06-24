@@ -41,6 +41,39 @@ module plplot_double
     ! Private interfaces for wp-precision callbacks
     private :: plmapformf2c, pllabelerf2c, pllabelerf2c_data, pltransformf2c, pltransformf2c_data
 
+    ! Normally interface blocks describing the C routines that are
+    ! called by this Fortran binding are embedded as part of module
+    ! procedures, but when more than one module procedure uses such
+    ! interface blocks there is a requirement (enforced at least by
+    ! the nagfor compiler) that those interface blocks be consistent.
+    ! We could comply with that requirement by embedding such multiply
+    ! used interface blocks as part of module procedures using
+    ! duplicated code, but that is inefficient (in terms of the number
+    ! of lines of code to be compiled) and implies a maintenance issue
+    ! (to keep that code duplicated whenever there are changes on the
+    ! C side).  To deal with those two potential issues we collect
+    ! here in alphabetical order all interface blocks describing C
+    ! routines that are called directly by more than one module
+    ! procedure.
+
+    interface
+        subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
+            import :: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plslabelfunc
+    end interface
+    private :: interface_plslabelfunc
+
+    interface
+        subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
+            import :: c_funptr, c_ptr
+            type(c_funptr), value, intent(in) :: proc
+            type(c_ptr), value, intent(in) :: data
+        end subroutine interface_plstransform
+    end interface
+    private :: interface_plstransform
+
     ! Routines that have floating-point attributes that nevertheless
     ! cannot be disambiguated so we only provide them for the
     ! double-precision case (rather than using a separate naming
@@ -111,14 +144,6 @@ module plplot_double
     subroutine plslabelfunc_impl_data( proc, data )
         procedure(pllabeler_proc_data) :: proc
         type(c_ptr), value, intent(in) :: data
-        interface
-            subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plslabelfunc
-        end interface
-
         pllabeler_data => proc
         call interface_plslabelfunc( c_funloc(pllabelerf2c_data), data )
     end subroutine plslabelfunc_impl_data
@@ -127,28 +152,11 @@ module plplot_double
     ! problems with the corresponding single-precision version.
     subroutine plslabelfunc_impl( proc )
         procedure(pllabeler_proc) :: proc
-        interface
-            subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plslabelfunc
-        end interface
-
         pllabeler => proc
         call interface_plslabelfunc( c_funloc(pllabelerf2c), c_null_ptr )
     end subroutine plslabelfunc_impl
 
     subroutine plslabelfunc_impl_null
-
-        interface
-            subroutine interface_plslabelfunc( proc, data ) bind(c, name = 'c_plslabelfunc' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plslabelfunc
-        end interface
-
         call interface_plslabelfunc( c_null_funptr, c_null_ptr )
     end subroutine plslabelfunc_impl_null
 
@@ -157,14 +165,6 @@ module plplot_double
     subroutine plstransform_impl_data( proc, data )
         procedure(pltransform_proc_data) :: proc
         type(c_ptr), value, intent(in) :: data
-        interface
-            subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plstransform
-        end interface
-
         pltransform_data => proc
         call interface_plstransform( c_funloc(pltransformf2c_data), data )
     end subroutine plstransform_impl_data
@@ -173,27 +173,11 @@ module plplot_double
     ! problems with the corresponding single-precision version.
     subroutine plstransform_impl( proc )
         procedure(pltransform_proc) :: proc
-        interface
-            subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plstransform
-        end interface
-
         pltransform => proc
         call interface_plstransform( c_funloc(pltransformf2c), c_null_ptr )
     end subroutine plstransform_impl
 
     subroutine plstransform_impl_null
-        interface
-            subroutine interface_plstransform( proc, data ) bind(c, name = 'c_plstransform' )
-                import :: c_funptr, c_ptr
-                type(c_funptr), value, intent(in) :: proc
-                type(c_ptr), value, intent(in) :: data
-            end subroutine interface_plstransform
-        end interface
-
         call interface_plstransform( c_null_funptr, c_null_ptr )
     end subroutine plstransform_impl_null
 
