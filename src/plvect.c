@@ -29,13 +29,24 @@
 static void plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale );
 
 //--------------------------------------------------------------------------
+// N.B. This routine only needed by the Fortran interface to distinguish
+// the case where both arrowx and arrowy are NULL.  So don't put declaration in
+// header which might encourage others to use this in some other context.
+//--------------------------------------------------------------------------
+PLDLLIMPEXP void
+plsvect_null(void)
+{
+  c_plsvect( NULL, NULL, 0, 0);
+}
+
+//--------------------------------------------------------------------------
 // void c_plsvect()
 //
 // Set the style of the arrow used by plvect
 //--------------------------------------------------------------------------
 
 void
-c_plsvect( PLFLT_VECTOR arrowx, PLFLT_VECTOR arrowy, PLINT npts, PLINT fill )
+c_plsvect( PLFLT_VECTOR arrowx, PLFLT_VECTOR arrowy, PLINT npts, PLBOOL fill )
 {
     int   i;
     PLFLT def_arrow_x[6] = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };

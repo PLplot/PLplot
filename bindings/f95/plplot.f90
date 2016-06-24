@@ -1471,17 +1471,11 @@ contains
         logical, optional, intent(in) :: fill
 
         interface
-            subroutine interface_plsvect( arrowx, arrowy, npts,  fill ) bind(c,name='c_plsvect')
-                import :: c_ptr
-                import :: private_plint, private_plbool
-                implicit none
-                integer(kind=private_plint), value, intent(in) :: npts
-                integer(kind=private_plbool), value, intent(in) :: fill
-                type(c_ptr), value, intent(in) :: arrowx, arrowy
-            end subroutine interface_plsvect
+            subroutine interface_plsvect_null() bind(c,name='plsvect_null')
+            end subroutine interface_plsvect_null
         end interface
 
-        call interface_plsvect( c_null_ptr, c_null_ptr, 0_private_plint, 0_private_plbool )
+        call interface_plsvect_null
     end subroutine plsvect_none
 
     subroutine plsxax_impl( digmax, digits )
