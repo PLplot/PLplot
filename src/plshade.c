@@ -187,10 +187,10 @@ plshade_int( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
 // header which might encourage others to use this in some other context.
 PLDLLIMPEXP void
 plshades_null( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
-                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                 PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
-                 PLINT cont_color, PLFLT cont_width,
-	       PLFILL_callback fill, PLINT rectangular )
+               PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+               PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
+               PLINT cont_color, PLFLT cont_width,
+               PLFILL_callback fill, PLINT rectangular )
 {
     plfshades( plf2ops_c(), (PLPointer) a, nx, ny, defined,
         xmin, xmax, ymin, ymax,
@@ -324,12 +324,12 @@ plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
 // header which might encourage others to use this in some other context.
 PLDLLIMPEXP void
 plshade_null( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
-                PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                PLFLT shade_min, PLFLT shade_max,
-                PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-                PLINT min_color, PLFLT min_width,
-                PLINT max_color, PLFLT max_width,
-                PLFILL_callback fill, PLINT rectangular )
+              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+              PLFLT shade_min, PLFLT shade_max,
+              PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+              PLINT min_color, PLFLT min_width,
+              PLINT max_color, PLFLT max_width,
+              PLFILL_callback fill, PLINT rectangular )
 {
     plshade_int( plf2eval1, (PLPointer) a,
         NULL, NULL,
@@ -338,7 +338,7 @@ plshade_null( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
         xmax, ymin, ymax, shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
-	fill, rectangular, NULL, NULL );
+        fill, rectangular, NULL, NULL );
 }
 
 //--------------------------------------------------------------------------

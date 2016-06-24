@@ -34,9 +34,9 @@ static void plP_plotvect( PLFLT x, PLFLT y, PLFLT u, PLFLT v, PLFLT scale );
 // header which might encourage others to use this in some other context.
 //--------------------------------------------------------------------------
 PLDLLIMPEXP void
-plsvect_null(void)
+plsvect_null( void )
 {
-  c_plsvect( NULL, NULL, 0, 0);
+    c_plsvect( NULL, NULL, 0, 0 );
 }
 
 //--------------------------------------------------------------------------

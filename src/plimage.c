@@ -195,12 +195,12 @@ grimage( short *x, short *y, unsigned short *z, PLINT nx, PLINT ny )
 // header which might encourage others to use this in some other context.
 PLDLLIMPEXP void
 plimagefr_null( PLFLT_MATRIX idata, PLINT nx, PLINT ny,
-             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-		PLFLT valuemin, PLFLT valuemax )
+                PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
+                PLFLT valuemin, PLFLT valuemax )
 {
     plfimagefr( plf2ops_c(), (PLPointer) idata, nx, ny,
         xmin, xmax, ymin, ymax, zmin, zmax,
-	valuemin, valuemax, NULL, NULL );
+        valuemin, valuemax, NULL, NULL );
 }
 
 //--------------------------------------------------------------------------
