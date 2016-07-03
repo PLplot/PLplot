@@ -308,7 +308,6 @@ contains
         real(kind=pl_test_flt) xmin, xmax, ymin, ymax
         real(kind=pl_test_flt) Q, scaling
         real(kind=pl_test_flt), allocatable :: xg(:), yg(:), b(:), u(:,:), v(:,:), clev(:)
-        character(len=1) defined
 
         type(callback_data_type), target :: data
 
@@ -345,7 +344,7 @@ contains
         call pllab('(x)', '(y)', &
                '#frPLplot Example 22 - constriction with plstransform')
         call plcol0(2)
-        call plshades(u, defined, xmin + dx / 2.0_pl_test_flt, &
+        call plshades(u, xmin + dx / 2.0_pl_test_flt, &
                xmax - dx / 2.0_pl_test_flt, &
                ymin + dy / 2.0_pl_test_flt, ymax - dy / 2.0_pl_test_flt, &
                clev, 0.0_pl_test_flt, 1, 1.0_pl_test_flt, .false. )

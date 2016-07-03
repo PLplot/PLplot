@@ -47,7 +47,7 @@ program x17f
     character(len=20)  :: legline(4)
 
     logical            :: pl_errcode
-    character(len=80)  :: errmsg
+    character(len=80)  :: errmsg = 'PLplot error'
 
     !   Process command-line arguments
     plparseopts_rc = plparseopts(PL_PARSE_FULL)

@@ -416,7 +416,7 @@ contains
 
         real(kind=pl_test_flt), dimension(xdim,ydim) ::  z, w
         real(kind=pl_test_flt), dimension(11) :: clevel
-        real(kind=pl_test_flt) :: xx, yy, argx, argy, distort
+        real(kind=pl_test_flt) :: xx, yy
         real(kind=pl_test_flt), dimension(6) :: tr
 
         data clevel /-1._pl_test_flt, -0.8_pl_test_flt, -0.6_pl_test_flt, -0.4_pl_test_flt, &
@@ -437,26 +437,6 @@ contains
                 yy = real(j-1-(nptsy/2),kind=pl_test_flt)/real(nptsy/2,kind=pl_test_flt) - 1.0_pl_test_flt
                 z(i,j) = xx*xx - yy*yy
                 w(i,j) = 2._pl_test_flt*xx*yy
-            enddo
-        enddo
-
-        !      Build the 1-d coord arrays.
-        distort = 0.4_pl_test_flt
-        do i=1,nptsx
-            xx = -1._pl_test_flt + real(i-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsx-1,kind=pl_test_flt)
-        enddo
-
-        do j=1,nptsy
-            yy = -1._pl_test_flt + real(j-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
-        enddo
-
-        !      Build the 2-d coord arrays.
-        do i=1,nptsx
-            xx = -1._pl_test_flt + real(i-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsx-1,kind=pl_test_flt)
-            argx = 0.5_pl_test_flt*PI*xx
-            do j=1,nptsy
-                yy = -1._pl_test_flt + real(j-1,kind=pl_test_flt)*2._pl_test_flt/real(nptsy-1,kind=pl_test_flt)
-                argy = 0.5_pl_test_flt*PI*yy
             enddo
         enddo
 

@@ -109,7 +109,7 @@ contains
             sh_color = real(i - 1,kind=pl_test_flt) / real(NCONTR - 1,kind=pl_test_flt)
             sh_width = 2
             call plpsty(0)
-            call plshade(z(:NX,:NY), ' ', &
+            call plshade(z(:NX,:NY), &
                    -1._pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
@@ -256,7 +256,7 @@ contains
             sh_width = 2
             call plpsty(0)
 
-            call plshade(z(:NX,:NY), ' ', &
+            call plshade(z(:NX,:NY), &
                    -1.0_pl_test_flt, 1.0_pl_test_flt, -1.0_pl_test_flt, 1.0_pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &

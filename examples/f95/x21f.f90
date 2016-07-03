@@ -73,8 +73,6 @@ program x21f
     integer :: plparseopts_rc
     real(kind=pl_test_flt) dist, d
 
-    character(len=1) defined
-
     xmin = -0.2_pl_test_flt
     ymin = -0.2_pl_test_flt
     xmax = 0.6_pl_test_flt
@@ -225,7 +223,7 @@ program x21f
                 call plenv0(xmin, xmax, ymin, ymax, 2, 0)
                 call plcol0(15)
                 call pllab("X", "Y", title(alg))
-                call plshades(zg, defined, xmin, xmax, ymin, &
+                call plshades(zg, xmin, xmax, ymin, &
                        ymax, clev, 1._pl_test_flt, 0, 1._pl_test_flt, .true. )
                 call plcol0(2)
             else

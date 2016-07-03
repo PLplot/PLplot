@@ -237,7 +237,6 @@ contains
         integer xdim, XPTS, YPTS
         real(kind=pl_test_flt)  z(xdim,YPTS), zmin, zmax
 
-        character(len=1) undefined
         real(kind=pl_test_flt)  shade_min, shade_max, sh_color
         integer sh_cmap
         integer min_color, max_color
@@ -268,7 +267,7 @@ contains
         call plpsty(8)
 
         if(tr_callback) then
-            call plshade(z(:XPTS,:YPTS), undefined, &
+            call plshade(z(:XPTS,:YPTS), &
                    -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
@@ -277,19 +276,19 @@ contains
             allocate( xg(XPTS), yg(YPTS) )
             xg = (2.0_pl_test_flt/real(XPTS-1,kind=pl_test_flt))*arange(XPTS) - 1.0_pl_test_flt
             yg = (2.0_pl_test_flt/real(YPTS-1,kind=pl_test_flt))*arange(YPTS) - 1.0_pl_test_flt
-            call plshade(z(:XPTS,:YPTS), undefined, &
+            call plshade(z(:XPTS,:YPTS), &
                    -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
                    min_color, min_width, max_color, max_width, .true., xg, yg )
         elseif(mypltr_callback) then
-            call plshade(z(:XPTS,:YPTS), undefined, &
+            call plshade(z(:XPTS,:YPTS), &
                    -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
                    min_color, min_width, max_color, max_width, .true., mypltr )
         else
-            call plshade(z(:XPTS,:YPTS), undefined, &
+            call plshade(z(:XPTS,:YPTS), &
                    -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &
@@ -317,7 +316,6 @@ contains
         integer xdim, XPTS, YPTS
         real(kind=pl_test_flt)  z(xdim,YPTS), zmin, zmax
 
-        character(len=1) undefined
         real(kind=pl_test_flt)  shade_min, shade_max, sh_color
         integer sh_cmap
         integer min_color, max_color
@@ -352,7 +350,7 @@ contains
             shade_max = zmin + (zmax - zmin) * i / 10.0_pl_test_flt
             sh_color = i+5
             call plpat( inc(1:nlin(i),i),del(1:nlin(i),i))
-            call plshade(z(:XPTS,:YPTS), undefined, &
+            call plshade(z(:XPTS,:YPTS), &
                    -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, 1._pl_test_flt, &
                    shade_min, shade_max, &
                    sh_cmap, sh_color, sh_width, &

@@ -140,7 +140,7 @@
         end function interface_plf2evalr
     end interface
     private :: interface_plf2evalr
-    
+
     interface
         subroutine interface_plfcont( lookup, grid, nx, ny, kx, lx, ky, ly, clevel, nlevel, transform, data ) &
                bind(c,name='plfcont')
@@ -184,7 +184,7 @@
         end subroutine interface_plfill
     end interface
     private :: interface_plfill
-    
+
     interface
         subroutine interface_plfvect( lookup, fgrid1, fgrid2, nx, ny, scale, transform, data ) bind(c, name = 'plfvect' )
             import :: c_ptr, c_funptr
@@ -217,7 +217,7 @@
         end subroutine interface_plfvect
     end interface
     private :: interface_plfvect
-    
+
     interface
         subroutine interface_plimagefr( idata, nx, ny, &
                xmin, xmax, ymin, ymax, &
@@ -242,7 +242,7 @@
         end subroutine interface_plimagefr
     end interface
     private :: interface_plimagefr
-    
+
     interface
         subroutine interface_plimagefr_null( idata, nx, ny, &
                xmin, xmax, ymin, ymax, &
@@ -515,7 +515,7 @@
     end subroutine interface_plvect
     end interface
     private :: interface_plvect
-    
+
     ! Interface blocks for module procedures
     ! These interface blocks are ordered by the names of the module
     ! procedures inside them.  (Recall that the collating sequence has
@@ -3341,10 +3341,9 @@ contains
                real(xmax,kind=private_plflt), real(ymax,kind=private_plflt) )
     end subroutine plsdiplz_impl
 
-    subroutine plshade_impl_0( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_0( z, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: sh_width, min_width, max_width
         real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
@@ -3367,10 +3366,9 @@ contains
                interface_plfill, int(merge(1,0,rectangular),kind=private_plbool) )
     end subroutine plshade_impl_0
 
-    subroutine plshade_impl_1( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_1( z, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: sh_width, min_width, max_width
         real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
@@ -3411,10 +3409,9 @@ contains
                interface_pltr1, c_loc(cgrid_local) )
     end subroutine plshade_impl_1
 
-    subroutine plshade_impl_2( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_2( z, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: sh_width, min_width, max_width
         real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
@@ -3457,10 +3454,9 @@ contains
                interface_pltr2f, c_loc(cgrid_local) )
     end subroutine plshade_impl_2
 
-    subroutine plshade_impl_tr( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_tr( z, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, tr )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: sh_width, min_width, max_width
         real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
@@ -3486,10 +3482,9 @@ contains
                interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), plplot_private_pltr, c_loc(tr_in) )
     end subroutine plshade_impl_tr
 
-    subroutine plshade_impl( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl( z, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, proc )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: sh_width, min_width, max_width
         real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
@@ -3514,10 +3509,9 @@ contains
                interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), pltransformf2c, c_null_ptr )
     end subroutine plshade_impl
 
-    subroutine plshade_impl_data( z, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
+    subroutine plshade_impl_data( z, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, &
            min_color, min_width, max_color, max_width, rectangular, proc, data )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: sh_width, min_width, max_width
         real(kind=wp), intent(in) :: shade_min, shade_max, sh_color
@@ -3543,10 +3537,9 @@ contains
                interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), pltransformf2c_data, data )
     end subroutine plshade_impl_data
 
-    subroutine plshades_impl_0( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_0( z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: fill_width, cont_width
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -3567,10 +3560,9 @@ contains
                interface_plfill, int(merge(1,0,rectangular),kind=private_plbool) )
     end subroutine plshades_impl_0
 
-    subroutine plshades_impl_1( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_1( z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: fill_width, cont_width
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -3610,10 +3602,9 @@ contains
                interface_pltr1, c_loc(cgrid_local) )
     end subroutine plshades_impl_1
 
-    subroutine plshades_impl_2( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_2( z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, xg, yg )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: fill_width, cont_width
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -3655,10 +3646,9 @@ contains
                interface_pltr2f, c_loc(cgrid_local) )
     end subroutine plshades_impl_2
 
-    subroutine plshades_impl_tr( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_tr( z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, tr )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: fill_width, cont_width
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -3682,10 +3672,9 @@ contains
                interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), plplot_private_pltr, c_loc(tr_in) )
     end subroutine plshades_impl_tr
 
-    subroutine plshades_impl( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl( z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, proc )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: fill_width, cont_width
         real(kind=wp), dimension(:), intent(in) :: clevel
@@ -3708,10 +3697,9 @@ contains
                interface_plfill, int(merge(1,0,rectangular),kind=private_plbool), pltransformf2c, c_null_ptr )
     end subroutine plshades_impl
 
-    subroutine plshades_impl_data( z, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
+    subroutine plshades_impl_data( z, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, &
            rectangular, proc, data )
         real(kind=wp), dimension(:,:), intent(in) :: z
-        character(len=*), intent(in) :: defined
         real(kind=wp), intent(in) :: xmin, xmax, ymin, ymax
         real(kind=wp), intent(in) :: fill_width, cont_width
         real(kind=wp), dimension(:), intent(in) :: clevel

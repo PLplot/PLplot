@@ -61,8 +61,6 @@ program x16f
 
     integer i, j
     integer :: plparseopts_rc
-    !      dummy to fill argument list with something not currently used.
-    character(len=1) defined
     real(kind=pl_test_flt) tr(6)
 
     ! Global parameters to be used in mypltr callback
@@ -175,22 +173,22 @@ program x16f
     labels(1) = 'Magnitude'
 
     if(no_callback) then
-        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+        call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
                1._pl_test_flt, &
                shedge, fill_width, &
                cont_color, cont_width, .true. )
     elseif(tr_callback) then
-        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+        call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
                1._pl_test_flt, &
                shedge, fill_width, &
                cont_color, cont_width, .true., tr )
     elseif(mypltr_callback) then
-        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+        call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
                1._pl_test_flt, &
                shedge, fill_width, &
                cont_color, cont_width, .true., mypltr )
     else
-        call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+        call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
                1._pl_test_flt, &
                shedge, fill_width, &
                cont_color, cont_width, .true., mypltr_data, c_loc(data) )
@@ -239,7 +237,7 @@ program x16f
     fill_width = 2
     cont_color = 0
     cont_width = 0
-    call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+    call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
            1._pl_test_flt, &
            shedge, fill_width, &
            cont_color, cont_width, .true., xg1(:NX), yg1(:NY))
@@ -287,7 +285,7 @@ program x16f
     fill_width = 2
     cont_color = 0
     cont_width = 0
-    call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+    call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
            1._pl_test_flt, &
            shedge, fill_width, &
            cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
@@ -336,7 +334,7 @@ program x16f
     fill_width = 2
     cont_color = 2
     cont_width = 3
-    call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+    call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
            1._pl_test_flt, &
            shedge, fill_width, &
            cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
@@ -401,7 +399,7 @@ program x16f
     fill_width = 2
     cont_color = 0
     cont_width = 0
-    call plshades(z(:NX,:NY), defined, -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
+    call plshades(z(:NX,:NY), -1._pl_test_flt, 1._pl_test_flt, -1._pl_test_flt, &
            1._pl_test_flt, &
            shedge, fill_width, &
            cont_color, cont_width, .false., xg2(:NX,:NY), yg2(:NX,:NY) )
