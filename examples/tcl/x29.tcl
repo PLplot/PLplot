@@ -98,11 +98,11 @@ proc x29_plot1 {{w loopback}} {
 
     $w cmd plcol0 4
 
-    $w cmd plline $npts x y
+    $w cmd plline x y
     $w cmd plcol0 2
-    $w cmd plerrx $npts xerr1 xerr2 y
+    $w cmd plerrx xerr1 xerr2 y
     $w cmd plcol0 3
-    $w cmd plerry $npts x yerr1 yerr2
+    $w cmd plerry x yerr1 yerr2
 
     $w cmd plsmaj 0.0 1.0
     $w cmd plsmin 0.0 1.0
@@ -152,7 +152,7 @@ proc x29_plot2 {{w loopback}} {
 
     $w cmd plcol0 4
 
-    $w cmd plline $npts x y
+    $w cmd plline x y
 
     $w cmd plprec 0 0
 }
@@ -202,8 +202,8 @@ proc x29_plot3 {{w loopback}} {
     $w cmd plcol0 4
 
     $w cmd plssym 0.0 0.5
-    $w cmd plpoin $npts x y 2
-    $w cmd plline $npts x y
+    $w cmd plpoin x y 2
+    $w cmd plline x y
 }
 
 proc x29_plot4 {{w loopback}} {

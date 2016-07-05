@@ -151,7 +151,7 @@ proc x28 {{w loopback}} {
 	    0.0 "  revolution"
     }
     # Draw minimal 3D grid to finish defining the 3D box.
-    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+    $w cmd plmesh x y z [expr {$::PLPLOT::DRAW_LINEXY}]
 
     # Page 2: Demonstrate rotation of string around its axis.
     $w cmd pladv 0
@@ -224,7 +224,7 @@ proc x28 {{w loopback}} {
 	    0.5 "rotation for z = z#dmin#u"
     }
     # Draw minimal 3D grid to finish defining the 3D box.
-    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+    $w cmd plmesh x y z [expr {$::PLPLOT::DRAW_LINEXY}]
 
     # Page 3: Demonstrate shear of string along its axis.
     # Work around xcairo and pngcairo (but not pscairo) problems for
@@ -301,7 +301,7 @@ proc x28 {{w loopback}} {
 	    0.5 "shear for z = z#dmin#u"
     }
     # Draw minimal 3D grid to finish defining the 3D box.
-    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+    $w cmd plmesh x y z [expr {$::PLPLOT::DRAW_LINEXY}]
 
     # Page 4: Demonstrate drawing a string on a 3D path.
     $w cmd pladv 0
@@ -349,7 +349,7 @@ proc x28 {{w loopback}} {
 	set omega [expr {$omega + $domega}]
     }
     # Draw minimal 3D grid to finish defining the 3D box.
-    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+    $w cmd plmesh x y z [expr {$::PLPLOT::DRAW_LINEXY}]
 
     # Page 5: Demonstrate plmtex3 axis labelling capability
     $w cmd pladv 0
@@ -376,6 +376,6 @@ proc x28 {{w loopback}} {
     $w cmd plmtex3 "zs" -2.5 0.5 0.5 "Arbitrarily displaced"
     $w cmd plmtex3 "zs" -1.0 0.5 0.5 "secondary Z-axis label"
     # Draw minimal 3D grid to finish defining the 3D box.
-    $w cmd plmesh x y z $XPTS $YPTS [expr {$::PLPLOT::DRAW_LINEXY}]
+    $w cmd plmesh x y z [expr {$::PLPLOT::DRAW_LINEXY}]
 
 }

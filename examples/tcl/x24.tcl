@@ -53,7 +53,7 @@ proc x24 {{w loopback}} {
     matrix px f 4 = {0.0, 0.0, 1.0, 1.0}
     matrix py f 4 = {0.0, 0.25, 0.25, 0.0}
 
-    matrix sx f 12 = { 
+    matrix sx f 12 = {
 	0.16374,
 	0.15844,
 	0.15255,
@@ -67,7 +67,7 @@ proc x24 {{w loopback}} {
 	0.82231,
 	0.82647
     }
-    
+
     matrix sy f 12 = {
 	0.125,
 	0.375,
@@ -82,22 +82,22 @@ proc x24 {{w loopback}} {
 	0.625,
 	0.875
     }
-    
+
 
 # Taken from http://www.columbia.edu/~fdc/pace/
 
-    # Mandarin 
-    # Hindi 
-    # English 
-    # Hebrew 
-    # Russian 
-    # German 
-    # Korean 
-    # French 
-    # Spanish 
-    # Arabic 
+    # Mandarin
+    # Hindi
+    # English
+    # Hebrew
+    # Russian
+    # German
+    # Korean
+    # French
+    # Spanish
+    # Arabic
     # Turkish
-    # Kurdish 
+    # Kurdish
     set peace {
 	"#<0x00>和平"
 	"#<0x20>शांति"
@@ -127,7 +127,7 @@ proc x24 {{w loopback}} {
 
     for {set i 0} {$i < 4} {incr i} {
 	$w cmd plcol0 [expr {$i + 1}]
-	$w cmd plfill 4 px py
+	$w cmd plfill px py
 
 	for {set j 0} {$j < 4} {incr j} {
 	    py $j = [expr {[py $j] + 1.0 / 4.0}]

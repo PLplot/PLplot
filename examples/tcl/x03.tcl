@@ -73,7 +73,7 @@ proc x03 {{w loopback}} {
 	y $j = [expr {$r * sin($theta)}]
     }
     $w cmd plcol0 3
-    $w cmd plline $npts1 x y
+    $w cmd plline x y
 
     $w cmd plcol0 4
     $w cmd plmtex "t" 2.0 0.5 0.5 "#frPLplot Example 3 - r(#gh)=sin 5#gh"

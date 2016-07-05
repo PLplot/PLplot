@@ -131,12 +131,12 @@ proc plot141 {w} {
     # plot the data points
 
     $w cmd plcol0 9
-    $w cmd plpoin 6 x1 y1 9
+    $w cmd plpoin x1 y1 9
 
     # draw the line through the data
 
     $w cmd plcol0 4
-    $w cmd plline $npts x y
+    $w cmd plline x y
     $w cmd plflush
 }
 
@@ -150,8 +150,8 @@ proc plot142 {w} {
 
 # Fill up the array
 
-    matrix x1 f 101
-    matrix y1 f 101
+    matrix x1 f 100
+    matrix y1 f 100
 
     for {set i 0} {$i < 100} {incr i} {
 	set x [expr {($i - 19.)/6.}]
@@ -161,7 +161,7 @@ proc plot142 {w} {
     }
 
     $w cmd plcol0 3
-    $w cmd plline 100 x1 y1
+    $w cmd plline x1 y1
     $w cmd plflush
 }
 
@@ -181,19 +181,20 @@ proc plot143 {w} {
 # Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 # plstyl expects two integer matrices for mark and space!
 
-    matrix mark i 1
+    matrix mark  i 1
     matrix space i 1
+    matrix none  i 0
 
     mark 0 = 1500
     space 0 = 1500
-    $w cmd plstyl 1 mark space
+    $w cmd plstyl mark space
 
     $w cmd plcol0 2
     $w cmd plbox "g" 30.0 0 "g" 0.2 0
 
     mark 0 = 0
     space 0 = 0
-    $w cmd plstyl 0 mark space
+    $w cmd plstyl none none
 
     $w cmd plcol0 3
     $w cmd pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"
@@ -207,7 +208,7 @@ proc plot143 {w} {
     }
 
     $w cmd plcol0 4
-    $w cmd plline 101 x y
+    $w cmd plline x y
     $w cmd plflush
 }
 
@@ -237,7 +238,7 @@ proc plot144 {w} {
 	    xj $j = [expr {$r * cos($theta)}]
 	    yj $j = [expr {$r * sin($theta)}]
 	}
-	$w cmd plline $nj1 xj yj
+	$w cmd plline xj yj
     }
 
 # Draw radial spokes for polar grid and write labels for angle
@@ -284,7 +285,7 @@ proc plot144 {w} {
 	y $j = [expr {$r * sin($theta)}]
     }
     $w cmd plcol0 3
-    $w cmd plline $npts1 x y
+    $w cmd plline x y
 
     $w cmd plcol0 4
     $w cmd plmtex "t" 2.0 0.5 0.5 "#frPLplot Example 3 - r(#gh)=sin 5#gh"
@@ -300,6 +301,7 @@ proc plot145 {w} {
 
     matrix mark  i 1 = { 1500 }
     matrix space i 1 = { 1500 }
+    matrix none  i 0
 
     matrix zz f $xpts $ypts
     matrix ww f $xpts $ypts
@@ -338,10 +340,10 @@ proc plot145 {w} {
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
     $w cmd plcont zz clevel pltr1 xg0 yg0
-    $w cmd plstyl 1 mark space
+    $w cmd plstyl mark space
     $w cmd plcol0 3
     $w cmd plcont ww clevel pltr1 xg0 yg0
-    $w cmd plstyl 0 mark space
+    $w cmd plstyl none none
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
     $w cmd plflush

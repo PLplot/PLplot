@@ -40,7 +40,7 @@ proc plot41 {w type} {
     }
 
     $w cmd plcol0 2
-    $w cmd plline 101 freql ampl
+    $w cmd plline freql ampl
 
     $w cmd plcol0 2
     $w cmd plptex 1.6 -30.0 1.0 -20.0 0.5 "-20 dB/decade"
@@ -60,8 +60,8 @@ proc plot41 {w type} {
        $w cmd plwind -2.0 3.0 -100.0 0.0
        $w cmd plbox "" 0.0 0 "cmstv" 30.0 3
        $w cmd plcol0 3
-       $w cmd plline 101 freql phase
-       $w cmd plstring 101 freql phase "#(728)"
+       $w cmd plline freql phase
+       $w cmd plstring freql phase "#(728)"
        $w cmd plcol0 3
        $w cmd plmtex "r" 5.0 0.5 0.5 "Phase shift (degrees)"
 

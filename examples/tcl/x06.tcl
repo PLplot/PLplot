@@ -48,7 +48,7 @@ proc x06 {{w loopback}} {
 	# Display the symbols
 
 	           if {$k < 128} {
-		       $w cmd plpoin 1 x y $k
+		       $w cmd plpoin x y $k
 	           }
 	           incr k
 	       }

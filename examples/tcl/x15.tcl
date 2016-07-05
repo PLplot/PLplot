@@ -62,7 +62,7 @@ proc  cmap1_init152 { w } {
   rev 2 = 0
   rev 3 = 0
 
-  $w cmd plscmap1l 0 4 i h l s rev
+  $w cmd plscmap1l 0 i h l s rev
 }
 proc plot151 { w z zmin zmax } {
 
@@ -169,11 +169,11 @@ proc plot153 { w } {
 
     $w cmd plcol0 3
     $w cmd plpsty 1
-    $w cmd plline3 5 xx0 yy0 zz0
-    $w cmd plfill3 4 xx0 yy0 zz0
+    $w cmd plline3 xx0 yy0 zz0
+    $w cmd plfill3 xx0 yy0 zz0
     $w cmd plpsty 2
-    $w cmd plline3 5 xx1 yy1 zz1
-    $w cmd plfill3 4 xx1 yy1 zz1
+    $w cmd plline3 xx1 yy1 zz1
+    $w cmd plfill3 xx1 yy1 zz1
 
     # Restore defaults
     # $w cmd plcol0 1

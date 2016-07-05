@@ -343,7 +343,7 @@ proc x16 {{w loopback}} {
     }
 # draw the perimeter.
     $w cmd plcol0 1
-    $w cmd plline 100 px py
+    $w cmd plline px py
 
 # And label the plot.
     $w cmd plcol0 2

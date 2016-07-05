@@ -9,6 +9,7 @@ proc x09 {{w loopback}} {
 
     matrix mark  i 1 = { 1500 }
     matrix space i 1 = { 1500 }
+    matrix none  i 0
 
     matrix zz f $xpts $ypts
     matrix ww f $xpts $ypts
@@ -85,10 +86,10 @@ proc x09 {{w loopback}} {
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
     $w cmd plcont zz clevel pltr1 xg0 yg0
-    $w cmd plstyl 1 mark space
+    $w cmd plstyl mark space
     $w cmd plcol0 3
     $w cmd plcont ww clevel pltr1 xg0 yg0
-    $w cmd plstyl 0 mark space
+    $w cmd plstyl none none
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
@@ -98,10 +99,10 @@ proc x09 {{w loopback}} {
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
     $w cmd plcont zz clevel pltr1 xg1 yg1
-    $w cmd plstyl 1 mark space
+    $w cmd plstyl mark space
     $w cmd plcol0 3
     $w cmd plcont ww clevel pltr1 xg1 yg1
-    $w cmd plstyl 0 mark space
+    $w cmd plstyl none none
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
@@ -122,10 +123,10 @@ proc x09 {{w loopback}} {
     $w cmd plenv -1.0 1.0 -1.0 1.0 0 0
     $w cmd plcol0 2
     $w cmd plcont zz clevel pltr2 xg2 yg2
-    $w cmd plstyl 1 mark space
+    $w cmd plstyl mark space
     $w cmd plcol0 3
     $w cmd plcont ww clevel pltr2 xg2 yg2
-    $w cmd plstyl 0 mark space
+    $w cmd plstyl none none
     $w cmd plcol0 1
     $w cmd pllab "X Coordinate" "Y Coordinate" "Streamlines of flow"
 
@@ -182,7 +183,7 @@ proc x09_polar {{w loopback}} {
 	py $i = [expr {sin($t)}]
     }
 
-    $w cmd plline 100 px py
+    $w cmd plline px py
 
     set xpts 40; set ypts 40; set ylim [expr {$ypts - 1}]; set wrap 2
     matrix xg f $xpts $ylim
@@ -354,7 +355,7 @@ proc x09_potential {{w loopback}} {
     }
 
     $w cmd plcol0 $ncolbox
-    $w cmd plline $perimeterpts px py
+    $w cmd plline px py
 
     $w cmd plcol0 $ncollab
     $w cmd pllab "" "" "Shielded potential of charges in a conducting sphere"

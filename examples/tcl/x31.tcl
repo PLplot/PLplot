@@ -65,8 +65,8 @@ proc x31 {{w loopback}} {
     matrix g1 i 2 = {255, 0}
     matrix b1 i 2 = {0, 0}
     matrix a1 f 2 = {1.0, 1.0}
-    $w cmd plscmap1 r1 g1 b1 2
-    $w cmd plscmap1a r1 g1 b1 a1 2
+    $w cmd plscmap1 r1 g1 b1
+    $w cmd plscmap1a r1 g1 b1 a1
 
     $w cmd plglevel level2
     puts [ format "level parameter = %d" $level2 ]

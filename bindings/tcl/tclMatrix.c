@@ -259,7 +259,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         index            = matPtr->dim - 1;
         matPtr->n[index] = atoi( argv[0] );
-        if ( matPtr->n[index] < 1 )
+        if ( matPtr->n[index] < 0 )
         {
             Tcl_AppendResult( interp, "invalid matrix dimension \"", argv[0],
                 "\" for Matrix operator \"", matPtr->name, "\"",

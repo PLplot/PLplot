@@ -10,7 +10,7 @@ proc x05 {{w loopback}} {
     }
 
     $w cmd plcol0 1
-    $w cmd plhist $npts data -1.1 1.1 44 0
+    $w cmd plhist data -1.1 1.1 44 0
 
     $w cmd plcol0 2
     $w cmd pllab "#frValue" "#frFrequency" \

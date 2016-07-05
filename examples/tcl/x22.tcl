@@ -8,7 +8,6 @@ proc x22 {{w loopback}} {
 
     circulation $w
 
-    set narr 6
     set fill 0
 
     $w cmd plsvect arrow_x arrow_y $fill
@@ -287,6 +286,6 @@ proc potential {w} {
 	px $i = [expr {$rmax*cos($theta)}]
 	py $i = [expr {$rmax*sin($theta)}]
     }
-    $w cmd plline $nper px py
+    $w cmd plline px py
 
 }

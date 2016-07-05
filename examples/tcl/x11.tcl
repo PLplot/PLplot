@@ -31,7 +31,7 @@ proc restore_cmap1_11 {w} {
    # Default number of cmap1 colours
    $w cmd plscmap1n 128
    # Interpolate between control points to set up default cmap1.
-   $w cmd plscmap1l 0 6 i h l s rev
+   $w cmd plscmap1l 0 i h l s rev
 }
 
 # Routine for initializing color map 1 in HLS space.
@@ -61,7 +61,7 @@ proc cmap1_init_11 {w gray} {
    # Number of cmap1 colours is 256 in this case.
    $w cmd plscmap1n 256
    # Interpolate between control points to set up default cmap1.
-   $w cmd plscmap1l 0 2 i h l s rev
+   $w cmd plscmap1l 0 i h l s rev
 }
 
 proc x11 {{w loopback}} {
@@ -145,8 +145,8 @@ proc x11 {{w loopback}} {
 
         # magnitude colored wireframe plot with base contour
         } elseif {$i == 3} {
-	   $w cmd plmeshc x y z $xpts $ypts \
-	     [expr {[opt $k] | $::PLPLOT::MAG_COLOR | $::PLPLOT::BASE_CONT}] clev $nlev
+	   $w cmd plmeshc x y z \
+	     [expr {[opt $k] | $::PLPLOT::MAG_COLOR | $::PLPLOT::BASE_CONT}] clev
         }
 
 	$w cmd plcol0 3

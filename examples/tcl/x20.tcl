@@ -406,7 +406,7 @@ proc get_clip {w xi xe yi ye} {
              set yyi $gin_wY
              if { $start } {
 #C              clear previous rectangle
-                $w cmd plline 5 sx sy
+                $w cmd plline sx sy
              }
 
              set start 0
@@ -422,7 +422,7 @@ proc get_clip {w xi xe yi ye} {
              set yye $gin_wY
              if { $start } {
 #               Clear previous rectangle
-                $w cmd plline 5 sx sy
+                $w cmd plline sx sy
              }
              set start 1
 
@@ -433,14 +433,14 @@ proc get_clip {w xi xe yi ye} {
              sx 3 = $xxi
              sy 3 = $yye
 #            Draw new rectangle
-             $w cmd plline 5 sx sy
+             $w cmd plline sx sy
           }
 
           if {($gin_button == 3) || ($gin_keysym == $PLK_Return) || \
               ($gin_keysym == $Q) } {
              if { $start } {
 #               Clear previous rectangle
-                $w cmd plline 5 sx sy
+                $w cmd plline sx sy
                 break
              }
           }
@@ -495,7 +495,7 @@ proc gray_cmap {w num_col} {
     rev 1 = 0
 
     $w cmd plscmap1n $num_col
-    $w cmd plscmap1l 1 2 pos R G B rev
+    $w cmd plscmap1l 1 pos R G B rev
 
 }
 

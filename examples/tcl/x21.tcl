@@ -128,7 +128,7 @@ proc x21 {{w loopback}} {
         # reasonable results for both Hershey and Unicode devices.
         xstr 0 = [x $i]
         ystr 0 = [y $i]
-        $w cmd plstring  1 xstr ystr "#(727)"
+        $w cmd plstring xstr ystr "#(727)"
     }
     $w cmd pladv 0
 
@@ -232,8 +232,8 @@ proc x21 {{w loopback}} {
                               "bcdfntu" "Z" 0.5 0
                 $w cmd plcol0 15
                 $w cmd pllab "" "" [lindex $title $alg]
-                $w cmd plot3dc xg yg zg $xp $yp \
-                   [expr {$::PLPLOT::DRAW_LINEXY|$::PLPLOT::MAG_COLOR|$::PLPLOT::BASE_CONT}] clev $nl
+                $w cmd plot3dc xg yg zg \
+                   [expr {$::PLPLOT::DRAW_LINEXY|$::PLPLOT::MAG_COLOR|$::PLPLOT::BASE_CONT}] clev
             }
         }
     }
@@ -311,7 +311,7 @@ proc cmap1_init {w} {
     r 1  = 0
 
     $w cmd plscmap1n 256
-    $w cmd plscmap1l 0 2 i h l s r
+    $w cmd plscmap1l 0 i h l s r
 }
 
 #----------------------------------------------------------------------------

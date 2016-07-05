@@ -32,7 +32,7 @@ proc x02_demo2 {w} {
 
     $w cmd plssub 10 10
 
-# Set up cmap0 
+# Set up cmap0
 # Use 100 custom colors in addition to base 16
     set npts 100
     set offset 16
@@ -98,7 +98,7 @@ proc x02_demo2 {w} {
   	  puts [format "%3d %3d %3d %3d" $i $r1 $g1 $b1]
        }
        # The following call currently segfaults.
-       $w cmd plscmap0 r g b $ntot
+       $w cmd plscmap0 r g b
     }
 
     x02_draw_windows $w 100 $offset

@@ -45,7 +45,7 @@ proc x07 {{w loopback}} {
 
 	    # Display the symbols
 
-		$w cmd plsym 1 x y [expr {[base $l] + $k}]
+		$w cmd plsym x y [expr {[base $l] + $k}]
 		incr k
 	    }
 	}

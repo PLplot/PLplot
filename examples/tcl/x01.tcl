@@ -128,19 +128,20 @@ proc plot3 {w} {
 # Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 # plstyl expects two integer matrices for mark and space!
 
-    matrix mark i 1
+    matrix mark  i 1
     matrix space i 1
+    matrix none  i 0
 
     mark 0 = 1500
     space 0 = 1500
-    $w cmd plstyl 1 mark space
+    $w cmd plstyl mark space
 
     $w cmd plcol0 2
     $w cmd plbox "g" 30.0 0 "g" 0.2 0
 
     mark 0 = 0
     space 0 = 0
-    $w cmd plstyl 0 mark space
+    $w cmd plstyl none none
 
     $w cmd plcol0 3
     $w cmd pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"

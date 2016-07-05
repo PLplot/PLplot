@@ -41,10 +41,10 @@ proc x18 {{w loopback}} {
 	$w cmd plcol0 2
 
 	if {[opt $k]} {
-	    $w cmd plline3 $npts x y z
+	    $w cmd plline3 x y z
 	} else {
 	    # U+22C5 DOT OPERATOR.
-	    $w cmd plstring3 $npts x y z "⋅" 
+	    $w cmd plstring3 x y z "⋅"
 	}
 
 	$w cmd plcol0 3
@@ -110,7 +110,7 @@ proc test_poly {{w loopback} k} {
 	    y 4 = [expr {sin( $pi * $j / 20.1 ) * sin( $two_pi * $i / 20 )}]
 	    z 4 = [expr {cos( $pi * $j / 20.1 )}]
 
-	    $w cmd plpoly3 5 x y z draw$k 1
+	    $w cmd plpoly3 x y z draw$k 1
 	}
     }
 

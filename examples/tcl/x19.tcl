@@ -174,7 +174,7 @@ proc x19 {{w loopback}} {
     x 0 = -76.6125
     y 0 = 39.2902778
 
-    $w cmd plpoin 1 x y 18
+    $w cmd plpoin x y 18
 
     $w cmd plssym 0. 1.
     $w cmd plptex -76.6125 43. 0.0 0.0 0.0 "Baltimore, MD"

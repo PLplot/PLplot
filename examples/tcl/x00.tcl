@@ -22,5 +22,5 @@ proc x00 {{w loopback}} {
     $w cmd pllab "x" "y=100 x#u2#d" "Simple PLplot demo of a 2D line plot"
 
     # Plot the data that was prepared above
-    $w cmd plline $nsize x y
+    $w cmd plline x y
 }

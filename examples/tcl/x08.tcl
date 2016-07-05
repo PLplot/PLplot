@@ -51,7 +51,7 @@ proc restore_cmap1_8 {w} {
    # Default number of cmap1 colours
    $w cmd plscmap1n 128
    # Interpolate between control points to set up default cmap1.
-   $w cmd plscmap1l 0 6 i h l s rev
+   $w cmd plscmap1l 0 i h l s rev
 }
 
 # Routine for initializing color map 1 in HLS space.
@@ -81,7 +81,7 @@ proc cmap1_init_8 {w gray} {
    # Number of cmap1 colours is 256 in this case.
    $w cmd plscmap1n 256
    # Interpolate between control points to set up default cmap1.
-   $w cmd plscmap1l 0 2 i h l s rev
+   $w cmd plscmap1l 0 i h l s rev
 }
 
 proc x08 {{w loopback}} {
@@ -222,12 +222,12 @@ proc x08 {{w loopback}} {
 	    # magnitude colored plot with contours.
 	    } elseif {$ifshade == 3}  {
 	       cmap1_init_8 $w 0
-	       $w cmd plsurf3d x y z $xpts $ypts \
-		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev $nlev
+	       $w cmd plsurf3d x y z \
+		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev
 	    } else {
 	       cmap1_init_8 $w 0
-	       $w cmd plsurf3dl x y z $xpts $ypts \
-		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev $nlev \
+	       $w cmd plsurf3dl x y z \
+		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev \
 		 $indexxmin $indexxmax indexymin indexymax
 	    }
         }
