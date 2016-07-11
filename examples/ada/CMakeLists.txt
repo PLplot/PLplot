@@ -87,28 +87,30 @@ if(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
+  # Setup compilation of nominal source file (see below) by including
+  # directory where test_ada library spec (*.ads) files reside.
   if(CORE_BUILD)
     include_directories(
-      ${CMAKE_BINARY_DIR}/examples/ada
       ${CMAKE_SOURCE_DIR}/bindings/ada
       )
   else(CORE_BUILD)
-    include_directories(${INCLUDE_DIR} ${ADA_INCLUDE_DIR})
+    include_directories(${ADA_INCLUDE_DIR})
   endif(CORE_BUILD)
 
-  # The first -aI option in adalinkflags is required to find <TARGET>.adb
-  # (see comment below). The second -aI option gives access to the
-  # libplplotada spec files. The -aL option gives access to the
-  # libplplotada *.ali files.  (That location currently works but is
-  # probably not guaranteed indefinitely for future versions of
-  # CMake.)
+  # The first -aI option in adalinkflags is required to find
+  # <TARGET>.adb (see comment below). The second -aI option gives
+  # access to the libplplotada spec (*.ads) files. The -aL option
+  # gives access to the libplplotada *.ali files.  (For the CORE_BUILD
+  # case that location currently works but is probably not guaranteed
+  # indefinitely for future versions of CMake.)
   
   if(CORE_BUILD)
-    set(adalinkflags "-aI${CMAKE_SOURCE_DIR}/examples/ada -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada.dir")
+    set(adalinkflags "-aI${CMAKE_CURRENT_SOURCE_DIR} -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada.dir")
   else(CORE_BUILD)
-    set(adalinkflags "-aI${CMAKE_SOURCE_DIR}/ada -aI${ADA_INCLUDE_DIR} -aL${ADA_LIB_DIR}")
+    set(adalinkflags "-aI${CMAKE_CURRENT_SOURCE_DIR} -aI${ADA_INCLUDE_DIR} -aL${ADA_LIB_DIR}")
   endif(CORE_BUILD)
 
+  set(ada_extra_clean_files)
   foreach(STRING_INDEX ${ada_STRING_INDICES})
     foreach(BINDING traditional standard)
       set(TARGET_NAME x${BINDING}${STRING_INDEX}a)
@@ -116,19 +118,30 @@ if(BUILD_TEST)
       set(adasrcfile ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
       
       # Note due to limitations of the Ada language support for CMake,
-      # the nominal source file for add_executable is compiled (which is
-      # why a real file has to be specified), but otherwise it is
+      # the nominal source file for add_executable is compiled (which
+      # is why a real file has to be specified), but otherwise it is
       # ignored except for its .adb suffix which identifies the Ada
-      # language.  The actual source file name for the internal gnatmake
-      # command that creates the executable is constructed from
-      # <TARGET>.adb.  Since no directory can be specified from this
-      # construction (don't ask), you must specify the directory of
-      # <TARGET>.adb with a -aI option (see above comment of adalinkflags).
+      # language.  The actual source file name for the internal
+      # gnatmake command that creates the executable is constructed
+      # from <TARGET>.adb.  Since no directory can be specified from
+      # this construction (don't ask), you must specify the directory
+      # of <TARGET>.adb with an -aI option (see above comment of
+      # adalinkflags).
       add_executable(${TARGET_NAME} ${adasrcfile})
       
       set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS ${adalinkflags})
       target_link_libraries(${TARGET_NAME} plplotada plplot)
       set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ada ${TARGET_NAME})
+
+      # CMake assumes compilation results only in object files being generated.
+      # However, gnatmake generates both object files and *.ali (Ada library
+      # information) files so it doesn't intrinsically know how to clean those
+      # additional *.ali files.
+      # Here is a workaround for this fundamental CMake limitation.
+
+      # Add generated .ali file and "extra" generated pair of .ali and .o files
+      # to the list of additional files to be removed by make clean
+      list(APPEND ada_extra_clean_files "${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/${TARGET_NAME}.dir/${TARGET_NAME}.ali")
       list(APPEND ada_extra_clean_files "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.o;${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME}.ali")
     endforeach(BINDING traditional standard)
   endforeach(STRING_INDEX ${ada_STRING_INDICES})
