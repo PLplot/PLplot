@@ -4,52 +4,59 @@ which prints out the classic "hello, world" phrase.  This complete project
 includes a CMake-based build system and files for Ada language support
 within CMake which will eventually become part of CMake itself.
 
-To run the test
+(1) Check documentation of comprehensive test of Ada language support
+on your platform as follows:
 
-(1) create an _empty_ build directory and cd to it.
+scripts/comprehensive_test.sh --help
+
+This script is similar in concept but quite different (note its
+different location) than the corresponding script in
+../../scripts/comprehensive_test.sh which comprehensively tests all of
+PLplot so do not confuse the two.
+
+(2) Actually do comprehensive test of Ada language support.  Normally this
+is done as follows without any script options
+
+scripts/comprehensive_test.sh
+
+For our two principal build configurations (shared libraries and
+static libraries) this script (if executed without options) builds the
+test_noninteractive target (which builds the "hello" executable and
+all its prerequisites, runs that executable, and compares the output
+of that executable with the expected output) in the build tree and in
+the installed examples tree.
+
+You check for errors in the above comprehensive test using
+
+grep -i error ../../../comprehensive_test_ada_disposeable/*/*/output_tree/*.out
+
+and send me (Alan W. Irwin <airwin@users.sourceforge.net> the tarball of information that
+is collected by that script at ../../../comprehensive_test_ada_disposeable/comprehensive_test.tar.gz
+
+(3, optional) Debug result:
+If (2) shows any errors than you can optionally debug the result as follows:
+
+scripts/comprehensive_test.sh --do_trace yes
+
+This produces voluminous results and buried (deeply) in those is
+typically enough information to find out what is going wrong with the
+CMake Ada language support.  These voluminous results are automatically
+included in the tarball report so please send that report to me (as well
+as the one created without the --do_trace yes option in step 2).
+
+(4, optional) Test with valgrind:
+Create an empty build tree, run cmake from there, create the hello executable
+and test that with valgrind.
+
 mkdir build_dir
 cd build_dir
-
-(2) configure project with cmake
-
-Note, in projects that include standard languages such as C, CXX, or Fortran, compiler
-introspection for those languages helps to determine CMAKE_LIBRARY_ARCHITECTURE which
-in turn allows cmake to find language-specific libraries such as libgnat.  However,
-such compiler introspection is not implemented by our Ada language support so for projects like test_ada
-where C, CXX, and/or Fortran are not enabled CMAKE_LIBRARY_ARCHITECTURE is not defined. Therefore,
-the -DCMAKE_LIBRARY_PATH option is required to help find the libgnat library below.
-
-  option a (built library is static).
-
-cmake -DBUILD_SHARED_LIBS=OFF -DCMAKE_LIBRARY_PATH:PATH=<path to the gnat library> <path/to/this/source/directory> >& cmake.out
-
-  option b (built library is shared by default).
-
-cmake -DCMAKE_LIBRARY_PATH:PATH=<path to the gnat library> <path/to/this/source/directory> >& cmake.out
-
-(2a) In cases where there are CMake errors revealed by either of the
-above commands, use the --trace option for cmake (which traces every
-cmake command that is executed so it generates a lot of output which
-is useful whenever there is a direct issue with a CMake error, but
-otherwise it is not too useful).
-
-(3) build library and executable that links to it
-make VERBOSE=1 >& make.out
-
-(4) run test that should generate "hello, world" phrase.
-
-Note for this step to work on Windows platforms it will be
-necessary to put the src_lib subdirectory of the build tree
-on your PATH so the dll can be found when running the hello
-application below.
-
-src_executable/hello >& executable.out
-
-(5, optional) Test with valgrind:
-
+cmake -DBUILD_TEST=ON <path to top-level of test_ada source tree> >& cmake.out
+make hello >& hello.out
 valgrind src_executable/hello >& valgrind.out
 
-(6, optional) Test whether run-time loader finds all the required libraries
+Look through the generated *.out files for any error conditions.
+
+(5, optional) Test whether run-time loader finds all the required libraries
 
 # Most Unix-like platforms (including MinGW-w64/MSYS2? and definitely Cygwin, but excluding Mac OS X)
 ldd -r src_executable/hello >& ldd.out
@@ -57,22 +64,16 @@ ldd -r src_executable/hello >& ldd.out
 # On Mac OS X
 otool -L src_executable/hello >& otool.out
 
+Look through the generated *.out files for any error conditions.
 
 N.B. on at least one platform (Cygwin) the -r option (which checks for
 any undefined symbols) is not implemented yet (as of 2015-11) so you
 will have to drop it for that special case until the Cygwin
 ldd -r option is implemented.
 
-7.  Check all *.out files to look for any error conditions.
-
 In sum, this project provides a simple demonstration of how to use the
 CMake Ada language support with Ada libraries that are either static
 or shared. At the same time, this project tests the quality of CMake
 Ada support for various user's platforms.  If any user is having
-trouble with CMake Ada language support, this is the simple test case
-they should run (once for the shared case and once for the static case
-starting with an empty build tree in each case) to help diagnose the
-problem.  The static and/or shared build-tree results (which would
-automatically include the above *.out files) should be collected in a
-compressed tarball and should be sent to me (AWI) for further
-analysis.
+trouble with CMake Ada language support, they should run at least step
+2 and step 3 above.
