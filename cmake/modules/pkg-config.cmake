@@ -120,7 +120,7 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
   
   if(CMAKE_VERSION VERSION_LESS "3.1")
     _pkg_check_modules_internal(0 0 ${_prefix} "${_package}")
-  else(CMAKE_VERSION VERSION_LESS "3.6")
+  elseif(CMAKE_VERSION VERSION_LESS "3.6")
     _pkg_check_modules_internal(0 0 0 0 ${_prefix} "${_package}")
   else(CMAKE_VERSION VERSION_LESS "3.1")
     _pkg_check_modules_internal(0 0 0 0 0 ${_prefix} "${_package}")
