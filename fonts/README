@@ -13,4 +13,5 @@ in the build tree and run
 This will create the standard and extended Hershey fonts in binary form as
 plstnd5.fnt and plxtnd5.fnt.  Then compare them with the ones already in
 the source tree data directory to confirm no changes have occurred.  (AWI
-did this check on 2009-01-22).
+last did this check on 2016-07-17 after making some substantial changes
+to stndfont.c, and xtndfont.c to get rid of compiler warnings).

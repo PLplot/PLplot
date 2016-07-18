@@ -12,18 +12,19 @@ extern short int *buffer[];
 int
 main( void )
 {
-    short       j, k, ib, nindx, nchars, nleng, htab, zero;
-    short       *hrshlst;
-    signed char ix, iy;
-    long        fpos;
-    PDFstrm     *pdfs;
+    size_t  j, k, ib;
+    U_SHORT nchars, nleng, htab, nindx, zero;
+    U_SHORT *hrshlst;
+    int     ix, iy;
+    long    fpos;
+    PDFstrm *pdfs;
 
-    hrshlst = (short *) malloc( 4 * 176 * sizeof ( short ) );
+    hrshlst = (U_SHORT *) malloc( 4 * 176 * sizeof ( U_SHORT ) );
 
     ib = 0;
     for ( j = 0; j < 4; j++ )
         for ( k = 0; k < 176; k++ )
-            hrshlst[ib++] = *( hersh[j] + k );
+            hrshlst[ib++] = (U_SHORT) *( hersh[j] + k );
 
     pdfs = pdf_fopen( PL_XFONT, "wb+" );
     if ( !pdfs )
@@ -35,7 +36,7 @@ main( void )
     htab = 4 * 256 + 176;
 
     pdf_wr_2bytes( pdfs, htab );
-    pdf_wr_2nbytes( pdfs, (U_SHORT *) hrshlst, 4 * 176 );
+    pdf_wr_2nbytes( pdfs, hrshlst, 4 * 176 );
 
     nleng = 1;
     zero  = 0;
@@ -46,7 +47,7 @@ main( void )
     {
         for ( k = 0; k < 100; k++ )
         {
-            ib = *( findex[j] + k );
+            ib = (size_t) *( findex[j] + k );
             if ( ib == 0 )
             {
                 pdf_wr_2bytes( pdfs, zero );
@@ -84,7 +85,7 @@ main( void )
     {
         for ( k = 0; k < 100; k++ )
         {
-            ib = *( findex[j] + k );
+            ib = (size_t) *( findex[j] + k );
             if ( ib != 0 )
             {
                 for (;; )
@@ -110,6 +111,8 @@ main( void )
     fseek( pdfs->file, fpos, 0 );
     pdf_wr_2bytes( pdfs, nleng );
     pdf_close( pdfs );
+
+    free( hrshlst );
 
     printf( "There are %d characters in font set.\n", nchars - 1 );
     exit( 0 );

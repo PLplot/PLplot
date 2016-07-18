@@ -7,33 +7,36 @@ extern short int *findex[];
 extern short int *buffer[];
 
 int
-compare( const void *si1, const void *si2 )
+compare( PL_GENERIC_POINTER si1, PL_GENERIC_POINTER si2 );
+int
+compare( PL_GENERIC_POINTER si1, PL_GENERIC_POINTER si2 )
 {
-    short *a = (short *) si1;
-    short *b = (short *) si2;
+    const short *a = (const short *) si1;
+    const short *b = (const short *) si2;
 
     return ( *a == *b ? 0 : ( *a > *b ? 1 : -1 ) );
 }
 
 int
-main( int argc, char **argv )
+main( void )
 {
-    short       i, j, k, ib, nstd, nchars, nleng, htab, nindx, zero;
-    short       *hrshlst, *hrshidx;
-    signed char ix, iy;
-    long        fpos;
-    PDFstrm     *pdfs;
+    size_t  i, j, k, ib, nstd;
+    U_SHORT nchars, nleng, htab, nindx, zero;
+    U_SHORT *hrshlst, *hrshidx;
+    int     ix, iy;
+    long    fpos;
+    PDFstrm *pdfs;
 
-    hrshlst = (short *) malloc( 176 * sizeof ( short ) );
-    hrshidx = (short *) malloc( 176 * sizeof ( short ) );
+    hrshlst = (U_SHORT *) malloc( 176 * sizeof ( U_SHORT ) );
+    hrshidx = (U_SHORT *) malloc( 176 * sizeof ( U_SHORT ) );
 
     ib = 0;
     for ( k = 0; k < 176; k++ )
-        hrshlst[ib++] = *( hersh[0] + k );
+        hrshlst[ib++] = (U_SHORT) *( hersh[0] + k );
 
 // Sort list
 
-    qsort( (char *) hrshlst, ib, sizeof ( short ), compare );
+    qsort( (char *) hrshlst, ib, sizeof ( U_SHORT ), compare );
 
 // Remove duplicates
 
@@ -55,7 +58,7 @@ main( int argc, char **argv )
         for ( i = 0; i < nstd; i++ )
             if ( *( hersh[0] + k ) == hrshlst[i] )
             {
-                hrshidx[k] = i + 1;
+                hrshidx[k] = (U_SHORT) ( i + 1 );
                 break;
             }
 
@@ -68,7 +71,7 @@ main( int argc, char **argv )
 
     htab = 1 * 256 + 176;
     pdf_wr_2bytes( pdfs, htab );
-    pdf_wr_2nbytes( pdfs, (U_SHORT *) hrshidx, 176 );
+    pdf_wr_2nbytes( pdfs, hrshidx, 176 );
 
     zero  = 0;
     nindx = 0;
@@ -78,7 +81,7 @@ main( int argc, char **argv )
     pdf_wr_2bytes( pdfs, nindx );
     for ( j = 0; j < nstd; j++ )
     {
-        ib = *( findex[( hrshlst[j] - 1 ) / 100] + ( hrshlst[j] - 1 ) % 100 );
+        ib = (size_t) *( findex[( hrshlst[j] - 1 ) / 100] + ( hrshlst[j] - 1 ) % 100 );
         if ( ib == 0 )
         {
             pdf_wr_2bytes( pdfs, zero );
@@ -114,7 +117,7 @@ main( int argc, char **argv )
 
     for ( j = 0; j < nstd; j++ )
     {
-        ib = *( findex[( hrshlst[j] - 1 ) / 100] + ( hrshlst[j] - 1 ) % 100 );
+        ib = (size_t) *( findex[( hrshlst[j] - 1 ) / 100] + ( hrshlst[j] - 1 ) % 100 );
         if ( ib != 0 )
         {
             for (;; )
@@ -139,7 +142,8 @@ main( int argc, char **argv )
     fseek( pdfs->file, fpos, 0 );
     pdf_wr_2bytes( pdfs, nleng );
     pdf_close( pdfs );
-
+    free( hrshlst );
+    free( hrshidx );
     printf( "There are %d characters in standard font set.\n", nchars - 1 );
     exit( 0 );
 }

@@ -196,8 +196,11 @@ typedef PLUINT                PLUNICODE;
 // For identifying logical (boolean) arguments
 typedef PLINT                 PLBOOL;
 
-// For passing user data, as with X's XtPointer
-typedef void*                 PLPointer;
+// typedefs for generic pointers.
+typedef void *                  PL_NC_GENERIC_POINTER;
+typedef const void *            PL_GENERIC_POINTER;
+// Deprecated and only provided for backwards compatibility.
+typedef PL_NC_GENERIC_POINTER   PLPointer;
 
 // For passing input vector, and (2D) matrix arguments.
 
