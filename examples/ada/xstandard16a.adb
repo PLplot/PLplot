@@ -82,14 +82,14 @@ procedure xstandard16a is
     procedure mypltr -- This spec is necessary to accommodate pragma Convention().
        (x, y : Long_Float; 
         tx, ty : out Long_Float; 
-        pltr_data : PLpointer);
+        pltr_data : PL_Pointer);
     pragma Convention(Convention => C, Entity => mypltr);
 
 
     procedure mypltr
        (x, y : Long_Float; 
         tx, ty : out Long_Float; 
-        pltr_data : PLpointer) is 
+        pltr_data : PL_Pointer) is 
     begin
         tx := tr(0) * x + tr(1) * y + tr(2);
         ty := tr(3) * x + tr(4) * y + tr(5);

@@ -43,7 +43,7 @@ package PLplot_Standard is
     -- user programs can see them without with-ing PLplot_thin. It might be 
     -- good to remove "use PLplot_Thin" for clarity since it is used in only
     -- a few places.
-    subtype PLPointer                  is PLplot_Thin.PLpointer;
+    subtype PL_Pointer                 is Plplot_Thin.PL_Pointer;
     subtype Unsigned_Int               is Interfaces.C.unsigned;
     subtype Transformation_Data_Type   is Plplot_Thin.Transformation_Data_Type;
     subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;
@@ -821,7 +821,7 @@ package PLplot_Standard is
        (u, v                             : Real_Matrix;
         Scale                            : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer);
+        Transformation_Data_Pointer      : PL_Pointer);
 
  
        -- Set the style for the arrow used by plvect to plot vectors.
@@ -834,7 +834,7 @@ package PLplot_Standard is
     -- Set the default style for the arrow used by plvect to plot vectors.
     -- plsvect (for setting default)
     procedure Set_Arrow_Style_For_Vector_Plots
-       (X_Vertices, Y_Vertices : PLPointer;
+       (X_Vertices, Y_Vertices : PL_Pointer;
         Fill_Arrow : Boolean);
 
 
@@ -958,7 +958,7 @@ package PLplot_Standard is
         y_Min_Index, y_Max_Index         : Integer;
         Contour_Levels                   : Real_Vector;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer);
+        Transformation_Data_Pointer      : PL_Pointer);
 
 
     -- The procedure plfcont is not documented and is not part of the API. 
@@ -1418,7 +1418,7 @@ package PLplot_Standard is
        (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
         Shapefile_File_Name        : String;
         Min_X, Max_X, Min_Y, Max_Y : Long_Float;
-        Plot_Entries               : PLPointer);
+        Plot_Entries               : PL_Pointer);
 
 
     -- Plot map fills: overload that doesn't use plotentries to emulate C, match documentaton.
@@ -1444,7 +1444,7 @@ package PLplot_Standard is
        (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
         Shapefile_File_Name        : String;
         Min_X, Max_X, Min_Y, Max_Y : Long_Float;
-        Plot_Entries               : PLPointer);
+        Plot_Entries               : PL_Pointer);
 
 
     -- Plot map outlines: overload that doesn't use plotentries to emulate C, match documentaton.
@@ -1915,7 +1915,7 @@ package PLplot_Standard is
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer              : PLpointer);
+        Transformation_Data_Pointer              : PL_Pointer);
 
 
     -- plshade1
@@ -1934,7 +1934,7 @@ package PLplot_Standard is
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer              : PLpointer);
+        Transformation_Data_Pointer              : PL_Pointer);
 
 
     -- plshades
@@ -1949,7 +1949,7 @@ package PLplot_Standard is
         Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles              : Boolean;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer);
+        Transformation_Data_Pointer      : PL_Pointer);
 
 
     -- The procedure plfshade is not part of the API. If it should be necessary 
@@ -1958,10 +1958,10 @@ package PLplot_Standard is
 
     -- fix this
     --    procedure
-    --    plfshade(PLFLT (*f2eval) ( : PLINT;  : PLINT; PLPointer),
-    --         PLPointer f2eval_data,
-    --         PLFLT (*c2eval) ( : PLINT;  : PLINT; PLPointer),
-    --         PLPointer c2eval_data,
+    --    plfshade(PLFLT (*f2eval) ( : PLINT;  : PLINT; PL_Pointer),
+    --         PL_Pointer f2eval_data,
+    --         PLFLT (*c2eval) ( : PLINT;  : PLINT; PL_Pointer),
+    --         PL_Pointer c2eval_data,
     --         nx : PLINT; ny : PLINT;
     --         left : PLFLT; right : PLFLT; bottom : PLFLT; top : PLFLT;
     --         shade_min : PLFLT; shade_max : PLFLT;
@@ -1969,8 +1969,8 @@ package PLplot_Standard is
     --         min_color : PLINT; min_width : PLINT;
     --         max_color : PLINT; max_width : PLINT;
     --         void (*fill) ( : PLINT;  : PL_Float_Array;  : PL_Float_Array), rectangular : PLINT;
-    --         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PLPointer),
-    --         PLPointer pltr_data);
+    --         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PL_Pointer),
+    --         PL_Pointer pltr_data);
     --
 
 
@@ -1978,7 +1978,7 @@ package PLplot_Standard is
     -- plslabelfunc
     procedure Set_Custom_Label
        (Custom_Label_Procedure_Pointer : Custom_Label_Procedure_Pointer_Type;
-        label_data : PLPointer);
+        label_data : PL_Pointer);
     
     
     -- Reset to default labeling. Not part of the C API.
@@ -2062,7 +2062,7 @@ package PLplot_Standard is
     -- plstransform
     procedure Set_Custom_Coordinate_Transform
        (Coordinate_Transform_Procedure_Pointer : Coordinate_Transform_Procedure_Pointer_Type;
-        Coordinate_Transform_Data_Pointer : PLpointer);
+        Coordinate_Transform_Data_Pointer : PL_Pointer);
     
     
     -- Clear the coordinate transform. Ada only; not part of the C API.
@@ -2131,7 +2131,7 @@ package PLplot_Standard is
         z_Min,     z_Max                 : Long_Float;
         Value_Min, Value_Max             : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer);
+        Transformation_Data_Pointer      : PL_Pointer);
 
 
     -- plots a 2d image (or a matrix too large for plshade() )
@@ -2322,7 +2322,7 @@ package PLplot_Standard is
     procedure Plot_Transformation_0
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
-        Data             : PLpointer);
+        Data             : PL_Pointer);
     pragma Convention(Convention => C, Entity => Plot_Transformation_0);
         
 
@@ -2331,7 +2331,7 @@ package PLplot_Standard is
     procedure Plot_Transformation_1
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
-        Data_Pointer     : PLpointer);
+        Data_Pointer     : PL_Pointer);
     pragma Convention(Convention => C, Entity => Plot_Transformation_1);
         
 
@@ -2341,7 +2341,7 @@ package PLplot_Standard is
     procedure Plot_Transformation_2
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
-        Data_Pointer     : PLpointer);
+        Data_Pointer     : PL_Pointer);
     pragma Convention(Convention => C, Entity => Plot_Transformation_2);
         
 

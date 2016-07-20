@@ -62,7 +62,7 @@ package PLplot_Thin is
     subtype PL_Float_Array    is Real_Vector;
     subtype PL_Float_Array_2D is Real_Matrix;
     type PL_Bool_Array        is array (Integer range <>) of PLBOOL;
-    subtype PLPointer         is System.Address; -- non-specific pointer to something
+    subtype PL_Pointer        is System.Address; -- non-specific pointer to something
             
     -- Types to pass 2D arrays, Real_Matrix, defined in plplot_auxiliary.ads, to C functions. Have
     -- only Long_Float capability for now. See function Matrix_To_Pointers for the conversion.
@@ -114,7 +114,7 @@ package PLplot_Thin is
     Max_Stripchart_Label_Length : constant Integer := 100;
     subtype PL_Stripchart_String is 
         Interfaces.C.char_array(0 .. size_t(Max_Stripchart_Label_Length));
-    type PL_Stripchart_String_Array is array (1 .. 4) of PLpointer;
+    type PL_Stripchart_String_Array is array (1 .. 4) of PL_Pointer;
     C_Stripchart_String_Array : array(1 .. 4) of PL_Stripchart_String;
 
 
@@ -127,12 +127,12 @@ package PLplot_Thin is
     Max_Legend_Label_Length : constant Integer := 100;
     subtype PL_Legend_String is 
         Interfaces.C.char_array(0 .. size_t(Max_Legend_Label_Length));
-    type PL_Legend_String_Array is array (Integer range <>) of PLpointer;
+    type PL_Legend_String_Array is array (Integer range <>) of PL_Pointer;
 
                         
     -- Access-to-procedure type for Draw_Vector_Plot and its kin.
     type Transformation_Procedure_Pointer_Type is access 
-        procedure (x, y : PLFLT; tx, ty : out PLFLT; pltr_data : PLpointer);
+        procedure (x, y : PLFLT; tx, ty : out PLFLT; pltr_data : PL_Pointer);
     pragma Convention (Convention => C, Entity => Transformation_Procedure_Pointer_Type);
     
     
@@ -175,7 +175,7 @@ package PLplot_Thin is
     -- Examples of such functions are in plplot.h and are called plf2eval, 
     -- plf2eval2, plf2evalr.
     type Function_Evaluator_Pointer_Type is access
-        function (ix, iy : PLINT; Irregular_Data : PLpointer) return PLFLT;
+        function (ix, iy : PLINT; Irregular_Data : PL_Pointer) return PLFLT;
     pragma Convention(Convention => C, Entity => Function_Evaluator_Pointer_Type);
     
     
@@ -193,7 +193,7 @@ package PLplot_Thin is
             a_value : PLFLT;
             label   : out Label_String_Type;
             length  : size_t;
-            data    : PLPointer);
+            data    : PL_Pointer);
     pragma Convention(Convention => C, Entity => Custom_Label_Procedure_Pointer_Type);
 
     -- Access-to-procedure type for setting a global custom coordinate tranformation.
@@ -201,7 +201,7 @@ package PLplot_Thin is
         procedure 
            (x_In, y_In                   : PLFLT; 
             x_Transformed, y_Transformed : out PLFLT;
-            data                         : PLpointer);
+            data                         : PL_Pointer);
     pragma Convention(Convention => C, Entity => Coordinate_Transform_Procedure_Pointer_Type);
 
 
@@ -528,7 +528,7 @@ package PLplot_Thin is
     procedure
     plvect(u : Long_Float_Pointer_Array; v : Long_Float_Pointer_Array; 
         nx : PLINT; ny : PLINT; scale : PLFLT;
-        pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
+        pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
     pragma Import(C, plvect, "c_plvect");
 
 
@@ -544,7 +544,7 @@ package PLplot_Thin is
     -- to reset the arrow style to a default value.
    
     procedure
-    plsvectdefault(arrowx : PLPointer; arrowy : PLPointer; npts : PLINT; fill : PLINT);
+    plsvectdefault(arrowx : PL_Pointer; arrowy : PL_Pointer; npts : PLINT; fill : PLINT);
     pragma Import(C, plsvectdefault, "c_plsvect");
 
 
@@ -644,7 +644,7 @@ package PLplot_Thin is
     procedure
     plcont(z : Long_Float_Pointer_Array; nx, ny : Integer; 
         kx, lx, ky, ly : Integer; clevel : PL_Float_Array; nlevel : Integer; 
-        pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
+        pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
     pragma Import(C, plcont, "c_plcont");
 
 
@@ -654,10 +654,10 @@ package PLplot_Thin is
  
     procedure
     plfcont(f2eval : Function_Evaluator_Pointer_Type;
-        Irregular_Data : PLpointer;
+        Irregular_Data : PL_Pointer;
         nx, ny : PLINT; 
         kx, lx, ky, ly: PLINT; clevel : PL_Float_Array; nlevel : PLINT;
-        pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
+        pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
     pragma Import(C, plfcont, "plfcont");
 
 
@@ -1182,7 +1182,7 @@ package PLplot_Thin is
     procedure
     plmapfill_Overload(mapform : Map_Form_Function_Pointer_Type; name : char_array;
         minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
-        plotentries : PLPointer; nplotentries : PLINT);
+        plotentries : PL_Pointer; nplotentries : PLINT);
     pragma Import(C, plmapfill_Overload, "c_plmapfill");
 
     -- Plot map outlines.
@@ -1199,7 +1199,7 @@ package PLplot_Thin is
     procedure
     plmapline_Overload(mapform : Map_Form_Function_Pointer_Type; name : char_array;
         minx : PLFLT; maxx : PLFLT; miny : PLFLT; maxy : PLFLT;
-        plotentries : PLPointer; nplotentries : PLINT);
+        plotentries : PL_Pointer; nplotentries : PLINT);
     pragma Import(C, plmapline_Overload, "c_plmapline");
 
 
@@ -1641,7 +1641,7 @@ package PLplot_Thin is
           min_color : PLINT; min_width : PLFLT;
           max_color : PLINT; max_width : PLFLT;
           fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
-          pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
+          pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
     pragma Import(C, plshade, "c_plshade");
 
 
@@ -1653,7 +1653,7 @@ package PLplot_Thin is
           min_color : PLINT; min_width : PLFLT;
           max_color : PLINT; max_width : PLFLT;
           fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
-          pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
+          pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
     pragma Import(C, plshade1, "c_plshade1");
 
 
@@ -1663,16 +1663,16 @@ package PLplot_Thin is
           clevel : PL_Float_Array; nlevel : PLINT; fill_width : PLFLT;
           cont_color : PLINT; cont_width : PLFLT;
           fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
-          pltr : Transformation_Procedure_Pointer_Type; pltr_data : PLpointer);
+          pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
     pragma Import(C, plshades, "c_plshades");
 
 
 -- fix this
 --    procedure
---    plfshade(PLFLT (*f2eval) ( : PLINT;  : PLINT; PLPointer),
---         PLPointer f2eval_data,
---         PLFLT (*c2eval) ( : PLINT;  : PLINT; PLPointer),
---         PLPointer c2eval_data,
+--    plfshade(PLFLT (*f2eval) ( : PLINT;  : PLINT; PL_Pointer),
+--         PL_Pointer f2eval_data,
+--         PLFLT (*c2eval) ( : PLINT;  : PLINT; PL_Pointer),
+--         PL_Pointer c2eval_data,
 --         nx : PLINT; ny : PLINT;
 --         left : PLFLT; right : PLFLT; bottom : PLFLT; top : PLFLT;
 --         shade_min : PLFLT; shade_max : PLFLT;
@@ -1680,15 +1680,15 @@ package PLplot_Thin is
 --         min_color : PLINT; min_width : PLINT;
 --         max_color : PLINT; max_width : PLINT;
 --         void (*fill) ( : PLINT;  : PL_Float_Array;  : PL_Float_Array), rectangular : PLINT;
---         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PLPointer),
---         PLPointer pltr_data);
+--         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PL_Pointer),
+--         PL_Pointer pltr_data);
 --    pragma Import(C, plfshade, "plfshade");
 
 
     -- Setup a user-provided custom labeling function.
 
     procedure
-    plslabelfunc(label_func : Custom_Label_Procedure_Pointer_Type; label_data : PLPointer);
+    plslabelfunc(label_func : Custom_Label_Procedure_Pointer_Type; label_data : PL_Pointer);
     pragma Import(C, plslabelfunc, "c_plslabelfunc");
 
 
@@ -1702,7 +1702,7 @@ package PLplot_Thin is
     -- Set the memory area to be plotted (with the 'mem' driver) 
 
     procedure
-    plsmem(maxx : PLINT; maxy : PLINT; plotmem : PLPointer);
+    plsmem(maxx : PLINT; maxy : PLINT; plotmem : PL_Pointer);
     pragma Import(C, plsmem, "c_plsmem");
 
 
@@ -1787,7 +1787,7 @@ package PLplot_Thin is
 
     procedure
     plstransform(coordinate_transform : Coordinate_Transform_Procedure_Pointer_Type;
-        coordinate_transform_data : PLpointer);
+        coordinate_transform_data : PL_Pointer);
     pragma Import(C, plstransform, "c_plstransform");
 
 
@@ -1848,7 +1848,7 @@ package PLplot_Thin is
         xmin : PLFLT; xmax : PLFLT; ymin : PLFLT; ymax : PLFLT; zmin : PLFLT; zmax : PLFLT;
         valuemin :PLFLT; valuemax : PLFLT;
         pltr : Transformation_Procedure_Pointer_Type;
-        pltr_data : PLpointer);
+        pltr_data : PL_Pointer);
     pragma Import(C, plimagefr, "c_plimagefr");
 
 
@@ -2133,7 +2133,7 @@ package PLplot_Thin is
     procedure pltr0
        (x, y      : PLFLT;
         tx, ty    : out PLFLT;
-        pltr_data : PLplot_thin.PLpointer);
+        pltr_data : PLplot_thin.PL_Pointer);
     pragma Convention (Convention => C, Entity => pltr0);
 
 
@@ -2141,7 +2141,7 @@ package PLplot_Thin is
     procedure pltr1
        (x, y      : PLFLT;
         tx, ty    : out PLFLT;
-        pltr_data : PLplot_thin.PLpointer);
+        pltr_data : PLplot_thin.PL_Pointer);
     pragma Convention (Convention => C, Entity => pltr1);
 
 
@@ -2151,7 +2151,7 @@ package PLplot_Thin is
     procedure pltr2
        (x, y      : PLFLT;
         tx, ty    : out PLFLT;
-        pltr_data : PLplot_thin.PLpointer);
+        pltr_data : PLplot_thin.PL_Pointer);
     pragma Convention (Convention => C, Entity => pltr2);
     
     

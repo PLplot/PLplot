@@ -62,13 +62,13 @@ procedure xtraditional19a is
     procedure map_transform
        (x, y   : Long_Float;
         xt, yt : out Long_Float; 
-        data   : PLPointer);
+        data   : PL_Pointer);
     pragma Convention(C, map_transform);
 
     procedure map_transform
        (x, y   : Long_Float;
         xt, yt : out Long_Float; 
-        data   : PLPointer)
+        data   : PL_Pointer)
     is
         radius : Long_Float;
     begin
@@ -117,7 +117,7 @@ procedure xtraditional19a is
         a_value  : Long_Float;
         label    : out Label_String_Type;
         a_length : size_t;
-        data     : PLpointer);
+        data     : PL_Pointer);
     pragma Convention(C, geolocation_labeler);
 
     -- A custom axis labeling function for longitudes and latitudes.
@@ -126,7 +126,7 @@ procedure xtraditional19a is
         a_value  : Long_Float;
         label    : out Label_String_Type;
         a_length : size_t;
-        data     : PLpointer) 
+        data     : PL_Pointer) 
     is
         direction_label : Unbounded_String;
         label_val : Long_Float;

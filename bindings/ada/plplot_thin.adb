@@ -158,7 +158,7 @@ package body PLplot_Thin is
     procedure pltr0
        (x, y      : PLFLT;
         tx, ty    : out PLFLT;
-        pltr_data : PLplot_thin.PLpointer) is
+        pltr_data : PLplot_thin.PL_Pointer) is
     begin
         tx := x;
         ty := y;
@@ -169,7 +169,7 @@ package body PLplot_Thin is
     procedure pltr1
        (x, y      : PLFLT;
         tx, ty    : out PLFLT;
-        pltr_data : PLplot_thin.PLpointer)
+        pltr_data : PLplot_thin.PL_Pointer)
     is
         ul, ur, vl, vr : PLINT;
         du, dv : PLFLT;
@@ -234,7 +234,7 @@ package body PLplot_Thin is
     procedure pltr2
        (x, y      : PLFLT;
         tx, ty    : out PLFLT;
-        pltr_data : PLplot_thin.PLpointer)
+        pltr_data : PLplot_thin.PL_Pointer)
     is
         ul, ur, vl, vr : Integer;
         du, dv                 : PLFLT;

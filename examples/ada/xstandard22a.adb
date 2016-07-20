@@ -132,15 +132,15 @@ procedure xstandard22a is
     procedure transform
        (x, y   : Long_Float;
         xt, yt : out Long_Float; 
-        data   : PLPointer);
+        data   : PL_Pointer);
     pragma Convention(C, transform);
 
     -- Global transform function for a constriction using data passed in
     -- This is the same transformation used in constriction.
-    procedure transform(x, y : Long_Float; xt, yt : out Long_Float; Data : PLPointer) is
+    procedure transform(x, y : Long_Float; xt, yt : out Long_Float; Data : PL_Pointer) is
 
         -- Convert the generic pointer represented as System.Address to a proper Ada pointer aka 
-        -- access variable. Recall that PLpointer is a subtype of System.Address.
+        -- access variable. Recall that PL_Pointer is a subtype of System.Address.
         package Data_Address_Conversions is new System.Address_To_Access_Conversions(Long_Float);
         Data_Pointer : Data_Address_Conversions.Object_Pointer; -- An Ada access variable
         xmax : Long_Float;

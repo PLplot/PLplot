@@ -412,7 +412,7 @@ begin
     -- mypltr. For compatibilty with other language bindings the same effect
     -- can be achieved by generating the transformed grid first and then
     -- using pltr2.
-    -- plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch);
+    -- plimagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, &stretch);
 
     declare -- Declare block is based on runtime-determined values of width, height.
         cgrid2 : aliased Transformation_Data_Type_2

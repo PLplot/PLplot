@@ -1149,7 +1149,7 @@ package body PLplot_Traditional is
        (u, v                             : Real_Matrix;
         Scale                            : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer) is
+        Transformation_Data_Pointer      : PL_Pointer) is
     begin
         PLplot_Thin.plvect(Matrix_To_Pointers(u), Matrix_To_Pointers(v), u'Length(1), u'Length(2), 
             Scale, Transformation_Procedure_Pointer, Transformation_Data_Pointer);
@@ -1175,7 +1175,7 @@ package body PLplot_Traditional is
     
     -- Set the default style for the arrow used by plvect to plot vectors.
     procedure plsvect
-       (X_Vertices, Y_Vertices : PLPointer;
+       (X_Vertices, Y_Vertices : PL_Pointer;
         Fill_Arrow : Boolean) is
         
         fill : PLBOOL;
@@ -1352,7 +1352,7 @@ package body PLplot_Traditional is
         y_Min_Index, y_Max_Index         : Integer;
         Contour_Levels                   : Real_Vector;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer) is
+        Transformation_Data_Pointer      : PL_Pointer) is
     begin
         PLplot_Thin.plcont(Matrix_To_Pointers(z), z'Length(1), z'Length(2), 
             x_Min_Index, x_Max_Index, y_Min_Index, y_Max_Index, Contour_Levels, 
@@ -1386,8 +1386,8 @@ package body PLplot_Traditional is
         -- This is a good place to change from the convenient form of passing 
         -- the transformation data (a record) to the form required by the PLplot 
         -- API (a pointer); same for the irregularly spaced data matrix.
-        Transformation_Data_Address : PLpointer;
-        Irregular_Data_Address      : PLpointer;
+        Transformation_Data_Address : PL_Pointer;
+        Irregular_Data_Address      : PL_Pointer;
     begin
         Transformation_Data_Address := Transformation_Data'Address;
         Irregular_Data_Address      := Irregular_Data'Address;
@@ -2139,7 +2139,7 @@ package body PLplot_Traditional is
        (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
         Shapefile_File_Name        : String;
         Min_X, Max_X, Min_Y, Max_Y : Long_Float;
-        Plot_Entries               : PLPointer) is
+        Plot_Entries               : PL_Pointer) is
     begin
         PLplot_Thin.plmapfill_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
             Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, 0);
@@ -2174,7 +2174,7 @@ package body PLplot_Traditional is
        (Map_Form_Function_Pointer  : Map_Form_Function_Pointer_Type;
         Shapefile_File_Name        : String;
         Min_X, Max_X, Min_Y, Max_Y : Long_Float;
-        Plot_Entries               : PLPointer) is
+        Plot_Entries               : PL_Pointer) is
     begin
         PLplot_Thin.plmapline_Overload(Map_Form_Function_Pointer, To_C(Shapefile_File_Name),
             Min_X, Max_X, Min_Y, Max_Y, Plot_Entries, 0);
@@ -2902,7 +2902,7 @@ package body PLplot_Traditional is
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer              : PLpointer) is
+        Transformation_Data_Pointer              : PL_Pointer) is
 
         Preserve_Rectangles_As_Integer : Integer;
     begin
@@ -2937,7 +2937,7 @@ package body PLplot_Traditional is
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer              : PLpointer) is
+        Transformation_Data_Pointer              : PL_Pointer) is
 
         Preserve_Rectangles_As_Integer : Integer;
     begin
@@ -2968,7 +2968,7 @@ package body PLplot_Traditional is
         Fill_Procedure_Pointer           : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles              : Boolean;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer) is
+        Transformation_Data_Pointer      : PL_Pointer) is
 
         Preserve_Rectangles_As_Integer : Integer;
     begin
@@ -2992,10 +2992,10 @@ package body PLplot_Traditional is
 
     -- fix this
     --    procedure
-    --    plfshade(PLFLT (*f2eval) ( : PLINT;  : PLINT; PLPointer),
-    --         PLPointer f2eval_data,
-    --         PLFLT (*c2eval) ( : PLINT;  : PLINT; PLPointer),
-    --         PLPointer c2eval_data,
+    --    plfshade(PLFLT (*f2eval) ( : PLINT;  : PLINT; PL_Pointer),
+    --         PL_Pointer f2eval_data,
+    --         PLFLT (*c2eval) ( : PLINT;  : PLINT; PL_Pointer),
+    --         PL_Pointer c2eval_data,
     --         nx : PLINT; ny : PLINT;
     --         left : PLFLT; right : PLFLT; bottom : PLFLT; top : PLFLT;
     --         shade_min : PLFLT; shade_max : PLFLT;
@@ -3003,14 +3003,14 @@ package body PLplot_Traditional is
     --         min_color : PLINT; min_width : PLINT;
     --         max_color : PLINT; max_width : PLINT;
     --         void (*fill) ( : PLINT;  : PL_Float_Array;  : PL_Float_Array), rectangular : PLINT;
-    --         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PLPointer),
-    --         PLPointer pltr_data);
+    --         void (*pltr) ( : PLFLT;  : PLFLT;  : PL_Float_Array;  : PL_Float_Array; PL_Pointer),
+    --         PL_Pointer pltr_data);
 
 
     -- Setup a user-provided custom labeling function.
     procedure plslabelfunc
        (Custom_Label_Procedure_Pointer : Custom_Label_Procedure_Pointer_Type;
-        label_data                     : PLPointer) is
+        label_data                     : PL_Pointer) is
     begin
         PLplot_Thin.plslabelfunc(Custom_Label_Procedure_Pointer, label_data);
     end plslabelfunc;
@@ -3145,7 +3145,7 @@ package body PLplot_Traditional is
     -- Set the coordinate transform.
     procedure plstransform
        (Coordinate_Transform_Procedure_Pointer : Coordinate_Transform_Procedure_Pointer_Type;
-        Coordinate_Transform_Data_Pointer : PLpointer) is
+        Coordinate_Transform_Data_Pointer : PL_Pointer) is
     begin
         PLplot_Thin.plstransform(Coordinate_Transform_Procedure_Pointer,
             Coordinate_Transform_Data_Pointer);
@@ -3278,7 +3278,7 @@ package body PLplot_Traditional is
         z_Min,     z_Max                 : Long_Float;
         Value_Min, Value_Max             : Long_Float;
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer      : PLpointer) is
+        Transformation_Data_Pointer      : PL_Pointer) is
     begin
         PLplot_Thin.plimagefr(Matrix_To_Pointers(Data), Data'Length(1), Data'Length(2), 
             x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Value_Min, Value_Max, 
@@ -3568,7 +3568,7 @@ package body PLplot_Traditional is
     procedure pltr0
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
-        Data             : PLpointer) is
+        Data             : PL_Pointer) is
     begin
         PLplot_Thin.pltr0(x_Grid, y_Grid, x_World, y_World, Data);
     end pltr0;
@@ -3578,7 +3578,7 @@ package body PLplot_Traditional is
     procedure pltr1
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
-        Data_Pointer     : PLpointer) is
+        Data_Pointer     : PL_Pointer) is
     begin
         PLplot_Thin.pltr1(x_Grid, y_Grid, x_World, y_World, Data_Pointer);
     end pltr1;
@@ -3589,7 +3589,7 @@ package body PLplot_Traditional is
     procedure pltr2
        (x_Grid, y_Grid   : Long_Float;
         x_World, y_World : out Long_Float;
-        Data_Pointer     : PLpointer) is
+        Data_Pointer     : PL_Pointer) is
     begin
         PLplot_Thin.pltr2(x_Grid, y_Grid, x_World, y_World, Data_Pointer);
     end pltr2;
