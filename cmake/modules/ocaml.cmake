@@ -204,6 +204,7 @@ if(ENABLE_ocaml)
       option(OCAML_HAS_CAIRO "OCaml has the cairo package" ON)
       # Disable since substantial maintenance is required before this component
       # of PLplot will configure, build, and/or run.
+      message(AUTHOR_WARNING "PLplot OCaml Cairo support currently requires substantial development effort so is indefinitely disabled")
       set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
       if(OCAML_HAS_CAIRO)
 	set(text_cairo "module C = Cairo")
