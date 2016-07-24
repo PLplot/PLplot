@@ -24,7 +24,7 @@
 !***********************************************************************
 
 module plplot_double
-    use iso_c_binding, only: c_ptr, c_char, c_null_char, c_null_ptr, c_loc, c_funptr, c_null_funptr, c_funloc
+    use iso_c_binding, only: c_ptr, c_char, c_null_char, c_null_ptr, c_loc, c_funptr, c_null_funptr, c_funloc, c_associated
     use iso_fortran_env, only: error_unit
     use plplot_types, only: private_plflt, private_plint, private_plbool, private_double, PLcGrid, PLfGrid
     use plplot_private_exposed
@@ -87,7 +87,7 @@ module plplot_double
         module procedure plrandd_impl
     end interface plrandd
     private :: plrandd_impl
-    
+
     interface plslabelfunc
         ! Only provide double-precison versions because of
         ! disambiguation problems with the corresponding
@@ -208,6 +208,11 @@ module plplot_double
         character(len=:), allocatable :: label_out
         integer :: trimmed_length
 
+        if ( c_associated(data) ) then
+            write(*,*) 'PLPlot: error in pllabelerf2c - data argument should be NULL'
+            stop
+        endif
+
         allocate(character(length) :: label_out)
         call pllabeler( int(axis), real(value,kind=wp), label_out )
         trimmed_length = min(length,len_trim(label_out) + 1)
@@ -237,6 +242,11 @@ module plplot_double
         type(c_ptr), value, intent(in) :: data
 
         real(kind=wp) :: tx_out, ty_out
+
+        if ( c_associated(data) ) then
+            write(*,*) 'PLPlot: error in pltransfrom2c - data argument should be NULL'
+            stop
+        endif
 
         call pltransform( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out )
         tx = tx_out
