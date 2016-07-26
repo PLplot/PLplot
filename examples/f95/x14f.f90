@@ -405,9 +405,8 @@ contains
 
     subroutine plot5()
 
-        use plplot, double_PI => PL_PI
+        use plplot
         implicit none
-        real(kind=pl_test_flt), parameter :: PI = double_PI
         integer :: i, j, nptsx, nptsy, xdim, ydim
         !      xdim and ydim are the absolute static dimensions.
         !      nptsx, and nptsy are the (potentially dynamic) defined area of the 2D
