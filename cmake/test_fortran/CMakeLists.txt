@@ -1,0 +1,97 @@
+# Top-level CMakeLists.txt for a simple project consisting of a
+# "Hello, world" library and executable to test CMake language support
+# for Fortran. See the README file in this directory for more details.
+
+# MAINTENANCE
+# Use same minimum version for all platforms as the non-Linux platform minimum adopted for
+# the PLplot project.
+cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+
+project(test_fortran Fortran)
+
+# Identify this project as the core build (as opposed to installed example
+# build).
+
+set(CORE_BUILD ON)
+
+# Build and test build-tree example?
+option(BUILD_TEST "Compile example in the build tree and test it" OFF)
+
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
+# Install locations
+
+set(
+CMAKE_INSTALL_EXEC_PREFIX
+${CMAKE_INSTALL_PREFIX}
+CACHE PATH "install location for architecture-dependent files"
+)
+
+set(
+CMAKE_INSTALL_BINDIR
+${CMAKE_INSTALL_EXEC_PREFIX}/bin
+CACHE PATH "install location for user executables"
+)
+
+set(
+CMAKE_INSTALL_DATADIR
+${CMAKE_INSTALL_PREFIX}/share
+CACHE PATH "install location for read-only architecture-independent data"
+)
+
+set(
+CMAKE_INSTALL_LIBDIR
+${CMAKE_INSTALL_EXEC_PREFIX}/lib
+CACHE PATH "install location for object code libraries"
+)
+
+# Configured test_fortran install locations determined from user-updatable
+# cached values above.
+
+# Data.
+set(DATA_DIR ${CMAKE_INSTALL_DATADIR}/test_fortran)
+
+# Libraries.
+set(LIB_DIR ${CMAKE_INSTALL_LIBDIR})
+
+# Binaries.
+set(BIN_DIR ${CMAKE_INSTALL_BINDIR})
+
+set(LIB_INSTALL_RPATH ${LIB_DIR})
+
+# Module files.
+set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/test_fortran)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  # No rpath on Darwin. Setting it will only cause trouble.
+else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+  option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
+endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+
+# cmp executable is used to help implement test_noninteractive targed for
+# the Fortran executable.
+find_program(CMP_EXECUTABLE cmp)
+
+# Configure and install a file to configure the build of the
+# installed example.
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/test_fortran_configure.cmake_installed_examples.in
+  ${CMAKE_CURRENT_BINARY_DIR}/test_fortran_configure.cmake_installed_examples
+  @ONLY
+  )
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/test_fortran_configure.cmake_installed_examples
+  DESTINATION ${DATA_DIR}/examples
+  RENAME test_fortran_configure.cmake
+  )
+
+# Build Fortran "Hello, world" library
+add_subdirectory(src_lib)
+# Build Fortran executable that links to that Fortran library
+add_subdirectory(src_executable)
+
+install(FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/installed_CMakeLists.txt
+  DESTINATION ${DATA_DIR}/examples
+  RENAME CMakeLists.txt
+  )
