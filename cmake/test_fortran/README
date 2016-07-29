@@ -10,12 +10,28 @@ compiler with CMake support such as ifort or nagfor).
 export FC=gfortran
 
 2. By hand, build and test the project (with default shared library) in an initially empty build tree.
+
+# Create and use an initially empty build tree.
 mkdir build_dir
 cd build_dir
+
+# Following PATH change needed for Windows platforms only for the
+# build-tree case.  (On such platforms, the library dll's are
+# collected in the dll directory for the build-tree case.  If you test
+# an installed version, the PATH manipulation should be different.
+# See scripts/comprehensive_test.sh.)
+PATH=$(pwd)/dll:$PATH
+
+# Configure the test_fortran project with cmake.
 cmake -DCMAKE_INSTALL_PREFIX=$(pwd)/install_tree -DBUILD_TEST=ON ..
+
+# build Fortran library and executable that links to that library.
 make hello
+
+# Test the executable by running it.
 # This should return the "hello, world" phrase
 src_executable/hello
+
 # This should supply a clean valgrind report
 valgrind src_executable/hello
 
@@ -37,6 +53,9 @@ will have to drop it for that special case until the Cygwin
 ldd -r option is implemented.
 
 3. Make more comprehensive test of this project with an automated script.
+Note, for Windows platforms this script manipulates the PATH so that
+the build-tree library dll will be found in the build-tree case, and the
+installed library dll will be found in the install-tree case.
 
 Check documentation of this comprehensive test script:
 
