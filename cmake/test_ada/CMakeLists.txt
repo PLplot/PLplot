@@ -86,6 +86,22 @@ else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
+if(BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
+  # For platforms (currently WIN32 or Cygwin, although the Cygwin version
+  # of CMake may support this in future since -rpath apparently does work
+  # on that platform) where CMake does not use -rpath, use a workaround
+  # where all dll's are collected in the dll subdirectory of the build tree.
+  set(USE_DLL_SUBDIRECTORY ON)
+else(BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
+  set(USE_DLL_SUBDIRECTORY OFF)
+endif(BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
+
+# For all windows platforms all created dlls are gathered in the dll directory
+# if you add this directory to your PATH all shared libraries are available
+if(USE_DLL_SUBDIRECTORY)
+  set(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/dll)
+endif(USE_DLL_SUBDIRECTORY)
+
 set(LANG_SUPPORT_FILES
   ./:CMakeAdaCompiler.cmake.in
   ./:CMakeAdaInformation.cmake
