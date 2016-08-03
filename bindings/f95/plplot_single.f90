@@ -70,6 +70,11 @@ module plplot_single
         character(len=:), allocatable :: label_out
         integer :: trimmed_length
 
+        if ( c_associated(data) ) then
+            write(*,*) 'PLPlot: error in pllabelerf2c - data argument should be NULL'
+            stop
+        endif
+
         allocate(character(length) :: label_out)
         call pllabeler( int(axis), real(value,kind=wp), label_out )
         trimmed_length = min(length,len_trim(label_out) + 1)
@@ -99,6 +104,11 @@ module plplot_single
         type(c_ptr), value, intent(in) :: data
 
         real(kind=wp) :: tx_out, ty_out
+
+        if ( c_associated(data) ) then
+            write(*,*) 'PLPlot: error in pltransfrom2c - data argument should be NULL'
+            stop
+        endif
 
         call pltransform( real(x,kind=wp), real(y,kind=wp), tx_out, ty_out )
         tx = tx_out

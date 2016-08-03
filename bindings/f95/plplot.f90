@@ -1475,7 +1475,14 @@ contains
             end subroutine interface_plsvect_null
         end interface
 
-        call interface_plsvect_null
+        !
+        ! Note: simple construct to avoid compiler message about unused argument
+        !
+        if ( present(fill) ) then
+            call interface_plsvect_null
+        else
+            call interface_plsvect_null
+        endif
     end subroutine plsvect_none
 
     subroutine plsxax_impl( digmax, digits )
