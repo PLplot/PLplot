@@ -1475,9 +1475,7 @@ contains
             end subroutine interface_plsvect_null
         end interface
 
-        !
         ! Note: simple construct to avoid compiler message about unused argument
-        !
         if ( present(fill) ) then
             call interface_plsvect_null
         else
