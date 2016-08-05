@@ -14,7 +14,7 @@ if(BUILD_TEST)
 
   # configure file to compare with output of hello executable.
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/compare_hello.out
-    "hello, world\n"
+    "hello, world"
     )
 
   # Add test_noninteractive custom_target to compare hello executable output
