@@ -62,11 +62,7 @@ set(LIB_INSTALL_RPATH ${LIB_DIR})
 # Module files.
 set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/test_fortran)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  # No rpath on Darwin. Setting it will only cause trouble.
-else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 
 if(BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
   # For platforms (currently WIN32 or Cygwin, although the Cygwin version

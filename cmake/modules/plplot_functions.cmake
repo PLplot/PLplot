@@ -289,6 +289,12 @@ function(set_library_properties library)
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
+  else(USE_RPATH AND LIB_INSTALL_RPATH)
+    set_target_properties(
+      ${library}
+      PROPERTIES
+      INSTALL_NAME_DIR "${LIB_DIR}"
+      )
   endif(USE_RPATH AND LIB_INSTALL_RPATH)
 
   set_target_properties(
@@ -296,7 +302,6 @@ function(set_library_properties library)
     PROPERTIES
     SOVERSION ${${library}_SOVERSION}
     VERSION ${${library}_VERSION}
-    INSTALL_NAME_DIR "${LIB_DIR}"
     # This allows PLplot static library builds to
     # be linked by shared libraries.
     POSITION_INDEPENDENT_CODE ON

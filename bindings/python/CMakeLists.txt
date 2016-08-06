@@ -159,7 +159,6 @@ if(ENABLE_python)
       plplot_widgetmodule
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
       )
   else(USE_RPATH)
     set_target_properties(

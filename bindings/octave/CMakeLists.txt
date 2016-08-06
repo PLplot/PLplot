@@ -127,7 +127,6 @@ if(ENABLE_octave)
       PREFIX "" 
       SUFFIX ".oct"
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
       )
   else(USE_RPATH)
     set_target_properties(

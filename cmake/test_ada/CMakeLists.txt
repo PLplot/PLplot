@@ -80,11 +80,7 @@ set(ADA_LIB_DIR ${CMAKE_INSTALL_LIBDIR}/ada/adalib/test_ada)
 
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  # No rpath on Darwin. Setting it will only cause trouble.
-else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 
 if(BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
   # For platforms (currently WIN32 or Cygwin, although the Cygwin version

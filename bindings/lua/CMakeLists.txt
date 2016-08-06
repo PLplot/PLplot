@@ -52,7 +52,6 @@ if(ENABLE_lua)
       plplotluac
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LUA_DIR}"
       )
   else(USE_RPATH)
     set_target_properties(

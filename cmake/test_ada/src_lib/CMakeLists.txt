@@ -48,6 +48,12 @@ if(USE_RPATH)
     PROPERTIES
     INSTALL_RPATH "${LIB_INSTALL_RPATH}"
     )
+else(USE_RPATH)
+  set_target_properties(
+    hello_1
+    PROPERTIES
+    INSTALL_NAME_DIR "${LIB_DIR}"
+    )
 endif(USE_RPATH)
 
 set_target_properties(hello_1
@@ -55,7 +61,6 @@ PROPERTIES
 SOVERSION 0
 VERSION 0.0
 OUTPUT_NAME hello
-INSTALL_NAME_DIR "${LIB_DIR}"
 POSITION_INDEPENDENT_CODE ON
 )
 

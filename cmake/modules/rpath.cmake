@@ -2,7 +2,7 @@
 #
 # Start driver initializations
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2016  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -19,12 +19,6 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Module for determining treatment of rpath for PLplot.  Must be
-# included after the instdirs module which defines LIB_DIR.
+# Module for determining treatment of rpath for PLplot.
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  # No rpath on Darwin. Setting it will only cause trouble.
-else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-  option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-
+option(USE_RPATH "Use -rpath when linking libraries, executables" ON)

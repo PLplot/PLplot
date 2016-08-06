@@ -171,7 +171,6 @@ if(ENABLE_java)
       plplotjavac_wrap
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${JAVAWRAPPER_HARDDIR}"
       )
   else(USE_RPATH)
     set_target_properties(

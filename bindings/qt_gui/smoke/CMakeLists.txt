@@ -94,7 +94,6 @@ if(ENABLE_smoke)
       smokeplplotqt
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      INSTALL_NAME_DIR "${LIB_DIR}"
       )
 
   else(USE_RPATH)
