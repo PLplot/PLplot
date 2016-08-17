@@ -44,6 +44,9 @@ package PLplot_Traditional is
     -- good to remove "use PLplot_Thin" for clarity since it is used in only
     -- a few places.
     subtype PL_Pointer                 is Plplot_Thin.PL_Pointer;
+    -- The following deprecated spelling is not used anywhere in the Ada bindings
+    -- or examples but is provided for backwards compatibility.
+    subtype PLpointer                  is Plplot_Thin.PLpointer; -- DEPRECATED
     subtype Unsigned_Int               is Interfaces.C.unsigned;
     subtype Transformation_Data_Type   is Plplot_Thin.Transformation_Data_Type;
     subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;

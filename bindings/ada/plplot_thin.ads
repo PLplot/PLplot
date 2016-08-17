@@ -63,7 +63,10 @@ package PLplot_Thin is
     subtype PL_Float_Array_2D is Real_Matrix;
     type PL_Bool_Array        is array (Integer range <>) of PLBOOL;
     subtype PL_Pointer        is System.Address; -- non-specific pointer to something
-            
+    -- The following deprecated spelling is not used anywhere in the Ada bindings
+    -- or examples but is provided for backwards compatibility.
+    subtype PLpointer is System.Address; -- DEPRECATED non-specific pointer to something
+
     -- Types to pass 2D arrays, Real_Matrix, defined in plplot_auxiliary.ads, to C functions. Have
     -- only Long_Float capability for now. See function Matrix_To_Pointers for the conversion.
     type Long_Float_Pointer is access all Long_Float;
