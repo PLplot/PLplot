@@ -64,7 +64,7 @@ if(BUILD_TEST)
 
   # configure file to compare with output of hello executable.
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/compare_hello.out
-    "hello, world\n"
+    "hello, world"
     )
 
   # Add test_noninteractive custom_target to compare hello executable output
@@ -72,11 +72,12 @@ if(BUILD_TEST)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/hello.out
     COMMAND
-    hello > ${CMAKE_CURRENT_BINARY_DIR}/hello.out
+    hello
     COMMAND
     ${CMP_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/hello.out ${CMAKE_CURRENT_BINARY_DIR}/compare_hello.out
     DEPENDS
     hello
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
     )
   add_custom_target(test_noninteractive

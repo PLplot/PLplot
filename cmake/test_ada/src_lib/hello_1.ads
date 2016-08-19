@@ -1,3 +1,3 @@
 package Hello_1 is
-    procedure hello;
+    procedure Hello;
 end Hello_1;
