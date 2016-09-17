@@ -207,18 +207,6 @@ set(wxWidgets_LIBRARIES    "")
 set(wxWidgets_LIBRARY_DIRS "")
 set(wxWidgets_CXX_FLAGS    "")
 
-# Using SYSTEM with INCLUDE_DIRECTORIES in conjunction with wxWidgets on
-# the Mac produces compiler errors. Set wxWidgets_INCLUDE_DIRS_NO_SYSTEM
-# to prevent UsewxWidgets.cmake from using SYSTEM.
-#
-# See cmake mailing list discussions for more info:
-#   http://www.cmake.org/pipermail/cmake/2008-April/021115.html
-#   http://www.cmake.org/pipermail/cmake/2008-April/021146.html
-#
-if(APPLE OR CMAKE_CXX_PLATFORM_ID MATCHES "OpenBSD")
-  set(wxWidgets_INCLUDE_DIRS_NO_SYSTEM 1)
-endif()
-
 # DEPRECATED: This is a patch to support the DEPRECATED use of
 # wxWidgets_USE_LIBS.
 #
@@ -409,7 +397,7 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
 
     # Clear wxWidgets multilib libraries.
     foreach(LIB core adv aui html media xrc dbgrid gl qa richtext
-                stc ribbon propgrid)
+                webview stc ribbon propgrid)
       WX_CLEAR_LIB(WX_${LIB}${_DBG})
     endforeach()
   endmacro()
@@ -535,22 +523,22 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
     # settings.
     if(MINGW)
       set(WX_LIB_DIR_PREFIX gcc)
-    elseif(CMAKE_CL_64)
-      set(WX_LIB_DIR_PREFIX vc_x64)
-    #unfortunately the above doesn't work on my system - can't find why, but workaround below
-    #Check for vs64 bit
-    elseif(${CMAKE_GENERATOR} MATCHES "Win64$")
-      set(WX_LIB_DIR_PREFIX vc_x64)
-    #Check for nmake 64 bit
-    elseif(${CMAKE_GENERATOR} STREQUAL "NMake Makefiles")
+    elseif(MSVC)
       set(WX_LIB_DIR_PREFIX vc)
-      foreach(ENVLIBDIR $ENV{LIB})
-        if( ENVLIBDIR MATCHES "amd64$")
-          set(WX_LIB_DIR_PREFIX vc_x64)
-        endif()
-      endforeach()
-    else()
-      set(WX_LIB_DIR_PREFIX vc)
+      if(MSVC14)
+        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}140)
+      elseif(MSVC12)
+        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}120)
+      elseif(MSVC11)
+        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}110)
+      elseif(MSVC10)
+        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}100)
+      elseif(MSVC90)
+        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}90)
+      endif()
+      if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}_x64)
+      endif()
     endif()
     if(BUILD_SHARED_LIBS)
       find_path(wxWidgets_LIB_DIR
@@ -776,9 +764,8 @@ else()
     # UNIX: Start actual work.
     #-----------------------------------------------------------------
     # Support cross-compiling, only search in the target platform.
-    # MAINTENANCE! versioned names of wx-config on e.g., Cygwin.
     find_program(wxWidgets_CONFIG_EXECUTABLE
-      NAMES wx-config-3.1 wx-config-3.0 wx-config-2.9 wx-config-2.8 wx-config
+      NAMES wx-config wx-config-3.1 wx-config-3.0 wx-config-2.9 wx-config-2.8
       DOC "Location of wxWidgets library configuration provider binary (wx-config)."
       ONLY_CMAKE_FIND_ROOT_PATH
       )
@@ -880,6 +867,36 @@ else()
       endif()
     endif()
 
+    # When using wx-config in MSYS, the include paths are UNIX style paths which may or may
+    # not work correctly depending on you MSYS/MinGW configuration.  CMake expects native
+    # paths internally.
+    if(wxWidgets_FOUND AND MSYS)
+      find_program(_cygpath_exe cygpath ONLY_CMAKE_FIND_ROOT_PATH)
+      DBG_MSG_V("_cygpath_exe:  ${_cygpath_exe}")
+      if(_cygpath_exe)
+        set(_tmp_path "")
+        foreach(_path ${wxWidgets_INCLUDE_DIRS})
+          execute_process(
+            COMMAND cygpath -w ${_path}
+            OUTPUT_VARIABLE _native_path
+            RESULT_VARIABLE _retv
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+            )
+          if(_retv EQUAL 0)
+            file(TO_CMAKE_PATH ${_native_path} _native_path)
+            DBG_MSG_V("Path ${_path} converted to ${_native_path}")
+            string(APPEND _tmp_path " ${_native_path}")
+          endif()
+        endforeach()
+        DBG_MSG("Setting wxWidgets_INCLUDE_DIRS = ${_tmp_path}")
+        set(wxWidgets_INCLUDE_DIRS ${_tmp_path})
+        separate_arguments(wxWidgets_INCLUDE_DIRS)
+        list(REMOVE_ITEM wxWidgets_INCLUDE_DIRS "")
+      endif()
+      unset(_cygpath_exe CACHE)
+    endif()
+
 #=====================================================================
 # Neither UNIX_FIND_STYLE, nor WIN32_FIND_STYLE
 #=====================================================================
@@ -894,6 +911,28 @@ else()
   endif()
 endif()
 
+# Check if a specfic version was requested by find_package().
+if(wxWidgets_FOUND)
+  find_file(_filename wx/version.h PATHS ${wxWidgets_INCLUDE_DIRS} NO_DEFAULT_PATH)
+  dbg_msg("_filename:  ${_filename}")
+
+  if(NOT _filename)
+    message(FATAL_ERROR "wxWidgets wx/version.h file not found in ${wxWidgets_INCLUDE_DIRS}.")
+  endif()
+
+  file(READ ${_filename} _wx_version_h)
+
+  string(REGEX REPLACE "^(.*\n)?#define +wxMAJOR_VERSION +([0-9]+).*"
+    "\\2" wxWidgets_VERSION_MAJOR "${_wx_version_h}" )
+  string(REGEX REPLACE "^(.*\n)?#define +wxMINOR_VERSION +([0-9]+).*"
+    "\\2" wxWidgets_VERSION_MINOR "${_wx_version_h}" )
+  string(REGEX REPLACE "^(.*\n)?#define +wxRELEASE_NUMBER +([0-9]+).*"
+    "\\2" wxWidgets_VERSION_PATCH "${_wx_version_h}" )
+  set(wxWidgets_VERSION_STRING
+    "${wxWidgets_VERSION_MAJOR}.${wxWidgets_VERSION_MINOR}.${wxWidgets_VERSION_PATCH}" )
+  dbg_msg("wxWidgets_VERSION_STRING:    ${wxWidgets_VERSION_STRING}")
+endif()
+
 # Debug output:
 DBG_MSG("wxWidgets_FOUND           : ${wxWidgets_FOUND}")
 DBG_MSG("wxWidgets_INCLUDE_DIRS    : ${wxWidgets_INCLUDE_DIRS}")
@@ -905,8 +944,11 @@ DBG_MSG("wxWidgets_USE_FILE        : ${wxWidgets_USE_FILE}")
 #=====================================================================
 #=====================================================================
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(wxWidgets DEFAULT_MSG wxWidgets_FOUND)
-# Maintain consistency with all other variables.
+find_package_handle_standard_args(wxWidgets DEFAULT_MSG wxWidgets_FOUND)
+# Maintain consistency with all other variables just in case
+# some old version of cmake sets just the uppercased version.
+# N.B. later versions of cmake set both uppercased and natural case versions
+# so this set command works for all versions of cmake.
 set(wxWidgets_FOUND ${WXWIDGETS_FOUND})
 
 #=====================================================================
