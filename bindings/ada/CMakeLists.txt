@@ -20,24 +20,31 @@
 
 if(ENABLE_ada)
 
-  set(SOURCE_LIST
-    plplot_standard.adb
+  # Specification files containing, e.g., variables, types, and subprogramme (subprocedure) declarations.
+  set(SPEC_SOURCE_LIST
+    plplot.ads
     plplot_standard.ads
-    plplot_thin.adb
     plplot_thin.ads
-    plplot_traditional.adb
     plplot_traditional.ads
-    plplot_auxiliary.adb
     plplot_auxiliary.ads
     )
-  
-  # These are Ada library information files built by gnat.  I am not 
+
+  # Body files containing code for the subprogrammes.  Only body files need to be compiled.  The
+  # corresponding specification files will be found automatically.
+  set(BODY_SOURCE_LIST
+    plplot_standard.adb
+    plplot_thin.adb
+    plplot_traditional.adb
+    plplot_auxiliary.adb
+    )
+
+  # These are Ada library information files built by gnat.  I am not
   # sure whether the name suffixes correspond to the *.adb or *.ads files
   # above or the union of them.  In any case, if any of the names change
   # above, then this list will probably have to be changed as well.)
   # N.B. the absolute location prefix of these files may have to be changed
   # in the future since this is a CMake internal.
-  set(ALI_PREFIX 
+  set(ALI_PREFIX
     ${CMAKE_CURRENT_BINARY_DIR}/CMakeFiles/plplotada.dir
     )
   set(ALI_LIST
@@ -63,14 +70,21 @@ if(ENABLE_ada)
       )
   endif(MINGW)
 
-  set(plplotada_LIB_SRCS)
-  foreach(SOURCE_FILE ${SOURCE_LIST})
-    list(APPEND plplotada_LIB_SRCS 
-      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
+  set(plplotada_SPEC_SRCS)
+  foreach(SPEC_FILE ${SPEC_SOURCE_LIST})
+    list(APPEND plplotada_SPEC_SRCS
+      ${CMAKE_CURRENT_SOURCE_DIR}/${SPEC_FILE}
       )
-  endforeach(SOURCE_FILE ${SOURCE_LIST})
+  endforeach(SPEC_FILE ${SPEC_SOURCE_LIST})
 
-  add_library(plplotada ${plplotada_LIB_SRCS})
+  set(plplotada_BODY_SRCS)
+  foreach(BODY_FILE ${BODY_SOURCE_LIST})
+    list(APPEND plplotada_BODY_SRCS
+      ${CMAKE_CURRENT_SOURCE_DIR}/${BODY_FILE}
+      )
+  endforeach(BODY_FILE ${BODY_SOURCE_LIST})
+
+  add_library(plplotada ${plplotada_BODY_SRCS})
 
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed
@@ -89,7 +103,7 @@ if(ENABLE_ada)
   if(USE_DLL_SUBDIRECTORY AND NOT CYGWIN)
     add_custom_command(
       TARGET plplotada POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different
       libplplotada.dll libplplotada.dll.a
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dll
       VERBATIM
@@ -99,7 +113,7 @@ if(ENABLE_ada)
   # Link to GNAT_LIB to avoid underlinking the plplotada library (which causes
   # link errors on at least the Cygwin platform), but use
   # the PRIVATE keyword (on all platforms) to avoid overlinking Ada applications
-  # that link to plplotada.         
+  # that link to plplotada.
   target_link_libraries(plplotada PRIVATE ${GNAT_LIB})
 
   # N.B. nm evidence shows that examples that use
@@ -113,17 +127,17 @@ if(ENABLE_ada)
   endif(USE_RPATH)
   set_library_properties(plplotada)
 
-  install(FILES ${plplotada_LIB_SRCS} 
+  install(FILES ${plplotada_SPEC_SRCS} ${plplotada_BODY_SRCS}
     DESTINATION ${ADA_INCLUDE_DIR}
     )
-  
+
   # Permissions of *.ali files in accordance with
   # http://people.debian.org/~lbrenta/debian-ada-policy.html
   install(FILES ${ALI_LIST}
     DESTINATION ${ADA_LIB_DIR}
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     )
-  
+
   install(TARGETS plplotada
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
