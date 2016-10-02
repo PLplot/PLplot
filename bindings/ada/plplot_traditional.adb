@@ -38,7 +38,7 @@ use
     Ada.Strings.Unbounded,
     Interfaces.C;
 
-package body PLplot_Traditional is    
+package body PLplot_Traditional is
 
 --------------------------------------------------------------------------------
 --        High-Level subroutines for thick binding                            --
@@ -52,7 +52,7 @@ package body PLplot_Traditional is
         plscol0(White, 255, 255, 255);
     end Draw_On_Black;
 
-    
+
     -- When asked to draw black lines on white background, reverse black and white.
     -- This might look better on anti-aliased displays.
     -- fix this Darken some colors which have low contrast on white background, e.g. Yellow.
@@ -64,8 +64,8 @@ package body PLplot_Traditional is
         plscol0(Black, 255, 255, 255);
         plscol0(White, 0,   0,   0);
     end Draw_On_White;
-    
-    
+
+
     -- Set default pen width. Docs don't say, so I'll make it 1.
     -- I could make this depend on the type of outut device used.
     Default_Pen_Width : constant Long_Float := 1.0;
@@ -75,9 +75,9 @@ package body PLplot_Traditional is
     end Set_Default_Pen_Width;
 
 
-    -- Plotter for up to five x-y pairs and settable axis style, plot 
+    -- Plotter for up to five x-y pairs and settable axis style, plot
     -- line colors, widths, and styles, justification, zoom, and labels.
-    -- Can be used directly or as part of a "simple" plotter 
+    -- Can be used directly or as part of a "simple" plotter
     -- such as those that follow or which are made by the user.
     -- fixme Add capability for labels, legends.
     procedure Multiplot_Pairs
@@ -126,9 +126,9 @@ package body PLplot_Traditional is
             end if;
             if x5'length /= 1 then
                 x_Min := Long_Float'min(x_Min, Vector_Min(x5));
-            end if;            
+            end if;
         end if; -- Set or find x_Min.
-        
+
         -- Set or find x_Max.
         if x_Max_Zoom /= Long_Float'large then -- zoom
             x_Max := x_Max_Zoom;
@@ -168,9 +168,9 @@ package body PLplot_Traditional is
             end if;
             if y5'length /= 1 then
                 y_Min := Long_Float'min(y_Min, Vector_Min(y5));
-            end if;            
+            end if;
         end if; -- Set or find y_Min.
-        
+
         -- Set or find y_Max.
         if y_Max_Zoom /= Long_Float'large then -- zoom
             y_Max := y_Max_Zoom;
@@ -197,7 +197,7 @@ package body PLplot_Traditional is
         plcol0(White);
 --        Set_Environment_Clear_Subpage(x_Min, x_Max, y_Min, y_Max, Justification, Axis_Style);
         plenv(x_Min, x_Max, y_Min, y_Max, Justification, Axis_Style);
-        
+
         if x1'length /= 1 and y1'length /= 1 then
             pllab(To_String(X_Labels(1)), To_String(Y_Labels(1)), To_String(Title_Labels(1)));
             plcol0(Colors(1));
@@ -237,7 +237,7 @@ package body PLplot_Traditional is
             pllsty(Line_Styles(5));
             plline(x5, y5);
         end if;
-        
+
         plcol0(White);
         Set_Default_Pen_Width;
         pllsty(1); --solid
@@ -246,7 +246,7 @@ package body PLplot_Traditional is
 
 --------- Simple plotters requiring minimal arguments -----
 
-    
+
     -- Quick plotter requires no x-axis as input; makes x up from indices of first of multiple y's.
     procedure Quick_Plot
        (y1 : Real_Vector := Dont_Plot_This;
@@ -271,7 +271,7 @@ package body PLplot_Traditional is
         Y_Label_String_Array(1)     := TUB(Y_Label);     -- First slot only; others not used.
         Title_Label_String_Array(1) := TUB(Title_Label); -- First slot only; others not used.
 
-        Multiplot_Pairs(x, y1, x, y2, x, y3, x, y4, x, y5, 
+        Multiplot_Pairs(x, y1, x, y2, x, y3, x, y4, x, y5,
             X_Labels     => X_Label_String_Array,
             Y_Labels     => Y_Label_String_Array,
             Title_Labels => Title_Label_String_Array,
@@ -280,7 +280,7 @@ package body PLplot_Traditional is
 
 
     -- Simple plotter for single x array and multiple y arrays
-    procedure Simple_Plot 
+    procedure Simple_Plot
        (x  : Real_Vector;
         y1 : Real_Vector := Dont_Plot_This;
         y2 : Real_Vector := Dont_Plot_This;
@@ -300,14 +300,14 @@ package body PLplot_Traditional is
         Y_Label_String_Array(1)     := TUB(Y_Label);     -- First slot only; others not used.
         Title_Label_String_Array(1) := TUB(Title_Label); -- First slot only; others not used.
 
-        Multiplot_Pairs(x, y1, x, y2, x, y3, x, y4, x, y5, 
+        Multiplot_Pairs(x, y1, x, y2, x, y3, x, y4, x, y5,
             X_Labels     => X_Label_String_Array,
             Y_Labels     => Y_Label_String_Array,
             Title_Labels => Title_Label_String_Array,
             Axis_Style   => Linear_Major_Grid);
     end Simple_Plot;
-    
-    
+
+
     -- Simple log x plotter for single x array and multiple y arrays
     -- fix this: Automatically skip zero-valued abscissa; place marker at the
     -- left-hand side of the plot at the ordinate of the deleted point.
@@ -336,15 +336,15 @@ package body PLplot_Traditional is
 
         for i in x_Log'range loop
             x_Log(i) := Log(x(i), Log_Base);
-        end loop;        
-        Multiplot_Pairs(x_Log, y1, x_Log, y2, x_Log, y3, x_Log, y4, x_Log, y5, 
+        end loop;
+        Multiplot_Pairs(x_Log, y1, x_Log, y2, x_Log, y3, x_Log, y4, x_Log, y5,
             X_Labels     => X_Label_String_Array,
             Y_Labels     => Y_Label_String_Array,
             Title_Labels => Title_Label_String_Array,
             Axis_Style   => Log_X_Minor_Grid);
     end Simple_Plot_Log_X;
-    
-    
+
+
     -- Simple log y plotter for multiple x arrays and single y array
     -- fix this: Automatically skip zero-valued ordinate; place marker at the
     -- bottom of the plot at the abscissa of the deleted point.
@@ -373,15 +373,15 @@ package body PLplot_Traditional is
 
         for i in y_Log'range loop
             y_Log(i) := Log(y(i), Log_Base);
-        end loop;        
-        Multiplot_Pairs(x1, y_Log, x2, y_Log, x3, y_Log, x4, y_Log, x5, y_Log, 
+        end loop;
+        Multiplot_Pairs(x1, y_Log, x2, y_Log, x3, y_Log, x4, y_Log, x5, y_Log,
             X_Labels     => X_Label_String_Array,
             Y_Labels     => Y_Label_String_Array,
             Title_Labels => Title_Label_String_Array,
             Axis_Style   => Log_Y_Minor_Grid);
     end Simple_Plot_Log_Y;
-    
-    
+
+
     -- Simple log x - log y plotter
     procedure Simple_Plot_Log_XY
        (x, y        : Real_Vector;
@@ -404,15 +404,15 @@ package body PLplot_Traditional is
         for i in x_Log'range loop
             x_Log(i) := Log(x(i), x_Log_Base);
             y_Log(i) := Log(y(i), y_Log_Base);
-        end loop;        
-        Multiplot_Pairs(x_Log, y_Log, 
+        end loop;
+        Multiplot_Pairs(x_Log, y_Log,
             X_Labels     => X_Label_String_Array,
             Y_Labels     => Y_Label_String_Array,
             Title_Labels => Title_Label_String_Array,
             Axis_Style   => Log_XY_Minor_Grid);
     end Simple_Plot_Log_XY;
-    
-    
+
+
     -- Simple plotter for multiple x-y arrays specified pairwise.
     procedure Simple_Plot_Pairs
        (x1 : Real_Vector := Dont_Plot_This;
@@ -437,7 +437,7 @@ package body PLplot_Traditional is
         Y_Label_String_Array(1)     := TUB(Y_Label);     -- First slot only; others not used.
         Title_Label_String_Array(1) := TUB(Title_Label); -- First slot only; others not used.
 
-        Multiplot_Pairs(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, 
+        Multiplot_Pairs(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5,
             X_Labels     => X_Label_String_Array,
             Y_Labels     => Y_Label_String_Array,
             Title_Labels => Title_Label_String_Array,
@@ -463,7 +463,7 @@ package body PLplot_Traditional is
         x_Max_Zoom    : Long_Float         := Long_Float'large;
         y_Min_Zoom    : Long_Float         := Long_Float'small;
         y_Max_Zoom    : Long_Float         := Long_Float'large) is
-    
+
         X_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
         Y_Label_String_Array     : Label_String_Array_Type := Default_Label_String_Array;
         Title_Label_String_Array : Label_String_Array_Type := Default_Label_String_Array;
@@ -492,18 +492,18 @@ package body PLplot_Traditional is
                 end loop;
 
                 Multiplot_Pairs(
-                    x_Log, y, 
+                    x_Log, y,
                     X_Labels      => X_Label_String_Array,
                     Y_Labels      => Y_Label_String_Array,
                     Title_Labels  => Title_Label_String_Array,
-                    Axis_Style    => Axis_Style, 
-                    Colors        => Color_Array, 
-                    Line_Widths   => Line_Width_Array, 
-                    Line_Styles   => Line_Style_Array, 
-                    Justification => Justification, 
-                    x_Min_Zoom    => x_Min_Zoom, 
-                    x_Max_Zoom    => x_Max_Zoom, 
-                    y_Min_Zoom    => y_Min_Zoom, 
+                    Axis_Style    => Axis_Style,
+                    Colors        => Color_Array,
+                    Line_Widths   => Line_Width_Array,
+                    Line_Styles   => Line_Style_Array,
+                    Justification => Justification,
+                    x_Min_Zoom    => x_Min_Zoom,
+                    x_Max_Zoom    => x_Max_Zoom,
+                    y_Min_Zoom    => y_Min_Zoom,
                     y_Max_Zoom    => y_Max_Zoom);
             end; -- declare
         end if; -- log x
@@ -517,18 +517,18 @@ package body PLplot_Traditional is
                     y_Log(i) := Log(y(i), 10.0);
                 end loop;
                 Multiplot_Pairs(
-                    x, y_Log, 
+                    x, y_Log,
                     X_Labels      => X_Label_String_Array,
                     Y_Labels      => Y_Label_String_Array,
                     Title_Labels  => Title_Label_String_Array,
-                    Axis_Style    => Axis_Style, 
-                    Colors        => Color_Array, 
-                    Line_Widths   => Line_Width_Array, 
-                    Line_Styles   => Line_Style_Array, 
-                    Justification => Justification, 
-                    x_Min_Zoom    => x_Min_Zoom, 
-                    x_Max_Zoom    => x_Max_Zoom, 
-                    y_Min_Zoom    => y_Min_Zoom, 
+                    Axis_Style    => Axis_Style,
+                    Colors        => Color_Array,
+                    Line_Widths   => Line_Width_Array,
+                    Line_Styles   => Line_Style_Array,
+                    Justification => Justification,
+                    x_Min_Zoom    => x_Min_Zoom,
+                    x_Max_Zoom    => x_Max_Zoom,
+                    y_Min_Zoom    => y_Min_Zoom,
                     y_Max_Zoom    => y_Max_Zoom);
             end; -- declare
         end if; -- log y
@@ -544,18 +544,18 @@ package body PLplot_Traditional is
                     y_Log(i) := Log(y(i), 10.0);
                 end loop;
                 Multiplot_Pairs(
-                    x_Log, y_Log, 
+                    x_Log, y_Log,
                     X_Labels      => X_Label_String_Array,
                     Y_Labels      => Y_Label_String_Array,
                     Title_Labels  => Title_Label_String_Array,
-                    Axis_Style    => Axis_Style, 
-                    Colors        => Color_Array, 
-                    Line_Widths   => Line_Width_Array, 
-                    Line_Styles   => Line_Style_Array, 
-                    Justification => Justification, 
-                    x_Min_Zoom    => x_Min_Zoom, 
-                    x_Max_Zoom    => x_Max_Zoom, 
-                    y_Min_Zoom    => y_Min_Zoom, 
+                    Axis_Style    => Axis_Style,
+                    Colors        => Color_Array,
+                    Line_Widths   => Line_Width_Array,
+                    Line_Styles   => Line_Style_Array,
+                    Justification => Justification,
+                    x_Min_Zoom    => x_Min_Zoom,
+                    x_Max_Zoom    => x_Max_Zoom,
+                    y_Min_Zoom    => y_Min_Zoom,
                     y_Max_Zoom    => y_Max_Zoom);
             end; -- declare
         end if; -- log x and log y
@@ -563,18 +563,18 @@ package body PLplot_Traditional is
         -- Linear plot is indicated.
         if Axis_Style in No_Box..Linear_Minor_Grid then
             Multiplot_Pairs(
-                x, y, 
+                x, y,
                 X_Labels      => X_Label_String_Array,
                 Y_Labels      => Y_Label_String_Array,
                 Title_Labels  => Title_Label_String_Array,
-                Axis_Style    => Axis_Style, 
-                Colors        => Color_Array, 
-                Line_Widths   => Line_Width_Array, 
-                Line_Styles   => Line_Style_Array, 
-                Justification => Justification, 
-                x_Min_Zoom    => x_Min_Zoom, 
-                x_Max_Zoom    => x_Max_Zoom, 
-                y_Min_Zoom    => y_Min_Zoom, 
+                Axis_Style    => Axis_Style,
+                Colors        => Color_Array,
+                Line_Widths   => Line_Width_Array,
+                Line_Styles   => Line_Style_Array,
+                Justification => Justification,
+                x_Min_Zoom    => x_Min_Zoom,
+                x_Max_Zoom    => x_Max_Zoom,
+                y_Min_Zoom    => y_Min_Zoom,
                 y_Max_Zoom    => y_Max_Zoom);
         end if; -- Linear plot
     end Single_Plot;
@@ -588,13 +588,13 @@ package body PLplot_Traditional is
         X_Label       : String  := To_String(Default_Label_String);
         Y_Label       : String  := To_String(Default_Label_String);
         Title_Label   : String  := To_String(Default_Label_String)) is
-       
+
         Contour_Levels : Real_Vector (0 .. Number_Levels);
 
     begin
         -- Fill the contour vector with some levels.
         Calculate_Contour_Levels(Contour_Levels, Matrix_Min(z), Matrix_Max(z));
-        
+
         pladv(Next_Subpage);
         plvpor(0.1, 0.9, 0.1, 0.9);
         plwind(1.0, 35.0, 1.0, 46.0); -- fix
@@ -604,15 +604,15 @@ package body PLplot_Traditional is
         pllab(X_Label, Y_Label, Title_Label);
         plcol0(White);
         pl_setcontlabelparam(0.008, 0.6, 0.1, True);
-        plcont(z, z'First(1), z'Last(1), z'First(2), z'Last(2), 
-            Contour_Levels, PLplot_Thin.pltr0'access, System.Null_Address);          
+        plcont(z, z'First(1), z'Last(1), z'First(2), z'Last(2),
+            Contour_Levels, PLplot_Thin.pltr0'access, System.Null_Address);
     end Simple_Contour;
 
 
 --------- Simple 3D Mesh Plotter ------
 
     procedure Simple_Mesh_3D
-       (x, y     : Real_Vector; -- data definition points 
+       (x, y     : Real_Vector; -- data definition points
         z        : Real_Matrix; -- z(x, y) = z(x(i), y(j))
         x_Min    : Long_Float := 0.0;  -- user coordinate limits
         x_Max    : Long_Float := 0.0;  -- If x_Min = x_Max = 0.0 then plot
@@ -625,7 +625,7 @@ package body PLplot_Traditional is
         Z_Label  : String := "z") is
 
         x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local : Long_Float;
-        
+
     begin
         -- Check for compatible lengths in x, y, and z.
         if x'length /= z'length(1) then
@@ -634,7 +634,7 @@ package body PLplot_Traditional is
         if y'length /= z'length(2) then
             Put_Line("*** WARNING: Mismatached y-lengths in Simple_Mesh_3D");
         end if;
-        
+
         -- Set min and max for x and y if they are not the defaults.
         if x_Min = 0.0 and x_Max = 0.0 then -- override
             x_Min_Local := Vector_Min(x);
@@ -643,7 +643,7 @@ package body PLplot_Traditional is
             x_Min_Local := x_Min;
             x_Max_Local := x_Max;
         end if;
-        
+
         if y_Min = 0.0 and y_Max = 0.0 then -- override
             y_Min_Local := Vector_Min(y);
             y_Max_Local := Vector_Max(y);
@@ -651,16 +651,16 @@ package body PLplot_Traditional is
             y_Min_Local := y_Min;
             y_Max_Local := y_Max;
         end if;
-        
+
         Quick_Set_Color_Map_1(Blue_Green_Red); -- no way to restore after doing this
         pladv(Next_Subpage);
         plcol0(White);
         plvpor(0.0, 1.0, 0.0, 1.0);
         plwind(-0.9, 0.9, -0.8, 1.5);
-        plw3d(1.0, 1.0, 1.0, x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local, 
+        plw3d(1.0, 1.0, 1.0, x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local,
             Matrix_Min(z), Matrix_Max(z), Altitude, Azimuth); -- plw3d
-        plbox3("bnstu", X_Label, 0.0, 0, 
-            "bnstu", Y_Label, 0.0, 0, 
+        plbox3("bnstu", X_Label, 0.0, 0,
+            "bnstu", Y_Label, 0.0, 0,
             "bcdmnstuv", Z_Label, 0.0, 0); -- plbox3
         plmesh(x, y, z, Lines_Parallel_To_X_And_Y + Magnitude_Color); -- plmesh
     end Simple_Mesh_3D;
@@ -669,7 +669,7 @@ package body PLplot_Traditional is
 --------- Simple 3D Surface Plotter ------
 
     procedure Simple_Surface_3D
-       (x, y     : Real_Vector; -- data definition points 
+       (x, y     : Real_Vector; -- data definition points
         z        : Real_Matrix; -- z(x, y) = z(x(i), y(j))
         x_Min    : Long_Float := 0.0;  -- user coordinate limits;
         x_Max    : Long_Float := 0.0;  -- If x_Min = x_Max = 0.0 then plot
@@ -683,7 +683,7 @@ package body PLplot_Traditional is
 
         x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local : Long_Float;
         Contour_Levels_Dummy : Real_Vector(0..1) := (others => 0.0);
-        
+
     begin
         -- Check for compatible lengths in x, y, and z.
         if x'length /= z'length(1) then
@@ -692,7 +692,7 @@ package body PLplot_Traditional is
         if y'length /= z'length(2) then
             Put_Line("*** WARNING: Mismatached y-lengths in Simple_Mesh_3D");
         end if;
-        
+
         -- Set min and max for x and y if they are not the defaults.
         if x_Min = 0.0 and x_Max = 0.0 then -- override
             x_Min_Local := Vector_Min(x);
@@ -701,7 +701,7 @@ package body PLplot_Traditional is
             x_Min_Local := x_Min;
             x_Max_Local := x_Max;
         end if;
-        
+
         if y_Min = 0.0 and y_Max = 0.0 then -- override
             y_Min_Local := Vector_Min(y);
             y_Max_Local := Vector_Max(y);
@@ -709,21 +709,21 @@ package body PLplot_Traditional is
             y_Min_Local := y_Min;
             y_Max_Local := y_Max;
         end if;
-        
+
         Quick_Set_Color_Map_1(Blue_Green_Red); -- no way to restore after doing this
         pladv(Next_Subpage);
         plcol0(White);
         plvpor(0.0, 1.0, 0.0, 1.0);
         plwind(-0.9, 0.9, -0.8, 1.5);
-        plw3d(1.0, 1.0, 1.0, x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local, 
+        plw3d(1.0, 1.0, 1.0, x_Min_Local, x_Max_Local, y_Min_Local, y_Max_Local,
             Matrix_Min(z), Matrix_Max(z), Altitude, Azimuth); -- plw3d
-        plbox3("bnstu", X_Label, 0.0, 0, 
-            "bnstu", Y_Label, 0.0, 0, 
+        plbox3("bnstu", X_Label, 0.0, 0,
+            "bnstu", Y_Label, 0.0, 0,
             "bcdmnstuv", Z_Label, 0.0, 0); -- plbox3
         plmesh(x, y, z, Lines_Parallel_To_X_And_Y + Magnitude_Color); -- plmesh
         plsurf3d(x, y, z, Magnitude_Color, Contour_Levels_Dummy);
     end Simple_Surface_3D;
-        
+
 
 
 --------- Simple color table manipulatons -----
@@ -733,128 +733,128 @@ package body PLplot_Traditional is
     -- Make a snapshot of color map 0 for possible later full or partial restoration.
     -- This is automatically called at package initialization with results stored
     -- in Default_Red_Components, Default_Green_Components, Default_Blue_Components.
-    procedure Make_Snapshot_Of_Color_Map_0 
+    procedure Make_Snapshot_Of_Color_Map_0
        (Reds, Greens, Blues : out Integer_Array_1D) is
     begin
         for i in Reds'range loop
             plgcol0(i, Reds(i), Greens(i), Blues(i));
         end loop;
     end Make_Snapshot_Of_Color_Map_0;
-    
-    
+
+
     -- Restore an arbitray snapshot of color map 0.
     procedure Restore_Snapshot_Of_Color_Map_0
        (Reds, Greens, Blues : Integer_Array_1D) is
     begin
         plscmap0(Reds, Greens, Blues);
     end Restore_Snapshot_Of_Color_Map_0;
-    
-    
+
+
     -- Restore the default colors of color map 0 taken as a snapshot at initialization.
     procedure Restore_Default_Snapshot_Of_Color_Map_0 is
     begin
         plscmap0n(Number_Of_Default_Colors);
         plscmap0(Default_Red_Components, Default_Green_Components, Default_Blue_Components);
     end Restore_Default_Snapshot_Of_Color_Map_0;
-    
-    
+
+
     -- Functions which correspond to the default colors of color map 0. Calling
-    -- one of these (1) resets the corresponding slot in color map 0 to its 
-    -- default value, and (2) returns the correct integer value for the default 
-    -- color specified. Thus, using plcol0(Reset_Red) instead of 
-    -- plcol0(Red) guarantees that the color will be set to Red even if 
+    -- one of these (1) resets the corresponding slot in color map 0 to its
+    -- default value, and (2) returns the correct integer value for the default
+    -- color specified. Thus, using plcol0(Reset_Red) instead of
+    -- plcol0(Red) guarantees that the color will be set to Red even if
     -- there have been prior manipulations of color 1.
-    
+
     function Reset_Black return Integer is
     begin
         plscol0(0, Default_Red_Components(0), Default_Green_Components(0), Default_Blue_Components(0));
         return 0;
     end Reset_Black;
-    
+
     function Reset_Red return Integer is
     begin
         plscol0(1, Default_Red_Components(1), Default_Green_Components(1), Default_Blue_Components(1));
         return 1;
     end Reset_Red;
-    
+
     function Reset_Yellow return Integer is
     begin
         plscol0(2, Default_Red_Components(2), Default_Green_Components(2), Default_Blue_Components(2));
         return 2;
     end Reset_Yellow;
-    
+
     function Reset_Green return Integer is
     begin
         plscol0(3, Default_Red_Components(3), Default_Green_Components(3), Default_Blue_Components(3));
         return 3;
     end Reset_Green;
-    
+
     function Reset_Aquamarine return Integer is
     begin
         plscol0(4, Default_Red_Components(4), Default_Green_Components(4), Default_Blue_Components(4));
         return 4;
     end Reset_Aquamarine;
-    
+
     function Reset_Pink return Integer is
     begin
         plscol0(5, Default_Red_Components(5), Default_Green_Components(5), Default_Blue_Components(5));
         return 5;
     end Reset_Pink;
-    
+
     function Reset_Wheat return Integer is
     begin
         plscol0(6, Default_Red_Components(6), Default_Green_Components(6), Default_Blue_Components(6));
         return 6;
     end Reset_Wheat;
-    
+
     function Reset_Grey return Integer is
     begin
         plscol0(7, Default_Red_Components(7), Default_Green_Components(7), Default_Blue_Components(7));
         return 7;
     end Reset_Grey;
-    
+
     function Reset_Brown return Integer is
     begin
         plscol0(8, Default_Red_Components(8), Default_Green_Components(8), Default_Blue_Components(8));
         return 8;
     end Reset_Brown;
-    
+
     function Reset_Blue return Integer is
     begin
         plscol0(9, Default_Red_Components(9), Default_Green_Components(9), Default_Blue_Components(9));
         return 9;
     end Reset_Blue;
-    
+
     function Reset_BlueViolet return Integer is
     begin
         plscol0(10, Default_Red_Components(10), Default_Green_Components(10), Default_Blue_Components(10));
         return 10;
     end Reset_BlueViolet;
-    
+
     function Reset_Cyan return Integer is
     begin
         plscol0(11, Default_Red_Components(11), Default_Green_Components(11), Default_Blue_Components(11));
         return 11;
     end Reset_Cyan;
-    
+
     function Reset_Turquoise return Integer is
     begin
         plscol0(12, Default_Red_Components(12), Default_Green_Components(12), Default_Blue_Components(12));
         return 12;
     end Reset_Turquoise;
-    
+
     function Reset_Magenta return Integer is
     begin
         plscol0(13, Default_Red_Components(13), Default_Green_Components(13), Default_Blue_Components(13));
         return 13;
     end Reset_Magenta;
-    
+
     function Reset_Salmon return Integer is
     begin
         plscol0(14, Default_Red_Components(14), Default_Green_Components(14), Default_Blue_Components(14));
         return 14;
     end Reset_Salmon;
-    
+
     function Reset_White return Integer is
     begin
         plscol0(15, Default_Red_Components(15), Default_Green_Components(15), Default_Blue_Components(15));
@@ -866,7 +866,7 @@ package body PLplot_Traditional is
 
     -- Quick application of pre-fabricated color schemes to color map 1.
     procedure Quick_Set_Color_Map_1(Color_Theme : Color_Themes_For_Map_1_Type) is
-    
+
         Controls_3 : Real_Vector (0..2); -- 3 control points
         Controls_4 : Real_Vector (0..3); -- 4 control points
         Red_3, Green_3, Blue_3 : Real_Vector (0..2); -- define 3
@@ -881,7 +881,7 @@ package body PLplot_Traditional is
         Controls_3(0) := 0.0;
         Controls_3(1) := 0.5;
         Controls_3(2) := 1.0;
-        
+
         Controls_4(0) := 0.0;
         Controls_4(1) := 0.5; -- allow a "bend" at the mid-point
         Controls_4(2) := 0.5; -- allow a "bend" at the mid-point
@@ -1054,14 +1054,14 @@ package body PLplot_Traditional is
         end case;
     end Quick_Set_Color_Map_1;
 
-        
+
 --------------------------------------------------------------------------------
 --        Auxiliary things                                                    --
 --------------------------------------------------------------------------------
 
     -- This is a mask function for Shade_Regions (aka plshades) et al that always
-    -- returns 1 so that all points are plotted. Can be used as a template 
-    -- for other user-written mask functions. This behaves the same as 
+    -- returns 1 so that all points are plotted. Can be used as a template
+    -- for other user-written mask functions. This behaves the same as
     -- when passing null for the second argument in Shade_Regions.
     function Mask_Function_No_Mask(x, y : Long_Float) return Integer is
     begin
@@ -1074,7 +1074,7 @@ package body PLplot_Traditional is
     procedure Calculate_Contour_Levels
        (Contour_Levels : in out Real_Vector;
         z_Min, z_Max : Long_Float) is
-        
+
         step : Long_Float;
         ii : Integer;
     begin
@@ -1107,9 +1107,9 @@ package body PLplot_Traditional is
         Label_Font_Height  : Long_Float := 0.3;   -- Units are ???
         Label_Spacing      : Long_Float := 0.1;   -- Units are???
         Labels_Active      : Boolean := False) is
-    
+
         active : Integer;
-    
+
     begin
         if Labels_Active then
             active := 1;
@@ -1151,18 +1151,18 @@ package body PLplot_Traditional is
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer      : PL_Pointer) is
     begin
-        PLplot_Thin.plvect(Matrix_To_Pointers(u), Matrix_To_Pointers(v), u'Length(1), u'Length(2), 
+        PLplot_Thin.plvect(Matrix_To_Pointers(u), Matrix_To_Pointers(v), u'Length(1), u'Length(2),
             Scale, Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plvect;
-       
+
 
     -- Set the style for the arrow used by plvect to plot vectors.
     procedure plsvect
        (X_Vertices, Y_Vertices : Real_Vector; -- Should be range -0.5..0.5
         Fill_Arrow             : Boolean) is
-        
+
         fill : PLBOOL;
-        
+
     begin
         if Fill_Arrow then
             fill := PLtrue;
@@ -1172,14 +1172,14 @@ package body PLplot_Traditional is
         PLplot_Thin.plsvect(X_Vertices, Y_Vertices, X_Vertices'length, fill);
     end plsvect;
 
-    
+
     -- Set the default style for the arrow used by plvect to plot vectors.
     procedure plsvect
        (X_Vertices, Y_Vertices : PL_Pointer;
         Fill_Arrow : Boolean) is
-        
+
         fill : PLBOOL;
-        
+
     begin
         if Fill_Arrow then
             fill := PLtrue;
@@ -1189,23 +1189,23 @@ package body PLplot_Traditional is
         PLplot_Thin.plsvectdefault(X_Vertices, Y_Vertices, 0, fill);
     end plsvect;
 
-    
+
     -- Simple method to set the default style for the arrow used by plvect to plot vectors.
     -- This is not part of the C API and is Ada-specific.
     procedure plsvect is
     begin
         PLplot_Thin.plsvectdefault(System.Null_Address, System.Null_Address, 0, PLfalse);
     end plsvect;
-    
- 
+
+
     -- Another simple method to set the default style for the arrow used by plvect to plot vectors.
     -- This is not part of the C API and is Ada-specific.
     procedure Reset_Vector_Arrow_Style is
     begin
         PLplot_Thin.plsvectdefault(System.Null_Address, System.Null_Address, 0, PLfalse);
     end Reset_Vector_Arrow_Style;
-        
-        
+
+
     -- This functions similarly to plbox() except that the origin of the axes
     -- is placed at the user-specified point (x0, y0).
     procedure plaxes
@@ -1242,7 +1242,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plbtime(year, month, day, hour, min, sec, ctime);
     end plbtime;
-        
+
 
     -- Start new page. Should only be used with pleop().
     procedure plbop is
@@ -1288,7 +1288,7 @@ package body PLplot_Traditional is
             To_C(Y_Option_String, True), To_C(Y_Label, True), Y_Major_Tick_Interval, Y_Number_Of_Subintervals,
             To_C(Z_Option_String, True), To_C(Z_Label, True), Z_Major_Tick_Interval, Z_Number_Of_Subintervals);
     end plbox3;
-        
+
 
     -- Calculate world coordinates and subpage from relative device coordinates.
     procedure plcalc_world
@@ -1329,7 +1329,7 @@ package body PLplot_Traditional is
         ifbtime_offset               : Boolean;
         year, month, day, hour, min : Integer;
         sec                          : Long_Float) is
-        
+
         ifbtime_offset_As_Integer : Integer;
     begin
         if ifbtime_offset then
@@ -1354,22 +1354,22 @@ package body PLplot_Traditional is
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer      : PL_Pointer) is
     begin
-        PLplot_Thin.plcont(Matrix_To_Pointers(z), z'Length(1), z'Length(2), 
-            x_Min_Index, x_Max_Index, y_Min_Index, y_Max_Index, Contour_Levels, 
-            Contour_Levels'Length, Transformation_Procedure_Pointer, 
+        PLplot_Thin.plcont(Matrix_To_Pointers(z), z'Length(1), z'Length(2),
+            x_Min_Index, x_Max_Index, y_Min_Index, y_Max_Index, Contour_Levels,
+            Contour_Levels'Length, Transformation_Procedure_Pointer,
             Transformation_Data_Pointer);
     end plcont;
 
 
-    -- The procedure plfcont is not documented and is not part of the API. 
+    -- The procedure plfcont is not documented and is not part of the API.
     -- However, it is a very useful capability to have available.
     -- I have tried to implement it as I think was intended but this may be incorrect.
-    -- It appears as though the intent is to pass the arbitrarily organized 
-    -- data (pointed to by Irregular_Data_Pointer) as a (single) pointer to a 
-    -- 2D C-style array. Thus, for examaple, it is not possible to pass the data  
+    -- It appears as though the intent is to pass the arbitrarily organized
+    -- data (pointed to by Irregular_Data_Pointer) as a (single) pointer to a
+    -- 2D C-style array. Thus, for examaple, it is not possible to pass the data
     -- as triples.
     -- For further conversion insight, see plcont, above.
-    
+
     -- Draws a contour plot using the function evaluator f2eval and data stored
     -- by way of the f2eval_data pointer. This allows arbitrary organizations
     -- of 2d array data to be used.
@@ -1383,8 +1383,8 @@ package body PLplot_Traditional is
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data              : Transformation_Data_Type) is
 
-        -- This is a good place to change from the convenient form of passing 
-        -- the transformation data (a record) to the form required by the PLplot 
+        -- This is a good place to change from the convenient form of passing
+        -- the transformation data (a record) to the form required by the PLplot
         -- API (a pointer); same for the irregularly spaced data matrix.
         Transformation_Data_Address : PL_Pointer;
         Irregular_Data_Address      : PL_Pointer;
@@ -1392,10 +1392,10 @@ package body PLplot_Traditional is
         Transformation_Data_Address := Transformation_Data'Address;
         Irregular_Data_Address      := Irregular_Data'Address;
 
-        PLplot_Thin.plfcont(Function_Evaluator_Pointer, Irregular_Data_Address, 
-            Irregular_Data'Length(1), Irregular_Data'Length(2), 
-            x_Min_Index, x_Max_Index, y_Min_Index, y_Max_Index, 
-            Contour_Levels, Contour_Levels'Length, 
+        PLplot_Thin.plfcont(Function_Evaluator_Pointer, Irregular_Data_Address,
+            Irregular_Data'Length(1), Irregular_Data'Length(2),
+            x_Min_Index, x_Max_Index, y_Min_Index, y_Max_Index,
+            Contour_Levels, Contour_Levels'Length,
             Transformation_Procedure_Pointer, Transformation_Data_Address);
     end plfcont;
 
@@ -1404,9 +1404,9 @@ package body PLplot_Traditional is
     procedure plcpstrm
        (Stream_ID                      : Integer;
         Do_Not_Copy_Device_Coordinates : Boolean) is
-    
+
         PL_Do_Not_Copy_Device_Coordinates : PLBOOL;
-        
+
     begin
         if Do_Not_Copy_Device_Coordinates then
             PL_Do_Not_Copy_Device_Coordinates := PLtrue;
@@ -1507,11 +1507,11 @@ package body PLplot_Traditional is
         PLplot_Thin.plfamadv;
     end plfamadv;
 
-    -- Other "fill" routines similar to plfill could be written in Ada if 
-    -- desired, but if they are intended to be used as callbacks in subprograms 
-    -- such as plshade, plshade1, and plshades, they should be called with C 
+    -- Other "fill" routines similar to plfill could be written in Ada if
+    -- desired, but if they are intended to be used as callbacks in subprograms
+    -- such as plshade, plshade1, and plshades, they should be called with C
     -- calling conventions.
-    
+
     -- Pattern fills the polygon bounded by the input points.
     procedure plfill(x, y : Real_Vector) is -- might have to put n:Integer first
     begin
@@ -1660,9 +1660,9 @@ package body PLplot_Traditional is
        (Family_Enabled : out Boolean;
         Family_File_Number : out Integer;
         Maximum_File_Size : out Integer) is
-        
+
         PL_Family_Enabled : PLBOOL;
-        
+
     begin
         PLplot_Thin.plgfam(PL_Family_Enabled, Family_File_Number, Maximum_File_Size);
         if PL_Family_Enabled = 0 then
@@ -1727,11 +1727,11 @@ package body PLplot_Traditional is
         Gridding_Algorithm     : Gridding_Algorithm_Type;
         Griding_Algorithm_Data : Long_Float) is
     begin
-        -- Note that since z_Gridded is converted to and passed as an array of 
-        -- pointers, this is effectively the same as pass-by-reference so 
+        -- Note that since z_Gridded is converted to and passed as an array of
+        -- pointers, this is effectively the same as pass-by-reference so
         -- "in out" is not required for the formal argument zg in plgriddata.
-        PLplot_Thin.plgriddata(x, y, z, x'Length, x_Grid, x_Grid'Length, y_Grid, y_Grid'Length, 
-            Matrix_To_Pointers(z_Gridded), Gridding_Algorithm, Griding_Algorithm_Data);            
+        PLplot_Thin.plgriddata(x, y, z, x'Length, x_Grid, x_Grid'Length, y_Grid, y_Grid'Length,
+            Matrix_To_Pointers(z_Gridded), Gridding_Algorithm, Griding_Algorithm_Data);
     end plgriddata;
 
 
@@ -1860,9 +1860,9 @@ package body PLplot_Traditional is
     end pllab;
 
 
-    -- Arrays that could have elements of Plot_Color_Type are merely arrays of 
-    -- integers; we have not defined special arrays (e.g., array(somerange) of 
-    -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors, 
+    -- Arrays that could have elements of Plot_Color_Type are merely arrays of
+    -- integers; we have not defined special arrays (e.g., array(somerange) of
+    -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors,
     -- or Symbol_Colors. Similarly for Entry_Options which could be an array
     -- of Legend_Flag_Type and some other arguments. fixme
     -- Routine for drawing discrete line, symbol, or cmap0 legends
@@ -1899,21 +1899,21 @@ package body PLplot_Traditional is
         -- Check that all array lengths in the argument list are the same.
         L := Entry_Options'length;
         if L /= Text_Colors'length or L /= Label_Text'length or L /= Box_Colors'length or
-            L /= Box_Patterns'length or L /= Box_Scales'length or 
+            L /= Box_Patterns'length or L /= Box_Scales'length or
             L /= Box_Line_Widths'length or L /= Line_Colors'length or L /= Line_Styles'length or
             L /= Line_Widths'length or L /= Symbol_Colors'length or L /= Symbol_Scales'length or
             L /= Symbol_Numbers'length or L /= Symbols'length
         then
             Put_Line("*** WARNING: Mismatched array lengths at pllegend");
         end if;
-        
+
         -- Adapt Label_Text and Symbols to C. See the comment at plstripc.
         -- Adapt Label_Text first.
         for I in Label_Text'range loop
 
             -- Check length and adjust if necessary.
             if Length(Label_Text(I)) >= Max_Legend_Label_Length then
-                Put_Line("*** Warning: Legend label was truncated to" 
+                Put_Line("*** Warning: Legend label was truncated to"
                     & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
                 Dum_Text(I) := Head(Label_Text(I), Max_Legend_Label_Length);
             else
@@ -1921,8 +1921,8 @@ package body PLplot_Traditional is
             end if;
 
             -- Make the C-style string with null character and spaces immediately after the text.
-            C_Legend_String_Array(I) := To_C(To_String(Dum_Text(I) 
-                & Character'val(0) 
+            C_Legend_String_Array(I) := To_C(To_String(Dum_Text(I)
+                & Character'val(0)
                 & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
 
             -- Set the I-th pointer in the array of pointers.
@@ -1934,7 +1934,7 @@ package body PLplot_Traditional is
 
             -- Check length and adjust if necessary.
             if Length(Symbols(I)) >= Max_Legend_Label_Length then
-                Put_Line("*** Warning: Legend symbols label was truncated to" 
+                Put_Line("*** Warning: Legend symbols label was truncated to"
                     & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
                 Dum_Text(I) := Head(Symbols(I), Max_Legend_Label_Length);
             else
@@ -1942,17 +1942,17 @@ package body PLplot_Traditional is
             end if;
 
             -- Make the C-style string with null character and spaces immediately after the text.
-            C_Symbols_String_Array(I) := To_C(To_String(Dum_Text(I) 
-                & Character'val(0) 
+            C_Symbols_String_Array(I) := To_C(To_String(Dum_Text(I)
+                & Character'val(0)
                 & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
 
             -- Set the I-th pointer in the array of pointers.
             PL_Symbols(I) := C_Symbols_String_Array(I)'Address;
-        end loop;            
+        end loop;
 
         PLplot_Thin.pllegend(Legend_Width, Legend_Height, Options, Position,
             X_Offset, Y_Offset, Plot_Area_Width, Background_Color, Bounding_Box_Color,
-            Bounding_Box_Style, Number_Rows, Number_Columns, Number_Entries, 
+            Bounding_Box_Style, Number_Rows, Number_Columns, Number_Entries,
             Entry_Options, Text_Offset, Text_Scale, Text_Spacing, Text_Justification,
             Text_Colors, PL_Label_Text, Box_Colors, Box_Patterns, Box_Scales,
             Box_Line_Widths, Line_Colors, Line_Styles, Line_Widths, Symbol_Colors,
@@ -1971,7 +1971,7 @@ package body PLplot_Traditional is
         Low_Cap_Color, High_Cap_Color        : Long_Float;
         Contour_Color_For_Shade              : Plot_Color_Type;
         Contour_Width_For_Shade              : Long_Float;
-        Label_Options                        : Integer_Array_1D; 
+        Label_Options                        : Integer_Array_1D;
         Label_Text                           : Legend_String_Array_Type;
         Axis_Options                         : Legend_String_Array_Type;
         Tick_Spacing                         : Real_Vector;
@@ -2003,7 +2003,7 @@ package body PLplot_Traditional is
 
             -- Check length and adjust if necessary.
             if Length(Label_Text(I)) >= Max_Legend_Label_Length then
-                Put_Line("*** Warning: Colorbar label was truncated to" 
+                Put_Line("*** Warning: Colorbar label was truncated to"
                     & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
                 Dum_Text(I) := Head(Label_Text(I), Max_Legend_Label_Length);
             else
@@ -2011,8 +2011,8 @@ package body PLplot_Traditional is
             end if;
 
             -- Make the C-style string with null character and spaces immediately after the text.
-            C_Legend_String_Array(I) := To_C(To_String(Dum_Text(I) 
-                & Character'val(0) 
+            C_Legend_String_Array(I) := To_C(To_String(Dum_Text(I)
+                & Character'val(0)
                 & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
 
             -- Set the I-th pointer in the array of pointers.
@@ -2024,7 +2024,7 @@ package body PLplot_Traditional is
 
             -- Check length and adjust if necessary.
             if Length(Axis_Options(I)) >= Max_Legend_Label_Length then
-                Put_Line("*** Warning: Colorbar asix options label was truncated to" 
+                Put_Line("*** Warning: Colorbar asix options label was truncated to"
                     & Integer'Image(Max_Legend_Label_Length) & " characters. ***");
                 Dum_Text(I) := Head(Axis_Options(I), Max_Legend_Label_Length);
             else
@@ -2032,23 +2032,23 @@ package body PLplot_Traditional is
             end if;
 
             -- Make the C-style string with null character and spaces immediately after the text.
-            C_Axis_Options_String_Array(I) := To_C(To_String(Dum_Text(I) 
-                & Character'val(0) 
+            C_Axis_Options_String_Array(I) := To_C(To_String(Dum_Text(I)
+                & Character'val(0)
                 & (Max_Legend_Label_Length - Length(Dum_Text(I))) * " "), False);
 
             -- Set the I-th pointer in the array of pointers.
             PL_Axis_Options(I) := C_Axis_Options_String_Array(I)'Address;
-        end loop;            
+        end loop;
 
         -- Adapt values in a similar way as Label_Text: make an array of pointers to Real_Vector.
         -- We need to transpose because we present the Values matrix to the user as described in the
         -- PLplot documentation for plcolorbar as rows indexing axes and columns indexing the axis
         -- values, and Matrix_To_Pointers wants things the other way.
         PL_Values := Matrix_To_Pointers(PLplot_Thin.PL_Transpose(Values));
-        PLplot_Thin.plcolorbar(Colorbar_Width, Colorbar_Height, Options, Position, X_Offset, 
+        PLplot_Thin.plcolorbar(Colorbar_Width, Colorbar_Height, Options, Position, X_Offset,
             Y_Offset, X_Length, Y_Length, Background_Color, Bounding_Box_Color, Bounding_Box_Style,
             Low_Cap_Color, High_Cap_Color, Contour_Color_For_Shade, Contour_Width_For_Shade,
-            Number_Labels, Label_Options, PL_Label_Text, Number_Axes, 
+            Number_Labels, Label_Options, PL_Label_Text, Number_Axes,
             PL_Axis_Options, Tick_Spacing, Number_Subticks, Number_Values, PL_Values);
     end plcolorbar;
 
@@ -2084,8 +2084,8 @@ package body PLplot_Traditional is
     end pllsty;
 
 
-    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
-    -- possibly eliminate the need to pass array size as the first argument in 
+    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to
+    -- possibly eliminate the need to pass array size as the first argument in
     -- the function pointed to by Map_Form_Function_Pointer. Ditto for plmeridians.
 
     -- Plot continental outline in world coordinates.
@@ -2094,7 +2094,7 @@ package body PLplot_Traditional is
         Map_Kind                             : Map_Type;
         Minimum_Longitude, Maximum_Longitude : Long_Float;
         Minimum_Latitude,  Maximum_Latitude  : Long_Float) is
-        
+
         Map_Kind_String : Unbounded_String;
     begin
         -- Convert Map_Kind into a string; later, a C string.
@@ -2116,8 +2116,8 @@ package body PLplot_Traditional is
                     Map_Kind_String := TUB("usaglobe");
                 end;
         end case;
-        
-        PLplot_Thin.plmap(Map_Form_Function_Pointer, To_C(To_String(Map_Kind_String), True), 
+
+        PLplot_Thin.plmap(Map_Form_Function_Pointer, To_C(To_String(Map_Kind_String), True),
             Minimum_Longitude, Maximum_Longitude, Minimum_Latitude, Maximum_Latitude);
     end plmap;
 
@@ -2194,7 +2194,7 @@ package body PLplot_Traditional is
 
     -- Plot map points.
     procedure plmapstring
-       (Map_Form_Function_Pointer : Map_Form_Function_Pointer_Type; 
+       (Map_Form_Function_Pointer : Map_Form_Function_Pointer_Type;
         Shapefile_File_Name : String;
         Min_X, Max_X, Min_Y, Max_Y : Long_Float;
         Plot_Entries : Integer_Array_1D) is
@@ -2228,7 +2228,7 @@ package body PLplot_Traditional is
         Minimum_Longitude, Maximum_Longitude : Long_Float;
         Minimum_Latitude,  Maximum_Latitude  : Long_Float) is
     begin
-        PLplot_Thin.plmeridians(Map_Form_Function_Pointer, Delta_Longitude, Delta_Latitude, 
+        PLplot_Thin.plmeridians(Map_Form_Function_Pointer, Delta_Longitude, Delta_Latitude,
             Minimum_Longitude, Maximum_Longitude, Minimum_Latitude, Maximum_Latitude);
     end plmeridians;
 
@@ -2238,7 +2238,7 @@ package body PLplot_Traditional is
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
         Options : Integer) is
-    begin        
+    begin
         PLplot_Thin.plmesh(x, y, Matrix_To_Pointers(z), x'Length, y'Length, Options);
     end plmesh;
 
@@ -2249,7 +2249,7 @@ package body PLplot_Traditional is
         z              : Real_Matrix; -- height of surface at definition points
         Options        : Integer;
         Contour_Levels : Real_Vector) is -- levels at which to draw contours
-    begin        
+    begin
         PLplot_Thin.plmeshc(x, y, Matrix_To_Pointers(z), x'Length, y'Length, Options, Contour_Levels, Contour_Levels'Length);
     end plmeshc;
 
@@ -2291,10 +2291,10 @@ package body PLplot_Traditional is
        (x, y    : Real_Vector; -- surface definition points
         z       : Real_Matrix; -- height of surface at definition points
         Options : Integer;
-        Sides   : Boolean) is -- draw sides?    
+        Sides   : Boolean) is -- draw sides?
 
         PLsides : PLBOOL;
-    
+
     begin
         if Sides then
             PLsides := PLtrue;
@@ -2311,7 +2311,7 @@ package body PLplot_Traditional is
         z              : Real_Matrix; -- height of surface at definition points
         Options        : Integer;
         Contour_Levels : Real_Vector) is -- levels at which to draw contours
-    begin        
+    begin
         PLplot_Thin.plot3dc(x, y, Matrix_To_Pointers(z), x'Length, y'Length, Options, Contour_Levels, Contour_Levels'Length);
     end plot3dc;
 
@@ -2326,10 +2326,10 @@ package body PLplot_Traditional is
         Contour_Levels       : Real_Vector;
         ixstart, ixn         : Integer;
         indexymin, indexymax : Integer_Array_1D) is -- levels at which to draw contours
-    begin        
+    begin
         PLplot_Thin.plot3dcl(x, y, Matrix_To_Pointers(z), x'Length, y'Length, Options, Contour_Levels, Contour_Levels'Length, ixstart, ixn, indexymin, indexymax);
     end plot3dcl;
- 
+
 
     -- Set fill pattern directly.
     procedure plpat
@@ -2356,7 +2356,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plpoin(x'Length, x, y, Symbol_As_Number);
     end plpoin;
-    
+
 
 
     -- Draws a series of points in 3 space.
@@ -2373,17 +2373,17 @@ package body PLplot_Traditional is
        (x, y, z : Real_Vector;
         Draw_Segments : Boolean_Array_1D;
         Draw_Counterclockwise : Boolean) is
-    
+
         PL_Draw_Segments : PL_Bool_Array(Draw_Segments'range);
         PL_Draw_Counterclockwise : PLBOOL;
-    
+
     begin
         if Draw_Counterclockwise then
             PL_Draw_Counterclockwise := PLTrue;
         else
             PL_Draw_Counterclockwise := PLfalse;
         end if;
-        
+
         for Index in Draw_Segments'range loop
             if Draw_Segments(Index) then
                 PL_Draw_Segments(Index) := PLtrue;
@@ -2434,7 +2434,7 @@ package body PLplot_Traditional is
         Justification             : Long_Float;
         The_Text                  : String) is
     begin
-        PLplot_Thin.plptex3(x, y, z, Delta_X, Delta_Y, Delta_Z, Shear_X, Shear_Y, Shear_Z, 
+        PLplot_Thin.plptex3(x, y, z, Delta_X, Delta_Y, Delta_Z, Shear_X, Shear_Y, Shear_Z,
             Justification, To_C(The_Text, True));
     end plptex3;
 
@@ -2514,7 +2514,7 @@ package body PLplot_Traditional is
     -- Set color map 1 colors by 8 bit RGB values
     procedure plscmap1
        (Red_Component, Green_Component, Blue_Component : Integer_0_255_Array) is
-       
+
        PL_Red_Component, PL_Green_Component, PL_Blue_Component : Integer_Array_1D(Red_Component'range);
     begin
         -- Copy constrained color integers to unconstrained integers.
@@ -2531,7 +2531,7 @@ package body PLplot_Traditional is
     procedure plscmap1a
        (Red_Component, Green_Component, Blue_Component : Integer_0_255_Array;
         Alpha                                          : Real_Vector) is
-       
+
        PL_Red_Component, PL_Green_Component, PL_Blue_Component : Integer_Array_1D(Red_Component'range);
     begin
         -- Copy constrained color integers to unconstrained integers.
@@ -2554,18 +2554,18 @@ package body PLplot_Traditional is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alt_Hue_Path   : Boolean_Array_1D) is -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
-        
+
         PL_Color_Model : PLBOOL;
         PL_Alt_Hue_Path : PL_Bool_Array (Alt_Hue_Path'range);
-        
+
     begin
         -- Check for consistent array lengths.
         if  Control_Points'length /= H_Or_R'length or Control_Points'length /= L_or_G'length or
-            Control_Points'length /= S_Or_B'length or Control_Points'length /= Alt_Hue_Path'length 
+            Control_Points'length /= S_Or_B'length or Control_Points'length /= Alt_Hue_Path'length
         then
             Put_Line("*** WARNING: Inconsistent array lengths when setting color map 1 ***");
         end if;
-        
+
         if Color_Model = RGB then
             PL_Color_Model := PLtrue;
         else
@@ -2582,8 +2582,8 @@ package body PLplot_Traditional is
 
         PLplot_Thin.plscmap1l(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, PL_Alt_Hue_Path);
     end plscmap1l;
-    
-    
+
+
     -- Overloaded version of plscmap1l which allows simplified (alt_hue_path false) interpolation.
     -- This is an Ada-like way of doing what is described
     -- in the PLplot documentation when a C user passes a null pointer as the
@@ -2597,7 +2597,7 @@ package body PLplot_Traditional is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alt_Hue_Path    : Alt_Hue_Path_Type) is
-        
+
         Alt_Hue_Path_Array : Boolean_Array_1D(Control_Points'range);
     begin
         if Alt_Hue_Path = Alt_Hue_Path_All then
@@ -2624,14 +2624,14 @@ package body PLplot_Traditional is
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alt_Hue_Path    : Boolean_Array_1D) is -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
-        
+
         PL_Color_Model : PLBOOL;
         PL_Alt_Hue_Path : PL_Bool_Array (Alt_Hue_Path'range);
-        
+
     begin
         -- Check for consistent array lengths.
         if  Control_Points'length /= H_Or_R'length or Control_Points'length /= L_or_G'length or
-            Control_Points'length /= S_Or_B'length or Control_Points'length /= Alt_Hue_Path'length 
+            Control_Points'length /= S_Or_B'length or Control_Points'length /= Alt_Hue_Path'length
         then
             Put_Line("*** WARNING: Inconsistent array lengths when setting color map 1 ***");
         end if;
@@ -2652,8 +2652,8 @@ package body PLplot_Traditional is
 
         PLplot_Thin.plscmap1la(PL_Color_Model, Control_Points'Length, Control_Points, H_Or_R, L_Or_G, S_Or_B, Alpha, PL_Alt_Hue_Path);
     end plscmap1la;
-    
-    
+
+
     -- Overloaded version of plscmap1la which allows simplified (alt_hue_path false) interpolation.
     -- This is an Ada-like way of doing what is described
     -- in the PLplot documentation when a C user passes a null pointer as the
@@ -2667,7 +2667,7 @@ package body PLplot_Traditional is
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alt_Hue_Path    : Alt_Hue_Path_Type) is
-        
+
         Alt_Hue_Path_Array : Boolean_Array_1D(Control_Points'range);
     begin
         if Alt_Hue_Path = Alt_Hue_Path_All then
@@ -2711,7 +2711,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plscol0(Plot_Color, Red_Component, Green_Component, Blue_Component);
     end plscol0;
-    
+
 
     -- Set a given color from color map 0 by 8 bit RGB value and alpha value
     procedure plscol0a
@@ -2744,7 +2744,7 @@ package body PLplot_Traditional is
     procedure plscolor(Enable_Color : Boolean) is
 
         PL_Enable_Color : PLBOOL;
-        
+
     begin
         if Enable_Color then
             PL_Enable_Color := 1;
@@ -2792,7 +2792,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plsdimap(dimxmin, dimxmax, dimymin, dimymax, dimxpmm, dimypmm);
     end plsdimap;
-    
+
 
     -- Set plot orientation, specifying rotation in units of pi/2.
     procedure plsdiori(Rotation : Long_Float) is
@@ -2810,7 +2810,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plsdiplt(x_Min, y_Min, x_Max, y_Max);
     end plsdiplt;
-    
+
 
     -- Set window into plot space incrementally (zoom)
     procedure plsdiplz
@@ -2832,13 +2832,13 @@ package body PLplot_Traditional is
 
     -- Set the escape character for text strings.
     procedure plsesc(Escape_Character : Character) is
-    
+
         Escape_Characters : Ada.Strings.Maps.Character_Set;
-        
+
     begin
 
         Escape_Characters := Ada.Strings.Maps.To_Set("!#$%&*@^~");
-        
+
         if Ada.Strings.Maps.Is_In(Escape_Character, Escape_Characters) then
             PLplot_Thin.plsesc(To_C(Escape_Character));
         else
@@ -2852,9 +2852,9 @@ package body PLplot_Traditional is
        (Enable_Family : Boolean;
         Family_File_Number : Integer := 1;
         Maximum_File_Size : Integer := 1_000_000) is
-    
+
         PL_Enable_Family : PLBOOL;
-        
+
     begin
         if Enable_Family then
             PL_Enable_Family := 1;
@@ -2870,8 +2870,8 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plsfci(Font_Characterization_Integer);
     end plsfci;
-    
-    
+
+
     -- Set the font family, style and weight
     procedure plsfont(Family, Style, Weight : Integer) is
     begin
@@ -2911,12 +2911,12 @@ package body PLplot_Traditional is
         else
             Preserve_Rectangles_As_Integer := 0;
         end if;
-        
+
         PLplot_Thin.plshade(Matrix_To_Pointers(z), z'Length(1), z'Length(2), Mask_Function_Pointer,
-            x_Min, x_Max, y_Min, y_Max, Shade_Min, Shade_Max, Select_Color_Map, 
-            Color, Fill_Pattern_Pen_Width, 
-            Shade_Min_Pen_Color, Shade_Min_Pen_Width, 
-            Shade_Max_Pen_Color, Shade_Max_Pen_Width, 
+            x_Min, x_Max, y_Min, y_Max, Shade_Min, Shade_Max, Select_Color_Map,
+            Color, Fill_Pattern_Pen_Width,
+            Shade_Min_Pen_Color, Shade_Min_Pen_Width,
+            Shade_Max_Pen_Color, Shade_Max_Pen_Width,
             Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer,
             Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plshade;
@@ -2946,13 +2946,13 @@ package body PLplot_Traditional is
         else
             Preserve_Rectangles_As_Integer := 0;
         end if;
-        
+
         PLplot_Thin.plshade1(z, z'Length(1), z'Length(2), Mask_Function_Pointer,
-            x_Min, x_Max, y_Min, y_Max, Shade_Min, Shade_Max, Select_Color_Map, 
-            Color, Fill_Pattern_Pen_Width, 
-            Shade_Min_Pen_Color, Shade_Min_Pen_Width, 
-            Shade_Max_Pen_Color, Shade_Max_Pen_Width, 
-            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer, 
+            x_Min, x_Max, y_Min, y_Max, Shade_Min, Shade_Max, Select_Color_Map,
+            Color, Fill_Pattern_Pen_Width,
+            Shade_Min_Pen_Color, Shade_Min_Pen_Width,
+            Shade_Max_Pen_Color, Shade_Max_Pen_Width,
+            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer,
             Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plshade1;
 
@@ -2977,17 +2977,17 @@ package body PLplot_Traditional is
         else
             Preserve_Rectangles_As_Integer := 0;
         end if;
-        
-        PLplot_Thin.plshades(Matrix_To_Pointers(z), z'Length(1), z'Length(2), Mask_Function_Pointer, 
-            x_Min, x_Max, y_Min, y_Max, Contour_Levels, Contour_Levels'Length, 
-            Fill_Pattern_Pen_Width, Contour_Pen_Color, Contour_Pen_Width, 
-            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer, 
+
+        PLplot_Thin.plshades(Matrix_To_Pointers(z), z'Length(1), z'Length(2), Mask_Function_Pointer,
+            x_Min, x_Max, y_Min, y_Max, Contour_Levels, Contour_Levels'Length,
+            Fill_Pattern_Pen_Width, Contour_Pen_Color, Contour_Pen_Width,
+            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer,
             Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plshades;
 
-    
-    -- The procedure plfshade is not part of the API. If it should be necessary 
-    -- to make it available to Ada programs, use the binding to plfcont in this 
+
+    -- The procedure plfshade is not part of the API. If it should be necessary
+    -- to make it available to Ada programs, use the binding to plfcont in this
     -- file as a guidline.
 
     -- fix this
@@ -3014,8 +3014,8 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plslabelfunc(Custom_Label_Procedure_Pointer, label_data);
     end plslabelfunc;
-    
-    
+
+
     -- Reset to default labeling. Not part of the C API.
     procedure Use_Default_Labels is
     begin
@@ -3076,9 +3076,9 @@ package body PLplot_Traditional is
 
     -- Set the colors for color table 1 from a cmap1 file.
     procedure plspal1(Color_File_Name : String; Interpolate : Boolean) is
-    
+
         PL_Interpolate : PLBOOL;
-        
+
     begin
         if Interpolate then
             PL_Interpolate := PLtrue;
@@ -3091,9 +3091,9 @@ package body PLplot_Traditional is
 
     -- Set the pause (on end-of-page) status
     procedure plspause(Pause : Boolean) is
-    
+
         PL_Pause : PLBOOL;
-    
+
     begin
         if Pause then
             PL_Pause := PLtrue;
@@ -3150,8 +3150,8 @@ package body PLplot_Traditional is
         PLplot_Thin.plstransform(Coordinate_Transform_Procedure_Pointer,
             Coordinate_Transform_Data_Pointer);
     end plstransform;
-    
-    
+
+
     -- Clear the coordinate transform. Ada only; not part of the C API.
     procedure Clear_Custom_Coordinate_Transform is
     begin
@@ -3210,10 +3210,10 @@ package body PLplot_Traditional is
         Line_Styles                          : Integer_Array_1D;
         Pen_Labels                           : in out Stripchart_Label_String_Array_Type;
         X_Label, Y_Label, Title_Label        : String := To_String(Default_Label_String)) is
-        
+
         PL_Autoscale_Y, PL_Accumulate : PLBOOL;
         PL_Pen_Labels : PL_Stripchart_String_Array;
-        
+
         x_LP : Long_Float renames x_Legend_Position;
         y_LP : Long_Float renames y_Legend_Position;
 
@@ -3223,42 +3223,42 @@ package body PLplot_Traditional is
         else
             PL_Autoscale_Y := PLfalse;
         end if;
-        
+
         if Accumulate then
             PL_Accumulate := PLtrue;
         else
             PL_Accumulate := PLfalse;
         end if;
-        
-        -- Adapt strings for Pen_Labels to C. We have to pass an array of 
-        -- pointers (here, System.Address) to C-style strings, except that the 
+
+        -- Adapt strings for Pen_Labels to C. We have to pass an array of
+        -- pointers (here, System.Address) to C-style strings, except that the
         -- C-style strings usually have the null terminator somewhere in the
         -- middle of the allocated string memory, after the "significant text."
-        -- I'm not sure if C allocates the memory or not--probably not, since 
-        -- this is not a callback as in plslabelfunc where string memory was 
+        -- I'm not sure if C allocates the memory or not--probably not, since
+        -- this is not a callback as in plslabelfunc where string memory was
         -- allocated by the intervening C code. Here, the C string length is set
         -- by Max_Stripchart_Label_Length, ranging 0 .. Max_Stripchart_Label_Length.
         for I in Pen_Labels'range loop
 
             -- Check length and adjust if necessary.
             if Length(Pen_Labels(I)) >= Max_Stripchart_Label_Length then
-                Put_Line("*** Warning: Stripchart label was truncated to" 
+                Put_Line("*** Warning: Stripchart label was truncated to"
                     & Integer'Image(Max_Stripchart_Label_Length) & " characters. ***");
                 Pen_Labels(I) := Head(Pen_Labels(I), Max_Stripchart_Label_Length);
             end if;
 
             -- Make the C-style string with null character immediately after the text.
-            C_Stripchart_String_Array(I) := To_C(To_String(Pen_Labels(I) 
-                & Character'val(0) 
+            C_Stripchart_String_Array(I) := To_C(To_String(Pen_Labels(I)
+                & Character'val(0)
                 & (Max_Stripchart_Label_Length - Length(Pen_Labels(I))) * " "), False);
 
             -- Set the I-th pointer in the array of pointers.
             PL_Pen_Labels(I) := C_Stripchart_String_Array(I)'Address;
         end loop;
-        
-        PLplot_Thin.plstripc(ID, To_C(X_Options), To_C(Y_Options), 
-            x_Min, x_Max, x_Jump, y_Min, y_Max, x_LP, y_LP, PL_Autoscale_Y, 
-            PL_Accumulate, Box_Color, Legend_Color, Pen_Colors, Line_Styles, 
+
+        PLplot_Thin.plstripc(ID, To_C(X_Options), To_C(Y_Options),
+            x_Min, x_Max, x_Jump, y_Min, y_Max, x_LP, y_LP, PL_Autoscale_Y,
+            PL_Accumulate, Box_Color, Legend_Color, Pen_Colors, Line_Styles,
             PL_Pen_Labels, To_C(x_Label), To_C(y_Label), To_C(Title_Label));
     end plstripc;
 
@@ -3280,8 +3280,8 @@ package body PLplot_Traditional is
         Transformation_Procedure_Pointer : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer      : PL_Pointer) is
     begin
-        PLplot_Thin.plimagefr(Matrix_To_Pointers(Data), Data'Length(1), Data'Length(2), 
-            x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Value_Min, Value_Max, 
+        PLplot_Thin.plimagefr(Matrix_To_Pointers(Data), Data'Length(1), Data'Length(2),
+            x_Min, x_Max, y_Min, y_Max, z_Min, z_Max, Value_Min, Value_Max,
             Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end plimagefr;
 
@@ -3319,7 +3319,7 @@ package body PLplot_Traditional is
        (x, y           : Real_Vector; -- surface definition points
         z              : Real_Matrix; -- height of surface at definition points
         Options        : Integer;
-        Contour_Levels : Real_Vector) is -- levels at which to draw contours        
+        Contour_Levels : Real_Vector) is -- levels at which to draw contours
     begin
         PLplot_Thin.plsurf3d(x, y, Matrix_To_Pointers(z), x'Length, y'Length, Options, Contour_Levels, Contour_Levels'Length);
     end plsurf3d;
@@ -3378,7 +3378,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.plsxwin(Window_ID);
     end plsxwin;
-    
+
 
     -- Set y axis labeling parameters
     -- "digits" changed to "field_digits".
@@ -3485,22 +3485,22 @@ package body PLplot_Traditional is
     end plwind;
 
 
-    -- set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device 
+    -- set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device
     procedure plxormod
        (Use_XOR : Boolean;
         Supports_XOR : out Boolean) is
-        
+
         PL_Use_XOR, PL_Supports_XOR : PLBOOL;
-        
+
     begin
         if Use_XOR then
             PL_Use_XOR := PLtrue;
         else
             PL_Use_XOR := PLfalse;
         end if;
-        
+
         PLplot_Thin.plxormod(PL_Use_XOR, PL_Supports_XOR);
-        
+
         if PL_Supports_XOR = PLtrue then
             Supports_XOR := True;
         elsif PL_Supports_XOR = PLfalse then
@@ -3553,15 +3553,15 @@ package body PLplot_Traditional is
 	-- Transformation routines
 
     -- fix this These functions are redundant with those in plplot_thin.
-    -- This might be OK since they are now available at all levels of binding. 
-    -- I wonder if this is approaching "wrapper bloat" since these procedures 
-    -- get called a lot of times during the making of a contour plot. 
-    -- The way to eliminate one level of calling would be to move the bodies 
-    -- of pltr? from plplot_thin.adb into plplot_traditional.adb and 
-    -- plplot.adb, then optionally eliminating the bodies from plplot_thin.adb 
-    -- on the idea that nobody is going to use them anyway. But even if the 
-    -- bodies were left in plplot_thin.adb, having them here would still 
-    -- remove the extra call level. The argument for the currend arrangement is 
+    -- This might be OK since they are now available at all levels of binding.
+    -- I wonder if this is approaching "wrapper bloat" since these procedures
+    -- get called a lot of times during the making of a contour plot.
+    -- The way to eliminate one level of calling would be to move the bodies
+    -- of pltr? from plplot_thin.adb into plplot_traditional.adb and
+    -- plplot.adb, then optionally eliminating the bodies from plplot_thin.adb
+    -- on the idea that nobody is going to use them anyway. But even if the
+    -- bodies were left in plplot_thin.adb, having them here would still
+    -- remove the extra call level. The argument for the currend arrangement is
     -- easier code maintainence.
 
     -- Identity transformation.
@@ -3572,7 +3572,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.pltr0(x_Grid, y_Grid, x_World, y_World, Data);
     end pltr0;
-        
+
 
     -- Does linear interpolation from singly dimensioned coord arrays.
     procedure pltr1
@@ -3593,7 +3593,7 @@ package body PLplot_Traditional is
     begin
         PLplot_Thin.pltr2(x_Grid, y_Grid, x_World, y_World, Data_Pointer);
     end pltr2;
-        
+
 
     -- Wait for graphics input event and translate to world coordinates.
     procedure plGetCursor(Graphics_Input : out PLGraphicsIn) is
@@ -3606,25 +3606,25 @@ begin -- package body for PLplot
     -- NOTE: One would ordinarily call the initialization procedure at this point.
     -- However, PLplot has several optional procedures that, if used, must be
     -- called _before_ the initializaiton, here called Initialize_PLplot (plinit).
-    -- Therefore, Initialize_PLplot (plinit) MUST BE CALLED FROM THE USER'S PROGRAM, 
+    -- Therefore, Initialize_PLplot (plinit) MUST BE CALLED FROM THE USER'S PROGRAM,
     -- before beginning normal plotting but AFTER any optional pre-initialization.
 
-    -- The following lines marked by ========= are some examples of how the 
-    -- entire initialzation can be done here if the user wants to do so, and is 
+    -- The following lines marked by ========= are some examples of how the
+    -- entire initialzation can be done here if the user wants to do so, and is
     -- willing to uncomment these lines and/or add new lines.
 
     -- =========================================================================
-    -- Set_Compression_Level (plscompression) should be called before 
+    -- Set_Compression_Level (plscompression) should be called before
     -- Initialize_PLplot (plinit) when it is needed.
     -- There should be a list of devices which use compression, and
-    -- Set_Compression_Level (plscompression) called conditioned on the current 
+    -- Set_Compression_Level (plscompression) called conditioned on the current
     -- device being in that list.
-    
+
     -- Optionally call Set_Command_Line_Option (plsetopt) before Initialize_PLplot
     -- (plinit).
-    
+
     -- Parse_Command_Line_Arguments(1);
-    -- Set_File_Family_Parameters(False); -- (plsfam(False)). Default off; 
+    -- Set_File_Family_Parameters(False); -- (plsfam(False)). Default off;
     -- other args are don't-cares here.
     -- Set_Orientation(Landscape); -- (plsori(Landscape)). Optional; before
     -- Initialize_PLplot if used.
@@ -3633,10 +3633,10 @@ begin -- package body for PLplot
     -- =========================================================================
 
 
-    -- Capture the initial, default, settings of color map 0 since these will be  
-    -- lost if the settings for color map 0 are set by the user. They can be 
-    -- restored collectively by calling Restore_Default_Snapshot_Of_Color_Map_0 
-    -- or individually by calling functions such as Reset_Red etc. for each of 
+    -- Capture the initial, default, settings of color map 0 since these will be
+    -- lost if the settings for color map 0 are set by the user. They can be
+    -- restored collectively by calling Restore_Default_Snapshot_Of_Color_Map_0
+    -- or individually by calling functions such as Reset_Red etc. for each of
     -- the 16 default colors of color map 0.
     Make_Snapshot_Of_Color_Map_0(Default_Red_Components, Default_Green_Components, Default_Blue_Components);
 

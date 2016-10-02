@@ -36,35 +36,35 @@ from time import sleep
 
 def main():
     nsteps = 1000
-    
+
 # If db is used the plot is much more smooth. However, because of the
 #   async X behaviour, one does not have a real-time scripcharter.
 
 #    plsetopt("db", "")
 #    plsetopt("np", "")
 
-# User sets up plot completely except for window and data 
+# User sets up plot completely except for window and data
 # Eventually settings in place when strip chart is created will be
 # remembered so that multiple strip charts can be used simultaneously.
-# 
+#
 
-# Specify some reasonable defaults for ymin and ymax 
-# The plot will grow automatically if needed (but not shrink) 
+# Specify some reasonable defaults for ymin and ymax
+# The plot will grow automatically if needed (but not shrink)
 
     ymin = -0.1
     ymax = 0.1
 
-# Specify initial tmin and tmax -- this determines length of window. 
-# Also specify maximum jump in t 
-# This can accomodate adaptive timesteps 
+# Specify initial tmin and tmax -- this determines length of window.
+# Also specify maximum jump in t
+# This can accomodate adaptive timesteps
 
     tmin = 0.
     tmax = 10.
-    tjump = 0.3	# percentage of plot to jump 
+    tjump = 0.3	# percentage of plot to jump
 
-# Axes options same as plbox. 
-# Only automatic tick generation and label placement allowed 
-# Eventually I ll make this fancier 
+# Axes options same as plbox.
+# Only automatic tick generation and label placement allowed
+# Eventually I ll make this fancier
 
     colbox = 1
     collab = 3
@@ -74,16 +74,16 @@ def main():
     legline = ["sum", "sin", "sin*noi", "sin+noi"]
 
     xlab = 0.
-    ylab = 0.25	# legend position 
+    ylab = 0.25	# legend position
 
-    autoy = 1	# autoscale y 
-    acc = 1	# don t scrip, accumulate 
+    autoy = 1	# autoscale y
+    acc = 1	# don t scrip, accumulate
 
-    pladv(0)    
-    plvsta()    
+    pladv(0)
+    plvsta()
 
-# Register our error variables with PLplot 
-# From here on, we're handling all errors here 
+# Register our error variables with PLplot
+# From here on, we're handling all errors here
 
     #plsError(&pl_errcode, errmsg)
 
@@ -92,18 +92,18 @@ def main():
                    xlab, ylab,
                    autoy, acc,
                    colbox, collab,
-                   colline, styline, legline, 
-                   "t", "", "Strip chart demo") 
+                   colline, styline, legline,
+                   "t", "", "Strip chart demo")
 
-# Let plplot handle errors from here on 
+# Let plplot handle errors from here on
 
     #plsError(NULL, NULL)
 
-    autoy = 0	# autoscale y 
-    acc = 1	# accumulate 
+    autoy = 0	# autoscale y
+    acc = 1	# accumulate
 
-# This is to represent a loop over time 
-# Let's try a random walk process 
+# This is to represent a loop over time
+# Let's try a random walk process
 
     y1 = y2 = y3 = y4 = 0.0
     dt = 0.1
@@ -118,7 +118,7 @@ def main():
 	y4 = y2 + noise/3.
 
         # There is no need for all pens to have the same number of
-        # points or beeing equally time spaced. 
+        # points or beeing equally time spaced.
 		
         if n%2:	
 	    plstripa(id1, 0, t, y1)
@@ -129,10 +129,10 @@ def main():
 	if n%5:
 	    plstripa(id1, 3, t, y4)
 
-    # Destroy strip chart and it's memory 
+    # Destroy strip chart and it's memory
 
     plstripd(id1)
-    
+
     # No defaults changed so nothing to restore
 
 main()

@@ -29,8 +29,8 @@ if(MSYS_PLATFORM)
   set(dependencies_LIST)
 else(MSYS_PLATFORM)
   # To avoid having to build all of gtk with epa_build in a consistent
-  # manner I tried several alternatives to the gtk toolkit.  
-  # e.g., 
+  # manner I tried several alternatives to the gtk toolkit.
+  # e.g.,
   # set(toolkit_options --with-x11)
   # set(toolkit_options --with-motif)
   # But neither of those worked because they are not capable of
@@ -52,7 +52,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 if(MSYS_PLATFORM)
   set(CXXFLAGS "-fno-keep-inline-dllexport $ENV{CXXFLAGS}")

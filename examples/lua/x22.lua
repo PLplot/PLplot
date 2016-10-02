@@ -23,7 +23,7 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
--- Pairs of points making the line segments used to plot the user defined arrow 
+-- Pairs of points making the line segments used to plot the user defined arrow
 arrow_x  = { -0.5, 0.5, 0.3, 0.5,  0.3, 0.5 }
 arrow_y  = {    0,   0, 0.2,   0, -0.2,   0 }
 arrow2_x = { -0.5, 0.3, 0.3, 0.5,  0.3, 0.3 }
@@ -50,7 +50,7 @@ function circulation()
 	u = {}
 	v = {}
 	
-	-- Create data - circulation around the origin. 
+	-- Create data - circulation around the origin.
 	for i = 1, nx do	
 		x = (i-1-nx/2+0.5)*dx
 		cgrid2["xg"][i] = {}
@@ -66,7 +66,7 @@ function circulation()
 		end
 	end
 
-	-- Plot vectors with default arrows 
+	-- Plot vectors with default arrows
 	pl.env(xmin, xmax, ymin, ymax, 0, 0)
 	pl.lab("(x)", "(y)", "#frPLplot Example 22 - circulation")
 	pl.col0(2)
@@ -126,10 +126,10 @@ function constriction( astyle )
 	pl.col0(1)
 end
 
--- Note this function uses the global variable xmax rather than passing 
+-- Note this function uses the global variable xmax rather than passing
 -- data as in C.
 function transform(x,y)
-	 
+	
 	xt = x
 	yt = y / 4.0 * ( 3 - math.cos( math.pi * x / xmax ))
 
@@ -181,7 +181,7 @@ function constriction2()
 	clev = {}
 	for i = 1, nc do
 	    clev[i] = Q + (i-1)*Q/(nc-1)
-	end 
+	end
 
 	pl.env(xmin, xmax, ymin, ymax, 0, 0)
 	pl.lab("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform")
@@ -283,30 +283,30 @@ function potential()
   pl.env(xmin, xmax, ymin, ymax, 0, 0)
   pl.lab("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot")
 
-  -- Plot contours of the potential 
+  -- Plot contours of the potential
   dz = (zmax-zmin)/nlevel
   for i = 1, nlevel do
   	clevel[i] = zmin + (i-0.5)*dz
   end
-  
+
   pl.col0(3)
   pl.lsty(2)
   pl.cont(z, 1, nr, 1, ntheta, clevel, "pltr2", cgrid2)
   pl.lsty(1)
   pl.col0(1)
 
-  -- Plot the vectors of the gradient of the potential 
+  -- Plot the vectors of the gradient of the potential
   pl.col0(2)
   pl.vect(u, v, 25, "pltr2", cgrid2)
   pl.col0(1)
 
-  -- Plot the perimeter of the cylinder 
+  -- Plot the perimeter of the cylinder
   for i=1, nper do
     theta = 2*math.pi/(nper-1)*(i-1)
     px[i] = rmax*math.cos(theta)
     py[i] = rmax*math.sin(theta)
   end
-  
+
   pl.line(px, py)
 end
 
@@ -317,10 +317,10 @@ end
 -- Generates several simple vector plots.
 ----------------------------------------------------------------------------
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 circulation()
@@ -333,7 +333,7 @@ pl.svect(arrow_x, arrow_y, fill)
 constriction(1)
 
 -- Set arrow style using arrow2_x and arrow2_y then
--- plot using these filled arrows. 
+-- plot using these filled arrows.
 fill = 1
 pl.svect(arrow2_x, arrow2_y, fill)
 constriction(2)

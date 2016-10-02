@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -25,7 +25,7 @@
 ##
 ## if names exists, they will be used at the plot legend
 ##
-## too old, needs to be updated. 
+## too old, needs to be updated.
 
 function label_plot( data, label, class, names)
 
@@ -68,7 +68,7 @@ function label_plot( data, label, class, names)
       names = setstr(ones(max(cla),4)*32);
       for i=cla; names(i,:) = sprintf(" %2d ", i);end
     endif
-    
+
     for i=cla
       j = rem(j,9)+1; fmt = sprintf("@%d%d;%s;", j-1, j, names(i,:));
       plot(data(find(label==i),1), data(find(label==i),2), fmt);hold on
@@ -89,17 +89,17 @@ function label_plot( data, label, class, names)
     if (nc != columns(class))
       error("label_plot: `data' and `class' must have the same number of columns\n");
     endif
-    
+
     for i=1:ct
       [ix, iy] = find(data == ones(nr,1)*class(i,:));
-      item = [item, ix(1)]; 
+      item = [item, ix(1)];
     endfor
   else
     item = 0:-1;
   endif
 
   hold on
-  plot(data(item,1), data(item,2), '95;Erros;'); 
+  plot(data(item,1), data(item,2), '95;Erros;');
   hold off
 
   for i = item

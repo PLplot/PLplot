@@ -84,13 +84,13 @@ if(ENABLE_qt)
     set_qt_target_properties(plplotqt)
   endif(PLPLOT_USE_QT5)
 
-  # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the 
+  # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the
   # install-tree rpath since cmake handles the build-tree rpath
   # automatically (so long as full pathnames to libraries are used).
   #message("qt_RPATH = ${qt_RPATH}")
   if(USE_RPATH)
     # Order is important here because of /usr/lib concerns.
-    set(LIB_INSTALL_RPATH 
+    set(LIB_INSTALL_RPATH
       ${LIB_DIR}
       ${qt_RPATH}
       ${libplplot_RPATH}

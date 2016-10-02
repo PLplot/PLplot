@@ -52,7 +52,7 @@ def polar():
     px = cos(t)
     py = sin(t)
     plline(px, py)
-    
+
     # create data to be contoured.
     r = arange(RPTS)/float(RPTS-1)
     r.shape = (-1,1)
@@ -62,7 +62,7 @@ def polar():
     zg = r*ones(THETAPTS-1)
 
     lev = 0.05 + 0.10*arange(10)
-    
+
     plcol0(2)
     plcont(zg, lev, pltr2, xg, yg, 2)
     #                              ^-- :-).  Means: "2nd coord is wrapped."
@@ -140,7 +140,7 @@ def potential():
     ncollin = 11
     ncolbox = 1
     ncollab = 2
-		      
+		
     #Finally start plotting this page!
     pladv(0)
     plcol0(ncolbox)
@@ -166,7 +166,7 @@ def potential():
 
     plcol0(ncolbox)
     plline(px, py)
-    
+
     plcol0(ncollab)
     pllab("", "", "Shielded potential of charges in a conducting sphere")
 
@@ -174,7 +174,7 @@ def main():
 
     mark = 1500
     space = 1500
-    
+
     clevel = -1. + 0.2*arange(11)
 
     xx = (arange(XPTS) - XPTS/2) / float((XPTS/2))
@@ -203,7 +203,7 @@ def main():
     xg0t.shape = (-1,1)
     xg2 = xg0t + distort*cos_x*cos_y
     yg2 = yg0 - distort*cos_x*cos_y
-	    
+	
     # Plot using mypltr (scaled identity) transformation used to create
     # xg0 and yg0
 #    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)

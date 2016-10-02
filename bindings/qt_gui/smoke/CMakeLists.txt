@@ -59,11 +59,11 @@ if(ENABLE_smoke)
   set(smokegen_I_options)
   foreach(directory ${include_directories_LIST})
     list(APPEND smokegen_I_options -I "${directory}")
-  endforeach(directory ${include_directories_LIST}) 
+  endforeach(directory ${include_directories_LIST})
 
   add_custom_command(
     OUTPUT ${plplot_smoke_SRC}
-    COMMAND ${SMOKE_GEN_BIN} 
+    COMMAND ${SMOKE_GEN_BIN}
     -config "${SMOKE_GEN_SHARED}/qt-config.xml" -smokeconfig "${CMAKE_CURRENT_SOURCE_DIR}/smokeconfig.xml" ${smokegen_I_options} -- ${CMAKE_CURRENT_SOURCE_DIR}/plplotqt.h
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/smokeconfig.xml ${CMAKE_CURRENT_SOURCE_DIR}/plplotqt.h
     VERBATIM

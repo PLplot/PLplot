@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -37,7 +37,7 @@
 
 function set_view (alt, az, varargin)
 
-  global __pl 
+  global __pl
   strm = __pl_init;
 
   callback = 0;
@@ -80,10 +80,10 @@ function set_view (alt, az, varargin)
     title(sprintf("Alt=%d   Az=%d", alt, az));
     feval(cmd, arg1, varargin{:});
   endif
-  
+
   ox = oy = 0;
   c_alt = c_az = 0;
-  
+
   while (1)
     [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY, subwin] = plGetCursor;
 
@@ -101,7 +101,7 @@ function set_view (alt, az, varargin)
       c_az = (dX-ox)*100;
       c_alt = (oy-dY)*100;
     endif
-    
+
     if (alt + c_alt > 90)
       c_alt = 90 - alt;
     elseif (alt + c_alt < 0)
@@ -121,16 +121,16 @@ function set_view (alt, az, varargin)
       plot3d(x,y,z,1,1);
       plflush;
     else
-      __pl.az(strm) = az + c_az; 
+      __pl.az(strm) = az + c_az;
       __pl.alt(strm) = alt + c_alt;
       title(sprintf("Alt=%d   Az=%d", alt+c_alt, az+c_az));
       feval(cmd, arg1, varargin{:});
     endif
-    
+
   endwhile
 
-  __pl.az(strm) = az + c_az; 
+  __pl.az(strm) = az + c_az;
   __pl.alt(strm) = alt + c_alt;
 
-  
+
 endfunction

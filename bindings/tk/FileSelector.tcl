@@ -1,8 +1,8 @@
 # FileSelect
 # ----------------------------------------------------------------------
 # Implements a version of the OSF/Motif standard file selection dialog
-# box using primitive widgets as the building blocks.  
-# 
+# box using primitive widgets as the building blocks.
+#
 #
 #   PUBLIC ATTRIBUTES:
 #
@@ -26,11 +26,11 @@
 #
 #     config ......... used to change public attributes
 #     get ............ return the selection
-#     activate ....... perform a grab, upon selection of ok(1) or cancel(0), 
+#     activate ....... perform a grab, upon selection of ok(1) or cancel(0),
 #                      return result.
 #
 #   USAGE:
-#     
+#
 #     FileSelect .fs -title "Test File Select" -full 0
 #
 #     if {[.fs activate]} {
@@ -73,7 +73,7 @@ itcl_class FileSelect {
 	wm withdraw $this
 
         #
-	# Create an overall frame and separate frames for the filter, 
+	# Create an overall frame and separate frames for the filter,
 	# lists, selection, and buttons.
 	#
 	set f [frame $this.fs]
@@ -96,7 +96,7 @@ itcl_class FileSelect {
 	pack $fs(filterf).entry -side bottom -fill x -expand yes
 		
 	#
-	# Create directory list, scrollbar, and label for the directory 
+	# Create directory list, scrollbar, and label for the directory
 	# frame.  Make the list single select.
 	#
 	set fs(dirf) [frame $fs(listf).dirf]
@@ -161,7 +161,7 @@ itcl_class FileSelect {
 		
 	#
 	# Add the separator and create the buttons in the button frame.
-	# Each button is within a frame used to display as default. 
+	# Each button is within a frame used to display as default.
 	# The placer is used to locate the three buttons at relative
 	# locations.
 	#
@@ -194,17 +194,17 @@ itcl_class FileSelect {
 
         if {$dispfilter} {pack $fs(filterf) -fill x -padx $_margin -pady 5}
 
-	pack $fs(listf) -fill both -padx $_margin -pady 5 -expand yes 
+	pack $fs(listf) -fill both -padx $_margin -pady 5 -expand yes
 
 	if {$dispselect} {pack $fs(self) -fill x -padx $_margin -pady 5}
 
 	pack $f.line -fill x -pady 5
-	pack $fs(btnf) -fill x -padx $_margin -pady 5 
+	pack $fs(btnf) -fill x -padx $_margin -pady 5
 
 	pack $f -fill both -expand yes
 
 	#
-	# Set up the bindings for the list widgets. Single click in either 
+	# Set up the bindings for the list widgets. Single click in either
 	# list executes a select method.  Double click for the both lists
 	# selects the entry and then invokes the button callback.  Focus
 	# events for the filter and select entry widgets control the default
@@ -222,7 +222,7 @@ itcl_class FileSelect {
 
 	#
 	# Explicitly handle configs that may have been ignored earlier.
-	# Also, check to see if the user has specified, width, or height.  
+	# Also, check to see if the user has specified, width, or height.
 	# If not, use the default and config.
 	#
 	if {! [regexp {FileSelect::width} $config]} {
@@ -236,7 +236,7 @@ itcl_class FileSelect {
 	    config -$attr [set $attr]
 	}
 
-	# 
+	#
 	# Construction is complete.  Now set up the initial text for the
 	# filter, selection, and both lists.  Finally, set the focus for
 	# either the filter or select widget based on the display attribute.
@@ -299,8 +299,8 @@ itcl_class FileSelect {
     # ------------------------------------------------------------------
     #  METHOD:  _selectdir - Select the directory, set the filter to
     #                        the new directory.  Set the selection to the
-    #                        new directory if the file list is not 
-    #                        displayed.  Mark the filter button as the 
+    #                        new directory if the file list is not
+    #                        displayed.  Mark the filter button as the
     #                        default.
     # ------------------------------------------------------------------
     method _selectdir {y} {
@@ -346,8 +346,8 @@ itcl_class FileSelect {
 
     # ------------------------------------------------------------------
     #  METHOD:  _setfilter - Update the filter based on the parameters.
-    #                        If the directory 'd' parameter is null, use 
-    #                        the 'dir' attribute.  If the file 'f' 
+    #                        If the directory 'd' parameter is null, use
+    #                        the 'dir' attribute.  If the file 'f'
     #                        parameter is null use the tail of the filter
     #                        entry text.
     # ------------------------------------------------------------------
@@ -360,7 +360,7 @@ itcl_class FileSelect {
     }
 
     # ------------------------------------------------------------------
-    #  METHOD:  _setselection - Update the selection based on the 
+    #  METHOD:  _setselection - Update the selection based on the
     #                           parameter.  If the file 'f' parameter is
     #                           null, use the 'selection' attribute.
     # ------------------------------------------------------------------
@@ -395,7 +395,7 @@ itcl_class FileSelect {
 
     # ------------------------------------------------------------------
     #  METHOD:  _filtercmd - Filter button callback.  Change directories
-    #                        as needed, and set the dir, filter, and 
+    #                        as needed, and set the dir, filter, and
     #                        selection attributes.  Change the filter and
     #                        selection text along with the list contents.
     #                        Mark the default button as filter.
@@ -424,7 +424,7 @@ itcl_class FileSelect {
     #                        result variable.
     # ------------------------------------------------------------------
     method _cancelcmd {} {
-	global result 
+	global result
 
 	_defaultbtn cancel
 
@@ -462,9 +462,9 @@ itcl_class FileSelect {
 
     # ------------------------------------------------------------------
     #  METHOD:  _fillfilelist - Clear the file list filling with the
-    #                           results of an 'glob'.  Use the full 
+    #                           results of an 'glob'.  Use the full
     #                           attribute to determine full file name
-    #                           insertion.  Select the first element if 
+    #                           insertion.  Select the first element if
     #                           it exists.
     # ------------------------------------------------------------------
     method _fillfilelist {} {
@@ -561,7 +561,7 @@ itcl_class FileSelect {
     }
 
     # ------------------------------------------------------------------
-    #  ATTRIBUTE selectlabel - Label for selection entry, default 
+    #  ATTRIBUTE selectlabel - Label for selection entry, default
     #                          "Selection".
     # ------------------------------------------------------------------
     public selectlabel "Selection" {
@@ -616,7 +616,7 @@ itcl_class FileSelect {
 	}
     }
 
-    # ------------------------------------------------------------------ 
+    # ------------------------------------------------------------------
     #  PRIVATE ATTRIBUTE _margin - Margin distance used in construction
     # ------------------------------------------------------------------
     public _margin 10 {}

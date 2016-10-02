@@ -1,7 +1,7 @@
 ## plmtex3, plptex3 demo
 ##
-## Copyright (C) 2007 Alan Irwin 
-## Copyright (C) 2007 Andrew Ross 
+## Copyright (C) 2007 Alan Irwin
+## Copyright (C) 2007 Andrew Ross
 ##
 ##
 ## This file is part of PLplot.
@@ -69,7 +69,7 @@ function ix28c
   y = ymin + (0:(XPTS-1))*yrange/(YPTS-1);
 
   z = zeros(XPTS,YPTS);
-  
+
   ## Parse and process command line arguments
 
   ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
@@ -77,18 +77,18 @@ function ix28c
   plinit();
 
   ## Page 1: Demonstrate inclination and shear capability pattern.
-  
+
   pladv(0);
   plvpor(-0.15, 1.15, -0.05, 1.05);
   plwind(-1.2, 1.2, -0.8, 1.5);
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
-   
+
   plcol0(2);
   plbox3("b", "", xrange, 0,
 	 "b", "", yrange, 0,
 	 "bcd", "", zrange, 0);
 
-  ## z = zmin. 
+  ## z = zmin.
   plschr(0., 1.0);
   for i = 0:NREVOLUTION-1
     omega = 2.*pi*(i/NREVOLUTION);
@@ -123,7 +123,7 @@ function ix28c
 	    0.0, "  revolution");
   endfor
 
-  ## y = ymax. 
+  ## y = ymax.
   plschr(0., 1.0);
   for i = 0:NREVOLUTION-1
     omega = 2.*pi*(i/NREVOLUTION);
@@ -149,7 +149,7 @@ function ix28c
   plvpor(-0.15, 1.15, -0.05, 1.05);
   plwind(-1.2, 1.2, -0.8, 1.5);
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
-   
+
   plcol0(2);
   plbox3("b", "", xrange, 0,
 	 "b", "", yrange, 0,
@@ -216,9 +216,9 @@ function ix28c
   endfor
   ## Draw minimal 3D grid to finish defining the 3D box.
   plmesh(x', y', z', DRAW_LINEXY);
-  
+
   ## Page 3: Demonstrate shear of string along its axis.
-  ## Work around xcairo and pngcairo (but not pscairo) problems for 
+  ## Work around xcairo and pngcairo (but not pscairo) problems for
   ## shear vector too close to axis of string. (N.B. no workaround
   ## would be domega = 0.)
   domega = 0.05;
@@ -226,7 +226,7 @@ function ix28c
   plvpor(-0.15, 1.15, -0.05, 1.05);
   plwind(-1.2, 1.2, -0.8, 1.5);
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
-   
+
   plcol0(2);
   plbox3("b", "", xrange, 0,
 	 "b", "", yrange, 0,
@@ -299,7 +299,7 @@ function ix28c
   plvpor(-0.15, 1.15, -0.05, 1.05);
   plwind(-1.2, 1.2, -0.8, 1.5);
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 40., -30.);
-  
+
   plcol0(2);
   plbox3("b", "", xrange, 0,
 	 "b", "", yrange, 0,
@@ -320,7 +320,7 @@ function ix28c
     xpos = xmid + radius*sin_omega;
     ypos = ymid - radius*cos_omega;
     zpos = zmin + pitch*omega;
-    ## In general, the inclination is proportional to the derivative of 
+    ## In general, the inclination is proportional to the derivative of
     ## the position wrt theta.
     x_inclination = radius*cos_omega;
     y_inclination = radius*sin_omega;
@@ -347,7 +347,7 @@ function ix28c
   plvpor(-0.15, 1.15, -0.05, 1.05);
   plwind(-1.2, 1.2, -0.8, 1.5);
   plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.);
-  
+
   plcol0(2);
   plbox3("b", "", xrange, 0,
 	 "b", "", yrange, 0,

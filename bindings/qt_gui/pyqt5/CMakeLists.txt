@@ -44,7 +44,7 @@ if(ENABLE_pyqt5)
 
   #message("DEBUG: PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
   #message("DEBUG: PYQT_SIP_FLAGS = ${PYQT_SIP_FLAGS}")
-  
+
   add_custom_command(
     OUTPUT ${plplot_pyqt5_HDR} ${plplot_pyqt5_SRC}
     COMMAND ${SIP_EXECUTABLE} -c . -b plplot_pyqt5.sbf -I${PYQT_SIP_DIR} ${PYQT_SIP_FLAGS} ${CMAKE_CURRENT_SOURCE_DIR}/plplot_pyqt5.sip

@@ -78,7 +78,7 @@ end
 
 --   Page 2:
 
---   This is a bunch of boxes colored red, green or blue with a single 
+--   This is a bunch of boxes colored red, green or blue with a single
 --   large (red) box of linearly varying transparency overlaid. The
 --   overlaid box is completely transparent at the bottom and completely
 --   opaque at the top.
@@ -96,14 +96,14 @@ for i = 0, 4 do
   px[3] = px[2]
   px[4] = px[1]
 
-  -- We don't want the boxes to be transparent, so since we changed 
+  -- We don't want the boxes to be transparent, so since we changed
   -- the colors transparencies in the first example we have to change
   -- the transparencies back to completely opaque.
   icol = (i % 3) + 1
   r, g, b, a = pl.gcol0a(icol)
   pl.scol0a(icol, r, g, b, 1)
   pl.col0(icol)
-  
+
   for j = 0, 4 do
     -- Set box y position and draw the box.
     py[1] = 0.05 + 0.2 * j

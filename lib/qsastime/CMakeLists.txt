@@ -128,7 +128,7 @@ if(TEST_QSASTIME)
     "Build qsastime_testlib application which is used to test the qsastime library against the C library time routines"
     OFF
     )
-  # Don't bother with building qsastime_testlib on Windows because its 
+  # Don't bother with building qsastime_testlib on Windows because its
   # C library is incapable of providing useful time routines to act
   # as comparisons with qsastime library results.
   if(WIN32_OR_CYGWIN)

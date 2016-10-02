@@ -62,7 +62,7 @@ if(AGG_FOUND)
   # Set additional uncached variables that users of this module should use.
 
   set(AGG_INCLUDE_DIRS ${AGG_INCLUDE_DIR})
-  
+
   # Blank-delimited is required.
   string(REGEX REPLACE ";" " " AGG_DEFINITIONS "${_AGGCflags}")
 

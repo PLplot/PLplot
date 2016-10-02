@@ -89,7 +89,7 @@ if(CORE_BUILD)
     DESTINATION ${DATA_DIR}/examples/c
     )
 
-  install(FILES CMakeLists.txt 
+  install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/c
     )
 
@@ -118,7 +118,7 @@ if(BUILD_TEST)
     target_link_libraries(x${STRING_INDEX}c plplot ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_c x${STRING_INDEX}c)
   endforeach(STRING_INDEX ${c_STRING_INDICES})
-  
+
   # Build simple test routines which nothing else depends on.
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(test_plend.c
@@ -126,7 +126,7 @@ if(BUILD_TEST)
   endif(BUILD_SHARED_LIBS)
   add_executable(test_plend test_plend.c)
   target_link_libraries(test_plend plplot ${MATH_LIB})
-  
+
   # Build test routines that test the plot buffer functionality
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(test_plbuf.c

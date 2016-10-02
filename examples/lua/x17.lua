@@ -33,61 +33,61 @@ nsteps = 1000
 colline = {}
 legline = {}
 
--- plplot initialization 
--- Parse and process command line arguments 
+-- plplot initialization
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- User sets up plot completely except for window and data 
+-- User sets up plot completely except for window and data
 -- Eventually settings in place when strip chart is created will be
 -- remembered so that multiple strip charts can be used simultaneously.
- 
--- Specify some reasonable defaults for ymin and ymax 
--- The plot will grow automatically if needed (but not shrink) 
+
+-- Specify some reasonable defaults for ymin and ymax
+-- The plot will grow automatically if needed (but not shrink)
 ymin = -0.1
 ymax = 0.1
 
--- Specify initial tmin and tmax -- this determines length of window. 
--- Also specify maximum jump in t 
--- This can accomodate adaptive timesteps 
+-- Specify initial tmin and tmax -- this determines length of window.
+-- Also specify maximum jump in t
+-- This can accomodate adaptive timesteps
 tmin = 0
 tmax = 10
-tjump = 0.3	-- percentage of plot to jump 
+tjump = 0.3	-- percentage of plot to jump
 
--- Axes options same as plbox. 
--- Only automatic tick generation and label placement allowed 
--- Eventually I'll make this fancier 
+-- Axes options same as plbox.
+-- Only automatic tick generation and label placement allowed
+-- Eventually I'll make this fancier
 colbox = 1
 collab = 3
-styline = { 2, 3, 4, 5 } -- line style 
+styline = { 2, 3, 4, 5 } -- line style
 colline = { 2, 3, 4, 5 } -- pens color
 
-legline= { "sum", "sin", "sin*noi", "sin+noi" } -- pens legend 
+legline= { "sum", "sin", "sin*noi", "sin+noi" } -- pens legend
 
-xlab = 0 -- legend position 
+xlab = 0 -- legend position
 ylab = 0.25	
 
-autoy = 1	-- autoscale y 
-acc = 1	-- don't scrip, accumulate 
+autoy = 1	-- autoscale y
+acc = 1	-- don't scrip, accumulate
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
-pl.adv(0)    
-pl.vsta()    
+pl.adv(0)
+pl.vsta()
 
 id1 = pl.stripc("bcnst", "bcnstv",
    tmin, tmax, tjump, ymin, ymax,
    xlab, ylab,
    autoy, acc,
    colbox, collab,
-   colline, styline, legline, 
-   "t", "", "Strip chart demo") 
+   colline, styline, legline,
+   "t", "", "Strip chart demo")
 
-autoy = 0	-- autoscale y 
-acc = 1	-- accumulate 
+autoy = 0	-- autoscale y
+acc = 1	-- accumulate
 
--- This is to represent a loop over time 
--- Let's try a random walk process 
+-- This is to represent a loop over time
+-- Let's try a random walk process
 
 y1 = 0
 y2 = 0
@@ -105,13 +105,13 @@ for n = 0, nsteps-1 do
 	y4 = y2 + noise/3
 
   -- There is no need for all pens to have the same number of
-  -- points or beeing equally time spaced. 
+  -- points or beeing equally time spaced.
 	if (n % 2)~=0 then pl.stripa(id1, 0, t, y1) end
 	if (n % 3)~=0 then pl.stripa(id1, 1, t, y2) end
 	if (n % 4)~=0 then pl.stripa(id1, 2, t, y3) end
 	if (n % 5)~=0 then pl.stripa(id1, 3, t, y4) end
 end
 
--- Destroy strip chart and it's memory 
+-- Destroy strip chart and it's memory
 pl.stripd(id1)
 pl.plend()

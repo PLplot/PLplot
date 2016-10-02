@@ -13,7 +13,7 @@ distributed under the following terms:
     Library General Public License for more details.
 
     You should have received a copy of the GNU Library General Public
-    License along with this library; if not, write to the Free Software 
+    License along with this library; if not, write to the Free Software
     Foundation, Inc. 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 The text of this license is given in the file COPYING.LIB in the
@@ -54,13 +54,13 @@ and the Massachusetts Institute of Technology, Cambridge, Massachusetts.
 
                         All Rights Reserved
 
-Permission to use, copy, modify, and distribute this software and its 
-documentation for any purpose and without fee is hereby granted, 
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
 provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in 
+both that copyright notice and this permission notice appear in
 supporting documentation, and that the names of Digital or MIT not be
 used in advertising or publicity pertaining to distribution of the
-software without specific, written prior permission.  
+software without specific, written prior permission.
 
 DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
 ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
@@ -199,11 +199,11 @@ ___________________________________________________________________________
 
 The www/css/style.css.in file is
 
-Copyright (C) 2008-2016 Alan W. Irwin 
+Copyright (C) 2008-2016 Alan W. Irwin
 Copyright (C) 2008-2016 Werner Smekal
 
 and is distributed under the
-"Creative Commons License", 
+"Creative Commons License",
 <http://creativecommons.org/licenses/by-nc/2.5/>
 whose full text (downloaded as of 2016-02-05) is as follows:
 
@@ -239,7 +239,7 @@ such as publicity, privacy, or moral rights may limit how you use the
 material.
 ___________________________________________________________________________
 
-The files 
+The files
 
 cmake/modules/FindLua.cmake
 cmake/modules/FindwxWidgets.cmake
@@ -314,5 +314,5 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ___________________________________________________________________________
 
 Any file that is explicitly marked as "public domain" is free from any
-restriction on distribution.  
+restriction on distribution.
 ___________________________________________________________________________

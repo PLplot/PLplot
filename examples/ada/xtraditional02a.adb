@@ -115,19 +115,19 @@ procedure xtraditional02a is
 
             -- Vary hue uniformly from left to right
             h := (360.0 / 10.0 ) * Long_Float( i mod 10 );
-            
+
             -- Vary lightness uniformly from top to bottom, between min & max.
             l := lmin + (lmax - lmin) * Long_Float(i / 10) / 9.0;
-            
+
             -- Use max saturation.
             s := 1.0;
 
             plhlsrgb(h, l, s, r1, g1, b1);
 
-            -- Ada converts floats to integers by rounding while C does so by 
-            -- truncation. There is no fool-proof way to fix that but this is pretty 
-            -- close: Add a bit less than 1/2 to the float before converting. A good  
-            -- number to use appears to be about 0.5 - 10^-16 which _might_  
+            -- Ada converts floats to integers by rounding while C does so by
+            -- truncation. There is no fool-proof way to fix that but this is pretty
+            -- close: Add a bit less than 1/2 to the float before converting. A good
+            -- number to use appears to be about 0.5 - 10^-16 which _might_
             -- be an exact fix for 64-bit floats since they have about 16 digits
             -- of accuracy.
             r(i+16) := Integer((r1 * 255.001) - 0.499999999999999);
@@ -150,7 +150,7 @@ procedure xtraditional02a is
 
 begin
     -- Parse and process command line arguments.
-    plparseopts(PL_PARSE_FULL); 
+    plparseopts(PL_PARSE_FULL);
 
     -- Initialize plplot.
     plinit;

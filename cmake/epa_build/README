@@ -66,7 +66,7 @@ compilers), relevant scripting languages (Python, Lua, etc.), make,
 and cmake (at least version 2.8.11.2).
 
 But the situation is different on Windows where you have to download
-and install specific toolchain software before you start.  
+and install specific toolchain software before you start.
 
 ===============================================================================
 Installing the Required Windows Toolchain:
@@ -318,7 +318,7 @@ ${BUILD_COMMAND} help
 # Comprehensive interactive checks of PLplot will be performed if
 # you have set -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON above, but
 # that will require substantial interaction from you with those interactive
-# tests that are run.  
+# tests that are run.
 
 # Comprehensive noninteractive checks of PLplot will be performed if
 # you have set -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON above, but
@@ -331,7 +331,7 @@ ${BUILD_COMMAND} build_plplot_lite >& build_plplot_lite.out
 less build_plplot_lite.out
 
 # Check detailed results from comprehensive tests by looking at the *.out
-# files in 
+# files in
 # epa_build/Source/comprehensive_test_disposeable/shared/output_tree,
 # epa_build/Source/comprehensive_test_disposeable/nondynamic/output_tree, and
 # epa_build/Source/comprehensive_test_disposeable/static/output_tree,

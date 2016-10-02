@@ -1,5 +1,5 @@
 #! /usr/bin/env perl
-# 
+#
 # Demo x26 for the PLplot PDL binding
 #
 # Multi-lingual version of the first page of example 4.
@@ -35,23 +35,23 @@
 #  required glyphs.
 
 #   Translation instructions: The strings to be translated are given by
-#   x_label, y_label, alty_label, title_label, and line_label below.  The 
+#   x_label, y_label, alty_label, title_label, and line_label below.  The
 #   encoding used must be UTF-8.
 
-#   The following strings to be translated involve some scientific/mathematical 
+#   The following strings to be translated involve some scientific/mathematical
 #   jargon which is now discussed further to help translators.
 
 #   (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
-#   (2) degrees is an angular measure, see 
+#   (2) degrees is an angular measure, see
 #       http://en.wikipedia.org/wiki/Degree_(angle) .
 #   (3) low-pass filter is one that transmits (passes) low frequencies.
 #   (4) pole is in the mathematical sense, see
 #       http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
 #       means a particular mathematical transformation of the filter function has
 #       a single pole, see
-#       http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .  
-#       Furthermore, a single-pole filter must have an inverse square decline 
-#       (or -20 db/decade). Since the filter plotted here does have that 
+#       http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
+#       Furthermore, a single-pole filter must have an inverse square decline
+#       (or -20 db/decade). Since the filter plotted here does have that
 #       characteristic, it must by definition be a single-pole filter, see also
 #       http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
 #   (5) decade represents a factor of 10, see
@@ -99,7 +99,7 @@ use Getopt::Long;
 
 sub main {
 
-# Parse and process command line arguments 
+# Parse and process command line arguments
 
     plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
@@ -111,7 +111,7 @@ sub main {
 # Make log plots using two different styles.
 
     for (my $i=0; $i<scalar(@x_label); $i++) {
-      plot1(0, $x_label[$i], $y_label[$i], $alty_label[$i], 
+      plot1(0, $x_label[$i], $y_label[$i], $alty_label[$i],
 	    $legend_text[$i], $title_label[$i], $line_label[$i]);
     }
 
@@ -184,7 +184,7 @@ sub plot1 {
   my @symbol_scales = (1, 1); # ???
   my @symbol_numbers = (4, 4);# ???
   my @symbols        = ('*', '*'); # ???
-  
+
   plscol0a(15, 32, 32, 32, 0.70);
   my ($legend_width, $legend_height) = pllegend(
       PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,

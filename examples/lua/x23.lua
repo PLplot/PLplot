@@ -1,6 +1,6 @@
 --[[
     Displays Greek letters and mathematically interesting Unicode ranges
-    
+
     Copyright (C) 2009  Werner Smekal
 
     This file is part of PLplot.
@@ -143,7 +143,7 @@ nycells = {
   8
 }
 
--- non-zero values Must be consistent with nxcells and nycells. 
+-- non-zero values Must be consistent with nxcells and nycells.
 offset = {
   0,
   0,
@@ -158,7 +158,7 @@ offset = {
   0
 }
 
--- 30 possible FCI values. 
+-- 30 possible FCI values.
 FCI_COMBINATIONS = 30
 fci = {
   2147483648,
@@ -212,27 +212,27 @@ weight = {
   "bold"
 }
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 for page=1, 11 do
   pl.adv(0)
 
-  -- Set up viewport and window 
+  -- Set up viewport and window
   pl.vpor(0.02, 0.98, 0.02, 0.90)
   pl.wind(0, 1, 0, 1)
   xmin, xmax, ymin, ymax = pl.gspa()
   pl.schr(0, 0.8)
   ycharacter_scale = (1-0)/(ymax-ymin)
 
-  -- Factor should be 0.5, but heuristically it turns out to be larger. 
+  -- Factor should be 0.5, but heuristically it turns out to be larger.
   chardef, charht = pl.gchr()
   yoffset = charht*ycharacter_scale
 
-  -- Draw the grid using plbox 
+  -- Draw the grid using plbox
   pl.col0(2)
   deltax = 1.0/nxcells[page]
   deltay = 1.0/nycells[page]
@@ -240,7 +240,7 @@ for page=1, 11 do
   pl.col0(15)
   length=hi[page]-lo[page]
   slice = 1
-  
+
   for j=nycells[page]-1, -1, -1 do
     y = (0.5+j)*deltay
     for i=1, nxcells[page] do
@@ -261,12 +261,12 @@ for page=1, 11 do
   end
 
   pl.schr(0, 1)
-  
-  -- Page title 
+
+  -- Page title
   pl.mtex("t", 1.5, 0.5, 0.5, title[page])
 end
 
--- Demonstrate methods of getting the current fonts 
+-- Demonstrate methods of getting the current fonts
 fci_old = pl.gfci()
 ifamily, istyle, iweight = pl.gfont()
 print(string.format("For example 23 prior to page 12 the FCI is 0x%x", fci_old))
@@ -280,7 +280,7 @@ for page=12, 16 do
   pl.vpor(0.02, 0.98, 0.02, 0.90)
   pl.wind(0, 1, 0, 1)
   pl.sfci(0)
-  
+
   if page==12 then
     pl.mtex("t", 1.5, 0.5, 0.5, "#<0x10>PLplot Example 23 - Set Font with plsfci")
   elseif page==13 then
@@ -292,7 +292,7 @@ for page=12, 16 do
   elseif page==16 then
     pl.mtex("t", 1.5, 0.5, 0.5, "#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs")
   end
-  
+
   pl.schr(0, 0.75)
   for i=1, FCI_COMBINATIONS do
     family_index = ((i-1) %  5) +1
@@ -324,7 +324,7 @@ for page=12, 16 do
   pl.schr(0, 1)
 end
 
--- Restore defaults 
+-- Restore defaults
 pl.col0(1)
 
 pl.plend()

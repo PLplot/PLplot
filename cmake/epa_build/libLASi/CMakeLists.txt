@@ -39,7 +39,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 set(CXXFLAGS "$ENV{CXXFLAGS}")
 

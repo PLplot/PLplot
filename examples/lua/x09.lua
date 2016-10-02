@@ -23,18 +23,18 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
-XPTS = 35		-- Data points in x 
-YPTS = 46		-- Data points in y 
+XPTS = 35		-- Data points in x
+YPTS = 46		-- Data points in y
 
 XSPA = 2/(XPTS-1)
 YSPA = 2/(YPTS-1)
 
--- polar plot data 
+-- polar plot data
 PERIMETERPTS = 100
 RPTS = 40
 THETAPTS = 40
 
--- potential plot data 
+-- potential plot data
 PPERIMETERPTS = 100
 PRPTS = 40
 PTHETAPTS = 64
@@ -42,7 +42,7 @@ PNLEVEL = 20
 
 clevel = { -1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1}
 
--- Transformation function 
+-- Transformation function
 tr = { XSPA, 0, -1, 0, YSPA, -1 }
 
 function mypltr(x, y)
@@ -60,7 +60,7 @@ function polar()
 
 	pl.env(-1, 1, -1, 1, 0, -2)
 	pl.col0(1)
-		 
+		
 	--Perimeter
 	for i=1, PERIMETERPTS do
 		t = (2*math.pi/(PERIMETERPTS-1))*(i-1)
@@ -68,14 +68,14 @@ function polar()
 		py[i] = math.sin(t)
   end
   pl.line(px, py)
-	       
+	
 	--create data to be contoured.
   cgrid2["xg"] = {}
   cgrid2["yg"] = {}
   cgrid2["nx"] = RPTS
   cgrid2["ny"] = THETAPTS
   z = {}
-   
+
   for i = 1, RPTS do
     r = (i-1)/(RPTS-1)
     cgrid2["xg"][i] = {}
@@ -151,7 +151,7 @@ function potential()
   x0 = (xmin + xmax)/2
   y0 = (ymin + ymax)/2
 
-  -- Expanded limits 
+  -- Expanded limits
   peps = 0.05
   xpmin = xmin - math.abs(xmin)*peps
   xpmax = xmax + math.abs(xmax)*peps
@@ -201,13 +201,13 @@ function potential()
       nlevelpos = nlevelpos + 1
     end
   end
-  
-  -- Colours! 
+
+  -- Colours!
   ncollin = 11
   ncolbox = 1
   ncollab = 2
 
-  -- Finally start plotting this page! 
+  -- Finally start plotting this page!
   pl.adv(0)
   pl.col0(ncolbox)
 
@@ -217,18 +217,18 @@ function potential()
 
   pl.col0(ncollin)
   if nlevelneg>1 then
-    -- Negative contours 
+    -- Negative contours
     pl.lsty(2)
     pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelneg, "pltr2", cgrid2)
   end
 
   if nlevelpos>1 then
-    -- Positive contours  
+    -- Positive contours
     pl.lsty(1)
     pl.cont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, "pltr2", cgrid2)
   end
-   
-  -- Draw outer boundary  
+
+  -- Draw outer boundary
   for i = 1, PPERIMETERPTS do
     t = (2*math.pi/(PPERIMETERPTS-1))*(i-1)
     px[i] = x0 + rmax*math.cos(t)
@@ -237,11 +237,11 @@ function potential()
 
   pl.col0(ncolbox)
   pl.line(px, py)
-       
+
   pl.col0(ncollab)
   pl.lab("", "", "Shielded potential of charges in a conducting sphere")
 end
-  
+
 
 ----------------------------------------------------------------------------
 -- main
@@ -251,13 +251,13 @@ end
 mark = { 1500 }
 space = { 1500 }
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
--- Set up function arrays 
+-- Set up function arrays
 z = {}
 w = {}
 
@@ -272,7 +272,7 @@ for i = 1, XPTS do
 	end
 end
 
--- Set up grids 
+-- Set up grids
 cgrid1 = {}
 cgrid1["xg"] = {}
 cgrid1["yg"] = {}
@@ -302,7 +302,7 @@ for i = 1, XPTS do
   end
 end
 
--- Plot using identity transform 
+-- Plot using identity transform
 pl.setcontlabelformat(4, 3)
 pl.setcontlabelparam(0.006, 0.3, 0.1, 1)
 pl.env(-1, 1, -1, 1, 0, 0)
@@ -315,8 +315,8 @@ pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 pl.setcontlabelparam(0.006, 0.3, 0.1, 0)
-    
--- Plot using 1d coordinate transform 
+
+-- Plot using 1d coordinate transform
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
 pl.cont(z, 1, XPTS, 1, YPTS, clevel, "pltr1", cgrid1)
@@ -326,8 +326,8 @@ pl.cont(w, 1, XPTS, 1, YPTS, clevel, "pltr1", cgrid1)
 pl.styl({}, {})
 pl.col0(1)
 pl.lab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-    
--- Plot using 2d coordinate transform 
+
+-- Plot using 2d coordinate transform
 pl.env(-1, 1, -1, 1, 0, 0)
 pl.col0(2)
 pl.cont(z, 1, XPTS, 1, YPTS, clevel, "pltr2", cgrid2)
@@ -345,5 +345,5 @@ polar()
 pl.setcontlabelparam(0.006, 0.3, 0.1, 0)
 potential()
 
--- Clean up 
+-- Clean up
 pl.plend()

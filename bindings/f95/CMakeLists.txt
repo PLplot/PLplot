@@ -28,9 +28,9 @@ if(ENABLE_f95)
    PRIVATE\" warning messages when building the plplotf95 target with the
    gfortran Fortran compiler.  A typical example of such a warning
    message is
-   
+
    Warning: Symbol 'interface_plcont' at (1) is marked PRIVATE but has been given the binding label 'c_plcont'
-   
+
    It appears these warnings (which do not occur if using the ifort or
    nagfor Fortran compilers) are due to a gfortran bug (see
    <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=49111> and

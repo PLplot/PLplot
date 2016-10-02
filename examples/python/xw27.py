@@ -24,7 +24,7 @@ from plplot_py_demos import *
 import types
 
 # main
-# 
+#
 # Generates two kinds of plots:
 #   - construction of a cycloid (animated)
 #   - series of epitrochoids and hypotrochoids
@@ -109,7 +109,7 @@ def spiro(params, fill):
     xmax = max(xcoord)
     ymin = min(ycoord)
     ymax = max(ycoord)
-    
+
     xrange_adjust = 0.15 * (xmax - xmin)
     xmin -= xrange_adjust
     xmax += xrange_adjust
@@ -137,7 +137,7 @@ def arcs() :
         plcol0( i%2 + 1 )
         plarc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0)
         theta = theta + dtheta
-    
+
 
     # Draw several filled ellipses inside the circle at different
     # angles.
@@ -148,7 +148,7 @@ def arcs() :
         plcol0( 2 - i%2 )
         plarc( a*cos(theta/180.0*pi), a*sin(theta/180.0*pi), a, b, 0.0, 360.0, theta, 1)
         theta = theta + dtheta
-    
+
 
 
 main()

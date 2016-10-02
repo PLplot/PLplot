@@ -1,5 +1,5 @@
 ## Copyright (C) 2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
@@ -16,26 +16,26 @@
 ##
 ## griddata takes irregularly sampled data from three input arrays
 ##    x[npts], y[npts], and z[npts], reads the desired grid location from
-##   input arrays xg[nptsx] and yg[nptsy], and returns the gridded data 
+##   input arrays xg[nptsx] and yg[nptsy], and returns the gridded data
 ##   into output array zg[nptsx][nptsy].
 ##
-##   The algorithm used to grid the data is specified with the argument 
-##   method. The algorithm  can use argument arg. 
+##   The algorithm used to grid the data is specified with the argument
+##   method. The algorithm  can use argument arg.
 ##   The available(*) algorithms are:
 ##
 ##         GRID_CSA: Bivariate Cubic Spline approximation
-##         GRID_DTLI: Delaunay Triangulation Linear Interpolation 
-##         GRID_NNI: Natural Neighbors Interpolation 
+##         GRID_DTLI: Delaunay Triangulation Linear Interpolation
+##         GRID_NNI: Natural Neighbors Interpolation
 ##         GRID_NNIDW: Nearest Neighbors Inverse Distance Weighted
-##         GRID_NNLI: Nearest Neighbors Linear Interpolation 
-##         GRID_NNAIDW:  Nearest Neighbors Around Inverse Distance Weighted (default) 
+##         GRID_NNLI: Nearest Neighbors Linear Interpolation
+##         GRID_NNAIDW:  Nearest Neighbors Around Inverse Distance Weighted (default)
 ##
 ##   Some algorithms can generate NaNs, and as PLplot is not NaN aware the
 ##   returned data must be treated before being plotted, e.g., zg(isnan (zg)) = 0;
 ##
 ##   (*) Some algorithms might not be present in your system, depending
 ##    on the availability of the QHull library.
-##    GRID_CSA, GRID_DTLI and GRID_NNI use the csa and nn library from 
+##    GRID_CSA, GRID_DTLI and GRID_NNI use the csa and nn library from
 ##    Pavel Sakof, http://www.marine.csiro.au/~sakov/
 
 function  zg = griddata(x, y, z, xg, yg, method, arg)
@@ -51,7 +51,7 @@ function  zg = griddata(x, y, z, xg, yg, method, arg)
 
   if (isvector(x) && isvector(y) && isvector(z) &&
       isvector(xg) && isvector(yg))
-    
+
     [err, x, y, z] = common_size(x, y, z);
     if (err)
       help griddata
@@ -86,6 +86,6 @@ function  zg = griddata(x, y, z, xg, yg, method, arg)
   else
     help griddata
     return
-  endif 
+  endif
 
 endfunction

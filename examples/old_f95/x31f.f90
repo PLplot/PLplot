@@ -27,14 +27,14 @@
 
 program x31f95
   use plplot
-  
+
   implicit none
   real(kind=plflt) xmin, xmax, ymin, ymax, zxmin, zxmax, zymin, zymax
   real(kind=plflt) xmid, ymid, wx, wy
   real(kind=plflt) mar, aspect, jx, jy, ori
   integer win, level2, digmax, digits, compression1, compression2
   real(kind=plflt) xp0, yp0, xp1, yp1, xp2, yp2
-  integer xleng0, yleng0, xoff0, yoff0, xleng1, yleng1, xoff1, yoff1 
+  integer xleng0, yleng0, xoff0, yoff0, xleng1, yleng1, xoff1, yoff1
   integer xleng2, yleng2, xoff2, yoff2
   integer fam0, num0, bmax0, fam1, num1, bmax1, fam2, num2, bmax2, r, g, b
   real(kind=plflt) a
@@ -47,14 +47,14 @@ program x31f95
   character(len=256) fnam
   integer stderr
   integer status
-  
+
   status = 0
   stderr = 0
 
 !     Parse and process command line arguments
 
   call plparseopts(PL_PARSE_FULL)
-  
+
 !     Test setting / getting familying parameters before plinit
   call plgfam(fam0, num0, bmax0)
   fam1 = 0
@@ -101,13 +101,13 @@ program x31f95
 !     Test setting / getting compression parameter across plinit
   compression1 = 95
   call plscompression(compression1)
-    
+
 !     Initialize plplot
 
   call plinit()
 
 !     Test if device initialization screwed around with the preset
-!     compression parameter. 
+!     compression parameter.
   call plgcompression(compression2)
   write(*,'(A)') 'Output various PLplot parameters'
   write(*,'(A,I2)') 'compression parameter = ', compression2
@@ -115,14 +115,14 @@ program x31f95
      write(stderr,*) 'plgcompression test failed'
      status = 1
   endif
-  
+
 !     Exercise plscolor, plscol0, plscmap1, and plscmap1a to make sure
 !     they work without any obvious error messages.
   call plscolor(1)
   call plscol0(1, 255, 0, 0)
   call plscmap1(r1,g1,b1)
   call plscmap1a(r1,g1,b1,a1)
-  
+
   call plglevel(level2)
   write(*,'(A,I1)') 'level parameter = ', level2
   if (level2 .ne. 1) then
@@ -142,7 +142,7 @@ program x31f95
   endif
   xmid = 0.5*(xmin+xmax)
   ymid = 0.5*(ymin+ymax)
-  
+
   call plwind(0.2_plflt, 0.3_plflt, 0.4_plflt, 0.5_plflt)
   call plgvpw(xmin, xmax, ymin, ymax)
   write(*,'(A,4F9.6)') 'plwind: xmin, xmax, ymin, ymax =', &
@@ -166,14 +166,14 @@ program x31f95
   call plgfnam(fnam)
   if (len(trim(fnam)) .eq. 0) then
      write(*,'(A)') 'No output file name is set'
-  else 
+  else
      write(*,'(A)') 'Output file name read'
   endif
   write(stderr,'(A,A)') 'Output file name is ',trim(fnam)
 
 !     Set and get the number of digits used to display axis labels
-!     Note digits is currently ignored in pls[xyz]ax and 
-!     therefore it does not make sense to test the returned 
+!     Note digits is currently ignored in pls[xyz]ax and
+!     therefore it does not make sense to test the returned
 !     value
   call plsxax(3,0)
   call plgxax(digmax,digits)
@@ -183,7 +183,7 @@ program x31f95
      write(stderr,*) 'plgxax test failed'
      status = 1
   endif
-  
+
   call plsyax(4,0)
   call plgyax(digmax,digits)
   write(*,'(A,I2,I2)') 'y axis parameters: digmax, digits =', &
@@ -201,7 +201,7 @@ program x31f95
      write(stderr,*) 'plgzax test failed'
      status = 1
   endif
-  
+
   call plsdidev(0.05_plflt, PL_NOTSET, 0.1_plflt, 0.2_plflt)
   call plgdidev(mar, aspect, jx, jy)
   write(*,'(A,4F9.6)') 'device-space window parameters: '// &
@@ -210,7 +210,7 @@ program x31f95
      write(stderr,*) 'plgdidev test failed'
      status = 1
   endif
-  
+
   call plsdiori(1.0_plflt)
   call plgdiori(ori)
   write(*,'(A,F9.6)') 'ori parameter =', ori
@@ -218,7 +218,7 @@ program x31f95
      write(stderr,*) 'plgdiori test failed'
      status = 1
   endif
-  
+
   call plsdiplt(0.1_plflt, 0.2_plflt, 0.9_plflt, 0.8_plflt)
   call plgdiplt(xmin, ymin, xmax, ymax)
   write(*,'(A,4F9.6)') 'plot-space window parameters: '// &
@@ -240,7 +240,7 @@ program x31f95
      write(stderr,*) 'plsdiplz test failed'
      status = 1
   endif
-  
+
   call plscolbg(10,20,30)
   call plgcolbg(r, g, b)
   write(*,'(A,3I3)') 'background colour parameters: r, g, b =', r, g, b
@@ -257,7 +257,7 @@ program x31f95
      write(stderr,*) 'plgcolbga test failed'
      status = 1
   endif
-  
+
   call plend()
   if (status.ne.0) then
     stop 'Error occured'

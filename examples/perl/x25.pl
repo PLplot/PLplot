@@ -30,7 +30,7 @@ use Getopt::Long;
 
 my ($i, $j);
 
-# Parse and process command line arguments 
+# Parse and process command line arguments
 
 plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
@@ -47,7 +47,7 @@ my ($x0, $y0);
 for ( $k = 0; $k < 2; $k++ ) {
     for ( $j = 0; $j < 4; $j ++ ) {
 	if ( $j == 0 ) {
-# Polygon 1: a diamond 
+# Polygon 1: a diamond
 	    $x0 = pdl( 0, -100, 0, 100);
 	    $y0 = pdl( -100, 0, 100, 0);
 	}
@@ -62,7 +62,7 @@ for ( $k = 0; $k < 2; $k++ ) {
 	    $y0 = pdl( -100, -80, 0, 80, 100, 100, 80, 100, 100, -100);
 	}
 	if ( $j == 3 ) {
-# Polygon 2: a square with punctures - reversed direction 
+# Polygon 2: a square with punctures - reversed direction
 	    $x0 = pdl( 100, 100, 80, 0, -80, -100, -100, 80, -100, -100);
 	    $y0 = pdl( -100, 100, 100, 80, 100, 100, 80, 0, -80, -100);
 	}
@@ -71,7 +71,7 @@ for ( $k = 0; $k < 2; $k++ ) {
 	    pladv(0);
 	    plvsta();
 	    plwind($xextreme->at($i,0), $xextreme->at($i,1), $yextreme->at($i,0), $yextreme->at($i,1));
-	    
+	
 	    plcol0(2) ;
 	    plbox(1.0, 0, 10.0, 0, "bc", "bcnv", );
 	    plcol0(1) ;

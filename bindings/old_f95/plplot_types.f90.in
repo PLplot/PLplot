@@ -9,7 +9,7 @@ module plplot_types
   ! The idea here is to match the Fortran 4-byte integer with
   ! the corresponding C types for PLINT (normally int32_t) and
   ! PLUNICODE (normally uint32_t).  According to websites I have
-  ! read, Fortran has no unsigned integer types and 
+  ! read, Fortran has no unsigned integer types and
   ! using 4 here is safer than anything more complicated.
   integer, parameter :: plint  = 4
   integer, parameter :: plunicode  = 4

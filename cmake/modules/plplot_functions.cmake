@@ -211,7 +211,7 @@ if(MINGW)
 endif(MINGW)
 
 if(${CMAKE_VERSION} VERSION_LESS 3.2 AND (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux"))
-  # N.B. file(GENERATE ...) has a bug (fixed in CMake 3.2) 
+  # N.B. file(GENERATE ...) has a bug (fixed in CMake 3.2)
   # where permissions were not copied from INPUT to OUTPUT.
   # So for CMake version less than 3.2 implement a permissions fixup
   # at run-time using the --reference option for chmod which is a GNU
@@ -229,7 +229,7 @@ endif(${CMAKE_VERSION} VERSION_LESS 3.2 AND (CYGWIN OR CMAKE_SYSTEM_NAME STREQUA
 set(configure_file_generate_suffix "_cf_only")
 function(configure_file_generate)
   # Configure files that contain both normal items
-  # to configure (referenced as ${VAR} or @VAR@) as well as 
+  # to configure (referenced as ${VAR} or @VAR@) as well as
   # generator expressions (referenced as $<...>).
   # The arguments of this function have exactly the
   # same syntax and meaning as configure_file.
@@ -257,7 +257,7 @@ function(configure_file_generate)
     # Collect all filenames whose permissions must be updated
     # from corresponding file name with ${configure_file_generate_suffix}
     # appended.
-    set_property(GLOBAL APPEND 
+    set_property(GLOBAL APPEND
       PROPERTY FILES_WORKAROUND_FILE_GENERATE_BUG
       ${output_file}
       )

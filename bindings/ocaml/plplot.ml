@@ -410,7 +410,7 @@ module Plot = struct
 
   (** [set_color_scale ?stream ?pos ?alt_hue_path colors] sets the color scale 1 (images
       and shade plots) using a linear interpolation between the given list of
-      colors.  If [alt_hue_path] is true then the interpolation of any segment 
+      colors.  If [alt_hue_path] is true then the interpolation of any segment
       uses the alternative hue path which always includes the hue = 0 point. *)
   let set_color_scale ?stream ?pos ?alt_hue_path colors =
     let cs = Array.map rgb_of_color colors in
@@ -574,7 +574,7 @@ module Plot = struct
   let text_outside ?(just = 0.5) ?(perp = false) color side displacement s =
     Text_outside (color, s, side, displacement, just, perp)
 
-  (** [func ?point ?step color f (min, max)] plots the function [f] from 
+  (** [func ?point ?step color f (min, max)] plots the function [f] from
       [x = min] to [x = max].  [step] can be used to tighten or coarsen the
       sampling of plot points. *)
   let func ?symbol ?step color f (min, max) =

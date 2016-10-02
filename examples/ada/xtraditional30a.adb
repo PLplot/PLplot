@@ -87,11 +87,11 @@ begin
     end loop;
 
     -- Page 2:
-    -- This is a bunch of boxes colored red, green or blue with a single 
+    -- This is a bunch of boxes colored red, green or blue with a single
     -- large (red) box of linearly varying transparency overlaid. The
     -- overlaid box is completely transparent at the bottom and completely
     -- opaque at the top.
-   
+
     -- Set up the window
     pladv(0);
     plvpor(0.1, 0.9, 0.1, 0.9);
@@ -105,7 +105,7 @@ begin
         px(2) := px(1);
         px(3) := px(0);
 
-        -- We don't want the boxes to be transparent, so since we changed  
+        -- We don't want the boxes to be transparent, so since we changed
         -- the colors transparencies in the first example we have to change
         -- the transparencies back to completely opaque.
         icol := i mod 3 + 1;
@@ -139,6 +139,6 @@ begin
     py(3) := 1.0;
 
     plgradient(px, py, 90.0);
-    
+
     plend;
 end xtraditional30a;

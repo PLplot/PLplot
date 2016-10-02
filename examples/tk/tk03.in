@@ -44,7 +44,7 @@ proc open_main {} {
     button .menu.open -text "Open new" -command "open_child"
     pack append .menu .menu.open {left expand fill}
 
-    button .menu.exit -text "Exit" -command "destroy ." 
+    button .menu.exit -text "Exit" -command "destroy ."
 
 #"quit 0"
 
@@ -57,7 +57,7 @@ proc open_main {} {
 
     pack append . \
 	.menu {top fillx} \
-	.msg {top padx 5 pady 5 fill} 
+	.msg {top padx 5 pady 5 fill}
 
     tk_menuBar .menu .menu.one .menu.two .menu.exit
 
@@ -108,7 +108,7 @@ proc open_child {} {
 
     pack append $w \
 	$w.menu {top fillx} \
-	$w.msg {top padx 5 pady 5 fill} 
+	$w.msg {top padx 5 pady 5 fill}
 
     tk_menuBar $w.menu $w.menu.three $w.menu.four
 
@@ -248,7 +248,7 @@ proc plot3 {w} {
     $w cmd plcol0 1
     $w cmd plbox "bcnst" 60.0 2 "bcnstv" 0.2 2
 
-# Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+# Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 # plstyl expects two integer matrices for mark and space!
 
     matrix mark i 1

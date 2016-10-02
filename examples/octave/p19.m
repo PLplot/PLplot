@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -63,7 +63,7 @@ function p19
     y2 = sin(t);
     y3 = y2 * noise/3;
     y4 = y2 + noise/4;
-    
+
     ## there is no need for all pens to have the same number of points
     ## or beeing equally time spaced.
 
@@ -86,7 +86,7 @@ function p19
       plflush;pleop;
       figure(f0);
     endif
-    
+
     plflush;pleop;
   endfor
 
@@ -95,7 +95,7 @@ function p19
   stripc_del(id1);
   stripc_del(id2);
   stripc_del(id3);
-  
+
   closefig(f1);
   oneplot;
 

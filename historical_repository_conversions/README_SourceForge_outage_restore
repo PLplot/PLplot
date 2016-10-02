@@ -39,14 +39,14 @@ git_old log --name-status > /tmp/git_log_old.out
 git_new log --name-status > /tmp/git_log_new.out
 diff /tmp/git_log_old.out /tmp/git_log_new.out
 
-Also look at the above results to verify they go back to 
+Also look at the above results to verify they go back to
 
 commit eacad1b4079dacd192c85006125bc03c38204046
 Author: Geoffrey Furnish <furnish@users.sourceforge.net>
 Date:   Wed May 20 21:36:02 1992 +0000
 
     Initial checkin of the whole PLPLOT project.
-    
+
     svn path=/trunk/; revision=2
 
 # Check working directories for each commit in log are identical (requires ~20 minutes)

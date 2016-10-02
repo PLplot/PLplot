@@ -3,7 +3,7 @@
 # This script generates a tarball of source code and screenshots,
 # 'htdocs_plot_examples.tgz', that will be part of the 'examples' web page,
 #
-# The original intention was to upload the generated tarball directly to the 
+# The original intention was to upload the generated tarball directly to the
 # PLplot SourceForge website filesystem and unpack it there using ssh
 # commands, but now that SF is no longer ssh accessible, the script
 # has been generalized for any ssh-accessible site, which in turn can
@@ -97,7 +97,7 @@ for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 
       # generates more interesting results.
         DRIVEROPT='-eofill'
     else
-      # Otherwise use default graphics AA which is full AA 
+      # Otherwise use default graphics AA which is full AA
         DRIVEROPT=
     fi
     echo Working on example ${exe} using DRIVEROPT of $DRIVEROPT

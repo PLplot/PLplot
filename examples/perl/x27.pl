@@ -28,7 +28,7 @@ plParseOpts (\@ARGV, PL_PARSE_SKIP | PL_PARSE_NOPROGRAM);
 
 plinit ();
 
-# 
+#
 # Generates two kinds of plots:
 #   - construction of a cycloid (animated) (TBD)
 #   - series of epitrochoids and hypotrochoids

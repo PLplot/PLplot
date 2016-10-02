@@ -39,11 +39,11 @@ def main():
     x.shape = (-1,)
     zmin = min(z.flat)
     zmax = max(z.flat)
-    
+
     plot1(z, zmin, zmax)
     plot2(z, zmin, zmax)
     plot3()
-    
+
     # Restore defaults
     #plcol0(1)
 	
@@ -53,7 +53,7 @@ def plot1(z, zmin, zmax):
     pladv(0)
     plvpor(0.1, 0.9, 0.1, 0.9)
     plwind(-1.0, 1.0, -1.0, 1.0)
-    
+
     shade_min = zmin + (zmax-zmin)*0.4
     shade_max = zmin + (zmax-zmin)*0.6
     sh_cmap = 0
@@ -63,13 +63,13 @@ def plot1(z, zmin, zmax):
     min_width = 2.
     max_color = 2
     max_width = 2.
-    
+
     plpsty(8)
-    
+
     # Just use identity transform on indices of z mapped to -1, 1 range
     # in X and Y coordinates
-    plshade( z, -1., 1., -1., 1., 
-    shade_min, shade_max, sh_cmap, sh_color, sh_width, 
+    plshade( z, -1., 1., -1., 1.,
+    shade_min, shade_max, sh_cmap, sh_color, sh_width,
     min_color, min_width, max_color, max_width, 1, None, None)
 							
     plcol0(1)
@@ -82,32 +82,32 @@ def plot2(z, zmin, zmax):
 # patterns for each region.
 
     nlin = array( [1, 1, 1, 1, 1, 2, 2, 2, 2, 2] )
-    inc = array( [ [450, 0], [-450, 0], [0, 0], [900, 0], 
-                 [300, 0], [450,-450], [0, 900], [0, 450], 
+    inc = array( [ [450, 0], [-450, 0], [0, 0], [900, 0],
+                 [300, 0], [450,-450], [0, 900], [0, 450],
                  [450, -450], [0, 900] ] )
-    spa = array( [ [2000, 2000], [2000, 2000], [2000, 2000], 
-                 [2000, 2000], [2000, 2000], [2000, 2000], 
-                 [2000, 2000], [2000, 2000], [4000, 4000], 
+    spa = array( [ [2000, 2000], [2000, 2000], [2000, 2000],
+                 [2000, 2000], [2000, 2000], [2000, 2000],
+                 [2000, 2000], [2000, 2000], [4000, 4000],
                  [4000, 2000] ] )
 
     pladv(0)
     plvpor(0.1, 0.9, 0.1, 0.9)
     plwind(-1.0, 1.0, -1.0, 1.0)
-    
+
     sh_cmap = 0
     sh_width = 2.
     min_color = 0
     min_width = 0.
     max_color = 0
     max_width = 0.
-    
+
     for i in range(10):
 	shade_min = zmin + (zmax - zmin) * i / 10.0
 	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0
 	sh_color = i+6
         n = nlin[i]
 	plpat(inc[i][0:n], spa[i][0:n])
-    
+
 	# Just use identity transform on indices of z mapped to -1, 1 range
 	# in X and Y coordinates
 	plshade( z, -1., 1., -1., 1.,
@@ -120,13 +120,13 @@ def plot2(z, zmin, zmax):
     pllab("distance", "altitude", "Bogon flux")
 
 def plot3():
-# Illustrates shaded regions in 3d, using a different fill pattern for 
-# each region.  
+# Illustrates shaded regions in 3d, using a different fill pattern for
+# each region.
     xx = array( [ [-1.0, 1.0, 1.0, -1.0, -1.0],
                   [-1.0, 1.0, 1.0, -1.0, -1.0] ] )
-    yy = array( [ [1.0, 1.0, 0.0, 0.0, 1.0], 
+    yy = array( [ [1.0, 1.0, 0.0, 0.0, 1.0],
                 [-1.0, -1.0, 0.0, 0.0, -1.0] ] )
-    zz = array( [ [0.0, 0.0, 1.0, 1.0, 0.0], 
+    zz = array( [ [0.0, 0.0, 1.0, 1.0, 0.0],
                   [0.0, 0.0, 1.0, 1.0, 0.0] ] )
 
     pladv(0)
@@ -135,7 +135,7 @@ def plot3():
     plw3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40)
 
     # Plot using identity transform
-    
+
     plcol0(1)
     plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0)
     plcol0(2)

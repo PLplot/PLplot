@@ -40,7 +40,7 @@ sub main {
 # Run demos
     demo1();
     demo2();
-    
+
     plend();
 }
 
@@ -99,9 +99,9 @@ sub demo2 {
     $b = $b->append($b1*255.001);
 
     #for ($i = 0; $i < 116; $i++) {
-    #  printf("%3.0f %3.0f %3.0f %3.0f \n", $i, $r->at($i), $g->at($i), $b->at($i)); 
+    #  printf("%3.0f %3.0f %3.0f %3.0f \n", $i, $r->at($i), $g->at($i), $b->at($i));
     #}
-    
+
 # Now set cmap0 all at once (faster, since fewer driver calls)
     plscmap0($r, $g, $b);
 

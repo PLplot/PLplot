@@ -1,17 +1,17 @@
 ## -*-Tcl-*-
  # ###################################################################
- # 
+ #
  #  FILE: "plbarchart.tcl"
- #                                    created: 03/21/1998 {00:21:52 AM} 
- #                                last update: 07/01/2002 {06:32:43 PM} 
+ #                                    created: 03/21/1998 {00:21:52 AM}
+ #                                last update: 07/01/2002 {06:32:43 PM}
  #  Author: Vince Darley
  #  E-mail: vince@biosgroup.com
  #    mail: Bios Group
  #          317 Paseo de Peralta, Santa Fe, NM 87501
  #     www: http://www.biosgroup.com/
- #  
+ #
  # Copyright (c) 1998-1999 Vince Darley
- # 
+ #
  # All rights reserved.
  # ###################################################################
  ##
@@ -31,13 +31,13 @@ itcl::class Plbarchart {
     public variable minbin 0.0
     public variable maxbin 1.0
     private variable step 0.0
-    
+
     itk_option define -title title Title "plot"
     itk_option define -xname xname Xname "x"
 
     constructor {args} {}
     destructor {}
-    
+
     method internal_set {var to} {
 	set $var $to
     }
@@ -52,7 +52,7 @@ itcl::configbody Plbarchart::ymax {
 }
 
 itcl::body Plbarchart::constructor {args} {
-    # 
+    #
     # Create the outermost frame to maintain geometry.
     #
     itk_component add shell {
@@ -61,7 +61,7 @@ itcl::body Plbarchart::constructor {args} {
 	keep -background -cursor -width -height
     }
     pack $itk_component(shell) -fill both -expand yes
-    
+
     itk_component add pl {
 	Plplotwin $itk_component(shell).pl
     } {

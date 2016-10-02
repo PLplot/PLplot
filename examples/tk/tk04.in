@@ -21,7 +21,7 @@ button .menu.contour -text "Line Contour" -command "contour"
 button .menu.shade -text "Color Fill Contour" -command "shade"
 pack .menu.comp .menu.contour .menu.shade -side left
 
-button .menu.exit -text "Exit" -command "destroy ." 
+button .menu.exit -text "Exit" -command "destroy ."
 pack .menu.exit -side right
 
 message .msg \
@@ -85,7 +85,7 @@ proc contour {} {
 }
 
 proc shade {} {
-    
+
     global x
 
     .plw pladv
@@ -111,7 +111,7 @@ proc shade {} {
 	.plw plshade x $xmin $xmax $ymin $ymax $sh_min $sh_max 1 $sh_col 0 \
 	    1 0 0 0 \
 	    1 "NULL"
-	    
+	
     }
 
     .plw plcol0 1

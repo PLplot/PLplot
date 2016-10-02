@@ -1,7 +1,7 @@
 /* January 24, 2016
 
    PyQt5 wrapper file for the PLplot QtExtWidget driver.
-    
+
    Copyright (C) 2016 Hazen Babcock
 
    This file is part of PLplot.
@@ -44,7 +44,7 @@ class QtPLWidget: QWidget, QtPLDriver {
 %TypeHeaderCode
 #include "qt.h"
 %End
-    
+
   public:
     QtPLWidget(int i_iWidth=QT_DEFAULT_X, int i_iHeight=QT_DEFAULT_Y, QWidget* parent=0);
     virtual ~QtPLWidget();
@@ -62,7 +62,7 @@ class QtPLWidget: QWidget, QtPLDriver {
 };
 
 class QtExtWidget: QtPLWidget {
-    
+
 %TypeHeaderCode
 #include "qt.h"
 %End

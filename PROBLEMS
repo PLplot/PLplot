@@ -21,7 +21,7 @@ Essential, minor effort required.
 ***************************************
 
 * Fix bad-looking surface contours for plsurf.  The problem goes away if the
-plP_fill call is commented out in the normal series of alternating calls to 
+plP_fill call is commented out in the normal series of alternating calls to
 plP_fill and plline3 that are used to generate the surface and the surface
 contours.  So I conclude there is some inconsistency between the edge of
 the triangles as defined for the surface contours plotted by plline3
@@ -111,22 +111,22 @@ I. Font problems associated with plfreetype.c which is called by gd.c which
   knows a small redesign that will fix it.
 
 * There are still problems with vertical alignment of symbols for
-  plfreetype.c.  See results from 
+  plfreetype.c.  See results from
 
   examples/c/x06c -dev png -o test.png
 
   where on line 100 the characters move up or down depending on whether they
   have an ascender, descender or neither.  There are similar problems for
   example 7.
-  
+
   N.B. This is only a problem for plpoin (example 6) and plsym (example 7),
   but not a problem for plmtex. So there is probably some issue with the way
   plhrsh (called by plpoin and plsym) sets up the call to the code in
   plfreetype.c that is not present for plmtex.
-  
+
 * The above problem may be related to the xform setting in plhrsh (plsym.c)
   which is a kludge.  if you define TEST_FOR_MISSING_GLYPHS,
-  it quits working (all the symbols are twisted by 90 deg). 
+  it quits working (all the symbols are twisted by 90 deg).
 
 * -drvopt 24bit problems.  If this option is turned on (and only in this
   case), Example 9 and 22 second and subsequent pages have rectangular

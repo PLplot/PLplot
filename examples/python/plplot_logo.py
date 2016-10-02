@@ -95,7 +95,7 @@ def main():
            "bcdmnstuv", "", 0.0, 0)
     # If converting the -dev svg result later with the ImageMagick
     # "convert" application or viewing the svg result with the ImageMagick
-    # "display" application must compensate for the librsvg-2.22 
+    # "display" application must compensate for the librsvg-2.22
     # positioning bug since librsvg is what ImageMagick uses
     # to interpret SVG results.
     if_rsvg_bug = True
@@ -109,7 +109,7 @@ def main():
     # magnitude colored plot with faceted squares
     cmap1_init(0)
     plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
-    
+
     # Shading to provide a good background for legend.
     x1 = 0.10
     x2 = 0.8
@@ -142,7 +142,7 @@ def main():
     plschr(0., 1.5)
     plptex(x1, 0.30, 1.0, 0.0, 0.0,
            "The ultimate in cross-platform plotting")
-    
+
 main()
 # Terminate plplot
 plend()

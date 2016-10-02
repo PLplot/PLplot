@@ -117,7 +117,7 @@ for line in sys.stdin.readlines():
         line = re.sub(r'^(.*)\n$', "\\1", line)
         if end_comment < 0:
             # Convert multiline comment line that is not start line
-            # or end line of that comment.  
+            # or end line of that comment.
             # Replace " *" after zero or more blanks (the standard form
             # produced by uncrustify) if it is there by "//".
             # N.B. preserves indentation.
@@ -160,7 +160,7 @@ for line in sys.stdin.readlines():
         # Add back (Unix-only) line ending.
         line = line + "\n"
 
-    # If previous comment continuation exists, check whether it is 
+    # If previous comment continuation exists, check whether it is
     # valid, i.e., whether it is followed by another line consisting
     # zero or more blanks followed by a comment.
     if previous_continue:

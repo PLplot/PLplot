@@ -61,7 +61,7 @@ set(d_STRING_INDICES
   "33"
   )
 
-if(CORE_BUILD) 
+if(CORE_BUILD)
   set(d_SRCS)
   foreach(STRING_INDEX ${d_STRING_INDICES})
     set(d_SRCS ${d_SRCS} x${STRING_INDEX}d.d)
@@ -86,7 +86,7 @@ if(CORE_BUILD)
   install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/d
     )
-endif(CORE_BUILD) 
+endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(CORE_BUILD)

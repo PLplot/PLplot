@@ -18,13 +18,13 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Configuration for the building of DocBook documentation 
+# Configuration for the building of DocBook documentation
 
 option(BUILD_DOC "Enable build of DocBook documentation" OFF)
 
 if(NOT PERL_FOUND)
   set(
-  BUILD_DOC OFF CACHE INTERNAL 
+  BUILD_DOC OFF CACHE INTERNAL
   "Enable build of DocBook documentation"
   )
 endif(NOT PERL_FOUND)
@@ -41,7 +41,7 @@ set(WWW_USER "" CACHE STRING "User name at WWW host")
 set(WWW_GROUP "plplot" CACHE STRING "Group name at WWW host")
 set(WWW_HOST "shell1.sourceforge.net" CACHE STRING "Host name at WWW host")
 set(
-WWW_DIR "/home/groups/p/pl/plplot/htdocs/docbook-manual" 
+WWW_DIR "/home/groups/p/pl/plplot/htdocs/docbook-manual"
 CACHE STRING "Dir name at WWW host"
 )
 set(RSH "ssh" CACHE STRING "Remote shell command")
@@ -123,7 +123,7 @@ if(BUILD_DOC)
   endif(XMLTO)
 
   option(DOCBOOK_DBLATEX_BACKEND "Use \"dblatex --backend=xetex\" XML/XSLT backend tool to generate our print documentation from DocBook source" ON)
-  
+
 
   if(DOCBOOK_DBLATEX_BACKEND)
     # For this default case configure the PDF-only print backend using dblatex and xelatex.

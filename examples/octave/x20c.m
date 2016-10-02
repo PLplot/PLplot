@@ -27,14 +27,14 @@ function ix20c
   ## view image border pixels
   if (exist("dbg","var"))
     plenv(1., xdim, 1., ydim, 1, 1);  ## no plot box
-    
+
     ## build a one pixel square border, for diagnostics
     z = zeros(xdim,ydim);
     z(:,ydim) = 1;  ## right
     z(:,1) = 1;     ## left
     z(0,:) = 1;     ## top
     z(xdim,:) = 1;  ## bottom
-  
+
     pllab("...around a blue square."," ","A red border should appear...");
 
     pplimage(z, 1.0, xdim, 1.0, ydim, 0.0, 0.0, 1.0, xdim, 1.0, ydim);
@@ -57,7 +57,7 @@ function ix20c
 
     pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?");
     plptex(2., 2., 3., 4., 0., "Transparent image");
-    pplimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1., 0., 2.*pi, 0, 3.*pi); 
+    pplimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1., 0., 2.*pi, 0, 3.*pi);
 
     ## save the plot
     if (exist("f_name","var"))
@@ -87,7 +87,7 @@ function ix20c
   else
     pllab(""," ","Chloe...");
   endif
-  
+
   pplimage(img, 1.0, width, 1.0, height, 0.0, 0.0, 1.0, width, 1.0, height);
 
   ## selection/expansion demo
@@ -97,8 +97,8 @@ function ix20c
 	plend1;
 	return;
       endif
-  
-    ## 
+
+    ##
     ## I'm unable to continue, clearing the plot and advancing to the next
     ## one, without hiting the enter key, or pressing the button... help!
     ##
@@ -106,12 +106,12 @@ function ix20c
     ## xhairs (in GetCursorCmd()) solves some problems, but I still have
     ## to press the enter key or press Button-2 to go to next plot, even
     ## if a pladv() is not present!  Using plbop() solves the problem, but
-    ## it shouldn't be needed! 
+    ## it shouldn't be needed!
     ##
 
     ## plbop();
 
-    ## 
+    ##
     ## plspause(0), pladv(0), plspause(1), also works,
     ## but the above question remains.
     ## With this approach, the previous pause state is lost,
@@ -129,19 +129,19 @@ function ix20c
     ## zoom in selection
     plenv(xi, xe, ye, yi, 1, -1);
     pplimage(img, 1.0, width, 1.0, height, 0.0, 0.0, xi, xe, ye, yi);
-  endif  
+  endif
 
   ## Base the dynamic range on the image contents.
 
   img_max = max(max(img));
   img_min = min(min(img));
-      
+
   plcol0(2)
   plenv(0., width, 0., height, 1, -1)
   pllab("", "", "Reduced dynamic range image example")
   plimagefr(img, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, img_max - img_max * 0.25)
 
-  ## Draw a distorted version of the original image, showing its 
+  ## Draw a distorted version of the original image, showing its
   ## full dynamic range.
   plenv(0., width, 0., height, 1, -1)
   pllab("", "", "Distorted image example")
@@ -209,11 +209,11 @@ endfunction
 
 
 ## save plot
-function save_plot(fname)   
+function save_plot(fname)
 
   cur_strm = plgstrm;   ## get current stream
   new_strm = plmkstrm;  ## create a new one
-    
+
   plsdev("psc"); ## new device type. Use a known existing driver
   plsfnam(fname); ## file name
 
@@ -238,12 +238,12 @@ function [ret, xi, xe, yi, ye] = get_clip
   keysym = 0;
 
   if (st)  ## driver has xormod capability, continue
-    while(1) 
+    while(1)
       st = plxormod(0);
       [retval, state, keysym, button, string, pX, pY, dX, dY, wX, wY, subwin]  = plGetCursor();
       st = plxormod(1);
 
-      if (button == 1) 
+      if (button == 1)
 	xi = wX; yi = wY;
 	if (start)
 	  plline(sx, sy); ## clear previous rectangle
@@ -254,8 +254,8 @@ function [ret, xi, xe, yi, ye] = get_clip
 	sx(1) = xi; sy(1) = yi;
 	sx(5) = xi; sy(5) = yi;
       endif
-      
-      if (state && 0x100) 
+
+      if (state && 0x100)
 	xe = wX; ye = wY;
 	if (start)
 	  plline(sx, sy); ## clear previous rectangle
@@ -269,19 +269,19 @@ function [ret, xi, xe, yi, ye] = get_clip
 	plline(sx, sy); ## draw new rectangle
       endif
 
-      ## Can't use PLK_Return here since PLK_ constant are not 
+      ## Can't use PLK_Return here since PLK_ constant are not
       ## currently defined for the octave bindings
       if (button == 3 || keysym == 0x0D || keysym == 'Q')
 	if (start)
 	  plline(sx, sy); ## clear previous rectangle
 	endif
 	break;
-      endif      
+      endif
     endwhile
     st = plxormod(0); ## leave xor mod
   endif
 
-  if (xe < xi) 
+  if (xe < xi)
     t=xi; xi=xe; xe=t;
   endif
 
@@ -297,7 +297,7 @@ function gray_cmap(num_col)
 
   r(1) = g(1) = b(1) = 0.0;
   r(2) = g(2) = b(2) = 1.0;
-    
+
   pos(1) = 0.0;
   pos(2) = 1.0;
 

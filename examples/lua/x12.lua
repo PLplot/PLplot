@@ -48,11 +48,11 @@ green = { 1,  0.5, 0.5,  0.5, 1 }
 blue  = { 1,    1, 0.5, 0.25, 0 }
 
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 
 pl.parseopts(arg, pl.PL_PARSE_FULL);
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 pl.adv(0)

@@ -33,7 +33,7 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 # Initialize plplot
 plinit()
 
-# Exclude interactive demos 14, 17, 31 which call plinit in the xw??.py 
+# Exclude interactive demos 14, 17, 31 which call plinit in the xw??.py
 # script
 failed = []
 for i in range(1, 14)+[15,16]+range(18,31):

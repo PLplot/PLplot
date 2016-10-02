@@ -1,5 +1,5 @@
 -- Maintain backward compatibility of the Ada "standard" binding after changing the
--- name to PLplot_Standard from PLplot. 
+-- name to PLplot_Standard from PLplot.
 
 -- Copyright (C) 2016 Jerry Bauck
 

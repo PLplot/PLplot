@@ -105,7 +105,7 @@ begin
                 begin
                     x0_Stop_Sucking := x0(0 .. npts - 1);
                     y0_Stop_Sucking := y0(0 .. npts - 1);
-                    
+
                     Set_Pen_Color(Yellow);
                     Box_Around_Viewport("bc", 1.0, 0, "bcnv", 10.0, 0);
                     Set_Pen_Color(Red);

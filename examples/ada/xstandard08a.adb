@@ -56,7 +56,7 @@ procedure xstandard08a is
     indexymin : Integer_Array_1D(0 .. XPTS - 1);
     indexymax : Integer_Array_1D(0 .. XPTS - 1);
     zlimited : Real_Matrix(0 .. XPTS - 1, 0 .. YPTS - 1);
-    
+
     -- Parameters of ellipse (in x, y index coordinates) that limits the data.
     -- x0, y0 correspond to the exact floating point centre of the index range.
     x0 : Long_Float := 0.5 * Long_Float(XPTS - 1);
@@ -64,12 +64,12 @@ procedure xstandard08a is
     y0 : Long_Float := 0.5 * Long_Float(YPTS - 1);
     b  : Long_Float := 0.7 * y0;
     square_root : Long_Float;
-    
+
     sombrero : Boolean := True; -- Edit this to choose sombrero or Rosenbrock function.
     rosen : Boolean := not sombrero; -- Toggle Rosenbrock according to sombrero.
     alt : Real_Vector(0 .. 1) := (60.0, 40.0);
     az  : Real_Vector(0 .. 1) := (30.0, -30.0);
-    title : array(0 .. 1) of Unbounded_String := 
+    title : array(0 .. 1) of Unbounded_String :=
         (TUB("#frPLplot Example 8 - Alt=60, Az=30"),
          TUB("#frPLplot Example 8 - Alt=40, Az=-30"));
 
@@ -143,7 +143,7 @@ begin
             yy := y(j);
             if rosen then
                 z(i, j) := (1.0 - xx) * (1.0 - xx) + 100.0 * (yy - (xx * xx)) * (yy - (xx * xx));
-                -- The log argument might be zero for just the right grid. 
+                -- The log argument might be zero for just the right grid.
                 if z(i, j) > 0.0 then
                     z(i, j) := log(z(i, j));
                 else
@@ -194,7 +194,7 @@ begin
             else
                 Set_Up_3D(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax, alt(k), az(k));
             end if;
-        
+
             Box_Around_Viewport_3D("bnstu", "x axis", 0.0, 0,
                 "bnstu", "y axis", 0.0, 0,
                 "bcdmnstuv", "z axis", 0.0, 0);

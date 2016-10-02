@@ -41,7 +41,7 @@ function ix24c
 
   px = [0.0; 0.0; 1.0; 1.0];
   py = [0.0; 0.25; 0.25; 0.0];
-  
+
   sx = [
   0.16374,
   0.15844,
@@ -76,29 +76,29 @@ sy = [
 ## Taken from http://www.columbia.edu/~fdc/pace/
 
 peace = [
-  ## Mandarin 
+  ## Mandarin
   "#<0x00>和平";
-  ## Hindi 
+  ## Hindi
   "#<0x20>शांति";
-  ## English 
+  ## English
   "#<0x10>Peace";
-  ## Hebrew 
+  ## Hebrew
   "#<0x10>שלום";
-  ## Russian 
+  ## Russian
   "#<0x10>Мир";
-  ## German 
+  ## German
   "#<0x10>Friede";
-  ## Korean 
+  ## Korean
   "#<0x30>평화";
-  ## French 
+  ## French
   "#<0x10>Paix";
-  ## Spanish 
+  ## Spanish
   "#<0x10>Paz";
-  ## Arabic 
+  ## Arabic
   "#<0x10>ﺳﻼم";
   ## Turkish
   "#<0x10>Barış";
-  ## Kurdish 
+  ## Kurdish
   "#<0x10>Hasîtî"
 ];
 

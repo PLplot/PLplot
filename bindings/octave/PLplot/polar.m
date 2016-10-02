@@ -32,7 +32,7 @@ function polar (x1, x2, fmt)
     __pl.lxm(strm) = __pl.lym(strm) = realmax;
     __pl.lxM(strm) = __pl.lyM(strm) = -realmax;
   endif
-  
+
   if (nargin == 3)
     if (!ischar (fmt))
       error ("polar: third argument must be a string");
@@ -51,7 +51,7 @@ function polar (x1, x2, fmt)
   else
     usage ("polar (theta, rho, fmt)");
   endif
-  
+
   __pl_plotit;
-  
+
 endfunction

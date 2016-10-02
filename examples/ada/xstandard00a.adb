@@ -44,17 +44,17 @@ begin
     end loop;
 
     -- Parse and process command line arguments.
-    Parse_Command_Line_Arguments(Parse_Full); 
+    Parse_Command_Line_Arguments(Parse_Full);
 
     -- Initialize plplot.
     Initialize_PLplot;
 
     -- Create a labelled box to hold the plot.
-    Set_Environment(x_Min, x_Max, y_Min, y_Max, 
-        Justification => Not_Justified, 
+    Set_Environment(x_Min, x_Max, y_Min, y_Max,
+        Justification => Not_Justified,
         Axis_Style    => Linear_Box_Plus);
     Write_Labels
-       (X_Label     => "x", 
+       (X_Label     => "x",
         Y_Label     => "y=100 x#u2#d",
         Title_Label => "Simple PLplot demo of a 2D line plot");
 

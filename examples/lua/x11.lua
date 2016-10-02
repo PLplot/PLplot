@@ -23,9 +23,9 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
-XPTS = 35		-- Data points in x 
-YPTS = 46		-- Data points in y 
-LEVELS = 10 
+XPTS = 35		-- Data points in x
+YPTS = 46		-- Data points in y
+LEVELS = 10
 
 opt = { pl.DRAW_LINEXY, pl.DRAW_LINEXY }
 
@@ -53,7 +53,7 @@ function lor(x,y)
 	return result
 end
 
-    
+
 function cmap1_init()
   i = { 0, 1 }      -- left boundary , right boundary
   h = { 240, 0 }    -- blue -> green -> yellow -> red
@@ -75,10 +75,10 @@ end
 nlevel = LEVELS
 clevel = {}
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 x = {}
@@ -101,15 +101,15 @@ for i=1, XPTS do
     z[i][j] = 3 * (1-xx)^2 * math.exp(-xx^2 - (yy+1.)^2) -
               10 * (xx/5 - xx^3 - yy^5) * math.exp(-xx^2-yy^2) -
               1/3 * math.exp(-(xx+1)^2 - yy^2)
-   
-    -- Jungfraujoch/Interlaken 
-    if false then  
+
+    -- Jungfraujoch/Interlaken
+    if false then
       if z[i][j] < -1 then z[i][j] = -1 end
     end
   end
 end
 
-zmax, zmin = pl.MinMax2dGrid(z)  
+zmax, zmin = pl.MinMax2dGrid(z)
 step = (zmax - zmin)/(nlevel+1)
 for i=1, nlevel do
   clevel[i] = zmin + step + step*(i-1)
@@ -129,22 +129,22 @@ for k=1, 2 do
 
     pl.col0(2)
 
-    -- wireframe plot 
+    -- wireframe plot
     if i==1 then
       pl.mesh(x, y, z, opt[k])
     end
 
-    -- magnitude colored wireframe plot 
+    -- magnitude colored wireframe plot
     if i==2 then
       pl.mesh(x, y, z, lor(opt[k], pl.MAG_COLOR))
     end
 
-    -- magnitude colored wireframe plot with sides 
+    -- magnitude colored wireframe plot with sides
     if i==3 then
       pl.plot3d(x, y, z, lor(opt[k], pl.MAG_COLOR), 1)
     end
 
-    -- magnitude colored wireframe plot with base contour 
+    -- magnitude colored wireframe plot with base contour
     if i==4 then
       pl.meshc(x, y, z, lor(lor(opt[k], pl.MAG_COLOR), pl.BASE_CONT), clevel)
     end
@@ -154,6 +154,6 @@ for k=1, 2 do
   end
 end
 
--- Clean up 
-  
+-- Clean up
+
 pl.plend()

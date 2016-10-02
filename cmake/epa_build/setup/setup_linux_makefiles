@@ -37,7 +37,7 @@ export INSTALL_PREFIX_BUILDTOOLS="${INSTALL_PREFIX}_buildtools"
 # Put buildtools that have been built and installed by build_packages on PATH.
 PATH="${INSTALL_PREFIX_BUILDTOOLS}"/bin:$PATH
 
-# Put Linux install directory on PATH (so that, e.g., the wxwidgets 
+# Put Linux install directory on PATH (so that, e.g., the wxwidgets
 # configuration tool will be found.
 PATH=${INSTALL_PREFIX}/bin:$PATH
 

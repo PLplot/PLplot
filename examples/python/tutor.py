@@ -6,7 +6,7 @@
 # This program is intended to be used as a template for creating simple
 # two-dimensional plotting programs which use the PLplot plotting
 # library.  The program was written with an emphasis on trying to clearly
-# illustrate how to use the PLplot library functions.  
+# illustrate how to use the PLplot library functions.
 #
 # This program reads data for M lines with N points each from an input
 # data file and plots them on the same graph using different symbols.  It
@@ -37,7 +37,7 @@ import string
 import sys
 
 # You can select a different set of symbols to use when plotting the
-# lines by changing the value of OFFSET. 
+# lines by changing the value of OFFSET.
 
 OFFSET = 2
 

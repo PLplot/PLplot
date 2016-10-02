@@ -6,7 +6,7 @@
 # it under the terms of the GNU Library General Public License as published
 # by the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # PLplot is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,7 +36,7 @@
 #    call loadAppDefaults with suitable arguments after the pldefaults call.
 #
 # The older syntax using the plconfig.tcl file may still work but is
-# deprecated. 
+# deprecated.
 #
 # BUGS:
 #  - should probably replace some of the global variables with resources.
@@ -119,7 +119,7 @@ proc pl_libdefaults {} {
     set dialog_bold_font	-*-times-bold-r-normal-*-*-180-*
 
 #----------------------------------------------------------------------------
-# Color-related resources. 
+# Color-related resources.
 # Sort of Motif-y.
 # It doesn't actually hurt to do this if not on a color system.
 
@@ -179,7 +179,7 @@ proc pl_libdefaults {} {
 	}
 
     #----------------------------------------------------------------------------
-    # Miscellaneous 
+    # Miscellaneous
 
 	option add *anchor			w		startupFile
 	option add *Button.borderWidth		2		startupFile
@@ -214,7 +214,7 @@ proc pl_libdefaults {} {
 
 	tk_focusFollowsMouse
     }
-    
+
 # Various options -- use global variables for simplicity.
 
 # Scale widget bindings
@@ -228,7 +228,7 @@ proc pl_libdefaults {} {
     global key_resume;		set key_resume		"Return"
     global key_zoom_select;	set key_zoom_select	"z"
     global key_zoom_back;	set key_zoom_back	"b"
-    global key_zoom_forward;	set key_zoom_forward	"f"    
+    global key_zoom_forward;	set key_zoom_forward	"f"
     global key_zoom_reset;	set key_zoom_reset	"r"
     global key_print;		set key_print		"P"
     global key_save_again;	set key_save_again	"s"
@@ -243,7 +243,7 @@ proc pl_libdefaults {} {
 
     global file_menu_on;	set file_menu_on "1"
     global plot_menu_on;	set plot_menu_on "1"
-    
+
     bind . <m> {toggle_menus %W}
 
     setup_cursorkeybindings
@@ -277,8 +277,8 @@ proc plw_moveCursor {w x y xd yd} {
 # manipulate the pointer on top of active Plframes.
 proc setup_cursorkeybindings {} {
     foreach combo {
-	{} 
-	Shift Option Control 
+	{}
+	Shift Option Control
 	{Shift Option} {Shift Control} {Option Control}
 	{Shift Option Control}
     } {

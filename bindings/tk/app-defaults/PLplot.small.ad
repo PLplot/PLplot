@@ -11,7 +11,7 @@
 ! Plotting window size.
 
 ! This gives the specified geometry.
-! This suggestion is scaled down from "auto" for a 1280x1024 screen. 
+! This suggestion is scaled down from "auto" for a 1280x1024 screen.
 *geometry:		630x556
 
 ! This is the default if geometry is unspecified.

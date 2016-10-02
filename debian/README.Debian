@@ -5,9 +5,9 @@ plplot for Debian
 
     These are the debianized packages for PLplot, a scientific plotting
     library.  They were put together by Rafael Laboissiere. The porting
-    to the new CMake build system and current maintenance is done by 
+    to the new CMake build system and current maintenance is done by
     Andrew Ross.
- 
+
     As of version 5.10.0 the original source tarball has been modified
     to remove the doc/doxygen and www directories. Both these are not
     needed for the Debian packages and contain non-DFSG auto-generated
@@ -44,16 +44,16 @@ plplot for Debian
       * libplplot-c++11: Contains the library for using the C++ PLplot
 	classes.
 
-      * libplplot-fortran10: Contains the F95 bindings for the PLplot 
+      * libplplot-fortran10: Contains the F95 bindings for the PLplot
         functions.
 
       * libplplot-java: Contains the bindings for using the PLplot
-	functions from java. 
+	functions from java.
 
-      * libplplot-ada1: Contains the runtime Ada bindings library for the 
+      * libplplot-ada1: Contains the runtime Ada bindings library for the
         PLplot functions.
 
-      * libplplot-ada1-dev: Development files for the Ada bindings for 
+      * libplplot-ada1-dev: Development files for the Ada bindings for
         the PLplot functions.
 
       * libplplot-ocaml: Contains the OCaml bindings for the PLplot functions.
@@ -78,7 +78,7 @@ plplot for Debian
         Octave 3.2 prompt.  This will have the effect of replacing the
         traditional Gnuplot interface by a PLplot based one.
 
-      * libcsiro0: libcsirocsa and libcsironn libraries from Pavel Sakov 
+      * libcsiro0: libcsirocsa and libcsironn libraries from Pavel Sakov
         at CSIRO which are used by PLplot.
 
       * libqsastime0, libqsastime-dev: library and development packages for

@@ -1,5 +1,5 @@
 #! /usr/bin/env perl
- 
+
 # Get symbols exported by the PLplot library and output only those that are
 # included in the public header file.
 #
@@ -30,12 +30,12 @@ my @symbols = ();
 
 my $maxlen = 0;
 
-map {    
+map {
   my $s = $_;
   if (grep {/$s/} @hlines) {
     push (@symbols, $s);
     my $len = length ($s);
-    $maxlen = $len 
+    $maxlen = $len
       if $len > $maxlen;
   }
 } sort map {
@@ -51,7 +51,7 @@ if ($columns == 1) {
   print join ("\n", @symbols);
 
 } else {
-    
+
   my $nsym = scalar @symbols;
   my $percol = $nsym / $columns;
   $percol = int ($percol) + 1

@@ -212,7 +212,7 @@ if(CORE_BUILD)
     @ONLY
     )
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     DESTINATION ${DATA_DIR}/examples
     RENAME Makefile
     )
@@ -251,7 +251,7 @@ if(CORE_BUILD)
       set(qt_RPATHCMD)
       set(plplottcltk_Main_RPATHCMD)
     endif(_LIB_INSTALL_RPATH)
-    
+
   endif(USE_RPATH)
 
   # Install Chloe.pgm in installed examples directory so that all implementations
@@ -340,14 +340,14 @@ if(CORE_BUILD)
 
   # Install soft-landing support for compiler detection/testing.
   install(FILES
-    ${CMAKE_SOURCE_DIR}/cmake/modules/language_support.cmake 
+    ${CMAKE_SOURCE_DIR}/cmake/modules/language_support.cmake
     DESTINATION ${DATA_DIR}/examples/cmake/modules
     )
 
   # Install qt support file.
   if(ANY_QT_DEVICE)
     install(FILES
-      ${CMAKE_SOURCE_DIR}/cmake/modules/ndp_UseQt4.cmake 
+      ${CMAKE_SOURCE_DIR}/cmake/modules/ndp_UseQt4.cmake
       DESTINATION ${DATA_DIR}/examples/cmake/modules
       )
   endif(ANY_QT_DEVICE)
@@ -550,7 +550,7 @@ if(BUILD_TEST)
   # file will ever change on short time scales.
   execute_process(
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_SOURCE_DIR}/Chloe.pgm 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Chloe.pgm
     ${CMAKE_CURRENT_BINARY_DIR}/Chloe.pgm
     )
 
@@ -701,7 +701,7 @@ if(BUILD_TEST)
 	list(APPEND device_depends ${targets_examples_c})
       endif(targets_examples_c)
     endif(files_examples_c)
-	  
+	
     # FILE_DEVICES_LIST is set in cmake/modules/drivers-finish.cmake
     # for all enabled _file_ devices and adjusted above for the
     # special case of the psttfc device.  It is thus available for the
@@ -716,10 +716,10 @@ if(BUILD_TEST)
       string(REGEX REPLACE "^(.*):.*:.*$" "\\1" device ${file_devices_info})
       string(REGEX REPLACE "^.*:(.*):.*$" "\\1" driver ${file_devices_info})
       string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" familied ${file_devices_info})
-      
+
       set(${device}_file_device_depends ${device_depends})
       if(ENABLE_DYNDRIVERS)
-	get_property(${driver}_file_depends 
+	get_property(${driver}_file_depends
 	  GLOBAL PROPERTY FILE_DEPENDS_${driver}_dyndriver
 	  )
 	list(APPEND ${device}_file_device_depends
@@ -763,7 +763,7 @@ if(BUILD_TEST)
     foreach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
       string(REGEX REPLACE "^(.*):.*$" "\\1" device ${interactive_devices_info})
       string(REGEX REPLACE "^.*:(.*)$" "\\1" driver ${interactive_devices_info})
-      
+
       # Only process first instance of a particular driver in the list because multiple
       # devices in the list can map to a single driver.
       if(NOT ${driver}_targets)
@@ -825,7 +825,7 @@ if(BUILD_TEST)
 	add_dependencies(test_octave_${device} ${targets_examples_octave} ${${driver}_targets})
 	message(STATUS "WARNING: The test_octave_${device} target can be run independently but does not
    work reliably so it is temporarily excluded from being a dependency of other
-   more general interactive test targets") 
+   more general interactive test targets")
 	#list(APPEND interactive_targets_LIST test_octave_${device})
 	#if(device STREQUAL "tk" OR device STREQUAL "ntk")
 	#  list(APPEND tk_targets_LIST test_octave_${device})
@@ -853,7 +853,7 @@ if(BUILD_TEST)
 	# the only one of these interactive devices that has a noninteractive
 	# test and associated custom_command so it is the only interactive
 	# device where <driver>_file_depends needs to be defined.
-	get_property(cairo_file_depends 
+	get_property(cairo_file_depends
 	  GLOBAL PROPERTY FILE_DEPENDS_cairo_dyndriver
 	  )
       endif(TARGET cairo)
@@ -876,7 +876,7 @@ if(BUILD_TEST)
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ext-cairo-test.ps
 	COMMAND ext-cairo-test -drvopt set_background=1
-	DEPENDS 
+	DEPENDS
 	ext-cairo-test
 	${cairo_file_depends}
 	${cairo_targets}
@@ -956,7 +956,7 @@ if(BUILD_TEST)
 	${qt_targets}
 	)
     endif(CORE_BUILD)
-    
+
     list(APPEND interactive_targets_LIST test_pyqt4_example)
   endif(ENABLE_pyqt4)
 
@@ -984,7 +984,7 @@ if(BUILD_TEST)
       COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
       )
-    
+
     if(tcltk_in_plplot_library)
       add_dependencies(test_tclsh_standard_examples
 	plplot
@@ -1000,11 +1000,11 @@ if(BUILD_TEST)
 	${tk_targets}
 	)
     endif(tcltk_in_plplot_library)
-    
+
     list(APPEND interactive_targets_LIST test_tclsh_standard_examples)
     list(APPEND tcl_targets_LIST test_tclsh_standard_examples)
   endif(ENABLE_tcl AND BUILD_SHARED_LIBS AND PLD_tk)
-  
+
   if(ENABLE_tkX)
     set(targets_examples_tk)
 
@@ -1018,7 +1018,7 @@ if(BUILD_TEST)
       ${xwin_targets}
       )
     list(APPEND targets_examples_tk test_tk_01)
-    
+
     add_custom_target(test_tk_03
       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/tk03
       )
@@ -1087,7 +1087,7 @@ if(BUILD_TEST)
       # as we know at this stage.
       message(STATUS "WARNING: The test_wish_standard_examples target can be run independently but
    it segfaults at the end so it is temporarily excluded from being a dependency
-   of other more general interactive test targets") 
+   of other more general interactive test targets")
       # list(APPEND targets_examples_tk test_wish_standard_examples)
     endif(BUILD_SHARED_LIBS AND PLD_tk)
 
@@ -1105,7 +1105,7 @@ if(BUILD_TEST)
       if(USE_INCRTCL_VERSION_4)
 	message(STATUS "WARNING: The test_tk_02 target can be run independently but it currently
    does not work for version 4 of Itcl and friends so it is temporarily excluded
-   from being a dependency of other more general interactive test targets") 
+   from being a dependency of other more general interactive test targets")
       else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_02)
       endif(USE_INCRTCL_VERSION_4)
@@ -1122,7 +1122,7 @@ if(BUILD_TEST)
       if(USE_INCRTCL_VERSION_4)
 	message(STATUS "WARNING: The test_tk_04 target can be run independently but it currently
    does not work for version 4 of Itcl and friends so it is temporarily excluded
-   from being a dependency of other more general interactive test targets") 
+   from being a dependency of other more general interactive test targets")
       else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_04)
       endif(USE_INCRTCL_VERSION_4)
@@ -1142,9 +1142,9 @@ if(BUILD_TEST)
       ${xwin_targets}
       )
 
-    message(STATUS "WARNING: The test_plserver_runAlldemos target can be run independently but 
+    message(STATUS "WARNING: The test_plserver_runAlldemos target can be run independently but
    there are several issues with this target so it is temporarily excluded from being a
-   dependency of other more general interactive test targets") 
+   dependency of other more general interactive test targets")
     #list(APPEND targets_examples_tk test_plserver_runAllDemos)
 
     if(BUILD_SHARED_LIBS AND PLD_tkwin)
@@ -1162,9 +1162,9 @@ if(BUILD_TEST)
 	${TARGET_tclIndex_tk}
 	tclIndex_examples_tk
 	)
-      message(STATUS "WARNING: The test_wish_runAlldemos target can be run independently but 
+      message(STATUS "WARNING: The test_wish_runAlldemos target can be run independently but
    there are several issues with this target so it is temporarily excluded from being a
-   dependency of other more general interactive test targets") 
+   dependency of other more general interactive test targets")
       # list(APPEND targets_examples_tk test_wish_runAlldemos)
     endif(BUILD_SHARED_LIBS AND PLD_tkwin)
 

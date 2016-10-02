@@ -97,7 +97,7 @@ sub constriction {
 
     my $u;
     my $v;
-    
+
     my $Q = 2.0;
     my $b = $ymax/4.0*(3-cos(pi*$x/$xmax));
     my $dbdx = $ymax/4.0*sin(pi*$x/$xmax)*$y/$b;

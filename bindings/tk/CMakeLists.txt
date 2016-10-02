@@ -97,8 +97,8 @@ if(ENABLE_tk)
     cmap1d.pal
     )
 
-  # Ugly hack to copy all .tcl files to the build tree so that tclIndex 
-  # can be generated there. This is a limitation is tcl's auto_mkindex which 
+  # Ugly hack to copy all .tcl files to the build tree so that tclIndex
+  # can be generated there. This is a limitation is tcl's auto_mkindex which
   # always generates the index in the directory with the files.
   if(NOT CMAKE_CURRENT_BINARY_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
     set(tclIndex_DEPENDS)

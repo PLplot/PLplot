@@ -57,7 +57,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
@@ -98,8 +98,8 @@ list(APPEND cmake_args
 # tree so check that the result really is a plplot source tree.
 get_filename_component(PLPLOT_LOCAL_SOURCE_DIR ${CMAKE_SOURCE_DIR} PATH)
 get_filename_component(PLPLOT_LOCAL_SOURCE_DIR ${PLPLOT_LOCAL_SOURCE_DIR} PATH)
-find_file(IS_PLPLOT_SOURCE_TREE plcore.c 
-  HINTS ${PLPLOT_LOCAL_SOURCE_DIR}/src 
+find_file(IS_PLPLOT_SOURCE_TREE plcore.c
+  HINTS ${PLPLOT_LOCAL_SOURCE_DIR}/src
   NO_DEFAULT_PATH
   )
 

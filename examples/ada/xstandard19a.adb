@@ -57,17 +57,17 @@ procedure xstandard19a is
     cragareas : Integer_Array_1D(0 .. 2023);
     majorroads : Integer_Array_1D  := (33, 48, 71, 83, 89, 90, 101, 102, 111);
 
-    -- This spec is necessary in order to enforce C calling conventions, used 
+    -- This spec is necessary in order to enforce C calling conventions, used
     -- in the callback by intervening C code.
     procedure map_transform
        (x, y   : Long_Float;
-        xt, yt : out Long_Float; 
+        xt, yt : out Long_Float;
         data   : PL_Pointer);
     pragma Convention(C, map_transform);
 
     procedure map_transform
        (x, y   : Long_Float;
-        xt, yt : out Long_Float; 
+        xt, yt : out Long_Float;
         data   : PL_Pointer)
     is
         radius : Long_Float;
@@ -78,27 +78,27 @@ procedure xstandard19a is
     end map_transform;
 
 
-    -- This spec is necessary in order to enforce C calling conventions, used 
+    -- This spec is necessary in order to enforce C calling conventions, used
     -- in the callback by intervening C code.
-    procedure mapform19(n : Integer; x, y : in out Map_Form_Constrained_Array); 
+    procedure mapform19(n : Integer; x, y : in out Map_Form_Constrained_Array);
     pragma Convention(C, mapform19);
 
     -- Defines specific coordinate transformation for example 19.
     -- Not to be confused with mapform in src/plmap.c.
     -- x(), y() are the coordinates to be plotted.
 
-    -- Ada note: Passing the array length as the first argument is the easiest 
-    -- way (for the developer of the bindings) and maintain a C-compatible 
-    -- argument list. It might be possible to instead pass a pointer to something 
+    -- Ada note: Passing the array length as the first argument is the easiest
+    -- way (for the developer of the bindings) and maintain a C-compatible
+    -- argument list. It might be possible to instead pass a pointer to something
     -- with an argument list (x, y : in out Real_Vector) instead, and write a
-    -- wrapper function inside Draw_Map and Draw_Latitude_Longitude that has the "correct" C 
+    -- wrapper function inside Draw_Map and Draw_Latitude_Longitude that has the "correct" C
     -- argument list, and then pass a pointer to _that_ when calling Draw_Map and
     -- plmeridian.
-    procedure mapform19(n : Integer; x, y : in out Map_Form_Constrained_Array) is 
+    procedure mapform19(n : Integer; x, y : in out Map_Form_Constrained_Array) is
         xp, yp : Long_Float;
     begin
-         -- DO NOT use x'range for this loop because the C function which calls 
-         -- this function WILL NOT SEE IT AND YOU WILL GET A SEGFAULT. Simply 
+         -- DO NOT use x'range for this loop because the C function which calls
+         -- this function WILL NOT SEE IT AND YOU WILL GET A SEGFAULT. Simply
          -- use 0 .. n - 1 explicitly.
         for i in 0 .. n - 1 loop
             map_transform(x(i), y(i), xp, yp, System.Null_Address);
@@ -107,13 +107,13 @@ procedure xstandard19a is
         end loop;
     end mapform19;
 
-    -- This spec is necessary in order to enforce C calling conventions, used 
+    -- This spec is necessary in order to enforce C calling conventions, used
     -- in the callback by intervening C code.
     -- See Ada note above, for mapform19.
     -- a_length is used only for bounds checking against the C-allocated memory
     -- for label.
     procedure geolocation_labeler
-       (axis     : Integer; 
+       (axis     : Integer;
         a_value  : Long_Float;
         label    : out Label_String_Type;
         a_length : size_t;
@@ -122,11 +122,11 @@ procedure xstandard19a is
 
     -- A custom axis labeling function for longitudes and latitudes.
     procedure geolocation_labeler
-       (axis     : Integer; 
+       (axis     : Integer;
         a_value  : Long_Float;
         label    : out Label_String_Type;
         a_length : size_t;
-        data     : PL_Pointer) 
+        data     : PL_Pointer)
     is
         direction_label : Unbounded_String;
         label_val : Long_Float;
@@ -147,24 +147,24 @@ procedure xstandard19a is
             end if;
         end normalize_longitude;
 
-        -- Function to convert an unbounded string to a fixed-length C string with the 
+        -- Function to convert an unbounded string to a fixed-length C string with the
         -- null terminator somewhere in the middle and spaces after. The result, of type
-        -- Label_String_Type, is fixed to a length by C, currently at 41, and is 
+        -- Label_String_Type, is fixed to a length by C, currently at 41, and is
         -- indexed in Ada as 0 .. PLplot_Traditional.Max_Label_String_Length.
         function Unbounded_To_Weird_C
            (Item     : Unbounded_String;
-            C_Length : size_t) return Label_String_Type 
+            C_Length : size_t) return Label_String_Type
         is
             Temp : Unbounded_String;
         begin
             -- Check length and adjust if necessary.
             if Length(Item) >= Integer(C_Length) then
-                Put_Line("*** Warning: Custom label was truncated to" 
+                Put_Line("*** Warning: Custom label was truncated to"
                     & Integer'Image(Integer(C_Length)) & " characters. ***");
                 Temp := Head(Item, Integer(C_Length));
                 return To_C(To_String(Temp), True);
             else
-               return To_C(To_String(Item & ASCII.nul & 
+               return To_C(To_String(Item & ASCII.nul &
                     (Max_Label_String_Length - Length(Item)) * " "), False);
             end if;
         end Unbounded_To_Weird_C;
@@ -189,7 +189,7 @@ procedure xstandard19a is
                 direction_label := To_Unbounded_String("");
             end if;
         end if;
-        
+
         if axis = Label_Y_Axis and a_value = 0.0 then
             -- A special case for the equator
             null;
@@ -201,17 +201,17 @@ procedure xstandard19a is
 
 begin
 
-    -- Parse and process command line arguments 
+    -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
 
     Initialize_PLplot;
 
-    -- Longitude (x) and latitude (y) 
+    -- Longitude (x) and latitude (y)
     miny := -70.0;
     maxy := 80.0;
 
-    -- Cartesian plots 
-    -- Most of world 
+    -- Cartesian plots
+    -- Most of world
     minx := -170.0;
     maxx := minx + 360.0;
 
@@ -222,7 +222,7 @@ begin
     Set_Environment(minx, maxx, miny, maxy, Justified, Custom_Labels_Linear_Box_Plus);
     Draw_Map(null, USA_States_and_Continents, minx, maxx, miny, maxy);
 
-    -- The Americas 
+    -- The Americas
     minx := 190.0;
     maxx := 340.0;
 
@@ -235,7 +235,7 @@ begin
     -- or...
     -- plslabelfunc(Null, System.Null_Address);
 
-    -- Polar, Northern hemisphere 
+    -- Polar, Northern hemisphere
     minx := 0.0;
     maxx := 360.0;
 

@@ -67,7 +67,7 @@ foreach(_file ${toplevel_FILES})
   ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/${_filename}
   DEPENDS ${_file}
   )
-  list(APPEND staging_FILES 
+  list(APPEND staging_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/${_filename}
     )
 endforeach(_file ${toplevel_FILES})
@@ -93,7 +93,7 @@ foreach(_file ${css_FILES})
   ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/css/${_filename}
   DEPENDS ${_file}
   )
-  list(APPEND staging_FILES 
+  list(APPEND staging_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/css/${_filename}
     )
 endforeach(_file ${css_FILES})
@@ -120,7 +120,7 @@ foreach(_file ${img_FILES})
   ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/img/${_filename}
   DEPENDS ${_file}
   )
-  list(APPEND staging_FILES 
+  list(APPEND staging_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/img/${_filename}
     )
 endforeach(_file ${img_FILES})
@@ -139,7 +139,7 @@ foreach(_file ${js_FILES})
   ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/js/${_filename}
   DEPENDS ${_file}
   )
-  list(APPEND staging_FILES 
+  list(APPEND staging_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/js/${_filename}
     )
 endforeach(_file ${js_FILES})
@@ -173,7 +173,7 @@ foreach(_file ${announce_FILES})
   ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/announce/${_filename}
   DEPENDS ${_file}
   )
-  list(APPEND staging_announce_FILES 
+  list(APPEND staging_announce_FILES
     ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/announce/${_filename}
     )
 endforeach(_file ${announce_FILES})
@@ -196,5 +196,5 @@ if(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
     ssh ${WWW_USER}@${WWW_HOST} mkdir -p ${WWW_DIR}/htdocs
     COMMAND rsync -avq ${CMAKE_CURRENT_BINARY_DIR}/staging/htdocs/ ${WWW_USER}@${WWW_HOST}:${WWW_DIR}/htdocs
     )
-  add_dependencies(www-install-base create_staging) 
+  add_dependencies(www-install-base create_staging)
 endif(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)

@@ -23,7 +23,7 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
--- Variables and data arrays used by plot generators 
+-- Variables and data arrays used by plot generators
 x = {}
 y = {}
 xs = {}
@@ -58,11 +58,11 @@ function plot1(do_test)
   pl.col0(2)
   pl.lab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2")
 
-  -- Plot the data points 
+  -- Plot the data points
   pl.col0(4)
   pl.poin(xs, ys, 9)
 
-  -- Draw the line through the data 
+  -- Draw the line through the data
   pl.col0(3)
   pl.line(x, y)
 end
@@ -77,14 +77,14 @@ function plot2()
   pl.col0(2)
   pl.lab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function")
 
-  -- Fill up the arrays 
+  -- Fill up the arrays
   for i=1, 100 do
     x[i] = (i - 20) / 6
     y[i] = 1
     if x[i] ~= 0 then y[i] = math.sin(x[i])/x[i] end
   end
 
-  -- Draw the line 
+  -- Draw the line
   pl.col0(3)
   pl.width(2)
   pl.line(x, y)
@@ -107,7 +107,7 @@ function plot3()
   pl.vsta()
   pl.wind(0, 360, -1.2, 1.2)
 
-  -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. 
+  -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
   pl.col0(1)
   pl.box("bcnst", 60, 2, "bcnstv", 0.2, 2)
 
@@ -143,43 +143,43 @@ end
 --   - gridded coordinate axes
 ----------------------------------------------------------------------------
 
--- plplot initialization 
+-- plplot initialization
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Get version number, just for kicks 
+-- Get version number, just for kicks
 ver=pl.gver()
 print("PLplot library version: " .. ver)
 
--- Initialize plplot 
--- Divide page into 2x2 plots 
--- Note: calling plstar replaces separate calls to plssub and plinit 
+-- Initialize plplot
+-- Divide page into 2x2 plots
+-- Note: calling plstar replaces separate calls to plssub and plinit
 pl.star(2,2)
 
--- Select font set as per input flag 
+-- Select font set as per input flag
 if fontset ~= 0 then
 	pl.fontld(1)
 else
 	pl.fontld(0)
 end
-  
--- Set up the data 
--- Original case 
+
+-- Set up the data
+-- Original case
 xscale = 6
 yscale = 1
 xoff = 0
 yoff = 0
 
--- Do a plot 
+-- Do a plot
 plot1(0)
 
--- Set up the data 
+-- Set up the data
 xscale = 1
 yscale = 0.0014
 yoff = 0.0185
 
--- Do a plot 
+-- Do a plot
 digmax = 5
 pl.syax(digmax, 0)
 
@@ -190,20 +190,20 @@ plot3()
 -- Show how to save a plot:
 -- Open a new device, make it current, copy parameters,
 -- and replay the plot buffer
-if f_name~="" then -- command line option '-save filename' 
+if f_name~="" then -- command line option '-save filename'
   print("The current plot was saved in color Postscript under the name " .. f_name .. ".\n")
-  cur_strm = pl.gstrm()    -- get current stream 
-  new_strm = pl.mkstrm()   -- create a new one 
+  cur_strm = pl.gstrm()    -- get current stream
+  new_strm = pl.mkstrm()   -- create a new one
 
-  pl.sfnam(f_name)       -- file name 
-  pl.sdev("psc")         -- device type 
+  pl.sfnam(f_name)       -- file name
+  pl.sdev("psc")         -- device type
 
-  pl.cpstrm(cur_strm, 0) -- copy old stream parameters to new stream 
-  pl.replot()	     -- do the save by replaying the plot buffer 
-  pl.plend1()              -- finish the device 
+  pl.cpstrm(cur_strm, 0) -- copy old stream parameters to new stream
+  pl.replot()	     -- do the save by replaying the plot buffer
+  pl.plend1()              -- finish the device
 
-  pl.sstrm(cur_strm)     -- return to previous stream 
+  pl.sstrm(cur_strm)     -- return to previous stream
 end
 
--- Don't forget to call plend() to finish off! 
+-- Don't forget to call plend() to finish off!
 pl.plend()

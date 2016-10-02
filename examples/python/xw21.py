@@ -42,9 +42,9 @@ def cmap1_init():
     plscmap1n(256)
     plscmap1l(0, i, h, l, s)
 
-    
 
-    
+
+
 # main
 #
 #
@@ -67,12 +67,12 @@ def main():
     opt[2] = wmin
     opt[3] = knn_order
     opt[4] = threshold
- 
+
     cmap1_init()
     plseed(5489)
 
     # Create the sampled data
-    # For consistency across languages use plrandd to create the 
+    # For consistency across languages use plrandd to create the
     # pseudo-random data that are required.
     xt = zeros(pts)
     yt = zeros(pts)
@@ -138,12 +138,12 @@ def main():
                                             d = 1.4142
                                         zg[i][j] += zg[ii][jj]/(d*d)
                                         dist += d
-                                        
+
                             if dist != 0.0 :
                                 zg[i][j] /= dist
                             else:
                                 zg[i][j] = zmin
-            
+
             lzM = max(zg.flat)
             lzm = min(zg.flat)
 
@@ -152,7 +152,7 @@ def main():
 
             lzm = lzm - 0.01
             lzM = lzM + 0.01
-            
+
             plcol0(1)
             pladv(alg)
 
@@ -172,5 +172,5 @@ def main():
                 plcol0(15)
                 pllab('','',title[alg-1])
                 plot3dc(xg, yg, zg, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev)
-    
+
 main()

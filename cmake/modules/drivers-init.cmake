@@ -93,14 +93,14 @@ if(DEFAULT_ALL_DEVICES)
 endif(DEFAULT_ALL_DEVICES)
 
 # The DRIVERS_DEVICE_LIST defined below is a colon-separated list of
-# <device>:<driver>:<enable_default>:<kind>:<familied> items.  
+# <device>:<driver>:<enable_default>:<kind>:<familied> items.
 
 # <device> is the name of the device (e.g., epsqt).
 
 # <driver> is the name of the device driver (e.g., qt).
 
 # <enable_default> should be ON or OFF and this will reflect in
-# inclusion/exclusion by default (as shown by ccmake). 
+# inclusion/exclusion by default (as shown by ccmake).
 
 # <kind> should be one of F (file), I (interactive), M (memory), E
 # (external), or N (null, i.e., valid prototype drive that produces
@@ -160,7 +160,7 @@ set(DRIVERS_DEVICE_LIST
   # gd related devices are not maintained.
   "gif:gd:OFF:F:ON"
   "jpeg:gd:OFF:F:ON"
-  "png:gd:OFF:F:ON" 
+  "png:gd:OFF:F:ON"
   "mem:mem:ON:M:OFF"
   "ntk:ntk:ON:I:OFF"
   "null:null:ON:N:OFF"
@@ -171,7 +171,7 @@ set(DRIVERS_DEVICE_LIST
   # yet.... :-)
   "plmeta:plmeta:OFF:F:OFF"
   "ps:ps:ON:F:OFF"
-  # No longer segfaults, but still default OFF because cleaner/better ways 
+  # No longer segfaults, but still default OFF because cleaner/better ways
   # (psttf and pscairo) to get modern fonts for postscript results.
   "pstex:pstex:OFF:F:OFF"
   "psttf:psttf:ON:F:OFF"
@@ -226,10 +226,10 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   #message(STATUS "DEBUG: DEFAULT= ${DEFAULT}")
   option(PLD_${DEVICE} "Enable ${DEVICE} device" ${DEFAULT})
   if(PLD_${DEVICE} AND USED_DRIVERS_DEVICE AND NOT ${DEFAULT})
-    message(STATUS 
+    message(STATUS
       "WARNING: You have enabled the PLD_${DEVICE} device which is disabled by "
       "default either because it is deprecated or because there are know issues "
-      "with it. Please check the documentation / release notes for details.") 
+      "with it. Please check the documentation / release notes for details.")
   endif(PLD_${DEVICE} AND USED_DRIVERS_DEVICE AND NOT ${DEFAULT})
 endforeach(DRIVERS_DEVICE)
 

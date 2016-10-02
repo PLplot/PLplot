@@ -8,7 +8,7 @@
 
 FIND_PATH(
   PLplot_INCLUDE_DIR
-  NAMES plplot.h 
+  NAMES plplot.h
   PATHS /usr/local/include /usr/include
   PATH_SUFFIXES plplot
 )
@@ -26,7 +26,7 @@ IF( PLplot_INCLUDE_DIR )
     set(PLplot_INCLUDE_DIRS ${PLplot_INCLUDE_DIR})
     set(PLplot_LIBRARIES ${PLplot_LIBRARY})
   endif(PLplot_LIBRARY)
-  
+
   # find cxx bindings
   find_library( PLplot_cxx_LIBRARY
     NAMES plplotcxxd
@@ -35,7 +35,7 @@ IF( PLplot_INCLUDE_DIR )
   if( PLplot_cxx_LIBRARY )
     set( PLplot_LIBRARIES ${PLplot_LIBRARIES} ${PLplot_cxx_LIBRARY} )
   endif( PLplot_cxx_LIBRARY )
-  
+
   # find f90 bindings
   find_library( PLplot_f90_LIBRARY
     NAMES plplotf90d
@@ -54,7 +54,7 @@ IF( PLplot_INCLUDE_DIR )
     set( PLplot_LIBRARIES ${PLplot_LIBRARIES} ${PLplot_wxwidgets_LIBRARY} )
   endif( PLplot_wxwidgets_LIBRARY )
 endif(PLplot_INCLUDE_DIR)
-	    
+	
 if(PLplot_FOUND)
   if(NOT PLplot_FIND_QUIETLY)
     message(STATUS "FindPLplot: Found both PLplot headers and library")

@@ -207,7 +207,7 @@ if(CORE_BUILD)
     GROUP_READ
     WORLD_READ
     )
-  install(FILES ${python_DATA} 
+  install(FILES ${python_DATA}
     DESTINATION ${DATA_DIR}/examples/python
     PERMISSIONS ${PERM_DATA}
     )
@@ -244,7 +244,7 @@ if(CORE_BUILD)
     RENAME plplot_python_start.py
     )
 
-  install(FILES CMakeLists.txt 
+  install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/python
     )
 
@@ -272,7 +272,7 @@ if(BUILD_TEST)
     COMMAND ${command_file} -dev svg -geometry 760x120
     -o ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.svg
     COMMAND convert
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.svg 
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.svg
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.jpg
     DEPENDS ${command_file}
     WORKING_DIRECTORY ${working_directory}
@@ -287,5 +287,5 @@ if(BUILD_TEST)
   else(CORE_BUILD)
     add_dependencies(plplot_logo _plplotcmodule)
   endif(CORE_BUILD)
-    
+
 endif(BUILD_TEST)

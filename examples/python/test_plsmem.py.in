@@ -107,7 +107,7 @@ my_buffera = numpy.numarray.zeros((height,width,4), numpy.uint8) + background
 
 '''
 # Or open an existing image
-# (note 'asarray' will fail as it sees PIL image as an array already and 
+# (note 'asarray' will fail as it sees PIL image as an array already and
 # does not perform a copy to make a writable array)
 src_img = Image.open("input.png")
 my_buffer = numpy.array(src_img.convert('RGB'), numpy.uint8)

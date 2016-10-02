@@ -1,10 +1,10 @@
 ## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -73,12 +73,12 @@ function ix11c
       plcol0(1);
       plvpor(0, 1, 0, 0.9);
       plwind(-1, 1, -1, 1.5);
-      
+
       plw3d(1, 1, 1.2, -3, 3, -3, 3, zmin, zmax, alt(k), az(k));
       plbox3("bnstu", "x axis", 0, 0,
 	     "bnstu", "y axis", 0, 0,
 	     "bcdmnstuv", "z axis", 0, 4);
-      
+
       plcol0(2);
 
       switch (i)

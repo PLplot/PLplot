@@ -43,7 +43,7 @@ else
 endif
 
 plplot_stub;
-t = char(strsplit("$options", "-")); 
+t = char(strsplit("$options", "-"));
 if (t)
     t(1,:)="";
     for i=1:rows(t)
@@ -78,8 +78,8 @@ for i=[0:31 33] ;
     if (verbose_test)
 	printf("%s\n",cmd);
     endif
-    t = char(strsplit("$options", "-")); 
-    if (t) 
+    t = char(strsplit("$options", "-"));
+    if (t)
         t(1,:)="";
         for j=1:rows(t)
             tt = deblank (t(j,:)); len = length(tt);
@@ -94,7 +94,7 @@ for i=[0:31 33] ;
 #common examples.
     file = sprintf("${OUTPUT_DIR}/x%.2d${lang}%%n.$dsuffix",i);
     plSetOpt("o", file);
-    if i == 14  
+    if i == 14
 	file2 = sprintf("${OUTPUT_DIR}/x%.2da${lang}.${dsuffix}",i);
     endif
     eval(cmd, "failed = [failed, i] ;");

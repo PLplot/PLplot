@@ -1,6 +1,6 @@
 ## Sample plots using date / time formatting for axes
 ##
-## Copyright (C) 2007, 2008 Andrew Ross 
+## Copyright (C) 2007, 2008 Andrew Ross
 ##
 ##
 ## This file is part of PLplot.
@@ -22,14 +22,14 @@
 
 1;
 
-## 
+##
 
 function ix29c
 
-    
+
     ## Initialize plplot
     plinit();
-    
+
     plsesc('@');
 
     plot1();
@@ -37,7 +37,7 @@ function ix29c
     plot2();
 
     plot3();
-    
+
     plot4();
 
     plend1();
@@ -62,7 +62,7 @@ function plot1
     xerr2 = x+60.0*5.0;
     yerr1 = y-0.1;
     yerr2 = y+0.1;
-    
+
     pladv(0);
 
     ## Rescale major ticks marks by 0.5
@@ -81,7 +81,7 @@ function plot1
 
     plcol0(3);
     pllab("Time (hours:mins)", "Temperature (degC)", "@frPLplot Example 29 - Daily temperature");
-    
+
     plcol0(4);
 
     plline(x', y');
@@ -108,18 +108,18 @@ function plot2
     xmax = npts*60.0*60.0*24.0;
     ymin = 0;
     ymax = 24;
-    
-    ## Formula for hours of daylight from 
-    ## "A Model Comparison for Daylength as a Function of Latitude and 
+
+    ## Formula for hours of daylight from
+    ## "A Model Comparison for Daylength as a Function of Latitude and
     ## Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
     i = 0:npts-1;
     x = i*60.0*60.0*24.0;
     p = asin(0.39795*cos(0.2163108 + 2*atan(0.9671396*tan(0.00860*(i-186)))));
     d = 24.0 - (24.0/pi)*acos( (sin(0.8333*pi/180.0) + ...
                                 sin(lat*pi/180.0)*sin(p)) ...
-                               ./(cos(lat*pi/180.0)*cos(p)) ); 
+                               ./(cos(lat*pi/180.0)*cos(p)) );
     y = d;
-    
+
     plcol0(1);
     ## Set time format to be abbreviated month name followed by day of month
     pltimefmt("%b %d");
@@ -129,12 +129,12 @@ function plot2
 
     plcol0(3);
     pllab("Date", "Hours of daylight", "@frPLplot Example 29 - Hours of daylight at 51.5N");
-    
+
     plcol0(4);
 
     plline(x', y');
 
-    plprec(0,0);  
+    plprec(0,0);
 
 endfunction
 
@@ -151,14 +151,14 @@ function plot3
     ## NB - no need to call tzset in octave - it doesn't exist.
     tz = getenv("TZ");
     putenv("TZ","");
-    
+
     ## tstart is a time_t value (cast to PLFLT) which represents the number
-    ## of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated 
-    ## Universal Time (UTC).  
+    ## of seconds elapsed since 00:00:00 on January 1, 1970, Coordinated
+    ## Universal Time (UTC).
     tstart = mktime(tm);
 
-    ## Note currently octave appears to have no way to unset a env 
-    ## variable. 
+    ## Note currently octave appears to have no way to unset a env
+    ## variable.
     putenv("TZ",tz);
 
     npts = 62;
@@ -173,7 +173,7 @@ function plot3
     y = 1.0 + sin( 2*pi*i / 7.0 ) + exp( min(i,npts-i) / 31.0);
 
     pladv(0);
-    
+
     plvsta();
     plwind(xmin, xmax, ymin, ymax);
     plcol0(1);
@@ -185,20 +185,20 @@ function plot3
 
     plcol0(3);
     pllab("Date", "Hours of television watched", "@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006");
-    
+
     plcol0(4);
 
     ## Rescale symbol size (used by plpoin) by 0.5
     plssym(0.0,0.5);
     plpoin(x', y', 2);
     plline(x', y');
-    
+
 endfunction
 
 function plot4
 
     ## TAI-UTC (seconds) as a function of time.
-    
+
     ## Continuous time unit is Besselian years from whatever epoch is
     ## chosen below.  Could change to seconds (or days) from the
     ## epoch, but then would have to adjust xlabel_step below.
@@ -247,7 +247,7 @@ function plot4
             if_TAI_time_format = 1;
             title_suffix = "from 1950 to 2020";
             xtitle =  "Year";
-            xlabel_step = 10.;    
+            xlabel_step = 10.;
         elseif (kind == 1 || kind ==2)
             ## Choose midpoint to maximize time-representation precision.
             epoch_year  = 1961;
@@ -292,7 +292,7 @@ function plot4
             if (kind == 3)
                 if_TAI_time_format = 1;
                 xtitle = "Seconds (TAI)";
-            else 
+            else
                 if_TAI_time_format = 0;
                 xtitle = "Seconds (TAI) labelled with corresponding UTC";
             endif
@@ -321,7 +321,7 @@ function plot4
                 xtitle = "Seconds (TAI) labelled with corresponding UTC";
             endif
         endif
-            
+
         x = xmin + (0:npts-1)*(xmax-xmin)/(npts-1);
         tai = x;
         for i=1:npts
@@ -340,12 +340,12 @@ function plot4
         endfor
         ## Convert residuals to seconds.
         y = (tai-utc)*scale*86400.0;
-                        
+
         pladv(0);
         plvsta();
         plwind(xmin, xmax, ymin, ymax);
         plcol0(1);
-        if (if_TAI_time_format) 
+        if (if_TAI_time_format)
             plconfigtime( scale, 0., 0., 0x0, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec );
         else
             plconfigtime( scale, 0., 0., 0x2, 1, epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min, epoch_sec );
@@ -355,9 +355,9 @@ function plot4
         plcol0(3);
         title = ["@frPLplot Example 29 - TAI-UTC ", title_suffix];
         pllab(xtitle, "TAI-UTC (sec)", title);
-        
+
         plcol0(4);
-        
+
         plline(x', y');
     endfor
 endfunction

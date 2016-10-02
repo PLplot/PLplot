@@ -22,7 +22,7 @@
 # Check if "using namespace std;" works
 IF(NOT DEFINED CMAKE_USE_NAMESPACE)
   MESSAGE(STATUS "Check for using namespace support")
-  TRY_COMPILE(CMAKE_USE_NAMESPACE  
+  TRY_COMPILE(CMAKE_USE_NAMESPACE
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/cmake/modules/TestForNamespace.cxx
     OUTPUT_VARIABLE OUTPUT)

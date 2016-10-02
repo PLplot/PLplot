@@ -6,21 +6,21 @@
   set/get tester
 
   This file is part of PLplot.
-  
+
   PLplot is free software; you can redistribute it and/or modify
   it under the terms of the GNU Library General Public License as published
   by the Free Software Foundation; either version 2 of the License, or
   (at your option) any later version.
-  
+
   PLplot is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Library General Public License for more details.
-  
+
   You should have received a copy of the GNU Library General Public License
   along with PLplot; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-  
+
 *)
 
 open Printf
@@ -78,7 +78,7 @@ let () =
     "page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n"
     xp2 yp2 xleng2 yleng2 xoff2 yoff2;
   failed_if
-    (xp2 <> xp1 || yp2 <> yp1 || xleng2 <> xleng1 || yleng2 <> yleng1 || 
+    (xp2 <> xp1 || yp2 <> yp1 || xleng2 <> xleng1 || yleng2 <> yleng1 ||
      xoff2 <> xoff1 || yoff2 <> yoff1)
     "plgpage test failed\n";
   (* Restore values set initially by plparseopts. *)
@@ -157,7 +157,7 @@ let () =
     "plcalc_world test failed\n";
 
   (* Retrieve and print the name of the output file (if any).
-     This goes to stderr not stdout since it will vary between tests and 
+     This goes to stderr not stdout since it will vary between tests and
      we want stdout to be identical for compare test. *)
   let fnam = plgfnam () in
   if String.length fnam = 0 then
@@ -167,8 +167,8 @@ let () =
   eprintf "Output file name is %s\n" fnam;
 
   (* Set and get the number of digits used to display axis labels *)
-  (* Note digits is currently ignored in pls[xyz]ax and 
-     therefore it does not make sense to test the returned 
+  (* Note digits is currently ignored in pls[xyz]ax and
+     therefore it does not make sense to test the returned
      value *)
   plsxax 3 0;
   let digmax, digits = plgxax () in
@@ -227,9 +227,9 @@ let () =
     "zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n"
     zxmin zymin zxmax zymax;
   failed_if (
-    abs_float (zxmin -. (xmin +. (xmax -. xmin) *. zxmin0)) > 1.0E-5 || 
-    abs_float (zymin -. (ymin +. (ymax -. ymin) *. zymin0)) > 1.0E-5 || 
-    abs_float (zxmax -. (xmin +. (xmax -. xmin) *. zxmax0)) > 1.0E-5 || 
+    abs_float (zxmin -. (xmin +. (xmax -. xmin) *. zxmin0)) > 1.0E-5 ||
+    abs_float (zymin -. (ymin +. (ymax -. ymin) *. zymin0)) > 1.0E-5 ||
+    abs_float (zxmax -. (xmin +. (xmax -. xmin) *. zxmax0)) > 1.0E-5 ||
     abs_float (zymax -. (ymin +. (ymax -. ymin) *. zymax0)) > 1.0E-5
   ) "plsdiplz test failed\n";
 

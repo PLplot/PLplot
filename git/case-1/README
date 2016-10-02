@@ -83,7 +83,7 @@ git branch -a
 did it that way.]
 
 5) Make yourself a git working (aka "topic") branch which tracks the svn
-   trunk. 
+   trunk.
 
 git checkout -b w_trunk svn/trunk
 

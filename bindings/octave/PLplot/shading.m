@@ -35,7 +35,7 @@ function type = shading(type)
     usage("shading");
     return;
   endif
-  
+
   if (exist("pl_automatic_replot"))
     if (pl_automatic_replot)
       __pl_plotit;

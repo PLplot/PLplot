@@ -169,7 +169,7 @@ class QPlot(QtWidgets.QMainWindow):
             plplot.plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, string)
             string = "%d" % (1980 + i)
             plplot.plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
-       
+
         self.update()
 
     def interactive(self):

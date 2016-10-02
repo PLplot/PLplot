@@ -29,7 +29,7 @@ base_day, double time_sec_utc = 0.), the discontinuous change, offset1,
 offset2, and slope stored for each epoch.
 
 The qsastime library uses equation 1 to calculate MJD(TAI) as a
-function of MJD(UTC), and 
+function of MJD(UTC), and
 
 MJD(TAI) - MJD(UTC) = ((offset1 + (MJD(TAI) - offset2)*slope)/86400)/
 	   	      (1. + slope/86400)                              (2)

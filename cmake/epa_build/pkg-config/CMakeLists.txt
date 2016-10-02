@@ -35,7 +35,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 # Data that is related to downloads.
 set(URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz)
@@ -80,6 +80,6 @@ ExternalProject_Add_Step(
   build_${PACKAGE} preinstall_fix
   COMMENT "remove pkg-config binaries from the install tree"
   DEPENDEES build
-  DEPENDERS install 
+  DEPENDERS install
   COMMAND ${CMAKE_COMMAND} -DFILE_WILDCARD:STRING=${EPA_CMAKE_INSTALL_PREFIX}/bin/*-pkg-config* -P ${CMAKE_SOURCE_DIR}/wildcard_remove.cmake
   )

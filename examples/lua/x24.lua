@@ -86,25 +86,25 @@ peace = {
   "#<0x00>和平",
   -- Hindi
   "#<0x20>शांति",
-  -- English 
+  -- English
   "#<0x10>Peace",
-  -- Hebrew 
+  -- Hebrew
   "#<0x10>שלום",
-  -- Russian 
+  -- Russian
   "#<0x10>Мир",
-  -- German 
+  -- German
   "#<0x10>Friede",
-  -- Korean 
+  -- Korean
   "#<0x30>평화",
-  -- French 
+  -- French
   "#<0x10>Paix",
-  -- Spanish 
+  -- Spanish
   "#<0x10>Paz",
-  -- Arabic 
+  -- Arabic
   "#<0x10>ﺳﻼم",
   -- Turkish
   "#<0x10>Barış",
-  -- Kurdish 
+  -- Kurdish
   "#<0x10>Hasîtî",
 }
 

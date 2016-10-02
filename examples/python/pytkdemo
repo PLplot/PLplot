@@ -166,7 +166,7 @@ class DemoApp(Frame):
 	pass
 
     def reload(s):
-	"""Reload all the demo modules.  
+	"""Reload all the demo modules.
 
 	Facilitates modification of the demos, which is most useful
 	during hte period of implementing the demos in Python."""

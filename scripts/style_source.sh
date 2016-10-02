@@ -184,7 +184,7 @@ This script only works with uncrustify $allowed_version."
     exit 1
 fi
 
-if [ ! -f src/plcore.c ] ; then 
+if [ ! -f src/plcore.c ] ; then
     echo "This script can only be run from PLplot top-level source tree."
     exit 1
 fi
@@ -197,7 +197,7 @@ csource_LIST="plplot_config.h.in"
 csource_LIST="$csource_LIST src/*.[ch]"
 
 # All C source (i.e., exclude qt.h) in include directory.
-csource_LIST="$csource_LIST $(ls include/*.h include/*.h.in |grep -v qt.h)" 
+csource_LIST="$csource_LIST $(ls include/*.h include/*.h.in |grep -v qt.h)"
 
 # Every subdirectory of lib.
 csource_LIST="$csource_LIST lib/*/*.[ch] lib/qsastime/qsastimeP.h.in"
@@ -221,11 +221,11 @@ export cppsource_LIST
 # C++ part of bindings/c++
 cppsource_LIST="bindings/c++/plstream.cc  bindings/c++/plstream.h"
 
-# C++ part of include. 
+# C++ part of include.
 cppsource_LIST="$cppsource_LIST include/qt.h"
 
 # C++ part of drivers.
-cppsource_LIST="$cppsource_LIST drivers/wx*.h drivers/*.cpp drivers/*.cc" 
+cppsource_LIST="$cppsource_LIST drivers/wx*.h drivers/*.cpp drivers/*.cc"
 
 # C++ part of examples.
 cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h"

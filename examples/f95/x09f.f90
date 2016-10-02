@@ -77,7 +77,7 @@ program x09f
 
     tr = (/ 2._pl_test_flt/real(nptsx-1,kind=pl_test_flt), 0.0_pl_test_flt, -1.0_pl_test_flt, &
            0.0_pl_test_flt, 2._pl_test_flt/real(nptsy-1,kind=pl_test_flt), -1.0_pl_test_flt /)
-    
+
     !   Calculate the data matrices.
     xc = (arange(nptsx) - (nptsx/2)) / real(nptsx/2,kind=pl_test_flt)
     yc = (arange(nptsy) - (nptsy/2)) / real(nptsy/2,kind=pl_test_flt) - 1.0_pl_test_flt

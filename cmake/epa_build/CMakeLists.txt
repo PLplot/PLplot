@@ -99,7 +99,7 @@ foreach(executable ${executables_LIST})
     if(MSYS_PLATFORM)
       message(STATUS "${executable} missing from your MSYS platform.  Use mingw-get to install it.")
     endif(MSYS_PLATFORM)
-    message(FATAL_ERROR "${executable} must be on your PATH in order for epa_build to work correctly")  
+    message(FATAL_ERROR "${executable} must be on your PATH in order for epa_build to work correctly")
   endif(NOT ${EXECUTABLE}_EXECUTABLE)
 endforeach(executable ${executables_LIST})
 
@@ -372,11 +372,11 @@ if(BUILD_THE_BUILDTOOLS)
       if(MSYS_PLATFORM)
 	message(STATUS "${executable} missing from your MSYS platform.  If sh is missing, use a generator other than 'MinGW Makefiles'.  If something else is missing use mingw-get to install it.")
       endif(MSYS_PLATFORM)
-      message(FATAL_ERROR "${executable} must be on your PATH in order for epa_build to work correctly")  
+      message(FATAL_ERROR "${executable} must be on your PATH in order for epa_build to work correctly")
     endif(NOT ${EXECUTABLE}_EXECUTABLE)
   endforeach(executable ${executables_LIST})
 
-  # List sufficient buildtool configurations so they will suck in 
+  # List sufficient buildtool configurations so they will suck in
   # the remaining buildtool configurations via dependencies.
   # Order does not matter because the dependency logic takes
   # care of any ordering issues.
@@ -410,7 +410,7 @@ if(BUILD_THE_BUILDTOOLS)
     list(APPEND subdirectories_LIST lapack_blas valgrind)
   endif(NOT MSYS_PLATFORM)
 else(BUILD_THE_BUILDTOOLS)
-  # List sufficient normal package configurations so they will suck in 
+  # List sufficient normal package configurations so they will suck in
   # the remaining configurations via dependencies.
   # Order does not matter because the dependency logic takes
   # care of any ordering issues.
@@ -446,7 +446,7 @@ set_property(GLOBAL PROPERTY EPA_build_targets_LIST)
 # practice because it turns out that fatal CMake errors don't stop the
 # loop (which I presume is a bug) so it just continues indefinitely.  Ugh!
 # So use foreach RANGE loop instead with maximum number of loop
-# interations equal to LENGTH_subdirectories_LIST and break out of it 
+# interations equal to LENGTH_subdirectories_LIST and break out of it
 # early if necessary if the subdirectories_LIST has become exhausted.
 list(LENGTH subdirectories_LIST LENGTH_subdirectories_LIST)
 foreach(idummy RANGE ${LENGTH_subdirectories_LIST})

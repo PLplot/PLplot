@@ -44,7 +44,7 @@ else
 endif
 
 plplot_stub;
-t = char(strsplit("$options", "-")); 
+t = char(strsplit("$options", "-"));
 if (t)
     t(1,:)="";
     for i=1:rows(t)

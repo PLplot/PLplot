@@ -47,7 +47,7 @@ end
 pl.col0(1)
 pl.hist(data, -1.1, 1.1, 44, 0)
 pl.col0(2)
-pl.lab("#frValue", "#frFrequency", 
+pl.lab("#frValue", "#frFrequency",
          "#frPLplot Example 5 - Probability function of Oscillator")
 
 pl.plend()

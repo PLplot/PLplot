@@ -56,7 +56,7 @@ sed -e 's?${VERSION}?'"r${WC_VERSION}?" -e 's?${PREFIX}?'"/tmp/plplot_wc/install
 echo -n "Reference version number (5.9.6)? "
 read REFERENCE_VERSION
 if [ -z "$REFERENCE_VERSION" ] ; then
-   REFERENCE_VERSION=5.9.6 
+   REFERENCE_VERSION=5.9.6
 fi
 echo "REFERENCE_VERSION = $REFERENCE_VERSION"
 

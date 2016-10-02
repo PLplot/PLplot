@@ -33,10 +33,10 @@ base = { 0, 100, 0, 100, 200, 500, 600, 700, 800, 900,
 -- Displays the entire "plsym" symbol (font) set.
 ----------------------------------------------------------------------------
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 pl.fontld(0)
@@ -47,33 +47,33 @@ for l = 1, 20 do
     end
     pl.adv(0)
 
-    -- Set up viewport and window 
+    -- Set up viewport and window
     pl.col0(2)
     pl.vpor(0.15, 0.95, 0.1, 0.9)
     pl.wind(0, 1, 0, 1)
 
-    -- Draw the grid using plbox 
+    -- Draw the grid using plbox
 
     pl.box("bcg", 0.1, 0, "bcg", 0.1, 0)
 
-    -- Write the digits below the frame 
+    -- Write the digits below the frame
 
     pl.col0(15)
-    for i = 0, 9 do 
+    for i = 0, 9 do
         pl.mtex("b", 1.5, (0.1 * i + 0.05), 0.5, tostring(i))
     end
 
     k = 0
     x = {}
     y = {}
-    for i = 0, 9 do 
-        -- Write the digits to the left of the frame 
+    for i = 0, 9 do
+        -- Write the digits to the left of the frame
         pl.mtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, tostring(base[l] + 10 * i))
         for j=0, 9 do
             x[1] = 0.1 * j + 0.05
             y[1] = 0.95 - 0.1 * i
 
-            -- Display the symbols 
+            -- Display the symbols
             pl.sym(x, y, base[l] + k)
             k = k + 1
         end

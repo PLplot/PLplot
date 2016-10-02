@@ -233,7 +233,7 @@ program x20f
     xmax = width_r
     ymin = 0.0_pl_test_flt
     ymax = height_r
-    
+
     data%xpts_data = width
     data%ypts_data = height
     data%xmin_data = xmin

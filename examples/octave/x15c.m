@@ -1,12 +1,12 @@
 ## Copyright (C) 1998, 1999, 2000  Joao Cardoso
 ## Copyright (C) 2004  Rafael Laboissiere
 ## Copyright (C) 2008 Andrew Ross
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -58,7 +58,7 @@ function ix15c
   plot3();
 
   plend1();
-  
+
 endfunction
 
 ## Initializes color map 1 in HLS space.
@@ -153,8 +153,8 @@ function plot1(z,zmin,zmax)
   max_width = 2.;
 
   plpsty(8);
-  plshade(z, 0, -1., 1., -1., 1., 
-	  shade_min, shade_max, 
+  plshade(z, 0, -1., 1., -1., 1.,
+	  shade_min, shade_max,
 	  sh_cmap, sh_color, sh_width,
 	  min_color, min_width, max_color, max_width, 1, tr);
 
@@ -182,7 +182,7 @@ function plot2(z,zmin,zmax)
   plwind(-1.0, 1.0, -1.0, 1.0);
 
   ## Plot using identity transform */
-  
+
   for i = 0:9
     shade_min = zmin + (zmax - zmin) * i / 10.0;
     shade_max = zmin + (zmax - zmin) * (i +1) / 10.0;
@@ -191,8 +191,8 @@ function plot2(z,zmin,zmax)
     n = nlin(i+1);
     plpat(inc(i+1,1:n)',del(i+1,1:n)');
 
-    plshade(z, 0, -1., 1., -1., 1., 
-	    shade_min, shade_max, 
+    plshade(z, 0, -1., 1., -1., 1.,
+	    shade_min, shade_max,
 	    sh_cmap, sh_color, sh_width,
 	    min_color, min_width, max_color, max_width,1,tr);
   endfor
@@ -203,8 +203,8 @@ function plot2(z,zmin,zmax)
   pllab("distance", "altitude", "Bogon flux");
 endfunction
 
-## Illustrates shaded regions in 3d, using a different fill pattern for 
-## each region.  
+## Illustrates shaded regions in 3d, using a different fill pattern for
+## each region.
 function plot3
 
     xx = [ -1.0, 1.0, 1.0, -1.0, -1.0;
@@ -220,7 +220,7 @@ function plot3
     plw3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40);
 
     ## Plot using identity transform
-    
+
     plcol0(1);
     plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0);
     plcol0(2);
@@ -234,7 +234,7 @@ function plot3
     plline3(xx(2,:)', yy(2,:)', zz(2,:)');
     plfill3(xx(2,1:4)', yy(2,1:4)', zz(2,1:4)');
 
-  endfunction    
+  endfunction
 
 
 ix15c

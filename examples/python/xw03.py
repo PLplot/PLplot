@@ -34,7 +34,7 @@ def main():
     # Set up viewport and window, but do not draw box
 
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
-    
+
     # Draw circles for polar grid
     for i in range(10):
 	plarc(0.0, 0.0, 0.1*(i+1), 0.1*(i+1), 0.0, 360.0, 0.0, 0)

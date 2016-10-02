@@ -35,12 +35,12 @@ function gcd (a,  b)
         t = b
         b = a % b
         a = t
-    end 
+    end
     return a
 end
 
 function cycloid()
-  -- TODO 
+  -- TODO
 end
 
 
@@ -49,19 +49,19 @@ function spiro( params, fill )
   xcoord = {}
   ycoord = {}
 
-  -- Fill the coordinates 
+  -- Fill the coordinates
   -- Proper termination of the angle loop very near the beginning
   -- point, see
   -- http://mathforum.org/mathimages/index.php/Hypotrochoid.
   windings = math.floor(math.abs(params[2])/gcd(params[1], params[2]))
   steps    = math.floor(NPNT/windings)
-  dphi     = 2*math.pi/steps 
+  dphi     = 2*math.pi/steps
 
   for i = 1, windings*steps+1 do
-    phi       = (i-1) * dphi 
-    phiw      = (params[1]-params[2])/params[2]*phi 
-    xcoord[i] = (params[1]-params[2])*math.cos(phi) + params[3]*math.cos(phiw) 
-    ycoord[i] = (params[1]-params[2])*math.sin(phi) - params[3]*math.sin(phiw) 
+    phi       = (i-1) * dphi
+    phiw      = (params[1]-params[2])/params[2]*phi
+    xcoord[i] = (params[1]-params[2])*math.cos(phi) + params[3]*math.cos(phiw)
+    ycoord[i] = (params[1]-params[2])*math.sin(phi) - params[3]*math.sin(phiw)
 
     if i == 1 then
         xmin = xcoord[i]
@@ -69,7 +69,7 @@ function spiro( params, fill )
         ymin = ycoord[i]
         ymax = ycoord[i]
     end
-    if xmin>xcoord[i] then xmin = xcoord[i] end 
+    if xmin>xcoord[i] then xmin = xcoord[i] end
     if xmax<xcoord[i] then xmax = xcoord[i] end
     if ymin>ycoord[i] then ymin = ycoord[i] end
     if ymax<ycoord[i] then ymax = ycoord[i] end
@@ -105,7 +105,7 @@ function arcs()
         pl.col0( i%2 + 1 )
         pl.arc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0)
         theta = theta + dtheta
-    end    
+    end
 
     -- Draw several filled ellipses inside the circle at different
     -- angles.
@@ -129,14 +129,14 @@ end
 --   - series of epitrochoids and hypotrochoids
 ----------------------------------------------------------------------------
 
--- R, r, p, N 
+-- R, r, p, N
 -- R and r should be integers to give correct termination of the
 -- angle loop using gcd.
 -- N.B. N is just a place holder since it is no longer used
 -- (because we now have proper termination of the angle loop).
 
 params = {
-  { 21,  7,  7,  3 },  -- Deltoid 
+  { 21,  7,  7,  3 },  -- Deltoid
   { 21,  7, 10,  3 },
   { 21, -7, 10,  3 },
   { 20,  3,  7, 20 },
@@ -144,49 +144,49 @@ params = {
   { 20, -3, 10, 20 },
   { 20, 13,  7, 20 },
   { 20, 13, 20, 20 },
-  { 20,-13, 20, 20 } } 
+  { 20,-13, 20, 20 } }
 
--- plplot initialization 
+-- plplot initialization
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
--- Illustrate the construction of a cycloid 
+-- Illustrate the construction of a cycloid
 cycloid()
 
 -- Loop over the various curves
 -- First an overview, then all curves one by one
 
-pl.ssub(3, 3)  -- Three by three window 
+pl.ssub(3, 3)  -- Three by three window
 
 fill = 0
 for i = 1, 9 do
-  pl.adv(0) 
-  pl.vpor(0, 1, 0, 1) 
-  spiro(params[i], fill) 
+  pl.adv(0)
+  pl.vpor(0, 1, 0, 1)
+  spiro(params[i], fill)
 end
 
-pl.adv(0) 
-pl.ssub(1, 1)  -- One window per curve 
+pl.adv(0)
+pl.ssub(1, 1)  -- One window per curve
 
 for i = 1, 9 do
-  pl.adv(0) 
-  pl.vpor(0, 1, 0, 1) 
-  spiro(params[i], fill) 
+  pl.adv(0)
+  pl.vpor(0, 1, 0, 1)
+  spiro(params[i], fill)
 end
 
 -- fill the curves.
 fill = 1
-pl.adv(0) 
-pl.ssub(1, 1)  -- One window per curve 
+pl.adv(0)
+pl.ssub(1, 1)  -- One window per curve
 
 for i = 1, 9 do
-  pl.adv(0) 
-  pl.vpor(0, 1, 0, 1) 
-  spiro(params[i], fill) 
+  pl.adv(0)
+  pl.vpor(0, 1, 0, 1)
+  spiro(params[i], fill)
 end
 
 arcs()

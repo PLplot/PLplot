@@ -1,46 +1,46 @@
 ## -*-Tcl-*-
  # ###################################################################
- # 
+ #
  # FILE: "Plplotwin.tcl"
- #                                     created: 18/6/96 {2:06:08 pm} 
+ #                                     created: 18/6/96 {2:06:08 pm}
  #                             last update: 07/01/2002 {03:40:29 PM}
  # Author: Vince Darley, based upon ordinary Tcl code written
  #                       by Geoffrey Furnish (and possibly others)
  # E-mail: <vince@santafe.edu>
  # mail: 317 Paseo de Peralta, Santa Fe, NM 87501
  # www: <http://www.santafe.edu/~vince/>
- # 
+ #
  # Description:
- # 
+ #
  # A unified Itk 'extended' widget for Plplot.
- # 
+ #
  # Derives from the plain Plwindow widget which wraps a plplot driver
- # 
+ #
  # Attached menus can be configured in a variety of ways:
  # (i) Long Tk 8 cross-platform menubar
  # (ii) Compressed Tk 8 cross-platform menubar (all items in 1 menu)
  # (iii) Like (ii) but in a menubutton to left of statusbar
  # (iv) Placed in any menu you pass to the widget
  # Use '$widget configure -menulocation' to adjust this placing.
- # 
+ #
  # Grabbed all the old legacy code and put it together in one
  # piece. Should be much more clear what's going on now. It has
  # also all been updated for Itk 3.0, using that package's mega-
  # widget capability.
- # 
+ #
  # August/Sept'99 fixed a bunch of subtle problems which can arise
  # due to using low tcl_precision, and with Tk's event loop, also
  # adjusted various 'grid' commands so unnecessary resizing doesn't
  # happen.  Added optional 'wait' argument to some zooming code
  # for many fewer redraws.  Fixed buggy plSaveFile, and added new
  # filter for .ppm
- # 
+ #
  # November '99.  Fixed propagation problems so zooming etc won't
  # change geometry of parent and cause all sorts of weird problems
  # for the windows inside which we've packed this item.  Also fixed
  # various 'itk::usual' problems so this can easily form a subwidget
  # inside e.g. Pltimeseries, Plbarchart...
- # 
+ #
  # modified by rev reason
  # -------- --- --- -----------
  # 19/7/96 VMD 1.0 original - many minor bugs probably exist.
@@ -59,7 +59,7 @@ eval package require $pl_itk_package_name
 itk::usual Plplotwin {
     keep -menulocation -zoomfromcenter -zoompreservesaspect \
       -background -cursor -foreground \
-      -plotbackground -xhairs -doublebuffer 
+      -plotbackground -xhairs -doublebuffer
 }
 
 itcl::class Plplotwin {
@@ -67,13 +67,13 @@ itcl::class Plplotwin {
 
     constructor {args} {}
     destructor {}
-    
+
     itk_option define -menulocation menuLocation Menulocation "menubar"
     itk_option define -zoomfromcenter zoomFromCenter ZoomFromCenter 1
     itk_option define -zoompreservesaspect zoomPreservesAspect ZoomPreservesAspect 0
-    
+
     protected method plwin {} { return $itk_interior.plwin }
-    
+
     public method setup_defaults {} {}
     public method start {} {}
     public method key_filter {keycode state x y keyname ascii} {}
@@ -110,7 +110,7 @@ itcl::class Plplotwin {
     public method next_page {} {}
     public method eop {} {}
     public method bop {} {}
-   
+
     protected method create_pmenu {} {}
     protected method create_pmenu_file {} {}
     protected method create_pmenu_orient {} {}
@@ -119,15 +119,15 @@ itcl::class Plplotwin {
     protected method create_pmenu_redraw {} {}
     protected method create_pmenu_options {} {}
     protected method fixview {hscroll vscroll} {}
-    
+
     protected method _menuLocate {where} {}
     protected method _menuDestroy {} {}
     protected method menuPath {{sub ""}} {}
-    
+
     private variable zidx 0
     private variable zidx_max 0
     private variable zcoords
-    
+
     private variable menulocation ""
     private variable menulocationtype ""
 
@@ -137,40 +137,40 @@ itcl::class Plplotwin {
 
 itcl::body Plplotwin::constructor {args} {
     # Set up defaults
-    
-    setup_defaults 
-    
+
+    setup_defaults
+
     itk_component add topframe {
 	frame $itk_interior.tf -relief ridge
     }
-    
+
     itk_component add lstat {
 	label $itk_component(topframe).lstat -anchor w -relief raised
-    } 
+    }
 
-    # Plframe widget must already have been created (the plframe is queried 
+    # Plframe widget must already have been created (the plframe is queried
     # for a list of the valid output devices for page dumps).
-    
+
     grid $itk_interior.tf -row 0 -columnspan 2 -sticky nsew
     grid columnconfigure $itk_interior 0 -weight 1 -minsize 0
     grid rowconfigure $itk_interior 0 -weight 0 -minsize 0
     # put the label in the topframe
     grid $itk_component(lstat) -column 1 -sticky nsew
     grid columnconfigure $itk_interior.tf 1 -weight 1 -minsize 0
-    
+
     eval itk_initialize $args
-    
-    label_reset 
+
+    label_reset
     update idletasks
     # This is necessary so that if we try to insert a large
     # label in the status bar, it doesn't make the whole
     # widget expand, which then causes the plot to redraw,...
     # Similarly for when scrollbars appear etc.
     grid propagate $itk_interior 0
-    
+
     [plwin] configure -eopcmd [itcl::code $this eop] -bopcmd [itcl::code $this bop]
     bind [plwin] <Button> [itcl::code $this next_page]
-    
+
     # Grab the initial input focus.
     focus [plwin]
 }
@@ -186,7 +186,7 @@ itcl::body Plplotwin::destructor {} {
 # you have two or more plframes both of which need to be updated
 # simultaneously.  If you have 'update idletasks', the when the
 # plframe calls this method (in the middle of updating itself),
-# Tcl will give the other frame a chance to update too.  This 
+# Tcl will give the other frame a chance to update too.  This
 # leads to horrible confusion, involving one window drawing all
 # over the other.
 itcl::body Plplotwin::eop {} {
@@ -200,7 +200,7 @@ itcl::body Plplotwin::eop {} {
 # you have two or more plframes both of which need to be updated
 # simultaneously.  If you have 'update idletasks', the when the
 # plframe calls this method (in the middle of updating itself),
-# Tcl will give the other frame a chance to update too.  This 
+# Tcl will give the other frame a chance to update too.  This
 # leads to horrible confusion, involving one window drawing all
 # over the other.
 itcl::body Plplotwin::bop {} {
@@ -275,10 +275,10 @@ itcl::body Plplotwin::_menuLocate {where} {
     create_pmenu
 }
 
-itcl::body Plplotwin::menuPath {{sub ""}} { 
+itcl::body Plplotwin::menuPath {{sub ""}} {
     set base $menulocation
-    if {$sub == ""} { 
-	return $base 
+    if {$sub == ""} {
+	return $base
     } else {
 	return $base.$sub
     }
@@ -292,23 +292,23 @@ itcl::body Plplotwin::menuPath {{sub ""}} {
 
 itcl::body Plplotwin::setup_defaults {} {
     # Set up zoom windows list
-    
+
     set zidx 0
     set zidx_max 0
     set zcoords(0) [list 0.0 0.0 1.0 1.0]
-    
+
     set saveOpts($this,savedevice) "psc"
     set saveOpts($this,savemanyplotsperfile) 0
     set saveOpts($this,flipBWforSave) 1
 
     # Bindings
-    
+
     bind [plwin] <Any-KeyPress> \
       [itcl::code $this key_filter %N %s %x %y %K %A]
-    
+
     bind [plwin] <Any-ButtonPress> \
       [itcl::code $this user_mouse %b %s %x %y]
-    
+
     bind [plwin] <Any-Enter> \
       "focus [plwin]"
 }
@@ -329,11 +329,11 @@ itcl::body Plplotwin::setup_defaults {} {
 #----------------------------------------------------------------------------
 
 itcl::body Plplotwin::create_pmenu {} {
-    create_pmenu_file 
-    create_pmenu_orient 
-    create_pmenu_zoom 
-    create_pmenu_page 
-    create_pmenu_options 
+    create_pmenu_file
+    create_pmenu_orient
+    create_pmenu_zoom
+    create_pmenu_page
+    create_pmenu_options
 }
 
 #----------------------------------------------------------------------------
@@ -344,43 +344,43 @@ itcl::body Plplotwin::create_pmenu {} {
 
 itcl::body Plplotwin::create_pmenu_file {} {
     set m [menuPath file]
-    
+
     [menuPath] add cascade -label "File" -menu $m
     menu $m
-    
+
     #$m add command -label "Print..." \
       -command [itcl::code $this print] -accelerator Cmd-P
     # Save - As
-    
+
     $m add command -label "Save As" \
       -command [itcl::code $this save_as ]
-    
+
     # Save - Again
-    
+
     $m add command -label "Save Again" \
       -command [itcl::code $this save_again ] \
       -state disabled
-    
+
     # Save - Close
-    
+
     $m add command -label "Save Close" \
       -command [itcl::code $this save_close ] \
       -state disabled
-    
+
     $m add separator
-    
+
     # Save - Set device.. (another cascade)
-    
+
     $m add cascade -label "Save device" -menu $m.sdev
     menu $m.sdev
-    
+
     $m.sdev add check -label "Flip B/W before save or print" \
       -variable [itcl::scope saveOpts($this,flipBWforSave)]
     $m.sdev add separator
 
     # Generate the device list in the "Save/Set device" widget menu, by querying
     # the plframe widget for the available output devices (which are listed).
-    
+
     set devnames [[plwin] info devnames]
     set devkeys [[plwin] info devkeys]
     set ndevs [llength $devnames]
@@ -391,19 +391,19 @@ itcl::body Plplotwin::create_pmenu_file {} {
 	$m.sdev add radio -label $devnam \
 	  -variable [itcl::scope saveOpts($this,savedevice)] -value $devkey
     }
-    
+
     # Save - Set file type.. (another cascade)
-    
+
     $m add cascade -label "Set file type" -menu $m.sfile
     menu $m.sfile
-    
+
     # Single file (one plot/file)
-    
+
     $m.sfile add radio -label "Single file (one plot/file)" \
       -variable [itcl::scope saveOpts($this,savemanyplotsperfile)] -value 0
-    
+
     # Archive file (many plots/file)
-    
+
     $m.sfile add radio -label "Archive file (many plots/file)" \
       -variable [itcl::scope saveOpts($this,savemanyplotsperfile)] -value 1
 }
@@ -416,29 +416,29 @@ itcl::body Plplotwin::create_pmenu_file {} {
 
 itcl::body Plplotwin::create_pmenu_orient {} {
     set m [menuPath orient]
-    
+
     [menuPath] add cascade -label "Orient" -menu $m
     menu $m
-    
+
     $m configure -postcommand [itcl::code $this update_orient ]
-    
+
     # Orient - 0 degrees
-    
+
     $m add radio -label "0 degrees" \
       -command [itcl::code $this orient 0]
-    
+
     # Orient - 90 degrees
-    
+
     $m add radio -label "90 degrees" \
       -command [itcl::code $this orient 1]
-    
+
     # Orient - 180 degrees
-    
+
     $m add radio -label "180 degrees" \
       -command [itcl::code $this orient 2]
-    
+
     # Orient - 270 degrees
-    
+
     $m add radio -label "270 degrees" \
       -command [itcl::code $this orient 3]
 }
@@ -451,49 +451,49 @@ itcl::body Plplotwin::create_pmenu_orient {} {
 
 itcl::body Plplotwin::create_pmenu_zoom {} {
     set m [menuPath zoom]
-    
+
     [menuPath] add cascade -label "Zoom" -menu $m
     menu $m
-    
+
     $m configure -postcommand [itcl::code $this update_zoom ]
-    
+
     # Zoom - select (by mouse)
-    
+
     $m add command -label "Select" \
       -command [itcl::code $this zoom_select ]
-    
+
     # Zoom - back (go back 1 zoom level)
-    
+
     $m add command -label "Back" \
       -command [itcl::code $this zoom_back ] \
       -state disabled
-    
+
     # Zoom - forward (go forward 1 zoom level)
-    
+
     $m add command -label "Forward" \
       -command [itcl::code $this zoom_forward ] \
       -state disabled
-    
+
     # Zoom - enter bounds
-    
+
     $m add command -label "Enter bounds.." \
       -command [itcl::code $this zoom_enter ]
-    
+
     # Zoom - reset
-    
+
     $m add command -label "Reset" \
       -command [itcl::code $this zoom_reset ]
-    
+
     # Zoom - options (another cascade)
-    
+
     $m add cascade -label "Options" -menu $m.options
     menu $m.options
-    
+
     $m.options add check -label "Preserve aspect ratio" \
       -variable [memberscope -zoompreservesaspect]
-    
+
     $m.options add separator
-    
+
     $m.options add radio -label "Start from corner" \
       -variable [memberscope -zoomfromcenter] \
       -value 0
@@ -501,7 +501,7 @@ itcl::body Plplotwin::create_pmenu_zoom {} {
     $m.options add radio -label "Start from center" \
       -variable [memberscope -zoomfromcenter] \
       -value 1
-    
+
     $m.options invoke 1
 }
 
@@ -513,17 +513,17 @@ itcl::body Plplotwin::create_pmenu_zoom {} {
 
 itcl::body Plplotwin::create_pmenu_page {} {
     set m [menuPath page]
-    
+
     [menuPath] add cascade -label "Page" -menu $m
     menu $m
-    
+
     # Page - enter bounds
-    
+
     $m add command -label "Setup.." \
       -command [itcl::code $this page_enter ]
-    
+
     # Page - reset
-    
+
     $m add command -label "Reset" \
       -command [itcl::code $this page_reset ]
 }
@@ -549,19 +549,19 @@ itcl::body Plplotwin::create_pmenu_redraw {} {
 
 itcl::body Plplotwin::create_pmenu_options {} {
     set m [menuPath options]
-    
+
     [menuPath] add cascade -label "Options" -menu $m
     menu $m
-    
+
     $m add command -label "Palette 0" \
-      -command "plcmap0_edit [plwin]" 
-    
+      -command "plcmap0_edit [plwin]"
+
     $m add command -label "Palette 1" \
-      -command "plcmap1_edit [plwin]" 
-    
+      -command "plcmap1_edit [plwin]"
+
     $m add checkbutton -label "Crosshairs" \
       -variable [memberscope -xhairs]
-    
+
     $m add checkbutton -label "Doublebuffer" \
       -variable [memberscope -doublebuffer]
 }
@@ -578,15 +578,15 @@ itcl::body Plplotwin::create_pmenu_options {} {
 
 itcl::body Plplotwin::start {} {
     global client
-    
+
     # Manage widget hierarchy
-    
+
     pack $this -side bottom -expand 1 -fill both
-    
+
     update
-    
+
     # Inform client that we're done.
-    
+
     if { [info exists client] } {
 	client_cmd "set widget_is_ready 1"
     }
@@ -604,7 +604,7 @@ itcl::body Plplotwin::start {} {
 
 itcl::body Plplotwin::key_filter {keycode state x y keyname ascii} {
     global user_key_filter
-    
+
     global key_zoom_select
     global key_zoom_reset
     global key_print
@@ -613,17 +613,17 @@ itcl::body Plplotwin::key_filter {keycode state x y keyname ascii} {
     global key_scroll_left
     global key_scroll_up
     global key_scroll_down
-    
+
     # puts "keypress: $keyname $keycode $ascii $state"
-    
+
     # Call user-defined key filter, if one exists
-    
+
     if { [info exists user_key_filter] } {
 	$user_key_filter $keyname $keycode $ascii
     }
-    
+
     # Interpret keystroke
-    
+
     switch $keyname \
       $key_zoom_select [itcl::code $this zoom_select ] \
       "b" [itcl::code $this zoom_back ] \
@@ -636,9 +636,9 @@ itcl::body Plplotwin::key_filter {keycode state x y keyname ascii} {
       $key_scroll_up [itcl::code $this view_scroll 0 -1 $state] \
       $key_scroll_down [itcl::code $this view_scroll 0 1 $state] \
       Return [itcl::code $this next_page]
-    
+
     # Pass keypress event info back to client.
-    
+
     user_key $keycode $state $x $y $keyname $ascii
 }
 
@@ -655,7 +655,7 @@ itcl::body Plplotwin::next_page {} {
 
 itcl::body Plplotwin::user_key {keycode state x y keyname ascii} {
     global client
-    
+
     if { [info exists client] } {
 	
 	# calculate relative window coordinates.
@@ -688,7 +688,7 @@ itcl::body Plplotwin::user_key {keycode state x y keyname ascii} {
 
 itcl::body Plplotwin::user_mouse {button state x y} {
     global client
-    
+
     if { [info exists client] } {
 	
 	# calculate relative window coordinates.
@@ -732,7 +732,7 @@ itcl::body Plplotwin::flash {col} {
 #
 # The closelink command was added in the hopes of making the dp driver
 # cleanup a bit more robust, but doesn't seem to have any effect except
-# to slow things down quite a bit. 
+# to slow things down quite a bit.
 #----------------------------------------------------------------------------
 
 itcl::body Plplotwin::end {} {
@@ -769,7 +769,7 @@ proc plSaveFile {devkey} {
       "psc"	"set filter .ps" \
       "plmeta"	"set filter .plm" \
       "xfig"	"set filter .fig"
-    
+
     if {[info exists filter]} {
 	set f [tk_getSaveFile -defaultextension $filter]
     } else {
@@ -811,7 +811,7 @@ itcl::body Plplotwin::save_as {{file ""}} {
 	    cmd plscmap0 16 #000000
 	    for {set i 1} {$i <= 15} {incr i} {
 		cmd plscol0 $i [lindex $c0 [expr $i +1]]
-	    }	    
+	    }	
 	}
 	
 	if { $saveOpts($this,savemanyplotsperfile) == 0 } {
@@ -866,15 +866,15 @@ itcl::body Plplotwin::save_close {} {
 
 itcl::body Plplotwin::update_zoom {} {
     # Back
-    
+
     if { $zidx == 0 } {
 	[menuPath zoom] entryconfigure "Back" -state disabled
     } else {
 	[menuPath zoom] entryconfigure "Back" -state normal
     }
-    
+
     # Forward
-    
+
     if { $zidx_max == 0 || $zidx == $zidx_max } {
 	[menuPath zoom] entryconfigure "Forward" -state disabled
     } else {
@@ -889,16 +889,16 @@ itcl::body Plplotwin::update_zoom {} {
 #----------------------------------------------------------------------------
 
 itcl::body Plplotwin::zoom_select {} {
-    global def_button_cmd 
-    
+    global def_button_cmd
+
     set def_button_cmd [bind [plwin] <ButtonPress>]
-    
+
     if { $itk_option(-zoomfromcenter) == 0 } {
 	label_set "Click on one corner of zoom region."
     } else {
 	label_set "Click on center of zoom region."
     }
-    
+
     bind [plwin] <ButtonPress> [itcl::code $this zoom_start %x %y]
 }
 
@@ -911,21 +911,21 @@ itcl::body Plplotwin::zoom_select {} {
 itcl::body Plplotwin::zoom_enter {} {
     global fv00 fv01 fv10 fv11
     global fn00 fn01 fn10 fn11
-    
+
     set coords [[plwin] view]
-    
+
     foreach {fv00 fv01 fv10 fv11} $coords {}
-    
+
     set fn00 xmin
     set fn01 ymin
     set fn10 xmax
     set fn11 ymax
-    
+
     Form2d .e "Enter window coordinates for zoom. Each coordinate\
       should range from 0 to 1, with (0,0) corresponding to the lower\
       left hand corner."
     tkwait window .e
-    
+
     view_select $fv00 $fv01 $fv10 $fv11
 }
 
@@ -939,7 +939,7 @@ itcl::body Plplotwin::zoom_enter {} {
 
 itcl::body Plplotwin::zoom_reset {} {
     global def_button_cmd
-    
+
     label_reset
     bind [plwin] <ButtonPress> $def_button_cmd
 
@@ -959,7 +959,7 @@ itcl::body Plplotwin::zoom_reset {} {
     #grid rowconfigure $itk_interior 1 -weight 1 -minsize 0
 
     # Reset zoom windows list
-    
+
     set zidx 0
     set zidx_max 0
     set zcoords(0) [list 0.0 0.0 1.0 1.0]
@@ -996,19 +996,19 @@ itcl::body Plplotwin::orient {rot} {
 itcl::body Plplotwin::page_enter {} {
     global fv00 fv01 fv10 fv11
     global fn00 fn01 fn10 fn11
-    
+
     set coords [[plwin] page]
-    
+
     foreach {fv00 fv01 fv10 fv11} $coords {}
-    
+
     set fn00 mar
     set fn01 aspect
     set fn10 jx
     set fn11 jy
-    
+
     Form2d .e "Enter page setup parameters. mar denotes the fractional page area on each side to use as a margin (0 to 0.5). jx and jy are the fractional justification relative to the center (-0.5 to 0.5). aspect is the page aspect ratio (0 preserves original aspect ratio)."
     tkwait window .e
-    
+
     [plwin] page $fv00 $fv01 $fv10 $fv11
 }
 
@@ -1030,10 +1030,10 @@ itcl::body Plplotwin::page_reset {} {
 
 itcl::body Plplotwin::zoom_start {wx wy} {
     global def_button_cmd
-    
+
     bind [plwin] <ButtonPress> $def_button_cmd
     label_set "Select zoom region by dragging mouse, then release."
-    
+
     [plwin] draw init
     bind [plwin] <B1-Motion> [itcl::code $this zoom_mouse_draw $wx $wy %x %y]
     bind [plwin] <B1-ButtonRelease> [itcl::code $this zoom_mouse_end $wx $wy %x %y]
@@ -1054,7 +1054,7 @@ itcl::body Plplotwin::zoom_start {wx wy} {
 # -zoomfromcenter
 # 0 first and last points specified determine opposite corners
 # of zoom box.
-# 1 box is centered about the first point clicked on, 
+# 1 box is centered about the first point clicked on,
 # perimeter follows mouse (default)
 #
 #----------------------------------------------------------------------------
@@ -1062,20 +1062,20 @@ itcl::body Plplotwin::zoom_start {wx wy} {
 itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
     set Lx [winfo width [plwin]]
     set Ly [winfo height [plwin]]
-    
+
     # Enforce boundaries in device coordinate space
-    
+
     set bounds [[plwin] view bounds]
     set xmin [expr [lindex "$bounds" 0] * $Lx]
     set ymin [expr [lindex "$bounds" 1] * $Ly]
     set xmax [expr [lindex "$bounds" 2] * $Lx]
     set ymax [expr [lindex "$bounds" 3] * $Ly]
-    
+
     set x1 [max $xmin [min $xmax $x1]]
     set y1 [max $ymin [min $ymax $y1]]
-    
+
     # Two-corners zoom.
-    
+
     if { $itk_option(-zoomfromcenter) == 0 } {
 	
 	# Get box lengths
@@ -1092,28 +1092,28 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 	# Constant aspect ratio
 	
 	if { $itk_option(-zoompreservesaspect)} {
-	    
+	
 	    # Scale factors used to maintain plot aspect ratio
-	    
+	
 	    set xscale [expr $xmax - $xmin]
 	    set yscale [expr $ymax - $ymin]
-	    
+	
 	    # Adjust box size for proper aspect ratio
-	    
+	
 	    set rx [expr double(abs($dx)) / $xscale]
 	    set ry [expr double(abs($dy)) / $yscale]
-	    
+	
 	    if { $rx > $ry } {
 		set dy [expr $yscale * $rx * $sign_dy]
 	    } else {
 		set dx [expr $xscale * $ry * $sign_dx]
 	    }
-	    
+	
 	    set xr [expr $xl + $dx]
 	    set yr [expr $yl + $dy]
-	    
+	
 	    # Now check again to see if in bounds, and adjust if not
-	    
+	
 	    if { $xr < $xmin || $xr > $xmax } {
 		if { $xr < $xmin } {
 		    set dx [expr $xmin - $x0]
@@ -1123,7 +1123,7 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 		set rx [expr double(abs($dx)) / $xscale]
 		set dy [expr $yscale * $rx * $sign_dy]
 	    }
-	    
+	
 	    if { $yr < $ymin || $yr > $ymax } {
 		if { $yr < $ymin } {
 		    set dy [expr $ymin - $y0]
@@ -1170,14 +1170,14 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 	# Constant aspect ratio
 	
 	if { $itk_option(-zoompreservesaspect) } {
-	    
+	
 	    # Scale factors used to maintain plot aspect ratio
-	    
+	
 	    set xscale [expr {$xmax - $xmin}]
 	    set yscale [expr {$ymax - $ymin}]
-	    
+	
 	    # Adjust box size for proper aspect ratio
-	    
+	
 	    set rx [expr {double($dx) / $xscale}]
 	    set ry [expr {double($dy) / $yscale}]
 	    if { $rx > $ry } {
@@ -1185,14 +1185,14 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 	    } else {
 		set dx [expr {$xscale * $ry}]
 	    }
-	    
+	
 	    set xr [expr $x0 + $dx]
 	    set xl [expr $x0 - $dx]
 	    set yr [expr $y0 + $dy]
 	    set yl [expr $y0 - $dy]
-	    
+	
 	    # Now check again to see if in bounds, and adjust downward if not
-	    
+	
 	    if { $xl < $xmin } {
 		set dx [expr $x0 - $xmin]
 		set rx [expr double($dx) / $xscale]
@@ -1222,9 +1222,9 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 	set yr [expr {$y0 + $dy}]
 	set yl [expr {$y0 - $dy}]
     }
-    
+
     # Optional translation to relative device coordinates.
-    
+
     if { $opt == 1 } {
 	set wxl [expr {$xl / double($Lx)} ]
 	set wxr [expr {$xr / double($Lx)} ]
@@ -1260,16 +1260,16 @@ itcl::body Plplotwin::zoom_mouse_draw {wx0 wy0 wx1 wy1} {
 #----------------------------------------------------------------------------
 
 itcl::body Plplotwin::zoom_mouse_end {wx0 wy0 wx1 wy1} {
-    
+
     # Finish rubber band draw
-    
+
     bind [plwin] <B1-ButtonRelease> {}
     bind [plwin] <B1-Motion> {}
-    label_reset 
+    label_reset
     [plwin] draw end
-    
+
     # Select new plot region
-    
+
     eval view_zoom [zoom_coords $wx0 $wy0 $wx1 $wy1 1]
 }
 
@@ -1281,38 +1281,38 @@ itcl::body Plplotwin::zoom_mouse_end {wx0 wy0 wx1 wy1} {
 #----------------------------------------------------------------------------
 
 itcl::body Plplotwin::view_select {x0 y0 x1 y1} {
-    
+
     # Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
-    
+
     set xl [min $x0 $x1]
     set yl [min $y0 $y1]
     set xr [max $x0 $x1]
     set yr [max $y0 $y1]
-    
+
     set xmin 0.
     set ymin 0.
     set xmax 1.
     set ymax 1.
-    
+
     set xl [max $xmin [min $xmax $xl]]
     set yl [max $ymin [min $ymax $yl]]
     set xr [max $xmin [min $xmax $xr]]
     set yr [max $ymin [min $ymax $yr]]
-    
+
     # Only create scrollbars if really needed.
-    
+
     if {($xl == $xmin) && ($xr == $xmax)} {set hscroll 0} else {set hscroll 1}
-    
+
     if {($yl == $xmin) && ($yr == $xmax)} {set vscroll 0} else {set vscroll 1}
-    
+
     if { ! ($hscroll || $vscroll)} {return}
-    
+
     # Select plot region
-    
+
     [plwin] view select $xl $yl $xr $yr
-    
+
     # Fix up view
-    
+
     fixview $hscroll $vscroll
 }
 
@@ -1325,19 +1325,19 @@ itcl::body Plplotwin::view_select {x0 y0 x1 y1} {
 
 itcl::body Plplotwin::view_zoom {x0 y0 x1 y1} {
     global xl xr yl yr
-    
+
     # Adjust arguments to be properly ordered (xl < xr, etc)
-    
+
     set xl [min $x0 $x1]
     set yl [min $y0 $y1]
     set xr [max $x0 $x1]
     set yr [max $y0 $y1]
-    
+
     # Check for double-click (specified zoom region less than a few pixels
     # wide). In this case, magnification is 2X in each direction, centered at
     # the mouse location. At the boundary, the magnification is determined
     # by the distance to the boundary.
-    
+
     set stdzoom 0.5
     if { ($xr - $xl < 0.02) && ($yr - $yl < 0.02) } {
 	set nxl [expr $xl - 0.5 * $stdzoom]
@@ -1345,7 +1345,7 @@ itcl::body Plplotwin::view_zoom {x0 y0 x1 y1} {
 	if { $nxl < 0.0 } {
 	    set nxl 0.0
 	    set nxr [expr 2.0 * $xl]
-	} 
+	}
 	if { $nxr > 1.0 } {
 	    set nxr 1.0
 	    set nxl [expr 2.0 * $xl - 1.0]
@@ -1366,40 +1366,40 @@ itcl::body Plplotwin::view_zoom {x0 y0 x1 y1} {
 	set yl $nyl
 	set yr $nyr
     }
-    
+
     # Adjust arguments to be in bounds (in case margins are in effect).
-    
+
     set bounds [[plwin] view bounds]
     foreach {xmin ymin xmax ymax} $bounds {}
-    
+
     set xl [max $xmin [min $xmax $xl]]
     set yl [max $ymin [min $ymax $yl]]
     set xr [max $xmin [min $xmax $xr]]
     set yr [max $ymin [min $ymax $yr]]
-    
+
     # Only create scrollbars if really needed.
-    
+
     set hscroll [expr {($xl != $xmin) || ($xr != $xmax)}]
     set vscroll [expr {($yl != $ymin) || ($yr != $ymax)}]
-    
+
     if {!($hscroll || $vscroll)} {
 	[plwin] redraw
 	return
     }
-    
+
     # Select plot region
-    
+
     [plwin] view zoom $xl $yl $xr $yr wait
-    
+
     # Fix up view
-    
+
     fixview $hscroll $vscroll
-    
+
     # Add window to zoom windows list
-    
+
     incr zidx
     set zidx_max $zidx
-    
+
     set zcoords($zidx) [[plwin] view]
 }
 
@@ -1411,11 +1411,11 @@ itcl::body Plplotwin::view_zoom {x0 y0 x1 y1} {
 
 itcl::body Plplotwin::zoom_back {} {
     if { $zidx == 0 } then return
-    
+
     incr zidx -1
-    
+
     # Select plot region
-    
+
     eval [plwin] view select $zcoords($zidx)
 }
 
@@ -1427,11 +1427,11 @@ itcl::body Plplotwin::zoom_back {} {
 
 itcl::body Plplotwin::zoom_forward {} {
     if { $zidx_max == 0 || $zidx == $zidx_max } {return}
-    
+
     incr zidx
-    
+
     # Select plot region
-    
+
     eval [plwin] view select $zcoords($zidx)
 }
 
@@ -1446,9 +1446,9 @@ itcl::body Plplotwin::zoom_forward {} {
 itcl::body Plplotwin::view_scroll {dx dy s} {
     global key_scroll_mag
     global key_scroll_speed
-    
+
     # Set up multiplication factor
-    
+
     set mult $key_scroll_speed
     if { $s & 0x01 } {
 	set mult [expr $mult * $key_scroll_mag]
@@ -1462,9 +1462,9 @@ itcl::body Plplotwin::view_scroll {dx dy s} {
     if { $s & 0x08 } {
 	set mult [expr $mult * $key_scroll_mag]
     }
-    
+
     # Now scroll
-    
+
     if {($dx != 0) && \
       [winfo exists $itk_interior.hscroll] && [winfo ismapped $itk_interior.hscroll] } then {
 	
@@ -1488,9 +1488,9 @@ itcl::body Plplotwin::view_scroll {dx dy s} {
 #----------------------------------------------------------------------------
 
 itcl::body Plplotwin::fixview {hscroll vscroll} {
-    
+
     # Create scrollbars if they don't already exist.
-    
+
     if { $hscroll && ! [winfo exists $itk_interior.hscroll] } {
 	scrollbar $itk_interior.hscroll -relief sunken -orient horiz \
 	  -command "[plwin] xview"
@@ -1501,9 +1501,9 @@ itcl::body Plplotwin::fixview {hscroll vscroll} {
 	  -command "[plwin] yview"
 	[plwin] config -yscroll "$itk_interior.vscroll set"
     }
-    
+
     # Map scrollbars if not already mapped.
-    
+
     if { ($hscroll && ! [winfo ismapped $itk_interior.hscroll]) || \
       ($vscroll && ! [winfo ismapped $itk_interior.vscroll]) } {
 	#update
@@ -1556,7 +1556,7 @@ itcl::body Plplotwin::label_reset {} {
 # label_set
 #
 # Sets message in status bar.
-# 
+#
 # EXTREMELY IMPORTANT.  This procedure must not re-enter
 # Tcl's event loop.  You must not call 'update', 'update idletasks'
 # or anything like that.  A future version of the plframe may avoid
@@ -1564,7 +1564,7 @@ itcl::body Plplotwin::label_reset {} {
 # you have two or more plframes both of which need to be updated
 # simultaneously.  If you have 'update idletasks', the when the
 # plframe calls this method (in the middle of updating itself),
-# Tcl will give the other frame a chance to update too.  This 
+# Tcl will give the other frame a chance to update too.  This
 # leads to horrible confusion, involving one window drawing all
 # over the other.
 #----------------------------------------------------------------------------
@@ -1584,14 +1584,14 @@ itcl::body Plplotwin::label_set {msg} {
 #----------------------------------------------------------------------------
 
 itcl::body Plplotwin::dplink {client} {
-    
+
     global list_sock data_sock
-    
+
     dp_Host +
     set rv [dp_connect -server 0]
     set list_sock [lindex $rv 0]
     set data_port [lindex $rv 1]
-    
+
     dp_RDO $client set data_port $data_port
     set data_sock [lindex [dp_accept $list_sock] 0]
     [plwin] openlink socket $data_sock

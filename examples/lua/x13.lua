@@ -44,7 +44,7 @@ pl.init()
 
 pl.adv(0)
 
--- Ensure window has aspect ratio of one so circle is 
+-- Ensure window has aspect ratio of one so circle is
 -- plotted as a circle.
 pl.vasp(1)
 pl.wind(0, 10, 0, 10)
@@ -59,10 +59,10 @@ for i = 1, 5 do
   y = { 5 }
   j = 2
   -- n.b. the theta quantities multiplied by 2*math.pi/500 afterward so
-  -- in fact per is interpreted as a percentage. 
+  -- in fact per is interpreted as a percentage.
 	theta1 = theta0 + 5 * per[i]
 	if i == 5 then theta1 = 500 end
-  
+
 	for theta = theta0, theta1, dthet do
 	    x[j] = 5 + 3 * math.cos(2*math.pi/500*theta)
 	    y[j] = 5 + 3 * math.sin(2*math.pi/500*theta)
@@ -79,7 +79,7 @@ for i = 1, 5 do
 	dy = 0.25 * math.sin(just)
 	if (theta0 + theta1)<250 or (theta0 + theta1)>750 then
 	  just = 0
-	else 
+	else
     just = 1
   end
 

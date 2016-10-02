@@ -9,7 +9,7 @@
 #    w -	Name to use for new top-level window.
 #
 # Note:
-# There is a fundamental problem with the text widget, in that you can't 
+# There is a fundamental problem with the text widget, in that you can't
 # get both decent word wrap and nice scrolling.  When proportional fonts are
 # used (which are nicest for reading), the spacing comes out much different
 # from that in the text file, leading to a very ragged right edge.  One way
@@ -67,15 +67,15 @@ JPEG, LaTeX, PBM, PDF, PNG, PostScript, SVG, and Xfig formats.
 GUI Devices: PLplot has devices that produce GUI's on the Gtk+,
 PyQt, Qt, Tcl/Tk, wxWidgets, and X platforms.
 
-      Tcl stands for ``tool command language'' and is pronounced ``tickle.''  
-Tk is an X11 toolkit that provides the Motif look and feel and is 
+      Tcl stands for ``tool command language'' and is pronounced ``tickle.''
+Tk is an X11 toolkit that provides the Motif look and feel and is
 implemented using the Tcl command language.  All of the fancy graphical
 elements (buttons, menus, scrollbars, etc) in the user interface are
-implemented via Tk with Tcl the glue that holds everything together.  
+implemented via Tk with Tcl the glue that holds everything together.
 The combination of Tcl and Tk is very powerful, providing easy access at
 a high level to the workings of the graphical interface, which in turn
 enables rapid prototyping and an unparalleled degree of flexibility.  The
-PLPLOT Tk driver is built with these principles in mind, and provides 
+PLPLOT Tk driver is built with these principles in mind, and provides
 ways for the user to customize the interface (add buttons, menu entries,
 callbacks to user code, etc).
 

@@ -45,7 +45,7 @@ function __plt__ (caller, varargin)
     __plt1__ (varargin{1}, "");
 
   elseif (nargin > 2)
-    
+
     hold_state = ishold;
 
     unwind_protect
@@ -120,7 +120,7 @@ function __plt__ (caller, varargin)
     usage (msg);
 
   endif
-  
+
   __pl_plotit;
-  
+
 endfunction

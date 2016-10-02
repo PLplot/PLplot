@@ -36,7 +36,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 set(CFLAGS "$ENV{CFLAGS}")
 # Drop -fvisibility=hidden since that option may not work for this package.

@@ -10,17 +10,17 @@
 	{
     $sub = '';
     $len = 0;
-    
+
     foreach(explode(' ', $str) as $word) {
 	    $part = (($sub != '') ? ' ' : '') . $word;
 	    $sub .= $part;
 	    $len += strlen($part);
-	    
+	
 	    if(strlen($word) > $minword && strlen($sub) >= $length) {
 	    	break;
 	    }
     }
-    
+
     return $sub . (($len < strlen($str)) ? '...' : '');
 	}
 
@@ -111,7 +111,7 @@ END;
 			$items = $feed->get_items();
 			$i = 0;
 			foreach($items as $item) {
-				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>' . "\n"; 
+				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>' . "\n";
 				echo '<p>' . _substr(strip_tags($item->get_content()), $contentlength) . ' ';
 				echo '<a href="' . $item->get_permalink() . '">Read more</a> (' . $item->get_date('j M Y') . ')</p>' . "\n";
 				
@@ -119,7 +119,7 @@ END;
 				if( $i >= $newscount )
 					break;
 			}
-		} else 
+		} else
 			echo '<p>Could not open <a href="' . $url . '">News feed</a>!</p>';
 	}
 

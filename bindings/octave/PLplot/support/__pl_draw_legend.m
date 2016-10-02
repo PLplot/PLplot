@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -65,7 +65,7 @@ function __pl_draw_legend(xm, xM, ym, yM)
 
     if(n>2) ## FIXME : sometimes n=1, which cause a division by zero
     for i = 1:n
-      plshade(z, 0, minx, maxx, miny, maxy, 
+      plshade(z, 0, minx, maxx, miny, maxy,
 	      clevel(i), clevel(i+1),
 	      1, (i-1) / (n-1), 1,
 	      min_color, min_width, max_color, max_width, 1, tr);
@@ -80,7 +80,7 @@ function __pl_draw_legend(xm, xM, ym, yM)
     if (length(tdeblank(__pl.lab_str(i,:))) != 0)
       xx = __pl.legend_xpos(strm);
       yy = (__pl.legend_ypos(strm) - ch_height * k++ );
-      
+
       plcol0(15);
       plptex(xx, yy, 0, 0, __pl.legend_xpos(strm), __pl.lab_str(i,:));
       if(__pl.type(strm) != -2)

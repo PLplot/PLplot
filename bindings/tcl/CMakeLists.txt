@@ -57,16 +57,16 @@ if(ENABLE_tcl)
   set(tclmatrix_INSTALLED_HEADERS
     tclMatrix.h
     )
-  
+
   install(
     FILES ${tclmatrix_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}
     )
-  
+
   set(plplottcltk_INSTALLED_HEADERS
     pltcl.h
     )
-  
+
   install(
     FILES ${plplottcltk_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}

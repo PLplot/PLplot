@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -66,9 +66,9 @@ function comet(x, y, p)
     k = 2;
   endif
   plxormod(1);
-  
+
   unwind_protect # recover if user hit ^C
-    
+
     ## Grow the body
     for i = 1:k
       __comet(x(1:i), y(1:i));
@@ -83,11 +83,11 @@ function comet(x, y, p)
     for i = m-k+1:m
       __comet(x(i:m), y(i:m));
     endfor
-    
+
   unwind_protect_cleanup
-    
+
     plxormod(0);
-    
+
     if (old_hold == 0)
       hold "off"
     endif

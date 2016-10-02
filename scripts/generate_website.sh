@@ -21,7 +21,7 @@ read GROUPNAME
 echo -n "ssh-accessible hostname? "
 read HOSTNAME
 echo "The following directory prefix on '$HOSTNAME' will be removed and then replaced by the complete PLplot website so be careful with what you specify"
-echo -n "Expendable directory prefix on '$HOSTNAME'? " 
+echo -n "Expendable directory prefix on '$HOSTNAME'? "
 read WEBSITE_PREFIX
 echo ""
 echo "Summary:"
@@ -96,7 +96,7 @@ make VERBOSE=1 www-install-doxygen >& make_www-install-doxygen.out
 echo ""
 echo "Build PLplot, PLplot examples, and screenshots of those examples.  This may take a while depending on your cpu speed...."
 
-# N.B. this command completely removes WWW_DIR/htdocs/examples-data 
+# N.B. this command completely removes WWW_DIR/htdocs/examples-data
 # on $HOSTNAME so be careful how you specify WWW_DIR!
 
 cd /tmp/plplotdoc/plplot_source

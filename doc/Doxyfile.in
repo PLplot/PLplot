@@ -813,7 +813,7 @@ RECURSIVE              = YES
 
 EXCLUDE                = "@CMAKE_SOURCE_DIR@/bindings/python/plplot.py" \
                          "@CMAKE_BINARY_DIR@/bindings/python/plplot.py" \
-			 "@CMAKE_SOURCE_DIR@/bindings/old_f95" \ 
+			 "@CMAKE_SOURCE_DIR@/bindings/old_f95" \
 			 "@CMAKE_SOURCE_DIR@/examples/old_f95" \
 			 "@CMAKE_SOURCE_DIR@/src/deprecated_plmap.c" \
 			 "@CMAKE_SOURCE_DIR@/src/pldeprecated.c" \
@@ -830,8 +830,8 @@ EXCLUDE                = "@CMAKE_SOURCE_DIR@/bindings/python/plplot.py" \
 			 "@CMAKE_SOURCE_DIR@/bindings/f95/included_plplot_configured_types.f90.in" \
 			 "@CMAKE_SOURCE_DIR@/bindings/f95/included_plplot_parameters.f90" \
 			 "@CMAKE_SOURCE_DIR@/bindings/f95/included_plplot_real_interfaces.f90"
-			 
-			 
+			
+			
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

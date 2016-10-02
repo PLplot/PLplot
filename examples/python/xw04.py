@@ -22,7 +22,7 @@
 from plplot_py_demos import *
 
 # main
-# 
+#
 # Illustration of logarithmic axes, and redefinition of window.
 
 def main():
@@ -34,7 +34,7 @@ def main():
     # Restore defaults
     plfont(1)
     #plcol0(1)
-    
+
 def plot1(type):
 
     pladv(0)
@@ -98,7 +98,7 @@ def plot1(type):
     # Only specify legend data that are required according to the
     # value of opt_array for that entry.
 
-    # Data for first legend entry. 
+    # Data for first legend entry.
     opt_array[0] = PL_LEGEND_LINE
     text_colors[0] = 2
     text[0] = "Amplitude"
@@ -119,13 +119,13 @@ def plot1(type):
         symbol_numbers[1] = 4
         symbols[1]        = "#(728)"
 
-    plscol0a( 15, 32, 32, 32, 0.70 ) 
+    plscol0a( 15, 32, 32, 32, 0.70 )
 
     (legend_width, legend_height) = \
     pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0, 0.0, 0.0,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
-              1., text_colors, text, 
-              box_colors, box_patterns, box_scales, box_line_widths, 
+              1., text_colors, text,
+              box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 

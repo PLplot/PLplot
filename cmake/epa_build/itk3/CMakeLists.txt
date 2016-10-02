@@ -39,7 +39,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 if(MSYS_PLATFORM)
   set(library_prefix)
@@ -92,7 +92,7 @@ ExternalProject_Add(
 add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
-  COMMAND ${CMAKE_COMMAND} -E echo 
+  COMMAND ${CMAKE_COMMAND} -E echo
   "Apply a patch for backporting the autotools changes for itk (version 4.0.0) to itk3"
   # These changes are replacing the old contents of the tclconfig
   # directory with the modern itk versions of those files and small

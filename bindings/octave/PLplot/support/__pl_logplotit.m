@@ -1,10 +1,10 @@
 ## Copyright (C) 2002 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -20,7 +20,7 @@ function __pl_logplotit
   ## plplot has no notion of log plots. Plot only positive values
   ## FIXME no matrix allowed!
   for i=1:__pl.items(strm)-1
-    
+
     x = __pl.x{i, strm};
     y = __pl.y{i, strm};
 
@@ -30,7 +30,7 @@ function __pl_logplotit
       else
 	break;
       endif
-      
+
     elseif (__pl.type(strm) == 20)
       if (any(y <= 0))
 	expr = "ix = find(y > 0);";
@@ -45,7 +45,7 @@ function __pl_logplotit
       endif
     endif
 
-    try 
+    try
       k = __pl.items(strm);
       while(!isempty(eval(expr)))
 	ixx = ix(find(ix == (min(ix):rows(ix)+min(ix)-1)'));
@@ -76,7 +76,7 @@ function __pl_logplotit
     catch
       error("__pl_plotit: FIXME. Logplot of matrices with negative elements is in some cases not allowed.\n");
     end
-    
+
   endfor
 
 endfunction

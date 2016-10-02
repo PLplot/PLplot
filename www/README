@@ -2,7 +2,7 @@
 more dated, but we keep them for a historical reference.  Instead, follow the
 directions in ../README.Release_Manager_Cookbook.
 
-11-27-06: This may work, but it is deprecated. Please follow the 
+11-27-06: This may work, but it is deprecated. Please follow the
 instructions contained in README.Release_Manager_Cookbook.
 
 
@@ -145,7 +145,7 @@ generated from the current date and time.  This tag has the following
 structure:
 
     cvs-tarball_<year>-<month>-<day>-<hour>-<minutes>-<seconds>
-    
+
 where the time is UTC-based.
 
 This tag can be used later to tag the final release with a symbolic string
@@ -159,7 +159,7 @@ version 5.6.7):
    path/to/make-cvs-tarball.sh -v 5.6.7 2>&1 | tee build.log
 
 2) Test the generated tarball (plplot-5.6.7.tar.gz)
-   You might also give options -c an -i to make some checks automatic  
+   You might also give options -c an -i to make some checks automatic
 
 3) Are you happy with the tarball?
    NO:
@@ -168,7 +168,7 @@ version 5.6.7):
      4) Release the tarball
      5) Tag the cvs repository with:
         cvs rtag -r cvs-tarball-<date>-<time> v5_6_7
-        (where cvs-tarball-<date>-<time> was obtained in step 1) 
+        (where cvs-tarball-<date>-<time> was obtained in step 1)
 
 6) Remove the temporary tags using scripts/rm-cvs-tarball-tags.pl
 

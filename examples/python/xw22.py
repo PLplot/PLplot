@@ -153,7 +153,7 @@ def potential():
     nlevel = 10
     nr = 20
     ntheta = 20
-  
+
     # Create data to be contoured
     r = 0.5+arange(nr)
     r.shape = (-1,1)
@@ -222,7 +222,7 @@ def potential():
     plcont(zg,clevel,pltr2,xg,yg)
     pllsty(1)
     plcol0(1)
-    
+
     # Plot the vectors of the gradient of the potential
     plcol0(2)
     scaling = 25.0
@@ -234,7 +234,7 @@ def potential():
     px = rmax*cos(t)
     py = rmax*sin(t)
     plline(px,py)
-    
+
 # main
 #
 # Does a series of vector plots
@@ -246,12 +246,12 @@ def main():
     narr = 6
     fill = 0
 
-# Set arrow style using arrow_x and arrow_y then 
+# Set arrow style using arrow_x and arrow_y then
 # plot using these arrows.
     plsvect(arrow_x, arrow_y, fill)
     constriction(1)
 
-# Set arrow style using arrow2_x and arrow2_y then 
+# Set arrow style using arrow2_x and arrow2_y then
 # plot using these filled arrows.
     fill = 1
     plsvect(arrow2_x, arrow2_y, fill)
@@ -264,5 +264,5 @@ def main():
     potential()
 
 
-# Vector plot of the circulation about the origin 
+# Vector plot of the circulation about the origin
 main()

@@ -14,21 +14,21 @@ nointeractive = 0
 f_name=""
 
 
--- Transformation function 
+-- Transformation function
 function mypltr(x,  y)
   local x0 = (stretch["xmin"] + stretch["xmax"])*0.5
   local y0 = (stretch["ymin"] + stretch["ymax"])*0.5
   local dy = (stretch["ymax"]-stretch["ymin"])*0.5
   local tx = x0 + (x0-x)*(1 - stretch["stretch"]*math.cos((y-y0)/dy*math.pi*0.5))
   local ty = y
-    
+
   return tx, ty
 end
 
 
--- read image from file in binary ppm format 
+-- read image from file in binary ppm format
 function read_img(fname)
-  -- naive grayscale binary ppm reading. If you know how to, improve it 
+  -- naive grayscale binary ppm reading. If you know how to, improve it
   local fp = io.open(fname, "rb")
   if fp==nil then
     return 1
@@ -36,27 +36,27 @@ function read_img(fname)
 
   -- version
   local ver = fp:read("*line")
-  
-  if ver~="P5" then -- I only understand this! 
+
+  if ver~="P5" then -- I only understand this!
     fp:close()
     return 1
   end
 
   while fp:read(1)=="#" do
     local com = fp:read("*line")
-    if com==nil then   
+    if com==nil then
       fp:close()
       return 1
     end
   end
   fp:seek("cur", -1)
-  
+
   local w, h, num_col = fp:read("*number", "*number", "*number")
-  if w==nil or h==nil or num_col==nil then -- width, height, num colors 
+  if w==nil or h==nil or num_col==nil then -- width, height, num colors
     fp:close()
     return 1
   end
-  
+
   -- read the rest of the line (only EOL)
   fp:read("*line")
 
@@ -71,7 +71,7 @@ function read_img(fname)
   for i = 1, w do
     imf[i] = {}
     for j = 1, h do
-      imf[i][j] = string.byte(img, (h-j)*w+i) -- flip image up-down 
+      imf[i][j] = string.byte(img, (h-j)*w+i) -- flip image up-down
     end
   end
 
@@ -79,29 +79,29 @@ function read_img(fname)
 end
 
 
--- save plot 
-function save_plot(fname)   
-  local cur_strm = pl.gstrm() -- get current stream 
-  local new_strm = pl.mkstrm() -- create a new one  
-    
-  pl.sdev("psc") -- new device type. Use a known existing driver 
-  pl.sfnam(fname) -- file name 
+-- save plot
+function save_plot(fname)
+  local cur_strm = pl.gstrm() -- get current stream
+  local new_strm = pl.mkstrm() -- create a new one
 
-  pl.cpstrm(cur_strm, 0) -- copy old stream parameters to new stream 
-  pl.replot()	-- do the save 
-  pl.end1() -- close new device 
+  pl.sdev("psc") -- new device type. Use a known existing driver
+  pl.sfnam(fname) -- file name
 
-  pl.sstrm(cur_strm)	-- and return to previous one 
+  pl.cpstrm(cur_strm, 0) -- copy old stream parameters to new stream
+  pl.replot()	-- do the save
+  pl.end1() -- close new device
+
+  pl.sstrm(cur_strm)	-- and return to previous one
 end
 
 
---  get selection square interactively 
+--  get selection square interactively
 function get_clip(xi, xe, yi, ye)
   return 0, xi, xe, yi, ye
 end
 
 
--- set gray colormap 
+-- set gray colormap
 function gray_cmap(num_col)
   local r = { 0, 1 }
   local g = { 0, 1 }
@@ -120,29 +120,29 @@ r = {}
 img_f = {}
 cgrid2 = {}
 
-  
--- Parse and process command line arguments 
+
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 z={}
 
--- view image border pixels 
+-- view image border pixels
 if dbg~=0 then
-  pl.env(1, XDIM, 1, YDIM, 1, 1) -- no plot box 
-  
-  -- build a one pixel square border, for diagnostics 
+  pl.env(1, XDIM, 1, YDIM, 1, 1) -- no plot box
+
+  -- build a one pixel square border, for diagnostics
   for i = 1, XDIM do
     z[i] = {}
-    z[i][1] = 1 -- left 
-    z[i][YDIM] = 1 -- right 
+    z[i][1] = 1 -- left
+    z[i][YDIM] = 1 -- right
   end
 
   for i = 1, YDIM do
-    z[1][i] = 1 -- top 
-    z[XDIM][i] = 1 -- botton 
+    z[1][i] = 1 -- top
+    z[XDIM][i] = 1 -- botton
   end
 
   pl.lab("...around a blue square."," ","A red border should appear...")
@@ -150,10 +150,10 @@ if dbg~=0 then
   pl.image(z, 1, XDIM, 1, YDIM, 0, 0, 1, XDIM, 1, YDIM)
 end
 
--- sombrero-like demo 
+-- sombrero-like demo
 if nosombrero==0 then
   r = {}
-  pl.col0(2) -- draw a yellow plot box, useful for diagnostics! :( 
+  pl.col0(2) -- draw a yellow plot box, useful for diagnostics! :(
   pl.env(0, 2*math.pi, 0, 3*math.pi, 1, -1)
 
   for i = 1, XDIM do
@@ -174,31 +174,31 @@ if nosombrero==0 then
 
   pl.lab("No, an amplitude clipped \"sombrero\"", "", "Saturn?")
   pl.ptex(2, 2, 3, 4, 0, "Transparent image")
-  pl.image(z, 0, 2*math.pi, 0, 3*math.pi, 0.05, 1, 0, 2*math.pi, 0, 3*math.pi) 
+  pl.image(z, 0, 2*math.pi, 0, 3*math.pi, 0.05, 1, 0, 2*math.pi, 0, 3*math.pi)
 
-  -- save the plot 
+  -- save the plot
   if f_name~="" then
     save_plot(f_name)
   end
 end
 
--- read Chloe image 
+-- read Chloe image
 -- Note we try two different locations to cover the case where this
--- examples is being run from the test_c.sh script 
+-- examples is being run from the test_c.sh script
 status, img_f, width, height, num_col = read_img("Chloe.pgm")
-if status~=0 then 
+if status~=0 then
   status, img_f, width, height, num_col = read_img("../Chloe.pgm")
-  if status~=0 then 
+  if status~=0 then
     pl.abort("No such file")
     pl.plend()
     os.exit()
   end
 end
 
--- set gray colormap 
+-- set gray colormap
 gray_cmap(num_col)
 
--- display Chloe 
+-- display Chloe
 pl.env(1, width, 1, height, 1, -1)
 
 if nointeractive==0 then
@@ -209,7 +209,7 @@ end
 
 pl.image(img_f, 1, width, 1, height, 0, 0, 1, width, 1, height)
 
--- selection/expansion demo 
+-- selection/expansion demo
 if nointeractive==0 then
   xi = 25
   xe = 130
@@ -217,7 +217,7 @@ if nointeractive==0 then
   ye = 125
 
   status, xi, xe, yi, ye = get_clip(xi, xe, yi, ye)
-  if status~=0 then  -- get selection rectangle 
+  if status~=0 then  -- get selection rectangle
     pl.plend()
     os.exit()
   end
@@ -225,27 +225,27 @@ if nointeractive==0 then
   pl.spause(0)
   pl.adv(0)
 
-  -- display selection only 
+  -- display selection only
   pl.image(img_f, 1, width, 1, height, 0, 0, xi, xe, ye, yi)
 
   pl.spause(1)
 
-  -- zoom in selection 
+  -- zoom in selection
   pl.env(xi, xe, ye, yi, 1, -1)
   pl.image(img_f, 1, width, 1, height, 0, 0, xi, xe, ye, yi)
 end
 
--- Base the dynamic range on the image contents. 
+-- Base the dynamic range on the image contents.
 img_max, img_min = pl.MinMax2dGrid(img_f)
 
 -- Draw a saturated version of the original image.  Only use the middle 50%
--- of the image's full dynamic range. 
+-- of the image's full dynamic range.
 pl.col0(2)
 pl.env(0, width, 0, height, 1, -1)
 pl.lab("", "", "Reduced dynamic range image example")
 pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min + img_max*0.25, img_max - img_max*0.25)
 
--- Draw a distorted version of the original image, showing its full dynamic range. 
+-- Draw a distorted version of the original image, showing its full dynamic range.
 pl.env(0, width, 0, height, 1, -1)
 pl.lab("", "", "Distorted image example")
 
@@ -259,8 +259,8 @@ stretch["stretch"] = 0.5
 -- In C / C++ the following would work, with plimagefr directly calling
 -- mypltr. For compatibilty with other language bindings the same effect
 -- can be achieved by generating the transformed grid first and then
--- using pltr2. 
--- pl.imagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch) 
+-- using pltr2.
+-- pl.imagefr(img_f, width, height, 0., width, 0., height, 0., 0., img_min, img_max, mypltr, (PLPointer) &stretch)
 
 cgrid2 = {}
 cgrid2["xg"] = {}
@@ -277,7 +277,7 @@ for i = 1, width+1 do
     cgrid2["yg"][i][j] = yy
   end
 end
-    
+
 --pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min, img_max, "pltr2", cgrid2)
 pl.imagefr(img_f, 0, width, 0, height, 0, 0, img_min, img_max, "mypltr")
 

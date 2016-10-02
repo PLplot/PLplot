@@ -1,11 +1,11 @@
 ## Copyright (C) 1998, 1999, 2000  Joao Cardoso
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -30,7 +30,7 @@ function x03c
   i=0:360;
   x0 = cos(dtr * i);
   y0 = sin(dtr * i);
-  
+
   ## Parse and process command line arguments */
 
   ##    (void) plparseopts(&argc, argv, PL_PARSE_FULL);
@@ -42,7 +42,7 @@ function x03c
     for i=1:10
       plarc(0.0, 0.0, 0.1 * i, 0.1 * i, 0.0, 360.0, 0.0, 0);
     endfor
-  
+
 
   plcol0(2);
   for i=0:11

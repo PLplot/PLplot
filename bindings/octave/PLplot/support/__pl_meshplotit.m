@@ -1,10 +1,10 @@
 ## Copyright (C) 2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -20,8 +20,8 @@ function __pl_meshplotit()
 
   strm = __pl_init;
 
-  xm = __pl.lxm(strm); xM = __pl.lxM(strm); 
-  ym = __pl.lym(strm); yM = __pl.lyM(strm); 
+  xm = __pl.lxm(strm); xM = __pl.lxM(strm);
+  ym = __pl.lym(strm); yM = __pl.lyM(strm);
   zm = __pl.lzm(strm); zM = __pl.lzM(strm);
 
   if (xm == xM)
@@ -52,7 +52,7 @@ function __pl_meshplotit()
     __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
     __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
   endif
-  
+
   plcol0(15);pllsty(1);
   if (__pl.multi(strm) == 1)	# multiplot, erase current subwindow
     plclear;
@@ -98,18 +98,18 @@ function __pl_meshplotit()
     case 101  ## meshc
       plmeshc(x, y, z', DRAW_LINEXY + MAG_COLOR + BASE_CONT, clevel);
     case 102  ## meshz
-      plot3d(x, y, z', DRAW_LINEXY + MAG_COLOR, 1); 
+      plot3d(x, y, z', DRAW_LINEXY + MAG_COLOR, 1);
     case 103  ## surf
       plsurf3d(x, y, z', MAG_COLOR + sh, clevel);
     case 104   ## surfc
-      plsurf3d(x, y, z', MAG_COLOR + BASE_CONT + sh, clevel) 
+      plsurf3d(x, y, z', MAG_COLOR + BASE_CONT + sh, clevel)
     case 105   ## surfl
       pllightsource(__pl.light(1), __pl.light(2), __pl.light(3));
       plsurf3d(x, y, z', sh, levs);
   endswitch	
 
   endfor
-  
+
   plcol0(15);
   plmtex("t", 1, 0.5,0.5, tdeblank(__pl.tlabel(strm,:)));
   plflush;

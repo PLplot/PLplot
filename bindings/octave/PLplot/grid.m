@@ -1,5 +1,5 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
@@ -17,7 +17,7 @@
 ## Turn grid lines at major ticks "on" or "off" for plotting.
 ## "minor" means to draw the grid at minor tiks.
 ## To setup the grid at your wish, use `x(y)ticks'
-## 
+##
 ## If the argument is omitted, "on" is assumed.
 
 function st = grid (x)
@@ -35,7 +35,7 @@ function st = grid (x)
       switch (x)
 	case "off"
           __pl.grid(strm) = 0;
-	case "on"   
+	case "on"
           __pl.grid(strm) = 1;
 	case "minor"
           __pl.grid(strm) = 2;

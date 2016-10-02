@@ -44,13 +44,13 @@ function(install_xml_catalog arguments_LIST3 catalog)
   # arguments_LIST3, which is a list of arguments grouped by
   # threes where each group of three arguments correspond to
   # the three arguments of the "xmlcatalog --add" command.
-  
+
   # Create the catalog if it does not exist.
   install(CODE "
 if(NOT EXISTS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 message(STATUS \"Creating \${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
-execute_process(COMMAND ${XMLCATALOG_EXECUTABLE} --noout 
-  --create 
+execute_process(COMMAND ${XMLCATALOG_EXECUTABLE} --noout
+  --create
   \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 endif(NOT EXISTS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 ")
@@ -67,7 +67,7 @@ endif(NOT EXISTS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
     install(CODE "
 message(STATUS \"Updating \${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 execute_process(COMMAND ${XMLCATALOG_EXECUTABLE} --noout
-  --add \"${type}\" \"${orig}\" \"${replace}\" 
+  --add \"${type}\" \"${orig}\" \"${replace}\"
   \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 "
       )
@@ -97,7 +97,7 @@ find_program(CP_EXECUTABLE cp)
 install(CODE "
 message(STATUS \"Installing \${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5\")
 execute_process(
-COMMAND ${INSTALL_EXECUTABLE} -v -d -m755 
+COMMAND ${INSTALL_EXECUTABLE} -v -d -m755
 \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xml-dtd-4.5\")
 "
   )
@@ -112,7 +112,7 @@ COMMAND ${CP_EXECUTABLE} -v -af ${path_list}
 install(CODE "
 message(STATUS \"Installing \${CMAKE_INSTALL_PREFIX}/etc/xml\")
 execute_process(
-COMMAND ${INSTALL_EXECUTABLE} -v -d -m755 
+COMMAND ${INSTALL_EXECUTABLE} -v -d -m755
 \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml\")
 "
   )
@@ -145,7 +145,7 @@ set(commands
 
 install_xml_catalog(commands "catalog")
 
-# LFS instructions at 
+# LFS instructions at
 # http://www.linuxfromscratch.org/blfs/view/svn/pst/DocBook.html
 # are open to interpretation for this part, but I think it means
 # these previous versions should be dropped if they are handled

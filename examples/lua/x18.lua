@@ -54,19 +54,19 @@ function test_poly(k)
 	    x[1] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
 	    y[1] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
 	    z[1] = math.cos( math.pi*j/20.1 )
-	    
+	
 	    x[2] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*i/20 )
 	    y[2] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*i/20 )
 	    z[2] = math.cos( math.pi*(j+1)/20.1 )
-	    
+	
 	    x[3] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
 	    y[3] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
 	    z[3] = math.cos( math.pi*(j+1)/20.1 )
-	    
+	
 	    x[4] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
 	    y[4] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
 	    z[4] = math.cos( math.pi*j/20.1 )
-	    
+	
 	    x[5] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
 	    y[5] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
 	    z[5] = math.cos( math.pi*j/20.1 )
@@ -93,10 +93,10 @@ alt = { 20, 35, 50, 65 }
 az  = { 30, 40, 50, 60 }
 
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 for k=1, 4 do
@@ -107,11 +107,11 @@ x = {}
 y = {}
 z = {}
 
--- From the mind of a sick and twisted physicist... 
+-- From the mind of a sick and twisted physicist...
 for i=1, NPTS do
   z[i] = -1 + 2*(i-1)/NPTS
 
-  -- Pick one ... 
+  -- Pick one ...
   --	r  = 1 - (i-1) / NPTS
   r = z[i]
 

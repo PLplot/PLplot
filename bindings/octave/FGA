@@ -16,7 +16,7 @@ compile and run the oregonator.cc and hello.cc files in the examples
 directory of the Octave distribution. If they don't run, fix first
 octave (configure with above options and reinstall).
 
---If you have a problem with the Tk demos in the plplot distribution, 
+--If you have a problem with the Tk demos in the plplot distribution,
 probably your Xserver is not secure. Use 'xauth' or rebuild tk without
 security. But you don't need Tk (although useful); the default is to
 use the Xwindows driver.
@@ -54,9 +54,9 @@ are using XFree, at least in version 3.3.3 you can start the Xserver
 with the '-wm' option; it will save obscured windows and you don't need
 to issue 'plreplot'. Also, the AfterStep window manager has an option
 for the same, I think that it is the `SaveUnders' one:
-	# Miscellaneous voodoo commands - they may help you, they may not   
+	# Miscellaneous voodoo commands - they may help you, they may not
 	AppsBackingStore
-	BackingStore  
+	BackingStore
 	SaveUnders
 
 Please keep reporting problems and how you solve them,

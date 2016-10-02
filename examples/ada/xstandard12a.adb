@@ -44,7 +44,7 @@ procedure xstandard12a is
     r   : Real_Vector (0 .. 4) := (0.0, 0.25, 0.5, 1.0,  1.0);
     g   : Real_Vector (0 .. 4) := (1.0, 0.5,  0.5, 0.5,  1.0);
     b   : Real_Vector (0 .. 4) := (1.0, 1.0,  0.5, 0.25, 0.0);
-    
+
     procedure plfbox (x0, y0 : Long_Float) is
         x, y : Real_Vector (0 ..3);
     begin
@@ -68,7 +68,7 @@ procedure xstandard12a is
 
  begin
     -- Parse and process command line arguments.
-    Parse_Command_Line_Arguments(Parse_Full); 
+    Parse_Command_Line_Arguments(Parse_Full);
 
     -- Initialize plplot.
     Initialize_PLplot;
@@ -92,7 +92,7 @@ procedure xstandard12a is
     y0(9) :=  3.0;
 
     Set_Color_Map_1_Piecewise(RGB, pos, r, g, b, Alt_Hue_Path_None);
-    
+
     for i in y0'range loop
         Set_Color_Map_1(Long_Float(i)/9.0);
         Select_Fill_Pattern(0);

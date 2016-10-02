@@ -49,7 +49,7 @@ if(ENABLE_cxx)
   else(NON_TRANSITIVE)
     target_link_libraries(plplotcxx PUBLIC plplot)
   endif(NON_TRANSITIVE)
-  
+
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
   endif(USE_RPATH)

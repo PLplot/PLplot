@@ -44,7 +44,7 @@ procedure xtraditional12a is
     r   : Real_Vector (0 .. 4) := (0.0, 0.25, 0.5, 1.0,  1.0);
     g   : Real_Vector (0 .. 4) := (1.0, 0.5,  0.5, 0.5,  1.0);
     b   : Real_Vector (0 .. 4) := (1.0, 1.0,  0.5, 0.25, 0.0);
-    
+
     procedure plfbox (x0, y0 : Long_Float) is
         x, y : Real_Vector (0 ..3);
     begin
@@ -65,7 +65,7 @@ procedure xtraditional12a is
         pllsty(1);
         plline(x, y);
     end plfbox;
-    
+
 begin
     -- Parse and process command line arguments.
     plparseopts(PL_PARSE_FULL);

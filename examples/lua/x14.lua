@@ -37,7 +37,7 @@ mark1 = { 1500 }
 function plot1()
   x = {}
   y = {}
-  
+
   for i = 1, 60 do
     x[i] = xoff + xscale*i/60
     y[i] = yoff + yscale*x[i]^2
@@ -48,25 +48,25 @@ function plot1()
   ymin = y[1]
   ymax = y[60]
 
-  for i = 1, 6 do 
+  for i = 1, 6 do
     xs[i] = x[(i-1)*10 + 4]
     ys[i] = y[(i-1)*10 + 4]
   end
 
-  -- Set up the viewport and window using PLENV. The range in X is 
-  -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
-  -- scaled separately (just = 0), and we just draw a labelled 
-  -- box (axis = 0). 
+  -- Set up the viewport and window using PLENV. The range in X is
+  -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+  -- scaled separately (just = 0), and we just draw a labelled
+  -- box (axis = 0).
   pl.col0(1)
   pl.env(xmin, xmax, ymin, ymax, 0, 0)
   pl.col0(6)
   pl.lab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2")
 
-  -- Plot the data points 
+  -- Plot the data points
   pl.col0(9)
   pl.poin(xs, ys, 9)
 
-  -- Draw the line through the data 
+  -- Draw the line through the data
   pl.col0(4)
   pl.line(x, y)
   pl.flush()
@@ -79,13 +79,13 @@ function plot2()
 
   -- Set up the viewport and window using PLENV. The range in X is -2.0 to
   -- 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-  -- (just = 0), and we draw a box with axes (axis = 1). 
+  -- (just = 0), and we draw a box with axes (axis = 1).
   pl.col0(1)
   pl.env(-2, 10, -0.4, 1.2, 0, 1)
   pl.col0(2)
   pl.lab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function")
 
-  -- Fill up the arrays 
+  -- Fill up the arrays
   for i = 1, 100 do
     x[i] = (i-20)/6
     y[i] = 1
@@ -94,7 +94,7 @@ function plot2()
     end
   end
 
-  -- Draw the line 
+  -- Draw the line
   pl.col0(3)
   pl.line(x, y)
   pl.flush()
@@ -106,20 +106,20 @@ function plot3()
   y = {}
 
   -- For the final graph we wish to override the default tick intervals, and
-  -- so do not use PLENV 
+  -- so do not use PLENV
   pl.adv(0)
 
   -- Use standard viewport, and define X range from 0 to 360 degrees, Y range
-  -- from -1.2 to 1.2. 
+  -- from -1.2 to 1.2.
   pl.vsta()
   pl.wind(0, 360, -1.2, 1.2)
 
-  -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y. 
+  -- Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
   pl.col0(1)
   pl.box("bcnst", 60, 2, "bcnstv", 0.2, 2)
 
   -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
-  -- expects a pointer!! 
+  -- expects a pointer!!
   pl.styl(mark1, space1)
   pl.col0(2)
   pl.box("g", 30, 0, "g", 0.2, 0)
@@ -151,7 +151,7 @@ function plot4()
     y0[i] = math.sin(dtr*(i-1))
   end
 
-  -- Set up viewport and window, but do not draw box 
+  -- Set up viewport and window, but do not draw box
   pl.env(-1.3, 1.3, -1.3, 1.3, 1, -2)
   for i = 1, 10 do
   	for j = 1, 361 do
@@ -159,7 +159,7 @@ function plot4()
 	    y[j] = 0.1*i*y0[j]
     end
 
-    -- Draw circles for polar grid 
+    -- Draw circles for polar grid
   	pl.line(x, y)
   end
 
@@ -169,11 +169,11 @@ function plot4()
     dx = math.cos(dtr * theta)
     dy = math.sin(dtr * theta)
 
-    -- Draw radial spokes for polar grid 
+    -- Draw radial spokes for polar grid
     pl.join(0, 0, dx, dy)
 
-    -- Write labels for angle 
-    -- Slightly off zero to avoid floating point logic flips at 90 and 270 deg. 
+    -- Write labels for angle
+    -- Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
     if dx>=-0.00001 then
       pl.ptex(dx, dy, dx, dy, -0.15, tostring(theta))
     else
@@ -184,13 +184,13 @@ function plot4()
   x = {}
   y = {}
 
-  -- Draw the graph 
+  -- Draw the graph
   for i = 1, 361 do
     r = math.sin(dtr * (5*(i-1)))
     x[i] = x0[i] * r
     y[i] = y0[i] * r
   end
-  
+
   pl.col0(3)
   pl.line(x, y)
 
@@ -199,7 +199,7 @@ function plot4()
   pl.flush()
 end
 
--- Demonstration of contour plotting 
+-- Demonstration of contour plotting
 
 XPTS = 35
 YPTS = 46
@@ -211,7 +211,7 @@ tr = { XSPA, 0, -1, 0, YSPA, -1 }
 function mypltr(x, y)
   tx = tr[1]*x + tr[2]*y + tr[3]
   ty = tr[4]*x + tr[5]*y + tr[6]
-    
+
   return tx, ty
 end
 
@@ -221,7 +221,7 @@ function plot5()
   mark = { 1500 }
   space = { 1500 }
 
-  -- Set up function arrays 
+  -- Set up function arrays
   z = {}
   w = {}
 
@@ -254,24 +254,24 @@ end
 -- Plots several simple functions from other example programs.
 --
 -- This version sends the output of the first 4 plots (one page) to two
--- independent streams.  
+-- independent streams.
 ----------------------------------------------------------------------------
 
--- Select either TK or DP driver and use a small window 
--- Using DP results in a crash at the end due to some odd cleanup problems 
--- The geometry strings MUST be in writable memory 
+-- Select either TK or DP driver and use a small window
+-- Using DP results in a crash at the end due to some odd cleanup problems
+-- The geometry strings MUST be in writable memory
 geometry_master = "500x410+100+200"
 geometry_slave  = "500x410+650+200"
 
--- plplot initialization 
--- Parse and process command line arguments 
+-- plplot initialization
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- If valid geometry specified on command line, use it for both streams. 
+-- If valid geometry specified on command line, use it for both streams.
 xp0, yp0, xleng0, yleng0, xoff0, yoff0 = pl.gpage()
 valid_geometry = xleng0>0 and yleng0>0
-    
--- Set up first stream 
+
+-- Set up first stream
 if valid_geometry==true then
   pl.spage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
 else
@@ -287,7 +287,7 @@ fam, num, bmax = pl.gfam()
 print("Demo of multiple output streams via the " .. driver .." driver.")
 print("Running with the second stream as slave to the first.\n")
 
--- Start next stream 
+-- Start next stream
 pl.sstrm(1)
 
 if valid_geometry==true then
@@ -296,18 +296,18 @@ else
   pl.setopt("geometry", geometry_slave)
 end
 
--- Turn off pause to make this a slave (must follow master) 
+-- Turn off pause to make this a slave (must follow master)
 pl.spause(0)
 pl.sdev(driver)
 pl.sfam(fam,num,bmax)
-    
--- Currently number of digits in format number can only be 
---set via the command line option 
+
+-- Currently number of digits in format number can only be
+--set via the command line option
 pl.setopt("fflen", "2")
 pl.init()
 
--- Set up the data & plot 
--- Original case 
+-- Set up the data & plot
+-- Original case
 pl.sstrm(0)
 
 xscale = 6
@@ -316,19 +316,19 @@ xoff = 0
 yoff = 0
 plot1()
 
--- Set up the data & plot 
+-- Set up the data & plot
 xscale = 1
 yscale = 1e6
 plot1()
 
--- Set up the data & plot 
+-- Set up the data & plot
 xscale = 1.
 yscale = 1.e-6
 digmax = 2
 pl.syax(digmax, 0)
 plot1()
 
--- Set up the data & plot 
+-- Set up the data & plot
 xscale = 1
 yscale = 0.0014
 yoff = 0.0185
@@ -336,25 +336,25 @@ digmax = 5
 pl.syax(digmax, 0)
 plot1()
 
--- To slave 
--- The pleop() ensures the eop indicator gets lit. 
+-- To slave
+-- The pleop() ensures the eop indicator gets lit.
 pl.sstrm(1)
 plot4()
 pl.eop()
 
--- Back to master 
+-- Back to master
 pl.sstrm(0)
 plot2()
 plot3()
 
--- To slave 
+-- To slave
 pl.sstrm(1)
 plot5()
 pl.eop()
 
--- Back to master to wait for user to advance 
+-- Back to master to wait for user to advance
 pl.sstrm(0)
 pl.eop()
 
--- Call plend to finish off. 
+-- Call plend to finish off.
 pl.plend()

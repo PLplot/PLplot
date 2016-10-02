@@ -1,11 +1,11 @@
 ## Copyright (C) 1998-2003  Joao Cardoso.
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -27,7 +27,7 @@ function __pl_plotit
   endif
 
   unwind_protect
-    
+
   old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
   warning("off","Octave:empty-list-elements");
 
@@ -41,7 +41,7 @@ function __pl_plotit
   if (__pl.type(strm) == 10 || __pl.type(strm) == 20 || __pl.type(strm) == 30)
     __pl_logplotit;
   endif
-  
+
   ## It seems that a viewport of (x, x, y, y) doesn't work
   __pl_lxm = __pl.lxm(strm); __pl_lxM = __pl.lxM(strm);
   __pl_lym = __pl.lym(strm); __pl_lyM = __pl.lyM(strm);
@@ -56,7 +56,7 @@ function __pl_plotit
   ## now check for user supplied axis ranges
   ## FIXME: possible polar plot inconsistency. User must specify axis in (x,y)
   ## coordinates, not (r,t). Advise user to use zoom() or ginput() to get (x,y)
-    
+
   if (__pl.axis_st(strm))
     __pl_lxm = __pl.axis(strm,1); __pl_lxM = __pl.axis(strm,2);
     if (length(__pl.axis(strm,:)) >= 4)
@@ -77,9 +77,9 @@ function __pl_plotit
   if (__pl.type(strm) == 20 || __pl.type(strm) == 30)		
     __pl_lym = log10(__pl_lym); __pl_lyM = log10(__pl_lyM);
   endif
-    
+
   ## start from the beginning
-    
+
   if (__pl.items(strm) != 1)
     __pl.plcol(strm) = 1;
     __pl.pllsty(strm) = 1;
@@ -88,8 +88,8 @@ function __pl_plotit
     __pl.line_count(strm) = 1;
     __pl.lab_str = "";
   endif
-  
-  ## set plot limits, plot box, grid and axis type  
+
+  ## set plot limits, plot box, grid and axis type
   plcol0(15); pllsty(1);
   if (__pl.type(strm) == -1)  # polar plot is special
     __pl_plenv(__pl_lxm, __pl_lxM, __pl_lym, __pl_lyM, 1, __pl.type(strm));
@@ -104,7 +104,7 @@ function __pl_plotit
       t = 1 + __pl.grid(strm);
     endif
     __pl_plenv(__pl_lxm, __pl_lxM, __pl_lym, __pl_lyM, 0, __pl.type(strm) + t);
-  endif			    
+  endif			
 
   ## get the plots to be done, previously stored in the __pl_struct structure
   for items=1:__pl.items(strm)-1
@@ -114,12 +114,12 @@ function __pl_plotit
     fmt = __pl.fmt{items, strm};
 
     if (__pl.type(strm) == 10 || __pl.type(strm) == 30)
-      x = log10(x); 
+      x = log10(x);
     endif
     if (__pl.type(strm) == 20 || __pl.type(strm) == 30)
       y = log10(y);
     endif
-    
+
     ## this is here just because of style variable
     if (isempty(fmt))
       [style, color, symbol, key_title] = __pl_opt(fmt);
@@ -130,10 +130,10 @@ function __pl_plotit
     if (color != 20)
       __pl.plcol(strm) = color;
     endif
-    
+
     xc = columns(x); yc = columns(y);
-    
-    if (ismatrix(x) && !isvector(x) && ismatrix(y) && !isvector(y)) 
+
+    if (ismatrix(x) && !isvector(x) && ismatrix(y) && !isvector(y))
       if (style != 9 && (xc != yc || rows(x) != rows(y)))
 	error ("__pl_plotit: matrix dimensions must match.");
       endif
@@ -141,7 +141,7 @@ function __pl_plotit
     elseif (isvector(x) || isvector(y))
       range ="1:yc;";
     endif
-    
+
     for i=1:xc
       for j=eval(range)
 	
@@ -230,7 +230,7 @@ function __pl_plotit
 	    endfor	
 	    plline(xs,ys);	
 
-	  case (9) ## errorbars	    
+	  case (9) ## errorbars	
 	    if ( (xc == 1 && yc == 1) || xc > 3 || yc > 3)
 	      error("plot with errorbars: either x or y or both must be 2 or 3 columns.\n\
 		  If x (or y) has two columns, then it is interpreted as (x, dx),\n\
@@ -244,13 +244,13 @@ function __pl_plotit
 	    elseif (xc == 3)
 	      xm = x(:,2); xM = x(:,3);
 	    endif
-	    
+	
 	    if (yc == 2)
 	      ym = y(:,1) .- y(:,2); yM = y(:,1) .+ y(:,2);
 	    elseif (yc == 3)
 	      ym = y(:,2); yM = y(:,3);
 	    endif
-	    
+	
 	    if (xc != 1)
 	      plerrx( xm, xM, y(:,1));
 	    endif
@@ -258,7 +258,7 @@ function __pl_plotit
 	      plerry( x(:,1), ym, yM);
 	    endif
 	    pllsty(__pl.pllsty(strm)); # recover linestyle
-	    
+	
 	  otherwise
 	    plline(x(:,i),y(:,j));
 	    warning("__pl_plotit: FIXME: format '%s' not implemented",fmt);
@@ -279,10 +279,10 @@ function __pl_plotit
   pllab(tdeblank(__pl.xlabel(strm,:)), tdeblank(__pl.ylabel(strm,:)), tdeblank(__pl.tlabel(strm,:)));
   plflush;
 
-  unwind_protect_cleanup  
+  unwind_protect_cleanup
 
   warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
 
-  end_unwind_protect  
+  end_unwind_protect
 
 endfunction

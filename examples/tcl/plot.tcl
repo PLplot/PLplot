@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------
 # Interactive plotting driver for pltcl (plplot-enhanced tclsh)
-# 
+#
 # Maurice LeBrun
 # 10/18/95
 # DejaNews, Inc.

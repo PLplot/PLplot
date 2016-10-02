@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # This is a Python/Tk toolbar to run the Python demos.  Perhpas
-# eventually we will be able to have plframe in a Python/Tk context. 
+# eventually we will be able to have plframe in a Python/Tk context.
 
 from Tkinter import *
 import string
@@ -128,7 +128,7 @@ class PyDemo(Frame):
 ####	    exec( """
 ####    def x""" + n + """m(s):
 ####	print "xxx" """ )
-##	    
+##	
 ##	    exec( "s.x" + n + " = Button( s, {" +
 ##		  "'text' : 'Example " + `i` + "'," +	
 ##		  "'command' : s.x" + n + "m" +
@@ -141,7 +141,7 @@ class PyDemo(Frame):
 ####		  "} )" )
 ##
 ####	    exec( "def x" + `i` +"m(s):
-####	    import x" + 
+####	    import x" +
 
 	# Don't forget the quit button!
 

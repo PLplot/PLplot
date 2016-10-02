@@ -41,7 +41,7 @@ tcldemos.tcl runs all the standard examples except for example 32.
 
 There are two ways to run tcldemos.tcl:
 
-(1) 
+(1)
 pltcl | ../../bindings/tcl/pltcl
 plinit
 source tcldemos.tcl
@@ -58,7 +58,7 @@ to find out what they are).  In fact, you can specify, e.g., -dev tk or
 well use the device driver chooser in that case.
 
 (2) Note, fill in $prefix below with whatever you configured for the install
-prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION 
+prefix (/usr/local/plplot or whatever) and $VERSION with the plplot VERSION
 you are running at this time (5.11.0 or whatever).
 
 tclsh

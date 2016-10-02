@@ -58,7 +58,7 @@ Areas currently under development
    the API or command-line.  This is a thorny problem.  A secondary issue
    is deciding what libraries it should depend on.  Using libX11 makes it
    easier for color support, and Tcl for parsing, but with a bit extra
-   effort, I could support non-Unix systems too. 
+   effort, I could support non-Unix systems too.
 
    The real problem is that plplot has no command to "open the library".
    I am VERY tempted to require a call to plopen() as the FIRST plplot
@@ -155,7 +155,7 @@ Areas currently under development
  - fix problems with hidden line removal on "spiky" 3D plots on high
    resolution (300 dpi or greater) devices.  There are little gaps that
    sometimes appear after a line reappears from behind a surface.  In
-   Mathematica, hidden line removal is done by the device driver (which 
+   Mathematica, hidden line removal is done by the device driver (which
    receives PostScript) instead of beforehand.  (There is a section in the
    Mathematica manual where they mention hidden-line removal as an inherently
    device dependent problem.)
@@ -192,7 +192,7 @@ BUGS
 The following are known bugs or failings of PLplot, that are unlikely to
 be fixed any time soon if at all.
 
- - ps output files do not work with up(1).  
+ - ps output files do not work with up(1).
 
  - The contour plotter has a bug that causes it to occasionally fail for
    some data sets.  One known example is if there is no x-dependence.

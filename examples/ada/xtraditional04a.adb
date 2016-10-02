@@ -50,10 +50,10 @@ procedure xtraditional04a is
 
         plvpor(0.15, 0.85, 0.1, 0.9);
         plwind(-2.0, 3.0, -80.0, 0.0);
-        
+
         -- Try different axis and labelling styles.
         plcol0(1);
-        
+
         if Plot_Type = 0 then
             plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0);
         elsif Plot_Type = 1 then
@@ -131,7 +131,7 @@ procedure xtraditional04a is
                     opt_array,
                     1.0, 1.0, 2.0,
                     1.0, text_colors, text,
-                    Box_Colors, Box_Patterns, 
+                    Box_Colors, Box_Patterns,
                     Box_Scales, Box_Line_Widths,
                     line_colors, line_styles, line_widths,
                     symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -172,7 +172,7 @@ procedure xtraditional04a is
                     opt_array,
                     1.0, 1.0, 2.0,
                     1.0, text_colors, text,
-                    Box_Colors, Box_Patterns, 
+                    Box_Colors, Box_Patterns,
                     Box_Scales, Box_Line_Widths,
                     line_colors, line_styles, line_widths,
                     symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -181,7 +181,7 @@ procedure xtraditional04a is
     end plot1;
 begin
     -- Parse and process command line arguments
-    plparseopts(PL_PARSE_FULL); 
+    plparseopts(PL_PARSE_FULL);
 
     -- Initialize plplot
     plinit;

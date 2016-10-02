@@ -22,7 +22,7 @@
 # Install octave support (in support subdirectory), binding "m", and user "m"
 # files.
 
-add_subdirectory(support) 
+add_subdirectory(support)
 
 set(binding_m_files
 arrow.m

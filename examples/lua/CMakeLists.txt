@@ -74,7 +74,7 @@ if(CORE_BUILD)
     WORLD_READ
     )
 
-  install(FILES ${lua_SCRIPTS} 
+  install(FILES ${lua_SCRIPTS}
     DESTINATION ${DATA_DIR}/examples/lua
     PERMISSIONS ${PERM_DATA}
     )
@@ -126,14 +126,14 @@ if(CORE_BUILD)
     RENAME plplot_examples.lua
     )
 
-  install(FILES CMakeLists.txt 
+  install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/lua
     )
 else(CORE_BUILD)
   set_property(GLOBAL PROPERTY TARGETS_examples_lua plplotluac)
   set_property(GLOBAL PROPERTY FILES_examples_lua)
   foreach(file ${lua_SCRIPTS})
-    set_property(GLOBAL APPEND PROPERTY 
+    set_property(GLOBAL APPEND PROPERTY
       FILES_examples_lua ${CMAKE_CURRENT_SOURCE_DIR}/${file}
       )
   endforeach(file ${lua_SCRIPTS} ${lua_DATA})

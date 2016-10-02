@@ -76,7 +76,7 @@ if(ENABLE_java)
   # If CMake doesn't find jni.h you need set CMAKE_INCLUDE_PATH
   if(NOT JAVA_INCLUDE_PATH)
     message(STATUS
-      "WARNING: jni.h header not found. Disabling Java binding.\n" 
+      "WARNING: jni.h header not found. Disabling Java binding.\n"
       "   Please install that header and/or set the environment variable\n"
       "   CMAKE_INCLUDE_PATH appropriately."
       )

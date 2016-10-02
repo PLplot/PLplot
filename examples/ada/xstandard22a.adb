@@ -33,7 +33,7 @@ use
     PLplot_Standard;
 
 procedure xstandard22a is
-    -- Pairs of points making the line segments used to plot the user defined arrow 
+    -- Pairs of points making the line segments used to plot the user defined arrow
     arrow_x  : Real_Vector(0 .. 5) := (-0.5, 0.5, 0.3, 0.5,  0.3, 0.5);
     arrow_y  : Real_Vector(0 .. 5) := ( 0.0, 0.0, 0.2, 0.0, -0.2, 0.0);
     arrow2_x : Real_Vector(0 .. 5) := (-0.5, 0.3, 0.3, 0.5,  0.3, 0.3);
@@ -59,7 +59,7 @@ procedure xstandard22a is
         ymin := Long_Float(-ny / 2) * dy;
         ymax := Long_Float( ny / 2) * dy;
 
-        -- Create data - circulation around the origin. 
+        -- Create data - circulation around the origin.
         for i in 0 .. nx - 1 loop
             x := (Long_Float(i - nx / 2) + 0.5) * dx;
                 for j in 0 .. ny - 1 loop
@@ -71,7 +71,7 @@ procedure xstandard22a is
                 end loop;
         end loop;
 
-        -- Plot vectors with default arrows 
+        -- Plot vectors with default arrows
         Set_Environment(xmin, xmax, ymin, ymax, Not_Justified, Linear_Box_Plus);
         Write_Labels("(x)", "(y)", "#frPLplot Example 22 - circulation");
         Set_Pen_Color(Yellow);
@@ -112,7 +112,7 @@ procedure xstandard22a is
                         dbdx := ymax / 4.0 * sin(pi * x / xmax) * pi / xmax * y / b;
                         u(i, j) := Q * ymax / b;
                         v(i, j) := dbdx * u(i, j);
-                    else 
+                    else
                         u(i, j) := 0.0;
                         v(i, j) := 0.0;
                     end if;
@@ -125,13 +125,13 @@ procedure xstandard22a is
         Vector_Plot(u, v, -1.0, Plot_Transformation_2'access, cgrid2'Address);
         Set_Pen_Color(Red);
     end constriction;
-    
-    
-    -- This spec is necessary in order to enforce C calling conventions, used 
+
+
+    -- This spec is necessary in order to enforce C calling conventions, used
     -- in the callback by intervening C code.
     procedure transform
        (x, y   : Long_Float;
-        xt, yt : out Long_Float; 
+        xt, yt : out Long_Float;
         data   : PL_Pointer);
     pragma Convention(C, transform);
 
@@ -139,7 +139,7 @@ procedure xstandard22a is
     -- This is the same transformation used in constriction.
     procedure transform(x, y : Long_Float; xt, yt : out Long_Float; Data : PL_Pointer) is
 
-        -- Convert the generic pointer represented as System.Address to a proper Ada pointer aka 
+        -- Convert the generic pointer represented as System.Address to a proper Ada pointer aka
         -- access variable. Recall that PL_Pointer is a subtype of System.Address.
         package Data_Address_Conversions is new System.Address_To_Access_Conversions(Long_Float);
         Data_Pointer : Data_Address_Conversions.Object_Pointer; -- An Ada access variable
@@ -150,7 +150,7 @@ procedure xstandard22a is
         xt := x;
         yt := y / 4.0 * (3.0 - cos(Pi * x / xmax));
     end transform;
-    
+
 
     -- Vector plot of flow through a constricted pipe with a coordinate transform
     procedure constriction2 is
@@ -234,7 +234,7 @@ procedure xstandard22a is
         cgrid2 : aliased Transformation_Data_Type_2
            (x_Last => nr - 1,
             y_Last => ntheta - 1);
-        
+
         function pow(x, y : Long_Float) return Long_Float is
             Result : Long_Float := 1.0;
         begin
@@ -276,7 +276,7 @@ procedure xstandard22a is
                 div1i := sqrt(pow(x-d1i, 2.0) + pow(y-d1i, 2.0) + pow(eps, 2.0));
                 div2  := sqrt(pow(x-d2, 2.0)  + pow(y+d2, 2.0) + pow(eps, 2.0));
                 div2i := sqrt(pow(x-d2i, 2.0) + pow(y+d2i, 2.0) + pow(eps, 2.0));
-                
+
                 z(i, j) := q1/div1 + q1i/div1i + q2/div2 + q2i/div2i;
                 u(i, j) := -q1*(x-d1)/pow(div1, 3.0) - q1i*(x-d1i)/pow(div1i, 3.00)
                     - q2*(x-d2)/pow(div2,3.0) - q2i*(x-d2i)/pow(div2i, 3.0);
@@ -295,7 +295,7 @@ procedure xstandard22a is
         Set_Environment(xmin, xmax, ymin, ymax, Not_Justified, Linear_Box_Plus);
         Write_Labels("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot");
 
-        -- Plot contours of the potential 
+        -- Plot contours of the potential
         dz := (zmax - zmin) / Long_Float(nlevel);
         for i in clevel'range loop
             clevel(i) := zmin + (Long_Float(i) + 0.5) * dz;
@@ -306,12 +306,12 @@ procedure xstandard22a is
         Select_Line_Style(1);
         Set_Pen_Color(Red);
 
-        -- Plot the vectors of the gradient of the potential 
+        -- Plot the vectors of the gradient of the potential
         Set_Pen_Color(Yellow);
         Vector_Plot(u, v, 25.0, Plot_Transformation_2'access, cgrid2'Address);
         Set_Pen_Color(Red);
 
-        -- Plot the perimeter of the cylinder 
+        -- Plot the perimeter of the cylinder
         for i in px'range loop
             theta := (2.0 * pi / Long_Float(nper - 1)) * Long_Float(i);
             px(i) := rmax * cos(theta);
@@ -326,10 +326,10 @@ procedure xstandard22a is
 ----------------------------------------------------------------------------
 begin
 
-    -- Parse and process command line arguments 
+    -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
 
-    -- Initialize plplot 
+    -- Initialize plplot
     Initialize_PLplot;
 
     circulation;
@@ -338,19 +338,19 @@ begin
     Set_Arrow_Style_For_Vector_Plots(arrow_x, arrow_y, False);
     constriction(1);
 
-    -- Set arrow style using arrow2_x and arrow2_y then plot using these filled arrows. 
+    -- Set arrow style using arrow2_x and arrow2_y then plot using these filled arrows.
     Set_Arrow_Style_For_Vector_Plots(arrow2_x, arrow2_y, True);
     constriction(2);
-    
+
     constriction2;
-    
+
     -- Reset arrow style to the default by passing two NULL arrays.
     -- This line uses the awkward method of the C API to reset the default arrow style.
     -- Set_Arrow_Style_For_Vector_Plots(System.Null_Address, System.Null_Address, False);
-    
+
     -- This method of resetting the default arrow style is a little more Ada-friendly...
     -- plsvect;
-    
+
     -- ... as is this one which is identical but for name.
     Reset_Vector_Arrow_Style;
 

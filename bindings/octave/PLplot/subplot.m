@@ -90,14 +90,14 @@ function subplot (rows, columns, index)
   if (columns*rows == 1) # switching to single plot
     plssub(1,1);
   else
-    
+
     ## already in multiplot with same characteristics ?
     __pl.multi_cur(strm) = index;
-    
-    if (__pl.multi(strm) == 1 &&   
+
+    if (__pl.multi(strm) == 1 &&
 	__pl.multi_col(strm) == columns &&
 	__pl.multi_row(strm) == rows)
-      
+
       pladv(index);
       plvpor(0,1,0,1)
       plwind(0,1,0,1)

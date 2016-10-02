@@ -33,7 +33,7 @@ if(PERL_XML_DOM AND PERL_XML_PARSER)
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/plplotdoc.xml.in
     ${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
-    COMMAND cmp 
+    COMMAND cmp
     ${CMAKE_CURRENT_SOURCE_DIR}/swig_documentation.i
     ${CMAKE_CURRENT_BINARY_DIR}/swig_documentation.i_compare
     )
@@ -41,7 +41,7 @@ if(PERL_XML_DOM AND PERL_XML_PARSER)
   add_dependencies(check_all check_swig_documentation)
 
 else(PERL_XML_DOM AND PERL_XML_PARSER)
-  message(STATUS 
+  message(STATUS
     "WARNING: Perl modules XML::Parser and/or XML::DOM not available\n"
     "   so cannot check that swig_documentation.i is up to date."
     )

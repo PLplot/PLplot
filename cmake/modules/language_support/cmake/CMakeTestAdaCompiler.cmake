@@ -60,7 +60,7 @@ begin
 end;
   "
     )
-    
+
   # Must use "whole project" form of try_compile because the "compile
   # file" form is too generic to be used for Ada compilation of an
   # executable which has special requirements with regard to source

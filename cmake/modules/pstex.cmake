@@ -26,7 +26,7 @@
 # N.B. this device driver is parasitic on the ps device driver so you cannot
 # enable pstex without ps being enabled.
 if(PLD_pstex AND NOT PLD_ps)
-  message(STATUS 
+  message(STATUS
   "WARNING: PLD_ps is OFF so must set PLD_pstex (which depends on PLD_ps) "
   "to OFF."
   )

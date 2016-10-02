@@ -57,27 +57,27 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         if supports_non_srcdir_builds == "no":
            supports_non_srcdir_builds = "OFF"
         else:
-           supports_non_srcdir_builds = "ON" 
+           supports_non_srcdir_builds = "ON"
 
         supports_parallel_builds = package.get("supports-parallel-builds")
         if supports_parallel_builds == "no":
            supports_parallel_builds = "OFF"
         else:
-           supports_parallel_builds = "ON" 
+           supports_parallel_builds = "ON"
     elif config_type == "cmake":
         config_arguments = package.get("cmakeargs")
         make_arguments = ""
         # Assume both non-source builds and parallel builds work for
         # CMake-based build systems.
-        supports_non_srcdir_builds = "ON" 
-        supports_parallel_builds = "ON" 
+        supports_non_srcdir_builds = "ON"
+        supports_parallel_builds = "ON"
     elif config_type == "tarball":
         config_arguments = ""
         make_arguments = ""
         # Assume both non-source builds and parallel builds work for
         # the tarball config type.  This may require review.
-        supports_non_srcdir_builds = "ON" 
-        supports_parallel_builds = "ON" 
+        supports_non_srcdir_builds = "ON"
+        supports_parallel_builds = "ON"
     else:
         return None
 
@@ -94,11 +94,11 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         return None
     elif len(branch) > 1:
         raise RuntimeError, "non-unique branch element found with hash attribute for %s" % id
-    
+
     # From here on drop the reference to the first (and only) element
     # of branch for convenience.
     branch = branch[0]
-    
+
     download_hash = branch.get("hash")
     if len(download_hash) == 0:
         return None
@@ -109,14 +109,14 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         download_hash_type = download_hash[0:index].upper()
     if index >= 0:
         download_hash = download_hash[index+1:]
-    
+
     if config_type == "tarball":
         download_href = branch.get("href")
     else:
         download_repo = branch.get("repo")
         if len(download_repo) == 0:
             return None
-    
+
         download_module = branch.get("module")
         if len(download_module) == 0:
             return None
@@ -128,7 +128,7 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         if len(download_repo)-1 != index:
             download_repo = download_repo + "/"
         download_href = download_repo + download_module
-    
+
     # Replace ${version} string that is sometimes in download_href
     index = download_href.find("${version}")
     if index >=0:
@@ -136,9 +136,9 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         if version == None:
             return None
         download_href = download_href.replace("${version}", version)
-    
+
     # Parse various kinds of jhbuild dependencies.
-    # Note from 
+    # Note from
     # http://stackoverflow.com/questions/9974957/what-is-the-after-element-used-for-in-jhbuild
     # "dependencies are hard dependencies. Packages that are
     # required to build a module.  suggests are soft
@@ -170,13 +170,13 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
         # with id=gdm).
         for dep_element in package.findall("suggest/dep"):
             suggests[dep_element.get("package")] = None
-        
+
     # Create after dictionary and populate it as needed.
     after={}
     if depend_track&4:
         for dep_element in package.findall("after/dep"):
             after[dep_element.get("package")] = None
-    
+
     if if_dependencies:
         overall_dependencies = {}
         overall_dependencies.update(dependencies)
@@ -199,8 +199,8 @@ def parse_jhbuild(root, id, depend_track, if_dependencies, called):
             if extra == None:
                 not_found_packages[dep] = None
             else:
-                found_packages.update(extra[0]) 
-                not_found_packages.update(extra[1]) 
+                found_packages.update(extra[0])
+                not_found_packages.update(extra[1])
 
         return (found_packages, not_found_packages)
     else:
@@ -265,4 +265,4 @@ else:
 
     # Output on stdout results for the packages that have been found.
     for id in found_packages_list:
-       parse_jhbuild(root, id, depend_track, False, {}) 
+       parse_jhbuild(root, id, depend_track, False, {})

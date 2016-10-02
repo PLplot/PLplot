@@ -36,23 +36,23 @@
   required glyphs.
 
   Translation instructions: The strings to be translated are given by
-  x_label, y_label, alty_label, title_label, and line_label below.  The 
+  x_label, y_label, alty_label, title_label, and line_label below.  The
   encoding used must be UTF-8.
 
-  The following strings to be translated involve some scientific/mathematical 
+  The following strings to be translated involve some scientific/mathematical
   jargon which is now discussed further to help translators.
 
   (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
-  (2) degrees is an angular measure, see 
+  (2) degrees is an angular measure, see
       http://en.wikipedia.org/wiki/Degree_(angle) .
   (3) low-pass filter is one that transmits (passes) low frequencies.
   (4) pole is in the mathematical sense, see
       http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
       means a particular mathematical transformation of the filter function has
       a single pole, see
-      http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .  
-      Furthermore, a single-pole filter must have an inverse square decline 
-      (or -20 db/decade). Since the filter plotted here does have that 
+      http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
+      Furthermore, a single-pole filter must have an inverse square decline
+      (or -20 db/decade). Since the filter plotted here does have that
       characteristic, it must by definition be a single-pole filter, see also
       http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
   (5) decade represents a factor of 10, see

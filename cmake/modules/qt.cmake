@@ -37,7 +37,7 @@
 #                           where "include(${QT_USE_FILE})" has no effect.
 # qt_COMPILE_FLAGS	  - empty.  Use "include(${QT_USE_FILE})" instead
 #                           (but only in directories where it is needed).
-# qt_LINK_FLAGS	  	  - empty.  Use "include(${QT_USE_FILE})" instead 
+# qt_LINK_FLAGS	  	  - empty.  Use "include(${QT_USE_FILE})" instead
 #                           (but only in directories where it is needed).
 #                           That command defines QT_LIBRARIES which should
 #                           be used instead of the (now empty) qt_LINK_FLAGS.
@@ -91,7 +91,7 @@ if(ENABLE_qt)
 
   if(PLPLOT_USE_QT5)
     # Calculate Qt5_library_COMPILE_FLAGS and Qt5_library_LINK_FLAGS
-    # to be used for the pkg-config case.  
+    # to be used for the pkg-config case.
 
     # Note that theoretically you could use execute_process and cmake
     # --find-package option to determine these flags, but
@@ -122,7 +122,7 @@ if(ENABLE_qt)
       Svg
       )
 
-    # Qt5 requires position-independent code.  Assume -fPIC will 
+    # Qt5 requires position-independent code.  Assume -fPIC will
     # create that although apparently that flag is not supported on
     # all platforms even for gcc, and may not be supported by other
     # compilers.
@@ -393,7 +393,7 @@ if(ENABLE_pyqt5)
   else (WIN32 AND NOT CYGWIN)
     set(PYQT_SIP_DIR "${PYQT_SIP_DIR}/share/sip/PyQt5/")
   endif (WIN32 AND NOT CYGWIN)
-  
+
   message(STATUS "pyqt5: PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
   if(PYQT_SIP_DIR_ERR OR NOT EXISTS "${PYQT_SIP_DIR}/QtWidgets/QtWidgetsmod.sip")
     message(STATUS

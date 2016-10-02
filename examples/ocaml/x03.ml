@@ -37,7 +37,7 @@ let main () =
   (* Parse and process command line arguments *)
   plparseopts Sys.argv [PL_PARSE_FULL];
 
-  (* Set orientation to portrait - note not all device drivers 
+  (* Set orientation to portrait - note not all device drivers
    * support this, in particular most interactive drivers do not *)
   plsori 1;
 

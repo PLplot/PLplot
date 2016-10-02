@@ -103,7 +103,7 @@ if(CORE_BUILD)
     PERMISSIONS ${PERM_DATA}
     )
 
-  install(FILES CMakeLists.txt 
+  install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/perl
     )
 

@@ -73,8 +73,8 @@ EXECUTABLES_list = \
 		 x33$(EXEEXT) \
 		 $(PLPLOTWXWIDGETS_EXECUTABLES_list) \
 		 $(qt_gui_EXECUTABLES_list)
-		 
-		 
+		
+		
 all: $(EXECUTABLES_list)
 
 clean:

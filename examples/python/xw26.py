@@ -34,30 +34,30 @@
 #
 #  Translation instructions: The strings to be translated are given by
 #  x_label, y_label, alty_label, title_label, and line_label below.  The encoding
-#  used must be UTF-8.  
+#  used must be UTF-8.
 
-# The following strings to be translated involve some scientific/mathematical jargon 
+# The following strings to be translated involve some scientific/mathematical jargon
 # which is now discussed further to help translators.
 
 # (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
 # (2) degrees is an angular measure, see http://en.wikipedia.org/wiki/Degree_(angle) .
 # (3) low-pass filter is one that transmits (passes) low frequencies.
-# (4) pole is in the mathematical sense, see 
+# (4) pole is in the mathematical sense, see
 #     http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
 #     means a particular mathematical transformation of the filter function has
-#     a single pole, see 
+#     a single pole, see
 #     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .  Furthermore,
 #     a single-pole filter must have an inverse square decline (or -20 db/decade).
 #     Since the filter plotted here does have that characteristic, it must by
 #     definition be a single-pole filter, see also
 #     http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
-# (5) decade represents a factor of 10, see 
+# (5) decade represents a factor of 10, see
 #     http://en.wikipedia.org/wiki/Decade_(log_scale) .
 
 from plplot_py_demos import *
 
 # main
-# 
+#
 # Illustration of first page of example 4 in different languages.
 
 def main():
@@ -87,7 +87,7 @@ def main():
     "-20 dB/decade",\
     "-20 dB/десяток",\
     ]
-    
+
     nlang = len(x_label)
     if len(y_label) != nlang or \
     len(alty_label) != nlang or \
@@ -96,7 +96,7 @@ def main():
 	raise RuntimeError, "Internal inconsistency in label dimension"
 
     plfont(2)
-    
+
     for i in range(nlang):
 	plot1(0, x_label[i], y_label[i], alty_label[i], \
 	title_label[i], line_label[i], legend_text[i])
@@ -104,7 +104,7 @@ def main():
     # Restore defaults
     plfont(1)
     #plcol0(1)
-    
+
 def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_text):
 
     pladv(0)
@@ -170,7 +170,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
     # Only specify legend data that are required according to the
     # value of opt_array for that entry.
 
-    # Data for first legend entry. 
+    # Data for first legend entry.
     opt_array[0] = PL_LEGEND_LINE
     text_colors[0] = 2
     text[0] = legend_text[0]
@@ -197,7 +197,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
     pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0, 0.0, 0.0,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
-              box_colors, box_patterns, box_scales, box_line_widths, 
+              box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 

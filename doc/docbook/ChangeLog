@@ -31,7 +31,7 @@
 
 
 	* configure.in: Only INFO build depends on Perl.  Check also for
-	Perl module XML::DOM. 
+	Perl module XML::DOM.
 
 2000-11-30  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
@@ -71,7 +71,7 @@
 
 	* Changes to allow the web page to show the sizes of the files
 	available for download.  File bin/size-href.pl is included in the
-	package. 
+	package.
 	* configure.in (AC_OUTPUT): Output www/index.html.in.
 	* Makefile.am (www/index.html): Added rule.
 	($(TARBALL)): Depends only on $(INDEX_HTML).
@@ -105,4 +105,4 @@
 2000-11-19  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Released overhauled version with Automake support and XML
-	translation. 
+	translation.

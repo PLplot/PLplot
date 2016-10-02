@@ -103,7 +103,7 @@
 #  13. magenta
 #  14. salmon
 #  15. white (default foreground)
-                                         
+
 ## Author: Rick Niles <niles@axp745.gsfc.nasa.gov>
 ## Adapted-By: jwe
 ## Modified: jc
@@ -114,7 +114,7 @@ function [style, color, symbol, key_title] = __pl_opt (opt)
   color = 20;
   symbol = 21;
   key_title = "";
-  
+
   set_color = 0;
   set_symbol = 0;
   set_lines = 0;
@@ -138,7 +138,7 @@ function [style, color, symbol, key_title] = __pl_opt (opt)
   if isempty(opt)
     return;
   endif
-  
+
   while (more_opts)
 
     ## first get next char.
@@ -228,7 +228,7 @@ function [style, color, symbol, key_title] = __pl_opt (opt)
     elseif (char == ";")  # title mode
       set_key = 1;
       working = 1;
-      key_title = ""; 
+      key_title = "";
       while (working)
         if (max (size (opt)) > 1)
 	  char = opt(1);

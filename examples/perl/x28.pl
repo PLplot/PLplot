@@ -111,7 +111,7 @@ $z_shear = 0.5*$zrange*cos($omega);
 plptex3(
     $xmax, $ymid, $zmid,
     $x_inclination, $y_inclination, $z_inclination,
-    $x_shear, $y_shear, $z_shear, 
+    $x_shear, $y_shear, $z_shear,
     0.0, "  revolution");
 
 $x_inclination = 0.5*$xrange*cos($omega);
@@ -123,7 +123,7 @@ $z_shear =  0.5*$zrange*cos($omega);
 plptex3(
     $xmid, $ymax, $zmid,
     $x_inclination, $y_inclination, $z_inclination,
-    $x_shear, $y_shear, $z_shear, 
+    $x_shear, $y_shear, $z_shear,
     0.0, "  revolution");
 
 # Draw minimal 3D grid to finish defining the 3D box.
@@ -186,7 +186,7 @@ plptex3(
 plmesh($x, $y, $z, DRAW_LINEXY);
 
 # Page 3: Demonstrate shear of string along its axis.
-# Work around xcairo and pngcairo (but not pscairo) problems for 
+# Work around xcairo and pngcairo (but not pscairo) problems for
 # shear vector too close to axis of string. (N.B. no workaround
 # would be domega = 0.)
 my $domega = 0.05;
@@ -268,7 +268,7 @@ plschr(0, 1.2);
 my $domega = 2*PI/length($pstring);
 my $omega  = 0;
 
-# 3D function is a helix of the given radius and pitch 
+# 3D function is a helix of the given radius and pitch
 
 my $radius = 0.5;
 my $pitch  = 1/(2*PI);
@@ -287,7 +287,7 @@ foreach my $c (split '', $pstring) {
     my $ypos = $ymid - $radius*$cos_omega;
     my $zpos = $zmin + $pitch*$omega;
 
-    # In general, the inclination is proportional to the derivative of 
+    # In general, the inclination is proportional to the derivative of
     # the position wrt theta.
     my $x_inclination = $radius*$cos_omega;;
     my $y_inclination = $radius*$sin_omega;

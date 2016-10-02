@@ -9,7 +9,7 @@
 # IFS, University of Texas at Austin
 # May 17, 1994
 #
-# Arguments: 
+# Arguments:
 #	-a	Add soft links
 #	-n	Print commands without executing
 #	-r	Remove soft links

@@ -240,11 +240,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	cmake &lt;cmake options&gt; &lt;top-level directory of the source tree&gt;
       </programlisting>
       on the command line. Many <literal>cmake</literal> options are possible.  Two common ones that are
-      often sufficient for most purposes are 
+      often sufficient for most purposes are
       <literal>-DCMAKE_INSTALL_PREFIX=&lt;installation prefix&gt;</literal> (to specify the
       top-level directory of the soon-to-be created install tree) and <literal>-G &lt;generator identification string&gt;</literal>
       (to identify the <literal>cmake</literal> backend generator to use such as "Unix Makefiles").  However, there are also
-      many other <literal>cmake</literal> options that are 
+      many other <literal>cmake</literal> options that are
       specific to the PLplot build system that
       are documented in the <filename>CMakeCache.txt</filename> file that
       is created by the <literal>cmake</literal> command.

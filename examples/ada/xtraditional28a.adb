@@ -40,13 +40,13 @@ procedure xtraditional28a is
 
     xmin, ymin, zmin : Long_Float := 0.0;
     xmax, ymax, zmax : Long_Float := 1.0;
-     
+
     xmid   : Long_Float := 0.5*(xmax + xmin);
     xrange : Long_Float := xmax - xmin;
-    
+
     ymid   : Long_Float := 0.5*(ymax + ymin);
     yrange : Long_Float := ymax - ymin;
-    
+
     zmid   : Long_Float := 0.5*(zmax + zmin);
     zrange : Long_Float := zmax - zmin;
 
@@ -112,7 +112,7 @@ begin
         plptex3(
             xmid, ymid, zmin,
             x_inclination, y_inclination, z_inclination,
-            x_shear, y_shear, z_shear, 
+            x_shear, y_shear, z_shear,
             0.0, "  revolution");
     end loop;
 
@@ -131,7 +131,7 @@ begin
         plptex3(
             xmax, ymid, zmid,
             x_inclination, y_inclination, z_inclination,
-            x_shear, y_shear, z_shear, 
+            x_shear, y_shear, z_shear,
             0.0, "  revolution");
     end loop;
 
@@ -151,7 +151,7 @@ begin
         plptex3(
             xmid, ymax, zmid,
             x_inclination, y_inclination, z_inclination,
-            x_shear, y_shear, z_shear, 
+            x_shear, y_shear, z_shear,
             0.0, "  revolution");
     end loop;
 
@@ -231,7 +231,7 @@ begin
     plmesh(x, y, z, DRAW_LINEXY);
 
     -- Page 3: Demonstrate shear of string along its axis.
-    -- Work around xcairo and pngcairo (but not pscairo) problems for 
+    -- Work around xcairo and pngcairo (but not pscairo) problems for
     -- shear vector too close to axis of string. (N.B. no workaround
     -- would be domega := 0.)
     domega := 0.05;
@@ -335,7 +335,7 @@ begin
         ypos := ymid - radius * cos_omega;
         zpos := zmin + pitch * omega;
 
-        -- In general, the inclination is proportional to the derivative of 
+        -- In general, the inclination is proportional to the derivative of
         -- the position wrt theta.
         x_inclination := radius * cos_omega;
         y_inclination := radius * sin_omega;

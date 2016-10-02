@@ -671,7 +671,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <literal>Plot_Shapefile_World</literal> (<literal>plmapfill
       </literal>) and <literal>plmapline</literal> in the traditional binding)
       are each provided an overloaded version allowing either an array of
-      integers or a null pointer to be passed for the last argument, so that the 
+      integers or a null pointer to be passed for the last argument, so that the
       documentation makes sense. An additional related procedure is provided in
       each case, <literal>Plot_Shapefile_All</literal> and <literal>
       Plot_Shapefile_World_All</literal> (identically named in the traditional

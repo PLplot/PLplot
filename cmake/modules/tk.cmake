@@ -47,7 +47,7 @@
 # tkwin_SOURCE		  - list of source files other than tkwin.c
 
 if(NOT ENABLE_tk AND (PLD_tk OR PLD_ntk OR PLD_tkwin))
-  message(STATUS 
+  message(STATUS
     "WARNING: ENABLE_tk OFF.  Therefore turning off tk, tkwin, and ntk devices"
     )
   set(PLD_tk OFF CACHE BOOL "Enable tk device" FORCE)
@@ -68,7 +68,7 @@ if(PLD_tk OR PLD_ntk OR PLD_tkwin)
 endif(PLD_tk OR PLD_ntk OR PLD_tkwin)
 	
 if(PLD_tk)
-  set(tk_COMPILE_FLAGS 
+  set(tk_COMPILE_FLAGS
   "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
   )
   set(tk_LINK_FLAGS plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY})
@@ -122,7 +122,7 @@ if(PLD_ntk)
 endif(PLD_ntk)
 
 if(PLD_tkwin)
-  set(tkwin_COMPILE_FLAGS 
+  set(tkwin_COMPILE_FLAGS
     "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk-x-plat -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
     )
 

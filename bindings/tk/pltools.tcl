@@ -33,7 +33,7 @@ proc plstdwin {w} {
 
 # Set min/max window sizes.
 
-    set root_width  [winfo vrootwidth .] 
+    set root_width  [winfo vrootwidth .]
     set root_height [winfo vrootheight .]
 
     wm minsize $w 300 240
@@ -341,7 +341,7 @@ proc getItem {item} {
 
     frame $w.frame -borderwidth 10
     pack append $w.frame \
-	[entry $w.frame.e1 -relief sunken] {top pady 10 fillx} 
+	[entry $w.frame.e1 -relief sunken] {top pady 10 fillx}
 
     button $w.ok -text OK -command \
 	"set itemval \[$w.frame.e1 get\]; destroy $w"
@@ -409,13 +409,13 @@ proc mkDialog {w msgArgs args} {
     frame $w.top -relief raised -border 1
     frame $w.bot -relief raised -border 1
     pack append $w $w.top {top fill expand} $w.bot {top fill expand}
-    
+
 # Create the message widget and arrange for it to be centered in the top
 # frame.
-    
+
     eval message $w.top.msg -justify center $msgArgs
     pack append $w.top $w.top.msg {top expand padx 10 pady 10}
-    
+
 # Create as many buttons as needed and arrange them from left to right in
 # the bottom frame.  Embed the left button in an additional sunken frame to
 # indicate that it is the default button, and arrange for that button to be
@@ -461,7 +461,7 @@ proc mkDialog {w msgArgs args} {
 #
 # The global variables are modified by the entry widgets and may be
 # overwritten at any time so the caller must wait for the dialog to be
-# destroyed and then use them immediately.  
+# destroyed and then use them immediately.
 #----------------------------------------------------------------------------
 
 proc Form2d {w desc} {
@@ -515,7 +515,7 @@ proc Form2d {w desc} {
 	}
 
 	pack append $w \
-	    $w.$i {top fillx} 
+	    $w.$i {top fillx}
     }
 
     button $w.ok -text OK -command "Form2d_destroy $w"
@@ -592,7 +592,7 @@ proc evalCmd {{w .eval}} {
     text $w.t -relief raised -bd 2 -setgrid true
     $w.t insert 0.0 {\
 Type TCL command to be executed in the window above, then type <Return>
-or click on "Execute".  
+or click on "Execute".
 }
     $w.t mark set insert 0.0
     bind $w <Any-Enter> "focus $w.cmd.entry"

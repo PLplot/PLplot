@@ -23,7 +23,7 @@ if(VGA_INCLUDE_DIR)
     set(VGA_LIBRARIES ${VGA_LIBRARY})
   endif(VGA_LIBRARY)
 endif(VGA_INCLUDE_DIR)
-	    
+	
 if(VGA_FOUND)
   if(NOT VGA_FIND_QUIETLY)
     message(STATUS "FindVGA: Found both vga.h and the vga library")

@@ -1,4 +1,4 @@
-// Define if inttypes.h can be found 
+// Define if inttypes.h can be found
 #cmakedefine HAVE_INTTYPES_H
 
 // Define if strings.h can be found.

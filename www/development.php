@@ -23,10 +23,10 @@
          <li>The source code itself is well commented and it's always worth have
              a look there to get better understanding.</li>
          <li>The core developers mainly discuss things in the PLplot developer
-             mailing list. You can search the archives or ask questions there.</li>             
-         <li>There is also a wiki where also information for developers can be 
+             mailing list. You can search the archives or ask questions there.</li>
+         <li>There is also a wiki where also information for developers can be
              found. Don't forget to extend the wiki if something is missing or wrong.</li>
-         <li>The PLplot manual not only provides valuable information for 
+         <li>The PLplot manual not only provides valuable information for
              users but also for developers.</li>
          </ul>
       </p>

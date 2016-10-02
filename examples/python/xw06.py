@@ -63,11 +63,11 @@ def main():
                 # Write the digits to the left of the frame
 
                 plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, `10 * i`)
-                
+
                 for j in range(10):
                     x = 0.1 * j + 0.05
                     y = 1.25 - 0.1 * i
-                    
+
                     # Display the symbol (plpoin expects that x
                     # and y are arrays so pass lists)
 

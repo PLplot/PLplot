@@ -36,7 +36,7 @@ procedure xtraditional01a is
     xscale, yscale, xoff, yoff : Long_Float;
     fontset : Integer := 1;
     notes : String := "Make sure you get it right!";
-    
+
     procedure plot1 is
         xmin, xmax, ymin, ymax : Long_Float;
         x, y : Real_Vector (0 .. 59);
@@ -45,7 +45,7 @@ procedure xtraditional01a is
             x(i) := xoff + xscale * Long_Float(i + 1) / Long_Float(x'Length);
             y(i) := yoff + yscale * x(i)**2.0;
         end loop;
-        
+
         xmin := x(x'First);
         xmax := x(x'Last);
         ymin := y(y'First);
@@ -55,10 +55,10 @@ procedure xtraditional01a is
             ys(i) := y(i * 10 + 3);
         end loop;
 
-        -- Set up the viewport and window using plenv. The range in X is 
-        -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
-        -- scaled separately (just = 0), and we just draw a labelled 
-        -- box (axis = 0). 
+        -- Set up the viewport and window using plenv. The range in X is
+        -- 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+        -- scaled separately (just = 0), and we just draw a labelled
+        -- box (axis = 0).
         plcol0(1);
         plenv(xmin, xmax, ymin, ymax, 0, 0);
         plcol0(2);
@@ -79,7 +79,7 @@ procedure xtraditional01a is
     begin
         -- Set up the viewport and window using PLENV. The range in X is -2.0 to
         -- 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-        -- (just = 0), and we draw a box with axes (axis = 1). 
+        -- (just = 0), and we draw a box with axes (axis = 1).
         plcol0(1);
         plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
         plcol0(2);
@@ -93,7 +93,7 @@ procedure xtraditional01a is
                 y(i) := sin(x(i)) / x(i);
             end if;
         end loop;
-        
+
         -- Draw the line
         plcol0(3);
         plwidth(2.0);
@@ -107,7 +107,7 @@ procedure xtraditional01a is
         space1, mark1 : Integer_Array_1D(1 .. 1) := (others => 1500);
     begin
         pladv(0);
-        
+
         -- Use standard viewport, and define X range from 0 to 360 degrees,
         -- Y range from -1.2 to 1.2.
         plvsta;
@@ -117,29 +117,29 @@ procedure xtraditional01a is
         plcol0(1);
         plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
-        -- Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+        -- Superimpose a dashed line grid, with 1.5 mm marks and spaces.
         -- plstyl expects a pointer! (-- Not Ada.)
         plstyl(mark1, space1);
         plcol0(2);
         plbox("g", 30.0, 0, "g", 0.2, 0);
         plstyl(Default_Continuous_Line);
-        
+
         plcol0(3);
         pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function");
-        
+
         for i in x'Range loop
             x(i) := 3.6 * Long_Float(i);
             y(i) := sin(x(i) * pi / 180.0);
         end loop;
-        
+
         plcol0(4);
         plline(x, y);
     end plot3;
 
-begin   
+begin
     -- Parse and process command line arguments
-    plparseopts(PL_PARSE_FULL); 
-    
+    plparseopts(PL_PARSE_FULL);
+
     -- Get version number, just for kicks
     Put_Line("PLplot library version: " & plgver);
 
@@ -153,7 +153,7 @@ begin
     yscale := 1.0;
     xoff   := 0.0;
     yoff   := 0.0;
-    
+
     -- Do a plot
     plot1;
 

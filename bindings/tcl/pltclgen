@@ -46,7 +46,7 @@ open( GENSTRUCT,">$genstruct")|| die "Can't open second output header file.";
 # "prototypes".  These are introduced with the token "pltclcmd".  When
 # we find one, go process it.  Anything other than a comment or a
 # valid function "prototype" is considered an error, and is printed to
-# stdout. 
+# stdout.
 
 while( <SPECFILE> ) {
     chomp;			# skip the \n.
@@ -216,19 +216,19 @@ sub process_pltclcmd {
 		  };
 		  /PLINT \*/ && do {
 		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
-		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		      
+		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		
 		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>idata;\n";
 		      last getarg;
 		  };
 		  /PLUNICODE \*/ && do {
 		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
-		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		      
+		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		
 		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>idata;\n";
 		      last getarg;
 		  };
 		  /PLFLT \*/ && do {
 		      print GENFILE "    mat$argname[$i] = Tcl_GetMatrixPtr( interp, argv[1+$i] );\n";
-		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		      
+		      print GENFILE "    if (mat$argname[$i] == NULL) return TCL_ERROR;\n";		
 		      print GENFILE "    $argname[$i] = mat$argname[$i]-\>fdata;\n";
 		      last getarg;
 		  };

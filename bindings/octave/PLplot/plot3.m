@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -15,14 +15,14 @@
 ## plot3 (x, y, z [, fmt])
 ##
 ## PLOT3() is a three-dimensional analogue of PLOT().
-## 
+##
 ## PLOT3(x,y,z), where x, y and z are three vectors of the same length,
 ## plots a line in 3-space through the points whose coordinates are the
 ## elements of x, y and z.
-## 
+##
 ## PLOT3(X,Y,Z), where X, Y and Z are three matrices of the same size,
 ## plots several lines obtained from the columns of X, Y and Z.
-## 
+##
 ## Various plot type, symbols and colors may be obtained with
 ## PLOT3(X,Y,Z,s) where s is a 1, 2 or 3 character string made from
 ## the characters listed under the PLOT command. See __pl_opt() and plot().
@@ -37,21 +37,21 @@ function plot3 (x, y, z, fmt)
   endif
 
   if (isvector(x) & isvector(y) & isvector(y))
-    
+
     if (nargin == 3)
       fmt = "-r";
     endif	
 
     __pl_plot3(x, y, z, fmt);
-    
+
   elseif (ismatrix(x) & ismatrix(y) & ismatrix(z))
-    
+
     if (!common_size(x,y,z))
 
       if (rows(x) < columns(x))
 	x = x'; y = y'; z = z';
       endif
-      
+
       if (nargin == 3)
 	fmt = "-r";
 	for i=2:columns(x)
@@ -64,11 +64,11 @@ function plot3 (x, y, z, fmt)
       elseif (rows(fmt) != columns(x))
 	error("plot3: `fmt' must have same length as `x'.\n");
       endif
-      
+
       xm = min(min(x)); xM = max(max(x));
       ym = min(min(y)); yM = max(max(y));
       zm = min(min(z)); zM = max(max(z));
-      
+
       if (__pl.axis_st(strm))
 	xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);	# at least x always exist
 	
@@ -87,9 +87,9 @@ function plot3 (x, y, z, fmt)
 	__pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
 	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
       endif
-      
+
       h_st = ishold;
-      
+
       if (!ishold)
 	plcol0(15);
 	__pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);

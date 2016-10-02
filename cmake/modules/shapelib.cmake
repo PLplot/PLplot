@@ -33,7 +33,7 @@ if(HAVE_SHAPELIB)
     set(SHAPELIB_RPATH ${SHAPELIB_LIBRARY_DIRS})
     filter_rpath(SHAPELIB_RPATH)
   else(SHAPELIB_FOUND)
-    message(STATUS 
+    message(STATUS
     "WARNING: SHAPELIB not found.  Setting HAVE_SHAPELIB to OFF."
     )
     set(HAVE_SHAPELIB OFF

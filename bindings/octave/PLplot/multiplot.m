@@ -52,7 +52,7 @@ function multiplot (xn, yn)
     __pl.multi_row(strm) = xn;
     __pl.multi_col(strm) = yn;
     __pl.multi_cur(strm) = 1;
-    
+
     plssub(xn, yn);
     pladv(0);
 

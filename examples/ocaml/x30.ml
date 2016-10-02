@@ -21,7 +21,7 @@
   along with PLplot; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-  This example will only really be interesting when used with devices that 
+  This example will only really be interesting when used with devices that
   support or alpha (or transparency) values, such as the cairo device family.
 *)
 
@@ -81,7 +81,7 @@ let () =
 
   (* Page 2:
 
-     This is a bunch of boxes colored red, green or blue with a single 
+     This is a bunch of boxes colored red, green or blue with a single
      large (red) box of linearly varying transparency overlaid. The
      overlaid box is completely transparent at the bottom and completely
      opaque at the top. *)

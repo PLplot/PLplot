@@ -37,14 +37,14 @@ foreach(generated_RELEASE ${generated_RELEASE_LIST})
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.html
     COMMAND xmlto -m ${CMAKE_CURRENT_SOURCE_DIR}/html.xsl xhtml-nochunks ${CMAKE_CURRENT_SOURCE_DIR}/announce-plplot-${generated_RELEASE}.xml
-    DEPENDS 
+    DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/html.xsl
     ${CMAKE_CURRENT_SOURCE_DIR}/announce-plplot-${generated_RELEASE}.xml
     )
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.xhtml
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.html ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.xhtml 
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.html ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.xhtml
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.html
     )
@@ -56,7 +56,7 @@ foreach(generated_RELEASE ${generated_RELEASE_LIST})
     ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.xhtml
     )
   list(
-    APPEND generated_announcements_target_LIST 
+    APPEND generated_announcements_target_LIST
     ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.txt
     )
 

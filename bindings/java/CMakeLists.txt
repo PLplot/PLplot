@@ -20,13 +20,13 @@
 
 if(ENABLE_java)
 
-  # Swig generated java files.  Order no longer matters since class 
+  # Swig generated java files.  Order no longer matters since class
   # dependencies are explicitly handled now.
 
   set(
     SWIG_JAVA_FILES
-    plplotjavacJNI.java 
-    PLGraphicsIn.java 
+    plplotjavacJNI.java
+    PLGraphicsIn.java
     plplotjavacConstants.java
     plplotjavac.java
     )
@@ -43,8 +43,8 @@ if(ENABLE_java)
   # .java files.
   string(
     REGEX REPLACE "([a-zA-z]*)\\.java"
-    "${CMAKE_CURRENT_BINARY_DIR}/\\1.java" 
-    JAVA_GEN_FILES_FULL 
+    "${CMAKE_CURRENT_BINARY_DIR}/\\1.java"
+    JAVA_GEN_FILES_FULL
     "${JAVA_GEN_FILES}"
     )
 
@@ -128,7 +128,7 @@ if(ENABLE_java)
   endif(JAVA_INCLUDE_PATH2)
   include_directories(${java_interface_INCLUDE_PATHS})
 
-  # Can't use source file properties as we have to quote the flags in that 
+  # Can't use source file properties as we have to quote the flags in that
   # case and it breaks swig. Doh! I would call this a cmake bug.
   if(SWIG_JAVA_NOPGCPP)
     #This version of swig supports the -nopgcpp option
@@ -148,7 +148,7 @@ if(ENABLE_java)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 
   set_source_files_properties(
-    plplotjavac.i 
+    plplotjavac.i
     PROPERTIES SWIG_MODULE_NAME plplotjavac
     )
 
@@ -180,7 +180,7 @@ if(ENABLE_java)
       )
   endif(USE_RPATH)
 
-  # Ensure we get the correct suffix for OS-X 
+  # Ensure we get the correct suffix for OS-X
   if(APPLE)
     set_target_properties(
       plplotjavac_wrap
@@ -198,7 +198,7 @@ if(ENABLE_java)
     list(APPEND JAVA_CLASSES ${output_file})
     add_custom_command(
       OUTPUT ${output_file}
-      COMMAND ${CMAKE_Java_COMPILER} 
+      COMMAND ${CMAKE_Java_COMPILER}
       ${JAVACFLAGS} -classpath ${CMAKE_CURRENT_BINARY_DIR} ${srcfile} -d ${CMAKE_CURRENT_BINARY_DIR}
       DEPENDS ${srcfile} ${${output_file}_DEPENDS}
       VERBATIM

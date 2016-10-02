@@ -62,10 +62,10 @@ if(PLD_wxwidgets OR PLD_wxpng)
       )
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
     set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
-  else(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)  
+  else(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)
     # Check if stdint.h can be used from c++ (PL_HAVE_CXX_STDINT_H)
     include(TestForStdintCXX)
-  endif(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)  
+  endif(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(PLD_wxwidgets OR PLD_wxpng)
@@ -102,22 +102,22 @@ int main(void)
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(PLD_wxwidgets OR PLD_wxpng)
-  string(REGEX REPLACE ";" " -I" 
+  string(REGEX REPLACE ";" " -I"
     wxwidgets_COMPILE_FLAGS
     "-I${wxWidgets_INCLUDE_DIRS}"
     )
-  string(REGEX REPLACE ";" " -D" 
+  string(REGEX REPLACE ";" " -D"
     wxWidgets_DEFINITIONS_wD
     "-D${wxWidgets_DEFINITIONS}"
     )
-  set(wxWidgets_DEFINITIONS_DEBUG_wD "") 
+  set(wxWidgets_DEFINITIONS_DEBUG_wD "")
   if(wxWidgets_DEFINITIONS_DEBUG AND CMAKE_BUILD_TYPE MATCHES "Debug")
-    string(REGEX REPLACE ";" " -D" 
+    string(REGEX REPLACE ";" " -D"
       wxWidgets_DEFINITIONS_DEBUG_wD
       "-D${wxWidgets_DEFINITIONS_DEBUG}"
       )
   endif(wxWidgets_DEFINITIONS_DEBUG AND CMAKE_BUILD_TYPE MATCHES "Debug")
-  string(REGEX REPLACE ";" " " 
+  string(REGEX REPLACE ";" " "
     wxwidgets_COMPILE_FLAGS
     ${wxwidgets_COMPILE_FLAGS}
     " ${wxWidgets_DEFINITIONS_wD} ${wxWidgets_DEFINITIONS_DEBUG_wD}"
@@ -179,7 +179,7 @@ if(PLD_wxwidgets OR PLD_wxpng)
   endif(OLD_WXWIDGETS)
 
   set(DRIVERS_LINK_FLAGS
-    ${DRIVERS_LINK_FLAGS} 
+    ${DRIVERS_LINK_FLAGS}
     ${wxwidgets_LINK_FLAGS}
     )
 

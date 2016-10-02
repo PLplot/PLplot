@@ -1,11 +1,11 @@
 ## Copyright (C) 1998, 1999, 2000  Joao Cardoso
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -20,7 +20,7 @@
 ## Plots several simple functions from other example programs.
 #
 ## This version sends the output of the first 4 plots (one page) to two
-## independent streams.  
+## independent streams.
 
 1;
 
@@ -57,8 +57,8 @@ function ix14c(fname2,strm)
   ##fprintf(strm,"or the enter key in the first (left) window\n");
   fprintf(strm,"\n");
 
-  ## This is an entirely bogus message since the output file name is 
-  ## set by the function arguments - but it does ensure that stdout 
+  ## This is an entirely bogus message since the output file name is
+  ## set by the function arguments - but it does ensure that stdout
   ## is identical to the C version of the example for ctest.
   if (strm != stdout)
     fprintf(strm,"Enter graphics output file name: ");
@@ -150,7 +150,7 @@ function ix14c(fname2,strm)
   ## close master
   plsstrm(0);
   plend1();
-  
+
 endfunction
 
 function plot1(xoff,xscale,yoff,yscale)
@@ -190,7 +190,7 @@ function plot1(xoff,xscale,yoff,yscale)
   plcol0(4);
   plline(x', y');
   plflush;#pleop();
-  
+
 endfunction
 
 function plot2()
@@ -274,7 +274,7 @@ function plot4()
   ## Set up viewport and window, but do not draw box */
 
   plenv(-1.3, 1.3, -1.3, 1.3, 1, -2);
-  
+
   for i = 1:10
     x = 0.1 * i * x0;
     y = 0.1 * i * y0;
@@ -283,7 +283,7 @@ function plot4()
 
     plline(x, y);
   endfor
-  
+
   plcol0(2);
   for i = 0:11
     theta = 30.0 * i;
@@ -309,7 +309,7 @@ function plot4()
   r = sin(dtr * (5 * zz'));
   x = x0 .* r;
   y = y0 .* r;
-  
+
   plcol0(3);
   plline(x, y);
 
@@ -331,7 +331,7 @@ function plot5()
   tr=[XSPA, 0.0, -1.0, 0.0, YSPA, -1.0]';
 
   ## this is builtin in plplot_octave
-  ## It is based on the corresponding demo function of PLplot.## 
+  ## It is based on the corresponding demo function of PLplot.##
   ## mypltr(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data)
   ## {
   ##    *tx = tr(0) * x + tr(1) * y + tr(2);

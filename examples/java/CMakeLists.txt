@@ -77,7 +77,7 @@ if(CORE_BUILD)
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     )
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     DESTINATION ${DATA_DIR}/examples/java
     RENAME Makefile
     )
@@ -120,8 +120,8 @@ if(CORE_BUILD)
   add_dependencies(plplot_examples plplot_core ${targets_examples_java})
 
   # This information is duplicated from bindings/java/CMakeLists.txt.
-  # It is required here to get the dependencies right for 
-  # the jar file. 
+  # It is required here to get the dependencies right for
+  # the jar file.
   set(java_CORE_CLASSES
     ${CMAKE_BINARY_DIR}/bindings/java/plplot/core/PLGraphicsIn.class
     ${CMAKE_BINARY_DIR}/bindings/java/plplot/core/PLStream.class

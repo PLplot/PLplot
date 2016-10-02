@@ -20,14 +20,14 @@ itk::usual Plwindow {
     keep -background -cursor -foreground \
       -plotbackground -xhairs -doublebuffer -width -height
 }
-      
+
 itcl::class Plwindow {
     inherit itk::Widget
 
     constructor {args} {
 	itk_component add plwin {
 	    plframe $itk_interior.plwin -relief sunken
-	} { 
+	} {
 	    rename -background -plotbackground plotBackground Background
 
 	    keep -width -height -xhairs -doublebuffer
@@ -39,7 +39,7 @@ itcl::class Plwindow {
     }
     destructor {
     }
-    
+
     method cmd {args} {
 	uplevel 1 $itk_interior.plwin cmd $args
     }
@@ -68,7 +68,7 @@ itcl::class Plwindow {
 
     method plshade {data xmin xmax ymin ymax sh_min sh_max sh_col} {
 	cmd plshade $data $xmin $xmax $ymin $ymax \
-	  $sh_min $sh_max 1 $sh_col 
+	  $sh_min $sh_max 1 $sh_col
     }
 
     public variable name

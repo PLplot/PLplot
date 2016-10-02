@@ -41,7 +41,7 @@ if(ENABLE_pdl)
     message(STATUS "Assume PDL-Graphics-PLplot exists and has version >= 0.55")
   else(SKIP_PDL_CHECK)
     # N.B. Some of the checks below only work if the correct version
-    # of libplplotd.so (currently libplplotd.so.10) is accessible 
+    # of libplplotd.so (currently libplplotd.so.10) is accessible
     # somewhere on the disk, and LD_LIBRARY_PATH
     # points to that directory location.
     if(PERL_FOUND)
@@ -72,7 +72,7 @@ if(ENABLE_pdl)
             ERROR_QUIET
             )
 	  if(NOT PDL_GRAPHICS_PLPLOT_RETURN_CODE)
-            message(STATUS 
+            message(STATUS
 	      "PDL version >= 2.4.7 and  PDL::Graphics::PLplot found."
 	      )
             execute_process(

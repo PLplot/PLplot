@@ -50,7 +50,7 @@ function plot1(type)
 
   pl.adv(0)
 
-  -- Set up data for log plot 
+  -- Set up data for log plot
   f0 = 1
   for i=1, 101 do
     freql[i] = -2 + (i-1) / 20
@@ -62,7 +62,7 @@ function plot1(type)
   pl.vpor(0.15, 0.85, 0.1, 0.9)
   pl.wind(-2, 3, -80, 0)
 
-  -- Try different axis and labelling styles. 
+  -- Try different axis and labelling styles.
   pl.col0(1)
   if type == 0 then
     pl.box("bclnst", 0, 0, "bnstv", 0, 0)
@@ -71,21 +71,21 @@ function plot1(type)
   else
     print("error: type must be either 0 or 1")
   end
-  
-  -- Plot ampl vs freq 
+
+  -- Plot ampl vs freq
   pl.col0(2)
   pl.line(freql, ampl)
   pl.col0(2)
   pl.ptex(1.6, -30, 1, -20, 0.5, "-20 dB/decade")
 
-  -- Put labels on 
+  -- Put labels on
   pl.col0(1)
   pl.mtex("b", 3.2, 0.5, 0.5, "Frequency")
   pl.mtex("t", 2, 0.5, 0.5, "Single Pole Low-Pass Filter")
   pl.col0(2)
   pl.mtex("l", 5, 0.5, 0.5, "Amplitude (dB)")
 
-  -- For the gridless case, put phase vs freq on same plot 
+  -- For the gridless case, put phase vs freq on same plot
   if type == 0 then
     pl.col0(1)
     pl.wind(-2, 3, -100, 0)
@@ -158,8 +158,8 @@ function plot1(type)
   legend_width, legend_height = pl.legend(
     lor(pl.PL_LEGEND_BACKGROUND, pl.PL_LEGEND_BOUNDING_BOX), 0, 0.0, 0.0,
     0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
-    1., text_colors, text, 
-    box_colors, box_patterns, box_scales, box_line_widths, 
+    1., text_colors, text,
+    box_colors, box_patterns, box_scales, box_line_widths,
     line_colors, line_styles, line_widths,
     symbol_colors, symbol_scales, symbol_numbers, symbols )
 end
@@ -170,14 +170,14 @@ end
 -- Illustration of logarithmic axes, and redefinition of window.
 ----------------------------------------------------------------------------
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 pl.font(2)
 
--- Make log plots using two different styles. 
+-- Make log plots using two different styles.
 plot1(0)
 plot1(1)
 

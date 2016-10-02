@@ -117,14 +117,14 @@ include_directories(
   )
 
 set(ndiff_SRC
-  ndiff.c 
-  store.c 
+  ndiff.c
+  store.c
   awklib.c
   regexp/regexp.c
   regexp/regerror.c
   )
 
-add_executable(ndiff ${ndiff_SRC}) 
+add_executable(ndiff ${ndiff_SRC})
 
 target_link_libraries(
   ndiff
@@ -179,7 +179,7 @@ if(BUILD_TEST)
     message(STATUS "Configuring tests using gmp precision")
     set(CHECK_DIR ${TEST_DIR}/okay-gmp)
   elseif(HAVE_LONG_DOUBLE)
-    message(STATUS 
+    message(STATUS
       "Configuring tests using long double precision. For this case, many tests\n   will fail on platforms where long double corresponds to 80-bit (rather than\n   128-bit) floating point."
       )
     set(CHECK_DIR ${TEST_DIR}/okay-ldb)

@@ -42,10 +42,10 @@ procedure xtraditional17a is
     colline, styline : Integer_Array_1D(0 .. 3);
     y1, y2, y3, y4, ymin, ymax, xlab, ylab : Long_Float;
     t, tmin, tmax, tjump, dt, noise : Long_Float;
-    legline : Stripchart_Label_String_Array_Type := 
-       (To_Unbounded_String("sum"), 
-        To_Unbounded_String("sin"), 
-        To_Unbounded_String("sin*noi"), 
+    legline : Stripchart_Label_String_Array_Type :=
+       (To_Unbounded_String("sum"),
+        To_Unbounded_String("sin"),
+        To_Unbounded_String("sin*noi"),
         To_Unbounded_String("sin+noi"));
 begin
     -- plplot initialization
@@ -57,7 +57,7 @@ begin
     -- plsetopt("db", "");
     -- plsetopt("np", "");
 
-    -- User sets up plot completely except for window and data 
+    -- User sets up plot completely except for window and data
     -- Eventually settings in place when strip chart is created will be
     -- remembered so that multiple strip charts can be used simultaneously.
 
@@ -82,12 +82,12 @@ begin
     styline(0) := 2; -- pens line style
     styline(1) := 3;
     styline(2) := 4;
-    styline(3) := 5;    
+    styline(3) := 5;
 
     colline(0) := 2; -- pens color
     colline(1) := 3;
     colline(2) := 4;
-    colline(3) := 5;    
+    colline(3) := 5;
 
     xlab := 0.0; -- legend position
     ylab := 0.25;
@@ -98,13 +98,13 @@ begin
     -- Initialize plplot
     plinit;
 
-    pladv(0);    
-    plvsta;    
+    pladv(0);
+    plvsta;
 
     -- Register our error variables with PLplot
     -- From here on, we're handling all errors here
     --    plsError(pl_errcode, errmsg);
-    
+
     -- Ada note: plsError is not yet implemented in Ada. Thus, pl_errcode is
     -- hardwired to 0 for now and no effective error handling is done.
 
@@ -113,10 +113,10 @@ begin
 	     xlab, ylab,
 	     autoy, acc,
 	     colbox, collab,
-	     colline, styline, legline, 
-	     "t", "", "Strip chart demo"); 
+	     colline, styline, legline,
+	     "t", "", "Strip chart demo");
 
-    -- Ada note: this would handle errors if error handling were implemented.       
+    -- Ada note: this would handle errors if error handling were implemented.
     if pl_errcode /= 0 then
         Put_Line("There was a problem which caused the program to quit.");
         plend;
@@ -139,10 +139,10 @@ begin
     dt := 0.1;
 
     for n in 0 .. nsteps - 1 loop
-        -- The Ada standard requires that the delay statement have a granularity 
-        -- of at most 20 ms but strongly recommends at most 100 microseconds. 
-        -- We'll try 10 ms to match the C example, x17c, but in theory this 
-        -- might fail to compile on some Ada systems. If so, the cure is to set 
+        -- The Ada standard requires that the delay statement have a granularity
+        -- of at most 20 ms but strongly recommends at most 100 microseconds.
+        -- We'll try 10 ms to match the C example, x17c, but in theory this
+        -- might fail to compile on some Ada systems. If so, the cure is to set
         -- the delay to 0.02.
         delay 0.01; -- wait a little (10 ms) to simulate time elapsing
         t := Long_Float(n) * dt;

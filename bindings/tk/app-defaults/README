@@ -14,7 +14,7 @@ These files use the standard X11 resource syntax.
 
 Suggested uses:
  - on a 1024x768 display (such as on a portable computer), use the small
-   settings. 
+   settings.
  - on a 1280x1024 workstation for most people, use the medium settings.
  - for the latter, use the large settings for something very easy to see.
    (PLplot classic settings)

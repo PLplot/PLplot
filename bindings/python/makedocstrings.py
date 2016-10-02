@@ -16,7 +16,7 @@
 
 # The recent versions of SWIG (at least for 1.3.11) do not handle documentation
 # strings correctly
-# This script is a quick hack to fixup the doc strings in the 
+# This script is a quick hack to fixup the doc strings in the
 # SWIG-generated c code, but presumably this script
 # will not always be necessary
 
@@ -25,12 +25,12 @@ import sys, re
 def main():
   if len(sys.argv) != 3:
     print 'usage: makedocstrings infile outfile'
-    
+
   infile = open(sys.argv[1], 'rt')
   outfile = open(sys.argv[2], 'wt')
 
   docstrings = {}
-  
+
   while 1:
     line = infile.readline()
     if not line:

@@ -1,4 +1,4 @@
--- Auxiliary types and subprograms to be with-ed and by all the Ada 
+-- Auxiliary types and subprograms to be with-ed and by all the Ada
 -- bindings to PLplot
 
 -- Copyright (C) 2006-2010 Jerry Bauck
@@ -23,10 +23,10 @@ with
     Ada.Strings.Bounded, -- fixme Probable cruft.
     Ada.Strings.Unbounded;
 
-use 
+use
     Ada.Strings.Bounded,
     Ada.Strings.Unbounded;
-    
+
    -- with Ada.Numerics.Long_Real_Arrays;
 
 package PLplot_Auxiliary is
@@ -68,8 +68,8 @@ type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
 
     -- Mimic C conversion of float to integer; something similar works in e.g.
     -- plplot_thin.adb.
-    -- C truncates towards 0. Ada rounds to nearest integer; midway rounded 
-    -- away from zero, e.g. Inteter(±3.5) is ±4. But any completely reliable 
+    -- C truncates towards 0. Ada rounds to nearest integer; midway rounded
+    -- away from zero, e.g. Inteter(±3.5) is ±4. But any completely reliable
     -- conversion is probalby not possible; indeed, this one exactly emulates C
     -- when tested for values around ±2 to ±3. Both convert ±2.9999999999999997
     -- to ±2 and ±2.9999999999999998 to ±3.
@@ -90,10 +90,10 @@ type Real_Matrix is array (Integer range <>, Integer range <>) of Long_Float;
     procedure Vector_Max(x               : Real_Vector;
                          The_Maximum     : out Long_Float;
                          Location_Of_Max : out Integer);
-    
+
     -- Find minimum in a 2D array.
     function Matrix_Min(x : Real_Matrix) return Long_Float;
-    
+
     -- Find maximum in a 2D array.
     function Matrix_Max(x : Real_Matrix) return Long_Float;
 

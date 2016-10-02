@@ -1,9 +1,9 @@
 /*
 
-Copyright (C) 2008-2016 Alan W. Irwin 
+Copyright (C) 2008-2016 Alan W. Irwin
 Copyright (C) 2008-2016 Werner Smekal
 
-License: Released Under the "Creative Commons License", 
+License: Released Under the "Creative Commons License",
 <http://creativecommons.org/licenses/by-nc/2.5/> in
 accordance with the copyright license of the original
 css theme.
@@ -29,7 +29,7 @@ body {
   background-position: top center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  
+
   margin-top:10px;
   margin-bottom:10px;
 }
@@ -48,7 +48,7 @@ A:hover {
 }
 
 #pagewrapper {
-  margin-left: auto; 
+  margin-left: auto;
   margin-right: auto;
   width: @width_pagewrapper@;
   text-align: left;
@@ -57,7 +57,7 @@ A:hover {
 }
 
 #pagewrapper_full {
-  margin-left: auto; 
+  margin-left: auto;
   margin-right: auto;
   width: @width_pagewrapper@;
   text-align: left;
@@ -100,10 +100,10 @@ A:hover {
 
 /* Notes on menu images.
 
-/* menu_bg.gif is a 10x40 color gradient ranging from 
+/* menu_bg.gif is a 10x40 color gradient ranging from
  * #FF6500 at the top to #C55000 at the bottom. */
 
-/* menu_hover_bg.gif is a 10x40 color gradient ranging from 
+/* menu_hover_bg.gif is a 10x40 color gradient ranging from
  * #E65D00 at the top to #FF6500 at the bottom. */
 
 /* menu_selected.gif is a 10x40 solid color = #94CA31. */
@@ -319,13 +319,13 @@ border:1px solid #808080;
 text-align:center;
 }
 
-.arrowlist { 
+.arrowlist {
   margin-left: 10px;
   padding-left: 0;
   list-style: none;
-} 
+}
 
-.arrowlist li { 
+.arrowlist li {
   padding-left: 10px;
   background-image: url(../img/arrow.gif);
   background-repeat: no-repeat;
@@ -333,7 +333,7 @@ text-align:center;
   font-family: verdana, arial, sans-serif;
   font-size: 11px;
   line-height:18px;
-  color: #333333;  
+  color: #333333;
 }
 
 /**************** Searchbar styles ****************/

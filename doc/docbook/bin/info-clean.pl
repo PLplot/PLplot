@@ -1,5 +1,5 @@
 #!/usr/bin/perl
- 
+
 $inpart = 0;
 $intoc = 0;
 while (<>) {

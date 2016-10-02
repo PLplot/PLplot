@@ -13,8 +13,8 @@ configurable.
 
 Why and when did PLplot come to be?
 
-PLplot was originally developed by Sze Tan of the University of Auckland 
-in Fortran-77 (in 1986). Many of the underlying concepts used in the 
+PLplot was originally developed by Sze Tan of the University of Auckland
+in Fortran-77 (in 1986). Many of the underlying concepts used in the
 PLplot package are based on ideas used in Tim Pearson's PGPLOT package.
 Sze Tan writes:
 
@@ -35,26 +35,26 @@ Sze Tan writes:
 Then Tony Richardson ported it to the Commodore Amiga, rewriting in C with
 additional improvements.
 
-While doing a post-doc fellowship in Japan Maurice LeBrun needed a free 
-scientific graphics library for his plasma simulation code and came across 
-PLplot on the Amiga "Fish disks" (disk 222).  Maurice ported it back to 
-several varieties of Unix and took over maintenance from Tony. After 
-returning to the Institute of Fusion Studies at University of Texas Maurice 
+While doing a post-doc fellowship in Japan Maurice LeBrun needed a free
+scientific graphics library for his plasma simulation code and came across
+PLplot on the Amiga "Fish disks" (disk 222).  Maurice ported it back to
+several varieties of Unix and took over maintenance from Tony. After
+returning to the Institute of Fusion Studies at University of Texas Maurice
 continued to develop the package, with Geoff Furnish joining him as a
-co-developer. In the early 90s's the new contributions were released under 
+co-developer. In the early 90s's the new contributions were released under
 the LGPL.
 
-When Maurice left UT in '95 Geoff became sole maintainer for some years, 
-and was responsible for getting it up at Sourceforge in the earliest days 
-of that site's existence.  That made it easier to add collaborators & such, 
-and starting with Alan Irwin & Rafael Laboissiere the core team gradually 
+When Maurice left UT in '95 Geoff became sole maintainer for some years,
+and was responsible for getting it up at Sourceforge in the earliest days
+of that site's existence.  That made it easier to add collaborators & such,
+and starting with Alan Irwin & Rafael Laboissiere the core team gradually
 came to be.
 
 
 In which [language(s)|platform(s)] is PLplot developed?
 
-PLplot is developed in primarily C, with language bindings for Ada, C++, 
-D, Fortran, Java, Lua, Perl, Python, OCaml, Octave and Tcl/Tk. Every effort 
+PLplot is developed in primarily C, with language bindings for Ada, C++,
+D, Fortran, Java, Lua, Perl, Python, OCaml, Octave and Tcl/Tk. Every effort
 is made to support the Linux, OS-X, and Windows platforms.
 
 Also answering the question from the human language perspective,
@@ -109,7 +109,7 @@ downloaders (say 6000 of them) will build PLplot for themselves and
 use it regularly.  When the unknown OS is split between the various
 OS's appropriately, and those splits adjusted for
 the 10 000 Linux binary package users we arrive at the final estimate
-given above.  
+given above.
 
 Note the above summary of the country statistics comes directly from
 SourceForge PLplot source download statistics site so these splits are
@@ -150,8 +150,8 @@ with subversion repository write access.
 What features are in the roadmap?
 
 The PLplot project does not have a formal roadmap. Development
-operates primarily in a reactive mode, bugs are fixed as users 
-discover them and features are added on request (if there is a 
+operates primarily in a reactive mode, bugs are fixed as users
+discover them and features are added on request (if there is a
 consensus among the developers that the feature seems like a
 reasonable addition).
 

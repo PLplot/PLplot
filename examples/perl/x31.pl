@@ -64,7 +64,7 @@ plspage($xp1, $yp1, $xleng1, $yleng1, $xoff1, $yoff1);
 # Retrieve the same values?
 my ($xp2, $yp2, $xleng2, $yleng2, $xoff2, $yoff2) = plgpage ();
 printf("page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", $xp2, $yp2, $xleng2, $yleng2, $xoff2, $yoff2);
-if ($xp2 != $xp1 || $yp2 != $yp1 || $xleng2 != $xleng1 || $yleng2 != $yleng1 || 
+if ($xp2 != $xp1 || $yp2 != $yp1 || $xleng2 != $xleng1 || $yleng2 != $yleng1 ||
     $xoff2 != $xoff1 || $yoff2 != $yoff1 ) {
     printf STDERR ("plgpage test failed\n");
     $status = 1;
@@ -146,7 +146,7 @@ if ($fnam eq "") {
 printf STDERR ("Output file name is %s\n", $fnam);
 
 # Set and get the number of digits used to display axis labels
-# Note digits is currently ignored in pls[xyz]ax and 
+# Note digits is currently ignored in pls[xyz]ax and
 # therefore it does not make sense to test the returned value.
 plsxax(3,0);
 my ($digmax, $digits) = plgxax();

@@ -39,7 +39,7 @@ endif(NOT PLPLOT_CXX_COMPILER_WORKS)
 if(PLPLOT_CXX_COMPILER_WORKS)
   # Find and check C++ compiler.
   enable_language(CXX OPTIONAL)
-  
+
   if(NOT CMAKE_CXX_COMPILER_WORKS)
     message(STATUS "No working C++ compiler found so disabling C++ binding and examples.")
     set(ENABLE_cxx OFF CACHE BOOL "Enable C++ binding" FORCE)

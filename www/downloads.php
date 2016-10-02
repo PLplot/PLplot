@@ -15,7 +15,7 @@
 			<h3><a name="source_code">Source Code</a></h3>
 		  <p>All our Windows users and many of our Unix users build PLplot from
 source code using our build system that is implemented with <a href="http://cmake.org/">CMake</a>
-following the directions in our 
+following the directions in our
 <a href="http://sourceforge.net/p/plplot/wiki">wiki</a>.  PLplot source code can be
 accessed a number of ways.  You can obtain the latest stable version of PLplot from our
 		     <a href="http://sourceforge.net/projects/plplot/files/plplot/">file
@@ -42,7 +42,7 @@ Binary packages are provided by at least the following Linux distributions:</p>
 		  </ul>
 <p>To our knowledge no binary packages for PLplot are currently available for
 Windows platforms so our Windows users must build PLplot
-<a href="#source_code">from source</a>.</p> 
+<a href="#source_code">from source</a>.</p>
 		</div>
 
 		<?php pageSidebar(1); ?>

@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -41,7 +41,7 @@ function ret = plsetopt(option, value)
 	     "tcl_cmd"; "TCL command string run at startup (note: disabled)";
 	     "auto_path"; "Additional directory(s) to autoload (tk or dp driver)";
 	     "tk_file"; "file for plserver (tk or dp driver)";
-	     "width"; "Sets pen width (1 <= width <= 10)"; 
+	     "width"; "Sets pen width (1 <= width <= 10)";
 	     "geometry"; "Window size, in pixels (e.g. -geometry 400x300)";
 	     "bufmax";"bytes sent before flushing output";
 	     "db";"Double buffer X window output";
@@ -75,7 +75,7 @@ function ret = plsetopt(option, value)
 	     "dpi"; "Resolution, in dots per inch (e.g. -dpi 360x360)";
 	     "drvopt"; "Driver dependent option";
 	     "compression"; "Sets compression level in supporting devices"];
-  
+
   global __pl set_options = "";
 
   ret = "";
@@ -136,10 +136,10 @@ function ret = plsetopt(option, value)
       break;
     endif
   endfor
- 
+
   if (! found)
     error("Option doesn't exist\n")
   endif
 
-  
+
 endfunction

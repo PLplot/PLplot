@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -45,7 +45,7 @@ function save_fig(file, device, rev)
 
   global __pl FIGDIR
   strm = __pl_init;
-  
+
   if (plglevel != 3)
     warning("Nothing to save");
     return
@@ -89,7 +89,7 @@ function save_fig(file, device, rev)
   device = dev;
 
   if (nargin >= 1 && ischar(device) & ischar(file))
-    
+
     to_prt = 0;
     if (strcmp(file,"|lp"))	# special output file, printer!
       to_prt = 1;
@@ -113,7 +113,7 @@ function save_fig(file, device, rev)
     if (isempty(f))
       f = plmkstrm;
     endif
-    
+
     plsstrm(f); # set stream type and output file
     plsfnam(file);
     plsdev(device);
@@ -129,7 +129,7 @@ function save_fig(file, device, rev)
 
     plsetopt "apply"
     plinit;
-    
+
     plcpstrm(cur_fig, 0); # copy parameters
 
     if (rev_done == 1) # and exchange black/white if needed, after plinit()

@@ -3,11 +3,11 @@ PLplot git repo (server-side hooks and not useful on the client side)
 and client-side hooks that can be voluntarily installed by our developers
 on their local PLplot repos.
 
-Client-side hooks: 
+Client-side hooks:
 
 None at this time.
 
-Server-side hooks: 
+Server-side hooks:
 
 update When uploaded to the SF site, this enforces our current workflow rules
        by controlling what can be done using the push command.  The current
@@ -16,5 +16,5 @@ update When uploaded to the SF site, this enforces our current workflow rules
        on tags insure our history is preserved for all tags for our releases
        and special tags pointing to commits corresponding to the head of
        historical svn branches which have subsequently been deleted.
-       
+
 

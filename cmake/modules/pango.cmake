@@ -40,7 +40,7 @@ if(PKG_CONFIG_EXECUTABLE)
     )
   endif(NOT PANGOFT2_LINK_FLAGS)
 else(PKG_CONFIG_EXECUTABLE)
-  message(STATUS 
+  message(STATUS
   "WARNING: pango not found because pkg-config not available."
   )
 endif(PKG_CONFIG_EXECUTABLE)

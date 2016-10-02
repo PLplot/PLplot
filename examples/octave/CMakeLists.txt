@@ -92,20 +92,20 @@ if(BUILD_TEST)
 
   if(CORE_BUILD)
     get_property(files_plplot_stub.m_built GLOBAL PROPERTY FILES_plplot_stub.m_built)
-    set_property(GLOBAL PROPERTY TARGETS_examples_octave 
+    set_property(GLOBAL PROPERTY TARGETS_examples_octave
       plplot_octave plplot_stub.m_built
       )
-    set_property(GLOBAL PROPERTY FILES_examples_octave 
+    set_property(GLOBAL PROPERTY FILES_examples_octave
       ${full_examples_octave} ${files_plplot_stub.m_built}
       )
   else(CORE_BUILD)
     # For this case, the (custom) target plplot_stub.m_built and its
     # associated file dependencies, files_plplot_stub.m_built are not
-    # defined.  
-    set_property(GLOBAL PROPERTY TARGETS_examples_octave 
+    # defined.
+    set_property(GLOBAL PROPERTY TARGETS_examples_octave
       plplot_octave
       )
-    set_property(GLOBAL PROPERTY FILES_examples_octave 
+    set_property(GLOBAL PROPERTY FILES_examples_octave
       ${full_examples_octave}
       )
   endif(CORE_BUILD)
@@ -113,7 +113,7 @@ endif(BUILD_TEST)
 
 if(CORE_BUILD)
   install(FILES ${examples_octave} DESTINATION ${DATA_DIR}/examples/octave)
-  install(FILES CMakeLists.txt 
+  install(FILES CMakeLists.txt
     DESTINATION ${DATA_DIR}/examples/octave
     )
 endif(CORE_BUILD)

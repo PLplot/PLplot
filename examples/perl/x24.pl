@@ -38,7 +38,7 @@
 # ttf-indic-fonts
 # ttf-unfonts
 # ttf-bangla-fonts
-# 
+#
 # For the latest Ubuntu systems lohit_hi.ttf has been moved to the
 # ttf-indic-fonts-core package instead of ttf-devanagari-fonts so you
 # will have to use this package instead and update the font path.

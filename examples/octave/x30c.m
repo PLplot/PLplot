@@ -1,7 +1,7 @@
 ## Alpha color values demonstration.
 ##
 ## Copyright (C) 2008 Hazen Babcock
-## Copyright (C) 2008 Andrew Ross 
+## Copyright (C) 2008 Andrew Ross
 ##
 ##
 ## This file is part of PLplot.
@@ -23,7 +23,7 @@
 
 1;
 
-## 
+##
 
 function ix30c
 
@@ -31,10 +31,10 @@ function ix30c
   green = [  0,   0, 255,   0];
   blue  = [  0,   0,   0, 255];
   alpha = [1.0, 1.0, 1.0, 1.0];
-  
+
   px = [0.1, 0.5, 0.5, 0.1];
   py = [0.1, 0.1, 0.5, 0.5];
-  
+
   pos = [0.0, 1.0];
   rcoord = [1.0, 1.0];
   gcoord = [0.0, 0.0];
@@ -49,7 +49,7 @@ function ix30c
   plscmap0n (4);
   plscmap0a (red', green', blue', alpha');
 
-  ## 
+  ##
   ## Page 1:
   ##
   ## This is a series of red, green and blue rectangles overlaid
@@ -81,10 +81,10 @@ function ix30c
     py += 0.5/9.0;
   endfor
 
-  ## 
+  ##
   ## Page 2:
   ##
-  ## This is a bunch of boxes colored red, green or blue with a single 
+  ## This is a bunch of boxes colored red, green or blue with a single
   ## large (red) box of linearly varying transparency overlaid. The
   ## overlaid box is completely transparent at the bottom and completely
   ## opaque at the top.

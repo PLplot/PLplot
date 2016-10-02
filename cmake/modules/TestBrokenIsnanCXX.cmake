@@ -19,7 +19,7 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Check if isnan is in <math.h> but not in <cmath> 
+# Check if isnan is in <math.h> but not in <cmath>
 IF(NOT DEFINED CMAKE_BROKEN_ISNAN_CXX)
   MESSAGE(STATUS "Check for broken isnan support in <cmath>")
   TRY_COMPILE(CMAKE_BROKEN_ISNAN_CXX

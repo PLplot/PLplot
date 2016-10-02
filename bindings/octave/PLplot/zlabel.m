@@ -28,11 +28,11 @@ function text = zlabel (text)
   if (nargin > 1)
     usage ("zlable (text)");
   endif
-  
+
   if (isempty(text))
     text = " ";
   endif
-  
+
   if (nargin == 0)
     text = __pl.zlabel(strm,:);
   else

@@ -70,9 +70,9 @@ endif(ENABLE_python)
 
 if(ENABLE_python)
   # NUMPY_INCLUDE_PATH = path to arrayobject.h for numpy.
-  #message(STATUS "DEBUG: NUMPY_INCLUDE_PATH = ${NUMPY_INCLUDE_PATH}") 
+  #message(STATUS "DEBUG: NUMPY_INCLUDE_PATH = ${NUMPY_INCLUDE_PATH}")
   if(NOT NUMPY_INCLUDE_PATH)
-    # Check for numpy installation. 
+    # Check for numpy installation.
     execute_process(
       COMMAND
       ${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"

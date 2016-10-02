@@ -6,7 +6,7 @@
 2000-06-25  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* api2man.pl: Generate correct entries for whatis database in the
-	short description of man pages. 
+	short description of man pages.
 
 2000-12-05  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
@@ -45,4 +45,4 @@
 2000-11-19  Rafael Laboissiere  <rafael@icp.inpg.fr>
 
 	* Released overhauled version with Automake support and XML
-	translation. 
+	translation.

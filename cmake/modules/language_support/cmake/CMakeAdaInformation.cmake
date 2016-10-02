@@ -328,7 +328,7 @@ endif()
 # routine qualifies since it is normally small.  Thus, the normal usage is
 # add_executable(foo foo.adb), but  add_executable(foo path/minimal.adb) would
 # work as well so long as both path/minimal.adb existed and foo.adb existed.
-# Also, note there is no way to specify 
+# Also, note there is no way to specify
 # ${CMAKE_CURRENT_SOURCE_DIR}/<TARGET>.adb as the code for gnatmake to compile
 # because in this context ${CMAKE_CURRENT_SOURCE_DIR} is set to the top
 # of the source tree and not the expected sub-directory of the source tree.
@@ -340,7 +340,7 @@ endif()
 # In sum, you have to be careful of your target name, the nominal source file
 # name has to be compilable, but otherwise it is ignored, and you must specify
 # the required -aI and other GNAT_EXECUTABLE_BUILDER = gnatmake options
-# using LINK_FLAGS specified with set_target_properties.  
+# using LINK_FLAGS specified with set_target_properties.
 # However, so long as you pay attention to these
 # constraints, add_executable should work for the Ada language.
 

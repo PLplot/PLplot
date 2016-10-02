@@ -259,7 +259,7 @@ if(ENABLE_ocaml)
       if(DROP_GTK_PLUS_2_BUILDS)
 	set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo2.lablgtk2 package" FORCE)
       endif(DROP_GTK_PLUS_2_BUILDS)
-      
+
       if(OCAML_HAS_GTK)
 	set(text_gtk
 	  "module G = Gtk

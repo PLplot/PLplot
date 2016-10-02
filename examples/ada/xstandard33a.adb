@@ -47,7 +47,7 @@ use
 ----------------------------------------------------------------------------
 
 procedure xstandard33a is
-    position_options : Integer_Array_1D(0 .. 15) := 
+    position_options : Integer_Array_1D(0 .. 15) :=
        (Pl_Position_Left + Pl_Position_Top + Pl_Position_Outside,
         Pl_Position_Top + Pl_Position_Outside,
         Pl_Position_Right + Pl_Position_Top + Pl_Position_Outside,
@@ -66,7 +66,7 @@ procedure xstandard33a is
         Pl_Position_Left + Pl_Position_Inside);
 
     -- Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
-    special_symbols : Legend_String_Array_Type(0 .. 4) := 
+    special_symbols : Legend_String_Array_Type(0 .. 4) :=
        (TUB("✰"), TUB("✴"), TUB("✱"), TUB("✽"), TUB("✦")); -- TUB is renamed To_Unbounded_String.
 
     -- Create_Colorbar options
@@ -91,13 +91,13 @@ procedure xstandard33a is
         Pl_Position_Right,
         Pl_Position_Top,
         Pl_Position_Bottom);
-    
+
     colorbar_position_option_labels : Legend_String_Array_Type(0 .. Colorbar_Positions - 1) :=
        (TUB("Left"),
         TUB("Right"),
         TUB("Top"),
         TUB("Bottom"));
-    
+
     -- Colorbar label positioning options
     Colorbar_Labels : constant Integer := 4;
     colorbar_label_options : Integer_Array_1D(0 .. Colorbar_Labels - 1) :=
@@ -111,7 +111,7 @@ procedure xstandard33a is
         TUB("Label right"),
         TUB("Label top"),
         TUB("Label bottom"));
-    
+
     -- Colorbar cap options
     Colorbar_Caps : constant Integer := 4;
     colorbar_cap_options : Integer_Array_1D(0 .. Colorbar_Caps - 1) :=
@@ -127,7 +127,7 @@ procedure xstandard33a is
 
 
     procedure Create_Colorbar_example_page(kind_i : Integer; label_i : Integer; cap_i : Integer;
-        cont_color : Integer; cont_width : Long_Float; n_values : Integer; values : Real_Vector) 
+        cont_color : Integer; cont_width : Long_Float; n_values : Integer; values : Real_Vector)
     is
         -- Parameters for the colorbars on this page
         position, opt : Integer;
@@ -161,16 +161,16 @@ procedure xstandard33a is
         -- Draw one colorbar relative to each side of the page.
         for position_i in 0 .. Colorbar_Positions - 1 loop
             position := colorbar_position_options(position_i);
-            opt := colorbar_option_kinds(kind_i) + 
+            opt := colorbar_option_kinds(kind_i) +
                 colorbar_label_options(label_i) + colorbar_cap_options(cap_i);
 
             -- We have to convert these integers to modular type Stupid before and-ing the bits.
             -- That's because manipulating bits of non-modular types is nonsense but other
             -- languages seem to not care about stuff like this.
-            vertical := ((Stupid(position) and Stupid(Pl_Position_Left)) > 0) or 
+            vertical := ((Stupid(position) and Stupid(Pl_Position_Left)) > 0) or
                         ((Stupid(position) and Stupid(Pl_Position_Right)) > 0);
-            
-            ifn := ((Stupid(position) and Stupid(Pl_Position_Left)) > 0) or 
+
+            ifn := ((Stupid(position) and Stupid(Pl_Position_Left)) > 0) or
                 ((Stupid(position) and Stupid(Pl_Position_Bottom)) > 0);
 
             -- Set the offset position on the page.
@@ -185,7 +185,7 @@ procedure xstandard33a is
                 x_length := 0.5;
                 y_length := 0.05;
             end if;
-            
+
             -- Set appropriate labelling options.
             if ifn then
                 if cont_color = 0 or cont_width = 0.0 then
@@ -200,16 +200,16 @@ procedure xstandard33a is
                     axis_opts(0) := TUB("uwxvm");
                 end if;
             end if;
-            
-            label(0) := colorbar_position_option_labels(position_i) & ", " 
+
+            label(0) := colorbar_position_option_labels(position_i) & ", "
                 & colorbar_label_option_labels(label_i);
-                
+
             -- Smaller text
             Set_Character_Height(0.0, 0.75);
             -- Small ticks on the vertical axis
             Set_Major_Tick_Length(0.0, 0.5);
             Set_Minor_Tick_Length(0.0, 0.5);
-            
+
             Set_Viewport_Normalized(0.20, 0.80, 0.20, 0.80);
             Set_Viewport_World(0.0, 1.0, 0.0, 1.0);
             -- Set interesting background colour.
@@ -224,7 +224,7 @@ procedure xstandard33a is
                 axis_opts,
                 ticks, sub_ticks,
                 n_values_array, values_array);
-            
+
             -- Reset text and tick sizes
             Set_Character_Height(0.0, 1.0);
             Set_Major_Tick_Length(0.0, 1.0);
@@ -232,7 +232,7 @@ procedure xstandard33a is
         end loop;
 
         -- Draw a page title
-        title := colorbar_option_kind_labels(kind_i) & " - " 
+        title := colorbar_option_kind_labels(kind_i) & " - "
             & colorbar_cap_option_labels(cap_i);
         Set_Viewport_Normalized(0.0, 1.0, 0.0, 1.0);
         Set_Viewport_World(0.0, 1.0, 0.0, 1.0);
@@ -265,7 +265,7 @@ procedure xstandard33a is
     position, opt_base, nrow, ncolumn : Integer;
 
 begin -- main
-    Parse_Command_Line_Arguments(Pl_Parse_Full); 
+    Parse_Command_Line_Arguments(Pl_Parse_Full);
 
     -- Initialize plplot
     Initialize_PLplot;
@@ -327,7 +327,7 @@ begin -- main
                 0.1, White, Red, 1, 0, 0,
                 opt_array, 1.0, 1.0, 2.0,
                 1.0, text_colors, text,
-                Box_Colors, Box_Patterns, 
+                Box_Colors, Box_Patterns,
                 Box_Scales, Box_Line_Widths,
                 line_colors, line_styles, line_widths,
                 symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -395,7 +395,7 @@ begin -- main
             0.05, White, Red, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -410,7 +410,7 @@ begin -- main
             0.05, White, Red, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -425,7 +425,7 @@ begin -- main
             0.05, White, Red, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -440,7 +440,7 @@ begin -- main
             0.05, White, Red, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -455,7 +455,7 @@ begin -- main
             0.05, White, Red, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -470,7 +470,7 @@ begin -- main
             0.05, White, Red, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -485,7 +485,7 @@ begin -- main
             0.05, White, Red, 1, nrow, ncolumn,
             opt_array, 1.0, 1.0, 2.0,
             1.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -561,7 +561,7 @@ begin -- main
                 0.025, White, Red, 1, nrow, ncolumn,
                 opt_array, 1.0, 1.0, 1.5,
                 1.0, text_colors, text,
-                Box_Colors, Box_Patterns, 
+                Box_Colors, Box_Patterns,
                 Box_Scales, Box_Line_Widths,
                 line_colors, line_styles, line_widths,
                 symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -683,7 +683,7 @@ begin -- main
             0.1, White, Red, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -708,7 +708,7 @@ begin -- main
             0.1, White, Red, 1, 0, 0,
             opt_array, 1.0, text_scale, 2.0,
             0.0, text_colors, text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -866,9 +866,9 @@ begin -- main
         -- Color bar examples
         declare
             values_small : Real_Vector(0 .. 1)  := (-1.0e-20, 1.0e-20);
-            values_uneven : Real_Vector(0 .. 8) := (-1.0e-20, 2.0e-20, 2.6e-20, 3.4e-20, 
+            values_uneven : Real_Vector(0 .. 8) := (-1.0e-20, 2.0e-20, 2.6e-20, 3.4e-20,
                 6.0e-20, 7.0e-20, 8.0e-20, 9.0e-20, 10.0e-20);
-            values_even : Real_Vector(0 .. 8)   := (-2.0e-20, -1.0e-20, 0.0e-20, 1.0e-20, 
+            values_even : Real_Vector(0 .. 8)   := (-2.0e-20, -1.0e-20, 0.0e-20, 1.0e-20,
                 2.0e-20, 3.0e-20, 4.0e-20, 5.0e-20, 6.0e-20);
         begin
             -- Use unsaturated green background colour to contrast with black caps.

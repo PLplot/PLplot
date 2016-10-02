@@ -1,11 +1,11 @@
 ## Copyright (C) 1998-2003  Joao Cardoso
 ## Copyright (C) 2004  Alan W. Irwin
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -27,10 +27,10 @@
 ##
 ## Set the current plot window to plot window n or creates a new figure,
 ##    returning the window id and driver;
-## If the driver is tk, also returns its interpreter name 
+## If the driver is tk, also returns its interpreter name
 ## If device is specified, it is opened. Default is 'xwin'.
 ## If file is specified, it is passed to PLplot for use. Can be a real file for
-##    plot output (e.g. postscript), or a  Xserver DISPLAY name. 
+##    plot output (e.g. postscript), or a  Xserver DISPLAY name.
 ## If win_id is specified, the plot will use the X window identified by win_id
 ##   if the driver is "xwin". Use program `xwininfo' to get its hexadecimal id
 ##   and octave `hex2dec' to get its decimal id.
@@ -51,7 +51,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
   if (!exist("__pl") || !struct_contains (__pl,"inited"))
     v = char(strsplit(version ,'.'));
     if (! ((str2num(v(1,:)) > 3) ||
-           (str2num(v(1,:)) == 3 && str2num(v(2,:)) >= 2))) 
+           (str2num(v(1,:)) == 3 && str2num(v(2,:)) >= 2)))
         error("The PLplot-Octave scripts need an Octave version \n\
                greater than or equal to 3.2.0.\n");
     endif
@@ -232,7 +232,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       #next two commented. After last bop/eop CVS changes, first plot is empty.
       #pladv(0);
       #plflush;pleop;
-      
+
       if ( 0 && exist("__tk_name") && (strcmp("tk", sprintf("%s",plgdev'))))
 	eval(tk_receive(1));
 	__pl.intp = __pl_matstr(__pl.intp, intp, strm);	# tk interpreter name					

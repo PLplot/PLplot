@@ -105,7 +105,7 @@ begin
                 begin
                     x0_Stop_Sucking := x0(0 .. npts - 1);
                     y0_Stop_Sucking := y0(0 .. npts - 1);
-                    
+
                     plcol0(2);
                     plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
                     plcol0(1);

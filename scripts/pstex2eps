@@ -33,7 +33,7 @@ cat > ${ofile}.tex <<EOF
 \usepackage{graphicx}
 \begin{document}
 \pagestyle{empty}
-This is a  preview demo of your plot, the 'pstex' driver is intended 
+This is a  preview demo of your plot, the 'pstex' driver is intended
 to be used with \LaTeX.
 Use \LaTeX math capabilities as strings in your plots,
 and they will appear as you would expect.
@@ -45,6 +45,6 @@ and they will appear as you would expect.
 EOF
 
 latex ${ofile} > /dev/null \
-&& dvips -Pcmz -o ${ifile}.eps $ofile 2> /dev/null 
+&& dvips -Pcmz -o ${ifile}.eps $ofile 2> /dev/null
 
 rm ${ofile}*

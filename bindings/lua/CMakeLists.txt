@@ -35,7 +35,7 @@ if(ENABLE_lua)
   set(CMAKE_SWIG_FLAGS -DSWIG_LUA)
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-  set_source_files_properties(plplotluac.i 
+  set_source_files_properties(plplotluac.i
     PROPERTIES SWIG_MODULE_NAME plplotluac
     )
 
@@ -61,7 +61,7 @@ if(ENABLE_lua)
       )
   endif(USE_RPATH)
 
-  # Ensure we get the correct suffix for OS-X 
+  # Ensure we get the correct suffix for OS-X
   if(APPLE)
     set_target_properties(
       plplotluac

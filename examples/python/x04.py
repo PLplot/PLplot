@@ -18,7 +18,7 @@ if module_dir[0] == '@':
 sys.path.insert (0, module_dir)
 
 # main
-# 
+#
 # Illustration of logarithmic axes, and redefinition of window.
 
 def main(w):

@@ -206,12 +206,12 @@ sub plot1 () {
 sub plot2 () {
 
     my $nlin = pdl [1, 1, 1, 1, 1, 2, 2, 2, 2, 2];
-    my $inc = pdl [ [450, 0], [-450, 0], [0, 0], [900, 0], 
-		    [300, 0], [450,-450], [0, 900], [0, 450], 
+    my $inc = pdl [ [450, 0], [-450, 0], [0, 0], [900, 0],
+		    [300, 0], [450,-450], [0, 900], [0, 450],
 		    [450, -450], [0, 900] ];
-    my $spa = pdl [ [2000, 2000], [2000, 2000], [2000, 2000], 
-		    [2000, 2000], [2000, 2000], [2000, 2000], 
-		    [2000, 2000], [2000, 2000], [4000, 4000], 
+    my $spa = pdl [ [2000, 2000], [2000, 2000], [2000, 2000],
+		    [2000, 2000], [2000, 2000], [2000, 2000],
+		    [2000, 2000], [2000, 2000], [4000, 4000],
 		    [4000, 2000] ];
 
     my $sh_cmap = 0;
@@ -249,30 +249,30 @@ sub plot2 () {
 
 # plot3
 #
-# Illustrates shaded regions in 3d, using a different fill pattern for 
+# Illustrates shaded regions in 3d, using a different fill pattern for
 # each region.
 
 sub plot3 () {
 
     my $xx = pdl [ [-1.0, 1.0, 1.0, -1.0, -1.0],
 		    [-1.0, 1.0, 1.0, -1.0, -1.0] ];
-    my $yy = pdl [ [1.0, 1.0, 0.0, 0.0, 1.0], 
+    my $yy = pdl [ [1.0, 1.0, 0.0, 0.0, 1.0],
 		   [-1.0, -1.0, 0.0, 0.0, -1.0] ];
-    my $zz = pdl [ [0.0, 0.0, 1.0, 1.0, 0.0], 
+    my $zz = pdl [ [0.0, 0.0, 1.0, 1.0, 0.0],
 		   [0.0, 0.0, 1.0, 1.0, 0.0] ];
 
     pladv (0);
     plvpor (0.1, 0.9, 0.1, 0.9);
     plwind (-1.0, 1.0, -1.0, 1.0);
     plw3d (1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30., -40,);
-    
+
     # Plot using identity transform
-    
+
     plcol0 (1);
     plbox3 (0.0, 0, 0.0, 0, 0.5, 0, "bntu", "X", "bntu", "Y", "bcdfntu", "Z");
     plcol0 (2);
     pllab ("","","3-d polygon filling");
-    
+
     plcol0 (3);
     plpsty (1);
     plline3 ($xx->slice(":,0"), $yy->slice(":,0"), $zz->slice(":,0"));
@@ -280,7 +280,7 @@ sub plot3 () {
     plpsty (2);
     plline3 ($xx->slice(":,1"), $yy->slice(":,1"), $zz->slice(":,1"));
     plfill3 (4, $xx->slice("0:4,1"), $yy->slice("0:4,1"), $zz->slice("0:4,1"));
-    
+
 }
 
 # f2mnmx

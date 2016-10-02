@@ -1,11 +1,11 @@
 ## Copyright (C) 1998-2003  Joao Cardoso.
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -20,7 +20,7 @@ function __pl_contour(x, y, z, n)
   strm = plgstrm+1;
 
   unwind_protect
-    
+
   old_empty_list_elements_ok = warning("query","Octave:empty-list-elements");
   warning("off","Octave:empty-list-elements");
 
@@ -55,7 +55,7 @@ function __pl_contour(x, y, z, n)
       __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
       __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
     endif
-    
+
     __pl.type(strm) = 0; ## was -3 ??
     __pl.plcol(strm) = 1;
     __pl.pllsty(strm) = 1;	
@@ -110,10 +110,10 @@ function __pl_contour(x, y, z, n)
 
   __pl.items(strm) = 1; # for now!
 
-  unwind_protect_cleanup  
-  
+  unwind_protect_cleanup
+
   warning(old_empty_list_elements_ok.state,"Octave:empty-list-elements");
 
-  end_unwind_protect  
+  end_unwind_protect
 
 endfunction

@@ -1,21 +1,21 @@
 You must add the plplot_octave script installation directory to Octave
-path *before* the standard Octave path if you want to use plplot 
-graphics by default. The best way to do this is to create a .octaverc 
-file in your home directory. 
+path *before* the standard Octave path if you want to use plplot
+graphics by default. The best way to do this is to create a .octaverc
+file in your home directory.
 
 With octave 2.1 or earlier you can use LOADPATH, e.g.
 
 LOADPATH = [ ":<install-directory>/share/plplot_octave//", LOADPATH ]
 
 With octave 2.9 and later, LOADPATH has been deprecated and you need to
-use addpath instead. You also need to explicitly add in any 
+use addpath instead. You also need to explicitly add in any
 subdirectories you wish to search, e.g.
 
 addpath("<install-directory>/share/plplot_octave", ...
         "<install-directory>/share/plplot_octave/support")
 
 If you also want to use Octave's standard plotting package, gnuplot, you
-can use the command "toggle_plplot_use" to switch between the two plot 
+can use the command "toggle_plplot_use" to switch between the two plot
 packages. Read the INSTALL file for more details.
 
 Then, invoke Octave and create a vector, say
@@ -67,7 +67,7 @@ read the online help
 	help __pl_opt
 
 and try it! Bellow is a short description of the available commands.
-You also have access to the PLplot API, 
+You also have access to the PLplot API,
 
 	help plfill
 
@@ -78,8 +78,8 @@ You also have access to the PLplot API,
 		   plfill(n, x, y) ...
 
 NOTES: - You don't need to specify vector or matrix dimensions.
-       - When setting the plplot variable "pl_automatic_replot = 1", 
-         changes take effect immediately, otherwise they only take 
+       - When setting the plplot variable "pl_automatic_replot = 1",
+         changes take effect immediately, otherwise they only take
          effect at the next plot.
 
 --- Plot window control
@@ -120,7 +120,7 @@ shading		-- Specifies how the surface in the surf plots is done.
 --- Plot control and decorations
 top_title,
 bottom_title	-- don't work in PLplot!
-title		-- Defines a title for the next plot. 
+title		-- Defines a title for the next plot.
 
 ylabel,
 xlabel,
@@ -132,7 +132,7 @@ yticks		-- set the x/yticks interval.
 plot_border	-- Don't work in PLplot.
 plot_margin	-- Set/return the status of the plot margin around the plot.
 
-autostyle	-- If set increases line style after each plot. 
+autostyle	-- If set increases line style after each plot.
 legend		-- Sets the legend position and mode.
 grid		-- Turn on/off grid lines at major/minor ticks.
 
@@ -142,7 +142,7 @@ axis_set	-- Return current axis status.
 plclg,
 plclearplot	-- Clear the plot window.
 fig_state	-- save/restore current figure axis and hold state.
-shg		-- Show the graph window. 
+shg		-- Show the graph window.
 stopdraw	-- Stop drawing plots, but still store them.
 drawnow		-- Plot all stored plots.
 
@@ -150,13 +150,13 @@ drawnow		-- Plot all stored plots.
 stripc,
 stripc_add,
 stripc_del,	-- creates/plot/delete a four pen stripchart.
-comet		-- Displays an animated comet plot of one the vector. 
-plrb		-- Iteractively selects a rectangular region of the plot. 
+comet		-- Displays an animated comet plot of one the vector.
+plrb		-- Iteractively selects a rectangular region of the plot.
 
 --- Interative utilities
 text		-- Place text on a 2-D graph at x y positions.
 set_view 	-- Set up the altitude and azimute in degrees for posterior 3d plots.
-arrow		-- Plot one arrow. 
+arrow		-- Plot one arrow.
 zoom		-- Select left botton and right top area for setting axis.
 
 --- Multiple plots
@@ -173,8 +173,8 @@ pink, prism,
 red, hsv, bgr	-- Several colormaps.
 
 colormap	-- Set colormap1.
-hls2rgb		-- Hue-lightness-saturation to red-green-blue conversion. 
-rgb2hls		-- red-green-blue to hue-lightness-saturation conversion. 
+hls2rgb		-- Hue-lightness-saturation to red-green-blue conversion.
+rgb2hls		-- red-green-blue to hue-lightness-saturation conversion.
 rgbplot		-- Plot color map.
 
 --- Interative mouse usage

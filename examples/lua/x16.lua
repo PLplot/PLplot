@@ -23,19 +23,19 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
--- Fundamental settings.  See notes[] for more info. 
-ns = 20		-- Default number of shade levels 
-nx = 35		-- Default number of data points in x 
-ny = 46		-- Default number of data points in y 
+-- Fundamental settings.  See notes[] for more info.
+ns = 20		-- Default number of shade levels
+nx = 35		-- Default number of data points in x
+ny = 46		-- Default number of data points in y
 exclude = 0   -- By default do not plot a page illustrating
               -- exclusion.  API is probably going to change
               -- anyway, and cannot be reproduced by any
-				      -- front end other than the C one. 
+				      -- front end other than the C one.
 
--- polar plot data 
+-- polar plot data
 PERIMETERPTS = 100
 
--- Transformation function 
+-- Transformation function
 tr = {}
 
 function mypltr(x, y)
@@ -51,7 +51,7 @@ end
 -- Returns min & max of input 2d array.
 ----------------------------------------------------------------------------
 function f2mnmx(f, nx, ny)
-  fmax = f[1][1] 
+  fmax = f[1][1]
   fmin = fmax
 
   for i = 1, nx do
@@ -60,7 +60,7 @@ function f2mnmx(f, nx, ny)
       fmin = math.min(fmin, f[i][j])
     end
   end
-  
+
   return fmin, fmax
 end
 
@@ -105,29 +105,29 @@ axis_subticks = { 0 }
 label_opts = { pl.PL_COLORBAR_LABEL_BOTTOM }
 labels = { "Magnitude" }
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
 pl.spal1("cmap1_gray.pal",1);
 
--- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display 
+-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 pl.scmap0n(3)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
--- Set up transformation function 
+-- Set up transformation function
 tr = { 2/(nx-1), 0, -1, 0, 2/(ny-1), -1 }
 
--- Allocate data structures 
+-- Allocate data structures
 clevel = {}
 shedge = {}
 z = {}
 w = {}
 
--- Set up data array 
+-- Set up data array
 for i = 1, nx do
 	x = (i-1 - math.floor(nx/2))/math.floor(nx/2)
   z[i] = {}
@@ -148,7 +148,7 @@ for i = 1, ns+1 do
 	shedge[i] = zmin + (zmax-zmin)*(i-1)/ns
 end
 
--- Set up coordinate grids 
+-- Set up coordinate grids
 cgrid1 = {}
 cgrid1["xg"] = {}
 cgrid1["yg"] = {}
@@ -179,7 +179,7 @@ for i = 1, nx do
   end
 end
 
--- Plot using identity transform 
+-- Plot using identity transform
 pl.adv(0)
 pl.vpor(0.1, 0.9, 0.1, 0.9)
 pl.wind(-1, 1, -1, 1)
@@ -210,7 +210,7 @@ pl.col0(2)
 --pl.cont(w, 1, nx, 1, ny, clevel, mypltr, {})
 pl.lab("distance", "altitude", "Bogon density")
 
--- Plot using 1d coordinate transform 
+-- Plot using 1d coordinate transform
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
@@ -248,7 +248,7 @@ pl.box("bcnst", 0, 0, "bcnstv", 0, 0)
 pl.col0(2)
 pl.lab("distance", "altitude", "Bogon density")
 
--- Plot using 2d coordinate transform 
+-- Plot using 2d coordinate transform
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
@@ -287,7 +287,7 @@ pl.cont(w, 1, nx, 1, ny, clevel, "pltr2", cgrid2)
 
 pl.lab("distance", "altitude", "Bogon density, with streamlines")
 
--- Plot using 2d coordinate transform 
+-- Plot using 2d coordinate transform
 
 -- Load colour palettes
 pl.spal0("");
@@ -325,7 +325,7 @@ pl.col0(2)
 
 pl.lab("distance", "altitude", "Bogon density")
 
--- Note this exclusion API will probably change. 
+-- Note this exclusion API will probably change.
 
 -- Plot using 2d coordinate transform and exclusion
 if exclude~=0 then
@@ -333,7 +333,7 @@ if exclude~=0 then
 	-- Load colour palettes
   pl.spal0("cmap0_black_on_white.pal");
   pl.spal1("cmap1_gray.pal",1);
-    
+
 	-- Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
   pl.scmap0n(3);
 
@@ -352,7 +352,7 @@ if exclude~=0 then
   pl.lab("distance", "altitude", "Bogon density with exclusion")
 end
 
--- Example with polar coordinates. 
+-- Example with polar coordinates.
 
 -- Load colour palettes
 pl.spal0("cmap0_black_on_white.pal");
@@ -367,7 +367,7 @@ pl.wind(-1, 1, -1, 1)
 
 pl.psty(0)
 
--- Build new coordinate matrices. 
+-- Build new coordinate matrices.
 for i = 1, nx do
   r = (i-1)/(nx-1)
 	for j = 1, ny do
@@ -378,14 +378,14 @@ for i = 1, nx do
 	end
 end
 
--- Need a new shedge to go along with the new data set. 
+-- Need a new shedge to go along with the new data set.
 zmin, zmax = f2mnmx(z, nx, ny)
 
 for i = 1, ns+1 do
 	shedge[i] = zmin + (zmax-zmin)*(i-1)/ns
 end
 
---  Now we can shade the interior region. 
+--  Now we can shade the interior region.
 pl.shades(z, -1, 1, -1, 1, shedge, fill_width, cont_color, cont_width, 0, "pltr2", cgrid2)
 
 -- Smaller text
@@ -403,7 +403,7 @@ pl.schr( 0.0, 1.0 )
 pl.smaj( 0.0, 1.0 )
 pl.smin( 0.0, 1.0 )
 
--- Now we can draw the perimeter.  (If do before, shade stuff may overlap.) 
+-- Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
 for i = 1, PERIMETERPTS do
    t = 2*math.pi/(PERIMETERPTS-1)*(i-1)
    px[i] = math.cos(t)
@@ -411,7 +411,7 @@ for i = 1, PERIMETERPTS do
 end
 pl.col0(1)
 pl.line(px, py)
-            
+
 -- And label the plot.
 pl.col0(2)
 pl.lab( "", "",  "Tokamak Bogon Instability" )

@@ -35,7 +35,7 @@ follow:
 ---------------------------------------------------------
 
 From: FAQ General information
-Subject: -II- What is Tcl?  Tk?  Extended Tcl? 
+Subject: -II- What is Tcl?  Tk?  Extended Tcl?
 
     Tcl (Version 6.7) stands for ``tool command language'' and is
 pronounced ``tickle.'' It is actually two things: a language and a
@@ -96,7 +96,7 @@ connections, send mail to "root@sprite.berkeley.edu", wait a few
 hours, and try again.
 
 Tcl and Extended Tcl were posted to comp.sources.misc, appearing
-In volume 25 and then Tcl appeared again in volume 26 and can be found at 
+In volume 25 and then Tcl appeared again in volume 26 and can be found at
 most comp.sources.misc archive sites in the tcl and tclx directories.
 These are quite old versions actually, but are still usable.
 
@@ -123,7 +123,7 @@ coma.cs.tu-berlin.ed:/pub/tcl
 nic.funet.fi:/pub/languages/tcl
 oskgate0.mei.co.jp:/free/X/toolkits/tcl <- sprite only
 
-sunsite.unc.edu:/pub/Linux	<- contains port of extended Tcl and 
+sunsite.unc.edu:/pub/Linux	<- contains port of extended Tcl and
 					extended Tk to this OS.
 
 --------------------------------------
@@ -171,7 +171,7 @@ tclX6.5c.tar.Z -		Extended Tcl (or NeoSoft Tcl), created by Mark
 			Tcl 6.5 and also works with Tcl 6.6, 6.7 and Tk 3.1,
 			Tk 3.2
 
-			Note that tclX6.5c-6.7c.update.shar.Z exists on 
+			Note that tclX6.5c-6.7c.update.shar.Z exists on
 			the purdue archive site.
 
 book.p1.ps.Z		Compressed Postscript for a draft of the first part

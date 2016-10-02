@@ -93,13 +93,13 @@ def read_img(fname):
     for i in range(w):
         for j in range(h):
             img[i*h+j] = ord(tmp[(h-1-j)*w+i])
-        
+
     img = reshape(img,[w,h])
-    
+
 
     fp.close()
     return [0,img,w,h,nc]
-    
+
 
 def get_clip(xi, xe, yi, ye):
 
@@ -124,7 +124,7 @@ def get_clip(xi, xe, yi, ye):
                 yi = gin.wY
                 if (start):
                     plline(sx,sy)  # Clear previous rectangle
-                    
+
                 start = 0
                 sx[0] = xi
                 sy[0] = yi
@@ -152,9 +152,9 @@ def get_clip(xi, xe, yi, ye):
                 if (start):
                     plline(sx,sy) # Clear previous rectangle
                 break
-            
+
         st = plxormod(0)  # Leave xor mode
-                
+
         if (xe < xi):
             t = xi
             xi = xe
@@ -166,7 +166,7 @@ def get_clip(xi, xe, yi, ye):
             ye = t
 
         return [gin.keysym == 'Q', xi, xe, yi, ye]
-        
+
     else:  # Driver has no xormod capability, just do nothing
         return [0, xi, xe, yi, ye]
 
@@ -177,8 +177,8 @@ def mypltr(x, y, stretch):
     result0 = x0 + multiply.outer((x0-x),(1.0 - stretch[4]*cos((y-y0)/dy*pi*0.5)))
     result1 = multiply.outer(ones(len(x)),y)
     return array((result0, result1))
-    
-    
+
+
 # main
 #
 #
@@ -207,7 +207,7 @@ def main():
         plcol0(2)  # Draw a yellow box, useful for diagnostics!
         plenv(0.0, 2.0*pi, 0, 3.0*pi, 1, -1)
 
-        
+
         x = arange(XDIM)*2.0*pi/(XDIM-1)
         y = arange(YDIM)*3.0*pi/(YDIM-1)
 
@@ -247,7 +247,7 @@ def main():
     plimage(img, 1., width, 1., height, 0., 0., 1., width, 1., height)
 
     # selection/expansion demo
-    if (not nointeractive): 
+    if (not nointeractive):
         xi = 25.
         xe = 130.
         yi = 235.
@@ -257,7 +257,7 @@ def main():
         if (err):
             plend()
             sys.exit(0)
-            
+
         plspause(0)
         pladv(0)
 
@@ -293,9 +293,9 @@ def main():
 
     xg = mypltr(arange(width+1),arange(height+1),stretch)[0]
     yg = mypltr(arange(width+1),arange(height+1),stretch)[1]
-    
+
     plimagefr(img, 0., width, 0., height, 0., 0., img_min, img_max, \
               pltr2, xg, yg)
 
-    
+
 main()

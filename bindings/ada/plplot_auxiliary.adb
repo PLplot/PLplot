@@ -1,4 +1,4 @@
--- Auxiliary types and subprograms to be with-ed by all the Ada 
+-- Auxiliary types and subprograms to be with-ed by all the Ada
 -- bindings to PLplot
 
 -- Copyright (C) 2008-2010 Jerry Bauck
@@ -27,8 +27,8 @@ package body PLplot_Auxiliary is
 
     -- Mimic C conversion of float to integer; something similar works in e.g.
     -- plplot_thin.adb.
-    -- C truncates towards 0. Ada rounds to nearest integer; midway rounded 
-    -- away from zero, e.g. Inteter(±3.5) is ±4. But any completely reliable 
+    -- C truncates towards 0. Ada rounds to nearest integer; midway rounded
+    -- away from zero, e.g. Inteter(±3.5) is ±4. But any completely reliable
     -- conversion is probalby not possible; indeed, this one exactly emulates C
     -- when tested for values around ±2 to ±3. Both convert ±2.9999999999999997
     -- to ±2 and ±2.9999999999999998 to ±3 which is of course wrong. But that's C.
@@ -52,7 +52,7 @@ package body PLplot_Auxiliary is
         end loop;
         return Result;
     end Vector_Min;
-    
+
 
     -- Find minimum and its location in a 1D array.
     procedure Vector_Min(x               : Real_Vector;
@@ -80,7 +80,7 @@ package body PLplot_Auxiliary is
         end loop;
         return Result;
     end Vector_Max;
-    
+
 
     -- Find maximum and its location in a 1D array.
     procedure Vector_Max(x               : Real_Vector;
@@ -96,8 +96,8 @@ package body PLplot_Auxiliary is
             end if;
         end loop;
     end Vector_Max;
-    
-    
+
+
     -- Find minimum in a 2D array.
     function Matrix_Min(x : Real_Matrix) return Long_Float is
         Result : Long_Float := Long_Float'large;
@@ -108,9 +108,9 @@ package body PLplot_Auxiliary is
             end loop;
         end loop;
         return Result;
-    end Matrix_Min;    
-    
-    
+    end Matrix_Min;
+
+
     -- Find maximum in a 2D array.
     function Matrix_Max(x : Real_Matrix) return Long_Float is
         Result : Long_Float := Long_Float'small;

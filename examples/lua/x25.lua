@@ -34,10 +34,10 @@ yextreme ={}
 x0 = {}
 y0 = {}
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.ssub(3, 3)
 pl.init()
 
@@ -45,27 +45,27 @@ xextreme = { { -120, 120 }, { -120, 120 }, { -120, 120 }, { -80,  80 }, { -220, 
              {  -20,  20 }, {  -20,  20 }, {  -80,  80 }, {  20, 120 } }
 
 yextreme = { { -120, 120 }, {   20, 120 }, {  -20, 120 }, {  -20, 120 }, { -120, 120 },
-             { -120, 120 }, {  -20,  20 }, {  -80,  80 }, { -120, 120 } }             
-             
+             { -120, 120 }, {  -20,  20 }, {  -80,  80 }, { -120, 120 } }
+
 for k = 1, 2 do
 for j = 1, 4 do
   if j==1 then
-    -- Polygon 1: a diamond 
+    -- Polygon 1: a diamond
     x0 = { 0, -100, 0, 100 }
     y0 = { -100, 0, 100, 0}
   end
   if j==2 then
-    -- Polygon 1: a diamond - reverse direction 
+    -- Polygon 1: a diamond - reverse direction
     x0 = { 100, 0, -100, 0 }
     y0 = { 0, 100, 0, -100}
   end
   if j==3 then
-    -- Polygon 2: a square with punctures 
+    -- Polygon 2: a square with punctures
     x0 = { -100, -100, 80, -100, -100, -80, 0, 80, 100, 100 }
     y0 = { -100, -80, 0, 80, 100, 100, 80, 100, 100, -100}
   end
   if j==4 then
-    -- Polygon 2: a square with punctures - reversed direction 
+    -- Polygon 2: a square with punctures - reversed direction
     x0 = { 100, 100, 80, 0, -80, -100, -100, 80, -100, -100 }
     y0 = { -100, 100, 100, 80, 100, 100, 80, 0, -80, -100}
   end
@@ -75,21 +75,21 @@ for j = 1, 4 do
     pl.vsta()
     pl.wind(xextreme[i][1], xextreme[i][2], yextreme[i][1], yextreme[i][2])
 
-    pl.col0(2) 
+    pl.col0(2)
     pl.box("bc", 1, 0, "bcnv", 10, 0)
-    pl.col0(1) 
-    pl.psty(0) 
+    pl.col0(1)
+    pl.psty(0)
     if k==1 then
       pl.fill(x0, y0)
     else
-      pl.gradient(x0, y0, 45.) 
+      pl.gradient(x0, y0, 45.)
     end
-    pl.col0(2) 
-    pl.lsty(1) 
-    pl.line(x0, y0) 
+    pl.col0(2)
+    pl.lsty(1)
+    pl.line(x0, y0)
   end
 end
 end
 
--- Don't forget to call plend() to finish off! 
+-- Don't forget to call plend() to finish off!
 pl.plend()

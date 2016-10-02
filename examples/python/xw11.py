@@ -35,7 +35,7 @@ title = ["#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
 # Routine for restoring colour map1 to default.
 # See static void plcmap1_def(void) in plctrl.c for reference.
 def restore_cmap1():
-    # For center control points, pick black or white, whichever is closer to bg 
+    # For center control points, pick black or white, whichever is closer to bg
     # Be careful to pick just short of top or bottom else hue info is lost
     vertex = sum(array(plgcolbg()))/(3.*255.)
     if vertex < 0.5:
@@ -94,7 +94,7 @@ def main():
     z = 3. * (1.-x)*(1.-x) * exp(-(x*x) - (y+1.)*(y+1.)) - \
         10. * (x/5. - pow(x,3.) - pow(y,5.)) * exp(-x*x-y*y) - \
         1./3. * exp(-(x+1)*(x+1) - (y*y))
-#    if 0: #Jungfraujoch/Interlaken 
+#    if 0: #Jungfraujoch/Interlaken
     # Not sure this is correct coding for truncating at -1, but
     # not activated anyway so ignore this question for now.
 #	z = max(z,-1)

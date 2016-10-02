@@ -47,7 +47,7 @@ procedure xstandard20a is
     x : Real_Vector(0 .. XDIM - 1);
     y : Real_Vector(0 .. YDIM - 1);
     z, r : Real_Matrix(0 .. XDIM - 1, 0 .. YDIM - 1);
-    xi, yi, xe, ye : Long_Float; 
+    xi, yi, xe, ye : Long_Float;
     width, height, num_col : Integer;
     img_f : Real_Matrix(0 .. 310, 0 .. 239); -- Chloe is width 311, height 240.
     img_min, img_max : Long_Float;
@@ -66,7 +66,7 @@ procedure xstandard20a is
     -- Read image from file in binary ppm format.
     procedure read_img
        (fname : String; img_f : out Real_Matrix;
-        width, height, num_col : out Integer) 
+        width, height, num_col : out Integer)
     is
         type Byte is mod 2 ** 8;
         A_Byte : Byte;
@@ -78,15 +78,15 @@ procedure xstandard20a is
         -- Mine is naiver than yours.
         -- Chloe.pgm has 15 bytes of header followed by 311 * 240 bytes of 8-bit pixels.
         Chloe_IO.Open(Input_File, In_File, fname);
-        
+
         for i in 1 .. 15 loop
             Chloe_IO.Read(Input_File, A_Byte);
         end loop;
-        
+
         width  := 311; -- columns
         height := 240; -- rows
         num_col := 255; -- number of colors
-        
+
         for j in img_f'range(2) loop
             for i in img_f'range(1) loop
                 Chloe_IO.Read(Input_File, A_Byte);
@@ -98,7 +98,7 @@ procedure xstandard20a is
 
     -- Save plot.
     procedure save_plot(fname : String) is
-        cur_strm, new_strm : Integer; 
+        cur_strm, new_strm : Integer;
     begin
         Get_Stream_Number(cur_strm); -- Get current stream.
         Make_Stream(new_strm); -- Create a new one.
@@ -114,7 +114,7 @@ procedure xstandard20a is
     -- Get selection square interactively.
     procedure get_clip(xi, xe, yi, ye : in out Long_Float; Return_This : out Integer) is
         gin : Graphics_Input_Record_Type;
-        xxi : Long_Float := xi; 
+        xxi : Long_Float := xi;
         yyi : Long_Float := yi;
         xxe : Long_Float := xe;
         yye : Long_Float := ye;
@@ -140,7 +140,7 @@ procedure xstandard20a is
                         Draw_Curve(sx, sy); -- Clear previous rectangle.
                         pragma Warnings(On);
                     end if;
-        
+
                     start := 0;
 
                     sx(0) := xxi;
@@ -152,13 +152,13 @@ procedure xstandard20a is
                 if (gin.state and Unsigned(16#100#)) /= 0 then
                     xxe := gin.wX;
                     yye := gin.wY;
-                    
+
                     if start /= 0 then
                         Draw_Curve(sx, sy); -- Clear previous rectangle.
                     end if;
-        
+
                     start := 1;
-            
+
                     sx(2) := xxe;
                     sy(2) := yye;
                     sx(1) := xxe;
@@ -168,7 +168,7 @@ procedure xstandard20a is
                     Draw_Curve(sx, sy); -- Draw new rectangle.
                 end if;
 
-                if gin.button = 3 or gin.keysym = PLK_Return or 
+                if gin.button = 3 or gin.keysym = PLK_Return or
                     gin.keysym = unsigned(Character'pos('Q')) then
                     if start /= 0 then
                         Draw_Curve(sx, sy); -- Clear previous rectangle.
@@ -176,7 +176,7 @@ procedure xstandard20a is
                     exit;
                 end if;
             end loop;
-        
+
             Set_XOR_Mode(False, st); -- Leave xor mod.
 
             if xxe < xxi then
@@ -184,18 +184,18 @@ procedure xstandard20a is
                 xxi := xxe;
                 xxe := t;
             end if;
-        
+
             if yyi < yye then
                 t   :=yyi;
                 yyi := yye;
                 yye := t;
             end if;
-        
+
             xe := xxe;
             xi := xxi;
             ye := yye;
             yi := yyi;
-            
+
             if gin.keysym = unsigned(Character'pos('Q')) then
                 Return_This := 1;
             else
@@ -228,8 +228,8 @@ procedure xstandard20a is
 
 
     procedure mypltr
-       (x, y   : Long_Float; 
-        tx, ty : out Long_Float; 
+       (x, y   : Long_Float;
+        tx, ty : out Long_Float;
         s      : stretch_data)
     is
         x0, y0, dy : Long_Float;
@@ -285,7 +285,7 @@ begin
         for i in x'range loop
             x(i) := Long_Float(i) * 2.0 * pi / Long_Float(XDIM - 1);
         end loop;
-        
+
         for i in y'range loop
             y(i) := Long_Float(i) * 3.0 * pi / Long_Float(YDIM - 1);
         end loop;
@@ -300,7 +300,7 @@ begin
         Write_Labels("No, an amplitude clipped ""sombrero""", "", "Saturn?");
         Write_Text_World(2.0, 2.0, 3.0, 4.0, 0.0, "Transparent image");
         Draw_Image_Color_Map_1_Automatic(z, 0.0, 2.0 * pi, 0.0, 3.0 * pi, 0.05, 1.0,
-            0.0, 2.0 * pi, 0.0, 3.0 * pi); 
+            0.0, 2.0 * pi, 0.0, 3.0 * pi);
 
         -- Save the plot.
         if Save_Sombrero then
@@ -342,7 +342,7 @@ begin
         Write_Labels(""," ","Chloe...");
     end if;
 
-    Draw_Image_Color_Map_1_Automatic(img_f, 1.0, Long_Float(width), 1.0, Long_Float(height), 0.0, 0.0, 1.0, 
+    Draw_Image_Color_Map_1_Automatic(img_f, 1.0, Long_Float(width), 1.0, Long_Float(height), 0.0, 0.0, 1.0,
         Long_Float(width), 1.0, Long_Float(height));
 
     -- Selection/expansion demo
@@ -356,7 +356,7 @@ begin
         if Get_Clip_Return /= 0 then
             End_PLplot;
         end if;
-      
+
         -- I'm unable to continue, clearing the plot and advancing to the next
         -- one, without hiting the enter key, or pressing the button... help!
 
@@ -364,7 +364,7 @@ begin
         -- xhairs (in GetCursorCmd()) solves some problems, but I still have
         -- to press the enter key or press Button-2 to go to next plot, even
         -- if a Advance_To_Subpage() is not present!  Using Begin_New_Page() solves the problem, but
-        -- it shouldn't be needed! 
+        -- it shouldn't be needed!
 
         -- Begin_New_Page();
 
@@ -395,7 +395,7 @@ begin
     Set_Pen_Color(Yellow);
     Set_Environment(0.0, Long_Float(width), 0.0, Long_Float(height), Justified, Box);
     Write_Labels("", "", "Reduced dynamic range image example");
-    Draw_Image_Color_Map_1(img_f, 0.0, Long_Float(width), 0.0, Long_Float(height), 0.0, 0.0, 
+    Draw_Image_Color_Map_1(img_f, 0.0, Long_Float(width), 0.0, Long_Float(height), 0.0, 0.0,
         img_min + img_max * 0.25, img_max - img_max * 0.25, Null, System.Null_Address);
 
     -- Draw a distorted version of the original image, showing its full dynamic range.
@@ -426,8 +426,8 @@ begin
                 cgrid2.yg(i, j) := yy;
             end loop;
         end loop;
-          
-        Draw_Image_Color_Map_1(img_f, 0.0, Long_Float(width), 0.0, Long_Float(height), 0.0, 0.0, img_min, img_max, 
+
+        Draw_Image_Color_Map_1(img_f, 0.0, Long_Float(width), 0.0, Long_Float(height), 0.0, 0.0, img_min, img_max,
             Plot_Transformation_2'access, cgrid2'Address);
     end;
     End_PLplot;

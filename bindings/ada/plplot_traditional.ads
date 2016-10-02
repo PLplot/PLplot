@@ -39,8 +39,8 @@ package PLplot_Traditional is
     subtype Boolean_Array_1D is PLplot_Thin.Boolean_Array_1D;
     subtype Integer_Array_1D is PLplot_Thin.Integer_Array_1D;
 
-    -- "Rename" some types mainly used for contour plots and the like so that 
-    -- user programs can see them without with-ing PLplot_thin. It might be 
+    -- "Rename" some types mainly used for contour plots and the like so that
+    -- user programs can see them without with-ing PLplot_thin. It might be
     -- good to remove "use PLplot_Thin" for clarity since it is used in only
     -- a few places.
     subtype PL_Pointer                 is Plplot_Thin.PL_Pointer;
@@ -52,19 +52,19 @@ package PLplot_Traditional is
     subtype Transformation_Data_Type_2 is Plplot_Thin.Transformation_Data_Type_2;
     subtype Graphics_Input_Record_Type is Plplot_Thin.PLGraphicsIn;
     -- subtype Data_Ops_2D_Type           is Plplot_Thin.PLf2ops_t; -- Manipulate 2D data
-    
-    -- "Rename" the unicode type for characters. 
+
+    -- "Rename" the unicode type for characters.
     subtype Unicode is PLplot_Thin.PLUNICODE;
-    
-    -- Rename Plplot_Thin.plfill so that a pointer to it can be passed to 
-    -- procedures such as plshade, plshade1, and plshades and called with C 
-    -- conventions. Note that Plplot_Thin.plfill is already in C so that it does 
-    -- not have to be re-written like e.g. pltr1 was for plcont. The Ada 
-    -- procedure plfill in this package can't be used because it does not carry 
-    -- the array dimensions which will be needed by the time it is finally 
-    -- called deep within the plplot calling chain; this is why the version 
+
+    -- Rename Plplot_Thin.plfill so that a pointer to it can be passed to
+    -- procedures such as plshade, plshade1, and plshades and called with C
+    -- conventions. Note that Plplot_Thin.plfill is already in C so that it does
+    -- not have to be re-written like e.g. pltr1 was for plcont. The Ada
+    -- procedure plfill in this package can't be used because it does not carry
+    -- the array dimensions which will be needed by the time it is finally
+    -- called deep within the plplot calling chain; this is why the version
     -- from this package (PLplot_Traditional) can't be used. Thus, this also
-    -- overloads the name plfill. It might never occur to the Ada programmer 
+    -- overloads the name plfill. It might never occur to the Ada programmer
     -- that this is happening, which is good.
     -- Suppress these warnings compatibly with pre-4.3 GNAT:
     --    "foreign caller must pass bounds explicitly"
@@ -73,18 +73,18 @@ package PLplot_Traditional is
     pragma Warnings(Off);
     procedure plfill(length : Integer; x, y : Real_Vector) renames PLplot_Thin.plfill;
     pragma Warnings(On);
-    
-    -- Make Mask_Function_Pointer_Type available to the user so that s/he doesn't 
+
+    -- Make Mask_Function_Pointer_Type available to the user so that s/he doesn't
     -- have to "with" PLplot_Thin. Note that it is also used herein.
     subtype Mask_Function_Pointer_Type is PLplot_Thin.Mask_Function_Pointer_Type;
-    
+
     -- "Rename" callback for map functions plmap and plmeridians.
     subtype Map_Form_Function_Pointer_Type is Plplot_Thin.Map_Form_Function_Pointer_Type;
-    
+
     -- "Rename" the necessarily constrained array for mapping longitudes and latitudes.
     subtype Map_Form_Constrained_Array is PLplot_Thin.Map_Form_Constrained_Array;
 
-    -- This is a fixed-length string for use with custom label procedures 
+    -- This is a fixed-length string for use with custom label procedures
     -- in Custom_Label_Procedure_Pointer_Type, and plslabelfunc (Set_Custom_Label).
     -- This length, 0 .. 40, is hardwired in the PLplot C code; this type will
     -- fail if that length is ever changed.
@@ -92,9 +92,9 @@ package PLplot_Traditional is
     subtype Label_String_Type is PLplot_Thin.Label_String_Type;
 
     -- "Rename" callback for custom label functions.
-    subtype Custom_Label_Procedure_Pointer_Type is 
+    subtype Custom_Label_Procedure_Pointer_Type is
         PLplot_Thin.Custom_Label_Procedure_Pointer_Type;
-        
+
     -- "Rename" callback for custom coordinate transform procedure.
     subtype Coordinate_Transform_Procedure_Pointer_Type is
         PLplot_Thin.Coordinate_Transform_Procedure_Pointer_Type;
@@ -106,11 +106,11 @@ package PLplot_Traditional is
     -- Default dummy arrays for various plotters which take multiple inputs.
     subtype Length_One_Real_Vector is Real_Vector(1..1);
     Dont_Plot_This : Length_One_Real_Vector := (1..1 => Long_Float'small);
-    
+
     -- Default colors for Color Map 0.
-    -- These are hard-wired to the current colors of color map 0; if that 
-    -- colors map has been changed, then these colors will return surprising 
-    -- results. Color map 0 can always be restored to its default state using 
+    -- These are hard-wired to the current colors of color map 0; if that
+    -- colors map has been changed, then these colors will return surprising
+    -- results. Color map 0 can always be restored to its default state using
     -- Restore_Default_Snapshot_Of_Color_Map_0.
     subtype Plot_Color_Type is Natural; -- Remember that user can expand color map 0.
     Black      : constant Plot_Color_Type := 0;
@@ -131,7 +131,7 @@ package PLplot_Traditional is
     White      : constant Plot_Color_Type := 15;
 
     Max_Lines_For_Multiplot : constant := 5;
-    
+
     -- Pre-defined line styles, e.g., continuous, dashed, etc.
     subtype Line_Style_Type is Integer range 1..8;
 
@@ -144,22 +144,22 @@ package PLplot_Traditional is
 
     type Line_Style_Array_Type is array (1..Max_Lines_For_Multiplot) of Line_Style_Type;
     Default_Line_Style_Array : Line_Style_Array_Type := (1, 1, 1, 1, 1);
-    
+
     -- Things for label strings
     Default_Label_String : constant Unbounded_String := To_Unbounded_String("");
     type Label_String_Array_Type is array (1..Max_Lines_For_Multiplot) of Unbounded_String;
     Default_Label_String_Array : Label_String_Array_Type := (others => Default_Label_String);
- 
+
     -- Things for stripcharts
     Maximum_Number_Of_Stripcharts : Integer := 4; -- Limited by PLplot designers.
     type Stripchart_Label_String_Array_Type is array (1 .. Maximum_Number_Of_Stripcharts) of Unbounded_String;
-    
+
     -- Things for legends
     -- The user program must declare one of these with definite bounds, one
     -- element for each legend label.
     type Legend_String_Array_Type is array (Integer range <>) of Unbounded_String;
 
-    --Flags used for position argument of both pllegend and plcolorbar 
+    --Flags used for position argument of both pllegend and plcolorbar
     -- (duplicated from plplot_thin.ads)
     PL_Position_Left     : constant Legend_Colorbar_Position_Type := 1;
     PL_Position_Right    : constant Legend_Colorbar_Position_Type := 2;
@@ -222,7 +222,7 @@ package PLplot_Traditional is
     -- Renamed flags for plcolorbar
     Colorbar_Label_Left    : constant Colorbar_Flag_Type := PL_Colorbar_Label_Left;
     Colorbar_Label_Right   : constant Colorbar_Flag_Type := PL_Colorbar_Label_Right;
-    Colorbar_Label_Top     : constant Colorbar_Flag_Type := PL_Colorbar_Label_Top; 
+    Colorbar_Label_Top     : constant Colorbar_Flag_Type := PL_Colorbar_Label_Top;
     Colorbar_Label_Bottom  : constant Colorbar_Flag_Type := PL_Colorbar_Label_Bottom;
     Colorbar_Image         : constant Colorbar_Flag_Type := PL_Colorbar_Image;
     Colorbar_Shade         : constant Colorbar_Flag_Type := PL_Colorbar_Shade;
@@ -260,12 +260,12 @@ package PLplot_Traditional is
     Log_X_Zero_Axes   : constant Axis_Style_Type := 11;
     Log_X_Major_Grid  : constant Axis_Style_Type := 12;
     Log_X_Minor_Grid  : constant Axis_Style_Type := 13;
-    
+
     Log_Y_Box_Plus    : constant Axis_Style_Type := 20;
     Log_Y_Zero_Axes   : constant Axis_Style_Type := 21;
     Log_Y_Major_Grid  : constant Axis_Style_Type := 22;
     Log_Y_Minor_Grid  : constant Axis_Style_Type := 23;
-    
+
     Log_XY_Box_Plus   : constant Axis_Style_Type := 30;
     Log_XY_Zero_Axes  : constant Axis_Style_Type := 31;
     Log_XY_Major_Grid : constant Axis_Style_Type := 32;
@@ -285,7 +285,7 @@ package PLplot_Traditional is
     Date_Time_XY_Linear_Zero_Axes  : constant Axis_Style_Type := 61;
     Date_Time_XY_Linear_Major_Grid : constant Axis_Style_Type := 62;
     Date_Time_XY_Linear_Minor_Grid : constant Axis_Style_Type := 63;
-    
+
     Custom_Labels_Linear_Box_Plus   : constant Axis_Style_Type := 70;
     Custom_Labels_Linear_Zero_Axes  : constant Axis_Style_Type := 71;
     Custom_Labels_Linear_Major_Grid : constant Axis_Style_Type := 72;
@@ -297,10 +297,10 @@ package PLplot_Traditional is
 
     -- Long_Float constrained to 0.0 .. 1.0.
     subtype Long_Float_0_1_Type is Long_Float range 0.0 .. 1.0;
-    
+
     -- Escape characters for text strings
     Escape_Character_Set : Ada.Strings.Maps.Character_Set;
-    
+
     -- Generic font styles
     subtype Font_Style_Type is Integer range 1..4;
     Normal_Font : constant Font_Style_Type := 1;
@@ -308,21 +308,21 @@ package PLplot_Traditional is
     Italic_Font : constant Font_Style_Type := 3;
     Script_Font : constant Font_Style_Type := 4;
     -- Bold_Font?
-    
+
     -- Character sets
     subtype Character_Set_Type is Integer range 0..1;
     Standard_Character_Set : constant Character_Set_Type := 0;
     Extended_Character_Set : constant Character_Set_Type := 1;
-    
+
     -- Plot orientation
     type Orientation_Type is (Landscape, Portrait);
-    
+
     -- Constant for several procedures which don't change a parameter if used
     Unchanged : constant Integer := 0;
-    
+
     -- Pre-defined fill patterns
     subtype Fill_Pattern_Type is Integer range 0..8; -- Guessing; not documented
-    
+
     -- Modes for parsing command line arguments.
     Parse_Partial    : constant Parse_Mode_Type := 0;   -- For backward compatibility
     Parse_Full       : constant Parse_Mode_Type := 1;   -- Process fully & exit if error
@@ -334,27 +334,27 @@ package PLplot_Traditional is
     Parse_No_Dash    : constant Parse_Mode_Type := 64;  -- Set if leading dash NOT required
     Parse_Skip       : constant Parse_Mode_Type := 128; -- Skip over unrecognized args
 
-    -- FCI (font characterization integer) related constants. 
+    -- FCI (font characterization integer) related constants.
     FCI_Mark                : constant Integer := 16#10000000#;
     FCI_Impossible          : constant Integer := 16#00000000#;
     FCI_Hexdigit_Mask       : constant Integer := 16#f#;
     FCI_Hexpower_Mask       : constant Integer := 16#7#;
     FCI_Hexpower_Impossible : constant Integer := 16#f#;
-    -- These define hexpower values corresponding to each font attribute. 
+    -- These define hexpower values corresponding to each font attribute.
     FCI_Family : constant Integer := 16#0#;
     FCI_Style  : constant Integer := 16#1#;
     FCI_Weight : constant Integer := 16#2#;
-    -- These are legal values for font family attribute 
+    -- These are legal values for font family attribute
     FCI_Sans   : constant Integer := 16#0#;
     FCI_Serif  : constant Integer := 16#1#;
     FCI_Mono   : constant Integer := 16#2#;
     FCI_Script : constant Integer := 16#3#;
     FCI_Symbol : constant Integer := 16#4#;
-    -- These are legal values for font style attribute 
+    -- These are legal values for font style attribute
     FCI_Upright : constant Integer := 16#0#;
     FCI_Italic  : constant Integer := 16#1#;
     FCI_Oblique : constant Integer := 16#2#;
-    -- These are legal values for font weight attribute 
+    -- These are legal values for font weight attribute
     FCI_Medium : constant Integer := 16#0#;
     FCI_Bold   : constant Integer := 16#1#;
 
@@ -409,27 +409,27 @@ package PLplot_Traditional is
     PL_PARSE_NODASH    : constant Parse_Mode_Type := 16#0040#; -- Set if leading dash NOT required
     PL_PARSE_SKIP      : constant Parse_Mode_Type := 16#0080#; -- Skip over unrecognized args
 
-    -- FCI (font characterization integer) related constants. 
+    -- FCI (font characterization integer) related constants.
     PL_FCI_MARK                : constant Integer := 16#10000000#;
     PL_FCI_IMPOSSIBLE          : constant Integer := 16#00000000#;
     PL_FCI_HEXDIGIT_MASK       : constant Integer := 16#f#;
     PL_FCI_HEXPOWER_MASK       : constant Integer := 16#7#;
     PL_FCI_HEXPOWER_IMPOSSIBLE : constant Integer := 16#f#;
-    -- These define hexpower values corresponding to each font attribute. 
+    -- These define hexpower values corresponding to each font attribute.
     PL_FCI_FAMILY : constant Integer := 16#0#;
     PL_FCI_STYLE  : constant Integer := 16#1#;
     PL_FCI_WEIGHT : constant Integer := 16#2#;
-    -- These are legal values for font family attribute 
+    -- These are legal values for font family attribute
     PL_FCI_SANS   : constant Integer := 16#0#;
     PL_FCI_SERIF  : constant Integer := 16#1#;
     PL_FCI_MONO   : constant Integer := 16#2#;
     PL_FCI_SCRIPT : constant Integer := 16#3#;
     PL_FCI_SYMBOL : constant Integer := 16#4#;
-    -- These are legal values for font style attribute 
+    -- These are legal values for font style attribute
     PL_FCI_UPRIGHT : constant Integer := 16#0#;
     PL_FCI_ITALIC  : constant Integer := 16#1#;
     PL_FCI_OBLIQUE : constant Integer := 16#2#;
-    -- These are legal values for font weight attribute 
+    -- These are legal values for font weight attribute
     PL_FCI_MEDIUM : constant Integer := 16#0#;
     PL_FCI_BOLD   : constant Integer := 16#1#;
 
@@ -498,16 +498,16 @@ package PLplot_Traditional is
     -- When asked to draw white lines on black background, do it.
     -- This is the default.
     procedure Draw_On_Black;
-    
-    
+
+
     -- When asked to draw black lines on white background, reverse black and white.
     -- This might look better on anti-aliased displays.
     procedure Draw_On_White;
 
 
-    -- Plotter for up to five x-y pairs and settable axis style, plot 
+    -- Plotter for up to five x-y pairs and settable axis style, plot
     -- line colors, widths, and styles, justification, zoom, and labels.
-    -- Can be used directly or as part of a "simple" plotter 
+    -- Can be used directly or as part of a "simple" plotter
     -- such as those that follow or are made by the user.
     procedure Multiplot_Pairs
        (x1            : Real_Vector     := Dont_Plot_This;
@@ -535,7 +535,7 @@ package PLplot_Traditional is
 
 
 --------- Simple plotters requiring minimal arguments -----
-    
+
 
     -- Quick plotter requires no x-axis as input; makes x up from indices of first of multiple y's.
     procedure Quick_Plot
@@ -551,7 +551,7 @@ package PLplot_Traditional is
 
     -- fix this Add x, y, title labels; make default " " or see predefined default.
     -- Simple plotter for single x array and multiple y arrays
-    procedure Simple_Plot 
+    procedure Simple_Plot
        (x  : Real_Vector;
         y1 : Real_Vector := Dont_Plot_This;
         y2 : Real_Vector := Dont_Plot_This;
@@ -561,8 +561,8 @@ package PLplot_Traditional is
         X_Label     : String := To_String(Default_Label_String);
         Y_Label     : String := To_String(Default_Label_String);
         Title_Label : String := To_String(Default_Label_String));
-    
-    
+
+
     -- Simple log x plotter for single x array and multiple y arrays
     procedure Simple_Plot_Log_X
        (x  : Real_Vector;
@@ -575,8 +575,8 @@ package PLplot_Traditional is
         Y_Label     : String := To_String(Default_Label_String);
         Title_Label : String := To_String(Default_Label_String);
         Log_Base : Long_Float := 10.0); -- Should this default to e?
-    
-    
+
+
     -- Simple log y plotter for multiple x arrays and single y array
     procedure Simple_Plot_Log_Y
        (x1 : Real_Vector := Dont_Plot_This;
@@ -589,8 +589,8 @@ package PLplot_Traditional is
         Y_Label     : String := To_String(Default_Label_String);
         Title_Label : String := To_String(Default_Label_String);
         Log_Base : Long_Float := 10.0); -- Should this default to e?
-    
-    
+
+
     -- Simple log x - log y plotter
     procedure Simple_Plot_Log_XY
        (x, y        : Real_Vector;
@@ -650,7 +650,7 @@ package PLplot_Traditional is
 --------- Simple 3D Mesh Plotter ------
 
     procedure Simple_Mesh_3D
-       (x, y     : Real_Vector; -- data definition points 
+       (x, y     : Real_Vector; -- data definition points
         z        : Real_Matrix; -- z(x, y) = z(x(i), y(j))
         x_Min    : Long_Float := 0.0;  -- user coordinate limits
         x_Max    : Long_Float := 0.0;  -- If x_Min = x_Max = 0.0 then plot
@@ -666,7 +666,7 @@ package PLplot_Traditional is
 --------- Simple 3D Surface Plotter ------
 
     procedure Simple_Surface_3D
-       (x, y     : Real_Vector; -- data definition points 
+       (x, y     : Real_Vector; -- data definition points
         z        : Real_Matrix; -- z(x, y) = z(x(i), y(j))
         x_Min    : Long_Float := 0.0;  -- user coordinate limits
         x_Max    : Long_Float := 0.0;  -- If x_Min = x_Max = 0.0 then plot
@@ -683,12 +683,12 @@ package PLplot_Traditional is
 
     -- Things for manipulating color map 0 --
 
-    -- Current default number of colors provided by PLplot. There is no way to 
-    -- get this number under program control. The actual number can be set by 
+    -- Current default number of colors provided by PLplot. There is no way to
+    -- get this number under program control. The actual number can be set by
     -- the user with Set_Number_Of_Colors_Map_0.
     Number_Of_Default_Colors : constant Integer := 16;
 
-    -- The default color map 0 is captured at initialization of PLplot.adb with 
+    -- The default color map 0 is captured at initialization of PLplot.adb with
     -- a call to Make_Snapshot_Of_Color_Map_0 stored here.
     Default_Red_Components   : Integer_Array_1D(0 .. Number_Of_Default_Colors - 1);
     Default_Green_Components : Integer_Array_1D(0 .. Number_Of_Default_Colors - 1);
@@ -698,10 +698,10 @@ package PLplot_Traditional is
     -- Make a snapshot of color map 0 for possible later full or partial restoration.
     -- This is automatically called at package initialization with results stored
     -- in Default_Red_Components, Default_Green_Components, Default_Blue_Components.
-    procedure Make_Snapshot_Of_Color_Map_0 
+    procedure Make_Snapshot_Of_Color_Map_0
        (Reds, Greens, Blues : out Integer_Array_1D);
 
- 
+
        -- Restore an arbitray snapshot of color map 0.
     procedure Restore_Snapshot_Of_Color_Map_0
        (Reds, Greens, Blues : Integer_Array_1D);
@@ -712,48 +712,48 @@ package PLplot_Traditional is
 
 
     -- Functions which correspond to the default colors of color map 0. Calling
-    -- one of these (1) resets the corresponding slot in color map 0 to its 
-    -- default value, and (2) returns the correct integer value for the default 
-    -- color specified. Thus, using plcol0(Reset_Red) instead of 
-    -- plcol0(Red) guarantees that the color will be set to Red even if 
+    -- one of these (1) resets the corresponding slot in color map 0 to its
+    -- default value, and (2) returns the correct integer value for the default
+    -- color specified. Thus, using plcol0(Reset_Red) instead of
+    -- plcol0(Red) guarantees that the color will be set to Red even if
     -- there have been prior manipulations of color 1.
-    
+
     function Reset_Black return Integer;
-    
+
     function Reset_Red return Integer;
-    
+
     function Reset_Yellow return Integer;
-    
+
     function Reset_Green return Integer;
-    
+
     function Reset_Aquamarine return Integer;
-    
+
     function Reset_Pink return Integer;
-    
+
     function Reset_Wheat return Integer;
-    
+
     function Reset_Grey return Integer;
-    
+
     function Reset_Brown return Integer;
-    
+
     function Reset_Blue return Integer;
-    
+
     function Reset_BlueViolet return Integer;
-    
+
     function Reset_Cyan return Integer;
-    
+
     function Reset_Turquoise return Integer;
-    
+
     function Reset_Magenta return Integer;
-    
+
     function Reset_Salmon return Integer;
-    
+
     function Reset_White return Integer;
 
 
     -- Things for manipulating color map 1 --
 
-    type Color_Themes_For_Map_1_Type is (Gray, Blue_Green_Red, Red_Green_Blue, 
+    type Color_Themes_For_Map_1_Type is (Gray, Blue_Green_Red, Red_Green_Blue,
         Red_Cyan_Blue, Blue_Black_Red, Red_Blue_Green, Red_Yellow);
     type Alt_Hue_Path_Type is (Alt_Hue_Path_None, Alt_Hue_Path_All);
 
@@ -767,8 +767,8 @@ package PLplot_Traditional is
 --------------------------------------------------------------------------------
 
     -- This is a mask function for Shade_Regions (aka plshades) et al that always
-    -- returns 1 so that all points are plotted. Can be used as a template 
-    -- for other user-written mask functions. This should be the same as 
+    -- returns 1 so that all points are plotted. Can be used as a template
+    -- for other user-written mask functions. This should be the same as
     -- passing null for the second argument in Shade_Regions.
     function Mask_Function_No_Mask(x, y : Long_Float) return Integer;
     pragma Convention(Convention => C, Entity => Mask_Function_No_Mask);
@@ -831,8 +831,8 @@ package PLplot_Traditional is
     procedure plsvect
        (X_Vertices, Y_Vertices : PL_Pointer;
         Fill_Arrow : Boolean);
-            
-            
+
+
     -- Simple method to set the default style for the arrow used by plvect to plot vectors.
     -- This is not part of the C API and is Ada-specific.
     procedure plsvect;
@@ -944,14 +944,14 @@ package PLplot_Traditional is
         Transformation_Data_Pointer      : PL_Pointer);
 
 
-    -- The procedure plfcont is not documented and is not part of the API. 
+    -- The procedure plfcont is not documented and is not part of the API.
     -- However, it is a very useful capability to have available.
     -- I have tried to implement it as I think was intended but this may be incorrect.
-    -- It appears as though the intent is to pass the arbitrarily organized 
-    -- data (pointed to by Irregular_Data_Pointer) as a (single) pointer to a 
-    -- 2D C-style array. Thus, for examaple, it is not possible to pass the data  
+    -- It appears as though the intent is to pass the arbitrarily organized
+    -- data (pointed to by Irregular_Data_Pointer) as a (single) pointer to a
+    -- 2D C-style array. Thus, for examaple, it is not possible to pass the data
     -- as triples.
-    
+
     -- Draws a contour plot using the function evaluator f2eval and data stored
     -- by way of the f2eval_data pointer. This allows arbitrary organizations
     -- of 2d array data to be used.
@@ -1013,7 +1013,7 @@ package PLplot_Traditional is
 
     -- End current page. Should only be used with plbop().
     procedure pleop;
-    
+
 
     -- Plot horizontal error bars (xmin(i),y(i)) to (xmax(i),y(i))
     procedure plerrx(x_Min, x_Max, y : Real_Vector);
@@ -1027,11 +1027,11 @@ package PLplot_Traditional is
     procedure plfamadv;
 
 
-    -- Other "fill" routines similar to plfill could be written in Ada if 
-    -- desired, but if they are intended to be used as callbacks in subprograms 
-    -- such as plshade, plshade1, and plshades, they should be called with C 
+    -- Other "fill" routines similar to plfill could be written in Ada if
+    -- desired, but if they are intended to be used as callbacks in subprograms
+    -- such as plshade, plshade1, and plshades, they should be called with C
     -- calling conventions.
-    
+
     -- Pattern fills the polygon bounded by the input points.
     procedure plfill(x, y : Real_Vector);
 
@@ -1116,8 +1116,8 @@ package PLplot_Traditional is
 
     -- Get FCI (font characterization integer)
     procedure plgfci(Font_Characterization_Integer : out Unicode);
-    
-    
+
+
     -- Get family, style and weight of the current font
     procedure plgfont(Family, Style, Weight : out Integer);
 
@@ -1199,7 +1199,7 @@ package PLplot_Traditional is
 
     -- Get y axis labeling parameters
     procedure plgyax(Max_Digits, Actual_Digits : out Integer);
-    
+
 
     -- Get z axis labeling parameters
     procedure plgzax(Max_Digits, Actual_Digits : out Integer);
@@ -1245,9 +1245,9 @@ package PLplot_Traditional is
     procedure pllab(X_Label, Y_Label, Title_Label : String := To_String(Default_Label_String));
 
 
-    -- Arrays that could have elements of Plot_Color_Type are merely arrays of 
-    -- integers; we have not defined special arrays (e.g., array(somerange) of 
-    -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors, 
+    -- Arrays that could have elements of Plot_Color_Type are merely arrays of
+    -- integers; we have not defined special arrays (e.g., array(somerange) of
+    -- Plot_Color_Type) for the arguments Text_Colors, Box_Colors, Line_Colors,
     -- or Symbol_Colors. Similarly for Entry_Options which could be an array
     -- of Legend_Flag_Type and some other arguments. fixme
     -- Routine for drawing discrete line, symbol, or cmap0 legends
@@ -1286,7 +1286,7 @@ package PLplot_Traditional is
         Low_Cap_Color, High_Cap_Color        : Long_Float;
         Contour_Color_For_Shade              : Plot_Color_Type;
         Contour_Width_For_Shade              : Long_Float;
-        Label_Options                        : Integer_Array_1D; 
+        Label_Options                        : Integer_Array_1D;
         Label_Text                           : Legend_String_Array_Type;
         Axis_Options                         : Legend_String_Array_Type;
         Tick_Spacing                         : Real_Vector;
@@ -1314,8 +1314,8 @@ package PLplot_Traditional is
     procedure pllsty(Line_Style : Line_Style_Type);
 
 
-    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to 
-    -- possibly eliminate the need to pass array size as the first argument in 
+    -- fix this See comment in Example 19, x19a.adb or xthick19a.adb for how to
+    -- possibly eliminate the need to pass array size as the first argument in
     -- the function pointed to by Map_Form_Function_Pointer. Ditto for plmeridians.
 
     -- plot continental outline in world coordinates
@@ -1374,7 +1374,7 @@ package PLplot_Traditional is
 
     -- Plot map points.
     procedure plmapstring
-       (Map_Form_Function_Pointer : Map_Form_Function_Pointer_Type; 
+       (Map_Form_Function_Pointer : Map_Form_Function_Pointer_Type;
         Shapefile_File_Name : String;
         Min_X, Max_X, Min_Y, Max_Y : Long_Float;
         Plot_Entries : Integer_Array_1D);
@@ -1472,7 +1472,7 @@ package PLplot_Traditional is
        --  valid options for plsurf3d():
        --
        --  MAG_COLOR, BASE_CONT, SURF_CONT, FACETED, DRAW_SIDES.
- 
+
 
     -- Set fill pattern directly.
     procedure plpat
@@ -1604,9 +1604,9 @@ package PLplot_Traditional is
         L_Or_G         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alt_Hue_Path   : Boolean_Array_1D);   -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
-    
-    
-    -- Overloaded version of plscmap1l which allows simplified (non-)reversal of 
+
+
+    -- Overloaded version of plscmap1l which allows simplified (non-)reversal of
     -- the traversed hue range. This is an Ada-like way of doing what is described
     -- in the PLplot documentation when a C user passes a null pointer as the
     -- final argument instead of an array of booleans to indicate hue reversal.
@@ -1631,9 +1631,9 @@ package PLplot_Traditional is
         S_Or_B         : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alpha          : Real_Vector; -- range 0.0 .. 1.0; not checked here
         Alt_Hue_Path    : Boolean_Array_1D);   -- True means use alternative hue interpolation path which always includes the point hue = 0.  False reverses.
-    
-    
-    -- Overloaded version of plscmap1la which allows simplified (non-)reversal of 
+
+
+    -- Overloaded version of plscmap1la which allows simplified (non-)reversal of
     -- the traversed hue range. This is an Ada-like way of doing what is described
     -- in the PLplot documentation when a C user passes a null pointer as the
     -- final argument instead of an array of booleans to indicate hue reversal.
@@ -1751,8 +1751,8 @@ package PLplot_Traditional is
 
     -- Set FCI (font characterization integer)
     procedure plsfci(Font_Characterization_Integer : Unicode);
-    
-    
+
+
     -- Set the font family, style and weight
     procedure plsfont(Family, Style, Weight : Integer);
 
@@ -1812,8 +1812,8 @@ package PLplot_Traditional is
         Transformation_Data_Pointer      : PL_Pointer);
 
 
-    -- The procedure plfshade is not part of the API. If it should be necessary 
-    -- to make it available to Ada programs, use the binding to plfcont in this 
+    -- The procedure plfshade is not part of the API. If it should be necessary
+    -- to make it available to Ada programs, use the binding to plfcont in this
     -- file as a guidline.
 
     -- fix this
@@ -1838,8 +1838,8 @@ package PLplot_Traditional is
     procedure plslabelfunc
        (Custom_Label_Procedure_Pointer : Custom_Label_Procedure_Pointer_Type;
         label_data : PL_Pointer);
-    
-    
+
+
     -- Reset to default labeling. Ada only; not part of the C API.
     procedure Use_Default_Labels;
 
@@ -1902,14 +1902,14 @@ package PLplot_Traditional is
     procedure plstart
        (Device_Name                                          : String;
         Number_Horizontal_Subpages, Number_Vertical_Subpages : Integer := 1);
-    
-    
+
+
     -- Set the coordinate transform.
     procedure plstransform
        (Coordinate_Transform_Procedure_Pointer : Coordinate_Transform_Procedure_Pointer_Type;
         Coordinate_Transform_Data_Pointer : PL_Pointer);
-    
-    
+
+
     -- Clear the coordinate transform. Ada only; not part of the C API.
     procedure Clear_Custom_Coordinate_Transform;
 
@@ -2122,7 +2122,7 @@ package PLplot_Traditional is
         Bottom_Edge : Long_Float;
         Top_Edge    : Long_Float);
 
-    -- set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device 
+    -- set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device
     procedure plxormod
        (Use_XOR : Boolean;
         Supports_XOR : out Boolean);
@@ -2147,15 +2147,15 @@ package PLplot_Traditional is
 	-- Transformation routines
 
     -- fix this These functions are redundant with those in plplot_thin.
-    -- This might be OK since they are now available at all levels of binding. 
-    -- I wonder if this is approaching "wrapper bloat" since these procedures 
-    -- get called a lot of times during the making of a contour plot. 
-    -- The way to eliminate one level of calling would be to move the bodies 
-    -- of pltr? from plplot_thin.adb into plplot_traditional.adb and 
-    -- plplot.adb, then optionally eliminating the bodies from plplot_thin.adb 
-    -- on the idea that nobody is going to use them anyway. But even if the 
-    -- bodies were left in plplot_thin.adb, having them here would still 
-    -- remove the extra call level. The argument for the current arrangement is 
+    -- This might be OK since they are now available at all levels of binding.
+    -- I wonder if this is approaching "wrapper bloat" since these procedures
+    -- get called a lot of times during the making of a contour plot.
+    -- The way to eliminate one level of calling would be to move the bodies
+    -- of pltr? from plplot_thin.adb into plplot_traditional.adb and
+    -- plplot.adb, then optionally eliminating the bodies from plplot_thin.adb
+    -- on the idea that nobody is going to use them anyway. But even if the
+    -- bodies were left in plplot_thin.adb, having them here would still
+    -- remove the extra call level. The argument for the current arrangement is
     -- easier code maintainence.
 
     -- Identity transformation.
@@ -2164,7 +2164,7 @@ package PLplot_Traditional is
         x_World, y_World : out Long_Float;
         Data             : PL_Pointer);
     pragma Convention(Convention => C, Entity => pltr0);
-        
+
 
     -- Does linear interpolation from singly dimensioned coord arrays.
     procedure pltr1
@@ -2172,7 +2172,7 @@ package PLplot_Traditional is
         x_World, y_World : out Long_Float;
         Data_Pointer     : PL_Pointer);
     pragma Convention(Convention => C, Entity => pltr1);
-        
+
 
     -- Does linear interpolation from doubly dimensioned coord arrays
     -- (column dominant, as per normal C 2d arrays).
@@ -2181,7 +2181,7 @@ package PLplot_Traditional is
         x_World, y_World : out Long_Float;
         Data_Pointer     : PL_Pointer);
     pragma Convention(Convention => C, Entity => pltr2);
-        
+
 
     -- Wait for graphics input event and translate to world coordinates.
     procedure plGetCursor(Graphics_Input : out Graphics_Input_Record_Type);

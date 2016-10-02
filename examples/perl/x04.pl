@@ -112,7 +112,7 @@ sub plot1 {
   my @symbol_scales = (1, 1); # ???
   my @symbol_numbers = (4, 4);# ???
   my @symbols        = ('*', '*'); # ???
-  
+
   plscol0a(15, 32, 32, 32, 0.70);
   my ($legend_width, $legend_height) = pllegend(
       PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0,

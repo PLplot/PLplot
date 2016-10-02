@@ -88,12 +88,12 @@ foreach(index RANGE 0 ${max_index})
   else(config_type STREQUAL "autotools" OR config_type STREQUAL "tarball" OR config_type STREQUAL "cmake")
     message(FATAL_ERROR "incorrect config_type = ${config_type}")
   endif(config_type STREQUAL "autotools" OR config_type STREQUAL "tarball" OR config_type STREQUAL "cmake")
-  
+
   if(NOT package)
     message(FATAL_ERROR "bad package = ${package}")
   endif(NOT package)
-  
+
   file(MAKE_DIRECTORY ${package})
   configure_file(${template_file} ${package}/CMakeLists.txt @ONLY)
-  
+
 endforeach(index RANGE 0 ${max_index})

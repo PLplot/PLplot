@@ -205,7 +205,7 @@ weight = (
 )
 
 def main():
-    
+
     for page in range(11):
 	pladv(0)
 
@@ -249,7 +249,7 @@ def main():
 	plmtex("t", 1.5, 0.5, 0.5, title[page])
 
     # Demonstrate methods of getting the current fonts
-    
+
     fci_old = plgfci()
     font = plgfont()
     ifamily = font[0]
@@ -270,7 +270,7 @@ def main():
         elif(page == 12):
             plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfont")
         elif(page == 13):
-            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct")       
+            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct")
         elif(page == 14):
             plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs")
         elif(page == 15):
@@ -293,7 +293,7 @@ def main():
             elif(page == 15):
                 string = "Page 16, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+family[family_index]+"/>#<"+style[style_index]+"/>#<"+weight[weight_index]+"/>"+"The quick brown fox jumps over the lazy dog"
             plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string)
-       
+
         plschr(0., 1.0)
 
 

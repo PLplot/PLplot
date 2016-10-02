@@ -2,7 +2,7 @@
 # Declare the repositories we know about:
 #
 
-create repository plplot.git 
+create repository plplot.git
 end repository
 
 #
@@ -11,7 +11,7 @@ end repository
 #
 
 match /trunk/
-  repository plplot.git 
+  repository plplot.git
   branch master
 end match
 
@@ -23,7 +23,7 @@ end match
 # as separate git branches.
 
 match /branches/([^/]+)/
-  repository plplot.git 
+  repository plplot.git
   branch \1
 end match
 

@@ -5,19 +5,19 @@
 ##
 ##  Thanks to the following for providing translated strings for this example:
 ##  Valery Pipin (Russian)
-## 
+##
 ##  This file is part of PLplot.
-##   
+##
 ##  PLplot is free software; you can redistribute it and/or modify
 ##  it under the terms of the GNU Library General Public License as published
 ##  by the Free Software Foundation; either version 2 of the License, or
 ##  (at your option) any later version.
-##  
+##
 ##  PLplot is distributed in the hope that it will be useful,
 ##  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ##  GNU Library General Public License for more details.
-##   
+##
 ##  You should have received a copy of the GNU Library General Public License
 ##  along with PLplot; if not, write to the Free Software
 ##  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
@@ -34,23 +34,23 @@
 ## required glyphs.
 ##
 ## Translation instructions: The strings to be translated are given by
-## x_label, y_label, alty_label, title_label, and line_label below.  The 
+## x_label, y_label, alty_label, title_label, and line_label below.  The
 ## encoding used must be UTF-8.
 ##
-## The following strings to be translated involve some scientific/mathematical 
+## The following strings to be translated involve some scientific/mathematical
 ## jargon which is now discussed further to help translators.
 ##
 ## (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
-## (2) degrees is an angular measure, see 
+## (2) degrees is an angular measure, see
 ##     http://en.wikipedia.org/wiki/Degree_(angle) .
 ## (3) low-pass filter is one that transmits (passes) low frequencies.
 ## (4) pole is in the mathematical sense, see
 ##     http://en.wikipedia.org/wiki/Pole_(complex_analysis) .  "Single Pole"
 ##     means a particular mathematical transformation of the filter function has
 ##     a single pole, see
-##     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .  
-##     Furthermore, a single-pole filter must have an inverse square decline 
-##     (or -20 db/decade). Since the filter plotted here does have that 
+##     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .
+##     Furthermore, a single-pole filter must have an inverse square decline
+##     (or -20 db/decade). Since the filter plotted here does have that
 ##     characteristic, it must by definition be a single-pole filter, see also
 ##     http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
 ## (5) decade represents a factor of 10, see
@@ -109,7 +109,7 @@ function ix26c
   for i = 1:size(x_label)(1);
     plot1(0, deblank(x_label(i,:)), deblank(y_label(i,:)), deblank(alty_label(i,:)), deblank(title_label(i,:)), deblank(line_label(i,:)), legend_text{i});
   endfor
-  
+
   plend1;
 endfunction
 
@@ -162,7 +162,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
 
   ## For the gridless case, put phase vs freq on same plot */
 
-  if (plottype == 0) 
+  if (plottype == 0)
     plcol0(1);
     plwind(-2.0, 3.0, -100.0, 0.0);
     plbox("", 0.0, 0, "cmstv", 30.0, 3);
@@ -216,7 +216,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
   ## Only specify legend data that are required according to the
   ## value of opt_array for that entry.
 
-  ## Data for first legend entry. 
+  ## Data for first legend entry.
   opt_array(1) = PL_LEGEND_LINE;
   text_colors(1) = 2;
   text(1,1:length(legend_text(1,:))) = legend_text(1,:);
@@ -243,8 +243,8 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
   [legend_width, legend_height] = ...
       pllegend( bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX), 0, 0.0, 0.0,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
-               1., text_colors, text, 
-               box_colors, box_patterns, box_scales, box_line_widths, 
+               1., text_colors, text,
+               box_colors, box_patterns, box_scales, box_line_widths,
                line_colors, line_styles, line_widths,
                symbol_colors, symbol_scales, symbol_numbers, symbols );
 

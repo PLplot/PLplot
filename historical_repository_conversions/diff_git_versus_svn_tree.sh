@@ -5,7 +5,7 @@
 # git tags.
 
 # Tailor these values (and only these values) in order to get this
-# script to work for other situations.  
+# script to work for other situations.
 
 # The testing of the master branch follows only first parent commits,
 # i.e., it corresponds to the history of svn trunk commits that were
@@ -84,7 +84,7 @@ directory.  This condition has been violated.
     # Loop through all files with appropriate keywords.
     svn propget svn:keywords --recursive $1 |
     sed -e 's? - .*$??' -e "s?$1?$svn_export_dir?" |
-    
+
     while read FILE; do
 	sed -e 's?\$Author:[^$]*\$?$Author$?' -e 's?\$Date:[^$]*\$?$Date$?' -e 's?\$Id:[^$]*\$?$Id$?' -e 's?\$Revision:[^$]*\$?$Revision$?' < "$FILE" >| /tmp/temporary_file
         # This overwrites $FILE with edited result, but doesn't matter because

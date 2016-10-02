@@ -51,7 +51,7 @@ if(ENABLE_octave)
 
   # Build octave interface.
   add_custom_command(
-    OUTPUT 
+    OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
     COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
@@ -79,8 +79,8 @@ if(ENABLE_octave)
   set(CMAKE_SWIG_FLAGS -DSWIG_OCTAVE)
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-  set_source_files_properties(plplot_octave.i 
-    PROPERTIES 
+  set_source_files_properties(plplot_octave.i
+    PROPERTIES
     SWIG_MODULE_NAME plplot_octave
     CPLUSPLUS ON
     )
@@ -93,7 +93,7 @@ if(ENABLE_octave)
   # Set up swig + c wrapper.
   swig_add_module(plplot_octave octave plplot_octave.i)
   swig_link_libraries(
-    plplot_octave 
+    plplot_octave
     plplot
     "${OCTAVE_LIBRARIES}"
     "${OCTINTERP_LIBRARIES}"
@@ -105,12 +105,12 @@ if(ENABLE_octave)
 
   # Need access elsewhere (examples/octave) to the file depends of
   # this custom target.
-  set_property(GLOBAL PROPERTY 
+  set_property(GLOBAL PROPERTY
     FILES_plplot_stub.m_built
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
     )
 
-  install(FILES 
+  install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
     DESTINATION ${PLPLOT_OCTAVE_DIR}
     )
@@ -124,7 +124,7 @@ if(ENABLE_octave)
     set_target_properties(
       plplot_octave
       PROPERTIES
-      PREFIX "" 
+      PREFIX ""
       SUFFIX ".oct"
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
@@ -132,7 +132,7 @@ if(ENABLE_octave)
     set_target_properties(
       plplot_octave
       PROPERTIES
-      PREFIX "" 
+      PREFIX ""
       SUFFIX ".oct"
       INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
       )

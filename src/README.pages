@@ -1,4 +1,4 @@
-The purpose of this README is to document the various bits of the page code 
+The purpose of this README is to document the various bits of the page code
 in the PLplot core that interacts with devices (such as ps, xwin) where
 pages are included in the standard and devices that have no paging (such as
 png, svg, pngcairo, svgcairo) where PLplot logical pages must be handled as
@@ -37,20 +37,20 @@ Page and family related code fragments:
         plsc->nsuby = 1;
 
     plsc->cursub = 0;
-			    
+			
 * plP_bop (continued) does nothing after above plP_subpInit call
   if already at beginning of page (as set by plP_init above)
 
     if (plsc->page_status == AT_BOP)
         return;
-	    
+	
     plsc->page_status = AT_BOP;
 		
 * plP_eop is a no-op if already at eop.
 
     if (plsc->page_status == AT_EOP)
         return;
-	    
+	
     plsc->page_status = AT_EOP;
 		
 * plbop
@@ -105,7 +105,7 @@ Single page:
 plinit, plend (example 5)
 plinit, pladv(0), plend (example 10 where I don't think that pladv(0) is
                          actually required.)
-plinit, plenv, plend    (the plenv here does lots of other essential stuff 
+plinit, plenv, plend    (the plenv here does lots of other essential stuff
                	         beside the pladv(0) which is not really necessary)
 
 Multiple pages:

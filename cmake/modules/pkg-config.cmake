@@ -21,7 +21,7 @@
 # install-tree build of the examples.
 # Also create useful macros called pkg_check_pkgconfig to emulate the
 # pkgconfig macro using the pkg_check_modules macro;
-# pkg_config_link_flags to process CMake link flags into 
+# pkg_config_link_flags to process CMake link flags into
 # pkg-config standard form for the configured output *.pc files, and
 # cmake_link_flags to process input link flags delivered
 # by pkg-config into CMake standard form.
@@ -111,13 +111,13 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
   if(NOT _prefix)
     set(_prefix "_PKGCONFIG_TMP")
   endif(NOT _prefix)
-  
+
   if(FORCE_EXTERNAL_STATIC)
     set(_xprefix ${_prefix}_STATIC)
   else(FORCE_EXTERNAL_STATIC)
     set(_xprefix ${_prefix})
   endif(FORCE_EXTERNAL_STATIC)
-  
+
   if(CMAKE_VERSION VERSION_LESS "3.1")
     _pkg_check_modules_internal(0 0 ${_prefix} "${_package}")
   elseif(CMAKE_VERSION VERSION_LESS "3.6")
@@ -125,7 +125,7 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
   else(CMAKE_VERSION VERSION_LESS "3.1")
     _pkg_check_modules_internal(0 0 0 0 0 ${_prefix} "${_package}")
   endif(CMAKE_VERSION VERSION_LESS "3.1")
-    
+
   if(${_prefix}_FOUND)
     cmake_link_flags(${_link_FLAGS} "${${_xprefix}_LDFLAGS}")
     # If libraries cannot be not found, then that is equivalent to whole
@@ -285,8 +285,8 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
     endif(NOT "${_index_list}" STREQUAL "")
     #message("_link_directory_list = ${_link_directory_list}")
     #message("_link_flags_list (without -L options) = ${_link_flags_list}")
-  
-    # Derive ${_link_flags_out} from _link_flags_list with -l options 
+
+    # Derive ${_link_flags_out} from _link_flags_list with -l options
     # replaced by complete pathname of library.
     list(LENGTH _link_flags_list _link_flags_length)
     math(EXPR _link_flags_length "${_link_flags_length} - 1")
@@ -298,7 +298,7 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
       if(_list_element STREQUAL "-l${_list_element1}")
         set(_library_pathname "_library_pathname-NOTFOUND")
         find_library(
-         _library_pathname 
+         _library_pathname
          ${_list_element1}
          PATHS ${_link_directory_list}
          NO_DEFAULT_PATH
@@ -306,7 +306,7 @@ macro(cmake_link_flags _link_flags_out _link_flags_in)
 	# Try second time (without NO_DEFAULT_PATH) just in case pkg-config
 	# specified some system libraries without corresponding -L options.
         find_library(
-         _library_pathname 
+         _library_pathname
          ${_list_element1}
          PATHS ${_link_directory_list}
         )

@@ -23,9 +23,9 @@
 # This is called from plplot-test.sh with $javadir, $device, $dsuffix,
 # $options, and possibly $verbose_test defined.
 
-# N.B. $PLPLOT_CLASSPATH must be defined properly so it includes a 
+# N.B. $PLPLOT_CLASSPATH must be defined properly so it includes a
 # reference to plplot.jar. If not we assume in installation location.
-# The path must point to the java command for this to work. 
+# The path must point to the java command for this to work.
 
 # To build the java examples before running this script do the following:
 # pushd $javadir; make; popd

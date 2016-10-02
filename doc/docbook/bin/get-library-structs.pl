@@ -1,5 +1,5 @@
 #! /usr/bin/env perl
- 
+
 # Get symbols exported by the PLplot library and output only those that are
 # included in the public header file.
 #
@@ -17,7 +17,7 @@ open (HEADER, "< $header")
 
 my $in_struct = 0;
 my $buf = "";
-  
+
 while (<HEADER>) {
   $in_struct = 1
     if /^typedef struct/;

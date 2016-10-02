@@ -68,7 +68,7 @@ procedure xstandard29a is
             -- Set x error bars to +/- 5 minute
             xerr1(i) := x(i) - Long_Float(60 * 5);
             xerr2(i) := x(i) + Long_Float(60 * 5);
-            
+
             -- Set y error bars to +/- 0.1 deg C */
             yerr1(i) := y(i) - 0.1;
             yerr2(i) := y(i) + 0.1;
@@ -103,8 +103,8 @@ procedure xstandard29a is
         Draw_Error_Bars_Y(x, yerr1, yerr2);
 
         -- Rescale major / minor tick marks back to default
-        Set_Minor_Tick_Length(0.0, 1.0); 
-        Set_Major_Tick_Length(0.0, 1.0); 
+        Set_Minor_Tick_Length(0.0, 1.0);
+        Set_Major_Tick_Length(0.0, 1.0);
     end plot1;
 
 
@@ -122,20 +122,20 @@ procedure xstandard29a is
         ymin := 0.0;
         ymax := 24.0;
 
-        -- Formula for hours of daylight from 
-        -- "A Model Comparison for Daylength as a Function of Latitude and 
+        -- Formula for hours of daylight from
+        -- "A Model Comparison for Daylength as a Function of Latitude and
         -- Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
         for j in x'range loop
             x(j):= Long_Float(j) * 60.0 * 60.0 * 24.0;
             p := arcsin(0.39795 * cos(0.2163108 + 2.0 * arctan(0.9671396 * tan(0.00860 * Long_Float(j-186)))));
             d := 24.0 - (24.0 / pi) *
-                arccos((sin(0.8333 * pi / 180.0) + sin(lat * pi / 180.0) * sin(p)) / 
+                arccos((sin(0.8333 * pi / 180.0) + sin(lat * pi / 180.0) * sin(p)) /
                 (cos(lat * pi / 180.0) * cos(p)));
             y(j):= d;
         end loop;
 
         Set_Pen_Color(Red);
-        
+
         -- Set time format to be abbreviated month name followed by day of month
         Set_Date_Time_Label_Format("%b %d");
         Set_Numeric_Label_Precision(True, 1);
@@ -164,10 +164,10 @@ procedure xstandard29a is
 
         for i in x'range loop
             x(i) := xmin + Long_Float(i) * 60.0 * 60.0 * 24.0;
-            y(i) := 1.0 + sin(2.0 * pi * Long_Float(i) / 7.0) + 
+            y(i) := 1.0 + sin(2.0 * pi * Long_Float(i) / 7.0) +
                 exp((Long_Float(Integer'min(i, x'length - i))) / 31.0);
         end loop;
-        
+
         Advance_To_Subpage(Next_Subpage);
 
         Set_Viewport_Standard;
@@ -190,14 +190,14 @@ procedure xstandard29a is
 
         Draw_Points(x, y, 2);
         Draw_Curve(x, y);
-     
+
     end plot3;
 
 
-    procedure plot4 is 
+    procedure plot4 is
         -- TAI-UTC (seconds) as a function of time.
 
-        Scale : Long_Float;  
+        Scale : Long_Float;
         xmin, xmax, ymin, ymax, xlabel_step : Long_Float;
         npts : Integer;
         if_TAI_time_format : Boolean;

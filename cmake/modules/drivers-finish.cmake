@@ -85,7 +85,7 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
       # included by drivers.cmake.
       if(DRIVER STREQUAL "wxwidgets")
 	if(OLD_WXWIDGETS)
-          set(${DRIVER}_SOURCE 
+          set(${DRIVER}_SOURCE
             ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}.cpp
             ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}_app.cpp
             ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}_dc.cpp
@@ -93,13 +93,13 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
             ${${DRIVER}_SOURCE}
 	    )
           if(HAVE_AGG)
-            set(${DRIVER}_SOURCE 
+            set(${DRIVER}_SOURCE
               ${CMAKE_SOURCE_DIR}/drivers/deprecated_${DRIVER}_agg.cpp
               ${${DRIVER}_SOURCE}
               )
           endif(HAVE_AGG)
 	else(OLD_WXWIDGETS)
-          set(${DRIVER}_SOURCE 
+          set(${DRIVER}_SOURCE
             ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}.cpp
 	    ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_comms.cpp
             ${CMAKE_SOURCE_DIR}/drivers/${DRIVER}_dev.cpp
@@ -126,7 +126,7 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   endif(PLD_${DEVICE})
 endforeach(DRIVERS_DEVICE)
 
-# Calculate driver information and store it in 
+# Calculate driver information and store it in
 # ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.driver_info for each driver to be compared
 # at run-time with the same information obtained from the actual
 # driver plug-in by test-drv-info as a check of the validity of

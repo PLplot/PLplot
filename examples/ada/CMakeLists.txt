@@ -76,7 +76,7 @@ if(CORE_BUILD)
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     )
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     DESTINATION ${DATA_DIR}/examples/ada
     RENAME Makefile
     )
@@ -103,7 +103,7 @@ if(BUILD_TEST)
   # gives access to the libplplotada *.ali files.  (For the CORE_BUILD
   # case that location currently works but is probably not guaranteed
   # indefinitely for future versions of CMake.)
-  
+
   if(CORE_BUILD)
     set(adalinkflags "-aI${CMAKE_CURRENT_SOURCE_DIR} -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada.dir")
   else(CORE_BUILD)
@@ -116,7 +116,7 @@ if(BUILD_TEST)
       set(TARGET_NAME x${BINDING}${STRING_INDEX}a)
       set(SOURCE_FILE ${TARGET_NAME}.adb)
       set(adasrcfile ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE})
-      
+
       # Note due to limitations of the Ada language support for CMake,
       # the nominal source file for add_executable is compiled (which
       # is why a real file has to be specified), but otherwise it is
@@ -128,7 +128,7 @@ if(BUILD_TEST)
       # of <TARGET>.adb with an -aI option (see above comment of
       # adalinkflags).
       add_executable(${TARGET_NAME} ${adasrcfile})
-      
+
       set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS ${adalinkflags})
       target_link_libraries(${TARGET_NAME} plplotada plplot)
       set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ada ${TARGET_NAME})

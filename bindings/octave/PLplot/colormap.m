@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -13,7 +13,7 @@
 ## This file is part of plplot_octave.
 
 ## cmap = colormap([map])
-## 
+##
 ## Set colormap1 to map; map is an n row by 3 columns matrix, representing
 ##   red, green and blue components in the range [0..1]
 ##
@@ -56,8 +56,8 @@ function ccmap = colormap(map)
   endif
 
   if (nargin == 2 && ischar(map) && strcmp(map, 'register'))
-    # Silently ignore register option to avoid error messages from core 
-    # octave colormaps if this version of colormap is on the path at 
+    # Silently ignore register option to avoid error messages from core
+    # octave colormaps if this version of colormap is on the path at
     # octave startup, e.g. the test_octave_interactive.sh script.
     return
   endif
@@ -75,11 +75,11 @@ function ccmap = colormap(map)
   plscmap1n(rows(map)); # number of colors
   plscmap1(map(:,1), map(:,2), map(:,3));
   plflush;#pleop;
-  
+
   if (exist("pl_automatic_replot"))
     if (pl_automatic_replot)
       ## can cause problems on plot scripts that dont support automatic _replot
-      __pl_plotit; 
+      __pl_plotit;
     endif
   endif
 

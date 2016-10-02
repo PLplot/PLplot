@@ -28,24 +28,24 @@
    common /plotdat/ x, y, xerr1, xerr2, yerr1, yerr2
 
    call plparseopts(PL_PARSE_FULL)
-   
+
    call plinit()
 
 !  This is the ASCII value for character @
    call plsesc(64)
-   
+
    call plot1()
    call plot2()
    call plot3()
    call plot4()
-   
+
    call plend()
    end program x29f95
 
 !====================================================================
 !
 !     Plot a model diurnal cycle of temperature
-     
+
       subroutine plot1()
       use plplot, PI => PL_PI
       implicit none
@@ -55,7 +55,7 @@
 
       integer :: i, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
-      
+
       parameter(npts = 73)
       parameter(xmin = 0.0_plflt)
       parameter(xmax = 60.0_plflt*60.0_plflt*24.0_plflt)
@@ -65,7 +65,7 @@
       do i = 1,npts
          x(i) = xmax*(dble(i-1)/dble(npts))
          y(i) = 15.0_plflt - 5.0_plflt*cos(2.0_plflt*PI*dble(i-1)/dble(npts))
-!     Set x error bars to +/- 5 minute 
+!     Set x error bars to +/- 5 minute
          xerr1(i) = x(i)-60.0_plflt*5.0_plflt
          xerr2(i) = x(i)+60.0_plflt*5.0_plflt
 !     Set y error bars to +/- 0.1 deg C
@@ -74,7 +74,7 @@
       enddo
 
       call pladv(0)
-      
+
 !     Rescale major ticks marks by 0.5
       call plsmaj(0.0_plflt,0.5_plflt)
 !     Rescale minor ticks and error bar marks by 0.5
@@ -93,7 +93,7 @@
       call plcol0(3)
       call pllab("Time (hours:mins)", "Temperature (degC)", &
            "@frPLplot Example 29 - Daily temperature")
-      
+
       call plcol0(4)
 
       call plline(x(1:npts), y(1:npts))
@@ -105,17 +105,17 @@
 !     Rescale major / minor tick marks back to default
       call plsmin(0.0_plflt,1.0_plflt)
       call plsmaj(0.0_plflt,1.0_plflt)
-      
+
     end subroutine plot1
 
 !
 !     Plot the number of hours of daylight as a function of day for a year
 !
-      subroutine plot2() 
+      subroutine plot2()
       use plplot, PI => PL_PI
 
       implicit none
-      
+
       integer ::  j, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       real(kind=plflt) :: lat, p, d
@@ -125,16 +125,16 @@
 
       ! Latitude for London
       parameter (lat = 51.5_plflt)
-      
+
       parameter (npts = 365)
-      
+
       parameter(xmin = 0.0_plflt)
       parameter(xmax = npts*60.0_plflt*60.0_plflt*24.0_plflt)
       parameter(ymin = 0)
       parameter(ymax = 24)
 
-!     Formula for hours of daylight from 
-!     "A Model Comparison for Daylength as a Function of Latitude and 
+!     Formula for hours of daylight from
+!     "A Model Comparison for Daylength as a Function of Latitude and
 !     Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
       do j=1,npts
          x(j) = (j-1)*60.0_plflt*60.0_plflt*24.0_plflt
@@ -152,15 +152,15 @@
       call pltimefmt("%b %d")
       call plprec(1,1)
       call plenv(xmin, xmax, ymin, ymax, 0, 40)
-      
+
       call plcol0(3)
       call pllab("Date", "Hours of daylight", &
            "@frPLplot Example 29 - Hours of daylight at 51.5N")
-  
+
       call plcol0(4)
 
       call plline(x, y)
-  
+
       call plprec(0,0)
 
     end subroutine plot2
@@ -171,7 +171,7 @@
       subroutine plot3()
       use plplot, PI => PL_PI
       implicit none
-      
+
       integer :: i, npts
       real(kind=plflt) :: xmin, xmax, ymin, ymax
       integer :: tstart
@@ -193,7 +193,7 @@
       xmax = xmin + npts*60.0_plflt*60.0_plflt*24.0_plflt
       ymin = 0.0_plflt
       ymax = 5.0_plflt
-  
+
       do i=1,npts
          x(i) = xmin + dble(i-1)*60.0_plflt*60.0_plflt*24.0_plflt
          y(i) = 1.0_plflt + sin( 2.0_plflt*PI*dble(i-1)/7.0_plflt) + &
@@ -216,26 +216,26 @@
       call pllab("Date", "Hours of television watched", &
            "@frPLplot Example 29 - Hours of television watched in " // &
            "Dec 2005 / Jan 2006")
-  
+
       call plcol0(4)
 
       call plssym(0.0_plflt, 0.5_plflt)
       call plpoin(x(1:npts), y(1:npts), 2)
       call plline(x(1:npts), y(1:npts))
- 
+
     end subroutine plot3
 
 !
 !
 !
-      subroutine plot4() 
+      subroutine plot4()
       use plplot, PI => PL_PI
       implicit none
 
 !     TAI-UTC (seconds) as a function of time.
 !     Use Besselian epochs as the continuous time interval just to prove
 !     this does not introduce any issues.
-  
+
       real(kind=plflt) :: scale, offset1, offset2
       real(kind=plflt) :: xmin, xmax, ymin, ymax, xlabel_step
       integer :: k, npts = 0, i
@@ -249,9 +249,9 @@
       real(kind=plflt) :: tai_sec, tai
       integer :: utc_year, utc_month, utc_day, utc_hour, utc_min
       real(kind=plflt) :: utc_sec, utc
-      
+
 !     Use the definition given in http://en.wikipedia.org/wiki/Besselian_epoch
-!     B = 1900. + (JD -2415020.31352)/365.242198781 
+!     B = 1900. + (JD -2415020.31352)/365.242198781
 !     ==> (as calculated with aid of "bc -l" command)
 !     B = (MJD + 678940.364163900)/365.242198781
 !     ==>
@@ -318,7 +318,7 @@
             if (k .eq. 5) then
                if_TAI_time_format = .true.
                xtitle = "Seconds (TAI)"
-            else 
+            else
                if_TAI_time_format = .false.
                xtitle = "Seconds (TAI) labelled with corresponding UTC"
             endif
@@ -359,9 +359,9 @@
          title = "@frPLplot Example 29 - TAI-UTC "// &
              trim(title_suffix)
          call pllab(xtitle, "TAI-UTC (sec)", title)
-    
+
          call plcol0(4)
-         
+
          call plline(x(1:npts), y(1:npts))
       enddo
       end subroutine plot4

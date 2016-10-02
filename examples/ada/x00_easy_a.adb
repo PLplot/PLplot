@@ -45,9 +45,9 @@ begin
      Initialize_PLplot;
 
     -- Make the plot.
-    Simple_Plot(x, y, 
-        X_Label => "x", 
-        Y_Label => "y=100 x#u2#d", 
+    Simple_Plot(x, y,
+        X_Label => "x",
+        Y_Label => "y=100 x#u2#d",
         Title_Label => "Simple PLplot demo of a 2D line plot");
 
     -- Close PLplot library.

@@ -45,7 +45,7 @@ if fam2 != fam1  or num2 != num1 or bmax2 != bmax1:
     status = 1
 # Restore values set initially by plparseopts.
 plsfam(fam0, num0, bmax0)
-    
+
 # Test setting / getting page parameters before plinit.
 # Save values set by plparseopts to be restored later.
 (xp0, yp0, xleng0, yleng0, xoff0, yoff0) = plgpage()
@@ -67,7 +67,7 @@ plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0)
 # Test setting / getting compression parameter across plinit.
 compression1 = 95
 plscompression(compression1)
-          
+
 # Initialize plplot
 plinit()
 
@@ -138,7 +138,7 @@ def main():
     sys.stderr.write("Output file name is %s\n" % fnam)
 
     # Set and get the number of digits used to display axis labels
-    # Note digits is currently ignored in pls[xyz]ax and 
+    # Note digits is currently ignored in pls[xyz]ax and
     # therefore it does not make sense to test the returned value.
     plsxax(3,0)
     (digmax, digits) = plgxax()

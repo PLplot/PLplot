@@ -335,7 +335,7 @@ module Plot :
       ?perp:bool ->
       color_t -> float tagged_side_t -> float -> string -> plot_t
 
-    (** [func ?symbol ?step color f (min, max)] plots the function [f] from 
+    (** [func ?symbol ?step color f (min, max)] plots the function [f] from
         [x = min] to [x = max].  [step] can be used to tighten or coarsen the
         sampling of plot points. *)
     val func :

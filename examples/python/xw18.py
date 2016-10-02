@@ -138,13 +138,13 @@ def test_poly(k):
 	
 	for i in range(20):
 		for j in range(20):
-		    
+		
 			x = [x0[i,j],x1[i,j],x2[i,j],x3[i,j],x4[i,j]]
 			y = [y0[i,j],y1[i,j],y2[i,j],y3[i,j],y4[i,j]]
 			z = [z0[j],z1[j],z2[j],z3[j],z4[j]]
 
-			# Since negative dimensions don't make sense here 
-			# to specify that points are to be drawn in 
+			# Since negative dimensions don't make sense here
+			# to specify that points are to be drawn in
 			# counter-clockwise direction (as in x18c.c and
 			# x18.tcl) this must be specified with an optional
 			# extra argument in python API.

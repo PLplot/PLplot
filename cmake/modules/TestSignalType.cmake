@@ -19,7 +19,7 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# If signal.h defines signal as returning a pointer to a function 
+# If signal.h defines signal as returning a pointer to a function
 # returning void RETSIGTYPE is defined as void. Otherwise RETSIGTYPE is
 # defined as int.
 

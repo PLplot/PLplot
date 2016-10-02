@@ -40,16 +40,16 @@ function.  The relevant java files and corresponding class files that are
 compiled from them make up the plplot.core package.
 
 'make install' installs the relevant java and class files that are part of
-the plplot.core package in $prefix/share/java/plplot/core, 
-installs the shared object module (DLL) plplotjavac_wrap.SOBJEXT for the 
-java PLplot interface in the $prefix/lib/jni, and also installs 
-(from ../../examples/java) the example java scripts and corresponding class 
-files that are part of the plplot.examples package into 
-$prefix/share/plplot5.3.1/java/plplot/examples. For more details about the 
-examples, please see ../../examples/java/README.javademos or the installed 
+the plplot.core package in $prefix/share/java/plplot/core,
+installs the shared object module (DLL) plplotjavac_wrap.SOBJEXT for the
+java PLplot interface in the $prefix/lib/jni, and also installs
+(from ../../examples/java) the example java scripts and corresponding class
+files that are part of the plplot.examples package into
+$prefix/share/plplot5.3.1/java/plplot/examples. For more details about the
+examples, please see ../../examples/java/README.javademos or the installed
 version of that file in $prefix/share/plplot$version/examples/java/. Copies of
 the java files are also in this directory for convenience.
-At the end of the install process all the files in 
+At the end of the install process all the files in
 $prefix/share/java/plplot/ are bundled into a jar file
 $prefix/share/java/plplot.jar and the plplot directory is
 deleted.

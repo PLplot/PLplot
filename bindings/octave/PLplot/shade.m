@@ -1,11 +1,11 @@
 ## Copyright (C) 1998-2003  Joao Cardoso.
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -27,7 +27,7 @@ function shade(x, y, z, levels, cont )
   strm = __pl_init;
 
   unwind_protect
-    
+
   old_empty_list_elements_ok = warning("query", "Octave:empty-list-elements");
   warning("off","Octave:empty-list-elements");
 
@@ -61,7 +61,7 @@ function shade(x, y, z, levels, cont )
   ## plot color and pen width of boundary of shade region
 
   max_color = 0; max_width = 0;
-  
+
   if (cont)
     cont_color = cont; cont_width = 1;
   else
@@ -72,13 +72,13 @@ function shade(x, y, z, levels, cont )
     xmm = xm = min(min(x)); xM = max(max(x));
     ymm = ym = min(min(y)); yM = max(max(y));
     zm = min(min(z)); zM = max(max(z));
-    
+
     if (__pl.axis_st(strm))
       xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
       if (xymat == 0)
-        ix = find(x >= xm & x <= xM); 
+        ix = find(x >= xm & x <= xM);
         x=x(ix); z=z(:,ix);
-        xmm = min(x); 
+        xmm = min(x);
       endif
 
       if (length(__pl.axis(strm,:)) >= 4)	
@@ -101,7 +101,7 @@ function shade(x, y, z, levels, cont )
       __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
       __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
     endif
-    
+
     __pl.plcol(strm) = 1;
     plcol0(15);pllsty(1);
     __pl_plenv(xm, xM, ym, yM, 0, -2);
@@ -128,7 +128,7 @@ function shade(x, y, z, levels, cont )
   if (columns(y)>1 && rows(y) == 1)
     y = y';
   endif
-    
+
   if (!isscalar(levels))
     n = length(levels)-1;
     clevel = levels;
@@ -148,17 +148,17 @@ function shade(x, y, z, levels, cont )
   plpsty(0);
   if (0) ## plshades() is slower than several calls to plshade() !? and plshades() sometimes fails ?!
     for i = 1:n
-      plshade1(z', 0, minx, maxx, miny, maxy, 
+      plshade1(z', 0, minx, maxx, miny, maxy,
 	      clevel(i), clevel(i+1),
 	      1, (i-1) / (n-1), 1,
 	      cont_color, cont_width, max_color, max_width, 1, x, y);
     endfor
   else
     if (columns(x) == 1 && columns(y) == 1)
-      plshades1(z', minx, maxx, miny, maxy, 
+      plshades1(z', minx, maxx, miny, maxy,
 	     clevel', 1, cont_color, cont_width, 1, x, y);
     else
-      plshades2(z', minx, maxx, miny, maxy, 
+      plshades2(z', minx, maxx, miny, maxy,
 	     clevel', 1, cont_color, cont_width, 1, x', y');
     endif
   endif
@@ -192,11 +192,11 @@ function shade(x, y, z, levels, cont )
   plflush;
   __pl.items(strm) = 1; # for now!
 
-  unwind_protect_cleanup  
-  
+  unwind_protect_cleanup
+
   warning(old_empty_list_elements_ok.state, "Octave:empty-list-elements");
 
-  end_unwind_protect  
+  end_unwind_protect
 
-  
+
 endfunction

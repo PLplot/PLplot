@@ -231,7 +231,7 @@ if(CORE_BUILD)
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     )
 
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples 
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
     DESTINATION ${DATA_DIR}/examples/c++
     RENAME Makefile
     )

@@ -42,14 +42,14 @@ def main():
   plscmap0n (4)
   plscmap0a (red, green, blue, alpha)
 
-  # 
+  #
   #   Page 1:
   #
   #   This is a series of red, green and blue rectangles overlaid
   #   on each other with gradually increasing transparency.
-  
 
-  # Set up the window 
+
+  # Set up the window
   pladv (0)
   plvpor (0.0, 1.0, 0.0, 1.0)
   plwind (0.0, 1.0, 0.0, 1.0)
@@ -60,58 +60,58 @@ def main():
   for i in range(9):
     icol = i%3 + 1
 
-    # Get a color, change its transparency and 
-    # set it as the current color. 
+    # Get a color, change its transparency and
+    # set it as the current color.
     rgba = plgcol0a (icol)
     plscol0a (icol, rgba[0], rgba[1], rgba[2], 1.0 - float(i)/9.0)
     plcol0 (icol)
 
-    # Draw the rectangle 
+    # Draw the rectangle
     plfill (px, py)
 
     # Shift the rectangles coordinates
     px += 0.5/9.0
     py += 0.5/9.0
 
-  # 
+  #
   #   Page 2:
   #
-  #   This is a bunch of boxes colored red, green or blue with a single 
+  #   This is a bunch of boxes colored red, green or blue with a single
   #   large (red) box of linearly varying transparency overlaid. The
   #   overlaid box is completely transparent at the bottom and completely
   #   opaque at the top.
-  
 
-  # Set up the window 
+
+  # Set up the window
   pladv(0)
   plvpor(0.1, 0.9, 0.1, 0.9)
   plwind(0.0, 1.0, 0.0, 1.0)
 
-  # Draw the boxes. There are 25 of them drawn on a 5 x 5 grid. 
-  for i in range(5): 
-    # Set box X position 
+  # Draw the boxes. There are 25 of them drawn on a 5 x 5 grid.
+  for i in range(5):
+    # Set box X position
     px[0] = 0.05 + 0.2 * i
     px[1] = px[0] + 0.1
     px[2] = px[1]
     px[3] = px[0]
 
-    # We don't want the boxes to be transparent, so since we changed   
-    # the colors transparencies in the first example we have to change 
-    # the transparencies back to completely opaque. 
+    # We don't want the boxes to be transparent, so since we changed
+    # the colors transparencies in the first example we have to change
+    # the transparencies back to completely opaque.
     icol = i%3 + 1
     rgba = plgcol0a (icol)
     plscol0a (icol, rgba[0], rgba[1], rgba[2], 1.0)
     plcol0 (icol)
     for j in range(5):
-      # Set box y position and draw the box. 
+      # Set box y position and draw the box.
       py[0] = 0.05 + 0.2 * j
       py[1] = py[0]
       py[2] = py[0] + 0.1
       py[3] = py[2]
       plfill(px, py)
 
-  # Create the color map with 128 colors and use plscmap1la to initialize 
-  # the color values with a linearly varying red transparency (or alpha) 
+  # Create the color map with 128 colors and use plscmap1la to initialize
+  # the color values with a linearly varying red transparency (or alpha)
   plscmap1n(128)
   plscmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev)
 
@@ -121,7 +121,7 @@ def main():
   px[1] = 1.
   px[2] = 1.
   px[3] = 0.
-   
+
   py[0] = 0.
   py[1] = 0.
   py[2] = 1.

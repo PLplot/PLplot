@@ -42,7 +42,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 if(MSYS_PLATFORM)
   set(CFLAGS "@MSYS_EXTRA_CFLAGS@$ENV{CFLAGS}")

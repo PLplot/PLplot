@@ -82,7 +82,7 @@ function circulation
   u = yg;
   v = -xg;
 
-  ## Plot vectors with default arrows 
+  ## Plot vectors with default arrows
   plenv(xmin, xmax, ymin, ymax, 0, 0);
   pllab("(x)", "(y)", "#frPLplot Example 22 - circulation");
   plcol0(2);
@@ -138,7 +138,7 @@ end
 function constriction2()
 
   global xmax;
-  
+
   nx = 20;
   ny = 20;
   nc = 11;
@@ -192,7 +192,7 @@ function potential
   ## Also put in smoothing term at small distances.
 
   rmax = nr;
-    
+
   eps = 2.;
 
   q1 = 1.;
@@ -203,7 +203,7 @@ function potential
 
   q2 = -1.;
   d2 = rmax/4.;
-  
+
   q2i = - q2*rmax/d2;
   d2i = rmax^2/d2;
 

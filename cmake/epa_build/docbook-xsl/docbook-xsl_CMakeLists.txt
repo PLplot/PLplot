@@ -44,13 +44,13 @@ function(install_xml_catalog arguments_LIST3 catalog)
   # arguments_LIST3, which is a list of arguments grouped by
   # threes where each group of three arguments correspond to
   # the three arguments of the "xmlcatalog --add" command.
-  
+
   # Create the catalog if it does not exist.
   install(CODE "
 if(NOT EXISTS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 message(STATUS \"Creating \${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
-execute_process(COMMAND ${XMLCATALOG_EXECUTABLE} --noout 
-  --create 
+execute_process(COMMAND ${XMLCATALOG_EXECUTABLE} --noout
+  --create
   \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 endif(NOT EXISTS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 ")
@@ -67,7 +67,7 @@ endif(NOT EXISTS \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
     install(CODE "
 message(STATUS \"Updating \${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 execute_process(COMMAND ${XMLCATALOG_EXECUTABLE} --noout
-  --add \"${type}\" \"${orig}\" \"${replace}\" 
+  --add \"${type}\" \"${orig}\" \"${replace}\"
   \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml/${catalog}\")
 "
       )
@@ -112,7 +112,7 @@ set(path_list
 install(CODE "
 message(STATUS \"Installing \${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1\")
 execute_process(
-COMMAND ${INSTALL_EXECUTABLE} -v -d -m755 
+COMMAND ${INSTALL_EXECUTABLE} -v -d -m755
 \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/share/xml/docbook/xsl-stylesheets-1.78.1\")
 "
   )
@@ -156,7 +156,7 @@ COMMAND ${INSTALL_EXECUTABLE} -v -m644 ${path_list}
 install(CODE "
 message(STATUS \"Installing \${CMAKE_INSTALL_PREFIX}/etc/xml\")
 execute_process(
-COMMAND ${INSTALL_EXECUTABLE} -v -d -m755 
+COMMAND ${INSTALL_EXECUTABLE} -v -d -m755
 \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/etc/xml\")
 "
   )

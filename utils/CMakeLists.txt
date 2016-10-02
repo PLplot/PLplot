@@ -37,7 +37,7 @@ if(PLD_plmeta)
       )
   endif(BUILD_SHARED_LIBS)
   add_executable(plrender plrender.c)
-  
+
   target_link_libraries(plrender plplot)
 
   if(USE_RPATH)

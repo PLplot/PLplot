@@ -1,11 +1,11 @@
 ## Copyright (C) 1998, 1999, 2000  Joao Cardoso
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -23,7 +23,7 @@ function cmap1_init(g)
   if (g)
     h = [0; 0]; 	# hue -- low: red (arbitrary if s=0) -- high: red (arbitrary if s=0)
     l = [0.5; 1];	# lightness -- low: half-dark -- high: light
-    s = [0; 0];		# minimum saturation 
+    s = [0; 0];		# minimum saturation
   else
     h = [240; 0];       # blue -> green -> yellow -> red
     l = [0.6; 0.6];
@@ -79,7 +79,7 @@ endfunction
         do_fortran_indexing = 1;
       endif
       z(z <= 0) = exp(-5); # make sure the minimum after applying log() is -5
-      if exist ("do_fortran_indexing")      
+      if exist ("do_fortran_indexing")
         do_fortran_indexing = of;
       endif
       z = log(z);
@@ -117,7 +117,7 @@ endfunction
     # all dimension consistency checks.  This index is outside the elliptical
     # limits above so should be ignored at the C level.
     zlimited(YPTS, XPTS) = 1.e300;
-    
+
     nlevel = 10;
     zmax = max(max(z));
     zmin = min(min(z));
@@ -141,7 +141,7 @@ endfunction
 
 	plbox3("bnstu", "x axis", 0.0, 0,
 	       "bnstu", "y axis", 0.0, 0,
-	       "bcdmnstuv", "z axis", 0.0, 0);      
+	       "bcdmnstuv", "z axis", 0.0, 0);
 	plcol0(2);
 
 	switch(ifshade)

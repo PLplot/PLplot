@@ -1,6 +1,6 @@
 ## Displays Greek letters and mathematically interesting Unicode ranges
-## Copyright (C) 2005 Alan Irwin 
-## Copyright (C) 2005 Andrew Ross 
+## Copyright (C) 2005 Alan Irwin
+## Copyright (C) 2005 Andrew Ross
 ##
 ##
 ## This file is part of PLplot.
@@ -25,7 +25,7 @@
 ## Displays Greek letters and mathematically interesting Unicode ranges
 
 function ix23c(strm)
- 
+
   # Redirect output to file if required
   if (nargin == 0)
     strm = stdout;
@@ -218,7 +218,7 @@ weight = [
 ## plparseopts(&argc, argv, PL_PARSE_FULL);
 
 plinit;
-    
+
 for page=1:11
 
   pladv(0);
@@ -234,7 +234,7 @@ for page=1:11
   ## Factor should be 0.5, but heuristically it turns out to be larger.
   [chardef, charht] = plgchr;
   yoffset = 1.0*charht*ycharacter_scale;
-  
+
   ## Draw the grid using plbox
 
   plcol0(2);
@@ -250,11 +250,11 @@ for page=1:11
     for i=0:nxcells(page)-1;
       x  = (0.5+i)*deltax;
       if (slice < length)
-	if (page == 1) 
+	if (page == 1)
 	  cmdString = sprintf("#%s",Greek(slice+1,:));
 	elseif ((page >= 2) && (page <= 4))
  	  cmdString = sprintf("##[0x%.4x]",Type1(offset(page)+slice+1));
-	elseif (page >= 5) 
+	elseif (page >= 5)
 	  cmdString = sprintf("##[0x%.4x]",lo(page)+slice);
 	end
 	strlen = size(cmdString)(2);
@@ -264,11 +264,11 @@ for page=1:11
       slice += 1;
     end
   end
-    
+
   plschr(0., 1.0);
   ## Page title
   plmtex("t", 1.5, 0.5, 0.5, title(page,:));
-  
+
 end
 
 ## Demonstrate methods of getting the current fonts
@@ -284,11 +284,11 @@ for page=11:15
   plvpor(0.02, 0.98, 0.02, 0.90);
   plwind(0.0, 1.0, 0.0, 1.0);
   plsfci(0);
-  if (page == 11) 
+  if (page == 11)
     plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfci");
-  elseif (page == 12) 
+  elseif (page == 12)
     plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfont");
-  elseif (page == 13) 
+  elseif (page == 13)
     plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct");
   elseif(page == 14)
     plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs");

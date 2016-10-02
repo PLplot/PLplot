@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -33,14 +33,14 @@ function __pl_plot3(x, y, z, c)
     endif
 
     [style, color, symbol, key_title] = __pl_opt (c);
-    
+
     xm = min(x); xM = max(x);
     ym = min(y); yM = max(y);
     zm = min(z); zM = max(z);
-    
+
     if (__pl.axis_st(strm))
       xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);	# at least x always exist
-      
+
       if (length(__pl.axis) >= 4)	
 	ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
       else
@@ -56,7 +56,7 @@ function __pl_plot3(x, y, z, c)
       __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
       __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
     endif
-    
+
     if (!ishold)
       plcol0(15);
       __pl_plenv(-1.6, 1.6, -1.6, 2.6, 0, -2);

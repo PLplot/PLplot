@@ -41,7 +41,7 @@ if(WITH_CSA)
     else(NON_TRANSITIVE)
       target_link_libraries(csirocsa PUBLIC ${MATH_LIB})
     endif(NON_TRANSITIVE)
-  endif(MATH_LIB)  
+  endif(MATH_LIB)
 
   install(TARGETS csirocsa
     EXPORT export_plplot

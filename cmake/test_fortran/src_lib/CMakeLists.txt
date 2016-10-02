@@ -3,7 +3,7 @@
 set(SOURCE_LIST
 ${CMAKE_CURRENT_SOURCE_DIR}/hello_1.f90
 )
-  
+
 add_library(hello_1 ${SOURCE_LIST})
 
 if(USE_RPATH)

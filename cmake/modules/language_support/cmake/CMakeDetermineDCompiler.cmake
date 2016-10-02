@@ -15,7 +15,7 @@
 # determine the compiler to use for D programs
 # NOTE, a generator may set CMAKE_D_COMPILER before
 # loading this file to force a compiler.
-# use environment variable DC first if defined by user, next use 
+# use environment variable DC first if defined by user, next use
 # the cmake variable CMAKE_GENERATOR_D which can be defined by a generator
 # as a default compiler
 
@@ -29,12 +29,12 @@ IF(NOT CMAKE_D_COMPILER)
     ENDIF(CMAKE_D_FLAGS_ENV_INIT)
     IF(EXISTS ${CMAKE_D_COMPILER_INIT})
     ELSE(EXISTS ${CMAKE_D_COMPILER_INIT})
-      MESSAGE(FATAL_ERROR "Could not find compiler set in environment variable C:\n$ENV{DC}.") 
+      MESSAGE(FATAL_ERROR "Could not find compiler set in environment variable C:\n$ENV{DC}.")
     ENDIF(EXISTS ${CMAKE_D_COMPILER_INIT})
   ENDIF($ENV{DC} MATCHES ".+")
 
   # next try prefer the compiler specified by the generator
-  IF(CMAKE_GENERATOR_D) 
+  IF(CMAKE_GENERATOR_D)
     IF(NOT CMAKE_D_COMPILER_INIT)
       SET(CMAKE_D_COMPILER_INIT ${CMAKE_GENERATOR_D})
     ENDIF(NOT CMAKE_D_COMPILER_INIT)
@@ -44,7 +44,7 @@ IF(NOT CMAKE_D_COMPILER)
   IF(CMAKE_D_COMPILER_INIT)
     SET(CMAKE_D_COMPILER_LIST ${CMAKE_D_COMPILER_INIT})
   ELSE(CMAKE_D_COMPILER_INIT)
-    SET(CMAKE_D_COMPILER_LIST gdc dmd)  
+    SET(CMAKE_D_COMPILER_LIST gdc dmd)
   ENDIF(CMAKE_D_COMPILER_INIT)
 
   # Find the compiler.
@@ -53,7 +53,7 @@ IF(NOT CMAKE_D_COMPILER)
     SET(CMAKE_D_COMPILER "${CMAKE_D_COMPILER_INIT}" CACHE FILEPATH "C compiler" FORCE)
   ENDIF(CMAKE_D_COMPILER_INIT AND NOT CMAKE_D_COMPILER)
 ENDIF(NOT CMAKE_D_COMPILER)
-MARK_AS_ADVANCED(CMAKE_D_COMPILER)  
+MARK_AS_ADVANCED(CMAKE_D_COMPILER)
 GET_FILENAME_COMPONENT(COMPILER_LOCATION "${CMAKE_D_COMPILER}" PATH)
 
 FIND_PROGRAM(CMAKE_AR NAMES ar PATHS ${COMPILER_LOCATION} )
@@ -67,7 +67,7 @@ MARK_AS_ADVANCED(CMAKE_RANLIB)
 # do not test for GNU if the generator is visual studio
 IF(${CMAKE_GENERATOR} MATCHES "Visual Studio")
   SET(CMAKE_COMPILER_IS_GDC_RUN 1)
-ENDIF(${CMAKE_GENERATOR} MATCHES "Visual Studio") 
+ENDIF(${CMAKE_GENERATOR} MATCHES "Visual Studio")
 
 
 IF(NOT CMAKE_COMPILER_IS_GDC_RUN)
@@ -98,10 +98,10 @@ ENDIF(NOT CMAKE_COMPILER_IS_GDC_RUN)
 # FIXME.  This is PLplot-specific location.  Other projects will use
 # a different location.
 IF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
-	CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in 
+	CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in
                "${CMAKE_PLATFORM_INFO_DIR}/CMakeDCompiler.cmake" IMMEDIATE)
 ELSE(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
-	CONFIGURE_FILE(${CMAKE_ROOT}/Modules/CMakeDCompiler.cmake.in 
+	CONFIGURE_FILE(${CMAKE_ROOT}/Modules/CMakeDCompiler.cmake.in
                "${CMAKE_PLATFORM_INFO_DIR}/CMakeDCompiler.cmake" IMMEDIATE)
 ENDIF(EXISTS ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in)
 

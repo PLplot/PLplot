@@ -57,7 +57,7 @@ weight = (
 )
 def main():
 
-    
+
     FCI_COMBINATIONS = 30
     plsfont(0, 0, 0)
     for index_fci in range(0,FCI_COMBINATIONS):
@@ -105,7 +105,7 @@ def main():
                 k = k + 1
             plsfont(0, 0, 0)
 
-        
+
     # Restore defaults
     #plcol0(1)
 

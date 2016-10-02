@@ -46,7 +46,7 @@ message .msg \
 
 pack append . \
 	.menu {top fillx} \
-	.msg {top padx 5 pady 5 fill} 
+	.msg {top padx 5 pady 5 fill}
 
 tk_menuBar .menu .menu.one .menu.two .menu.three .menu.four .menu.exit
 

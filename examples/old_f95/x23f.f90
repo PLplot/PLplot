@@ -38,7 +38,7 @@
       ! commands, and the "The quick brown..." string.
       character(len=200) string
 
-       
+
 
 !
 !  Displays Greek letters and mathematically interesting Unicode ranges
@@ -300,7 +300,7 @@
          call plmtex("t", 1.5_plflt, 0.5_plflt, 0.5_plflt, title(page))
       enddo
 
-!     Demonstrate methods of getting the current fonts 
+!     Demonstrate methods of getting the current fonts
       call plgfci(fci_old)
       call plgfont(ifamily, istyle, iweight)
       write (*,'(a,z8)') 'For example 23 prior to page 12 the FCI is 0x',fci_old
@@ -393,7 +393,7 @@
 !     Restore defaults
 
    call plcol0(1)
-   
+
    call plend()
 
  end program x23f

@@ -128,7 +128,7 @@ Fortran.  There are several advantages to this rewritten binding.
 
 (i) It is implemented using much more compact code with none
 of the interfacing done in C (i.e., the plplotf95c library has
-now been removed completely).  
+now been removed completely).
 
 (ii) It is much easier to understand and maintain than the previous
 effort.
@@ -226,7 +226,7 @@ users' code similar to the following:
 
 call plparseopts(...)
 
-changed to 
+changed to
 
 integer :: plplarseopts_rc
 [...]

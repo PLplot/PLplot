@@ -73,7 +73,7 @@ configure_file(iwidgets.tcl.in iwidgets.tcl @ONLY)
 configure_file(pkgIndex.tcl.in pkgIndex.tcl @ONLY)
 install(
   FILES
-  ${CMAKE_CURRENT_BINARY_DIR}/iwidgets.tcl 
+  ${CMAKE_CURRENT_BINARY_DIR}/iwidgets.tcl
   ${CMAKE_CURRENT_BINARY_DIR}/pkgIndex.tcl
   DESTINATION ${CMAKE_INSTALL_SCRIPTS_DIR}
   )
@@ -136,7 +136,7 @@ foreach(manpage ${man_FILE_LIST})
   execute_process(
     COMMAND
     ${SED_EXECUTABLE} -e "/man\\.macros/r ${CMAKE_CURRENT_SOURCE_DIR}/doc/man.macros" -e "/man\\.macros/d"
-    INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${manpage} 
+    INPUT_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${manpage}
     OUTPUT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${processed_manpage}
     )
 endforeach(manpage ${man_FILE_LIST})

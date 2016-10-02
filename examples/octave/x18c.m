@@ -1,11 +1,11 @@
 ## Copyright (C) 1998, 1999, 2000  Joao Cardoso
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -93,7 +93,7 @@ function test_poly(k)
 
   global alt;
   global az;
-  
+
   draw = [ 1, 1, 1, 1;
 	  1, 0, 1, 0;
 	  0, 1, 0, 1;
@@ -115,31 +115,31 @@ function test_poly(k)
 
   for i=0:19
     for j=0:19
-      
+
       pj=pi*j/20.1;	pj1=pi*(j+1)/20.1;
       ti=2*pi*i/20; ti1=2*pi*(i+1)/20;
-      
+
       x(1) = sin( pj ) * cos( ti );
       y(1) = sin( pj ) * sin( ti );
       z(1) = cos( pj );
-      
+
       x(2) = sin( pj1 ) * cos( ti );
       y(2) = sin( pj1 ) * sin( ti );
       z(2) = cos( pj1 );
-      
+
       x(3) = sin( pj1 ) * cos( ti1 );
       y(3) = sin( pj1 ) * sin( ti1 );
       z(3) = cos( pj1 );
-      
+
       x(4) = sin( pj ) * cos( ti1 );
       y(4) = sin( pj ) * sin( ti1 );
       z(4) = cos( pj );
-      
+
       x(5) = sin( pj ) * cos( ti );
       y(5) = sin( pj ) * sin( ti );
       z(5) = cos( pj );
 
-      plpoly3(x', y', z', draw(k+1,:)', -1); ## added an extra argument, with the sign 
+      plpoly3(x', y', z', draw(k+1,:)', -1); ## added an extra argument, with the sign
     endfor
   endfor
 

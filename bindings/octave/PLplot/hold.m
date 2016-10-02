@@ -1,5 +1,5 @@
 ## Copyright (C) 2007 Andrew Ross
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
@@ -23,11 +23,11 @@ function hold (arg)
 
   global __pl
 
-  if (nargin ~= 1) 
+  if (nargin ~= 1)
     usage("hold on|off");
   end
 
-  if (strcmpi(arg,"on") == 1) 
+  if (strcmpi(arg,"on") == 1)
     __pl.hold(plgstrm+1) = 1;
   elseif (strcmpi(arg,"off") == 1)
     __pl.hold(plgstrm+1) = 0;

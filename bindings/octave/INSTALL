@@ -8,7 +8,7 @@ Simply use the normal cmake command to configure PLplot, then
 
 <build_tool> install
 
-to build PLplot including its Octave binding, and install PLplot including 
+to build PLplot including its Octave binding, and install PLplot including
 its Octave binding and associated Octave examples.
 
 N.B. <build_tool> is typically the make command, but CMake allows for
@@ -74,8 +74,8 @@ There are three paths that you can add to LOADPATH:
 2-The demos path is <installation prefix>/lib/plplotx.y.z/examples/octave//
 3-The path to switch between PLplot and gnuplot is <installation prefix>/share/octave//
 
-Note: If you are using octave2.9 then LOADPATH is obsolete and you must 
-use addpath instead. Note also that a trailing // no longer includes 
+Note: If you are using octave2.9 then LOADPATH is obsolete and you must
+use addpath instead. Note also that a trailing // no longer includes
 all subdirectories. You must explicitly add them. In particular you need
 the support subdirectory of plplot_octave.
 

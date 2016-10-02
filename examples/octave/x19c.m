@@ -1,10 +1,10 @@
 ## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -19,22 +19,22 @@
 
 function ix19c
   ## Parse and process command line arguments
-  
+
   ## (void) plparseopts( &argc, argv, PL_PARSE_FULL );
-  
+
   ## Longitude (x) and latitude (y)
-  
+
   miny = -70;
   maxy = 80;
-  
+
   plinit();
-  
+
   ## Cartesian plots
   ## Most of world
-  
+
   minx = -170;
   maxx = minx + 360;
- 
+
   ## Setup a custom latitude and longitude-based scaling function.
   plslabelfunc( @geolocation_labeler, [] );
 
@@ -46,16 +46,16 @@ function ix19c
 
   minx = 190;
   maxx = 340;
-  
+
   plcol0( 1 );
   plenv( minx, maxx, miny, maxy, 1, 70 );
   plmap( [], "usaglobe", minx, maxx, miny, maxy );
- 
+
   ## Clear the labeling function
   plslabelfunc( [], [] );
-  
+
   ## Polar, Northern hemisphere
- 
+
   minx = 0;
   maxx = 360;
 
@@ -64,12 +64,12 @@ function ix19c
 
   pllsty( 2 );
   plmeridians( @mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
-  
+
   ## Polar, Northern hemisphere, this time with a PLplot-wide transform
-  
+
   minx = 0;
   maxx = 360;
- 
+
   plstransform( @map_transform, [] );
 
   pllsty( 1 );
@@ -77,10 +77,10 @@ function ix19c
   ## No need to set the map transform here as the global transform will be
   ## used.
   plmap( [], "globe", minx, maxx, miny, maxy );
-  
+
   pllsty( 2 );
   plmeridians( [], 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
-  
+
   ## Show Baltimore, MD on the map
   plcol0( 2 );
   plssym( 0.0, 2.0 );
@@ -89,7 +89,7 @@ function ix19c
   plpoin( x, y, 18 );
   plssym( 0.0, 1.0 );
   plptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );
-  
+
   ## For C, this is how the global transform is cleared
   plstransform( [], [] );
 
@@ -197,7 +197,7 @@ function ix19c
   plmaptex( [], "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Woolhanger\nCommon", minx, maxx, miny, maxy, 60 );
   plmaptex( [], "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "West Ilkerton\nCommon", minx, maxx, miny, maxy, 61 );
   plmaptex( [], "ss/ss64ne_General_Text", 1.0, 0.0, 0.5, "Caffyns\nHeanton\nDown", minx, maxx, miny, maxy, 62 );
-  
+
   plend1();
 endfunction
 

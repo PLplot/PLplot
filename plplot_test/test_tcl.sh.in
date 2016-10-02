@@ -29,7 +29,7 @@ PLATFORM=@PLATFORM@
 # Put pltcl on the PATH.
 PLTCL_DIR="@PLTCL_DIR@"
 # Escape blanks anywhere in fullpathname.
-PLTCL_DIR=${PLTCL_DIR// /\\ } 
+PLTCL_DIR=${PLTCL_DIR// /\\ }
 if [ "$PLATFORM" = "CYGWIN" -o "$PLATFORM" = "MSYS" -o "$PLATFORM" = "MINGW" ] ; then
     # Convert from "<drive_letter>:/" to "/<drive_letter>/" form.
     re='^([a-zA-Z]):/(.*)'
@@ -84,7 +84,7 @@ if [ -n "$is_error" ] ; then
 fi
 if [ "$verbose_test" ] ; then
     echo "$PLTCL_DIR/pltcl demo of plgrid"
-fi 
+fi
 pltcl -dev $device -o "$results/plgrid%n.$dsuffix" $options <<EOF 2> "test.error"
 plinit
 source plgrid.tcl

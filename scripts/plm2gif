@@ -2,7 +2,7 @@
 ############################################################################
 #
 # File: plm2gif
-# Usage: plm2gif [files] 
+# Usage: plm2gif [files]
 #
 # Maurice J. LeBrun (mjl@dino.ph.utexas.edu)
 # Institute for Fusion Studies, University of Texas
@@ -66,7 +66,7 @@ for arg in $*
 	name=`basename $arg .plm`
 	plrender -dev psc -o $name.ps -ori 3 -freeaspect $arg >/dev/null 2>&1
 	$gs -sDEVICE=gif8 -r$res -sOutputFile=$name%d.gif $name.ps \
-	    </dev/null >/dev/null 2>&1 
+	    </dev/null >/dev/null 2>&1
     fi
 done
 exit 0

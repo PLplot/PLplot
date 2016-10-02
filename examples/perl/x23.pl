@@ -358,7 +358,7 @@ for (my $page=11; $page<16; $page++) {
      }
      plptex (0, 1 - ($i+0.5)*$dy, 1, 0, 0, $string);
    }
-  
+
   plschr(0, 1.0);
 }
 

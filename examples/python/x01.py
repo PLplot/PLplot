@@ -61,7 +61,7 @@ def main(w):
 	# Do a plot
 
 	plot1(w)
- 
+
 	# Set up the data
 
 	xscale = 1.
@@ -225,8 +225,8 @@ def plot3(w):
 	w.plcol0(1)
 	w.plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2)
 
-	# Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
-	# plstyl expects a pointer!! 
+	# Superimpose a dashed line grid, with 1.5 mm marks and spaces.
+	# plstyl expects a pointer!!
 
 	#w.plstyl([1500], [1500])
 	w.plcol0(2)
@@ -254,4 +254,4 @@ def plot3(w):
 
 ## Do something to make the demo run if not under the Tk demo gui.
 ## Something about the if __name__ == __main__ business, but need to
-## cobble together a "loopback" widget or some such, so it will work.  
+## cobble together a "loopback" widget or some such, so it will work.

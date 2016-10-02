@@ -30,7 +30,7 @@
 <xsl:template name="header.table">
 </xsl:template>
 
-<!-- 
+<!--
   The redefinition of the template is necessary to fix a bug in the XSL
   DocBook stylesheet, which does not follow the W3C XSL-FO Recommendation
   about the children of a fo:list-item-body
@@ -92,6 +92,6 @@
   </xsl:choose>
 </xsl:template>
 
-<xsl:param name="passivetex.extensions" select="1"></xsl:param> 
+<xsl:param name="passivetex.extensions" select="1"></xsl:param>
 
 </xsl:stylesheet>

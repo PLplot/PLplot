@@ -27,7 +27,7 @@ reimplemented all validation and build rules using our CMake-based build
 system rather than the old special Makefile that Rafael used.
 
 The current list of announcement versions is 5.3.0 and 5.3.1.  To add
-another one (say for 5.9.1), 
+another one (say for 5.9.1),
 
 * cd to www/announce, and add 5.9.1 to the list of versions in
 CMakeLists.txt.

@@ -63,7 +63,7 @@ set(
   )
 
 add_library(
-  qhull 
+  qhull
   ${qhull_src}
   )
 
@@ -83,7 +83,7 @@ if(NOT WIN32)
     message(FATAL_ERROR "Cannot find required math library")
   endif(NOT MATH_LIB)
   target_link_libraries(
-    qhull 
+    qhull
     ${MATH_LIB}
     )
 endif(NOT WIN32)
@@ -94,7 +94,7 @@ endif(NOT WIN32)
 # best tested by the qhull developers.
 set_target_properties(
   qhull
-  PROPERTIES 
+  PROPERTIES
   SOVERSION ${qhull_SOVERSION}
   VERSION ${qhull_VERSION}
 #  COMPILE_DEFINITIONS qh_QHpointer=1
@@ -102,10 +102,10 @@ set_target_properties(
 
 if(UNIX)
   if(APPLE)
-    set_target_properties(qhull PROPERTIES 
+    set_target_properties(qhull PROPERTIES
       INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
   else(APPLE)
-    set_target_properties(qhull PROPERTIES 
+    set_target_properties(qhull PROPERTIES
       INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib"
       INSTALL_RPATH_USE_LINK_PATH TRUE
       BUILD_WITH_INSTALL_RPATH FALSE)
@@ -140,14 +140,14 @@ foreach(TARGET ${TARGET_LIST})
   if(USE_RPATH)
     set_target_properties(
       ${TARGET}
-      PROPERTIES 
+      PROPERTIES
       INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib
       INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/bin
       )
   else(USE_RPATH)
     set_target_properties(
       ${TARGET}
-      PROPERTIES 
+      PROPERTIES
       INSTALL_NAME_DIR ${CMAKE_INSTALL_PREFIX}/bin
       )
   endif(USE_RPATH)

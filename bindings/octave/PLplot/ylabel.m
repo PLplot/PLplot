@@ -28,11 +28,11 @@ function text = ylabel (text)
   if (nargin > 1)
     usage ("ylable (text)");
   endif
-  
+
   if (nargin == 1 && isempty(text))
     text = " ";
   endif
-  
+
   if (nargin == 0)
     text = __pl.ylabel(strm,:);
   else

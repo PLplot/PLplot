@@ -79,7 +79,7 @@ let plot1 z zmin zmax =
  * plot2
  *
  * Illustrates multiple adjacent shaded regions, using different fill
- * patterns for each region. 
+ * patterns for each region.
 \*--------------------------------------------------------------------------*)
 
 let plot2 z zmin zmax =
@@ -92,16 +92,16 @@ let plot2 z zmin zmax =
 
   let inc =
     [|
-      [|450|]; [|-450|]; [|0|]; [|900|]; 
-      [|300|]; [|450;-450|]; [|0; 900|]; [|0; 450|]; 
+      [|450|]; [|-450|]; [|0|]; [|900|];
+      [|300|]; [|450;-450|]; [|0; 900|]; [|0; 450|];
       [|450; -450|]; [|0; 900|];
     |]
   in
   let del =
     [|
-      [|2000|]; [|2000|]; [|2000|]; 
-      [|2000|]; [|2000|]; [|2000; 2000|]; 
-      [|2000; 2000|]; [|2000; 2000|]; [|4000; 4000|]; 
+      [|2000|]; [|2000|]; [|2000|];
+      [|2000|]; [|2000|]; [|2000; 2000|];
+      [|2000; 2000|]; [|2000; 2000|]; [|4000; 4000|];
       [|4000; 2000|];
     |]
   in
@@ -133,8 +133,8 @@ let plot2 z zmin zmax =
 (*--------------------------------------------------------------------------*\
  * plot3
  *
- * Illustrates shaded regions in 3d, using a different fill pattern for 
- * each region.  
+ * Illustrates shaded regions in 3d, using a different fill pattern for
+ * each region.
 \*--------------------------------------------------------------------------*)
 
 let plot3 () =
@@ -146,7 +146,7 @@ let plot3 () =
   in
   let yy =
     [|
-      [|1.0; 1.0; 0.0; 0.0; 1.0|]; 
+      [|1.0; 1.0; 0.0; 0.0; 1.0|];
       [|-1.0; -1.0; 0.0; 0.0; -1.0|];
     |]
   in
@@ -162,7 +162,7 @@ let plot3 () =
   plwind (-1.0) 1.0 (-1.0) 1.0;
   plw3d 1.0 1.0 1.0 (-1.0) 1.0 (-1.0) 1.0 0.0 1.5 30.0 (-40.0);
 
-  (* Plot using identity transform *) 
+  (* Plot using identity transform *)
   plcol0 1;
   plbox3 "bntu" "X" 0.0 0 "bntu" "Y" 0.0 0 "bcdfntu" "Z" 0.5 0;
   plcol0 2;

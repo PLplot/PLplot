@@ -1,10 +1,10 @@
 ## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -83,7 +83,7 @@ function plot1(type)
 
   ## For the gridless case, put phase vs freq on same plot */
 
-  if (type == 0) 
+  if (type == 0)
     plcol0(1);
     plwind(-2.0, 3.0, -100.0, 0.0);
     plbox("", 0.0, 0, "cmstv", 30.0, 3);
@@ -131,7 +131,7 @@ function plot1(type)
   ## Only specify legend data that are required according to the
   ## value of opt_array for that entry.
 
-  ## Data for first legend entry. 
+  ## Data for first legend entry.
   opt_array(1) = PL_LEGEND_LINE;
   text_colors(1) = 2;
   text(1,1:length("Amplitude")) = "Amplitude";
@@ -158,8 +158,8 @@ function plot1(type)
   [legend_width, legend_height] = ...
       pllegend( bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX), 0, 0.0, 0.0,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
-               1., text_colors, text, 
-               [], [], [], [], 
+               1., text_colors, text,
+               [], [], [], [],
                line_colors, line_styles, line_widths,
                symbol_colors, symbol_scales, symbol_numbers, symbols );
 

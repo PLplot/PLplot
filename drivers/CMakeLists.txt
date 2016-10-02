@@ -119,7 +119,7 @@ if(ENABLE_DYNDRIVERS)
 	  if(NOT QT_LIBRARIES)
 	    message(FATAL_ERROR "Internal build system inconsistency. QT_LIBRARIESis empty but it should be populated")
 	  endif(NOT QT_LIBRARIES)
-	  
+	
 	  target_link_libraries(
 	    ${SOURCE_ROOT_NAME}
 	    plplot

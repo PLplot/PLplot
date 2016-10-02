@@ -32,24 +32,24 @@ package body PLplot_Thin is
 -- Utility for passing matrices to C                                          --
 --------------------------------------------------------------------------------
 
-    -- Take a Real_Matrix as defined in Ada.Numerics.Generic_Real_Arrays 
-    -- and its instances and produce a 1D array of access variables to the  
-    -- element located at the first column of each row. This is then suitable  
-    -- for passing to an external C subroutine which expects a "2D array" in the 
+    -- Take a Real_Matrix as defined in Ada.Numerics.Generic_Real_Arrays
+    -- and its instances and produce a 1D array of access variables to the
+    -- element located at the first column of each row. This is then suitable
+    -- for passing to an external C subroutine which expects a "2D array" in the
     -- form of an array of pointers to "1D arrays" which in turn are pointers to
-    -- the first element of each row in C-land. This currently uses the GNAT 
-    -- attribute Unrestricted_Access which makes it non-portable but allows the 
-    -- accessing of the matrix elements without aliasing them, which is useful 
+    -- the first element of each row in C-land. This currently uses the GNAT
+    -- attribute Unrestricted_Access which makes it non-portable but allows the
+    -- accessing of the matrix elements without aliasing them, which is useful
     -- because the Ada 2005 vector and matrix types are non-aliased.
-    
-    -- For more about the Unrestricted_Access attribute, see Implementation 
+
+    -- For more about the Unrestricted_Access attribute, see Implementation
     -- Defined Attributes in the GNAT Reference Manual.
 
-    -- TO-DO: Write a function which accepts x(Index, Index_Of_First_Column) 
-    -- as an argument and returns a "proper" access variable using the method 
-    -- discussed in "Ada as a Second Language," Second Edition, by Norman H. 
+    -- TO-DO: Write a function which accepts x(Index, Index_Of_First_Column)
+    -- as an argument and returns a "proper" access variable using the method
+    -- discussed in "Ada as a Second Language," Second Edition, by Norman H.
     -- Cohen, Section 19.3, for portability. This should remove GNAT dependence.
-    
+
     -- Question: Will Unchecked_Access, a normal Ada feature, work instead? fix this
 
     function Matrix_To_Pointers(x : Real_Matrix) return Long_Float_Pointer_Array is
@@ -86,15 +86,15 @@ package body PLplot_Thin is
 -- THESE FUNCTIONS ^^^ ARE NOT IMPLEMENTED FOR THE ADA BINDING
 -- EXCEPT FOR THE FOLLOWING.
 
-    -- plparseopts here is an exact copy (exept for the name) of 
+    -- plparseopts here is an exact copy (exept for the name) of
     -- Parse_Command_Line_Arguments in the thick binding. The reason for
     -- departing from the usual method of simply pragma Import-ing as in
-    -- most or all of the other interfaces to C is because of the need to 
-    -- figure out what the command lines arguments are by also pragma 
-    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argment version is made 
-    -- at the request of the development team rather than the three-argument 
+    -- most or all of the other interfaces to C is because of the need to
+    -- figure out what the command lines arguments are by also pragma
+    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argment version is made
+    -- at the request of the development team rather than the three-argument
     -- version of the documetation. The caller specifies only the parse mode.
-    
+
     -- Process options list using current options info.
     procedure plparseopts(Mode : Parse_Mode_Type) is
 
@@ -129,7 +129,7 @@ package body PLplot_Thin is
         Mode      : Parse_Mode_Type) is
 
         Gnat_Argc_Dummy : aliased Integer;
-        
+
         type Gnat_Argc_Access_Type is access all Integer;
         Gnat_Argc_Access : Gnat_Argc_Access_Type;
 
@@ -148,9 +148,9 @@ package body PLplot_Thin is
 
 	-- Transformation routines
 
-    -- pltr0, pltr1, and pltr2 had to be re-written in Ada in order to make the 
-    -- callback work while also passing the data structure along, e.g. 
-    -- pltr_data in the formal names below. The machinery surroundinging this idea  
+    -- pltr0, pltr1, and pltr2 had to be re-written in Ada in order to make the
+    -- callback work while also passing the data structure along, e.g.
+    -- pltr_data in the formal names below. The machinery surroundinging this idea
     -- also allows for user-defined plot transformation subprograms to be easily
     -- written.
 
@@ -175,20 +175,20 @@ package body PLplot_Thin is
         du, dv : PLFLT;
         xl, xr, yl, yr : PLFLT;
         nx, ny : PLINT;
-       
+
         -- Tell the program what structure the data beginning at pltr_data has.
         package Transformation_Data_Type_Address_Conversions is new System.Address_To_Access_Conversions(Transformation_Data_Type);
         Transformation_Data_Pointer : Transformation_Data_Type_Address_Conversions.Object_Pointer;
-    
+
     begin
         Transformation_Data_Pointer := Transformation_Data_Type_Address_Conversions.To_Pointer(pltr_data);
 
         nx := Transformation_Data_Pointer.nx;
         ny := Transformation_Data_Pointer.ny;
 
-        -- Ada converts floats to integers by rounding while C does so by 
-        -- truncation. There is no fool-proof way to fix that. Here, we simply 
-        -- subtract 0.499999999999999 before doing the conversion. Subtracting 
+        -- Ada converts floats to integers by rounding while C does so by
+        -- truncation. There is no fool-proof way to fix that. Here, we simply
+        -- subtract 0.499999999999999 before doing the conversion. Subtracting
         -- 0.5 results in index constraint errors being raised.
         ul := Integer(x - 0.499999999999999);
         ur := ul + 1;
@@ -208,17 +208,17 @@ package body PLplot_Thin is
             Put_Line("pltr1: Invalid coordinates");
             return; -- Return to caller instead of aborting like plexit.
         end if;
-        
+
         xl := Transformation_Data_Pointer.xg(ul);
         yl := Transformation_Data_Pointer.yg(vl);
-        
+
         if ur = Transformation_Data_Pointer.nx then
             tx := xl;
         else
             xr := Transformation_Data_Pointer.xg(ur);
             tx := xl * (1.0 - du) + xr * du;
         end if;
-        
+
         if vr = Transformation_Data_Pointer.ny then
             ty := yl;
         else
@@ -244,13 +244,13 @@ package body PLplot_Thin is
 
         package Transformation_Data_Type_2_Address_Conversions is new System.Address_To_Access_Conversions(Transformation_Data_Type_2);
         TD : Transformation_Data_Type_2_Address_Conversions.Object_Pointer;
-    
+
     begin
         TD := Transformation_Data_Type_2_Address_Conversions.To_Pointer(pltr_data);
 
-        -- Ada converts floats to integers by rounding while C does so, dangerously, by 
-        -- truncation. There is no fool-proof way to fix that. Here, we simply 
-        -- subtract 0.499999999999999 before doing the conversion. Subtracting 
+        -- Ada converts floats to integers by rounding while C does so, dangerously, by
+        -- truncation. There is no fool-proof way to fix that. Here, we simply
+        -- subtract 0.499999999999999 before doing the conversion. Subtracting
         -- 0.5 results in index constraint errors being raised.
         ul := Integer(x - 0.499999999999999);
         ur := ul + 1;
@@ -286,7 +286,7 @@ package body PLplot_Thin is
                     tx := xll * (1.0 - dv) + xlr * dv;
                     ty := yll * (1.0 - dv) + ylr * dv;
                 end if;
-            
+
             elsif x > xmax then
 
                 if y < ymin then
@@ -295,7 +295,7 @@ package body PLplot_Thin is
                 elsif y > ymax then
                     tx := TD.xg(TD.nx - 1, TD.ny - 1);
                     ty := TD.yg(TD.nx - 1, TD.ny - 1);
-                else 
+                else
                     xll := TD.xg(TD.nx - 1, vl);
                     yll := TD.yg(TD.nx - 1, vl);
                     xlr := TD.xg(TD.nx - 1, vr);
@@ -304,9 +304,9 @@ package body PLplot_Thin is
                     tx := xll * (1.0 - dv) + xlr * dv;
                     ty := yll * (1.0 - dv) + ylr * dv;
                 end if;
-            
+
             else
-            
+
                 if y < ymin then
                     xll := TD.xg(ul, 0);
                     xrl := TD.xg(ur, 0);
@@ -323,7 +323,7 @@ package body PLplot_Thin is
                     tx := xlr * (1.0 - du) + xrr * du;
                     ty := ylr * (1.0 - du) + yrr * du;
                 end if;
-                
+
             end if;
 
         -- Normal case.
@@ -335,29 +335,29 @@ package body PLplot_Thin is
             xll := TD.xg(ul, vl);
             yll := TD.yg(ul, vl);
 
-            -- ur is out of bounds 
+            -- ur is out of bounds
             if ur = TD.nx and vr < TD.ny then
                 xlr := TD.xg(ul, vr);
                 ylr := TD.yg(ul, vr);
 
                 tx := xll * (1.0 - dv) + xlr * dv;
                 ty := yll * (1.0 - dv) + ylr * dv;
-            
-            -- vr is out of bounds 
+
+            -- vr is out of bounds
             elsif ur < TD.nx and vr = TD.ny then
                 xrl := TD.xg(ur, vl);
                 yrl := TD.yg(ur, vl);
 
                 tx := xll * (1.0 - du) + xrl * du;
                 ty := yll * (1.0 - du) + yrl * du;
-            
-            -- both ur and vr are out of bounds 
+
+            -- both ur and vr are out of bounds
             elsif ur = TD.nx and vr = TD.ny then
                 tx := xll;
                 ty := yll;
 
-            -- everything in bounds 
-            else 
+            -- everything in bounds
+            else
                 xrl := TD.xg(ur, vl);
                 xlr := TD.xg(ul, vr);
                 xrr := TD.xg(ur, vr);

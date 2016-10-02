@@ -18,7 +18,7 @@ Installation instructions for Unix
    - run: make
    - run: sudo make install
    - run: cd examples/c
-   - run: make x01c 
+   - run: make x01c
    - run: ./x01c
 
 Installation instructions for Mac OS X
@@ -28,7 +28,7 @@ Installation instructions for Mac OS X
      - Untar it to a folder and cd into the main dir.
      - Make a directory called "buildosx". cd into "buildosx".
      - Run: ../configure --disable-debug --enable-monolithic --enable-shared
-     - Run: make 
+     - Run: make
      - Run: sudo make install (library and developer files are installed to /usr/local)
      OR
      - download and install the port package from http://darwinports.opendarwin.org
@@ -58,10 +58,10 @@ Installation instructions for Mac OS X
    - run: ./configure --enable-wxwidgets --with-wxwidgets-bindir=/opt/local/bin (port)
      OR
      run: ./configure --enable-wxwidgets (self compiled in /usr/local)
-   - run: make 
+   - run: make
    - run: sudo make install
    - run: cd examples/c
-   - run: make x01c 
+   - run: make x01c
    - run: ./x01c
 
 
@@ -88,7 +88,7 @@ private:
 };
 
 
-wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height ) : 
+wxPLplotstream::wxPLplotstream( wxDC *dc, int width, int height ) :
                 m_dc(dc), m_width(width), m_height(height)
 {
   ::plstream();
@@ -170,7 +170,7 @@ Installation instructions for Win32
 - NOT WORKING NOW: install gd library and/or freetype library (see instructions below)
 - download the PLplot library from plplot.sf.net (version 5.5.3)
 - Remark (Mac OS X): You need automake 1.8.2 and libtool 1.4 in order to compile PLplot.
-                     Download and install fink (fink.sf.net) and install these programs. 
+                     Download and install fink (fink.sf.net) and install these programs.
 - untar or unzip it in a suitable directory
 - unzip or untar the wxPLplot package in sys/win32
 - cd into sys/win32/wxplplot
@@ -184,7 +184,7 @@ Installation instructions for Win32
   . Run: cd examples
   . Run: mingw32-make COMPILER=bcc
   .  or: mingw32-make COMPILER=gcc
-  
+
 
 
 
@@ -197,7 +197,7 @@ Install the gd library for png, gif and jpeg drivers (Win32, NOT WORKING NOW)
   Borland BCC 5.5: implib -a bgd_bcc.lib bgd.dll
   VC++: lib /machine:i386 /def:bgd.def
   MingW: already in gdwin32 (libbgd.a)
-  
+
 Install the freetype library (Win32, NOT WORKING NOW)
 
 
@@ -212,13 +212,13 @@ Install wxWidgets 2.6.1
  - Goto %WXWIN%/build/msw.
  - Run all or some of the following commands:
    mingw32-make -f makefile.gcc BUILD=debug MONOLITHIC=1 SHARED=1
-     The wxWidgets (debug, shared) library will be build. 
+     The wxWidgets (debug, shared) library will be build.
    mingw32-make -f makefile.gcc BUILD=release MONOLITHIC=1 SHARED=1
-     The wxWidgets (release, shared) library will be build. 
+     The wxWidgets (release, shared) library will be build.
    mingw32-make -f makefile.gcc BUILD=debug MONOLITHIC=1 SHARED=0
-     The wxWidgets (debug, static) library will be build. 
+     The wxWidgets (debug, static) library will be build.
    mingw32-make -f makefile.gcc BUILD=release MONOLITHIC=1 SHARED=0.
-     The wxWidgets (release, static) library will be build. 
+     The wxWidgets (release, static) library will be build.
  - Copy both dlls from %%WXWIN%/lib/gcc_dll to a directory, where they can be found (e.g. sys/win32/wxplplot/examples directory).
  - The same WXWIN variable must than be set for the wxplplot makefile.
 
@@ -229,13 +229,13 @@ Install wxWidgets 2.6.1
  - Goto %WXWIN%/build/msw.
  - Run all or some of the following commands:
    make -f makefile.bcc -DBUILD=debug -DMONOLITHIC=1 -DSHARED=1
-     The wxWidgets (debug, shared) library will be build. 
+     The wxWidgets (debug, shared) library will be build.
    make -f makefile.bcc -DBUILD=release -DMONOLITHIC=1 -DSHARED=1
-     The wxWidgets (release, shared) library will be build. 
+     The wxWidgets (release, shared) library will be build.
    make -f makefile.bcc -DBUILD=debug -DMONOLITHIC=1 -DSHARED=0
-     The wxWidgets (debug, static) library will be build. 
+     The wxWidgets (debug, static) library will be build.
    make -f makefile.bcc -DBUILD=release -DMONOLITHIC=1 -DSHARED=0.
-     The wxWidgets (release, static) library will be build. 
+     The wxWidgets (release, static) library will be build.
  - Copy both dlls from %%WXWIN%/lib/gcc_dll to a directory, where they can be found (e.g. sys/win32/wxplplot/examples directory).
  - The same WXWIN variable must than be set for the wxplplot makefile.
 

@@ -67,13 +67,13 @@ if(NOT DEFAULT_CMAP1_FILE)
   set(DEFAULT_CMAP1_FILE "cmap1_default.pal")
 endif(NOT DEFAULT_CMAP1_FILE)
 
-# Deprecated functions are not included by default. Set to ON if you 
+# Deprecated functions are not included by default. Set to ON if you
 # require this for backwards compatibility.
 option(PL_DEPRECATED "Include support for deprecated functions" OFF)
 
 # Set to ON if want to use general fill_intersection_polygon approach
 # rather than the traditional code to fill the intersection of a
-# polygon with the clipping limits. 
+# polygon with the clipping limits.
 
 option(USE_FILL_INTERSECTION_POLYGON "use fill_intersection_polygon" OFF)
 
@@ -270,7 +270,7 @@ check_function_exists(mkfifo PL_HAVE_MKFIFO)
 check_function_exists(unlink PL_HAVE_UNLINK)
 check_function_exists(_NSGetArgc HAVE_NSGETARGC)
 
-# Check for FP functions, including underscored version which 
+# Check for FP functions, including underscored version which
 # are sometimes all that is available on windows
 
 check_symbol_exists(isfinite "math.h" HAVE_ISFINITE_SYMBOL)

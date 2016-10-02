@@ -218,7 +218,7 @@ if(NOT original_logic)
 
   # Function to set appropriate target properties for Qt-related build targets.
   function(set_qt_target_properties target)
-    # Actual target argument is just a string so only one level of 
+    # Actual target argument is just a string so only one level of
     # indirection required to determine that string.
     set_property(TARGET ${target} APPEND PROPERTY COMPILE_DEFINITIONS ${NP_QT_COMPILE_DEFINITIONS})
     set_property(TARGET ${target} APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG ${NP_QT_COMPILE_DEFINITIONS} QT_DEBUG)

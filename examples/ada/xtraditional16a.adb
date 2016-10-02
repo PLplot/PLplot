@@ -50,14 +50,14 @@ procedure xtraditional16a is
     z, w : Real_Matrix(0 .. nx - 1, 0 .. ny - 1);
     clevel : Real_Vector(0 .. ns - 1);
     shedge : Real_Vector(0 .. ns);
-    
+
     cgrid1 : aliased Transformation_Data_Type
-       (x_Last => nx - 1, 
-        y_Last => ny - 1, 
+       (x_Last => nx - 1,
+        y_Last => ny - 1,
         z_Last => 0);
 
     cgrid2 : aliased Transformation_Data_Type_2
-       (x_Last => nx - 1, 
+       (x_Last => nx - 1,
         y_Last => ny - 1);
 
     fill_width : Long_Float := 2.0;
@@ -80,16 +80,16 @@ procedure xtraditional16a is
     tr : Real_Vector(0 .. 5);
 
     procedure mypltr -- This spec is necessary to accommodate pragma Convention().
-       (x, y : Long_Float; 
-        tx, ty : out Long_Float; 
+       (x, y : Long_Float;
+        tx, ty : out Long_Float;
         pltr_data : PL_Pointer);
     pragma Convention(Convention => C, Entity => mypltr);
 
 
     procedure mypltr
-       (x, y : Long_Float; 
-        tx, ty : out Long_Float; 
-        pltr_data : PL_Pointer) is 
+       (x, y : Long_Float;
+        tx, ty : out Long_Float;
+        pltr_data : PL_Pointer) is
     begin
         tx := tr(0) * x + tr(1) * y + tr(2);
         ty := tr(3) * x + tr(4) * y + tr(5);
@@ -175,7 +175,7 @@ begin
             cgrid2.zg(i, j) := 0.0; -- Not used, but initialize anway.
         end loop;
     end loop;
-    
+
     -- Plot using identity transform
     pladv(0); -- page 1
     plvpor(0.1, 0.9, 0.1, 0.9);
@@ -183,7 +183,7 @@ begin
 
     plpsty(0);
 
-    plshades(z, Null, -1.0, 1.0, -1.0, 1.0, 
+    plshades(z, Null, -1.0, 1.0, -1.0, 1.0,
          shedge, fill_width,
          cont_color, cont_width,
          plfill'access, True, Null, System.Null_Address);
@@ -215,11 +215,11 @@ begin
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol0(2);
-   
+
     pllab("distance", "altitude", "Bogon density");
 
     -- Plot using 1d coordinate transform
-    
+
     -- Load colour palettes
     plspal0("cmap0_black_on_white.pal");
     plspal1("cmap1_blue_yellow.pal", True);
@@ -233,7 +233,7 @@ begin
 
     plpsty(0);
 
-    plshades(z, Null, -1.0, 1.0, -1.0, 1.0, 
+    plshades(z, Null, -1.0, 1.0, -1.0, 1.0,
          shedge, fill_width,
          cont_color, cont_width,
          plfill'access, True, pltr1'access, cgrid1'Address);
@@ -265,7 +265,7 @@ begin
     plcol0(1);
     plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
     plcol0(2);
-   
+
     pllab("distance", "altitude", "Bogon density");
 
     -- Plot using 2d coordinate transform
@@ -283,7 +283,7 @@ begin
 
     plpsty(0);
 
-    plshades(z, Null, -1.0, 1.0, -1.0, 1.0, 
+    plshades(z, Null, -1.0, 1.0, -1.0, 1.0,
          shedge, fill_width,
          cont_color, cont_width,
          plfill'access, False, pltr2'access, cgrid2'Address);
@@ -334,7 +334,7 @@ begin
 
     plpsty(0);
 
-    plshades(z, Null, -1.0, 1.0, -1.0, 1.0, 
+    plshades(z, Null, -1.0, 1.0, -1.0, 1.0,
          shedge, fill_width,
          2, 3.0,
          plfill'access, False, pltr2'access, cgrid2'Address);
@@ -374,7 +374,7 @@ begin
     -- Plot using 2d coordinate transform and exclusion
 
     -- Ada note: This "exclusion" part works if exclude is set to True.
-    -- In the C original example, the setting of exclude was handled by the 
+    -- In the C original example, the setting of exclude was handled by the
     -- the input parser which handling is not implemented in this Ada example.
     --    exclude := False;
     if exclude then
@@ -392,7 +392,7 @@ begin
 
         plpsty(0);
 
-        plshades(z, zdefined'Unrestricted_Access, -1.0, 1.0, -1.0, 1.0, 
+        plshades(z, zdefined'Unrestricted_Access, -1.0, 1.0, -1.0, 1.0,
              shedge, fill_width,
              cont_color, cont_width,
              plfill'access, False, pltr2'access, cgrid2'Address);
@@ -418,7 +418,7 @@ begin
 
     plpsty(0);
 
-    -- Build new coordinate matrices. 
+    -- Build new coordinate matrices.
     for i in cgrid2.xg'range(1) loop
         r := Long_Float(i) / Long_Float(nx - 1);
         for j in cgrid2.xg'range(2) loop
@@ -438,7 +438,7 @@ begin
     end loop;
 
     -- Now we can shade the interior region.
-    plshades(z, Null, -1.0, 1.0, -1.0, 1.0, 
+    plshades(z, Null, -1.0, 1.0, -1.0, 1.0,
          shedge, fill_width,
          cont_color, cont_width,
          plfill'access, False, pltr2'access, cgrid2'Address);
@@ -476,7 +476,7 @@ begin
 
       plcol0(1);
       plline(px, py);
-                  
+
       -- And label the plot.
       plcol0(2);
       pllab("", "",  "Tokamak Bogon Instability");

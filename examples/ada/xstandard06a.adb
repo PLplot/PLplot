@@ -40,7 +40,7 @@ procedure xstandard06a is
 
 begin
     -- Parse and process command line arguments
-    Parse_Command_Line_Arguments(Parse_Full); 
+    Parse_Command_Line_Arguments(Parse_Full);
 
     -- Initialize plplot
     Initialize_PLplot;

@@ -35,13 +35,13 @@ procedure xstandard05a is
     data : Real_Vector(0 .. NPTS - 1);
     delt : Long_Float; -- delta is a reserved word in Ada.
 begin
-    -- Parse and process command line arguments 
+    -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
 
-    -- Initialize plplot 
+    -- Initialize plplot
     Initialize_PLplot;
 
-    -- Fill up data points 
+    -- Fill up data points
     delt := 2.0 * pi / Long_Float(NPTS);
     for i in data'range loop
         data(i) := sin(Long_Float(i) * delt);

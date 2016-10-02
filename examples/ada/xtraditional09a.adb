@@ -61,19 +61,19 @@ procedure xtraditional09a is
     clevel : Real_Vector(0 .. 10) := (-1.0, -0.8, -0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6, 0.8, 1.0);
 
     cgrid1 : aliased Transformation_Data_Type
-       (x_Last => XPTS - 1, 
-        y_Last => YPTS - 1, 
+       (x_Last => XPTS - 1,
+        y_Last => YPTS - 1,
         z_Last => 0);
 
     cgrid2 : aliased Transformation_Data_Type_2
-       (x_Last => XPTS - 1, 
+       (x_Last => XPTS - 1,
         y_Last => YPTS - 1);
 
 
-    -- Quick and dirty function for converting from C. Apparently C lacks an 
+    -- Quick and dirty function for converting from C. Apparently C lacks an
     -- exponentiation operator.
-    -- Don't have a cow over the abs(a) in pow because all calls to pow() in 
-    -- this example have an exponent of 2.0, i.e., squaring. Without the abs() 
+    -- Don't have a cow over the abs(a) in pow because all calls to pow() in
+    -- this example have an exponent of 2.0, i.e., squaring. Without the abs()
     -- Ada raises an exception. (Why doesn't C?)
     function pow(a, b : Long_Float) return Long_Float is
         aa : Long_Float;
@@ -84,16 +84,16 @@ procedure xtraditional09a is
 
 
     procedure mypltr -- This spec is necessary to accommodate pragma Convention().
-       (x, y : Long_Float; 
-        tx, ty : out Long_Float; 
+       (x, y : Long_Float;
+        tx, ty : out Long_Float;
         pltr_data : PL_Pointer);
     pragma Convention(Convention => C, Entity => mypltr);
 
     procedure mypltr
-       (x, y : Long_Float; 
-        tx, ty : out Long_Float; 
+       (x, y : Long_Float;
+        tx, ty : out Long_Float;
         pltr_data : PL_Pointer)
-    is 
+    is
         -- Transformation function
         XSPA : Long_Float := 2.0 / Long_Float(XPTS - 1);
         YSPA : Long_Float := 2.0 / Long_Float(YPTS - 1);
@@ -111,13 +111,13 @@ procedure xtraditional09a is
         lev : Real_Vector(0 .. 9);
         z : Real_Matrix(0 .. RPTS - 1, 0 .. THETAPTS - 1);
         cgrid2 : aliased Transformation_Data_Type_2
-           (x_Last => RPTS - 1, 
+           (x_Last => RPTS - 1,
             y_Last => THETAPTS - 1);
 
     begin -- polar
         plenv(-1.0, 1.0, -1.0, 1.0, 0, -2);
         plcol0(1);
-           
+
         -- Perimeter
         for i in 0 .. PERIMETERPTS - 1 loop
             t := (2.0 * pi / Long_Float(PERIMETERPTS - 1)) * Long_Float(i);
@@ -126,7 +126,7 @@ procedure xtraditional09a is
         end loop;
 
         plline(px, py);
- 
+
         for i in 0 .. RPTS - 1 loop
             r := Long_Float(i) / Long_Float(RPTS - 1);
             for j in 0 .. THETAPTS - 1 loop
@@ -163,7 +163,7 @@ procedure xtraditional09a is
         px, py : Real_Vector(0 .. PPERIMETERPTS - 1);
         z : Real_Matrix(0 .. PRPTS - 1, 0 .. PTHETAPTS - 1);
         cgrid2 : aliased Transformation_Data_Type_2
-           (x_Last => PRPTS - 1, 
+           (x_Last => PRPTS - 1,
             y_Last => PTHETAPTS - 1);
 
     begin -- potential
@@ -258,12 +258,12 @@ procedure xtraditional09a is
         end if;
 
         if nlevelpos > 0 then
-            -- Positive contours 
+            -- Positive contours
             pllsty(1);
             plcont(z, 1, PRPTS, 1, PTHETAPTS, clevelpos, pltr2'access, cgrid2'Address);
         end if;
-             
-        -- Draw outer boundary 
+
+        -- Draw outer boundary
         for i in 0 .. PPERIMETERPTS - 1 loop
             t := (2.0 * pi / Long_Float(PPERIMETERPTS - 1)) * Long_Float(i);
             px(i) := x0 + rmax * cos(t);
@@ -272,7 +272,7 @@ procedure xtraditional09a is
 
         plcol0(ncolbox);
         plline(px, py);
-               
+
         plcol0(ncollab);
         pllab("", "", "Shielded potential of charges in a conducting sphere");
 
@@ -285,7 +285,7 @@ begin -- main
 
     -- Initialize plplot
     plinit;
-    
+
     -- Take care of limitation on singleton positional aggregates.
     mark(1)  := 1500;
     space(1) := 1500;
@@ -319,10 +319,10 @@ begin -- main
     end loop;
 
     -- The following use of Unrestricted_Access works but is GNAT-specific.
-    -- I don't know how else to solve the problem of having a user-specified 
-    -- function that is passed through five or so levels of C as a callback 
+    -- I don't know how else to solve the problem of having a user-specified
+    -- function that is passed through five or so levels of C as a callback
     -- while also not requiring the user to modify the source for plplot_thin.adb
-    -- which is where the type for the "pltr" subprograms is declared. Even if 
+    -- which is where the type for the "pltr" subprograms is declared. Even if
     -- I move that type declaration into the thick bindings, the problem remains.
 
     pl_setcontlabelformat(4,3);
@@ -350,7 +350,7 @@ begin -- main
     plstyl(0);
     plcol0(1);
     pllab("X Coordinate", "Y Coordinate", "Streamlines of flow");
-   
+
     -- Plot using 2d coordinate transform
     plenv(-1.0, 1.0, -1.0, 1.0, 0, 0);
     plcol0(2);

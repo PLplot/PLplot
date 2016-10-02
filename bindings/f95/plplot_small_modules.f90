@@ -56,8 +56,8 @@ module plplot_types
     ! Wadud Miah of the NAG group.
 
     ! The kind c_int32_t defined in ISO_C_BINDING is meant to match the
-    ! C type int32_t, which is used for PLINT and PLBOOL. As there 
-    ! is no equivalent for unsigned integers in Fortran, we use this 
+    ! C type int32_t, which is used for PLINT and PLBOOL. As there
+    ! is no equivalent for unsigned integers in Fortran, we use this
     ! kind for PLUNICODE as well.
     integer, parameter :: private_plint  = c_int32_t
     integer, parameter :: private_plbool  = c_int32_t

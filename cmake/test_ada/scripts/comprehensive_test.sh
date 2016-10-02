@@ -414,7 +414,7 @@ hash git
 hash_rc=$?
 
 if [ "$hash_rc" -ne 0 ] ; then
-    echo_tee "WARNING: git not on PATH so cannot determine if SOURCE_TREE = 
+    echo_tee "WARNING: git not on PATH so cannot determine if SOURCE_TREE =
 $SOURCE_TREE is a git repository or not"
 else
     cd $SOURCE_TREE
@@ -449,7 +449,7 @@ echo_tee "Summary of options used for these tests
 "
 
 if [ "$do_clean_first" = "yes" ] ; then
-    echo_tee "WARNING: The shared and static subdirectory trees of 
+    echo_tee "WARNING: The shared and static subdirectory trees of
 $prefix
 are about to be removed!
 "
@@ -491,7 +491,7 @@ if [[ "$OSTYPE" =~ ^darwin ]]; then
 else
     ANY_MAC_OSX_PLATFORM="false"
 fi
-    
+
 hash printenv
 hash_rc=$?
 if [ "$hash_rc" -ne 0 ] ; then

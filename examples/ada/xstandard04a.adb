@@ -50,10 +50,10 @@ procedure xstandard04a is
 
         Set_Viewport_Normalized(0.15, 0.85, 0.1, 0.9);
         Set_Viewport_World(-2.0, 3.0, -80.0, 0.0);
-        
+
         -- Try different axis and labelling styles.
         Set_Pen_Color(Red);
-        
+
         if Plot_Type = 0 then
             Box_Around_Viewport("bclnst", 0.0, 0, "bnstv", 0.0, 0);
         elsif Plot_Type = 1 then
@@ -131,7 +131,7 @@ procedure xstandard04a is
                     opt_array,
                     1.0, 1.0, 2.0,
                     1.0, text_colors, text,
-                    Box_Colors, Box_Patterns, 
+                    Box_Colors, Box_Patterns,
                     Box_Scales, Box_Line_Widths,
                     line_colors, line_styles, line_widths,
                     symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -172,7 +172,7 @@ procedure xstandard04a is
                     opt_array,
                     1.0, 1.0, 2.0,
                     1.0, text_colors, text,
-                    Box_Colors, Box_Patterns, 
+                    Box_Colors, Box_Patterns,
                     Box_Scales, Box_Line_Widths,
                     line_colors, line_styles, line_widths,
                     symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -182,7 +182,7 @@ procedure xstandard04a is
 
 begin
     -- Parse and process command line arguments
-    Parse_Command_Line_Arguments(Parse_Full); 
+    Parse_Command_Line_Arguments(Parse_Full);
 
     -- Initialize plplot
     Initialize_PLplot;

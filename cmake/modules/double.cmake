@@ -22,5 +22,5 @@
 # Module for determining configuration variables for PLplot related to
 # double/single precision.
 
-option(PL_DOUBLE 
+option(PL_DOUBLE
 "Compile the library with double precision floating point" ON)

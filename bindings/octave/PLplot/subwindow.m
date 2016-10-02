@@ -1,5 +1,5 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
@@ -40,7 +40,7 @@ function subwindow (xn, yn)
   if (! (isscalar (xn) && isscalar (yn)))
     error ("subwindow: xn and yn have to be scalars");
   endif
-  
+
   xn = round (xn);
   yn = round (yn);
 
@@ -48,13 +48,13 @@ function subwindow (xn, yn)
     multiplot (xn, yn);
     return;
   endif
-  
+
   if (xn < 1 || xn > __pl.multi_row(strm) ||
       yn < 1 || yn > __pl.multi_col(strm))
     error ("subwindow: incorrect xn and yn");
   endif
-  
+
   __pl.multi_cur(strm) = (yn-1)*__pl.multi_row(strm) + xn;
   pladv(__pl.multi_cur(strm));
-  
+
 endfunction

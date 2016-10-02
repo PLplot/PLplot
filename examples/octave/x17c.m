@@ -1,11 +1,11 @@
 ## Copyright (C) 1998, 1999, 2000  Joao Cardoso
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -20,7 +20,7 @@ function x17c
 
   ## If db is used the plot is much more smooth. However, because of the
   ## async X behaviour, one does not have a real-time scripcharter.
-  ##    plSetOpt("db", ""); 
+  ##    plSetOpt("db", "");
 
   ## plSetOpt("np", "");
 
@@ -47,20 +47,20 @@ function x17c
   styline(1) = colline(1) = 2;	## pens color and line style
   styline(2) = colline(2) = 3;
   styline(3) = colline(3) = 4;
-  styline(4) = colline(4) = 5;    
+  styline(4) = colline(4) = 5;
 
   ##    legline = ["sum"; "sin"; "sin*noi"; "sin+noi";];
 
 
-  xlab = 0.; ylab = 0.25;	## legend position 
-  
+  xlab = 0.; ylab = 0.25;	## legend position
+
   autoy = 1;	## autoscale y
   acc = 1;	## dont strip, accumulate
 
   ## Initialize plplot */
   plinit();
-  pladv(0);    
-  plvsta();    
+  pladv(0);
+  plvsta();
   id1= plstripc("bcnst", "bcnstv",
 		tmin, tmax, tjump, ymin, ymax,
 		xlab, ylab,
@@ -85,10 +85,10 @@ function x17c
     y2 = sin(t*pi/18.);
     y3 = y2 * noise;
     y4 = y2 + noise/3.;
-    
+
     ## there is no need for all pens to have the same number of points
     ## or beeing equally time spaced.
-    
+
     if (rem(n,2))	
       plstripa(id1, 0, t, y1);
     endif
@@ -107,5 +107,5 @@ function x17c
 
   plstripd(id1);
   plend1();
-  
+
 endfunction

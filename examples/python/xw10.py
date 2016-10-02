@@ -39,5 +39,5 @@ def main():
 
     # Restore defaults
     #plcol0(1)
-    
+
 main()

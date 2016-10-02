@@ -63,12 +63,12 @@ def main():
 
  if 1:
     # Page 1: Demonstrate inclination and shear capability pattern.
-   
+
     pladv(0)
     plvpor(-0.15, 1.15, -0.05, 1.05)
     plwind(-1.2, 1.2, -0.8, 1.5)
     plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
-   
+
     plcol0(2)
     plbox3(
     "b", "", xmax-xmin, 0,
@@ -90,7 +90,7 @@ def main():
 	plptex3(
 	xmid, ymid, zmin,
 	x_inclination, y_inclination, z_inclination,
-	x_shear, y_shear, z_shear, 
+	x_shear, y_shear, z_shear,
 	0.0, "  revolution")
 
     # x = xmax.
@@ -108,7 +108,7 @@ def main():
 	plptex3(
 	xmax, ymid, zmid,
 	x_inclination, y_inclination, z_inclination,
-	x_shear, y_shear, z_shear, 
+	x_shear, y_shear, z_shear,
 	0.0, "  revolution")
 
     # y = ymax.
@@ -126,7 +126,7 @@ def main():
 	plptex3(
 	xmid, ymax, zmid,
 	x_inclination, y_inclination, z_inclination,
-	x_shear, y_shear, z_shear, 
+	x_shear, y_shear, z_shear,
 	0.0, "  revolution")
     # Draw minimal 3D grid to finish defining the 3D box.
     plmesh(x, y, z, DRAW_LINEXY)
@@ -137,10 +137,10 @@ def main():
     plvpor(-0.15, 1.15, -0.05, 1.05)
     plwind(-1.2, 1.2, -0.8, 1.5)
     plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
-   
+
     plcol0(2)
     plbox3(
-    "b", "", xmax-xmin, 0, 
+    "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
@@ -206,7 +206,7 @@ def main():
 
     # Page 3: Demonstrate shear of string along its axis.
 
-    # Work around xcairo and pngcairo (but not pscairo) problems for 
+    # Work around xcairo and pngcairo (but not pscairo) problems for
     # shear vector too close to axis of string. (N.B. no workaround
     # would be domega = 0.)
     domega = 0.05
@@ -214,10 +214,10 @@ def main():
     plvpor(-0.15, 1.15, -0.05, 1.05)
     plwind(-1.2, 1.2, -0.8, 1.5)
     plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
-   
+
     plcol0(2)
     plbox3(
-    "b", "", xmax-xmin, 0, 
+    "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
@@ -286,10 +286,10 @@ def main():
     plvpor(-0.15, 1.15, -0.05, 1.05)
     plwind(-1.2, 1.2, -0.8, 1.5)
     plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 40., -30.)
-   
+
     plcol0(2)
     plbox3(
-    "b", "", xmax-xmin, 0, 
+    "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
@@ -308,7 +308,7 @@ def main():
 	xpos = xmid + radius*sin_omega
 	ypos = ymid - radius*cos_omega
 	zpos = zmin + pitch*omega
-	# In general, the inclination is proportional to the derivative of 
+	# In general, the inclination is proportional to the derivative of
 	# the position wrt theta.
 	x_inclination = radius*cos_omega
 	y_inclination = radius*sin_omega
@@ -334,10 +334,10 @@ def main():
     plvpor(-0.15, 1.15, -0.05, 1.05)
     plwind(-1.2, 1.2, -0.8, 1.5)
     plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
-   
+
     plcol0(2)
     plbox3(
-    "b", "", xmax-xmin, 0, 
+    "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
@@ -356,5 +356,5 @@ def main():
     plmtex3("zs", -1.0, 0.5, 0.5, "secondary Z-axis label")
     # Draw minimal 3D grid to finish defining the 3D box.
     plmesh(x, y, z, DRAW_LINEXY)
-	    
+	
 main()

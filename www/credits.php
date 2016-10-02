@@ -14,9 +14,9 @@
 		<div id="leftside">
 			<h3>Developers</h3>
 		  <p>Many developers have contributed to PLplot over its long history.  The list of the current core developers is <a href="http://sourceforge.net/p/plplot/_members/">here.</a> Activity graphics for the last 5 years for a historically complete list of developers is at <a href="http://www.openhub.net/p/plplot/contributors/summary">the PLplot contributor summary page at Open HUB</a>. In addition many other individuals have contributed to PLplot by providing patches, finding bugs, or requesting features.</p>
-         
+
       <h3>Additional libraries</h3>
-      <p>The PLplot library depends on some other open source libraries provided by 
+      <p>The PLplot library depends on some other open source libraries provided by
       the community.</p>
       <h4>PLplot core dependencies</h4>
       <ul class="arrowlist">
@@ -39,7 +39,7 @@
       <li>The Qt device driver depends on <a href="https://www.qt.io/download-open-source/">Qt</a>; a multi-platform toolkit library for creating graphical user interfaces.</li>
       <li>The wxwidgets device driver depends on <a href="http://www.wxwidgets.org/">wxWidgets</a>; a GUI and tools library that lets developers create GUI applications for Win32, Mac OS X, GTK+, X11, Motif, WinCE, and more using one codebase.</li>
       </ul>
-      
+
       <h3>Tools</h3>
       <p>The development of the Plplot project is supported by the use of several open source tools.</p>
       <ul class="arrowlist">

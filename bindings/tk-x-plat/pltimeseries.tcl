@@ -1,17 +1,17 @@
 ## -*-Tcl-*-
  # ###################################################################
- # 
+ #
  #  FILE: "pltimeseries.tcl"
- #                                    created: 03/21/1998 {00:21:52 AM} 
- #                                last update: 07/01/2002 {06:11:57 PM} 
+ #                                    created: 03/21/1998 {00:21:52 AM}
+ #                                last update: 07/01/2002 {06:11:57 PM}
  #  Author: Vince Darley
  #  E-mail: vince@biosgroup.com
  #    mail: Bios Group
  #          317 Paseo de Peralta, Santa Fe, NM 87501
  #     www: http://www.biosgroup.com/
- #  
+ #
  # Copyright (c) 1998-1999 Vince Darley
- # 
+ #
  # All rights reserved.
  # ###################################################################
  ##
@@ -22,7 +22,7 @@ proc pltimeseries {args} {uplevel Pltimeseries $args}
 
 itcl::class Pltimeseries {
     inherit itk::Widget
-    
+
     variable timespan 100
     variable min_time 0
     public variable max_time 100
@@ -34,21 +34,21 @@ itcl::class Pltimeseries {
     public variable auto_reduce_scale_minimum 0.75
     public variable auto_scale_freq 0
     public variable auto_scale_intelligently 0
-    
+
     variable colour_increment 1.0
-    
+
     itk_option define -title title Title "plot"
     itk_option define -yname yname Yname "y"
     itk_option define -xname xname Xname "time"
 
     private variable _tick 0
     private variable _ticks ""
-    private variable _points 
+    private variable _points
     private variable _replot 0
-    
+
     constructor {args} {}
     destructor {}
-    
+
     method internal_set {var to} {
 	set $var $to
     }
@@ -63,7 +63,7 @@ itcl::class Pltimeseries {
 }
 
 itcl::body Pltimeseries::constructor {args} {
-    # 
+    #
     # Create the outermost frame to maintain geometry.
     #
     itk_component add shell {
@@ -72,7 +72,7 @@ itcl::body Pltimeseries::constructor {args} {
 	keep -background -cursor -width -height
     }
     pack $itk_component(shell) -fill both -expand yes
-    
+
     itk_component add pl {
 	Plplotwin $itk_component(shell).pl
     } {
@@ -121,7 +121,7 @@ itcl::body Pltimeseries::tick {} {
     }
     incr min_time $scroll_every
     incr max_time $scroll_every
-    set i 0 
+    set i 0
     while {[lindex [lindex $_ticks $i] 0] < $min_time} { incr i }
     foreach trace [array names _points] {
 	set _points($trace) [lrange $_points($trace) $i end]

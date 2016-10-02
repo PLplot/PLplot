@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -41,7 +41,7 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
   elseif (__pl.aspect(strm) == 1) ## equal
     scale = 1;
   endif
-  
+
   if (scale == 1 || scale == 2)
     [t, chrht]= plgchr;
     lb = 8.0 * chrht;
@@ -72,7 +72,7 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
       plsvpa(vpxmin, vpxmax, vpymin, vpymax);
     endif
   endif
-  
+
   if (scale == 0) ## normal
     plvsta;
   endif
@@ -81,9 +81,9 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
   if (__pl.margin(strm))
     xrg = (xM-xm)/50; yrg = (yM-ym)/50;
   endif
-  
+
   plwind(xm-xrg, xM+xrg, ym-yrg, yM+yrg);
-  
+
   ## axis=-2 : draw no box, axis or labels
   ## axis=-1 : draw box only
   ## axis= 0 : Draw box and label with coordinates
@@ -161,6 +161,6 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
 
   plcol0(15); pllsty(1);
   plbox(xopt, __pl.xticks(strm,1), __pl.xticks(strm,2),
-	yopt, __pl.yticks(strm,1), __pl.yticks(strm,2));            
-  
+	yopt, __pl.yticks(strm,1), __pl.yticks(strm,2));
+
 endfunction

@@ -1,31 +1,31 @@
 ## -*-Tcl-*-
  # ###################################################################
- # 
+ #
  #  FILE: "Pltkwin.tcl"
- #				      created: 19/7/96 {1:43:00	pm} 
+ #				      created: 19/7/96 {1:43:00	pm}
  #				  last update: 4/10/96 {1:41:46 pm} pm}	
  #  Author: Vince Darley
  #  E-mail: <vince@das.harvard.edu>
  #    mail: Division of	Applied	Sciences, Harvard University
  #	    Oxford Street, Cambridge MA	02138, USA
  #     www: <http://www.fas.harvard.edu/~darley/>
- #  
+ #
  #  Description:
  #    A	unified	Itk 'extended' widget for Plplot.
- #  
+ #
  #    Derives from the plain PLWin widget which	wraps a	plplot driver
- #  
+ #
  #    Grabbed all the old legacy code and put it together in one
  #    piece.  Should be	much more clear	what's going on	now. It	has
  #    also all been updated for	Itk 2.1, using that package's mega-
  #    widget capability.
- #    
+ #
  #    Am considering making these Itcl classes and/or the plframe
  #    derive their Tcl-plplot interface	from my	'pltcl_stream' class.
- #    
+ #
  #    The advantages are: more sophisticated, better error messages, ...
  #    The disadvantage is that you must	use the	'Cpptcl' package and C++.
- #    
+ #
  #  modified by	 rev reason
  #  -------- --- --- -----------
  #  19/7/96  VMD 1.0 original -	many minor bugs	probably exist.
@@ -42,7 +42,7 @@ itcl::class Pltkwin {
 
     constructor	{args} {}
     protected method plwin {} {	return $itk_interior.plwin }
-    
+
     public method setup_defaults {} {}
     public method create_pmenu {} {}
     public method create_pmenu_print {}	{}
@@ -90,7 +90,7 @@ itcl::class Pltkwin {
 body Pltkwin::constructor {args} {
 # Set up defaults
 
-    setup_defaults 
+    setup_defaults
 
 # Make frame for top row widgets.  plframe widget must already have been
 # created (the plframe is queried for a	list of	the valid output devices
@@ -102,7 +102,7 @@ body Pltkwin::constructor {args} {
 	keep -background -cursor
     }
     pack $itk_component(ftop) -side top	-fill x -before $hull.plwin
-#-fill both 
+#-fill both
 #-expand yes
     itk_component add pmenub {
 	menubutton $itk_interior.ftop.pmenu -text "Plot" \
@@ -115,11 +115,11 @@ body Pltkwin::constructor {args} {
     } {
 	#keep -background -cursor
     }
-    
+
     pack append	$itk_interior.ftop $itk_interior.ftop.pmenu \
 	{left fill padx	12}
     create_pmenu
-    
+
     itk_component add lstat {
 	label $itk_interior.ftop.lstat -anchor w -relief raised
     } {
@@ -127,7 +127,7 @@ body Pltkwin::constructor {args} {
     }
     label_reset	
     pack append	$itk_interior.ftop  $itk_interior.ftop.lstat \
-	{right expand fill} 
+	{right expand fill}
 
 # Initialize plplot widget.  Enable keyboard traversal when widget has
 # the input focus.  Also grab the initial input	focus.
@@ -209,12 +209,12 @@ body Pltkwin::setup_defaults	{}  {
 #----------------------------------------------------------------------------
 
 body Pltkwin::create_pmenu {}	{
-    create_pmenu_print	 
-    create_pmenu_save	 
-    create_pmenu_orient	 
-    create_pmenu_zoom	 
-    create_pmenu_page	 
-    create_pmenu_options 
+    create_pmenu_print	
+    create_pmenu_save	
+    create_pmenu_orient	
+    create_pmenu_zoom	
+    create_pmenu_page	
+    create_pmenu_options
 }
 
 #----------------------------------------------------------------------------
@@ -517,7 +517,7 @@ body Pltkwin::key_filter    {keycode state x y keyname ascii}	{
 	$key_scroll_right	[code $this view_scroll	     1	0 $state] \
 	$key_scroll_left	[code $this view_scroll	    -1	0 $state] \
 	$key_scroll_up		[code $this view_scroll	     0 -1 $state] \
-	$key_scroll_down	[code $this view_scroll	     0	1 $state] 
+	$key_scroll_down	[code $this view_scroll	     0	1 $state]
 
 # Pass keypress	event info back	to client.
 
@@ -610,7 +610,7 @@ body Pltkwin::flash {col} {
 #
 # The closelink	command	was added in the hopes of making the dp	driver
 # cleanup a bit	more robust, but doesn't seem to have any effect except
-# to slow things down quite a bit.  
+# to slow things down quite a bit.
 #----------------------------------------------------------------------------
 
 body Pltkwin::end {} {
@@ -915,7 +915,7 @@ body Pltkwin::zoom_start    {wx	wy} {
 # zoomopts($this,1):
 #   0	first and last points specified	determine opposite corners
 #	of zoom	box.
-#   1	box is centered	about the first	point clicked on, 
+#   1	box is centered	about the first	point clicked on,
 #	perimeter follows mouse	(default)
 #
 #----------------------------------------------------------------------------
@@ -1117,7 +1117,7 @@ body Pltkwin::zoom_mouse_draw {wx0  wy0	wx1 wy1} {
 
     [plwin] draw rect \
 	[lindex	"$coords" 0] [lindex "$coords" 1] \
-	[lindex	"$coords" 2] [lindex "$coords" 3] 
+	[lindex	"$coords" 2] [lindex "$coords" 3]
 }
 
 #----------------------------------------------------------------------------
@@ -1127,7 +1127,7 @@ body Pltkwin::zoom_mouse_draw {wx0  wy0	wx1 wy1} {
 #----------------------------------------------------------------------------
 
 body Pltkwin::zoom_mouse_end	{wx0 wy0 wx1 wy1}   {
-    
+
 # Finish rubber	band draw
 
     bind [plwin] <B1-ButtonRelease> {}
@@ -1140,7 +1140,7 @@ body Pltkwin::zoom_mouse_end	{wx0 wy0 wx1 wy1}   {
     set	coords [zoom_coords $wx0    $wy0 $wx1 $wy1 1]
 
     view_zoom [lindex	"$coords" 0] [lindex "$coords" 1] \
-	[lindex	"$coords" 2] [lindex "$coords" 3] 
+	[lindex	"$coords" 2] [lindex "$coords" 3]
 }
 
 #----------------------------------------------------------------------------
@@ -1151,7 +1151,7 @@ body Pltkwin::zoom_mouse_end	{wx0 wy0 wx1 wy1}   {
 #----------------------------------------------------------------------------
 
 body Pltkwin::view_select {x0 y0 x1 y1}	{
-    
+
 # Adjust arguments to be in bounds and properly	ordered	(xl < xr, etc)
 
     set	xl [min	$x0 $x1]
@@ -1196,7 +1196,7 @@ body Pltkwin::view_select {x0 y0 x1 y1}	{
 #----------------------------------------------------------------------------
 
 body Pltkwin::view_zoom	{x0 y0	x1 y1} {
-    
+
     global xl xr yl yr
 
 # Adjust arguments to be properly ordered (xl <	xr, etc)
@@ -1218,7 +1218,7 @@ body Pltkwin::view_zoom	{x0 y0	x1 y1} {
 	if { $nxl < 0.0	} then {
 	    set	nxl 0.0
 	    set	nxr [expr 2.0 *	$xl]
-	} 
+	}
 	if { $nxr > 1.0	} then {
 	    set	nxr 1.0
 	    set	nxl [expr 2.0 *	$xl - 1.0]
@@ -1292,7 +1292,7 @@ body Pltkwin::view_zoom	{x0 y0	x1 y1} {
 #----------------------------------------------------------------------------
 
 body Pltkwin::zoom_back	{} {
-    
+
     global zidx	zxl zyl	zxr zyr
 
     if { $zidx($this) == 0  } then return
@@ -1316,7 +1316,7 @@ body Pltkwin::zoom_back	{} {
 #----------------------------------------------------------------------------
 
 body Pltkwin::zoom_forward {} {
-    
+
     global zidx	zidx_max zxl zyl zxr zyr
 
     if { $zidx_max($this) == 0	|| $zidx($this)	==  $zidx_max($this) }	then return
@@ -1386,7 +1386,7 @@ body Pltkwin::view_scroll {dx dy s} {
 #----------------------------------------------------------------------------
 
 body Pltkwin::fixview {hscroll	vscroll} {
-    
+
 # Create scrollbars if they don't already exist.
 
     set	created_sb 0

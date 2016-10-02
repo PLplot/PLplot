@@ -109,7 +109,7 @@ _________________________________________________________________________
 
 ** Check and potentially fix internal consistency
 
-This step depends on the step above entitled 
+This step depends on the step above entitled
 
 "Prepare and test the documentation".
 
@@ -141,7 +141,7 @@ golang application api.xml_consistency_checker.  For more details
 concerning how to install that application see the Appendix section
 entitled "The golang API consistency checker".
 
-Note the check_plplot_h.inc target only exists 
+Note the check_plplot_h.inc target only exists
 because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
 -DGENERATE_PLPLOT_H_INC=ON by default which in turn requires
 that at least the OCaml version of the Perl regular expression library
@@ -391,7 +391,7 @@ created.
 
 rsync -av --delete --no-p --no-g --chmod=ugo=rwX \
 /home/irwin/public_html/plplot/htdocs/ \
-airwin,plplot@web.sourceforge.net:htdocs 
+airwin,plplot@web.sourceforge.net:htdocs
 
 Adjust for your username and WEBSITE_PREFIX.  The ",plplot" part of the
 username makes sure you have the right group permissions and default website
@@ -408,7 +408,7 @@ N.B. the trailing slash on the source directory is essential and means rsync
 the contents of this directory with the contents of the destination htdocs
 directory.  Without the trailing slash you would rsync the the contents of
 the source directory with the contents of the htdocs/htdocs destination
-directory which is not what you want to do.  
+directory which is not what you want to do.
 
 N.B. the --dry-run option for rsync is a godsend since it tells you exactly what
 will happen without actually doing it.
@@ -465,7 +465,7 @@ git commit
 
 git checkout master
 #Last check there is nothing to download from server.
-git fetch 
+git fetch
 # Only if git fetch did not download anything....
 git merge --ff-only maint
 git push origin master
@@ -486,7 +486,7 @@ change nothing there for the following tests of this release.
 
    ++ Create a final release tarball and check the result for errors
 
-Follow the above step entitled 
+Follow the above step entitled
 
 "Create (a preliminary version of) the release tarball and check the result for errors"
 
@@ -683,7 +683,7 @@ gpg --search-keys Alan W. Irwin
 gpg --gen-key
 
   With gnupg 1.4.10, I chose the following options when creating a new key:
-  
+
 Please select what kind of key you want:
   (1) RSA and RSA (default)
 
@@ -788,10 +788,10 @@ _________________________________________________________________________
 
 ** Correct computer time
 
-(While it is useful to have the correct time on your computer, this is no 
+(While it is useful to have the correct time on your computer, this is no
 longer strictly necessary).
 Verify that your computer has the right date and time using the command date.
-The easiest way to make sure the time and date are correct is to do the 
+The easiest way to make sure the time and date are correct is to do the
 following:
 1. Install the debian ntpdate package.
 2. Execute the command "/usr/sbin/ntpdate pool.ntp.org", which you will
@@ -800,7 +800,7 @@ This will immediately change your system clock. It is not recommended if you
 have other apps running on your system that expect time to increase in a
 smooth and linear fashion.
 
-If you would like your computer to always have the correct time and date, you 
+If you would like your computer to always have the correct time and date, you
 can install the debian ntp package.  The default configuration appears
 to give good results.  You can check those results by the ntpq -pe command,
 e.g.,
@@ -891,7 +891,7 @@ mkdir /tmp/empty
 rsync -av --delete  /tmp/empty/ airwin,plplot@web.sourceforge.net:htdocs
 
 followed by the original rsync command above to upload the website using
-the new ownership of files.  
+the new ownership of files.
 
 For more on the extremly non-posix permissions of the SF website files
 see
@@ -912,7 +912,7 @@ laborious method worked to delete all files in the past.
 
 sftp airwin,plplot@web.sourceforge.net
 
-Then use the 
+Then use the
 
 ls -l
 

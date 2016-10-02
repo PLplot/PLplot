@@ -9,16 +9,16 @@
 ##  it under the terms of the GNU Library General Public License as published
 ##  by the Free Software Foundation; either version 2 of the License, or
 ##  (at your option) any later version.
-##  
+##
 ##  PLplot is distributed in the hope that it will be useful,
 ##  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ##  GNU Library General Public License for more details.
-##  
+##
 ##  You should have received a copy of the GNU Library General Public License
 ##  along with PLplot; if not, write to the Free Software
 ##  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-##  
+##
 
 1;
 
@@ -75,7 +75,7 @@ function status = ix31c(strm)
   ## Retrieve the same values?
   [xp2, yp2, xleng2, yleng2, xoff2, yoff2] = plgpage();
   fprintf(strm,"page parameters: xp, yp, xleng, yleng, xoff, yoff = %f %f %d %d %d %d\n", xp2, yp2, xleng2, yleng2, xoff2, yoff2);
-  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 || 
+  if (xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 ||
       xoff2 != xoff1 || yoff2 != yoff1 )
     fputs(stderr,"plgpage test failed\n");
     status = 1;
@@ -83,7 +83,7 @@ function status = ix31c(strm)
   ## Restore values set initially by plparseopts.
   plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
 
-  ## Test setting / getting compression parameter across plint 
+  ## Test setting / getting compression parameter across plint
   compression1 = 95;
   plscompression(compression1);
 
@@ -111,7 +111,7 @@ function status = ix31c(strm)
   compression2 = plgcompression();
   fprintf(strm,"Output various PLplot parameters\n");
   fprintf(strm,"compression parameter = %d\n", compression2);
-  if (compression2 != compression1) 
+  if (compression2 != compression1)
     fputs(stderr, "plgcompression test failed\n");
     status = 1;
   endif
@@ -125,7 +125,7 @@ function status = ix31c(strm)
 
   plscmap1(r1',g1',b1');
   plscmap1a(r1',g1',b1',a1');
-  
+
   level2 = plglevel();
   fprintf(strm,"level parameter = %d\n", level2);
   if (level2 != 1)
@@ -161,7 +161,7 @@ function status = ix31c(strm)
   endif
 
 
-  ## Get world coordinates for middle of viewport 
+  ## Get world coordinates for middle of viewport
   [wx,wy,win] = plcalc_world(xmid,ymid);
   fprintf(strm,"world parameters: wx, wy, win = %f %f %d\n", wx, wy, win);
   if (abs(wx-0.5*(xmin+xmax))>1.0E-5 || abs(wy-0.5*(ymin+ymax))>1.0E-5)
@@ -170,7 +170,7 @@ function status = ix31c(strm)
   endif
 
   ## Retrieve and print the name of the output file (if any)
-  ## This goes to stderr not stdout since it will vary between tests and 
+  ## This goes to stderr not stdout since it will vary between tests and
   ## we want stdout to be identical for compare test.
   fnam = plgfnam();
   if (fnam(1) == "\0")
@@ -181,8 +181,8 @@ function status = ix31c(strm)
   fprintf(stderr,"Output file name is %s\n",fnam);
 
   ## Set and get the number of digits used to display axis labels
-  ## Note digits is currently ignored in pls[xyz]ax and 
-  ## therefore it does not make sense to test the returned 
+  ## Note digits is currently ignored in pls[xyz]ax and
+  ## therefore it does not make sense to test the returned
   ## value.
   plsxax(3,0);
   [digmax,digits] = plgxax();
@@ -249,7 +249,7 @@ function status = ix31c(strm)
   plsdiplz(zxmin0, zymin0, zxmax0, zymax0);
   [zxmin, zymin, zxmax, zymax] = plgdiplt();
   fprintf(strm,"zoomed plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f\n", zxmin, zymin, zxmax, zymax);
-  if ( abs(zxmin -(xmin + (xmax-xmin)*zxmin0)) > 1.0E-5 || abs(zymin -(ymin+(ymax-ymin)*zymin0)) > 1.0E-5 || abs(zxmax -(xmin+(xmax-xmin)*zxmax0)) > 1.0E-5 || abs(zymax -(ymin+(ymax-ymin)*zymax0)) > 1.0E-5 ) 
+  if ( abs(zxmin -(xmin + (xmax-xmin)*zxmin0)) > 1.0E-5 || abs(zymin -(ymin+(ymax-ymin)*zymin0)) > 1.0E-5 || abs(zxmax -(xmin+(xmax-xmin)*zxmax0)) > 1.0E-5 || abs(zymax -(ymin+(ymax-ymin)*zymax0)) > 1.0E-5 )
     fputs(stderr,"plsdiplz test failed\n");
     status = 1;
   endif

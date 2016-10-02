@@ -18,13 +18,13 @@ if(LTDL_INCLUDE_DIR)
 
     set(LTDL_LIBRARY_DIR "")
     get_filename_component(LTDL_LIBRARY_DIR ${LTDL_LIBRARIES} PATH)
-    
+
     # Define useful internal macro for finding and checking a library
     include(CheckLibraryExists)
     macro(_find_check_libs _library_name _function_name _lib _have_lib)
       find_library(
       ${_lib}
-      NAMES ${_library_name} 
+      NAMES ${_library_name}
       PATHS /usr/local/lib /usr/lib
       )
 #      message("_library_name = ${_library_name}")
@@ -32,9 +32,9 @@ if(LTDL_INCLUDE_DIR)
       if(${_lib})
         get_filename_component(_path ${${_lib}} PATH)
         check_library_exists(
-	${_library_name} 
-	${_function_name} 
-	${_path} 
+	${_library_name}
+	${_function_name}
+	${_path}
 	${_have_lib}
 	)
       endif(${_lib})
@@ -81,7 +81,7 @@ if(LTDL_INCLUDE_DIR)
 
   endif(LTDL_LIBRARIES)
 endif(LTDL_INCLUDE_DIR)
-	    
+	
 if(LTDL_FOUND)
   if(NOT LTDL_FIND_QUIETLY)
     message(STATUS "Found LTDL: ${LTDL_LIBRARIES}")

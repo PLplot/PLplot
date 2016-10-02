@@ -19,7 +19,7 @@
 -- Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 -- Ada note: This example originally used Ada's random number generator, but in
--- order to make Postscript results that are identical to the C version, a 
+-- order to make Postscript results that are identical to the C version, a
 -- PLplot-specific random number generator was substituted. The original Ada
 -- generator lines are left in as comments for reference.
 
@@ -237,7 +237,7 @@ begin
             lzm :=  Vector_Min((lzm,  zmin));
             lzMM := Vector_Max((lzMM, zmax));
 
-            -- Increase limits slightly to prevent spurious contours 
+            -- Increase limits slightly to prevent spurious contours
             -- due to rounding errors.
             lzm := lzm - 0.01;
             lzMM := lzMM + 0.01;

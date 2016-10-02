@@ -27,5 +27,5 @@ function map = copper (number)
   b = clip(0.5*x);
 
   map = [ r, g, b ];
-  
+
 endfunction

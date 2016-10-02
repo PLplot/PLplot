@@ -33,7 +33,7 @@ if(PLD_xwin)
     set(xwin_LINK_FLAGS "${X11_LIBRARIES}")
     if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
       # turn PL_HAVE_PTHREAD OFF by default for Mac OS X since it doesn't
-      # work for Mac OS X 10.4.  Werner says it does work for vanilla 
+      # work for Mac OS X 10.4.  Werner says it does work for vanilla
       # XQuartz X11, but the official Apple version of X(Quartz) for 10.5
       # doesn't have all the fixes of the vanilla version so he doesn't trust
       # it.  This his advice for now is to be conservative until we can

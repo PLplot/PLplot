@@ -61,7 +61,7 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
   COMMAND echo "Add CMake-based build system"
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
   ${CMAKE_SOURCE_DIR}/iwidgets/iwidgets_CMakeLists.txt
   ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
   APPEND

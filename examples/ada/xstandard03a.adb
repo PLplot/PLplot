@@ -46,20 +46,20 @@ begin
         y0(i) := sin(dtr * Long_Float(i));
     end loop;
 
-    -- Parse and process command line arguments. 
+    -- Parse and process command line arguments.
     Parse_Command_Line_Arguments(Parse_Full);
 
     -- Set orientation to landscape. Note not all device drivers
     -- support this, in particular most interactive drivers do not.
     Set_Orientation(Portrait);
 
-    -- Initialize plplot 
+    -- Initialize plplot
     Initialize_PLplot;
 
-    -- Set up viewport and window, but do not draw box. 
+    -- Set up viewport and window, but do not draw box.
     Set_Environment(-1.3, 1.3, -1.3, 1.3, Justified, No_Box);
 
-    -- Draw circles for polar grid. 
+    -- Draw circles for polar grid.
     for i in 1 .. 10 loop
         Draw_Arc(0.0, 0.0, 0.1 * Long_Float(i), 0.1 * Long_Float(i), 0.0, 360.0, 0.0, False);
     end loop;
@@ -70,10 +70,10 @@ begin
         dx := cos(dtr * theta);
         dy := sin(dtr * theta);
 
-        -- Draw radial spokes for polar grid. 
+        -- Draw radial spokes for polar grid.
         Draw_Line(0.0, 0.0, dx, dy);
 
-        -- Write labels for angle. 
+        -- Write labels for angle.
 
         if theta < 9.99 then
            offset := 0.45;
@@ -103,6 +103,6 @@ begin
     Set_Pen_Color(Aquamarine);
     Write_Text_Viewport("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh");
 
-    -- Close the plot at end. 
+    -- Close the plot at end.
     End_PLplot;
 end xstandard03a;

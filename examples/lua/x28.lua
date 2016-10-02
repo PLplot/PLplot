@@ -24,7 +24,7 @@
 -- initialise Lua bindings for PLplot examples.
 dofile("plplot_examples.lua")
 
--- Choose these values to correspond to tick marks. 
+-- Choose these values to correspond to tick marks.
 XPTS = 2
 YPTS = 2
 NREVOLUTION = 16
@@ -62,11 +62,11 @@ dzsshear = zsrange / ( NSHEAR - 1 )
 
 pstring = "The future of our civilization depends on software freedom."
 
--- Allocate and define the minimal x, y, and z to insure 3D box 
+-- Allocate and define the minimal x, y, and z to insure 3D box
 x = {}
 y = {}
 z = {}
-   
+
 for i = 1, XPTS do
   x[i] = xmin + (i-1) * (xmax-xmin)/(XPTS-1)
 end
@@ -82,12 +82,12 @@ for i = 1, XPTS do
   end
 end
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
-   
+
 pl.init()
 
--- Page 1: Demonstrate inclination and shear capability pattern. 
+-- Page 1: Demonstrate inclination and shear capability pattern.
 pl.adv(0)
 pl.vpor(-0.15, 1.15, -0.05, 1.05)
 pl.wind(-1.2, 1.2, -0.8, 1.5)
@@ -98,7 +98,7 @@ pl.box3("b", "", xmax-xmin, 0,
         "b", "", ymax-ymin, 0,
         "bcd", "", zmax-zmin, 0)
 
--- z = zmin. 
+-- z = zmin.
 pl.schr(0, 1)
 for i = 1, NREVOLUTION do
   omega = 2*math.pi*(i-1)/NREVOLUTION
@@ -114,7 +114,7 @@ for i = 1, NREVOLUTION do
            x_shear, y_shear, z_shear, 0, "  revolution")
 end
 
--- x = xmax. 
+-- x = xmax.
 pl.schr(0, 1)
 for i = 1, NREVOLUTION do
   omega = 2.*math.pi*(i-1)/NREVOLUTION
@@ -130,7 +130,7 @@ for i = 1, NREVOLUTION do
            x_shear, y_shear, z_shear, 0, "  revolution")
 end
 
--- y = ymax. 
+-- y = ymax.
 pl.schr(0, 1)
 for i = 1, NREVOLUTION do
   omega = 2.*math.pi*(i-1)/NREVOLUTION
@@ -146,10 +146,10 @@ for i = 1, NREVOLUTION do
            x_shear, y_shear, z_shear, 0, "  revolution")
 end
 
--- Draw minimal 3D grid to finish defining the 3D box. 
+-- Draw minimal 3D grid to finish defining the 3D box.
 pl.mesh(x, y, z, pl.DRAW_LINEXY)
 
--- Page 2: Demonstrate rotation of string around its axis. 
+-- Page 2: Demonstrate rotation of string around its axis.
 pl.adv(0)
 pl.vpor(-0.15, 1.15, -0.05, 1.05)
 pl.wind(-1.2, 1.2, -0.8, 1.5)
@@ -160,7 +160,7 @@ pl.box3("b", "", xmax-xmin, 0,
         "b", "", ymax-ymin, 0,
         "bcd", "", zmax-zmin, 0)
 
--- y = ymax. 
+-- y = ymax.
 pl.schr(0, 1)
 x_inclination = 1
 y_inclination = 0
@@ -179,7 +179,7 @@ for i = 1, NROTATION do
            0.5, "rotation for y = y#dmax#u")
 end
 
--- x = xmax. 
+-- x = xmax.
 pl.schr(0, 1)
 x_inclination = 0
 y_inclination = -1
@@ -198,7 +198,7 @@ for i = 1, NROTATION do
            0.5, "rotation for x = x#dmax#u")
 end
 
--- z = zmin. 
+-- z = zmin.
 pl.schr(0, 1)
 x_inclination = 1
 y_inclination = 0
@@ -217,13 +217,13 @@ for i = 1, NROTATION do
            0.5, "rotation for z = z#dmin#u")
 end
 
--- Draw minimal 3D grid to finish defining the 3D box. 
+-- Draw minimal 3D grid to finish defining the 3D box.
 pl.mesh(x, y, z, pl.DRAW_LINEXY)
 
--- Page 3: Demonstrate shear of string along its axis. 
--- Work around xcairo and pngcairo (but not pscairo) problems for 
+-- Page 3: Demonstrate shear of string along its axis.
+-- Work around xcairo and pngcairo (but not pscairo) problems for
 -- shear vector too close to axis of string. (N.B. no workaround
--- would be domega = 0.) 
+-- would be domega = 0.)
 domega = 0.05
 pl.adv(0)
 pl.vpor(-0.15, 1.15, -0.05, 1.05)
@@ -235,7 +235,7 @@ pl.box3("b", "", xmax-xmin, 0,
         "b", "", ymax-ymin, 0,
         "bcd", "", zmax-zmin, 0)
 
--- y = ymax. 
+-- y = ymax.
 pl.schr(0, 1)
 x_inclination = 1
 y_inclination = 0
@@ -254,7 +254,7 @@ for i = 1, NSHEAR do
            0.5, "shear for y = y#dmax#u")
 end
 
--- x = xmax. 
+-- x = xmax.
 pl.schr(0, 1)
 x_inclination = 0
 y_inclination = -1
@@ -273,7 +273,7 @@ for i = 1, NSHEAR do
            0.5, "shear for x = x#dmax#u")
 end
 
--- z = zmin. 
+-- z = zmin.
 pl.schr(0, 1)
 x_inclination = 1
 y_inclination = 0
@@ -292,10 +292,10 @@ for i = 1, NSHEAR do
            0.5, "shear for z = z#dmin#u")
 end
 
--- Draw minimal 3D grid to finish defining the 3D box. 
+-- Draw minimal 3D grid to finish defining the 3D box.
 pl.mesh(x, y, z, pl.DRAW_LINEXY)
 
--- Page 4: Demonstrate drawing a string on a 3D path. 
+-- Page 4: Demonstrate drawing a string on a 3D path.
 pl.adv(0)
 pl.vpor(-0.15, 1.15, -0.05, 1.05)
 pl.wind(-1.2, 1.2, -0.8, 1.5)
@@ -309,11 +309,11 @@ pl.box3("b", "", xmax-xmin, 0,
 pl.schr(0, 1.2)
 -- domega controls the spacing between the various characters of the
 -- string and also the maximum value of omega for the given number
--- of characters in *pstring. 
+-- of characters in *pstring.
 domega = 2.*math.pi/string.len(pstring)
 omega = 0
 
--- 3D function is a helix of the given radius and pitch 
+-- 3D function is a helix of the given radius and pitch
 radius = 0.5
 pitch = 1/(2*math.pi)
 
@@ -323,16 +323,16 @@ for i = 1, string.len(pstring) do
   xpos = xmid + radius*sin_omega
   ypos = ymid - radius*cos_omega
   zpos = zmin + pitch*omega
-  
-  -- In general, the inclination is proportional to the derivative of 
-  --the position wrt theta. 
+
+  -- In general, the inclination is proportional to the derivative of
+  --the position wrt theta.
   x_inclination = radius*cos_omega
   y_inclination = radius*sin_omega
   z_inclination = pitch
-  
+
   -- The shear vector should be perpendicular to the 3D line with Z
   -- component maximized, but for low pitch a good approximation is
-  --a constant vector that is parallel to the Z axis. 
+  --a constant vector that is parallel to the Z axis.
   x_shear = 0
   y_shear = 0
   z_shear = 1
@@ -341,15 +341,15 @@ for i = 1, string.len(pstring) do
   omega = omega + domega
 end
 
--- Draw minimal 3D grid to finish defining the 3D box. 
+-- Draw minimal 3D grid to finish defining the 3D box.
 pl.mesh(x, y, z, pl.DRAW_LINEXY)
 
--- Page 5: Demonstrate pl.mtex3 axis labelling capability 
+-- Page 5: Demonstrate pl.mtex3 axis labelling capability
 pl.adv(0)
 pl.vpor(-0.15, 1.15, -0.05, 1.05)
 pl.wind(-1.2, 1.2, -0.8, 1.5)
 pl.w3d(1, 1, 1, xmin, xmax, ymin, ymax, zmin, zmax, 20, 45)
-   
+
 pl.col0(2)
 pl.box3("b", "", xmax-xmin, 0,
         "b", "", ymax-ymin, 0,
@@ -369,7 +369,7 @@ pl.mtex3("zp", 3, 0.5, 0.5, "primary Z-axis label")
 pl.mtex3("zs", -2.5, 0.5, 0.5, "Arbitrarily displaced")
 pl.mtex3("zs", -1, 0.5, 0.5, "secondary Z-axis label")
 
--- Draw minimal 3D grid to finish defining the 3D box. 
+-- Draw minimal 3D grid to finish defining the 3D box.
 pl.mesh(x, y, z, pl.DRAW_LINEXY)
 
 pl.plend()

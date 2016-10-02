@@ -9,7 +9,7 @@
 # the AC_HEADER_DIRENT test programme rather than the CheckSymbolExists.cmake
 # test programme since that latter programme always fails when the DIR symbol
 # is typedef'd rather than #define'd.
-# 
+#
 # The following variables may be set before calling this macro to
 # modify the way the check is run:
 #
@@ -24,7 +24,7 @@ macro(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
     set(MACRO_CHECK_DIRSYMBOL_EXISTS_FLAGS ${CMAKE_REQUIRED_FLAGS})
 
     if(CMAKE_REQUIRED_LIBRARIES)
-      set(MACRO_CHECK_DIRSYMBOL_EXISTS_LIBS 
+      set(MACRO_CHECK_DIRSYMBOL_EXISTS_LIBS
         "-DLINK_LIBRARIES:STRING=${CMAKE_REQUIRED_LIBRARIES}")
     else(CMAKE_REQUIRED_LIBRARIES)
       set(MACRO_CHECK_DIRSYMBOL_EXISTS_LIBS)
@@ -52,7 +52,7 @@ macro(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c
       COMPILE_DEFINITIONS ${CMAKE_REQUIRED_DEFINITIONS}
-      CMAKE_FLAGS 
+      CMAKE_FLAGS
       -DCOMPILE_DEFINITIONS:STRING=${MACRO_CHECK_DIRSYMBOL_EXISTS_FLAGS}
       "${MACRO_CHECK_DIRSYMBOL_EXISTS_LIBS}"
       "${MACRO_CHECK_DIRSYMBOL_EXISTS_INCLUDES}"
@@ -60,7 +60,7 @@ macro(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
     if(${VARIABLE})
       message(STATUS "Looking for DIR symbol in ${FILES} - found")
       set(${VARIABLE} 1 CACHE INTERNAL "Have symbol DIR")
-      file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log 
+      file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
         "Determining if the DIR symbol is defined as in AC_HEADER_DIRENT "
         "passed with the following output:\n"
         "${OUTPUT}\nFile ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c:\n"
@@ -68,7 +68,7 @@ macro(CHECK_DIRSYMBOL_EXISTS FILES VARIABLE)
     else(${VARIABLE})
       message(STATUS "Looking for DIR symbol in ${FILES} - not found.")
       set(${VARIABLE} "" CACHE INTERNAL "Have symbol DIR")
-      file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log 
+      file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
         "Determining if the DIR symbol is defined as in AC_HEADER_DIRENT "
         "failed with the following output:\n"
         "${OUTPUT}\nFile ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/CheckDIRSymbolExists.c:\n"

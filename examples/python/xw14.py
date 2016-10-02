@@ -36,39 +36,39 @@ plparseopts(sys.argv, PL_PARSE_FULL)
 from plplot_py_demos import *
 
 def main():
-    
+
     geometry_master = "500x410+100+200"
     geometry_slave  = "500x410+650+200"
     driver = plgdev()
     (fam, num, bmax) = plgfam()
-    
+
     print "Demo of multiple output streams via the %s driver." % driver
     print "Running with the second stream as slave to the first."
     print ""
-    
+
     # Set up the first stream.
     plsetopt("geometry", geometry_master)
     plsdev(driver)
     plssub(2, 2)
     plinit()
-    
+
     # Start next stream.
     plsstrm(1)
-    
+
     # Turn off pause to make this a slave (must follow master)
-    
+
     plsetopt("geometry", geometry_slave)
     plspause(0)
     plsdev(driver)
     plsfam(fam, num, bmax)
     plsetopt("fflen","2")
     plinit()
-		    
+		
     # Set up the data & plot
     # Original case
 
     plsstrm(0)
-    
+
     xscale = 6.
     yscale = 1.
     xoff = 0.
@@ -80,9 +80,9 @@ def main():
     xscale = 1.
     yscale = 1.e+6
     plot1(xscale, yscale, xoff, yoff)
-				    
+				
     # Set up the data & plot
-				    
+				
     xscale = 1.
     yscale = 1.e-6
     digmax = 2
@@ -97,10 +97,10 @@ def main():
     digmax = 5
     plsyax(digmax, 0)
     plot1(xscale, yscale, xoff, yoff)
-    
+
     # To slave
     # The pleop() ensures the eop indicator gets lit.
-    
+
     plsstrm(1)
     plot4()
     pleop()
@@ -110,9 +110,9 @@ def main():
     plsstrm(0)
     plot2()
     plot3()
-			    
+			
     # To slave
-			    
+			
     plsstrm(1)
     plot5()
     pleop()
@@ -132,31 +132,31 @@ def plot1(xscale, yscale, xoff, yoff):
     xmax = x[59]
     ymin = y[0]
     ymax = y[59]
-    
+
     xs = x[3::10]
     ys = y[3::10]
-    
+
     # Set up the viewport and window using pl.env. The range in X
     # is 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes
     # are scaled separately (just = 0), and we just draw a
     # labelled box (axis = 0).
-    
+
     plcol0(1)
     plenv(xmin, xmax, ymin, ymax, 0, 0)
     plcol0(6)
     pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2")
-    
+
     # Plot the data points
-    
+
     plcol0(9)
     plpoin(xs, ys, 9)
-    
+
     # Draw the line through the data
-    
+
     plcol0(4)
     plline(x, y)
     plflush()
-    
+
 # ===============================================================
 
 def plot2():
@@ -165,7 +165,7 @@ def plot2():
     # is -2.0 to 10.0, and the range in Y is -0.4 to 2.0. The axes
     # are scaled separately (just = 0), and we draw a box with
     # axes (axis = 1).
-    
+
     plcol0(1)
     plenv(-2.0, 10.0, -0.4, 1.2, 0, 1)
     plcol0(2)
@@ -205,8 +205,8 @@ def plot3():
     plcol0(1)
     plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2)
 
-    # Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
-    # plstyl expects a pointer!! 
+    # Superimpose a dashed line grid, with 1.5 mm marks and spaces.
+    # plstyl expects a pointer!!
 
     plstyl([1500], [1500])
     plcol0(2)
@@ -236,12 +236,12 @@ def plot4():
     plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
     i = 0.1*arange(1,11)
-    #outerproduct(i,x0) and outerproduct(i,y0) is what we are 
+    #outerproduct(i,x0) and outerproduct(i,y0) is what we are
     #mocking up here since old Numeric version does not have outerproduct.
     i.shape = (-1,1)
     x=i*x0
     y=i*y0
-    
+
     # Draw circles for polar grid
     for i in range(10):
 	plline(x[i], y[i])
@@ -296,7 +296,7 @@ def plot5():
 
     mark = 1500
     space = 1500
-    
+
     clevel = -1. + 0.2*arange(11)
 
     xx = (arange(XPTS) - XPTS/2) / float((XPTS/2))

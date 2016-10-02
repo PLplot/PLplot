@@ -101,8 +101,8 @@ procedure xtraditional15a is
 
         plpsty(8);
 
-        plshade1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0, 
-             shade_min, shade_max, 
+        plshade1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0,
+             shade_min, shade_max,
              sh_cmap, sh_color, sh_width,
              min_color, min_width, max_color, max_width,
              plfill'access, True, Null, System.Null_Address);
@@ -116,7 +116,7 @@ procedure xtraditional15a is
     ----------------------------------------------------------------------------
     -- plot2
     -- Illustrates multiple adjacent shaded regions, using different fill
-    -- patterns for each region. 
+    -- patterns for each region.
     ----------------------------------------------------------------------------
     procedure plot2 is
         shade_min, shade_max, sh_color : Long_Float;
@@ -125,14 +125,14 @@ procedure xtraditional15a is
         min_color, max_color : Integer := 0;
         min_width, max_width : Long_Float := 0.0;
 
-        -- C run amok. The following arrays are made to accommodate the 
+        -- C run amok. The following arrays are made to accommodate the
         -- original example which is written in perverse C.
         inc_0_To_4 : array (0 .. 4) of Integer_Array_1D(0 .. 0);
-        inc_5_To_9 : array (5 .. 9) of Integer_Array_1D(0 .. 1) := 
+        inc_5_To_9 : array (5 .. 9) of Integer_Array_1D(0 .. 1) :=
            ((450, -450), (0, 900), (0, 450), (450, -450), (0, 900));
 
         del_0_To_4 : array (0 .. 4) of Integer_Array_1D(0 .. 0);
-        del_5_To_9 : array (5 .. 9) of Integer_Array_1D(0 .. 1) := 
+        del_5_To_9 : array (5 .. 9) of Integer_Array_1D(0 .. 1) :=
            ((2000, 2000), (2000, 2000), (2000, 2000), (4000, 4000), (4000, 2000));
     begin
         -- Initialize the rest of the amokified arrays.
@@ -141,7 +141,7 @@ procedure xtraditional15a is
         inc_0_To_4(2)(0) :=    0;
         inc_0_To_4(3)(0) :=  900;
         inc_0_To_4(4)(0) :=  300;
-        
+
         del_0_To_4(0)(0) := 2000;
         del_0_To_4(1)(0) := 2000;
         del_0_To_4(2)(0) := 2000;
@@ -164,8 +164,8 @@ procedure xtraditional15a is
             else
                 plpat(inc_5_To_9(i), del_5_To_9(i));
             end if;
-            plshade1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0, 
-                 shade_min, shade_max, 
+            plshade1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0,
+                 shade_min, shade_max,
                  sh_cmap, sh_color, sh_width,
                  min_color, min_width, max_color, max_width,
                  plfill'access, True, Null, System.Null_Address);
@@ -179,18 +179,18 @@ procedure xtraditional15a is
 
     ----------------------------------------------------------------------------
     -- plot3
-    -- Illustrates shaded regions in 3d, using a different fill pattern for 
-    -- each region.  
+    -- Illustrates shaded regions in 3d, using a different fill pattern for
+    -- each region.
     ----------------------------------------------------------------------------
     procedure plot3 is
-    xx : array (0 .. 1) of Real_Vector(0 ..4) := 
-       ((-1.0, 1.0, 1.0, -1.0, -1.0), 
+    xx : array (0 .. 1) of Real_Vector(0 ..4) :=
+       ((-1.0, 1.0, 1.0, -1.0, -1.0),
         (-1.0, 1.0, 1.0, -1.0, -1.0));
-    yy : array (0 .. 1) of Real_Vector(0 ..4) := 
-       ((1.0,  1.0,  0.0, 0.0,  1.0), 
+    yy : array (0 .. 1) of Real_Vector(0 ..4) :=
+       ((1.0,  1.0,  0.0, 0.0,  1.0),
         (-1.0, -1.0, 0.0, 0.0, -1.0));
-    zz : array (0 .. 1) of Real_Vector(0 ..4) := 
-       ((0.0, 0.0, 1.0, 1.0, 0.0), 
+    zz : array (0 .. 1) of Real_Vector(0 ..4) :=
+       ((0.0, 0.0, 1.0, 1.0, 0.0),
         (0.0, 0.0, 1.0, 1.0, 0.0));
     begin
         pladv(0);

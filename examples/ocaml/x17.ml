@@ -45,7 +45,7 @@ let () =
   plsetopt "np" "";
   *)
 
-  (* User sets up plot completely except for window and data 
+  (* User sets up plot completely except for window and data
      Eventually settings in place when strip chart is created will be
      remembered so that multiple strip charts can be used simultaneously. *)
 

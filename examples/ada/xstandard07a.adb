@@ -37,12 +37,12 @@ procedure xstandard07a is
 
     k : Integer;
     x, y : Real_Vector(1 .. 1);
-    base : array(0 .. 19) of Integer := (0, 100, 0, 100, 200, 500, 600, 700, 800, 
+    base : array(0 .. 19) of Integer := (0, 100, 0, 100, 200, 500, 600, 700, 800,
         900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900);
 
 begin
     -- Parse and process command line arguments
-    Parse_Command_Line_Arguments(Parse_Full); 
+    Parse_Command_Line_Arguments(Parse_Full);
 
     -- Initialize plplot
     Initialize_PLplot;
@@ -76,7 +76,7 @@ begin
             for j in 0 .. 9 loop
                 x(1) := 0.1 * Long_Float(j) + 0.05;
                 y(1) := 0.95 - 0.1 * Long_Float(i);
-    
+
                 -- Display the symbols
                 Draw_Hershey_Symbol(x, y, base(l) + k);
                 k := k + 1;

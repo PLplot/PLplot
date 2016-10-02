@@ -160,7 +160,7 @@ if(ENABLE_octave)
     octave
     HINTS ${OCTAVE_LIB_DIR}
     )
-    
+
     find_library(
     OCTINTERP_LIBRARIES
     octinterp
@@ -175,7 +175,7 @@ if(ENABLE_octave)
       ${OCTAVE_INCLUDE_PATH}
       )
       if(NOT OCTAVE_INCLUDE_PATH_TRIMMED STREQUAL "${OCTAVE_INCLUDE_PATH}")
-        set(OCTAVE_INCLUDE_PATH 
+        set(OCTAVE_INCLUDE_PATH
 	${OCTAVE_INCLUDE_PATH_TRIMMED} ${OCTAVE_INCLUDE_PATH}
 	CACHE INTERNAL ""
 	)
@@ -196,7 +196,7 @@ if(ENABLE_octave)
 	hdf5.h PATH_SUFFIXES hdf5/serial
 	)
       if(OCTAVE_INCLUDE_PATH_EXTERNAL)
-        set(OCTAVE_INCLUDE_PATH 
+        set(OCTAVE_INCLUDE_PATH
 	${OCTAVE_INCLUDE_PATH_EXTERNAL} ${OCTAVE_INCLUDE_PATH}
 	CACHE INTERNAL ""
 	)
@@ -209,7 +209,7 @@ if(ENABLE_octave)
       message(STATUS "WARNING: "
       "The Octave headers and/or library not found. Disabling Octave binding")
       set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
-    endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES) 
+    endif(OCTAVE_INCLUDE_PATH AND OCTAVE_LIBRARIES AND OCTINTERP_LIBRARIES)
   endif(NOT DEFINED OCTAVE_INCLUDE_PATH)
   message(STATUS "OCTAVE_LIBRARIES = ${OCTAVE_LIBRARIES}")
   message(STATUS "OCTINTERP_LIBRARIES = ${OCTINTERP_LIBRARIES}")
@@ -221,7 +221,7 @@ if(ENABLE_octave)
   # specific m files
   set(PLPLOT_OCTAVE_DIR ${CMAKE_INSTALL_DATADIR}/plplot_octave)
   message(STATUS "PLPLOT_OCTAVE_DIR = ${PLPLOT_OCTAVE_DIR}")
-  
+
   # OCTAVE_PREFIX is the prefix where octave was installed.
   # N.B. this file method is really clunky, but we are forced to use
   # this method because as far as I know there is no method
@@ -238,7 +238,7 @@ if(ENABLE_octave)
   #message(STATUS "OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
   file(TO_CMAKE_PATH ${OCTAVE_PREFIX} OCTAVE_PREFIX)
   #message(STATUS "(CMake) OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
-  
+
   # octave-2.1 (or higher) logic.
   #_OCTAVE_M_DIR
   file(WRITE ${CMAKE_BINARY_DIR}/octave_command
@@ -252,7 +252,7 @@ if(ENABLE_octave)
   #message(STATUS "_OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")
   file(TO_CMAKE_PATH ${_OCTAVE_M_DIR} _OCTAVE_M_DIR)
   #message(STATUS "(CMake) _OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")
-  
+
   #OCTAVE_OCT_DIR
   if(NOT DEFINED OCTAVE_OCT_DIR)
     file(WRITE ${CMAKE_BINARY_DIR}/octave_command
@@ -267,20 +267,20 @@ if(ENABLE_octave)
     file(TO_CMAKE_PATH ${OCTAVE_OCT_DIR} OCTAVE_OCT_DIR)
     #message(STATUS "(CMake) OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
   endif(NOT DEFINED OCTAVE_OCT_DIR)
-  
+
   # Replace the OCTAVE_PREFIX with the PLplot prefix in OCTAVE_M_DIR
   string(REPLACE
-  "${OCTAVE_PREFIX}" 
+  "${OCTAVE_PREFIX}"
   "${CMAKE_INSTALL_PREFIX}"
   OCTAVE_M_DIR
   ${_OCTAVE_M_DIR}
   )
   message(STATUS "OCTAVE_M_DIR = ${OCTAVE_M_DIR}")
-  
+
   # Transform OCTAVE_OCT_DIR if prefixes not the same.
   if(NOT CMAKE_INSTALL_PREFIX STREQUAL "${OCTAVE_PREFIX}")
     set(OCTAVE_OCT_DIR ${CMAKE_INSTALL_LIBDIR}/octave)
-  endif(NOT CMAKE_INSTALL_PREFIX STREQUAL "${OCTAVE_PREFIX}") 
+  endif(NOT CMAKE_INSTALL_PREFIX STREQUAL "${OCTAVE_PREFIX}")
   message(STATUS "OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
-  
+
 endif(ENABLE_octave)

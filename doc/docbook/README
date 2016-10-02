@@ -2,7 +2,7 @@ This plplot docbook documentation project started as a joint effort by Alan
 W. Irwin (AWI) and Rafael Laboissiere (RL) to convert the plplot latexinfo
 documentation (last modified in 1995 or earlier) to the docbook sgml format.
 The motivations for the project are discussed at
-http://www.icp.inpg.fr/~rafael/plplotdoc.  
+http://www.icp.inpg.fr/~rafael/plplotdoc.
 
 To summarise, many large software projects (e.g., KDE) use docbook for
 documentation.  The sgml docbook syntax is well-documented (see book on

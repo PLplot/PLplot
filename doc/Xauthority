@@ -2,7 +2,7 @@ IMPORTANT NOTE about the plplot Tcl/TK driver :
 
     IF YOU DO NOT HAVE XAUTH STYLE SECURITY ENABLED, YOU ARE VULNERABLE TO
     OUTSIDE INTRUSION.  I MAKE NO CLAIMS THAT PLPLOT/TK IS SAFE AGAINST
-    SUCH AN ATTACK, AND ASSUME NO RESPONSIBILITY FOR RISK.  
+    SUCH AN ATTACK, AND ASSUME NO RESPONSIBILITY FOR RISK.
 
 To reiterate the statement made elsewhere:
 
@@ -36,7 +36,7 @@ to not raise your suspicions.  A "show interps" command (or something
 like that) displays the names of the Tcl interpreters that your Tcl/TK
 applications are using.  Then the hacker merely needs to send commands
 to these interpreters to do nasty things, the classic being "exec rm -rf
-*".  Yes, this is a legal Tcl command.  
+*".  Yes, this is a legal Tcl command.
 
 Using xauth this is prevented.  You can also prevent it by renaming the
 dangerous commands in your interpreter to {} (null), thus preventing their
@@ -51,7 +51,7 @@ and "open" commands (the latter can be done only after all autoloading
 takes place) takes care of the two most flagrant examples of security
 holes, but there may be others, so caveat emptor.
 
-Before too long I will also support the Tcl-DP method (sockets) for 
+Before too long I will also support the Tcl-DP method (sockets) for
 communication between the client and the renderer.  Fortunately, the
 issue of security was recently taken up in earnest by the Tcl-DP author
 as well, so I don't see any reasons not to pursue this right away (except
@@ -186,7 +186,7 @@ else
   # use $key$key to make sure even length.
   key=$key$key
 fi
-# add to auth file. 
+# add to auth file.
 xauth add ${HOST}/unix:0 . $key
 xauth add ${HOST}:0 . $key
 --cut here--
@@ -457,7 +457,7 @@ ingwa@isy.liu.se (Inge Wallin) writes:
 
 Well, the point was I couldn't get it to work, period!  Kind of useless
 in that case, eh?  Turns out that getting xauth-style security working
-involves a bit of voodoo sometimes, or so it seems.  
+involves a bit of voodoo sometimes, or so it seems.
 
 I agree about the security hole.  One of the first things I do in
 my initial Tcl script is the following:
@@ -507,9 +507,9 @@ In-Reply-To: <9309160052.AA20499@unixhub.SLAC.Stanford.EDU>; from "Paul E. Raine
 Mailer: Elm [revision: 70.85]
 Status: RO
 
-> 
+>
 > I hope you can help me.
-> 
+>
 > I can't get Xauthority to work and the man pages explain
 > nothing. I am not trying to do anything with Tk yet, just get
 > it to work in general.
@@ -518,23 +518,23 @@ I sympathize.  I was there, and it is VERY frustrating.
 
 > I did
 > 	xauth add $DISPLAY . 12345678901234567890123456789012
-> 
+>
 > All the machines at this site share the same home directory.
 > So I logged in remotely to anther machine and tried to run
 > an X app, but it was refused.
-> 
+>
 > I restarted X, but still the same problem.
-> 
+>
 > I restarted with
 > 	startx -auth ~/.Xauthority
-> 
+>
 > but X refused to run complaining
 > 	/a/juno/u1/ra/raines/.Xauthority: ^DO@l^A0^RMIT-MAGIC-COOKIE-1^P^R4Vx^R4Vx^R4Vx^R:  not found.
-> 
+>
 > What am I doing wrong?
 
 Sounds like it should work.  I did, however, leave out one part of my
-tale.  I started out creating the ~/.Xauthority entry for my machine much 
+tale.  I started out creating the ~/.Xauthority entry for my machine much
 like you did.  I ended up rebooting my machine twice in all, and at some
 point it "noticed" I wanted to use ~/.Xauthority and started creating
 entries automatically upon login.  After the *next* time I rebooted (just
@@ -576,19 +576,19 @@ Date: Fri, 12 Nov 1993 13:16:43 GMT
 
 In article <1993Nov12.084044@zam067.zam.kfa-juelich.de>, zdv145@zam067.zam.kfa-juelich.de (Helmut Schumacher) writes:
 > Does anyone have/use X-Terminals with Xauthority?
-> 
+>
 > How must XDM be configured?
-> 
+>
 > Can xauth be used without using XDM?
-> 
+>
 > Helmut Schumacher
-> 
+>
 > hel.schumacher@kfa-juelich.de
 
 Well, I don't think this is the right newsgroup (comp.lang.tcl) so I'm
 cross-posting to comp.windows.x with followup redirected there. Anyway,
 yes, we use xauth for our NCD xterminals. You have to do to things, you
-have to have your xauth keys in two different places. 
+have to have your xauth keys in two different places.
 
 1) /usr/lib/X11/xdm/xdm-keys
 where entries look like this
@@ -602,7 +602,7 @@ login-xdm-authentication-key = 0xb0b125abe7cd00
 
 Hope this helps (notice, the two keys are identical. very important. :) )
 
--- 
+--
 _____________________________________________________________
 Doug Hughes
 System/Net Admin - Martin Marietta Aerospace, Valley Forge, PA

@@ -20,7 +20,7 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 # changes have been made in the current release cycle.
 
 # Then use that information and the following rules to update the PLplot
-# library version information: 
+# library version information:
 # (1) If a backwards incompatible API change has been made in the library
 #     API (e.g., if old compiled and linked applications will no longer work)
 #     then increment SOVERSION and zero the corresponding minor and patch
@@ -28,7 +28,7 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 # (2) If the library changes are limited to additions to the API, then
 #     then leave SOVERSION alone, increment the minor number and zero the
 #     patch number just before release.
-# (3) If the library changes are limited to implementation changes with 
+# (3) If the library changes are limited to implementation changes with
 #     no API changes at all, then leave SOVERSION and minor number alone, and
 #     increment the patch number just before the release.
 # (4) If there are no library source code changes at all, then leave all

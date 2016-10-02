@@ -44,28 +44,28 @@
 
 
 program x24f
-  use plplot      
+  use plplot
   implicit none
-  
+
   integer i, j
   integer red(7)
   integer green(7)
   integer blue(7)
-  
+
   real(kind=plflt)  px(4)
   real(kind=plflt)  py(4)
   real(kind=plflt)  sx(12)
   real(kind=plflt)  sy(12)
-  
+
   character(len=30) peace(12)
-  
+
   data (red(i) ,i=1,7)   / 240, 204, 204, 204,   0,  39, 125 /
   data (green(i) ,i=1,7) / 240,   0, 125, 204, 204,  80,   0 /
   data (blue(i) ,i=1,7)  / 240,   0,   0,   0,   0, 204, 125 /
-  
+
   data (px(i) ,i=1,4) / 0.0d0, 0.0d0, 1.0d0, 1.0d0 /
   data (py(i) ,i=1,4) / 0.0d0, 0.25d0, 0.25d0, 0.0d0 /
-  
+
   data (sx(i) ,i=1,12) / &
        0.16374, &
        0.15844, &

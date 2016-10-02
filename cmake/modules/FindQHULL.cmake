@@ -37,6 +37,6 @@ elseif(NOT QHULL_LIBRARY AND NOT QHULL_FIND_QUIETLY)
   message(STATUS "qhull library could not be found")
 endif(QHULL_LIBRARY)
 
-find_package_handle_standard_args(QHULL 
+find_package_handle_standard_args(QHULL
   REQUIRED_VARS QHULL_INCLUDE_DIRS QHULL_LIBRARIES QHULL_LIBRARY_DIRS
   )

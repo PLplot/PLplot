@@ -28,7 +28,7 @@ function map_transform(x,y)
   radius = 90 - y
   xt = radius * math.cos(x * math.pi / 180)
   yt = radius * math.sin(x * math.pi / 180)
-  
+
   return xt, yt
 end
 
@@ -40,11 +40,11 @@ end
 -- x[], y[] are the coordinates to be plotted.
 --------------------------------------------------------------------------
 
-function mapform19(n, x, y) 
+function mapform19(n, x, y)
   for i = 1, n do
     x[i], y[i] = map_transform(x[i], y[i])
   end
-  
+
   return x, y
 end
 
@@ -57,14 +57,14 @@ function normalize_longitude(lon)
 			times = math.floor((math.abs(lon)+180)/360)
 			if lon<0 then
 				return lon+360*times
-			else 
+			else
 				return lon-360*times
 			end
 	end
 end
 
 -- A custom axis labeling function for longitudes and latitudes.
-function geolocation_labeler(axis, value) 
+function geolocation_labeler(axis, value)
 	if axis==pl.PL_Y_AXIS then
 		label_val = value
 		if label_val>0 then
@@ -72,7 +72,7 @@ function geolocation_labeler(axis, value)
 		else
 			if label_val<0 then
 				direction_label = " S"
-			else 
+			else
 				direction_label = "Eq"
 			end
 		end
@@ -107,22 +107,22 @@ end
 -- Shows two views of the world map.
 --------------------------------------------------------------------------
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 
 x = {}
 y = {}
 
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Longitude (x) and latitude (y) 
+-- Longitude (x) and latitude (y)
 
 miny = -70
 maxy = 80
 
 pl.init()
 
--- Cartesian plots 
--- Most of world 
+-- Cartesian plots
+-- Most of world
 
 minx = -170
 maxx = minx+360
@@ -134,7 +134,7 @@ pl.col0(1)
 pl.env(minx, maxx, miny, maxy, 1, 70)
 pl.map(nil, "usaglobe", minx, maxx, miny, maxy)
 
--- The Americas 
+-- The Americas
 
 minx = 190
 maxx = 340
@@ -146,7 +146,7 @@ pl.map(nil, "usaglobe", minx, maxx, miny, maxy)
 -- Clear the labeling function
 pl.slabelfunc(nil)
 
--- Polar, Northern hemisphere 
+-- Polar, Northern hemisphere
 
 minx = 0
 maxx = 360

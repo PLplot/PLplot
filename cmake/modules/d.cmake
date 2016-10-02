@@ -27,7 +27,7 @@ if(DEFAULT_NO_BINDINGS)
 elseif(WIN32_AND_NOT_CYGWIN)
   option(ENABLE_d "Enable D binding" OFF)
   if(ENABLE_d)
-    message(STATUS "WARNING: setting the -DENABLE_d=ON option is considered to be experimental on Windows because it has been found to interfere with wxwidgets linking for unknown reasons") 
+    message(STATUS "WARNING: setting the -DENABLE_d=ON option is considered to be experimental on Windows because it has been found to interfere with wxwidgets linking for unknown reasons")
   endif(ENABLE_d)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_d "Enable D binding" ON)
@@ -63,4 +63,4 @@ if(ENABLE_d)
   # potentially other Linux systems.
   option(plplotdmd_SHARED "Treat libplplotdmd as a shared library" OFF)
 endif(ENABLE_d)
-  
+

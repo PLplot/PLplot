@@ -171,7 +171,7 @@ EOT
   plcol0(2);
   plenv(0, $width, 0, $height, 1, -1);
   pllab("", "", "Reduced dynamic range image example");
-  plimagefr($img_f, 0, $width, 0, $height, 0, 0, 
+  plimagefr($img_f, 0, $width, 0, $height, 0, 0,
 	    $img_min + $img_max * 0.25, $img_max - $img_max * 0.25, 0, 0);
 
   # Draw a distorted version of the original image, showing its full dynamic range.
@@ -226,7 +226,7 @@ sub read_img {
   my $fname = shift;
   if (-r $fname) {
     my $img = rpnm ($fname);
-    # We want the number of colours from the header, not the maximum 
+    # We want the number of colours from the header, not the maximum
     # colour. We can't get this via PDL, so hard code it to 255.
     #return ($img, $img->dims (), $img->max);
     return ($img, $img->dims (), 255);
@@ -307,18 +307,18 @@ sub get_clip {
 	$xxi = $xxe;
 	$xxe = $t;
     }
-    
+
     if ($yyi < $yye) {
 	my $t = $yyi;
 	$yyi = $yye;
 	$yye = $t;
     }
-    
+
     $$xe = $xxe;
     $$xi = $xxi;
     $$ye = $yye;
     $$yi = $yyi;
-    
+
     return ($gin{keysym} eq 'Q');
   }
 

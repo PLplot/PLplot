@@ -9,7 +9,7 @@ if(BUILD_TEST)
   endif(CORE_BUILD)
 
   add_executable(hello hello.f90)
-  
+
   target_link_libraries(hello hello_1)
 
   # configure file to compare with output of hello executable.
@@ -32,7 +32,7 @@ if(BUILD_TEST)
   add_custom_target(test_noninteractive
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/hello.out
     )
-  
+
 endif(BUILD_TEST)
 
 if(CORE_BUILD)

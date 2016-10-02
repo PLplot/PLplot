@@ -29,7 +29,7 @@ ON
 if (HAVE_AGG)
   find_package(AGG)
   if(NOT AGG_FOUND)
-    message(STATUS 
+    message(STATUS
     "WARNING: AGG not found.  Setting HAVE_AGG to OFF."
     )
     set(HAVE_AGG OFF

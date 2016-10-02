@@ -1,14 +1,14 @@
 #----------------------------------------------------------------------------
 # Source this file into a working Tk interpreter to run all the Tcl demos
 # in a nice window with buttons for each demo you'd like to run.
-# 
+#
 # This requires the 'Plplotwin' extended widget.  If you don't have that
 # widget set up (from the 'tk-x-plat' bindings), then use the
 # 'runAllDemos.tcl' script instead.
-# 
+#
 # Vince Darley
 # vince@santafe.edu
-# 
+#
 #----------------------------------------------------------------------------
 
 if {[catch {file readlink [info script]} path]} {

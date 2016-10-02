@@ -1,6 +1,6 @@
 #!/bin/bash
 # This Linux-only script creates a sorted list of our API from several
-# independent locations within our source tree and finds all the 
+# independent locations within our source tree and finds all the
 # inconsistencies between them.
 
 # This script should be run from the top-level source tree.
@@ -31,7 +31,7 @@ case $1 in
     sort |\
     diff -au /tmp/plplot_api.txt -
   ;;
-  
+
   swig)
     # Prepare API list from bindings/swig-support/plplotcapi.i
     # and compare with previous
@@ -40,7 +40,7 @@ case $1 in
     # is exposed for the swig-generated bindings, and similarly for the list
     # of commands that are excluded.  The grep -v stanzas also get rid of
     # deprecated API that is mentioned but excluded with #if 0 ... #endif
-    
+
     grep '^pl.*(' bindings/swig-support/plplotcapi.i |\
     cut --delimiter='(' --fields=1 |\
     grep -v '[A-Z]' |\
@@ -114,9 +114,9 @@ case $1 in
     grep -v 'plhls$' |\
     grep -v 'plrgb$' |\
     grep -v 'plrgb1$' |\
-    diff -au /tmp/plplot_api.txt - 
+    diff -au /tmp/plplot_api.txt -
   ;;
-  
+
   c++)
     # Prepare API list from bindings/c++/plstream.h
     # and compare with previous.
@@ -141,7 +141,7 @@ case $1 in
       cut --delimiter='"' --fields=2 \
     ) | \
     sort -u | \
-    diff -au /tmp/plplot_api.txt - 
+    diff -au /tmp/plplot_api.txt -
   ;;
 
   all)

@@ -5,7 +5,7 @@
 -- This file is part of PLplot.
 
 -- Thanks to the following for providing translated strings for this example:
--- Valery Pipin (Russian)  
+-- Valery Pipin (Russian)
 
 -- PLplot is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU Library General Public License as published
@@ -30,23 +30,23 @@
 -- required glyphs.
 
 -- Translation instructions: The strings to be translated are given by
--- x_label, y_label, alty_label, title_label, and line_label below.-- The 
+-- x_label, y_label, alty_label, title_label, and line_label below.-- The
 -- encoding used must be UTF-8.
 
--- The following strings to be translated involve some scientific/mathematical 
+-- The following strings to be translated involve some scientific/mathematical
 -- jargon which is now discussed further to help translators.
 
 -- (1) dB is a decibel unit, see http://en.wikipedia.org/wiki/Decibel .
--- (2) degrees is an angular measure, see 
+-- (2) degrees is an angular measure, see
 --     http://en.wikipedia.org/wiki/Degree_(angle) .
 -- (3) low-pass filter is one that transmits (passes) low frequencies.
 -- (4) pole is in the mathematical sense, see
 --     http://en.wikipedia.org/wiki/Pole_(complex_analysis) .-- "Single Pole"
 --     means a particular mathematical transformation of the filter function has
 --     a single pole, see
---     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .-- 
---     Furthermore, a single-pole filter must have an inverse square decline 
---     (or -20 db/decade). Since the filter plotted here does have that 
+--     http://ccrma.stanford.edu/~jos/filters/Pole_Zero_Analysis_I.html .--
+--     Furthermore, a single-pole filter must have an inverse square decline
+--     (or -20 db/decade). Since the filter plotted here does have that
 --     characteristic, it must by definition be a single-pole filter, see also
 --     http://www-k.ext.ti.com/SRVS/Data/ti/KnowledgeBases/analog/document/faqs/1p.htm
 -- (5) decade represents a factor of 10, see
@@ -147,10 +147,10 @@ procedure xtraditional26a is
 
         plvpor(0.15, 0.85, 0.1, 0.9);
         plwind(-2.0, 3.0, -80.0, 0.0);
-        
+
         -- Try different axis and labelling styles.
         plcol0(1);
-        
+
         plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0);
 
         -- Plot ampl vs freq
@@ -207,7 +207,7 @@ procedure xtraditional26a is
             opt_array,
             1.0, 1.0, 2.0,
             1.0, text_colors, L_Text,
-            Box_Colors, Box_Patterns, 
+            Box_Colors, Box_Patterns,
             Box_Scales, Box_Line_Widths,
             line_colors, line_styles, line_widths,
             symbol_colors, symbol_scales, symbol_numbers, symbols);
@@ -225,6 +225,6 @@ begin
         plot1(To_String(x_label(i)), y_label(i), alty_label(i), legend_text(i),
             title_label(i), line_label(i));
     end loop;
-    
+
     plend;
 end xtraditional26a;

@@ -166,12 +166,12 @@ itcl::class ColorEditor {
 	    set r [format %.0f [$w.scale1 get]]
 	    set g [format %.0f [$w.scale2 get]]
 	    set b [format %.0f [$w.scale3 get]]
-	} 
+	}
 	if {$colorSpace == "cmy"} {
 	    set r [format %.0f [expr {255 - [$w.scale1 get]}]]
 	    set g [format %.0f [expr {255 - [$w.scale2 get]}]]
 	    set b [format %.0f [expr {255 - [$w.scale3 get]}]]
-	} 
+	}
 	if {$colorSpace == "hsl"} {
 	    set list [hslToRgb \
 			  [expr {[$w.scale1 get]}] \
@@ -422,7 +422,7 @@ itcl::class ColorPalette0 {
 	    set plcmap0_col($i) [lindex $cmap0 [expr $i+1]]
 	    frame $w.$i
 	    label $w.$i.color -width 14 \
-		-anchor w 
+		-anchor w
 	    button $w.$i.patch -text Edit \
 		-command "$this edit $i $plot $plw"
 	    pack append $w.$i \
@@ -473,9 +473,9 @@ itcl::class ColorPalette0 {
     }
 
     method loadcmap {} {
-	global ncol0 plcmap0_col 
+	global ncol0 plcmap0_col
 	for {set i 0} {$i < $ncol0} {incr i} {
-	    $w.$i.color config -text $plcmap0_col($i) 
+	    $w.$i.color config -text $plcmap0_col($i)
 	    $w.$i.patch config -background $plcmap0_col($i)
 	}
     }
@@ -517,7 +517,7 @@ itcl::class ColorPalette0 {
     }
 
     method setcmap {plot plw} {
-	global ncol0 plcmap0_col 
+	global ncol0 plcmap0_col
 	global plopt_static_redraw plopt_dynamic_redraw
 	set cmap0 ""
 	for {set i 0} {$i < $ncol0} {incr i} {
@@ -548,7 +548,7 @@ proc plcmap0_edit {plot plw} {
     Buttons0 \#auto .edit.buttons $plot $plw
     pack append .edit .edit.buttons \
       "top fillx"
-    
+
     set palette [ColorPalette0 \#auto .edit.palette $plot $plw]
     pack append .edit .edit.palette \
       "left filly"
@@ -652,7 +652,7 @@ itcl::class ColorPalette1 {
 
 	    if {$i == 0 || $i == $ncol1-1} {
 		pack append $w.l.$i \
-		    $w.l.$i.scale "right expand padx 8 pady 4" 
+		    $w.l.$i.scale "right expand padx 8 pady 4"
 	    } else {
 		button $w.l.$i.up -width 2 -text + \
 		    -command "$this inc $i 1"
@@ -662,11 +662,11 @@ itcl::class ColorPalette1 {
 		pack append $w.l.$i \
 		    $w.l.$i.up "right padx .5c" \
 		    $w.l.$i.scale "right expand padx 8 pady 4" \
-		    $w.l.$i.down "right padx .5c" 
+		    $w.l.$i.down "right padx .5c"
 	    }
 	    pack append $w.l.$i \
 		$w.l.$i.color "right frame e" \
-		$w.l.$i.patch "left padx 4 pady 4 frame w" 
+		$w.l.$i.patch "left padx 4 pady 4 frame w"
 	    pack append $w.l $w.l.$i "top fillx"
 	}
 
@@ -681,7 +681,7 @@ itcl::class ColorPalette1 {
 		    -variable plcmap1_rev($i) -relief flat \
 		    -command "$this setcmap $plot $plw"
 		pack append $w.r.$i \
-		    $w.r.$i.rev "right padx .5c" 
+		    $w.r.$i.rev "right padx .5c"
 	    }
 	    pack append $w.r $w.r.$i "top filly expand"
 	}
@@ -789,7 +789,7 @@ itcl::class ColorPalette1 {
     method loadcmap {} {
 	global ncol1 plcmap1_col plcmap1_pos
 	for {set i 0} {$i < $ncol1} {incr i} {
-	    $w.l.$i.color config -text $plcmap1_col($i) 
+	    $w.l.$i.color config -text $plcmap1_col($i)
 	    $w.l.$i.patch config -background $plcmap1_col($i)
 	    $w.l.$i.scale set $plcmap1_pos($i)
 	}
@@ -841,7 +841,7 @@ itcl::class ColorPalette1 {
 		"$cmap1 $plcmap1_col($i) $plcmap1_pos($i) $plcmap1_rev($i)"
 	}
 	$plot scmap1 $ncol1 $cmap1
-	if { (!$dynamic && $plopt_static_redraw($plw)) || 
+	if { (!$dynamic && $plopt_static_redraw($plw)) ||
 	     ($dynamic && $plopt_dynamic_redraw($plw)) } {
 	    $plot redraw
 	}

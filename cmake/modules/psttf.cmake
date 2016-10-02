@@ -17,7 +17,7 @@
 # along with the file PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Configuration for the psttf device driver (supporting the psttf and 
+# Configuration for the psttf device driver (supporting the psttf and
 # psttfc devices).
 #
 # The following variables are set / modified
@@ -48,7 +48,7 @@ endif(PLD_psttf)
 # Look for psttf headers and libraries with pkg-config
 if(PLD_psttf)
   if(NOT PKG_CONFIG_EXECUTABLE)
-    message(STATUS 
+    message(STATUS
     "WARNING: pkg-config not found. Setting PLD_psttf to OFF."
     )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)

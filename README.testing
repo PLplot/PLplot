@@ -63,7 +63,7 @@ The new testing framework also has advantages over the traditional ctest-based t
 
 - Full dependencies are implemented (unlike ctest which requires the "all" target to be run before ctest is run).
 
-- There are many individual test targets implemented which allow users to test PLplot with extremely fine-grained control.  To obtain a list of such targets run the "help" target and select target names that have "test" in the target name.  For example, on Unix systems you can run 
+- There are many individual test targets implemented which allow users to test PLplot with extremely fine-grained control.  To obtain a list of such targets run the "help" target and select target names that have "test" in the target name.  For example, on Unix systems you can run
 
 `make help |grep test`
 
@@ -229,7 +229,7 @@ Notes|(a), (b), (c), (d), (e), (f), (A)
 Date|2014-03-12
 PLplot commit|3e817e
 CMake version|2.8.12.1
-Platform|MinGW-4.7.2/MSYS/Wine-1.6.1 with epa_built libraries 
+Platform|MinGW-4.7.2/MSYS/Wine-1.6.1 with epa_built libraries
 Pango/Cairo version| none
 Qt version|none
 Shared libraries?|Dynamic drivers?

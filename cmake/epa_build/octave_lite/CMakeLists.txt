@@ -38,7 +38,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
@@ -99,10 +99,10 @@ message(STATUS "(processed) LIB_LAPACK = ${LIB_LAPACK}")
 set(configure_options
   --disable-silent-rules
   --disable-java
-  --with-qhull-includedir=${EPA_CMAKE_INSTALL_PREFIX}/include 
+  --with-qhull-includedir=${EPA_CMAKE_INSTALL_PREFIX}/include
   --with-qhull-libdir=${EPA_CMAKE_INSTALL_PREFIX}/lib
   --without-z
-  --without-hdf5 
+  --without-hdf5
 # Works properly (no fftw build errors) only with 4.0.0
 #  --without-fftw3
 #  --without-fftw3f
@@ -118,7 +118,7 @@ set(configure_options
   --with-blas=${LIB_BLAS}
   --with-lapack=${LIB_LAPACK}
   --without-qrupdate
-  --without-amd 
+  --without-amd
   --without-camd
   --without-colamd
   --without-ccolamd

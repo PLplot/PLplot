@@ -63,7 +63,7 @@ def demo2():
 
     # Divide screen into 100 regions
     plssub(10,10)
-    
+
     r = zeros(116,"int")
     g = zeros(116,"int")
     b = zeros(116,"int")
@@ -95,10 +95,10 @@ def demo2():
 
 def main():
 
-    # For starting from scratch this call to pladv increments cursub, but 
-    # then the following plssub sets it to zero so the whole thing is 
-    # essentially a nop.  However, for the case when other examples are run 
-    # first, this call to pladv is absolutely essential to finish the 
+    # For starting from scratch this call to pladv increments cursub, but
+    # then the following plssub sets it to zero so the whole thing is
+    # essentially a nop.  However, for the case when other examples are run
+    # first, this call to pladv is absolutely essential to finish the
     # preceding page.
     pladv(0)
 

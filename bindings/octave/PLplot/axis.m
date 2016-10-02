@@ -21,30 +21,30 @@
 ## With no arguments, turns "autoscaling" on, and returns the current axis
 ##
 ## "ax" can be a 2, 4 or 6 element row vector that sets the minimum and
-##   maximum lower and upper limits of the data that will be plotted: 
+##   maximum lower and upper limits of the data that will be plotted:
 ##     [xmin, xmax], [xmin, xmax, ymin, ymax], [xmin, xmax, ymin, ymax, zmin, zmax]
 ##
 ## "opt" is an option string, that:
 ##
 ##   control the aspect ratio of the axes:
-##     "square"   Force a square aspect ratio. 
-##     "equal"    Force x distance to equal y-distance. 
-##     "normal"   Restore the balance. 
+##     "square"   Force a square aspect ratio.
+##     "equal"    Force x distance to equal y-distance.
+##     "normal"   Restore the balance.
 ##     "auto"     Set the specified axes to have nice limits around the data.
-##     "manual"   Fix the current axes limits. 
-##     "tight"    Fix axes to the limits of the data. 
-##     "image"    Equivalent to "tight" and "equal". 
-## 
+##     "manual"   Fix the current axes limits.
+##     "tight"    Fix axes to the limits of the data.
+##     "image"    Equivalent to "tight" and "equal".
+##
 ##   affect the appearance of tic marks (note, if there are no tic marks
 ##   for an axis, there can be no labels):
-##     "on"       Turn tic marks and labels on for all axes. 
-##     "off"      Turn tic marks off for all axes. 
+##     "on"       Turn tic marks and labels on for all axes.
+##     "off"      Turn tic marks off for all axes.
 ##     "tic[xy]"  Turn tic marks on for all axes, or turn them on for
-##                  the specified axes and off for the remainder. 
+##                  the specified axes and off for the remainder.
 ##     "label[xy] Turn tic labels on for all axes, or turn them on
-##                  for the specified axes and off for the remainder. 
-##     "nolabel"  Turn tic labels off for all axes. 
-## 
+##                  for the specified axes and off for the remainder.
+##     "nolabel"  Turn tic labels off for all axes.
+##
 ##   affect the appearance of the x and y coordinate axis
 ##      "axison"  Turn on the x and y coordinate axis
 ##      "axisoff" Turn off the x and y coordinate axis
@@ -82,7 +82,7 @@ function curr_axis = axis (ax, opt)
     if (len != 2 && len != 4 && len != 6)
       error ("axis: expecting vector with 2, 4, or 6 elements.\n");
     endif
-    
+
     __pl.axis_st(strm) = 1;
 
     if (len > 1)
@@ -132,12 +132,12 @@ function curr_axis = axis (ax, opt)
 	__pl.aspect(strm) = 0;
 
 	## the way axis limits are interpreted.
-      case "auto" 
+      case "auto"
 	__pl.axis_st(strm) = 0;
 	__pl.margin(strm) = 1;
       case "manual"  ## fix the current axis
 	__pl.axis_st(strm) = 1;
-      case "tight" 
+      case "tight"
 	__pl.axis_st(strm) = 0;
 	__pl.margin(strm) = 0;
       case "image"
@@ -145,26 +145,26 @@ function curr_axis = axis (ax, opt)
 	__pl.margin(strm) = 0;
 
 	## the appearance of tic marks
-      case "on"  ## tic marks and tick labels on for all axes 
+      case "on"  ## tic marks and tick labels on for all axes
 	__pl.xticks(strm,3) = 1;
 	__pl.xticks(strm,4) = 1;
 	__pl.yticks(strm,3) = 1;
 	__pl.yticks(strm,4) = 1;
-      case "off"  ## tic marks off for all axes 
+      case "off"  ## tic marks off for all axes
 	__pl.xticks(strm,3) = 0;
 	__pl.yticks(strm,3) = 0;
       case "ticxy"  ## on for the specified axes and off for the remainder.
 	__pl.xticks(strm,3) = 1;
 	__pl.yticks(strm,3) = 1;
-      case "ticx" 
+      case "ticx"
 	__pl.xticks(strm,3) = 1;
 	__pl.yticks(strm,3) = 0;
-      case "ticy" 
+      case "ticy"
 	__pl.xticks(strm,3) = 0;
 	__pl.yticks(strm,3) = 1;
 
 	## the appearance of tic labels
-      case "labelxy"  ## on for the specified axes and off for the remainder. 
+      case "labelxy"  ## on for the specified axes and off for the remainder.
 	__pl.xticks(strm,4) = 1;
 	__pl.yticks(strm,4) = 1;
       case "labelx"
@@ -178,9 +178,9 @@ function curr_axis = axis (ax, opt)
 	__pl.yticks(strm,4) = 0;
 
 	##  the direction of increasing values on the axes
-      case "ij" 
+      case "ij"
 	warning("axis: option 'ij' not supported.");
-      case "xy" 
+      case "xy"
 	1;  ## default
 
 	## the appearance of the xy axis

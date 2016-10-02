@@ -52,7 +52,7 @@ less gtk+_packages.stderr
 # The rest of the "not found" packages such as pkg-config and libffi have
 # epa_build configurations that have been independently implemented.
 # Some of those have hand-generated configurations (e.g.,
-# pkg-config/CMakeLists.txt).  
+# pkg-config/CMakeLists.txt).
 
 # Other "not found" packages have been configured with a template
 # (e.g., libffi).  This is done by adding additional configurations to
@@ -167,6 +167,6 @@ no experience building octave.  So I have decided to indefinitely put
 off working on this epa_build configuration.  As a result, the octave
 component of the plplot epa_build is currently disabled both for
 plplot and plplot_lite, and it will likely be a long time before this
-limitation is removed unless someone else is motivated to 
+limitation is removed unless someone else is motivated to
 make this work.
 

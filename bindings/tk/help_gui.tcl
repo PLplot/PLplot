@@ -15,14 +15,14 @@ proc help_gui {{w .help_gui}} {
     dpos $w
     wm title $w "Help on GUI"
     wm iconname $w "help_gui"
-    normal_text_setup $w 
+    normal_text_setup $w
 
     insertWithTags $w.t {\
-      The PLPLOT/TK user interface is constructed from TK widgets, using Tcl 
+      The PLPLOT/TK user interface is constructed from TK widgets, using Tcl
 as a (dynamic) specification language.  The Tcl scripts provided with PLPLOT
 control the layout of the user interface, initialization of the widgets, and
 some of the binding of actions to events.  Widgets, on the other hand, are
-all coded in C for speed.  
+all coded in C for speed.
 
       The fundamental addition to PLPLOT to allow it to use Tcl/TK effectively
 has been the creation of a PLPLOT widget, called a "plframe".  It was
@@ -31,7 +31,7 @@ as close ties to the underlying graphics library.  The plframe widget can
 be created, mapped, and destroyed basically just like a TK frame widget.
 In addition, it supports numerous widget commands.
 
-      The default PLPLOT/TK interface looks like a window with a top-level 
+      The default PLPLOT/TK interface looks like a window with a top-level
 menu bar, containing any number of frames devoted to plotting.  These child
 windows contain a bar with an end-of-plot indicator, a "Plot" menu, a forward
 page button (also a back page button when plrender is being used), and a
@@ -86,14 +86,14 @@ Also supported are some alternate configurations:
       work is done in one process, but has the disadvantage that the
       user interface goes "dead" while the calculation is proceeding.
 
-      By offloading the GUI-building code into a simple script language, it 
+      By offloading the GUI-building code into a simple script language, it
 becomes easy to build menus, buttons, scrollbars, etc.  All of these are
 configurable by the user, as well as the ability to map events (such as
 button presses) to functions calls in your own program. Note: the
 alternate configurations as well as the customization options are not yet
 fully tested.
 
-      Most of the currently supported operations of the PLPLOT/TK user 
+      Most of the currently supported operations of the PLPLOT/TK user
 interface are self-explanatory, and can be understood with a bit of
 experimentation.  Better documentation will eventually follow.  Some
 points to remember:

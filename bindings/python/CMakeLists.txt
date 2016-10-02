@@ -68,7 +68,7 @@ if(ENABLE_python)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
     )
 
-  set_source_files_properties(plplotcmodule.i 
+  set_source_files_properties(plplotcmodule.i
     PROPERTIES SWIG_MODULE_NAME plplotc
     )
 
@@ -100,14 +100,14 @@ if(ENABLE_python)
       PROPERTIES
       SUFFIX ".dll"
       OUTPUT_NAME "_plplotc"
-      )  
+      )
   endif(WIN32_AND_NOT_CYGWIN)
 
   # Fixup required to deal with UTF-8 help strings.  Note the DEPENDS
   # only brings in a file dependency on the shared object and
   # not ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py that is also built
   # by swig.  Therefore, when the _plplotcmodule_fixed target is run the
-  # following command is only executed if 
+  # following command is only executed if
   # ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py is outdated relative
   # to the shared object and it ignores the dating of
   # ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py.  Thus, that file
@@ -130,8 +130,8 @@ if(ENABLE_python)
 
   add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
   set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
-  set_source_files_properties( 
-    plplot_widgetmodule.c 
+  set_source_files_properties(
+    plplot_widgetmodule.c
     PROPERTIES COMPILE_FLAGS
     "-DUSINGDLL"
     )
@@ -145,7 +145,7 @@ if(ENABLE_python)
   else(ENABLE_tkX AND ENABLE_DYNDRIVERS)
     # Don't link to plplottcltk if ENABLE_tkX is false
     # or ENABLE_DYNDRIVERS is false.  If ENABLE_tkX is true
-    # and ENABLE_DYNDRIVERS is false all of the plplottcltk 
+    # and ENABLE_DYNDRIVERS is false all of the plplottcltk
     # code is already in plplot so this rule avoids redundant
     # linking.
     target_link_libraries( plplot_widgetmodule
@@ -171,7 +171,7 @@ if(ENABLE_python)
   install(
     TARGETS plplot_widgetmodule _plplotcmodule
     EXPORT export_plplot
-    LIBRARY 
+    LIBRARY
     DESTINATION ${PYTHON_INSTDIR}
     )
 

@@ -137,11 +137,11 @@ proc spiro {w params fill} {
      ycoord $i = [expr {($param1-$param2)*sin($phi)-$param3*sin($phiw)}]
 
      if { $i == 0} {
-	set xmin [xcoord 0]  
-	set xmax [xcoord 0]  
-	set ymin [ycoord 0]  
-	set ymax [ycoord 0]  
-     }  
+	set xmin [xcoord 0]
+	set xmax [xcoord 0]
+	set ymin [ycoord 0]
+	set ymax [ycoord 0]
+     }
      if { $xmin > [xcoord $i] } { set xmin [xcoord $i] }
      if { $xmax < [xcoord $i] } { set xmax [xcoord $i] }
      if { $ymin > [ycoord $i] } { set ymin [ycoord $i] }

@@ -32,7 +32,7 @@ import numpy
 # All unbracketed arguments within brackets must all be present or all be
 # missing.  Furthermore, z must be a 2D array, kx, lx, ky, ly must all be
 # integers, clev must be a 1D array, pltr can be a function reference or
-# string, pltr_data is an optional arbitrary data object, xg and yg are 
+# string, pltr_data is an optional arbitrary data object, xg and yg are
 # optional 1D or 2D arrays and wrap (which only works if xg and yg
 # are specified) is 0, 1, or 2.
 
@@ -85,8 +85,8 @@ def plcont(z, *args):
     type(args[0]) == types.BuiltinFunctionType):
 	pltr = args[0]
 	# Handle the string names for the callbacks though specifying the
-	# built-in function name directly (without the surrounding quotes) 
-	# or specifying any user-defined transformation function 
+	# built-in function name directly (without the surrounding quotes)
+	# or specifying any user-defined transformation function
 	# (following above rules) works fine too.
 	if type(pltr) == types.StringType:
 	    if pltr == "pltr0":
@@ -156,7 +156,7 @@ def plcont(z, *args):
 	ly = z.shape[1]
     _plcont(z, kx, lx, ky, ly, clev, pltr, pltr_data)
 plcont.__doc__ = _plcont.__doc__
-  
+
 # Redefine plvect to have the user-friendly interface
 # Allowable syntaxes:
 
@@ -185,8 +185,8 @@ def plvect(u, v, *args):
     type(args[0]) == types.BuiltinFunctionType):
         pltr = args[0]
         # Handle the string names for the callbacks though specifying the
-        # built-in function name directly (without the surrounding quotes) 
-        # or specifying any user-defined transformation function 
+        # built-in function name directly (without the surrounding quotes)
+        # or specifying any user-defined transformation function
         # (following above rules) works fine too.
         if type(pltr) == types.StringType:
             if pltr == "pltr0":
@@ -268,7 +268,7 @@ def plimagefr(img, *args):
         for i in range(8) :
             if (type(args[i]) != types.FloatType and \
                 type(args[i]) != numpy.float64 and \
-                type(args[i]) != types.IntType) : 
+                type(args[i]) != types.IntType) :
                 raise ValueError, "Expected 8 numbers for xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax"
         else:
             # These 8 args are xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax
@@ -283,8 +283,8 @@ def plimagefr(img, *args):
     type(args[0]) == types.BuiltinFunctionType):
         pltr = args[0]
         # Handle the string names for the callbacks though specifying the
-        # built-in function name directly (without the surrounding quotes) 
-        # or specifying any user-defined transformation function 
+        # built-in function name directly (without the surrounding quotes)
+        # or specifying any user-defined transformation function
         # (following above rules) works fine too.
         if type(pltr) == types.StringType:
             if pltr == "pltr0":
@@ -354,7 +354,7 @@ plimagefr.__doc__ = _plimagefr.__doc__
 # plshades(z,  [xmin, xmax, ymin, ymax,] clev, \
 # fill_width, [cont_color, cont_width,], rect, \
 # [pltr, [pltr_data] or [xg, yg, [wrap]]])
- 
+
 _plshades = plshades
 def plshades(z, *args):
     z = numpy.asarray(z)
@@ -397,7 +397,7 @@ def plshades(z, *args):
     if len(args) > 2 and \
     type(args[0]) == types.IntType and \
     (type(args[1]) == types.FloatType or type(args[1]) == numpy.float64):
-	# These 2 args are 
+	# These 2 args are
 	cont_color, cont_width = args[0:2]
 	args = args[2:]
     else:
@@ -418,8 +418,8 @@ def plshades(z, *args):
     type(args[0]) == types.BuiltinFunctionType):
 	pltr = args[0]
 	# Handle the string names for the callbacks though specifying the
-	# built-in function name directly (without the surrounding quotes) 
-	# or specifying any user-defined transformation function 
+	# built-in function name directly (without the surrounding quotes)
+	# or specifying any user-defined transformation function
 	# (following above rules) works fine too.
 	if type(pltr) == types.StringType:
 	    if pltr == "pltr0":
@@ -484,7 +484,7 @@ def plshades(z, *args):
     _plshades(z, xmin, xmax, ymin, ymax, clev, \
     fill_width, cont_color, cont_width, rect, pltr, pltr_data)
 plshades.__doc__ = _plshades.__doc__
-  
+
 # Redefine plshade to have the user-friendly interface
 # Allowable syntaxes:
 
@@ -538,7 +538,7 @@ def plshade(z, *args):
     (type(args[1]) == types.FloatType or type(args[1]) == numpy.float64) and \
     type(args[2]) == types.IntType and \
     (type(args[3]) == types.FloatType or type(args[3]) == numpy.float64):
-	# These 4 args are 
+	# These 4 args are
 	min_color, min_width, max_color, max_width = args[0:4]
 	args = args[4:]
     else:
@@ -559,8 +559,8 @@ def plshade(z, *args):
     type(args[0]) == types.BuiltinFunctionType):
 	pltr = args[0]
 	# Handle the string names for the callbacks though specifying the
-	# built-in function name directly (without the surrounding quotes) 
-	# or specifying any user-defined transformation function 
+	# built-in function name directly (without the surrounding quotes)
+	# or specifying any user-defined transformation function
 	# (following above rules) works fine too.
 	if type(pltr) == types.StringType:
 	    if pltr == "pltr0":
@@ -631,7 +631,7 @@ plshade.__doc__ = _plshade.__doc__
 # Allowable syntaxes:
 
 # plscmap1l(itype, pos, coord1, coord2, coord3[, alt_hue_path])
- 
+
 _plscmap1l = plscmap1l
 def plscmap1l(itype, pos, coord1, coord2, coord3, *args):
 

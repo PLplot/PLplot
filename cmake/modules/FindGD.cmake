@@ -118,6 +118,6 @@ if(GD_FOUND)
   set(GD_LIBRARY_DIRS ${GD_LIBRARY_DIR})
 endif(GD_FOUND)
 
-find_package_handle_standard_args(GD 
+find_package_handle_standard_args(GD
   REQUIRED_VARS GD_INCLUDE_DIRS GD_LIBRARIES GD_LIBRARY_DIRS
   )

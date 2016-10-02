@@ -101,5 +101,5 @@ plscol0a( 15, 32, 32, 32, 0.70 )
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-        
+
 plend()

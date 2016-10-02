@@ -216,7 +216,7 @@ let plot5 () =
  * Plots several simple functions from other example programs.
  *
  * This version sends the output of the first 4 plots (one page) to two
- * independent streams.  
+ * independent streams.
 \*--------------------------------------------------------------------------*)
 let () =
   let geometry_master = "500x410+100+200" in
@@ -241,7 +241,7 @@ let () =
 
   let driver = plgdev () in
   let fam, num, bmax = plgfam () in
-  
+
   printf "Demo of multiple output streams via the %s driver.\n" driver;
   printf "Running with the second stream as slave to the first.\n";
   printf "\n";

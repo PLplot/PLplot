@@ -74,6 +74,6 @@ clean:
 
 
 .mlocaml$(EXEEXT):
-	$(OCAMLC) $(OCAML_CFLAGS) $(OCAML_LIBS) -o $@ $< 
+	$(OCAMLC) $(OCAML_CFLAGS) $(OCAML_LIBS) -o $@ $<
 
 .SUFFIXES: .ml ocaml$(EXEEXT)

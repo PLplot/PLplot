@@ -1,11 +1,11 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
 ## Copyright (C) 2004  Rafael Laboissiere
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -41,12 +41,12 @@ function id = stripc (xmin, xmax, xjump, ymin, ymax, leg1, leg2, leg3, leg4, acc
   styline(1)  = 1;	# pens line style
   styline(2) = 1;
   styline(3) = 1;
-  styline(4) = 1;    
+  styline(4) = 1;
 
   colline(1) = 1;	# pens color
   colline(2) = 9;
   colline(3) = 3;
-  colline(4) = 4;    
+  colline(4) = 4;
 
   if ( plglevel == 1 )
     pladv(0);
@@ -54,7 +54,7 @@ function id = stripc (xmin, xmax, xjump, ymin, ymax, leg1, leg2, leg3, leg4, acc
 
   id = plstripc("bcnst", "bcnstv",
 		xmin, xmax, xjump, ymin, ymax,
-		__pl.legend_xpos(strm), __pl.legend_ypos(strm), 
+		__pl.legend_xpos(strm), __pl.legend_ypos(strm),
 		autoy, acc, 15, 15,
 		colline', styline', leg1, leg2, leg3, leg4,
 		tdeblank(__pl.xlabel(strm,:)),

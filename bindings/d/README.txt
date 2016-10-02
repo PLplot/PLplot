@@ -29,7 +29,7 @@ Instructions to create the plplot module
     const DRAW_SIDES=1<<6; /* draw sides */
     const FACETED=1<<7; /* draw outline for each square that makes up the surface */
     const MESH=1<<8; /* draw mesh */
-  
+
 Compile examples
 ================
 * Download and install the gdc compiler (only tested with this compiler)

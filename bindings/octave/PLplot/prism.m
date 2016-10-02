@@ -27,5 +27,5 @@ function map = prism (number)
   b = clip(2 - 6*abs(x-2/3));
 
   map = [r, g, b];
-  
+
 endfunction

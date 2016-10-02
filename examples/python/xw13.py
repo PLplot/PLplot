@@ -48,7 +48,7 @@ def main():
     for i in range(5):
 	#theta quantities scaled as integers to make logic independent of
 	#floating point considerations.
-	#n.b. theta multiplied by 2 pi/500 afterward so per is in fact 
+	#n.b. theta multiplied by 2 pi/500 afterward so per is in fact
 	#interpreted as a percentage.
 	theta1 = theta0 + int(5.*per[i])
 	if i == 4:

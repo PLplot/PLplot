@@ -84,7 +84,7 @@ let plot1 () =
 
   (* Rescale major / minor tick marks back to default *)
   plsmin 0.0 1.0;
-  plsmaj 0.0 1.0; 
+  plsmaj 0.0 1.0;
   ()
 
 (* Plot the number of hours of daylight as a function of day for a year *)

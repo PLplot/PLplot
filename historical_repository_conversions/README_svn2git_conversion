@@ -16,7 +16,7 @@ svn checkout https://svn.code.sf.net/p/plplot/code plplot_complete_SF_svn
   label button for "Code" to change that to "Old Code".  N.B. MAKE
   ABSOLUTELY POSITIVE YOU DO NOT HIT THE DELETE BUTTON.  That would
   destroy our subversion repository which we would like to keep
-  available at SourceForge for some time in a readonly status 
+  available at SourceForge for some time in a readonly status
 
 * [Not done by AWI.  Should be done by Hazen.] While in the same location create
   an empty git repo.  Click on the git button, and choose a label of
@@ -157,7 +157,7 @@ grep '^Author' git.log |sort -u |less
 
 grep "svn path" git.log |sort --field-separator='=' --key=3 -n |less
 
-  This shows that only 23 are missing, but I think that is reasonable since  
+  This shows that only 23 are missing, but I think that is reasonable since
 
 grep '^Exporting' svn-all-fast-export.log |grep -v modifications |grep done |less
 
@@ -175,7 +175,7 @@ further steps.]
 * Configure git with the same information so that the Author lines will
   continue to be consistent in the log for new commits to the git repo.
 
-git config --global user.name "Hazen Babcock" 
+git config --global user.name "Hazen Babcock"
 git config --global user.email "hbabcock@users.sourceforge.net"
 
 * Prepare bare repo for pushing to SF following directions at
@@ -244,7 +244,7 @@ ssh airwin,plplot@shell.sourceforge.net "chmod a+x /home/git/p/plplot/plplot.git
 
 # List branches
 git branch -a
- 
+
 # Tag the branch called branch_name
 git tag archive/branch_name origin/branch_name
 

@@ -70,7 +70,7 @@ begin
         if i = 4 then
             theta1 := 500;
         end if;
-        
+
         theta := theta0;
         while theta <= theta1 loop
             x(j) := 5.0 + 3.0 * cos((2.0 * pi / 500.0) * Long_Float(theta));
@@ -78,7 +78,7 @@ begin
             j := j + 1;
             theta := theta + dthet;
         end loop;
-        
+
         plcol0(i + 1);
         plpsty((i + 3) mod 8 + 1);
 
@@ -97,7 +97,7 @@ begin
         dy := 0.25 * sin(just);
         if (theta0 + theta1) < 250 or (theta0 + theta1) > 750 then
             just := 0.0;
-        else 
+        else
             just := 1.0;
         end if;
 

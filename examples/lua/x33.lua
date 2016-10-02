@@ -149,7 +149,7 @@ function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width
         pl.wind( 0.0, 1.0, 0.0, 1.0 )
         -- Set interesting background colour.
         pl.scol0a( 15, 0, 0, 0, 0.20 );
-        colorbar_width, colorbar_height = pl.colorbar( 
+        colorbar_width, colorbar_height = pl.colorbar(
             lor(opt, lor(pl.PL_COLORBAR_BOUNDING_BOX, pl.PL_COLORBAR_BACKGROUND)),  position,
             x, y, x_length, y_length,
             15, 1, 1,
@@ -282,10 +282,10 @@ colorbar_cap_option_labels = {
     "Low and high caps"
 }
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
 -- First page illustrating the 16 standard positions.
@@ -326,8 +326,8 @@ for k=0,15 do
   legend_width, legend_height = pl.legend(
     opt, position, 0.05, 0.05,
     0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
-    1.0, text_colors, text, 
-    box_colors, box_patterns, box_scales, box_line_widths, 
+    1.0, text_colors, text,
+    box_colors, box_patterns, box_scales, box_line_widths,
     line_colors, line_styles, line_widths,
     symbol_colors, symbol_scales, symbol_numbers, symbols )
 end
@@ -375,8 +375,8 @@ ncolumn = nlegend
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-  1.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  1.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -389,8 +389,8 @@ ncolumn = nlegend
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-  1.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  1.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -403,8 +403,8 @@ ncolumn = 1
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-  1.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  1.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -417,8 +417,8 @@ ncolumn = 1
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-  1.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  1.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -431,8 +431,8 @@ ncolumn = 2
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-  1.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  1.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -445,8 +445,8 @@ ncolumn = 2
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-  1.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  1.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -459,8 +459,8 @@ ncolumn = 3
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
-  1.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  1.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -510,8 +510,8 @@ for i=0,8 do
   legend_width, legend_height = pl.legend(
     opt, position, x, y,
     0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
-    1.0, text_colors, text, 
-    box_colors, box_patterns, box_scales, box_line_widths, 
+    1.0, text_colors, text,
+    box_colors, box_patterns, box_scales, box_line_widths,
     line_colors, line_styles, line_widths,
     symbol_colors, symbol_scales, symbol_numbers, symbols )
   if i==nturn then
@@ -592,8 +592,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 
@@ -614,8 +614,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
@@ -637,8 +637,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
@@ -663,8 +663,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
@@ -686,8 +686,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
@@ -709,8 +709,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
@@ -734,8 +734,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
@@ -756,8 +756,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)
@@ -778,8 +778,8 @@ pl.scol0a( 15, 32, 32, 32, 0.70 )
 legend_width, legend_height = pl.legend(
   opt, position, x, y,
   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-  0.0, text_colors, text, 
-  box_colors, box_patterns, box_scales, box_line_widths, 
+  0.0, text_colors, text,
+  box_colors, box_patterns, box_scales, box_line_widths,
   line_colors, line_styles, line_widths,
   symbol_colors, symbol_scales, symbol_numbers, symbols )
 max_height = math.max(max_height, legend_height)

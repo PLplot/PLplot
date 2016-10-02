@@ -61,7 +61,7 @@ end
 function demo1()
   pl.bop()
 
-  -- Divide screen into 16 regions 
+  -- Divide screen into 16 regions
   pl.ssub(4, 4)
 
   draw_windows(16, 0)
@@ -78,19 +78,19 @@ end
 ----------------------------------------------------------------------------
 
 function demo2()
-  -- Set up cmap0 
-  -- Use 100 custom colors in addition to base 16 
+  -- Set up cmap0
+  -- Use 100 custom colors in addition to base 16
   r = {}
   g = {}
   b = {}
 
-  -- Min & max lightness values 
+  -- Min & max lightness values
   lmin = 0.15
   lmax = 0.85
 
   pl.bop()
 
-  -- Divide screen into 100 regions 
+  -- Divide screen into 100 regions
 
   pl.ssub(10, 10)
 
@@ -99,30 +99,30 @@ function demo2()
     --	hue		[0., 360.]	degrees
     --	lightness	[0., 1.]	magnitude
     --	saturation	[0., 1.]	magnitude
-   
-    -- Vary hue uniformly from left to right 
+
+    -- Vary hue uniformly from left to right
     h = (360/10) * (i % 10)
-    
-    -- Vary lightness uniformly from top to bottom, between min & max 
+
+    -- Vary lightness uniformly from top to bottom, between min & max
     l = lmin + (lmax - lmin) * math.floor(i/10)/9
-    
-    -- Use max saturation 
+
+    -- Use max saturation
     s = 1
 
     r1, g1, b1 = pl.hlsrgb(h, l, s)
 
-    -- Use 255.001 to avoid close truncation decisions in this example. 
+    -- Use 255.001 to avoid close truncation decisions in this example.
     r[i+1+16] = r1 * 255.001
     g[i+1+16] = g1 * 255.001
     b[i+1+16] = b1 * 255.001
   end
 
-  -- Load default cmap0 colors into our custom set 
+  -- Load default cmap0 colors into our custom set
   for i = 0, 15 do
     r[i+1], g[i+1], b[i+1] = pl.gcol0(i)
   end
 
-  -- Now set cmap0 all at once (faster, since fewer driver calls) 
+  -- Now set cmap0 all at once (faster, since fewer driver calls)
   pl.scmap0(r, g, b)
 
   draw_windows(100, 16)
@@ -138,13 +138,13 @@ end
 -- user-modified.
 ----------------------------------------------------------------------------
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize pl.pl.ot 
+-- Initialize pl.pl.ot
 pl.init()
 
--- Run demos 
+-- Run demos
 demo1()
 demo2()
 

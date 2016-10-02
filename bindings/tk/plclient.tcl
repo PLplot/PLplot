@@ -20,7 +20,7 @@
 # plw_create_proc	proc to create the plframe widget
 # plw_start_proc	proc to manage the plframe widget
 # plw_flash_proc	proc to handle end of page condition
-# plw_end_proc		proc to detach the plframe widget from the client 
+# plw_end_proc		proc to detach the plframe widget from the client
 #----------------------------------------------------------------------------
 
 proc plclient_init {} {
@@ -139,7 +139,7 @@ proc plclient_link_end {} {
 #----------------------------------------------------------------------------
 
 proc plclient_dp_init {} {
-    global server server_host plwindow client data_port data_sock 
+    global server server_host plwindow client data_port data_sock
 
     dp_RDO $server plw::dplink $plwindow $client
 

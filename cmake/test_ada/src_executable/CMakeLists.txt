@@ -23,14 +23,14 @@ if(BUILD_TEST)
   # must specify the directory of <TARGET>.adb with an -aI option (see
   # below).
   add_executable(hello hello.adb)
-  
+
   # The first -aI option is required to find <TARGET>.adb (see above
   # comment). The second -aI option gives access to the test_ada
   # library spec (*.ads) files. The -aL option gives access to the
   # test_ada library *.ali files.  (For the CORE_BUILD case, that
   # location currently works but is probably not guaranteed
   # indefinitely for future versions of CMake.)
-  
+
   if(CORE_BUILD)
     set_target_properties(
       hello
@@ -83,7 +83,7 @@ if(BUILD_TEST)
   add_custom_target(test_noninteractive
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/hello.out
     )
-  
+
 endif(BUILD_TEST)
 
 if(CORE_BUILD)

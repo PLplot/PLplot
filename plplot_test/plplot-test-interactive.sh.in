@@ -30,7 +30,7 @@ echo '
 Usage: plplot-test-interactive.sh [OPTIONS]
 
 Options:
-   [--device=DEVICES_LIST] 
+   [--device=DEVICES_LIST]
        where DEVICES_LIST is one of more devices specified as a
        blank-delimited string (e.g., --device=xwin or
        --device="qtwidget extqt").  Note each specified device must be
@@ -127,7 +127,7 @@ for device in $DEVICES_LIST ; do
     eval pld_device='$'PLD_$device
     if [ ! "$pld_device" = "ON" ] ; then
 	echo "$device is either not configured or not used for interactive tests."
-	usage 1 1>&2 
+	usage 1 1>&2
     fi
 done
 
@@ -227,7 +227,7 @@ for index in $INDEX_LIST ; do
     # Look for any PLPLOT ERROR messages from plwarn that do not result in an exit code.
     is_error=`grep -l 'PLPLOT ERROR' test.error`
     if [ -n "$is_error" ] ; then
-        echo "ERROR indicated by 'PLPLOT ERROR' in stderr for ${COMMAND[$index]}" 
+        echo "ERROR indicated by 'PLPLOT ERROR' in stderr for ${COMMAND[$index]}"
 	OVERALL_STATUS_CODE=1
     fi
     popd

@@ -1,7 +1,7 @@
 # cmake/modules/language_support.cmake
 #
 # Temporary additional general language support is contained within this
-# file.  
+# file.
 
 # This additional function definition is needed to provide a workaround for
 # CMake bug 9220.
@@ -39,7 +39,7 @@ enable_language(${language})
     # Special language support files for various languages:
     # N.B. This list of files has to be maintained to be consistent
     # with anything special we do in terms of language support.
-    
+
     if(language STREQUAL "Ada")
       set(language_special ON)
       set(language_files

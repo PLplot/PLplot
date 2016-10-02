@@ -1,10 +1,10 @@
 ## Copyright (C) 2000-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -30,7 +30,7 @@ function plimage(img, x1, x2, y1, y2)
 
   global __pl
   strm = __pl_init;
-  
+
   [nr, nc] = size(img);
   if (nargin == 1)
     xi = yi = 1.0;
@@ -42,10 +42,10 @@ function plimage(img, x1, x2, y1, y2)
       usage "plimage";
       return;
     else
-      xi = min([x1, x2]); 
-      xf = max([x1, x2]); 
-      yi = min([y1, y2]); 
-      yf = max([y1, y2]); 
+      xi = min([x1, x2]);
+      xf = max([x1, x2]);
+      yi = min([y1, y2]);
+      yf = max([y1, y2]);
     endif
   else
     usage "plimage";

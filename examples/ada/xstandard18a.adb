@@ -52,23 +52,23 @@ procedure xstandard18a is
         x, y, z : Real_Vector(0 .. 4);
         Two_Pi : Long_Float := 2.0 * pi;
         draw : array(0 .. 3) of Boolean_Array_1D(0 .. 3);
-        
+
         function THETA(a : Integer) return Long_Float is
         begin
             return Two_Pi * Long_Float(a) / 20.0;
         end;
-        
+
         function PHI(a : Integer) return Long_Float is
         begin
             return pi * Long_Float(a) / 20.1;
         end;
-        
+
     begin
         draw(0) := (True,  True,  True,  True);
         draw(1) := (True,  False, True,  False);
         draw(2) := (False, True,  False, True);
         draw(3) := (True,  True,  False, False);
-        
+
         Advance_To_Subpage(Next_Subpage);
         Set_Viewport_Normalized(0.0, 1.0, 0.0, 0.9);
         Set_Viewport_World(-1.0, 1.0, -0.9, 1.1);
@@ -84,19 +84,19 @@ procedure xstandard18a is
                 x(0) := sin(PHI(j)) * cos(THETA(i));
                 y(0) := sin(PHI(j)) * sin(THETA(i));
                 z(0) := cos(PHI(j));
-                
+
                 x(1) := sin(PHI(j + 1)) * cos(THETA(i));
                 y(1) := sin(PHI(j + 1)) * sin(THETA(i));
                 z(1) := cos(PHI(j + 1));
-                
+
                 x(2) := sin(PHI(j + 1)) * cos(THETA(i + 1));
                 y(2) := sin(PHI(j + 1)) * sin(THETA(i + 1));
                 z(2) := cos(PHI(j + 1));
-                
+
                 x(3) := sin(PHI(j)) * cos(THETA(i + 1));
                 y(3) := sin(PHI(j)) * sin(THETA(i + 1));
                 z(3) := cos(PHI(j));
-                
+
                 x(4) := sin(PHI(j)) * cos(THETA(i));
                 y(4) := sin(PHI(j)) * sin(THETA(i));
                 z(4) := cos(PHI(j));
@@ -110,21 +110,21 @@ procedure xstandard18a is
     end test_poly;
 
 begin
-    -- Parse and process command line arguments 
+    -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
 
-    -- Initialize plplot 
+    -- Initialize plplot
     Initialize_PLplot;
 
     for k in 0 .. 3 loop
         test_poly(k);
     end loop;
 
-    -- From the mind of a sick and twisted physicist... 
+    -- From the mind of a sick and twisted physicist...
     for i in x'range loop
         z(i) := -1.0 + 2.0 * Long_Float(i) / Long_Float(NPTS);
 
-        -- Pick one... 
+        -- Pick one...
         r := z(i);
 
         x(i) := r * cos( 2.0 * pi * 6.0 * Long_Float(i) / Long_Float(NPTS) );
@@ -149,8 +149,8 @@ begin
         end if;
 
         Set_Pen_Color(Green);
-        Write_Text_Viewport("t", 1.0, 0.5, 0.5, "#frPLplot Example 18 - Alt=" & 
-            Trim(Integer'image(Integer(alt(k))), Left) & ", Az=" & 
+        Write_Text_Viewport("t", 1.0, 0.5, 0.5, "#frPLplot Example 18 - Alt=" &
+            Trim(Integer'image(Integer(alt(k))), Left) & ", Az=" &
             Trim(Integer'image(Integer( az(k))), Left));
     end loop;
 

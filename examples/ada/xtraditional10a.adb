@@ -30,18 +30,18 @@ use
     PLplot_Traditional;
 
 procedure xtraditional10a is
-begin   
-    -- Parse and process command line arguments    
+begin
+    -- Parse and process command line arguments
     plparseopts(PL_PARSE_FULL);
-    
+
     -- Initialize plplot
     plinit;
-    
+
     pladv(0);
     plvpor(0.0, 1.0, 0.0, 1.0);
     plwind(0.0, 1.0, 0.0, 1.0);
     plbox("bc", 0.0, 0, "bc", 0.0, 0);
-    
+
     plsvpa(50.0, 150.0, 50.0, 100.0);
     plwind(0.0, 1.0, 0.0, 1.0);
     plbox("bc", 0.0, 0, "bc", 0.0, 0);

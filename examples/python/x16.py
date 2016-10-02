@@ -121,7 +121,7 @@ def main(w):
     w.plcol0(1)
     w.plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
     w.plcol0(2)
-	       
+	
     #    plcont(w, nx, ny, 1, nx, 1, ny, clevel, ns, pltr1, (void *) &cgrid1);
 
     w.pllab( "distance", "altitude", "Bogon density" )

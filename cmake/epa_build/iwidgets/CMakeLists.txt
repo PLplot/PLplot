@@ -67,7 +67,7 @@ ExternalProject_Add(
 #
 # diff -Naur iwidgets4.0.1/README iwidgets4.1/README >iwidgets4.1.patch
 # diff -Naur iwidgets4.0.1/license.terms iwidgets4.1/license.terms >>iwidgets4.1.patch
-# diff -Naur --exclude=pkgIndex.tcl iwidgets4.0.1/generic iwidgets4.1/library >> iwidgets4.1.patch 
+# diff -Naur --exclude=pkgIndex.tcl iwidgets4.0.1/generic iwidgets4.1/library >> iwidgets4.1.patch
 # diff -Naur iwidgets4.0.1/tests iwidgets4.1/tests >> iwidgets4.1.patch
 #
 # N.B. this patch is somewhat larger than
@@ -89,7 +89,7 @@ add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
   COMMAND echo "Add CMake-based build system"
-  COMMAND ${CMAKE_COMMAND} -E copy_if_different 
+  COMMAND ${CMAKE_COMMAND} -E copy_if_different
   ${CMAKE_CURRENT_SOURCE_DIR}/${PACKAGE}_CMakeLists.txt
   ${EPA_BASE}/Source/build_${PACKAGE}/CMakeLists.txt
   APPEND

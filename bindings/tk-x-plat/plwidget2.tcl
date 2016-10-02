@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # PLPLOT TK/TCL graphics renderer
 # plplot window initialization procs
-# 
+#
 # Maurice LeBrun
 # IFS, University of Texas at Austin
 # 29-May-1993
@@ -87,7 +87,7 @@ proc plw::plxframe {w {client_id {}}} {
 	plw::create_TopRow $w
 	pack $w.ftop -side top -fill x
     }
-    
+
 # Also grab the initial input focus.
 
     if {[info tclversion] < 8.0} {
@@ -118,7 +118,7 @@ proc plw::plxframe {w {client_id {}}} {
 	$w.plwin configure -bopcmd "plw::bop $w"
 	$w.plwin configure -eopcmd "plw::eop $w"
     }
-    
+
     return $w
 }
 
@@ -178,13 +178,13 @@ proc plw::setup_defaults {w} {
 
     bind $w.plwin <B1-Motion> \
       "plw::user_mouse $w %b %s %x %y"
-    
+
     bind $w.plwin <B2-Motion> \
       "plw::user_mouse $w %b %s %x %y"
-    
+
     bind $w.plwin <B3-Motion> \
       "plw::user_mouse $w %b %s %x %y"
-    
+
     bind $w.plwin <Any-Enter> \
       "focus $w.plwin"
 }
@@ -380,7 +380,7 @@ proc plw::create_pmenu_file {w} {
 proc plw::create_pmenu_orient {w} {
     global pmenu; set m $pmenu($w).orient
 
-    $pmenu($w) add cascade -label "Orient" -menu $m 
+    $pmenu($w) add cascade -label "Orient" -menu $m
     menu $m
 
     $m configure -postcommand "plw::update_orient $w"
@@ -519,11 +519,11 @@ proc plw::create_pmenu_options {w} {
     menu $m
 
     $m add command -label "Palette 0" \
-      -command "plcmap0_edit $w" 
+      -command "plcmap0_edit $w"
 
     $m add command -label "Palette 1" \
-      -command "plcmap1_edit $w" 
-      
+      -command "plcmap1_edit $w"
+
     global plotopts
     set plotopts($w,xhairs) [$w.plwin configure -xhairs]
     set plotopts($w,dbl) [$w.plwin configure -doublebuffer]
@@ -568,10 +568,10 @@ proc plw::create_pmenu_options {w} {
 # Set up palette tools
 
     $m add command -label "Palette 0" \
-	-command "plcmap0_edit $w.plwin $w" 
+	-command "plcmap0_edit $w.plwin $w"
 
     $m add command -label "Palette 1" \
-	-command "plcmap1_edit $w.plwin $w" 
+	-command "plcmap1_edit $w.plwin $w"
 
 # Palettes - options (another cascade)
 
@@ -631,7 +631,7 @@ proc plw::start {w} {
     if { [info exists client] } {
 	client_cmd "set widget_is_ready 1"
     }
-    
+
     # Call a user supplied routine to do any necessary post initialization
     catch after_plw::start
 }
@@ -776,7 +776,7 @@ proc plw::flash {w col} {
 #
 # The closelink command was added in the hopes of making the dp driver
 # cleanup a bit more robust, but doesn't seem to have any effect except
-# to slow things down quite a bit.  
+# to slow things down quite a bit.
 #----------------------------------------------------------------------------
 
 proc plw::end {w} {
@@ -843,7 +843,7 @@ proc plw::save_as {w} {
 	    $w.plwin cmd plscmap0 16 #000000
 	    for {set i 1} {$i <= 15} {incr i} {
 		$w.plwin cmd plscol0 $i [lindex $c0 [expr $i +1]]
-	    }	    
+	    }	
 	}
 
 	if { $saveopts($w,1) == 0 } {
@@ -865,7 +865,7 @@ proc plw::SaveFile {devkey} {
       "plmeta"	"set filter .plm" \
       "pam"	"set filter .ppm" \
       "xfig"	"set filter .fig"
-    
+
     if {[info exists filter]} {
 	set f [tk_getSaveFile -defaultextension $filter]
     } else {
@@ -1112,7 +1112,7 @@ proc plw::zoom_start {w wx wy} {
 # zoomopts($w,1):
 #   0	first and last points specified determine opposite corners
 #	of zoom box.
-#   1	box is centered about the first point clicked on, 
+#   1	box is centered about the first point clicked on,
 #	perimeter follows mouse	(default)
 #
 #----------------------------------------------------------------------------
@@ -1314,7 +1314,7 @@ proc plw::zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
 
     $w.plwin draw rect \
 	[lindex "$coords" 0] [lindex "$coords" 1] \
-	[lindex "$coords" 2] [lindex "$coords" 3] 
+	[lindex "$coords" 2] [lindex "$coords" 3]
 }
 
 #----------------------------------------------------------------------------
@@ -1324,7 +1324,7 @@ proc plw::zoom_mouse_draw {w wx0 wy0 wx1 wy1} {
 #----------------------------------------------------------------------------
 
 proc plw::zoom_mouse_end {w wx0 wy0 wx1 wy1} {
-    
+
 # Finish rubber band draw
 
     bind $w.plwin <B1-ButtonRelease> {}
@@ -1338,7 +1338,7 @@ proc plw::zoom_mouse_end {w wx0 wy0 wx1 wy1} {
 
     plw::view_zoom $w \
 	[lindex "$coords" 0] [lindex "$coords" 1] \
-	[lindex "$coords" 2] [lindex "$coords" 3] 
+	[lindex "$coords" 2] [lindex "$coords" 3]
 }
 
 #----------------------------------------------------------------------------
@@ -1349,7 +1349,7 @@ proc plw::zoom_mouse_end {w wx0 wy0 wx1 wy1} {
 #----------------------------------------------------------------------------
 
 proc plw::view_select {w x0 y0 x1 y1} {
-    
+
 # Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
 
     set xl [min $x0 $x1]
@@ -1394,7 +1394,7 @@ proc plw::view_select {w x0 y0 x1 y1} {
 #----------------------------------------------------------------------------
 
 proc plw::view_zoom {w x0 y0 x1 y1} {
-    
+
     global xl xr yl yr
 
 # Adjust arguments to be properly ordered (xl < xr, etc)
@@ -1416,7 +1416,7 @@ proc plw::view_zoom {w x0 y0 x1 y1} {
 	if { $nxl < 0.0 } {
 	    set nxl 0.0
 	    set nxr [expr 2.0 * $xl]
-	} 
+	}
 	if { $nxr > 1.0 } {
 	    set nxr 1.0
 	    set nxl [expr 2.0 * $xl - 1.0]
@@ -1490,7 +1490,7 @@ proc plw::view_zoom {w x0 y0 x1 y1} {
 #----------------------------------------------------------------------------
 
 proc plw::zoom_back {w} {
-    
+
     global zidx zxl zyl zxr zyr
 
     if { $zidx($w) == 0 } then return
@@ -1514,7 +1514,7 @@ proc plw::zoom_back {w} {
 #----------------------------------------------------------------------------
 
 proc plw::zoom_forward {w} {
-    
+
     global zidx zidx_max zxl zyl zxr zyr
 
     if { $zidx_max($w) == 0 || $zidx($w) == $zidx_max($w) } then return
@@ -1584,7 +1584,7 @@ proc plw::view_scroll {w dx dy s} {
 #----------------------------------------------------------------------------
 
 proc plw::fixview {w hscroll vscroll} {
-    
+
 # Create scrollbars if they don't already exist.
 
     set created_sb 0

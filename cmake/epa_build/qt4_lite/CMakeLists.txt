@@ -25,7 +25,7 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# Many of the details of this epa_build configuration were derived from 
+# Many of the details of this epa_build configuration were derived from
 # <http://www.linuxfromscratch.org/blfs/view/svn/x/qt4.html>.
 
 set(PACKAGE qt4_lite)
@@ -50,7 +50,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
@@ -71,7 +71,7 @@ set(DOWNLOAD_HASH 1864987bdbb2f58f8ae8b350dfdbe133)
 # a consistent install prefix and I have also turned off as
 # much as possible for this "lite" version.
 set(config_arguments
-  
+
   # Installation options:
   -sysconfdir ${EPA_CMAKE_INSTALL_PREFIX}/etc/xdg
 
@@ -81,7 +81,7 @@ set(config_arguments
   -opensource
   # Need to be consistent with system versions of PyQt4/QtGui.so which need
   # a libQtGui.so library which contains QWidget::accessibleName() const
-  # and QWidget::accessibleDescription() const. 
+  # and QWidget::accessibleDescription() const.
   -accessibility
 
   # Try to get rid of everything to do with sql by eliminating all possible
@@ -134,7 +134,7 @@ set(config_arguments
 
   -optimized-qmake
 
-  # Need gui which happens by default (there is no -gui option) 
+  # Need gui which happens by default (there is no -gui option)
   # if you do not specify -no-gui
 
   -no-nis
@@ -168,7 +168,7 @@ add_custom_command(
   APPEND
   )
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/install_png.sh 
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/install_png.sh
 "install -v -Dm644 ${EPA_BASE}/Source/build_${PACKAGE}/src/gui/dialogs/images/qtlogo-64.png ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/pixmaps/qt4logo.png
 install -v -Dm644 ${EPA_BASE}/Source/build_${PACKAGE}/tools/assistant/tools/assistant/images/assistant-128.png ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/pixmaps/assistant-qt4.png
 install -v -Dm644 ${EPA_BASE}/Source/build_${PACKAGE}/tools/designer/src/designer/images/designer.png ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/pixmaps/designer-qt4.png
@@ -185,7 +185,7 @@ add_custom_command(
   APPEND
   )
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/install_fixups.sh 
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/install_fixups.sh
 "for file in `basename -a -s .prl ${EPA_CMAKE_INSTALL_PREFIX}/lib/lib*.prl`; do
   sed -i -e '/^QMAKE_PRL_BUILD_DIR/d;s/\(QMAKE_PRL_LIBS =\).*/\\1/' ${EPA_CMAKE_INSTALL_PREFIX}/lib/\${file}.prl
   perl -pi -e \"s, -L\$PWD/?\\S+,,g\" ${EPA_CMAKE_INSTALL_PREFIX}/lib/pkgconfig/\${file##lib}.pc

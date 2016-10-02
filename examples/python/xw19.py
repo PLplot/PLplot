@@ -63,7 +63,7 @@ def geolocation_labeler(axis, value, data):
             direction_label = " N"
         elif (label_val < 0.0) :
             direction_label = " S"
-        
+
         else :
             direction_label = "Eq"
     elif (axis == PL_X_AXIS) :
@@ -95,7 +95,7 @@ def main():
     miny = -70
     maxy = 80
 
-    # Cartesian plots 
+    # Cartesian plots
     # Most of world
 
     minx = -170
@@ -156,7 +156,7 @@ def main():
     plssym( 0.0, 1.0 )
     plptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" )
 
-    # For C, this is how the global transform is cleared 
+    # For C, this is how the global transform is cleared
     plstransform( None, None )
 
     # An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.

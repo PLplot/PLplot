@@ -11,7 +11,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Aug 12 09:43:47 2015 -0700
 
     Add source code for the D and Lua examples to our website
-    
+
     This change corrects a long-standing oversight that I just happened to
     notice for this release.
 
@@ -23,7 +23,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Aug 11 14:46:36 2015 -0700
 
     5.11.1 preparation: Update all files that the check_all target indicates are inconsistent with other PLplot files
-    
+
     The check targets that are built as dependencies of the check_all
     target typically generate a file in the build tree from some source
     file and then compare that generated file with the corresponding file
@@ -37,16 +37,16 @@ Date:   Tue Aug 11 14:46:36 2015 -0700
     relevant to the one part of that file (the #defines) that is generated
     so the cure in that case I edited
     bindings/swig-support/plplotcapi.i to maintain consistency in the
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
     both
-    
+
     make check_all
-    
+
     in the build tree and
-    
+
     scripts/comprehensive_test.sh --do_test_interactive no
-    
+
     in the source tree.
 
 M	bindings/f95/plplot_parameters.inc
@@ -76,7 +76,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Aug 11 10:52:21 2015 -0700
 
     Update of the release notes for the forthcoming 5.11.1 release
-    
+
     This update (which is likely the last update prior to the 5.11.1
     release) includes a summary of all the improvements made during this
     release cycle (based on looking at all the commit messages for this
@@ -90,19 +90,19 @@ Author: Tom Schoonjans <Tom.Schoonjans@bam.de>
 Date:   Mon Aug 10 15:56:17 2015 +0100
 
     Removes quotation marks in plConfig.h.in
-    
+
     Removed for PLPLOT_VERSION_MAJOR, PLPLOT_VERSION_MINOR and
     PLPLOT_VERSION_PATCH.
     This is necessary to ensure that they are useful for comparing these
     version numbers in preprocessor macros like:
-    
+
     \#if PLPLOT_VERSION_MAJOR >= 5 && \
         PLPLOT_VERSION_MINOR >= 11
     	#define PLCALLBACK plcallback
     \#else
     	#define PLCALLBACK plstream
     \#endif
-    
+
     This patch ensures that the preceding code snippet compiles when using PLplot 5.11.0: right now it fails...
 
 M	include/plConfig.h.in
@@ -112,13 +112,13 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Aug 7 14:19:42 2015 -0700
 
     Build system(s): make -DOLD_WXWIDGETS=ON work for all build systems and major configurations
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_wxwidgets=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_wxwidgets=ON -DOLD_WXWIDGETS=ON -DENABLE_cxx=ON" --do_test_noninteractive no --do_ctest no
-    
+
     and
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_wxwidgets=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_wxwidgets=ON -DENABLE_cxx=ON" --do_test_noninteractive no --do_ctest no
 
 M	cmake/modules/wxwidgets.cmake
@@ -132,7 +132,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Aug 7 13:25:31 2015 -0700
 
     Comprehensive testing script: process cmake return code for installed examples
-    
+
     This fix insures if that if there is a cmake command failure for the
     installed examples, the script immediately exits with appropriate
     messages (just as already had been implemented when running the cmake
@@ -145,7 +145,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Aug 6 02:14:11 2015 -0700
 
     Update release notes for the forthcoming 5.11.1 release
-    
+
     These release notes contain descriptions of the more important changes
     in ChangeLog.release_preliminary as well as tables (in SourceForge
     markdown format) of all comprehensive testing done so far for this
@@ -158,7 +158,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jul 30 13:54:08 2015 -0700
 
     Propagate tcltk_in_plplot_library variable to the CMake-based build system for the installed examples
-    
+
     This change fixes a bug in the CMake-based build of the installed
     examples when -DENABLE_DYNDRIVERS=OFF
 
@@ -169,7 +169,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jul 30 08:23:11 2015 -0700
 
     Revert "5867959 Fix to the multiple keypress bug on page advance" for cairo device driver
-    
+
     This is a temporary measure for the 5.11.1 release to return the cairo
     device driver to essentially what existed for 5.11.0 to workaround the
     following regression created by the above bug fix for the
@@ -188,7 +188,7 @@ Date:   Thu Jul 30 08:23:11 2015 -0700
     make[2]: *** [examples/CMakeFiles/test_extXdrawable.dir/all] Error 2
     make[1]: *** [examples/CMakeFiles/test_extXdrawable.dir/rule] Error 2
     make: *** [test_extXdrawable] Error 2
-    
+
     See further plplot-devel list discussion.
 
 M	drivers/cairo.c
@@ -198,10 +198,10 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 29 15:00:26 2015 -0700
 
     Comprehensive testing script: be selective in collecting environment variables
-    
+
     Instead of collecting all environment variables now collect only the
     following relevant ones:
-    
+
     PATH
     CC
     CXX
@@ -210,7 +210,7 @@ Date:   Wed Jul 29 15:00:26 2015 -0700
     .*FLAGS.* (e.g., CFLAGS, CXXFLAGS, and FFLAGS)
     PKG_CONFIG_PATH
     LD_LIBRARY_PATH
-    
+
     Being selective like this not only makes it easier to analyze the
     results, but also should ease any privacy concerns there might have
     been concerning the previous dumping of all environment variables set
@@ -223,25 +223,25 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jul 27 10:00:36 2015 -0700
 
     Build system: remove garbage from MINGWLIBPATH and BORLANDLIBPATH variables
-    
+
     These variables have been set with incorrect set command syntax
     (i.e., with an extra DOCSTRING directive before the actual doc string)
     from the very first.  The result is the set command is interpreted as
     specifying a CMake list as the value of the ordinary uncached
     MINGWLIBPATH and BORLANDLIBPATH variables.  That list for MINGWLIBPATH
     is
-    
+
     <desired result>;CACHE;FILEPATH;DOCSTRING;"Path to MinGW import libraries"
-    
+
     and similarly for BORLANDLIBPATH.
-    
+
     These extraneous extra list values were than used as garbage HINTS to
     help find wingcc libraries which did not affect the actual finding
     since the <desired result> was also a HINT.  So the net effect of this
     bad set syntax was the libraries for wingcc were still found with a good
     HINT plus a lot of garbage HINTS, but MINGWLIBPATH and BORLANDLIBPATH
     are uncached, i.e., impossible for the user to modify.
-    
+
     These issues have now been addressed by removing the invalid extra
     DOCSTRING directives in the set commands and the result is the garbage
     hints are gone, and the results for MINGWLIBPATH and BORLANDLIBPATH
@@ -263,7 +263,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 22 18:45:32 2015 -0700
 
     epa_build: Add valgrind configuration for the -DBUILD_THE_BUILD_TOOLS=ON case
-    
+
     Because the epa_build of valgrind and lapack_blas (another package
     that is only configured for the -DBUILD_THE_BUILD_TOOLS=ON case) has
     not been tried for the MSYS_PLATFORM=ON case, only configure these two
@@ -278,25 +278,25 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jul 18 20:57:08 2015 -0700
 
     Traditional build system: make compiler options honor users' setting of compiler options and flags
-    
+
     For example, if the user specifies either
-    
+
     CC="gcc -g"
-    
+
     or
-    
+
     CC=gcc
     CFLAGS="-g"
-    
+
     environment variables, the -g option will be used for the traditional
     build of the C examples, and similarly for the C examples that
     demonstrate Tk functionality and (for the equivalent environment
     variables ADA and ADAFLAGS; CXX and CXXFLAGS; DC and DFLAGS; and FC
     and FLAGS) the Ada, C++, D, and Fortran examples.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh --do_ctest no --do_test_interactive no --do_test_build_tree no --do_test_install_tree no
 
 M	examples/c++/CMakeLists.txt
@@ -311,7 +311,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Jul 17 14:25:40 2015 -0700
 
     Handle user interrupts properly for the comprehensive testing script
-    
+
     This change insures collect_exit is called on user interrupt so the
     report results up to the time of the interrupt will be collected in
     the tarball.
@@ -323,14 +323,14 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Jul 17 11:05:12 2015 -0700
 
     Build system, libcsironn, and libplplot: Revert back to using qhull/qhull_a.h #include form
-    
+
     As pointed out by Greg Jung, this #include style is recommended by
     qhull_a.h to solve name clashes between the names of qhull headers
     (e.g., io.h) and other system headers.  As also pointed out by Greg
     io.h is an important system header on Windows which resulted in
     an actual io.h nameclash for him on Windows for a 32-bit MinGW-w64/MSYS2
     comprehensive test of PLplot that he was attempting to do.
-    
+
     Note this reversion in #include style for qhull headers leaves Cygwin
     out in the cold since the qhull packager there has gone out of his way
     to change the name of the subdirectory where qhull headers are
@@ -350,17 +350,17 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 15 14:12:58 2015 -0700
 
     Improve comprehensive_test.sh script
-    
+
     The improvements are the following:
-    
+
     1. Make the summary of options state the options
     with the same format users would need to specify them (and with quotes
     wherever they might be required).
-    
+
     2. Make the script more robust by warning when no printenv command is
     available, for that case removing corresponding stale file results, and
     by checking that files exist before storing them in the tarball.
-    
+
     when there is no printenv command
     available.
 
@@ -371,29 +371,29 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 15 12:48:23 2015 -0700
 
     epa_build: configure octave-lite
-    
+
     This is an epa_build of octave-4.0.0 that is configured to drop a
     number of optional parts of octave.
-    
+
     As part of this change move the epa_build of lapack_blas from
     the BUILD_THE_BUILD_TOOLS=OFF case to the BUILD_THE_BUILD_TOOLS=ON case
     since the configuration of octave_lite (when
     BUILD_THE_BUILD_TOOLS=OFF) requires that lapack_blas be built already.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux by
-    
+
     epa_building octave_lite and doing superficial run-time tests of
     that result such as
-    
+
     octave:1> x=-pi:0.1:pi;
     octave:2> plot(x,sin(x));
-    
+
     This test worked fine with default plotting (gnuplot), but segfaults
     if a locally modified epa_build of plplot_lite is used that enables
     octave and when the plotting is done with PLplot (using the
     appropriate .octaverc such as the one configured in bindings/octave
     for the PLplot build).
-    
+
     This same PLplot run-time test works fine when the octave binding of
     PLplot is built against the system octave-3.6.2.  I assume the
     segfault for the octave-4.0.0 PLplot plotting case is caused by some
@@ -409,24 +409,24 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 15 12:37:05 2015 -0700
 
     epa_build: swig: update from patched 2.0.11 to patched 3.0.6
-    
+
     The present patch is to allow swig support for Octave-4.0.0.  It
     was derived by
-    
+
     wget https://github.com/swig/swig/pull/460.patch
     mv 460.patch octave-4.0.0.patch
-    
+
     where https://github.com/swig/swig/pull/460 is Orion Poplawski's
     pull request (which apparently has been accepted by swig developers)
     to swig to fix this swig issue with octave-4.0.0.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     with an epa_build test done by
-    
+
     make build_swig
-    
+
     with BUILD_THE_BUILD_TOOLS is ON
-    
+
     The result is not run-time tested yet.
 
 M	cmake/epa_build/swig/CMakeLists.txt
@@ -438,10 +438,10 @@ Author: Arjen Markus <arjen.markus@deltares.nl>
 Date:   Mon Jul 13 12:53:18 2015 +0200
 
     Add MSYS to the condition for including a .def file in the linking of the Fortran bindings on Windows.
-    
+
     Rationale:
     If you use the MSYS shell, then CMake defines MSYS but not MINGW to identify theplatform, but the underlying compiler (gfortran) is the same. Hence to make sure that the right link information is used (in this case no .def file should be added to the link step), we need to cover the MSYS environment as well.
-    
+
     Tested on MingW-w64/MSYS2
 
 M	bindings/f95/CMakeLists.txt
@@ -459,23 +459,23 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Jul 12 16:44:06 2015 -0700
 
     epa_build: Configure an epa_build of lapack_blas
-    
+
     This build uses the CMake-based build system for the combination
     of lapack and blas you get with
     <http://www.netlib.org/lapack/lapack-3.5.0.tgz>.
-    
+
     Currently, no other epa_built package depends on this one, but
     if it is eventually possible to epa_build octave, that package will
     depend on lapack_blas.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by configuring epa_build and then running
-    
+
     make build_lapack_blas >& build_lapack_blas.out
-    
+
     ctest is automatically run as part of that build, and the ctest
     results for that were
-    
+
     100% tests passed, 0 tests failed out of 86
 
 M	cmake/epa_build/CMakeLists.txt
@@ -486,13 +486,13 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jul 11 15:57:32 2015 -0700
 
     Build system: Bump CMake minimum version from 3.2.2 to 3.2.3
-    
+
     This change is motivated by what looks like an important fix in 3.2.3
     (see <http://www.cmake.org/Bug/view.php?id=15546>) which works around
     mingw32-make trailing backslash trouble which in turn (without the
     workaround) interferes with the use of the "MinGW Makefiles" generator
     for a number of different compilers.
-    
+
     The CMake minimum version remains at 3.0.2 for the Cygwin and Linux
     platforms, i.e., they are unaffected by this change.
 
@@ -504,7 +504,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jul 11 10:07:01 2015 -0700
 
     Comprehensive testing script: Create $prefix directory if it does not exist
-    
+
     This script bug was discovered as a result of comprehensive test results kindly provided by
     Greg Jung.
 
@@ -515,12 +515,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jul 11 00:47:40 2015 -0700
 
     Build system: Propagate USE_DLL_SUBDIRECTORY=ON case correctly to octave binding
-    
+
     In all cases when USE_DLL_SUBDIRECTORY=ON, add an additional addpath
     call for the dll subdirectory of the top-level build tree.  This fix
     is designed to solve the Cygwin octave issue recently discovered by
     Arjen, but has not been tested on Cygwin yet.
-    
+
     During testing this fix on Linux I discovered that some
     simplifications could be done, that is I was able to drop the trailing
     ":" from the octavedir environment variable list of directories to be
@@ -529,14 +529,14 @@ Date:   Sat Jul 11 00:47:40 2015 -0700
     push the PLPLOT_LIB environment variable from the
     bindings/octave/.octaverc file that is configured as a convenience for
     users (but which is not used in automated testing).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_octave=ON" --do_test_interactive no
-    
+
     and also (to test the configured bindings/octave/.octaverc file)
-    
+
     make xwin
     cd bindings/octave/
     make plplot_octave
@@ -554,7 +554,7 @@ Author: Arjen Markus <arjen.markus@deltares.nl>
 Date:   Fri Jul 10 11:07:36 2015 +0200
 
     Improve the logic for including the header file "unistd.h" in plfreetype. The original conditions led to a problem on MinGW/MSYS. As it turns that the main decision was to include this header file or not, the code now uses the macro that is specifically defined for this task.
-    
+
     Tested on MinGW/MSYS, but given the solution, this should work on all platforms, unless the controlling macro, PL_HAVE_UNISTD_H, is incorrectly defined there.
 
 M	src/plfreetype.c
@@ -564,7 +564,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 8 15:08:24 2015 -0700
 
     Build system: Use more refined procedure for dealing with Octave-4 (Try 2)
-    
+
     Fix a bug in the previous commit on the Octave version to check against
     (I used "3." rather than the correct "4.".)
 
@@ -575,7 +575,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 8 13:57:51 2015 -0700
 
     Build system: Use more refined procedure for dealing with Octave-4
-    
+
     If Octave-4 is detected then octave is automatically disabled with
     a warning message unless the user specifically opts in by specifying
     -DTRY_OCTAVE4=ON.
@@ -587,7 +587,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 8 13:21:37 2015 -0700
 
     Build system: Implement WARNING message for the Octave-4 case
-    
+
     Note that the WARNING message warns the users of potential build
     errors but does not actually disable Octave in case someone wants to
     experimentally try Octave-4 once the swig fix for Octave-4 #include
@@ -632,7 +632,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 8 00:04:18 2015 -0700
 
     Documentation: Fix leading blank issues in titles for DocBook-generated man and swig documentation pages
-    
+
     These issues are caused currently by extra blanks after ":" in the
     title sections of the plcolbg, plcolbga, plscol0, plscol0a, and
     plshade sections of doc/docbook/src/api.xml.  However, these extra
@@ -655,11 +655,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jul 7 22:59:28 2015 -0700
 
     Swig-generated bindings documentation: Make that consistent with doc/docbook/src/api.xml
-    
+
     This is done by running
-    
+
     make check_swig_documentation
-    
+
     which generates from doc/docbook/src/api.xml documentation for the
     swig-generated bindings and warns if that generated result is
     different from the source-tree result.  For this case where that
@@ -674,34 +674,34 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jul 7 17:22:34 2015 -0700
 
     Build system: Fix another issue for a wxwidgets corner case and reinstate wxwidgets tests as part of comprehensive testing
-    
+
     The fix was for the traditional build where required cxx examples
     builds were not done unless
-    
+
     ENABLE_cxx AND (PLD_ps OR ENABLE_qt)
-    
+
     The fix consisted of changing that condition to
-    
+
     ENABLE_cxx AND (PLD_ps OR ENABLE_qt OR ENABLE_wxwidgets)
-    
+
     which matters only for the corner case when both PLD_ps and ENABLE_qt
     are false (as in the test below).
-    
+
     As discussed on list wxwidgets is still uncomfortably slow, e.g.,
     the test_c_xcairo target requires
-    
+
     real    0m4.978s
     user    0m2.848s
     sys     0m0.368s
-    
+
     to finish while the test_c_wxwidgets target requires
-    
+
     real    0m59.189s
     user    0m0.720s
     sys     0m0.392s
-    
+
     to finish.
-    
+
     Since comprehensive testing does interactive testing 9 times (for the
     build tree and two versions of the install tree for each of our 3
     major configurations), the above length of time to finish the
@@ -713,10 +713,10 @@ Date:   Tue Jul 7 17:22:34 2015 -0700
     works now for wxwidgets which removes a major irritation with
     comprehensive testing of wxwidgets.  Therefore, I made the decision to
     reinstate comprehensive testing of wxwidgets.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux by
     running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_wxwidgets=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_wxwidgets=ON -DENABLE_cxx=ON" --do_test_noninteractive no --do_ctest no
 
 M	examples/CMakeLists.txt
@@ -727,22 +727,22 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jul 7 16:59:16 2015 -0700
 
     Build system: Fixes for various wxwidgets corner cases
-    
+
     Those corner cases are as follows:
-    
+
     1. libplplotwxwidgets depends on libplplotcxx so if ENABLE_cxx is OFF
     must set ENABLE_wxwidgets to OFF as well
-    
+
     This corner case was discovered when attempting to use
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_wxwidgets=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_wxwidgets=ON" --do_test_noninteractive no --do_ctest no
-    
+
     2. The wxwidgets device driver depends on wxPLViewer which depends on
     libplplotwxwidgets so if ENABLE_wxwidgets is OFF, then the
     PLD_<wxwidgets_device_names> should be set to OFF.
-    
+
     This corner case was discovered when attempting to use
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_wxwidgets=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_wxwidgets=ON -DENABLE_cxx=ON" ----do_test_noninteractive no --do_ctest no
 
 M	bindings/wxwidgets/CMakeLists.txt
@@ -754,17 +754,17 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jul 6 16:05:14 2015 -0700
 
     libplplot and libplplottcltk: make plplotLibDir symbol visible in more standard way
-    
+
     This change retains good test results on Linux (see below), and may
     solve the current issue with plplotLibDir that has been discovered by
     Arjen's recent comprehensive test on Cygwin.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
     nm and ldd to check by hand for visibility issues for plplotLibDir within libplplot in
     the nondynamic case and also by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_tk=ON -DPLD_xwin=ON -DPLD_ntk=ON -DPLD_tkwin=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DENABLE_itcl=ON -DENABLE_tk=ON -DENABLE_itk=ON" --do_test_interactive no
-    
+
     to mimic Arjen's recent comprehensive test on Cygwin (but for speed
     just focussing on the Tcl/Tk part of that comprehensive test that
     would be affected by plplotLibDir symbol visibility issues).
@@ -801,7 +801,7 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Sat Jul 4 11:34:31 2015 +0100
 
     Removed exit() calls from wxPLViewer
-    
+
     There were two exit calls in wxplframe.cpp. Calling exit bypasses all
     the cleanup code including freeing any system resources that have been
     allocated. The exit call in the constructor of wxPlFrame has been
@@ -821,7 +821,7 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Fri Jul 3 12:43:33 2015 +0100
 
     Modification to previous wxPLViewer optimisation
-    
+
     Added multiple retries with a short delay between each in checking for
     more transmitted data. This was because requesting text size took
     slightly longer than one extra check, but was much quicker than waiting
@@ -834,7 +834,7 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Fri Jul 3 12:16:42 2015 +0100
 
     Optimisation of wxPLViewer
-    
+
     We now check for new commands multiple times each time we get a timer
     event. The reading of the transmission data has been moved to a separate
     funtion which returns false if it checked the buffer and found there was
@@ -864,10 +864,10 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Fri Jul 3 10:18:58 2015 +0100
 
     Changed the way fonts are passed to wxPLViewer and created when received
-    
+
     This fixes a but when using Ubuntu with wxWidgets 3.0 and hopefully
     gives a speed increase.
-    
+
     When the console mode part of the app created a wxFont to get a text
     description to pass to wxPLViewer, this caused a crash on the above
     system. Instead now we simply convert the plplot native font parameters
@@ -884,12 +884,12 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Wed Jun 24 12:47:20 2015 +0100
 
     Optimisation of wxPLViewer to speed up plotting
-    
+
     We were getting very slow rendering which proved to be related to requesting
     text size from the viewer. To improve this I removed a mutex from
     wxDevice::DrawTextSection as it was not needed and now do not immediately slow
     the the buffer poling in wxPLViewer if it finds no data.
-    
+
     Signed-off-by: Phil Rosenberg <p.d.rosenberg@gmail.com>
 
 M	drivers/wxwidgets_dev.cpp
@@ -901,11 +901,11 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Wed Jun 24 10:55:22 2015 +0100
 
     Optimisation for the wxWidgets driver - finding wxPLViewer
-    
+
     Previously the wxWidgets driver enumerated the entire build directory when
     hunting for wxPLViewer which took 75% of the execution time. Now it just
     checks the utils directory.
-    
+
     Signed-off-by: Phil Rosenberg <p.d.rosenberg@gmail.com>
 
 M	drivers/wxwidgets_dev.cpp
@@ -915,13 +915,13 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 23 08:32:10 2015 -0700
 
     Drop execute permission bits from files that appear not to need them
-    
+
     I used the command
-    
+
     find . -type f -a '!' -name "*.sh*" -a '!' -name "*.pl*" \
     -a '!' -perm u=rw,go=r | \
     grep -Ev '(.git|debian|examples/tcl|examples/python)' |less
-    
+
     to find files that were potential candidates for wrong permissions.
 
 M	bindings/octave/README
@@ -954,7 +954,7 @@ Author: Jim Dishaw <jamesd47@users.sourceforge.net>
 Date:   Sun Jun 21 22:43:00 2015 -0400
 
     Corrections to the cairo.c file to fix compilation error
-    
+
     - When cairo.c was modified for the multiple keypress bug, the local
     variables need in the wait function were not defined.
     - The required variables were moved from the EOP handler, where they
@@ -975,7 +975,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Mon Jun 15 12:10:04 2015 -0400
 
     Fix to the multiple keypress bug on page advance
-    
+
     - The "wait for user input" is not part of an EOP.
       -- A new function plP_wait() was created
       -- plP_wait() calls were added next to plP_eop() calls to generate
@@ -1014,16 +1014,16 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Jun 21 17:04:47 2015 -0700
 
     Drivers: Purge long-retired device drivers from the source tree
-    
+
     The purged drivers are dg300, hpgl, impress, linuxvga, ljii, ljiip,
     pbm, and tek.
-    
+
     The purged information does not include the DocBook documentation of
     our device drivers which needs a complete rewrite rather than simply
     removing any mention of these device drivers.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
-    
+
     scripts/comprehensive_test.sh --do_test_interactive no
 
 M	bindings/tk-x-plat/Plplotwin.tcl
@@ -1062,7 +1062,7 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Sat Jun 20 13:32:29 2015 +0100
 
     Impliment use of nopause in the wxWidgets driver
-    
+
     Added a chek for nopause for the wxwidgets driver when using wxViewer.
     This was a missing feature to now. To do this the device sends a new
     transmissionEndOfPageNoPause ratehr than a transmissionEndOfPage
@@ -1084,7 +1084,7 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Sat Jun 20 12:14:54 2015 +0100
 
     changes a sizeof for consistenct in wxwidgets_dev.cpp
-    
+
     in wxPLDevice::TransmitBuffer made sure we used the transmissionLocate
     variable in sizeof calls when sending a transmissionLocate command. This
     is just for consistency as all command variables have the same size.
@@ -1096,7 +1096,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jun 18 19:07:32 2015 -0700
 
     Spelling: concatanate ==> concatenate
-    
+
     This change only affects commentary and documentation.
 
 M	README.Release_Manager_Cookbook
@@ -1107,27 +1107,27 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jun 17 19:10:48 2015 -0700
 
     Build system: fix logic bugs that were revealed by the -DPLD_tk=OFF -DPLD_tkwin=OFF case and the -DENABLE_itk=OFF case
-    
+
     1. Change
-    
+
     NOT ENABLE_DYNDRIVERS ==> tcltk_in_plplot_library
-    
+
     everywhere as a test whether the tclmatrix and plplottcltk code
     is compiled as part of the plplot library or whether the tclmatrix
     and plplottcltk libraries are actually built and linked to separately.
-    
+
     The tcltk_in_plplot_library variable is equivalent to
-    
+
     NOT ENABLE_DYNDRIVERS AND (PLD_tk OR PLD_tkwin)
-    
+
     and the effective addition of that AND (PLD_tk OR PLD_tkwin) is the real
     fix here.
-    
+
     This change fixes at least an undefined symbol issue with the
     plplottcltk_Main library that shows up for the -DPLD_tk=OFF
     -DPLD_tkwin=OFF case, but I suspect there are other corner cases that
     are fixed by this change as well.
-    
+
     2. Change to setting the -DUSINGDLL compile flag on library source
     code so that occurs just before when the library is built to make sure
     that flag is used for all source code for a given library.  This
@@ -1135,41 +1135,41 @@ Date:   Wed Jun 17 19:10:48 2015 -0700
     plplottcltk_Main library that showed up when -DPLD_tk=OFF
     -DPLD_tkwin=OFF, but I suspect there are other corner cases that are
     fixed by this change as well.
-    
+
     3. Test PLD_tk rather than ENABLE_tk when deciding
     whether to configure bindings/tk/pkgIndex.tcl to load the TEA-based
     Pltk package.  That package is based exactly on the tk device driver
     code so this fix solves a bug where CMake errors out at generation
     time with the message
-    
+
     CMake Error at cmake/modules/plplot_functions.cmake:251 (file):
       Error evaluating generator expression:
-    
+
         $<TARGET_FILE_DIR:tk>
-    
+
       No target "tk"
     [...]
-    
+
     for the corner case where PLD_tk=OFF and ENABLE_tk=ON
-    
+
     4. Fix several issues with whether various Tcl/Tk/Itcl/Itk tests are
     configured or not.
-    
+
     4a. test_tk_0[1-4], test_tk_plgrid, and test_plserver_standard_examples
     no longer incorrectly depend on PLD_tk.
-    
+
     4b. test_plserver_runAllDemos no longer incorrectly depends on PLD_tk and
     ENABLE_itkX.
-    
+
     4c. test_wish_runAllDemos now correctly depends on PLD_tkwin and no longer
     incorrectly depends on PLD_tk and ENABLE_itkX.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_tk=OFF -DPLD_xwin=ON -DPLD_ntk=ON -DPLD_tkwin=OFF -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DENABLE_itcl=ON -DENABLE_tk=ON -DENABLE_itk=ON"
-    
+
     N.B. note the -DPLD_tk=OFF -DPLD_tkwin=OFF options in the above command.
-    
+
     In addition, the test_plserver_runAllDemos and test_wish_runAllDemos
     test targets (which are currently excluded from comprehensive testing
     because of some issues with runAllDemos.tcl) were built for the
@@ -1190,7 +1190,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jun 17 19:05:12 2015 -0700
 
     Build system: Only calculate and print out TKLIB_COMPILE_FLAGS when actually needed
-    
+
     This change is primarily motivated by removing confusing and unneeded
     Tk output information when ENABLE_tk=OFF.
 
@@ -1201,7 +1201,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jun 17 14:14:05 2015 -0700
 
     Build system: Fix potential inconsistencies in itcl and itk variables
-    
+
     With the old CMake logic it was possible in a certain corner case
     (found by one of Arjen's tests when an iwidgets package was not
     installed on Cytwin) for HAVE_ITCL, HAVE_ITCLDECLS_H to be set
@@ -1210,14 +1210,14 @@ Date:   Wed Jun 17 14:14:05 2015 -0700
     verified also on Linux. This fix makes such inconsistencies
     impossible, and therefore should make it possible to build PLplot when
     iwidgets is not found.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by temporarily looking for iwidgetsxx rather than iwidgets to
     emulate a missing iwidgets.  The result was bad
-    
+
     make plplottcltk
     ldd -r bindings/tcl/libplplottcltk_Main.so
-    
+
     results before the fix, and good results afterwards.
 
 M	cmake/modules/tcl-related.cmake
@@ -1227,7 +1227,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Wed Jun 17 10:43:34 2015 -0400
 
     Corrects an off by 1 error in plbuf.c identified by Greg Jung
-    
+
     - In wr_command() and wr_data() the check_buffer_size() was called with
       size of the data being written without considering the two-byte alignment
       padding.
@@ -1250,23 +1250,23 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 16 22:42:29 2015 -0700
 
     Build system: Avoid redundant linking of tclmatrix and plplottcltk libraries
-    
+
     If ENABLE_DYNDRIVERS=OFF then all code in both the tclmatrix and
     plplottcltk libraries appears in the plplot library.  So for this case
     we replace redundant linking to the tclmatrix, plplottcltk, and plplot
     libraries by just linking to the plplot library. In fact, for this
     case we don't bother to build or install the tclmatrix and plplottcltk
     libraries at all.
-    
+
     Note, the working hypothesis behind these changes is redundant linking
     might cause memory management issues on library exit.  At least that is
     our experience with a similar redundant linking problem (since fixed)
     for the plplotqt library.  But regardless of that potential issue, I
     also feel it is cleaner not to use redundant linking.
-    
+
     In addition to the above fundamental and intrusive change, we have
     taken this opportunity to also do the following:
-    
+
     1. Rewrote bindings/tk/pkgIndex.tcl.in and
     bindings/tk-x-plat/pkgIndex.tcl.in to be exactly the same as
     bindings/tcl/pkgIndex.tcl.in aside from the name of the TEA-based
@@ -1276,18 +1276,18 @@ Date:   Tue Jun 16 22:42:29 2015 -0700
     PLplotter packages would not load for the ENABLE_DYNDRIVERS=OFF case
     before) and should also work on Windows, but that latter platform
     remains to be tested.
-    
+
     2. Updated instructions in examples/tcl/README.tcldemos and
     examples/tk/README.tkdemos about running the Tcl/Tk/Itcl/Itk
     examples by hand (especially useful for valgrind runs).
-    
+
     3. I don't think it is an improvement due to dropping redundant linking
     but for examples/tk/wish_standard_examples(.in) it appears examples
     2 and 24 now work without memory management issues or any other kind
     of run-time error and example 20 works also without nopause issues.
     Therefore, I have added 2, 20, and 24 to the examples that are run
     by this script.
-    
+
     4. Add test_pltcl_standard_examples to the dependencies of test_tcl
     and test_interactive targets for the Windows case. I have made this
     change because we have good memory management results for
@@ -1295,15 +1295,15 @@ Date:   Tue Jun 16 22:42:29 2015 -0700
     valgrind, and Arjen's previous test of this target where he reported
     memory management issues on Cygwin may be an artifact of his previous
     inconsistent Tcl/Tk/Itcl/Itk installation on that platform.
-    
+
     5. Sort out visibility issues for the tclmatrix and plplottcltk code
     that is included in the plplot library when ENABLE_DYNDRIVERS=OFF.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using the command
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_tk=ON -DPLD_xwin=ON -DPLD_ntk=ON -DPLD_tkwin=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DENABLE_itcl=ON -DENABLE_tk=ON -DENABLE_itk=ON"
-    
+
     I also tested the tclsh and wish examples in
     examples/tcl/README.tcldemos and examples/tk/README.tkdemos using
     valgrind.  For some still unknown reason (not related to redundant
@@ -1335,7 +1335,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 16 09:39:01 2015 -0700
 
     Build system: Fix "spaced" pathname bug for concatenate_pkgIndex.tcl target (addendum)
-    
+
     The first attempt to fix this issue only quoted the pathnames of the
     files to be concatanated.  This addition to that fix also quotes the
     pathname of the resulting concatanated file.
@@ -1412,7 +1412,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Mon Jun 8 18:16:43 2015 -0400
 
     Fixed a NUL termination bug in plbuf.c
-    
+
     When storing non-unicode strings, the NUL character was not being stored in
     the buffer.  This causes problems with drivers that use non-unicode strings
     when the plot buffer is replayed.
@@ -1424,7 +1424,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jun 6 10:42:07 2015 -0700
 
     Build system: use PLD_wxwidgets=ON by default
-    
+
     Recent changes have cured the build trouble on Linux for CMake-2.8.12 so
     set PLD_wxwidgets=ON by default again.
 
@@ -1435,7 +1435,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jun 6 10:06:33 2015 -0700
 
     Build system: FindwxWidgets.cmake: order of search for aliases of wx-config
-    
+
     The usual CMake philosophy is to search first for most specific forms
     of names in descending order by version then generic.  So I have
     followed that philosophy for the possible aliases of wx-config.  I
@@ -1470,11 +1470,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jun 6 00:34:06 2015 -0700
 
     Build system: emergency temporary response to current wxwidgets build issues
-    
+
     I have temporarily disabled the wxwidgets device and library because
     I cannot get those to build on Linux when the wxwidgets sofware version is
     either 2.8.12 or 3.0.2.
-    
+
     Until these build issues are addressed, those who want to test
     wxwidgets builds on any platform will have to specify
     -DPLD_wxwidgets=ON.
@@ -1486,7 +1486,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jun 6 00:32:47 2015 -0700
 
     Build system: implement wxwidgets version check for 2.8.12 or higher
-    
+
     This could easily be modified to 3.0.0 or higher if necessary.
 
 M	cmake/modules/wxwidgets.cmake
@@ -1496,19 +1496,19 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Jun 5 11:27:51 2015 -0700
 
     Build system: bug fix for plplotada library naming convention
-    
+
     For some reason (not yet analyzed but my guess is the problem occurs
     for every Windows platform where UNIX is not true, i.e., all other
     platforms than Cygwin) the naming convention for the plplotada library
     on MinGW is not consistent with our other libraries so there has been
     a long-standing workaround for that issue.
-    
+
     That workaround errors out on Cygwin because on that platform a very
     different naming convention is used.  Furthermore, it appears the
     naming convention for the plplotada library on Cygwin is consistent
     (i.e., no naming-convention workaround of any kind is needed for that
     platform).
-    
+
     Thus, this bug fix simply drops the naming-convention workaround
     for the Cygwin case.  But for all other Windows platforms a
     more fundamental fix is required than the current workaround.
@@ -1525,12 +1525,12 @@ Date:   Fri Jun 5 14:29:42 2015 +0100
     and PLESC_FLUSH_REMAINING_BUFFER flushes any buffer that hasn't been
     rendered. A slight restructuring of the plRemakePlot() function in
     plbuf.c allowed this.
-    
+
     The impact is a massive speed increase of wxPLViewer when using lots of
     flusheses, for example the stripchart in example 17 ground to a halt in
     the previous version which used PLESC_IMPORT_BUFFER and plreplot to
     replot the whole buffer after each flush.
-    
+
     Also added an esc_old variable in plbuf_control. This is just useful for
     debugging buffer coruption issues and isn't actually used by the library
     (so will probably get optimised away anyway in release builds)
@@ -1559,7 +1559,7 @@ Date:   Thu Jun 4 22:25:12 2015 +0100
     generally the case when drawing points) then the size can be reused.
     This avoids sending text size requests to wxPLViewer and waiting for
     responses.
-    
+
     Tidied up some unused text variables from the dev class including moving
     m_underlined to a local variable/function argument in the text methods.
 
@@ -1587,7 +1587,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jun 4 03:34:32 2015 -0700
 
     Build system: Work around linking issue for traditional static build
-    
+
     One minor bug fix to previous fix for this issue.  On some platforms,
     e.g., Mac OS X, CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES can contain not
     only the usual short CMake-style library names but also the full path
@@ -1611,7 +1611,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jun 3 12:32:29 2015 -0700
 
     Build system: wxwidgets; Adopt modified version of latest find module
-    
+
     For this commit, the cmake/modules/FindwxWidgets.cmake file was copied from CMake-3.2.1
     and modified appropriately in the licensing section and also the
     include(FindPackageHandleStandardArgs) command so we can use this file
@@ -1619,7 +1619,7 @@ Date:   Wed Jun 3 12:32:29 2015 -0700
     portion of Phil's previous patch.  (The other part of his patch is now
     no longer relevant since the section he was changing has now been
     completely removed from the 3.2.1 version.)
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by running the cmake command and making sure that wxwidgets was found.
 
@@ -1630,22 +1630,22 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 2 19:45:37 2015 -0700
 
     Build system: Work around linking issue for traditional static build
-    
+
     For the following conditions:
-    
+
     1. static build of PLplot libraries;
-    
+
     2. C++ code in libplplot (i.e., if any of the qt, psttf, or wxwidgets
     devices are enabled); and
-    
+
     3. traditional build of PLplot examples that are written in languages
     other than C or C++
-    
+
     it turns out that information on the required special C++ libraries
     (e.g., libstdc++.so for the g++ compiler) is missing from the explicit
     PLplot linker information that has been collected for our configured
     *.pc files unless special measures are taken.
-    
+
     This solution for the issue is elegant because it simply relies on
     CMake's knowledge of the C++ special libraries (held in
     CMAKE_CXX_IMPLICIT_LINK_LIBRARIES and
@@ -1659,7 +1659,7 @@ Date:   Tue Jun 2 19:45:37 2015 -0700
     result of this is the static traditional build of the PLplot examples
     should always include the special C++ libraries that CMake uses for
     its own builds for all languages.
-    
+
     N.B. this commit drops all prior workarounds such as using the C++
     compiler for the traditional build of the examples written in C (i.e.,
     those in examples/c and examples/tk) and dropping all examples for the
@@ -1667,19 +1667,19 @@ Date:   Tue Jun 2 19:45:37 2015 -0700
     C++.  So the results for the traditional build and test in the static
     case are much more substantial (include f95, ada, adathick and D)
     than prior to this commit when those workarounds were in effect.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by running
-    
+
     scripts/comprehensive_test.sh --do_test_interactive no --do_ctest no \
     --do_test_build_tree no --do_test_install_tree no \
     --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON \
     -DPLD_psttf=ON"
-    
+
     This test previously generated errors before the last set of
     workarounds for this issue were put into place, but now it
     produces perfect results.
-    
+
     N.B. additional testing requested on the various Windows platforms
     and Mac OS X.
 
@@ -1695,7 +1695,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Mon Jun 1 17:27:44 2015 -0400
 
     Fixed uninitialized variable error in read_entry()
-    
+
     - Compiler complained that pdf_rc may be unintialized
 
 M	src/plmetafile.c
@@ -1705,7 +1705,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Mon Jun 1 17:22:01 2015 -0400
 
     Fixed uninitialized value warning in plreadmetafile()
-    
+
     - The compiler generated warning that plm is unintialized.
 
 M	src/plmetafile.c
@@ -1715,7 +1715,7 @@ Author: jdishaw <jim@dishaw.org>
 Date:   Mon Jun 1 14:24:17 2015 -0400
 
     Ignore .DS_store and ._.DS_Store files
-    
+
     .DS_Store and ._.DS_Store files are used by MacOSX to store file
     attributes.  Ignore these files for git and also when our CMake-based
     build system generates a source distribution tarball.
@@ -1767,26 +1767,26 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat May 30 22:56:14 2015 -0700
 
     Build system: Fix qhull-related bugs
-    
+
     Changed FindQHULL.cmake to create a more robust
     environment for finding the qhull header qhull_a.h (including looking for
     that header in both the qhull and libqhull subdirectories) and the
     qhull library.
-    
+
     Changed csiro.cmake to give more informative success or failure messages
     for the qhull case.
-    
+
     To be consistent with the above header search must also change our
-    
+
     ==>
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by running
-    
+
     make -j4 x21c ; make xwin
     and
     examples/c/x21c -dev xwin
-    
+
     to assure all is well with our use of qhull.
 
 M	cmake/modules/FindQHULL.cmake
@@ -1843,7 +1843,7 @@ Date:   Sat May 30 10:23:06 2015 +0100
     no clipping, therefore if we have no clipping then checking the clipping
     box, setting it, then restoring it to its original value results in
     clipping everything if the original state was clipping nothing.
-    
+
     This is clearly a wxWidgets bug. I have worked around it by checking for
     a zero sized box and performing the correct action.
 
@@ -1857,11 +1857,11 @@ Date:   Sat May 30 10:09:40 2015 +0100
     wxDCClipper in that it can deal with (i.e. does nothing for) a null dc
     and upon destruction it restores the clipping region to the previous
     state rather than removing all clipping regions.
-    
+
     Removed all the if( m_dc ) checks from calls to the DC state changing
     objects in wxPLDevice. See previous commit for details of why this was a
     problem and modifications to these classes to allow null pointers.
-    
+
     Now we have text back for wxPLplotDemo, but still some issues in
     wxPLViewer - for x00 we have no data in the plot and only a single axis
     label of 0.0
@@ -1889,7 +1889,7 @@ Date:   Fri May 29 15:25:29 2015 +0100
     code was there anyway. For wxPLViewer this involved a new command passed
     to the viewer and some extra data in the header to get the text size
     from the viewer.
-    
+
     Somehow this commit has broken text rendering completely, but I'm not
     sure how. I am making this commit so I can easily diff it to see what
     has caused the problem.
@@ -1905,7 +1905,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue May 26 13:11:06 2015 -0700
 
     Build system: exclude testing the wxwidgets device from the test_interactive target
-    
+
     The issue is the -np option does not yet work for the wxwidgets
     device.  Therefore, including this device in the list of tests run by
     the test_interactive target significantly increases the interactive
@@ -1922,7 +1922,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat May 23 09:11:46 2015 -0700
 
     Build system:libplplot: Improved fix for plInBuildTree on Windows
-    
+
     The previous IGNORECASE fix for plInBuildTree in the Windows case had
     a CMake-level issue that IGNORECASE was not being set for the static
     build case on Windows. This bug fix solves that CMake-level issue and
@@ -1930,7 +1930,7 @@ Date:   Sat May 23 09:11:46 2015 -0700
     the non-IGNORECASE code path that in any case was not general enough
     (didn't handle case issues on Windows like the IGNORECASE C-level code
     path does).
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
     scripts/comprehensive_test.sh.  N.B. Additional testing on both
     MSVC and non-MSVC (Cygwin, MinGW/MSYS) windows platforms is needed.
@@ -1951,7 +1951,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri May 22 17:42:38 2015 -0700
 
     Build system: replace use of the transform_version function with VERSION_LESS
-    
+
     I wrote that transform_version function years ago (before VERSION_LESS
     was available for version comparisons of arbitrary depth) to transform
     version triplets into a number that could then be evaluated with LESS
@@ -1963,7 +1963,7 @@ Date:   Fri May 22 17:42:38 2015 -0700
     defining and using transform_version, and have converted all the
     surrounding logic to simple VERSION_LESS comparisions which should fix
     the problem that Orion has encountered on Fedora.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by running CMake and making sure there were no extra warnings
     concerning version checks that did not pass.
@@ -2010,7 +2010,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu May 21 12:01:13 2015 -0700
 
     Build system: Use cmake_minimum_required in Ada language support
-    
+
     This fix should quiet (I hope!) the last Cygwin warning concerning
     "CMake no longer defines WIN32 on Cygwin!".  In this case the warning
     was actually correct and not spurious; project was being called in the
@@ -2026,17 +2026,17 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 20 21:16:49 2015 -0700
 
     Build system: Work around linking issue for traditional static build
-    
+
     For the following conditions:
-    
+
     1. static build of PLplot libraries;
-    
+
     2. C++ code in libplplot (i.e., if any of the qt, psttf, or wxwidgets
     devices are enabled); and
-    
+
     3. traditional build of PLplot examples that are written in languages
     other than C or C++
-    
+
     it turns out that information on the required special C++ library
     (e.g., libstdc++.so for the g++ compiler) is missing from the explicit
     PLplot linker information (because cannot work around this problem by
@@ -2052,7 +2052,7 @@ Date:   Wed May 20 21:16:49 2015 -0700
     my preliminary test of that case failed demonstrating the problematic
     nature of the linking of the traditional build for this special
     combination of circumstances.
-    
+
     Note, CMake is smart enough to figure out this difficult case
     (presumably by figuring out the names and locations of the special
     libraries associated with each kind of compiler).  And the traditional
@@ -2077,16 +2077,16 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 20 17:44:33 2015 -0700
 
     Build system: set target property POSITION_INDEPENDENT_CODE ON for all PLplot libraries
-    
+
     This change should allow shared libraries from foreign software
     packages (or user's code) to link properly to static PLplot libraries.
     The cost of this gain is there is a small amount of inefficiency
     (e.g., the more complicated addressing code that apparently occurs on
     Linux for all code compiled with the -fPIC flag) introduced for the
     static PLplot libraries.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
-    
+
     scripts/comprehensive_test.sh --do_ctest no --do_test_interactive no --do_test_build_tree no
 
 M	cmake/modules/plplot_functions.cmake
@@ -2096,15 +2096,15 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 20 16:27:17 2015 -0700
 
     Build system: Simplify the logic by implementing and using set_library_properties function
-    
+
     To simplify the build system logic and to improve the uniformity of
     the way library target properties are set, implement and use the
     set_library_properties function which sets all the usual target properties
     for a given PLplot library.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh --do_ctest no --do_test_interactive no --do_test_build_tree no
 
 M	bindings/ada/CMakeLists.txt
@@ -2128,12 +2128,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 20 11:50:15 2015 -0700
 
     Build system: fix logic problems for the case when devices are limited
-    
+
     Without this fix, "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DPLD_psttf=ON"
     did not work correctly.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
-    
+
     scripts/comprehensive_test.sh \
     --do_test_interactive no \
     --do_ctest no \
@@ -2149,7 +2149,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 18 16:50:12 2015 -0700
 
     Build system: change pkg-config *.pc file default install location
-    
+
     My previous choice of ${CMAKE_INSTALL_DATADIR}/pkgconfig for the
     default value of CMAKE_INSTALL_PKG_CONFIG_DIR is an architecture-
     independent location, but as pointed out by Orion the contents of
@@ -2167,24 +2167,24 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 18 11:37:20 2015 -0700
 
     Core library: Add needed level check for calls to plP_state
-    
+
     Put a
-    
+
     if ( plsc->level > 0 )
-    
+
     level check on all calls to
-    
+
     plP_state( PLSTATE_FILL );
-    
+
     in src/plsdef.c. Without these level checks, then the combination
     of
-    
+
     plschr( 0.0, 1.0);
     plinit();
-    
+
     in that order leads to an invalid read as reported by valgrind and
     a segfault.  See also <https://sourceforge.net/p/plplot/bugs/162/>.
-    
+
     Note the wxwidgets/plbuf changes associated with the last release
     cycle moved a call to plP_state to the spat routine (but without the
     level check that it had in its previous location).  So that was a
@@ -2200,14 +2200,14 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 18 11:11:54 2015 -0700
 
     Fix styling issue that caused a bad result for scripts/style_source.sh
-    
+
     The bad result was in include/pldll.h.in where for an #if preprocessor
     directive uncrustify removed a misaligned continuation "\" character
     rather than aligning it on the end of a second line of a whole bunch
     of continued lines. The solution was to align the "\" by hand, and
     after that change uncrustify no longer removed the continuation
     character.
-    
+
     N.B. This is the first time in years that uncrustify has introduced a
     code error, but the episode is useful because it should strongly
     motivate us to always carefully check what uncrustify does (typically
@@ -2220,7 +2220,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 18 00:03:24 2015 -0700
 
     Build system: Adopt new user-configurable install location CMAKE_INSTALL_PKG_CONFIG_DIR for PLplot-generated pkg-config *.pc files
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
     scripts/comprehensive_test.sh --do_test_interactive no --do_ctest no --do_test_build_tree no --do_test_install_tree no
 
@@ -2232,7 +2232,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 17 21:34:29 2015 -0700
 
     Build system: Drop problematic specific Cygwin logic for the traditional build of the fortran examples.
-    
+
     This problematic logic was introduced in 2007 for f77 and inherited
     for f95 later.  It specifies for the traditional build a versioned
     library name for both libplplotf95c and libplplotf95 installed in a
@@ -2240,11 +2240,11 @@ Date:   Sun May 17 21:34:29 2015 -0700
     2007, but it definitely does not work now leading to traditional build
     errors on Cygwin with a message stating "cannot find
     -lplplotf95-12.0.0".
-    
+
     So as an experiment I have completely removed this logic and instead
     treat the traditional build of fortran examples in the same standard
     way as the C, C++, etc., examples.
-    
+
     N.B. needs testing on Cygwin to see whether removing this problematic
     logic for Cygwin is the right approach.
 
@@ -2255,7 +2255,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 17 21:09:19 2015 -0700
 
     Traditional build system for installed examples: Fix determination of extXdrawable_true and extcairo_true
-    
+
     These two variables used to configure examples/c/Makefile.examples
     are now being set using exactly the same logic as the CMake build
     system.  This should fix a cross-platform issue (which Arjen happened to
@@ -2272,7 +2272,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 17 21:05:49 2015 -0700
 
     Build system: Fix linking issues with traditional build of installed examples (update)
-    
+
     Fix an issue where pkg-config style variables to configure
     Makefile.examples would not be set unless BUILD_TEST was true
     for the core build.
@@ -2285,21 +2285,21 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 17 17:04:44 2015 -0700
 
     Build system cleanup; remove all references to gnome device
-    
+
     The gnome device (since superseded by the gcw/gnome2/plplotcanvas
     effort which has also been retired a long time and recently cleaned
     out) has been retired since 2006 with no users requests to restore it
     so run
-    
+
     find . -type f |grep -v .git |xargs grep -li gnome
-    
+
     to find all files which contain this term, and edit those files to
     clean out everything associated with the gnome device.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux using
-    
+
     scripts/comprehensive_test.sh --do_test_interactive no
-    
+
     (The interactive portion of the tests were dropped as a matter of
     convenience.)
 
@@ -2317,22 +2317,22 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 17 15:19:01 2015 -0700
 
     Build system cleanup; remove all references to gcw, gnome2, and plplotcanvas
-    
+
     The gcw device and associated gnome2 bindings and plplotcanvas examples
     have been retired since 2010 with no users requests to restore them
     so run
-    
+
     find . -type f |grep -v .git |xargs grep -E -li '(gcw|gnome2|plplotcanvas)'
-    
+
     to find all files which contain those terms, and either edit or remove
     the files as appropriate to clean out everything associated with those
     terms. Note this is quite an intrusive change, but see test below.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh --do_test_interactive no
-    
+
     (The interactive portion of the tests were dropped as a matter
     of convenience.)
 
@@ -2388,48 +2388,48 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 17 00:43:37 2015 -0700
 
     Build system: Fix linking issues with traditional build of installed examples
-    
+
     The general issues fixed in this commit are the following:
-    
+
     1. Distinctions between PUBLIC (for shared libraries) and PRIVATE for
     (static libraries) linking were not being done in the configured *.pc
     files leading to overlinking issues for the shared libraries case.
     Now, most libraries (unless they are always supposed to be PUBLIC) are
     assigned to PUBLIC or PRIVATE depending on whether NON_TRANSITIVE is
     OFF or ON.
-    
+
     2. The linking configuration of the *.pc files was additionally
     incomplete for some of our libraries leading to underlinking.
-    
+
     3. The link steps in the Makefiles for the traditional build were
     being configured to an incomplete result leading to underlinking.
-    
+
     I dealt with these issues in general by transforming the linking
     solutions developed in the CMake case (since those are better debugged)
     to the pkg-config and configured Makefile case.
-    
+
     Along the way, I discovered a fixed the following issues in our
     CMake build system:
-    
+
     A. libplplotada must always link to libplplot as PUBLIC.
-    
+
     B. pkg_config_link_flags function must allow empty items in the lists of
     libraries it translates into pkg-config form.  (This was handled
     by using quotes appropriately.)
-    
+
     C. Some libraries need to be treated as PUBLIC regardless (such as
     case A above).  To handle this issue for the pkg-config case,
     I added an optional 7th argument to pkg_config_file containing
     a list of libraries that should be treated as always PUBLIC.
-    
+
     D. --static option now used for pkg-config results in the traditional
     build when BUILD_SHARED_LIBS=OFF.  (Previously this only happened when
     FORCE_EXTERNAL_STATIC was ON which was a mistake since that
     experimental option is used for another purpose.)
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using default (i.e., everything tested) scripts/comprehensive_test.sh.
-    
+
     N.B. this only tested the Qt4 case on Debian stable so additional
     comprehensive testing is requested for Qt5 and/or additional platforms.
 
@@ -2458,7 +2458,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 17 00:00:00 2015 -0700
 
     Core C library: fix floating point issue in notcrossed function (second try)
-    
+
     The last commit concerning this topic had some problems with
     uninitialized variables.  The results of calculations with those
     uninitialized variables were ignored (because status !=0) so there
@@ -2482,18 +2482,18 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri May 15 12:56:03 2015 -0700
 
     Build system: Update implementation of different cmake minimum versions on different platforms
-    
+
     In this new simplified implementation drops the idea of using a
     function (since Brad King has just generated documentation stating
     that calling cmake_minimum_version inside a function is problematic)
     and instead simply use cmake_policy(VERSION 3.0.2) to enforce uniform
     policy for different minimum CMake versions on different platforms.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux by
     configuring PLplot with various versions of CMake.  These tests
     generated no policy warnings or any other unexpected error or warning
     messages.
-    
+
     N.B. this change still needs testing on Cygwin, but my hope is this
     change finally squelches the last of the spurious warning messages on
     that platform.
@@ -2530,11 +2530,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 13 16:58:56 2015 -0700
 
     Fortran example 29: fix argument specification bug
-    
+
     The change was 0. ==> 0._plflt in two different plctime calls and this
     cleared up the case where the seconds variable was being replaced by a
     random floating point number in the C version of the plctime call.
-    
+
     This change also apparently fixed the floating-point exceptions for
     Fortran example 29 although I leave it to Hazen (who drew attention
     to the plctime issue) to explain why.
@@ -2546,14 +2546,14 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 13 14:21:38 2015 -0700
 
     Core C library: fix floating point issue in notcrossed function
-    
+
     The issue was that sometimes the calculated intersection was far
     outside the line segments so the conversion of that floating-point
     information to PLINT was out of range.  The returned intersection is
     only used when status = 0 (i.e., there was a definite crossing within
     both line segments) so the fix was only to do that conversion when
     status = 0.
-    
+
     This change fixed the floating-point issues revealed by using
     the gfortran option -ffpe-trap=invalid,zero,overflow,underflow'
     for fortran examples 25 and 30, but floating-point issues still
@@ -2566,18 +2566,18 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue May 12 01:47:36 2015 -0700
 
     Build system: replace deprecated use of LINK_INTERFACE_LIBRARIES with recommended INTERFACE_LINK_LIBRARIES
-    
+
     Policies CMP0022 and CMP0023 have been set to NEW, and all use of
     LINK_INTERFACE_LIBRARIES has been replaced by using either the
     PRIVATE (NON_TRANSITIVE=ON, INTERFACE_LINK_LIBRARIES set to empty) or
     PUBLIC (NON_TRANSITIVE=OFF, INTERFACE_LINK_LIBRARIES set to listed
     libraries) target_link_libraries keywords.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by running
-    
+
     scripts/comprehensive_test.sh
-    
+
     Furthermore, for the shared library case, I have selectively used the
     "ldd -u -r" command on various executables, drivers, and libraries to
     show that overlinking is almost entirely removed by setting
@@ -2602,7 +2602,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 11 16:04:08 2015 -0700
 
     Build system: Finish change to call cmake_minimum_required command before project command
-    
+
     This part of the change affects the installed examples build and the
     soft-landing logic for compiler detection and should finish this
     effort for our PLplot builds.  This reording should quiet the spurious
@@ -2610,15 +2610,15 @@ Date:   Mon May 11 16:04:08 2015 -0700
     also solve some other potential issues when cmake_minimum_required
     and project commands are called in the incorrect order (as occurred
     before this fix).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh \
     --do_test_interactive no \
     --do_nondynamic no \
     --do_static no
-    
+
     Further testing (especially on Cygwin to confirm the warnings are
     gone) is requested.
 
@@ -2638,14 +2638,14 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 11 10:43:25 2015 -0700
 
     Traditional build of installed examples: Fix test_tcl_psc target
-    
+
     The (non-Windows) issue was the results variable was being set to "." rather than
     the full path corresponding to OUTPUT_DIR=. so the results were being
     put into the incorrect (tcl) directory.
-    
+
     Tested: by Alan W. Irwin <airwin@users.sourcforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh --cmake_added_options \
     "-DDEFAULT_NO_DEVICES=ON -DPLD_tk=ON -DPLD_xwin=ON -DPLD_ntk=ON -DPLD_tkwin=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DENABLE_itcl=ON -DENABLE_tk=ON -DENABLE_itk=ON" \
     --do_test_interactive no
@@ -2657,40 +2657,40 @@ Author: Aaron Hexamer <hexamer@comcast.net>
 Date:   Sat May 9 08:21:34 2015 -0500
 
     Build system: fix qt configuration
-    
+
     Deal properly with the case where memqt is the only Qt device.
-    
+
     Consistently use PLD_extqt rather than ENABLE_qt to identify when
     the pyqt4 bindings should be implemented and the qt_example
     application built.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using the following combinations of cmake options and tests:
-    
+
     1. extqt only (-DDEFAULT_NO_QT_DEVICES=ON -DPLD_extqt=ON)
-    
+
     Built test_all_qt (which runs the C++ and pyqt4 forms of qt_example)
     in both the build tree and installed examples tree.
-    
+
     2. memqt only (-DDEFAULT_NO_QT_DEVICES=ON -DPLD_memqt=ON)
-    
+
     2a. In the build tree, built the test_python_psc target (to populate all python
     dependencies) and the mem, cairo, and qt targets (to populate
     the mem, memcairo, and memqt devices).  Then ran
-    
+
     examples/python/test_plsmem.py
-    
+
     in the build tree which generated correct mem, memcairo, and memqt results.
-    
+
     2b. For the CMake-based build of the installed examples, installed, then
     ran
-    
+
     cmake $prefix/share/plplot5.11.0/examples
     without options, then built the test_python_psc target (probably
     not necessary), then ran
-    
+
     $prefix/share/plplot5.11.0/examples/python/test_plsmem.py
-    
+
     which generated correct mem, memcairo, and memqt results.
 
 M	bindings/qt_gui/plqt.cpp
@@ -2705,11 +2705,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri May 8 23:22:09 2015 -0700
 
     Build system: move to using CMP0026 NEW
-    
+
     This is a rather intrusive build-system change where use
     of the deprecated LOCATION property for build targets is replaced by
     using appropriate generator expressions.
-    
+
     One large complication of this change is that certain files now have
     to be configured that contain generator expressions.  I have designed
     the configure_file_generate function to do that task which combines
@@ -2723,13 +2723,13 @@ Date:   Fri May 8 23:22:09 2015 -0700
     for likely the next two years for both those platforms so it is only
     for those platforms where a permission fix is convenient (using the
     GNU extension to chmod) that a permissions fix is required.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh --cmake_added_options \
     "-DDEFAULT_NO_DEVICES=ON -DPLD_tk=ON -DPLD_xwin=ON -DPLD_ntk=ON -DPLD_tkwin=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DENABLE_itcl=ON -DENABLE_tk=ON -DENABLE_itk=ON"
-    
+
     The restrictions on the tests specified by --cmake_added_options are
     to speed the test while not compromising the ability to comprehensively
     test all Tcl and Tk targets which are the only ones where the
@@ -2753,17 +2753,17 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri May 8 23:03:51 2015 -0700
 
     Build system: Update minimum CMake version to 3.2.2 for most platforms
-    
+
     The platforms where the minimum version remains at 3.0.2 are Linux
     and Cygwin, and that will likely continue for a couple of more years
     until all modern Linux distros and Cygwin install a cmake version >= 3.2
-    
+
     The reason for requiring 3.2.2 for most platforms is there is a
     permissions bug in file(GENERATE...) that is fixed in cmake 3.2, and a
     straightforward workaround for that bug is only available for Linux
     and Cygwin (e.g., not Mac OS X) where we are retaining the lower
     minimum version in any case.
-    
+
     This commit also processes the plplot_test subdirectory before the
     examples subdirectory so that the planned workaround_file_generate_bug
     target which is designed to fix the permissions problem will work properly.
@@ -2775,15 +2775,15 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri May 8 22:46:17 2015 -0700
 
     Update scripts/comprehensive_test.sh to collect selected results in a tarball
-    
+
     That tarball (named comprehensive_test.tar.gz) is located in the
     prefix directory and contains
-    
+
     1. Environment variable output.
     2. Script output
     3. All */output_tree files
     4. A complete listing of all files.
-    
+
     That is, that tarball contains the complete information ordinarily
     needed to report success or failure of the comprehensive_test.sh
     script.
@@ -2820,12 +2820,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu May 7 16:59:10 2015 -0700
 
     DocBook documentation:  pltimefmt
-    
+
     Replace the previous fairly minimal and sometimes incorrect
     documentation of pltimefmt with complete documentation based on the
     strfMJD implementation in lib/qsastime/qsastime.c and the original
     documentation of that routine in lib/qsastime/qsastime.txt.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux by
     using the -DBUILD_DOC=ON cmake option, building the print target, and
     viewing the resulting doc/docbook/src/plplot-5.11.0.pdf file in the
@@ -2846,11 +2846,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 6 13:44:13 2015 -0700
 
     libplplot: Add date/time formatting to plbox3
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on
     Linux using the following local change to the 11th standard
     C example.
-    
+
     diff --git a/examples/c/x11c.c b/examples/c/x11c.c
     index eca0fab..85d11a0 100644
     --- a/examples/c/x11c.c
@@ -2860,13 +2860,13 @@ Date:   Wed May 6 13:44:13 2015 -0700
                            10. * ( xx / 5. - pow( xx, 3. ) - pow( yy, 5. ) ) * exp( -xx * xx - yy * yy ) -
                            1. / 3. * exp( -( xx + 1 ) * ( xx + 1 ) - ( yy * yy ) );
     +            z[i][j] = 1.e4 * z[i][j];
-    
+
                  if ( 0 ) // Jungfraujoch/Interlaken
                  {
     @@ -112,12 +113,21 @@ main( int argc, const char *argv[] )
              }
          }
-    
+
     +    for ( i = 0; i < XPTS; i++ )
     +    {
     +        x[i] = 1.e4 * x[i];
@@ -2879,7 +2879,7 @@ Date:   Wed May 6 13:44:13 2015 -0700
          step = ( zmax - zmin ) / ( nlevel + 1 );
          for ( i = 0; i < nlevel; i++ )
              clevel[i] = zmin + step + step * i;
-    
+
          cmap1_init();
     +    pltimefmt( "%H:%M" );
          for ( k = 0; k < 2; k++ )
@@ -2897,9 +2897,9 @@ Date:   Wed May 6 13:44:13 2015 -0700
     +            plbox3( "bdnstu", "x axis", 0.0, 0,
     +                "bdnstu", "y axis", 0.0, 0,
     +                "bcdemnstuv", "z axis", 0.0, 4 );
-    
+
                  plcol0( 2 );
-    
+
     This change simply scales x, y, and z by 1.e4 (so the ranges
     correspond to several hours) and reformats all axis labelling using
     date/time using the d suboption of xopt and yopt and the e suboption
@@ -2914,21 +2914,21 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Apr 23 14:04:20 2015 -0700
 
     test_diff.sh: bugfix: Replace psc by ${device} for stdout differences
-    
+
     Replaced some psc-specific logic for checking the stdout differences
     with more general ${device} logic so that when the test device is
     something other than psc, this script does not give spurious
     missing stdout messages.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by using the CMake option -DTEST_DEVICE:STRING=svg, running the all
     target to fill in build system dependencies for ctest, then running
-    
+
     ctest -j4 --tests-regex '(compare|examples_(c|ocaml|ada))'
-    
+
     (that regex limits the scope of the test to comparisons of c++, ocaml, and
     ada results with c results).  The results were
-    
+
     [...]
     26: Test command: /bin/bash "-c" "/home/software/plplot/HEAD/build_dir/plplot_test/test_diff.sh --device=svg"
     26: Test timeout computed to be: 1500
@@ -2957,16 +2957,16 @@ Date:   Thu Apr 23 14:04:20 2015 -0700
     26:   Differing stdout            :
     26: WARNING: Some graphical or stdout results were different
     5/5 Test #26: examples_compare .................   Passed    2.33 sec
-    
+
     The following tests passed:
             examples_ocaml
             examples_c
             examples_cxx
             examples_ada
             examples_compare
-    
+
     100% tests passed, 0 tests failed out of 5
-    
+
     Prior to this fix, the Missing stdout lines were filled with all
     example numbers.
 
@@ -2977,20 +2977,20 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Apr 21 12:57:39 2015 -0700
 
     Build system: Tcl-related bindings: use generator expressions instead of LOCATION properties
-    
+
     This is a fairly large step in the war against using LOCATION properties
     to get into conformance with setting CMP0026 to new.
-    
+
     Since generator expressions only work at generate-time (which
     apparently comes later than configure-time), can no longer use
     configure-time cmake logic to concatenate the various pkgIndex.tcl
     files together into one joint pkgIndex.tcl file that is installed.
     Instead, use a custom_command/custom_target pair to do that
     concatenation at build time using the concatenate_pkgIndex.tcl target.
-    
+
     Also drop some leftovers from the "d" suffix era in the configured
     pkgIndex.tcl files.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     by building the concatenate_pkgIndex.tcl target in the build tree
     and inspecting the configured results that were implemented with
@@ -3009,7 +3009,7 @@ Author: Arjen Markus <arjen.markus@deltares.nl>
 Date:   Tue Apr 21 21:59:07 2015 +0200
 
     Extend the procedure to determine if we are in the build tree so that it works for MinGW/MSYS - the name of the directory is case-insenstive in this environment and in some versions forward slashes are used rather than backward slashes.
-    
+
     Tested on MinGW/MSYS by Arjen Markus, but should also work on other Windows environments, as the CMake logic uses the WIN32_OR_CYGWIN variable and the C code uses a macro IGNORECASE, in stead of a compiler-specific macro.
 
 M	src/CMakeLists.txt
@@ -3020,11 +3020,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Apr 20 18:19:53 2015 -0700
 
     libplplot: plInBuildTree: bugfix: For windows check both possible directory separators
-    
+
     Previously the logic assumed the directory separator was '\\' on
     Windows, but with recent versions of MSYS this may have changed so
     now for Windows platforms check both the '\\' and '/' separators.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on both Linux
     and MinGW/MSYS/Wine by using the -debug option to make sure the
     build-tree drivers directory is properly found in both cases, i.e.,
@@ -3044,7 +3044,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Apr 20 17:22:42 2015 -0700
 
     libplplot: Fix bug in -debug
-    
+
     The -debug option did not work previously for plInitDispatchTable
     because plparseopt called pllib_init before processing command-line
     arguments.  I assume some of the command-line options do require
@@ -3054,17 +3054,17 @@ Date:   Mon Apr 20 17:22:42 2015 -0700
     after that call.  The plparseopts logic is notorious for being fragile,
     and I am near or beyond the level of my C expertise so I thoroughly
     tested this change (see below) before committing it.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     in the build tree using
-    
+
     valgrind examples/c/x00c -debug -dev psc -o test.psc
-    
+
     (which gave perfect results), and using
-    
+
     make -j4 test_noninteractive >& test_noninteractive.out
     make -j4 test_interactive >& test_interactive.out
-    
+
     (neither of which had any obvious errors).
 
 M	src/plargs.c
@@ -3074,29 +3074,29 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Apr 18 19:23:40 2015 -0700
 
     Traditional build system for installed examples: Improve linking for non-shared case
-    
+
     The problem is that libplplot is a mixed C and C++ library for the
     nondynamic or static case (because of including C++ drivers code in
     the library for those cases).  Therefore, for the traditional build
     system for the installed examples, when gcc is used to link a C
     example a specific link to libstdc++.so has to be provided.
-    
+
     The code in src/CMakeLists.txt to find that library is really ugly,
     works only for g++ and no other C++ compiler, and depends on g++
     internals which apparently have now changed.  (Uses colon-separation
     of libraries rather than semicolon separation.) And figuring out how
     to deal with that colon separation when there are drive letters is a
     real pain to deal with.
-    
+
     So I have completely abandoned that method and instead simply use the
     C++ compiler (which automatically links in libstdc++) for the
     non-shared case when building C examples using the traditional build
     system.  For some reason I had to change how plexit was declared in
     examples/c/x08c.c to get this idea to work.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh \
     --do_ctest no \
     --do_test_interactive no \
@@ -3129,7 +3129,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Apr 18 10:20:29 2015 -0700
 
     Comprehensive testing script: restore correct Windows PATH manipulation
-    
+
     The Windows PATH manipulation should put the dll subdirectory in the
     build tree in the PATH for build-tree tests for BOTH the shared and
     nondynamic cases.  Due to a misunderstanding when rewriting this logic
@@ -3153,12 +3153,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Apr 16 13:56:58 2015 -0700
 
     Build system: Adopt a minimum CMake version of 3.0.2 everywhere
-    
+
     In order for our current build system to work, we have had to
     explicitly set several CMake policies to old, but using such
     deprecated features of CMake is not ideal so I plan to make
     changes in our build system so that it works with new policies.
-    
+
     The problem is, however, that those planned changes use CMake
     functionality that is only available for CMake version 3.  Therefore,
     as a prerequisite for these planned changes, in this commit I have
@@ -3176,22 +3176,22 @@ Date:   Tue Apr 14 12:52:58 2015 -0700
 
     Comprehensive testing bug-fix for required PATH manipulations on
     Windows platforms
-    
+
     This script uses the following PATH manipulations on Windows
     platforms.
-    
+
     1. Put the dll subdirectory of the build tree on the PATH for _just_
     the build-tree parts of the testing.
-    
+
     2. Put the installed bin directory and drivers directory on the PATH
     for _just_ the install-tree parts of the testing.
-    
+
     As discussed on list prior to the 5.11.0 release, these required
     Windows PATH manipulations were only being done on MinGW and
     MinGW/MSYS which lead to script errors on Cygwin (unless the PATH was
     brute-forced prior to running the script in a way that mixed
     build-tree and install-tree results together).
-    
+
     As far as I know, these PATH manipulations should be done on all
     Windows platforms.  Therefore, this bug fix detects Windows platforms
     in a much more general way now (by looking for the "exe" suffix for
@@ -3199,21 +3199,21 @@ Date:   Tue Apr 14 12:52:58 2015 -0700
     the Cygwin issue (i.e., the brute-force PATH manipulations should no
     longer be required) and similar issues that would have occurred for MSVC
     once that platform was comprehensively tested with this script.
-    
+
     Tested by Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     using
-    
+
     scripts/comprehensive_test.sh \
     --do_nondynamic no \
     --do_static no \
     --do_ctest no \
     --do_test_interactive no \
     --do_test_traditional_install_tree no
-    
+
     i.e, run the test_noninteractive target in the build tree and
     the non-traditional installed examples tree for the shared library
     case only.
-    
+
     Note, this test merely checks that the script still works on Linux,
     but the definitive test of this bug fix will require running this
     script on Cygwin and other Windows platforms.
@@ -3225,12 +3225,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Apr 13 12:19:09 2015 -0700
 
     Prepare for next release cycle
-    
+
     Last update for README.Release_Manager_Cookbook to reflect what
     was done for the release of 5.11.0.
-    
+
     Save 5.11.0 release notes in OLD-README.release.
-    
+
     Prepare placeholder (README.release) for release notes for the next
     release.
 

@@ -1,4 +1,4 @@
-# This configured file (whose configured pathname is 
+# This configured file (whose configured pathname is
 # @CMAKE_BINARY_DIR@/bindings/octave/.octaverc)
 # is only used as a convenience if you are running octave by hand.  It
 # is not used by any of our automated tests of our octave binding and

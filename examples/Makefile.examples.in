@@ -3,7 +3,7 @@
 # in the build tree and installed as examples/Makefile in the install tree.
 
 # Copyright (C) 2004-2015  Alan W. Irwin
-# 
+#
 # This file is part of PLplot.
 #
 # PLplot is free software; you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # This Makefile should not be used in the build tree.  It is meant for use
-# only in the install tree.  It is first configured, then installed 
+# only in the install tree.  It is first configured, then installed
 # (with the name Makefile) in the _installed_ examples directory
 # It combines building all the examples that need to be built along
 # with testing all examples.
@@ -251,7 +251,7 @@ test_interactive: c/x01c@EXEEXT@
 @PDFQT_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=pdfqt
 @PDFQT_COMMENT@test_noninteractive: x01c01.pdfqt
 
-@COMPARE_COMMENT@compare: 
+@COMPARE_COMMENT@compare:
 @COMPARE_COMMENT@	@echo Compare non-C language psc and stdout results with corresponding C results
 @COMPARE_COMMENT@	-./test_diff.sh
 @COMPARE_COMMENT@	touch compare

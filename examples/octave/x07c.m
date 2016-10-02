@@ -1,10 +1,10 @@
 ## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -25,7 +25,7 @@ function x07c
   plinit();
 
   base=[0, 100, 0, 100, 200, 500, 600, 700, 800, 900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900];
-  
+
   plfontld(0);
   for l=0:19
     if ( l == 2 )

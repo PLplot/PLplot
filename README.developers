@@ -38,7 +38,7 @@ I got a fresh clone."
 As expected (since git-lfs adds nothing that is truly needed for PLplot git
 needs) that lean git command-line environment has been working well for him.
 
-PLplot currently uses the rebase git workflow 
+PLplot currently uses the rebase git workflow
 [described here](http://kevinold.com/2013/04/17/my-git-workflow.html).
 
 And summarized here:
@@ -48,7 +48,7 @@ And summarized here:
    Develop followed by tests of that development followed by
 
    $ git commit
-   
+
    to create commits in new_branch.  If you create a commit and
    realize before you make additional commits that there is an error
    in the commit, please use the --amend option to the subsequent
@@ -63,7 +63,7 @@ And summarized here:
 2. Updating the master branch:
    $ git checkout master
    $ git fetch
-   (optional) review newly downloaded changes 
+   (optional) review newly downloaded changes
    $ git log origin/master
    $ git merge --ff-only origin/master
 
@@ -77,8 +77,8 @@ And summarized here:
    $ git checkout new_branch
    $ git rebase master
 
-   Note that there is some possibility for headaches here. If one 
-   of the files that you are working on is changed in the master 
+   Note that there is some possibility for headaches here. If one
+   of the files that you are working on is changed in the master
    branch you may have to deal with merge conflicts. Unless you
    really need some new feature in master (and you probably
    should not if your branch is really a self-contained topic)
@@ -87,7 +87,7 @@ And summarized here:
 
    Also, git rebase is not suitable if you are right in the
    middle of work on a topic with a dirty tree with uncommitted
-   changes.  For this case use 
+   changes.  For this case use
 
    $ git checkout new_branch # (checkout the dirty tree with uncommitted changes)
    $ git stash save # (save that dirty tree to make new_branch clean
@@ -96,9 +96,9 @@ And summarized here:
    $ git stash pop # (restore your uncommitted changes)
    # ... keep working.... until you are ready to commit (and ultimately
    # merge back to master and push).
-   
+
 4. Incorporate changes back into master:
-   $ git checkout master 
+   $ git checkout master
    $ git merge --ff-only new_branch
 
    At this point you should see a message like "Fast-forward". If
@@ -116,7 +116,7 @@ And summarized here:
    Push:
    $ git push origin master
 
-This is a rebase work flow. The linearity of the master branch is 
+This is a rebase work flow. The linearity of the master branch is
 enforced by server side hooks and by only allowing fast-forward
 merges with the merge flag --ff-only. You can make this the
 default option for your repository using the command:
@@ -159,23 +159,23 @@ http://sourceforge.net/p/plplot/wiki/
 Coding standards for PLplot
 ---------------------------
 
-When writing / contributing code for PLplot the following standards are 
+When writing / contributing code for PLplot the following standards are
 followed:
 
-C: ISO C99 standards with POSIX.1-2001 base specification (required 
+C: ISO C99 standards with POSIX.1-2001 base specification (required
 for a number of functions)
 C++: ISO C++ 1998 standard plus amendents
 Fortran 95: Fortran 95 standard
 
-To check code it is recommended to try compiling with suitable compiler 
+To check code it is recommended to try compiling with suitable compiler
 flags to enforce these standards and to enable compiler warnings to check
 for dubious code.
 
 For gcc / g++ / gfortran the following flags can be used
 
 CFLAGS='-O3 -std=c99 -pedantic -D_POSIX_C_SOURCE=200112L -Wall  \
--Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs \ 
--Wconversion -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings' 
+-Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs \
+-Wconversion -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings'
 CCFLAGS='-O3 -fvisibility=hidden -std=c++98 -pedantic -Wall -Wextra'
 
 FFLAGS='-std=f95 -O3 -fall-intrinsics -fvisibility=hidden -pedantic \
@@ -186,9 +186,9 @@ Adherence to the standards should help make the code more portable.
 Some notes and recommendations
 ------------------------------
 
-- Use C++ style // comments rather than the older /* */ style comments. 
-The only exception to this where a comment is embeded in a line of code, 
-e.g. to comment out a parameter name in a function definition in C++. 
+- Use C++ style // comments rather than the older /* */ style comments.
+The only exception to this where a comment is embeded in a line of code,
+e.g. to comment out a parameter name in a function definition in C++.
 
 - To mark function parameters as unused and to suppress at least gcc
 warnings about these, mark the parameter names with the PL_UNUSED( )
@@ -198,6 +198,6 @@ Styling of code
 ---------------
 
 The uncrustify code beautifying program is used to style the source
-code consistently and in a readable manner. Running the 
-scripts/style_source.sh shell script can be used the check the 
+code consistently and in a readable manner. Running the
+scripts/style_source.sh shell script can be used the check the
 source code and optionally apply any styling changes required.

@@ -1,4 +1,4 @@
-# Initialisation.  This file is automatically found and sourced by 
+# Initialisation.  This file is automatically found and sourced by
 # either Pltcl_Init or Pltk_Init.  If it cannot be found or sourced, those
 # procedures will throw an error.
 

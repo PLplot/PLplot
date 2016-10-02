@@ -31,7 +31,7 @@ proc load_pkg_Pltk {dir} {
     set pllibrary $dir
 
     set thisDir [pwd]
-    # Find absolute path of $dir 
+    # Find absolute path of $dir
     cd $dir
     set pkgIndexDir [pwd]
     cd $thisDir

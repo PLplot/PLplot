@@ -1,5 +1,5 @@
 # sed script specifically designed to parse the output of
-# nm --defined-only bindings/f95/libplplotf95.so | sort --key=3 | tr '[:lower:]' '[:upper:]' 
+# nm --defined-only bindings/f95/libplplotf95.so | sort --key=3 | tr '[:lower:]' '[:upper:]'
 # to help generate a sorted ifort definition file.
 # N.B. note the last stanza of that pipeline which
 # converts everything to upper case.  That upper-case

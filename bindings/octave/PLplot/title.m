@@ -1,5 +1,5 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
@@ -47,11 +47,11 @@ function text = title (text)
   if (nargin > 1)
     usage ("title (text)");
   endif
-  
+
   if (nargin == 1 && isempty(text))
     text = " ";
   endif
-  
+
   if (nargin == 0)
     text = __pl.tlabel(strm,:);
   else

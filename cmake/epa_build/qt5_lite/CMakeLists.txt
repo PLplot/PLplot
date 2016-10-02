@@ -18,7 +18,7 @@
 # License along with this file; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-# Many of the details of this epa_build configuration were derived from 
+# Many of the details of this epa_build configuration were derived from
 # <http://www.linuxfromscratch.org/blfs/view/svn/x/qt5.html>.
 
 set(PACKAGE qt5_lite)
@@ -43,7 +43,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 set(CFLAGS "$ENV{CFLAGS}")
 set(CXXFLAGS "$ENV{CXXFLAGS}")
@@ -208,14 +208,14 @@ set(config_arguments
   # documentation that I am going to use default
   # features and not try these -no-feature options.
 
-  -no-opengl  
+  -no-opengl
   # Qt/X11 only: (leave everything default)
 
   )
 
 # Note, setting the QT5DIR environment variable to the install prefix
 # as below is recommended by method 2 of BLFS.
-set(QT5DIR ${EPA_CMAKE_INSTALL_PREFIX}) 
+set(QT5DIR ${EPA_CMAKE_INSTALL_PREFIX})
 
 ExternalProject_Add(
   build_qt5_lite
@@ -235,7 +235,7 @@ install -v -Dm644 ${EPA_BASE}/Source/build_${PACKAGE}/qttools/src/assistant/assi
 install -v -Dm644 ${EPA_BASE}/Source/build_${PACKAGE}/qttools/src/designer/src/designer/images/designer.png ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/pixmaps/designer-qt5.png
 install -v -Dm644 ${EPA_BASE}/Source/build_${PACKAGE}/qttools/src/linguist/linguist/images/icons/linguist-128-32.png ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/pixmaps/linguist-qt5.png
 install -v -Dm644 ${EPA_BASE}/Source/build_${PACKAGE}/qttools/src/qdbus/qdbusviewer/images/qdbusviewer-128.png ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/pixmaps/qdbusviewer-qt5.png
-install -dm755 ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/applications 
+install -dm755 ${EPA_CMAKE_INSTALL_PREFIX}/usr/share/applications
 "
   )
 

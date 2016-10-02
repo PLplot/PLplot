@@ -11,7 +11,7 @@
 
 function ix25c
   npts = 0;
-  
+
 ## Parse and process command line arguments
 
 ## plparseopts(&argc, argv, PL_PARSE_FULL);
@@ -59,7 +59,7 @@ function ix25c
 	plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
 	plcol0(1) ;
 	plpsty(0) ;
-	if (k == 0) 
+	if (k == 0)
 	  plfill(x0,y0) ;
 	else
 	  plgradient(x0,y0,45.) ;

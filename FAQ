@@ -5,7 +5,7 @@ PLplot FAQ (Frequently Asked Questions)
 ---------------------------------------
 
 This note contains answers to some Frequently Asked Questions (FAQ)
-regarding PLplot.  
+regarding PLplot.
 
 Disclaimer:
 
@@ -54,7 +54,7 @@ Section 1: Building/installing PLplot
 =1.8  The compiler complains about "caddr_t" in one of the X support files.
  1.9  configure script doesn't run correctly
  1.10 (removed)
- 1.11 The linker complains that it can't resolve Tcl_AppInit. 
+ 1.11 The linker complains that it can't resolve Tcl_AppInit.
 +1.12 Can the library place be changed *after* compilation, say, by an
       environment variable ?
 +1.13 tcpip.c won't compile.
@@ -63,12 +63,12 @@ Section 1: Building/installing PLplot
 Section 2: Philosophy, future directions, broad capabilities, etc.
 
  2.1  Why should I use PLplot?
-+2.2  Could you comment on the pros and cons of plplot and gnuplot? 
++2.2  Could you comment on the pros and cons of plplot and gnuplot?
 +2.3  How do I use PLplot to do interactive plotting?
 +2.4  What is RLaB?
 +2.5  Why should I use Tcl?
 +2.6  What are some of the planned enhancements to the PLplot interactive
-      capabilities? 
+      capabilities?
 +2.7  Is there a PLplot newsgroup?
 
 ==============================================================================
@@ -282,7 +282,7 @@ in the defaults file.
  1.10  (removed)
 
 
- 1.11 The linker complains that it can't resolve Tcl_AppInit. 
+ 1.11 The linker complains that it can't resolve Tcl_AppInit.
 
 The Tcl7.0/TK3.3 and later libraries contain a function called "main".
 As a result, when linking you don't always get the correct main program.
@@ -378,7 +378,7 @@ Japan.  This was an extremely frustrating situation, which had always been
 apparent to me but only then came to a head.  Scientific graphics is an
 utter necessity to anyone doing numerical modelling, and I decided that
 being at the mercy of vendors and computer centers on this issue was
-unacceptable.  
+unacceptable.
 
 I have no objection to commercial software, but let's face it.. sometimes
 commercial solutions suck.  This is one of those times.  You don't have
@@ -456,7 +456,7 @@ broad changes to the package, but any of the following would be great:
 	help rewriting the manual?  (OK, so I'm really reaching here)
 
 
-+2.2  Could you comment on the pros and cons of plplot and gnuplot? 
++2.2  Could you comment on the pros and cons of plplot and gnuplot?
 
 They came from a different set of objectives initially.  PLplot started
 out primarily as a library and gnuplot as an interactive tool.  At one
@@ -538,7 +538,7 @@ or
 	plot(abs(X));
 
 RLaB is geared towards scientific/engineering usage, but could also be
-quite useful for other types of data. 
+quite useful for other types of data.
 
 RLaB is a "High Level Language" with matrices (2-d arrays) as a
 fundamental object. Thus:
@@ -549,16 +549,16 @@ where b is (Mx1), A is (MxN), x is (Nx1) works as expected. RLaB
 includes a host of builtin linear-algebra, an spectral functions,
 taking advantage of LAPACK, BLAS, and FFTPACK. Although RLaB may be
 more than the original poster wants, I think it is at least worth a
-mention. 
+mention.
 
 
 +2.5  Why should I use Tcl?
 
 > I've recently seen an article on the net (comp.lang.tcl:19017)
-> 
+>
 > 	Title:		Why you should not use Tcl
 > 	Author:		Richard Stallman, GNU Project.
-> 
+>
 > In which a case was made to avoid a "scripting language" such as Tcl in
 > favour of a language that is more easily extended.
 > ...
@@ -674,7 +674,7 @@ come.
 
 
 +2.6  What are some of the planned enhancements to the PLplot interactive
-      capabilities? 
+      capabilities?
 
 By mirroring the C api in Tcl, it is becoming possible to rapidly
 prototype data interaction programs, coded entirely as Tcl scripts,
@@ -691,7 +691,7 @@ autoload on demand mechanism.
 
 Example itcl classes could be things like:
 	1-d histogram utility
-		reads data from specified file, puts up some 
+		reads data from specified file, puts up some
 		buttons to allow generation of histograms with
 		various different options
 	Financial analyst
@@ -713,7 +713,7 @@ Example itcl classes could be things like:
 		and max domain values, and plots the equation.
 		Provides buttons for performing integration,
 		(numerical) differentiation, fourier analysis (coupled
-		to the above mentioned package), spline fitting, 
+		to the above mentioned package), spline fitting,
 		root finding, etc.
 
 Some of these ideas will require the 2-d Tcl api, which is still being
@@ -742,14 +742,14 @@ welcome to contact me for further elaboration.
 
 +2.7  Is there a PLplot newsgroup?
 
-> I think one way to achieve better support/development of the PLPlot 
-> package would be to create a newsgroup to give such requests as the above 
+> I think one way to achieve better support/development of the PLPlot
+> package would be to create a newsgroup to give such requests as the above
 > a wider audience. Maybe something like comp.grahpics.PLPLOT?
-> 
-> This could also be the place to ask questions like "How do I do this..." 
+>
+> This could also be the place to ask questions like "How do I do this..."
 > or "I have a problem doing this, can anyone help me?".
-> Apart from that it could alleviate the pressure of supporting PLPlot by 
-> the primary developers (GF & MJL) so that they can spend more time 
+> Apart from that it could alleviate the pressure of supporting PLPlot by
+> the primary developers (GF & MJL) so that they can spend more time
 > actually doing new development.
 
 A newsgroup comp.graphics.plplot would be fine with me.  In fact, I've
@@ -841,7 +841,7 @@ but this is a real pain.
 The driver does initialize the width to something reasonable, but only
 if the user hasn't already set it (i.e. it is zero).  The postscript
 driver uses a line width of 3 as a default, since this produces pretty
-good results.  
+good results.
 
 
 =3.5  How can I generate more than 16 line colors?
@@ -864,7 +864,7 @@ arrays and performed a transpose before calling the C API.  With plplot
 to increase performance on some platforms.  Unfortunately on high end
 platforms (vector machines or superscalar RISC workstations) performance
 can actually be worse as a result -- slowdowns due to memory access can be
-much worse than doing extra computation.  
+much worse than doing extra computation.
 
 As a result the situation re: 2d array organization in C became somewhat
 confusing -- now there was a /third/ type of array organization, or /four/
@@ -882,7 +882,7 @@ provide front-end C API calls to handle the various popular 2d array
 organizations.  These front-ends merely pass in the appropriate function
 evaluator to the core routine, passing the user's array as data.  This
 results in calls like plfcont(), which is the core routine, and plcont1(),
-plcont2(), etc, which are the front-end routines.  
+plcont2(), etc, which are the front-end routines.
 
 The core routine can do one of two things: it can either use function
 evaluations in place of the 2d array lookups in its computations, or
@@ -945,7 +945,7 @@ be possible to mock something up for Fortran too if needed.  There is no
 problem with doing this from X since only a single key code is
 transmitted, but an xterm sends an escape sequence.  Your event handler
 would be called for each key code which makes recognition a bit harder but
-still doable (if in an xterm).  
+still doable (if in an xterm).
 
 
 -3.9  How to get more information about a function or capability.
@@ -954,13 +954,13 @@ still doable (if in an xterm).
 > with 4.99g, but to do this I need to know the argument list that is
 > supplied to each one - the additional docs that came with 4.99g are very
 > sketchy on this.
-> 
+>
 > I would particularly like to use plscmap1l, which I have had trouble
 > with,  also the following which are not explained:
-> 
+>
 >  *      plwarn plexit plcol0 plcol1 plrgb plrgb1 plscolbg plscol0 plgcol0
 >  *      plscmap1 plscmap1f1 plscolor
-> 
+>
 > Any details would be gratefully received.
 
 Well for me to really explain would be basically the same as finishing the
@@ -969,7 +969,7 @@ example programs and especially the source.  Now, I know that might not
 sound like fun, but some of the source code is a fairly easy read.  Look
 in "plplot.h" -- each function has a prototype that lists arguments and
 has a one-line description.  The description is usually an abbreviated
-version of the comments written with the function itself.  
+version of the comments written with the function itself.
 
 If you are an emacs user, browsing the source code is very easy with
 'tags'.  From the tmp directory, type 'etags *.c'.  Then edit plplot.h,
@@ -1028,7 +1028,7 @@ keystrokes:
  * keyboards (different from keypad key).
  *
  * No user data is passed in this case, although a test case is
- * illustrated. 
+ * illustrated.
  *
  * Illegal input is ignored.
 
@@ -1079,11 +1079,11 @@ something that should be in the API, let me know.
 +3.12 I'm getting "Unable to delete command .dx.gq1" when I use a tclMatrix.
 
 > Whenever I use the tcl matrix facility you wrote from itcl, I always
-> get these annoying 
-> 
+> get these annoying
+>
 > Unable to delete command .dx.gq1
 
-Yeah.  I continued to look into this after you left.  
+Yeah.  I continued to look into this after you left.
 
 > Seems you set a local variable when the matrix is created.  Then
 > when the local variable goes out of scope, it is unset, which trigger
@@ -1202,7 +1202,7 @@ docs.
 
  4.4  I've been having trouble getting the TK/TCL and PLplot working on
 my Indigo running IRIX 4.0.5. I got TCL7.0 and TK3.3 as advised and built the
-libraries and moved them to "/usr/lib" directory and then went about 
+libraries and moved them to "/usr/lib" directory and then went about
 (re)building PLplot. I then compiled the c-demos and ran them. The tk driver
 would pop up a window and disappear with the following complaints...
 ...
@@ -1230,7 +1230,7 @@ version of wish.  Some of the tests will fail because "make test" actually
 compiles a custom version of wish with some extra functionality just for
 the test suite.  But most of the tests will do ok.  If not, you hosed
 the installation and that would explain the observed behavior.  If not
-we need to do some more hunting.  
+we need to do some more hunting.
 
 Here are some more things to try: define DEBUG at the head of the files:
 
@@ -1253,7 +1253,7 @@ The resulting messages often prove useful.
  4.5  I would like to issue a plot command, have the window appear,
 or be re-painted, and allow the user to continue with command line operation
 of RLaB. I would like the user to be able to resize the window at any time
-or cover/un-cover it at any time and have it re-paint itself. The way  I 
+or cover/un-cover it at any time and have it re-paint itself. The way  I
 can get it to work is: the user issues plot command, window appears and is
 resizable, etc... the user must use the 3rd mouse button to "release" the
 window, after that control returns to the command line, but the window will
@@ -1309,14 +1309,14 @@ an HP 720 color console and graphics speed is usually not a problem :-).
  4.7  How do I change the title on the TK window menu bar, i.e.,
 
 >   Plot >> plclient_#2
-> 
+>
 >            ^^^^
 >            I'd like this to read SuperCode
 
 It uses the name of the main window if nothing else is set.  You can set
 it two ways.  One, use plParseOpts to parse your command line, then it
 will use argv[0] out of that list.  Two, just glom pls->program directly,
-via: 
+via:
 
 #include <plstream.h>
 
@@ -1349,7 +1349,7 @@ mysterious _#2 appended (and _#3, and so on; note there are utilities
 > previously unused (or reclaimed) port.  Then the daemon goes back to
 > listening.  That way, you could run multiple apps simultaneously, each
 > getting a new plserver if a spare one isn't already available...
-> 
+>
 > I think the default action would be that when you punch >> on the last
 > plot, the client goes ahead and terminates, but plserver stays up, for
 > future invocations.  But when the user wants to get rid of it, if he
@@ -1370,7 +1370,7 @@ around this.
 > We're having some big problems with the latest release of PLPLOT.
 > Basically, we can't print and we can't save Postscript files. When we
 > try to print we get
-> 
+>
 > *** PLPLOT ERROR ***
 > process_next: Unrecognized command
 > Program aborted
@@ -1383,7 +1383,7 @@ as a plplot metafile, and then invokes plrender to turn it into
 postscript.  Either it was installed incorrectly, or (more likely), it is
 a bug.  I have printed plots by this method without problem since the
 4.99g release, but probably I didn't exercise everything.  Maybe try "Save
-As.." with a variety of file types and see if anything turns out.  
+As.." with a variety of file types and see if anything turns out.
 
 > I have my PRINTER environment variable set. Am I supposed to do
 > something else?  As for saving Postscript files, it seems to write part
@@ -1416,7 +1416,7 @@ send me a copy.
 > I am trying to install PLPLOT on a DECstation 5000/240 running Ultrix
 > 4.2a and an earlier version of X11R4. I am using gcc with the -ansi
 > option.  Running make gives me the following errors:
-> 
+>
 > In file included from xwin.c:50:
 > /usr/local/lib/gcc-lib/decstation-ultrix4.2a/2.4.5/include/X11/Xlib.h:3958: parse error before `XSizeHints'
 
@@ -1426,7 +1426,7 @@ ANSI compiler or C++ since it's in the function prototypes.  In
 particular, Xlib.h uses XSizeHints before it's defined (in Xutil.h).  In
 the X11R5 header files from HP-UX, all of the functions needing to
 reference a variable of type XSizeHints* are prototyped in Xutil.h, after
-the declaration of XSizeHints.  
+the declaration of XSizeHints.
 
 I don't know how many systems I've seen with broken X11R4 header files --
 a lot.  Seems the X11R4 distribution was partly to blame, but you'd think
@@ -1435,7 +1435,7 @@ would work with them.  In any case, there /should/ be an upgrade to fix
 problems like this.  At worst, you can pull over a later X11 distribution
 (as I write this X11R6 just came out) and build it yourself.  I do know
 that some PLplot runs OK on some Ultrix systems so there should be an
-upgrade available.  
+upgrade available.
 
 
  4.11 Problems saving files from the Tk driver.
@@ -1443,10 +1443,10 @@ upgrade available.
 > When I tried to save
 > the .ps files (both color and mono) using "Save as.." in plrender,
 > it doesn't seem to terminate the file properly. I had to add a
-> "showpage" statement at the end before I send it to the printer 
+> "showpage" statement at the end before I send it to the printer
 > in order for my printer to print it properly. On the other hand, if
 > I select the drivers (ps or psc) at the command line or upon start
-> of the program, the output files looked fine. 
+> of the program, the output files looked fine.
 
 You either need to quit the program or pick "save close" before displaying
 the saved file.  This is because "save as" leaves the file open so that
@@ -1456,12 +1456,12 @@ you can use "save" on multiple plots, each going to the same file.
 +4.12 Why does the Tcl/TK driver use a separate process for rendering but
       not the X driver?
 
-> The pgplot xwin driver forks a separate process to handle expose and other 
-> events, and this works fine under SunOS 4.3.1 but fails under AIX 3.2.5 (and 
-> I hear under other similar systems like Solaris 2). In your own code, you 
-> seem to keep event handling inside the other routines, and periodically you 
-> deal with the queue. Is that correct? Can you tell me a bit about the 
-> philosophy behind the routines, and why such careful housekeeping is 
+> The pgplot xwin driver forks a separate process to handle expose and other
+> events, and this works fine under SunOS 4.3.1 but fails under AIX 3.2.5 (and
+> I hear under other similar systems like Solaris 2). In your own code, you
+> seem to keep event handling inside the other routines, and periodically you
+> deal with the queue. Is that correct? Can you tell me a bit about the
+> philosophy behind the routines, and why such careful housekeeping is
 > necessary?
 
 Forking it off as a separate process is much better, in principle.  The
@@ -1511,7 +1511,7 @@ color.  But these capabilities are a long way off and will be added very
 conservatively.
 
 BTW, a Tk canvas has good support for manipulating its components (at a
-price). 
+price).
 
 Now back to the high level way of doing it.  You can intercept keystrokes or
 mouse clicks in Tk very easily using the "bind" command (Tcl API).  You can

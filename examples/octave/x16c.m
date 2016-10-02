@@ -1,10 +1,10 @@
 ## Copyright (C) 1998, 1999, 2000 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -17,10 +17,10 @@
 
 1;
 
-## Set up transformation function 
+## Set up transformation function
 
-global nx = 35;	## Default number of data points in x 
-global ny = 46;	## Default number of data points in y 
+global nx = 35;	## Default number of data points in x
+global ny = 46;	## Default number of data points in y
 global	tr = [2/(nx-1); 0.0; -1.0; 0.0; 2/(ny-1); -1.0];
 
 function  [tx ty] = mypltr( x, y)
@@ -35,9 +35,9 @@ function ix16c
   global PL_COLORBAR_LABEL_BOTTOM;
   global PL_COLORBAR_SHADE;
   global PL_COLORBAR_SHADE_LABEL;
-  ## Fundamental settings.  See notes[] for more info. 
+  ## Fundamental settings.  See notes[] for more info.
 
-  ns = 20;		## Default number of shade levels 
+  ns = 20;		## Default number of shade levels
 
   notes = [
 	   "To get smoother color variation, increase ns, nx, and ny.  To get faster",
@@ -46,7 +46,7 @@ function ix16c
 
   sh_cmap = 1;
   fill_width = 2.; cont_color = 0;  cont_width = 0.;
-  
+
   num_axes = 1;
   n_axis_opts = num_axes;
   axis_opts = { "bcvtm" };
@@ -59,22 +59,22 @@ function ix16c
   labels = { "Magnitude" };
 
 
-  ## Parse and process command line arguments 
+  ## Parse and process command line arguments
 
   ##    plMergeOpts(options, "x16c options", notes);
   ##    plparseopts(&argc, argv, PL_PARSE_FULL);
 
-  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display 
+  ## Reduce colors in cmap 0 so that cmap 1 is useful on a 16-color display
 
   ## Load colour palettes
   plspal0("cmap0_black_on_white.pal");
   plspal1("cmap1_gray.pal",1);
   plscmap0n(3);
 
-  ## Initialize plplot 
+  ## Initialize plplot
   plinit();
 
-  ## Set up data array 
+  ## Set up data array
 
   for i = 0:nx-1
     x = (i - fix(nx / 2)) / fix(nx / 2);
@@ -92,8 +92,8 @@ function ix16c
   clevel = (zmin .+ (zmax - zmin) .* (i + 0.5) ./ ns)';
   i = 0:ns;
   shedge = zmin + (zmax - zmin) * i / ns;
-  
-  ## Set up coordinate grids 
+
+  ## Set up coordinate grids
 
   for i = 0:nx-1
     j = 0:ny-1;
@@ -113,14 +113,14 @@ function ix16c
   xg1 = xg1(:,1);
   yg1 = yg1(1,:)';
 
-  ## Plot using identity transform 
+  ## Plot using identity transform
 
   pladv(0);
   plvpor(0.1, 0.9, 0.1, 0.9);
   plwind(-1.0, 1.0, -1.0, 1.0);
   plpsty(0);
 
-  plshades(z, -1., 1., -1., 1., 
+  plshades(z, -1., 1., -1., 1.,
 	   shedge', fill_width,
 	   cont_color, cont_width,
 	   1);
@@ -134,7 +134,7 @@ function ix16c
   num_values(1) = ns + 1;
   values(1,:) = shedge;
 
-  [colorbar_width, colorbar_height] = plcolorbar( 
+  [colorbar_width, colorbar_height] = plcolorbar(
             bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width,
@@ -150,12 +150,12 @@ function ix16c
   plcol0(1);
   plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);
   plcol0(2);
-  
+
   ## plcont(w, 1, nx, 1, ny, clevel, tr);
-  
+
   pllab("distance", "altitude", "Bogon density");
 
-  ## Plot using 1d coordinate transform 
+  ## Plot using 1d coordinate transform
 
   ##  Load colour palettes
   plspal0("cmap0_black_on_white.pal");
@@ -168,7 +168,7 @@ function ix16c
   plwind(-1.0, 1.0, -1.0, 1.0);
   plpsty(0);
 
-  plshades1(z, -1., 1., -1., 1., 
+  plshades1(z, -1., 1., -1., 1.,
 	    shedge', fill_width,
 	    cont_color, cont_width,
 	    1, xg1, yg1);
@@ -182,7 +182,7 @@ function ix16c
   num_values(1) = ns + 1;
   values(1,:) = shedge;
 
-  [colorbar_width, colorbar_height] = plcolorbar( 
+  [colorbar_width, colorbar_height] = plcolorbar(
             bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width,
@@ -203,7 +203,7 @@ function ix16c
 
   pllab("distance", "altitude", "Bogon density");
 
-  ## Plot using 2d coordinate transform 
+  ## Plot using 2d coordinate transform
 
   ## Load colour palettes
   plspal0("cmap0_black_on_white.pal");
@@ -216,7 +216,7 @@ function ix16c
   plwind(-1.0, 1.0, -1.0, 1.0);
   plpsty(0);
 
-  plshades2(z, -1., 1., -1., 1., 
+  plshades2(z, -1., 1., -1., 1.,
 	    shedge', fill_width,
 	    cont_color, cont_width,
 	    0, xg2, yg2);
@@ -230,7 +230,7 @@ function ix16c
   num_values(1) = ns + 1;
   values(1,:) = shedge;
 
-  [colorbar_width, colorbar_height] = plcolorbar( 
+  [colorbar_width, colorbar_height] = plcolorbar(
             bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width,
@@ -250,7 +250,7 @@ function ix16c
 
   pllab("distance", "altitude", "Bogon density, with streamlines");
 
-  ## Plot using 2d coordinate transform 
+  ## Plot using 2d coordinate transform
 
   ## Load colour palettes
   plspal0("");
@@ -263,7 +263,7 @@ function ix16c
   plwind(-1.0, 1.0, -1.0, 1.0);
   plpsty(0);
 
-  plshades2(z, -1., 1., -1., 1., 
+  plshades2(z, -1., 1., -1., 1.,
 	    shedge', fill_width,
 	    2, 3.,
 	    0, xg2, yg2);
@@ -277,7 +277,7 @@ function ix16c
   num_values(1) = ns + 1;
   values(1,:) = shedge;
 
-  [colorbar_width, colorbar_height] = plcolorbar( 
+  [colorbar_width, colorbar_height] = plcolorbar(
             bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             2, 3,
@@ -297,8 +297,8 @@ function ix16c
 
   pllab("distance", "altitude", "Bogon density");
 
-  ## Note this exclusion API will probably change. 
-  
+  ## Note this exclusion API will probably change.
+
   ## Plot using 2d coordinate transform and exclusion
   if (0) ## exclusion not implemented
     ## Load colour palettes
@@ -312,7 +312,7 @@ function ix16c
     plwind(-1.0, 1.0, -1.0, 1.0);
     plpsty(0);
 
-    plshades2(z, -1., 1., -1., 1., 
+    plshades2(z, -1., 1., -1., 1.,
 	      shedge', fill_width,
 	      cont_color, cont_width,
 	      0, xg2, yg2);
@@ -322,7 +322,7 @@ function ix16c
     pllab("distance", "altitude", "Bogon density with exclusion");
   endif
 
-### Example with polar coordinates. 
+### Example with polar coordinates.
 
   PERIMETERPTS=100;
   ## Load colour palettes
@@ -337,8 +337,8 @@ function ix16c
 
   plpsty(0);
 
-  ## Build new coordinate matrices. 
-  
+  ## Build new coordinate matrices.
+
   for i = 0:nx-1;
     r = i/ (nx-1);
     j = 0:ny-1;
@@ -348,7 +348,7 @@ function ix16c
     z(i+1,:) = exp(-r.*r).*cos(5*pi*r).*cos(5*t);
   endfor
 
-  ## Need a new shedge to go along with the new data set. 
+  ## Need a new shedge to go along with the new data set.
 
   zmin = min(min(z));
   zmax = max(max(z));
@@ -356,8 +356,8 @@ function ix16c
   i = 0:ns;
   shedge = zmin + (zmax - zmin) *  i /  ns;
 
-  ##  Now we can shade the interior region. 
-  plshades2(z, -1, 1, -1, 1, 
+  ##  Now we can shade the interior region.
+  plshades2(z, -1, 1, -1, 1,
 	    shedge', fill_width,
 	    cont_color, cont_width,
 	    0, xg2, yg2);
@@ -371,7 +371,7 @@ function ix16c
   num_values(1) = ns + 1;
   values(1,:) = shedge;
 
-  [colorbar_width, colorbar_height] = plcolorbar( 
+  [colorbar_width, colorbar_height] = plcolorbar(
             bitor(PL_COLORBAR_SHADE, PL_COLORBAR_SHADE_LABEL), 0,
             0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0,
             cont_color, cont_width,
@@ -384,7 +384,7 @@ function ix16c
   plsmaj( 0.0, 1.0 );
   plsmin( 0.0, 1.0 );
 
-  ## Now we can draw the perimeter.  (If do before, shade stuff may overlap.) 
+  ## Now we can draw the perimeter.  (If do before, shade stuff may overlap.)
   i = 0:PERIMETERPTS-1;
   t = (2*pi/(PERIMETERPTS-1))*i;
   px = cos(t);
@@ -392,13 +392,13 @@ function ix16c
 
   plcol0(1);
   plline(px', py');
-  
+
   ## And label the plot.
 
   plcol0(2);
   pllab( "", "",  "Tokamak Bogon Instability" );
 
-  ## Clean up 
+  ## Clean up
 
   plend1();
 

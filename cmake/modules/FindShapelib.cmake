@@ -21,7 +21,7 @@ if(SHAPELIB_INCLUDE_DIR)
     get_filename_component(SHAPELIB_LIBRARY_DIRS ${SHAPELIB_LIBRARY} PATH)
   endif(SHAPELIB_LIBRARY)
 endif(SHAPELIB_INCLUDE_DIR)
-	    
+	
 if(SHAPELIB_FOUND)
   if(NOT SHAPELIB_FIND_QUIETLY)
     message(STATUS "FindShapelib: Found shapelib header directory, ${SHAPELIB_INCLUDE_DIR}, and library, ${SHAPELIB_LIBRARIES}.")

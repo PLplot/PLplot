@@ -65,7 +65,7 @@ def main():
     y = (arange(NY) - (NY/2)) / float(NY/2) - 1.
     zz = -sin(7.*x) * cos(7.*y) + x*x - y*y
     ww = -cos(7.*x) * sin(7.*y) + 2.*x*y
-    
+
     zmin = min(zz.flat)
     zmax = max(zz.flat)
 
@@ -78,11 +78,11 @@ def main():
     # and mypltr(i,j,tr)[1] is only function of j.
     xg0 = mypltr(arange(NX),0,tr)[0]
     yg0 = mypltr(0,arange(NY),tr)[1]
-	    
+	
     # Build the 1-d coord arrays.
 
     distort = .4
-    
+
     xx =  xg0
     xg1 = xx + distort * cos( .5 * pi * xx )
     yy =  yg0
@@ -106,10 +106,10 @@ def main():
 #   The above command works because xmin, xmax, ymin, and ymax do an effective
 #   linear transformation on the index ranges.  (We could have dropped
 #   xmin, xmax, ymin, ymax since the defaults are -1.0, 1.0, -1.0, 1.0, but
-#   for pedagogical reasons we left them in.)  The alternative below using 
+#   for pedagogical reasons we left them in.)  The alternative below using
 #   mypltr does the exact same linear transformation because of the way that
-#   the tr array has been defined.  Note that when pltr and pltr_data are 
-#   defined, xmin, xmax, ymin, ymax are completely ignored so we can drop 
+#   the tr array has been defined.  Note that when pltr and pltr_data are
+#   defined, xmin, xmax, ymin, ymax are completely ignored so we can drop
 #   them from the argument list.
     plshades(zz, shedge, fill_width, 1, mypltr, tr)
 
@@ -133,7 +133,7 @@ def main():
     plcol0(2)
 
     pllab( "distance", "altitude", "Bogon density" )
-    
+
     # Plot using 1d coordinate transform
 
     plspal0("cmap0_black_on_white.pal")
@@ -165,7 +165,7 @@ def main():
     plcol0(1)
     plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
     plcol0(2)
-	       
+	
     pllab( "distance", "altitude", "Bogon density" )
 
     # Plot using 2d coordinate transform
@@ -252,7 +252,7 @@ def main():
     plwind(-1.0, 1.0, -1.0, 1.0)
 
     # Build new coordinate matrices.
-    
+
     r = arange(NX)/(NX-1.)
     r.shape = (-1,1)
     t = (2.*pi/(NY-1.))*arange(NY-1)

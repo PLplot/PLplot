@@ -23,23 +23,23 @@ import calendar
 
 #--------------------------------------------------------------------------
 # main
-#  
+#
 #  Draws several plots which demonstrate the use of date / time formats for
 #  the axis labels.
-#  Time formatting is done using the system strftime routine. See the 
+#  Time formatting is done using the system strftime routine. See the
 #  documentation of this for full details of the available formats.
-# 
+#
 #  1) Plotting temperature over a day (using hours / minutes)
-#  2) Plotting 
-# 
-#  Note: Times are stored as seconds since the epoch (usually 1st Jan 1970). 
-#  
+#  2) Plotting
+#
+#  Note: Times are stored as seconds since the epoch (usually 1st Jan 1970).
+#
 #--------------------------------------------------------------------------
 
 def main():
 
   plsesc('@')
-  
+
   plot1()
 
   plot2()
@@ -49,14 +49,14 @@ def main():
   plot4()
 
 
-# Plot a model diurnal cycle of temperature 
+# Plot a model diurnal cycle of temperature
 def plot1():
 
-  # Data points every 10 minutes for 1 day 
+  # Data points every 10 minutes for 1 day
   npts = 73;
 
   xmin = 0.0;
-  xmax = 60.0*60.0*24.0;    # Number of seconds in a day 
+  xmax = 60.0*60.0*24.0;    # Number of seconds in a day
   ymin = 10.0;
   ymax = 20.0;
 
@@ -75,15 +75,15 @@ def plot1():
   plvsta()
   plwind(xmin, xmax, ymin, ymax)
 
-  # Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y. 
+  # Draw a box with ticks spaced every 3 hour in X and 1 degree C in Y.
   plcol0(1)
-  # Set time format to be hours:minutes 
+  # Set time format to be hours:minutes
   pltimefmt("%H:%M")
   plbox("bcnstd", 3.0*60*60, 3, "bcnstv", 1, 5)
 
   plcol0(3)
   pllab("Time (hours:mins)", "Temperature (degC)", "@frPLplot Example 29 - Daily temperature")
-  
+
   plcol0(4)
 
   plline(x, y)
@@ -95,10 +95,10 @@ def plot1():
   plsmin(0.0,1.0)
   plsmaj(0.0,1.0)
 
-# Plot the number of hours of daylight as a function of day for a year 
+# Plot the number of hours of daylight as a function of day for a year
 def plot2():
 
-  # Latitude for London 
+  # Latitude for London
   lat = 51.5
 
   npts = 365
@@ -107,9 +107,9 @@ def plot2():
   xmax = npts*60.0*60.0*24.0
   ymin = 0.0
   ymax = 24.0
-  
-  # Formula for hours of daylight from 
-  # "A Model Comparison for Daylength as a Function of Latitude and 
+
+  # Formula for hours of daylight from
+  # "A Model Comparison for Daylength as a Function of Latitude and
   # Day of the Year", 1995, Ecological Modelling, 80, pp 87-95.
   x = arange(npts)*60.0*60.0*24.0
   p = arcsin(0.39795*cos(0.2163108 + 2*arctan(0.9671396*tan(0.00860*(arange(npts)-186)))))
@@ -117,7 +117,7 @@ def plot2():
   y = d
 
   plcol0(1)
-  # Set time format to be abbreviated month name followed by day of month 
+  # Set time format to be abbreviated month name followed by day of month
   pltimefmt("%b %d")
   plprec(1,1)
   plenv(xmin, xmax, ymin, ymax, 0, 40)
@@ -125,11 +125,11 @@ def plot2():
 
   plcol0(3)
   pllab("Date", "Hours of daylight", "@frPLplot Example 29 - Hours of daylight at 51.5N")
-  
+
   plcol0(4)
 
   plline(x, y)
-  
+
   plprec(0,0)
 
 
@@ -156,20 +156,20 @@ def plot3():
 
   plcol0(1)
   # Set time format to be ISO 8601 standard YYYY-MM-DD. Note that this is
-  # equivalent to %f for C99 compliant implementations of strftime. 
+  # equivalent to %f for C99 compliant implementations of strftime.
   pltimefmt("%Y-%m-%d")
-  # Draw a box with ticks spaced every 14 days in X and 1 hour in Y. 
+  # Draw a box with ticks spaced every 14 days in X and 1 hour in Y.
   plbox("bcnstd", 14*24.0*60.0*60.0,14, "bcnstv", 1, 4)
 
   plcol0(3)
   pllab("Date", "Hours of television watched", "@frPLplot Example 29 - Hours of television watched in Dec 2005 / Jan 2006")
-  
+
   plcol0(4)
 
   plssym(0.0,0.5)
   plpoin(x, y, 2)
   plline(x, y)
-	    
+	
 def plot4():
 
   # TAI-UTC (seconds) as a function of time.
@@ -324,9 +324,9 @@ def plot4():
     plbox("bcnstd", xlabel_step, 0, "bcnstv", 0., 0)
     plcol0(3)
     pllab(xtitle, "TAI-UTC (sec)", "@frPLplot Example 29 - TAI-UTC " + title_suffix)
-  
+
     plcol0(4)
-    
+
     plline(x, y)
-	    
+	
 main()

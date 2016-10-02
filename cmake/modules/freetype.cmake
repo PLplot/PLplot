@@ -21,7 +21,7 @@
 # Configuration for the freetype support in plplot.
 
 option(
-  WITH_FREETYPE 
+  WITH_FREETYPE
   "Enable driver options for using freetype library for fonts"
   ON
   )
@@ -33,7 +33,7 @@ if (WITH_FREETYPE)
     #message(STATUS "FREETYPE_INCLUDE_DIRS = ${FREETYPE_INCLUDE_DIRS}")
     string(REGEX REPLACE ";" " -I" FREETYPE_INCLUDE_CFLAGS "-I${FREETYPE_INCLUDE_DIRS}")
     message(STATUS "FREETYPE_CFLAGS = ${FREETYPE_INCLUDE_CFLAGS}")
-    
+
     message(STATUS "FREETYPE_LIBRARIES = ${FREETYPE_LIBRARIES}")
   else (FREETYPE_FOUND)
     set(WITH_FREETYPE OFF
@@ -58,7 +58,7 @@ if (WITH_FREETYPE)
       CACHE PATH "Path for TrueType fonts"
       )
   endif(WIN32_OR_CYGWIN)
-  # PLplot internally needs a trailing slash for this path. 
+  # PLplot internally needs a trailing slash for this path.
   set(PL_FREETYPE_FONT_DIR "${PL_FREETYPE_FONT_PATH}/")
 
   set(PL_FREETYPE_FONT_LIST
@@ -94,7 +94,7 @@ if (WITH_FREETYPE)
     "PL_FREETYPE_SYMBOL_OBLIQUE:FreeSansOblique.ttf:ariali.ttf"
     )
 
-  foreach(FONT_ENTRY ${PL_FREETYPE_FONT_LIST}) 
+  foreach(FONT_ENTRY ${PL_FREETYPE_FONT_LIST})
     string(REGEX REPLACE "^(.*):.*:.*$" "\\1" NAME ${FONT_ENTRY})
     if (WIN32_OR_CYGWIN)
       string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" FONT ${FONT_ENTRY})
@@ -104,20 +104,20 @@ if (WITH_FREETYPE)
     set(${NAME} ${FONT}
       CACHE FILEPATH "Font file for ${NAME}"
       )
-  endforeach(FONT_ENTRY PL_FREETYPE_FONT_LIST) 
+  endforeach(FONT_ENTRY PL_FREETYPE_FONT_LIST)
 
   # Check a couple of fonts actually exists
   if (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS})
-    if (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})  
+    if (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})
     else (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})
       message("Fonts not found - disabling freetype")
-      set(WITH_FREETYPE OFF CACHE BOOL 
+      set(WITH_FREETYPE OFF CACHE BOOL
 	"Enable driver options for using freetype library for fonts" FORCE
-	)  
-    endif (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})  
+	)
+    endif (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SYMBOL})
   else (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS})
     message("Fonts not found - disabling freetype")
-    set(WITH_FREETYPE OFF CACHE BOOL 
+    set(WITH_FREETYPE OFF CACHE BOOL
       "Enable driver options for using freetype library for fonts" FORCE
       )
   endif (EXISTS ${PL_FREETYPE_FONT_DIR}${PL_FREETYPE_SANS})

@@ -115,10 +115,10 @@ procedure xstandard02a is
 
             -- Vary hue uniformly from left to right
             h := (360.0 / 10.0 ) * Long_Float( i mod 10 );
-            
+
             -- Vary lightness uniformly from top to bottom, between min & max.
             l := lmin + (lmax - lmin) * Long_Float(i / 10) / 9.0;
-            
+
             -- Use max saturation.
             s := 1.0;
 
@@ -148,7 +148,7 @@ procedure xstandard02a is
 
 begin
     -- Parse and process command line arguments.
-    Parse_Command_Line_Arguments(Parse_Full); 
+    Parse_Command_Line_Arguments(Parse_Full);
 
     -- Initialize plplot.
     Initialize_PLplot;

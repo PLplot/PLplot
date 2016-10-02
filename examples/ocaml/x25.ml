@@ -20,7 +20,7 @@
   along with PLplot; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-  This example will only really be interesting when used with devices that 
+  This example will only really be interesting when used with devices that
   support or alpha (or transparency) values, such as the cairo device family.
 *)
 

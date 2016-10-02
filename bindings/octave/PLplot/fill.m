@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -47,7 +47,7 @@ function fill(x, y, c)
 
   if (isvector(x) & isvector(y))
     __pl_fill(x, y, c);
-    
+
   elseif (ismatrix(x) | ismatrix(y))
 
     if (rows(x) == rows(y))
@@ -75,13 +75,13 @@ function fill(x, y, c)
 	xmin=min(min(x)); xmax=max(max(x));
 	ymin=min(min(y)); ymax=max(max(y));
       endif
-      
+
       ## if (__pl.axis_st(strm) == 0)
       ##   xm = min(min(x)); xM = max(max(x));
       ##   ym = min(min(y)); yM = max(max(y));
       ##   axis([xm xM ym yM]);
       ## endif
-      
+
       if (!ishold)
 	plcol0(15);
 	__pl_plenv(xmin, xmax, ymin, ymax, 0, -1);

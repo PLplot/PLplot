@@ -30,18 +30,18 @@ use
     PLplot_Standard;
 
 procedure xstandard10a is
-begin   
-    -- Parse and process command line arguments    
+begin
+    -- Parse and process command line arguments
     Parse_Command_Line_Arguments(Parse_Full);
-    
+
     -- Initialize plplot
     Initialize_PLplot;
-    
+
     Advance_To_Subpage(Next_Subpage);
     Set_Viewport_Normalized(0.0, 1.0, 0.0, 1.0);
     Set_Viewport_World(0.0, 1.0, 0.0, 1.0);
     Box_Around_Viewport("bc", 0.0, 0, "bc", 0.0, 0);
-    
+
     Set_Viewport_Absolute(50.0, 150.0, 50.0, 100.0);
     Set_Viewport_World(0.0, 1.0, 0.0, 1.0);
     Box_Around_Viewport("bc", 0.0, 0, "bc", 0.0, 0);

@@ -14,9 +14,9 @@
 ##  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ##  GNU Library General Public License for more details.
-## 
-##  You should have received a copy of the GNU Library General Public License 
-##  along with PLplot; if not, write to the Free Software 
+##
+##  You should have received a copy of the GNU Library General Public License
+##  along with PLplot; if not, write to the Free Software
 ##  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 ##
 
@@ -28,7 +28,7 @@ function cmap1_init
   i(2) = 1.0;		## right boundary
 
   h(1) = 240; ## blue -> green -> yellow ->
-  h(2) = 0;   ## -> red 
+  h(2) = 0;   ## -> red
 
   l(1) = 0.6;
   l(2) = 0.6;
@@ -118,12 +118,12 @@ function ix21c
       ## the neighbors is done.
       ##
 
-      if (alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI) 
+      if (alg == GRID_CSA || alg == GRID_DTLI || alg == GRID_NNLI || alg == GRID_NNI)
 	for i=1:xp
 	  for j=1:yp
 	    ## average (IDW) over the 8 neighbors for NaN's
 	    if isnan(zg(i,j))
-	      zg(i,j) = 0.; 
+	      zg(i,j) = 0.;
 	      dist = 0.;
 		
 	      for ii=i-1:i+1
@@ -154,7 +154,7 @@ function ix21c
 
       lzm = min(lzm, zmin)-0.01;
       lzM = max(lzM, zmax)+0.01;
-      
+
       plcol0(1);
       pladv(alg);
 
@@ -168,7 +168,7 @@ function ix21c
 	pllab("X", "Y", deblank(title(alg,:)));
 	plshades(zg, xm, xM, ym, yM, clev, 1., 0, 1., 1);
 	plcol0(2);
-      else 
+      else
 
 	i=(0:nl-1)';
 	clev = lzm + (lzM-lzm)/(nl-1)*i;
@@ -210,8 +210,8 @@ function [x, y] = create_grid(px, py, xm, xM, ym, yM)
 endfunction
 
 function [x, y, z] = create_data(pts, xm, xM, ym, yM, randn, rosen)
-  
-  ## This would be a much more efficient way of generating an array of 
+
+  ## This would be a much more efficient way of generating an array of
   ## random numbers, but we stick with plrandd for compatibility between
   ## examples.
   ## x = rand(pts,1);
@@ -230,7 +230,7 @@ function [x, y, z] = create_data(pts, xm, xM, ym, yM, randn, rosen)
     x = sqrt(-2.*log(x)) * cos(2.*pi*y) + xm;
     y = sqrt(-2.*log(x)) * sin(2.*pi*y) + ym;
   endif
-  if (!rosen) 
+  if (!rosen)
     r = sqrt(x.*x + y.*y);
     z = exp(-r .* r) .* cos(2.0 * pi * r);
   else

@@ -162,10 +162,10 @@ set(non_gen_tk_SCRIPTS
   wish_standard_examples
   wish_runAllDemos
 )
-  
+
 # These examples depend on Itk to work.
 if(ENABLE_itkX)
-  list(APPEND gen_tk_SCRIPTS 
+  list(APPEND gen_tk_SCRIPTS
     tk02
     tk04
     )
@@ -235,7 +235,7 @@ if(BUILD_TEST)
   # Configure the tk_SCRIPTS
   foreach(tk_SCRIPT ${non_gen_tk_SCRIPTS})
     configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in 
+      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in
       ${CMAKE_CURRENT_BINARY_DIR}/${tk_SCRIPT}
       @ONLY
       )
@@ -244,7 +244,7 @@ if(BUILD_TEST)
   foreach(tk_SCRIPT ${gen_tk_SCRIPTS})
     # N.B. Results only available at generate time.
     configure_file_generate(
-      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in 
+      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in
       ${CMAKE_CURRENT_BINARY_DIR}/${tk_SCRIPT}
       @ONLY
       )
@@ -261,7 +261,7 @@ if(CORE_BUILD)
     else(tk_related_target STREQUAL "plserver")
       set(install_dir ${DATA_DIR}/examples/tk)
     endif(tk_related_target STREQUAL "plserver")
-    set(${tk_related_target}_LOCATION 
+    set(${tk_related_target}_LOCATION
       ${install_dir}/${tk_related_target}${EXEEXT}
       )
   endforeach(tk_related_target xtk01 plserver xtk02 xtk04)
@@ -269,7 +269,7 @@ if(CORE_BUILD)
   foreach(tk_SCRIPT ${tk_SCRIPTS})
     # Configure and install the tk_SCRIPTS used for the traditional build.
     configure_file(
-      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in 
+      ${CMAKE_CURRENT_SOURCE_DIR}/${tk_SCRIPT}.in
       ${CMAKE_CURRENT_BINARY_DIR}/install_${tk_SCRIPT}
       @ONLY
       )

@@ -32,14 +32,14 @@ use
 procedure xtraditional11a is
     XPTS   : constant Integer := 35;   -- Data points in x
     YPTS   : constant Integer := 46;   -- Data points in y
-    LEVELS : constant Integer := 10; 
+    LEVELS : constant Integer := 10;
 
     opt : Integer_Array_1D(0 ..1) := (DRAW_LINEXY, DRAW_LINEXY);
     alt : Real_Vector(0 ..1) := (33.0, 17.0);
     az  : Real_Vector(0 ..1) := (24.0, 115.0);
 
-    title0 : String(1 .. 43) := ("#frPLplot Example 11 - Alt=33, Az=24, Opt=3"); 
-    title1 : String(1 .. 44) := ("#frPLplot Example 11 - Alt=17, Az=115, Opt=3"); 
+    title0 : String(1 .. 43) := ("#frPLplot Example 11 - Alt=33, Az=24, Opt=3");
+    title1 : String(1 .. 44) := ("#frPLplot Example 11 - Alt=17, Az=115, Opt=3");
 
     x : Real_Vector(0 .. XPTS - 1);
     y : Real_Vector(0 .. YPTS - 1);
@@ -48,7 +48,7 @@ procedure xtraditional11a is
     nlevel : Integer := LEVELS;
     clevel : Real_Vector(0 .. LEVELS - 1);
     zmin, zmax, step : Long_Float;
-    
+
     procedure cmap1_init is
         i, h, l, s : Real_Vector(0 .. 1);
     begin
@@ -78,7 +78,7 @@ begin
 
     -- Initialize plplot
     plinit;
-    
+
     for i in x'range loop
         x(i) := 3.0 * Long_Float(i - XPTS / 2) / Long_Float(XPTS / 2);
     end loop;
@@ -94,7 +94,7 @@ begin
             z(i, j) := 3.0 * (1.0-xx)*(1.0-xx) * exp(-(xx*xx) - (yy+1.0)*(yy+1.0)) -
             10.0 * (xx/5.0 - xx**3 - yy**5) * exp(-xx*xx-yy*yy) -
             1.0/3.0 * exp(-(xx+1.0)*(xx+1.0) - (yy*yy));
-             
+
 --            if(0) {-- Jungfraujoch/Interlaken
 --            if (z(i)(j) < -1.)
 --            z(i)(j) := -1.;

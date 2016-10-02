@@ -1,10 +1,10 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -40,7 +40,7 @@ function __pl_fill(x, y, c)
     if (length(x) != length(y))
       error("__pl_fill: x and y must have same size\n");
     endif
-    
+
     plpsty(0); # solid fill
 
     if (__pl.axis_st(strm) == 1)
@@ -49,12 +49,12 @@ function __pl_fill(x, y, c)
     else
       xmin=min(x); xmax=max(x); ymin=min(y); ymax=max(y);
     endif
-    
+
     if (!ishold)
       plcol0(15);
       __pl_plenv(min(x), max(x), min(y), max(y), 0, -1);
     endif
-    
+
     if (ischar(c) & length(c) == 1)
       ## map to plplot color
       coln = ['r','g','b','c','m','y','w','k'];
@@ -72,12 +72,12 @@ function __pl_fill(x, y, c)
       plscol0(15, c(1), c(2), c(3));
       plcol0(15);
     elseif (isvector(c) & length(x) == length(x))
-      
+
       ## If C is a vector the same length as X and Y, its elements are
       ## scaled by CAXIS and used as indices into the current COLORMAP to
       ## specify colors at the vertices; the color within the polygon is
       ## obtained by bilinear interpolation in the vertex colors.
-      
+
       error("__pl_fill: gradient fill, not yet.\n");
     else
       error("__pl_fill: color ????.\n");

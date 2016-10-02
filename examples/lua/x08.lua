@@ -52,14 +52,14 @@ end
 ----------------------------------------------------------------------------
 
 function cmap1_init(gray)
-  i = { 0, 1 } -- left and right boundary 
+  i = { 0, 1 } -- left and right boundary
 
   if gray ~= 0 then
-    h = { 0, 0 } -- hue -- low: red (arbitrary if s=0), high: red (arbitrary if s=0) 
-    l = { 0.5, 1 }		-- lightness -- low: half-dark, high: light 
-    s = { 0, 0 }		-- minimum saturation 
+    h = { 0, 0 } -- hue -- low: red (arbitrary if s=0), high: red (arbitrary if s=0)
+    l = { 0.5, 1 }		-- lightness -- low: half-dark, high: light
+    s = { 0, 0 }		-- minimum saturation
   else
-    h = { 240, 0 } -- blue -> green -> yellow -> red 
+    h = { 240, 0 } -- blue -> green -> yellow -> red
     l = { 0.6, 0.6 }
     s = { 0.8, 0.8 }
   end
@@ -80,8 +80,8 @@ end
 -- of the index range to be an integer, and thus
 -- to correspond to the exact floating point centre
 -- of the sombrero.
-XPTS = 35		-- Data points in x 
-YPTS = 45		-- Data points in y 
+XPTS = 35		-- Data points in x
+YPTS = 45		-- Data points in y
 LEVELS = 10
 
 alt = { 60, 40 }
@@ -96,13 +96,13 @@ clevel = {}
 nlevel = LEVELS
 rosen = 0
 
--- Parse and process command line arguments 
+-- Parse and process command line arguments
 pl.parseopts(arg, pl.PL_PARSE_FULL)
 
--- Initialize plplot 
+-- Initialize plplot
 pl.init()
 
--- Allocate data structures 
+-- Allocate data structures
 x = {}
 y = {}
 z = {}
@@ -112,7 +112,7 @@ dy = 2. / ( YPTS - 1 )
 
 for i=1, XPTS do
   x[i] = -1. + (i-1)*dx
-  if rosen~=0 then x[i]=x[i]*1.5 end 
+  if rosen~=0 then x[i]=x[i]*1.5 end
 end
 
 for j=1, YPTS do
@@ -127,11 +127,11 @@ for i=1, XPTS do
     yy = y[j]
     if rosen~=0 then
       z[i][j] = (1-xx)^2 + 100*(yy-xx^2)^2
-      -- The log argument might be zero for just the right grid.  
+      -- The log argument might be zero for just the right grid.
       if z[i][j] > 0 then
         z[i][j] = math.log(z[i][j])
       else
-        z[i][j] = -5   -- MAXFLOAT would mess-up up the scale 
+        z[i][j] = -5   -- MAXFLOAT would mess-up up the scale
       end
     else
       r = math.sqrt(xx^2 + yy^2)
@@ -247,22 +247,22 @@ for k=1, 2 do
            "bcdmnstuv", "z axis", 0, 0)
     pl.col0(2)
 
-    if ifshade==1 then -- diffuse light surface plot 
+    if ifshade==1 then -- diffuse light surface plot
       cmap1_init(1)
       pl.surf3d(x, y, z, 0, clevel)
     end
-     
-    if ifshade==2 then -- magnitude colored plot 
+
+    if ifshade==2 then -- magnitude colored plot
       cmap1_init(0)
       pl.surf3d(x, y, z, pl.MAG_COLOR, {})
     end
-    
-    if ifshade==3 then --  magnitude colored plot with faceted squares 
+
+    if ifshade==3 then --  magnitude colored plot with faceted squares
       cmap1_init(0)
       pl.surf3d(x, y, z, lor(pl.MAG_COLOR, pl.FACETED), {})
     end
-    
-    if ifshade==4 then  -- magnitude colored plot with contours 
+
+    if ifshade==4 then  -- magnitude colored plot with contours
       cmap1_init(0)
       pl.surf3d(x, y, z, lor(lor(pl.MAG_COLOR, pl.SURF_CONT), pl.BASE_CONT), clevel)
     end
@@ -275,5 +275,5 @@ for k=1, 2 do
   end
 end
 
--- Clean up 
+-- Clean up
 pl.plend()

@@ -22,7 +22,7 @@
 # Check if "using namespace std;" works
 if(NOT DEFINED CMAKE_CXX_STDINT_H)
   message(STATUS "Check for using stdint.h with CXX compiler")
-  try_compile(CMAKE_CXX_STDINT_H  
+  try_compile(CMAKE_CXX_STDINT_H
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/cmake/modules/TestForStdintCXX.cxx
     OUTPUT_VARIABLE OUTPUT)

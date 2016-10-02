@@ -40,7 +40,7 @@ procedure xtraditional06a is
 
 begin
     -- Parse and process command line arguments
-    plparseopts(PL_PARSE_FULL); 
+    plparseopts(PL_PARSE_FULL);
 
     -- Initialize plplot
     plinit;

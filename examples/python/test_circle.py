@@ -10,7 +10,7 @@ from numpy import *
 
 x = [0.5]
 y = [0.5]
-  
+
 title = [
   "Large Circle + Light Diagonal Cross with plptex",
   "UTF-8 plus",

@@ -55,9 +55,9 @@ add_custom_command(
   ${CMAKE_SOURCE_DIR}/fonts/plhershey-unicode.csv
   )
 
-if(NOT CMAKE_CROSSCOMPILING) 
+if(NOT CMAKE_CROSSCOMPILING)
   export(TARGETS plhershey-unicode-gen FILE ${CMAKE_CURRENT_BINARY_DIR}/ImportExecutables.cmake )
-endif(NOT CMAKE_CROSSCOMPILING) 
+endif(NOT CMAKE_CROSSCOMPILING)
 
 # For cross-directory dependencies....
 add_custom_target(

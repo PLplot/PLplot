@@ -1,10 +1,10 @@
 ## Copyright (C) 2002-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by the
 ## Free Software Foundation; either version 2 of the License, or (at your
 ## option) any later version.
-## 
+##
 ## This program is distributed in the hope that it will be useful, but
 ## WITHOUT ANY WARRANTY; without even the implied warranty of
 ## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -30,12 +30,12 @@ function map = bgr(n)
   r(1,rg) = 0;
   g(1,rg) = linspace(0,1,length(rg));
   b(1,rg) = 1;
-  
+
   rg = i(2):i(3);
   r(1,rg) = 0;
   g(1,rg) = 1;
   b(1,rg) = linspace(1,0,length(rg));
-  
+
   rg = i(3):i(4);
   r(1,rg) = linspace(0,1,length(rg));
   g(1,rg) = 1;

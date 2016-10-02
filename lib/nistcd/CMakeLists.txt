@@ -25,13 +25,13 @@ if(PLD_cgm)
   include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
-  
+
   set( cd_LIB_SRCS cd.c )
   set( cd_LIB_HDRS cd.h defines.h )
 
   # Bypass "#include <malloc.h>" in all code where it appears since
   # being too specific like this fails on some platforms (e.g., OS X), and
-  # the proper form of the malloc.h include should be dragged in by 
+  # the proper form of the malloc.h include should be dragged in by
   # ""#include stdlib.h" in any case.
   # There may be some arcane platforms where we should not define this,
   # but for now, at least, try it for all platforms.
@@ -85,7 +85,7 @@ if(PLD_cgm)
       else(cd_EXECUTABLE STREQUAL "cdexpert")
 	set(output_template ${cd_EXECUTABLE})
       endif(cd_EXECUTABLE STREQUAL "cdexpert")
-      
+
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/${output_template}.cgm
 	COMMAND $<TARGET_FILE:${cd_EXECUTABLE}>
@@ -96,9 +96,9 @@ if(PLD_cgm)
 	DEPENDS
 	${cd_EXECUTABLE}
 	)
-    
+
     endforeach(cd_EXECUTABLE ${cd_EXECUTABLES})
-    
+
     add_custom_target(test_nistcd ALL
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdexp1.cgm
@@ -108,8 +108,8 @@ if(PLD_cgm)
       ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/cdtext.cgm
       ${CMAKE_CURRENT_BINARY_DIR}/test_nistcd_dir/color16.cgm
       )
-    
-  endif(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING) 
+
+  endif(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)
 
   # install library and binaries
   install(TARGETS nistcd

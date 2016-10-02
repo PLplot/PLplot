@@ -95,12 +95,12 @@ Finish the plot with the <Enter> or <ESC> key or the 3d mouse button\n");
       [status, mod, keysym, button, string, pX, pY, dX, dY, wX, wY, swin] = plGetCursor;
 
       if (keysym == hex2dec("0D")); break; endif
-      
+
       if (status != 0)
 	printf("wx=%.3f wy=%.3f dx=%.3f dy=%.3f c=0x%02x str=%s mb=%d mod=%0x swin=%d\n", ...
 	       wX, wY, dX, dY, keysym, string, button, mod, swin);
       else
-        break;       
+        break;
       endif
 
       fflush(stdout);
@@ -128,10 +128,10 @@ function plot1(xscale, yscale, xoff, yoff)
   xs = x(i * 10 + 4);
   ys = y(i * 10 + 4);
 
-  ## Set up the viewport and window using PLENV. The range in X is 
-  ## * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are 
-  ## * scaled separately (just = 0), and we just draw a labelled 
-  ## * box (axis = 0). 
+  ## Set up the viewport and window using PLENV. The range in X is
+  ## * 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+  ## * scaled separately (just = 0), and we just draw a labelled
+  ## * box (axis = 0).
 
   plcol0(1);
   plenv(xmin, xmax, ymin, ymax, 0, 0);
@@ -150,11 +150,11 @@ function plot1(xscale, yscale, xoff, yoff)
 
 endfunction
 
-function plot2 
+function plot2
 
   ## Set up the viewport and window using PLENV. The range in X is -2.0 to
   ## * 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
-  ## * (just = 0), and we draw a box with axes (axis = 1). 
+  ## * (just = 0), and we draw a box with axes (axis = 1).
 
   plcol0(1);
   plenv(-2.0, 10.0, -0.4, 1.2, 0, 1);
@@ -167,7 +167,7 @@ function plot2
   x = (i - 19.0) / 6.0;
   y = sin(x) ./ x;
   y(x==0) = 1;
-  
+
   ## Draw the line */
 
   plcol0(3);
@@ -177,7 +177,7 @@ function plot2
 
 endfunction
 
-function plot3 
+function plot3
 
   space0 = []; mark0 = []; space1 = [1500]; mark1 = [1500];
 
@@ -187,7 +187,7 @@ function plot3
   pladv(0);
 
   ## Use standard viewport, and define X range from 0 to 360 degrees, Y range
-  ## * from -1.2 to 1.2. 
+  ## * from -1.2 to 1.2.
 
   plvsta;
   plwind(0.0, 360.0, -1.2, 1.2);
@@ -197,7 +197,7 @@ function plot3
   plcol0(1);
   plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2);
 
-  ## Superimpose a dashed line grid, with 1.5 mm marks and spaces. 
+  ## Superimpose a dashed line grid, with 1.5 mm marks and spaces.
 
   plstyl(mark1, space1);
   plcol0(2);
@@ -213,7 +213,7 @@ function plot3
 
   plcol0(4);
   plline(x', y');
-  
+
 endfunction
 
 if (exist("strm","var"))

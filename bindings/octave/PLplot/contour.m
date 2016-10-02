@@ -29,21 +29,21 @@ function contour (z, n, x, y)
 
   global __pl
   __pl_init;
-  
+
   if (nargin == 1)
     n = 8;
   endif
   if (nargin == 3)
     lines = 8;
   endif
-  
+
   ## XXX FIXME XXX -- these plot states should really just be set
   ## temporarily, probably inside an unwind_protect block, but there is
   ## no way to determine their current values.
 
   if (nargin == 1 || nargin == 2)
     if (ismatrix (z))
-      __pl_contour(1:columns(z), 1:rows(z), z', n);      
+      __pl_contour(1:columns(z), 1:rows(z), z', n);
     else
       error ("contour: argument must be a matrix");
     endif

@@ -277,22 +277,22 @@ class PlXframe(Frame):
 
 	# Orient - 0 degrees
 
-	m.add( 'radio', label="0 degrees", 
+	m.add( 'radio', label="0 degrees",
 	       command=lambda o=s: o.orient(0) )
 
 	# Orient - 90 degrees
 
-	m.add( 'radio', label="90 degrees", 
+	m.add( 'radio', label="90 degrees",
 	       command=lambda o=s: o.orient(1) )
 
 	# Orient - 180 degrees
 
-	m.add( 'radio', label="180 degrees", 
+	m.add( 'radio', label="180 degrees",
 	       command=lambda o=s: o.orient(2) )
 
 	# Orient - 270 degrees
 
-	m.add( 'radio', label="270 degrees", 
+	m.add( 'radio', label="270 degrees",
 	       command=lambda o=s: o.orient(3) )
 
     def create_menu_zoom( s, pmenu ):
@@ -572,7 +572,7 @@ class PlXframe(Frame):
 ## zoomopts($this,1):
 ##	0	first and last points specified	determine opposite corners
 ##		of zoom	box.
-##	1	box is centered about the first point clicked on, 
+##	1	box is centered about the first point clicked on,
 ##		perimeter follows mouse	(default)
 ##
 ##----------------------------------------------------------------------------
@@ -580,7 +580,7 @@ class PlXframe(Frame):
     def zoom_coords( s, x0, y0, x1, y1, opt ):
 
         # Convert the integer input to float, prevents problems with
-        # division. 
+        # division.
 
         x0 = float(x0)
         y0 = float(y0)
@@ -925,7 +925,7 @@ class PlXframe(Frame):
 	    return
 
 ## Select plot region
- 
+
 	s.tk.call( s.plf._w, 'view', 'zoom', xl, yl, xr, yr )
 
 ## Fix up view
@@ -1039,7 +1039,7 @@ class PlXframe(Frame):
 
 ## Hmmm.  Actually, "update_view" doesn't seem to be used by anything...
 ##    def update_view(s):
-##	"""Updates view.  
+##	"""Updates view.
 ##	Results in scrollbars being added if they are appropriate.
 ##	Does nothing if the plot window is unchanged from the default."""
 ##
@@ -1116,7 +1116,7 @@ class PlXframe(Frame):
 
     def plfcont( s ): pass
     def plcpstream( s ): pass
-    
+
     def plenv( s, xmin, xmax, ymin, ymax, i, j ):
 	s.cmd( 'plenv', xmin, xmax, ymin, ymax, i, j )
 
@@ -1256,7 +1256,7 @@ class PlXframe(Frame):
     # plstar and plstart not relevant
 
     #def plstyl( s, ...
-    
+
     def plsvpa( s, xmin, xmax, ymin, ymax ):
 	s.cmd( 'plsvpa', xmin, xmax, ymin, ymax )
 

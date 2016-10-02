@@ -27,7 +27,7 @@
 
 1;
 
-global position_options special_symbols colorbar_option_kinds colorbar_option_kind_labels colorbar_position_options colorbar_position_option_labels colorbar_label_options colorbar_label_option_labels colorbar_cap_options colorbar_cap_option_labels 
+global position_options special_symbols colorbar_option_kinds colorbar_option_kind_labels colorbar_position_options colorbar_position_option_labels colorbar_label_options colorbar_label_option_labels colorbar_cap_options colorbar_cap_option_labels
 global COLORBAR_KINDS COLORBAR_POSITIONS COLORBAR_LABELS COLORBAR_CAPS
 
 position_options = [
@@ -125,14 +125,14 @@ colorbar_cap_option_labels = {
 };
 
 function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, values )
-  
+
     global COLORBAR_POSITIONS colorbar_option_kinds colorbar_option_kind_labels colorbar_position_options colorbar_position_option_labels colorbar_label_options colorbar_label_option_labels colorbar_cap_options colorbar_cap_option_labels
     global PL_POSITION_LEFT PL_POSITION_RIGHT PL_POSITION_BOTTOM PL_COLORBAR_BOUNDING_BOX PL_COLORBAR_BACKGROUND
 
     label_opts = zeros(1,1);
     ticks = zeros(1,1);
     sub_ticks = zeros(1,1);
-  
+
     n_values_array(1,:) = length(values);
     values_array(1,:)   = values;
 
@@ -145,7 +145,7 @@ function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width
     # Draw one colorbar relative to each side of the page
     for position_i = 1:COLORBAR_POSITIONS
         position = colorbar_position_options(position_i);
-        opt      = bitor( 
+        opt      = bitor(
             colorbar_option_kinds(kind_i), bitor(
             colorbar_label_options(label_i),
             colorbar_cap_options(cap_i) ) );
@@ -165,7 +165,7 @@ function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width
             x_length = 0.5;
             y_length = 0.05;
 	endif
-	  
+	
         # Set appropriate labelling options.
         if ( ifn )
             if ( cont_color == 0 || cont_width == 0. )
@@ -235,10 +235,10 @@ function ix33c()
   ## Parse and process command line arguments
 
   ## (void) plparseopts(&argc, argv, PL_PARSE_FULL);
-  
+
   ## Initialize plplot
   ## set global attributes for PLplot variables used in this function.
-  global PL_FCI_SANS PL_FCI_MONO PL_LEGEND_NONE PL_LEGEND_COLOR_BOX PL_LEGEND_LINE PL_LEGEND_SYMBOL PL_LEGEND_TEXT_LEFT PL_LEGEND_BACKGROUND PL_LEGEND_BOUNDING_BOX PL_LEGEND_ROW_MAJOR 
+  global PL_FCI_SANS PL_FCI_MONO PL_LEGEND_NONE PL_LEGEND_COLOR_BOX PL_LEGEND_LINE PL_LEGEND_SYMBOL PL_LEGEND_TEXT_LEFT PL_LEGEND_BACKGROUND PL_LEGEND_BOUNDING_BOX PL_LEGEND_ROW_MAJOR
   global PL_POSITION_LEFT PL_POSITION_RIGHT PL_POSITION_TOP PL_POSITION_BOTTOM PL_POSITION_INSIDE PL_POSITION_OUTSIDE PL_POSITION_SUBPAGE
   global PL_COLORBAR_IMAGE PL_COLORBAR_SHADE PL_COLORBAR_GRADIENT PL_COLORBAR_SHADE_LABEL
   global position_options special_symbols
@@ -413,7 +413,7 @@ function ix33c()
 	       line_colors, line_styles, line_widths,
 	       symbol_colors, symbol_scales, symbol_numbers, symbols );
 
-    
+
   position = bitor(PL_POSITION_LEFT, PL_POSITION_OUTSIDE);
   opt = opt_base;
   x = 0.1;
@@ -880,7 +880,7 @@ function ix33c()
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
-	       [], [], [], [], 
+	       [], [], [], [],
                line_colors, line_styles, line_widths,
 	       [], [], [], [] );
   max_height = max(max_height, legend_height);
@@ -907,7 +907,7 @@ function ix33c()
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
-	       [], [], [], [], 
+	       [], [], [], [],
                line_colors, line_styles, line_widths,
 	       [], [], [], [] );
   max_height = max(max_height, legend_height);
@@ -935,7 +935,7 @@ function ix33c()
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
                0., text_colors, text',
-	       [], [], [], [], 
+	       [], [], [], [],
                line_colors, line_styles, line_widths,
 	       [], [], [], [] );
   max_height = max(max_height, legend_height);

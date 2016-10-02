@@ -39,7 +39,7 @@ epa_boilerplate(
   dependencies_targets
   EPA_PATH
   source_PATH
-  ) 
+  )
 
 if(MSYS_PLATFORM)
   set(library_prefix)
@@ -84,7 +84,7 @@ ExternalProject_Add(
 add_custom_command(
   OUTPUT
   ${EPA_BASE}/Stamp/build_${PACKAGE}/build_${PACKAGE}-patch
-  COMMAND ${CMAKE_COMMAND} -E echo 
+  COMMAND ${CMAKE_COMMAND} -E echo
   "Provide an exactly equivalent \"Itk\" and \"itk\" form of the package name to follow what is implemented for itcl version 4."
   # This patch has been publicly distributed at https://sourceforge.net/p/incrtcl/patches/52/
   COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/itk4_case.patch
@@ -92,7 +92,7 @@ add_custom_command(
   "Add generic/itkDecls.h to the list of itk headers that must be installed."
   # This patch has been publicly distributed at https://sourceforge.net/p/incrtcl/patches/53/
   COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/itk4_header_list.patch
-  COMMAND ${CMAKE_COMMAND} -E echo 
+  COMMAND ${CMAKE_COMMAND} -E echo
   "Apply a patch for the results of \"autoreconf -i\" run on Linux."
   COMMAND ${PATCH_EXECUTABLE} --directory=${EPA_BASE}/Source/build_${PACKAGE} -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/autoreconf.patch
   APPEND

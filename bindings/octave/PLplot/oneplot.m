@@ -1,5 +1,5 @@
 ## Copyright (C) 1998-2003 Joao Cardoso.
-## 
+##
 ## This program is free software; you can redistribute it and/or modify it
 ## under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 2, or (at your option)
@@ -26,7 +26,7 @@ function oneplot ()
   __pl.multi_col(strm)=1;
   __pl.multi_cur(strm)=1;
   __pl.multi(strm)=0;
-  
+
   plssub(1,1);
   pladv(0);
 

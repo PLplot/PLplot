@@ -165,7 +165,7 @@ begin
     end if;
 
     Advance_To_Subpage(Next_Subpage);
-    
+
     xmin0 := 0.01;
     xmax0 := 0.99;
     ymin0 := 0.02;

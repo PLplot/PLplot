@@ -22,7 +22,7 @@ endif (ENABLE_tcl)
 install(FILES ${manpages} DESTINATION ${MAN_DIR}/man1)
 
 # Process the docbook documentation.
-add_subdirectory(docbook) 
+add_subdirectory(docbook)
 
 # Process the doxygen documentation.
 
@@ -42,7 +42,7 @@ if(BUILD_DOX_DOC)
   # at run time.
 
   set(doxygen_prefixes  "*.c;*.cc;*.cxx;*.cpp;*.c++;*.d;*.java;*.h;*.py;*.f90;*.f")
-  set(doxygen_directories 
+  set(doxygen_directories
     ${CMAKE_SOURCE_DIR}/lib
     ${CMAKE_SOURCE_DIR}/src
     ${CMAKE_SOURCE_DIR}/drivers
@@ -124,6 +124,6 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINAR
       ssh ${WWW_USER}@${WWW_HOST} mkdir -p ${WWW_DIR}/htdocs/doxygen
       COMMAND rsync -avq ${CMAKE_CURRENT_BINARY_DIR}/doxygen/ ${WWW_USER}@${WWW_HOST}:${WWW_DIR}/htdocs/doxygen
       )
-    add_dependencies(www-install-doxygen build_doxygen) 
+    add_dependencies(www-install-doxygen build_doxygen)
   endif(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
 endif(BUILD_DOX_DOC)
