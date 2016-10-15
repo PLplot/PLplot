@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009-2015 Alan W. Irwin
+# Copyright (C) 2009-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -77,7 +77,7 @@ if(ENABLE_qt)
   option(PLPLOT_USE_QT5 "Experimental option to try Qt5" OFF)
 
   if(PLPLOT_USE_QT5)
-    find_package(Qt5 5.2.0 COMPONENTS Svg Gui PrintSupport)
+    find_package(Qt5 5.3.1 COMPONENTS Svg Gui PrintSupport)
     if(Qt5_FOUND)
       message(STATUS "Attempting to use Qt5 so have set PLD_epsqt to OFF since Qt5 does not support PostScript")
       set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
