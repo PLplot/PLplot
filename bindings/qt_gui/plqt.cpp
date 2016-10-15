@@ -265,7 +265,10 @@ QPicture QtPLDriver::getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PL
     // cairo.  I assume all these issues are due to Qt5 version 5.2.1
     // font selection and font alignment bugs which will be addressed
     // for future Qt5 versions.
-    PLFLT empirical_yOffset = -0.63 * chrht * POINTS_PER_INCH / 25.4;
+    // PLFLT empirical_yOffset = -0.63 * chrht * POINTS_PER_INCH / 25.4;
+    // With Debian Jessie Qt5 version 5.3.2, that font alignment bug
+    // finally appears to be fixed.
+    PLFLT empirical_yOffset = 0.;
 #else
     PLFLT empirical_yOffset = 0.;
 #endif
