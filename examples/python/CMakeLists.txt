@@ -1,6 +1,6 @@
 # examples/python/CMakeLists.txt
 
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -220,7 +220,15 @@ if(CORE_BUILD)
   else(USE_DLL_SUBDIRECTORY)
     set(python_location4)
   endif(USE_DLL_SUBDIRECTORY)
-  set(python_location5 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
+
+  if(ENABLE_pyqt4)
+    set(python_location5 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt4)
+  elseif(ENABLE_pyqt5)
+    set(python_location5 ${CMAKE_BINARY_DIR}/bindings/qt_gui/pyqt5)
+  else(ENABLE_pyqt4)
+    set(python_location5)
+  endif(ENABLE_pyqt4)
+
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_python_start.py.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_python_start.py

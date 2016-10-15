@@ -121,6 +121,7 @@ ENABLE_pdl:		${ENABLE_pdl}
 ENABLE_python:		${ENABLE_python}
 ENABLE_qt:		${ENABLE_qt}
 ENABLE_pyqt4:		${ENABLE_pyqt4}
+ENABLE_pyqt5:		${ENABLE_pyqt5}
 ENABLE_tcl:		${ENABLE_tcl}
 ENABLE_itcl:		${ENABLE_itcl}
 ENABLE_tk:		${ENABLE_tk}

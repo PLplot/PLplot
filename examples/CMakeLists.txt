@@ -960,6 +960,33 @@ if(BUILD_TEST)
     list(APPEND interactive_targets_LIST test_pyqt4_example)
   endif(ENABLE_pyqt4)
 
+  if(ENABLE_pyqt5)
+    if(CORE_BUILD)
+      add_custom_target(test_pyqt5_example
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt5_example.py
+	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+	)
+      add_dependencies(test_pyqt5_example
+	plplot_pyqt5
+	python_examples
+	_plplotcmodule_fixed
+	${qt_targets}
+	)
+    else(CORE_BUILD)
+      add_custom_target(test_pyqt5_example
+	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt5_example.py
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
+	)
+      add_dependencies(test_pyqt5_example
+	plplot_pyqt5
+	_plplotcmodule
+	${qt_targets}
+	)
+    endif(CORE_BUILD)
+
+    list(APPEND interactive_targets_LIST test_pyqt5_example)
+  endif(ENABLE_pyqt5)
+
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
     add_custom_target(test_pltcl_standard_examples
       COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev ${generic_interactive_device} -np
@@ -1203,9 +1230,13 @@ if(BUILD_TEST)
     test_c_svgqt
     test_c_tiffqt
     #test_octave_qtwidget
-    test_pyqt4_example
     test_qt_example
     )
+  if(ENABLE_pyqt4)
+    list(APPEND qt_test_target_LIST test_pyqt4_example)
+  elseif(ENABLE_pyqt5)
+    list(APPEND qt_test_target_LIST test_pyqt5_example)
+  endif(ENABLE_pyqt4)
 
   set(qt_test_target_DEPENDS)
   foreach(qt_test_target ${qt_test_target_LIST})
