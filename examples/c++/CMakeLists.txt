@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -186,14 +186,15 @@ if(BUILD_TEST AND BUILD_qt_example)
         PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
     endif(BUILD_SHARED_LIBS)
     add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${QT_MOC_OUTFILES})
-    qt5_use_modules(qt_example Svg Gui PrintSupport)
+    # Not used with new Qt5 support method
+    # qt5_use_modules(qt_example Svg Gui PrintSupport)
     if(ENABLE_DYNDRIVERS)
-      target_link_libraries(qt_example plplotqt plplot ${qt_example_TARGETS})
+      target_link_libraries(qt_example plplotqt plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     else(ENABLE_DYNDRIVERS)
       # In this case plplot contains all the code in plplotqt so there is no
       # need to link to plplotqt at all, and in fact for some reason it
       # causes memory management issues to link to both plplot and plplotqt in this case.
-      target_link_libraries(qt_example plplot ${qt_example_TARGETS})
+      target_link_libraries(qt_example plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     endif(ENABLE_DYNDRIVERS)
   else(PLPLOT_USE_QT5)
     qt4_wrap_cpp(

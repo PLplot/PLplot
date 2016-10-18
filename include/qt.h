@@ -6,7 +6,7 @@
 // Imperial College, London
 //
 // Copyright (C) 2009  Imperial College, London
-// Copyright (C) 2009  Alan W. Irwin
+// Copyright (C) 2009-2016  Alan W. Irwin
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Lesser Public License as published
@@ -300,9 +300,14 @@ public:
     } Data;
 };
 
-// This widget allows to use plplot as a plotting engine in a Qt Application
-// The aspect ratio of the plotted data is constant, so gray strips are used
-// to delimit the page when the widget aspect ratio is not the one of the plotted page
+// This widget allows to use plplot as a plotting engine in a Qt
+// Application. The aspect ratio of the plotted data is constant, so
+// gray strips are used to delimit the page when the widget aspect
+// ratio is not the one of the plotted page.
+
+// N.B. The moc application assumes that the first inherited class and
+// only that inherited class is a subclass of QObject.  Therefore,
+// Qwidget (a subclass of QObject) must be first.
 class PLDLLIMPEXP_QT QtPLWidget : public QWidget, public QtPLDriver
 {
     Q_OBJECT

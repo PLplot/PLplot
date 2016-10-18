@@ -77,6 +77,21 @@ if(ENABLE_qt)
   option(PLPLOT_USE_QT5 "Experimental option to try Qt5" OFF)
 
   if(PLPLOT_USE_QT5)
+    # We are using latest Qt5 support method, see
+    # <http://doc.qt.io/qt-5/cmake-manual.html>.
+    # However, instead of the recommended "set(CMAKE_AUTOMOC ON)",
+    # "set(CMAKE_AUTOMOC_MOC_OPTIONS ...)", and
+    # "set(CMAKE_INCLUDE_CURRENT_DIR ON)" which has the huge
+    # disadvantage that these variables affect every target whether
+    # Qt-related or not, and especially because automoc cannot
+    # handle header files in different directories, use
+    # qt5_wrap_cpp as appropriate instead, since experiments show
+    # that produces the same results as automoc
+    # with no symlink necessary to take care of the different directory
+    # problem that automoc has.
+    
+    # Find needed components of Qt5.  Minimum value of the version is
+    # 5.3.1 because there were significant text alignment bugs in prior versions.
     find_package(Qt5 5.3.1 COMPONENTS Svg Gui PrintSupport)
     if(Qt5_FOUND)
       message(STATUS "Attempting to use Qt5 so have set PLD_epsqt to OFF since Qt5 does not support PostScript")
@@ -90,6 +105,10 @@ if(ENABLE_qt)
   endif(PLPLOT_USE_QT5)
 
   if(PLPLOT_USE_QT5)
+
+    # Disable the whole rest of this section since it is not necessary/desireable
+    # when moving to latest Qt5 support method documented above.
+    if(0)
     # Calculate Qt5_library_COMPILE_FLAGS and Qt5_library_LINK_FLAGS
     # to be used for the pkg-config case.
 
@@ -167,6 +186,7 @@ if(ENABLE_qt)
     message(STATUS "Qt5_library_fullpath_list = ${Qt5_library_fullpath_list}")
     pkg_config_link_flags(Qt5_library_LINK_FLAGS "${Qt5_library_fullpath_list}")
     message(STATUS "Qt5_library_LINK_FLAGS = ${Qt5_library_LINK_FLAGS}")
+  endif(0)
   endif(PLPLOT_USE_QT5)
 endif(ENABLE_qt)
 

@@ -85,7 +85,7 @@ if(ENABLE_pyqt5)
     plplotqt
     plplot
     ${PYTHON_LIBRARIES}
-    ${QT_LIBRARIES}
+    Qt5::Svg Qt5::Gui Qt5::PrintSupport
     )
   add_dependencies(plplot_pyqt5 generate_pyqt5_source)
 

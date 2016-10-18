@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 if(ENABLE_qt)
-  # Set up Qt4-based build environment.
+  # Set up Qt4- or Qt5-based build environment.
   set(qt_SOURCE plqt.cpp)
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
@@ -48,13 +48,13 @@ if(ENABLE_qt)
     # According to advice from Steve Kelly on the Cmake list, the Qt5
     # Gui component is a dependency of the Qt5 Svg component so is not
     # needed here, but I will leave it in since it is informative.
-    qt5_use_modules(plplotqt Svg Gui PrintSupport)
+    # Not needed with new Qt5 support method so comment out.
+    # qt5_use_modules(plplotqt Svg Gui PrintSupport)
 
     if(NON_TRANSITIVE)
-      #target_link_libraries(plplotqt PRIVATE plplot ${MATH_LIB})
-      target_link_libraries(plplotqt plplot ${MATH_LIB})
+      target_link_libraries(plplotqt PRIVATE plplot ${MATH_LIB} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     else(NON_TRANSITIVE)
-      target_link_libraries(plplotqt PUBLIC plplot ${MATH_LIB})
+      target_link_libraries(plplotqt PUBLIC plplot ${MATH_LIB} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     endif(NON_TRANSITIVE)
   else(PLPLOT_USE_QT5)
     if(NON_TRANSITIVE)
@@ -110,6 +110,9 @@ if(ENABLE_qt)
     # For this special case QT_LIBRARIES is not populated so must
     # use this alternative method to add Qt(5) libraries to the pkg-config file
     # for the plplotqt library.
+    # N.B. with new configuration method for Qt5, must implement something
+    # different to get this to work since Qt5_library_LINK_FLAGS
+    # undefined.
     set(
       libplplotqt_LINK_FLAGS
       "${Qt5_library_LINK_FLAGS}"

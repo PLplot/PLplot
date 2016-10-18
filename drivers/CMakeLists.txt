@@ -108,12 +108,14 @@ if(ENABLE_DYNDRIVERS)
 	  # According to advice from Steve Kelly on the Cmake list, the Qt5
 	  # Gui component is a dependency of the Qt5 Svg component so is not
 	  # needed here, but I will leave it in since it is informative.
-	  qt5_use_modules(${SOURCE_ROOT_NAME} Svg Gui PrintSupport)
+	  # N.B. with new Qt5 support, qt5_use_modules no longer required.
+	  # qt5_use_modules(${SOURCE_ROOT_NAME} Svg Gui PrintSupport)
 	  target_link_libraries(
 	    ${SOURCE_ROOT_NAME}
 	    plplot
 	    ${MATH_LIB}
 	    ${${SOURCE_ROOT_NAME}_TARGETS}
+	    Qt5::Svg Qt5::Gui Qt5::PrintSupport
 	    )
 	else(PLPLOT_USE_QT5)
 	  if(NOT QT_LIBRARIES)

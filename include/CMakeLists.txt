@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -147,8 +147,7 @@ if(ANY_QT_DEVICE)
     # #include ${QT_MOC_OUTFILES}) indirectly via the configured moc_files.h
     # header.
     # This header is #included by plqt.cpp so must be configured regardless
-    # of whether Qt4 or Qt5 is being used although it is effectively empty
-    # in the latter case.
+    # of whether Qt4 or Qt5 is being used.
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/moc_files.h.in
       ${CMAKE_CURRENT_BINARY_DIR}/moc_files.h

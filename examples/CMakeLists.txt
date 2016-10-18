@@ -801,11 +801,13 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_c_${device} ${${driver}_targets} ${targets_examples_c})
       if(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
-	message(STATUS "WARNING: The test_c_qtwidget target can be run independently
-   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
-   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
-   temporarily exclude this target from being a dependency of other more general interactive
-   test targets")
+#	message(STATUS "WARNING: The test_c_qtwidget target can be run independently
+#   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
+#   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
+#   temporarily exclude this target from being a dependency of other more general interactive
+#   test targets")
+	list(APPEND interactive_targets_LIST test_c_${device})
+	list(APPEND qt_targets_LIST test_c_${device})
       else(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
 	list(APPEND interactive_targets_LIST test_c_${device})
 	if(device STREQUAL "tk" OR device STREQUAL "ntk")
@@ -920,11 +922,13 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_qt_example qt_example ${qt_targets})
       if(PLPLOT_USE_QT5)
-	message(STATUS "WARNING: The test_qt_example target can be run independently
-   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
-   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
-   temporarily exclude this target from being a dependency of other more general interactive
-   test targets")
+#	message(STATUS "WARNING: The test_qt_example target can be run independently
+#   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
+#   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
+#   temporarily exclude this target from being a dependency of other more general interactive
+#   test targets")
+	list(APPEND qt_targets_LIST test_qt_example)
+	list(APPEND interactive_targets_LIST test_qt_example)
       else(PLPLOT_USE_QT5)
 	list(APPEND qt_targets_LIST test_qt_example)
 	list(APPEND interactive_targets_LIST test_qt_example)
