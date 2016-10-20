@@ -1,3 +1,6 @@
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file Copyright.txt or https://cmake.org/licensing for details.
+
 #.rst:
 # FindwxWidgets
 # -------------
@@ -103,39 +106,6 @@
 #    include(${wxWidgets_USE_FILE})
 #    # and for each of your dependent executable/library targets:
 #    target_link_libraries(<YourTarget> ${wxWidgets_LIBRARIES})
-
-#=============================================================================
-# Copyright 2004-2009 Kitware, Inc.
-# Copyright 2007-2009 Miguel A. Figueroa-Villanueva <miguelf at ieee dot org>
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-#
-# * Redistributions of source code must retain the above copyright
-#   notice, this list of conditions and the following disclaimer.
-#
-# * Redistributions in binary form must reproduce the above copyright
-#   notice, this list of conditions and the following disclaimer in the
-#   documentation and/or other materials provided with the distribution.
-#
-# * Neither the names of Kitware, Inc., the Insight Software Consortium,
-#   nor the names of their contributors may be used to endorse or promote
-#   products derived from this software without specific prior written
-#   permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#=============================================================================
 
 #
 # FIXME: check this and provide a correct sample usage...
@@ -521,23 +491,26 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
     # Select one default tree inside the already determined wx tree.
     # Prefer static/shared order usually consistent with build
     # settings.
+    set(_WX_TOOL "")
+    set(_WX_TOOLVER "")
+    set(_WX_ARCH "")
     if(MINGW)
-      set(WX_LIB_DIR_PREFIX gcc)
+      set(_WX_TOOL gcc)
     elseif(MSVC)
-      set(WX_LIB_DIR_PREFIX vc)
+      set(_WX_TOOL vc)
       if(MSVC14)
-        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}140)
+        set(_WX_TOOLVER 140)
       elseif(MSVC12)
-        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}120)
+        set(_WX_TOOLVER 120)
       elseif(MSVC11)
-        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}110)
+        set(_WX_TOOLVER 110)
       elseif(MSVC10)
-        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}100)
+        set(_WX_TOOLVER 100)
       elseif(MSVC90)
-        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}90)
+        set(_WX_TOOLVER 90)
       endif()
       if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(WX_LIB_DIR_PREFIX ${WX_LIB_DIR_PREFIX}_x64)
+        set(_WX_ARCH _x64)
       endif()
     endif()
     if(BUILD_SHARED_LIBS)
@@ -552,8 +525,10 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
           mswunivu/wx/setup.h
           mswunivud/wx/setup.h
         PATHS
-        ${WX_ROOT_DIR}/lib/${WX_LIB_DIR_PREFIX}_dll   # prefer shared
-        ${WX_ROOT_DIR}/lib/${WX_LIB_DIR_PREFIX}_lib
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_TOOLVER}${_WX_ARCH}_dll   # prefer shared
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_ARCH}_dll                 # prefer shared
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_TOOLVER}${_WX_ARCH}_lib
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_ARCH}_lib
         DOC "Path to wxWidgets libraries"
         NO_DEFAULT_PATH
         )
@@ -569,12 +544,17 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
           mswunivu/wx/setup.h
           mswunivud/wx/setup.h
         PATHS
-        ${WX_ROOT_DIR}/lib/${WX_LIB_DIR_PREFIX}_lib   # prefer static
-        ${WX_ROOT_DIR}/lib/${WX_LIB_DIR_PREFIX}_dll
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_TOOLVER}${_WX_ARCH}_lib   # prefer static
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_ARCH}_lib                 # prefer static
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_TOOLVER}${_WX_ARCH}_dll
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_ARCH}_dll
         DOC "Path to wxWidgets libraries"
         NO_DEFAULT_PATH
         )
     endif()
+    unset(_WX_TOOL)
+    unset(_WX_TOOLVER)
+    unset(_WX_ARCH)
 
     # If wxWidgets_LIB_DIR changed, clear all libraries.
     if(NOT WX_LIB_DIR STREQUAL wxWidgets_LIB_DIR)
@@ -943,13 +923,13 @@ DBG_MSG("wxWidgets_USE_FILE        : ${wxWidgets_USE_FILE}")
 
 #=====================================================================
 #=====================================================================
+
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(wxWidgets DEFAULT_MSG wxWidgets_FOUND)
-# Maintain consistency with all other variables just in case
-# some old version of cmake sets just the uppercased version.
-# N.B. later versions of cmake set both uppercased and natural case versions
-# so this set command works for all versions of cmake.
-set(wxWidgets_FOUND ${WXWIDGETS_FOUND})
+
+find_package_handle_standard_args(wxWidgets
+  REQUIRED_VARS wxWidgets_LIBRARIES wxWidgets_INCLUDE_DIRS
+  VERSION_VAR   wxWidgets_VERSION_STRING
+  )
 
 #=====================================================================
 # Macros for use in wxWidgets apps.

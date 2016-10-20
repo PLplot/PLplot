@@ -239,7 +239,7 @@ such as publicity, privacy, or moral rights may limit how you use the
 material.
 ___________________________________________________________________________
 
-The files
+The CMake-related files
 
 cmake/modules/FindLua.cmake
 cmake/modules/FindwxWidgets.cmake
@@ -251,7 +251,10 @@ cmake/test_ada/cmake/Modules/CMakeAdaInformation.cmake
 cmake/test_ada/cmake/Modules/CMakeDetermineAdaCompiler.cmake
 cmake/test_ada/cmake/Modules/CMakeTestAdaCompiler.cmake
 
-and the D language support files
+were originally distributed by Kitware Inc. and were downloaded at
+various epochs by PLplot developers and then further modified by us.
+
+The CMake-related D language support files
 cmake/modules/language_support/cmake/CMakeD_Copyright.txt
 cmake/modules/language_support/cmake/CMakeDInformation.cmake
 cmake/modules/language_support/cmake/Platform/Linux-dmd.cmake
@@ -263,54 +266,18 @@ cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in
 cmake/modules/language_support/cmake/CMakeTestDCompiler.cmake
 cmake/modules/language_support/cmake/CMakeDetermineDCompiler.cmake
 
-were originally distributed by Kitware Inc. and were downloaded at
-various epochs by PLplot developers and then further modified (often
-substantially) by us.  In the case of the D language support files
-those files were downloaded from Kitware Inc. by CMakeD developers
-Selman Ulug and Tim Burrell <http://www.dsource.org/projects/cmaked>,
-substantially modified by them, and then further downloaded from that
-site in 2009 by us and further modified by us.
+were downloaded from Kitware Inc. by CMakeD developers Selman Ulug and
+Tim Burrell <http://www.dsource.org/projects/cmaked>, substantially
+modified by them, and then further downloaded from that site in 2009
+by us and further modified by us.
 
-This complete group of files sometimes have slightly different licensing language
-depending on the epoch of our download so look at each of the above
-files for the definitive source of licensing language.  However, in
-all cases that language is very similar to the modern version of the
-license for CMake itself given at <https://cmake.org/licensing/> whose
-full text (downloaded as of 2016-02-05) is as follows:
-
-CMake is distributed under the OSI-approved BSD 3-clause License:
-CMake - Cross Platform Makefile Generator
-Copyright 2000-2014 Kitware, Inc.
-Copyright 2000-2011 Insight Software Consortium
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions
-are met:
-
-* Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-
-* Redistributions in binary form must reproduce the above copyright
-notice, this list of conditions and the following disclaimer in the
-documentation and/or other materials provided with the distribution.
-
-* Neither the names of Kitware, Inc., the Insight Software Consortium,
-nor the names of their contributors may be used to endorse or promote
-products derived from this software without specific prior written
-permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+This complete group of CMake-related files sometimes has slightly
+different licensing language depending on download epoch so look at
+each of the above files for the definitive source of licensing
+language.  However, in all cases that language is very similar to the
+modern version of the license for CMake itself which is the
+OSI-approved BSD 3-clause License (see <https://cmake.org/licensing>
+for further details).
 ___________________________________________________________________________
 
 Any file that is explicitly marked as "public domain" is free from any
