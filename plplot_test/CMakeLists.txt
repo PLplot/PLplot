@@ -80,16 +80,6 @@ if(SH_EXECUTABLE)
     NEWLINE_STYLE UNIX
     )
 
-  #Install-tree configuration
-  set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
-  set(configured_PL_DEPRECATED_f95 OFF)
-  configure_file(
-    plplot-test.sh.in
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install
-    @ONLY
-    NEWLINE_STYLE UNIX
-    )
-
   # Set up optional tests in the configured plplot-test-interactive.sh file
   # which is used by the traditional build system for the installed
   # examples to do some interactive testing.
@@ -126,6 +116,28 @@ if(SH_EXECUTABLE)
     @ONLY
     NEWLINE_STYLE UNIX
     )
+
+  # Install-tree configuration of plplot-test.sh and plplot-test-interactive.sh
+  # No Tcl/Tk prefix for these cases.
+  set(SAVE_TCL_TK_SRC_PREFIX ${TCL_TK_SRC_PREFIX})
+  set(TCL_TK_SRC_PREFIX)
+
+  set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
+  set(configured_PL_DEPRECATED_f95 OFF)
+  configure_file(
+    plplot-test.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install
+    @ONLY
+    NEWLINE_STYLE UNIX
+    )
+
+  configure_file(
+    plplot-test-interactive.sh.in
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh_install
+    @ONLY
+    NEWLINE_STYLE UNIX
+    )
+  set(TCL_TK_SRC_PREFIX ${SAVE_TCL_TK_SRC_PREFIX})
 
   configure_file(
     test_c.sh.in
@@ -490,9 +502,10 @@ if(SH_EXECUTABLE)
       )
   endif(ENABLE_tcl)
   install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh_install
     DESTINATION ${DATA_DIR}/examples
     PERMISSIONS ${PERM_SCRIPTS}
+    RENAME plplot-test-interactive.sh
     )
   if(PLD_plmeta)
     install(

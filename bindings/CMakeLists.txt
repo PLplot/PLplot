@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -28,9 +28,9 @@ if(PL_DEPRECATED_f95)
 else(PL_DEPRECATED_f95)
   add_subdirectory(f95)
 endif(PL_DEPRECATED_f95)
-add_subdirectory(tcl)
-add_subdirectory(tk)
-add_subdirectory(tk-x-plat)
+add_subdirectory(${TCL_TK_SRC_PREFIX}tcl tcl)
+add_subdirectory(${TCL_TK_SRC_PREFIX}tk tk)
+add_subdirectory(${TCL_TK_SRC_PREFIX}tk-x-plat tk-x-plat)
 add_subdirectory(python)
 add_subdirectory(octave)
 add_subdirectory(java)

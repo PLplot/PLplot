@@ -1,0 +1,20 @@
+#!/bin/sh
+#--------------------------------*- Tcl -*------------------------------------#
+# Maurice LeBrun
+# 12/24/02
+#
+# A front-end to x01.tcl for running directly from the command line, locating
+# pltcl via PATH.
+# Handles all usual plplot command arguments.  See "pltcl -h" for info.
+#-----------------------------------------------------------------------------#
+#\
+exec pltcl -f "$0" ${1+"$@"}
+
+source x01.tcl
+
+plgver ver
+puts [format "PLplot library version: %s" $ver ]
+
+plinit
+x01
+plend

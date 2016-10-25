@@ -124,12 +124,12 @@ if(NOT ENABLE_DYNDRIVERS)
     add_custom_command(
       OUTPUT ${tclgenfiles}
       COMMAND ${TCL_TCLSH}
-      ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
-      ${CMAKE_SOURCE_DIR}/bindings/tcl
+      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/pltclgen.tcl
+      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl
       DEPENDS
-      ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
-      ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
-      ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
+      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/pltclgen.tcl
+      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/plapi.tpl
+      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/tclcmd.tpl
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
       )
   endif(ENABLE_tcl)

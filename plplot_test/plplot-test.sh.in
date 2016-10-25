@@ -1,7 +1,7 @@
 #!@SH_EXECUTABLE@
 # -*- mode: shell-script -*-
 #
-# Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009  Alan W. Irwin
+# Copyright (C) 2004-2016 Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
@@ -263,7 +263,7 @@ else
     f95dir="$EXAMPLES_DIR"/f95
 fi
 pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
-tclexamplesdir="$EXAMPLES_DIR"/tcl
+tclexamplesdir="$EXAMPLES_DIR"/@TCL_TK_SRC_PREFIX@tcl
 tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl
 perldir="$SRC_EXAMPLES_DIR"/perl
 javadir="$EXAMPLES_DIR"/java
