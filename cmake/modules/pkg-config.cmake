@@ -384,6 +384,18 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
       set(PC_PRECISION)
     endif(PC_LONG_NAME MATCHES "^ ")
 
+    # Filter all build-tree or source-tree -I options from
+    # compile-flags.  These occur, for example, for libplplot in the
+    # -DENABLE_DYNDRIVERS=OFF case because the compile flags of
+    # certain device drivers (e.g., tk) depend on build-tree
+    # directories, but libraries or applications that are built
+    # against libplplot should _never_ include those build-tree
+    # headers.
+    string(REGEX REPLACE "-I[^ ]*${CMAKE_SOURCE_DIR}[^ ]*" "" PC_COMPILE_FLAGS "${PC_COMPILE_FLAGS}")
+    string(REGEX REPLACE "-I[^ ]*${CMAKE_BINARY_DIR}[^ ]*" "" PC_COMPILE_FLAGS "${PC_COMPILE_FLAGS}")
+    # Clean up extra blanks
+    string(REGEX REPLACE "  *" " " PC_COMPILE_FLAGS "${PC_COMPILE_FLAGS}")
+
     # Transform PC_LINK_FLAGS from list of libraries to the standard pkg-config form.
     #message(STATUS "input PC_LINK_FLAGS = ${PC_LINK_FLAGS}")
     pkg_config_link_flags(PC_LINK_FLAGS "${PC_LINK_FLAGS}")
