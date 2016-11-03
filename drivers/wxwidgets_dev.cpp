@@ -1087,32 +1087,29 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
     //save the text state for automatic restoration on scope exit
     TextObjectsSaver textObjectsSaver( m_dc );
 
-    if ( !drawText )
+    wxCoord          leading;
+    Font             font = m_fontGrabber.GetFont( fci, scaledFontSize, underlined );
+    if ( m_dc )
     {
-        wxCoord leading;
-        Font    font = m_fontGrabber.GetFont( fci, scaledFontSize, underlined );
-        if ( m_dc )
-        {
-            wxFont theFont = font.getWxFont();
-            m_dc->GetTextExtent( section, &sectionWidth, &sectionHeight,
-                &sectionDepth, &leading, &theFont );
-            sectionHeight -= sectionDepth + leading;                         //The height reported is the line spacing
-            sectionDepth  += leading;
-            sectionWidth  *= m_xScale;
-            sectionHeight *= m_yScale;
-            sectionDepth  *= m_yScale;
-        }
-        else
-        {
-            wxFont theFont = font.getWxFont();
-            m_interactiveTextGcdc->GetTextExtent( section, &sectionWidth, &sectionHeight,
-                &sectionDepth, &leading, &theFont );
-            sectionHeight -= sectionDepth + leading;             //The height reported is the line spacing
-            sectionDepth  += leading;
-            sectionWidth  *= m_xScale;
-            sectionHeight *= m_yScale;
-            sectionDepth  *= m_yScale;
-        }
+        wxFont theFont = font.getWxFont();
+        m_dc->GetTextExtent( section, &sectionWidth, &sectionHeight,
+            &sectionDepth, &leading, &theFont );
+        sectionHeight -= sectionDepth + leading;                         //The height reported is the line spacing
+        sectionDepth  += leading;
+        sectionWidth  *= m_xScale;
+        sectionHeight *= m_yScale;
+        sectionDepth  *= m_yScale;
+    }
+    else
+    {
+        wxFont theFont = font.getWxFont();
+        m_interactiveTextGcdc->GetTextExtent( section, &sectionWidth, &sectionHeight,
+            &sectionDepth, &leading, &theFont );
+        sectionHeight -= sectionDepth + leading;             //The height reported is the line spacing
+        sectionDepth  += leading;
+        sectionWidth  *= m_xScale;
+        sectionHeight *= m_yScale;
+        sectionDepth  *= m_yScale;
     }
 
     //draw the text if requested
