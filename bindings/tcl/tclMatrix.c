@@ -2,7 +2,8 @@
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 2004  Joao Cardoso
+//  Copyright (C) 2004 Joao Cardoso
+//  Copyright (C) 2016 Alan W. Irwin
 //
 //  This file is part of PLplot.
 //
@@ -30,7 +31,7 @@
 //
 
 //
-// #define DEBUG
+//#define DEBUG
 //
 
 #include <stdio.h>
@@ -122,10 +123,11 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
                int argc, const char **argv )
 {
     register tclMatrix *matPtr;
-    int i, j, length, new, index, persist = 0, initializer = 0;
+    int i, j, new, index, persist = 0, initializer = 0;
     Tcl_HashEntry      *hPtr;
     Tcl_CmdInfo        infoPtr;
     char c;
+    size_t             argv0_length;
 
     dbug_enter( "Tcl_MatrixCmd" );
 
@@ -148,12 +150,12 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
     for ( i = 1; i < argc; i++ )
     {
-        c      = argv[i][0];
-        length = (int) strlen( argv[i] );
+        c            = argv[i][0];
+        argv0_length = strlen( argv[i] );
 
         // If found, set persist variable and compress argv-list
 
-        if ( ( c == '-' ) && ( strncmp( argv[i], "-persist", (size_t) length ) == 0 ) )
+        if ( ( c == '-' ) && ( strncmp( argv[i], "-persist", argv0_length ) == 0 ) )
         {
             persist = 1;
             argc--;
@@ -172,6 +174,10 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     matPtr->dim     = 0;
     matPtr->len     = 1;
     matPtr->tracing = 0;
+    // MAX_ARRAY_DIM is #defined to be 3. Later programming logic
+    // treats all lower-dimensioned matrices as 3D matrices where the
+    // higher dimension size is 1.  So must initialize all sizes
+    // to 1 here.
     for ( i = 0; i < MAX_ARRAY_DIM; i++ )
         matPtr->n[i] = 1;
 
@@ -203,16 +209,16 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 // Initialize type
 
     argc--; argv++;
-    c      = argv[0][0];
-    length = (int) strlen( argv[0] );
+    c            = argv[0][0];
+    argv0_length = strlen( argv[0] );
 
-    if ( ( c == 'f' ) && ( strncmp( argv[0], "float", (size_t) length ) == 0 ) )
+    if ( ( c == 'f' ) && ( strncmp( argv[0], "float", argv0_length ) == 0 ) )
     {
         matPtr->type = TYPE_FLOAT;
         matPtr->put  = MatrixPut_f;
         matPtr->get  = MatrixGet_f;
     }
-    else if ( ( c == 'i' ) && ( strncmp( argv[0], "int", (size_t) length ) == 0 ) )
+    else if ( ( c == 'i' ) && ( strncmp( argv[0], "int", argv0_length ) == 0 ) )
     {
         matPtr->type = TYPE_INT;
         matPtr->put  = MatrixPut_i;
@@ -258,17 +264,8 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         // Check to see if dimension is valid and store
 
         index            = matPtr->dim - 1;
-        matPtr->n[index] = atoi( argv[0] );
-        if ( matPtr->n[index] < 0 )
-        {
-            Tcl_AppendResult( interp, "invalid matrix dimension \"", argv[0],
-                "\" for Matrix operator \"", matPtr->name, "\"",
-                (char *) NULL );
-
-            DeleteMatrixCmd( (ClientData) matPtr );
-            return TCL_ERROR;
-        }
-        matPtr->len *= matPtr->n[index];
+        matPtr->n[index] = MAX( 0, atoi( argv[0] ) );
+        matPtr->len     *= matPtr->n[index];
     }
 
     if ( matPtr->dim < 1 )
@@ -523,11 +520,19 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
            int argc, const char **argv )
 {
     register tclMatrix *matPtr = (tclMatrix *) clientData;
-    int  length, put = 0;
-    char c, tmp[80];
-    const char         *name = argv[0];
-    int  nmin[MAX_ARRAY_DIM], nmax[MAX_ARRAY_DIM];
-    int  i, j, k;
+    int        put             = 0;
+    char       c, tmp[200];
+    const char *name = argv[0];
+    // In one case (negative step and desired last actual index of 0)
+    // stop[i] is -1 so it must have an int type rather than size_t.
+    // To reduce casting most other slice-related types are also int
+    // rather than size_t.
+    int    start[MAX_ARRAY_DIM], stop[MAX_ARRAY_DIM], step[MAX_ARRAY_DIM], sign_step[MAX_ARRAY_DIM];
+    int    i, j, k;
+    int    char_converted, change_default_start, change_default_stop;
+    size_t argv0_length;
+    // Needs size to contain ":" and terminating NULL as a result of sscanf calls below.
+    char   c1[2], c2[2];
 
 // Initialize
 
@@ -540,26 +545,28 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
     for ( i = 0; i < MAX_ARRAY_DIM; i++ )
     {
-        nmin[i] = 0;
-        nmax[i] = matPtr->n[i] - 1;
+        start[i]     = 0;
+        stop[i]      = matPtr->n[i];
+        step[i]      = 1;
+        sign_step[i] = 1;
     }
 
 // First check for a matrix command
 
     argc--; argv++;
-    c      = argv[0][0];
-    length = (int) strlen( argv[0] );
+    c            = argv[0][0];
+    argv0_length = strlen( argv[0] );
 
 // dump -- send a nicely formatted listing of the array contents to stdout
 // (very helpful for debugging)
 
-    if ( ( c == 'd' ) && ( strncmp( argv[0], "dump", (size_t) length ) == 0 ) )
+    if ( ( c == 'd' ) && ( strncmp( argv[0], "dump", argv0_length ) == 0 ) )
     {
-        for ( i = nmin[0]; i <= nmax[0]; i++ )
+        for ( i = start[0]; i < stop[0]; i++ )
         {
-            for ( j = nmin[1]; j <= nmax[1]; j++ )
+            for ( j = start[1]; j < stop[1]; j++ )
             {
-                for ( k = nmin[2]; k <= nmax[2]; k++ )
+                for ( k = start[2]; k < stop[2]; k++ )
                 {
                     ( *matPtr->get )( (ClientData) matPtr, interp, I3D( i, j, k ), tmp );
                     printf( "%s ", tmp );
@@ -576,7 +583,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 // delete -- delete the array
 
-    else if ( ( c == 'd' ) && ( strncmp( argv[0], "delete", (size_t) length ) == 0 ) )
+    else if ( ( c == 'd' ) && ( strncmp( argv[0], "delete", argv0_length ) == 0 ) )
     {
 #ifdef DEBUG
         fprintf( stderr, "Deleting array %s\n", name );
@@ -588,7 +595,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 // filter
 // Only works on 1d matrices
 
-    else if ( ( c == 'f' ) && ( strncmp( argv[0], "filter", (size_t) length ) == 0 ) )
+    else if ( ( c == 'f' ) && ( strncmp( argv[0], "filter", argv0_length ) == 0 ) )
     {
         Mat_float *tmpMat;
         int       ifilt, nfilt;
@@ -637,7 +644,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
 
 // help
 
-    else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", (size_t) length ) == 0 ) )
+    else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", argv0_length ) == 0 ) )
     {
         Tcl_AppendResult( interp,
             "Available subcommands:\n\
@@ -662,7 +669,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 
 // info
 
-    else if ( ( c == 'i' ) && ( strncmp( argv[0], "info", (size_t) length ) == 0 ) )
+    else if ( ( c == 'i' ) && ( strncmp( argv[0], "info", argv0_length ) == 0 ) )
     {
         for ( i = 0; i < matPtr->dim; i++ )
         {
@@ -678,7 +685,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 
 // max
 
-    else if ( ( c == 'm' ) && ( strncmp( argv[0], "max", (size_t) length ) == 0 ) )
+    else if ( ( c == 'm' ) && ( strncmp( argv[0], "max", argv0_length ) == 0 ) )
     {
         int len;
         if ( argc < 1 || argc > 2 )
@@ -691,8 +698,21 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 
         if ( argc == 2 )
             len = atoi( argv[1] );
+        if ( len < 0 || len > matPtr->len )
+        {
+            Tcl_AppendResult( interp, "specified length out of valid range",
+                (char *) NULL );
+            return TCL_ERROR;
+        }
         else
             len = matPtr->len;
+
+        if ( len == 0 )
+        {
+            Tcl_AppendResult( interp, "attempt to find maximum of array with zero elements",
+                (char *) NULL );
+            return TCL_ERROR;
+        }
 
         switch ( matPtr->type )
         {
@@ -719,7 +739,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 
 // min
 
-    else if ( ( c == 'm' ) && ( strncmp( argv[0], "min", (size_t) length ) == 0 ) )
+    else if ( ( c == 'm' ) && ( strncmp( argv[0], "min", argv0_length ) == 0 ) )
     {
         int len;
         if ( argc < 1 || argc > 2 )
@@ -732,8 +752,21 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 
         if ( argc == 2 )
             len = atoi( argv[1] );
+        if ( len < 0 || len > matPtr->len )
+        {
+            Tcl_AppendResult( interp, "specified length out of valid range",
+                (char *) NULL );
+            return TCL_ERROR;
+        }
         else
             len = matPtr->len;
+
+        if ( len == 0 )
+        {
+            Tcl_AppendResult( interp, "attempt to find minimum of array with zero elements",
+                (char *) NULL );
+            return TCL_ERROR;
+        }
 
         switch ( matPtr->type )
         {
@@ -761,7 +794,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 // redim
 // Only works on 1d matrices
 
-    else if ( ( c == 'r' ) && ( strncmp( argv[0], "redim", (size_t) length ) == 0 ) )
+    else if ( ( c == 'r' ) && ( strncmp( argv[0], "redim", argv0_length ) == 0 ) )
     {
         int  newlen;
         void *data;
@@ -786,7 +819,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         {
         case TYPE_FLOAT:
             data = realloc( matPtr->fdata, (size_t) newlen * sizeof ( Mat_float ) );
-            if ( data == NULL )
+            if ( newlen != 0 && data == NULL )
             {
                 Tcl_AppendResult( interp, "redim failed!",
                     (char *) NULL );
@@ -799,7 +832,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 
         case TYPE_INT:
             data = realloc( matPtr->idata, (size_t) newlen * sizeof ( Mat_int ) );
-            if ( data == NULL )
+            if ( newlen != 0 && data == NULL )
             {
                 Tcl_AppendResult( interp, "redim failed!",
                     (char *) NULL );
@@ -817,7 +850,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 // scale
 // Only works on 1d matrices
 
-    else if ( ( c == 's' ) && ( strncmp( argv[0], "scale", (size_t) length ) == 0 ) )
+    else if ( ( c == 's' ) && ( strncmp( argv[0], "scale", argv0_length ) == 0 ) )
     {
         Mat_float scale;
 
@@ -858,17 +891,25 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         tclMatrixXtnsnDescr *p = head;
         for (; p; p = p->next )
         {
-            if ( ( c == p->cmd[0] ) && ( strncmp( argv[0], p->cmd, (size_t) length ) == 0 ) )
+            if ( ( c == p->cmd[0] ) && ( strncmp( argv[0], p->cmd, argv0_length ) == 0 ) )
             {
 #ifdef DEBUG
-                printf( "found a match, invoking %s\n", p->cmd );
+                fprintf( stderr, "found a match, invoking %s\n", p->cmd );
 #endif
                 return ( *( p->cmdproc ) )( matPtr, interp, --argc, ++argv );
             }
         }
     }
 
-// Must be a put or get.  Get array indices.
+    // Must be a put or get of an array slice.
+
+    // Determine array index slice adopting the same rules as the Python case
+    // documented at <https://docs.python.org/3/library/stdtypes.html#common-sequence-operations>
+    // Also, for the case where just a _single_ ":" is used to represent the
+    // complete range of indices for a dimension, the
+    // notation "*" can be used as well for backwards compatibility
+    // with the limited slice capability that was available before
+    // this full slice capability was implemented.
 
     if ( argc < matPtr->dim )
     {
@@ -876,29 +917,180 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
             name, (char *) NULL );
         return TCL_ERROR;
     }
+
     for ( i = 0; i < matPtr->dim; i++ )
     {
-        if ( strcmp( argv[0], "*" ) == 0 )
+        // Because of argc and argv initialization and logic at end of
+        // loop which decrements argc and increments argv, argv[0]
+        // walks through the space-separated command-line strings that
+        // have been parsed by Tcl for each iteration of this loop.
+        // N.B. argv[0] should point to valid memory (i.e., one of the
+        // command-line strings) because of the above initial argc
+        // check and loop limits.
+        argv0_length = strlen( argv[0] );
+        // According to Linux man page for sscanf, a straightforward interpretation of the C standard
+        // indicates that %n should not be counted as a successful conversion when calculating
+        // the sscanf return value, but that man page also says should not count on that in general.
+        // So in the logic below use the ">= " test to allow for both possibilities.
+
+        // Default values if not determined below.
+        start[i]             = 0;
+        stop[i]              = matPtr->n[i];
+        step[i]              = 1;
+        change_default_start = 0;
+        change_default_stop  = 0;
+        // i:j:k
+        if ( sscanf( argv[0], "%d%1[:]%d%1[:]%d%n", start + i, c1, stop + i, c2, step + i, &char_converted ) >= 5 )
         {
-            nmin[i] = 0;
-            nmax[i] = matPtr->n[i] - 1;
+        }
+        // i:j:
+        else if ( sscanf( argv[0], "%d%1[:]%d%1[:]%n", start + i, c1, stop + i, c2, &char_converted ) >= 4 )
+        {
+        }
+        // i:j
+        else if ( sscanf( argv[0], "%d%1[:]%d%n", start + i, c1, stop + i, &char_converted ) >= 3 )
+        {
+        }
+        // i::k
+        else if ( sscanf( argv[0], "%d%1[:]%1[:]%d%n", start + i, c1, c2, step + i, &char_converted ) >= 4 )
+        {
+            if ( step[i] < 0 )
+            {
+                change_default_stop = 1;
+            }
+        }
+        // i::
+        else if ( sscanf( argv[0], "%d%1[:]%1[:]%n", start + i, c1, c2, &char_converted ) >= 3 )
+        {
+        }
+        // i:
+        else if ( sscanf( argv[0], "%d%1[:]%n", start + i, c1, &char_converted ) >= 2 )
+        {
+        }
+        // :j:k
+        else if ( sscanf( argv[0], "%1[:]%d%1[:]%d%n", c1, stop + i, c2, step + i, &char_converted ) >= 4 )
+        {
+            if ( step[i] < 0 )
+            {
+                change_default_start = 1;
+            }
+        }
+        // :j:
+        else if ( sscanf( argv[0], "%1[:]%d%1[:]%n", c1, stop + i, c2, &char_converted ) >= 3 )
+        {
+        }
+        // :j
+        else if ( sscanf( argv[0], "%1[:]%d%n", c1, stop + i, &char_converted ) >= 2 )
+        {
+        }
+        // ::k
+        else if ( sscanf( argv[0], "%1[:]%1[:]%d%n", c1, c2, step + i, &char_converted ) >= 3 )
+        {
+            if ( step[i] < 0 )
+            {
+                change_default_start = 1;
+                change_default_stop  = 1;
+            }
+        }
+        // ::
+        else if ( strcmp( argv[0], "::" ) == 0 )
+            char_converted = 2;
+        // :
+        else if ( strcmp( argv[0], ":" ) == 0 )
+            char_converted = 1;
+        // *
+        else if ( strcmp( argv[0], "*" ) == 0 )
+            char_converted = 1;
+        // i
+        else if ( sscanf( argv[0], "%d%n", start + i, &char_converted ) >= 1 )
+        {
+            // Special checks for the pure index case (just like in Python).
+            if ( start[i] < 0 )
+                start[i] += matPtr->n[i];
+            if ( start[i] < 0 || start[i] > matPtr->n[i] - 1 )
+            {
+                sprintf( tmp, "Array index %d out of bounds: original string = \"%s\"; transformed = %d; min = 0; max = %d\n",
+                    i, argv[0], start[i], matPtr->n[i] - 1 );
+                Tcl_AppendResult( interp, tmp, (char *) NULL );
+                return TCL_ERROR;
+            }
+            stop[i] = start[i] + 1;
         }
         else
         {
-            nmin[i] = atoi( argv[0] );
-            nmax[i] = nmin[i];
-        }
-        if ( nmin[i] < 0 || nmax[i] > matPtr->n[i] - 1 )
-        {
-            sprintf( tmp, "Array index %d out of bounds: %s; max: %d\n",
-                i, argv[0], matPtr->n[i] - 1 );
+            sprintf( tmp, "Array slice for index %d with original string = \"%s\" could not be parsed\n",
+                i, argv[0] );
             Tcl_AppendResult( interp, tmp, (char *) NULL );
             return TCL_ERROR;
         }
+
+        // Check, convert and sanitize start[i], stop[i], and step[i] values.
+        if ( step[i] == 0 )
+        {
+            Tcl_AppendResult( interp, "step part of slice must be non-zero",
+                (char *) NULL );
+            return TCL_ERROR;
+        }
+        sign_step[i] = ( step[i] > 0 ) ? 1 : -1;
+        if ( (size_t) char_converted > argv0_length )
+        {
+            Tcl_AppendResult( interp, "MatrixCmd, internal logic error",
+                (char *) NULL );
+            return TCL_ERROR;
+        }
+        if ( (size_t) char_converted < argv0_length )
+        {
+            sprintf( tmp, "Array slice for index %d with original string = \"%s\" "
+                "had trailing unparsed characters\n", i, argv[0] );
+            Tcl_AppendResult( interp, tmp, (char *) NULL );
+            return TCL_ERROR;
+        }
+        if ( start[i] < 0 )
+            start[i] += matPtr->n[i];
+        start[i] = MAX( 0, MIN( matPtr->n[i] - 1, start[i] ) );
+        if ( change_default_start )
+            start[i] = matPtr->n[i] - 1;
+        if ( stop[i] < 0 )
+            stop[i] += matPtr->n[i];
+        if ( step[i] > 0 )
+            stop[i] = MAX( 0, MIN( matPtr->n[i], stop[i] ) );
+        else
+            stop[i] = MAX( -1, MIN( matPtr->n[i], stop[i] ) );
+        if ( change_default_stop )
+            stop[i] = -1;
+
+        // At this stage, start, stop, and step (!=0), correspond to
+        // i, j, and k (!=0) in the slice documentation given at
+        // <https://docs.python.org/3/library/stdtypes.html#common-sequence-operations>.
+        // with all checks and conversions made.  According to note 5
+        // of that documentation (translated to the present start,
+        // stop and step notation and also subject to the clarifying
+        // discussion in <http://bugs.python.org/issue28614>) the
+        // array index should take on the values
+        // index = start + n*step
+        // where n 0, 1, etc., with that sequence
+        // terminated just before index = stop is reached.
+        // Therefore, the for loop for a typical index when step is positive should read
+        // for ( i = start[0]; i < stop[0]; i += step[0] )
+        // and when step is negative should read
+        // for ( i = start[0]; i > stop[0]; i += step[0] )
+        // So to cover both cases, we use for loops of the
+        // following form below
+        // for ( i = start[0]; sign_step[0]*i < stop[0]; i += step[0] )
+        // where stop has been transformed as follows:
+#ifdef DEBUG
+        fprintf( stderr, "Array slice for index %d with original string = \"%s\" "
+            "yielded start[i], stop[i], transformed stop[i], and step[i] = "
+            "%d, %d, ", i, argv[0], start[i], stop[i] );
+#endif
+        stop[i] = sign_step[i] * stop[i];
+#ifdef DEBUG
+        fprintf( stderr, "%d, %d\n", stop[i], step[i] );
+#endif
         argc--; argv++;
     }
 
-// If there is an "=" after indicies, it's a put.  Do error checking.
+// If there is an "=" after indices, it's a put.  Do error checking.
 
     if ( argc > 0 )
     {
@@ -930,21 +1122,21 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
 // Do the get/put.
 // The loop over all elements takes care of the multi-element cases.
 
-    for ( i = nmin[0]; i <= nmax[0]; i++ )
+    for ( i = start[0]; sign_step[0] * i < stop[0]; i += step[0] )
     {
-        for ( j = nmin[1]; j <= nmax[1]; j++ )
+        for ( j = start[1]; sign_step[1] * j < stop[1]; j += step[1] )
         {
-            for ( k = nmin[2]; k <= nmax[2]; k++ )
+            for ( k = start[2]; sign_step[2] * k < stop[2]; k += step[2] )
             {
                 if ( put )
                     ( *matPtr->put )( (ClientData) matPtr, interp, I3D( i, j, k ), argv[0] );
                 else
                 {
                     ( *matPtr->get )( (ClientData) matPtr, interp, I3D( i, j, k ), tmp );
-                    if ( i == nmax[0] && j == nmax[1] && k == nmax[2] )
-                        Tcl_AppendResult( interp, tmp, (char *) NULL );
-                    else
+                    if ( sign_step[0] * ( i + step[0] ) < stop[0] || sign_step[1] * ( j + step[1] ) < stop[1] || sign_step[2] * ( k + step[2] ) < stop[2] )
                         Tcl_AppendResult( interp, tmp, " ", (char *) NULL );
+                    else
+                        Tcl_AppendResult( interp, tmp, (char *) NULL );
                 }
             }
         }

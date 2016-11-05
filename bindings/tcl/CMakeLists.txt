@@ -1,7 +1,7 @@
 # bindings/tcl/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -23,14 +23,13 @@ if(ENABLE_tcl)
   # Check consistency of plplot_parameters.h.
   add_custom_target(
     check_tcl_parameters
-    ${CMAKE_COMMAND} -E echo "Check that bindings/tcl/plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i"
+    COMMAND ${CMAKE_COMMAND} -E echo "Check that bindings/tcl/plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i"
     COMMAND ${CMAKE_COMMAND} -E remove -f
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
     COMMAND
     sed -f ${CMAKE_CURRENT_SOURCE_DIR}/global_defines.sed <
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i >
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
-    COMMAND
     COMMAND
     cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_parameters.h
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_parameters.h_compare
@@ -508,4 +507,38 @@ if(ENABLE_tcl)
     EXPORT export_plplot
     DESTINATION ${BIN_DIR}
     )
+
+  if(NOT WORKAROUND_FILE_GENERATE_BUG)
+    # This test will work only if the CMake version is large
+    # enough so the file_generate bug had been fixed, i.e.,
+    # WORKAROUND_FILE_GENERATE_BUG is false.
+
+    # test_tclmatrix.sh is a configured shell script that tests
+    # the matrix capabilities of the tclmatrix library using
+    # the tcl code in test_tclmatrix.tcl.
+    set(pltcl_LOCATION $<TARGET_FILE:pltcl>)
+    # N.B. Results only available at generate time.
+    configure_file_generate(
+      ${CMAKE_CURRENT_SOURCE_DIR}/test_tclmatrix.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_tclmatrix.sh
+      @ONLY
+      )
+
+    # Configure a target to check the matrix capabilities of libtclmatrix using pltcl.
+    
+    add_custom_target(
+      check_libtclmatrix_capabilities
+      COMMAND ${CMAKE_COMMAND} -E echo "Check the matrix capabilities of libtclmatrix"
+      COMMAND ${CMAKE_COMMAND} -E remove -f
+      ${CMAKE_CURRENT_BINARY_DIR}/test_tclmatrix.out_compare
+      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/test_tclmatrix.sh > ${CMAKE_CURRENT_BINARY_DIR}/test_tclmatrix.out_compare
+      COMMAND
+      cmp ${CMAKE_CURRENT_SOURCE_DIR}/test_tclmatrix.out
+      ${CMAKE_CURRENT_BINARY_DIR}/test_tclmatrix.out_compare
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      )
+    add_dependencies(check_libtclmatrix_capabilities pltcl tclIndex_tcl)
+    add_dependencies(check_all check_libtclmatrix_capabilities)
+  endif(NOT WORKAROUND_FILE_GENERATE_BUG)
+  
 endif(ENABLE_tcl)

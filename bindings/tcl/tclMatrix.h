@@ -3,7 +3,8 @@
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 2004  Maurice LeBrun
+//  Copyright (C) 2004 Maurice LeBrun
+//  Copyright (C) 2016 Alan W. Irwin
 //
 //  This file is part of PLplot.
 //
@@ -60,7 +61,11 @@ enum { TYPE_FLOAT, TYPE_INT };
 
 typedef struct
 {
-    int        type;             // Data type
+    int type;                    // Data type
+    // It is tempting to declare the next 3 as size_t, but the second
+    // limit on slices must be -1 for one particular case (negative
+    // step with second limit of -1 corresponding to actual index of
+    // 0) so it is better to keep all these as int to reduce casting.
     int        len;              // Total length of array
     int        dim;              // Number of dimensions
     int        n[MAX_ARRAY_DIM]; // Holds array length in each dimension
