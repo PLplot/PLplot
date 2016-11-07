@@ -69,8 +69,8 @@ static Tcl_HashTable matTable;             // Hash table for external access to 
 // Handles matrix initialization lists
 
 static int
-matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
-                  int dim, int offs, int nargs, const char** args );
+MatrixAssign( Tcl_Interp* interp, tclMatrix* m,
+              int level, int *offset, int nargs, const char** args );
 
 // Invoked to process the "matrix" Tcl command.
 
@@ -128,6 +128,9 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     Tcl_CmdInfo        infoPtr;
     char c;
     size_t             argv0_length;
+    int offset = 0;
+    size_t             concatenated_argv_len;
+    char               *concatenated_argv;
 
     dbug_enter( "Tcl_MatrixCmd" );
 
@@ -138,7 +141,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-// Create hash table on first call
+    // Create hash table on first call
 
     if ( !matTable_initted )
     {
@@ -146,7 +149,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         Tcl_InitHashTable( &matTable, TCL_STRING_KEYS );
     }
 
-// Check for -persist flag
+    // Check for -persist flag
 
     for ( i = 1; i < argc; i++ )
     {
@@ -165,7 +168,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
     }
 
-// Create matrix data structure
+    // Create matrix data structure
 
     matPtr          = (tclMatrix *) malloc( sizeof ( tclMatrix ) );
     matPtr->fdata   = NULL;
@@ -174,6 +177,8 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     matPtr->dim     = 0;
     matPtr->len     = 1;
     matPtr->tracing = 0;
+    matPtr->indices = NULL;
+
     // MAX_ARRAY_DIM is #defined to be 3. Later programming logic
     // treats all lower-dimensioned matrices as 3D matrices where the
     // higher dimension size is 1.  So must initialize all sizes
@@ -181,8 +186,8 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     for ( i = 0; i < MAX_ARRAY_DIM; i++ )
         matPtr->n[i] = 1;
 
-// Create name
-// It should be unique
+    // Create name
+    // It should be unique
 
     argc--; argv++;
 
@@ -206,7 +211,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     matPtr->name = (char *) malloc( strlen( argv[0] ) + 1 );
     strcpy( matPtr->name, argv[0] );
 
-// Initialize type
+    // Initialize type
 
     argc--; argv++;
     c            = argv[0][0];
@@ -234,7 +239,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-// Initialize dimensions
+    // Initialize dimensions
 
     argc--; argv++;
     for (; argc > 0; argc--, argv++ )
@@ -277,7 +282,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         return TCL_ERROR;
     }
 
-// Allocate space for data
+    // Allocate space for data
 
     switch ( matPtr->type )
     {
@@ -294,13 +299,64 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         break;
     }
 
-// Process the initializer, if present
+    // Process the initializer, if present
 
     if ( initializer )
-        matrixInitialize( interp, matPtr, 0, 0, 1, &argv[0] );
+    {
+        if ( argc <= 0 )
+        {
+            Tcl_AppendResult( interp,
+                "no initialization data given after \"=\" for Matrix operator \"",
+                matPtr->name, "\"", (char *) NULL );
+            DeleteMatrixCmd( (ClientData) matPtr );
+            return TCL_ERROR;
+        }
 
-// Delete matrix when it goes out of scope unless -persist specified
-// Use local variable of same name as matrix and trace it for unsets
+        // Prepare concatenated_argv string consisting of "{argv[0] argv[1] ... argv[argc-1]}"
+        // so that _any_ space-separated bunch of numerical arguments will work.
+        // Account for beginning and ending curly braces and trailing \0.
+        concatenated_argv_len = 3;
+        for ( i = 0; i < argc; i++ )
+            // Account for length of string + space separator.
+            concatenated_argv_len += strlen( argv[i] ) + 1;
+        concatenated_argv = (char *) malloc( concatenated_argv_len * sizeof ( char ) );
+
+        // Prepare for string concatenation using strcat
+        concatenated_argv[0] = '\0';
+        strcat( concatenated_argv, "{" );
+        for ( i = 0; i < argc; i++ )
+        {
+            strcat( concatenated_argv, argv[i] );
+            strcat( concatenated_argv, " " );
+        }
+        strcat( concatenated_argv, "}" );
+
+        // Use all raw indices in row-major (C) order for put in MatrixAssign
+        matPtr->nindices = matPtr->len;
+        matPtr->indices  = NULL;
+
+        if ( MatrixAssign( interp, matPtr, 0, &offset, 1, (const char **) ( &concatenated_argv ) ) != TCL_OK )
+        {
+            DeleteMatrixCmd( (ClientData) matPtr );
+            free( (void *) concatenated_argv );
+            return TCL_ERROR;
+        }
+        free( (void *) concatenated_argv );
+    }
+
+    // For later use in matrix assigments
+    // N.B. matPtr->len could be large so this check for success might
+    // be is more than pro forma.
+    if ( ( matPtr->indices = (int *) malloc( (size_t) ( matPtr->len ) * sizeof ( int ) ) ) == NULL )
+    {
+        Tcl_AppendResult( interp,
+            "memory allocation failed for indices vector associated with Matrix operator \"",
+            matPtr->name, "\"", (char *) NULL );
+        DeleteMatrixCmd( (ClientData) matPtr );
+        return TCL_ERROR;
+    }
+    // Delete matrix when it goes out of scope unless -persist specified
+    // Use local variable of same name as matrix and trace it for unsets
 
     if ( !persist )
     {
@@ -317,7 +373,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             (Tcl_VarTraceProc *) DeleteMatrixVar, (ClientData) matPtr );
     }
 
-// Create matrix operator
+    // Create matrix operator
 
 #ifdef DEBUG
     fprintf( stderr, "Creating Matrix operator of name %s\n", matPtr->name );
@@ -325,13 +381,13 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     Tcl_CreateCommand( interp, matPtr->name, (Tcl_CmdProc *) MatrixCmd,
         (ClientData) matPtr, (Tcl_CmdDeleteProc *) DeleteMatrixCmd );
 
-// Store pointer to interpreter to handle bizarre uses of multiple
-// interpreters (e.g. as in [incr Tcl])
+    // Store pointer to interpreter to handle bizarre uses of multiple
+    // interpreters (e.g. as in [incr Tcl])
 
     matPtr->interp = interp;
 
-// Create hash table entry for this matrix operator's data
-// This should never fail
+    // Create hash table entry for this matrix operator's data
+    // This should never fail
 
     hPtr = Tcl_CreateHashEntry( &matTable, matPtr->name, &new );
     if ( !new )
@@ -440,61 +496,74 @@ Tcl_MatrixInstallXtnsn( const char *cmd, tclMatrixXtnsnProc proc )
 
 //--------------------------------------------------------------------------
 //
-// matrixInitialize --
+// MatrixAssign --
 //
-//	Handles matrix initialization lists.
-//	Written by Martin L. Smith.
+// Assign values to the elements of a matrix.
 //
-// Results:
-//	None.
-//
-// Side effects:
-//	None.
+// Returns TCL_OK on success or TC_ERROR on failure.
 //
 //--------------------------------------------------------------------------
 
-static int matrixInitialize( Tcl_Interp* interp, tclMatrix* m,
-                             int dim, int offs, int nargs, const char** args )
+static int MatrixAssign( Tcl_Interp* interp, tclMatrix* m,
+                         int level, int *offset, int nargs, const char** args )
 {
     static int verbose = 0;
 
     char       ** newargs;
     int        numnewargs;
-    int        newoffs;
     int        i;
 
     if ( verbose )
-        fprintf( stderr, "level %d  offset %d  args %d\n", dim, offs, nargs );
-
-    if ( dim < m->dim )
     {
+        fprintf( stderr, "level %d  offset %d  nargs %d\n", level, *offset, nargs );
         for ( i = 0; i < nargs; i++ )
         {
-            if ( Tcl_SplitList( interp, args[i], &numnewargs, (CONST char ***) &newargs )
-                 != TCL_OK )
-            {
-                Tcl_AppendResult( interp, "bad matrix initializer list form: ",
-                    args[i], (char *) NULL );
-                return TCL_ERROR;
-            }
-            if ( dim > 0 )
-                newoffs = offs * m->n[dim - 1] + i;
-            else
-                newoffs = 0;
-
-            matrixInitialize( interp, m, dim + 1, newoffs, numnewargs, (const char **) newargs );
-            // Must use Tcl_Free since allocated by Tcl
-            Tcl_Free( (char *) newargs );
+            fprintf( stderr, "i = %d, args[i] = %s\n", i, args[i] );
         }
-        return TCL_OK;
+    }
+    // Just in case of some programming error below that creates an infinite loop
+    if ( level > 100 )
+    {
+        Tcl_AppendResult( interp, "too many list levels", (char *) NULL );
+        return TCL_ERROR;
     }
 
     for ( i = 0; i < nargs; i++ )
     {
-        newoffs = offs * m->n[dim - 1] + i;
-        ( m->put )( (ClientData) m, interp, newoffs, args[i] );
-        if ( verbose )
-            fprintf( stderr, "\ta[%d] = %s\n", newoffs, args[i] );
+        if ( Tcl_SplitList( interp, args[i], &numnewargs, (CONST char ***) &newargs )
+             != TCL_OK )
+        {
+            // Tcl_SplitList has already appended an error message
+            // to the result associated with interp so no need to
+            // append more.
+            return TCL_ERROR;
+        }
+
+        if ( numnewargs == 1 && strlen( args[i] ) == strlen( newargs[0] ) && strcmp( args[i], newargs[0] ) == 0 )
+        {
+            // Tcl_SplitList has gone as deep as it can go into hierarchical lists ....
+            if ( *offset >= m->nindices )
+            {
+                // Ignore any values in array assignment beyond what are needed.
+            }
+            else
+            {
+                if ( verbose )
+                    fprintf( stderr, "\ta[%d] = %s\n", *offset, args[i] );
+                if ( m->indices == NULL )
+                    ( m->put )( (ClientData) m, interp, *offset, args[i] );
+                else
+                    ( m->put )( (ClientData) m, interp, m->indices[*offset], args[i] );
+                ( *offset )++;
+            }
+        }
+        else if ( MatrixAssign( interp, m, level + 1, offset, numnewargs, (const char **) newargs )
+                  != TCL_OK )
+        {
+            Tcl_Free( (char *) newargs );
+            return TCL_ERROR;
+        }
+        Tcl_Free( (char *) newargs );
     }
     return TCL_OK;
 }
@@ -531,10 +600,10 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
     int    i, j, k;
     int    char_converted, change_default_start, change_default_stop;
     size_t argv0_length;
-    // Needs size to contain ":" and terminating NULL as a result of sscanf calls below.
+    // Needs dimension of 2 to contain ":" and terminating NULL as a result of sscanf calls below.
     char   c1[2], c2[2];
 
-// Initialize
+    // Initialize
 
     if ( argc < 2 )
     {
@@ -551,14 +620,14 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         sign_step[i] = 1;
     }
 
-// First check for a matrix command
+    // First check for a matrix command
 
     argc--; argv++;
     c            = argv[0][0];
     argv0_length = strlen( argv[0] );
 
-// dump -- send a nicely formatted listing of the array contents to stdout
-// (very helpful for debugging)
+    // dump -- send a nicely formatted listing of the array contents to stdout
+    // (very helpful for debugging)
 
     if ( ( c == 'd' ) && ( strncmp( argv[0], "dump", argv0_length ) == 0 ) )
     {
@@ -581,7 +650,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-// delete -- delete the array
+    // delete -- delete the array
 
     else if ( ( c == 'd' ) && ( strncmp( argv[0], "delete", argv0_length ) == 0 ) )
     {
@@ -592,8 +661,8 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-// filter
-// Only works on 1d matrices
+    // filter
+    // Only works on 1d matrices
 
     else if ( ( c == 'f' ) && ( strncmp( argv[0], "filter", argv0_length ) == 0 ) )
     {
@@ -642,7 +711,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
         return TCL_OK;
     }
 
-// help
+    // help
 
     else if ( ( c == 'h' ) && ( strncmp( argv[0], "help", argv0_length ) == 0 ) )
     {
@@ -667,7 +736,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         return TCL_OK;
     }
 
-// info
+    // info
 
     else if ( ( c == 'i' ) && ( strncmp( argv[0], "info", argv0_length ) == 0 ) )
     {
@@ -683,7 +752,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         return TCL_OK;
     }
 
-// max
+    // max
 
     else if ( ( c == 'm' ) && ( strncmp( argv[0], "max", argv0_length ) == 0 ) )
     {
@@ -697,12 +766,14 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         }
 
         if ( argc == 2 )
-            len = atoi( argv[1] );
-        if ( len < 0 || len > matPtr->len )
         {
-            Tcl_AppendResult( interp, "specified length out of valid range",
-                (char *) NULL );
-            return TCL_ERROR;
+            len = atoi( argv[1] );
+            if ( len < 0 || len > matPtr->len )
+            {
+                Tcl_AppendResult( interp, "specified length out of valid range",
+                    (char *) NULL );
+                return TCL_ERROR;
+            }
         }
         else
             len = matPtr->len;
@@ -737,7 +808,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         return TCL_OK;
     }
 
-// min
+    // min
 
     else if ( ( c == 'm' ) && ( strncmp( argv[0], "min", argv0_length ) == 0 ) )
     {
@@ -751,12 +822,14 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         }
 
         if ( argc == 2 )
-            len = atoi( argv[1] );
-        if ( len < 0 || len > matPtr->len )
         {
-            Tcl_AppendResult( interp, "specified length out of valid range",
-                (char *) NULL );
-            return TCL_ERROR;
+            len = atoi( argv[1] );
+            if ( len < 0 || len > matPtr->len )
+            {
+                Tcl_AppendResult( interp, "specified length out of valid range",
+                    (char *) NULL );
+                return TCL_ERROR;
+            }
         }
         else
             len = matPtr->len;
@@ -791,8 +864,8 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         return TCL_OK;
     }
 
-// redim
-// Only works on 1d matrices
+    // redim
+    // Only works on 1d matrices
 
     else if ( ( c == 'r' ) && ( strncmp( argv[0], "redim", argv0_length ) == 0 ) )
     {
@@ -847,8 +920,8 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         return TCL_OK;
     }
 
-// scale
-// Only works on 1d matrices
+    // scale
+    // Only works on 1d matrices
 
     else if ( ( c == 's' ) && ( strncmp( argv[0], "scale", argv0_length ) == 0 ) )
     {
@@ -885,7 +958,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         return TCL_OK;
     }
 
-// Not a "standard" command, check the extension commands.
+    // Not a "standard" command, check the extension commands.
 
     {
         tclMatrixXtnsnDescr *p = head;
@@ -901,7 +974,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         }
     }
 
-    // Must be a put or get of an array slice.
+    // Must be a put or get of an array slice or array value.
 
     // Determine array index slice adopting the same rules as the Python case
     // documented at <https://docs.python.org/3/library/stdtypes.html#common-sequence-operations>
@@ -914,7 +987,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
     if ( argc < matPtr->dim )
     {
         Tcl_AppendResult( interp, "not enough dimensions specified for \"",
-            name, (char *) NULL );
+            name, "\"", (char *) NULL );
         return TCL_ERROR;
     }
 
@@ -1090,7 +1163,7 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         argc--; argv++;
     }
 
-// If there is an "=" after indices, it's a put.  Do error checking.
+    // If there is an "=" after indices, it's a put.  Do error checking.
 
     if ( argc > 0 )
     {
@@ -1104,12 +1177,6 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
                     (char *) NULL );
                 return TCL_ERROR;
             }
-            else if ( argc > 1 )
-            {
-                Tcl_AppendResult( interp, "extra characters after value: \"",
-                    argv[1], "\"", (char *) NULL );
-                return TCL_ERROR;
-            }
         }
         else
         {
@@ -1119,8 +1186,8 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         }
     }
 
-// Do the get/put.
-// The loop over all elements takes care of the multi-element cases.
+    // Calculate which indices will be used for the given index slices.
+    matPtr->nindices = 0;
 
     for ( i = start[0]; sign_step[0] * i < stop[0]; i += step[0] )
     {
@@ -1128,17 +1195,90 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
         {
             for ( k = start[2]; sign_step[2] * k < stop[2]; k += step[2] )
             {
-                if ( put )
-                    ( *matPtr->put )( (ClientData) matPtr, interp, I3D( i, j, k ), argv[0] );
-                else
-                {
-                    ( *matPtr->get )( (ClientData) matPtr, interp, I3D( i, j, k ), tmp );
-                    if ( sign_step[0] * ( i + step[0] ) < stop[0] || sign_step[1] * ( j + step[1] ) < stop[1] || sign_step[2] * ( k + step[2] ) < stop[2] )
-                        Tcl_AppendResult( interp, tmp, " ", (char *) NULL );
-                    else
-                        Tcl_AppendResult( interp, tmp, (char *) NULL );
-                }
+                matPtr->indices[matPtr->nindices++] = I3D( i, j, k );
             }
+        }
+    }
+
+    // Do the get/put.
+    // The loop over all elements takes care of the multi-element cases.
+    if ( put )
+    {
+        char *endptr;
+        // Check whether argv[0] could be interpreted as a raw single
+        // number with no trailing characters.
+        switch ( matPtr->type )
+        {
+        case TYPE_FLOAT:
+            strtod( argv[0], &endptr );
+            break;
+        case TYPE_INT:
+            strtol( argv[0], &endptr, 10 );
+            break;
+        }
+        if ( argc == 1 && *argv[0] != '\0' && *endptr == '\0' )
+        {
+            // If _all_ characters of single RHS string can be
+            // successfully read as a single number, then assign all
+            // matrix elements with indices in matPtr->indices to that
+            // single number.
+            for ( i = 0; i < matPtr->nindices; i++ )
+                ( *matPtr->put )( (ClientData) matPtr, interp, matPtr->indices[i], argv[0] );
+        }
+        else
+        {
+            // If RHS cannot be successfully read as a single number,
+            // then assume it is a collection of numbers (in list form
+            // or white-space separated).  Concatenate all remaining
+            // elements of argv into list form, then use MatrixAssign
+            // to assign all matrix elements with indices in
+            // matPtr->indices using all (deep) non-list elements of
+            // that list.
+            int    offset = 0;
+            size_t concatenated_argv_len;
+            char   *concatenated_argv;
+
+            // Prepare concatenated_argv string consisting of
+            // "{argv[0] argv[1] ... argv[argc-1]}" so that _any_
+            // space-separated bunch of numerical arguments or lists
+            // of those will work.  Account for beginning and ending
+            // curly braces and trailing \0.
+            concatenated_argv_len = 3;
+            for ( i = 0; i < argc; i++ )
+                // Account for length of string + space separator.
+                concatenated_argv_len += strlen( argv[i] ) + 1;
+            concatenated_argv = (char *) malloc( concatenated_argv_len * sizeof ( char ) );
+
+            // Prepare for string concatenation using strcat
+            concatenated_argv[0] = '\0';
+            strcat( concatenated_argv, "{" );
+            for ( i = 0; i < argc; i++ )
+            {
+                strcat( concatenated_argv, argv[i] );
+                strcat( concatenated_argv, " " );
+            }
+            strcat( concatenated_argv, "}" );
+
+            // Assign matrix elements using all numbers collected from
+            // the potentially deep list, concatenated_argv.
+            if ( MatrixAssign( interp, matPtr, 0, &offset, 1, (const char **) ( &concatenated_argv ) ) != TCL_OK )
+            {
+                free( (void *) concatenated_argv );
+                return TCL_ERROR;
+            }
+            free( (void *) concatenated_argv );
+        }
+    }
+    else
+    {
+        // get
+        for ( i = 0; i < matPtr->nindices; i++ )
+        {
+            ( *matPtr->get )( (ClientData) matPtr, interp, matPtr->indices[i], tmp );
+            if ( i < matPtr->nindices - 1 )
+                Tcl_AppendResult( interp, tmp, " ", (char *) NULL );
+            else
+                Tcl_AppendResult( interp, tmp, (char *) NULL );
         }
     }
 
@@ -1281,13 +1421,13 @@ DeleteMatrixCmd( ClientData clientData )
     fprintf( stderr, "Freeing space associated with matrix %s\n", matPtr->name );
 #endif
 
-// Remove hash table entry
+    // Remove hash table entry
 
     hPtr = Tcl_FindHashEntry( &matTable, matPtr->name );
     if ( hPtr != NULL )
         Tcl_DeleteHashEntry( hPtr );
 
-// Free data
+    // Free data
 
     if ( matPtr->fdata != NULL )
     {
@@ -1299,8 +1439,13 @@ DeleteMatrixCmd( ClientData clientData )
         free( (void *) matPtr->idata );
         matPtr->idata = NULL;
     }
+    if ( matPtr->indices != NULL )
+    {
+        free( (void *) matPtr->indices );
+        matPtr->indices = NULL;
+    }
 
-// Attempt to turn off tracing if possible.
+    // Attempt to turn off tracing if possible.
 
     if ( matPtr->tracing )
     {
@@ -1314,7 +1459,7 @@ DeleteMatrixCmd( ClientData clientData )
         }
     }
 
-// Free name.
+    // Free name.
 
     if ( matPtr->name != NULL )
     {
@@ -1322,7 +1467,7 @@ DeleteMatrixCmd( ClientData clientData )
         matPtr->name = NULL;
     }
 
-// Free tclMatrix
+    // Free tclMatrix
 
     if ( !matPtr->tracing )
         free( (void *) matPtr );

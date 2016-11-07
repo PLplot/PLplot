@@ -78,10 +78,17 @@ typedef struct
 
     Tcl_Interp *interp;          // Interpreter where command is installed
 
-// These do the put/get operations for each supported type
+    // These do the put/get operations for each supported type
 
     void ( *put )( ClientData clientData, Tcl_Interp* interp, int index, const char *string );
     void ( *get )( ClientData clientData, Tcl_Interp* interp, int index, char *string );
+    // number of indices that will be either put or get.  If indices is NULL, this
+    // should be set to the product of the (MAX_ARRAY_DIM=3) values in the above n array.
+    int nindices;
+    // Array of those indices (malloc'ed if used, NULL if all raw indices
+    // are used in the normal C [row-major] order without reference to the indices
+    // array).
+    int *indices;
 } tclMatrix;
 
 // Function prototypes

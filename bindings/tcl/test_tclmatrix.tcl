@@ -86,4 +86,35 @@ puts "Change all elements using \"x : = 3\""
 x : = 3
 puts "\[x :\] = [x :]"
 x delete
+puts "Various matrix initializations and assignments"
+puts "Using a collection of space-separated numbers"
+matrix x f 4 = 1 2 3 4
+puts "\[x :\] = [x :]"
+matrix y f 2 4
+y : : = 1 2 3 4 5 6 7 8
+puts "\[y : :\] = [y : :]"
+x delete
+y delete
+puts "Using a list of lists of numbers"
+matrix x f 4 = {{{1 2}} {3 4}}
+puts "\[x :\] = [x :]"
+matrix y f 2 4
+y : : = {{1 2 3 4 5} {{6}} {7 8}}
+puts "\[y : :\] = [y : :]"
+puts "Using slices of a previously defined matrix"
+matrix z f 2 2 2 = [x ::] [x ::-1]
+puts "\[z : : :\] = [z : : :]"
+y : : = [x ::] [x ::-1]
+puts "\[y : :\] = [y : :]"
+puts "Combination of previously defined matrices, deep lists, and space-separated numbers"
+matrix a f 2 2 3 = [x ::] [x ::-1] {{{1.E-13} {2}}} 3 4 5 6 7 8 9 10 11 12 13 14
+puts "\[a : : :\] = [a : : :]"
+matrix b f 2 2 3
+b : : : = [x ::] [x ::-1] {{{1.E-13} {2}}} 3 4 5 6 7 8 9 10 11 12 13 14
+puts "\[b : : :\] = [b : : :]"
+x delete
+y delete
+z delete
+a delete
+b delete
 }

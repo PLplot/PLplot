@@ -83,3 +83,16 @@ Change 3rd element using "x 2 = 7"
 [x :] yields 0.0 1.0 7.0 3.0
 Change all elements using "x : = 3"
 [x :] = 3.0 3.0 3.0 3.0
+Various matrix initializations and assignments
+Using a collection of space-separated numbers
+[x :] = 1.0 2.0 3.0 4.0
+[y : :] = 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0
+Using a list of lists of numbers
+[x :] = 1.0 2.0 3.0 4.0
+[y : :] = 1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0
+Using slices of a previously defined matrix
+[z : : :] = 1.0 2.0 3.0 4.0 4.0 3.0 2.0 1.0
+[y : :] = 1.0 2.0 3.0 4.0 4.0 3.0 2.0 1.0
+Combination of previously defined matrices, deep lists, and space-separated numbers
+[a : : :] = 1.0 2.0 3.0 4.0 4.0 3.0 2.0 1.0 1e-13 2.0 3.0 4.0
+[b : : :] = 1.0 2.0 3.0 4.0 4.0 3.0 2.0 1.0 1e-13 2.0 3.0 4.0
