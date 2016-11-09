@@ -68,6 +68,87 @@ proc expandmacro {string} {
     return $string
 }
 
+# Process arguments.
+proc process_args { GENFILE round ndefs indent nredacted nargs name_argred name_argref name_argtype name_argname } {
+
+    # All array references in arguments must be passed by name
+    # which is documented by the "name_" prefix for all such array names.
+    # Obtain access to those arrays (defined in the calling programme)
+    # from those names using upvar.
+    upvar 1 $name_argred argred
+    upvar 1 $name_argref argref
+    upvar 1 $name_argtype argtype
+    upvar 1 $name_argname argname
+    set i -1
+    for { set k 0 } { $k < $nargs } { incr k } {
+	if { $round == 0 } {
+	    incr i
+	}
+	if { $round == 1 } {
+	    if { $argred($k) != "" } {
+		continue
+	    }
+	    incr i
+	}
+	if { $round == 2 && $argred($k) == "" } {
+	    continue
+	}
+	if { $ndefs > 0 } {
+	    puts $GENFILE "    if (argc > $i+1) \{    "
+	}
+	if { $argref($k) } {
+	    puts $GENFILE "/* $argname($i) is for output. */"
+	    continue
+	}
+	switch -- $argtype($k) {
+	    "PLINT *" {
+		puts $GENFILE "    ${indent}mat$argname($k) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
+		puts $GENFILE "    ${indent}if (mat$argname($k) == NULL) return TCL_ERROR;"
+		puts $GENFILE "    ${indent}$argname($k) = mat$argname($k)-\>idata;"
+	    }
+	    "PLUNICODE *" {
+		puts $GENFILE "    ${indent}mat$argname($k) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
+		puts $GENFILE "    ${indent}if (mat$argname($k) == NULL) return TCL_ERROR;"
+		puts $GENFILE "    ${indent}$argname($k) = mat$argname($k)-\>idata;"
+	    }
+	    "PLFLT \*" {
+		puts $GENFILE "    ${indent}mat$argname($k) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
+		puts $GENFILE "    ${indent}if (mat$argname($k) == NULL) return TCL_ERROR;"
+		puts $GENFILE "    ${indent}$argname($k) = mat$argname($k)-\>fdata;"
+	    }
+	    "PLINT" {
+		# Redacted arguments are always PLINTs
+		if { $round != 2 } {
+		    puts $GENFILE "    ${indent}$argname($k) = atoi(argv\[1+$i\]);"
+		} else {
+		    puts $GENFILE "    ${indent}$argname($k) = $argred($k);"
+		}
+	    }
+	    "PLUNICODE" {
+		puts $GENFILE "    ${indent}$argname($k) = (PLUNICODE) strtoul(argv\[1+$i\],NULL,10);"
+	    }
+	    "unsigned int" {
+		puts $GENFILE "    ${indent}$argname($k) = (unsigned int) strtoul(argv\[1+$i\],NULL,10);"
+	    }
+	    "PLFLT" {
+		puts $GENFILE "    ${indent}$argname($k) = atof(argv\[1+$i\]);"
+	    }
+	    "const char *" {
+		puts $GENFILE "    ${indent}$argname($k) = argv\[1+$i\];"
+	    }
+	    "char" {
+		puts $GENFILE "    ${indent}$argname($k) = argv\[1+$i\]\[0\];"
+	    }
+	    default {
+		puts "Unrecognized argtype : $argtype($k)"
+	    }
+	}
+	if { $ndefs > 0 } {
+	    puts $GENFILE "    \}"
+	}
+    }
+}
+
 # Process a function "prototype".  Suck up the args, then perform the
 # needed substitutions to the Tcl command procedure template.
 # Generate the three outputs needed for use in tclAPI.c:  the C
@@ -76,6 +157,7 @@ proc expandmacro {string} {
 
 proc process_pltclcmd {cmd rtype} {
     global verbose
+    global if_non_redacted
     global cmdfile
     global GENHEAD
     global GENSTRUCT
@@ -89,12 +171,22 @@ proc process_pltclcmd {cmd rtype} {
     puts $GENHEAD "static int ${cmd}Cmd( ClientData, Tcl_Interp *, int, const char **);"
     puts $GENSTRUCT "    {\"$cmd\",          ${cmd}Cmd},"
 
-    set args         ""
-    set argchk       ""
-    set nargs        0
-    set ndefs        0
-    set nredacted    0
-    set refargs      0
+    # The following while loop parses the arguments and consistency
+    # checks from all parts of a spec other than the first line (which
+    # is parsed by the main routine before calling process_pltclcmd).
+    # Note an empty line separates one spec from the next).
+    set args         ""  ;# Space delimited list of argument names.
+    set argchk       ""  ;# C code to check arguments.
+    set nargs        0   ;# Number of arguments
+    set ndefs        0   ;# Number of default values of arguments
+    set nredacted    0   ;# Number of redacted arguments
+    set refargs      0   ;# Whether argument list includes a returned argument?
+    # argname($nargs) stores $vname = argument name
+    # argtype($nargs) stores $vtype = argument type
+    # argred($nargs)  stores [expandmacro $redactedval] 
+    # argdef($nargs)  stores $defval = argument default value.
+    # argref($nargs)  stores 0 or 1 depending on whether argument is a returned argument.
+    
     while { [gets $SPECFILE line] >= 0 } {
 
         if { $line == "" } {
@@ -231,103 +323,41 @@ proc process_pltclcmd {cmd rtype} {
                 # from the argc/argv list passed to the Tcl command proc.  Each
                 # supported argument type will need special handling here.
 
-                if { $nredacted > 0 } {
-                    puts $GENFILE "    if (argc == 1+$nargs) \{"
-                    set indent "    "
-                } else {
-                    set indent ""
-                }
-                for { set round 0 } { $round < 3 } { incr round } {
-                    set offset 0
-                    set upto   $nargs
-                    if { $round == 1 } {
-                        set offset $nredacted
-                        set upto   $nargs
-                    }
-                    if { $round == 2 } {
-                        set offset 0
-                        set upto   $nredacted
-                    }
+		set round 0
+		if { $nredacted == 0 } {
+		    # For nredacted = 0, all arguments are ordinary
+		    # and a call to process_args with round == 0 processes all of them.
 
-                    set i -1
-                    for { set k 0 } { $k < $nargs } { incr k } {
-                        if { $round == 0 } {
-                            incr i
-                        }
-                        if { $round == 1 } {
-                            if { $argred($k) != "" } {
-                                continue
-                            }
-                            incr i
-                        }
-                        if { $round == 2 && $argred($k) == "" } {
-                            continue
-                        }
-                        if { $ndefs > 0 } {
-                            puts $GENFILE "    if (argc > $i+1) \{    "
-                        }
-                        if { $argref($k) } {
-                            puts $GENFILE "/* $argname($i) is for output. */"
-                            continue
-                        }
-                        switch -- $argtype($k) {
-                            "PLINT *" {
-                                puts $GENFILE "    ${indent}mat$argname($k) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
-                                puts $GENFILE "    ${indent}if (mat$argname($k) == NULL) return TCL_ERROR;"
-                                puts $GENFILE "    ${indent}$argname($k) = mat$argname($k)-\>idata;"
-                            }
-                            "PLUNICODE *" {
-                                puts $GENFILE "    ${indent}mat$argname($k) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
-                                puts $GENFILE "    ${indent}if (mat$argname($k) == NULL) return TCL_ERROR;"
-                                puts $GENFILE "    ${indent}$argname($k) = mat$argname($k)-\>idata;"
-                            }
-                            "PLFLT \*" {
-                                puts $GENFILE "    ${indent}mat$argname($k) = Tcl_GetMatrixPtr( interp, argv\[1+$i\] );"
-                                puts $GENFILE "    ${indent}if (mat$argname($k) == NULL) return TCL_ERROR;"
-                                puts $GENFILE "    ${indent}$argname($k) = mat$argname($k)-\>fdata;"
-                            }
-                            "PLINT" {
-                                # Redacted arguments are always PLINTs
-                                if { $round != 2 } {
-                                    puts $GENFILE "    ${indent}$argname($k) = atoi(argv\[1+$i\]);"
-                                } else {
-                                    puts $GENFILE "    ${indent}$argname($k) = $argred($k);"
-                                }
-                            }
-                            "PLUNICODE" {
-                                puts $GENFILE "    ${indent}$argname($k) = (PLUNICODE) strtoul(argv\[1+$i\],NULL,10);"
-                            }
-                            "unsigned int" {
-                                puts $GENFILE "    ${indent}$argname($k) = (unsigned int) strtoul(argv\[1+$i\],NULL,10);"
-                            }
-                            "PLFLT" {
-                                puts $GENFILE "    ${indent}$argname($k) = atof(argv\[1+$i\]);"
-                            }
-                            "const char *" {
-                                puts $GENFILE "    ${indent}$argname($k) = argv\[1+$i\];"
-                            }
-                            "char" {
-                                puts $GENFILE "    ${indent}$argname($k) = argv\[1+$i\]\[0\];"
-                            }
-                            default {
-                                puts "Unrecognized argtype : $argtype($k)"
-                            }
-                        }
-                        if { $ndefs > 0 } {
-                            puts $GENFILE "    \}"
-                        }
-                    }
-                    if { $nredacted == 0 } {
-                        break
-                    } else {
-                        if { $round == 0 } {
-                            puts $GENFILE "    \} else \{"
-                        }
-                    }
+                    set indent ""
+		    # Note arrays must be passed by name.
+		    process_args $GENFILE $round $ndefs $indent $nredacted $nargs argred argref argtype argname 
+		} else {
+		    # For nredacted > 0, there are three (if_non_redacted !=0) or
+		    # two (if_non_redacted == 0) rounds of calls to process_args
+		    if { $if_non_redacted } {
+			set indent "    "
+			puts $GENFILE "    if (argc == 1+$nargs) \{"
+			# round == 0 processes both ordinary and redacted
+			# arguments to generate non-redacted API.
+			process_args $GENFILE $round $ndefs $indent $nredacted $nargs argred argref argtype argname
+			puts $GENFILE "    \} else \{"
+		    } else {
+			set indent ""
+		    }
+		    incr round
+		    # round == 1 skips processing all redacted
+		    # arguments so just handles generating the
+		    # redacted API for ordinary arguments.
+		    process_args $GENFILE $round $ndefs $indent $nredacted $nargs argred argref argtype argname
+		    incr round
+		    # round == 2 skips processing all ordinary
+		    # arguments so just handles generating the
+		    # redacted API for redacted arguments.
+		    process_args $GENFILE $round $ndefs $indent $nredacted $nargs argred argref argtype argname
+		    if { $if_non_redacted } {
+			puts $GENFILE "    \}"
+		    }
                 }
-                if { $nredacted > 0 } {
-                    puts $GENFILE "    \}"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               }
             }
 
             # Call the PLplot API function.
@@ -437,6 +467,8 @@ proc process_pltclcmd {cmd rtype} {
 # main code --
 #
 set verbose [expr {[lsearch $argv "-v"] >= 0}]
+
+set if_non_redacted 1 ;# Whether to generate non-redacted API when nredacted > 0?
 
 # Find the source tree directory that must be specified on the command line.
 set sourcedir [lindex $argv 0]                    ;# Get the current source directory - for "out of source tree builds"
