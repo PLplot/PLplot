@@ -289,12 +289,17 @@ proc plot {{file {}} {columns {}}} {
 
 # Plot the data
 
+    # These matrices must be the exact size that needs
+    # to be plotted.
+    matrix xplot f $nx = [x :]
+    matrix yplot f $nx
     if { $lsty > 0 } {
 	pllsty $lsty
 	for {set iy 0} {$iy < $ny} {incr iy} {
 	    set jy [lindex $columns $iy]
 	    plcol0 [expr 2 + $jy]
-	    plline $nx x y$jy
+	    yplot : = [y$jy :]
+	    plline xplot yplot
 	}
 
     } else {
@@ -302,7 +307,8 @@ proc plot {{file {}} {columns {}}} {
 	for {set iy 0} {$iy < $ny} {incr iy} {
 	    set jy [lindex $columns $iy]
 	    plcol0 [expr 2 + $jy]
-	    plpoin $nx x y$jy $poin
+	    yplot : = [y$jy :]
+	    plpoin xplot yplot $poin
 	}
     }
 

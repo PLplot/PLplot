@@ -346,7 +346,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
     // For later use in matrix assigments
     // N.B. matPtr->len could be large so this check for success might
-    // be is more than pro forma.
+    // be more than pro forma.
     if ( ( matPtr->indices = (int *) malloc( (size_t) ( matPtr->len ) * sizeof ( int ) ) ) == NULL )
     {
         Tcl_AppendResult( interp,
@@ -917,6 +917,16 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
             break;
         }
         matPtr->n[0] = matPtr->len = newlen;
+        // For later use in matrix assigments
+        // N.B. matPtr->len could be large so this check for success might
+        // be more than pro forma.
+        data = realloc( matPtr->indices, (size_t) ( matPtr->len ) * sizeof ( int ) );
+        if ( newlen != 0 && data == NULL )
+        {
+            Tcl_AppendResult( interp, "redim failed!", (char *) NULL );
+            return TCL_ERROR;
+        }
+        matPtr->indices = (int *) data;
         return TCL_OK;
     }
 
