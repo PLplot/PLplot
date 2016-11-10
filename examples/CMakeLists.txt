@@ -1175,7 +1175,7 @@ if(BUILD_TEST)
       ${xwin_targets}
       )
 
-    message(STATUS "WARNING: The test_plserver_runAlldemos target can be run independently but
+    message(STATUS "WARNING: The test_plserver_runAllDemos target can be run independently but
    there are several issues with this target so it is temporarily excluded from being a
    dependency of other more general interactive test targets")
     #list(APPEND targets_examples_tk test_plserver_runAllDemos)
@@ -1195,10 +1195,10 @@ if(BUILD_TEST)
 	${TARGET_tclIndex_tk}
 	tclIndex_examples_tk
 	)
-      message(STATUS "WARNING: The test_wish_runAlldemos target can be run independently but
+      message(STATUS "WARNING: The test_wish_runAllDemos target can be run independently but
    there are several issues with this target so it is temporarily excluded from being a
    dependency of other more general interactive test targets")
-      # list(APPEND targets_examples_tk test_wish_runAlldemos)
+      # list(APPEND targets_examples_tk test_wish_runAllDemos)
     endif(BUILD_SHARED_LIBS AND PLD_tkwin)
 
   endif(ENABLE_tkX)
