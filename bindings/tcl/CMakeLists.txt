@@ -525,7 +525,7 @@ if(ENABLE_tcl)
       )
 
     # Configure a target to check the matrix capabilities of libtclmatrix using pltcl.
-    
+
     add_custom_target(
       check_libtclmatrix_capabilities
       COMMAND ${CMAKE_COMMAND} -E echo "Check the matrix capabilities of libtclmatrix"
@@ -540,5 +540,5 @@ if(ENABLE_tcl)
     add_dependencies(check_libtclmatrix_capabilities pltcl tclIndex_tcl)
     add_dependencies(check_all check_libtclmatrix_capabilities)
   endif(NOT WORKAROUND_FILE_GENERATE_BUG)
-  
+
 endif(ENABLE_tcl)

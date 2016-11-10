@@ -228,7 +228,7 @@ proc x08 {{w loopback}} {
 	       cmap1_init_8 $w 0
 	       $w cmd plsurf3dl x y z \
 		 [expr {$::PLPLOT::MAG_COLOR | $::PLPLOT::SURF_CONT | $::PLPLOT::BASE_CONT}] clev \
-		 $indexxmin $indexxmax indexymin indexymax
+		 $indexxmin indexymin indexymax
 	    }
         }
     }

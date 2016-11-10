@@ -159,14 +159,18 @@ proc x25 {{w loopback}} {
 		$w cmd plbox "bc" 1.0 0 "bcnv" 10.0 0
 		$w cmd plcol0 1
 		$w cmd plpsty 0
+		matrix xplot f $npts = [x0 :]
+		matrix yplot f $npts = [y0 :]
 		if { $k == 0 } {
-		    $w cmd plfill $npts x0 y0
+		    $w cmd plfill xplot yplot
 		} else {
-		    $w cmd plgradient $npts x0 y0 45.0
+		    $w cmd plgradient xplot yplot 45.0
 		}
 		$w cmd plcol0 2
 		$w cmd pllsty 1
-		$w cmd plline $npts x0 y0
+		$w cmd plline xplot yplot
+		xplot delete
+		yplot delete
 	    }
 	}
     }

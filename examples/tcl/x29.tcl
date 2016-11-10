@@ -375,7 +375,11 @@ proc x29_plot4 {{w loopback}} {
 	
 	$w cmd plcol0 4
 	
-	$w cmd plline $npts x y
+	matrix xplot f $npts = [x :]
+	matrix yplot f $npts = [y :]
+	$w cmd plline xplot yplot
+	xplot delete
+	yplot delete
     }
 
 }

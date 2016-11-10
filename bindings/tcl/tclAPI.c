@@ -2,8 +2,10 @@
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 2004  Joao Cardoso
-//  Copyright (C) 2004  Andrew Ross
+//  Copyright (C) 2004 Joao Cardoso
+//  Copyright (C) 2004 Andrew Ross
+//  Copyright (C) 2006-2016 Arjen Markus
+//  Copyright (C) 2000-2016 Alan W. Irwin
 //
 //  This file is part of PLplot.
 //
@@ -44,6 +46,11 @@
 #endif
 
 #include "tclgen.h"
+
+// Include non-redacted API?
+//#define PLPLOTTCLTK_NON_REDACTED_API
+// Exclude non-redacted API?
+#undef PLPLOTTCLTK_NON_REDACTED_API
 
 // Standardize error checking of Tcl_GetMatrixPtr calls with a macro
 #define CHECK_Tcl_GetMatrixPtr( result, interp, matName ) \
@@ -1625,7 +1632,7 @@ plvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 // Processes plmesh Tcl command.
 //
 // We support 3 different invocation forms:
-// 1)	plmesh x y z nx ny opt
+// 1)	plmesh x y z nx ny opt (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
 // 2)	plmesh x y z opt
 // 3)	plmesh z opt
 //
@@ -1643,6 +1650,7 @@ plmeshCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix *matx, *maty, *matz, *matPtr;
     int       i;
 
+#ifdef PLPLOTTCLTK_NON_REDACTED_API
     if ( argc == 7 )
     {
         nx  = atoi( argv[4] );
@@ -1678,6 +1686,9 @@ plmeshCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
     else if ( argc == 5 )
+#else
+    if ( argc == 5 )
+#endif
     {
         opt = atoi( argv[4] );
 
@@ -1747,16 +1758,17 @@ plmeshCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 //
 // Processes plmeshc Tcl command.
 //
-// We support 5 different invocation forms:
-// 1)	plmeshc x y z nx ny opt clevel nlevel
-// 2)	plmeshc x y z nx ny opt clevel
-// 3)	plmeshc x y z nx ny opt
-// 4)	plmeshc x y z opt
-// 5)	plmeshc z opt
+// We support 6 different invocation forms:
+// 1)	plmeshc x y z nx ny opt clevel nlevel (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 2)	plmeshc x y z nx ny opt clevel (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 3)	plmeshc x y z nx ny opt (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 4)	plmeshc x y z opt clevel
+// 5)	plmeshc x y z opt
+// 6)	plmeshc z opt
 //
 // Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
-// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
-// ny from the input data, and in form 5 we infer nx and ny, and also take
+// In form 3, 5 and 6 clevel is set to NULL. In form 4 we infer nx, ny, and nlevel
+// from the input data, in form 5 we infer nx and ny, and in form 6 we take
 // the x and y arrays to just be integral spacing.
 //--------------------------------------------------------------------------
 
@@ -1771,6 +1783,7 @@ plmeshcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix *matx, *maty, *matz, *matPtr, *matlev;
     int       i;
 
+#ifdef PLPLOTTCLTK_NON_REDACTED_API
     if ( argc == 9 )
     {
         nlev = atoi( argv[8] );
@@ -1889,6 +1902,9 @@ plmeshcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
 
     else if ( argc == 6 )
+#else
+    if ( argc == 6 )
+#endif
     {
         opt = atoi( argv[4] );
 
@@ -2001,7 +2017,7 @@ plmeshcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 // Processes plot3d Tcl command.
 //
 // We support 3 different invocation forms:
-// 1)	plot3d x y z nx ny opt side
+// 1)	plot3d x y z nx ny opt side (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
 // 2)	plot3d x y z opt side
 // 3)	plot3d z opt side
 //
@@ -2019,6 +2035,7 @@ plot3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix *matx, *maty, *matz, *matPtr;
     int       i;
 
+#ifdef PLPLOTTCLTK_NON_REDACTED_API
     if ( argc == 8 )
     {
         nx   = atoi( argv[4] );
@@ -2055,6 +2072,9 @@ plot3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
     else if ( argc == 6 )
+#else
+    if ( argc == 6 )
+#endif
     {
         opt  = atoi( argv[4] );
         side = atoi( argv[5] );
@@ -2125,16 +2145,17 @@ plot3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 //
 // Processes plot3dc Tcl command.
 //
-// We support 5 different invocation forms:
-// 1)	plot3dc x y z nx ny opt clevel nlevel
-// 2)	plot3dc x y z nx ny opt clevel
-// 3)	plot3dc x y z nx ny opt
-// 4)	plot3dc x y z opt
-// 5)	plot3dc z opt
+// We support 6 different invocation forms:
+// 1)	plot3dc x y z nx ny opt clevel nlevel (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 2)	plot3dc x y z nx ny opt clevel (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 3)	plot3dc x y z nx ny opt (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 4)	plot3dc x y z opt clevel
+// 5)	plot3dc x y z opt
+// 6)	plot3dc z opt
 //
 // Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
-// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
-// ny from the input data, and in form 5 we infer nx and ny, and also take
+// In form 3, 5 and 6 clevel is set to NULL. In form 4 we infer nx, ny, and nlevel
+// from the input data, in form 5 we infer nx and ny, and in form 6 we take
 // the x and y arrays to just be integral spacing.
 //--------------------------------------------------------------------------
 
@@ -2149,6 +2170,7 @@ plot3dcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix *matx, *maty, *matz, *matPtr, *matlev;
     int       i;
 
+#ifdef PLPLOTTCLTK_NON_REDACTED_API
     if ( argc == 9 )
     {
         nlev = atoi( argv[8] );
@@ -2267,6 +2289,9 @@ plot3dcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
 
     else if ( argc == 6 )
+#else
+    if ( argc == 6 )
+#endif
     {
         opt = atoi( argv[4] );
 
@@ -2378,16 +2403,17 @@ plot3dcCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 //
 // Processes plsurf3d Tcl command.
 //
-// We support 5 different invocation forms:
-// 1)	plsurf3d x y z nx ny opt clevel nlevel
-// 2)	plsurf3d x y z nx ny opt clevel
-// 3)	plsurf3d x y z nx ny opt
-// 4)	plsurf3d x y z opt
-// 5)	plsurf3d z opt
+// We support 6 different invocation forms:
+// 1)	plsurf3d x y z nx ny opt clevel nlevel (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 2)	plsurf3d x y z nx ny opt clevel (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 3)	plsurf3d x y z nx ny opt (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 4)	plsurf3d x y z opt clevel
+// 5)	plsurf3d x y z opt
+// 6)	plsurf3d z opt
 //
 // Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
-// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
-// ny from the input data, and in form 5 we infer nx and ny, and also take
+// In form 3, 5 and 6 clevel is set to NULL. In form 4 we infer nx, ny, and nlevel
+// from the input data, in form 5 we infer nx and ny, and in form 6 we take
 // the x and y arrays to just be integral spacing.
 //--------------------------------------------------------------------------
 
@@ -2402,6 +2428,7 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix *matx, *maty, *matz, *matPtr, *matlev;
     int       i;
 
+#ifdef PLPLOTTCLTK_NON_REDACTED_API
     if ( argc == 9 )
     {
         nlev = atoi( argv[8] );
@@ -2520,6 +2547,9 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     }
 
     else if ( argc == 6 )
+#else
+    if ( argc == 6 )
+#endif
     {
         opt = atoi( argv[4] );
 
@@ -2631,17 +2661,18 @@ plsurf3dCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 //
 // Processes plsurf3d Tcl command.
 //
-// We support 5 different invocation forms:
-// 1)	plsurf3dl x y z nx ny opt clevel nlevel indexxmin indexxmax indexymin indexymax
-// 2)	plsurf3dl x y z nx ny opt clevel indexxmin indexxmax indexymin indexymax
-// 3)	plsurf3dl x y z nx ny opt indexxmin indexxmax indexymin indexymax
-// 4)	plsurf3dl x y z opt indexxmin indexxmax indexymin indexymax
-// 5)	plsurf3dl z opt indexxmin indexxmax indexymin indexymax
+// We support 6 different invocation forms:
+// 1)	plsurf3dl x y z nx ny opt clevel nlevel indexxmin indexxmax indexymin indexymax (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 2)	plsurf3dl x y z nx ny opt clevel indexxmin indexxmax indexymin indexymax (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 3)	plsurf3dl x y z nx ny opt indexxmin indexxmax indexymin indexymax (only if PLPLOTTCLTK_NON_REDACTED_API is #defined)
+// 4)	plsurf3dl x y z opt clevel indexxmin indexymin indexymax
+// 5)	plsurf3dl x y z opt indexxmin indexymin indexymax
+// 6)	plsurf3dl z opt indexxmin indexymin indexymax
 //
 // Form 1) is an exact mirror of the usual C API.  In form 2) we infer nlevel.
-// In form 3,4 and 5 clevel is set to NULL. In form 4 we infer nx and
-// ny from the input data, and in form 5 we infer nx and ny, and also take
-// the x and y arrays to just be integral spacing.
+// In form 3, 5 and 6 clevel is set to NULL. In form 4 we infer nx, ny, nlevel, and indexxmax
+// from the input data, in form 5 we infer nx ny, and indexxmax, and in form 6 we take
+// the x and y arrays to just be integral spacing and infer indexxmax.
 //--------------------------------------------------------------------------
 
 static int
@@ -2659,6 +2690,7 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
     int       i;
 
+#ifdef PLPLOTTCLTK_NON_REDACTED_API
     if ( argc == 13 )
     {
         nlev = atoi( argv[8] );
@@ -2696,9 +2728,11 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         if ( matx->dim != 1 || matx->n[0] != nx ||
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
-             matlev->dim != 1 || matlev->n[0] != nlev )
+             matlev->dim != 1 || matlev->n[0] != nlev ||
+             indexymin->dim != 1 || indexymin->n[0] != indexxmax ||
+             indexymax->dim != 1 || indexymax->n[0] != indexxmax )
         {
-            Tcl_SetResult( interp, "popo Inconsistent dimensions", TCL_STATIC );
+            Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
         }
 
@@ -2749,7 +2783,9 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         if ( matx->dim != 1 || matx->n[0] != nx ||
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
-             matlev->dim != 1 || matlev->n[0] != nlev )
+             matlev->dim != 1 || matlev->n[0] != nlev ||
+             indexymin->dim != 1 || indexymin->n[0] != indexxmax ||
+             indexymax->dim != 1 || indexymax->n[0] != indexxmax )
         {
             Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
@@ -2801,7 +2837,9 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         if ( matx->dim != 1 || matx->n[0] != nx ||
              maty->dim != 1 || maty->n[0] != ny ||
-             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
+             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
+             indexymin->dim != 1 || indexymin->n[0] != indexxmax ||
+             indexymax->dim != 1 || indexymax->n[0] != indexxmax )
         {
             Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
@@ -2818,18 +2856,21 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
 
-    else if ( argc == 10 )
+    else if ( argc == 9 )
+#else
+    if ( argc == 9 )
+#endif
     {
         indexxmin = atoi( argv[6] );
-        indexxmax = atoi( argv[7] );
-        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[8] );
-        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[9] );
+        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[7] );
+        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[8] );
         if ( indexymin->type != TYPE_INT ||
              indexymax->type != TYPE_INT )
         {
             Tcl_SetResult( interp, "indexymin and indexymax must be integer matrices", TCL_STATIC );
             return TCL_ERROR;
         }
+        indexxmax = indexymin->n[0];
 
         CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
         CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
@@ -2853,7 +2894,9 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         if ( matx->dim != 1 || matx->n[0] != nx ||
              maty->dim != 1 || maty->n[0] != ny ||
              matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
-             matlev->dim != 1 || matlev->n[0] != nlev )
+             matlev->dim != 1 || matlev->n[0] != nlev ||
+             indexymin->dim != 1 || indexymin->n[0] != indexxmax ||
+             indexymax->dim != 1 || indexymax->n[0] != indexxmax )
         {
             Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
@@ -2872,21 +2915,21 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
 
-    else if ( argc == 9 )
+    else if ( argc == 8 )
     {
         opt  = atoi( argv[4] );
         clev = NULL;
 
         indexxmin = atoi( argv[5] );
-        indexxmax = atoi( argv[6] );
-        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[7] );
-        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[8] );
+        CHECK_Tcl_GetMatrixPtr( indexymin, interp, argv[6] );
+        CHECK_Tcl_GetMatrixPtr( indexymax, interp, argv[7] );
         if ( indexymin->type != TYPE_INT ||
              indexymax->type != TYPE_INT )
         {
             Tcl_SetResult( interp, "indexymin and indexymax must be integer matrices", TCL_STATIC );
             return TCL_ERROR;
         }
+        indexxmax = indexymin->n[0];
 
         CHECK_Tcl_GetMatrixPtr( matx, interp, argv[1] );
         CHECK_Tcl_GetMatrixPtr( maty, interp, argv[2] );
@@ -2905,7 +2948,9 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
 
         if ( matx->dim != 1 || matx->n[0] != nx ||
              maty->dim != 1 || maty->n[0] != ny ||
-             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny )
+             matz->dim != 2 || matz->n[0] != nx || matz->n[1] != ny ||
+             indexymin->dim != 1 || indexymin->n[0] != indexxmax ||
+             indexymax->dim != 1 || indexymax->n[0] != indexxmax )
         {
             Tcl_SetResult( interp, "Inconsistent dimensions", TCL_STATIC );
             return TCL_ERROR;
@@ -2921,16 +2966,16 @@ plsurf3dlCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         for ( i = 0; i < nx; i++ )
             z[i] = &matz->fdata[ I2D( i, 0 ) ];
     }
-    else if ( argc == 3 )
+    else if ( argc == 2 )
     {
         Tcl_SetResult( interp, "unimplemented", TCL_STATIC );
         return TCL_ERROR;
     }
     else
     {
-        Tcl_AppendResult( interp, "wrong # args: should be \"plsurf3d ",
-            "x y z nx ny opt clevel nlevel\", or a valid contraction ",
-            "thereof.", (char *) NULL );
+        Tcl_AppendResult( interp, "wrong # args: should be \"plsurf3dl ",
+            "x y z nx ny opt clevel nlevel indexxmin indexxmax indexymin ",
+            "indexymax\", or a valid contraction thereof.", (char *) NULL );
         return TCL_ERROR;
     }
 

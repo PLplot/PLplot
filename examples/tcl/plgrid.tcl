@@ -51,7 +51,7 @@ proc plgrid {{w loopback}} {
 	    xj $j = [expr $r * cos($psi)]
 	    yj $j = [expr $r * sin($psi)]
 	}
-	$w cmd plline $nj1 xj yj
+	$w cmd plline xj yj
     }
 
 # Draw j-lines
@@ -65,6 +65,6 @@ proc plgrid {{w loopback}} {
 	    xi $i = [expr $r * cos($psi)]
 	    yi $i = [expr $r * sin($psi)]
 	}
-	$w cmd plline $ni xi yi
+	$w cmd plline xi yi
     }
 }

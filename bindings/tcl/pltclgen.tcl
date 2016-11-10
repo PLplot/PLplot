@@ -1,7 +1,24 @@
 #!/usr/local/bin/tclsh
-# Arjen Markus
-# - translation of the original Perl script
+
+#  Copyright (C) 2006-2016 Arjen Markus
+#  Copyright (C) 2016 Alan W. Irwin
 #
+#  This file is part of PLplot.
+#
+#  PLplot is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU Library General Public License as published
+#  by the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  PLplot is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU Library General Public License for more details.
+#
+#  You should have received a copy of the GNU Library General Public License
+#  along with PLplot; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 # This script is used to automatically generate most of the functions needed
 # to implement the PLplot Tcl API.  It reads a file which specifies the
 # PLplot API command arguments and return value (basically like a C
@@ -175,18 +192,19 @@ proc process_pltclcmd {cmd rtype} {
     # checks from all parts of a spec other than the first line (which
     # is parsed by the main routine before calling process_pltclcmd).
     # Note an empty line separates one spec from the next).
-    set args         ""  ;# Space delimited list of argument names.
-    set argchk       ""  ;# C code to check arguments.
-    set nargs        0   ;# Number of arguments
-    set ndefs        0   ;# Number of default values of arguments
-    set nredacted    0   ;# Number of redacted arguments
-    set refargs      0   ;# Whether argument list includes a returned argument?
+    set args              ""  ;# Space delimited list of argument names.
+    set non_redacted_args ""  ;# Space delimited list of non-redacted argument names.
+    set argchk            ""  ;# C code to check arguments.
+    set nargs             0   ;# Number of arguments
+    set ndefs             0   ;# Number of default values of arguments
+    set nredacted         0   ;# Number of redacted arguments
+    set refargs           0   ;# Whether argument list includes a returned argument?
     # argname($nargs) stores $vname = argument name
     # argtype($nargs) stores $vtype = argument type
-    # argred($nargs)  stores [expandmacro $redactedval] 
+    # argred($nargs)  stores [expandmacro $redactedval]
     # argdef($nargs)  stores $defval = argument default value.
     # argref($nargs)  stores 0 or 1 depending on whether argument is a returned argument.
-    
+
     while { [gets $SPECFILE line] >= 0 } {
 
         if { $line == "" } {
@@ -198,6 +216,10 @@ proc process_pltclcmd {cmd rtype} {
             if { $verbose } {
                puts "vname=$vname vtype=$vtype"
             }
+	    # The current $SPECFILE does not have lines containing
+	    # both "Def:" and "=" so defacto defval and redactedval
+	    # are mutually exclusive and therefore the logic below to
+	    # determine those two quantities works.
             if { [regexp {(.*)\s+Def:\s+(.*)} $vtype ==> vtype defval] } {
                 if { $verbose } {
                     puts "default arg: vtype=$vtype defval=$defval"
@@ -222,11 +244,20 @@ proc process_pltclcmd {cmd rtype} {
                 set argref($nargs) 1
             }
 
-            if { $nargs == 0 } {
-                set args "${args}$vname"
+            if { $args == "" } {
+                set args "$vname"
             } else {
                 set args "$args $vname"
             }
+
+	    if { $argred($nargs) == "" } {
+		if { $non_redacted_args == "" } {
+		    set non_redacted_args "$vname"
+		} else {
+		    set non_redacted_args "$non_redacted_args $vname"
+		}
+	    }
+
             if { $defval != "" } {
                 incr ndefs
             }
@@ -236,7 +267,6 @@ proc process_pltclcmd {cmd rtype} {
             incr nargs
             continue
         }
-
         # Consistency check
         if { [regexp {^!consistency} $line] } {
             set check  [expandmacro [lindex $line 1]]
@@ -265,6 +295,20 @@ proc process_pltclcmd {cmd rtype} {
     }
 
     set TEMPLATE [open "$cmdfile"]
+
+    if { $refargs } {
+	if { $if_non_redacted && $nredacted > 0 } {
+	    set full_command "\\\"$cmd \?$non_redacted_args\?\\\" or \\\"$cmd \?$args\?\\\""
+	} else {
+	    set full_command "\\\"$cmd \?$non_redacted_args\?\\\""
+	}
+    } else {
+	if { $if_non_redacted && $nredacted > 0 } {
+	    set full_command "\\\"$cmd $non_redacted_args\\\" or \\\"$cmd $args\\\""
+	} else {
+	    set full_command "\\\"$cmd $non_redacted_args\\\""
+	}
+    }
 
     while { [gets $TEMPLATE tmpline] >= 0 } {
 
@@ -330,7 +374,7 @@ proc process_pltclcmd {cmd rtype} {
 
                     set indent ""
 		    # Note arrays must be passed by name.
-		    process_args $GENFILE $round $ndefs $indent $nredacted $nargs argred argref argtype argname 
+		    process_args $GENFILE $round $ndefs $indent $nredacted $nargs argred argref argtype argname
 		} else {
 		    # For nredacted > 0, there are three (if_non_redacted !=0) or
 		    # two (if_non_redacted == 0) rounds of calls to process_args
@@ -447,14 +491,7 @@ proc process_pltclcmd {cmd rtype} {
              default {
 
                  # substitutions here...
-
-                 set line [string map [list %cmd% $cmd %nargs% $nargs %nredacted% $nredacted] $tmpline]
-                 if { $refargs } {
-                    set line [string map [list %args% \?$args\?] $line]
-                 } else {
-                    set line [string map [list %args% $args] $line]
-                 }
-                 set line [string map [list %ndefs% $ndefs %isref% $refargs] $line]
+                 set line [string map [list %full_command% $full_command %cmd% $cmd %nargs% $nargs %nredacted% $nredacted %ndefs% $ndefs %isref% $refargs %if_non_redacted $if_non_redacted] $tmpline]
 
                  puts $GENFILE $line
              }
@@ -468,7 +505,7 @@ proc process_pltclcmd {cmd rtype} {
 #
 set verbose [expr {[lsearch $argv "-v"] >= 0}]
 
-set if_non_redacted 1 ;# Whether to generate non-redacted API when nredacted > 0?
+set if_non_redacted 0 ;# Whether to generate non-redacted API when nredacted > 0?
 
 # Find the source tree directory that must be specified on the command line.
 set sourcedir [lindex $argv 0]                    ;# Get the current source directory - for "out of source tree builds"

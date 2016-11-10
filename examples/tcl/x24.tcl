@@ -120,7 +120,7 @@ proc x24 {{w loopback}} {
     $w cmd plbox "" 1.0 0 "" 1.0 0
 
     $w cmd plscmap0n 7
-    $w cmd plscmap0 red green blue 7
+    $w cmd plscmap0 red green blue
 
     $w cmd plschr 0 4.0
     $w cmd plfont 1

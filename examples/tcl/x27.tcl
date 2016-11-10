@@ -113,12 +113,9 @@ proc spiro {w params fill} {
 
   foreach {param1 param2 param3 param4} $params {break}
 
-  set NPNT 2000
-
-  matrix xcoord f [expr {$NPNT+1}]
-  matrix ycoord f [expr {$NPNT+1}]
-
   #     Fill the coordinates
+
+  set NPNT 2000
 
   #     Proper termination of the angle loop very near the beginning
   #     point, see
@@ -129,6 +126,9 @@ proc spiro {w params fill} {
   # puts [ format "windings, steps, dphi = %d, %d, %f" $windings $steps $dphi ]
 
   set n [expr {int($windings*$steps)+1}]
+
+  matrix xcoord f $n
+  matrix ycoord f $n
 
   for { set i 0 } { $i < $n } { incr i } {
      set phi  [expr {double($i) * $dphi}]
@@ -160,9 +160,9 @@ proc spiro {w params fill} {
   $w cmd plcol0 1
 
   if { $fill } {
-      $w cmd plfill $n xcoord ycoord
+      $w cmd plfill xcoord ycoord
   } else {
-      $w cmd plline $n xcoord ycoord
+      $w cmd plline xcoord ycoord
   }
 }
 

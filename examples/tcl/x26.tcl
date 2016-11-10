@@ -157,7 +157,7 @@ proc plot261 { w type x_label y_label alty_label legend_text title_label line_la
   #  Plot ampl vs freq
 
   $w cmd plcol0 2
-  $w cmd plline 101 freql ampl
+  $w cmd plline freql ampl
   $w cmd plcol0 2
   $w cmd plptex 1.6 -30.0 1.0 -20.0 0.5 $line_label
 

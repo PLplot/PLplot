@@ -46,9 +46,13 @@ proc x13 {{w loopback}} {
 
 	$w cmd plcol0 [expr {$i + 1}]
 	$w cmd plpsty [expr {($i + 3) % 8 + 1}]
-	$w cmd plfill $j x y
+	matrix xplot f $j = [x :]
+	matrix yplot f $j = [y :]
+	$w cmd plfill xplot yplot
 	$w cmd plcol0 1
-	$w cmd plline $j x y
+	$w cmd plline xplot yplot
+	xplot delete
+	yplot delete
 	set just [expr {$factor * ($theta0 + $theta1) / 2.}]
 	set dx [expr {.25 * cos($just)}]
 	set dy [expr {.25 * sin($just)}]

@@ -203,12 +203,12 @@ proc plot1 {w} {
     # plot the data points
 
     $w cmd plcol0 9
-    $w cmd plpoin 6 x1 y1 9
+    $w cmd plpoin x1 y1 9
 
     # draw the line through the data
 
     $w cmd plcol0 4
-    $w cmd plline $npts x y
+    $w cmd plline x y
 }
 
 # This is supposed to work just like the plot2() in x01c.c
@@ -232,7 +232,7 @@ proc plot2 {w} {
     }
 
     $w cmd plcol0 3
-    $w cmd plline 101 x1 y1
+    $w cmd plline x1 y1
 }
 
 # This is supposed to work just like the plot3() in x01c.c
@@ -256,14 +256,14 @@ proc plot3 {w} {
 
     mark 0 = 1500
     space 0 = 1500
-    $w cmd plstyl 1 mark space
+    $w cmd plstyl mark space
 
     $w cmd plcol0 2
     $w cmd plbox "g" 30.0 0 "g" 0.2 0
 
-    mark 0 = 0
-    space 0 = 0
-    $w cmd plstyl 0 mark space
+    # Change back to default style.
+    matrix empty i 0
+    $w cmd plstyl empty empty
 
     $w cmd plcol0 3
     $w cmd pllab "Angle (degrees)" "sine" "#frPLplot Example 1 - Sine function"
@@ -277,10 +277,9 @@ proc plot3 {w} {
     }
 
     $w cmd plcol0 4
-    $w cmd plline 101 x y
+    $w cmd plline x y
 }
 
 ###############################################################################
 
 open_main
-

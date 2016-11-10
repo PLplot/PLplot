@@ -103,12 +103,14 @@ proc plot1 {} {
     # plot the data points
 
     .plw plcol0 9
-    .plw plpoin $n1 x1 y1 9
+    matrix xplot f $n1 = [x1 :]
+    matrix yplot f $n1 = [y1 :]
+    .plw plpoin xplot yplot 9
 
     # plot the data points
 
     .plw plcol0 4
-    .plw plline $n2 x2 y2
+    .plw plline x2 y2
 }
 
 # This is supposed to work just like the plot2() in x01c.c/xtk02.c
@@ -132,7 +134,7 @@ proc plot2 {} {
     }
 
     .plw plcol0 3
-    .plw plline 101 x1 y1
+    .plw plline x1 y1
 }
 
 proc gumbyplot {} {
@@ -150,7 +152,7 @@ proc gumbyplot {} {
 	y1 $i = [expr 1 - 2 * $x + 2 * $x * $x]
     }
 
-    .plw plline 101 x1 y1
+    .plw plline x1 y1
 }
 
 # This proc shows off the use of a matrix extension subcommand.
@@ -171,7 +173,7 @@ proc snoopy {} {
     .plw plenv 0 1 0 1 0 0
     .plw plcol0 6
     .plw pllab "(x)" "(y)" "#frDemo of Matrix extension subcommand"
-    .plw plline 101 x y
+    .plw plline x y
 }
 
 # Punch eject and hold onto your seat !!!
