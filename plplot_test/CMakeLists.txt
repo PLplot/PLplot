@@ -110,6 +110,15 @@ if(SH_EXECUTABLE)
   # for the traditional build.
   set(SHELL_TEST_WXWIDGETS 1)
 
+  # Set this value to 0 if you want to temporarily disable qt_example tests
+  # for the traditional build.
+  if(PLPLOT_USE_QT5)
+    # FIXME once the Qt5 memory management issues are fixed
+    set(SHELL_TEST_QT_EXAMPLE 0)
+  else(PLPLOT_USE_QT5)
+    set(SHELL_TEST_QT_EXAMPLE 1)
+  endif(PLPLOT_USE_QT5)
+  
   configure_file(
     plplot-test-interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh

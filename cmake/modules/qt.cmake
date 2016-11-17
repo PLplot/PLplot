@@ -74,21 +74,11 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_qt)
-  option(PLPLOT_USE_QT5 "Experimental option to try Qt5" OFF)
+  option(PLPLOT_USE_QT5 "Experimental (because that library is buggy compared to Qt4) option to try Qt5" OFF)
 
   if(PLPLOT_USE_QT5)
-    # We are using latest Qt5 support method, see
+    # We are using the latest Qt5 support method, see
     # <http://doc.qt.io/qt-5/cmake-manual.html>.
-    # However, instead of the recommended "set(CMAKE_AUTOMOC ON)",
-    # "set(CMAKE_AUTOMOC_MOC_OPTIONS ...)", and
-    # "set(CMAKE_INCLUDE_CURRENT_DIR ON)" which has the huge
-    # disadvantage that these variables affect every target whether
-    # Qt-related or not, and especially because automoc cannot
-    # handle header files in different directories, use
-    # qt5_wrap_cpp as appropriate instead, since experiments show
-    # that produces the same results as automoc
-    # with no symlink necessary to take care of the different directory
-    # problem that automoc has.
     
     # Find needed components of Qt5.  Minimum value of the version is
     # 5.3.1 because there were significant text alignment bugs in prior versions.
@@ -291,6 +281,46 @@ if(NOT ANY_QT_DEVICE AND ENABLE_qt)
     )
   set(ENABLE_qt OFF CACHE BOOL "Enable Qt binding" FORCE)
 endif(NOT ANY_QT_DEVICE AND ENABLE_qt)
+
+if(PLPLOT_USE_QT5)
+  # Calculate what will be the AUTOMOC_MOC_OPTIONS property
+  # for targets where the AUTOMOC property needs to be set.
+  set(PLPLOT_AUTOMOC_MOC_OPTIONS)
+  if(PLD_bmpqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_bmpqt)
+  endif(PLD_bmpqt)
+  if(PLD_jpgqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_jpgqt)
+  endif(PLD_jpgqt)
+  if(PLD_pngqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_pngqt)
+  endif(PLD_pngqt)
+  if(PLD_ppmqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_ppmqt)
+  endif(PLD_ppmqt)
+  if(PLD_tiffqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_tiffqt)
+  endif(PLD_tiffqt)
+  if(PLD_svgqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_svgqt)
+  endif(PLD_svgqt)
+  if(PLD_epsqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_epsqt)
+  endif(PLD_epsqt)
+  if(PLD_pdfqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_pdfqt)
+  endif(PLD_pdfqt)
+  if(PLD_qtwidget)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_qtwidget)
+  endif(PLD_qtwidget)
+  if(PLD_extqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_extqt)
+  endif(PLD_extqt)
+  if(PLD_memqt)
+    list(APPEND PLPLOT_AUTOMOC_MOC_OPTIONS -DPLD_memqt)
+  endif(PLD_memqt)
+endif(PLPLOT_USE_QT5)
+
 
 if(ENABLE_pyqt4 AND PLPLOT_USE_QT5)
   message(STATUS

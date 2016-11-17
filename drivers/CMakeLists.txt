@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -103,13 +103,13 @@ if(ENABLE_DYNDRIVERS)
 
     if(SOURCE_ROOT_NAME STREQUAL "qt")
       if(ANY_QT_DEVICE)
-	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
+	# Must add qt.h to explicit sources for AUTOMOC method to work for either
+	# Qt4 or Qt5.
+	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE} ${CMAKE_SOURCE_DIR}/include/qt.h)
 	if(PLPLOT_USE_QT5)
 	  # According to advice from Steve Kelly on the Cmake list, the Qt5
 	  # Gui component is a dependency of the Qt5 Svg component so is not
 	  # needed here, but I will leave it in since it is informative.
-	  # N.B. with new Qt5 support, qt5_use_modules no longer required.
-	  # qt5_use_modules(${SOURCE_ROOT_NAME} Svg Gui PrintSupport)
 	  target_link_libraries(
 	    ${SOURCE_ROOT_NAME}
 	    plplot
@@ -132,14 +132,10 @@ if(ENABLE_DYNDRIVERS)
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
 	  set_qt_target_properties(${SOURCE_ROOT_NAME})
 	endif(PLPLOT_USE_QT5)
-	if(NOT ENABLE_qt)
-	  # Note this code is never executed considering the way the
-          # build system is set up now (see cmake/modules/qt.cmake),
-          # but nevertheless keep it for the future in case we ever
-          # want to deal with the case where we want to build the qt
-          # device without building the plplotqtd library
-	  add_dependencies(${SOURCE_ROOT_NAME} moc_outfile_generated)
-	endif(NOT ENABLE_qt)
+	set_target_properties(${SOURCE_ROOT_NAME} PROPERTIES
+	  AUTOMOC ON
+	  AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
+    )
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)

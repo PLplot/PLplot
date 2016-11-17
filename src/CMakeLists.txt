@@ -142,10 +142,9 @@ if(NOT ENABLE_DYNDRIVERS)
 
     if(SOURCE_ROOT_NAME STREQUAL "qt")
       if(ANY_QT_DEVICE)
-	# For this case libplot must have a target dependency on the
-	# moc files generated in the binary include directory.
-	set(qt_dependency moc_outfile_generated)
-
+	# Must add qt.h to explicit sources for AUTOMOC method to work for either
+	# Qt4 or Qt5.
+	list(APPEND plplot_LIB_SRCS ${CMAKE_SOURCE_DIR}/include/qt.h)
 	# Qt5 handled a completely different way.
 	if(NOT PLPLOT_USE_QT5)
 	  if(NOT QT_LIBRARIES)
@@ -198,15 +197,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}/include
   )
 add_library(plplot ${plplot_LIB_SRCS})
-add_dependencies(plplot plhershey-unicode.h_built ${qt_dependency})
-
-# Disable with new support method.
-if(0 AND NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  # According to advice from Steve Kelly on the Cmake list, the Qt5
-  # Gui component is a dependency of the Qt5 Svg component so is not
-  # needed here, but I will leave it in since it is informative.
-  qt5_use_modules(plplot Svg Gui PrintSupport)
-endif(0 AND NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+add_dependencies(plplot plhershey-unicode.h_built)
 
 # Deal with external libraries.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
@@ -313,21 +304,28 @@ endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
 
 #message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
 
-if(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   if(NON_TRANSITIVE)
     target_link_libraries(plplot PRIVATE ${libplplot_LINK_LIBRARIES} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
   else(NON_TRANSITIVE)
     target_link_libraries(plplot PUBLIC ${libplplot_LINK_LIBRARIES} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
   endif(NON_TRANSITIVE)
-else(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+else(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   if(NON_TRANSITIVE)
     target_link_libraries(plplot PRIVATE ${libplplot_LINK_LIBRARIES})
   else(NON_TRANSITIVE)
     target_link_libraries(plplot PUBLIC ${libplplot_LINK_LIBRARIES})
   endif(NON_TRANSITIVE)
-endif(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 set_library_properties(plplot)
+
+if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
+  set_target_properties(plplot PROPERTIES
+    AUTOMOC ON
+    AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
+    )
+endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
 
 install(TARGETS plplot
   EXPORT export_plplot
@@ -351,6 +349,7 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   # for the plplot library.
   # N.B. this will not work with new Qt5 support method since
   # Qt5_library_LINK_FLAGS does not exist.
+
   list(APPEND libplplot_LINK_FLAGS ${Qt5_library_LINK_FLAGS})
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 

@@ -1,7 +1,7 @@
 # bindings/qt_gui/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -38,8 +38,13 @@ if(ENABLE_qt)
   endif(BUILD_SHARED_LIBS)
 
   if(ANY_QT_DEVICE)
-    add_library(plplotqt ${qt_SOURCE})
-    add_dependencies(plplotqt moc_outfile_generated)
+    # Must add qt.h to explicit sources for AUTOMOC method to work for either
+    # Qt4 or Qt5.
+    add_library(plplotqt ${qt_SOURCE} ${CMAKE_SOURCE_DIR}/include/qt.h)
+    set_target_properties(plplotqt PROPERTIES
+      AUTOMOC ON
+      AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
+      )
   else(ANY_QT_DEVICE)
     message(FATAL_ERROR "Internal build system inconsistency between ENABLE_qt true and ANY_QT_DEVICE false.")
   endif(ANY_QT_DEVICE)
@@ -48,8 +53,6 @@ if(ENABLE_qt)
     # According to advice from Steve Kelly on the Cmake list, the Qt5
     # Gui component is a dependency of the Qt5 Svg component so is not
     # needed here, but I will leave it in since it is informative.
-    # Not needed with new Qt5 support method so comment out.
-    # qt5_use_modules(plplotqt Svg Gui PrintSupport)
 
     if(NON_TRANSITIVE)
       target_link_libraries(plplotqt PRIVATE plplot ${MATH_LIB} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
@@ -110,9 +113,8 @@ if(ENABLE_qt)
     # For this special case QT_LIBRARIES is not populated so must
     # use this alternative method to add Qt(5) libraries to the pkg-config file
     # for the plplotqt library.
-    # N.B. with new configuration method for Qt5, must implement something
-    # different to get this to work since Qt5_library_LINK_FLAGS
-    # undefined.
+    # N.B. this will not work with new Qt5 support method since
+    # Qt5_library_LINK_FLAGS does not exist.
     set(
       libplplotqt_LINK_FLAGS
       "${Qt5_library_LINK_FLAGS}"

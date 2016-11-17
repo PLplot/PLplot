@@ -5,7 +5,7 @@
 // Imperial College, London
 //
 // Copyright (C) 2009  Imperial College, London
-// Copyright (C) 2009-2011  Alan W. Irwin
+// Copyright (C) 2009-2016  Alan W. Irwin
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Lesser Public License as published
@@ -1667,5 +1667,3 @@ void plfreeqtdev()
     plsc->dev = NULL;
 }
 #endif
-
-#include "moc_files.h"
