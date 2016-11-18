@@ -1,4 +1,5 @@
 /*************************************************************************\
+*                  Copyright (C) Alan W. Irwin, 2016.                     *
 *                  Copyright (C) Michael Kerrisk, 2016.                   *
 *                                                                         *
 * This program is free software. You may use, modify, and redistribute it *
@@ -19,10 +20,18 @@
 
    See also pshm_write.c.
 */
+#include <sys/types.h>  /* Type definitions used by many programs */
+#include <stdio.h>      /* Standard I/O functions */
+#include <stdlib.h>     /* Prototypes of commonly used library functions,
+                           plus EXIT_SUCCESS and EXIT_FAILURE constants */
+#include <unistd.h>     /* Prototypes for many system calls */
+#include <errno.h>      /* Declares errno and defines error constants */
+#include <string.h>     /* Commonly used string-handling functions */
+#include <semaphore.h>
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include "tlpi_hdr.h"
+#include "pshm.h"
 
 int
 main(int argc, char *argv[])
@@ -32,24 +41,44 @@ main(int argc, char *argv[])
     struct stat sb;
 
     if (argc != 2 || strcmp(argv[1], "--help") == 0)
-        usageErr("%s shm-name\n", argv[0]);
+      {
+        //usageErr("%s shm-name\n", argv[0]);
+	fprintf(stderr, "%s shm-name\n", argv[0]);
+	exit(EXIT_FAILURE);
+      }
 
     fd = shm_open(argv[1], O_RDONLY, 0);    /* Open existing object */
     if (fd == -1)
-        errExit("shm_open");
+      {
+        //errExit("shm_open");
+	fprintf(stderr, "shm_open\n");
+	exit(EXIT_FAILURE);
+      }
 
     /* Use shared memory object size as length argument for mmap()
        and as number of bytes to write() */
 
     if (fstat(fd, &sb) == -1)
-        errExit("fstat");
+      {
+        //errExit("fstat");
+	fprintf(stderr, "fstat\n");
+	exit(EXIT_FAILURE);
+      }
 
     addr = mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
     if (addr == MAP_FAILED)
-        errExit("mmap");
+      {
+        //errExit("mmap");
+	fprintf(stderr, "mmap\n");
+	exit(EXIT_FAILURE);
+      }
 
     if (close(fd) == -1)                    /* 'fd' is no longer needed */
-        errExit("close");
+      {
+        //errExit("close");
+	fprintf(stderr, "close\n");
+	exit(EXIT_FAILURE);
+      }
 
     write(STDOUT_FILENO, addr, sb.st_size);
     printf("\n");
