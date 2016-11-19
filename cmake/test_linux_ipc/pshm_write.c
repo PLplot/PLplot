@@ -1,31 +1,26 @@
-/*************************************************************************\
-*                  Copyright (C) Alan W. Irwin, 2016.                     *
-*                  Copyright (C) Michael Kerrisk, 2016.                   *
-*                                                                         *
-* This program is free software. You may use, modify, and redistribute it *
-* under the terms of the GNU General Public License as published by the   *
-* Free Software Foundation, either version 3 or (at your option) any      *
-* later version. This program is distributed without any warranty.  See   *
-* the file COPYING.gpl-v3 for details.                                    *
-\*************************************************************************/
+// Copyright (C) Alan W. Irwin, 2016 
+// Copyright (C) Michael Kerrisk, 2016
+//
+// This program is free software. You may use, modify, and redistribute it
+// under the terms of the GNU General Public License as published by the
+// Free Software Foundation, either version 3 or (at your option) any
+// later version. This program is distributed without any warranty.  See
+// the file COPYING.gpl-v3 for details.
 
-/* Listing 54-2 */
+// pshm_write.c
 
-/* pshm_write.c
+// Usage: pshm_write
+// Copy stdin into a POSIX shared memory object under unnamed semaphore control.
+// To be used in conjunction with pshm_read (which reads from that shared
+// memory object under unnamed semaphore control and outputs the results to stdout).
 
-   Usage: pshm_write shm-name string
-
-   Copy 'string' into the POSIX shared memory object named in 'shm-name'.
-
-   See also pshm_read.c.
-*/
-#include <sys/types.h>  /* Type definitions used by many programs */
-#include <stdio.h>      /* Standard I/O functions */
-#include <stdlib.h>     /* Prototypes of commonly used library functions,
-                           plus EXIT_SUCCESS and EXIT_FAILURE constants */
-#include <unistd.h>     /* Prototypes for many system calls */
-#include <errno.h>      /* Declares errno and defines error constants */
-#include <string.h>     /* Commonly used string-handling functions */
+#include <sys/types.h>  // Type definitions used by many programs
+#include <stdio.h>      // Standard I/O functions
+#include <stdlib.h>     // Prototypes of commonly used library functions,
+                        // plus EXIT_SUCCESS and EXIT_FAILURE constants
+#include <unistd.h>     // Prototypes for many system calls
+#include <errno.h>      // Declares errno and defines error constants
+#include <string.h>     // Commonly used string-handling functions
 #include <semaphore.h>
 #include <fcntl.h>
 #include <sys/mman.h>
@@ -35,49 +30,96 @@ int
 main(int argc, char *argv[])
 {
     int fd;
-    size_t len;                 /* Size of shared memory object */
-    char *addr;
+    shmbuf *shmp;
+    int xfrs, bytes;
 
-    if (argc != 3 || strcmp(argv[1], "--help") == 0)
+    if (argc != 1)
       {
-        //usageErr("%s shm-name string\n", argv[0]);
-	fprintf(stderr, "%s shm-name string\n", argv[0]);
+	fprintf(stderr, "%s should have no arguments because it only accepts input from stdin\n", argv[0]);
 	exit(EXIT_FAILURE);
       }
 
-    fd = shm_open(argv[1], O_RDWR, 0);      /* Open existing object */
+    // Create new instance of shared memory with read-write permissions of just the current user.
+    fd = shm_open(SHM_PATH, O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
     if (fd == -1)
       {
-        //errExit("shm_open");
 	fprintf(stderr, "shm-open\n");
 	exit(EXIT_FAILURE);
       }
 
-    len = strlen(argv[2]);
-    if (ftruncate(fd, len) == -1)           /* Resize object to hold string */
+    // Resize object to hold struct.
+    if (ftruncate(fd, sizeof(shmbuf)) == -1)
       {
-        //errExit("ftruncate");
 	fprintf(stderr, "ftruncate\n");
 	exit(EXIT_FAILURE);
       }
-    printf("Resized to %ld bytes\n", (long) len);
-
-    addr = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    if (addr == MAP_FAILED)
+    shmp = mmap(NULL, sizeof(shmbuf), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+    if (shmp == MAP_FAILED)
       {
-        //errExit("mmap");
 	fprintf(stderr, "mmap\n");
 	exit(EXIT_FAILURE);
       }
 
-    if (close(fd) == -1)                    /* 'fd' is no longer needed */
+    // 'fd' is no longer needed
+    if (close(fd) == -1)
       {
-        //errExit("close");
 	fprintf(stderr, "close\n");
 	exit(EXIT_FAILURE);
       }
 
-    printf("copying %ld bytes\n", (long) len);
-    memcpy(addr, argv[2], len);             /* Copy string to shared memory */
+    if (sem_init(&shmp->rsem, 1, 0) == -1)
+      {
+	fprintf(stderr, "sem_init\n");
+	exit(EXIT_FAILURE);
+      }
+
+    // We (pshm_write) gets first turn
+    if (sem_init(&shmp->wsem, 1, 1) == -1)
+      {
+	fprintf(stderr, "sem_init\n");
+	exit(EXIT_FAILURE);
+      }
+
+    for (xfrs = 0, bytes = 0; ; xfrs++, bytes += shmp->cnt) {
+      // Wait for our turn
+      if(sem_wait(&shmp->wsem) == -1)
+	{
+	  fprintf(stderr, "sem_wait\n");
+	  exit(EXIT_FAILURE);
+	}
+	
+      shmp->cnt = read(STDIN_FILENO, shmp->buf, BUF_SIZE);
+      if(shmp->cnt == -1)
+	{
+	  fprintf(stderr, "read\n");
+	  exit(EXIT_FAILURE);
+	}
+	
+      // Give pshm_read a turn
+      if(sem_post(&shmp->rsem) == -1)
+	{
+	  fprintf(stderr, "read\n");
+	  exit(EXIT_FAILURE);
+	}
+
+      // EOF on stdin?
+      if (shmp->cnt == 0)
+	break;
+
+    }
+    // Wait for pshm_read to finish
+    if(sem_wait(&shmp->wsem) == -1)
+      {
+	fprintf(stderr, "sem_wait\n");
+	exit(EXIT_FAILURE);
+      }
+
+    // Clean up
+    if(shm_unlink(SHM_PATH) == -1)
+      {
+	fprintf(stderr, "shm_unlink\n");
+	exit(EXIT_FAILURE);
+      }
+
     exit(EXIT_SUCCESS);
 }

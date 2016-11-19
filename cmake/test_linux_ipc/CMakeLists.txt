@@ -9,8 +9,9 @@ project(test_linux_ipc C)
 
 add_executable(pshm_write pshm_write.c)
 add_executable(pshm_read pshm_read.c)
+add_executable(pshm_unlink pshm_unlink.c)
 
-set_target_properties(pshm_write pshm_read
+set_target_properties(pshm_write pshm_read pshm_unlink
   PROPERTIES
   INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}"
   )
@@ -33,5 +34,15 @@ else(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(RT_LIB)
 endif(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 
-target_link_libraries(pshm_write ${RT_LIB})
-target_link_libraries(pshm_read ${RT_LIB})
+# The -pthread compiler option set below is not enough, and I have
+# to add this library to the ones that are linked in.
+find_library(PTHREAD_LIB pthread)
+
+target_link_libraries(pshm_write ${RT_LIB} ${PTHREAD_LIB})
+target_link_libraries(pshm_read ${RT_LIB} ${PTHREAD_LIB})
+target_link_libraries(pshm_unlink ${RT_LIB} ${PTHREAD_LIB})
+
+# Web advice says -pthread has to be a compiler option as well.
+target_compile_options(pshm_write PRIVATE "-pthread")
+target_compile_options(pshm_read PRIVATE "-pthread")
+target_compile_options(pshm_unlink PRIVATE "-pthread")
