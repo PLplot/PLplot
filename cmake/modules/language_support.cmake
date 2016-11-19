@@ -9,8 +9,10 @@
 option(ENABLE_workaround_9220 "Enable a workaround for cmake bug 9220" ON)
 
 if(ENABLE_workaround_9220)
+  option(ENABLE_compiler_diagnostics "Enable printing out full CMake messages when CMake discovers a compiler does not work" OFF)
   function(workaround_9220 language language_works)
     #message("DEBUG: language = ${language}")
+    # MAINTENANCE of minimum version
     set(text
       "cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
 project(test NONE)
@@ -36,6 +38,8 @@ enable_language(${language})
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language})
     file(WRITE ${CMAKE_BINARY_DIR}/language_tests/${language}/CMakeLists.txt
       ${text})
+
+    # MAINTENANCE
     # Special language support files for various languages:
     # N.B. This list of files has to be maintained to be consistent
     # with anything special we do in terms of language support.
@@ -86,19 +90,25 @@ enable_language(${language})
       COMMAND ${CMAKE_COMMAND} -G ${CMAKE_GENERATOR} .
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/language_tests/${language}
       RESULT_VARIABLE return_code
-      #OUTPUT_VARIABLE output
-      #ERROR_VARIABLE error
-      #OUTPUT_STRIP_TRAILING_WHITESPACE
-      #ERROR_STRIP_TRAILING_WHITESPACE
+      OUTPUT_VARIABLE output
+      ERROR_VARIABLE output
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_STRIP_TRAILING_WHITESPACE
       )
     if(return_code EQUAL 0)
       set(${language_works} ON CACHE INTERNAL "")
     else(return_code EQUAL 0)
       set(${language_works} OFF CACHE INTERNAL "")
-      #message(STATUS "A test cmake run with language = ${language} enabled failed with the following stdout and stderr:")
-      #message(STATUS "stdout = ${output}")
-      #message(STATUS "stderr = ${error}")
-    endif(return_code EQUAL 0)
+      if(ENABLE_compiler_diagnostics)
+	message(STATUS "A test cmake run with language = ${language} enabled failed with the following output:")
+	message("---------------------------------------------------------------------------------------------------------")
+	message("${output}")
+	message("---------------------------------------------------------------------------------------------------------")
+      else(ENABLE_compiler_diagnostics)
+	message(STATUS "A test cmake run with language = ${language} enabled failed.")
+	message(STATUS "Specify -DENABLE_compiler_diagnostics=ON to see full CMake diagnostics concerning this failure.")
+      endif(ENABLE_compiler_diagnostics)
+      endif(return_code EQUAL 0)
   endfunction(workaround_9220)
 else(ENABLE_workaround_9220)
   function(workaround_9220 language language_works)
