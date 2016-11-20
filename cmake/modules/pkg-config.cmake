@@ -1,6 +1,6 @@
 # cmake/modules/pkg-config.cmake
 #
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -415,25 +415,30 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
       message(FATAL_ERROR "pkg_config_file called with wrong number of arguments")
     endif(ARGC EQUAL 7)
 
-    if(BINDING STREQUAL "c")
+    # N.B. all the tests on "X${BINDING}X" below rather than BINDING
+    # are to beat a potential dereferencing problem for strings in if statements.
+    # This problem only occurs with old CMake versions that don't
+    # have CMP0054 set to NEW.
+    
+    if("X${BINDING}X" STREQUAL "XcX")
       set(PC_FILE_SUFFIX "")
       set(PC_REQUIRES "")
-    elseif(BINDING STREQUAL "wxwidgets")
+    elseif("X${BINDING}X" STREQUAL "XwxwidgetsX")
       set(PC_FILE_SUFFIX "-${BINDING}")
       set(PC_REQUIRES "plplot-c++")
-    else(BINDING STREQUAL "c")
+    else("X${BINDING}X" STREQUAL "XcX")
       set(PC_FILE_SUFFIX "-${BINDING}")
       set(PC_REQUIRES "plplot")
-    endif(BINDING STREQUAL "c")
+    endif("X${BINDING}X" STREQUAL "XcX")
 
     if(NON_TRANSITIVE)
-      if(BINDING STREQUAL "ocaml")
+      if("X${BINDING}X" STREQUAL "XocamlX")
 	# Don't know how to do non-transitive linking for
         # Ocaml binding of PLplot.
 	set(PC_REQUIRES_TAG "Requires")
-      else(BINDING STREQUAL "ocaml")
+      else("X${BINDING}X" STREQUAL "XocamlX")
 	set(PC_REQUIRES_TAG "Requires.private")
-      endif(BINDING STREQUAL "ocaml")
+      endif("X${BINDING}X" STREQUAL "XocamlX")
     else(NON_TRANSITIVE)
       set(PC_REQUIRES_TAG "Requires")
     endif(NON_TRANSITIVE)
