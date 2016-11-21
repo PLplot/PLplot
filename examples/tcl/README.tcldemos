@@ -79,3 +79,14 @@ package) use man tclsh.
 Both the pltcl and tclsh methods execute the various x??.tcl examples
 corresponding to the numbers (in the range from 0 to 33, except for 32)
 specified by the user.
+
+Test the matrix capabilities of the tclmatrix library.
+
+pltcl | ../../bindings/tcl/pltcl
+source <top of source tree>/bindings/tcl/test_tclmatrix.tcl
+ctrl-D to exit pltcl
+
+Copy complete output from the above and compare (e.g., with diff) with the
+file <top of source tree>/bindings/tcl/test_tclmatrix.out which contains
+the results that should be generated above if the tclmatrix library
+is working properly on your platform.
