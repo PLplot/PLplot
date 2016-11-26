@@ -243,6 +243,29 @@ Each of the steps in this comprehensive test may take a while...."
 		echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
 		collect_exit 1
 	    fi
+
+	    if [[ "$OSTYPE" =~ ^linux && "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" ]]; then
+		# The above install and the above "if" assure there are *.so files in both
+		# the build and install trees for the linux case that can be analyzed with ldd -r.
+		output="$OUTPUT_TREE"/build_tree_ldd.out
+		rm -f "$output"
+		echo_tee "find \"$BUILD_TREE\" -name \"*.so\" | xargs ldd -r in the build tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+		find "$BUILD_TREE" -name "*.so" | xargs ldd -r >& "$output"
+		ldd_rc=$?
+		if [ "$ldd_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: find \"$BUILD_TREE\" -name \"*.so\" | xargs ldd -r failed in the build tree"
+		    collect_exit 1
+		fi
+		output="$OUTPUT_TREE"/install_tree_ldd.out
+		rm -f "$output"
+		echo_tee "find \"$INSTALL_TREE\" -name \"*.so\" | xargs ldd -r in the install tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+		find "$INSTALL_TREE" -name "*.so" | xargs ldd -r >& "$output"
+		ldd_rc=$?
+		if [ "$ldd_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: find \"$INSTALL_TREE\" -name \"*.so\" | xargs ldd -r failed in the install tree"
+		    collect_exit 1
+		fi
+	    fi
 	fi
 
 	if [ "$do_clean_as_you_go" = "yes" ] ; then
@@ -332,11 +355,15 @@ Each of the steps in this comprehensive test may take a while...."
 	fi
     fi
 
-    # This logic identical to previous stanza except that "noninteractive" is
-    # replaced everywhere by "interactive" and the ctest stanza is removed.
-    # There is likely a way with bash to implement this by generalizing the previous
-    # stanza, and thus halving the code size and maintenance, but I don't know
-    # how to do that so this brute-force edit of copy of previous stanza was done instead.
+    # This logic identical to previous stanza except that
+    # "noninteractive" is replaced everywhere by "interactive" and the
+    # ctest stanza is removed.  There is likely a way with bash to
+    # implement this by generalizing the previous stanza, and thus
+    # halving the code size and maintenance.  For example, the
+    # "declare" possibilities suggested in
+    # <http://stackoverflow.com/questions/16553089/bash-dynamic-variable-names>
+    # look promising.  But for now I just using the present
+    # brute-force edit of a copy of the previous stanza.
     if [ "$TEST_TYPE" = "interactive" ] ; then
 	if [ "$do_test_build_tree" = "yes" -a "$do_test_interactive" = "yes" ] ; then
 	    output="$OUTPUT_TREE"/make_interactive.out
@@ -360,6 +387,29 @@ Each of the steps in this comprehensive test may take a while...."
 	    if [ "$make_install_rc" -ne 0 ] ; then
 		echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
 		collect_exit 1
+	    fi
+
+	    if [[ "$OSTYPE" =~ ^linux && "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" ]]; then
+		# The above install and the above "if" assure there are *.so files in both
+		# the build and install trees for the linux case that can be analyzed with ldd -r.
+		output="$OUTPUT_TREE"/build_tree_ldd.out
+		rm -f "$output"
+		echo_tee "find \"$BUILD_TREE\" -name \"*.so\" | xargs ldd -r in the build tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+		find "$BUILD_TREE" -name "*.so" | xargs ldd -r >& "$output"
+		ldd_rc=$?
+		if [ "$ldd_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: find \"$BUILD_TREE\" -name \"*.so\" | xargs ldd -r failed in the build tree"
+		    collect_exit 1
+		fi
+		output="$OUTPUT_TREE"/install_tree_ldd.out
+		rm -f "$output"
+		echo_tee "find \"$INSTALL_TREE\" -name \"*.so\" | xargs ldd -r in the install tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+		find "$INSTALL_TREE" -name "*.so" | xargs ldd -r >& "$output"
+		ldd_rc=$?
+		if [ "$ldd_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: find \"$INSTALL_TREE\" -name \"*.so\" | xargs ldd -r failed in the install tree"
+		    collect_exit 1
+		fi
 	    fi
 	fi
 
