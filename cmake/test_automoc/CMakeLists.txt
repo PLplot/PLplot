@@ -18,10 +18,7 @@ target_link_libraries(helloworld_qt5_wrap Qt5::Widgets)
 # header is in the source-tree include directory and the
 # moc-generated result is part of the source files so does
 # not need to be part of INCLUDE_DIRECTORIES.
-set_target_properties(helloworld_qt5_wrap
-  PROPERTIES
-  INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/include"
-  )
+target_include_directories(helloworld_qt5_wrap PRIVATE "${CMAKE_SOURCE_DIR}/include")
 
 #_______________________________________________
 
@@ -32,14 +29,23 @@ add_executable(helloworld_automoc_noinclude src_noinclude/helloworld.cpp ${CMAKE
 target_link_libraries(helloworld_automoc_noinclude Qt5::Widgets)
 
 # Set automoc to ON.
-# Also, note that the required test_q_object.h header is in the
-# source-tree include directory and automoc result is automatically
-# added to the target source files so no need to specify the
-# build-tree for the current directory as an include directory.
 set_target_properties(helloworld_automoc_noinclude
   PROPERTIES
   AUTOMOC ON
-  INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/include"
+  )
+
+# Note that the required test_q_object.h header is in the
+# source-tree include directory.
+# Also note that ${CMAKE_CURRENT_BUILD_DIR} is not required for g++
+# and many other C++ compilers, but still best practice for AUTOMOC
+# just in case there is a compiler out there that does not look in the
+# source directory for the quoted form of #included headers in the
+# automoc-generated source code
+# ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+# specifically added by automoc to the list of source files for the
+# target.
+target_include_directories(helloworld_automoc_noinclude PRIVATE
+  "${CMAKE_SOURCE_DIR}/include;${CMAKE_CURRENT_BINARY_DIR}"
   )
 
 #_______________________________________________
@@ -52,14 +58,23 @@ add_executable(helloworld_automoc_same_noinclude src_same_noinclude/helloworld.c
 target_link_libraries(helloworld_automoc_same_noinclude Qt5::Widgets)
 
 # Set automoc to ON.
-# Also, note that the required helloworld.h header is in the
-# same source-tree directory and the automoc result is automatically
-# added to the target source files so no need to specify the
-# build-tree for the current directory as an include directory.
 set_target_properties(helloworld_automoc_same_noinclude
   PROPERTIES
   AUTOMOC ON
-  INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/src_same_noinclude"
+  )
+
+# Note that the required helloworld.h header is in the
+# same source directory.
+# Also note that ${CMAKE_CURRENT_BUILD_DIR} is not required for g++
+# and many other C++ compilers, but still best practice for AUTOMOC
+# just in case there is a compiler out there that does not look in the
+# source directory for the quoted form of #included headers in the
+# automoc-generated source code
+# ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+# specifically added by automoc to the list of source files for the
+# target.
+target_include_directories(helloworld_automoc_same_noinclude PRIVATE
+  "${CMAKE_SOURCE_DIR}/src_same_noinclude;${CMAKE_CURRENT_BINARY_DIR}"
   )
 
 #_______________________________________________
@@ -72,14 +87,17 @@ add_executable(helloworld_automoc_same_include src_same_include/helloworld.cpp )
 target_link_libraries(helloworld_automoc_same_include Qt5::Widgets)
 
 # Set automoc to ON.
-# Also, note that the required helloworld.h header is in the same
-# source-tree directory and the source file #includes the specific moc
-# result produced by automoc so need to specify the build-tree for the
-# current directory as an include directory.
 set_target_properties(helloworld_automoc_same_include
   PROPERTIES
   AUTOMOC ON
-  INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/src_same_include;${CMAKE_CURRENT_BINARY_DIR}"
+  )
+
+# Note that the required test_q_object.h header is in the same
+# source-tree directory and the source file #includes the specific moc
+# result produced by automoc so need to specify
+# ${CMAKE_CURRENT_BINARY_DIR} as an include directory.
+target_include_directories(helloworld_automoc_same_include PRIVATE
+  "${CMAKE_SOURCE_DIR}/src_same_include;${CMAKE_CURRENT_BINARY_DIR}"
   )
 
 #_______________________________________________
@@ -93,14 +111,17 @@ add_executable(helloworld_automoc_same_include1 src_same_include/helloworld.cpp 
 target_link_libraries(helloworld_automoc_same_include1 Qt5::Widgets)
 
 # Set automoc to ON.
-# Also, note that the required helloworld.h header is in the same
-# source-tree directory and the source file #includes the specific moc
-# result produced by automoc so need to specify the build-tree for the
-# current directory as an include directory.
 set_target_properties(helloworld_automoc_same_include1
   PROPERTIES
   AUTOMOC ON
-  INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/src_same_include;${CMAKE_CURRENT_BINARY_DIR}"
+  )
+
+# Note that the required test_q_object.h header is in the same
+# source-tree directory and the source file #includes the specific moc
+# result produced by automoc so need to specify
+# ${CMAKE_CURRENT_BINARY_DIR} as an include directory.
+target_include_directories(helloworld_automoc_same_include1 PRIVATE
+  "${CMAKE_SOURCE_DIR}/src_same_include;${CMAKE_CURRENT_BINARY_DIR}"
   )
 
 #_______________________________________________
@@ -118,12 +139,15 @@ add_executable(helloworld_automoc_same_include2 src_same_include_alt/helloworld.
 target_link_libraries(helloworld_automoc_same_include2 Qt5::Widgets)
 
 # Set automoc to ON.
-# Also, note that the required helloworld.h header is in the same
-# source-tree directory and the source file #includes the specific moc
-# result produced by automoc so need to specify the build-tree for the
-# current directory as an include directory.
 set_target_properties(helloworld_automoc_same_include2
   PROPERTIES
   AUTOMOC ON
-  INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/src_same_include_alt;${CMAKE_CURRENT_BINARY_DIR}"
+  )
+
+# Note that the required test_q_object.h header is in the same
+# source-tree directory and the source file #includes the specific moc
+# result produced by automoc so need to specify
+# ${CMAKE_CURRENT_BINARY_DIR} as an include directory.
+target_include_directories(helloworld_automoc_same_include2 PRIVATE
+  "${CMAKE_SOURCE_DIR}/src_same_include_alt;${CMAKE_CURRENT_BINARY_DIR}"
   )
