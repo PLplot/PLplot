@@ -92,13 +92,11 @@ clean:
 # For the ENABLE_DYNDRIVERS=ON case, must include link to the plplot-qt library
 # target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot)
 # For the ENABLE_DYNDRIVERS=OFF case, drop the link to the plplot-qt library (to avoid memory
-# management issues when linking to identical code in two different libraries), but retain
-# the cflags for that case since the plplot cflags is not as comprehensive concerning
-# compile flags required for compiling a Qt application like qt_example.
+# management issues when linking to identical code in two different libraries).
 # target_link_libraries(qt_example ${QT_LIBRARIES} plplot)
 @qt_gui_true@qt_example$(EXEEXT): qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp
-@qt_gui_true@@enable_dyndrivers_true@	$(CXX) qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-qt) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pkg_config_QT_LIBRARIES@
-@qt_gui_true@@enable_dyndrivers_false@	$(CXX) qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags plplot-qt) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pkg_config_QT_LIBRARIES@
+@qt_gui_true@@enable_dyndrivers_true@	$(CXX) @Qt_EXECUTABLE_COMPILE_FLAGS@ qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-qt) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pc_qt_link_flags@
+@qt_gui_true@@enable_dyndrivers_false@	$(CXX) @Qt_EXECUTABLE_COMPILE_FLAGS@ qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pc_qt_link_flags@
 
 # target_link_libraries(x${STRING_INDEX} plplotcxx ${MATH_LIB})
 .cc$(EXEEXT):

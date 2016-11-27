@@ -57,12 +57,12 @@ set(plplot_LIB_SRCS
   pllegend.c
   )
 if(PL_DEPRECATED)
-  set(plplot_LIB_SRCS ${plplot_LIB_SRCS} pldeprecated.c deprecated_plmap.c)
+  list(APPEND plplot_LIB_SRCS pldeprecated.c deprecated_plmap.c)
   else(PL_DEPRECATED)
-  set(plplot_LIB_SRCS ${plplot_LIB_SRCS} plmap.c)
+  list(APPEND plplot_LIB_SRCS plmap.c)
 endif(PL_DEPRECATED)
 if(LTDL_WIN32)
-  set(plplot_LIB_SRCS ${plplot_LIB_SRCS} ltdl_win32.c)
+  list(APPEND plplot_LIB_SRCS ltdl_win32.c)
 endif(LTDL_WIN32)
 
 if(HAS_LIBQHULL_INCLUDE)
@@ -89,7 +89,7 @@ if(NOT HERSHEY_FALLBACK)
     )
 endif(NOT HERSHEY_FALLBACK)
 
-set(libplplot_COMPILE_FLAGS)
+set(pc_libplplot_COMPILE_FLAGS)
 
 get_source_file_property(PLCORE_COMPILE_PROPS plcore.c COMPILE_FLAGS)
 # Deal with NOTFOUND case.
@@ -145,13 +145,7 @@ if(NOT ENABLE_DYNDRIVERS)
 	# Must add qt.h to explicit sources for AUTOMOC method to work for either
 	# Qt4 or Qt5.
 	list(APPEND plplot_LIB_SRCS ${CMAKE_SOURCE_DIR}/include/qt.h)
-	# Qt5 handled a completely different way.
-	if(NOT PLPLOT_USE_QT5)
-	  if(NOT QT_LIBRARIES)
-	    message(FATAL_ERROR "include(${QT_USE_FILE}) failed in src subdirectory.")
-	  endif(NOT QT_LIBRARIES)
-	  set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${QT_LIBRARIES})
-	endif(NOT PLPLOT_USE_QT5)
+	list(APPEND pc_libplplot_COMPILE_FLAGS ${pc_qt_COMPILE_FLAGS})
 	
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build static qt device when ANY_QT_DEVICE is false.")
@@ -170,7 +164,7 @@ if(NOT ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_SOURCE}
 	PROPERTIES COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}
 	)
-      list(APPEND libplplot_COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS})
+      list(APPEND pc_libplplot_COMPILE_FLAGS ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS})
       if(SOURCE_ROOT_NAME STREQUAL "tk")
         set_source_files_properties(
 	  ${${SOURCE_ROOT_NAME}_SOURCE}
@@ -185,7 +179,7 @@ if(NOT ENABLE_DYNDRIVERS)
       endif(SOURCE_ROOT_NAME STREQUAL "tkwin")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     if(${SOURCE_ROOT_NAME}_RPATH)
-      set(DRIVERS_RPATH ${DRIVERS_RPATH} ${${SOURCE_ROOT_NAME}_RPATH})
+      list(APPEND DRIVERS_RPATH ${${SOURCE_ROOT_NAME}_RPATH})
     endif(${SOURCE_ROOT_NAME}_RPATH)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 endif(NOT ENABLE_DYNDRIVERS)
@@ -212,7 +206,7 @@ else(ENABLE_DYNDRIVERS)
   list(APPEND LIB_INSTALL_RPATH ${DRIVERS_RPATH})
   if(ANY_QT_DEVICE AND NOT PLPLOT_USE_QT5)
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-    set_qt_target_properties(plplot)
+    set_qt4_target_properties(plplot)
   endif(ANY_QT_DEVICE AND NOT PLPLOT_USE_QT5)
 endif(ENABLE_DYNDRIVERS)
 #message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
@@ -254,13 +248,20 @@ if(WITH_FREETYPE)
 endif(WITH_FREETYPE)
 
 # Copy current information in libplplot_LINK_LIBRARIES
-# into libplplot_LINK_FLAGS, which contains the equivalent list information
+# into pc_libplplot_LINK_FLAGS, which contains the equivalent list information
 # in a combination of library list form and pkg-config form that will
 # eventually be transformted into pure pkg-config form.  Both variables
 # will have data added to them afterward due to the internal PLplot libraries
 # which have a different pkg-config treatment than the external libraries
 # dealt with here.
-set(libplplot_LINK_FLAGS ${libplplot_LINK_LIBRARIES})
+set(pc_libplplot_LINK_FLAGS ${libplplot_LINK_LIBRARIES})
+
+if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+  # N.B. pc_qt_LIBRARIES_LIST is the same as QT_LIBRARIES for
+  # the Qt4 case which is why this logic is redundant in that
+  # case.
+  list(APPEND pc_libplplot_LINK_FLAGS ${pc_qt_LIBRARIES_LIST})
+endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 # The above completes dealing with the external libraries.  Now
 # deal with the internal libraries that are built by the PLplot
@@ -268,15 +269,15 @@ set(libplplot_LINK_FLAGS ${libplplot_LINK_LIBRARIES})
 
 if(WITH_CSA)
   list(APPEND libplplot_LINK_LIBRARIES csirocsa)
-  list(APPEND libplplot_LINK_FLAGS -lcsirocsa)
+  list(APPEND pc_libplplot_LINK_FLAGS -lcsirocsa)
 endif(WITH_CSA)
 
 if(PL_HAVE_QHULL)
   list(APPEND libplplot_LINK_LIBRARIES csironn)
   if(QHULL_RPATH)
-    list(APPEND libplplot_LINK_FLAGS -lcsironn -L${QHULL_RPATH} -lqhull)
+    list(APPEND pc_libplplot_LINK_FLAGS -lcsironn -L${QHULL_RPATH} -lqhull)
   else(QHULL_RPATH)
-    list(APPEND libplplot_LINK_FLAGS -lcsironn -lqhull)
+    list(APPEND pc_libplplot_LINK_FLAGS -lcsironn -lqhull)
   endif(QHULL_RPATH)
 
   # Needed by plgridd.c.
@@ -290,16 +291,16 @@ endif(PL_HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
   list(APPEND libplplot_LINK_LIBRARIES nistcd)
-  list(APPEND libplplot_LINK_FLAGS -lnistcd)
+  list(APPEND pc_libplplot_LINK_FLAGS -lnistcd)
   include_directories(${CMAKE_SOURCE_DIR}/lib/nistcd)
 endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 
 list(APPEND libplplot_LINK_LIBRARIES qsastime)
-list(APPEND libplplot_LINK_FLAGS -lqsastime)
+list(APPEND pc_libplplot_LINK_FLAGS -lqsastime)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
   list(APPEND libplplot_LINK_LIBRARIES ${RT_LIB})
-  list(APPEND libplplot_LINK_FLAGS ${RT_LIB})
+  list(APPEND pc_libplplot_LINK_FLAGS ${RT_LIB})
 endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
 
 #message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
@@ -325,6 +326,15 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
     AUTOMOC ON
     AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
     )
+    # This is not required for g++ and many other C++ compilers, but
+    # still this is best practice for AUTOMOC just in case there is a
+    # compiler out there (which is allowed by the lax C/C++ standards)
+    # that does not look in the source directory for the quoted form
+    # of #included headers in the automoc-generated source code
+    # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+    # specifically added by automoc to the list of source files for
+    # the target.
+    target_include_directories(plplot PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
 
 install(TARGETS plplot
@@ -343,23 +353,13 @@ install(EXPORT export_plplot DESTINATION ${LIB_DIR}/cmake/plplot)
 
 install(FILES plplotConfig.cmake DESTINATION ${LIB_DIR}/cmake/plplot)
 
-if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  # For this special case QT_LIBRARIES is not populated so must
-  # use this alternative method to add Qt(5) libraries to the pkg-config file
-  # for the plplot library.
-  # N.B. this will not work with new Qt5 support method since
-  # Qt5_library_LINK_FLAGS does not exist.
-
-  list(APPEND libplplot_LINK_FLAGS ${Qt5_library_LINK_FLAGS})
-endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-
-message("libplplot_LINK_FLAGS = ${libplplot_LINK_FLAGS}")
+message("pc_libplplot_LINK_FLAGS = ${pc_libplplot_LINK_FLAGS}")
 
 string(REGEX REPLACE ";" " "
-  libplplot_COMPILE_FLAGS
-  "${libplplot_COMPILE_FLAGS}"
+  pc_libplplot_COMPILE_FLAGS
+  "${pc_libplplot_COMPILE_FLAGS}"
   )
-#message("libplplot_COMPILE_FLAGS = ${libplplot_COMPILE_FLAGS}")
+#message("pc_libplplot_COMPILE_FLAGS = ${pc_libplplot_COMPILE_FLAGS}")
 
 # Configure pkg-config *.pc file corresponding to libplplot
-pkg_config_file("c" "" " Core C library" "plplot" "${libplplot_COMPILE_FLAGS}" "${libplplot_LINK_FLAGS};${cxx_compiler_library_pathname_list}")
+pkg_config_file("c" "" " Core C library" "plplot" "${pc_libplplot_COMPILE_FLAGS}" "${pc_libplplot_LINK_FLAGS};${cxx_compiler_library_pathname_list}")

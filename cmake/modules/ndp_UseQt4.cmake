@@ -1,49 +1,21 @@
-# - Use Module for QT4
-# Sets up C and C++ to use Qt 4.  It is assumed that FindQt.cmake
-# has already been loaded.  See FindQt.cmake for information on
-# how to load Qt 4 into your CMake project.
+# The substantial modifications of this file compared to
+# the CMake-3.7.0 version of UseQt4.cmake are
+
+# Copyright 2013-2016 Alan W. Irwin
+
+# under the license below.
+
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file Copyright.txt or https://cmake.org/licensing for details.
 
 # The "ndp_" prefix of this filename stands for "no directory
-# property".  That is, this version of the current (CMake-2.8.12.1)
-# version of UseQt4.cmake uses variables to transmit results rather
-# than using directory properties (which are much too blunt an
-# instrument for transmitting results since they affect all
-# compilations, not just those which are Qt-specific).
+# property".  That is, this substantially modified version of the of
+# UseQt4.cmake uses variables to transmit results rather than using
+# directory properties (which are much too blunt an instrument for
+# transmitting results since they affect all compilations, not just
+# those which are Qt-specific).
 
-# Copyright 2013 Alan W. Irwin under the license below
-
-#=============================================================================
-# Copyright 2005-2009 Kitware, Inc.
-# All rights reserved.
-
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-
-# * Redistributions of source code must retain the above copyright
-#   notice, this list of conditions and the following disclaimer.
-
-# * Redistributions in binary form must reproduce the above copyright
-#   notice, this list of conditions and the following disclaimer in the
-#   documentation and/or other materials provided with the distribution.
-
-# * Neither the names of Kitware, Inc., the Insight Software Consortium,
-#   nor the names of their contributors may be used to endorse or promote
-#   products derived from this software without specific prior written
-#   permission.
-
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+# This goal is implemented as follows:
 # When the original_logic variable is false, add_definitions and
 # include_directories calls are all replaced by collecting all -D
 # options for Qt in the QT_COMPILE_DEFINITIONS list, and collecting
@@ -56,18 +28,24 @@
 # names stands for "no prefix", and is the one used in general for
 # CMake logic except for the pkg-config case where the
 # variant of the variables without the "NP_" prefix is used instead.
+# We also define the function set_qt4_target_properties to make it
+# convenient to update Qt4-related target properties appropriately.
+
+#.rst:
+# UseQt4
+# ------
+#
+# Use Module for QT4
+#
+# Sets up C and C++ to use Qt 4.  It is assumed that FindQt.cmake has
+# already been loaded.  See FindQt.cmake for information on how to load
+# Qt 4 into your CMake project.
 
 set(original_logic OFF)
 
 if(original_logic)
   add_definitions(${QT_DEFINITIONS})
-  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_DEBUG QT_DEBUG)
-  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_RELEASE QT_NO_DEBUG)
-  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_RELWITHDEBINFO QT_NO_DEBUG)
-  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS_MINSIZEREL QT_NO_DEBUG)
-  if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-    set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS QT_NO_DEBUG)
-  endif()
+  set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS $<$<NOT:$<CONFIG:Debug>>:QT_NO_DEBUG>)
 
   if(QT_INCLUDE_DIRS_NO_SYSTEM)
     include_directories(${QT_INCLUDE_DIR})
@@ -110,8 +88,6 @@ endif ()
 
 # list dependent modules, so dependent libraries are added
 set(QT_QT3SUPPORT_MODULE_DEPENDS QTGUI QTSQL QTXML QTNETWORK QTCORE)
-# This original_logic code contains an incorrect dependency.
-#set(QT_QTSVG_MODULE_DEPENDS QTGUI QTXML QTCORE)
 set(QT_QTSVG_MODULE_DEPENDS QTGUI QTCORE)
 set(QT_QTUITOOLS_MODULE_DEPENDS QTGUI QTXML QTCORE)
 set(QT_QTHELP_MODULE_DEPENDS QTGUI QTSQL QTXML QTNETWORK QTCORE)
@@ -161,17 +137,13 @@ foreach(module QT3SUPPORT QTOPENGL QTASSISTANT QTDESIGNER QTMOTIF QTNSPLUGIN
 	  list(APPEND NP_QT_INCLUDE_DIRECTORIES ${QT_${module}_INCLUDE_DIR})
 	endif(original_logic)
       endif()
-
-      # For the case when QT_USE_${module} is false but
-      # QT_USE_${module}_DEPENDS is true, the following logic
-      # implies transitive linking.  But we let that go....
-      set(QT_LIBRARIES ${QT_LIBRARIES} ${QT_${module}_LIBRARY})
+      if(QT_USE_${module} OR QT_IS_STATIC)
+        set(QT_LIBRARIES ${QT_LIBRARIES} ${QT_${module}_LIBRARY})
+      endif()
       set(QT_LIBRARIES_PLUGINS ${QT_LIBRARIES_PLUGINS} ${QT_${module}_PLUGINS})
-
       if(QT_IS_STATIC)
         set(QT_LIBRARIES ${QT_LIBRARIES} ${QT_${module}_LIB_DEPENDENCIES})
       endif()
-
       foreach(depend_module ${QT_${module}_MODULE_DEPENDS})
         set(QT_USE_${depend_module}_DEPENDS 1)
       endforeach()
@@ -216,8 +188,8 @@ if(NOT original_logic)
   message(STATUS "NP_QT_INCLUDE_DIRECTORIES = ${NP_QT_INCLUDE_DIRECTORIES}")
   message(STATUS "QT_INCLUDE_DIRECTORIES = ${QT_INCLUDE_DIRECTORIES}")
 
-  # Function to set appropriate target properties for Qt-related build targets.
-  function(set_qt_target_properties target)
+  # Function to set appropriate target properties for Qt4-related build targets.
+  function(set_qt4_target_properties target)
     # Actual target argument is just a string so only one level of
     # indirection required to determine that string.
     set_property(TARGET ${target} APPEND PROPERTY COMPILE_DEFINITIONS ${NP_QT_COMPILE_DEFINITIONS})
@@ -233,16 +205,11 @@ if(NOT original_logic)
     # target_include_directories function (outside of directory
     # properties which which is a method we want to avoid since it
     # affects every compilation in the directory and all
-    # subdirectories).  However, target_include_directories was first
-    # available only for 2.8.12.1.  So for previous versions (or if
-    # QT_INCLUDE_DIRS_NO_SYSTEM is true) drop the system qualifier for
-    # the include directories the compiler is to use, and specify
-    # those directories with set_property which is available for
-    # earlier versions of cmake.
-    if(QT_INCLUDE_DIRS_NO_SYSTEM OR ${CMAKE_VERSION} VERSION_LESS 2.8.12.1)
-      set_property(TARGET ${target} APPEND PROPERTY INCLUDE_DIRECTORIES ${NP_QT_INCLUDE_DIRECTORIES})
-    else(QT_INCLUDE_DIRS_NO_SYSTEM OR ${CMAKE_VERSION} VERSION_LESS 2.8.12.1)
+    # subdirectories).
+    if(QT_INCLUDE_DIRS_NO_SYSTEM)
+      target_include_directories(${target} PRIVATE ${NP_QT_INCLUDE_DIRECTORIES})
+    else(QT_INCLUDE_DIRS_NO_SYSTEM)
       target_include_directories(${target} SYSTEM PRIVATE ${NP_QT_INCLUDE_DIRECTORIES})
-    endif(QT_INCLUDE_DIRS_NO_SYSTEM OR ${CMAKE_VERSION} VERSION_LESS 2.8.12.1)
-  endfunction(set_qt_target_properties target)
+    endif(QT_INCLUDE_DIRS_NO_SYSTEM)
+  endfunction(set_qt4_target_properties target)
 endif(NOT original_logic)

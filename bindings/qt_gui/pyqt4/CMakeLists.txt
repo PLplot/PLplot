@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2009 Hazen Babcock
-# Copyright (C) 2009-2013 Alan W. Irwin
+# Copyright (C) 2009-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -63,11 +63,32 @@ if(ENABLE_pyqt4)
     ${PYTHON_INCLUDE_PATH}
     )
 
-  add_library(
-    plplot_pyqt4
-    MODULE
-    ${plplot_pyqt4_SRC}
+  # Experiments with g++ and the -fvisibility=default (or equivalent
+  # no setting of the -fvisibility option) versus -fvisibility=hidden
+  # compiler options show that with -fvisibility=default (wide open)
+  # visibility the moc-generated symbols in the plplotqt library (or
+  # when ENABLE_DYNDRIVERS=OFF the plplot library) satisfy the needs
+  # of this target, but with fvisibility=hidden some (but not all)
+  # moc-generated symbols are hidden (with no known way to force them
+  # to be visible) within the library.  Therefore, always use moc
+  # (implemented with the AUTOMOC ON property) on qt.h here even
+  # though it is sometimes redundant.
+
+  # Must add qt.h to explicit sources for AUTOMOC method to work.
+  add_library(plplot_pyqt4 MODULE ${plplot_pyqt4_SRC} ${CMAKE_SOURCE_DIR}/include/qt.h)
+  set_target_properties(plplot_pyqt4 PROPERTIES
+    AUTOMOC ON
+    AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
     )
+  # This is not required for g++ and many other C++ compilers, but
+  # still this is best practice for AUTOMOC just in case there is a
+  # compiler out there (which is allowed by the lax C/C++ standards)
+  # that does not look in the source directory for the quoted form
+  # of #included headers in the automoc-generated source code
+  # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+  # specifically added by automoc to the list of source files for
+  # the target.
+  target_include_directories(plplot_pyqt4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
   if(WIN32_OR_CYGWIN)
     set_target_properties(
@@ -80,17 +101,28 @@ if(ENABLE_pyqt4)
     set_target_properties(plplot_pyqt4 PROPERTIES PREFIX "")
   endif(WIN32_OR_CYGWIN)
 
-  target_link_libraries(
-    plplot_pyqt4
-    plplotqt
-    plplot
-    ${PYTHON_LIBRARIES}
-    ${QT_LIBRARIES}
-    )
+  if(ENABLE_DYNDRIVERS)
+    target_link_libraries(
+      plplot_pyqt4
+      plplotqt
+      plplot
+      ${PYTHON_LIBRARIES}
+      ${QT_LIBRARIES}
+      )
+  else(ENABLE_DYNDRIVERS)
+    # With static device drivers, all the plplotqt code is
+    # in the plplot library so plplotqt becomes redundant.
+    target_link_libraries(
+      plplot_pyqt4
+      plplot
+      ${PYTHON_LIBRARIES}
+      ${QT_LIBRARIES}
+      )
+  endif(ENABLE_DYNDRIVERS)
   add_dependencies(plplot_pyqt4 generate_pyqt4_source)
 
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-  set_qt_target_properties(plplot_pyqt4)
+  set_qt4_target_properties(plplot_pyqt4)
 
   if(USE_RPATH)
     set_target_properties(

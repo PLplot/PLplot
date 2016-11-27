@@ -189,12 +189,6 @@ if(PLD_extqt)
       endif(Qt4_FOUND AND QT_VERSION_MAJOR STREQUAL "${CORE_QT_VERSION_MAJOR}" AND QT_VERSION_MINOR STREQUAL "${CORE_QT_VERSION_MINOR}" AND QT_VERSION_PATCH STREQUAL "${CORE_QT_VERSION_PATCH}")
     endif(PLPLOT_USE_QT5)
   endif(CORE_BUILD)
-  # Transform QT_LIBRARIES from list of libraries to the standard pkg-config form
-  # for use in configuring Makefile.examples.
-  # FIXME.  This currently does not work for Qt5.
-  pkg_config_link_flags(pkg_config_QT_LIBRARIES "${QT_LIBRARIES}")
-  #message(STATUS "QT_LIBRARIES = ${QT_LIBRARIES}")
-  #message(STATUS "pkg_config_QT_LIBRARIES = ${pkg_config_QT_LIBRARIES}")
 endif(PLD_extqt)
 
 if(BUILD_TEST AND BUILD_qt_example)
@@ -204,14 +198,10 @@ if(BUILD_TEST AND BUILD_qt_example)
   endif(BUILD_SHARED_LIBS)
   # For both Qt4 and Qt5 AUTOMOC method works fine to process
   # qt_PlotWindow.h in the same directory with the same base name as
-  # qt_PlotWindow.cpp, but must add qt.h to explicit sources for
-  # AUTOMOC method to work for that header file since it is in a
-  # separate directory.
-  if(CORE_BUILD)
-    add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${CMAKE_SOURCE_DIR}/include/qt.h )
-  else(CORE_BUILD)
-    add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp ${INCLUDE_DIR}/qt.h )
-  endif(CORE_BUILD)
+  # qt_PlotWindow.cpp.  Do not add qt.h to explicit sources since
+  # that is only relevant for a separate library (plplotqt or plplot)
+  # that is linked.
+  add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp)
     
   if(PLPLOT_USE_QT5)
     if(ENABLE_DYNDRIVERS)
@@ -232,17 +222,47 @@ if(BUILD_TEST AND BUILD_qt_example)
       target_link_libraries(qt_example ${QT_LIBRARIES} plplot)
     endif(ENABLE_DYNDRIVERS)
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-    set_qt_target_properties(qt_example)
+    set_qt4_target_properties(qt_example)
   endif(PLPLOT_USE_QT5)
   set_target_properties(qt_example PROPERTIES
     AUTOMOC ON
     AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
     )
+    # This is not required for g++ and many other C++ compilers, but
+    # still this is best practice for AUTOMOC just in case there is a
+    # compiler out there (which is allowed by the lax C/C++ standards)
+    # that does not look in the source directory for the quoted form
+    # of #included headers in the automoc-generated source code
+    # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+    # specifically added by automoc to the list of source files for
+    # the target.
+    target_include_directories(qt_example PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif(BUILD_TEST AND BUILD_qt_example)
 
 if(CORE_BUILD)
-  # This configuration must occur after the pkg_config variables are
-  # determined above.
+  if(ENABLE_qt)
+    # Set additional variables used to configure Makefile.examples.in
+    # which are required for the traditional build of the qt_example.
+    
+    if(PLPLOT_USE_QT5)
+      # Apparently, Qt5Core_EXECUTABLE_COMPILE_FLAGS (= -fPIE on Linux
+      # systems) needs to be a compiler option to build executables such
+      # as qt_example in the traditional way for the Qt5 case.  
+      set(Qt_EXECUTABLE_COMPILE_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+    else(PLPLOT_USE_QT5)
+      # An equivalent variable is not defined for the Qt4 case because
+      # apparently executables that are linked to Qt4 have no
+      # equivalent special compile flag needs.
+      set(Qt_EXECUTABLE_COMPILE_FLAGS)
+    endif(PLPLOT_USE_QT5)
+    
+    # Need link flags in pkg-config form for traditional builds of
+    # qt_example where that example refers to Qt functions so needs to
+    # be directly linked to Qt libraries.  Note, pc_qt_LIBRARIES_LIST is
+    # defined for both Qt4 and Qt5.
+    pkg_config_link_flags(pc_qt_link_flags "${pc_qt_LIBRARIES_LIST}")
+    message(STATUS "pc_qt_link_flags = ${pc_qt_link_flags}")
+  endif(ENABLE_qt)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

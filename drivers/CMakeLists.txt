@@ -130,12 +130,21 @@ if(ENABLE_DYNDRIVERS)
 	    ${${SOURCE_ROOT_NAME}_TARGETS}
 	    )
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-	  set_qt_target_properties(${SOURCE_ROOT_NAME})
+	  set_qt4_target_properties(${SOURCE_ROOT_NAME})
 	endif(PLPLOT_USE_QT5)
 	set_target_properties(${SOURCE_ROOT_NAME} PROPERTIES
 	  AUTOMOC ON
 	  AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
-    )
+	  )
+	# This is not required for g++ and many other C++ compilers, but
+	# still this is best practice for AUTOMOC just in case there is a
+	# compiler out there (which is allowed by the lax C/C++ standards)
+	# that does not look in the source directory for the quoted form
+	# of #included headers in the automoc-generated source code
+	# ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+	# specifically added by automoc to the list of source files for
+	# the target.
+	target_include_directories(${SOURCE_ROOT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)

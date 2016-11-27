@@ -28,7 +28,7 @@ if(ENABLE_qt)
     ${CMAKE_SOURCE_DIR}/drivers
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
-    )
+  )
 
   if(BUILD_SHARED_LIBS)
     set_source_files_properties(
@@ -45,6 +45,15 @@ if(ENABLE_qt)
       AUTOMOC ON
       AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
       )
+    # This is not required for g++ and many other C++ compilers, but
+    # still this is best practice for AUTOMOC just in case there is a
+    # compiler out there (which is allowed by the lax C/C++ standards)
+    # that does not look in the source directory for the quoted form
+    # of #included headers in the automoc-generated source code
+    # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+    # specifically added by automoc to the list of source files for
+    # the target.
+    target_include_directories(plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
   else(ANY_QT_DEVICE)
     message(FATAL_ERROR "Internal build system inconsistency between ENABLE_qt true and ANY_QT_DEVICE false.")
   endif(ANY_QT_DEVICE)
@@ -84,7 +93,7 @@ if(ENABLE_qt)
     # (by looking for overlinking issues) is desireable.
     target_link_libraries(plplotqt PUBLIC ${QT_LIBRARIES})
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-    set_qt_target_properties(plplotqt)
+    set_qt4_target_properties(plplotqt)
   endif(PLPLOT_USE_QT5)
 
   # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the
@@ -109,26 +118,8 @@ if(ENABLE_qt)
     RUNTIME DESTINATION ${BIN_DIR}
     )
 
-  if(PLPLOT_USE_QT5)
-    # For this special case QT_LIBRARIES is not populated so must
-    # use this alternative method to add Qt(5) libraries to the pkg-config file
-    # for the plplotqt library.
-    # N.B. this will not work with new Qt5 support method since
-    # Qt5_library_LINK_FLAGS does not exist.
-    set(
-      libplplotqt_LINK_FLAGS
-      "${Qt5_library_LINK_FLAGS}"
-      )
-  else(PLPLOT_USE_QT5)
-    set(
-      libplplotqt_LINK_FLAGS
-      "${QT_LIBRARIES}"
-      )
-  endif(PLPLOT_USE_QT5)
-
-  # Configure pkg-config *.pc file corresponding to the compile and link
-  # flags needed by a Qt GUI executable using extqt to gain access to PLplot.
-  pkg_config_file("qt" "Qt" " Qt binding" "plplotqt" "${pc_qt_COMPILE_FLAGS}" "-lplplot;${MATH_LIB}" "${libplplotqt_LINK_FLAGS}")
+  # Configure pkg-config *.pc file corresponding to libplplotqt
+  pkg_config_file("qt" "Qt" " Qt binding" "plplotqt" "${pc_qt_COMPILE_FLAGS}" "-lplplot;${pc_qt_LIBRARIES_LIST};${MATH_LIB}")
 
   add_subdirectory(pyqt4)
   add_subdirectory(pyqt5)
