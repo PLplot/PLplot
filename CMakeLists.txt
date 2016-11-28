@@ -155,7 +155,16 @@ add_definitions("-DPLPLOT_HAVE_CONFIG_H")
 
 # Enable testing framework for examples
 if(BUILD_TEST)
+  # According to
+  # <https://cmake.org/Wiki/CMake_Testing_With_CTest>
+  # the following command executes the required "enable_testing()"
+  # command and also enable the creation and submission of a dashboard
+  # (which is defined as the result of a test run, reformatted for easy review)
+  # to a dashboard server such as open.cdash.org or my.cdash.org.
   include(CTest)
+  # N.B. we actually execute add_test(...) in the plplot_test
+  # subdirectory to implement the various tests that are
+  # run by ctest.
 endif(BUILD_TEST)
 
 # Disable warnings about deprecated functions (Visual C++ 2005)
