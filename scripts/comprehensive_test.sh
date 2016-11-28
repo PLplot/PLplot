@@ -35,7 +35,7 @@ OPTIONS:
   option).
   [--do_clean_as_you_go (yes/no, defaults to yes)]
 
-  The next five options control the tools used for the configurations, builds, and tests.
+  The next six options control the tools used for the configurations, builds, and tests.
   [--cmake_command (defaults to cmake)]
   [--generator_string (defaults to 'Unix Makefiles')]
   [--cmake_added_options (defaults to none, but can be used to specify any
@@ -44,6 +44,10 @@ OPTIONS:
                           built and tested)]
   [--build_command (defaults to 'make -j4')]
   [--ctest_command (defaults to 'ctest -j4')]
+  [--do_submit_dashboard (yes/no defaults to no,  but if set to yes, the -D Experimental option
+                      will be added to the ctest command, i.e., a dashboard of the ctest results
+                      will be sent to <http://my.cdash.org/index.php?project=PLplot_git> where
+                      they will be publicly displayed.]
 
   The next three options control which of the three principal PLplot configurations are tested.
   [--do_shared (yes/no, defaults to yes)]
@@ -52,9 +56,9 @@ OPTIONS:
 
   The next six control which of seven kinds of tests are done for
   each kind of build.
-  [--do_ctest (yes/no, defaults to yes)]
-  [--do_test_noninteractive (yes/no, defaults to yes)]
   [--do_test_interactive (yes/no, defaults to yes)]
+  [--do_test_noninteractive (yes/no, defaults to yes)]
+  [--do_ctest (yes/no, defaults to yes)]
   [--do_test_build_tree (yes/no, defaults to yes)]
   [--do_test_install_tree (yes/no, defaults to yes)]
   [--do_test_traditional_install_tree (yes/no, defaults to yes)]
@@ -212,8 +216,8 @@ Each of the steps in this comprehensive test may take a while...."
 	if [ "$make_rc" -eq 0 ] ; then
 	    output="$OUTPUT_TREE"/ctest.out
 	    rm -f "$output"
-	    echo_tee "$ctest_command --extra-verbose in the build tree"
-	    $ctest_command --extra-verbose >& "$output"
+	    echo_tee "$ctest_command --extra-verbose ${dashboard_option}in the build tree"
+	    $ctest_command --extra-verbose ${dashboard_option}>& "$output"
 	    ctest_rc=$?
 	    if [ "$ctest_rc" -eq 0 ] ; then
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
@@ -228,7 +232,7 @@ Each of the steps in this comprehensive test may take a while...."
 		    fi
 		fi
 	    else
-		echo_tee "ERROR: $ctest_command --extra-verbose failed in the build tree"
+		echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the build tree"
 		collect_exit 1
 	    fi
 	else
@@ -383,21 +387,23 @@ SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
 prefix="${SOURCE_TREE}/../comprehensive_test_disposeable"
 
 do_clean_first=yes
+
 do_clean_as_you_go=yes
 
 cmake_command="cmake"
 generator_string="Unix Makefiles"
-ctest_command="ctest -j4"
-build_command="make -j4"
-
 cmake_added_options=
+build_command="make -j4"
+ctest_command="ctest -j4"
+do_submit_dashboard=no
+
 do_shared=yes
 do_nondynamic=yes
 do_static=yes
 
-do_ctest=yes
-do_test_noninteractive=yes
 do_test_interactive=yes
+do_test_noninteractive=yes
+do_ctest=yes
 do_test_build_tree=yes
 do_test_install_tree=yes
 do_test_traditional_install_tree=yes
@@ -443,18 +449,30 @@ while test $# -gt 0; do
 	    generator_string=$2
 	    shift
 	    ;;
-        --ctest_command)
-	    ctest_command=$2
-	    shift
-	    ;;
-        --build_command)
-	    build_command=$2
-	    shift
-	    ;;
         --cmake_added_options)
 	    cmake_added_options=$2
             shift
             ;;
+        --build_command)
+	    build_command=$2
+	    shift
+	    ;;
+        --ctest_command)
+	    ctest_command=$2
+	    shift
+	    ;;
+	--do_submit_dashboard)
+	    case $2 in
+		yes|no)
+		    do_submit_dashboard=$2
+		    shift
+		    ;;
+		
+		*)
+		    usage 1 1>&2
+		    ;;
+	    esac
+	    ;;
 	--do_shared)
 	    case $2 in
 		yes|no)
@@ -489,10 +507,10 @@ while test $# -gt 0; do
 		    ;;
 	    esac
 	    ;;
-	--do_ctest)
+	--do_test_interactive)
 	    case $2 in
 		yes|no)
-		    do_ctest=$2
+		    do_test_interactive=$2
 		    shift
 		    ;;
 		*)
@@ -511,10 +529,10 @@ while test $# -gt 0; do
 		    ;;
 	    esac
 	    ;;
-	--do_test_interactive)
+	--do_ctest)
 	    case $2 in
 		yes|no)
-		    do_test_interactive=$2
+		    do_ctest=$2
 		    shift
 		    ;;
 		*)
@@ -641,6 +659,8 @@ echo_tee "Summary of options used for these tests
 
 --prefix \"$prefix\"
 
+--do_clean_first $do_clean_first
+
 --do_clean_as_you_go $do_clean_as_you_go
 
 --cmake_command \"$cmake_command\"
@@ -649,14 +669,15 @@ echo_tee "Summary of options used for these tests
 --build_command \"$build_command\"
   (derived) traditional_build_command \"$traditional_build_command\"
 --ctest_command \"$ctest_command\"
+--do_submit_dashboard $do_submit_dashboard
 
 --do_shared $do_shared
 --do_nondynamic $do_nondynamic
 --do_static $do_static
 
---do_ctest $do_ctest
---do_test_noninteractive $do_test_noninteractive
 --do_test_interactive $do_test_interactive
+--do_test_noninteractive $do_test_noninteractive
+--do_ctest $do_ctest
 --do_test_build_tree $do_test_build_tree
 --do_test_install_tree $do_test_install_tree
 --do_test_traditional_install_tree $do_test_traditional_install_tree
@@ -666,6 +687,17 @@ accumulation of ~40GB of plot files!  Even with this option set to yes
 the high-water mark of disk usage can still be as high as 4GB so be
 sure you have enough free disk space to run this test!
 "
+
+# N.B. dashboard_option must always have a trailing blank
+if [ "$do_submit_dashboard" = "yes" ] ; then
+    echo_tee "WARNING: Because you have specified \"do_submit_dashboard $do_submit_dashboard\" above, all details concerning each
+of your ctest results will be published at <http://my.cdash.org/index.php?project=PLplot_git>
+"
+    dashboard_option="-D Experimental "
+else
+    dashboard_option=" "
+fi
+
 
 if [ "$do_clean_first" = "yes" ] ; then
     echo_tee "WARNING: The shared, nondynamic, and static subdirectory trees of
