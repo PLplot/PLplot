@@ -160,9 +160,19 @@ if(BUILD_TEST)
   # the following command executes the required "enable_testing()"
   # command and also enable the creation and submission of a dashboard
   # (which is defined as the result of a test run, reformatted for easy review)
-  # to a dashboard server such as open.cdash.org or my.cdash.org.
+  # to our dashboard server (the PLplot_git "project" at my.cdash.org whose
+  # details are given by CTestConfig.cmake and whose dashboard viewer
+  # URL is <http://my.cdash.org/index.php?project=PLplot_git>).
   include(CTest)
-  # N.B. we actually execute add_test(...) in the plplot_test
+
+  # Customize default values set by include(CTest).  Result must be in
+  # build tree so copy it there.
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.ctest.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.ctest
+    COPYONLY
+    )
+  # N.B. we execute add_test(...) in the plplot_test
   # subdirectory to implement the various tests that are
   # run by ctest.
 endif(BUILD_TEST)
