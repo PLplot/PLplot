@@ -155,6 +155,48 @@ add_definitions("-DPLPLOT_HAVE_CONFIG_H")
 
 # Enable testing framework for examples
 if(BUILD_TEST)
+
+  # Use same BUILDNAME logic as the CTest module except
+  # we allow a BUILDNAME suffix whose value is specified
+  # by the user as PLPLOT_BUILDNAME_SUFFIX.  In order
+  # for this logic to work it must precede including the
+  # CTest module which configures DartConfiguration.tcl
+  # with BUILDNAME as determined here.
+  
+  if(NOT BUILDNAME)
+    set(DART_COMPILER "${CMAKE_CXX_COMPILER}")
+    if(NOT DART_COMPILER)
+      set(DART_COMPILER "${CMAKE_C_COMPILER}")
+    endif()
+    if(NOT DART_COMPILER)
+      set(DART_COMPILER "unknown")
+    endif()
+    if(WIN32)
+      set(DART_NAME_COMPONENT "NAME_WE")
+    else()
+      set(DART_NAME_COMPONENT "NAME")
+    endif()
+    if(NOT BUILD_NAME_SYSTEM_NAME)
+      set(BUILD_NAME_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}")
+    endif()
+    if(WIN32)
+      set(BUILD_NAME_SYSTEM_NAME "Win32")
+    endif()
+    if(UNIX OR BORLAND)
+      get_filename_component(DART_COMPILER_NAME
+        "${DART_COMPILER}" ${DART_NAME_COMPONENT})
+    else()
+      get_filename_component(DART_COMPILER_NAME
+        "${CMAKE_MAKE_PROGRAM}" ${DART_NAME_COMPONENT})
+    endif()
+    if(DART_COMPILER_NAME MATCHES "devenv")
+      GET_VS_VERSION_STRING("${CMAKE_GENERATOR}" DART_COMPILER_NAME)
+    endif()
+    set(BUILDNAME "${BUILD_NAME_SYSTEM_NAME}-${DART_COMPILER_NAME}")
+  endif()
+  # This is only logic that is different.
+  set(BUILDNAME "${BUILDNAME}${PLPLOT_BUILDNAME_SUFFIX}")
+
   # According to
   # <https://cmake.org/Wiki/CMake_Testing_With_CTest>
   # the following command executes the required "enable_testing()"

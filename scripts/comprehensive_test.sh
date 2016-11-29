@@ -182,7 +182,7 @@ Each of the steps in this comprehensive test may take a while...."
     echo_tee "${cmake_command} in the build tree"
     ${cmake_command} "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
 		     $* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
-		     "$SOURCE_TREE" >& "$output"
+		     "$DASHBOARD_LABEL_OPTION" "$SOURCE_TREE" >& "$output"
     cmake_rc=$?
     if [ "$cmake_rc" -ne 0 ] ; then
 	echo_tee "ERROR: ${cmake_command} in the build tree failed"
@@ -779,6 +779,11 @@ for test_type in ${test_types} ; do
 	BUILD_TREE="$prefix/shared/$test_type/build_tree"
 	INSTALL_TREE="$prefix/shared/$test_type/install_tree"
 	INSTALL_BUILD_TREE="$prefix/shared/$test_type/install_build_tree"
+	if [ "$do_submit_dashboard" = "yes" ] ; then
+	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(shared library + dynamic devices)"
+	else
+	    DASHBOARD_LABEL_OPTION=
+	fi
 	comprehensive_test "-DBUILD_SHARED_LIBS=ON" $test_type
     fi
 
@@ -788,6 +793,11 @@ for test_type in ${test_types} ; do
 	BUILD_TREE="$prefix/nondynamic/$test_type/build_tree"
 	INSTALL_TREE="$prefix/nondynamic/$test_type/install_tree"
 	INSTALL_BUILD_TREE="$prefix/nondynamic/$test_type/install_build_tree"
+	if [ "$do_submit_dashboard" = "yes" ] ; then
+	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(shared library + nondynamic devices)"
+	else
+	    DASHBOARD_LABEL_OPTION=
+	fi
 	comprehensive_test "-DBUILD_SHARED_LIBS=ON -DENABLE_DYNDRIVERS=OFF" $test_type
     fi
 
@@ -797,6 +807,11 @@ for test_type in ${test_types} ; do
 	BUILD_TREE="$prefix/static/$test_type/build_tree"
 	INSTALL_TREE="$prefix/static/$test_type/install_tree"
 	INSTALL_BUILD_TREE="$prefix/static/$test_type/install_build_tree"
+	if [ "$do_submit_dashboard" = "yes" ] ; then
+	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(static library + nondynamic devices)"
+	else
+	    DASHBOARD_LABEL_OPTION=
+	fi
 	comprehensive_test "-DBUILD_SHARED_LIBS=OFF" $test_type
     fi
 done
