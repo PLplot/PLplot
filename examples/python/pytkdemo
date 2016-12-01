@@ -4,6 +4,9 @@
 #
 # A Python/Tk script to interactively run the various Python demos.
 
+# Append to effective python path so that can find plplot modules.
+from plplot_python_start import *
+
 from Tkinter import *
 
 from plplot import *

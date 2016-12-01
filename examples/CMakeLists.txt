@@ -1097,6 +1097,38 @@ if(BUILD_TEST)
       )
     list(APPEND targets_examples_tk test_plserver_standard_examples)
 
+    if(ENABLE_python)
+      if(CORE_BUILD)
+	add_custom_target(test_pytkdemo
+	  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/pytkdemo
+	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+	  )
+	add_dependencies(test_pytkdemo
+	  _plplotcmodule_fixed
+	  plplot_widgetmodule
+	  python_examples
+	  ${TARGET_tclIndex_tcl}
+	  ${xwin_targets}
+	  )
+      else(CORE_BUILD)
+	add_custom_target(test_pytkdemo
+	  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pytkdemo
+	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
+	  )
+	add_dependencies(test_pyqt4_example
+	  _plplotcmodule
+	  plplot_widgetmodule
+	  ${TARGET_tclIndex_tcl}
+	  ${xwin_targets}
+	  )
+      endif(CORE_BUILD)
+      message(STATUS "WARNING: The test_pytkdemo target can be run independently but does not
+   work reliably so it is temporarily excluded from being a dependency of other
+   more general interactive test targets")
+	#list(APPEND interactive_targets_LIST test_pytkdemo)
+	#list(APPEND tk_targets_LIST test_pytkdemo)
+    endif(ENABLE_python)
+
     if(BUILD_SHARED_LIBS AND PLD_tk)
       # tests that use "package require Pltk" only work if
       # BUILD_SHARED_LIBS is true and PLD_tk is true.
