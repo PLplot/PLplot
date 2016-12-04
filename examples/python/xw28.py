@@ -1,4 +1,4 @@
-#  Copyright (C) 2007 Alan W. Irwin
+#  Copyright (C) 2007-2016 Alan W. Irwin
 
 # plmtex3, plptex3 demo.
 #
@@ -18,7 +18,7 @@
 #  along with PLplot; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
-from plplot_py_demos import *
+from numpy import *
 
 # Choose these values to correspond to tick marks.
 XPTS = 2
@@ -54,7 +54,8 @@ dzsrot   = zsrange / float( NROTATION - 1 )
 dzsshear = zsrange / float( NSHEAR - 1 )
 
 pstring = "The future of our civilization depends on software freedom."
-def main():
+
+def main(w):
 
  if 1:
     x = xmin + (xmax-xmin)*arange(XPTS)/float(XPTS-1)
@@ -64,19 +65,19 @@ def main():
  if 1:
     # Page 1: Demonstrate inclination and shear capability pattern.
 
-    pladv(0)
-    plvpor(-0.15, 1.15, -0.05, 1.05)
-    plwind(-1.2, 1.2, -0.8, 1.5)
-    plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
+    w.pladv(0)
+    w.plvpor(-0.15, 1.15, -0.05, 1.05)
+    w.plwind(-1.2, 1.2, -0.8, 1.5)
+    w.plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
 
-    plcol0(2)
-    plbox3(
+    w.plcol0(2)
+    w.plbox3(
     "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
     # z = zmin.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     for i in range(NREVOLUTION):
 	omega = 2.*pi*(float(i)/float(NREVOLUTION))
 	sin_omega = sin(omega)
@@ -87,14 +88,14 @@ def main():
 	x_shear = -0.5*xrange*sin_omega
 	y_shear = 0.5*yrange*cos_omega
 	z_shear = 0.
-	plptex3(
+	w.plptex3(
 	xmid, ymid, zmin,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.0, "  revolution")
 
     # x = xmax.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     for i in range(NREVOLUTION):
 	omega = 2.*pi*(float(i)/float(NREVOLUTION))
 	sin_omega = sin(omega)
@@ -105,14 +106,14 @@ def main():
 	x_shear = 0.
 	y_shear = 0.5*yrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
-	plptex3(
+	w.plptex3(
 	xmax, ymid, zmid,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.0, "  revolution")
 
     # y = ymax.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     for i in range(NREVOLUTION):
 	omega = 2.*pi*(float(i)/float(NREVOLUTION))
 	sin_omega = sin(omega)
@@ -123,29 +124,29 @@ def main():
 	x_shear = -0.5*xrange*sin_omega
 	y_shear = 0.
 	z_shear = 0.5*zrange*cos_omega
-	plptex3(
+	w.plptex3(
 	xmid, ymax, zmid,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.0, "  revolution")
     # Draw minimal 3D grid to finish defining the 3D box.
-    plmesh(x, y, z, DRAW_LINEXY)
+    w.plmesh(x, y, z, w.DRAW_LINEXY)
 
     # Page 2: Demonstrate rotation of string around its axis.
 
-    pladv(0)
-    plvpor(-0.15, 1.15, -0.05, 1.05)
-    plwind(-1.2, 1.2, -0.8, 1.5)
-    plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
+    w.pladv(0)
+    w.plvpor(-0.15, 1.15, -0.05, 1.05)
+    w.plwind(-1.2, 1.2, -0.8, 1.5)
+    w.plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
 
-    plcol0(2)
-    plbox3(
+    w.plcol0(2)
+    w.plbox3(
     "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
     # y = ymax.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
@@ -157,14 +158,14 @@ def main():
 	y_shear = 0.5*yrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
         zs = zsmax - dzsrot * float(i)
-	plptex3(
+	w.plptex3(
 	xmid, ymax, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "rotation for y = y#dmax#u")
 
     # x = xmax.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     x_inclination = 0.
     y_inclination = -1.
     z_inclination = 0.
@@ -176,14 +177,14 @@ def main():
 	x_shear = 0.5*xrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
         zs = zsmax - dzsrot * float(i)
-	plptex3(
+	w.plptex3(
 	xmax, ymid, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "rotation for x = x#dmax#u")
 
     # z = zmin.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
@@ -195,14 +196,14 @@ def main():
 	y_shear = 0.5*yrange*cos_omega
 	z_shear = 0.5*zrange*sin_omega
         ys = ysmax - dysrot * float(i)
-	plptex3(
+	w.plptex3(
 	xmid, ys, zmin,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "rotation for z = z#dmin#u")
 
     # Draw minimal 3D grid to finish defining the 3D box.
-    plmesh(x, y, z, DRAW_LINEXY)
+    w.plmesh(x, y, z, w.DRAW_LINEXY)
 
     # Page 3: Demonstrate shear of string along its axis.
 
@@ -210,19 +211,19 @@ def main():
     # shear vector too close to axis of string. (N.B. no workaround
     # would be domega = 0.)
     domega = 0.05
-    pladv(0)
-    plvpor(-0.15, 1.15, -0.05, 1.05)
-    plwind(-1.2, 1.2, -0.8, 1.5)
-    plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
+    w.pladv(0)
+    w.plvpor(-0.15, 1.15, -0.05, 1.05)
+    w.plwind(-1.2, 1.2, -0.8, 1.5)
+    w.plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
 
-    plcol0(2)
-    plbox3(
+    w.plcol0(2)
+    w.plbox3(
     "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
     # y = ymax.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
@@ -234,14 +235,14 @@ def main():
 	x_shear = 0.5*xrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
         zs = zsmax - dzsshear * float(i)
-	plptex3(
+	w.plptex3(
 	xmid, ymax, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "shear for y = y#dmax#u")
 
     # x = xmax.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     x_inclination = 0.
     y_inclination = -1.
     z_inclination = 0.
@@ -253,14 +254,14 @@ def main():
 	y_shear = -0.5*yrange*sin_omega
 	z_shear = 0.5*zrange*cos_omega
         zs = zsmax - dzsshear * float(i)
-	plptex3(
+	w.plptex3(
 	xmax, ymid, zs,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "shear for x = x#dmax#u")
 
     # z = zmin.
-    plschr(0., 1.0)
+    w.plschr(0., 1.0)
     x_inclination = 1.
     y_inclination = 0.
     z_inclination = 0.
@@ -272,28 +273,28 @@ def main():
 	y_shear = 0.5*yrange*cos_omega
 	x_shear = 0.5*xrange*sin_omega
         ys = ysmax - dysshear * float(i)
-	plptex3(
+	w.plptex3(
 	xmid, ys, zmin,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
 	0.5, "shear for z = z#dmin#u")
 
     # Draw minimal 3D grid to finish defining the 3D box.
-    plmesh(x, y, z, DRAW_LINEXY)
+    w.plmesh(x, y, z, w.DRAW_LINEXY)
 
     # Page 4: Demonstrate drawing a string on a 3D path.
-    pladv(0)
-    plvpor(-0.15, 1.15, -0.05, 1.05)
-    plwind(-1.2, 1.2, -0.8, 1.5)
-    plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 40., -30.)
+    w.pladv(0)
+    w.plvpor(-0.15, 1.15, -0.05, 1.05)
+    w.plwind(-1.2, 1.2, -0.8, 1.5)
+    w.plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 40., -30.)
 
-    plcol0(2)
-    plbox3(
+    w.plcol0(2)
+    w.plbox3(
     "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
-    plschr(0., 1.2)
+    w.plschr(0., 1.2)
     # domega controls the spacing between the various characters of the
     # string and also the maximum value of omega for the given number
     # of characters in *pstring.
@@ -319,7 +320,7 @@ def main():
 	x_shear = 0.
 	y_shear = 0.
 	z_shear = 1.
-	plptex3(
+	w.plptex3(
 	xpos, ypos, zpos,
 	x_inclination, y_inclination, z_inclination,
 	x_shear, y_shear, z_shear,
@@ -327,34 +328,39 @@ def main():
 	omega += domega
 
     # Draw minimal 3D grid to finish defining the 3D box.
-    plmesh(x, y, z, DRAW_LINEXY)
+    w.plmesh(x, y, z, w.DRAW_LINEXY)
 
-    # Page 5: Demonstrate plmtex3 axis labelling capability.
-    pladv(0)
-    plvpor(-0.15, 1.15, -0.05, 1.05)
-    plwind(-1.2, 1.2, -0.8, 1.5)
-    plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
+    # Page 5: Demonstrate w.plmtex3 axis labelling capability.
+    w.pladv(0)
+    w.plvpor(-0.15, 1.15, -0.05, 1.05)
+    w.plwind(-1.2, 1.2, -0.8, 1.5)
+    w.plw3d(1.0, 1.0, 1.0, xmin, xmax, ymin, ymax, zmin, zmax, 20., 45.)
 
-    plcol0(2)
-    plbox3(
+    w.plcol0(2)
+    w.plbox3(
     "b", "", xmax-xmin, 0,
     "b", "", ymax-ymin, 0,
     "bcd", "", zmax-zmin, 0)
 
-    plschr(0., 1.0)
-    plmtex3("xp", 3.0, 0.5, 0.5, "Arbitrarily displaced")
-    plmtex3("xp", 4.5, 0.5, 0.5, "primary X-axis label")
-    plmtex3("xs", -2.5, 0.5, 0.5, "Arbitrarily displaced")
-    plmtex3("xs", -1.0, 0.5, 0.5, "secondary X-axis label")
-    plmtex3("yp", 3.0, 0.5, 0.5, "Arbitrarily displaced")
-    plmtex3("yp", 4.5, 0.5, 0.5, "primary Y-axis label")
-    plmtex3("ys", -2.5, 0.5, 0.5, "Arbitrarily displaced")
-    plmtex3("ys", -1.0, 0.5, 0.5, "secondary Y-axis label")
-    plmtex3("zp", 4.5, 0.5, 0.5, "Arbitrarily displaced")
-    plmtex3("zp", 3.0, 0.5, 0.5, "primary Z-axis label")
-    plmtex3("zs", -2.5, 0.5, 0.5, "Arbitrarily displaced")
-    plmtex3("zs", -1.0, 0.5, 0.5, "secondary Z-axis label")
+    w.plschr(0., 1.0)
+    w.plmtex3("xp", 3.0, 0.5, 0.5, "Arbitrarily displaced")
+    w.plmtex3("xp", 4.5, 0.5, 0.5, "primary X-axis label")
+    w.plmtex3("xs", -2.5, 0.5, 0.5, "Arbitrarily displaced")
+    w.plmtex3("xs", -1.0, 0.5, 0.5, "secondary X-axis label")
+    w.plmtex3("yp", 3.0, 0.5, 0.5, "Arbitrarily displaced")
+    w.plmtex3("yp", 4.5, 0.5, 0.5, "primary Y-axis label")
+    w.plmtex3("ys", -2.5, 0.5, 0.5, "Arbitrarily displaced")
+    w.plmtex3("ys", -1.0, 0.5, 0.5, "secondary Y-axis label")
+    w.plmtex3("zp", 4.5, 0.5, 0.5, "Arbitrarily displaced")
+    w.plmtex3("zp", 3.0, 0.5, 0.5, "primary Z-axis label")
+    w.plmtex3("zs", -2.5, 0.5, 0.5, "Arbitrarily displaced")
+    w.plmtex3("zs", -1.0, 0.5, 0.5, "secondary Z-axis label")
     # Draw minimal 3D grid to finish defining the 3D box.
-    plmesh(x, y, z, DRAW_LINEXY)
-	
-main()
+    w.plmesh(x, y, z, w.DRAW_LINEXY)
+
+    # Restore defaults
+    w.plschr( 0.0, 1.0 )
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

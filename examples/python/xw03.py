@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Polar plot demo.
 #
@@ -19,13 +19,13 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 # main
 #
 # Generates polar plot, with 1-1 scaling.
 
-def main():
+def main(w):
 
     dtr = pi / 180.0
     x0 = cos(dtr*arange(361))
@@ -33,13 +33,13 @@ def main():
 
     # Set up viewport and window, but do not draw box
 
-    plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
+    w.plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
     # Draw circles for polar grid
     for i in range(10):
-	plarc(0.0, 0.0, 0.1*(i+1), 0.1*(i+1), 0.0, 360.0, 0.0, 0)
+	w.plarc(0.0, 0.0, 0.1*(i+1), 0.1*(i+1), 0.0, 360.0, 0.0, 0)
 
-    plcol0(2)
+    w.plcol0(2)
     for i in range(12):
 	theta = 30.0 * i
 	dx = cos(dtr * theta)
@@ -47,7 +47,7 @@ def main():
 
 	# Draw radial spokes for polar grid
 
-	pljoin(0.0, 0.0, dx, dy)
+	w.pljoin(0.0, 0.0, dx, dy)
 
 	# Write labels for angle
 
@@ -60,9 +60,9 @@ def main():
             offset = 0.15
 #Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
 	if dx >= -0.00001:
-	    plptex(dx, dy, dx, dy, -offset, text)
+	    w.plptex(dx, dy, dx, dy, -offset, text)
 	else:
-	    plptex(dx, dy, -dx, -dy, 1.+offset, text)
+	    w.plptex(dx, dy, -dx, -dy, 1.+offset, text)
 
     # Draw the graph
 
@@ -70,13 +70,13 @@ def main():
     x = x0*r
     y = y0*r
 
-    plcol0(3)
-    plline(x, y)
+    w.plcol0(3)
+    w.plline(x, y)
 
-    plcol0(4)
-    plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh")
+    w.plcol0(4)
+    w.plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh")
 
     # Restore defaults
-    #plcol0(1)
-
-main()
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

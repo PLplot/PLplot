@@ -1,7 +1,7 @@
 # Simple demo of a 2D line plot.
 #
-# Copyright (C) 2011  Alan W. Irwin
-# Copyright (C) 2012  Andrew Ross
+# Copyright (C) 2011-2016 Alan W. Irwin
+# Copyright (C) 2012 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -21,11 +21,11 @@
 #
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 NSIZE = 101
 
-def main():
+def main(w):
     xmin = 0.
     xmax = 1.
     ymin = 0.
@@ -36,10 +36,14 @@ def main():
     y = ymax*x**2
 
     # Create a labelled box to hold the plot.
-    plenv( xmin, xmax, ymin, ymax, 0, 0 )
-    pllab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" )
+    w.plenv( xmin, xmax, ymin, ymax, 0, 0 )
+    w.pllab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" )
 
     # Plot the data that was prepared above.
-    plline( x, y )
+    w.plline( x, y )
 
-main()
+    # Restore defaults
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)
+    

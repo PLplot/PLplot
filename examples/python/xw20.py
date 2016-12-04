@@ -1,4 +1,5 @@
 #  Copyright (C) 2007, 2008 Andrew Ross
+#  Copyright (C) 2007-2016 Alan W. Irwin
 
 #  plimage demo
 #
@@ -19,7 +20,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 import os.path
 import sys
@@ -32,33 +33,32 @@ nosombrero = 0
 nointeractive = 0
 f_name = ""
 
-def gray_cmap(num_col):
+def gray_cmap(w, num_col):
     r = [0.0, 1.0]
     g = [0.0, 1.0]
     b = [0.0, 1.0]
     pos = [0.0, 1.0]
 
-    plscmap1n(num_col)
-    plscmap1l(1, pos, r, g, b)
+    w.plscmap1n(num_col)
+    w.plscmap1l(1, pos, r, g, b)
 
-
-def save_plot(fname):
+def save_plot(w, fname):
     # Get current stream and create a new one
-    cur_strm = plgstrm()
-    new_strm = plmkstrm()
+    cur_strm = w.plgstrm()
+    new_strm = w.plmkstrm()
 
     # Set new device type and file name - use a known existing driver
-    plsdev("psc")
-    plsfnam(fname)
+    w.plsdev("psc")
+    w.plsfnam(fname)
 
     # Copy old stream parameters to new stream, do the save,
     # then close new device.
-    plcpstrm(cur_strm,0)
-    plreplot()
-    plend1()
+    w.plcpstrm(cur_strm,0)
+    w.plreplot()
+    w.plend1()
 
     # Return to previous stream
-    plsstrm(cur_strm)
+    w.plsstrm(cur_strm)
 
 def read_img(fname):
 
@@ -100,30 +100,28 @@ def read_img(fname):
     fp.close()
     return [0,img,w,h,nc]
 
-
-def get_clip(xi, xe, yi, ye):
-
+def get_clip(w, xi, xe, yi, ye):
 
     sx = zeros(5)
     sy = zeros(5)
 
     start = 0
 
-    st = plxormod(1)
+    st = w.plxormod(1)
 
     if (st):
-        gin = PLGraphicsIn()
+        gin = w.PLGraphicsIn()
         gin.button = 0
         while (1):
-            st = plxormod(0)
-            plGetCursor(gin)
-            st = plxormod(1)
+            st = w.plxormod(0)
+            w.plGetCursor(gin)
+            st = w.plxormod(1)
 
             if (gin.button == 1):
                 xi = gin.wX
                 yi = gin.wY
                 if (start):
-                    plline(sx,sy)  # Clear previous rectangle
+                    w.plline(sx,sy)  # Clear previous rectangle
 
                 start = 0
                 sx[0] = xi
@@ -135,7 +133,7 @@ def get_clip(xi, xe, yi, ye):
                 xe = gin.wX
                 ye = gin.wY
                 if (start):
-                    plline(sx,sy)
+                    w.plline(sx,sy)
 
                 start = 1
 
@@ -146,14 +144,14 @@ def get_clip(xi, xe, yi, ye):
                 sx[3] = xi
                 sy[3] = ye
 
-                plline(sx,sy)  # Draw new rectangle
+                w.plline(sx,sy)  # Draw new rectangle
 
             if (gin.button == 3 or gin.keysym == 0x0D or gin.keysym == 'Q'):
                 if (start):
-                    plline(sx,sy) # Clear previous rectangle
+                    w.plline(sx,sy) # Clear previous rectangle
                 break
 
-        st = plxormod(0)  # Leave xor mode
+        st = w.plxormod(0)  # Leave xor mode
 
         if (xe < xi):
             t = xi
@@ -178,17 +176,16 @@ def mypltr(x, y, stretch):
     result1 = multiply.outer(ones(len(x)),y)
     return array((result0, result1))
 
-
 # main
 #
 #
-def main():
+def main(w):
 
     z = reshape(zeros(XDIM*YDIM),[XDIM,YDIM])
 
     # View image border pixels
     if (dbg):
-        plenv(1.0, XDIM, 1.0, YDIM, 1, 1)
+        w.plenv(1.0, XDIM, 1.0, YDIM, 1, 1)
 
         for i in range(XDIM):
             z[i][YDIM-1] = 1.0
@@ -199,13 +196,13 @@ def main():
             z[XDIM-1][j] = 1.0
 
 
-        pllab("...around a blue square."," ","A ref border should appear...")
+        w.pllab("...around a blue square."," ","A ref border should appear...")
 
-        plimage(z, 1.0, XDIM, 1.0, YDIM, 0.0, 0.0, 1.0, XDIM, 1.0, YDIM)
+        w.plimage(z, 1.0, XDIM, 1.0, YDIM, 0.0, 0.0, 1.0, XDIM, 1.0, YDIM)
 
     if (not nosombrero):
-        plcol0(2)  # Draw a yellow box, useful for diagnostics!
-        plenv(0.0, 2.0*pi, 0, 3.0*pi, 1, -1)
+        w.plcol0(2)  # Draw a yellow box, useful for diagnostics!
+        w.plenv(0.0, 2.0*pi, 0, 3.0*pi, 1, -1)
 
 
         x = arange(XDIM)*2.0*pi/(XDIM-1)
@@ -214,13 +211,13 @@ def main():
         r = sqrt( multiply.outer(x*x,ones(YDIM)) + multiply.outer(ones(XDIM),y*y)) + 1e-3
         z = sin(r) / r
 
-        pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?")
-        plptex(2., 2., 3., 4., 0., "Transparent image")
-        plimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1.,0., 2.*pi, 0, 3.*pi)
+        w.pllab("No, an amplitude clipped \"sombrero\"", "", "Saturn?")
+        w.plptex(2., 2., 3., 4., 0., "Transparent image")
+        w.plimage(z, 0., 2.*pi, 0, 3.*pi, 0.05, 1.,0., 2.*pi, 0, 3.*pi)
 
         # Save the plot
         if (f_name != ""):
-            save_plot(f_name)
+            save_plot(w, f_name)
 
     # Read Chloe image
     # Note: we try two different locations to cover the case where
@@ -229,22 +226,22 @@ def main():
     if (err):
         [err, img, width, height, num_col] = read_img("../Chloe.pgm")
         if (err):
-            plabort("No such file")
-            plend()
+            sys.stderr.write("Failed to find Chloe.pgm\n")
+            w.plend()
             sys.exit(1)
 
     # Set gray colormap
-    gray_cmap(num_col)
+    gray_cmap(w, num_col)
 
     # Display Chloe
-    plenv(1., width, 1., height, 1, -1)
+    w.plenv(1., width, 1., height, 1, -1)
 
     if (not nointeractive):
-        pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Chloe...")
+        w.pllab("Set and drag Button 1 to (re)set selection, Button 2 to finish."," ","Chloe...")
     else:
-        pllab(""," ","Chloe...")
+        w.pllab(""," ","Chloe...")
 
-    plimage(img, 1., width, 1., height, 0., 0., 1., width, 1., height)
+    w.plimage(img, 1., width, 1., height, 0., 0., 1., width, 1., height)
 
     # selection/expansion demo
     if (not nointeractive):
@@ -253,22 +250,22 @@ def main():
         yi = 235.
         ye = 125.
 
-        [err, xi, xe, yi, ye] = get_clip(xi, xe, yi, ye)
+        [err, xi, xe, yi, ye] = get_clip(w, xi, xe, yi, ye)
         if (err):
-            plend()
+            w.plend()
             sys.exit(0)
 
-        plspause(0)
-        pladv(0)
+        w.plspause(0)
+        w.pladv(0)
 
         # display selection only
-        plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
+        w.plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
 
-        plspause(1)
+        w.plspause(1)
 
         # zoom in selection
-        plenv(xi, xe, ye, yi, 1, -1)
-        plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
+        w.plenv(xi, xe, ye, yi, 1, -1)
+        w.plimage(img, 1., width, 1., height, 0., 0., xi, xe, ye, yi)
 
     # Base the dynamic range on the image contents.
     img_min = min(img.flat)
@@ -276,15 +273,15 @@ def main():
 
     # Draw a saturated version of the original image.  Only use the middle 50%
     # of the image's full dynamic range.
-    plcol0(2)
-    plenv(0, width, 0, height, 1, -1)
-    pllab("", "", "Reduced dynamic range image example")
-    plimagefr(img, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, \
+    w.plcol0(2)
+    w.plenv(0, width, 0, height, 1, -1)
+    w.pllab("", "", "Reduced dynamic range image example")
+    w.plimagefr(img, 0., width, 0., height, 0., 0., img_min + img_max * 0.25, \
               img_max - img_max * 0.25)
 
     # Draw a distorted version of the original image, showing its full dynamic range.
-    plenv(0, width, 0, height, 1, -1)
-    pllab("", "", "Distorted image example")
+    w.plenv(0, width, 0, height, 1, -1)
+    w.pllab("", "", "Distorted image example")
 
     stretch = zeros(5)
     stretch[1] = width
@@ -294,8 +291,13 @@ def main():
     xg = mypltr(arange(width+1),arange(height+1),stretch)[0]
     yg = mypltr(arange(width+1),arange(height+1),stretch)[1]
 
-    plimagefr(img, 0., width, 0., height, 0., 0., img_min, img_max, \
-              pltr2, xg, yg)
+    w.plimagefr(img, 0., width, 0., height, 0., 0., img_min, img_max, \
+              w.pltr2, xg, yg)
 
+    # Restore defaults
+    # cmap1 default color palette.
+    w.plspal1("cmap1_default.pal",1)
 
-main()
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

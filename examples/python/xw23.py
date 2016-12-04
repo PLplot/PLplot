@@ -1,4 +1,4 @@
-#  Copyright (C) 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2005-2016 Alan W. Irwin
 
 #  Displays Greek letters and mathematically interesting Unicode ranges.
 #
@@ -18,7 +18,7 @@
 #  along with PLplot; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
-from plplot_py_demos import *
+from numpy import *
 
 # main
 #
@@ -204,28 +204,28 @@ weight = (
 "bold",
 )
 
-def main():
+def main(w):
 
     for page in range(11):
-	pladv(0)
+	w.pladv(0)
 
 	# Set up viewport and window
 
-	plvpor(0.02, 0.98, 0.02, 0.90)
-	plwind(0.0, 1.0, 0.0, 1.0)
-	mm = plgspa()
-	plschr(0., 0.8)
+	w.plvpor(0.02, 0.98, 0.02, 0.90)
+	w.plwind(0.0, 1.0, 0.0, 1.0)
+	mm = w.plgspa()
+	w.plschr(0., 0.8)
 	ycharacter_scale = (1.0 - 0.0)/(mm[3]-mm[2])
 	# Factor should be 0.5, but heuristically it turns out to be larger.
-	yoffset = 1.0*plgchr()[1]*ycharacter_scale
+	yoffset = 1.0*w.plgchr()[1]*ycharacter_scale
 
-	# Draw the grid using plbox
+	# Draw the grid using w.plbox
 
-	plcol0(2)
+	w.plcol0(2)
 	deltax = 1./float(nxcells[page])
 	deltay = 1./float(nycells[page])
-	plbox("bcg", deltax, 0, "bcg", deltay, 0)
-	plcol0(15)
+	w.plbox("bcg", deltax, 0, "bcg", deltay, 0)
+	w.plcol0(15)
 	length = int(hi[page],16) - int(lo[page],16)
 	slice = 0
 	for y in (0.5+arange(nycells[page]-1,-1,-1))*deltay:
@@ -240,18 +240,18 @@ def main():
 	    		[offset[page]+slice]) + "]"
 		    elif page >= 4:
 			CommandString = "#[" + hex(int(lo[page],16)+slice) + "]"
-		    plptex(x,y+yoffset,1.,0.,0.5, CommandString)
-		    plptex(x,y-yoffset,1.,0.,0.5, "#" +CommandString)
+		    w.plptex(x,y+yoffset,1.,0.,0.5, CommandString)
+		    w.plptex(x,y-yoffset,1.,0.,0.5, "#" +CommandString)
 		slice += 1
 
-	plschr(0., 1.0)
+	w.plschr(0., 1.0)
 	# Page title
-	plmtex("t", 1.5, 0.5, 0.5, title[page])
+	w.plmtex("t", 1.5, 0.5, 0.5, title[page])
 
     # Demonstrate methods of getting the current fonts
 
-    fci_old = plgfci()
-    font = plgfont()
+    fci_old = w.plgfci()
+    font = w.plgfont()
     ifamily = font[0]
     istyle = font[1]
     iweight = font[2]
@@ -261,30 +261,30 @@ def main():
     FCI_COMBINATIONS = 30
     dy = 0.030
     for page in range(11,16):
-        pladv(0)
-        plvpor(0.02, 0.98, 0.02, 0.90)
-        plwind(0.0, 1.0, 0.0, 1.0)
-        plsfci(0)
+        w.pladv(0)
+        w.plvpor(0.02, 0.98, 0.02, 0.90)
+        w.plwind(0.0, 1.0, 0.0, 1.0)
+        w.plsfci(0)
         if(page == 11):
-            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfci")
+            w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfci")
         elif(page == 12):
-            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfont")
+            w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with plsfont")
         elif(page == 13):
-            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct")
+            w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0x8nnnnnnn> construct")
         elif(page == 14):
-            plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs")
+            w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs")
         elif(page == 15):
-	  plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs")
-        plschr(0., 0.75)
+	  w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs")
+        w.plschr(0., 0.75)
         for i in range(0,FCI_COMBINATIONS):
             family_index = i % 5
             style_index = (i/5) % 3
             weight_index = ((i/5)/3) % 2
             if(page == 11):
-                plsfci(fci[i])
+                w.plsfci(fci[i])
                 string = "Page 12, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  "+"The quick brown fox jumps over the lazy dog"
             elif(page == 12):
-                plsfont(family_index, style_index, weight_index)
+                w.plsfont(family_index, style_index, weight_index)
                 string = "Page 13, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  "+"The quick brown fox jumps over the lazy dog"
             elif(page == 13):
                 string = "Page 14, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+hex(fci[i]).rstrip('L')+">"+"The quick brown fox jumps over the lazy dog"
@@ -292,12 +292,17 @@ def main():
                 string = "Page 15, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+hex(family_index)+"0>"+"#<"+hex(style_index)+"1>"+"#<"+hex(weight_index)+"2>"+"The quick brown fox jumps over the lazy dog"
             elif(page == 15):
                 string = "Page 16, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  #<"+family[family_index]+"/>#<"+style[style_index]+"/>#<"+weight[weight_index]+"/>"+"The quick brown fox jumps over the lazy dog"
-            plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string)
+            w.plptex (0., 1. - (i+0.5)*dy, 1., 0., 0., string)
 
-        plschr(0., 1.0)
-
+        w.plschr(0., 1.0)
 
     # Restore defaults
-    plcol0(1)
+    w.plschr( 0.0, 1.0 )
 
-main()
+    # Would not do this ordinarily, but this is required to follow C example.
+    w.plcol0(1)
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)
+

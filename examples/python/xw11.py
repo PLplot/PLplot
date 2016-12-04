@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Mesh plot demo.
 #
@@ -19,7 +19,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 XPTS = 35		# Data points in x
 YPTS = 46		# Data points in y
@@ -32,35 +32,10 @@ az = [24.0, 115.0]
 title = ["#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
 	 "#frPLplot Example 11 - Alt=17, Az=115, Opt=3"]
 
-# Routine for restoring colour map1 to default.
-# See static void plcmap1_def(void) in plctrl.c for reference.
-def restore_cmap1():
-    # For center control points, pick black or white, whichever is closer to bg
-    # Be careful to pick just short of top or bottom else hue info is lost
-    vertex = sum(array(plgcolbg()))/(3.*255.)
-    if vertex < 0.5:
-	vertex = 0.01
-	midpt = 0.10
-    else:
-	vertex = 0.99
-	midpt = 0.90
-    # Independent variable of control points.
-    i = array((0., 0.44, 0.50, 0.50, 0.56, 1.))
-    # Hue for control points.  Blue-violet to red
-    h = array((260., 260., 260., 0., 0., 0.))
-    # Lightness ranging from medium to vertex to medium
-    l = array((0.5, midpt, vertex, vertex, midpt, 0.5))
-    # Saturation is complete for default
-    s = array((1., 1., 1., 1., 1., 1.))
-    # Default number of cmap1 colours
-    plscmap1n(128)
-    # Interpolate between control points to set up default cmap1.
-    plscmap1l(0, i, h, l, s)
-
 # Routine for defining a specific color map 1 in HLS space.
 # if gray is true, use basic grayscale variation from half-dark to light.
 # otherwise use false color variation from blue (240 deg) to red (360 deg).
-def cmap1_init(gray):
+def cmap1_init(w, gray):
     # Independent variable of control points.
     i = array((0., 1.))
     if gray:
@@ -78,15 +53,15 @@ def cmap1_init(gray):
 	s = array((0.8, 0.8))
 
     # number of cmap1 colours is 256 in this case.
-    plscmap1n(256)
+    w.plscmap1n(256)
     # Interpolate between control points to set up cmap1.
-    plscmap1l(0, i, h, l, s)
+    w.plscmap1l(0, i, h, l, s)
 # main
 #
 # Does a series of mesh plots for a given data set, with different
 # viewing options in each plot.
 
-def main():
+def main(w):
 
     x = 3.*(arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
     y = 3.*(arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
@@ -105,40 +80,42 @@ def main():
     nlevel = 10
     step = (zmax-zmin)/(nlevel+1)
     clevel = zmin + step + arange(nlevel)*step
-    cmap1_init(0)
+    cmap1_init(w, 0)
     for k in range(2):
 	for i in range(4):
-	    pladv(0)
-	    plcol0(1)
-	    plvpor(0.0, 1.0, 0.0, 0.9)
-	    plwind(-1.0, 1.0, -1.0, 1.5)
-	    plw3d(1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax, alt[k], az[k])
-	    plbox3("bnstu", "x axis", 0.0, 0,
+	    w.pladv(0)
+	    w.plcol0(1)
+	    w.plvpor(0.0, 1.0, 0.0, 0.9)
+	    w.plwind(-1.0, 1.0, -1.0, 1.5)
+	    w.plw3d(1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax, alt[k], az[k])
+	    w.plbox3("bnstu", "x axis", 0.0, 0,
 		"bnstu", "y axis", 0.0, 0,
 		"bcdmnstuv", "z axis", 0.0, 4)
-	    plcol0(2)
+	    w.plcol0(2)
 
 	    #wireframe plot
             if i==0:
-		plmesh(x, y, z, opt[k])
+		w.plmesh(x, y, z, opt[k])
 
 	    # magnitude colored wireframe plot
 	    elif i==1:
-		plmesh(x, y, z, opt[k] | MAG_COLOR)
+		w.plmesh(x, y, z, opt[k] | w.MAG_COLOR)
 
 	    # magnitude colored wireframe plot with sides
 	    elif i==2:
-		plot3d(x, y, z, opt[k] | MAG_COLOR, 1)
+		w.plot3d(x, y, z, opt[k] | w.MAG_COLOR, 1)
 
 	    # magnitude colored wireframe plot with base contour
 	    elif i==3:
-		plmeshc(x, y, z, opt[k] | MAG_COLOR | BASE_CONT, clevel)
+		w.plmeshc(x, y, z, opt[k] | w.MAG_COLOR | w.BASE_CONT, clevel)
 
-
-	    plcol0(3)
-	    plmtex("t", 1.0, 0.5, 0.5, title[k])
+	    w.plcol0(3)
+	    w.plmtex("t", 1.0, 0.5, 0.5, title[k])
 
     # Restore defaults
-    #plcol0(1)
-    restore_cmap1()
-main()
+    # cmap1 default color palette.
+    w.plspal1("cmap1_default.pal",1)
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright 2002 Gary Bishop
-# Copyright 2004-2014 Alan W. Irwin
+# Copyright 2004-2016 Alan W. Irwin
 
 # This file is part of PLplot.
 
@@ -24,24 +24,25 @@
 from plplot_python_start import *
 
 import sys
-from plplot_py_demos import *
+import plplot as w
+from numpy import *
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
+w.plinit()
 
 from time import sleep
 
-def main():
+def main(w):
     nsteps = 1000
 
 # If db is used the plot is much more smooth. However, because of the
 #   async X behaviour, one does not have a real-time scripcharter.
 
-#    plsetopt("db", "")
-#    plsetopt("np", "")
+#    w.plsetopt("db", "")
+#    w.plsetopt("np", "")
 
 # User sets up plot completely except for window and data
 # Eventually settings in place when strip chart is created will be
@@ -62,7 +63,7 @@ def main():
     tmax = 10.
     tjump = 0.3	# percentage of plot to jump
 
-# Axes options same as plbox.
+# Axes options same as w.plbox.
 # Only automatic tick generation and label placement allowed
 # Eventually I ll make this fancier
 
@@ -79,15 +80,15 @@ def main():
     autoy = 1	# autoscale y
     acc = 1	# don t scrip, accumulate
 
-    pladv(0)
-    plvsta()
+    w.pladv(0)
+    w.plvsta()
 
 # Register our error variables with PLplot
 # From here on, we're handling all errors here
 
-    #plsError(&pl_errcode, errmsg)
+    #w.plsError(&pl_errcode, errmsg)
 
-    id1 = plstripc("bcnst", "bcnstv",
+    id1 = w.plstripc("bcnst", "bcnstv",
                    tmin, tmax, tjump, ymin, ymax,
                    xlab, ylab,
                    autoy, acc,
@@ -97,7 +98,7 @@ def main():
 
 # Let plplot handle errors from here on
 
-    #plsError(NULL, NULL)
+    #w.plsError(NULL, NULL)
 
     autoy = 0	# autoscale y
     acc = 1	# accumulate
@@ -111,7 +112,7 @@ def main():
     for n in range(nsteps):
         sleep(0.01)
 	t = n * dt
-	noise = plrandd() - 0.5
+	noise = w.plrandd() - 0.5
 	y1 = y1 + noise
 	y2 = sin(t*pi/18.)
 	y3 = y2 * noise
@@ -121,19 +122,20 @@ def main():
         # points or beeing equally time spaced.
 		
         if n%2:	
-	    plstripa(id1, 0, t, y1)
+	    w.plstripa(id1, 0, t, y1)
 	if n%3:
-	    plstripa(id1, 1, t, y2)
+	    w.plstripa(id1, 1, t, y2)
 	if n%4:
-	    plstripa(id1, 2, t, y3)
+	    w.plstripa(id1, 2, t, y3)
 	if n%5:
-	    plstripa(id1, 3, t, y4)
+	    w.plstripa(id1, 3, t, y4)
 
     # Destroy strip chart and it's memory
 
-    plstripd(id1)
+    w.plstripd(id1)
 
+    # Restore defaults
     # No defaults changed so nothing to restore
 
-main()
-plend()
+main(w)
+w.plend()

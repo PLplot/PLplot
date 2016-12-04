@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 
-#  Copyright (C) 2010 Alan W. Irwin
+#  Copyright (C) 2010-2016 Alan W. Irwin
 
 #  Demonstrate most pllegend capability including unicode symbols.
 
@@ -27,25 +27,28 @@
 #  course, you must have the appropriate TrueType fonts installed to
 #  have access to all the required glyphs.
 
-from plplot_py_demos import *
+from numpy import *
+
+# This only needed to define the following lists 
+import plplot as w_alt
 
 position_options = [
-PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
-PL_POSITION_TOP | PL_POSITION_OUTSIDE,
-PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
-PL_POSITION_RIGHT| PL_POSITION_OUTSIDE,
-PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
-PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
-PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE,
-PL_POSITION_LEFT | PL_POSITION_OUTSIDE,
-PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE,
-PL_POSITION_TOP | PL_POSITION_INSIDE,
-PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE,
-PL_POSITION_RIGHT| PL_POSITION_INSIDE,
-PL_POSITION_RIGHT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
-PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
-PL_POSITION_LEFT | PL_POSITION_BOTTOM | PL_POSITION_INSIDE,
-PL_POSITION_LEFT | PL_POSITION_INSIDE,
+w_alt.PL_POSITION_LEFT | w_alt.PL_POSITION_TOP | w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_TOP | w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_RIGHT | w_alt.PL_POSITION_TOP | w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_RIGHT| w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_RIGHT | w_alt.PL_POSITION_BOTTOM | w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_BOTTOM | w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_LEFT | w_alt.PL_POSITION_BOTTOM | w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_LEFT | w_alt.PL_POSITION_OUTSIDE,
+w_alt.PL_POSITION_LEFT | w_alt.PL_POSITION_TOP | w_alt.PL_POSITION_INSIDE,
+w_alt.PL_POSITION_TOP | w_alt.PL_POSITION_INSIDE,
+w_alt.PL_POSITION_RIGHT | w_alt.PL_POSITION_TOP | w_alt.PL_POSITION_INSIDE,
+w_alt.PL_POSITION_RIGHT| w_alt.PL_POSITION_INSIDE,
+w_alt.PL_POSITION_RIGHT | w_alt.PL_POSITION_BOTTOM | w_alt.PL_POSITION_INSIDE,
+w_alt.PL_POSITION_BOTTOM | w_alt.PL_POSITION_INSIDE,
+w_alt.PL_POSITION_LEFT | w_alt.PL_POSITION_BOTTOM | w_alt.PL_POSITION_INSIDE,
+w_alt.PL_POSITION_LEFT | w_alt.PL_POSITION_INSIDE,
 ]
 
 # Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
@@ -60,10 +63,10 @@ special_symbols = [
 # Colorbar type options
 COLORBAR_KINDS =  4
 colorbar_option_kinds = [
-    PL_COLORBAR_SHADE,
-    PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
-    PL_COLORBAR_IMAGE,
-    PL_COLORBAR_GRADIENT
+    w_alt.PL_COLORBAR_SHADE,
+    w_alt.PL_COLORBAR_SHADE | w_alt.PL_COLORBAR_SHADE_LABEL,
+    w_alt.PL_COLORBAR_IMAGE,
+    w_alt.PL_COLORBAR_GRADIENT
 ]
 colorbar_option_kind_labels = [
     "Shade colorbars",
@@ -75,10 +78,10 @@ colorbar_option_kind_labels = [
 # Which side of the page are we positioned relative to?
 COLORBAR_POSITIONS = 4
 colorbar_position_options = [
-    PL_POSITION_LEFT,
-    PL_POSITION_RIGHT,
-    PL_POSITION_TOP,
-    PL_POSITION_BOTTOM
+    w_alt.PL_POSITION_LEFT,
+    w_alt.PL_POSITION_RIGHT,
+    w_alt.PL_POSITION_TOP,
+    w_alt.PL_POSITION_BOTTOM
 ]
 colorbar_position_option_labels = [
     "Left",
@@ -90,10 +93,10 @@ colorbar_position_option_labels = [
 # Colorbar label positioning options
 COLORBAR_LABELS = 4
 colorbar_label_options = [
-    PL_COLORBAR_LABEL_LEFT,
-    PL_COLORBAR_LABEL_RIGHT,
-    PL_COLORBAR_LABEL_TOP,
-    PL_COLORBAR_LABEL_BOTTOM
+    w_alt.PL_COLORBAR_LABEL_LEFT,
+    w_alt.PL_COLORBAR_LABEL_RIGHT,
+    w_alt.PL_COLORBAR_LABEL_TOP,
+    w_alt.PL_COLORBAR_LABEL_BOTTOM
 ]
 colorbar_label_option_labels = [
     "Label left",
@@ -105,10 +108,10 @@ colorbar_label_option_labels = [
 # Colorbar cap options
 COLORBAR_CAPS = 4
 colorbar_cap_options = [
-    PL_COLORBAR_CAP_NONE,
-    PL_COLORBAR_CAP_LOW,
-    PL_COLORBAR_CAP_HIGH,
-    PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
+    w_alt.PL_COLORBAR_CAP_NONE,
+    w_alt.PL_COLORBAR_CAP_LOW,
+    w_alt.PL_COLORBAR_CAP_HIGH,
+    w_alt.PL_COLORBAR_CAP_LOW | w_alt.PL_COLORBAR_CAP_HIGH
 ]
 colorbar_cap_option_labels = [
     "No caps",
@@ -117,13 +120,13 @@ colorbar_cap_option_labels = [
     "Low and high caps"
 ]
 
-def plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, values ):
+def plcolorbar_example_page( w, kind_i, label_i, cap_i, cont_color, cont_width, values ):
     n_axes = 1
     axis_opts = zeros(n_axes,"S100")
     ticks = zeros(n_axes)
     sub_ticks = zeros(n_axes,"int")
     label_opts = zeros(n_axes,"int")
-    label_opts[0] = PL_COLORBAR_LABEL_BOTTOM
+    label_opts[0] = w.PL_COLORBAR_LABEL_BOTTOM
     label = zeros(n_axes,"S100")
     n_values_array = zeros(n_axes,"int")
     n_values_array[0] = len(values)
@@ -133,15 +136,15 @@ def plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, val
     high_cap_color = 1.0
 
     # Start a new page
-    pladv( 0 )
+    w.pladv( 0 )
 
     # Draw one colorbar relative to each side of the page
     for position_i in range(COLORBAR_POSITIONS):
         position = colorbar_position_options[position_i]
         opt = colorbar_option_kinds[kind_i] | colorbar_label_options[label_i] | colorbar_cap_options[cap_i]
 
-        vertical = (position & PL_POSITION_LEFT) or (position & PL_POSITION_RIGHT)
-        ifn      = position & PL_POSITION_LEFT or position & PL_POSITION_BOTTOM
+        vertical = (position & w.PL_POSITION_LEFT) or (position & w.PL_POSITION_RIGHT)
+        ifn      = position & w.PL_POSITION_LEFT or position & w.PL_POSITION_BOTTOM
 
         # Set the offset position on the page
         if vertical:
@@ -170,17 +173,17 @@ def plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, val
         label[0] =  "%s, %s" % (colorbar_position_option_labels[position_i] , colorbar_label_option_labels[label_i])
 
         # Smaller text
-        plschr( 0.0, 0.75 )
+        w.plschr( 0.0, 0.75 )
         # Small ticks on the vertical axis
-        plsmaj( 0.0, 0.5 )
-        plsmin( 0.0, 0.5 )
+        w.plsmaj( 0.0, 0.5 )
+        w.plsmin( 0.0, 0.5 )
 
-        plvpor( 0.20, 0.80, 0.20, 0.80 )
-        plwind( 0.0, 1.0, 0.0, 1.0 )
+        w.plvpor( 0.20, 0.80, 0.20, 0.80 )
+        w.plwind( 0.0, 1.0, 0.0, 1.0 )
         # Set interesting background colour.
-        plscol0a( 15, 0, 0, 0, 0.20 )
-        (colorbar_width, colorbar_height) = plcolorbar( \
-            opt | PL_COLORBAR_BOUNDING_BOX | PL_COLORBAR_BACKGROUND, position, \
+        w.plscol0a( 15, 0, 0, 0, 0.20 )
+        (colorbar_width, colorbar_height) = w.plcolorbar( \
+            opt | w.PL_COLORBAR_BOUNDING_BOX | w.PL_COLORBAR_BACKGROUND, position, \
             x, y, x_length, y_length, \
             15, 1, 1, \
             low_cap_color, high_cap_color, \
@@ -190,34 +193,34 @@ def plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, val
             n_values_array, values_array )
 
         # Reset text and tick sizes
-        plschr( 0.0, 1.0 )
-        plsmaj( 0.0, 1.0 )
-        plsmin( 0.0, 1.0 )
+        w.plschr( 0.0, 1.0 )
+        w.plsmaj( 0.0, 1.0 )
+        w.plsmin( 0.0, 1.0 )
 
     # Draw a page title
     title  = "%s - %s" % (colorbar_option_kind_labels[kind_i] , colorbar_cap_option_labels[cap_i])
-    plvpor( 0.0, 1.0, 0.0, 1.0 )
-    plwind( 0.0, 1.0, 0.0, 1.0 )
-    plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title )
+    w.plvpor( 0.0, 1.0, 0.0, 1.0 )
+    w.plwind( 0.0, 1.0, 0.0, 1.0 )
+    w.plptex( 0.5, 0.5, 0.0, 0.0, 0.5, title )
 
-def plcolorbar_example( palette, kind_i, cont_color, cont_width, values ):
+def plcolorbar_example( w, palette, kind_i, cont_color, cont_width, values ):
     # Load the color palette
-    plspal1( palette, 1 )
+    w.plspal1( palette, 1 )
 
     for label_i in arange(COLORBAR_LABELS):
         for cap_i in arange(COLORBAR_CAPS):
-            plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width, values )
+            plcolorbar_example_page( w, kind_i, label_i, cap_i, cont_color, cont_width, values )
 
 
-def main():
+def main(w):
     # First page illustrating the 16 standard positions.
-    pladv(0)
-    plvpor(0.25, 0.75, 0.25, 0.75)
-    plwind(0.0, 1.0, 0.0, 1.0)
-    plbox("bc", 0.0, 0, "bc", 0.0, 0)
-    plsfont(PL_FCI_SANS, -1, -1)
-    plmtex("t", 8.0, 0.5, 0.5, "The 16 standard legend positions with")
-    plmtex("t", 6.0, 0.5, 0.5, "the same (0.05) offset in x and y")
+    w.pladv(0)
+    w.plvpor(0.25, 0.75, 0.25, 0.75)
+    w.plwind(0.0, 1.0, 0.0, 1.0)
+    w.plbox("bc", 0.0, 0, "bc", 0.0, 0)
+    w.plsfont(w.PL_FCI_SANS, -1, -1)
+    w.plmtex("t", 8.0, 0.5, 0.5, "The 16 standard legend positions with")
+    w.plmtex("t", 6.0, 0.5, 0.5, "the same (0.05) offset in x and y")
 
     # Set up legend arrays with the correct size, type.
     nlegend = 1
@@ -238,8 +241,8 @@ def main():
 
     # Only specify legend data that are required according to the
     # value of opt_array for that entry.
-    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX
-    opt_array[0] = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
+    opt_base = w.PL_LEGEND_BACKGROUND | w.PL_LEGEND_BOUNDING_BOX
+    opt_array[0] = w.PL_LEGEND_LINE | w.PL_LEGEND_SYMBOL
     line_styles[0] = 1
     line_widths[0] = 1.
     symbol_scales[0] = 1.
@@ -247,8 +250,8 @@ def main():
     symbols[0] = "#(728)"
 
     # Use monotype fonts so that all legends are the same size.
-    plsfont(PL_FCI_MONO, -1, -1)
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plsfont(w.PL_FCI_MONO, -1, -1)
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
 
     for k in range(16):
         position = position_options[k]
@@ -259,7 +262,7 @@ def main():
         symbol_colors[0] = 1 + (k % 8)
 
         (legend_width, legend_height) = \
-        pllegend( opt, position, 0.05, 0.05,
+        w.pllegend( opt, position, 0.05, 0.05,
                   0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
                   1., text_colors, text,
                   box_colors, box_patterns, box_scales, box_line_widths,
@@ -268,13 +271,13 @@ def main():
 
     # Second page illustrating effect of nrow, ncolumn for the same legend
     # data.
-    pladv(0)
-    plvpor(0.25, 0.75, 0.25, 0.75)
-    plwind(0.0, 1.0, 0.0, 1.0)
-    plbox("bc", 0.0, 0, "bc", 0.0, 0)
-    plsfont(PL_FCI_SANS, -1, -1)
-    plmtex("t", 8.0, 0.5, 0.5, "The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,")
-    plmtex("t", 6.0, 0.5, 0.5, "and position for the same legend data")
+    w.pladv(0)
+    w.plvpor(0.25, 0.75, 0.25, 0.75)
+    w.plwind(0.0, 1.0, 0.0, 1.0)
+    w.plbox("bc", 0.0, 0, "bc", 0.0, 0)
+    w.plsfont(w.PL_FCI_SANS, -1, -1)
+    w.plmtex("t", 8.0, 0.5, 0.5, "The effect of nrow, ncolumn, PL_LEGEND_ROW_MAJOR,")
+    w.plmtex("t", 6.0, 0.5, 0.5, "and position for the same legend data")
 
     # Set up legend arrays with the correct size, type.
     nlegend = 7
@@ -295,9 +298,9 @@ def main():
 
     # Only specify legend data that are required according to the
     # value of opt_array for that entry.
-    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX
+    opt_base = w.PL_LEGEND_BACKGROUND | w.PL_LEGEND_BOUNDING_BOX
     for k in range(nlegend):
-        opt_array[k] = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
+        opt_array[k] = w.PL_LEGEND_LINE | w.PL_LEGEND_SYMBOL
         line_styles[k] = 1
         line_widths[k] = 1.
         symbol_scales[k] = 1.
@@ -309,101 +312,101 @@ def main():
         symbol_colors[k] = 1 + (k % 8)
 
     # Use monotype fonts so that all legends are the same size.
-    plsfont(PL_FCI_MONO, -1, -1)
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plsfont(w.PL_FCI_MONO, -1, -1)
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
 
-    position = PL_POSITION_TOP | PL_POSITION_OUTSIDE
+    position = w.PL_POSITION_TOP | w.PL_POSITION_OUTSIDE
     opt = opt_base
     x = 0.
     y = 0.1
     nrow = 1
     ncolumn = nlegend
     (legend_width, legend_height) = \
-     pllegend( opt, position, x, y,
+     w.pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-    position = PL_POSITION_BOTTOM | PL_POSITION_OUTSIDE
+    position = w.PL_POSITION_BOTTOM | w.PL_POSITION_OUTSIDE
     opt = opt_base
     x = 0.
     y = 0.1
     nrow = 1
     ncolumn = nlegend
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-    position = PL_POSITION_LEFT | PL_POSITION_OUTSIDE
+    position = w.PL_POSITION_LEFT | w.PL_POSITION_OUTSIDE
     opt = opt_base
     x = 0.1
     y = 0.
     nrow = nlegend
     ncolumn = 1
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-    position = PL_POSITION_RIGHT | PL_POSITION_OUTSIDE
+    position = w.PL_POSITION_RIGHT | w.PL_POSITION_OUTSIDE
     opt = opt_base
     x = 0.1
     y = 0.
     nrow = nlegend
     ncolumn = 1
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-    position = PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_INSIDE
+    position = w.PL_POSITION_LEFT | w.PL_POSITION_TOP | w.PL_POSITION_INSIDE
     opt = opt_base
     x = 0.
     y = 0.
     nrow = 6
     ncolumn = 2
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-    position = PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_INSIDE
-    opt = opt_base | PL_LEGEND_ROW_MAJOR
+    position = w.PL_POSITION_RIGHT | w.PL_POSITION_TOP | w.PL_POSITION_INSIDE
+    opt = opt_base | w.PL_LEGEND_ROW_MAJOR
     x = 0.
     y = 0.
     nrow = 6
     ncolumn = 2
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-    position = PL_POSITION_BOTTOM | PL_POSITION_INSIDE
-    opt = opt_base | PL_LEGEND_ROW_MAJOR
+    position = w.PL_POSITION_BOTTOM | w.PL_POSITION_INSIDE
+    opt = opt_base | w.PL_LEGEND_ROW_MAJOR
     x = 0.
     y = 0.
     nrow = 3
     ncolumn = 3
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.05, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -411,18 +414,18 @@ def main():
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
     # Third page demonstrating legend alignment
-    pladv(0)
-    plvpor(0.0, 1.0, 0.0, 0.9)
-    plwind(0.0, 1.0, 0.0, 1.0)
-    plsfont(PL_FCI_SANS, -1, -1)
-    plmtex("t", 2.0, 0.5, 0.5, "Demonstrate legend alignment")
+    w.pladv(0)
+    w.plvpor(0.0, 1.0, 0.0, 0.9)
+    w.plwind(0.0, 1.0, 0.0, 1.0)
+    w.plsfont(w.PL_FCI_SANS, -1, -1)
+    w.plmtex("t", 2.0, 0.5, 0.5, "Demonstrate legend alignment")
 
     x = 0.1
     y = 0.1
     nturn = 4
     nlegend = 0
-    position = PL_POSITION_TOP |  PL_POSITION_LEFT | PL_POSITION_SUBPAGE
-    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX
+    position = w.PL_POSITION_TOP |  w.PL_POSITION_LEFT | w.PL_POSITION_SUBPAGE
+    opt_base = w.PL_LEGEND_BACKGROUND | w.PL_LEGEND_BOUNDING_BOX
     opt = opt_base
     for i in range(9):
         # Set up legend arrays with the correct size, type.
@@ -449,7 +452,7 @@ def main():
         # Only specify legend data that are required according to the
         # value of opt_array for that entry.
         for k in range(nlegend):
-            opt_array[k] = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
+            opt_array[k] = w.PL_LEGEND_LINE | w.PL_LEGEND_SYMBOL
             line_styles[k] = 1
             line_widths[k] = 1.
             symbol_scales[k] = 1.
@@ -461,21 +464,21 @@ def main():
             symbol_colors[k] = 1 + (k % 8)
 
         # Use monotype fonts so that all legends are the same size.
-        plsfont(PL_FCI_MONO, -1, -1)
-        plscol0a( 15, 32, 32, 32, 0.70 )
+        w.plsfont(w.PL_FCI_MONO, -1, -1)
+        w.plscol0a( 15, 32, 32, 32, 0.70 )
 
         nrow = min(3, nlegend)
         ncolumn = 0
 
         (legend_width, legend_height) = \
-        pllegend( opt, position, x, y,
+        w.pllegend( opt, position, x, y,
                   0.025, 15, 1, 1, nrow, ncolumn, opt_array, 1.0, 1.0, 1.5,
                   1., text_colors, text,
                   box_colors, box_patterns, box_scales, box_line_widths,
                   line_colors, line_styles, line_widths,
                   symbol_colors, symbol_scales, symbol_numbers, symbols )
         if i == nturn:
-            position = PL_POSITION_TOP |  PL_POSITION_RIGHT | PL_POSITION_SUBPAGE
+            position = w.PL_POSITION_TOP |  w.PL_POSITION_RIGHT | w.PL_POSITION_SUBPAGE
             opt = opt_base
             x = 1. - x
             y += legend_height
@@ -490,12 +493,12 @@ def main():
     x = xstart
     y = ystart
     text_scale = 0.90
-    pladv(0)
-    plvpor(0.0, 1., 0.0, 0.90)
-    plwind(0.0, 1.0, 0.0, 1.0)
-    # plbox("bc", 0.0, 0, "bc", 0.0, 0)
-    plsfont(PL_FCI_SANS, -1, -1)
-    plmtex("t", 2.0, 0.5, 0.5, "Demonstrate Various Kinds of Legends")
+    w.pladv(0)
+    w.plvpor(0.0, 1., 0.0, 0.90)
+    w.plwind(0.0, 1.0, 0.0, 1.0)
+    # w.plbox("bc", 0.0, 0, "bc", 0.0, 0)
+    w.plsfont(w.PL_FCI_SANS, -1, -1)
+    w.plmtex("t", 2.0, 0.5, 0.5, "Demonstrate Various Kinds of Legends")
 
     # Set up legend arrays with the correct size, type.
     nlegend = 5
@@ -516,15 +519,15 @@ def main():
 
     # Only specify legend data that are required according to the
     # value of opt_array for that entry.
-    position = PL_POSITION_LEFT | PL_POSITION_TOP
-    opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_TEXT_LEFT
+    position = w.PL_POSITION_LEFT | w.PL_POSITION_TOP
+    opt_base = w.PL_LEGEND_BACKGROUND | w.PL_LEGEND_BOUNDING_BOX | w.PL_LEGEND_TEXT_LEFT
 
     # Set up None, Box, Line, Symbol, and Line & Symbol legend entries.
-    opt_array[0] = PL_LEGEND_NONE
+    opt_array[0] = w.PL_LEGEND_NONE
     text[0] = "None"
     text_colors[0] = 1
 
-    opt_array[1] = PL_LEGEND_COLOR_BOX
+    opt_array[1] = w.PL_LEGEND_COLOR_BOX
     text[1] = "Box"
     text_colors[1] = 2
     box_colors[1] = 2
@@ -532,14 +535,14 @@ def main():
     box_scales[1] = 0.8
     box_line_widths[1] = 1.
 
-    opt_array[2] = PL_LEGEND_LINE
+    opt_array[2] = w.PL_LEGEND_LINE
     text[2] = "Line"
     text_colors[2] = 3
     line_colors[2] = 3
     line_styles[2] = 1
     line_widths[2] = 1.
 
-    opt_array[3] = PL_LEGEND_SYMBOL
+    opt_array[3] = w.PL_LEGEND_SYMBOL
     text[3] = "Symbol"
     text_colors[3] = 4
     symbol_colors[3] = 4
@@ -547,7 +550,7 @@ def main():
     symbol_numbers[3] = 4
     symbols[3] = special_symbols[2]
 
-    opt_array[4] = PL_LEGEND_SYMBOL | PL_LEGEND_LINE
+    opt_array[4] = w.PL_LEGEND_SYMBOL | w.PL_LEGEND_LINE
     text[4] = "L & S"
     text_colors[4] = 5
     line_colors[4] = 5
@@ -559,9 +562,9 @@ def main():
     symbols[4] = special_symbols[2]
 
     opt = opt_base
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -571,7 +574,7 @@ def main():
 
     # Set up symbol legend entries with various symbols.
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_SYMBOL
+        opt_array[i] = w.PL_LEGEND_SYMBOL
         text[i] = "Symbol " + special_symbols[i]
         text_colors[i] = i+1
         symbol_colors[i] = i+1
@@ -581,9 +584,9 @@ def main():
 
     opt = opt_base
     x += legend_width
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -593,7 +596,7 @@ def main():
 
     # Set up symbol legend entries with various numbers of symbols.
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_SYMBOL
+        opt_array[i] = w.PL_LEGEND_SYMBOL
         text[i] = "Symbol Number %d" % (i+2)
         text_colors[i] = i+1
         symbol_colors[i] = i+1
@@ -603,9 +606,9 @@ def main():
 
     opt = opt_base
     x += legend_width
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -615,7 +618,7 @@ def main():
 
     # Set up box legend entries with various colours.
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_COLOR_BOX
+        opt_array[i] = w.PL_LEGEND_COLOR_BOX
         text[i] = "%s %d" % ("Box Color",i+1)
         text_colors[i] = i+1
         box_colors[i] = i+1
@@ -628,9 +631,9 @@ def main():
     x = xstart
     y += max_height
     max_height = 0.
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -640,7 +643,7 @@ def main():
 
     # Set up box legend entries with various patterns.
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_COLOR_BOX
+        opt_array[i] = w.PL_LEGEND_COLOR_BOX
         text[i] = "%s %d" % ("Box Pattern",i)
         text_colors[i] = 2
         box_colors[i] = 2
@@ -650,9 +653,9 @@ def main():
 
     opt = opt_base
     x += legend_width
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -662,7 +665,7 @@ def main():
 
     # Set up box legend entries with various box pattern line widths.
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_COLOR_BOX
+        opt_array[i] = w.PL_LEGEND_COLOR_BOX
         text[i] = "%s %d" % ("Box Line Width",i+1)
         text_colors[i] = 2
         box_colors[i] = 2
@@ -672,9 +675,9 @@ def main():
 
     opt = opt_base
     x += legend_width
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -684,7 +687,7 @@ def main():
 
     # Set up line legend entries with various colours.
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_LINE
+        opt_array[i] = w.PL_LEGEND_LINE
         text[i] = "%s %d" % ("Line Color",i+1)
         text_colors[i] = i+1
         line_colors[i] = i+1
@@ -696,9 +699,9 @@ def main():
     x = xstart
     y += max_height
     max_height = 0.
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -708,7 +711,7 @@ def main():
 
     # Set up line legend entries with various styles
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_LINE
+        opt_array[i] = w.PL_LEGEND_LINE
         text[i] = "%s %d" % ("Line Style",i+1)
         text_colors[i] = 2
         line_colors[i] = 2
@@ -717,9 +720,9 @@ def main():
 
     opt = opt_base
     x += legend_width
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -729,7 +732,7 @@ def main():
 
     # Set up line legend entries with various widths.
     for i in range(nlegend):
-        opt_array[i] = PL_LEGEND_LINE
+        opt_array[i] = w.PL_LEGEND_LINE
         text[i] = "%s %d" % ("Line Width",i+1)
         text_colors[i] = 2
         line_colors[i] = 2
@@ -738,9 +741,9 @@ def main():
 
     opt = opt_base
     x += legend_width
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
     (legend_width, legend_height) = \
-    pllegend( opt, position, x, y,
+    w.pllegend( opt, position, x, y,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -754,18 +757,27 @@ def main():
     values_even   = [ -2.0e-20, -1.0e-20, 0.0e-20, 1.0e-20, 2.0e-20, 3.0e-20, 4.0e-20, 5.0e-20, 6.0e-20 ]
 
     # Use unsaturated green background colour to contrast with black caps.
-    plscolbg( 70, 185, 70 )
+    w.plscolbg( 70, 185, 70 )
     # Cut out the greatest and smallest bits of the color spectrum to
     # leave colors for the end caps.
-    plscmap1_range( 0.01, 0.99 )
+    w.plscmap1_range( 0.01, 0.99 )
 
     # We can only test image and gradient colorbars with two element arrays
     for i in arange(COLORBAR_KINDS-2)+2:
-        plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_small )
+        plcolorbar_example( w, "cmap1_blue_yellow.pal", i, 0, 0, values_small )
     # Test shade colorbars with larger arrays
     for i in arange(2):
-        plcolorbar_example( "cmap1_blue_yellow.pal", i, 4, 2, values_even )
+        plcolorbar_example( w, "cmap1_blue_yellow.pal", i, 4, 2, values_even )
     for i in arange(2):
-        plcolorbar_example( "cmap1_blue_yellow.pal", i, 0, 0, values_uneven )
+        plcolorbar_example( w, "cmap1_blue_yellow.pal", i, 0, 0, values_uneven )
 
-main()
+    # Restore defaults
+    w.plschr( 0.0, 1.0 )
+    # cmap0 default color palette.
+    w.plspal0("cmap0_default.pal")
+    # cmap1 default color palette.
+    w.plspal1("cmap1_default.pal", 1)
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

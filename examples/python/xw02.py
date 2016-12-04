@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Multiple window and color map 0 demo.
 #
@@ -19,50 +19,49 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
-
+from numpy import *
 # Demonstrates multiple windows and default color map 0 palette.
 
 # Draws a set of numbered boxes with colors according to cmap0 entry
-def draw_windows(nw, cmap0_offset):
-    plschr(0.0, 3.5)
-    plfont(4)
+def draw_windows(w, nw, cmap0_offset):
+    w.plschr(0.0, 3.5)
+    w.plfont(4)
 
     for i in range(nw):
-	plcol0(i+cmap0_offset)
-	pladv(0)
+	w.plcol0(i+cmap0_offset)
+	w.pladv(0)
 	vmin = 0.1
 	vmax = 0.9
 	for j in range(3):
-	    plwidth(j + 1)
-	    plvpor(vmin, vmax, vmin, vmax)
-	    plwind(0.0, 1.0, 0.0, 1.0)
-	    plbox("bc", 0.0, 0, "bc", 0.0, 0)
+	    w.plwidth(j + 1)
+	    w.plvpor(vmin, vmax, vmin, vmax)
+	    w.plwind(0.0, 1.0, 0.0, 1.0)
+	    w.plbox("bc", 0.0, 0, "bc", 0.0, 0)
 	    vmin = vmin + 0.1
 	    vmax = vmax - 0.1
-	plwidth(1)
-	plptex(0.5, 0.5, 1.0, 0.0, 0.5, `i`)
+	w.plwidth(1)
+	w.plptex(0.5, 0.5, 1.0, 0.0, 0.5, `i`)
 
 # Demonstrate multiple windows and default color map 0 palette.
-def demo1():
+def demo1(w):
 
-    plbop()
+    w.plbop()
     # Divide screen into 16 regions
-    plssub(4, 4)
+    w.plssub(4, 4)
 
-    draw_windows(16,0)
+    draw_windows(w,16,0)
 
-    pleop()
+    w.pleop()
 
 
-def demo2():
+def demo2(w):
     lmin = 0.15
     lmax = 0.85
 
-    plbop()
+    w.plbop()
 
     # Divide screen into 100 regions
-    plssub(10,10)
+    w.plssub(10,10)
 
     r = zeros(116,"int")
     g = zeros(116,"int")
@@ -73,43 +72,47 @@ def demo2():
         l = lmin + (lmax-lmin)*(i/10)/9
         s = 1.0
 
-        rgb = plhlsrgb(h, l, s)
+        rgb = w.plhlsrgb(h, l, s)
 
         r[i+16] = rgb[0]*255.001
         g[i+16] = rgb[1]*255.001
         b[i+16] = rgb[2]*255.001
 
-    # Load default cmap0 colors into out custom set
+    # Load default cmap0 colors into our custom set
     for i in range(16):
-        rgb = plgcol0(i)
+        rgb = w.plgcol0(i)
         r[i] = rgb[0]
         g[i] = rgb[1]
         b[i] = rgb[2]
 
     # Now set cmap0 all at once (faster, since fewer driver calls)
-    plscmap0(r,g,b)
+    w.plscmap0(r,g,b)
 
-    draw_windows(100,16)
+    draw_windows(w,100,16)
 
-    pleop()
+    w.pleop()
 
-def main():
+def main(w):
 
     # For starting from scratch this call to pladv increments cursub, but
     # then the following plssub sets it to zero so the whole thing is
     # essentially a nop.  However, for the case when other examples are run
     # first, this call to pladv is absolutely essential to finish the
     # preceding page.
-    pladv(0)
+    #w.pladv(0)
 
     # Run demos
-    demo1()
-    demo2()
+    demo1(w)
+    demo2(w)
 
     # Restore defaults
-    plssub(1, 1)
-    plfont(1)
-#    plcol0(1)
-    pleop()
+    w.plschr( 0.0, 1.0 )
+    w.plfont(1)
+    # cmap0 default color palette.
+    w.plspal0("cmap0_default.pal")
+    w.plssub(1, 1)
+    w.pleop()
 
-main()
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

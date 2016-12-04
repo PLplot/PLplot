@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Shade plot demo.
 #
@@ -19,13 +19,13 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 XPTS = 35		# Data points in x
 YPTS = 46		# Data points in y
 
 
-def main():
+def main(w):
 # Does a variety of shade plots with discrete colours and patterns.
 
     # Do not fiddle with cmap1 since this example actually uses cmap0.
@@ -40,19 +40,21 @@ def main():
     zmin = min(z.flat)
     zmax = max(z.flat)
 
-    plot1(z, zmin, zmax)
-    plot2(z, zmin, zmax)
-    plot3()
+    plot1(w, z, zmin, zmax)
+    plot2(w, z, zmin, zmax)
+    plot3(w)
 
     # Restore defaults
-    #plcol0(1)
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)
 	
-def plot1(z, zmin, zmax):
+def plot1(w, z, zmin, zmax):
 # Illustrates a single shaded region
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
 
     shade_min = zmin + (zmax-zmin)*0.4
     shade_max = zmin + (zmax-zmin)*0.6
@@ -64,20 +66,20 @@ def plot1(z, zmin, zmax):
     max_color = 2
     max_width = 2.
 
-    plpsty(8)
+    w.plpsty(8)
 
     # Just use identity transform on indices of z mapped to -1, 1 range
     # in X and Y coordinates
-    plshade( z, -1., 1., -1., 1.,
+    w.plshade( z, -1., 1., -1., 1.,
     shade_min, shade_max, sh_cmap, sh_color, sh_width,
     min_color, min_width, max_color, max_width, 1, None, None)
 							
-    plcol0(1)
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
-    plcol0(2)
-    pllab("distance", "altitude", "Bogon flux")
+    w.plcol0(1)
+    w.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
+    w.plcol0(2)
+    w.pllab("distance", "altitude", "Bogon flux")
 
-def plot2(z, zmin, zmax):
+def plot2(w, z, zmin, zmax):
 # Illustrates multiple adjacent shaded regions, using different fill
 # patterns for each region.
 
@@ -90,9 +92,9 @@ def plot2(z, zmin, zmax):
                  [2000, 2000], [2000, 2000], [4000, 4000],
                  [4000, 2000] ] )
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
 
     sh_cmap = 0
     sh_width = 2.
@@ -106,20 +108,20 @@ def plot2(z, zmin, zmax):
 	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0
 	sh_color = i+6
         n = nlin[i]
-	plpat(inc[i][0:n], spa[i][0:n])
+	w.plpat(inc[i][0:n], spa[i][0:n])
 
 	# Just use identity transform on indices of z mapped to -1, 1 range
 	# in X and Y coordinates
-	plshade( z, -1., 1., -1., 1.,
+	w.plshade( z, -1., 1., -1., 1.,
 	shade_min, shade_max, sh_cmap, sh_color, sh_width,
 	min_color, min_width, max_color, max_width, 1, None, None)
 
-    plcol0(1)
-    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
-    plcol0(2)
-    pllab("distance", "altitude", "Bogon flux")
+    w.plcol0(1)
+    w.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
+    w.plcol0(2)
+    w.pllab("distance", "altitude", "Bogon flux")
 
-def plot3():
+def plot3(w):
 # Illustrates shaded regions in 3d, using a different fill pattern for
 # each region.
     xx = array( [ [-1.0, 1.0, 1.0, -1.0, -1.0],
@@ -129,25 +131,22 @@ def plot3():
     zz = array( [ [0.0, 0.0, 1.0, 1.0, 0.0],
                   [0.0, 0.0, 1.0, 1.0, 0.0] ] )
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
-    plw3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40)
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
+    w.plw3d(1., 1., 1., -1.0, 1.0, -1.0, 1.0, 0.0, 1.5, 30, -40)
 
     # Plot using identity transform
 
-    plcol0(1)
-    plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0)
-    plcol0(2)
-    pllab("","","3-d polygon filling")
+    w.plcol0(1)
+    w.plbox3("bntu", "X", 0.0, 0, "bntu", "Y", 0.0, 0, "bcdfntu", "Z", 0.5, 0)
+    w.plcol0(2)
+    w.pllab("","","3-d polygon filling")
 
-    plcol0(3)
-    plpsty(1)
-    plline3(xx[0], yy[0], zz[0])
-    plfill3(xx[0][0:4], yy[0][0:4], zz[0][0:4])
-    plpsty(2)
-    plline3(xx[1], yy[1], zz[1])
-    plfill3(xx[1][0:4], yy[1][0:4], zz[1][0:4])
-
-
-main()
+    w.plcol0(3)
+    w.plpsty(1)
+    w.plline3(xx[0], yy[0], zz[0])
+    w.plfill3(xx[0][0:4], yy[0][0:4], zz[0][0:4])
+    w.plpsty(2)
+    w.plline3(xx[1], yy[1], zz[1])
+    w.plfill3(xx[1][0:4], yy[1][0:4], zz[1][0:4])

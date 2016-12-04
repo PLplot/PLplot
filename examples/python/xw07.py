@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Font demo.
 #
@@ -19,40 +19,38 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
-
 # main
 #
 # Displays the entire "plsym" symbol (font) set.
 
-def main():
+def main(w):
 
     base = [0, 100, 0, 100, 200, 500, 600, 700, 800, 900, 2000,
 	    2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900]
 
-    plfontld( 0 )
+    w.plfontld( 0 )
 
     for l in range(20):
         if l == 2:
-            plfontld( 1 )
+            w.plfontld( 1 )
 
-	pladv(0)
+	w.pladv(0)
 
 	# Set up viewport and window
 
-	plcol0(2)
-	plvpor(0.15, 0.95, 0.1, 0.9)
-	plwind(0.0, 1.0, 0.0, 1.0)
+	w.plcol0(2)
+	w.plvpor(0.15, 0.95, 0.1, 0.9)
+	w.plwind(0.0, 1.0, 0.0, 1.0)
 
 	# Draw the grid using plbox
 
-	plbox("bcg", 0.1, 0, "bcg", 0.1, 0)
+	w.plbox("bcg", 0.1, 0, "bcg", 0.1, 0)
 
 	# Write the digits below the frame
 
-	plcol0(15)
+	w.plcol0(15)
 	for i in range(10):
-	    plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, `i`)
+	    w.plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, `i`)
 
 	k = 0
 	for i in range(10):
@@ -60,7 +58,7 @@ def main():
 	    # Write the digits to the left of the frame
 
 	    text = `base[l] + 10 * i`
-	    plmtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, text)
+	    w.plmtex("lv", 1.0, (0.95 - 0.1 * i), 1.0, text)
 
 	    for j in range(10):
 		x = [ 0.1 * j + 0.05 ]
@@ -68,14 +66,16 @@ def main():
 
 		# Display the symbols
 
-		plsym(x, y, base[l] + k)
+		w.plsym(x, y, base[l] + k)
 		k = k + 1
         if l < 2 :
-            plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)")
+            w.plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (compact)")
         else :
-            plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)")
+            w.plmtex("t", 1.5, 0.5, 0.5, "PLplot Example 7 - PLSYM symbols (extended)")
 
     # Restore defaults
-    #plcol0(1)
-
-main()
+    w.plfontld(1)
+    w.plfont(1)
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

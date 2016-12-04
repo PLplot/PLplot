@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Demo of multiple stream/window capability.
 #
@@ -26,68 +26,68 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
-#	Simple line plot and multiple windows demo.
+# Simple line plot and multiple windows demo.
 
-from plplot_py_demos import *
+from numpy import *
 
-def main():
+def main(w):
 
     geometry_master = "500x410+100+200"
     geometry_slave  = "500x410+650+200"
-    driver = plgdev()
-    (fam, num, bmax) = plgfam()
+    driver = w.plgdev()
+    (fam, num, bmax) = w.plgfam()
 
     print "Demo of multiple output streams via the %s driver." % driver
     print "Running with the second stream as slave to the first."
     print ""
 
     # Set up the first stream.
-    plsetopt("geometry", geometry_master)
-    plsdev(driver)
-    plssub(2, 2)
-    plinit()
+    w.plsetopt("geometry", geometry_master)
+    w.plsdev(driver)
+    w.plssub(2, 2)
+    w.plinit()
 
     # Start next stream.
-    plsstrm(1)
+    w.plsstrm(1)
 
     # Turn off pause to make this a slave (must follow master)
 
-    plsetopt("geometry", geometry_slave)
-    plspause(0)
-    plsdev(driver)
-    plsfam(fam, num, bmax)
-    plsetopt("fflen","2")
-    plinit()
+    w.plsetopt("geometry", geometry_slave)
+    w.plspause(0)
+    w.plsdev(driver)
+    w.plsfam(fam, num, bmax)
+    w.plsetopt("fflen","2")
+    w.plinit()
 		
     # Set up the data & plot
     # Original case
 
-    plsstrm(0)
+    w.plsstrm(0)
 
     xscale = 6.
     yscale = 1.
     xoff = 0.
     yoff = 0.
-    plot1(xscale, yscale, xoff, yoff)
+    plot1(w, xscale, yscale, xoff, yoff)
 			
     # Set up the data & plot
 			
     xscale = 1.
     yscale = 1.e+6
-    plot1(xscale, yscale, xoff, yoff)
+    plot1(w, xscale, yscale, xoff, yoff)
 				
     # Set up the data & plot
 				
     xscale = 1.
     yscale = 1.e-6
     digmax = 2
-    plsyax(digmax, 0)
-    plot1(xscale, yscale, xoff, yoff)
+    w.plsyax(digmax, 0)
+    plot1(w, xscale, yscale, xoff, yoff)
 							
     # Set up the data & plot
 							
@@ -95,35 +95,39 @@ def main():
     yscale = 0.0014
     yoff = 0.0185
     digmax = 5
-    plsyax(digmax, 0)
-    plot1(xscale, yscale, xoff, yoff)
+    w.plsyax(digmax, 0)
+    plot1(w, xscale, yscale, xoff, yoff)
 
     # To slave
-    # The pleop() ensures the eop indicator gets lit.
+    # The w.pleop() ensures the eop indicator gets lit.
 
-    plsstrm(1)
-    plot4()
-    pleop()
+    w.plsstrm(1)
+    plot4(w)
+    w.pleop()
 		
     # Back to master
 		
-    plsstrm(0)
-    plot2()
-    plot3()
+    w.plsstrm(0)
+    plot2(w)
+    plot3(w)
 			
     # To slave
 			
-    plsstrm(1)
-    plot5()
-    pleop()
+    w.plsstrm(1)
+    plot5(w)
+    w.pleop()
 					
     # Back to master to wait for user to advance
 					
-    plsstrm(0)
-    pleop()
+    w.plsstrm(0)
+    w.pleop()
+    # Restore defaults
+    # Probably only need to do that for stream 0, but not quite sure about
+    # that and no need to do this currently in any case (since example 14 not used from
+    # pyqtdemo or python_demos.py) so don't restore defaults for now.
 # ===============================================================
 
-def plot1(xscale, yscale, xoff, yoff):
+def plot1(w, xscale, yscale, xoff, yoff):
 
     x = xoff + (xscale/60.)*(1+arange(60))
     y = yoff + yscale*pow(x,2.)
@@ -136,40 +140,40 @@ def plot1(xscale, yscale, xoff, yoff):
     xs = x[3::10]
     ys = y[3::10]
 
-    # Set up the viewport and window using pl.env. The range in X
+    # Set up the viewport and window using w.plenv. The range in X
     # is 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes
     # are scaled separately (just = 0), and we just draw a
     # labelled box (axis = 0).
 
-    plcol0(1)
-    plenv(xmin, xmax, ymin, ymax, 0, 0)
-    plcol0(6)
-    pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2")
+    w.plcol0(1)
+    w.plenv(xmin, xmax, ymin, ymax, 0, 0)
+    w.plcol0(6)
+    w.pllab("(x)", "(y)", "#frPLplot Example 1 - y=x#u2")
 
     # Plot the data points
 
-    plcol0(9)
-    plpoin(xs, ys, 9)
+    w.plcol0(9)
+    w.plpoin(xs, ys, 9)
 
     # Draw the line through the data
 
-    plcol0(4)
-    plline(x, y)
-    plflush()
+    w.plcol0(4)
+    w.plline(x, y)
+    w.plflush()
 
 # ===============================================================
 
-def plot2():
+def plot2(w):
 
-    # Set up the viewport and window using pl.env. The range in X
+    # Set up the viewport and window using w.plenv. The range in X
     # is -2.0 to 10.0, and the range in Y is -0.4 to 2.0. The axes
     # are scaled separately (just = 0), and we draw a box with
     # axes (axis = 1).
 
-    plcol0(1)
-    plenv(-2.0, 10.0, -0.4, 1.2, 0, 1)
-    plcol0(2)
-    pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function")
+    w.plcol0(1)
+    w.plenv(-2.0, 10.0, -0.4, 1.2, 0, 1)
+    w.plcol0(2)
+    w.pllab("(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function")
 
     # Fill up the arrays
 
@@ -181,51 +185,50 @@ def plot2():
 
     # Draw the line
 
-    plcol0(3)
-    plline(x, y)
-    plflush()
+    w.plcol0(3)
+    w.plline(x, y)
+    w.plflush()
 
 # ===============================================================
 
-def plot3():
+def plot3(w):
 
     # For the final graph we wish to override the default tick
-    # intervals, so do not use pl.env
+    # intervals, so do not use w.plenv
 
-    pladv(0)
+    w.pladv(0)
 
     # Use standard viewport, and define X range from 0 to 360
     # degrees, Y range from -1.2 to 1.2.
 
-    plvsta()
-    plwind(0.0, 360.0, -1.2, 1.2)
+    w.plvsta()
+    w.plwind(0.0, 360.0, -1.2, 1.2)
 
     # Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-    plcol0(1)
-    plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2)
+    w.plcol0(1)
+    w.plbox("bcnst", 60.0, 2, "bcnstv", 0.2, 2)
 
     # Superimpose a dashed line grid, with 1.5 mm marks and spaces.
-    # plstyl expects a pointer!!
 
-    plstyl([1500], [1500])
-    plcol0(2)
-    plbox("g", 30.0, 0, "g", 0.2, 0)
-    plstyl([], [])
+    w.plstyl([1500], [1500])
+    w.plcol0(2)
+    w.plbox("g", 30.0, 0, "g", 0.2, 0)
+    w.plstyl([], [])
 
-    plcol0(3)
-    pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function")
+    w.plcol0(3)
+    w.pllab("Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function")
 
     x = 3.6*arange(101)
     y = sin((pi/180.)*x)
 
-    plcol0(4)
-    plline(x, y)
-    plflush()
+    w.plcol0(4)
+    w.plline(x, y)
+    w.plflush()
 
 # ===============================================================
 
-def plot4():
+def plot4(w):
 
     dtr = pi / 180.0
     x0 = cos(dtr*arange(361))
@@ -233,7 +236,7 @@ def plot4():
 
     # Set up viewport and window, but do not draw box
 
-    plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
+    w.plenv(-1.3, 1.3, -1.3, 1.3, 1, -2)
 
     i = 0.1*arange(1,11)
     #outerproduct(i,x0) and outerproduct(i,y0) is what we are
@@ -244,9 +247,9 @@ def plot4():
 
     # Draw circles for polar grid
     for i in range(10):
-	plline(x[i], y[i])
+	w.plline(x[i], y[i])
 
-    plcol0(2)
+    w.plcol0(2)
     for i in range(12):
 	theta = 30.0 * i
 	dx = cos(dtr * theta)
@@ -254,16 +257,16 @@ def plot4():
 
 	# Draw radial spokes for polar grid
 
-	pljoin(0.0, 0.0, dx, dy)
+	w.pljoin(0.0, 0.0, dx, dy)
 
 	# Write labels for angle
 
 	text = `int(theta)`
 #Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
 	if dx >= -0.00001:
-	    plptex(dx, dy, dx, dy, -0.15, text)
+	    w.plptex(dx, dy, dx, dy, -0.15, text)
 	else:
-	    plptex(dx, dy, -dx, -dy, 1.15, text)
+	    w.plptex(dx, dy, -dx, -dy, 1.15, text)
 
     # Draw the graph
 
@@ -271,12 +274,12 @@ def plot4():
     x = x0*r
     y = y0*r
 
-    plcol0(3)
-    plline(x, y)
+    w.plcol0(3)
+    w.plline(x, y)
 
-    plcol0(4)
-    plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh")
-    plflush()
+    w.plcol0(4)
+    w.plmtex("t", 2.0, 0.5, 0.5, "#frPLplot Example 3 - r(#gh)=sin 5#gh")
+    w.plflush()
 
 # ===============================================================
 
@@ -292,7 +295,7 @@ def mypltr(x, y, data):
     result1 = data[3] * x + data[4] * y + data[5]
     return array((result0, result1))
 
-def plot5():
+def plot5(w):
 
     mark = 1500
     space = 1500
@@ -304,20 +307,20 @@ def plot5():
     xx.shape = (-1,1)
     z = (xx*xx)-(yy*yy)
     # 2.*outerproduct(xx,yy) for new versions of Numeric which have outerproduct.
-    w = 2.*xx*yy
+    w_array = 2.*xx*yy
 
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, clevel, mypltr, tr)
-    plstyl([mark], [space])
-    plcol0(3)
-    plcont(w, clevel, mypltr, tr)
-    plstyl([], [])
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-    plflush()
+    w.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+    w.plcol0(2)
+    w.plcont(z, clevel, mypltr, tr)
+    w.plstyl([mark], [space])
+    w.plcol0(3)
+    w.plcont(w_array, clevel, mypltr, tr)
+    w.plstyl([], [])
+    w.plcol0(1)
+    w.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+    w.plflush()
 
 # ===============================================================
 
-main()
-plend()
+main(w)
+w.plend()

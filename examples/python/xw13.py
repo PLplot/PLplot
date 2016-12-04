@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Pie chart demo.
 #
@@ -19,7 +19,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 text = ["Maurice",
 	"Geoffrey",
@@ -31,15 +31,15 @@ text = ["Maurice",
 #
 # Does a simple pie chart.
 
-def main():
+def main(w):
 
-    pladv(0)
+    w.pladv(0)
     # Ensure window has aspect ratio of one so circle is
     # plotted as a circle.
-    plvasp(1.0)
-    plwind(0., 10., 0., 10.)
-    #plenv(0., 10., 0., 10., 1, -2)
-    plcol0(2)
+    w.plvasp(1.0)
+    w.plwind(0., 10., 0., 10.)
+    #w.plenv(0., 10., 0., 10., 1, -2)
+    w.plcol0(2)
     #if these don't add up to 100, the logic adds to the last to make
     #up the balance.
     per = [10., 32., 12., 30., 16.]
@@ -58,11 +58,11 @@ def main():
 	x = concatenate((array([5.]), (5. + 3.*cos((2.*pi/500.)*theta))))
 	y = concatenate((array([5.]), (5. + 3.*sin((2.*pi/500.)*theta))))
 
-	plcol0(i + 1)
-	plpsty((i + 3) % 8 + 1)
-	plfill(x, y)
-	plcol0(1)
-	plline(x, y)
+	w.plcol0(i + 1)
+	w.plpsty((i + 3) % 8 + 1)
+	w.plfill(x, y)
+	w.plcol0(1)
+	w.plline(x, y)
 	just = (2.*pi/500.)*(theta0 + theta1) / 2.
 	dx = .25 * cos(just)
 	dy = .25 * sin(just)
@@ -72,15 +72,17 @@ def main():
 	    just = 1.
 
 	mid = len(x) / 2
-	plptex((x[mid] + dx), (y[mid] + dy), 1.0, 0.0, just, text[i])
+	w.plptex((x[mid] + dx), (y[mid] + dy), 1.0, 0.0, just, text[i])
 	theta0 = theta[-1]
 
-    plfont(2)
-    plschr(0., 1.3)
-    plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales")
+    w.plfont(2)
+    w.plschr(0., 1.3)
+    w.plptex(5.0, 9.0, 1.0, 0.0, 0.5, "Percentage of Sales")
 
     # Restore defaults
-    plfont(1)
-    #plcol0(1)
-	
-main()
+    w.plschr( 0.0, 1.0 )
+    w.plfont(1)
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Histogram demo.
 #
@@ -19,7 +19,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 NPTS = 2047
 
@@ -27,20 +27,20 @@ NPTS = 2047
 #
 # Draws a histogram from sample data.
 
-def main():
+def main(w):
 
     # Fill up data points
 
     delta = 2.0 * pi / NPTS
     data = sin(delta*arange(NPTS))
 
-    plcol0(1)
-    plhist(data, -1.1, 1.1, 44, 0)
-    plcol0(2)
-    pllab("#frValue", "#frFrequency",
+    w.plcol0(1)
+    w.plhist(data, -1.1, 1.1, 44, 0)
+    w.plcol0(2)
+    w.pllab("#frValue", "#frFrequency",
 	   "#frPLplot Example 5 - Probability function of Oscillator")
 
     # Restore defaults
-    #plcol0(1)
-
-main()
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

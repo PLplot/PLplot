@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  3-d line and point plot demo.
 #
@@ -21,7 +21,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 opt = [1, 0, 1, 0]
 
@@ -36,10 +36,10 @@ az = [30.0, 40.0, 50.0, 60.0]
 
 NPTS = 1000
 
-def main():
+def main(w):
 
 	for k in range(4):
-		test_poly(k)
+		test_poly(w, k)
 
 	# From the mind of a sick and twisted physicist...
 	
@@ -48,31 +48,33 @@ def main():
 	y = z*sin((2.*pi*6./NPTS)*arange(NPTS))
 
 	for k in range(4):
-		pladv(0)
-		plvpor(0.0, 1.0, 0.0, 0.9)
-		plwind(-1.0, 1.0, -0.9, 1.1)
-		plcol0(1)
-		plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
+		w.pladv(0)
+		w.plvpor(0.0, 1.0, 0.0, 0.9)
+		w.plwind(-1.0, 1.0, -0.9, 1.1)
+		w.plcol0(1)
+		w.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0,
 		       alt[k], az[k])
-		plbox3("bnstu", "x axis", 0.0, 0,
+		w.plbox3("bnstu", "x axis", 0.0, 0,
 			"bnstu", "y axis", 0.0, 0,
 			"bcdmnstuv", "z axis", 0.0, 0)
 
-		plcol0(2)
+		w.plcol0(2)
 
 		if opt[k]:
-			plline3(x, y, z)
+			w.plline3(x, y, z)
 		else:
 			# U+22C5 DOT OPERATOR.
-			plstring3(x, y, z, "⋅")
+			w.plstring3(x, y, z, "⋅")
 
-		plcol0(3)
+		w.plcol0(3)
 		title = "#frPLplot Example 18 - Alt=%.0f, Az=%.0f" % (alt[k],
 								      az[k])
-		plmtex("t", 1.0, 0.5, 0.5, title)
+		w.plmtex("t", 1.0, 0.5, 0.5, title)
 
 	# Restore defaults
-	#plcol0(1)
+        # Must be done independently because otherwise this changes output files
+        # and destroys agreement with C examples.
+        #w.plcol0(1)
 
 def THETA(a):
     return 2. * pi * (a) / 20.
@@ -80,23 +82,23 @@ def THETA(a):
 def PHI(a):
     return pi * (a) / 20.1
 
-def test_poly(k):
+def test_poly(w, k):
 
 	draw = [ [ 1, 1, 1, 1 ],
 		 [ 1, 0, 1, 0 ],
 		 [ 0, 1, 0, 1 ],
 		 [ 1, 1, 0, 0 ] ]
 
-	pladv(0)
-	plvpor(0.0, 1.0, 0.0, 0.9)
-	plwind(-1.0, 1.0, -0.9, 1.1)
-	plcol0(1)
-	plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k])
-	plbox3("bnstu", "x axis", 0.0, 0,
+	w.pladv(0)
+	w.plvpor(0.0, 1.0, 0.0, 0.9)
+	w.plwind(-1.0, 1.0, -0.9, 1.1)
+	w.plcol0(1)
+	w.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0, alt[k], az[k])
+	w.plbox3("bnstu", "x axis", 0.0, 0,
 		"bnstu", "y axis", 0.0, 0,
 		"bcdmnstuv", "z axis", 0.0, 0)
 
-	plcol0(2)
+	w.plcol0(2)
 
 ##      x = r sin(phi) cos(theta)
 ##      y = r sin(phi) sin(theta)
@@ -148,9 +150,7 @@ def test_poly(k):
 			# counter-clockwise direction (as in x18c.c and
 			# x18.tcl) this must be specified with an optional
 			# extra argument in python API.
-			plpoly3(x, y, z, draw[k], 1)
+			w.plpoly3(x, y, z, draw[k], 1)
 
-	plcol0(3)
-	plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" )
-
-main()
+	w.plcol0(3)
+	w.plmtex("t", 1.0, 0.5, 0.5, "unit radius sphere" )

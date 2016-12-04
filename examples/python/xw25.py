@@ -1,4 +1,6 @@
 #  Copyright (C) 2007, 2008 Andrew Ross
+#  Copyright (C) 2007-2016 Alan W. Irwin
+
 
 #  Filling and clipping polygons.
 #
@@ -18,16 +20,15 @@
 #  along with PLplot; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
-from plplot_py_demos import *
 
 # main
 #
 # Test program for filling polygons and proper clipping
 
+def main(w):
 
-def main():
-
-    plssub(3,3)
+    w.pladv(0)
+    w.plssub(3,3)
 
     xextreme = [ [ -120.0,  120.0 ],
                  [ -120.0,  120.0 ],
@@ -70,20 +71,26 @@ def main():
                 y0 = [-100, 100, 100, 80, 100, 100, 80, 0, -80, -100]
 
             for i in range(9):
-                pladv(0)
-                plvsta()
-                plwind(xextreme[i][0], xextreme[i][1], yextreme[i][0], yextreme[i][1])
+                w.pladv(0)
+                w.plvsta()
+                w.plwind(xextreme[i][0], xextreme[i][1], yextreme[i][0], yextreme[i][1])
 
-                plcol0(2)
-                plbox("bc", 1.0, 0, "bcnv", 10.0, 0)
-                plcol0(1)
-                plpsty(0)
+                w.plcol0(2)
+                w.plbox("bc", 1.0, 0, "bcnv", 10.0, 0)
+                w.plcol0(1)
+                w.plpsty(0)
                 if (k == 0):
-                    plfill(x0,y0)
+                    w.plfill(x0,y0)
                 else:
-                    plgradient(x0, y0, 45.)
-                plcol0(2)
-                pllsty(1)
-                plline(x0,y0)
+                    w.plgradient(x0, y0, 45.)
+                w.plcol0(2)
+                w.pllsty(1)
+                w.plline(x0,y0)
 
-main()
+    # Restore defaults
+    w.plssub(1, 1)
+    w.pleop()
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

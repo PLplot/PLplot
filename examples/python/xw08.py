@@ -1,6 +1,6 @@
 # xw08.py PLplot demo for Python
 #
-# Copyright (C) 2004-2014  Alan W. Irwin
+# Copyright (C) 2004-2016  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -18,7 +18,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from plplot_py_demos import *
+from numpy import *
 
 # These values must be odd, for the middle
 # of the index range to be an integer, and thus
@@ -35,35 +35,10 @@ az = [30.0, -30.0]
 title = ["#frPLplot Example 8 - Alt=60, Az=30",
 	 "#frPLplot Example 8 - Alt=40, Az=-30"]
 
-# Routine for restoring colour map1 to default.
-# See static void plcmap1_def(void) in plctrl.c for reference.
-def restore_cmap1():
-    # For center control points, pick black or white, whichever is closer to bg
-    # Be careful to pick just short of top or bottom else hue info is lost
-    vertex = sum(array(plgcolbg()))/(3.*255.)
-    if vertex < 0.5:
-	vertex = 0.01
-	midpt = 0.10
-    else:
-	vertex = 0.99
-	midpt = 0.90
-    # Independent variable of control points.
-    i = array((0., 0.44, 0.50, 0.50, 0.56, 1.))
-    # Hue for control points.  Blue-violet to red
-    h = array((260., 260., 260., 0., 0., 0.))
-    # Lightness ranging from medium to vertex to medium
-    l = array((0.5, midpt, vertex, vertex, midpt, 0.5))
-    # Saturation is complete for default
-    s = array((1., 1., 1., 1., 1., 1.))
-    # Default number of cmap1 colours
-    plscmap1n(128)
-    # Interpolate between control points to set up default cmap1.
-    plscmap1l(0, i, h, l, s)
-
 # Routine for defining a specific color map 1 in HLS space.
 # if gray is true, use basic grayscale variation from half-dark to light.
 # otherwise use false color variation from blue (240 deg) to red (360 deg).
-def cmap1_init(gray):
+def cmap1_init(w, gray):
     # Independent variable of control points.
     i = array((0., 1.))
     if gray:
@@ -81,15 +56,15 @@ def cmap1_init(gray):
 	s = array((0.8, 0.8))
 
     # number of cmap1 colours is 256 in this case.
-    plscmap1n(256)
+    w.plscmap1n(256)
     # Interpolate between control points to set up cmap1.
-    plscmap1l(0, i, h, l, s)
+    w.plscmap1l(0, i, h, l, s)
 # main
 #
 # Does a series of 3-d plots for a given data set, with different
 # viewing options in each plot.
 
-def main():
+def main(w):
 
     rosen = 0
     dx = 2. / float( XPTS - 1 )
@@ -116,7 +91,7 @@ def main():
     step = (zmax-zmin)/(nlevel+1)
     clevel = zmin + step + arange(nlevel)*step
 
-    # Set up data and arrays for plsurf3dl call below.
+    # Set up data and arrays for w.plsurf3dl call below.
     indexxmin = 0
     indexxmax = XPTS
     # Must be same shape as z, and a row of z.
@@ -138,51 +113,53 @@ def main():
          indexymax[i] = min(YPTS, 1 + int(0.5 + y0 + b*square_root))
          zlimited[i][indexymin[i]:indexymax[i]] = z[i][indexymin[i]:indexymax[i]]
 
-    pllightsource(1., 1., 1.)
+    w.pllightsource(1., 1., 1.)
 
     for k in range(2):
 	for ifshade in range(5):
-	    pladv(0)
-	    plvpor(0.0, 1.0, 0.0, 0.9)
-	    plwind(-1.0, 1.0, -0.9, 1.1)
-	    plcol0(3)
-	    plmtex("t", 1.0, 0.5, 0.5, title[k])
-	    plcol0(1)
+	    w.pladv(0)
+	    w.plvpor(0.0, 1.0, 0.0, 0.9)
+	    w.plwind(-1.0, 1.0, -0.9, 1.1)
+	    w.plcol0(3)
+	    w.plmtex("t", 1.0, 0.5, 0.5, title[k])
+	    w.plcol0(1)
 	    if rosen == 1:
-		plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
+		w.plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
 		alt[k], az[k])
 	    else:
-		plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
+		w.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
 		alt[k], az[k])
-	    plbox3("bnstu", "x axis", 0.0, 0,
+	    w.plbox3("bnstu", "x axis", 0.0, 0,
 	    "bnstu", "y axis", 0.0, 0,
 	    "bcdmnstuv", "z axis", 0.0, 0)
 
-	    plcol0(2)
+	    w.plcol0(2)
 	    if ifshade == 0:
 		# diffuse light surface plot.
 		# set up modified gray scale cmap1.
-		cmap1_init(1)
-		plsurf3d(x, y, z, 0, ())
+		cmap1_init(w, 1)
+		w.plsurf3d(x, y, z, 0, ())
 	    elif ifshade == 1:
 		# magnitude colored plot.
-		cmap1_init(0)
-		plsurf3d(x, y, z, MAG_COLOR, ())
+		cmap1_init(w, 0)
+		w.plsurf3d(x, y, z, w.MAG_COLOR, ())
 	    elif ifshade == 2:
 		# magnitude colored plot with faceted squares
-		cmap1_init(0)
-		plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
+		cmap1_init(w, 0)
+		w.plsurf3d(x, y, z, w.MAG_COLOR | w.FACETED, ())
 	    elif ifshade == 3:
 		# magnitude colored plot with contours
-		cmap1_init(0)
-		plsurf3d(x, y, z, MAG_COLOR | SURF_CONT | BASE_CONT, clevel)
+		cmap1_init(w, 0)
+		w.plsurf3d(x, y, z, w.MAG_COLOR | w.SURF_CONT | w.BASE_CONT, clevel)
 	    elif ifshade == 4:
 		# magnitude colored plot with contoursmagnitude colored plot and index limits
-		cmap1_init(0)
-		plsurf3dl(x, y, zlimited, MAG_COLOR | SURF_CONT | BASE_CONT, clevel, indexxmin, indexymin, indexymax)
+		cmap1_init(w, 0)
+		w.plsurf3dl(x, y, zlimited, w.MAG_COLOR | w.SURF_CONT | w.BASE_CONT, clevel, indexxmin, indexymin, indexymax)
 
     # Restore defaults
-    #plcol0(1)
-    restore_cmap1()
+    # cmap1 default color palette.
+    w.plspal1("cmap1_default.pal",1)
 
-main()
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

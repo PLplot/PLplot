@@ -1,5 +1,6 @@
 #  Copyright (C) 2007 Arjen Markus
 #  Copyright (C) 2008 Andrew Ross
+#  Copyright (C) 2007-2016 Alan W. Irwin
 
 #  Drawing "spirograph" curves - epitrochoids, cycolids, roulettes
 
@@ -20,7 +21,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 import types
 
 # main
@@ -29,7 +30,7 @@ import types
 #   - construction of a cycloid (animated)
 #   - series of epitrochoids and hypotrochoids
 
-def main():
+def main(w):
 
     # R, r, p, N
     # R and r should be integers to give correct termination of the
@@ -53,31 +54,40 @@ def main():
 
     # Loop over the various curves
     # First an overview, then all curves one by one
-    plssub(3, 3)  # Three by three window
+    w.pladv(0)
+    w.plssub(3, 3)  # Three by three window
 
     for i in range(9) :
-        pladv(0)
-        plvpor( 0.0, 1.0, 0.0, 1.0 )
-        spiro( params[i], 0 )
+        w.pladv(0)
+        w.plvpor( 0.0, 1.0, 0.0, 1.0 )
+        spiro( w, params[i], 0 )
 
-    pladv(0)
-    plssub(1, 1)  # One window per curve
+    w.pladv(0)
+    w.plssub(1, 1)  # One window per curve
 
     for i in range(9):
-        pladv(0)
-        plvpor( 0.0, 1.0, 0.0, 1.0 )
-        spiro( params[i], 0 )
+        w.pladv(0)
+        w.plvpor( 0.0, 1.0, 0.0, 1.0 )
+        spiro( w, params[i], 0 )
 
     # Fill the curves.
-    pladv(0)
-    plssub(1, 1)  # One window per curve
+    w.pladv(0)
+    w.plssub(1, 1)  # One window per curve
 
     for i in range(9):
-        pladv(0)
-        plvpor( 0.0, 1.0, 0.0, 1.0 )
-        spiro( params[i], 1 )
+        w.pladv(0)
+        w.plvpor( 0.0, 1.0, 0.0, 1.0 )
+        spiro( w, params[i], 1 )
 
-    arcs()
+    arcs(w)
+
+    # Restore defaults
+    w.plssub(1, 1)
+    w.pleop()
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)
 
 def gcd(a, b):
     if not (type(a) is  types.IntType and type(b) is types.IntType):
@@ -90,7 +100,7 @@ def gcd(a, b):
         a = t
     return a
 
-def spiro(params, fill):
+def spiro(w, params, fill):
     # Fill the coordinates
     NPNT = 2000
 
@@ -117,25 +127,25 @@ def spiro(params, fill):
     ymin -= yrange_adjust
     ymax += yrange_adjust
 
-    plwind( xmin, xmax, ymin, ymax )
+    w.plwind( xmin, xmax, ymin, ymax )
 
-    plcol0(1)
+    w.plcol0(1)
     if fill:
-        plfill( xcoord, ycoord )
+        w.plfill( xcoord, ycoord )
     else:
-        plline( xcoord, ycoord )
+        w.plline( xcoord, ycoord )
 
-def arcs() :
+def arcs(w) :
     NSEG = 8
 
     theta = 0.0
     dtheta = 360.0 / NSEG
-    plenv( -10.0, 10.0, -10.0, 10.0, 1, 0 )
+    w.plenv( -10.0, 10.0, -10.0, 10.0, 1, 0 )
 
     # Plot segments of circle in different colors
     for i in range (NSEG) :
-        plcol0( i%2 + 1 )
-        plarc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0)
+        w.plcol0( i%2 + 1 )
+        w.plarc(0.0, 0.0, 8.0, 8.0, theta, theta + dtheta, 0.0, 0)
         theta = theta + dtheta
 
 
@@ -145,10 +155,6 @@ def arcs() :
     b = a * tan( (dtheta/180.0*pi)/2.0 )
     theta = dtheta/2.0
     for i in range(NSEG):
-        plcol0( 2 - i%2 )
-        plarc( a*cos(theta/180.0*pi), a*sin(theta/180.0*pi), a, b, 0.0, 360.0, theta, 1)
+        w.plcol0( 2 - i%2 )
+        w.plarc( a*cos(theta/180.0*pi), a*sin(theta/180.0*pi), a, b, 0.0, 360.0, theta, 1)
         theta = theta + dtheta
-
-
-
-main()

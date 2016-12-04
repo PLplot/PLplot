@@ -1,4 +1,5 @@
 #  Copyright (C) 2004, 2005, 2006, 2007, 2008 Andrew Ross
+#  Copyright (C) 2004-2016 Alan W. Irwin
 
 #  Simple vector plot example.
 #
@@ -18,7 +19,8 @@
 #  along with PLplot; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
-from plplot_py_demos import *
+
+from numpy import *
 
 # Pairs of points making the line segments used to plot the user defined arrow
 arrow_x = [-0.5, 0.5, 0.3, 0.5, 0.3, 0.5]
@@ -27,7 +29,7 @@ arrow2_x = [-0.5, 0.3, 0.3, 0.5, 0.3, 0.3]
 arrow2_y = [0.0, 0.0,   0.2, 0.0, -0.2, 0.0]
 xmax = 0.0
 
-def circulation():
+def circulation(w):
 
     nx = 20
     ny = 20
@@ -51,16 +53,16 @@ def circulation():
     v = -xg
 
     # Plot vectors with default arrows
-    plenv(xmin, xmax, ymin, ymax, 0, 0)
-    pllab("(x)", "(y)", "#frPLplot Example 22 - circulation")
-    plcol0(2)
+    w.plenv(xmin, xmax, ymin, ymax, 0, 0)
+    w.pllab("(x)", "(y)", "#frPLplot Example 22 - circulation")
+    w.plcol0(2)
     scaling = 0.0
-    plvect(u,v,scaling,pltr2,xg,yg)
-    plcol0(1)
+    w.plvect(u,v,scaling,w.pltr2,xg,yg)
+    w.plcol0(1)
 
 
 # Vector plot of flow through a constricted pipe
-def constriction( astyle ):
+def constriction( w, astyle ):
 
     nx = 20
     ny = 20
@@ -87,12 +89,12 @@ def constriction( astyle ):
     u = Q*ymax/b2*mask
     v = dbdx*u
 
-    plenv(xmin, xmax, ymin, ymax, 0, 0)
-    pllab("(x)", "(y)", "#frPLplot Example 22 - constriction (arrow style "+str(astyle)+")")
-    plcol0(2)
+    w.plenv(xmin, xmax, ymin, ymax, 0, 0)
+    w.pllab("(x)", "(y)", "#frPLplot Example 22 - constriction (arrow style "+str(astyle)+")")
+    w.plcol0(2)
     scaling=-1.0
-    plvect(u,v,scaling,pltr2,xg,yg)
-    plcol0(1)
+    w.plvect(u,v,scaling,w.pltr2,xg,yg)
+    w.plcol0(1)
 
 def transform( x, y, xt, yt, data ):
 
@@ -101,7 +103,7 @@ def transform( x, y, xt, yt, data ):
 
 
 # Vector plot of flow through a constricted pipe
-def constriction2():
+def constriction2(w):
 
     global xmax
 
@@ -118,7 +120,7 @@ def constriction2():
     ymin = -ny/2*dy
     ymax = ny/2*dy
 
-    plstransform( transform, None )
+    w.plstransform( transform, None )
 
     Q = 2.0
     ix = ones(nx)
@@ -134,21 +136,21 @@ def constriction2():
 
     clev = Q + arange(nc)*Q/(nc-1)
 
-    plenv(xmin, xmax, ymin, ymax, 0, 0)
-    pllab("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform")
+    w.plenv(xmin, xmax, ymin, ymax, 0, 0)
+    w.pllab("(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform")
 
-    plcol0(2)
-    plshades(u,xmin+dx/2,xmax-dx/2,ymin+dy/2,ymax-dy/2,clev,0.0,1,1.0,0,None,None)
+    w.plcol0(2)
+    w.plshades(u,xmin+dx/2,xmax-dx/2,ymin+dy/2,ymax-dy/2,clev,0.0,1,1.0,0,None,None)
     scaling=-1.0
-    plvect(u,v,scaling,pltr2,xg,yg)
-    plpath(nseg,xmin,ymax,xmax,ymax)
-    plpath(nseg,xmin,ymin,xmax,ymin)
-    plcol0(1)
+    w.plvect(u,v,scaling,w.pltr2,xg,yg)
+    w.plpath(nseg,xmin,ymax,xmax,ymax)
+    w.plpath(nseg,xmin,ymin,xmax,ymin)
+    w.plcol0(1)
 
-    plstransform(None,None)
+    w.plstransform(None,None)
 
 # Vector plot of the gradient of a shielded potential (see example 9)
-def potential():
+def potential(w):
     nper = 100
     nlevel = 10
     nr = 20
@@ -207,8 +209,8 @@ def potential():
     vmin = min(vg.flat)
     vmax = max(vg.flat)
 
-    plenv(xmin, xmax, ymin, ymax, 0, 0)
-    pllab("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot")
+    w.plenv(xmin, xmax, ymin, ymax, 0, 0)
+    w.pllab("(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot")
     # Plot contours of the potential
     dz = (zmax-zmin)/float(nlevel)
     clevel = zmin + (arange(nlevel)+0.5)*dz
@@ -217,52 +219,54 @@ def potential():
     dv = (vmax-vmin)/float(nlevel)
     clevelv = vmin + (arange(nlevel)+0.5)*dv
 
-    plcol0(3)
-    pllsty(2)
-    plcont(zg,clevel,pltr2,xg,yg)
-    pllsty(1)
-    plcol0(1)
+    w.plcol0(3)
+    w.pllsty(2)
+    w.plcont(zg,clevel,w.pltr2,xg,yg)
+    w.pllsty(1)
+    w.plcol0(1)
 
     # Plot the vectors of the gradient of the potential
-    plcol0(2)
+    w.plcol0(2)
     scaling = 25.0
-    plvect(ug,vg,scaling,pltr2,xg,yg)
-    plcol0(1)
+    w.plvect(ug,vg,scaling,w.pltr2,xg,yg)
+    w.plcol0(1)
 
     # Perimeter
     t = (2.*pi/(nper-1))*arange(nper)
     px = rmax*cos(t)
     py = rmax*sin(t)
-    plline(px,py)
+    w.plline(px,py)
 
 # main
 #
 # Does a series of vector plots
 #
-def main():
+def main(w):
 
-    circulation()
+    circulation(w)
 
     narr = 6
     fill = 0
 
 # Set arrow style using arrow_x and arrow_y then
 # plot using these arrows.
-    plsvect(arrow_x, arrow_y, fill)
-    constriction(1)
+    w.plsvect(arrow_x, arrow_y, fill)
+    constriction(w, 1)
 
 # Set arrow style using arrow2_x and arrow2_y then
 # plot using these filled arrows.
     fill = 1
-    plsvect(arrow2_x, arrow2_y, fill)
-    constriction(2)
+    w.plsvect(arrow2_x, arrow2_y, fill)
+    constriction(w, 2)
 
-    constriction2()
+    constriction2(w)
 
-    plsvect( None, None, 0)
+    w.plsvect( None, None, 0)
 
-    potential()
+    potential(w)
 
-
-# Vector plot of the circulation about the origin
-main()
+    # Restore defaults
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)
+    

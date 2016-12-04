@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  plshade demo, using color fill.
 #
@@ -19,7 +19,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 NS = 20
 NX = 35
@@ -38,7 +38,7 @@ def mypltr(x, y, data):
     result1 = data[3] * x + data[4] * y + data[5]
     return array((result0, result1))
 		
-def main():
+def main(w):
 
     fill_width = 2.
     cont_color = 0
@@ -55,7 +55,7 @@ def main():
     n_labels = NUM_LABELS
     label_opts = zeros(NUM_LABELS,"int")
     labels = zeros(NUM_LABELS,"S100")
-    label_opts[0] = PL_COLORBAR_LABEL_BOTTOM
+    label_opts[0] = w.PL_COLORBAR_LABEL_BOTTOM
     labels[0] = "Magnitude"
 
     # Set up data array
@@ -95,14 +95,19 @@ def main():
 
     # Plot using identity transform
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
-    plpsty(0)
+    # Load first-page colour palettes
+    w.plspal0("cmap0_black_on_white.pal")
+    w.plspal1("cmap1_gray.pal",1)
+    w.plscmap0n(3)
+
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
+    w.plpsty(0)
 
 #   Note another alternative to produce the identical result in a different way
 #   is to use the command:
-#   plshades(zz, -1.0, 1.0, -1.0, 1.0, shedge, fill_width, 1)
+#   w.plshades(zz, -1.0, 1.0, -1.0, 1.0, shedge, fill_width, 1)
 #   The above command works because xmin, xmax, ymin, and ymax do an effective
 #   linear transformation on the index ranges.  (We could have dropped
 #   xmin, xmax, ymin, ymax since the defaults are -1.0, 1.0, -1.0, 1.0, but
@@ -111,145 +116,145 @@ def main():
 #   the tr array has been defined.  Note that when pltr and pltr_data are
 #   defined, xmin, xmax, ymin, ymax are completely ignored so we can drop
 #   them from the argument list.
-    plshades(zz, shedge, fill_width, 1, mypltr, tr)
+    w.plshades(zz, shedge, fill_width, 1, mypltr, tr)
 
     # Smaller text
-    plschr(0.0, 0.75 )
+    w.plschr(0.0, 0.75 )
     # Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5 )
-    plsmin( 0.0, 0.5 )
+    w.plsmaj( 0.0, 0.5 )
+    w.plsmin( 0.0, 0.5 )
 
     num_values[0] = NS + 1
     values[0] = shedge
-    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+    (colorbar_width, colorbar_height) = w.plcolorbar ( w.PL_COLORBAR_SHADE | w.PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
 
     # Reset text and tick sizes
-    plschr( 0.0, 1.0 )
-    plsmaj( 0.0, 1.0 )
-    plsmin( 0.0, 1.0 )
+    w.plschr( 0.0, 1.0 )
+    w.plsmaj( 0.0, 1.0 )
+    w.plsmin( 0.0, 1.0 )
 
-    plcol0(1)
-    plbox( "bcnst", 0., 0, "bcnstv", 0., 0 )
-    plcol0(2)
+    w.plcol0(1)
+    w.plbox( "bcnst", 0., 0, "bcnstv", 0., 0 )
+    w.plcol0(2)
 
-    pllab( "distance", "altitude", "Bogon density" )
+    w.pllab( "distance", "altitude", "Bogon density" )
 
     # Plot using 1d coordinate transform
 
-    plspal0("cmap0_black_on_white.pal")
-    plspal1("cmap1_blue_yellow.pal",1)
-    plscmap0n(3)
+    w.plspal0("cmap0_black_on_white.pal")
+    w.plspal1("cmap1_blue_yellow.pal",1)
+    w.plscmap0n(3)
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
-    plpsty(0)
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
+    w.plpsty(0)
 
-    plshades(zz, shedge, fill_width, 1, pltr1, xg1, yg1)
+    w.plshades(zz, shedge, fill_width, 1, w.pltr1, xg1, yg1)
 
     # Smaller text
-    plschr(0.0, 0.75 )
+    w.plschr(0.0, 0.75 )
     # Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5 )
-    plsmin( 0.0, 0.5 )
+    w.plsmaj( 0.0, 0.5 )
+    w.plsmin( 0.0, 0.5 )
 
     num_values[0] = NS + 1
     values[0] = shedge
-    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+    (colorbar_width, colorbar_height) = w.plcolorbar ( w.PL_COLORBAR_SHADE | w.PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
 
     # Reset text and tick sizes
-    plschr( 0.0, 1.0 )
-    plsmaj( 0.0, 1.0 )
-    plsmin( 0.0, 1.0 )
+    w.plschr( 0.0, 1.0 )
+    w.plsmaj( 0.0, 1.0 )
+    w.plsmin( 0.0, 1.0 )
 
-    plcol0(1)
-    plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
-    plcol0(2)
+    w.plcol0(1)
+    w.plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
+    w.plcol0(2)
 	
-    pllab( "distance", "altitude", "Bogon density" )
+    w.pllab( "distance", "altitude", "Bogon density" )
 
     # Plot using 2d coordinate transform
 
-    plspal0("cmap0_black_on_white.pal")
-    plspal1("cmap1_blue_red.pal",1)
-    plscmap0n(3)
+    w.plspal0("cmap0_black_on_white.pal")
+    w.plspal1("cmap1_blue_red.pal",1)
+    w.plscmap0n(3)
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
-    plpsty(0)
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
+    w.plpsty(0)
 
-    plshades(zz, shedge, fill_width, 0, pltr2, xg2, yg2)
+    w.plshades(zz, shedge, fill_width, 0, w.pltr2, xg2, yg2)
 
     # Smaller text
-    plschr(0.0, 0.75 )
+    w.plschr(0.0, 0.75 )
     # Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5 )
-    plsmin( 0.0, 0.5 )
+    w.plsmaj( 0.0, 0.5 )
+    w.plsmin( 0.0, 0.5 )
 
     num_values[0] = NS + 1
     values[0] = shedge
-    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+    (colorbar_width, colorbar_height) = w.plcolorbar ( w.PL_COLORBAR_SHADE | w.PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
 
     # Reset text and tick sizes
-    plschr( 0.0, 1.0 )
-    plsmaj( 0.0, 1.0 )
-    plsmin( 0.0, 1.0 )
+    w.plschr( 0.0, 1.0 )
+    w.plsmaj( 0.0, 1.0 )
+    w.plsmin( 0.0, 1.0 )
 
-    plcol0(1)
-    plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
-    plcol0(2)
+    w.plcol0(1)
+    w.plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
+    w.plcol0(2)
 
-    plcont(ww, clevel, pltr2, xg2, yg2)
-    pllab( "distance", "altitude", "Bogon density, with streamlines" )
+    w.plcont(ww, clevel, w.pltr2, xg2, yg2)
+    w.pllab( "distance", "altitude", "Bogon density, with streamlines" )
 
-    # Plot using 2d coordinate transform (with contours generated by plshades)
+    # Plot using 2d coordinate transform (with contours generated by w.plshades)
 
-    plspal0("")
-    plspal1("",1)
-    plscmap0n(3)
+    w.plspal0("")
+    w.plspal1("",1)
+    w.plscmap0n(3)
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
-    plpsty(0)
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
+    w.plpsty(0)
 
     # Note default cont_color and cont_width are zero so that no contours
-    # are done with other calls to plshades.  But for this call we specify
+    # are done with other calls to w.plshades.  But for this call we specify
     # non-zero values so that contours are drawn.
-    plshades(zz, shedge, fill_width, 2, 3.0, 0, pltr2, xg2, yg2)
+    w.plshades(zz, shedge, fill_width, 2, 3.0, 0, w.pltr2, xg2, yg2)
 
     # Smaller text
-    plschr(0.0, 0.75 )
+    w.plschr(0.0, 0.75 )
     # Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5 )
-    plsmin( 0.0, 0.5 )
+    w.plsmaj( 0.0, 0.5 )
+    w.plsmin( 0.0, 0.5 )
 
     num_values[0] = NS + 1
     values[0] = shedge
-    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, 2, 3.0, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+    (colorbar_width, colorbar_height) = w.plcolorbar ( w.PL_COLORBAR_SHADE | w.PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, 2, 3.0, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
 
     # Reset text and tick sizes
-    plschr( 0.0, 1.0 )
-    plsmaj( 0.0, 1.0 )
-    plsmin( 0.0, 1.0 )
+    w.plschr( 0.0, 1.0 )
+    w.plsmaj( 0.0, 1.0 )
+    w.plsmin( 0.0, 1.0 )
 
-    plcol0(1)
-    plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
-    plcol0(2)
+    w.plcol0(1)
+    w.plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
+    w.plcol0(2)
 
-#    plcont(ww, clevel, "pltr2", xg2, yg2, 0)
-    pllab( "distance", "altitude", "Bogon density" )
+    # w.plcont(ww, clevel, "pltr2", xg2, yg2, 0)
+    w.pllab( "distance", "altitude", "Bogon density" )
 
     # Example with polar coordinates that demonstrates python wrap support.
 
-    plspal0("cmap0_black_on_white.pal")
-    plspal1("cmap1_gray.pal",1)
-    plscmap0n(3)
+    w.plspal0("cmap0_black_on_white.pal")
+    w.plspal1("cmap1_gray.pal",1)
+    w.plscmap0n(3)
 
-    pladv(0)
-    plvpor(0.1, 0.9, 0.1, 0.9)
-    plwind(-1.0, 1.0, -1.0, 1.0)
+    w.pladv(0)
+    w.plvpor(0.1, 0.9, 0.1, 0.9)
+    w.plwind(-1.0, 1.0, -1.0, 1.0)
 
     # Build new coordinate matrices.
 
@@ -266,42 +271,48 @@ def main():
     zmax = max(z.flat)
     shedge = zmin + ((zmax - zmin)/NS) * (arange(NS+1))
 
-    plpsty(0)
+    w.plpsty(0)
 
     # Now we can shade the interior region.  Use wrap=2 to simulate additional
     # point at t = 2 pi.
-    plshades(z, shedge, fill_width, 0, pltr2, xg, yg, 2)
+    w.plshades(z, shedge, fill_width, 0, w.pltr2, xg, yg, 2)
 
     # Smaller text
-    plschr(0.0, 0.75 )
+    w.plschr(0.0, 0.75 )
     # Small ticks on the vertical axis
-    plsmaj( 0.0, 0.5 )
-    plsmin( 0.0, 0.5 )
+    w.plsmaj( 0.0, 0.5 )
+    w.plsmin( 0.0, 0.5 )
 
     num_values[0] = NS + 1
     values[0] = shedge
-    (colorbar_width, colorbar_height) = plcolorbar ( PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
+    (colorbar_width, colorbar_height) = w.plcolorbar ( w.PL_COLORBAR_SHADE | w.PL_COLORBAR_SHADE_LABEL, 0, 0.005, 0.0, 0.0375, 0.875, 0, 1, 1, 0.0, 0.0, cont_color, cont_width, label_opts, labels, axis_opts, axis_ticks, axis_subticks, num_values, values)
 
     # Reset text and tick sizes
-    plschr( 0.0, 1.0 )
-    plsmaj( 0.0, 1.0 )
-    plsmin( 0.0, 1.0 )
+    w.plschr( 0.0, 1.0 )
+    w.plsmaj( 0.0, 1.0 )
+    w.plsmin( 0.0, 1.0 )
 
-    # Now we can draw the perimeter.  (If do before, plshades may overlap.)
+    # Now we can draw the perimeter.  (If do before, w.plshades may overlap.)
     t = 2.*pi*arange(PERIMETERPTS)/(PERIMETERPTS-1.)
     px = cos(t)
     py = sin(t)
 
 
-    plcol0(1)
-    plline( px, py )
+    w.plcol0(1)
+    w.plline( px, py )
 
     # And label the plot.
 
-    plcol0(2)
-    pllab( "", "",  "Tokamak Bogon Instability" )
+    w.plcol0(2)
+    w.pllab( "", "",  "Tokamak Bogon Instability" )
 
     # Restore defaults
-    #plcol0(1)
+    w.plschr( 0.0, 1.0 )
+    # cmap0 default color palette.
+    w.plspal0("cmap0_default.pal")
+    # cmap1 default color palette.
+    w.plspal1("cmap1_default.pal",1)
 
-main()
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

@@ -3,6 +3,8 @@
 #  Unicode Pace Flag
 #
 #  Copyright (C) 2005 Rafael Laboissiere
+#  Copyright (C) 2005-2016 Alan W. Irwin
+#  
 #
 #
 #  This file is part of PLplot.
@@ -46,10 +48,9 @@
 #
 #  Translated from x24c.c into python by Thomas J. Duck
 
-from plplot_py_demos import *
+from numpy import *
 
-
-def main():
+def main(w):
 
     red =   array([240, 204, 204, 204,   0,  39, 125])
     green = array([240,   0, 125, 204, 204,  80,   0])
@@ -119,30 +120,37 @@ def main():
         ]
 
 
-    pladv(0)
-    plvpor(0.0, 1.0, 0.0, 1.0)
-    plwind(0.0, 1.0, 0.0, 1.0)
-    plcol0(0)
-    plbox("", 1.0, 0, "", 1.0, 0)
+    w.pladv(0)
+    w.plvpor(0.0, 1.0, 0.0, 1.0)
+    w.plwind(0.0, 1.0, 0.0, 1.0)
+    w.plcol0(0)
+    w.plbox("", 1.0, 0, "", 1.0, 0)
 
-    plscmap0n(7)
-    plscmap0(red, green, blue)
+    w.plscmap0n(7)
+    w.plscmap0(red, green, blue)
 
-    plschr(0, 4.0)
-    plfont(1)
+    w.plschr(0, 4.0)
+    w.plfont(1)
 
     for i in range(4):
 
-        plcol0(i + 1)
-        plfill(px, py)
+        w.plcol0(i + 1)
+        w.plfill(px, py)
 
         for j in range(4):
             py[j] += 1.0 / 4.0
 
-    plcol0(0)
+    w.plcol0(0)
 
     for i in range(12):
-        plptex(sx[i], sy[i], 1.0, 0.0, 0.5, peace[i])
+        w.plptex(sx[i], sy[i], 1.0, 0.0, 0.5, peace[i])
 
+    # Restore defaults
+    w.plschr( 0.0, 1.0 )
+    w.plfont(1)
+    # cmap0 default color palette.
+    w.plspal0("cmap0_default.pal")
 
-main()
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

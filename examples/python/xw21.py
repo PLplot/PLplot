@@ -1,4 +1,5 @@
 #  Copyright (C) 2007, 2008 Andrew Ross
+#  Copyright (C) 2007-2016 Alan W. Irwin
 
 #  Grid data demo.
 #
@@ -19,7 +20,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 import time
 
 pts = 500
@@ -33,14 +34,14 @@ randn = 0
 rosen = 0
 
 
-def cmap1_init():
+def cmap1_init(w):
     i = [0, 1]
     h = [240, 0]
     l = [0.6, 0.6]
     s = [0.8, 0.8]
 
-    plscmap1n(256)
-    plscmap1l(0, i, h, l, s)
+    w.plscmap1n(256)
+    w.plscmap1l(0, i, h, l, s)
 
 
 
@@ -48,7 +49,7 @@ def cmap1_init():
 # main
 #
 #
-def main():
+def main(w):
 
     title = ["Cubic Spline Approximation",
 		   "Delaunay Linear Interpolation",
@@ -68,17 +69,17 @@ def main():
     opt[3] = knn_order
     opt[4] = threshold
 
-    cmap1_init()
-    plseed(5489)
+    cmap1_init(w)
+    w.plseed(5489)
 
     # Create the sampled data
-    # For consistency across languages use plrandd to create the
+    # For consistency across languages use w.plrandd to create the
     # pseudo-random data that are required.
     xt = zeros(pts)
     yt = zeros(pts)
     for i in range(pts) :
-	xt[i] = (xM-xm)*plrandd()
-	yt[i] = (yM-ym)*plrandd()
+	xt[i] = (xM-xm)*w.plrandd()
+	yt[i] = (yM-ym)*w.plrandd()
     if randn == 0 :
         x = xt + xm
         y = yt + ym
@@ -102,28 +103,28 @@ def main():
     xx = zeros(1)
     yy = zeros(1)
 
-    plcol0(1)
-    plenv(xm,xM,ym,yM,2,0)
-    plcol0(15)
-    pllab('X','Y','The original data sampling')
+    w.plcol0(1)
+    w.plenv(xm,xM,ym,yM,2,0)
+    w.plcol0(15)
+    w.pllab('X','Y','The original data sampling')
     for i in range(pts):
-        plcol1( ( z[i] - zmin )/( zmax - zmin ) )
+        w.plcol1( ( z[i] - zmin )/( zmax - zmin ) )
         xx[0] = x[i]
         yy[0] = y[i]
-        plstring( xx, yy, '#(727)' )
-    pladv(0)
+        w.plstring( xx, yy, '#(727)' )
+    w.pladv(0)
 
-    plssub(3,2)
+    w.plssub(3,2)
 
     for k in range(2):
-        pladv(0)
+        w.pladv(0)
         for alg in range(1,7):
-            zg = plgriddata(x, y, z, xg, yg, alg, opt[alg-1])
+            zg = w.plgriddata(x, y, z, xg, yg, alg, opt[alg-1])
 #            for i in range(xp):
 #                for j in range(yp):
 #                    print("zg[%d,%d] = %g" % (i, j, zg[i][j]))
 
-            if alg == GRID_CSA or alg == GRID_DTLI or alg == GRID_NNLI or alg == GRID_NNI:
+            if alg == w.GRID_CSA or alg == w.GRID_DTLI or alg == w.GRID_NNLI or alg == w.GRID_NNI:
                 for i in range(xp):
                     for j in range(yp):
                         # Average (IDW) over the 8 neighbours for Nan
@@ -153,24 +154,32 @@ def main():
             lzm = lzm - 0.01
             lzM = lzM + 0.01
 
-            plcol0(1)
-            pladv(alg)
+            w.plcol0(1)
+            w.pladv(alg)
 
             if (k == 0):
                 clev = lzm + (lzM-lzm)*arange(nl)/(nl-1)
-                plenv0(xm,xM,ym,yM,2,0)
-                plcol0(15)
-                pllab('X','Y',title[alg-1])
-                plshades(zg, xm, xM, ym, yM, clev, 1., 1, None, None)
-                plcol0(2)
+                w.plenv0(xm,xM,ym,yM,2,0)
+                w.plcol0(15)
+                w.pllab('X','Y',title[alg-1])
+                w.plshades(zg, xm, xM, ym, yM, clev, 1., 1, None, None)
+                w.plcol0(2)
             else:
                 clev = lzm + (lzM-lzm)*arange(nl)/(nl-1)
-                plvpor(0.0, 1.0, 0.0, 0.9)
-                plwind(-1.1, 0.75, -0.65, 1.20)
-                plw3d(1.0, 1.0, 1.0, xm, xM, ym, yM, lzm, lzM, 30.0, -40.0)
-                plbox3('bntu', 'X', 0.0, 0,'bntu', 'Y', 0.0, 0,'bcdfntu', 'Z', 0.5, 0)
-                plcol0(15)
-                pllab('','',title[alg-1])
-                plot3dc(xg, yg, zg, DRAW_LINEXY | MAG_COLOR | BASE_CONT, clev)
+                w.plvpor(0.0, 1.0, 0.0, 0.9)
+                w.plwind(-1.1, 0.75, -0.65, 1.20)
+                w.plw3d(1.0, 1.0, 1.0, xm, xM, ym, yM, lzm, lzM, 30.0, -40.0)
+                w.plbox3('bntu', 'X', 0.0, 0,'bntu', 'Y', 0.0, 0,'bcdfntu', 'Z', 0.5, 0)
+                w.plcol0(15)
+                w.pllab('','',title[alg-1])
+                w.plot3dc(xg, yg, zg, w.DRAW_LINEXY | w.MAG_COLOR | w.BASE_CONT, clev)
 
-main()
+    # Restore defaults
+    # cmap1 default color palette.
+    w.plspal1("cmap1_default.pal",1)
+    w.plssub(1, 1)
+    w.pleop()
+
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

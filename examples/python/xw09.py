@@ -1,4 +1,4 @@
-#  Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 Alan W. Irwin
+#  Copyright (C) 2001-2016 Alan W. Irwin
 
 #  Contour plot demo.
 #
@@ -19,7 +19,7 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-from plplot_py_demos import *
+from numpy import *
 
 XPTS = 35
 YPTS = 46
@@ -42,16 +42,16 @@ def mypltr(x, y, data):
     result1 = data[3] * x + data[4] * y + data[5]
     return array((result0, result1))
 
-def polar():
+def polar(w):
     #polar contour plot example.
-    plenv(-1., 1., -1., 1., 0, -2,)
-    plcol0(1)
+    w.plenv(-1., 1., -1., 1., 0, -2,)
+    w.plcol0(1)
 
     # Perimeter
     t = (2.*pi/(PERIMETERPTS-1))*arange(PERIMETERPTS)
     px = cos(t)
     py = sin(t)
-    plline(px, py)
+    w.plline(px, py)
 
     # create data to be contoured.
     r = arange(RPTS)/float(RPTS-1)
@@ -63,13 +63,13 @@ def polar():
 
     lev = 0.05 + 0.10*arange(10)
 
-    plcol0(2)
-    plcont(zg, lev, pltr2, xg, yg, 2)
+    w.plcol0(2)
+    w.plcont(zg, lev, w.pltr2, xg, yg, 2)
     #                              ^-- :-).  Means: "2nd coord is wrapped."
-    plcol0(1)
-    pllab("", "", "Polar Contour Plot")
+    w.plcol0(1)
+    w.pllab("", "", "Polar Contour Plot")
 
-def potential():
+def potential(w):
     #shielded potential contour plot example.
 
     # create data to be contoured.
@@ -140,23 +140,23 @@ def potential():
     ncollin = 11
     ncolbox = 1
     ncollab = 2
-		
+
     #Finally start plotting this page!
-    pladv(0)
-    plcol0(ncolbox)
+    w.pladv(0)
+    w.plcol0(ncolbox)
 
-    plvpas(0.1, 0.9, 0.1, 0.9, 1.0)
-    plwind(xpmin, xpmax, ypmin, ypmax)
-    plbox("", 0., 0, "", 0., 0)
+    w.plvpas(0.1, 0.9, 0.1, 0.9, 1.0)
+    w.plwind(xpmin, xpmax, ypmin, ypmax)
+    w.plbox("", 0., 0, "", 0., 0)
 
-    plcol0(ncollin)
+    w.plcol0(ncollin)
     # Negative contours
-    pllsty(2)
-    plcont(zg, clevelneg, pltr2, xg, yg, 2)
+    w.pllsty(2)
+    w.plcont(zg, clevelneg, w.pltr2, xg, yg, 2)
 
     # Positive contours
-    pllsty(1)
-    plcont(zg, clevelpos, pltr2, xg, yg, 2)
+    w.pllsty(1)
+    w.plcont(zg, clevelpos, w.pltr2, xg, yg, 2)
 
 
     # Draw outer boundary
@@ -164,13 +164,13 @@ def potential():
     px = x0 + rmax*cos(t)
     py = y0 + rmax*sin(t)
 
-    plcol0(ncolbox)
-    plline(px, py)
+    w.plcol0(ncolbox)
+    w.plline(px, py)
 
-    plcol0(ncollab)
-    pllab("", "", "Shielded potential of charges in a conducting sphere")
+    w.plcol0(ncollab)
+    w.pllab("", "", "Shielded potential of charges in a conducting sphere")
 
-def main():
+def main(w):
 
     mark = 1500
     space = 1500
@@ -182,7 +182,7 @@ def main():
     xx.shape = (-1,1)
     z = (xx*xx)-(yy*yy)
     # 2.*outerproduct(xx,yy) for new versions of Numeric which have outerproduct.
-    w = 2.*xx*yy
+    w_array = 2.*xx*yy
 
     # Set up grids.
 
@@ -203,92 +203,92 @@ def main():
     xg0t.shape = (-1,1)
     xg2 = xg0t + distort*cos_x*cos_y
     yg2 = yg0 - distort*cos_x*cos_y
-	
+
     # Plot using mypltr (scaled identity) transformation used to create
     # xg0 and yg0
-#    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-#    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-#    plcol0(2)
-#    plcont(z, clevel, mypltr, tr)
-#    plstyl([mark], [space])
-#    plcol0(3)
-#    plcont(w, clevel, mypltr, tr)
-#    plstyl([], [])
-#    plcol0(1)
-#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+#    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+#    w.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+#    w.plcol0(2)
+#    w.plcont(z, clevel, mypltr, tr)
+#    w.plstyl([mark], [space])
+#    w.plcol0(3)
+#    w.plcont(w, clevel, mypltr, tr)
+#    w.plstyl([], [])
+#    w.plcol0(1)
+#    w.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
-    pl_setcontlabelformat(4,3)
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, clevel, mypltr, tr)
-    plstyl([mark], [space])
-    plcol0(3)
-    plcont(w, clevel, mypltr, tr)
-    plstyl([], [])
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+    w.pl_setcontlabelformat(4,3)
+    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+    w.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+    w.plcol0(2)
+    w.plcont(z, clevel, mypltr, tr)
+    w.plstyl([mark], [space])
+    w.plcol0(3)
+    w.plcont(w_array, clevel, mypltr, tr)
+    w.plstyl([], [])
+    w.plcol0(1)
+    w.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
     # Plot using 1D coordinate transformation.
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, clevel, pltr1, xg1, yg1)
-    plstyl([mark], [space])
-    plcol0(3)
-    plcont(w, clevel, pltr1, xg1, yg1)
-    plstyl([], [])
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+    w.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+    w.plcol0(2)
+    w.plcont(z, clevel, w.pltr1, xg1, yg1)
+    w.plstyl([mark], [space])
+    w.plcol0(3)
+    w.plcont(w_array, clevel, w.pltr1, xg1, yg1)
+    w.plstyl([], [])
+    w.plcol0(1)
+    w.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
-#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-#    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-#    plcol0(2)
-#    plcont(z, clevel, pltr1, xg1, yg1)
-#    plstyl([mark], [space])
-#    plcol0(3)
-#    plcont(w, clevel, pltr1, xg1, yg1)
-#    plstyl([], [])
-#    plcol0(1)
-#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
-#    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+#    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    w.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+#    w.plcol0(2)
+#    w.plcont(z, clevel, w.pltr1, xg1, yg1)
+#    w.plstyl([mark], [space])
+#    w.plcol0(3)
+#    w.plcont(w, clevel, w.pltr1, xg1, yg1)
+#    w.plstyl([], [])
+#    w.plcol0(1)
+#    w.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+#    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
 #
     # Plot using 2D coordinate transformation.
-    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-    plcol0(2)
-    plcont(z, clevel, pltr2, xg2, yg2)
-    plstyl([mark], [space])
-    plcol0(3)
-    plcont(w, clevel, pltr2, xg2, yg2)
-    plstyl([], [])
-    plcol0(1)
-    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+    w.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+    w.plcol0(2)
+    w.plcont(z, clevel, w.pltr2, xg2, yg2)
+    w.plstyl([mark], [space])
+    w.plcol0(3)
+    w.plcont(w_array, clevel, w.pltr2, xg2, yg2)
+    w.plstyl([], [])
+    w.plcol0(1)
+    w.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 
-#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-#    plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
-#    plcol0(2)
-#    plcont(z, clevel, pltr2, xg2, yg2)
-#    plstyl([mark], [space])
-#    plcol0(3)
-#    plcont(w, clevel, pltr2, xg2, yg2)
-#    plstyl([], [])
-#    plcol0(1)
-#    pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
+#    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    w.plenv(-1.0, 1.0, -1.0, 1.0, 0, 0)
+#    w.plcol0(2)
+#    w.plcont(z, clevel, w.pltr2, xg2, yg2)
+#    w.plstyl([mark], [space])
+#    w.plcol0(3)
+#    w.plcont(w, clevel, w.pltr2, xg2, yg2)
+#    w.plstyl([], [])
+#    w.plcol0(1)
+#    w.pllab("X Coordinate", "Y Coordinate", "Streamlines of flow")
 #
 #   polar contour examples.
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-    polar()
-#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-#    polar()
+    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+    polar(w)
+#    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    polar(w)
 
 #   potential contour examples.
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-    potential()
-#    pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
-#    potential()
+    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+    potential(w)
+#    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 1)
+#    potential(w)
 
-# Restore defaults
-    #plcol0(1)
-    pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
-
-main()
+    # Restore defaults
+    w.pl_setcontlabelparam(0.006, 0.3, 0.1, 0)
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)

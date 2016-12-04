@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2004  Alan W. Irwin
-# Copyright (C) 2004  Andrew Ross
+# Copyright (C) 2004-2016 Alan W. Irwin
+# Copyright (C) 2004 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -19,27 +19,29 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 
-# Run all python plplot examples non-interactively.
+# Run python plplot example 16 non-interactively.
 
 # Append to effective python path so that can find plplot modules.
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
-
-# Load colour palettes
-plspal0("cmap0_black_on_white.pal")
-plspal1("cmap1_gray.pal",1)
-plscmap0n(3)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
+
+# Colour palette must be set before
+# w.plinit to follow C version and
+# to set the first page background properly.
+w.plspal0("cmap0_black_on_white.pal")
+w.plspal1("cmap1_gray.pal",1)
+w.plscmap0n(3)
+w.plinit()
 
 import xw16
+xw16.main(w)
 
 # Terminate plplot
-plend()
-
+w.plend()

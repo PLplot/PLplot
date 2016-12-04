@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 
-#  Copyright (C) 2006-2010 Alan W. Irwin
+#  Copyright (C) 2006-2016 Alan W. Irwin
 
 #  Multi-lingual version of the first page of example 4.
 
@@ -54,13 +54,13 @@
 # (5) decade represents a factor of 10, see
 #     http://en.wikipedia.org/wiki/Decade_(log_scale) .
 
-from plplot_py_demos import *
+from numpy import *
 
 # main
 #
 # Illustration of first page of example 4 in different languages.
 
-def main():
+def main(w):
     x_label = [\
     "Frequency",\
     "Частота",\
@@ -95,56 +95,60 @@ def main():
     len(line_label) != nlang:
 	raise RuntimeError, "Internal inconsistency in label dimension"
 
-    plfont(2)
+    w.plfont(2)
 
     for i in range(nlang):
-	plot1(0, x_label[i], y_label[i], alty_label[i], \
+	plot1(w, 0, x_label[i], y_label[i], alty_label[i], \
 	title_label[i], line_label[i], legend_text[i])
 
     # Restore defaults
-    plfont(1)
-    #plcol0(1)
+    w.plfont(1)
+    # cmap0 default color palette.
+    w.plspal0("cmap0_default.pal")
+    # Must be done independently because otherwise this changes output files
+    # and destroys agreement with C examples.
+    #w.plcol0(1)
 
-def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_text):
+def plot1(w, type, x_label, y_label, alty_label, title_label, line_label, legend_text):
 
-    pladv(0)
+    w.pladv(0)
     f0 = 1.0
     freql = -2.0 + arange(101)/20.0
     freq = pow(10.0, freql)
     ampl = 20.0 * log10(1.0 / sqrt(1.0 + pow((freq / f0), 2.)))
     phase = -(180.0 / pi) * arctan(freq / f0)
 
-    plvpor(0.15, 0.85, 0.1, 0.9)
-    plwind(-2., 3.0, -80.0, 0.0)
-    plcol0(1)
+    w.plvpor(0.15, 0.85, 0.1, 0.9)
+    w.plwind(-2., 3.0, -80.0, 0.0)
+    w.plcol0(1)
     if type == 0:
-	plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0)
+	w.plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0)
     elif type == 1:
-	plbox("bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0)
+	w.plbox("bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0)
     else:
 	print "error: type must be either 0 or 1"
-    plcol0(2)
-    plline(freql, ampl)
-    plcol0(2)
-    plptex(1.6, -30.0, 1.0, -20.0, 0.5, line_label)
+    w.plcol0(2)
+    w.plline(freql, ampl)
+    w.plcol0(2)
+    w.plptex(1.6, -30.0, 1.0, -20.0, 0.5, line_label)
 
     # Put labels on
-    plcol0(1)
-    plmtex("b", 3.2, 0.5, 0.5, x_label)
-    plmtex("t", 2.0, 0.5, 0.5, title_label)
-    plcol0(2)
-    plmtex("l", 5.0, 0.5, 0.5, y_label)
+    w.plcol0(1)
+    w.plmtex("b", 3.2, 0.5, 0.5, x_label)
+    w.plmtex("t", 2.0, 0.5, 0.5, title_label)
+    w.plcol0(2)
+    w.plmtex("l", 5.0, 0.5, 0.5, y_label)
 
     # For the gridless case, put phase vs freq on same plot
     if type == 0:
-        plcol0(1)
-	plwind(-2.0, 3.0, -100.0, 0.0)
-	plbox("", 0.0, 0, "cmstv", 30.0, 3)
-	plcol0(3)
-	plline(freql, phase)
-	plstring(freql, phase, "#(728)")
-	plcol0(3)
-	plmtex("r", 5.0, 0.5, 0.5, alty_label)
+        w.plcol0(1)
+	w.plwind(-2.0, 3.0, -100.0, 0.0)
+	w.plbox("", 0.0, 0, "cmstv", 30.0, 3)
+	w.plcol0(3)
+	w.plline(freql, phase)
+	w.plstring(freql, phase, "#(728)")
+	w.plcol0(3)
+	w.plmtex("r", 5.0, 0.5, 0.5, alty_label)
         nlegend = 2
     else:
         nlegend = 1
@@ -171,7 +175,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
     # value of opt_array for that entry.
 
     # Data for first legend entry.
-    opt_array[0] = PL_LEGEND_LINE
+    opt_array[0] = w.PL_LEGEND_LINE
     text_colors[0] = 2
     text[0] = legend_text[0]
     line_colors[0] = 2
@@ -180,7 +184,7 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
 
     # Data for second legend entry.
     if nlegend > 1:
-        opt_array[1]      = PL_LEGEND_LINE | PL_LEGEND_SYMBOL
+        opt_array[1]      = w.PL_LEGEND_LINE | w.PL_LEGEND_SYMBOL
         text_colors[1]    = 3
         text[1] = legend_text[1]
         line_colors[1]    = 3
@@ -191,14 +195,12 @@ def plot1(type, x_label, y_label, alty_label, title_label, line_label, legend_te
         symbol_numbers[1] = 4
         symbols[1]        = "#(728)"
 
-    plscol0a( 15, 32, 32, 32, 0.70 )
+    w.plscol0a( 15, 32, 32, 32, 0.70 )
 
     (legend_width, legend_height) = \
-    pllegend( PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX, 0, 0.0, 0.0,
+    w.pllegend( w.PL_LEGEND_BACKGROUND | w.PL_LEGEND_BOUNDING_BOX, 0, 0.0, 0.0,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
               1., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-
-main()
