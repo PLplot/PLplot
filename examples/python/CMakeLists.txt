@@ -139,7 +139,7 @@ endif(ENABLE_pyqt5)
 set(
   python_DATA
   ${python_DATA}
-  plplot_py_demos.py
+  restore.py
   README.pythondemos
   README.rendering_tests
   README.logo
@@ -258,11 +258,11 @@ if(CORE_BUILD)
 
 else(CORE_BUILD)
   set_property(GLOBAL PROPERTY FILES_examples_python)
-  foreach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py plplot_py_demos.py test_plsmem.py)
+  foreach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py test_plsmem.py)
     set_property(GLOBAL APPEND PROPERTY FILES_examples_python
       ${CMAKE_CURRENT_SOURCE_DIR}/${file}
       )
-  endforeach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py plplot_py_demos.py)
+  endforeach(file ${python_SCRIPTS} ${python_DATA} plplot_python_start.py test_plsmem.py)
 endif(CORE_BUILD)
 
 # Custom target to build logo (Unix only with ImageMagick installed).

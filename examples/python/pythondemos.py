@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2004  Alan W. Irwin
-# Copyright (C) 2004  Andrew Ross
+# Copyright (C) 2004-2016 Alan W. Irwin
+# Copyright (C) 2004 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -25,29 +25,32 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
+import restore
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
+w.plinit()
 
-# Exclude interactive demos 14, 17, 31 which call plinit in the xw??.py
-# script
 failed = []
-for i in range(1, 14)+[15,16]+range(18,31):
+for i in range(0,34):
+    # Exclude interactive demos 14, 17, 31 which call plinit in the xw??.py
+    # script.  Also, exclude 32 which is not implemented.
+    if i == 14 or i == 17 or i == 31 or i == 32:
+        continue
     script = 'xw' + '%02d' % i
+    module = __import__(script, globals(), locals(), [])
     try:
-	__import__(script, globals(), locals(), [])
+        module.main(w)
     except:
 	failed.append(script)
-    # Reset color here rather than in individual examples to ensure results
-    # for individual tests are identical to C versions
-    plcol0(1)
+
+    restore.main(w)
 
 # Terminate plplot
-plend()
+w.plend()
 
 if len(failed) != 0:
     import string
