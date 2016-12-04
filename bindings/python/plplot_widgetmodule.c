@@ -26,7 +26,7 @@ static char doc_Pltk_init[] = "Initialize the Pltk Tcl extension.";
 
 static PyObject *pl_Pltk_init( PyObject * PL_UNUSED( self ), PyObject *args )
 {
-    printf( "in pl_Pltk_init()\n" );
+  //printf( "in pl_Pltk_init()\n" );
     long x = 0;
 
     TRY( PyArg_ParseTuple( args, "l", &x ) );
@@ -40,7 +40,7 @@ static PyObject *pl_Pltk_init( PyObject * PL_UNUSED( self ), PyObject *args )
 
     Tcl_Interp *interp = (Tcl_Interp *) x;
 
-    printf( "Tcl_Interp * = %ld \n", x );
+    //printf( "Tcl_Interp * = %ld \n", x );
 
     if ( Pltk_Init( interp ) == TCL_ERROR )
     {
@@ -48,7 +48,7 @@ static PyObject *pl_Pltk_init( PyObject * PL_UNUSED( self ), PyObject *args )
         return NULL;
     }
 
-    printf( "plframe has been installed into the Tcl interpreter.\n" );
+    //printf( "plframe has been installed into the Tcl interpreter.\n" );
 
     Py_INCREF( Py_None );
     return Py_None;
