@@ -4,15 +4,15 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
 from numpy import *
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
-plssym(0., 10.)
-plenv(0,1,0,1,0,0)
-plpoin([1.0],[0.5],0)
-plend()
+w.plinit()
+w.plssym(0., 10.)
+w.plenv(0,1,0,1,0,0)
+w.plpoin([1.0],[0.5],0)
+w.plend()

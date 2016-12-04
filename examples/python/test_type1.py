@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright 2010 Alan W. Irwin
+# Copyright 2010-2016 Alan W. Irwin
 # This file is part of PLplot.
 
 # PLplot is free software; you can redistribute it and/or modify
@@ -27,13 +27,13 @@
 from plplot_python_start import *
 
 import sys
-from plplot_py_demos import *
+import plplot as w
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
+w.plinit()
 
 # main
 #
@@ -55,43 +55,43 @@ weight = (
 "medium",
 "bold",
 )
-def main():
+def main(w):
 
 
     FCI_COMBINATIONS = 30
-    plsfont(0, 0, 0)
+    w.plsfont(0, 0, 0)
     for index_fci in range(0,FCI_COMBINATIONS):
         family_index = index_fci % 5
         style_index = (index_fci/5) % 3
         weight_index = ((index_fci/5)/3) % 2
         title = "Type 1 glyphs for family = " + family[family_index] + ", style = " + style[style_index] + ", weight = " + weight[weight_index]
-        pladv(0)
+        w.pladv(0)
 
 # Set up viewport and window
 
-        plcol0(2)
-        plvpor(0.1, 1.0, 0.1, 0.9)
-        plwind(0.0, 1.0, 0.0, 1.0)
+        w.plcol0(2)
+        w.plvpor(0.1, 1.0, 0.1, 0.9)
+        w.plwind(0.0, 1.0, 0.0, 1.0)
 
-# Draw the grid using plbox
+# Draw the grid using w.plbox
 
-        plbox("bcg", 1./16., 0, "bcg", 1./16., 0)
+        w.plbox("bcg", 1./16., 0, "bcg", 1./16., 0)
 
 # Write the digits below the frame
 
-        plcol0(15)
+        w.plcol0(15)
         for i in range(16):
-            plmtex("b", 1.5, ((i+0.5)/16.), 0.5, str(i))
+            w.plmtex("b", 1.5, ((i+0.5)/16.), 0.5, str(i))
 
         k = 0
-        plmtex("t", 1.5, 0.5, 0.5, title)
+        w.plmtex("t", 1.5, 0.5, 0.5, title)
         for i in range(16):
 
             # Write the digits to the left of the frame
 
-            plmtex("lv", 1.0, (1.0 - (i+0.5)/16.), 1.0, str(16 * i))
+            w.plmtex("lv", 1.0, (1.0 - (i+0.5)/16.), 1.0, str(16 * i))
 
-            plsfont(family_index, style_index, weight_index)
+            w.plsfont(family_index, style_index, weight_index)
             for j in range(16):
                 x = (j+0.5)/16.
                 y = 1. - (i+0.5)/16
@@ -101,13 +101,9 @@ def main():
                 # Escape the escape.
                 if glyph_string == "#":
                     glyph_string = "##"
-                plptex(x, y, 1., 0., 0.5, glyph_string)
+                w.plptex(x, y, 1., 0., 0.5, glyph_string)
                 k = k + 1
-            plsfont(0, 0, 0)
+            w.plsfont(0, 0, 0)
 
-
-    # Restore defaults
-    #plcol0(1)
-
-main()
-plend()
+main(w)
+w.plend()

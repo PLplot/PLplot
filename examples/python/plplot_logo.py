@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2008  Alan W. Irwin
+# Copyright (C) 2008-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -24,15 +24,15 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
+w.plinit()
 
-from plplot_py_demos import *
+from numpy import *
 
 XPTS = 35		# Data points in x
 YPTS = 46		# Data points in y
@@ -42,7 +42,7 @@ az = 30.0
 # Routine for defining a specific color map 1 in HLS space.
 # if gray is true, use basic grayscale variation from half-dark to light.
 # otherwise use false color variation from blue (240 deg) to red (360 deg).
-def cmap1_init(gray):
+def cmap1_init(w, gray):
     # Independent variable of control points.
     i = array((0., 1.))
     if gray:
@@ -60,11 +60,11 @@ def cmap1_init(gray):
 	s = array((0.8, 0.8))
 
     # number of cmap1 colours is 256 in this case.
-    plscmap1n(256)
+    w.plscmap1n(256)
     # Interpolate between control points to set up cmap1.
-    plscmap1l(0, i, h, l, s)
+    w.plscmap1l(0, i, h, l, s)
 
-def main():
+def main(w):
 
     x = (arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
     y = (arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)
@@ -82,15 +82,15 @@ def main():
     nlevel = 10
     step = (zmax-zmin)/(nlevel+1)
     clevel = zmin + step + arange(nlevel)*step
-    plschr(0., 1.8)
-    plwidth(1)
-    pladv(0)
-    plvpor(0.0, 1.0, 0.0, 1.0)
-    plwind(-0.43, 0.840, 0.05, 0.48)
-    plcol0(1)
-    plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
+    w.plschr(0., 1.8)
+    w.plwidth(1)
+    w.pladv(0)
+    w.plvpor(0.0, 1.0, 0.0, 1.0)
+    w.plwind(-0.43, 0.840, 0.05, 0.48)
+    w.plcol0(1)
+    w.plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
           alt, az)
-    plbox3("bnstu", "", 0.0, 0,
+    w.plbox3("bnstu", "", 0.0, 0,
            "bnstu", "", 0.0, 0,
            "bcdmnstuv", "", 0.0, 0)
     # If converting the -dev svg result later with the ImageMagick
@@ -103,24 +103,24 @@ def main():
         shift = 1.00
     else:
         shift = 1.07
-    plmtex3("zs", 5.0, shift, 1.0, "z axis")
+    w.plmtex3("zs", 5.0, shift, 1.0, "z axis")
 
-    plcol0(2)
+    w.plcol0(2)
     # magnitude colored plot with faceted squares
-    cmap1_init(0)
-    plsurf3d(x, y, z, MAG_COLOR | FACETED, ())
+    cmap1_init(w, 0)
+    w.plsurf3d(x, y, z, w.MAG_COLOR | w.FACETED, ())
 
     # Shading to provide a good background for legend.
     x1 = 0.10
     x2 = 0.8
-    plvpor(0.0, 1.0, 0.0, 1.0)
-    plwind(0.0, 1.0, 0.0, 1.0)
+    w.plvpor(0.0, 1.0, 0.0, 1.0)
+    w.plwind(0.0, 1.0, 0.0, 1.0)
     # Completely opaque from 0. to x1
-    plscol0a(15, 0, 0, 0, 1.0)
-    plcol0(15)
+    w.plscol0a(15, 0, 0, 0, 1.0)
+    w.plcol0(15)
     x=array([0., 0., x1, x1])
     y=array([0., 1., 1., 0.])
-    plfill(x,y)
+    w.plfill(x,y)
     # Black transparent gradient.
     pos = array([0.0, 1.0])
     rcoord = array([0.0, 0.0])
@@ -128,21 +128,21 @@ def main():
     bcoord = array([0.0, 0.0])
     acoord = array([1.0, 0.0])
     rev = array([0, 0])
-    plscmap1n(2)
-    plscmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev)
+    w.plscmap1n(2)
+    w.plscmap1la(1, pos, rcoord, gcoord, bcoord, acoord, rev)
     x=array([x1, x1, x2, x2])
-    plgradient(x,y,0.)
+    w.plgradient(x,y,0.)
     # Logo Legend
-    plscol0a(15, 255, 255, 255, 1.0)
-    plcol0(15)
+    w.plscol0a(15, 255, 255, 255, 1.0)
+    w.plcol0(15)
     x1 = 0.03
-    plschr(0., 2.9)
-    plsfont(PL_FCI_SANS, PL_FCI_UPRIGHT, PL_FCI_BOLD)
-    plptex(x1, 0.57, 1.0, 0.0, 0.0, "PLplot")
-    plschr(0., 1.5)
-    plptex(x1, 0.30, 1.0, 0.0, 0.0,
+    w.plschr(0., 2.9)
+    w.plsfont(w.PL_FCI_SANS, w.PL_FCI_UPRIGHT, w.PL_FCI_BOLD)
+    w.plptex(x1, 0.57, 1.0, 0.0, 0.0, "PLplot")
+    w.plschr(0., 1.5)
+    w.plptex(x1, 0.30, 1.0, 0.0, 0.0,
            "The ultimate in cross-platform plotting")
 
-main()
+main(w)
 # Terminate plplot
-plend()
+w.plend()

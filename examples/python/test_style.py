@@ -5,19 +5,19 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
 from numpy import *
 from math import *
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 xmin,xmax,ymin,ymax = (0., 1., 0., 1.)
 # Initialize plplot
-plinit()
+w.plinit()
 
 # Set up legend arrays with the correct size, type.
-# pllsty takes integers from 1 to 8.
+# w.pllsty takes integers from 1 to 8.
 nlegend = 8
 
 opt_array = zeros(nlegend, "int")
@@ -37,16 +37,16 @@ symbols = zeros(nlegend, "S100")
 
 # Only specify legend data that are required according to the
 # value of opt_array for that entry.
-opt_base = PL_LEGEND_BACKGROUND | PL_LEGEND_BOUNDING_BOX | PL_LEGEND_TEXT_LEFT
+opt_base = w.PL_LEGEND_BACKGROUND | w.PL_LEGEND_BOUNDING_BOX | w.PL_LEGEND_TEXT_LEFT
 
-pladv(0)
-plvpor(0.1, 0.9, 0.1, 0.9)
-plwind(xmin, xmax, ymin, ymax)
+w.pladv(0)
+w.plvpor(0.1, 0.9, 0.1, 0.9)
+w.plwind(xmin, xmax, ymin, ymax)
 text_scale = 0.90
 
 # Set up line legend entries with various styles
 for i in range(nlegend):
-    opt_array[i] = PL_LEGEND_LINE
+    opt_array[i] = w.PL_LEGEND_LINE
     text[i] = "%s %d" % ("Line Style",i+1)
     text_colors[i] = 2
     line_colors[i] = 2
@@ -54,9 +54,9 @@ for i in range(nlegend):
     line_widths[i] = 1
 
 opt = opt_base
-plscol0a( 15, 32, 32, 32, 0.70 )
+w.plscol0a( 15, 32, 32, 32, 0.70 )
 (legend_width, legend_height) = \
-    pllegend( opt, PL_POSITION_LEFT, 0., 0.,
+    w.pllegend( opt, w.PL_POSITION_LEFT, 0., 0.,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
@@ -64,7 +64,7 @@ plscol0a( 15, 32, 32, 32, 0.70 )
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
 # Set up legend arrays with the correct size, type.
-# plpsty takes integers from 0 to 8.
+# w.plpsty takes integers from 0 to 8.
 nlegend = 9
 
 opt_array = zeros(nlegend, "int")
@@ -84,7 +84,7 @@ symbols = zeros(nlegend, "S100")
 
 # Set up box legend entries with various patterns.
 for i in range(nlegend):
-    opt_array[i] = PL_LEGEND_COLOR_BOX
+    opt_array[i] = w.PL_LEGEND_COLOR_BOX
     text[i] = "%s %d" % ("Box Pattern",i)
     text_colors[i] = 2
     box_colors[i] = 2
@@ -93,13 +93,13 @@ for i in range(nlegend):
     box_line_widths[i] = 1
 
 opt = opt_base
-plscol0a( 15, 32, 32, 32, 0.70 )
+w.plscol0a( 15, 32, 32, 32, 0.70 )
 (legend_width, legend_height) = \
-    pllegend( opt, PL_POSITION_RIGHT, 0., 0.,
+    w.pllegend( opt, w.PL_POSITION_RIGHT, 0., 0.,
               0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
               0., text_colors, text,
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
 
-plend()
+w.plend()

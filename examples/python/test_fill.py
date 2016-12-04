@@ -6,25 +6,25 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
 from numpy import *
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
-plcol0(2)
-pladv(0)
-plvpor(0.1, 0.9, 0.1, 0.9)
+w.plinit()
+w.plcol0(2)
+w.pladv(0)
+w.plvpor(0.1, 0.9, 0.1, 0.9)
 xmin,xmax,ymin,ymax = (0., 1., 0., 1.)
-plwind(xmin, xmax, ymin, ymax)
+w.plwind(xmin, xmax, ymin, ymax)
 # Just to show edges of viewport
-plbox("bc", 0., 0, "bc", 0., 0)
-plcol0(1)
+w.plbox("bc", 0., 0, "bc", 0., 0)
+w.plcol0(1)
 eps = 0.001
 xmin,xmax,ymin,ymax = (xmin - eps, xmax + eps, ymin - eps, ymax + eps)
 x = (xmin, xmax, xmax, xmin)
 y = (ymin, ymin, ymax, ymax)
-plfill(x,y)
-plend()
+w.plfill(x,y)
+w.plend()

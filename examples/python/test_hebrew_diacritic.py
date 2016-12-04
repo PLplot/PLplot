@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8; -*-
-#  Copyright (C) 2010 Alan W. Irwin
+#  Copyright (C) 2010-2016 Alan W. Irwin
 
 #  Displays Genesis Chapter 1 verse 3 "And God said: 'Let there be
 #  light.' And there was light" in Hebrew as a test of diacritical
@@ -26,28 +26,26 @@
 from plplot_python_start import *
 
 import sys
-from plplot import *
+import plplot as w
 
 # Parse and process command line arguments
-plparseopts(sys.argv, PL_PARSE_FULL)
+w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 
 # Initialize plplot
-plinit()
+w.plinit()
 
-from plplot_py_demos import *
-
-def main():
-    pladv(0)
-    plcol0(2)
-    plvpor(0.02, 0.98, 0.02, 0.90)
-    plwind(0.0, 1.0, 0.0, 1.0)
-    plsfci(0)
-    plschr(0., 2.5)
+def main(w):
+    w.pladv(0)
+    w.plcol0(2)
+    w.plvpor(0.02, 0.98, 0.02, 0.90)
+    w.plwind(0.0, 1.0, 0.0, 1.0)
+    w.plsfci(0)
+    w.plschr(0., 2.5)
     # The text is Genesis, Chapter 1 verse 3 in Hebrew.
-    plptex (0.5, 0.5, 1., 0., 0.5, "וַיֹּאמֶר אֱלֹהִים יְהִי אוֹר וַיְהִי אוֹר וַיַּרְא")
-    plschr(0., 1.0)
+    w.plptex (0.5, 0.5, 1., 0., 0.5, "וַיֹּאמֶר אֱלֹהִים יְהִי אוֹר וַיְהִי אוֹר וַיַּרְא")
+    w.plschr(0., 1.0)
     # Restore defaults
-    plcol0(1)
-main()
-plend()
+    w.plcol0(1)
+main(w)
+w.plend()
 
