@@ -1,5 +1,4 @@
 from Tkinter import *
-#from pl import *
 from plplot import *
 from TclSup import *
 
@@ -30,7 +29,7 @@ class Plframe(Widget):
     def __init__( self, master=None, cnf={}, **kw ):
 	"""Constructor.
 
-	Initialize the Tk base class, and squirel away the stream id,
+	Initialize the Tk base class, and squirrel away the stream id,
 	so that we will be able to ensure that future draw requests
 	show up in the right place."""
 
@@ -233,9 +232,9 @@ class PlXframe(Frame):
 	devnamlst = TclList2Py( devnames )
 	devkeylst = TclList2Py( devkeys )
 
-        print "devnamlst = ", devnamlst
-        print "devkeylst = ", devkeylst
-        print "len(devnamlst) = ", len(devnamlst)
+        #print "devnamlst = ", devnamlst
+        #print "devkeylst = ", devkeylst
+        #print "len(devnamlst) = ", len(devnamlst)
 
 ##	for i in range( len(devnamlst) ):
 ##	    devnam = devnamlst[i]
@@ -393,7 +392,7 @@ class PlXframe(Frame):
 	    s.zoom_reset()
 	else:
 	    pass
-	    #print "Unknown keyname ", kn
+	    print "Unknown keyname ", kn
 
     def user_mouse( s, e ):
 	print "in user_mouse"
@@ -1070,15 +1069,216 @@ class PlXframe(Frame):
     def plcmap1_edit(s):
 	print "in plcmap1_edit"
 
+    def clearpage(s):
+        s.plf.setvar( 'wv', 1 )
+
 ## Now do the PLplot API.  Just vector these off to the contained
 ## Plframe widget.
+
+# Define constants that are accessible from the API
+# MAINTENANCE 2016-12
+# These are taken from the "#define" section of bindings/swig-support/plplotcapi.i
+# and transformed as follows:
+# grep '^#define' bindings/swig-support/plplotcapi.i |sed -e '/#define / s?#define ?    ?' -e 's?//?#?g' -e 's? \([(0-9]\)? = \1?' | grep '=' >|/tmp/software
+# and then that generated file was inserted here.
+    PLESC_SET_RGB                    = 1  # obsolete
+    PLESC_ALLOC_NCOL                 = 2  # obsolete
+    PLESC_SET_LPB                    = 3  # obsolete
+    PLESC_EXPOSE                     = 4  # handle window expose
+    PLESC_RESIZE                     = 5  # handle window resize
+    PLESC_REDRAW                     = 6  # handle window redraw
+    PLESC_TEXT                       = 7  # switch to text screen
+    PLESC_GRAPH                      = 8  # switch to graphics screen
+    PLESC_FILL                       = 9  # fill polygon
+    PLESC_DI                         = 10 # handle DI command
+    PLESC_FLUSH                      = 11 # flush output
+    PLESC_EH                         = 12 # handle Window events
+    PLESC_GETC                       = 13 # get cursor position
+    PLESC_SWIN                       = 14 # set window parameters
+    PLESC_DOUBLEBUFFERING            = 15 # configure double buffering
+    PLESC_XORMOD                     = 16 # set xor mode
+    PLESC_SET_COMPRESSION            = 17 # AFR: set compression
+    PLESC_CLEAR                      = 18 # RL: clear graphics region
+    PLESC_DASH                       = 19 # RL: draw dashed line
+    PLESC_HAS_TEXT                   = 20 # driver draws text
+    PLESC_IMAGE                      = 21 # handle image
+    PLESC_IMAGEOPS                   = 22 # plimage related operations
+    PLESC_PL2DEVCOL                  = 23 # convert PLColor to device color
+    PLESC_DEV2PLCOL                  = 24 # convert device color to PLColor
+    PLESC_SETBGFG                    = 25 # set BG, FG colors
+    PLESC_DEVINIT                    = 26 # alternate device initialization
+    PLESC_GETBACKEND                 = 27 # get used backend of (wxWidgets) driver - no longer used
+    PLESC_BEGIN_TEXT                 = 28 # get ready to draw a line of text
+    PLESC_TEXT_CHAR                  = 29 # render a character of text
+    PLESC_CONTROL_CHAR               = 30 # handle a text control character (super/subscript, etc.)
+    PLESC_END_TEXT                   = 31 # finish a drawing a line of text
+    PLESC_START_RASTERIZE            = 32 # start rasterized rendering
+    PLESC_END_RASTERIZE              = 33 # end rasterized rendering
+    PLESC_ARC                        = 34 # render an arc
+    PLESC_GRADIENT                   = 35 # render a gradient
+    PLESC_MODESET                    = 36 # set drawing mode
+    PLESC_MODEGET                    = 37 # get drawing mode
+    PLESC_FIXASPECT                  = 38 # set or unset fixing the aspect ratio of the plot
+    PLESC_IMPORT_BUFFER              = 39 # set the contents of the buffer to a specified byte string
+    PLESC_APPEND_BUFFER              = 40 # append the given byte string to the buffer
+    PLESC_FLUSH_REMAINING_BUFFER     = 41 # flush the remaining buffer e.g. after new data was appended
+    PLTEXT_FONTCHANGE                = 0  # font change in the text stream
+    PLTEXT_SUPERSCRIPT               = 1  # superscript in the text stream
+    PLTEXT_SUBSCRIPT                 = 2  # subscript in the text stream
+    PLTEXT_BACKCHAR                  = 3  # back-char in the text stream
+    PLTEXT_OVERLINE                  = 4  # toggle overline in the text stream
+    PLTEXT_UNDERLINE                 = 5  # toggle underline in the text stream
+    ZEROW2B                          = 1
+    ZEROW2D                          = 2
+    ONEW2B                           = 3
+    ONEW2D                           = 4
+    PLSWIN_DEVICE                    = 1      # device coordinates
+    PLSWIN_WORLD                     = 2      # world coordinates
+    PL_X_AXIS                        = 1      # The x-axis
+    PL_Y_AXIS                        = 2      # The y-axis
+    PL_Z_AXIS                        = 3      # The z-axis
+    PL_OPT_ENABLED                   = 0x0001 # Obsolete
+    PL_OPT_ARG                       = 0x0002 # Option has an argment
+    PL_OPT_NODELETE                  = 0x0004 # Don't delete after processing
+    PL_OPT_INVISIBLE                 = 0x0008 # Make invisible
+    PL_OPT_DISABLED                  = 0x0010 # Processing is disabled
+    PL_OPT_FUNC                      = 0x0100 # Call handler function
+    PL_OPT_BOOL                      = 0x0200 # Set *var = 1
+    PL_OPT_INT                       = 0x0400 # Set *var = atoi(optarg)
+    PL_OPT_FLOAT                     = 0x0800 # Set *var = atof(optarg)
+    PL_OPT_STRING                    = 0x1000 # Set var = optarg
+    PL_PARSE_PARTIAL                 = 0x0000 # For backward compatibility
+    PL_PARSE_FULL                    = 0x0001 # Process fully & exit if error
+    PL_PARSE_QUIET                   = 0x0002 # Don't issue messages
+    PL_PARSE_NODELETE                = 0x0004 # Don't delete options after
+    PL_PARSE_SHOWALL                 = 0x0008 # Show invisible options
+    PL_PARSE_OVERRIDE                = 0x0010 # Obsolete
+    PL_PARSE_NOPROGRAM               = 0x0020 # Program name NOT in *argv[0]..
+    PL_PARSE_NODASH                  = 0x0040 # Set if leading dash NOT required
+    PL_PARSE_SKIP                    = 0x0080 # Skip over unrecognized args
+    PL_FCI_MARK                      = 0x80000000
+    PL_FCI_IMPOSSIBLE                = 0x00000000
+    PL_FCI_HEXDIGIT_MASK             = 0xf
+    PL_FCI_HEXPOWER_MASK             = 0x7
+    PL_FCI_HEXPOWER_IMPOSSIBLE       = 0xf
+    PL_FCI_FAMILY                    = 0x0
+    PL_FCI_STYLE                     = 0x1
+    PL_FCI_WEIGHT                    = 0x2
+    PL_FCI_SANS                      = 0x0
+    PL_FCI_SERIF                     = 0x1
+    PL_FCI_MONO                      = 0x2
+    PL_FCI_SCRIPT                    = 0x3
+    PL_FCI_SYMBOL                    = 0x4
+    PL_FCI_UPRIGHT                   = 0x0
+    PL_FCI_ITALIC                    = 0x1
+    PL_FCI_OBLIQUE                   = 0x2
+    PL_FCI_MEDIUM                    = 0x0
+    PL_FCI_BOLD                      = 0x1
+    PL_MAXKEY                        = 16
+    PL_MASK_SHIFT                    = 0x1    # ( 1 << 0 )
+    PL_MASK_CAPS                     = 0x2    # ( 1 << 1 )
+    PL_MASK_CONTROL                  = 0x4    # ( 1 << 2 )
+    PL_MASK_ALT                      = 0x8    # ( 1 << 3 )
+    PL_MASK_NUM                      = 0x10   # ( 1 << 4 )
+    PL_MASK_ALTGR                    = 0x20   #  ( 1 << 5 )
+    PL_MASK_WIN                      = 0x40   # ( 1 << 6 )
+    PL_MASK_SCROLL                   = 0x80   # ( 1 << 7 )
+    PL_MASK_BUTTON1                  = 0x100  # ( 1 << 8 )
+    PL_MASK_BUTTON2                  = 0x200  # ( 1 << 9 )
+    PL_MASK_BUTTON3                  = 0x400  # ( 1 << 10 )
+    PL_MASK_BUTTON4                  = 0x800  # ( 1 << 11 )
+    PL_MASK_BUTTON5                  = 0x1000 # ( 1 << 12 )
+    PL_MAXWINDOWS                    = 64     # Max number of windows/page tracked
+    PL_NOTSET                        = ( -42 )
+    PLESC_DOUBLEBUFFERING_ENABLE     = 1
+    PLESC_DOUBLEBUFFERING_DISABLE    = 2
+    PLESC_DOUBLEBUFFERING_QUERY      = 3
+    PL_BIN_DEFAULT                   = 0x0
+    PL_BIN_CENTRED                   = 0x1
+    PL_BIN_NOEXPAND                  = 0x2
+    PL_BIN_NOEMPTY                   = 0x4
+    GRID_CSA                         = 1 # Bivariate Cubic Spline approximation
+    GRID_DTLI                        = 2 # Delaunay Triangulation Linear Interpolation
+    GRID_NNI                         = 3 # Natural Neighbors Interpolation
+    GRID_NNIDW                       = 4 # Nearest Neighbors Inverse Distance Weighted
+    GRID_NNLI                        = 5 # Nearest Neighbors Linear Interpolation
+    GRID_NNAIDW                      = 6 # Nearest Neighbors Around Inverse Distance Weighted
+    PL_HIST_DEFAULT                  = 0x00
+    PL_HIST_NOSCALING                = 0x01
+    PL_HIST_IGNORE_OUTLIERS          = 0x02
+    PL_HIST_NOEXPAND                 = 0x08
+    PL_HIST_NOEMPTY                  = 0x10
+    PL_POSITION_LEFT                 = 0x1
+    PL_POSITION_RIGHT                = 0x2
+    PL_POSITION_TOP                  = 0x4
+    PL_POSITION_BOTTOM               = 0x8
+    PL_POSITION_INSIDE               = 0x10
+    PL_POSITION_OUTSIDE              = 0x20
+    PL_POSITION_VIEWPORT             = 0x40
+    PL_POSITION_SUBPAGE              = 0x80
+    PL_LEGEND_NONE                   = 0x1
+    PL_LEGEND_COLOR_BOX              = 0x2
+    PL_LEGEND_LINE                   = 0x4
+    PL_LEGEND_SYMBOL                 = 0x8
+    PL_LEGEND_TEXT_LEFT              = 0x10
+    PL_LEGEND_BACKGROUND             = 0x20
+    PL_LEGEND_BOUNDING_BOX           = 0x40
+    PL_LEGEND_ROW_MAJOR              = 0x80
+    PL_COLORBAR_LABEL_LEFT           = 0x1
+    PL_COLORBAR_LABEL_RIGHT          = 0x2
+    PL_COLORBAR_LABEL_TOP            = 0x4
+    PL_COLORBAR_LABEL_BOTTOM         = 0x8
+    PL_COLORBAR_IMAGE                = 0x10
+    PL_COLORBAR_SHADE                = 0x20
+    PL_COLORBAR_GRADIENT             = 0x40
+    PL_COLORBAR_CAP_NONE             = 0x80
+    PL_COLORBAR_CAP_LOW              = 0x100
+    PL_COLORBAR_CAP_HIGH             = 0x200
+    PL_COLORBAR_SHADE_LABEL          = 0x400
+    PL_COLORBAR_ORIENT_RIGHT         = 0x800
+    PL_COLORBAR_ORIENT_TOP           = 0x1000
+    PL_COLORBAR_ORIENT_LEFT          = 0x2000
+    PL_COLORBAR_ORIENT_BOTTOM        = 0x4000
+    PL_COLORBAR_BACKGROUND           = 0x8000
+    PL_COLORBAR_BOUNDING_BOX         = 0x10000
+    PL_DRAWMODE_UNKNOWN              = 0x0
+    PL_DRAWMODE_DEFAULT              = 0x1
+    PL_DRAWMODE_REPLACE              = 0x2
+    PL_DRAWMODE_XOR                  = 0x4
+    DRAW_LINEX                       = 0x001 # draw lines parallel to the X axis
+    DRAW_LINEY                       = 0x002 # draw lines parallel to the Y axis
+    DRAW_LINEXY                      = 0x003 # draw lines parallel to both the X and Y axis
+    MAG_COLOR                        = 0x004 # draw the mesh with a color dependent of the magnitude
+    BASE_CONT                        = 0x008 # draw contour plot at bottom xy plane
+    TOP_CONT                         = 0x010 # draw contour plot at top xy plane
+    SURF_CONT                        = 0x020 # draw contour plot at surface
+    DRAW_SIDES                       = 0x040 # draw sides
+    FACETED                          = 0x080 # draw outline for each square that makes up the surface
+    MESH                             = 0x100 # draw mesh
+# End of constants.
+
+    # Define pltr0, pltr1, and pltr2 as equivalent strings so they
+    # can be turned back into callback functions by plcont, etc., in
+    # plplot.py
+    pltr0 = "pltr0"
+    pltr1 = "pltr1"
+    pltr2 = "pltr2"
 
     def cmd( s, *args ):
 	"Invoke a subcommand on the plframe widget."
 	apply( s.tk.call, (s.plf._w, 'cmd',) + _flatten(args) )
 
+    def pl_setcontlabelformat(s, lexp, sigdig):
+        s.cmd( 'pl_setcontlabelformat', lexp, sigdig )
+        
+    def pl_setcontlabelparam(s, offset, size, spacing, active):
+        s.cmd( 'pl_setcontlabelparam', offset, size, spacing, active)
+
     def pladv( s, page ):
         s.cmd( 'pladv', page )
+
+    def plarc( s, x, y, a, b, angle1, angle2, rotate, fill ):
+        s.cmd( 'plarc', x, y, a, b, angle1, angle2, rotate, fill )
 
     def plaxes( s, x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub ):
 	s.cmd( 'plaxes', x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub )
@@ -1098,17 +1298,18 @@ class PlXframe(Frame):
                yopt, ylabel, ytick, nsuby,
                zopt, zlabel, ztick, nsubz )
 
+    def plclear(s):
+	s.cmd( 'plclear' )
+
     def plcol0( s, col0 ):
 	s.cmd( 'plcol0', col0 )
 
     def plcol1( s, col1 ):
         s.cmd( 'plcol1', col1 )
 
-#    def plcont( s ): pass
-
-##    def plcontxxx( s, z, kx, lx, ky, ly, clev, pltr, xg, yg, wrap ):
-##	plsstrm( s.strm )
-##	plcont( z, kx, lx, ky, ly, clev, pltr, xg, yg, wrap )
+    def plcolorbar( s, *args ):
+	plsstrm( s.strm )
+	return plcolorbar( *args )
 
     def plcont( s, *args ):
 	plsstrm( s.strm )
@@ -1131,9 +1332,6 @@ class PlXframe(Frame):
 	s.label_reset()
 	s.update()
 
-    def clearpage(s):
-	s.plf.setvar( 'wv', 1 )
-
     def plfill( s, x, y ):
 	plsstrm( s.strm )
 	plfill( x, y )
@@ -1144,6 +1342,14 @@ class PlXframe(Frame):
     def plfontld( s, fnt ):
         s.cmd( 'plfontld', fnt )
 
+    def plgcol0(s, i):
+	plsstrm( s.strm )
+        return plgcol0(i)
+
+    def plgcolbg(s):
+	plsstrm( s.strm )
+        return plgcolbg()
+
     def plhist( s, data, datmin, datmax, nbin, oldwin ):
 	plsstrm( s.strm )
 	plhist( data, datmin, datmax, nbin, oldwin )
@@ -1151,11 +1357,22 @@ class PlXframe(Frame):
     def plhls( s, h, l, sat ):
 	s.cmd( 'plhls', h, l, sat )
 
+    def plhlsrgb(namespace, h, l, s):
+	plsstrm( namespace.strm )
+        return plhlsrgb(h, l, s)
+
     def pljoin( s, x1, y1, x2, y2 ):
 	s.cmd( 'pljoin', x1, y1, x2, y2 )
 
     def pllab( s, xlab, ylab, tlab ):
         s.cmd( 'pllab', xlab, ylab, tlab )
+
+    def pllegend(s, opt, position, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols):
+	plsstrm( s.strm )
+	return pllegend(opt, position, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
+
+    def pllightsource( s, x, y, z ):
+	s.cmd( 'pllightsource', x, y, z )
 
     def plline( s, x, y ):
 	plsstrm( s.strm )
@@ -1174,16 +1391,16 @@ class PlXframe(Frame):
 	plsstrm( s.strm )
 	plmesh( x, y, z, opt )
 
+    def plmeshc( s, x, y, z, opt, clevel ):
+	plsstrm( s.strm )
+	plmeshc( x, y, z, opt, clevel )
+
     def plmtex( s, side, disp, pos, just, text ):
 	s.cmd( 'plmtex', side, disp, pos, just, text )
 
     def plot3d( s, x, y, z, opt, side ):
 	plsstrm( s.strm )
-	plplot3d( x, y, z, opt, side )
-
-    def plplot3d( s, x, y, z, opt, side ):
-	plsstrm( s.strm )
-	plplot3d( x, y, z, opt, side )
+	plot3d( x, y, z, opt, side )
 
     def plpoin( s, xs, ys, mark ):
 	plsstrm( s.strm )
@@ -1193,9 +1410,9 @@ class PlXframe(Frame):
 	plsstrm( s.strm )
 	plpoin3( x, y, z, code )
 
-    def plpoly3( s, x, y, z, draw ):
+    def plpoly3( s, x, y, z, draw, ifcc ):
 	plsstrm( s.strm )
-	plpoly3( x, y, z, draw )
+	plpoly3( x, y, z, draw, ifcc )
 
     def plprec( s, setp, prec ):
 	s.cmd( 'plprec', setp, prec )
@@ -1218,34 +1435,47 @@ class PlXframe(Frame):
     def plschr( s, dflt, scale ):
 	s.cmd( 'plschr', dflt, scale )
 
-    def plshade( s, z, xmin, xmax, ymin, ymax,
-		 sh_min, sh_max, sh_cmap, sh_color, sh_width,
-		 min_col, min_wid, max_col, max_wid, rect,
-		 pltr='pltr0', xg=None, yg=None, wrap=0 ):
-	"Color filled shad plot."
+    def plsmaj( s, dflt, scale ):
+	s.cmd( 'plsmaj', dflt, scale )
 
-	plsstrm( s.strm );
-	plshade( z, xmin, xmax, ymin, ymax,
-		 sh_min, sh_max, sh_cmap, sh_color, sh_width,
-		 min_col, min_wid, max_col, max_wid, rect,
-		 pltr, xg, yg, wrap )
+    def plsmin( s, dflt, scale ):
+	s.cmd( 'plsmin', dflt, scale )
 
-##    def plshade2( s, z, xmin, xmax, ymin, ymax,
-##		  sh_min, sh_max, sh_cmap, sh_color, sh_width,
-##		  min_col, min_wid, max_col, max_wid, rect,
-##		  pltr, xg, yg, wrap ):
-##	"Was unable to fix plshade, must make new plshade2, grrr."
-##
-##	print "in plshade2"
-##	plsstrm( s.strm );
-##	plshade( z, xmin, xmax, ymin, ymax,
-##		 sh_min, sh_max, sh_cmap, sh_color, sh_width,
-##		 min_col, min_wid, max_col, max_wid, rect,
-##		 pltr, xg, yg, wrap )
+    def plshade( s, *args ):
+	plsstrm( s.strm )
+	apply( plshade, args )
 
-# Only works for special conditions so comment it out for now.
-#    def plsmem( ny, ny, plotmem ):
-#        s.cmd('plsmem', nx, ny plotmem )
+    def plshades( s, *args ):
+	plsstrm( s.strm )
+	apply( plshades, args )
+
+    def plscmap0(s, r, g, b):
+	plsstrm( s.strm )
+        plscmap0(r, g, b)
+
+    def plscmap0n(s, ncol1):
+	s.cmd( 'plscmap0n', ncol1 )
+
+    def plscmap1l(s, itype, intensity, coord1, coord2, coord3, *alt_hue_path):
+	plsstrm( s.strm )
+        plscmap1l(itype, intensity, coord1, coord2, coord3, *alt_hue_path)
+        
+    def plscmap1n(s, ncol1):
+	s.cmd( 'plscmap1n', ncol1 )
+
+    def plscol0( s, icol0, r, g, b ):
+	s.cmd( 'plscol0', icol0, r, g, b )
+
+    def plscol0a( s, icol0, r, g, b, a ):
+	s.cmd( 'plscol0a', icol0, r, g, b, a )
+
+    def plspal0(s, filename):
+        plsstrm( s.strm )
+        plspal0(filename)
+
+    def plspal1(s, filename, interpolate):
+        plsstrm( s.strm )
+        plspal1(filename, interpolate)
 
     def plssub( s, nx, ny ):
 	s.cmd( 'plssub', nx, ny )
@@ -1255,8 +1485,26 @@ class PlXframe(Frame):
 
     # plstar and plstart not relevant
 
-    #def plstyl( s, ...
+    def plstring(s, x, y, string):
+	plsstrm( s.strm )
+	plstring(x, y, string)
 
+    def plstring3(s, x, y, z, string):
+	plsstrm( s.strm )
+	plstring3(x, y, z, string)
+
+    def plstyl( s, mark, space ):
+	plsstrm( s.strm )
+	plstyl( mark, space )
+
+    def plsurf3d(s, x, y, z, opt, clevel):
+	plsstrm( s.strm )
+        plsurf3d(x, y, z, opt, clevel)
+        
+    def plsurf3dl(s, x, y, z, opt, clevel, indexxmin, indexymin, indexymax):
+	plsstrm( s.strm )
+        plsurf3dl(x, y, z, opt, clevel,indexxmin, indexymin, indexymax)
+        
     def plsvpa( s, xmin, xmax, ymin, ymax ):
 	s.cmd( 'plsvpa', xmin, xmax, ymin, ymax )
 
@@ -1291,8 +1539,8 @@ class PlXframe(Frame):
                basex, basey, height, xmin0,
                xmax0, ymin0, ymax0, zmin0, zmax0, alt, az)
 
-    def plwid( s, width ):
-	s.cmd( 'plwid', width )
+    def plwidth( s, width ):
+	s.cmd( 'plwidth', width )
 
     def plwind( s, xmin, xmax, ymin, ymax ):
 	s.cmd( 'plwind', xmin, xmax, ymin, ymax )
