@@ -128,52 +128,55 @@ if(ENABLE_python)
     )
   add_dependencies(_plplotcmodule_fixed _plplotcmodule)
 
-  add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
-  set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
-  set_source_files_properties(
-    plplot_widgetmodule.c
-    PROPERTIES COMPILE_FLAGS
-    "-DUSINGDLL"
-    )
+  # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
+  # insure correct code to support plplot_widgetmodule is in
+  # libplplot if ENABLE_DYNDRIVERS is OFF.
+  if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
+    add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
+    set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
+    set_source_files_properties(
+      plplot_widgetmodule.c
+      PROPERTIES COMPILE_FLAGS
+      "-DUSINGDLL"
+      )
 
-  if(ENABLE_tkX AND ENABLE_DYNDRIVERS)
-    target_link_libraries( plplot_widgetmodule
-      plplot
-      plplottcltk
-      ${PYTHON_LIBRARIES}
-      )
-  else(ENABLE_tkX AND ENABLE_DYNDRIVERS)
-    # Don't link to plplottcltk if ENABLE_tkX is false
-    # or ENABLE_DYNDRIVERS is false.  If ENABLE_tkX is true
-    # and ENABLE_DYNDRIVERS is false all of the plplottcltk
-    # code is already in plplot so this rule avoids redundant
-    # linking.
-    target_link_libraries( plplot_widgetmodule
-      plplot
-      ${PYTHON_LIBRARIES}
-      )
-  endif(ENABLE_tkX AND ENABLE_DYNDRIVERS)
+    if(ENABLE_DYNDRIVERS)
+      target_link_libraries( plplot_widgetmodule
+	plplot
+	plplottcltk
+	${PYTHON_LIBRARIES}
+	)
+    else(ENABLE_DYNDRIVERS)
+      # Don't link to plplottcltk if ENABLE_tkX is false since all of
+      # the plplottcltk code is already in plplot.  Therefore this
+      # rule avoids redundant linking.
+      target_link_libraries( plplot_widgetmodule
+	plplot
+	${PYTHON_LIBRARIES}
+	)
+    endif(ENABLE_DYNDRIVERS)
 
-  if(USE_RPATH)
-    set_target_properties(
-      plplot_widgetmodule
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+    if(USE_RPATH)
+      set_target_properties(
+	plplot_widgetmodule
+	PROPERTIES
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	)
+    else(USE_RPATH)
+      set_target_properties(
+	plplot_widgetmodule
+	PROPERTIES
+	INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
+	)
+    endif(USE_RPATH)
+    
+    install(
+      TARGETS plplot_widgetmodule _plplotcmodule
+      EXPORT export_plplot
+      LIBRARY
+      DESTINATION ${PYTHON_INSTDIR}
       )
-  else(USE_RPATH)
-    set_target_properties(
-      plplot_widgetmodule
-      PROPERTIES
-      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-      )
-  endif(USE_RPATH)
-
-  install(
-    TARGETS plplot_widgetmodule _plplotcmodule
-    EXPORT export_plplot
-    LIBRARY
-    DESTINATION ${PYTHON_INSTDIR}
-    )
+  endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
 
   set(PERM_SCRIPTS
     OWNER_READ

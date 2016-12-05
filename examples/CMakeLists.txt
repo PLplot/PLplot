@@ -756,13 +756,33 @@ if(BUILD_TEST)
     set(tk_targets_LIST)
     set(qt_targets_LIST)
 
-    # INTERACTIVE_DEVICES_LIST is set in
+    # EXTERNAL_DEVICES_LIST determined here from what external devices
+    # are enabled.  The required PLD_* data are available both for the
+    # core build and (via the configured plplot_configure.cmake) the
+    # installed examples build.  Each list member consists of a
+    # colon-separated external device name and driver name.
+
+    set(EXTERNAL_DEVICES_LIST)
+    if(PLD_extcairo)
+      list(APPEND EXTERNAL_DEVICES_LIST "extcairo:cairo")
+    endif(PLD_extcairo)
+    if(PLD_extqt)
+      list(APPEND EXTERNAL_DEVICES_LIST "extqt:qt")
+    endif(PLD_extqt)
+      
+    # <driver>_targets determined in the loop below over all enabled
+    # external devices and interactive devices are used both for (one)
+    # custom command DEPENDS below and for several add_dependencies
+    # commands below.
+
+    # N.B. INTERACTIVE_DEVICES_LIST is set in
     # cmake/modules/drivers-finish.cmake for all enabled _interactive_
     # devices and is thus available for the core build.  It is also
     # configured in plplot_configure.cmake and is thus available
     # for the installed examples tests.  Each list member consists of
     # a colon-separated device name and driver name.
-    foreach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
+
+    foreach(interactive_devices_info IN LISTS EXTERNAL_DEVICES_LIST INTERACTIVE_DEVICES_LIST)
       string(REGEX REPLACE "^(.*):.*$" "\\1" device ${interactive_devices_info})
       string(REGEX REPLACE "^.*:(.*)$" "\\1" driver ${interactive_devices_info})
 
@@ -795,6 +815,12 @@ if(BUILD_TEST)
 	endif(driver STREQUAL "wxwidgets" AND TARGET wxPLViewer)
 
       endif(NOT ${driver}_targets)
+    endforeach(interactive_devices_info IN LISTS EXTERNAL_DEVICES_LIST EXTERNAL_DEVICES_LIST)
+
+    # Create some custom interactive test targets using list of interactive devices.
+    foreach(interactive_devices_info IN LISTS INTERACTIVE_DEVICES_LIST)
+      string(REGEX REPLACE "^(.*):.*$" "\\1" device ${interactive_devices_info})
+      string(REGEX REPLACE "^.*:(.*)$" "\\1" driver ${interactive_devices_info})
 
       add_custom_target(test_c_${device}
 	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} interactive device"
@@ -835,11 +861,8 @@ if(BUILD_TEST)
 	#  list(APPEND tk_targets_LIST test_octave_${device})
 	#endif(device STREQUAL "tk" OR device STREQUAL "ntk")
       endif(ENABLE_octave)
-    endforeach(interactive_devices_info ${INTERACTIVE_DEVICES_LIST})
+    endforeach(interactive_devices_info IN LISTS INTERACTIVE_DEVICES_LIST)
 
-    # <driver>_targets determined in the above loop over all enabled
-    # interactive devices is used both for (one) custom command
-    # DEPENDS below and for several add_dependencies commands below.
     if(ENABLE_DYNDRIVERS)
 
       if(TARGET tkwin)
@@ -1097,7 +1120,10 @@ if(BUILD_TEST)
       )
     list(APPEND targets_examples_tk test_plserver_standard_examples)
 
-    if(ENABLE_python)
+    # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
+    # insure correct code to support plplot_widgetmodule is in
+    # libplplot if ENABLE_DYNDRIVERS is OFF.
+    if(ENABLE_python AND (ENABLE_DYNDRIVERS OR PLD_tk))
       if(CORE_BUILD)
 	add_custom_target(test_pytkdemo
 	  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/pytkdemo
@@ -1115,19 +1141,19 @@ if(BUILD_TEST)
 	  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pytkdemo
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	  )
-	add_dependencies(test_pyqt4_example
+	add_dependencies(test_pytkdemo
 	  _plplotcmodule
 	  plplot_widgetmodule
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
 	  )
       endif(CORE_BUILD)
-      message(STATUS "WARNING: The test_pytkdemo target can be run independently but does not
-   work reliably so it is temporarily excluded from being a dependency of other
-   more general interactive test targets")
-	#list(APPEND interactive_targets_LIST test_pytkdemo)
-	#list(APPEND tk_targets_LIST test_pytkdemo)
-    endif(ENABLE_python)
+      #message(STATUS "WARNING: The test_pytkdemo target can be run independently but does not
+#   work reliably so it is temporarily excluded from being a dependency of other
+#   more general interactive test targets")
+      list(APPEND interactive_targets_LIST test_pytkdemo)
+      list(APPEND tk_targets_LIST test_pytkdemo)
+    endif(ENABLE_python AND (ENABLE_DYNDRIVERS OR PLD_tk))
 
     if(BUILD_SHARED_LIBS AND PLD_tk)
       # tests that use "package require Pltk" only work if
