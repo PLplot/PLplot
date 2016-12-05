@@ -4,8 +4,9 @@ proc x02 {{w loopback}} {
     x02_demo2 $w
 
 # Restore defaults
-    $w cmd plssub 1 1
     $w cmd plfont 1
+    $w cmd plssub 1 1
+    $w cmd pleop
     # $w cmd plcol0 1
 }
 
@@ -130,6 +131,4 @@ proc x02_draw_windows { w nw {cmap0_offset 0} } {
 	$w cmd plwidth 1
 	$w cmd plptex 0.5 0.5 1.0 0.0 0.5 $i
     }
-
-    $w cmd pleop
 }
