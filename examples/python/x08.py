@@ -1,4 +1,4 @@
-# xw08.py PLplot demo for Python
+# x08.py PLplot demo for Python
 #
 # Copyright (C) 2004-2016  Alan W. Irwin
 #

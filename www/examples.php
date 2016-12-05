@@ -192,7 +192,7 @@ END;
 	  case ("Lua"):    $fname = "x" . $demo_str . ".lua.txt"; break;
 	  case ("Ocaml"):  $fname = "x" . $demo_str . ".ml.txt"; break;
 	  case ("Octave"): $fname = "x" . $demo_str . "c.m.txt"; break;
-	  case ("Python"): $fname = "xw" . $demo_str . ".py.txt"; break;
+	  case ("Python"): $fname = "x" . $demo_str . ".py.txt"; break;
 	  case ("Tcl"):    $fname = "x" . $demo_str . ".tcl.txt";  break;
 	  default:         $fname = "x" . $demo_str . "c.c.txt";
 	  }

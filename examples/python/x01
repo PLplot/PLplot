@@ -35,8 +35,8 @@ print "PLplot library version: " + version
 # Initialize plplot
 w.plinit()
 
-import xw01
-xw01.main(w)
+import x01
+x01.main(w)
 
 # Terminate plplot
 w.plend()

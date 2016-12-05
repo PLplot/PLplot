@@ -40,8 +40,8 @@ w.plspal1("cmap1_gray.pal",1)
 w.plscmap0n(3)
 w.plinit()
 
-import xw16
-xw16.main(w)
+import x16
+x16.main(w)
 
 # Terminate plplot
 w.plend()

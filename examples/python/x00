@@ -33,8 +33,8 @@ w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 # Initialize plplot
 w.plinit()
 
-import xw00
-xw00.main(w)
+import x00
+x00.main(w)
 
 # Terminate plplot
 w.plend()

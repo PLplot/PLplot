@@ -37,8 +37,8 @@ w.plsori(1)
 # Initialize plplot
 w.plinit()
 
-import xw03
-xw03.main(w)
+import x03
+x03.main(w)
 
 # Terminate plplot
 w.plend()

@@ -36,11 +36,11 @@ w.plinit()
 
 failed = []
 for i in range(0,34):
-    # Exclude interactive demos 14, 17, 31 which call plinit in the xw??.py
+    # Exclude interactive demos 14, 17, 31 which call plinit in the x??.py
     # script.  Also, exclude 32 which is not implemented.
     if i == 14 or i == 17 or i == 31 or i == 32:
         continue
-    script = 'xw' + '%02d' % i
+    script = 'x' + '%02d' % i
     module = __import__(script, globals(), locals(), [])
     try:
         module.main(w)

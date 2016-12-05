@@ -5,5 +5,5 @@
 
 # However, provide this wrapper for the standalone module so that it
 # can be run just like the other python examples that are not standalone.
-import xw31
+import x31
 

@@ -62,7 +62,7 @@ set(python_SCRIPTS)
 set(python_DATA)
 foreach(STRING_INDEX ${python_STRING_INDICES})
   set(python_SCRIPTS ${python_SCRIPTS} x${STRING_INDEX})
-  set(python_DATA ${python_DATA} xw${STRING_INDEX}.py)
+  set(python_DATA ${python_DATA} x${STRING_INDEX}.py)
 endforeach(STRING_INDEX ${python_STRING_INDICES})
 
 # This list contains standalone scripts which are executable and which
@@ -74,9 +74,9 @@ set(
   x14
   x17
   x31
-  xw14.py
-  xw17.py
-  xw31.py
+  x14.py
+  x17.py
+  x31.py
   plplot_logo.py
   test_circle.py
   test_axis_precision.py

@@ -16,25 +16,25 @@ import Plframe
 from Plframe import *
 
 import restore
-import xw00 as x00
-import xw01 as x01
-import xw02 as x02
-import xw03 as x03
-import xw04 as x04
-import xw05 as x05
-import xw06 as x06
-import xw07 as x07
-import xw08 as x08
-import xw09 as x09
-import xw10 as x10
-import xw11 as x11
-import xw12 as x12
-import xw13 as x13
+import x00
+import x01
+import x02
+import x03
+import x04
+import x05
+import x06
+import x07
+import x08
+import x09
+import x10
+import x11
+import x12
+import x13
 ##import x14
 ##import x15
-import xw16 as x16
+import x16
 ##import x17
-import xw18 as x18
+import x18
 ##import x19
 
 class DemoApp(Frame):
