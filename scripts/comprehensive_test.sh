@@ -751,16 +751,16 @@ else
     HAS_PRINTENV=true
 fi
 
+# Collect selected important environment variable results prior to testing.
+rm -f $ENVIRONMENT_LOG
+echo "PATH=$PATH" > $ENVIRONMENT_LOG
+echo "CC=$CC" >> $ENVIRONMENT_LOG
+echo "CXX=$CXX" >> $ENVIRONMENT_LOG
+echo "FC=$FC" >> $ENVIRONMENT_LOG
 if [ "$HAS_PRINTENV" = "false" ] ; then
-    echo_tee "WARNING: printenv not on PATH so not collecting environment variables in $ENVIRONMENT_LOG"
-    rm -f $ENVIRONMENT_LOG
+    echo_tee "WARNING: printenv not on PATH so cannot collect certain important environment variables in $ENVIRONMENT_LOG"
 else
-    # Collect selected important environment variable results prior to testing.
-    echo "PATH=$PATH" >| $ENVIRONMENT_LOG
-    echo "CC=$CC" >> $ENVIRONMENT_LOG
-    echo "CXX=$CXX" >> $ENVIRONMENT_LOG
-    echo "FC=$FC" >> $ENVIRONMENT_LOG
-    printenv |grep -E 'CMAKE_.*PATH|FLAGS|PKG_CONFIG_PATH|LD_LIBRARY_PATH|PLPLOT' >> $ENVIRONMENT_LOG
+    printenv |grep -E '^CMAKE_.*PATH=|^.*FLAGS=|^PKG_CONFIG_PATH=|^LD_LIBRARY_PATH=|PLPLOT' >> $ENVIRONMENT_LOG
 fi
 
 test_types=
