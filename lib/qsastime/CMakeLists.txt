@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2009-2015 Alan W. Irwin
+# Copyright (C) 2009-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -89,11 +89,6 @@ set(qsastime_LIB_SRCS
   qsastime.c dsplint.c
   )
 
-if(BUILD_SHARED_LIBS)
-  set_source_files_properties( ${qsastime_LIB_SRCS}
-    PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-    )
-endif(BUILD_SHARED_LIBS)
 add_library(qsastime ${qsastime_LIB_SRCS})
 add_dependencies(qsastime tai-utc.h_built deltaT.h_built)
 

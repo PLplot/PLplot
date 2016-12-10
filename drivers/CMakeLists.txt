@@ -39,9 +39,14 @@ if(ENABLE_DYNDRIVERS)
 
     set_source_files_properties(
       test-drv-info.c
-      PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR} -DUSINGDLL"
+      PROPERTIES COMPILE_FLAGS "-I${LTDL_INCLUDE_DIR}"
       )
     add_executable(test-drv-info test-drv-info.c)
+    if(BUILD_SHARED_LIBS)
+      set_target_properties(test-drv-info PROPERTIES
+	COMPILE_DEFINITIONS "USINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
     target_link_libraries(test-drv-info
       plplot
       ${LTDL_LIBRARIES}
@@ -80,14 +85,9 @@ if(ENABLE_DYNDRIVERS)
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(
 	${${SOURCE_ROOT_NAME}_SOURCE}
-	PROPERTIES COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGDLL"
+	PROPERTIES COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}"
 	)
       #message("${SOURCE_ROOT_NAME}_COMPILE_FLAGS = ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}")
-    else(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
-      set_source_files_properties(
-	${${SOURCE_ROOT_NAME}_SOURCE}
-	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-	)
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
 
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
@@ -211,6 +211,11 @@ if(ENABLE_DYNDRIVERS)
 	SUFFIX ${DYNAMIC_SUFFIX}
 	)
     endif(USE_RPATH)
+    if(BUILD_SHARED_LIBS)
+      set_target_properties(${SOURCE_ROOT_NAME} PROPERTIES
+	COMPILE_DEFINITIONS "USINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
 
     if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
       add_custom_command(

@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2007 Werner Smekal
-# Copyright (C) 2015 Alan W. Irwin
+# Copyright (C) 2015-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -57,15 +57,9 @@ if(ENABLE_wxwidgets)
   # Create plplotwxwidgets library
   add_library(plplotwxwidgets ${plplotwxwidgets_LIB_SRCS})
 
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS} -DUSINGDLL"
-      )
-  else(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
-      )
-  endif(BUILD_SHARED_LIBS)
+  set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
+    PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
+    )
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   IF(wxWidgets_DEFINITIONS)

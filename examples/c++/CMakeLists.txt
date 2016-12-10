@@ -99,11 +99,12 @@ if(BUILD_TEST)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_cxx)
   foreach(STRING_INDEX ${cxx_STRING_INDICES})
-    if(BUILD_SHARED_LIBS)
-      set_source_files_properties(x${STRING_INDEX}.cc
-        PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
-    endif(BUILD_SHARED_LIBS)
     add_executable(x${STRING_INDEX} x${STRING_INDEX}.cc)
+    if(BUILD_SHARED_LIBS)
+      set_target_properties(x${STRING_INDEX} PROPERTIES
+	COMPILE_DEFINITIONS "USINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
     target_link_libraries(x${STRING_INDEX} plplotcxx ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_cxx x${STRING_INDEX})
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
@@ -119,14 +120,14 @@ if(ENABLE_wxwidgets)
       )
   endif(CORE_BUILD)
   if(BUILD_TEST)
-    if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${wxPLplotDemo_SRCS}
-        PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
-    else(BUILD_SHARED_LIBS)
-      set_source_files_properties(${wxPLplotDemo_SRCS}
-        PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
-    endif(BUILD_SHARED_LIBS)
+    set_source_files_properties(${wxPLplotDemo_SRCS}
+      PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
     add_executable(wxPLplotDemo WIN32 ${wxPLplotDemo_SRCS})
+    if(BUILD_SHARED_LIBS)
+      set_target_properties(wxPLplotDemo PROPERTIES
+	COMPILE_DEFINITIONS "USINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
     target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   endif(BUILD_TEST)
   # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
@@ -192,16 +193,17 @@ if(PLD_extqt)
 endif(PLD_extqt)
 
 if(BUILD_TEST AND BUILD_qt_example)
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(qt_example.cpp qt_PlotWindow.cpp
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
-  endif(BUILD_SHARED_LIBS)
   # For both Qt4 and Qt5 AUTOMOC method works fine to process
   # qt_PlotWindow.h in the same directory with the same base name as
   # qt_PlotWindow.cpp.  Do not add qt.h to explicit sources since
   # that is only relevant for a separate library (plplotqt or plplot)
   # that is linked.
   add_executable(qt_example qt_example.cpp qt_PlotWindow.cpp)
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(qt_example PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
     
   if(PLPLOT_USE_QT5)
     if(ENABLE_DYNDRIVERS)

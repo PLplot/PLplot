@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -31,12 +31,12 @@ if(USE_RPATH)
 endif(USE_RPATH)
 
 if(PLD_plmeta)
+  add_executable(plrender plrender.c)
   if(BUILD_SHARED_LIBS)
-    set_source_files_properties(plrender.c
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
+    set_target_properties(plrender PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  add_executable(plrender plrender.c)
 
   target_link_libraries(plrender plplot)
 
@@ -50,11 +50,12 @@ if(PLD_plmeta)
   install(TARGETS plrender DESTINATION ${BIN_DIR})
 endif(PLD_plmeta)
 
-if(BUILD_SHARED_LIBS)
-  set_source_files_properties(pltek.c
-    PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-endif(BUILD_SHARED_LIBS)
 add_executable(pltek pltek.c)
+if(BUILD_SHARED_LIBS)
+  set_target_properties(pltek PROPERTIES
+    COMPILE_DEFINITIONS "USINGDLL"
+    )
+endif(BUILD_SHARED_LIBS)
 
 target_link_libraries(pltek plplot)
 
@@ -76,18 +77,18 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
 # as used with the PLplot wxwidgets device driver.
 
   set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp ${CMAKE_SOURCE_DIR}/drivers/wxwidgets_comms.cpp)
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${wxPLViewer_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${wxwidgets_COMPILE_FLAGS}")
-  else(BUILD_SHARED_LIBS)
-    set_source_files_properties(${wxPLViewer_SRCS}
-      PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
-  endif(BUILD_SHARED_LIBS)
+  set_source_files_properties(${wxPLViewer_SRCS}
+    PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
   include_directories(
     ${CMAKE_SOURCE_DIR}/bindings/wxwidgets
 	${CMAKE_SOURCE_DIR}/bindings/c++
     )
   add_executable(wxPLViewer WIN32 ${wxPLViewer_SRCS})
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(wxPLViewer PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
   target_link_libraries(wxPLViewer plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
 
   if(USE_RPATH)

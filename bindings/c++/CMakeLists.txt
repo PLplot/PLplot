@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2015 Alan W. Irwin
+# Copyright (C) 2015-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -38,11 +38,6 @@ if(ENABLE_cxx)
 
   # Create plplotcxx[d] library
   add_library(plplotcxx ${plplotcxx_LIB_SRCS})
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplotcxx_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-  endif(BUILD_SHARED_LIBS)
 
   if(NON_TRANSITIVE)
     target_link_libraries(plplotcxx PRIVATE plplot)

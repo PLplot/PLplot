@@ -1,7 +1,7 @@
 # examples/c/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -110,29 +110,32 @@ if(BUILD_TEST)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_c)
   foreach(STRING_INDEX ${c_STRING_INDICES})
-    if(BUILD_SHARED_LIBS)
-      set_source_files_properties(x${STRING_INDEX}c.c
-        PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-    endif(BUILD_SHARED_LIBS)
     add_executable(x${STRING_INDEX}c x${STRING_INDEX}c.c)
+    if(BUILD_SHARED_LIBS)
+      set_target_properties(x${STRING_INDEX}c PROPERTIES
+	COMPILE_DEFINITIONS "USINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
     target_link_libraries(x${STRING_INDEX}c plplot ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_c x${STRING_INDEX}c)
   endforeach(STRING_INDEX ${c_STRING_INDICES})
 
   # Build simple test routines which nothing else depends on.
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(test_plend.c
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-  endif(BUILD_SHARED_LIBS)
   add_executable(test_plend test_plend.c)
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(test_plend PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
   target_link_libraries(test_plend plplot ${MATH_LIB})
 
   # Build test routines that test the plot buffer functionality
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(test_plbuf.c
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-  endif(BUILD_SHARED_LIBS)
   add_executable(test_plbuf test_plbuf.c)
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(test_plbuf PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
   target_link_libraries(test_plbuf plplot ${MATH_LIB})
 endif(BUILD_TEST)
 
@@ -144,9 +147,6 @@ if(PKG_CONFIG_EXECUTABLE)
     if(linkflags3)
       # Requires blank-delimited list.
       string(REGEX REPLACE ";" " " GTK_X11_COMPILE_FLAGS "${cflags3}")
-      if(BUILD_SHARED_LIBS)
-	set(GTK_X11_COMPILE_FLAGS "-DUSINGDLL ${GTK_X11_COMPILE_FLAGS}")
-      endif(BUILD_SHARED_LIBS)
       set(GTK_X11_LINK_FLAGS "${linkflags3}")
       if(BUILD_TEST)
 	set_source_files_properties(
@@ -154,6 +154,11 @@ if(PKG_CONFIG_EXECUTABLE)
 	  PROPERTIES COMPILE_FLAGS "${GTK_X11_COMPILE_FLAGS}"
 	  )
 	add_executable(extXdrawable_demo extXdrawable_demo.c)
+	if(BUILD_SHARED_LIBS)
+	  set_target_properties(extXdrawable_demo PROPERTIES
+	    COMPILE_DEFINITIONS "USINGDLL"
+	    )
+	endif(BUILD_SHARED_LIBS)
 	target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} plplot)
       endif(BUILD_TEST)
     else(linkflags3)
@@ -170,9 +175,6 @@ if(PKG_CONFIG_EXECUTABLE)
     if(linkflags4)
       # Requires blank-delimited list.
       string(REGEX REPLACE ";" " " CAIRO_COMPILE_FLAGS "${cflags4}")
-      if(BUILD_SHARED_LIBS)
-	set(CAIRO_COMPILE_FLAGS "-DUSINGDLL ${CAIRO_COMPILE_FLAGS}")
-      endif(BUILD_SHARED_LIBS)
       set(CAIRO_LINK_FLAGS "${linkflags4}")
       if(BUILD_TEST)
 	set_source_files_properties(
@@ -180,6 +182,11 @@ if(PKG_CONFIG_EXECUTABLE)
 	  PROPERTIES COMPILE_FLAGS "${CAIRO_COMPILE_FLAGS}"
 	  )
 	add_executable(ext-cairo-test ext-cairo-test.c)
+	if(BUILD_SHARED_LIBS)
+	  set_target_properties(ext-cairo-test PROPERTIES
+	    COMPILE_DEFINITIONS "USINGDLL"
+	    )
+	endif(BUILD_SHARED_LIBS)
 	target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} plplot)
       endif(BUILD_TEST)
     else(linkflags4)

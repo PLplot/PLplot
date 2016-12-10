@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -49,11 +49,6 @@ if(ENABLE_f95)
     sccont.c
     scstubs.c
     )
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplotf95c_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-  endif(BUILD_SHARED_LIBS)
 
   add_library(plplotf95c ${plplotf95c_LIB_SRCS})
 

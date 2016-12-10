@@ -1,7 +1,7 @@
 # bindings/tcl/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -83,11 +83,6 @@ if(ENABLE_tcl)
       libplplottcltk_COMPILE_FLAGS
       "-I\"${TCL_INCLUDE_PATH}\""
       )
-
-    if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${tclmatrix_LIB_SRCS}
-	PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-    endif(BUILD_SHARED_LIBS)
 
     add_library(tclmatrix ${tclmatrix_LIB_SRCS})
 
@@ -218,12 +213,6 @@ if(ENABLE_tcl)
 	  )
       endif(USE_TCL_TK_STUBS)
     endif(ENABLE_tkX)
-
-    if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${plplottcltk_LIB_SRCS}
-	PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-	)
-    endif(BUILD_SHARED_LIBS)
 
     add_library(plplottcltk ${plplottcltk_LIB_SRCS})
 
@@ -361,12 +350,6 @@ if(ENABLE_tcl)
     endif(ENABLE_itkX)
   endif(ENABLE_tkX)
 
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${plplottcltk_Main_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-
   add_library(plplottcltk_Main ${plplottcltk_Main_LIB_SRCS})
 
   if(NON_TRANSITIVE)
@@ -475,12 +458,12 @@ if(ENABLE_tcl)
 
   pkg_config_file("tcl_Main" "Tcl_Main/Tk_Main" " Tcl_Main/Tk_Main bindings" "plplottcltk_Main" "${libplplottcltk_Main_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_Main_LINK_FLAGS}")
 
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(pltcl.c
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL")
-  endif(BUILD_SHARED_LIBS)
-
   add_executable(pltcl pltcl.c)
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(pltcl PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
 
   if(tcltk_in_plplot_library)
     if(ENABLE_itcl)

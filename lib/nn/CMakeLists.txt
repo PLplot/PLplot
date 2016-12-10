@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -36,12 +36,6 @@ if(PL_HAVE_QHULL)
       PROPERTIES COMPILE_DEFINITIONS HAS_LIBQHULL_INCLUDE
       )
   endif(HAS_LIBQHULL_INCLUDE)
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties( ${csironn_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
 
   add_library(csironn ${csironn_LIB_SRCS})
 

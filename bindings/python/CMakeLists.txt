@@ -1,7 +1,7 @@
 # bindings/python/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -133,12 +133,12 @@ if(ENABLE_python)
   # libplplot if ENABLE_DYNDRIVERS is OFF.
   if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
     add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
+    if(BUILD_SHARED_LIBS)
+      set_target_properties(plplot_widgetmodule PROPERTIES
+	COMPILE_DEFINITIONS "USINGDLL"
+	)
+    endif(BUILD_SHARED_LIBS)
     set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
-    set_source_files_properties(
-      plplot_widgetmodule.c
-      PROPERTIES COMPILE_FLAGS
-      "-DUSINGDLL"
-      )
 
     if(ENABLE_DYNDRIVERS)
       target_link_libraries( plplot_widgetmodule

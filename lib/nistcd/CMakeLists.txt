@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -37,15 +37,9 @@ if(PLD_cgm)
   # but for now, at least, try it for all platforms.
   set( cd_ADD_DEFINES "-DNOMALLOCH" )
 
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties( ${cd_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${cd_ADD_DEFINES}"
-      )
-  else(BUILD_SHARED_LIBS)
-    set_source_files_properties( ${cd_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
-      )
-  endif(BUILD_SHARED_LIBS)
+  set_source_files_properties( ${cd_LIB_SRCS}
+    PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
+    )
 
   add_library( nistcd ${cd_LIB_SRCS} )
   set_library_properties(nistcd)
@@ -65,16 +59,15 @@ if(PLD_cgm)
       )
 
     foreach(cd_EXECUTABLE ${cd_EXECUTABLES})
-      if(BUILD_SHARED_LIBS)
-      set_source_files_properties(${cd_EXECUTABLE}.c
-        PROPERTIES COMPILE_FLAGS "-DUSINGDLL ${cd_ADD_DEFINES}"
-        )
-      else(BUILD_SHARED_LIBS)
       set_source_files_properties( ${cd_EXECUTABLE}.c
         PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
         )
+      add_executable(${cd_EXECUTABLE} ${cd_EXECUTABLE}.c)
+      if(BUILD_SHARED_LIBS)
+	set_target_properties(${cd_EXECUTABLE} PROPERTIES
+	  COMPILE_DEFINITIONS "USINGDLL"
+	  )
       endif(BUILD_SHARED_LIBS)
-      add_executable( ${cd_EXECUTABLE} ${cd_EXECUTABLE}.c )
       target_link_libraries( ${cd_EXECUTABLE} nistcd )
 
       # Create tests for libnistcd.

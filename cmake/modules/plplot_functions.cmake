@@ -306,5 +306,18 @@ function(set_library_properties library)
     # be linked by shared libraries.
     POSITION_INDEPENDENT_CODE ON
     )
+  if(BUILD_SHARED_LIBS)
+    # Use set_property here so can append "USINGDLL" to the
+    # COMPILE_DEFINITIONS list property if that property has been set
+    # before (or initiate that list property if it does not exist).
+    # My tests indicate that although repeat calls to this function
+    # will keep appending duplicate "USINGDLL" to the list of
+    # COMPILE_DEFINITIONS, apparently those dups are removed before
+    # compilation so we don't have to worry about appending those dups here.
+    set_property(TARGET ${library}
+      APPEND PROPERTY
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
 
 endfunction(set_library_properties library)

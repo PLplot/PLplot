@@ -37,14 +37,6 @@ if(ENABLE_smoke)
     GENERATED ON
     )
 
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(
-      ${plplot_smoke_SRC}
-      PROPERTIES
-      COMPILE_FLAGS "-DUSINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-
   set(include_directories_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_SOURCE_DIR}/include
@@ -87,6 +79,11 @@ if(ENABLE_smoke)
   # not work at all for that case.  So until I understand more of what
   # is going on, I will ignore automoc here.
   add_library(smokeplplotqt ${plplot_smoke_SRC})
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(smokeplplotqt PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
 
   target_link_libraries(
     smokeplplotqt

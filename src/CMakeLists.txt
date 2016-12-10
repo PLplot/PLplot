@@ -71,11 +71,6 @@ if(HAS_LIBQHULL_INCLUDE)
     )
 endif(HAS_LIBQHULL_INCLUDE)
 
-if(BUILD_SHARED_LIBS)
-  set_source_files_properties(${plplot_LIB_SRCS}
-    PROPERTIES COMPILE_FLAGS "-DUSINGDLL" )
-endif(BUILD_SHARED_LIBS)
-
 option(HERSHEY_FALLBACK "Hershey fallback for Unicode fonts" ON)
 
 if(NOT HERSHEY_FALLBACK)
@@ -151,13 +146,6 @@ if(NOT ENABLE_DYNDRIVERS)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build static qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
-
-    # qt and tk or tkwin device driver code within libplplot has some
-    # symbols that need to be visible for qt_example in examples/c++
-    # and various Tcl/Tk PLplot applications to link properly.
-    if(BUILD_SHARED_LIBS AND (SOURCE_ROOT_NAME STREQUAL "qt" OR SOURCE_ROOT_NAME STREQUAL "tk" OR SOURCE_ROOT_NAME STREQUAL "tkwin"))
-      set(${SOURCE_ROOT_NAME}_COMPILE_FLAGS "${${SOURCE_ROOT_NAME}_COMPILE_FLAGS} -DUSINGDLL")
-    endif(BUILD_SHARED_LIBS AND (SOURCE_ROOT_NAME STREQUAL "qt" OR SOURCE_ROOT_NAME STREQUAL "tk" OR SOURCE_ROOT_NAME STREQUAL "tkwin"))
 
     if(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
       set_source_files_properties(

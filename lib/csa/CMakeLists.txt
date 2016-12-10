@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -24,12 +24,6 @@ if(WITH_CSA)
   set(csirocsa_LIB_SRCS
     csa.c
     )
-
-  if(BUILD_SHARED_LIBS)
-    set_source_files_properties(${csirocsa_LIB_SRCS}
-      PROPERTIES COMPILE_FLAGS "-DUSINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
 
   add_library(csirocsa ${csirocsa_LIB_SRCS})
 

@@ -39,7 +39,6 @@ if(ENABLE_pyqt4)
     ${plplot_pyqt4_SRC}
     PROPERTIES
     GENERATED ON
-    COMPILE_FLAGS "-DUSINGDLL"
     )
 
   #message("DEBUG: PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
@@ -63,32 +62,12 @@ if(ENABLE_pyqt4)
     ${PYTHON_INCLUDE_PATH}
     )
 
-  # Experiments with g++ and the -fvisibility=default (or equivalent
-  # no setting of the -fvisibility option) versus -fvisibility=hidden
-  # compiler options show that with -fvisibility=default (wide open)
-  # visibility the moc-generated symbols in the plplotqt library (or
-  # when ENABLE_DYNDRIVERS=OFF the plplot library) satisfy the needs
-  # of this target, but with fvisibility=hidden some (but not all)
-  # moc-generated symbols are hidden (with no known way to force them
-  # to be visible) within the library.  Therefore, always use moc
-  # (implemented with the AUTOMOC ON property) on qt.h here even
-  # though it is sometimes redundant.
-
-  # Must add qt.h to explicit sources for AUTOMOC method to work.
-  add_library(plplot_pyqt4 MODULE ${plplot_pyqt4_SRC} ${CMAKE_SOURCE_DIR}/include/qt.h)
-  set_target_properties(plplot_pyqt4 PROPERTIES
-    AUTOMOC ON
-    AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
-    )
-  # This is not required for g++ and many other C++ compilers, but
-  # still this is best practice for AUTOMOC just in case there is a
-  # compiler out there (which is allowed by the lax C/C++ standards)
-  # that does not look in the source directory for the quoted form
-  # of #included headers in the automoc-generated source code
-  # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
-  # specifically added by automoc to the list of source files for
-  # the target.
-  target_include_directories(plplot_pyqt4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  add_library(plplot_pyqt4 MODULE ${plplot_pyqt4_SRC})
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(plplot_pyqt4 PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
 
   if(WIN32_OR_CYGWIN)
     set_target_properties(
