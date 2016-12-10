@@ -90,6 +90,7 @@ private:
     HANDLE m_mapFile;
 #else
     int m_mapFile;
+    int if_close_debug_output;
     char   * m_name;
 #endif
     size_t m_size;

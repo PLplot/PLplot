@@ -19,6 +19,8 @@
 
 #include "wxwidgets_comms.h"
 #include <assert.h>
+#include <cstdio>
+#include <errno.h>
 
 //--------------------------------------------------------------------------
 //  Constructor, creates the object but does not actually create or link to
@@ -30,6 +32,7 @@ PLMemoryMap::PLMemoryMap()
     m_mapFile = NULL;
 #else
     m_mapFile = -1;
+    if_close_debug_output = 0;
     m_name    = NULL;
 #endif
     m_buffer = NULL;
@@ -47,6 +50,7 @@ PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mus
     m_mapFile = NULL;
 #else
     m_mapFile = -1;
+    if_close_debug_output = 0;
     m_name    = NULL;
 #endif
     m_buffer = NULL;
@@ -86,16 +90,24 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
         m_buffer = MapViewOfFile( m_mapFile, FILE_MAP_ALL_ACCESS, 0, 0, size );
 #else
     if ( mustExist )
+      {
         m_mapFile = shm_open( name, O_RDWR, 0 );
+	if(m_mapFile != -1)
+	  fprintf( stderr, "PLMemoryMap::create: shm_open was a success for %s\n", name );
+      }
     else if ( mustNotExist )
     {
         m_mapFile = shm_open( name, O_RDWR | O_CREAT | O_EXCL, S_IRWXU );     //S_IRWXU gives user wrx permissions
+	if(m_mapFile != -1)
+	  fprintf( stderr, "PLMemoryMap::create: shm_open was a success for %s\n", name );
         if ( ftruncate( m_mapFile, size ) == -1 )
             close( );
     }
     else
     {
         m_mapFile = shm_open( name, O_RDWR | O_CREAT, S_IRWXU );       //S_IRWXU gives user wrx permissions
+	if(m_mapFile != -1)
+	  fprintf( stderr, "PLMemoryMap::create: shm_open was a success for %s\n", name );
         if ( ftruncate( m_mapFile, size ) == -1 )
             close( );
     }
@@ -105,6 +117,7 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
         m_name   = new char[strlen( name ) + 1];
         strcpy( m_name, name );
     }
+    if_close_debug_output = 1;
 #endif
     if ( isValid() )
         m_size = size;
@@ -123,14 +136,43 @@ void PLMemoryMap::close()
         CloseHandle( m_mapFile );
     m_mapFile = NULL;
 #else
+    int shm_unlink_rc = -2;
     if ( m_buffer )
         munmap( m_buffer, m_size );
     if ( m_mapFile != -1 )
-        shm_unlink( m_name );
+      {
+        shm_unlink_rc = shm_unlink( m_name );
+	if( if_close_debug_output )
+	  {
+	    if( shm_unlink_rc == -2 )
+	      {
+		fprintf( stderr, "PLMemoryMap::close: shm_unlink never called\n" );
+	      }
+	    else if (shm_unlink_rc == -1 )
+	      {
+		fprintf( stderr, "PLMemoryMap::close: shm_unlink error\n" );
+		perror("PLMemoryMap::close");
+	      }
+	    else if (shm_unlink_rc == 0)
+	      {
+		fprintf( stderr, "PLMemoryMap::close: shm_unlink was a success for %s\n", m_name );
+	      }
+	    else
+	      {
+		fprintf( stderr, "PLMemoryMap::close: should never reach this part of the code\n" );
+	      }
+	  }
+	else if ( shm_unlink_rc == 0)
+	  {
+	    fprintf( stderr, "PLMemoryMap::close: shm_unlink was unexpectedly a success for %s for if_close_debug_output false\n", m_name );
+	  }
+      }
     if ( m_name )
         delete[] m_name;
     m_mapFile = -1;
+    if_close_debug_output = 0;
     m_name    = NULL;
+    
 #endif
     m_buffer = NULL;
     m_size   = 0;
