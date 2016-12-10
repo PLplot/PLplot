@@ -174,6 +174,9 @@ EXPORTS
     target_link_libraries(plplotf95 PUBLIC plplot)
   endif(NON_TRANSITIVE)
 
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+  endif(USE_RPATH)
   set_library_properties(plplotf95)
 
   install(TARGETS plplotf95
