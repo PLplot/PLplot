@@ -47,8 +47,8 @@ const unsigned char transmissionClose            = 9;
 
 #define TEXTSIZEINFO_MAX_LENGTH    500
 
-//#define PLMemoryMap_DEBUG
-#undef PLMemoryMap_DEBUG
+#define PLMemoryMap_DEBUG
+//#undef PLMemoryMap_DEBUG
 
 struct TextSizeInfo
 {
