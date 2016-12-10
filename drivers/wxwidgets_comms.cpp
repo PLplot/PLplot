@@ -32,7 +32,9 @@ PLMemoryMap::PLMemoryMap()
     m_mapFile = NULL;
 #else
     m_mapFile = -1;
+#ifdef PLMemoryMap_DEBUG
     if_close_debug_output = 0;
+#endif
     m_name    = NULL;
 #endif
     m_buffer = NULL;
@@ -50,7 +52,9 @@ PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mus
     m_mapFile = NULL;
 #else
     m_mapFile = -1;
+#ifdef PLMemoryMap_DEBUG
     if_close_debug_output = 0;
+#endif
     m_name    = NULL;
 #endif
     m_buffer = NULL;
@@ -92,22 +96,28 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
     if ( mustExist )
       {
         m_mapFile = shm_open( name, O_RDWR, 0 );
+#ifdef PLMemoryMap_DEBUG
 	if(m_mapFile != -1)
 	  fprintf( stderr, "PLMemoryMap::create: shm_open was a success for %s\n", name );
+#endif
       }
     else if ( mustNotExist )
     {
         m_mapFile = shm_open( name, O_RDWR | O_CREAT | O_EXCL, S_IRWXU );     //S_IRWXU gives user wrx permissions
+#ifdef PLMemoryMap_DEBUG
 	if(m_mapFile != -1)
 	  fprintf( stderr, "PLMemoryMap::create: shm_open was a success for %s\n", name );
+#endif
         if ( ftruncate( m_mapFile, size ) == -1 )
             close( );
     }
     else
     {
         m_mapFile = shm_open( name, O_RDWR | O_CREAT, S_IRWXU );       //S_IRWXU gives user wrx permissions
+#ifdef PLMemoryMap_DEBUG
 	if(m_mapFile != -1)
 	  fprintf( stderr, "PLMemoryMap::create: shm_open was a success for %s\n", name );
+#endif
         if ( ftruncate( m_mapFile, size ) == -1 )
             close( );
     }
@@ -117,7 +127,9 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
         m_name   = new char[strlen( name ) + 1];
         strcpy( m_name, name );
     }
+#ifdef PLMemoryMap_DEBUG
     if_close_debug_output = 1;
+#endif
 #endif
     if ( isValid() )
         m_size = size;
@@ -142,6 +154,7 @@ void PLMemoryMap::close()
     if ( m_mapFile != -1 )
       {
         shm_unlink_rc = shm_unlink( m_name );
+#ifdef PLMemoryMap_DEBUG
 	if( if_close_debug_output )
 	  {
 	    if( shm_unlink_rc == -2 )
@@ -166,11 +179,14 @@ void PLMemoryMap::close()
 	  {
 	    fprintf( stderr, "PLMemoryMap::close: shm_unlink was unexpectedly a success for %s for if_close_debug_output false\n", m_name );
 	  }
+#endif
       }
     if ( m_name )
         delete[] m_name;
     m_mapFile = -1;
+#ifdef PLMemoryMap_DEBUG
     if_close_debug_output = 0;
+#endif
     m_name    = NULL;
     
 #endif
