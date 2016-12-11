@@ -191,31 +191,64 @@ typedef __int64        PLINT64;
 #endif
 
 // For identifying unicode characters
-typedef PLUINT                PLUNICODE;
+typedef PLUINT   PLUNICODE;
 
 // For identifying logical (boolean) arguments
-typedef PLINT                 PLBOOL;
+typedef PLINT    PLBOOL;
 
 // typedefs for generic pointers.
-typedef void *                  PL_NC_GENERIC_POINTER;
-typedef const void *            PL_GENERIC_POINTER;
+
+// generic pointer to mutable object:
+typedef void *   PL_NC_GENERIC_POINTER;
+
+// generic pointer to immutable object:
+// But make this mutable for the time being
+// to slow the pace of backwards-incompatible changes.
+// typedef const void *            PL_GENERIC_POINTER;
+typedef void *                  PL_GENERIC_POINTER;
+
 // Deprecated and only provided for backwards compatibility.
 typedef PL_NC_GENERIC_POINTER   PLPointer;
 
-// For passing input vector, and (2D) matrix arguments.
+// typedefs that are typically used for passing scalar, vector, and
+// matrix arguments to functions.  The NC attribute concerns pointers
+// to mutable objects, where the objects are used for passing values
+// that are either output only or both input and output.  Pointers whose
+// name does not contain the NC attribute point to immutable objects
+// which are strictly input and guaranteed to be unchanged by the function.
+//
 
-typedef const PLFLT *         PLFLT_VECTOR;
+// Pointers to mutable scalars:
+typedef PLINT *               PLINT_NC_SCALAR;
+typedef PLBOOL *              PLBOOL_NC_SCALAR;
+typedef PLUNICODE *           PLUNICODE_NC_SCALAR;
+typedef char *                PLCHAR_NC_SCALAR;
+typedef PLFLT *               PLFLT_NC_SCALAR;
+
+// Pointers to mutable vectors:
+typedef char *                PLCHAR_NC_VECTOR;
+typedef PLFLT *               PLFLT_NC_VECTOR;
+
+// Pointers to immutable vectors:
 typedef const PLINT *         PLINT_VECTOR;
 typedef const PLBOOL *        PLBOOL_VECTOR;
 typedef const char *          PLCHAR_VECTOR;
-typedef const PLFLT * const * PLFLT_MATRIX;
+typedef const PLFLT *         PLFLT_VECTOR;
+
+// Pointers to mutable 2-dimensional matrices:
+typedef char **               PLCHAR_NC_MATRIX;
+typedef PLFLT **              PLFLT_NC_MATRIX;
+
+// Pointers to immutable 2-dimensional matrices,
+// (i.e., pointers to const pointers to const values):
 typedef const char * const *  PLCHAR_MATRIX;
+typedef const PLFLT * const * PLFLT_MATRIX;
 
 // Callback-related typedefs
-typedef void ( *PLMAPFORM_callback )( PLINT n, PLFLT *x, PLFLT *y );
-typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT *xp, PLFLT *yp, PLPointer data );
-typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, char *label, PLINT length, PLPointer data );
-typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PLPointer data );
+typedef void ( *PLMAPFORM_callback )( PLINT n, PLFLT_NC_VECTOR x, PLFLT_NC_VECTOR y );
+typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT_NC_SCALAR xp, PLFLT_NC_SCALAR yp, PL_GENERIC_POINTER data );
+typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, PLCHAR_NC_VECTOR label, PLINT length, PL_GENERIC_POINTER data );
+typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PL_GENERIC_POINTER data );
 typedef void ( *PLFILL_callback )( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y );
 typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y );
 
@@ -363,13 +396,13 @@ typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y );
 
 typedef struct
 {
-    PLCHAR_VECTOR opt;
-    int ( *handler )( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-    void          *client_data;
-    void          *var;
-    long          mode;
-    PLCHAR_VECTOR syntax;
-    PLCHAR_VECTOR desc;
+    PLCHAR_VECTOR         opt;
+    int ( *handler )( PLCHAR_VECTOR, PLCHAR_VECTOR, PL_NC_GENERIC_POINTER );
+    PL_NC_GENERIC_POINTER client_data;
+    PL_NC_GENERIC_POINTER var;
+    long mode;
+    PLCHAR_VECTOR         syntax;
+    PLCHAR_VECTOR         desc;
 } PLOptionTable;
 
 // PLplot Graphics Input structure
@@ -457,8 +490,8 @@ typedef struct
 
 typedef struct
 {
-    PLFLT **f;
-    PLINT nx, ny;
+    PLFLT_NC_MATRIX f;
+    PLINT           nx, ny;
 } PLfGrid2;
 
 //
@@ -474,8 +507,8 @@ typedef struct
 
 typedef struct
 {
-    PLFLT *xg, *yg, *zg;
-    PLINT nx, ny, nz;
+    PLFLT_NC_VECTOR xg, yg, zg;
+    PLINT           nx, ny, nz;
 } PLcGrid;
 
 //
@@ -486,8 +519,8 @@ typedef struct
 
 typedef struct
 {
-    PLFLT **xg, **yg, **zg;
-    PLINT nx, ny;
+    PLFLT_NC_MATRIX xg, yg, zg;
+    PLINT           nx, ny;
 } PLcGrid2;
 
 //
@@ -543,29 +576,30 @@ typedef struct
 //
 
 //
-// This type of struct holds pointers to functions that are used to get, set,
-// modify, and test individual 2-D data points referenced by a PLPointer.  How
-// the PLPointer is used depends entirely on the functions that implement the
-// various operations.  Certain common data representations have predefined
-// instances of this structure prepopulated with pointers to predefined
-// functions.
+// This type of struct holds pointers to functions that are used to
+// get, set, modify, and test individual 2-D data points referenced by
+// a PL_NC_GENERIC_POINTER or PL_GENERIC_POINTER.  How these
+// generic pointers are used depends entirely on the functions
+// that implement the various operations.  Certain common data
+// representations have predefined instances of this structure
+// prepopulated with pointers to predefined functions.
 //
 
 typedef struct
 {
-    PLFLT ( *get )( PLPointer p, PLINT ix, PLINT iy );
-    PLFLT ( *set )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *add )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *sub )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *mul )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *div )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
-    PLINT ( *is_nan )( PLPointer p, PLINT ix, PLINT iy );
-    void ( *minmax )( PLPointer p, PLINT nx, PLINT ny, PLFLT *zmim, PLFLT *zmax );
+    PLFLT ( *get )( PL_GENERIC_POINTER p, PLINT ix, PLINT iy );
+    PLFLT ( *set )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *add )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *sub )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *mul )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *div )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
+    PLINT ( *is_nan )( PL_GENERIC_POINTER p, PLINT ix, PLINT iy );
+    void ( *minmax )( PL_GENERIC_POINTER p, PLINT nx, PLINT ny, PLFLT_NC_SCALAR zmin, PLFLT_NC_SCALAR zmax );
     //
     // f2eval is backwards compatible signature for "f2eval" functions that
     // existed before plf2ops "operator function families" were used.
     //
-    PLFLT ( *f2eval )( PLINT ix, PLINT iy, PLPointer p );
+    PLFLT ( *f2eval )( PLINT ix, PLINT iy, PL_GENERIC_POINTER p );
 } plf2ops_t;
 
 //
@@ -580,7 +614,7 @@ typedef plf2ops_t * PLF2OPS;
 typedef struct
 {
     size_t size;
-    void   * buffer;
+    PL_NC_GENERIC_POINTER buffer;
 } plbuffer;
 
 //--------------------------------------------------------------------------
@@ -905,7 +939,7 @@ c_plbin( PLINT nbin, PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT opt );
 
 // Calculate broken-down time from continuous time for current stream.
 PLDLLIMPEXP void
-c_plbtime( PLINT *year, PLINT *month, PLINT *day, PLINT *hour, PLINT *min, PLFLT *sec, PLFLT ctime );
+c_plbtime( PLINT_NC_SCALAR year, PLINT_NC_SCALAR month, PLINT_NC_SCALAR day, PLINT_NC_SCALAR hour, PLINT_NC_SCALAR min, PLFLT_NC_SCALAR sec, PLFLT ctime );
 
 // Start new page.  Should only be used with pleop().
 
@@ -928,7 +962,7 @@ c_plbox3( PLCHAR_VECTOR xopt, PLCHAR_VECTOR xlabel, PLFLT xtick, PLINT nxsub,
 // Calculate world coordinates and subpage from relative device coordinates.
 
 PLDLLIMPEXP void
-c_plcalc_world( PLFLT rx, PLFLT ry, PLFLT *wx, PLFLT *wy, PLINT *window );
+c_plcalc_world( PLFLT rx, PLFLT ry, PLFLT_NC_SCALAR wx, PLFLT_NC_SCALAR wy, PLINT_NC_SCALAR window );
 
 // Clear current subpage.
 
@@ -957,7 +991,7 @@ c_plconfigtime( PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOO
 PLDLLIMPEXP void
 c_plcont( PLFLT_MATRIX f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
           PLINT ky, PLINT ly, PLFLT_VECTOR clevel, PLINT nlevel,
-          PLTRANSFORM_callback pltr, PLPointer pltr_data );
+          PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 // Draws a contour plot using the function evaluator f2eval and data stored
 // by way of the f2eval_data pointer.  This allows arbitrary organizations
@@ -965,10 +999,10 @@ c_plcont( PLFLT_MATRIX f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 //
 
 PLDLLIMPEXP void
-plfcont( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
+plfcont( PLF2EVAL_callback f2eval, PL_GENERIC_POINTER f2eval_data,
          PLINT nx, PLINT ny, PLINT kx, PLINT lx,
          PLINT ky, PLINT ly, PLFLT_VECTOR clevel, PLINT nlevel,
-         PLTRANSFORM_callback pltr, PLPointer pltr_data );
+         PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 // Copies state parameters from the reference stream to the current stream.
 
@@ -977,19 +1011,19 @@ c_plcpstrm( PLINT iplsr, PLBOOL flags );
 
 // Calculate continuous time from broken-down time for current stream.
 PLDLLIMPEXP void
-c_plctime( PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime );
+c_plctime( PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT_NC_SCALAR ctime );
 
 // Converts input values from relative device coordinates to relative plot
 // coordinates.
 
 PLDLLIMPEXP void
-pldid2pc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax );
+pldid2pc( PLFLT_NC_SCALAR xmin, PLFLT_NC_SCALAR ymin, PLFLT_NC_SCALAR xmax, PLFLT_NC_SCALAR ymax );
 
 // Converts input values from relative plot coordinates to relative
 // device coordinates.
 
 PLDLLIMPEXP void
-pldip2dc( PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax );
+pldip2dc( PLFLT_NC_SCALAR xmin, PLFLT_NC_SCALAR ymin, PLFLT_NC_SCALAR xmax, PLFLT_NC_SCALAR ymax );
 
 // End a plotting session for all open streams.
 
@@ -1063,52 +1097,52 @@ c_plfontld( PLINT fnt );
 // Get character default height and current (scaled) height
 
 PLDLLIMPEXP void
-c_plgchr( PLFLT *p_def, PLFLT *p_ht );
+c_plgchr( PLFLT_NC_SCALAR p_def, PLFLT_NC_SCALAR p_ht );
 
 // Returns 8 bit RGB values for given color from color map 0
 
 PLDLLIMPEXP void
-c_plgcol0( PLINT icol0, PLINT *r, PLINT *g, PLINT *b );
+c_plgcol0( PLINT icol0, PLINT_NC_SCALAR r, PLINT_NC_SCALAR g, PLINT_NC_SCALAR b );
 
 // Returns 8 bit RGB values for given color from color map 0 and alpha value
 
 PLDLLIMPEXP void
-c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha );
+c_plgcol0a( PLINT icol0, PLINT_NC_SCALAR r, PLINT_NC_SCALAR g, PLINT_NC_SCALAR b, PLFLT_NC_SCALAR alpha );
 
 // Returns the background color by 8 bit RGB value
 
 PLDLLIMPEXP void
-c_plgcolbg( PLINT *r, PLINT *g, PLINT *b );
+c_plgcolbg( PLINT_NC_SCALAR r, PLINT_NC_SCALAR g, PLINT_NC_SCALAR b );
 
 // Returns the background color by 8 bit RGB value and alpha value
 
 PLDLLIMPEXP void
-c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha );
+c_plgcolbga( PLINT_NC_SCALAR r, PLINT_NC_SCALAR g, PLINT_NC_SCALAR b, PLFLT_NC_SCALAR alpha );
 
 // Returns the current compression setting
 
 PLDLLIMPEXP void
-c_plgcompression( PLINT *compression );
+c_plgcompression( PLINT_NC_SCALAR compression );
 
 // Get the current device (keyword) name
 
 PLDLLIMPEXP void
-c_plgdev( char *p_dev );
+c_plgdev( PLCHAR_NC_VECTOR p_dev );
 
 // Retrieve current window into device space
 
 PLDLLIMPEXP void
-c_plgdidev( PLFLT *p_mar, PLFLT *p_aspect, PLFLT *p_jx, PLFLT *p_jy );
+c_plgdidev( PLFLT_NC_SCALAR p_mar, PLFLT_NC_SCALAR p_aspect, PLFLT_NC_SCALAR p_jx, PLFLT_NC_SCALAR p_jy );
 
 // Get plot orientation
 
 PLDLLIMPEXP void
-c_plgdiori( PLFLT *p_rot );
+c_plgdiori( PLFLT_NC_SCALAR p_rot );
 
 // Retrieve current window into plot space
 
 PLDLLIMPEXP void
-c_plgdiplt( PLFLT *p_xmin, PLFLT *p_ymin, PLFLT *p_xmax, PLFLT *p_ymax );
+c_plgdiplt( PLFLT_NC_SCALAR p_xmin, PLFLT_NC_SCALAR p_ymin, PLFLT_NC_SCALAR p_xmax, PLFLT_NC_SCALAR p_ymax );
 
 // Get the drawing mode
 
@@ -1118,33 +1152,33 @@ c_plgdrawmode( void );
 // Get FCI (font characterization integer)
 
 PLDLLIMPEXP void
-c_plgfci( PLUNICODE *p_fci );
+c_plgfci( PLUNICODE_NC_SCALAR p_fci );
 
 // Get family file parameters
 
 PLDLLIMPEXP void
-c_plgfam( PLINT *p_fam, PLINT *p_num, PLINT *p_bmax );
+c_plgfam( PLINT_NC_SCALAR p_fam, PLINT_NC_SCALAR p_num, PLINT_NC_SCALAR p_bmax );
 
 // Get the (current) output file name.  Must be preallocated to >80 bytes
 
 PLDLLIMPEXP void
-c_plgfnam( char *fnam );
+c_plgfnam( PLCHAR_NC_VECTOR fnam );
 
 // Get the current font family, style and weight
 
 PLDLLIMPEXP void
-c_plgfont( PLINT *p_family, PLINT *p_style, PLINT *p_weight );
+c_plgfont( PLINT_NC_SCALAR p_family, PLINT_NC_SCALAR p_style, PLINT_NC_SCALAR p_weight );
 
 // Get the (current) run level.
 
 PLDLLIMPEXP void
-c_plglevel( PLINT *p_level );
+c_plglevel( PLINT_NC_SCALAR p_level );
 
 // Get output device parameters.
 
 PLDLLIMPEXP void
-c_plgpage( PLFLT *p_xp, PLFLT *p_yp,
-           PLINT *p_xleng, PLINT *p_yleng, PLINT *p_xoff, PLINT *p_yoff );
+c_plgpage( PLFLT_NC_SCALAR p_xp, PLFLT_NC_SCALAR p_yp,
+           PLINT_NC_SCALAR p_xleng, PLINT_NC_SCALAR p_yleng, PLINT_NC_SCALAR p_xoff, PLINT_NC_SCALAR p_yoff );
 
 // Switches to graphics screen.
 
@@ -1161,12 +1195,12 @@ c_plgradient( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT angle );
 PLDLLIMPEXP void
 c_plgriddata( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, PLINT npts,
               PLFLT_VECTOR xg, PLINT nptsx, PLFLT_VECTOR yg, PLINT nptsy,
-              PLFLT **zg, PLINT type, PLFLT data );
+              PLFLT_NC_MATRIX zg, PLINT type, PLFLT data );
 
 PLDLLIMPEXP void
 plfgriddata( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, PLINT npts,
              PLFLT_VECTOR xg, PLINT nptsx, PLFLT_VECTOR yg, PLINT nptsy,
-             PLF2OPS zops, PLPointer zgp, PLINT type, PLFLT data );
+             PLF2OPS zops, PL_NC_GENERIC_POINTER zgp, PLINT type, PLFLT data );
 
 // type of gridding algorithm for plgriddata()
 
@@ -1180,42 +1214,42 @@ plfgriddata( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, PLINT npts,
 // Get subpage boundaries in absolute coordinates
 
 PLDLLIMPEXP void
-c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
+c_plgspa( PLFLT_NC_SCALAR xmin, PLFLT_NC_SCALAR xmax, PLFLT_NC_SCALAR ymin, PLFLT_NC_SCALAR ymax );
 
 // Get current stream number.
 
 PLDLLIMPEXP void
-c_plgstrm( PLINT *p_strm );
+c_plgstrm( PLINT_NC_SCALAR p_strm );
 
 // Get the current library version number
 
 PLDLLIMPEXP void
-c_plgver( char *p_ver );
+c_plgver( PLCHAR_NC_VECTOR p_ver );
 
 // Get viewport boundaries in normalized device coordinates
 
 PLDLLIMPEXP void
-c_plgvpd( PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax );
+c_plgvpd( PLFLT_NC_SCALAR p_xmin, PLFLT_NC_SCALAR p_xmax, PLFLT_NC_SCALAR p_ymin, PLFLT_NC_SCALAR p_ymax );
 
 // Get viewport boundaries in world coordinates
 
 PLDLLIMPEXP void
-c_plgvpw( PLFLT *p_xmin, PLFLT *p_xmax, PLFLT *p_ymin, PLFLT *p_ymax );
+c_plgvpw( PLFLT_NC_SCALAR p_xmin, PLFLT_NC_SCALAR p_xmax, PLFLT_NC_SCALAR p_ymin, PLFLT_NC_SCALAR p_ymax );
 
 // Get x axis labeling parameters
 
 PLDLLIMPEXP void
-c_plgxax( PLINT *p_digmax, PLINT *p_digits );
+c_plgxax( PLINT_NC_SCALAR p_digmax, PLINT_NC_SCALAR p_digits );
 
 // Get y axis labeling parameters
 
 PLDLLIMPEXP void
-c_plgyax( PLINT *p_digmax, PLINT *p_digits );
+c_plgyax( PLINT_NC_SCALAR p_digmax, PLINT_NC_SCALAR p_digits );
 
 // Get z axis labeling parameters
 
 PLDLLIMPEXP void
-c_plgzax( PLINT *p_digmax, PLINT *p_digits );
+c_plgzax( PLINT_NC_SCALAR p_digmax, PLINT_NC_SCALAR p_digits );
 
 // Draws a histogram of n values of a variable in array data[0..n-1]
 
@@ -1234,7 +1268,7 @@ c_plhist( PLINT n, PLFLT_VECTOR data, PLFLT datmin, PLFLT datmax,
 // Functions for converting between HLS and RGB color space
 
 PLDLLIMPEXP void
-c_plhlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b );
+c_plhlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT_NC_SCALAR p_r, PLFLT_NC_SCALAR p_g, PLFLT_NC_SCALAR p_b );
 
 // Initializes PLplot, using preset or default options
 
@@ -1298,7 +1332,7 @@ c_pllab( PLCHAR_VECTOR xlabel, PLCHAR_VECTOR ylabel, PLCHAR_VECTOR tlabel );
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 PLDLLIMPEXP void
-c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
+c_pllegend( PLFLT_NC_SCALAR p_legend_width, PLFLT_NC_SCALAR p_legend_height,
             PLINT opt, PLINT position, PLFLT x, PLFLT y, PLFLT plot_width,
             PLINT bg_color, PLINT bb_color, PLINT bb_style,
             PLINT nrow, PLINT ncolumn,
@@ -1315,7 +1349,7 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
 
 // Routine for drawing continous colour legends
 PLDLLIMPEXP void
-c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
+c_plcolorbar( PLFLT_NC_SCALAR p_colorbar_width, PLFLT_NC_SCALAR p_colorbar_height,
               PLINT opt, PLINT position, PLFLT x, PLFLT y,
               PLFLT x_length, PLFLT y_length,
               PLINT bg_color, PLINT bb_color, PLINT bb_style,
@@ -1396,7 +1430,7 @@ c_plmesh( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny, PL
 // Like plmesh, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
-plfmesh( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+plfmesh( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PL_GENERIC_POINTER zp,
          PLINT nx, PLINT ny, PLINT opt );
 
 // Plots a mesh representation of the function z[x][y] with contour
@@ -1408,13 +1442,13 @@ c_plmeshc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny, P
 // Like plmeshc, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
-plfmeshc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+plfmeshc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PL_GENERIC_POINTER zp,
           PLINT nx, PLINT ny, PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel );
 
 // Creates a new stream and makes it the default.
 
 PLDLLIMPEXP void
-c_plmkstrm( PLINT *p_strm );
+c_plmkstrm( PLINT_NC_SCALAR p_strm );
 
 // Prints out "text" at specified position relative to viewport
 
@@ -1437,7 +1471,7 @@ c_plot3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z,
 // Like plot3d, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
-plfplot3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+plfplot3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PL_GENERIC_POINTER zp,
            PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
 
 // Plots a 3-d representation of the function z[x][y] with contour.
@@ -1450,7 +1484,7 @@ c_plot3dc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z,
 // Like plot3dc, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
-plfplot3dc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+plfplot3dc( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PL_GENERIC_POINTER zp,
             PLINT nx, PLINT ny, PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel );
 
 // Plots a 3-d representation of the function z[x][y] with contour and
@@ -1465,7 +1499,7 @@ c_plot3dcl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z,
 // Like plot3dcl, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
-plfplot3dcl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+plfplot3dcl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PL_GENERIC_POINTER zp,
              PLINT nx, PLINT ny, PLINT opt,
              PLFLT_VECTOR clevel, PLINT nlevel,
              PLINT indexxmin, PLINT indexxmax, PLINT_VECTOR indexymin, PLINT_VECTOR indexymax );
@@ -1558,7 +1592,7 @@ c_plreplot( void );
 // Functions for converting between HLS and RGB color space
 
 PLDLLIMPEXP void
-c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT *p_h, PLFLT *p_l, PLFLT *p_s );
+c_plrgbhls( PLFLT r, PLFLT g, PLFLT b, PLFLT_NC_SCALAR p_h, PLFLT_NC_SCALAR p_l, PLFLT_NC_SCALAR p_s );
 
 // Set character height.
 
@@ -1618,7 +1652,7 @@ c_plscmap1_range( PLFLT min_color, PLFLT max_color );
 // Get the color map 1 range used in continuous plots
 
 PLDLLIMPEXP void
-c_plgcmap1_range( PLFLT *min_color, PLFLT *max_color );
+c_plgcmap1_range( PLFLT_NC_SCALAR min_color, PLFLT_NC_SCALAR max_color );
 
 // Set a given color from color map 0 by 8 bit RGB value
 
@@ -1722,7 +1756,7 @@ c_plshade( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
            PLINT min_color, PLFLT min_width,
            PLINT max_color, PLFLT max_width,
            PLFILL_callback fill, PLBOOL rectangular,
-           PLTRANSFORM_callback pltr, PLPointer pltr_data );
+           PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 PLDLLIMPEXP void
 c_plshade1( PLFLT_VECTOR a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
@@ -1732,7 +1766,7 @@ c_plshade1( PLFLT_VECTOR a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
             PLINT min_color, PLFLT min_width,
             PLINT max_color, PLFLT max_width,
             PLFILL_callback fill, PLBOOL rectangular,
-            PLTRANSFORM_callback pltr, PLPointer pltr_data );
+            PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 PLDLLIMPEXP void
 c_plshades( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
@@ -1740,20 +1774,20 @@ c_plshades( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
             PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
             PLINT cont_color, PLFLT cont_width,
             PLFILL_callback fill, PLBOOL rectangular,
-            PLTRANSFORM_callback pltr, PLPointer pltr_data );
+            PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 PLDLLIMPEXP void
-plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+plfshades( PLF2OPS zops, PL_GENERIC_POINTER zp, PLINT nx, PLINT ny,
            PLDEFINED_callback defined,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
            PLINT cont_color, PLFLT cont_width,
            PLFILL_callback fill, PLINT rectangular,
-           PLTRANSFORM_callback pltr, PLPointer pltr_data );
+           PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 PLDLLIMPEXP void
-plfshade( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
-          PLF2EVAL_callback c2eval, PLPointer c2eval_data,
+plfshade( PLF2EVAL_callback f2eval, PL_GENERIC_POINTER f2eval_data,
+          PLF2EVAL_callback c2eval, PL_GENERIC_POINTER c2eval_data,
           PLINT nx, PLINT ny,
           PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
           PLFLT shade_min, PLFLT shade_max,
@@ -1761,10 +1795,10 @@ plfshade( PLF2EVAL_callback f2eval, PLPointer f2eval_data,
           PLINT min_color, PLFLT min_width,
           PLINT max_color, PLFLT max_width,
           PLFILL_callback fill, PLBOOL rectangular,
-          PLTRANSFORM_callback pltr, PLPointer pltr_data );
+          PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 PLDLLIMPEXP void
-plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+plfshade1( PLF2OPS zops, PL_GENERIC_POINTER zp, PLINT nx, PLINT ny,
            PLDEFINED_callback defined,
            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
            PLFLT shade_min, PLFLT shade_max,
@@ -1772,12 +1806,12 @@ plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
            PLINT min_color, PLFLT min_width,
            PLINT max_color, PLFLT max_width,
            PLFILL_callback fill, PLINT rectangular,
-           PLTRANSFORM_callback pltr, PLPointer pltr_data );
+           PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 // Setup a user-provided custom labeling function
 
 PLDLLIMPEXP void
-c_plslabelfunc( PLLABEL_FUNC_callback label_func, PLPointer label_data );
+c_plslabelfunc( PLLABEL_FUNC_callback label_func, PL_GENERIC_POINTER label_data );
 
 // Set up lengths of major tick marks.
 
@@ -1787,12 +1821,12 @@ c_plsmaj( PLFLT def, PLFLT scale );
 // Set the RGB memory area to be plotted (with the 'mem' or 'memcairo' drivers)
 
 PLDLLIMPEXP void
-c_plsmem( PLINT maxx, PLINT maxy, void *plotmem );
+c_plsmem( PLINT maxx, PLINT maxy, PL_NC_GENERIC_POINTER plotmem );
 
 // Set the RGBA memory area to be plotted (with the 'memcairo' driver)
 
 PLDLLIMPEXP void
-c_plsmema( PLINT maxx, PLINT maxy, void *plotmem );
+c_plsmema( PLINT maxx, PLINT maxy, PL_NC_GENERIC_POINTER plotmem );
 
 // Set up lengths of minor tick marks.
 
@@ -1857,7 +1891,7 @@ c_plstart( PLCHAR_VECTOR devname, PLINT nx, PLINT ny );
 // Set the coordinate transform
 
 PLDLLIMPEXP void
-c_plstransform( PLTRANSFORM_callback coordinate_transform, PLPointer coordinate_transform_data );
+c_plstransform( PLTRANSFORM_callback coordinate_transform, PL_GENERIC_POINTER coordinate_transform_data );
 
 // Prints out the same string repeatedly at the n points in world
 // coordinates given by the x and y arrays.  Supersedes plpoin and
@@ -1885,7 +1919,7 @@ c_plstripa( PLINT id, PLINT pen, PLFLT x, PLFLT y );
 // Create 1d stripchart
 
 PLDLLIMPEXP void
-c_plstripc( PLINT *id, PLCHAR_VECTOR xspec, PLCHAR_VECTOR yspec,
+c_plstripc( PLINT_NC_SCALAR id, PLCHAR_VECTOR xspec, PLCHAR_VECTOR yspec,
             PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
             PLFLT xlpos, PLFLT ylpos,
             PLBOOL y_ascl, PLBOOL acc,
@@ -1904,7 +1938,7 @@ PLDLLIMPEXP void
 c_plimagefr( PLFLT_MATRIX idata, PLINT nx, PLINT ny,
              PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
              PLFLT valuemin, PLFLT valuemax,
-             PLTRANSFORM_callback pltr, PLPointer pltr_data );
+             PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 //
 // Like plimagefr, but uses an evaluator function to access image data from
@@ -1912,10 +1946,10 @@ c_plimagefr( PLFLT_MATRIX idata, PLINT nx, PLINT ny,
 //
 
 PLDLLIMPEXP void
-plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
+plfimagefr( PLF2OPS idataops, PL_GENERIC_POINTER idatap, PLINT nx, PLINT ny,
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
             PLFLT valuemin, PLFLT valuemax,
-            PLTRANSFORM_callback pltr, PLPointer pltr_data );
+            PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 // plots a 2d image (or a matrix too large for plshade() ) - colors
 // automatically scaled
@@ -1931,7 +1965,7 @@ c_plimage( PLFLT_MATRIX idata, PLINT nx, PLINT ny,
 //
 
 PLDLLIMPEXP void
-plfimage( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
+plfimage( PLF2OPS idataops, PL_GENERIC_POINTER idatap, PLINT nx, PLINT ny,
           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
           PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
 
@@ -1949,7 +1983,7 @@ c_plsurf3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny,
 // Like plsurf3d, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
-plfsurf3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
+plfsurf3d( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PL_GENERIC_POINTER zp,
            PLINT nx, PLINT ny, PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel );
 
 // Plots the 3d surface representation of the function z[x][y] with y
@@ -1963,7 +1997,7 @@ c_plsurf3dl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_MATRIX z, PLINT nx, PLINT ny,
 // Like plsurf3dl, but uses an evaluator function to access z data from zp
 
 PLDLLIMPEXP void
-plfsurf3dl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+plfsurf3dl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PL_GENERIC_POINTER zp, PLINT nx, PLINT ny,
             PLINT opt, PLFLT_VECTOR clevel, PLINT nlevel,
             PLINT indexxmin, PLINT indexxmax, PLINT_VECTOR indexymin, PLINT_VECTOR indexymax );
 
@@ -2024,16 +2058,16 @@ c_plvasp( PLFLT aspect );
 
 PLDLLIMPEXP void
 c_plvect( PLFLT_MATRIX u, PLFLT_MATRIX v, PLINT nx, PLINT ny, PLFLT scale,
-          PLTRANSFORM_callback pltr, PLPointer pltr_data );
+          PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 //
 // Routine to plot a vector array with arbitrary coordinate
 // and vector transformations
 //
 PLDLLIMPEXP void
-plfvect( PLF2EVAL_callback getuv, PLPointer up, PLPointer vp,
+plfvect( PLF2EVAL_callback getuv, PL_GENERIC_POINTER up, PL_GENERIC_POINTER vp,
          PLINT nx, PLINT ny, PLFLT scale,
-         PLTRANSFORM_callback pltr, PLPointer pltr_data );
+         PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 PLDLLIMPEXP void
 c_plvpas( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect );
@@ -2076,7 +2110,7 @@ c_plwind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 // Set xor mode; mode = 1-enter, 0-leave, status = 0 if not interactive device
 
 PLDLLIMPEXP void
-c_plxormod( PLBOOL mode, PLBOOL *status );
+c_plxormod( PLBOOL mode, PLBOOL_NC_SCALAR status );
 
 
 //--------------------------------------------------------------------------
@@ -2086,38 +2120,38 @@ c_plxormod( PLBOOL mode, PLBOOL *status );
 // Returns a list of file-oriented device names and their menu strings
 
 PLDLLIMPEXP void
-plgFileDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev );
+plgFileDevs( PLCHAR_VECTOR **p_menustr, PLCHAR_VECTOR **p_devname, int *p_ndev );
 
 // Returns a list of all device names and their menu strings
 
 PLDLLIMPEXP void
-plgDevs( const char ***p_menustr, const char ***p_devname, int *p_ndev );
+plgDevs( PLCHAR_VECTOR **p_menustr, PLCHAR_VECTOR **p_devname, int *p_ndev );
 
 // Set the function pointer for the keyboard event handler
 
 PLDLLIMPEXP void
-plsKeyEH( void ( *KeyEH )( PLGraphicsIn *, void *, int * ), void *KeyEH_data );
+plsKeyEH( void ( *KeyEH )( PLGraphicsIn *, PL_NC_GENERIC_POINTER, int * ), PL_NC_GENERIC_POINTER KeyEH_data );
 
 // Set the function pointer for the (mouse) button event handler
 
 PLDLLIMPEXP void
-plsButtonEH( void ( *ButtonEH )( PLGraphicsIn *, void *, int * ),
-             void *ButtonEH_data );
+plsButtonEH( void ( *ButtonEH )( PLGraphicsIn *, PL_NC_GENERIC_POINTER, int * ),
+             PL_NC_GENERIC_POINTER ButtonEH_data );
 
 // Sets an optional user bop handler
 
 PLDLLIMPEXP void
-plsbopH( void ( *handler )( void *, int * ), void *handler_data );
+plsbopH( void ( *handler )( PL_NC_GENERIC_POINTER, int * ), PL_NC_GENERIC_POINTER handler_data );
 
 // Sets an optional user eop handler
 
 PLDLLIMPEXP void
-plseopH( void ( *handler )( void *, int * ), void *handler_data );
+plseopH( void ( *handler )( PL_NC_GENERIC_POINTER, int * ), PL_NC_GENERIC_POINTER handler_data );
 
 // Set the variables to be used for storing error info
 
 PLDLLIMPEXP void
-plsError( PLINT *errcode, char *errmsg );
+plsError( PLINT_NC_SCALAR errcode, PLCHAR_NC_VECTOR errmsg );
 
 // Sets an optional user exit handler.
 
@@ -2134,30 +2168,30 @@ plsabort( void ( *handler )( PLCHAR_VECTOR ) );
 // Identity transformation.
 
 PLDLLIMPEXP void
-pltr0( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+pltr0( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PLFLT_NC_SCALAR ty, PL_GENERIC_POINTER pltr_data );
 
 // Does linear interpolation from singly dimensioned coord arrays.
 
 PLDLLIMPEXP void
-pltr1( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+pltr1( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PLFLT_NC_SCALAR ty, PL_GENERIC_POINTER pltr_data );
 
 // Does linear interpolation from doubly dimensioned coord arrays
 // (column dominant, as per normal C 2d arrays).
 
 PLDLLIMPEXP void
-pltr2( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+pltr2( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PLFLT_NC_SCALAR ty, PL_GENERIC_POINTER pltr_data );
 
 // Just like pltr2() but uses pointer arithmetic to get coordinates from
 // 2d grid tables.
 
 PLDLLIMPEXP void
-pltr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data );
+pltr2p( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PLFLT_NC_SCALAR ty, PL_GENERIC_POINTER pltr_data );
 
 // Does linear interpolation from doubly dimensioned coord arrays
 // (row dominant, i.e. Fortran ordering).
 
 PLDLLIMPEXP void
-pltr2f( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
+pltr2f( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PLFLT_NC_SCALAR ty, PL_GENERIC_POINTER pltr_data );
 
 //
 // Returns a pointer to a plf2ops_t stucture with pointers to functions for
@@ -2214,7 +2248,7 @@ plf2ops_grid_col_major( void );
 //
 
 PLDLLIMPEXP PLFLT
-plf2eval1( PLINT ix, PLINT iy, PLPointer plf2eval_data );
+plf2eval1( PLINT ix, PLINT iy, PL_GENERIC_POINTER plf2eval_data );
 
 //
 // Does a lookup from a 2d function array.  plf2eval_data is treated as type
@@ -2224,7 +2258,7 @@ plf2eval1( PLINT ix, PLINT iy, PLPointer plf2eval_data );
 //
 
 PLDLLIMPEXP PLFLT
-plf2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data );
+plf2eval2( PLINT ix, PLINT iy, PL_GENERIC_POINTER plf2eval_data );
 
 //
 // Does a lookup from a 2d function array.  plf2eval_data is treated as type
@@ -2239,7 +2273,7 @@ plf2eval2( PLINT ix, PLINT iy, PLPointer plf2eval_data );
 //
 
 PLDLLIMPEXP PLFLT
-plf2eval( PLINT ix, PLINT iy, PLPointer plf2eval_data );
+plf2eval( PLINT ix, PLINT iy, PL_GENERIC_POINTER plf2eval_data );
 
 //
 // Does a lookup from a 2d function array.  plf2eval_data is treated as type
@@ -2254,7 +2288,7 @@ plf2eval( PLINT ix, PLINT iy, PLPointer plf2eval_data );
 //
 
 PLDLLIMPEXP PLFLT
-plf2evalr( PLINT ix, PLINT iy, PLPointer plf2eval_data );
+plf2evalr( PLINT ix, PLINT iy, PL_GENERIC_POINTER plf2eval_data );
 
 // Command line parsing utilities
 
@@ -2271,7 +2305,7 @@ plResetOpts( void );
 // Merge user option table into internal info structure.
 
 PLDLLIMPEXP PLINT
-plMergeOpts( PLOptionTable *options, PLCHAR_VECTOR name, const char **notes );
+plMergeOpts( PLOptionTable *options, PLCHAR_VECTOR name, PLCHAR_VECTOR *notes );
 
 // Set the strings used in usage and syntax messages.
 
@@ -2295,7 +2329,7 @@ plSetOpt( PLCHAR_VECTOR opt, PLCHAR_VECTOR optarg );
 // Process options list using current options info.
 
 PLDLLIMPEXP PLINT
-c_plparseopts( int *p_argc, char **argv, PLINT mode );
+c_plparseopts( int *p_argc, PLCHAR_NC_MATRIX argv, PLINT mode );
 
 // Print usage & syntax message.
 
@@ -2317,28 +2351,28 @@ plsfile( FILE *file );
 // Get the escape character for text strings.
 
 PLDLLIMPEXP void
-plgesc( char *p_esc );
+plgesc( PLCHAR_NC_SCALAR p_esc );
 
 // Front-end to driver escape function.
 
 PLDLLIMPEXP void
-pl_cmd( PLINT op, void *ptr );
+pl_cmd( PLINT op, PL_NC_GENERIC_POINTER ptr );
 
 // Return full pathname for given file if executable
 
 PLDLLIMPEXP PLINT
-plFindName( char *p );
+plFindName( PLCHAR_NC_VECTOR p );
 
 // Looks for the specified executable file according to usual search path.
 
-PLDLLIMPEXP char *
+PLDLLIMPEXP PLCHAR_NC_VECTOR
 plFindCommand( PLCHAR_VECTOR fn );
 
 // Gets search name for file by concatenating the dir, subdir, and file
 // name, allocating memory as needed.
 
 PLDLLIMPEXP void
-plGetName( PLCHAR_VECTOR dir, PLCHAR_VECTOR subdir, PLCHAR_VECTOR filename, char **filespec );
+plGetName( PLCHAR_VECTOR dir, PLCHAR_VECTOR subdir, PLCHAR_VECTOR filename, PLCHAR_NC_VECTOR *filespec );
 
 // Prompts human to input an integer in response to given message.
 
@@ -2355,17 +2389,17 @@ plGetFlt( PLCHAR_VECTOR s );
 // Allocates a block of memory for use as a 2-d grid of PLFLT's.
 
 PLDLLIMPEXP void
-plAlloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny );
+plAlloc2dGrid( PLFLT_NC_MATRIX *f, PLINT nx, PLINT ny );
 
 // Frees a block of memory allocated with plAlloc2dGrid().
 
 PLDLLIMPEXP void
-plFree2dGrid( PLFLT **f, PLINT nx, PLINT ny );
+plFree2dGrid( PLFLT_NC_MATRIX f, PLINT nx, PLINT ny );
 
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
 
 PLDLLIMPEXP void
-plMinMax2dGrid( PLFLT_MATRIX f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
+plMinMax2dGrid( PLFLT_MATRIX f, PLINT nx, PLINT ny, PLFLT_NC_SCALAR fmax, PLFLT_NC_SCALAR fmin );
 
 // Wait for graphics input event and translate to world coordinates
 
@@ -2386,7 +2420,7 @@ plTranslateCursor( PLGraphicsIn *gin );
 // c++.
 
 PLDLLIMPEXP void
-plsdevdata( void *data );
+plsdevdata( PL_NC_GENERIC_POINTER data );
 
 #ifdef PL_DEPRECATED
 

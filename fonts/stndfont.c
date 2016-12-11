@@ -7,9 +7,9 @@ extern short int *findex[];
 extern short int *buffer[];
 
 int
-compare( PL_GENERIC_POINTER si1, PL_GENERIC_POINTER si2 );
+compare( const void *si1, const void *si2 );
 int
-compare( PL_GENERIC_POINTER si1, PL_GENERIC_POINTER si2 )
+compare( const void *si1, const void *si2 )
 {
     const short *a = (const short *) si1;
     const short *b = (const short *) si2;
