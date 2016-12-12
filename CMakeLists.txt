@@ -162,7 +162,7 @@ if(BUILD_TEST)
   # for this logic to work it must precede including the
   # CTest module which configures DartConfiguration.tcl
   # with BUILDNAME as determined here.
-  
+
   if(NOT BUILDNAME)
     set(DART_COMPILER "${CMAKE_CXX_COMPILER}")
     if(NOT DART_COMPILER)

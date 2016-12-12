@@ -1,4 +1,4 @@
-// Copyright (C) Alan W. Irwin, 2016 
+// Copyright (C) Alan W. Irwin, 2016
 // Copyright (C) Michael Kerrisk, 2016
 //
 // This program is free software. You may use, modify, and redistribute it

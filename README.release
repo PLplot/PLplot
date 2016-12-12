@@ -397,7 +397,7 @@ follows this naming convention, and we have now changed to this same
 naming convention for our other thick binding by renaming it from
 "PLplot" to "PLplot_Standard".  To keep backwards compatibility
 (which has been tested by building and running our PLplot-5.11.1 Ada
-examples against our latest Ada binding) we still provide  
+examples against our latest Ada binding) we still provide
 the deprecated "PLplot" name to be used in "with" and "use" statements
 instead of the recommended "PLplot_Standard" name to access our
 "standard" thick binding.

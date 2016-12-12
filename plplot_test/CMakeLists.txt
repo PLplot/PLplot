@@ -118,7 +118,7 @@ if(SH_EXECUTABLE)
   else(PLPLOT_USE_QT5)
     set(SHELL_TEST_QT_EXAMPLE 1)
   endif(PLPLOT_USE_QT5)
-  
+
   configure_file(
     plplot-test-interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh

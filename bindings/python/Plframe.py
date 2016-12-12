@@ -1270,7 +1270,7 @@ class PlXframe(Frame):
 
     def pl_setcontlabelformat(s, lexp, sigdig):
         s.cmd( 'pl_setcontlabelformat', lexp, sigdig )
-        
+
     def pl_setcontlabelparam(s, offset, size, spacing, active):
         s.cmd( 'pl_setcontlabelparam', offset, size, spacing, active)
 
@@ -1459,7 +1459,7 @@ class PlXframe(Frame):
     def plscmap1l(s, itype, intensity, coord1, coord2, coord3, *alt_hue_path):
 	plsstrm( s.strm )
         plscmap1l(itype, intensity, coord1, coord2, coord3, *alt_hue_path)
-        
+
     def plscmap1n(s, ncol1):
 	s.cmd( 'plscmap1n', ncol1 )
 
@@ -1500,11 +1500,11 @@ class PlXframe(Frame):
     def plsurf3d(s, x, y, z, opt, clevel):
 	plsstrm( s.strm )
         plsurf3d(x, y, z, opt, clevel)
-        
+
     def plsurf3dl(s, x, y, z, opt, clevel, indexxmin, indexymin, indexymax):
 	plsstrm( s.strm )
         plsurf3dl(x, y, z, opt, clevel,indexxmin, indexymin, indexymax)
-        
+
     def plsvpa( s, xmin, xmax, ymin, ymax ):
 	s.cmd( 'plsvpa', xmin, xmax, ymin, ymax )
 

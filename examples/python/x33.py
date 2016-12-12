@@ -29,7 +29,7 @@
 
 from numpy import *
 
-# This only needed to define the following lists 
+# This only needed to define the following lists
 import plplot as w_alt
 
 position_options = [

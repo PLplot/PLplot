@@ -769,7 +769,7 @@ if(BUILD_TEST)
     if(PLD_extqt)
       list(APPEND EXTERNAL_DEVICES_LIST "extqt:qt")
     endif(PLD_extqt)
-      
+
     # <driver>_targets determined in the loop below over all enabled
     # external devices and interactive devices are used both for (one)
     # custom command DEPENDS below and for several add_dependencies

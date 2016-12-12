@@ -99,7 +99,7 @@ def plot1(w):
     w.plerrx(xerr1,xerr2,y)
     w.plcol0(3)
     w.plerry(x,yerr1,yerr2)
-    
+
     w.plsmin(0.0,1.0)
     w.plsmaj(0.0,1.0)
 

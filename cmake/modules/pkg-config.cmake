@@ -419,7 +419,7 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
     # are to beat a potential dereferencing problem for strings in if statements.
     # This problem only occurs with old CMake versions that don't
     # have CMP0054 set to NEW.
-    
+
     if("X${BINDING}X" STREQUAL "XcX")
       set(PC_FILE_SUFFIX "")
       set(PC_REQUIRES "")

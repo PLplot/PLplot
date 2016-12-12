@@ -56,7 +56,7 @@ def main(w):
     w.plwind (0.0, 1.0, 0.0, 1.0)
     w.plcol0 (0)
     w.plbox ("", 1.0, 0, "", 1.0, 0)
-    
+
     # Draw the boxes
     for i in range(9):
         icol = i%3 + 1

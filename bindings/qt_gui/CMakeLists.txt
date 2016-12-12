@@ -40,7 +40,7 @@ if(ENABLE_qt)
       AUTOMOC ON
       AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
       )
-      
+
     # This is not required for g++ and many other C++ compilers, but
     # still this is best practice for AUTOMOC just in case there is a
     # compiler out there (which is allowed by the lax C/C++ standards)

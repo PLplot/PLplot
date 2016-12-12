@@ -33,7 +33,7 @@
 # PLD_extqt		  - ON means the extqt device is enabled.
 # PLD_memqt               - ON means the memqt device is enabled.
 # PLPLOT_USE_Qt5          - ON means the Qt5 libraries are used rather than the default Qt4.
-# pc_qt_COMPILE_FLAGS	  - Space-separated Qt-related COMPILE_FLAGS used strictly 
+# pc_qt_COMPILE_FLAGS	  - Space-separated Qt-related COMPILE_FLAGS used strictly
 #                           just for the pkg-config configuration case.
 # pc_qt_LIBRARIES_LIST    - List of Qt-related libraries used strictly
 #                           just for the pkg-config configuration case.  Note it is the same as
@@ -138,7 +138,7 @@ if(ENABLE_qt)
   if(PLPLOT_USE_QT5)
     # We are using the latest Qt5 support method, see
     # <http://doc.qt.io/qt-5/cmake-manual.html>.
-    
+
     # Find needed components of Qt5.  Minimum value of the version is
     # 5.3.1 because there were significant text alignment bugs in prior versions.
     find_package(Qt5 5.3.1 COMPONENTS Svg Gui PrintSupport)

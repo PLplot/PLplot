@@ -30,7 +30,7 @@ little more precisely (e.g., by using the cmake option
 
 the users adds that suffix to the usual BUILDNAME label to help
 identify their dashboard in what can be long lists of dashboards
-presented by dashboard servers.  
+presented by dashboard servers.
 
 I plan no more changes to this Experimental dashboard client
 capability I have configured for ctest and which is also supported by

@@ -26,7 +26,7 @@ static char doc_Pltk_init[] = "Initialize the Pltk Tcl extension.";
 
 static PyObject *pl_Pltk_init( PyObject * PL_UNUSED( self ), PyObject *args )
 {
-  //printf( "in pl_Pltk_init()\n" );
+    //printf( "in pl_Pltk_init()\n" );
     long x = 0;
 
     TRY( PyArg_ParseTuple( args, "l", &x ) );

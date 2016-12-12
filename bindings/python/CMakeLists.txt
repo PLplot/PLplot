@@ -169,7 +169,7 @@ if(ENABLE_python)
 	INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
 	)
     endif(USE_RPATH)
-    
+
     install(
       TARGETS plplot_widgetmodule _plplotcmodule
       EXPORT export_plplot

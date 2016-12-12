@@ -204,7 +204,7 @@ if(BUILD_TEST AND BUILD_qt_example)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-    
+
   if(PLPLOT_USE_QT5)
     if(ENABLE_DYNDRIVERS)
       target_link_libraries(qt_example plplotqt plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
@@ -245,11 +245,11 @@ if(CORE_BUILD)
   if(ENABLE_qt)
     # Set additional variables used to configure Makefile.examples.in
     # which are required for the traditional build of the qt_example.
-    
+
     if(PLPLOT_USE_QT5)
       # Apparently, Qt5Core_EXECUTABLE_COMPILE_FLAGS (= -fPIE on Linux
       # systems) needs to be a compiler option to build executables such
-      # as qt_example in the traditional way for the Qt5 case.  
+      # as qt_example in the traditional way for the Qt5 case.
       set(Qt_EXECUTABLE_COMPILE_FLAGS "${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
     else(PLPLOT_USE_QT5)
       # An equivalent variable is not defined for the Qt4 case because
@@ -257,7 +257,7 @@ if(CORE_BUILD)
       # equivalent special compile flag needs.
       set(Qt_EXECUTABLE_COMPILE_FLAGS)
     endif(PLPLOT_USE_QT5)
-    
+
     # Need link flags in pkg-config form for traditional builds of
     # qt_example where that example refers to Qt functions so needs to
     # be directly linked to Qt libraries.  Note, pc_qt_LIBRARIES_LIST is

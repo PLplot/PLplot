@@ -95,7 +95,7 @@ private:
 #else
     int m_mapFile;
 #ifdef PLMemoryMap_DEBUG
-    int if_close_debug_output;
+    int    if_close_debug_output;
 #endif
     char   * m_name;
 #endif

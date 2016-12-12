@@ -46,4 +46,4 @@ def main(w):
     # Must be done independently because otherwise this changes output files
     # and destroys agreement with C examples.
     #w.plcol0(1)
-    
+
