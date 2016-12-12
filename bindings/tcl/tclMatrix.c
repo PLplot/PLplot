@@ -131,6 +131,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     int offset = 0;
     size_t             concatenated_argv_len;
     char               *concatenated_argv;
+    const char         *const_concatenated_argv;
 
     dbug_enter( "Tcl_MatrixCmd" );
 
@@ -331,11 +332,13 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
         }
         strcat( concatenated_argv, "}" );
 
+        const_concatenated_argv = (const char *) concatenated_argv;
+
         // Use all raw indices in row-major (C) order for put in MatrixAssign
         matPtr->nindices = matPtr->len;
         matPtr->indices  = NULL;
 
-        if ( MatrixAssign( interp, matPtr, 0, &offset, 1, (const char **) ( &concatenated_argv ) ) != TCL_OK )
+        if ( MatrixAssign( interp, matPtr, 0, &offset, 1, &const_concatenated_argv ) != TCL_OK )
         {
             DeleteMatrixCmd( (ClientData) matPtr );
             free( (void *) concatenated_argv );
@@ -509,7 +512,7 @@ static int MatrixAssign( Tcl_Interp* interp, tclMatrix* m,
 {
     static int verbose = 0;
 
-    char       ** newargs;
+    const char ** newargs;
     int        numnewargs;
     int        i;
 
@@ -530,7 +533,7 @@ static int MatrixAssign( Tcl_Interp* interp, tclMatrix* m,
 
     for ( i = 0; i < nargs; i++ )
     {
-        if ( Tcl_SplitList( interp, args[i], &numnewargs, (CONST char ***) &newargs )
+        if ( Tcl_SplitList( interp, args[i], &numnewargs, &newargs )
              != TCL_OK )
         {
             // Tcl_SplitList has already appended an error message
@@ -557,7 +560,7 @@ static int MatrixAssign( Tcl_Interp* interp, tclMatrix* m,
                 ( *offset )++;
             }
         }
-        else if ( MatrixAssign( interp, m, level + 1, offset, numnewargs, (const char **) newargs )
+        else if ( MatrixAssign( interp, m, level + 1, offset, numnewargs, newargs )
                   != TCL_OK )
         {
             Tcl_Free( (char *) newargs );
@@ -1244,9 +1247,10 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
             // to assign all matrix elements with indices in
             // matPtr->indices using all (deep) non-list elements of
             // that list.
-            int    offset = 0;
-            size_t concatenated_argv_len;
-            char   *concatenated_argv;
+            int        offset = 0;
+            size_t     concatenated_argv_len;
+            char       *concatenated_argv;
+            const char *const_concatenated_argv;
 
             // Prepare concatenated_argv string consisting of
             // "{argv[0] argv[1] ... argv[argc-1]}" so that _any_
@@ -1269,9 +1273,11 @@ m * 2 3 = 2.0    - set a slice consisting of all elements with second index 2 an
             }
             strcat( concatenated_argv, "}" );
 
+            const_concatenated_argv = (const char *) concatenated_argv;
+
             // Assign matrix elements using all numbers collected from
-            // the potentially deep list, concatenated_argv.
-            if ( MatrixAssign( interp, matPtr, 0, &offset, 1, (const char **) ( &concatenated_argv ) ) != TCL_OK )
+            // the potentially deep list, const_concatenated_argv.
+            if ( MatrixAssign( interp, matPtr, 0, &offset, 1, &const_concatenated_argv ) != TCL_OK )
             {
                 free( (void *) concatenated_argv );
                 return TCL_ERROR;
