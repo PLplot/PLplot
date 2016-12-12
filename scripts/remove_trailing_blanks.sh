@@ -44,6 +44,8 @@ cd $SOURCE_TREE
 # * Exclude all files in the debian, rpm, and lib trees (may review lib later).
 # * Exclude all *.patch files.
 # * Exclude libqhull/src/mem.h (may review this later when epa_build is updated).
-# * Exclude COPYING.LIB (since want to preserve exact LGPL licensing text).
+# * Exclude COPYING.LIB (since we want to preserve exact LGPL licensing text).
+# * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
+#   that does generate lines with some trailing blanks).
 
-sed -i -e 's?  *$??' $(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|debian/|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB' | xargs grep -l '  *$')
+sed -i -e 's?  *$??' $(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|debian/|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l '  *$')
