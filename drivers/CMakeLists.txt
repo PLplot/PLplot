@@ -103,9 +103,7 @@ if(ENABLE_DYNDRIVERS)
 
     if(SOURCE_ROOT_NAME STREQUAL "qt")
       if(ANY_QT_DEVICE)
-	# Must add qt.h to explicit sources for AUTOMOC method to work for either
-	# Qt4 or Qt5.
-	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE} ${CMAKE_SOURCE_DIR}/include/qt.h)
+	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
 	if(PLPLOT_USE_QT5)
 	  # According to advice from Steve Kelly on the Cmake list, the Qt5
 	  # Gui component is a dependency of the Qt5 Svg component so is not
@@ -132,19 +130,6 @@ if(ENABLE_DYNDRIVERS)
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
 	  set_qt4_target_properties(${SOURCE_ROOT_NAME})
 	endif(PLPLOT_USE_QT5)
-	set_target_properties(${SOURCE_ROOT_NAME} PROPERTIES
-	  AUTOMOC ON
-	  AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
-	  )
-	# This is not required for g++ and many other C++ compilers, but
-	# still this is best practice for AUTOMOC just in case there is a
-	# compiler out there (which is allowed by the lax C/C++ standards)
-	# that does not look in the source directory for the quoted form
-	# of #included headers in the automoc-generated source code
-	# ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
-	# specifically added by automoc to the list of source files for
-	# the target.
-	target_include_directories(${SOURCE_ROOT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)
