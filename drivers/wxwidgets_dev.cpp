@@ -680,13 +680,13 @@ void Font::createFont()
     int          pt;
     plFontToWxFontParameters( m_fci, m_size, family, style, weight, pt );
 
-    m_font    = wxFont( pt, family, style, weight, m_underlined, wxEmptyString, wxFONTENCODING_DEFAULT );
-	//wxWidgets has a feature where wxDEFAULT can be passed in as the size in the constructor
-	//which gives the default size for the system. Annoyingly wxDEFAULT is 70 which can get used
-	//as an actual size. The workaround as per http://trac.wxwidgets.org/ticket/12315 is to call
-	//wxFont::SetPointSize after construction.
-	if (pt == wxDEFAULT)
-		m_font.SetPointSize(pt);
+    m_font = wxFont( pt, family, style, weight, m_underlined, wxEmptyString, wxFONTENCODING_DEFAULT );
+    //wxWidgets has a feature where wxDEFAULT can be passed in as the size in the constructor
+    //which gives the default size for the system. Annoyingly wxDEFAULT is 70 which can get used
+    //as an actual size. The workaround as per http://trac.wxwidgets.org/ticket/12315 is to call
+    //wxFont::SetPointSize after construction.
+    if ( pt == wxDEFAULT )
+        m_font.SetPointSize( pt );
     m_hasFont = true;
 }
 
