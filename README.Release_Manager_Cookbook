@@ -58,23 +58,28 @@ _________________________________________________________________________
 
 This step does not depend on other steps.
 
-git log --name-status --reverse <commit_id>..master >| ChangeLog.release_preliminary
+Review previous release tags (which recently have been in the form
+plplot-L.M.N).
 
-where <commit_id> is the last commit id of the log of commits for the
-previous release cycle (i.e., plplot-$old_plplot_version for the
-plplot-$plplot_version release).
+git tag --list |grep '^plplot'
 
-Note the "_preliminary" suffix to distinguish this from the final
-result below which will contain (if all goes well in the steps below)
-a record of all but the last commit (of the ChangeLog itself) for this
-release.
+Checkout an up-to-date master branch or a topic branch that is rebased on
+up-to-date master, then create the preliminary ChangeLog from that.
 
-Note because of the --reverse option above the order of this log will
+git checkout master
+git log --name-status --reverse <tag-name>..HEAD >| /tmp/ChangeLog.release_preliminary
+
+where <tag-name> is the tag-name for the tag corresponding to the
+last release.
+
+Also, create a summary of all the commits topics for quick reference.
+git log --oneline --reverse <tag-name>..HEAD >| /tmp/ChangeLog.release_preliminary_summary
+
+Note because of the --reverse option above the order of these logs will
 be in chronological order.  But it is traditional for the final
-version of this file to have the result in default reverse
+version ChangeLog to have the result in default reverse
 chronological order so the --reverse option is not used in that case
 (see below).
-
 _________________________________________________________________________
 
 ** Prepare the README.release file and/or press those who have made
@@ -518,6 +523,7 @@ which would have been v5_11_0 to a more informative scheme for names.)
    ++ Sign the release with your plplot Release Manager gpg key
 
 A list of your GPG keys can be obtained using, e.g.,
+
 software@raven> gpg --list-keys Alan
 pub   2048R/BB159E92 2011-08-19 [expires: 2016-08-17]
 uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
@@ -526,12 +532,12 @@ uid                  Alan W. Irwin (FreeEOS key) <airwin@users.sourceforge.net>
 uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
 sub   2048R/C5ECCF77 2011-08-19 [expires: 2016-08-17]
 
-
 gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
 
 where YYYYYYYY is BB159E92 for Alan W. Irwin as taken from the above key list.
 
    ++ Verify the release tarball signing
+
 gpg --verify /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz.asc
 
    ++ Make a SourceForge file release
@@ -662,8 +668,15 @@ http://dewinter.com/gnupg_howto/english/GPGMiniHowto.html,
 man gpg, and http://www.gnupg.org/faq/GnuPG-FAQ.html.
 
    ++ Configure key-server (if you haven't done that already) by editing
-  $HOME/.gnupg/gpg.conf.  Also specify the auto-key-retrieve option
-  for convenience.
+      $HOME/.gnupg/gpg.conf.  Also specify the auto-key-retrieve option
+      for convenience.
+
+      N.B. According to
+      <http://superuser.com/questions/227991/where-to-upload-pgp-public-key-are-keyservers-still-surviving>
+      the recommended keyserver (which really refers to a large pool of them
+      that are deemed reliable at any given time) is
+      hkp://pool.sks-keyservers.net so that is what I have been using
+      recently, and it appears so far to be reliable.
 
    ++ List keys on your keyring that have been retrieved or generated so far:
 
@@ -714,10 +727,10 @@ So the name could be BB159E92.  Other possibilities exist as well such
 as "irwin", but that might not be unique.
 
 Here is a complete recording of the gpg --edit-keys commands where I
-added an additional user ID with the different comment "PLplot key" to my
-existing key.  Note  this technique
-could be used to add an additional user ID with a different
-Real name or Email address as well.
+added an additional user ID with the different comment "PLplot key" to
+my existing key.  Note this technique could be used to add an
+additional user ID with a different Real name or Email address as
+well.
 
 gpg --edit-key irwin
 gpg> adduid
@@ -732,7 +745,7 @@ gpg> trust # select ultimate since you ultimately trust yourself.  :-)
 Your decision? 5
 Do you really want to set this key to ultimate trust? (y/N) y
 
-# Do to a gpg bug, the trust value looks like it is not updated, but
+# Due to a gpg bug, the trust value looks like it is not updated, but
 # it is so if you
 
 gpg > save  # To save your changes, the trust value listed by
@@ -754,18 +767,58 @@ trust  (to make the new one ultimately trusted, again, not sure that is necessar
 
 save  (to get out again)
 
-When edited the next time showed ultimate trust value for correct id, but
-I don't know whether that was the above primary/trust subcommands or
-whether those were necessary at all.  It turned out those were not
-necessary at all as I later used the above sequence to generate
-a libLASi key and a FreeEOS uid key.
+When edited the next time showed ultimate trust value for correct id,
+but I don't know whether that was the above primary/trust subcommands
+or whether those were necessary at all.  It turned out those were not
+necessary at all as I later used the above first sequence without
+trust subcommand to generate a libLASi uid key and a FreeEOS uid key.
 
-   ++ Generate a revocation certificate.  Note this requires the pass phrase
-  specified at the time of key generation so keep that pass phrase in
-  a safe place or else generate the revocation certificate right after
-  generating the key, and keep that certificate in a safe place.  I chose
-  the former course (keep the pass phrase safe).  N.B. the options should
-  appear below in the order given!
+  ++ Key Expiration:
+
+      What to do when your key expires and you feel it is _not_
+      compromised in any way.  (See
+      <http://unix.stackexchange.com/questions/177291/how-to-renew-an-expired-keypair-with-gpg>
+      for discussion of this method):
+
+gpg --edit-key irwin
+# To bump expiration date of existing key.  gpg asked some reasonable
+# questions here such as how long until the next expiry (I specified
+# 5y for 5 more years).  Then it asks you to verify that new expiry,
+# then asks for your pass phrase and then shows the changed result.
+gpg> expire
+# Save results in your local keyring
+gpg> save
+
+      N.B.  The key ID (BB159E92 in my case) remains unchanged.
+
+      Publish those changed results to a keyserver (which propagates
+      them to all other key servers).
+
+gpg --send-keys key ID
+
+      where key ID is BB159E92 for my case.
+
+   ++ Verify the above propagated.
+
+      Use a different user account with keyring that has not
+      been locally updated.  Then update it using
+
+gpg --refresh-keys
+
+      Then verified that refresh worked using, e.g.,
+
+gpg --list-keys irwin
+gpg --verify plplot-5.11.1.tar.gz.asc
+
+      etc.
+
+   ++ Generate a revocation certificate.  Note this requires the pass
+      phrase specified at the time of key generation so keep that pass
+      phrase in a safe place or else generate the revocation
+      certificate right after generating the key, and keep that
+      certificate in a safe place.  I chose the former course (keep
+      the pass phrase safe).  N.B. the options should appear below in
+      the order given!
 
 gpg --armor -o nameofkey-revocation.asc --gen-revoke nameofkey
 
@@ -774,11 +827,17 @@ gpg --armor -o nameofkey-revocation.asc --gen-revoke nameofkey
 gpg --import old-revocation.asc
 gpg --send-keys nameofkey
 
-   ++ Upload your (public) key to GPG key server so that others can obtain it to
-verify your signature on the release tarball.
-gpg --send-keys nameofkey
+   ++ Upload your (public) key to GPG key server pool so that others
+      can obtain it to verify your signature on the release tarball.
 
-gpg --refresh-keys  (to update from the server all keys including your own).
+gpg --send-keys key ID
+
+      where key ID is BB159E92 for my case.
+
+gpg --refresh-keys
+
+      to update from the key server pool all keys on your keyring
+      including your own.
 
 This verified that the bad irwin address was revoked even though
 gpg --search-keys Alan W. Irwin
