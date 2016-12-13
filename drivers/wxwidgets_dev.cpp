@@ -119,7 +119,7 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
             bool      testUnderlined = currentUnderlined = false;
             PLFLT     identityMatrix[6];
             plP_affine_identity( identityMatrix );
-            DrawTextLine( lines[i].first, lines[i].second - lines[i].first, 0, 0, identityMatrix, baseFontSize, false,
+            DrawTextLine( lines[i].first, lines[i].second - lines[i].first, 0, 0, 0, 0, identityMatrix, baseFontSize, false,
                 testSuperscriptLevel, testSuperscriptScale, testSuperscriptOffset, testUnderlined, testFci,
                 0, 0, 0, 0.0, lineWidths[i], lineHeights[i], lineDepths[i] );
             paraWidth   = MAX( paraWidth, lineWidths[i] );
@@ -182,24 +182,17 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
         }
         diorotTransform[4] = 0;
         diorotTransform[5] = 0;
+
+        PLFLT finalTransform[6];
+        memcpy( finalTransform, textTransform, sizeof ( PLFLT ) * 6 );
+        plP_affine_multiply( finalTransform, textTransform, diorotTransform );
+
         for ( size_t i = 0; i < lines.size(); ++i )
         {
-            PLFLT justTransform[6];
-            justTransform[0] = 1.0;
-            justTransform[1] = 0.0;
-            justTransform[2] = 0.0;
-            justTransform[3] = 1.0;
-            justTransform[4] = -lineWidths[i] * args->just;
-            justTransform[5] = lineHeights[i] * 0.5 - cumSumHeight;            //Pass the location of the top left point of the string.
-
-            PLFLT finalTransform[6];
-            memcpy( finalTransform, textTransform, sizeof ( PLFLT ) * 6 );
-            plP_affine_multiply( finalTransform, textTransform, diorotTransform );
-            plP_affine_multiply( finalTransform, finalTransform, justTransform );
-
             DrawTextLine( lines[i].first, lines[i].second - lines[i].first,
                 args->x,
                 args->y,
+                -lineWidths[i] * args->just, lineHeights[i] * 0.5 - cumSumHeight,
                 finalTransform, baseFontSize, true,
                 currentSuperscriptLevel, currentSuperscriptScale, currentSuperscriptOffset, currentUnderlined,
                 currentFci, pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a, lineWidths[i],
@@ -233,7 +226,7 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
 //  If drawText is true the text will actually be drawn. If it is false the size
 //  will be calsulated but the text will not be rendered.
 //--------------------------------------------------------------------------
-void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth )
+void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth )
 {
     //check if we have the same symbol as last time - only do this for single characters
     if ( !drawText
@@ -249,6 +242,9 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y,
     }
 
     wxString section;
+
+    PLFLT    sectionTransform[6];
+    memcpy( sectionTransform, transform, sizeof ( sectionTransform ) );
 
     // Get PLplot escape character
     char plplotEsc;
@@ -278,7 +274,7 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y,
                 wxCoord sectionWidth;
                 wxCoord sectionHeight;
                 wxCoord sectionDepth;
-                DrawTextSection( section, x + textWidth, y - actualSuperscriptOffset, transform,
+                DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + actualSuperscriptOffset, transform,
                     baseFontSize * superscriptScale, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
                 textWidth += sectionWidth;
                 textHeight = MAX( textHeight, sectionHeight );
@@ -316,7 +312,7 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y,
             wxCoord sectionWidth;
             wxCoord sectionHeight;
             wxCoord sectionDepth;
-            DrawTextSection( section, x + textWidth, y - actualSuperscriptOffset, transform,
+            DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + actualSuperscriptOffset, transform,
                 baseFontSize * superscriptScale, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
             textWidth += sectionWidth;
             textHeight = MAX( textHeight, sectionHeight + superscriptOffset * baseFontSize );
@@ -340,7 +336,7 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x, wxCoord y,
     wxCoord sectionWidth;
     wxCoord sectionHeight;
     wxCoord sectionDepth;
-    DrawTextSection( section, x + textWidth, y - actualSuperscriptOffset, transform,
+    DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + actualSuperscriptOffset, transform,
         baseFontSize * superscriptScale, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
     textWidth += sectionWidth;
     textHeight = MAX( textHeight, sectionHeight + superscriptOffset * baseFontSize );
@@ -685,6 +681,12 @@ void Font::createFont()
     plFontToWxFontParameters( m_fci, m_size, family, style, weight, pt );
 
     m_font    = wxFont( pt, family, style, weight, m_underlined, wxEmptyString, wxFONTENCODING_DEFAULT );
+	//wxWidgets has a feature where wxDEFAULT can be passed in as the size in the constructor
+	//which gives the default size for the system. Annoyingly wxDEFAULT is 70 which can get used
+	//as an actual size. The workaround as per http://trac.wxwidgets.org/ticket/12315 is to call
+	//wxFont::SetPointSize after construction.
+	if (pt == wxDEFAULT)
+		m_font.SetPointSize(pt);
     m_hasFont = true;
 }
 
@@ -1065,17 +1067,22 @@ PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
 //  void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
 //
 //  This function will draw a section of text given by section at location
-//  x, y. The function must not contain any newline characters or plplot
-//  escapes.
-//  scaledFontSize is the size of a character after any scaling for
-//  superscript. The underlined flag and fci are inputs defining the text
-//  style.
+//  x, y relative to the origin xOrigin, yOrigin. The function must not
+//  contain any newline characters or plplot escapes.
+//  transform is a transformation to be applied to the device context AFTER
+//  the origin of the device context has been moved to xOrigin, yOrigin. The
+//  purpose of having this origin is to allow the units used by wxWidgets to
+//  be different to those passed in and for the scaling factors to be
+//  different in each direction.
+//  scaledFontSize is the font size in pt after any scaling for super/sub script.
+//  The underlined flag, overlined flag, fci and text colours are inputs defining
+//  the text style.
 //  On return textWidth, textHeigth and textDepth will be filled with the width,
 //  ascender height and descender depth of the text string.
 //  If drawText is true the text will actually be drawn. If it is false the size
 //  will be calculated but the text will not be rendered.
 //--------------------------------------------------------------------------
-void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth )
+void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth )
 {
     //for text, work in native coordinates, because it is significantly easier when
     //dealing with superscripts and text chunks.
@@ -1137,8 +1144,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
         {
             wxGraphicsMatrix originalGcMatrix = m_gc->GetTransform();
 
-            m_gc->Translate( x / m_xScale, m_height - y / m_yScale );              //move to text starting position
-
+            m_gc->Translate( xOrigin / m_xScale, m_height - yOrigin / m_yScale );              //move to text starting position
             //Create a wxGraphicsMatrix from our plplot transformation matrix.
             //Note the different conventions
             //1) plpot tranforms use notation x' = Mx, where x and x' are column vectors,
@@ -1174,7 +1180,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
                 xTransform, -yTransform );
             wxGraphicsMatrix reflectMatrix = m_gc->CreateMatrix();
             m_gc->ConcatTransform( matrix );
-            m_gc->DrawText( section, 0, 0 );
+            m_gc->DrawText( section, x / m_xScale, -y / m_yScale );
             m_gc->SetTransform( originalGcMatrix );
         }
 #if wxVERSION_NUMBER >= 2902
@@ -1183,7 +1189,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
             wxAffineMatrix2D originalDcMatrix = m_dc->GetTransformMatrix();
 
             wxAffineMatrix2D newMatrix = originalDcMatrix;
-            newMatrix.Translate( x / m_xScale, m_height - y / m_yScale );
+            newMatrix.Translate( xOrigin / m_xScale, m_height - yOrigin / m_yScale );
             wxAffineMatrix2D textMatrix;
             //note same issues as for wxGraphicsContext above.
             PLFLT            xTransform = transform[4] / m_xScale;
@@ -1197,7 +1203,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
             newMatrix.Concat( textMatrix );
             m_dc->SetTransformMatrix( newMatrix );
 
-            m_dc->DrawText( section, 0, 0 );
+            m_dc->DrawText( section, x / m_xScale, -y / m_yScale );
 
             m_dc->SetTransformMatrix( originalDcMatrix );
         }
@@ -1208,7 +1214,9 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord x, wxCoord y, PLFLT 
             // all we can really do is rotate the text - this is a bit of a poor state
             // really, but to be honest it is better than defaulting to hershey for all
             // text
-            m_dc->DrawRotatedText( section, x / m_xScale, m_height - y / m_yScale, angle );
+            PLFLT xTransformed = x / m_xScale * transform[0] + y / m_yScale * transform[2] + transform[4] / m_xScale;
+            PLFLT yTransformed = x / m_xScale * transform[1] + y / m_yScale * transform[3] + transform[4] / m_xScale;
+            m_dc->DrawRotatedText( section, xOrigin / m_xScale + xTransformed, m_height - y / m_yScale + yTransformed, angle );
         }
 #endif
     }
