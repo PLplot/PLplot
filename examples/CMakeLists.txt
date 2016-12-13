@@ -402,7 +402,7 @@ if(CORE_BUILD)
 
 else(CORE_BUILD)
 
-  # MAINTENANCE
+  # MAINTENANCE 2016-12-12
   # This logic copied exactly (including version numbers which change
   # from time to time) from the top-level CMakeLists.txt file except
   # for the name of the project.
@@ -417,7 +417,7 @@ else(CORE_BUILD)
   else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     # Latest CMake version as of 2016-02 for all platforms
     # other than Linux.
-    cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+    cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
     # Keep policy consistent for all platforms.
     cmake_policy(VERSION 3.0.2)
   endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")

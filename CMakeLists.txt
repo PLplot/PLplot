@@ -30,37 +30,36 @@ set(
   ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
   )
 
-# MAINTENANCE
+# MAINTENANCE 2016-12-12
 # We prefer to support only recent CMake versions and latest CMake
 # policies to keep our build system as simple and as bug free as
 # possible.  However, as a special concession for our modern (not
 # enterprise or LTS) Linux distro users we allow them to use the
-# system version of CMake which at this time (2016-02) is typically
-# 3.0.2 or later.  By coincidence there is a CMake bug for 3.0 (a
-# permissions issue for file(GENERATE...), see
+# system version of CMake which at this time is typically 3.0.2 (on
+# Debian stable = Jessie) or later.  So we adopt 3.0.2 for the minimum
+# CMake version on Linux and also that version for CMake policies on
+# all platforms for CMake policy uniformity.  For non-Linux platforms
+# we adopt 3.6.2 for the minimum version at this time.  3.6.2 is the
+# version of CMake that is supplied by Cygwin at this time and note
+# that rolling releases such as Debian testing and also
+# MinGW-w64/MSYS2 already supply CMake-3.7.0.  Note, that if you
+# are using a platform that does not supply CMake-3.0.2 (Linux)
+# or CMake-3.6.2 (non-Linux) or later, then your best bet is
+# to build a recent version of CMake for yourself or even download
+# a binary version of it from Kitware that is suitable for your
+# platform.
+
+# Additional notes for Linux users of older CMake versions.  There is
+# a CMake bug for 3.0 (a permissions issue for file(GENERATE...), see
 # cmake/modules/plplot_functions.cmake for details) that has a
-# workaround that works on Cygwin and Linux but all other platforms
-# than Cygwin and Linux _must_ use CMake 3.2 (where that permissions
-# bug was fixed) or later.
-#
-# In addition, CMake 3.3.2 solves a fundamental and quite nasty CMake
-# find regression that occurred from 3.2.0 through 3.3.1. See threads
-# entitled "[BUG] HINTS not correctly handled in find_program" and
-# "find_program HINTS no longer preferred over PATH" on the
-# cmake-devel list.  I think this regression will not affect users who
-# only have the system versions of libraries to find in the standard
-# locations, but other users (e.g., those on one of the MSVC Windows
-# platforms) who are building or downloading their own sets of free
-# software libraries that are not installed in some standard place
-# recognized implicitly by CMake could run into find trouble.  So it
-# is not a showstopper regression, but still it makes any bug report
-# specified for that range of CMake versions somewhat suspect in case
-# the error reported is a result of this find regression.  For this
-# reason we adopt 3.3.2 as our minimum CMake version below even for
-# Cygwin which supported 3.3.2 starting in 2015-11.  The one exception
-# to that minimum version is Linux where the minimum is 3.0.2, and for
-# that Linux case we warn of potential find issues if the actual
-# version is in the range from 3.2.0 through 3.3.1.
+# workaround that works on Linux but that bug was fixed as of CMake
+# 3.2.  In addition, CMake 3.3.2 solves a fundamental and quite nasty
+# CMake find regression that occurred from 3.2.0 through 3.3.1. See
+# threads entitled "[BUG] HINTS not correctly handled in find_program"
+# and "find_program HINTS no longer preferred over PATH" on the
+# cmake-devel list.  So for Linux users we warn of potential find
+# issues if the actual CMake version they are running is in the range
+# from 3.2.0 through 3.3.1.
 
 # Adapted method suggested by Brad King for using
 # different minimum versions for different platforms.
@@ -74,9 +73,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
    a compromised find ability that was fixed in 3.3.2.  Please upgrade to 3.3.2 or greater.")
   endif(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
 else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  # Latest CMake version as of 2016-02 for all platforms
+  # Latest CMake version as of 2016-12-12 for all platforms
   # other than Linux.
-  cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+  cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
   # Keep policy consistent for all platforms.
   cmake_policy(VERSION 3.0.2)
 endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
