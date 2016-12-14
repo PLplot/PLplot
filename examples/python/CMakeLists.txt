@@ -92,11 +92,13 @@ set(
   test_linebreak.py
   )
 
-if(ENABLE_tkX)
-  set(python_SCRIPTS ${python_SCRIPTS}
-    pytkdemo
-    )
-endif(ENABLE_tkX)
+# AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
+# insure correct code to support plplot_widgetmodule is in
+# libplplot if ENABLE_DYNDRIVERS is OFF.
+
+if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
+  list(APPEND python_SCRIPTS pytkdemo)
+endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
 
 if(ENABLE_pyqt4)
   set(
@@ -145,7 +147,11 @@ if(CORE_BUILD)
     endforeach(file ${python_SCRIPTS} ${python_DATA})
     add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
     set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
-      _plplotcmodule_fixed plplot_widgetmodule)
+      _plplotcmodule_fixed)
+    if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
+      set_property(GLOBAL APPEND PROPERTY TARGETS_examples_python python_examples
+      plplot_widgetmodule)
+    endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
     set_property(GLOBAL PROPERTY FILES_examples_python ${command_DEPENDS})
   endif(BUILD_TEST)
 
