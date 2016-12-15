@@ -5,9 +5,14 @@ PLplot uses git for version control.  The fundamental git
 documentation we refer to most often is the freely downloadable
 [Pro Git Book](http://git-scm.com/book).
 
-There is excellent advise about commit messages and how to organize
+There is excellent advice about commit messages and how to organize
 commits at <http://who-t.blogspot.be/2009/12/on-commit-messages.html>
-as well.
+as well.  In particular, the fundamental advice there is to always
+include a short description paragraph at the top of your commit
+message giving a general description of your commit.  That description
+is used throughout git when summarizing commits so it should be kept
+as short as reasonable (i.e., there is typically just one line in the
+description paragraph).
 
 Installation of git is straightforward as described at
 <http://git-scm.com/book/en/Getting-Started-Installing-Git>
@@ -38,16 +43,32 @@ I got a fresh clone."
 As expected (since git-lfs adds nothing that is truly needed for PLplot git
 needs) that lean git command-line environment has been working well for him.
 
+Local configuration of git
+--------------------------
+
+That is covered in the Pro Git book referenced above.  But the fundamental
+thing you should do is identify yourself in the way you want to be identified
+in your commit messages.
+
+# To change/set the relevant values use, e.g.,
+
+git config --global user.name "Alan W. Irwin"
+git config --global user.email airwin@users.sourceforge.net
+
+Workflow
+--------
+
 PLplot currently uses the rebase git workflow
 [described here](http://kevinold.com/2013/04/17/my-git-workflow.html).
 
 And summarized here:
 1. *ALWAYS* develop on a branch:
-   $ git checkout -b new_branch
+
+git checkout -b new_branch
 
    Develop followed by tests of that development followed by
 
-   $ git commit
+git commit
 
    to create commits in new_branch.  If you create a commit and
    realize before you make additional commits that there is an error
@@ -61,11 +82,12 @@ And summarized here:
    caused a regression) much easier.
 
 2. Updating the master branch:
-   $ git checkout master
-   $ git fetch
-   (optional) review newly downloaded changes
-   $ git log origin/master
-   $ git merge --ff-only origin/master
+
+git checkout master
+git fetch
+# (optional) review newly downloaded changes
+git log origin/master
+git merge --ff-only origin/master
 
    Make sure that you are on the master branch before doing the
    merge. Failure to do so will mean having to undo the merge as
@@ -74,8 +96,9 @@ And summarized here:
 
 3. Updating your working branch so that it is a linear
    continuation of the work on the master branch:
-   $ git checkout new_branch
-   $ git rebase master
+
+git checkout new_branch
+git rebase master
 
    Note that there is some possibility for headaches here. If one
    of the files that you are working on is changed in the master
@@ -89,17 +112,18 @@ And summarized here:
    middle of work on a topic with a dirty tree with uncommitted
    changes.  For this case use
 
-   $ git checkout new_branch # (checkout the dirty tree with uncommitted changes)
-   $ git stash save # (save that dirty tree to make new_branch clean
-                    # i.e., all uncommitted changes disappear).
-   $ git rebase master # (update that clean branch)
-   $ git stash pop # (restore your uncommitted changes)
-   # ... keep working.... until you are ready to commit (and ultimately
-   # merge back to master and push).
+git checkout new_branch # (checkout the dirty tree with uncommitted changes)
+git stash save # (save that dirty tree to make new_branch clean
+               # i.e., all uncommitted changes disappear).
+git rebase master # (update that clean branch)
+git stash pop # (restore your uncommitted changes)
+# ... keep working.... until you are ready to commit (and ultimately
+# merge back to master and push).
 
 4. Incorporate changes back into master:
-   $ git checkout master
-   $ git merge --ff-only new_branch
+
+git checkout master
+git merge --ff-only new_branch
 
    At this point you should see a message like "Fast-forward". If
    instead you see "Merge made by the 'recursive' strategy" this
@@ -110,23 +134,27 @@ And summarized here:
    the history linear again.
 
 5. Push changes to the official repo:
-   Check first:
-   $ git push --dry-run origin master
 
-   Push:
-   $ git push origin master
+# Check first:
+git push --dry-run origin master
+# Actual Push:
+git push origin master
 
 This is a rebase work flow. The linearity of the master branch is
 enforced by server side hooks and by only allowing fast-forward
 merges with the merge flag --ff-only. You can make this the
 default option for your repository using the command:
-   $ git config merge.ff only
+
+git config merge.ff only
 
 This will add these two lines:
 [merge]
 	ff = only
 
-To the .git/config file in the home directory of the PLplot project.
+To the .git/config file in your local repository of the PLplot project.
+
+Development Collaboration
+-------------------------
 
 Note one drawback of a rebase workflow like adopted here is care must
 be used in sharing development branches with others.  One such method
@@ -145,6 +173,40 @@ file conflicts with the HEAD of master in which case the developer of
 those series of patches would need to bring them up to date with
 master by rebasing his private development branch before regenerating
 the patch series).
+
+For those new to git, here is the simple cookbook for using "git format-patch"
+(but use "git help format-patch" to learn a lot more).
+
+1. Develop your topic on a private branch as indicated above.  Suppose
+you have made 2 commits to that topic branch that you would like to
+share with others for their evaluation.  Then use
+
+git format-patch -2
+
+to create two formatted patch files corresponding to your two commits, e.g.,
+
+0001-Build-system-Fix-test_python_psc-dependency-issue.patch
+0002-Build-system-Implement-version-check-on-libharu-libh.patch
+
+Review each of those files to make sure your commit name and e-mail
+address are the way you like them (see the "git config" command above
+for changing those).  Also make sure your description (see comments
+on the description paragraph above) is the way you like it for
+each of the commits.  Then
+store those files in a compressed tarball, e.g.,
+
+tar zcf my_topic.tar.gz 000*.patch
+
+send those compressed results as an e-mail attachment to, e.g., the plplot-devel
+mailing list; and then cleanup afterward as follows:
+
+rm 000*.patch
+rm my_topic.tar.gz
+
+Those receiving such a tarball should unpack it, and then use git am
+_on a private topic branch_ to commit those changes for further
+collaboration until the collaborative yet private topic is matured
+enough to be merged with the master branch and pushed.
 
 Configuring the build system
 ----------------------------
@@ -199,5 +261,33 @@ Styling of code
 
 The uncrustify code beautifying program is used to style the source
 code consistently and in a readable manner. Running the
-scripts/style_source.sh shell script can be used the check the
+
+scripts/style_source.sh
+
+shell script can be used the check the
 source code and optionally apply any styling changes required.
+
+Use the --help option for this script to find out what options
+you have to run it.
+
+In order for this script to work, you must have the correct version
+(currently that is version 0.60) of uncrustify installed and
+on your PATH.  You must also have PYTHON and other Unix tools
+installed.  So typically this script is only run on Unix
+systems (or Unix-like systems such as Cygwin and MinGW-w64/MSYS2).
+
+Since this script can potentially make intrusive changes (if you use
+the --apply option), always run the "git diff" command afterward to
+review those changes before committing the result.
+
+Another important code styling script available on Unix or Unix-like
+systems is
+
+scripts/remove_trailing_blanks.sh
+
+which unconditionally removes trailing blanks from
+essentially all text files in the source tree.
+
+Since this script can potentially make intrusive changes, always run
+the "git diff" command afterward to review the changes before
+committing the result.
