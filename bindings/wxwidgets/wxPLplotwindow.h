@@ -80,6 +80,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize client
     : m_created( false ), m_initialSize( clientSize )
 
 {
+    wxLogDebug("wxPLplotwindow::wxPLplotwindow");
     m_memoryDc = NULL;
 #ifdef wxUSE_GRAPHICS_CONTEXT
     m_gcDc = NULL;
@@ -185,6 +186,7 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
+    wxLogDebug("wxPLplotwindow::OnCreate");
     if ( !m_created )
     {
         //set the client size if requested

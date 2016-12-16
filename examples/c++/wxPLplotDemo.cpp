@@ -144,6 +144,7 @@ bool MyApp::OnInit()
 
     wxPLplotwindow<wxFrame> *frame = new wxPlDemoFrame();
     frame->Create( NULL, wxID_ANY, wxT( "wxPLplotDemo" ) );
+    wxLogDebug("frame->Create");
     frame->SetIcon( wxIcon( graph ) );
     frame->Show();
     Plot( frame );
@@ -155,6 +156,13 @@ template< class WXWINDOW >
 void Plot( wxPLplotwindow<WXWINDOW> *plotwindow )
 {
     wxPLplotstream* pls = plotwindow->GetStream();
+    if (pls == NULL)
+    {
+     wxLogDebug("pls NULL");
+     return;
+    }
+    wxLogDebug("Plot()");
+    assert(pls);
 
     const size_t  np = 500;
     PLFLT         x[np], y[np];
