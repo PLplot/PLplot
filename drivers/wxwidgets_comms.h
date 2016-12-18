@@ -47,9 +47,6 @@ const unsigned char transmissionClose            = 9;
 
 #define TEXTSIZEINFO_MAX_LENGTH    500
 
-#define PLMemoryMap_DEBUG
-//#undef PLMemoryMap_DEBUG
-
 struct TextSizeInfo
 {
     long         width;
@@ -94,9 +91,6 @@ private:
     HANDLE m_mapFile;
 #else
     int m_mapFile;
-#ifdef PLMemoryMap_DEBUG
-    int    if_close_debug_output;
-#endif
     char   * m_name;
 #endif
     size_t m_size;
