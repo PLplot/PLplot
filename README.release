@@ -1,10 +1,26 @@
-PLplot Release 5.11.2
+PLplot Release 5.12.0
+
+N.B. This document NEEDS REVISION because at this stage only the first
+part of the preliminary ChangeLog (everything before the first commit
+concerning the changes to remove NAGFOR warnings and errors) of commit
+messages has been reviewed for particular topics to include in this
+document.  Also look for "NEEDS REVISION" below for any other parts of
+the current document which are known to need revision.
 
 This is a release of the PLplot plotting package. It represents the
-ongoing best efforts of the PLplot community to improve this package,
-and it is the only version of PLplot that we attempt to support.
-Releases in the 5.x.y series should be available several times per
-year.
+ongoing best efforts of the PLplot development community (roughly 400
+commits since the last release) to improve this package, and it is the
+only version of PLplot that we attempt to support.  Releases in the
+5.x.y series should be available several times per year.
+
+Note that PLplot has been continuously developed since 1986 so it has
+accumulated a lot of cruft since that time that we are now slowing
+dealing with to improve the lot of both new users and new members of
+the development team.  As a result virtually every PLplot release has
+some backwards incompatibilities introduced to help clean it up so
+please pay careful attention to the OFFICIAL NOTICES FOR USERS below
+where we document such incompatibilities to make life easier
+for those who have prior experience with older PLplot releases.
 
 If you encounter a problem with this release that is not already
 documented on our bug tracker, then please send bug reports to PLplot
@@ -22,10 +38,11 @@ CONTENTS
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Backwards incompatibilities introduced for our C (and other) API
-1.2 Backwards incompatibilities for our Fortran binding
-1.3 Octal interpretation removed from numerical escape sequences in text
-1.4 The rpath treatment has been changed for Mac OS X platforms
+1.1 Backwards incompatibilities have been introduced for our C (and other) API
+1.2 Backwards incompatibilities have been introduced for our Fortran binding
+1.3 Backwards incompatibilities have been introduced for our Tcl/Tk bindings
+1.4 Octal interpretation has been removed from numerical escape sequences in text
+1.5 The rpath treatment has been changed for Mac OS X platforms
 
 2. Improvements relative to the previous release
 
@@ -35,14 +52,23 @@ CONTENTS
 2.4 Supply old Fortran binding and examples option
 2.5 Backwards incompatibilites introduced by the new Fortran binding
 2.6 Examples reworked for the -DPL_DOUBLE=OFF case
-2.7 Changes to our Ada thick bindings
+2.7 Changes to our Ada bindings and examples
+2.8 Changes to our tclmatrix library
+2.9 Backwards-incompatible changes to our Tcl/Tk bindings and examples
+2.10 Substantially updated the DocBook documentation
+2.11 Default page size consistency
+2.12 Updated D language support
+2.13 Modernized build-system support for Qt4 and Qt5
+2.14 Implemented support for pyqt5
+2.15 Addressed -DPL_DOUBLE=OFF issues
+2.16 Replaced "Lena" with "Chloe"
 
 3. PLplot testing
 ________________________________________________________________
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Backwards incompatibilities introduced for our C (and other) API
+1.1 Backwards incompatibilities have been introduced for our C (and other) API
 
 We recently discovered that the second (argv) argument of plparseopts
 was changed by that routine so accordingly we have dropped the
@@ -52,16 +78,22 @@ The return type has been change from int to PLINT (which is normally
 defined by "typedef int32_t PLINT;" for plparseopts, plsetopt,
 plMergeOpts, plFindName, plGetCursor, and plTranslateCursor.
 
-Where appropriate all these changes have been propagated to our language
-bindings.
+All these changes have been propagated to our language bindings where
+appropriate.
 
-1.2 Backwards incompatibilities for our Fortran binding
+1.2 Backwards incompatibilities have been introduced for our Fortran binding
 
 The new implementation of the Fortran binding has introduced a
 significant number of backwards incompatibilities.  See 2.5 below for
 the details.
 
-1.3 Octal interpretation removed from numerical escape sequences in text
+1.3 Backwards incompatibilities have been introduced for our Tcl/Tk bindings
+
+Our Tcl/Tk bindings and examples now use only a redacted API, i.e.,
+redundant array dimensions are removed from all argument lists.
+See 2.9 for the details concerning this important Tcl/Tk change.
+
+1.4 Octal interpretation has been removed from numerical escape sequences in text
 
 The undocumented feature where leading 0's in numerical escape
 sequences meant the whole number was interpreted as octal rather than
@@ -72,7 +104,7 @@ decimal rather than octal.  Thus, the decimal interpretation of
 "#(0123)" and "#(123)" is now identical, and there are no errors
 introduced by leading-zero decimal escape sequences such as "#(0855)".
 
-1.4 The linking method has been changed for the Mac OS X platform
+1.5 The linking method has been changed for the Mac OS X platform
 
 For this platform our build system previously used the default CMake
 rpath-based linking method in the build tree, but in the installed
@@ -96,7 +128,7 @@ ________________________________________________________________
 
 2.1 Bug fixes
 
-The bug fixes in this release are noted in the commit messages
+The bug fixes in this release are noted in the ~400 commit messages
 collected in ChangeLog.release.
 
 2.2 Rewrite the CMake Ada language support
@@ -111,6 +143,18 @@ the new Ada language support is based on modern CMake language support
 principles and infrastructure as opposed to whatever was available for
 language support a decade ago when the old Ada language support was
 implemented.
+
+This new Ada language has been much more extensively tested than our
+old Ada language support.  On Linux it is essentially perfect for our
+Ada library and executable needs in the build tree and install tree.
+On Mac OS X, our one report shows no problems in the build tree, but
+there is a linking issue in the install-tree version of PLplot Ada
+libraries that we have been unable to figure out.  Our one report for
+Cygwin (the first time our old or new Ada language support has been
+tested on any Windows platform) shows complete failure of our Ada
+language support on that platform (fairly much as expected since we
+don't understand what the Cygwin platform requires for CMake language
+support) .
 
 2.3 Rewrite the Fortran binding
 
@@ -156,11 +200,22 @@ longer required for that reason.  If it turns out no other
 binding requires these prefixes then we potentially could
 remove them which would be a welcome simplification.
 
-We have achieved good test results for gfortran, ifort, and nagfor
-with this new Fortran binding.  However, one known downside of this
-new binding is it generates some ~50 "marked PRIVATE" warning messages
-when building the plplotf95 target with the gfortran Fortran compiler.
-A typical example of such a warning message is
+We have achieved good test results (no build or run-time issues, no
+PostScript differences between the Fortran and C results for our ~30
+standard examples written in the two languages) for gfortran, ifort,
+and nagfor with this new Fortran binding and examples.  In particular,
+we feel it is significant there are no warning messages at all
+generated by nagfor when we build the new Fortran binding and examples
+with that compiler.  We had to make a significant number of changes to
+achieve that goal to bring us into strict standards compliance consistent
+with the claim made for that compiler that it is "valued by developers
+all over the globe for its checking capabilities and detailed error
+reporting" (see <https://www.nag.com/nag-compiler>).
+
+One known gfortran downside of this new binding is it generates some ~50
+"marked PRIVATE" warning messages when building the plplotf95 target
+with the gfortran Fortran compiler.  A typical example of such a
+warning message is
 
 Warning: Symbol 'interface_plcont' at (1) is marked PRIVATE but has been given the binding label 'c_plcont'
 
@@ -175,10 +230,21 @@ spurious warnings themselves.  Until this gfortran bug is fixed, these
 ~50 "marked PRIVATE" warnings should just be ignored for those using
 gfortran.
 
+Another known gfortran downside of this new binding is it does not
+build with gfortran 4.8.x or less, i.e., apparently the implementation
+of the iso_c_binding module for those versions of gfortran is not good
+enough to build our new Fortran binding.  However, our tests show
+gfortran 4.9.2 does implement the iso_c_binding module well enough to
+produce good results (other than the above spurious warnings).  So
+4.9.2 is the minimum version of gfortran that we support with this new
+binding, and if the user is temporarily stuck with an earlier version
+of gfortran, see the next section.
+
 2.4 Supply old Fortran binding and examples option
 
 Because the new Fortran binding is not completely compatible with the
-old one (see 2.5 below for the list of incompatibilities) we have
+old one (see 2.5 below for the list of incompatibilities) and does not
+build for gfortran versions less than 4.9.2, we have
 supplied a -DPL_DEPRECATED_f95=ON CMake option (which defaults to
 OFF) that uses a snapshot of the old Fortran binding and associated
 Fortran examples rather than the new versions.
@@ -189,16 +255,17 @@ work well, but this option should be suitable for emergency conditions
 where you just cannot get the new Fortran binding to work properly.
 But in this case please let us know about those issues so we can fix
 them.  Also, this -DPL_DEPRECATED_f95=ON option should extend the
-length of time that the old Fortran 95 binding is available, but that
-old binding will not be available indefinitely so at some point (after
-discussions on the plplot-general list concerning how many users are
-still using this option) the -DPL_DEPRECATED_f95=ON option will be
-removed and user choices will be reduced to either using an old PLplot
-version or adjusting your software for the incompatibilities mentioned
-below for the new Fortran binding.  And if you start that process
-immediately, you will likely get better help with it since we have
-just gone through that process for the Fortran examples (which should
-be your first guide concerning how to use the new Fortran binding).
+length of time that the old Fortran 95 binding is available for new
+PLplot releases, but that old binding will not be available
+indefinitely so at some point (after discussions on the plplot-general
+list concerning how many users are still using this option) the
+-DPL_DEPRECATED_f95=ON option will be removed and user choices will be
+reduced to either using an old PLplot version or modifying their
+software for the incompatibilities mentioned below for the new Fortran
+binding.  And if you start that modification process immediately, you
+will likely get better help with it since we have just gone through
+that process for the Fortran examples (which should be your first
+guide concerning how to use the new Fortran binding).
 
 2.5 Backwards incompatibilites introduced by the new Fortran binding
 
@@ -302,7 +369,11 @@ has exactly the same effect.
 plshades has been added to give the same control of this argument to
 Fortran users that is currently available to C users.
 
-(ix) The old support for translating any "\n" characters in Fortran
+(ix) The "defined" argument for all variants of plshade and plshades
+that existed but was unused in the old Fortran binding has been
+removed for the new binding.
+
+(x) The old support for translating any "\n" characters in Fortran
 character string arguments to "char(10)" has now been removed.
 Instead, a user should use achar(10) (not char(10) which may not give
 you the desired line feed character on certain platforms) to do this
@@ -322,11 +393,11 @@ of linefeed unlike the Fortran case.  After that, how our device
 drivers currently interpret that special C character for linefeed is
 idiosyncratic to each of our device drivers.)
 
-(x) The index arguments (i.e., the last 3 arguments) of plot3dcl and
+(xi) The index arguments (i.e., the last 3 arguments) of plot3dcl and
 plsurf3dl have been changed from one-based indexing to zero-based
 indexing to be consistent with C and also all our other bindings.
 
-(xi) For the plimagefr signature without callback-related arguments
+(xii) For the plimagefr signature without callback-related arguments
 (i.e., no trailing xg, yg, tr, or callback arguments), we now use NULL
 internally for the C callback following what is done (both in the old
 and new binding) for the plshade and plshades signatures without
@@ -345,7 +416,7 @@ correspond to the exact x and y ranges that pltr0 delivers.  But it
 does matter for other uses of this plimagefr signature which is
 why we are documenting this backwards incompatibility here.
 
-(xii) For the plcont and plvect signatures without callback-related
+(xiii) For the plcont and plvect signatures without callback-related
 arguments (i.e., no trailing xg, yg, tr, or callback arguments), we
 now use pltr0 internally for the callback rather than pltr0f (which
 applies an offset of 1 unit in the way that input arguments were
@@ -386,7 +457,7 @@ the (default) -DPL_DOUBLE=ON case.
   factor underflowed, and those uniformly zeroed results in turn
   caused PLplot run-time errors.
 
-2.7 Changes to our Ada thick bindings
+2.7 Changes to our Ada bindings and examples
 
 Using PLplot "traditional" and PLplot "standard" to name our two thick
 user-visible Ada bindings has long been documented in our DocBook
@@ -401,12 +472,257 @@ examples against our latest Ada binding) we still provide
 the deprecated "PLplot" name to be used in "with" and "use" statements
 instead of the recommended "PLplot_Standard" name to access our
 "standard" thick binding.
+
+We have changed our Ada examples to be consistent with the above change.  In
+addition, we have renamed the x??a.adb examples which depend on what
+is now called our thick PLplot_Traditional binding to xtraditional??a.adb
+and our xthick??a.adb examples (a egregious misnomer) which depend
+on what is now called our thick PLplot_Standard binding to xstandard??a.adb.
+
+We have made changes to our Ada bindings and examples so they now provide
+the following report of complete consistency with the corresponding C results:
+
+    adastandard
+      Missing examples            :
+      Differing graphical output  :
+      Missing stdout              :
+      Differing stdout            :
+    adatraditional
+      Missing examples            :
+      Differing graphical output  :
+      Missing stdout              :
+      Differing stdout            :
+
+2.8 Changes to our tclmatrix library
+
+Implement vastly improved index slicing following the index slicing
+rules used for Python.  Also implement vastly improved array
+initialization and assignment for our tclmatrix library.
+To see what is now possible, take a look at bindings/tcl/test_tclmatrix.tcl
+and also the added instructions in examples/tcl/README.tcldemos for using
+bindings/tcl/test_tclmatrix.tcl to test all these new tclmatrix capabilities.
+
+2.9 Backwards-incompatible changes to our Tcl/Tk bindings and examples
+
+Our Tcl/Tk bindings have been modified in a backwards-incompatible way
+to use a redacted API.  That is, redundant array dimension information
+has now been removed from all calls to PLplot routines.  So for
+example, the call to plline from a Tcl/Tk environment has been changed
+from
+
+$w cmd plline $nsize x y
+
+(where $nsize is the redundant size of the x and y arrays)
+
+to
+
+$w cmd plline x y
+
+Note, this call returns TCL_ERROR if either x or y are of the wrong
+type, or if x and y have inconsistent lengths.  So this new API is typically
+more robust than our old API.  Of course, there are cases where users need to
+collect information in x and y matrices of different sizes and only
+plot a subset of that information.  For this case you should use the new
+tclmatrix index slicing, matrix initialization, and matrix assignment capabilities
+to create the same-sized x and y matrices you want to plot.
+
+For (a rather contrived) example that plots a slice of xoriginal and
+yoriginal corresponding to the third hundred values of xoriginal and the
+second hundred values of yoriginal do the following:
+
+matrix xoriginal f 500
+matrix yoriginal f 1000
+
+# for loop to define the 500 values of xoriginal
+[...]
+# for loop to define the 1000 values of yoriginal
+
+# Use new index slice and matrix initialization capability
+# to select the third hundred xoriginal values to plot:
+
+matrix x f 100 = [xoriginal 200:300]
+
+# Use new index slice and matrix assignment capability
+# to select the second hundred yorignal values to plot:
+
+matrix y f 100
+y : = [yoriginal 100:200]
+
+$w cmd plline x y
+
+Note that many PLplot calls do involve arrays so this new redacted API is largely
+incompatible with the old API.  So for old applications we have
+provided the -DUSE_NON_REDACTED_TCL_TK=ON cmake option to provide
+access to a deprecated version of our Tcl/Tk bindings and examples
+that is a snapshot of the relevant Tcl/Tk code before any of this
+redacted API work had been done.
+
+This -DUSE_NON_REDACTED_TCL_TK=ON option should extend the length of
+time that the old non-redacted API is available with new PLplot
+releases, but that deprecated API will not be available
+indefinitely so at some point (after discussions on the plplot-general
+list concerning how many users are still using this option) the
+-DUSE_NON_REDACTED_TCL_TK=ON option will be removed and user choices
+will be reduced to either using an old PLplot version or modifying
+their Tcl/TK software for the incompatibilities mentioned above for
+our new redacted API.  And if you start that modification process
+immediately, you will likely get better help with it since we have
+just gone through that process for our Tcl/Tk examples (which should
+be your first guide concerning how to use the new redacted API for
+Tcl/Tk).
+
+2.10 Substantially updated the DocBook documentation
+
+N.B. this documents what has gone on in a private documentation branch
+which has not yet been pushed.  So this likely NEEDS REVISION for
+the actual release.
+
+* The introduction has been completely rewritten to be consistent with
+  modern PLplot.  In particular instead of copying documentation
+  actually implemented elsewhere so our DocBook version of that is
+  typically inconsistent/out-of-date, this chapter is greatly
+  simplified by referring to documentation that is actually
+  implemented elsewhere.  The result is less self-contained but much
+  easier to maintain.
+
+* The C chapter has been completely rewritten to be consistent with
+  modern PLplot.  In particular, the typedef'd C types used by PLplot
+  are documented including the callback function types.
+
+* The Fortran chapter has been completely rewritten to be consistent
+  with modern PLplot, i.e., the new Fortran binding that has just been
+  implemented.
+
+* A number of documentation improvements have been made to the api
+  chapter.  In particular, typedef'd C callback function types are now
+  used to document all the callback arguments which makes it much
+  simpler to document those arguments.
+
+* An important short paragraph of text was inserted in the simple,
+  advanced, and api chapters to clarify how all our supported
+  languages correspond with the C API, and corresponding typedef'd C
+  types that are often used in those chapters.
+
+2.11 Default page sizes
+
+We now provide two default page sizes for our device drivers. One for
+drivers which have real world pages (e.g. the postscript driver) which
+is specified in mm and one for drivers which use pixel pages (e.g. the
+Cairo or the interactive drivers). The mm page size is A4 as this is
+the most commonly used metric paper size used. The pixel size is
+approximately A5 when scaled using the default 90 dpi. This was chosen
+as it has the same aspect ratio as the mm size, but fits comfortably
+on most computer screens.  So far only the gd, cgm, and wxwidgets
+device drivers uses these defaults, but our eventual goal is that all
+our device drivers will use these defaults for consistency between them.
+
+2.12 Updated D language support
+
+CMake-3.4.0 introduced a change in internal language support infrastructure.
+Our D language support was changed so that it accommodated this change and
+also still worked for older CMake versions.
+
+2.13 Modernized build-system support for Qt4 and Qt5
+
+The Qt4 support modernization consisted of moving from the old and rigid
+QT4_WRAP_CPP method of applying moc to just qt.h and propagating those
+results everywhere they were needed to the more flexible AUTOMOC approach
+which allows us to choose (important!) what Qt header(s) to moc for each
+library.  This same approach is now also used for the Qt5 case.
+
+The Qt4 CMake support is a responsibility of CMake developers, but the
+Qt5 CMake support is the responsibility of Qt5 developers and is
+entirely different (except for AUTOMOC) from Qt4 support.  That
+Qt5 CMake support is documented at <http://doc.qt.io/qt-5/cmake-manual.html>
+and this PLplot release has moved from the deprecated qt5_use_modules method
+to the latest method involving using aliased libraries called
+Qt5::Svg, Qt5::Gui, and Qt5::PrintSupport in the appropriate
+target_link_libraries command.
+
+Our tests now show that as a result of these changes our build-system
+support for Qt5 is now just as mature as for the Qt4 case.  Our tests
+also show the Qt5 library has matured (as of Qt5 version 5.3.2 from
+Debian Jessie) somewhat in that the character alignment issues that
+plagued us before are now gone.  So there are no more ad hoc adjustments
+of the character height to accommodate for the Qt5 character alignment bugs
+so our qt device driver code now uses exactly the same code for Qt4
+and Qt5.
+
+Despite this encouraging recent alignment improvement, Qt5 is still
+not nearly as mature as Qt4 according to our other tests.  For our qt
+device driver linked to Qt5 and according to the
+-DVALGRIND_ALL_TESTS=ON cmake option, results for the test_pdfqt
+target show severe memory management issues (invalid reads, etc.) for
+all standard examples other than 0, 1, 3, 5, 10, 12, 13, 24, and 31.
+(Presumably these inter-example differences in Qt5 memory management
+issues are due to the different ways these examples use the Qt
+libraries and thus find the memory management issues in those
+libraries or not.)  It is encouraging that there are no memory
+management issues for some of our examples for qt linked to Qt5, but
+in contrast when our qt device driver is linked to Qt4 instead (at
+least for the Debian Jessie version 4.8.6) there are no memory
+management issues for _any_ of the examples for the pdfqt device.  We
+have not had time to make similar comprehensive valgrind tests for all
+our examples for other qt devices, but spot checks with valgrind
+indicate a consistent pattern of severe memory management issues with
+Qt5 that just don't occur for Qt4.  Another memory-management issue
+that is likely related to Qt5 is we get a segfault when exiting from
+the pyqt5_example (which is necessarily linked to Qt5) while we have
+no such issues with pyqt4_example (that is necessarily linked to Qt4).
+A final issue with Qt5 that we have noticed is our comprehensive test
+of our qt device driver linked to Qt5 was twice (!) as slow as the
+same test for our qt device driver linked to Qt4.
+
+Because of these present Qt5 memory management and inefficiency
+concerns, our build system currently prefers to use Qt4 if it can find
+it, but automatically falls back to Qt5 otherwise.  If for some reason
+a user wants to avoid Qt4, then only Qt5 will be searched for and used
+if they specify -DPLPLOT_USE_QT5=ON.  (Note this important change in
+the semantics of -DPLPLOT_USE_QT5=ON which in 5.11.1 was the only
+(experimental) way users could link qt to Qt5.)
+
+2.14 Implemented support for pyqt5
+
+Because our build-system support for Qt5 has matured (although the Qt5
+library has not matured yet in memory management and efficiency, see
+comments above), we have also implemented support for pyqt5 when Qt5
+is being used to link qt.  Our tests using the test_pyqt5_example show
+this support for pyqt5 has matured (other than the segfault issue at
+exit from this GUI which we attribute to memory management issues in
+Qt5).  (Note our support for pyqt4 when Qt4 is being used to
+link qt continues without known build or run-time issues.)
+
+2.15 Addressed -DPL_DOUBLE=OFF issues
+
+Our comprehensive tests of the single-precision version of the PLplot
+libraries (built with -DPL_DOUBLE=OFF) demonstrated a substantial
+number of issues that had accumulated since we last tested this
+option.  Those issues have now all been solved so that PLplot users
+can be reasonably confident again about using the -DPL_DOUBLE=OFF
+option if they so desire.  However, it should be emphasized that the
+-DPL_DOUBLE=ON case (which is the case users get by default) is the
+case we test the most so that will almost always be the more reliable
+option to use.
+
+2.16 Replaced "Lena" with "Chloe"
+
+The image we use to demonstrate and test our plimage capability has
+been changed from "Lena" to "Chloe" because the licensing for the
+former image (although used often as a test image by other software
+projects) turns out to be not definite while the licensing for the
+latter image is definite and gives us the freedom to modify and
+redistribute that image.  Also, I like that image of Chloe who is a
+cute "Westie" (West Highland White Terrier) that reminds me of one of
+my all-time favourite TV shows "Hamish Macbeth".  :-)
+
 ________________________________________________________________
 
 3. PLplot testing
 
 Comprehensive tests of this release are documented in
-<http://sourceforge.net/p/plplot/wiki/Testing_PLplot#Testing%20Reports>.
+<http://sourceforge.net/p/plplot/wiki/Testing_PLplot#Testing%20Reports>
+and
+<https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Fortran%20Testing%20Reports>.
 In addition, developers and users who have used the git master tip
 version for all their plotting needs during this release cycle have
 provided additional important testing of this release of PLplot.
