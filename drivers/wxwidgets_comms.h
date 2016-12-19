@@ -32,6 +32,7 @@
 #endif
 
 #include <wx/font.h>
+#include "wxPLplot_nanosec.h"
 
 //data transmission codes
 const unsigned char transmissionRegular          = 0;

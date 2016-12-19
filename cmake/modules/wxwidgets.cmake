@@ -212,10 +212,16 @@ if(ENABLE_wxwidgets)
   option(PLPLOT_WX_NANOSEC "Experimental option (because it may lead to build failures (!)) for nanosec timestamp for wx debug output" OFF)
   set(wxwidgets_true "")
 
+  set(wxwidgets_SOURCE)
   if(OLD_WXWIDGETS)
     set(wxdemo_name deprecated_wxPLplotDemo)
   else(OLD_WXWIDGETS)
     set(wxdemo_name wxPLplotDemo)
+    if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
+      # This is added to later by drivers_finish with
+      # the standard source code for the device driver.
+      set(wxwidgets_SOURCE ${CMAKE_SOURCE_DIR}/bindings/wxwidgets/wxPLplot_nanosec.cpp)
+    endif((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
   endif(OLD_WXWIDGETS)
 
 else(ENABLE_wxwidgets)

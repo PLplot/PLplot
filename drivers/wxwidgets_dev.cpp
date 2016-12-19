@@ -742,6 +742,7 @@ Font FontGrabber::GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underlined 
 wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     : m_plplotEdgeLength( PLFLT( SHRT_MAX ) ), m_interactiveTextImage( 1, 1 )
 {
+    PLPLOT_wxLogDebug( "wxPLDevice(): enter" );
     m_fixedAspect = false;
 
     m_lineSpacing = 1.0;
@@ -749,6 +750,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     m_dc = NULL;
 
     wxGraphicsContext *gc = wxGraphicsContext::Create( m_interactiveTextImage );
+    PLPLOT_wxLogDebug( "wxPLDevice(): gc done" );
     try
     {
         m_interactiveTextGcdc = new wxGCDC( gc );
@@ -758,6 +760,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
         delete gc;
         throw;
     }
+    PLPLOT_wxLogDebug( "wxPLDevice(): m_interactiveTextGcdc done" );
 
     m_prevSingleCharString       = 0;
     m_prevSingleCharStringWidth  = 0;
@@ -826,10 +829,16 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     SetSize( pls, plsc->xlength, plsc->ylength );
 
     if ( pls->dev_data )
+      {
         SetDC( pls, (wxDC *) pls->dev_data );
+	PLPLOT_wxLogDebug( "wxPLDevice(): SetDC done" );
+      }
     else
+      {
         SetupMemoryMap();
+      }
 
+    PLPLOT_wxLogDebug( "wxPLDevice(): leave" );
     //this must be the absolute last thing that is done
     //so that if an exception is thrown pls->dev remains as NULL
     pls->dev = (void *) this;
@@ -1525,6 +1534,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
 
 void wxPLDevice::SetupMemoryMap()
 {
+    PLPLOT_wxLogDebug( "SetupMemoryMap(): enter" );
     if ( strlen( m_mfo ) > 0 )
     {
         const size_t mapSize = 1024 * 1024;
@@ -1535,6 +1545,7 @@ void wxPLDevice::SetupMemoryMap()
         static Rand  randomGenerator;         // make this static so that rapid repeat calls don't use the same seed
         while ( nTries < 10 )
         {
+	    PLPLOT_wxLogDebug( "SetupMemoryMap(): mapName start" );
             for ( int i = 0; i < strlen( m_mfo ); ++i )
             {
                 if ( m_mfo[i] == '?' )
@@ -1542,6 +1553,7 @@ void wxPLDevice::SetupMemoryMap()
                 else
                     mapName[i] = m_mfo[i];
             }
+	    PLPLOT_wxLogDebug( "SetupMemoryMap(): mapName done" );
             mapName[strlen( m_mfo )] = '\0';
             //truncate it earlier if needed
             if ( strlen( m_mfo ) > PLPLOT_MAX_PATH - 4 )
@@ -1550,7 +1562,9 @@ void wxPLDevice::SetupMemoryMap()
             strcpy( mutexName, mapName );
             strcat( mutexName, "mut" );
             pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mutexName = %s\n", nTries, mutexName );
+	    PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create call" );
             m_outputMemoryMap.create( mapName, mapSize, false, true );
+	    PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
             if ( m_outputMemoryMap.isValid() )
                 m_mutex.create( mutexName );
             if ( !m_mutex.isValid() )
@@ -1633,6 +1647,7 @@ void wxPLDevice::SetupMemoryMap()
         if ( viewerSignal == 0 )
             plwarn( "wxPLViewer failed to signal it has found the shared memory." );
     }
+    PLPLOT_wxLogDebug( "SetupMemoryMap(): leave" );
 }
 
 void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )

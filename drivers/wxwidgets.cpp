@@ -145,7 +145,7 @@ void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
 //--------------------------------------------------------------------------
 void plD_init_wxwidgets( PLStream* pls )
 {
-    // Log_Verbose( "plD_init_wxwidgets()" );
+    PLPLOT_wxLogDebug( "plD_init_wxwidgets(): enter" );
 
     try
     {
@@ -207,6 +207,7 @@ void plD_init_wxwidgets( PLStream* pls )
     {
         plabort( "unknown error in plD_init_wxwidgets." );
     }
+    PLPLOT_wxLogDebug( "plD_init_wxwidgets(): leave" );
 }
 
 #endif  // PLD_wxwidgets
@@ -244,7 +245,7 @@ void plD_dispatch_init_wxpng( PLDispatchTable *pdt )
 //--------------------------------------------------------------------------
 void plD_init_wxpng( PLStream *pls )
 {
-    // Log_Verbose( "plD_init_wxwidgets()" );
+    PLPLOT_wxLogDebug( "plD_init_wxpng()" );
 
     wxPLDevBase* dev;
     dev = common_init( pls );
@@ -303,7 +304,7 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
 //--------------------------------------------------------------------------
 void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    // Log_Verbose( "plD_polyline_wxwidgets()" );
+    // PLPLOT_wxLogDebug( "plD_polyline_wxwidgets()" );
     try
     {
         wxPLDevice *device = (wxPLDevice *) pls->dev;
@@ -332,7 +333,7 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
 //--------------------------------------------------------------------------
 void plD_eop_wxwidgets( PLStream *pls )
 {
-    // Log_Verbose( "plD_eop_wxwidgets()" );
+    // PLPLOT_wxLogDebug( "plD_eop_wxwidgets()" );
     try
     {
         wxPLDevice *device = (wxPLDevice *) pls->dev;
@@ -362,7 +363,7 @@ void plD_eop_wxwidgets( PLStream *pls )
 //--------------------------------------------------------------------------
 void plD_bop_wxwidgets( PLStream *pls )
 {
-    // Log_Verbose( "plD_bop_wxwidgets()" );
+    // PLPLOT_wxLogDebug( "plD_bop_wxwidgets()" );
     try
     {
         wxPLDevice *device = (wxPLDevice *) pls->dev;
@@ -388,7 +389,7 @@ void plD_bop_wxwidgets( PLStream *pls )
 //--------------------------------------------------------------------------
 void plD_tidy_wxwidgets( PLStream *pls )
 {
-    // Log_Verbose( "plD_tidy_wxwidgets()" );
+    // PLPLOT_wxLogDebug( "plD_tidy_wxwidgets()" );
     if ( !pls->dev )
         return;
     try
