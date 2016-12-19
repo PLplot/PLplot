@@ -122,7 +122,7 @@ bool wxPLplotwindow<WXWINDOW>::Show(bool show)
 {
   PLPLOT_wxLogDebug("wxPLplotwindow::Show");
   CreateStream();
-  return WXWINDOW::Show(show);
+  WXWINDOW::Show(show);
 
 }
 
