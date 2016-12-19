@@ -155,13 +155,13 @@ bool MyApp::OnInit()
 template< class WXWINDOW >
 void Plot( wxPLplotwindow<WXWINDOW> *plotwindow )
 {
-    wxPLplotstream* pls = plotwindow->GetStream();
-    if (pls == NULL)
+	while (!plotwindow->IsReady())
     {
-     PLPLOT_wxLogDebug("pls NULL");
-     return;
+        PLPLOT_wxLogDebug("Plot() Yielding");
+		wxGetApp().Yield();
     }
-    PLPLOT_wxLogDebug("Plot()");
+    wxPLplotstream* pls = plotwindow->GetStream();
+	PLPLOT_wxLogDebug("Plot()");
     assert(pls);
 
     const size_t  np = 500;
