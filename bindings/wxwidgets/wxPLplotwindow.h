@@ -45,8 +45,6 @@ public:
     wxPLplotstream* GetStream()  { return m_created ? &m_stream : NULL; }                //!< Get pointer to wxPLplotstream of this widget.
     void setUseGraphicsContext( bool useGraphicsContext );
     void setCanvasColour( const wxColour &colour );
-    void CreateStream( void );
-    virtual bool Show(bool show = true);
 
 protected:
     virtual void OnPaint( wxPaintEvent& event );         //!< Paint event
@@ -112,57 +110,6 @@ wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
         delete m_memoryDc;
     if ( m_gcDc )
         delete m_gcDc;
-}
-
-//Implemented to handle cases (some linux builds with wxWidgets 3.0/3.1) 
-//where the OnCreate function is not called before a plot was made
-//with an already created stream 
-template<class WXWINDOW>
-bool wxPLplotwindow<WXWINDOW>::Show(bool show)
-{
-  PLPLOT_wxLogDebug("wxPLplotwindow::Show");
-  CreateStream();
-  WXWINDOW::Show(show);
-
-}
-
-template<class WXWINDOW>
-void wxPLplotwindow<WXWINDOW>::CreateStream( void )
-{
-    PLPLOT_wxLogDebug("wxPLplotwindow::CreateStream");
-    if ( !m_created )
-    {
-        //set the client size if requested
-        if ( m_initialSize != wxDefaultSize )
-            WXWINDOW::SetClientSize( m_initialSize );
-        //create the stream
-        int width  = WXWINDOW::GetClientSize().GetWidth();
-        int height = WXWINDOW::GetClientSize().GetHeight();
-        m_bitmap.Create( width, height );
-        if ( m_memoryDc )
-            delete m_memoryDc;
-        m_memoryDc = new wxMemoryDC;
-        m_memoryDc->SelectObject( m_bitmap );
-        wxDC * drawDc = m_memoryDc;
-#ifdef wxUSE_GRAPHICS_CONTEXT
-        if ( m_useGraphicsContext )
-        {
-            if ( m_gcDc )
-                delete m_gcDc;
-            m_gcDc = new wxGCDC( *m_memoryDc );
-            drawDc = m_gcDc;
-        }
-#endif
-        if ( !m_stream.IsValid() )
-            m_stream.Create( drawDc, width, height, wxPLPLOT_DRAW_TEXT );
-        else
-            m_stream.SetDC( drawDc );
-        drawDc->SetBackground( wxBrush( m_canvasColour ) );
-        drawDc->Clear();
-
-        m_created = true;
-        RenewPlot();
-    }
 }
 
 //! In the OnPaint Method we check if the Windows was resized (will be moved to OnSize() sometimes
@@ -238,8 +185,40 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
-    PLPLOT_wxLogDebug("wxPLplotwindow::OnCreate");
-    CreateStream();
+	PLPLOT_wxLogDebug("wxPLplotwindow::OnCreate");
+    if ( !m_created )
+    {
+        //set the client size if requested
+        if ( m_initialSize != wxDefaultSize )
+            WXWINDOW::SetClientSize( m_initialSize );
+        //create the stream
+        int width  = WXWINDOW::GetClientSize().GetWidth();
+        int height = WXWINDOW::GetClientSize().GetHeight();
+        m_bitmap.Create( width, height );
+        if ( m_memoryDc )
+            delete m_memoryDc;
+        m_memoryDc = new wxMemoryDC;
+        m_memoryDc->SelectObject( m_bitmap );
+        wxDC * drawDc = m_memoryDc;
+#ifdef wxUSE_GRAPHICS_CONTEXT
+        if ( m_useGraphicsContext )
+        {
+            if ( m_gcDc )
+                delete m_gcDc;
+            m_gcDc = new wxGCDC( *m_memoryDc );
+            drawDc = m_gcDc;
+        }
+#endif
+        if ( !m_stream.IsValid() )
+            m_stream.Create( drawDc, width, height, wxPLPLOT_DRAW_TEXT );
+        else
+            m_stream.SetDC( drawDc );
+        drawDc->SetBackground( wxBrush( m_canvasColour ) );
+        drawDc->Clear();
+
+        m_created = true;
+        RenewPlot();
+    }
 }
 
 //Capture Mouse events and pass the
