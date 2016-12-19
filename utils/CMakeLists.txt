@@ -81,7 +81,8 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
     PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
   include_directories(
     ${CMAKE_SOURCE_DIR}/bindings/wxwidgets
-	${CMAKE_SOURCE_DIR}/bindings/c++
+    ${CMAKE_BINARY_DIR}/bindings/wxwidgets
+    ${CMAKE_SOURCE_DIR}/bindings/c++
     )
   add_executable(wxPLViewer WIN32 ${wxPLViewer_SRCS})
   if(BUILD_SHARED_LIBS)

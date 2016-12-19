@@ -1,7 +1,7 @@
 # cmake/modules/wxwidgets.cmake
 #
-# Copyright (C) 2006  Werner Smekal
-# Copyright (C) 2015  Alan W. Irwin
+# Copyright (C) 2006 Werner Smekal
+# Copyright (C) 2015-2016 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -208,6 +208,8 @@ if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 endif(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 
 if(ENABLE_wxwidgets)
+  option(PLPLOT_WX_DEBUG_OUTPUT "Enable debug output for wxwidgets device driver, binding, and example" OFF)
+  option(PLPLOT_WX_NANOSEC "Experimental option (because it may lead to build failures (!)) for nanosec timestamp for wx debug output" OFF)
   set(wxwidgets_true "")
 
   if(OLD_WXWIDGETS)

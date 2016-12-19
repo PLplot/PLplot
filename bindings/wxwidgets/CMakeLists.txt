@@ -36,12 +36,21 @@ if(ENABLE_wxwidgets)
       deprecated_wxPLplotwindow.h
       )
   else(OLD_WXWIDGETS)
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/wxPLplot_nanosec.h.in
+      ${CMAKE_CURRENT_BINARY_DIR}/wxPLplot_nanosec.h
+      )
     set(plplotwxwidgets_LIB_SRCS
       wxPLplotstream.cpp
       )
+    if(PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
+      list(APPEND plplotwxwidgets_LIB_SRCS wxPLplot_nanosec.cpp)
+    endif(PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
+
     set(plplotwxwidgets_INSTALLED_HEADERS
       wxPLplotstream.h
       wxPLplotwindow.h
+      wxPLplot_nanosec.h
       )
   endif(OLD_WXWIDGETS)
   # Set the include path

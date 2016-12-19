@@ -82,7 +82,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize client
     : m_created( false ), m_initialSize( clientSize )
 
 {
-    wxLogDebug("wxPLplotwindow::wxPLplotwindow");
+    PLPLOT_wxLogDebug("wxPLplotwindow::wxPLplotwindow");
     m_memoryDc = NULL;
 #ifdef wxUSE_GRAPHICS_CONTEXT
     m_gcDc = NULL;
@@ -120,7 +120,7 @@ wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
 template<class WXWINDOW>
 bool wxPLplotwindow<WXWINDOW>::Show(bool show)
 {
-  wxLogDebug("wxPLplotwindow::Show");
+  PLPLOT_wxLogDebug("wxPLplotwindow::Show");
   CreateStream();
   return WXWINDOW::Show(show);
 
@@ -129,7 +129,7 @@ bool wxPLplotwindow<WXWINDOW>::Show(bool show)
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::CreateStream( void )
 {
-    wxLogDebug("wxPLplotwindow::CreateStream");
+    PLPLOT_wxLogDebug("wxPLplotwindow::CreateStream");
     if ( !m_created )
     {
         //set the client size if requested
@@ -238,7 +238,7 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
-    wxLogDebug("wxPLplotwindow::OnCreate");
+    PLPLOT_wxLogDebug("wxPLplotwindow::OnCreate");
     CreateStream();
 }
 

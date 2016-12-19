@@ -22,6 +22,7 @@
 #define WXPLPLOTSTREAM_H__INCLUDED_
 
 #include "plstream.h"
+#include "wxPLplot_nanosec.h"
 
 // forward declarations
 class wxImage;
