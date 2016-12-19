@@ -45,6 +45,7 @@ public:
     wxPLplotstream* GetStream()  { return m_created ? &m_stream : NULL; }                //!< Get pointer to wxPLplotstream of this widget.
     void setUseGraphicsContext( bool useGraphicsContext );
     void setCanvasColour( const wxColour &colour );
+    bool IsReady() { return GetStream() != NULL; }
 
 protected:
     virtual void OnPaint( wxPaintEvent& event );         //!< Paint event
@@ -152,10 +153,12 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
             drawDc = m_gcDc;
         }
 #endif
-        m_stream.SetDC( drawDc );
+        if( IsReady() )
+            m_stream.SetDC( drawDc );
         drawDc->SetBackground( wxBrush( m_canvasColour ) );
         drawDc->Clear();
-        m_stream.SetSize( width, height );
+        if( IsReady() )
+            m_stream.SetSize( width, height );
     }
 
     paintDc.Blit( 0, 0, width, height, m_memoryDc, 0, 0 );
@@ -288,7 +291,8 @@ void wxPLplotwindow<WXWINDOW>::OnMouse( wxMouseEvent &event )
         graphicsIn.state |= PL_MASK_SCROLL;
     //Note I can't find a way to catch the windows key
 
-    m_stream.translatecursor( &graphicsIn );
+    if( IsReady() )
+        m_stream.translatecursor( &graphicsIn );
     this->OnLocate( graphicsIn );
 }
 
@@ -352,7 +356,7 @@ void wxPLplotwindow<WXWINDOW>::setUseGraphicsContext( bool useGraphicsContext )
     drawDc = &m_memoryDc;
     m_useGraphicsContext = false;
 #endif
-    if ( m_created )
+    if ( IsReady() )
     {
         m_stream.SetDC( drawDc );
         RenewPlot();
