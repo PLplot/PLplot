@@ -598,13 +598,23 @@ private:
 class Rand
 {
 public:
-    Rand()
-    {
+	Rand()
+	{
 #ifdef WIN32
-        rand_s( &m_seed );
+		rand_s(&m_seed);
 #else
-        std::fstream fin( "/dev/random", std::ios::in );
-        fin.read( (char *) ( &m_seed ), sizeof ( m_seed ) );
+		std::fstream fin("/dev/urandom", std::ios::in);
+		if (fin.is_open())
+			fin.read((char *)(&m_seed), sizeof(m_seed));
+		else
+		{
+			fin.clear();
+			fin.open("/dev/random", std::ios::in);
+			if (fin.is_open())
+				fin.read((char *)(&m_seed), sizeof(m_seed));
+			else
+				m_seed = 0;
+		}
         fin.close();
 #endif
     }
