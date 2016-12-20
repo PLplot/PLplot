@@ -143,12 +143,12 @@ if(ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	${${SOURCE_ROOT_NAME}_TARGETS}
 	)
-      if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT)
+      if(PLD_wxwidgets OR PLD_wxpng)
 	set_property(TARGET ${SOURCE_ROOT_NAME}
 	  APPEND PROPERTY
 	  INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
 	  )
-      endif((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT)
+      endif(PLD_wxwidgets OR PLD_wxpng)
 	    
     else(SOURCE_ROOT_NAME STREQUAL "qt")
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})

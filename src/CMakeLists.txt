@@ -291,12 +291,12 @@ if(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
   list(APPEND pc_libplplot_LINK_FLAGS ${RT_LIB})
 endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
 
-if(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT)
+if(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
   set_property(TARGET plplot
     APPEND PROPERTY
     INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
     )
-endif(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT)
+endif(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
 
 #message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
 

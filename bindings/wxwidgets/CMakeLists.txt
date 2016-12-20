@@ -50,7 +50,7 @@ if(ENABLE_wxwidgets)
     set(plplotwxwidgets_INSTALLED_HEADERS
       wxPLplotstream.h
       wxPLplotwindow.h
-      wxPLplot_nanosec.h
+      ${CMAKE_CURRENT_BINARY_DIR}/wxPLplot_nanosec.h
       )
   endif(OLD_WXWIDGETS)
   # Set the include path
