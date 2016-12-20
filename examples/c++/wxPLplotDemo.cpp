@@ -142,12 +142,29 @@ bool MyApp::OnInit()
     SetFrontProcess( &psn );
 #endif
 
+	//There is only a default constructor for the wxPLplotwindow<> class
+	//so we do two stage creation - first use default constructor, then
+	//call Create.
     wxPLplotwindow<wxFrame> *frame = new wxPlDemoFrame();
     frame->Create( NULL, wxID_ANY, wxT( "wxPLplotDemo" ) );
     PLPLOT_wxLogDebug("frame->Create");
+
+	//We must wait for the Create event to be processed and the
+	//wxPLplotstream to be prepared
+	while (!frame->IsReady())
+	{
+		PLPLOT_wxLogDebug("Plot() Yielding");
+		wxGetApp().Yield();
+	}
+
+	//Now we can set up our frame and do the plotting
     frame->SetIcon( wxIcon( graph ) );
     frame->Show();
     Plot( frame );
+
+	//note that all the code above starting from the Create() call could
+	//instead go in the wxPlDemoFrame constructor should we wish. It is
+	//entirely the user's choice.
 
     return true;
 }
@@ -155,11 +172,11 @@ bool MyApp::OnInit()
 template< class WXWINDOW >
 void Plot( wxPLplotwindow<WXWINDOW> *plotwindow )
 {
-	while (!plotwindow->IsReady())
-    {
-        PLPLOT_wxLogDebug("Plot() Yielding");
-		wxGetApp().Yield();
-    }
+	if (!plotwindow->IsReady())
+	{
+		wxMessageBox(wxT("Somehow we attempted to plot before the wxPLplotwindow was ready. The plot will not be drawn."));
+		return;
+	}
     wxPLplotstream* pls = plotwindow->GetStream();
 	PLPLOT_wxLogDebug("Plot()");
     assert(pls);
