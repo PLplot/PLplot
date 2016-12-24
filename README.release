@@ -51,7 +51,7 @@ CONTENTS
 2.2 Rewrite the CMake Ada language support
 2.3 Rewrite the Fortran binding
 2.4 Supply old Fortran binding and examples option
-2.5 Backwards incompatibilites introduced by the new Fortran binding
+2.5 Backwards incompatibilities introduced by the new Fortran binding
 2.6 Examples reworked for the -DPL_DOUBLE=OFF case
 2.7 Changes to our Ada bindings and examples
 2.8 Changes to our tclmatrix library
@@ -145,7 +145,7 @@ DYLD_LIBRARY_PATH no longer has to be set in order to use a
 traditional (Make + pkg-config) build of software against a set of
 PLplot libraries that are installed in a non-standard location.
 However, those who install PLplot libraries in standard locations
-(typicaly just the downstream Mac OS X free software distributors of
+(typically just the downstream Mac OS X free software distributors of
 PLplot such as Fink, MacPorts, and Homebrew) may prefer not to use
 rpath-based methods for installed libraries.  Such users should
 specify the old linking behaviour using -DUSE_RPATH=OFF.
@@ -230,7 +230,7 @@ PLplot routine.  See further remarks in examples/f95/README_precision.
 
 (v) Once support for bindings/old_f95 and examples/old_f95 (see 2.4
 below) has been dropped, the "c_" prefixes on our C API that were
-required to avoid nameclashes with the Fortran versions are no
+required to avoid name clashes with the Fortran versions are no
 longer required for that reason.  If it turns out no other
 binding requires these prefixes then we potentially could
 remove them which would be a welcome simplification.
@@ -302,7 +302,7 @@ will likely get better help with it since we have just gone through
 that process for the Fortran examples (which should be your first
 guide concerning how to use the new Fortran binding).
 
-2.5 Backwards incompatibilites introduced by the new Fortran binding
+2.5 Backwards incompatibilities introduced by the new Fortran binding
 
 The rewritten Fortran binding does have a significant number of
 backwards-incompatible API changes we have decided to introduce at
@@ -496,7 +496,7 @@ the (default) -DPL_DOUBLE=ON case.
 
 Using PLplot "traditional" and PLplot "standard" to name our two thick
 user-visible Ada bindings has long been documented in our DocBook
-documention for our Ada bindings.  That is a good naming convention
+documentation for our Ada bindings.  That is a good naming convention
 since the names of these bindings nicely complement each other.  Our
 existing Ada thick "PLplot_Traditional" binding implementation already
 follows this naming convention, and we have now changed to this same
@@ -578,7 +578,7 @@ matrix yoriginal f 1000
 matrix x f 100 = [xoriginal 200:300]
 
 # Use new index slice and matrix assignment capability
-# to select the second hundred yorignal values to plot:
+# to select the second hundred yoriginal values to plot:
 
 matrix y f 100
 y : = [yoriginal 100:200]
@@ -796,7 +796,7 @@ typedef void * PL_GENERIC_POINTER;
 typedef PL_NC_GENERIC_POINTER  PLPointer;
 
 So all the above is backwards compatible with prior releases which
-just typedefed and used
+just typedef'd and used
 
 typedef void * PLPointer;
 
