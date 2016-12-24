@@ -1,11 +1,10 @@
-PLplot Release 5.12.0
+N.B. These release notes now should be complete except for the one
+section below (our documentation improvements) which likely will NEED
+REVISION after our actual work on the documentation improvements has
+been completed.  This paragraph should be removed for the release once
+that documentation work has been completed.
 
-N.B. This document NEEDS REVISION because at this stage only the first
-part of the preliminary ChangeLog (everything before the first commit
-concerning the changes to remove NAGFOR warnings and errors) of commit
-messages has been reviewed for particular topics to include in this
-document.  Also look for "NEEDS REVISION" below for any other parts of
-the current document which are known to need revision.
+PLplot Release 5.12.0
 
 This is a release of the PLplot plotting package. It represents the
 ongoing best efforts of the PLplot development community (roughly 400
@@ -38,11 +37,13 @@ CONTENTS
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Backwards incompatibilities have been introduced for our C (and other) API
-1.2 Backwards incompatibilities have been introduced for our Fortran binding
-1.3 Backwards incompatibilities have been introduced for our Tcl/Tk bindings
-1.4 Octal interpretation has been removed from numerical escape sequences in text
-1.5 The rpath treatment has been changed for Mac OS X platforms
+1.1 CMake version compatibility
+1.2 Backwards incompatibilities have been introduced for our C (and other) API
+1.3 Backwards incompatibilities have been introduced for our Fortran binding
+1.4 Backwards incompatibilities have been introduced for our Tcl/Tk bindings
+1.5 Octal interpretation has been removed from numerical escape sequences in text
+1.6 The rpath treatment has been changed for Mac OS X platforms
+1.7 Notice of a backwards incompatibility for our C API that we plan for our next release
 
 2. Improvements relative to the previous release
 
@@ -62,13 +63,39 @@ CONTENTS
 2.14 Implemented support for pyqt5
 2.15 Addressed -DPL_DOUBLE=OFF issues
 2.16 Replaced "Lena" with "Chloe"
+2.17 Removed trailing blanks on most text files in our source tree
+2.18 Make our wxwidgets find module consistent with the official version for CMake-3.7.1
+2.19 Introduction of two new generic pointer types to help protect against a planned future C API breakage
+2.20 Introduction of additional self-describing names for the types of arguments used in our C API.
+2.21 Implement submission of dashboards to the <my.cdash.org> cdash server
+2.22 Substantial update and rename of the Python examples
+2.23 Linux efficiency improvements for the wxwidgets device driver
 
 3. PLplot testing
 ________________________________________________________________
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 Backwards incompatibilities have been introduced for our C (and other) API
+1.1 CMake version compatibility
+
+Our build system is implemented using CMake.  The minimum version of
+CMake we allow is 3.0.2 on Linux and 3.6.2 on all other platforms.
+(And it is likely we will bump those minimum versions to at least
+3.7.0 for our next release.)
+
+This particular PLplot release has been comprehensively tested for
+CMake versions 3.0.2 through 3.7.0 on a variety of platforms (see
+<http://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>).
+So if your CMake version is <= 3.7.0 and satisfies the above minimum
+CMake version requirement there is an excellent chance that our build
+system will work well.  Furthermore, if you try later CMake versions
+as they are released during the life of this PLplot release, our build
+system might continue to work well because CMake has an excellent
+reputation for preserving backwards compatibility.  But if you get
+build-system trouble for versions of CMake greater than 3.7.0, the
+first thing you should try is the well-tested CMake-3.7.0.
+
+1.2 Backwards incompatibilities have been introduced for our C (and other) API
 
 We recently discovered that the second (argv) argument of plparseopts
 was changed by that routine so accordingly we have dropped the
@@ -81,19 +108,19 @@ plMergeOpts, plFindName, plGetCursor, and plTranslateCursor.
 All these changes have been propagated to our language bindings where
 appropriate.
 
-1.2 Backwards incompatibilities have been introduced for our Fortran binding
+1.3 Backwards incompatibilities have been introduced for our Fortran binding
 
 The new implementation of the Fortran binding has introduced a
 significant number of backwards incompatibilities.  See 2.5 below for
 the details.
 
-1.3 Backwards incompatibilities have been introduced for our Tcl/Tk bindings
+1.4 Backwards incompatibilities have been introduced for our Tcl/Tk bindings
 
 Our Tcl/Tk bindings and examples now use only a redacted API, i.e.,
 redundant array dimensions are removed from all argument lists.
 See 2.9 for the details concerning this important Tcl/Tk change.
 
-1.4 Octal interpretation has been removed from numerical escape sequences in text
+1.5 Octal interpretation has been removed from numerical escape sequences in text
 
 The undocumented feature where leading 0's in numerical escape
 sequences meant the whole number was interpreted as octal rather than
@@ -104,7 +131,7 @@ decimal rather than octal.  Thus, the decimal interpretation of
 "#(0123)" and "#(123)" is now identical, and there are no errors
 introduced by leading-zero decimal escape sequences such as "#(0855)".
 
-1.5 The linking method has been changed for the Mac OS X platform
+1.6 The linking method has been changed for the Mac OS X platform
 
 For this platform our build system previously used the default CMake
 rpath-based linking method in the build tree, but in the installed
@@ -122,6 +149,14 @@ However, those who install PLplot libraries in standard locations
 PLplot such as Fink, MacPorts, and Homebrew) may prefer not to use
 rpath-based methods for installed libraries.  Such users should
 specify the old linking behaviour using -DUSE_RPATH=OFF.
+
+1.7 Notice of a backwards incompatibility for our C API that we plan for our next release
+
+In our next release as an aid toward achieving our goal of const
+correctness for PLplot, we plan to distinguish between generic pointer
+arguments to our C API that do and do not have the const attribute.
+See 2.19 for a method of protecting yourself against that planned
+future backwards incompatibility for our C API.
 ________________________________________________________________
 
 2. Improvements relative to the previous release
@@ -151,7 +186,7 @@ On Mac OS X, our one report shows no problems in the build tree, but
 there is a linking issue in the install-tree version of PLplot Ada
 libraries that we have been unable to figure out.  Our one report for
 Cygwin (the first time our old or new Ada language support has been
-tested on any Windows platform) shows complete failure of our Ada
+tested on any Windows platform) shows failure of our Ada
 language support on that platform (fairly much as expected since we
 don't understand what the Cygwin platform requires for CMake language
 support) .
@@ -574,7 +609,7 @@ Tcl/Tk).
 2.10 Substantially updated the DocBook documentation
 
 N.B. this documents what has gone on in a private documentation branch
-which has not yet been pushed.  So this likely NEEDS REVISION for
+which has not yet been pushed.  So this section likely will NEED REVISION for
 the actual release.
 
 * The introduction has been completely rewritten to be consistent with
@@ -586,22 +621,22 @@ the actual release.
   easier to maintain.
 
 * The C chapter has been completely rewritten to be consistent with
-  modern PLplot.  In particular, the typedef'd C types used by PLplot
-  are documented including the callback function types.
+  modern PLplot.  In particular, the new self-describing names for
+  PLplot C argument types (see 2.19 and 2.20) are documented.
 
 * The Fortran chapter has been completely rewritten to be consistent
   with modern PLplot, i.e., the new Fortran binding that has just been
   implemented.
 
 * A number of documentation improvements have been made to the api
-  chapter.  In particular, typedef'd C callback function types are now
-  used to document all the callback arguments which makes it much
-  simpler to document those arguments.
+  chapter.  In particular, the new self-describing names for PLplot
+  C argument types (see 2.19 and 2.20) are now used to document all
+  arguments which makes it much simpler to document those arguments.
 
 * An important short paragraph of text was inserted in the simple,
-  advanced, and api chapters to clarify how all our supported
-  languages correspond with the C API, and corresponding typedef'd C
-  types that are often used in those chapters.
+  advanced, and api chapters to clarify how the API for all our supported
+  languages corresponds with the self-describing names for PLplot
+  C argument types (see 2.19 and 2.20).
 
 2.11 Default page sizes
 
@@ -613,7 +648,7 @@ the most commonly used metric paper size used. The pixel size is
 approximately A5 when scaled using the default 90 dpi. This was chosen
 as it has the same aspect ratio as the mm size, but fits comfortably
 on most computer screens.  So far only the gd, cgm, and wxwidgets
-device drivers uses these defaults, but our eventual goal is that all
+device drivers use these defaults, but our eventual goal is that all
 our device drivers will use these defaults for consistency between them.
 
 2.12 Updated D language support
@@ -715,12 +750,242 @@ redistribute that image.  Also, I like that image of Chloe who is a
 cute "Westie" (West Highland White Terrier) that reminds me of one of
 my all-time favourite TV shows "Hamish Macbeth".  :-)
 
+2.17 Removed trailing blanks on most text files in our source tree
+
+This was a massive and intrusive change to our source tree when we
+first did this because years of neglect concerning this issue had left
+trailing whitespace virtually everywhere which git constantly
+complained about.  From now on, our developers our encouraged to run
+scripts/remove_trailing_blanks.sh to deal with this issue before each
+of their commits.  That script excludes all binary files following the
+rules in .gitattributes concerning what constitutes a text file.  In
+addition some text files are excluded from trailing-blank removal
+because they involve text that should be immutable (e.g., licensing
+text, test text) that has trailing blanks.  This script uses sed to do
+the job so this script can only be run on systems that have sed
+installed.
+
+2.18 Make our wxwidgets find module consistent with the official version for CMake-3.7.1
+
+That latest released version of the find module for wxwidgets is
+actively maintained by the CMake developers so the latest version
+available (from CMake-3.7.1) is likely to be the best version of this
+find module. We therefore adopt that version (with one necessary line
+change so we can use it for PLplot) for all our users regardless of
+the CMake version they are using.
+
+2.19 Introduction of two new generic pointer types to help protect against a planned future C API breakage
+
+As a step toward our goal of achieving const correctness for PLplot we
+have defined two new generic pointer types called PL_GENERIC_POINTER
+and PL_NC_GENERIC_POINTER which are typedef'd and used in
+include/plplot.h as the types for the generic pointers in our C API
+with the former reserved for identifying generic pointer arguments
+where the called routine guarantees to leave the object being pointed
+to completely unchanged while the latter is used for those rare cases
+when we cannot make that guarantee.  (NC stands for "non const".)  The
+generic pointer type PLPointer is typedef'd in include/plplot.h for
+those of our users who are still using it, but it is deprecated and
+therefore unused in include/plplot.h.
+
+The typedefs for these 3 generic pointers are currently the following:
+
+typedef void * PL_NC_GENERIC_POINTER;
+typedef void * PL_GENERIC_POINTER;
+// Deprecated and only provided for backwards compatibility.
+typedef PL_NC_GENERIC_POINTER  PLPointer;
+
+So all the above is backwards compatible with prior releases which
+just typedefed and used
+
+typedef void * PLPointer;
+
+However, for our next release we plan to change PL_GENERIC_POINTER as follows:
+
+typedef const void * PL_GENERIC_POINTER;
+
+which will help improve our const correctness but which will also
+introduce a substantial backwards incompatibility into our C API.
+
+To protect yourself against this planned future backwards incompatibility we recommend
+you do the following:
+
+Change the types of all your void * or PLPointer arguments for our C
+API to PL_GENERIC_POINTER or PL_NC_GENERIC_POINTER as documented for
+each of our functions in include/plplot.h and also at
+<http://plplot.sourceforge.net/docbook-manual/plplot-html-5.12.0/API.html>.
+This change means when we update the PL_GENERIC_POINTER typedef as above,
+a recompilation of your code will be all that is required to deal with this issue.
+
+We also recommend you drop use of the deprecated PLPointer type since
+we plan to stop providing a typedef for that type sometime in the future.
+
+2.20 Introduction of additional self-describing names for the types of arguments used in our C API.
+
+These new self-describing type name are defined (in include/plplot.h) as follows:
+
+// typedefs that are typically used for passing scalar, vector, and
+// matrix arguments to functions.  The NC attribute concerns pointers
+// to mutable objects, where the objects are used for passing values
+// that are either output only or both input and output.  Pointers whose
+// name does not contain the NC attribute point to immutable objects
+// which are strictly input and guaranteed to be unchanged by the function.
+//
+
+// Pointers to mutable scalars:
+typedef PLINT *               PLINT_NC_SCALAR;
+typedef PLBOOL *              PLBOOL_NC_SCALAR;
+typedef PLUNICODE *           PLUNICODE_NC_SCALAR;
+typedef char *                PLCHAR_NC_SCALAR;
+typedef PLFLT *               PLFLT_NC_SCALAR;
+
+// Pointers to mutable vectors:
+typedef char *                PLCHAR_NC_VECTOR;
+typedef PLFLT *               PLFLT_NC_VECTOR;
+
+// Pointers to immutable vectors:
+typedef const PLINT *         PLINT_VECTOR;
+typedef const PLBOOL *        PLBOOL_VECTOR;
+typedef const char *          PLCHAR_VECTOR;
+typedef const PLFLT *         PLFLT_VECTOR;
+
+// Pointers to mutable 2-dimensional matrices:
+typedef char **               PLCHAR_NC_MATRIX;
+typedef PLFLT **              PLFLT_NC_MATRIX;
+
+// Pointers to immutable 2-dimensional matrices,
+// (i.e., pointers to const pointers to const values):
+typedef const char * const *  PLCHAR_MATRIX;
+typedef const PLFLT * const * PLFLT_MATRIX;
+
+// Callback-related typedefs
+typedef void ( *PLMAPFORM_callback )( PLINT n, PLFLT_NC_VECTOR x, PLFLT_NC_VECTOR y );
+typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT_NC_SCALAR xp, PLFLT_NC_SCALAR yp, PL_GENEIC_POINTER data );
+typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, PLCHAR_NC_VECTOR label, PLINT length, P_GENERIC_POINTER data );
+typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PL_GENERIC_POINTER data );
+typedef void ( *PLFILL_callback )( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y );
+typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y );
+
+For this release we have only partially propagated the use of these
+self-describing names for PLplot C argument types to our core C
+library, device drivers, our bindings implemented in C, our C++
+binding, and the C and C++ examples, but we plan to address that
+propagation issue in the next release.  Meanwhile these type names are
+extremely useful for helping to document our bindings and common API,
+see 2.10.
+
+2.21 Implement submission of dashboards to the <my.cdash.org> cdash server
+
+CMake users who want to help with testing PLplot on Unix-like Windows
+platforms such as Cygwin or MinGW-w64/MSYS2 or on the usual Unix
+platforms such as Linux or Mac OS X can now submit dashboards (defined
+as a collection of data associated with a given ctest run in a
+standard form) to the <my.cdash.org> cdash server where it is publicly
+displayed using a nice format at
+<http://my.cdash.org/index.php?project=PLplot_git>.
+
+Such dashboards should be submitted using, e.g.,
+
+cmake -DBUILD_TEST=ON -DPLPLOT_BUILDNAME_SUFFIX:STRING="-shared library + dynamic devices" ....
+#N.B. the all target must always be built before ctest is run
+make -j4 all  
+ctest -j4 -D Experimental
+
+The -DPLPLOT_BUILDNAME_SUFFIX:STRING option is not necessary, but the
+string specified with that option is appended to the "Build Name"
+field displayed by the cdash server so it helps PLplot users to
+identify the broad configuration of the type of build that was used to
+submit a dashboard.
+
+If the user specifies the
+
+--do_submit_dashboard yes
+
+option for the bash script,
+
+scripts/comprehensive_test.sh,
+
+then the above tests to submit a dashboard will occur for each ctest
+command (typically for (1) shared library + dynamic devices, (2)
+shared library + nondynamic devices, and (3) static library +
+nondynamic devices) that is run by that script and with
+-DPLPLOT_BUILDNAME_SUFFIX:STRING automatically set appropriately for
+each dashboard submission generated by the script.
+
+2.22 Substantial update and rename of the Python examples
+
+All python modules and scripts in example/python were converted to the
+namespace form, e.g.,
+
+from plplot import *
+
+was replaced by
+
+import plplot as <some namespace>
+
+where "<some namespace>" is typically "w" for historical reasons.
+
+This change removed the fundamental difference between the set of
+well-maintained xw??.py standard examples and the original
+badly-maintained and incomplete set of standard examples that were
+called x??.py.  So we removed all those badly maintained versions and
+renamed xw??.py as the corresponding x??.py.
+
+This rename, some work on examples/python/pytkdemo, and a large amount
+of generic work on bindings/python/Plframe.py to add the necessary
+PLplot API to run the revitalized x??.py examples means
+examples/python/pytkdemo (previously crippled by using the old buggy
+version of the x??.py examples) is working reliably for the first time
+ever.  In fact it is so reliable we routinely add the new
+test_pytkdemo target to the dependencies of the generic
+test_interactive target which is reserved for just running the
+interactive test targets that are reliable.
+
+2.23 Linux efficiency improvements for the wxwidgets device
+
+The speed of the Linux wxwidgets device (N.B. note the
+time required by wxPLViewer is not counted in any of these comparisons) was not in a good
+state for PLplot-5.11.1; slowdowns of a factor of two compared
+to the qtwidget and xcairo devices were typical while in some cases
+the slowdown ranged up to two orders of magnitude!  That latter problem
+turned out to be due to our use of the blocking /dev/random device
+to choose the seed for the random names chosen for the shared memory
+areas used for IPC between -dev wxwidgets and wxPLViewer, and the simple fix
+(discovered quite recently) was to preferentially use the non-blocking
+/dev/urandom instead!  In addition many other changes have been
+made to both -dev wxwidgets and wxPLViewer to improve their joint
+efficiency since the release of PLplot-5.11.1.  A recent detailed experiment
+showing real times required to complete examples showed
+the following count results for which of the three devices was the fastest
+for each of the 27 standard examples that were run for this test:
+
+qtwidget  10
+xcairo    08
+wxwidgets 09
+
+In none of these 27 standard examples is -dev wxwidgets slower than
+the best of the other two by a factor of two or more.  And -dev
+wxwidgets is actually the best of the three devices for a 3rd of these
+examples.  So -dev wxwidgets is clearly comparable in speed to the
+other two for most of our examples.  However, the above 27 standard
+examples did not include examples 8, 25, and 33 which all notoriously
+have extremely large numbers of graphical elements.  I just ran
+comparisons for examples 8 and 25 (because 33 takes too long even when
+it is efficient), and in those two cases the wxwidgets slowdown factor
+compared to the best of the other two devices is respectively 16 and
+8!  So clearly there is still some large bottleneck in efficiency for the
+combination of -dev wxwidgets and wxPLViewer that shows up
+particularly strongly when there are large numbers of graphical
+elements.  We hope to deal with that issue for our next release, but
+clearly for this release Linux -dev wxwidgets users are going to be
+much better off in the efficiency department than they were for
+PLplot-5.11.1.
 ________________________________________________________________
 
 3. PLplot testing
 
 Comprehensive tests of this release are documented in
-<http://sourceforge.net/p/plplot/wiki/Testing_PLplot#Testing%20Reports>
+<http://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>
 and
 <https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Fortran%20Testing%20Reports>.
 In addition, developers and users who have used the git master tip
