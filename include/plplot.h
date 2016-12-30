@@ -210,6 +210,15 @@ typedef void *                  PL_GENERIC_POINTER;
 // Deprecated and only provided for backwards compatibility.
 typedef PL_NC_GENERIC_POINTER   PLPointer;
 
+// PLFLT first element pointers which are used to point to the first
+// element of a contigous block of memory containing a PLFLT array with
+// an arbitrary number of dimensions.
+
+// mutable version
+typedef PLFLT * PLFLT_NC_FE_POINTER;
+// immutable version
+typedef const PLFLT * PLFLT_FE_POINTER;
+
 // typedefs that are typically used for passing scalar, vector, and
 // matrix arguments to functions.  The NC attribute concerns pointers
 // to mutable objects, where the objects are used for passing values
@@ -479,7 +488,7 @@ typedef struct
 
 typedef struct
 {
-    PLFLT_VECTOR f;
+    PLFLT_FE_POINTER f;
     PLINT        nx, ny, nz;
 } PLfGrid;
 
@@ -507,7 +516,7 @@ typedef struct
 
 typedef struct
 {
-    PLFLT_NC_VECTOR xg, yg, zg;
+    PLFLT_NC_FE_POINTER xg, yg, zg;
     PLINT           nx, ny, nz;
 } PLcGrid;
 
@@ -1759,7 +1768,7 @@ c_plshade( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
            PLTRANSFORM_callback pltr, PL_GENERIC_POINTER pltr_data );
 
 PLDLLIMPEXP void
-c_plshade1( PLFLT_VECTOR a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
+c_plshade1( PLFLT_FE_POINTER a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
             PLFLT shade_min, PLFLT shade_max,
             PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
