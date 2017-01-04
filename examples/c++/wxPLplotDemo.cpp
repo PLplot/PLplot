@@ -68,11 +68,45 @@ static const char            *graph[] = {
     "UX. . . . . . . . . . . . . . UX"
 };
 
+template< class WXWINDOW >
+void Plot(wxPLplotwindow<WXWINDOW> *plotwindow);
+
 class wxPlDemoFrame : public wxPLplotwindow<wxFrame>
 {
+public:
+	wxPlDemoFrame(const wxString &title);
 private:
     virtual void OnLocate( const PLGraphicsIn &graphicsIn );
+	void OnIdle(wxIdleEvent &event);
+	virtual void plot();
+	bool m_plotted;
 };
+
+wxPlDemoFrame::wxPlDemoFrame(const wxString &title)
+{
+	Create(NULL, wxID_ANY, title);
+	//give our frame a nice icon
+	SetIcon(wxIcon(graph));
+	Connect(wxEVT_IDLE, wxIdleEventHandler(wxPlDemoFrame::OnIdle));
+	m_plotted = false;
+}
+
+void wxPlDemoFrame::OnIdle(wxIdleEvent &event)
+{
+	//We do our plotting in here, but only the first time it is called
+	//This allows us to keep checking if the window is ready and only
+	//plot if it is.
+	if ( !m_plotted && IsReady() )
+	{
+		m_plotted = true;
+		plot();
+	}
+}
+
+void wxPlDemoFrame::plot()
+{
+	Plot(this);
+}
 
 void wxPlDemoFrame::OnLocate( const PLGraphicsIn &graphicsIn )
 {
@@ -117,9 +151,6 @@ void wxPlDemoFrame::OnLocate( const PLGraphicsIn &graphicsIn )
     wxMessageBox( message, "Mouse capture demo" );
 }
 
-template< class WXWINDOW >
-void Plot( wxPLplotwindow<WXWINDOW> *plotwindow );
-
 class MyApp : public wxApp
 {
 public:
@@ -142,15 +173,40 @@ bool MyApp::OnInit()
     SetFrontProcess( &psn );
 #endif
 
-	//There is only a default constructor for the wxPLplotwindow<> class
-	//so we do two stage creation - first use default constructor, then
-	//call Create.
-    wxPLplotwindow<wxFrame> *frame = new wxPlDemoFrame();
-    frame->Create( NULL, wxID_ANY, wxT( "wxPLplotDemo" ) );
+	//In this example we will create two frames. The first uses the wxPlDemoFrame class
+	//above which inherits from wxPLwindow<wxFrame>. The majority of the code for this
+	//frame is in the class above and this frame also overrides the virtual OnLocate
+	//method to capture mouse clicks.
+	//The second example shows how you can create a wxPLwindow<wxFrame> directly without
+	//creating a child class. The code is similar, just in a different location and
+	//obviously there is no use of the virtual OnLocate method.
+	//You should note however that in both cases we do not try to grab the wxPLplotstream
+	//until the frame is ready. On some systems (certainly on Windows with wxWidgets 3.0)
+	//this happens immediately after the Create function is called. However on some other
+	//systems (noteably Linux systems using some remote X11 servers) frame creation does
+	//not occur until after the Show() method is called. Then we must still wait for the 
+	//wxEVT_CREATE event to be processed. Up until this point calls to GetStream will
+	//return NULL.
+
+	//*******The first method using the child class defined above******
+	wxPlDemoFrame *inheritedFrame = new wxPlDemoFrame(wxT("wxPLplotDemo - Interactive Frame With Inheritance"));
+	inheritedFrame->Show();
+
+	//*******The second method using no inheritance*******
+	//Use two stage window creation to first construct the frame using the wxPLplotwindow
+	//constructor, then pass in the appropriate wxFrame parameters
+    wxPLplotwindow<wxFrame> *frame = new wxPLplotwindow<wxFrame>();
+    frame->Create( NULL, wxID_ANY, wxT( "wxPLplotDemo - Non-interactive Directly Created Frame" ) );
     PLPLOT_wxLogDebug("frame->Create");
 
-	//We must wait for the Create event to be processed and the
-	//wxPLplotstream to be prepared
+	//give our frame a nice icon
+	frame->SetIcon(wxIcon(graph));
+
+	//Make sure we call Show() before we try to do any plotting
+	frame->Show();
+
+	//We must wait for the wxEVT_CREATE event to be processed and the
+	//wxPLplotstream to be prepared. 
 	while (!frame->IsReady())
 	{
 		PLPLOT_wxLogDebug("Plot() Yielding");
@@ -158,13 +214,7 @@ bool MyApp::OnInit()
 	}
 
 	//Now we can set up our frame and do the plotting
-    frame->SetIcon( wxIcon( graph ) );
-    frame->Show();
     Plot( frame );
-
-	//note that all the code above starting from the Create() call could
-	//instead go in the wxPlDemoFrame constructor should we wish. It is
-	//entirely the user's choice.
 
     return true;
 }
