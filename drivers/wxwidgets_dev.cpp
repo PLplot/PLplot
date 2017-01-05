@@ -598,23 +598,23 @@ private:
 class Rand
 {
 public:
-	Rand()
-	{
+    Rand()
+    {
 #ifdef WIN32
-		rand_s(&m_seed);
+        rand_s( &m_seed );
 #else
-		std::fstream fin("/dev/urandom", std::ios::in);
-		if (fin.is_open())
-			fin.read((char *)(&m_seed), sizeof(m_seed));
-		else
-		{
-			fin.clear();
-			fin.open("/dev/random", std::ios::in);
-			if (fin.is_open())
-				fin.read((char *)(&m_seed), sizeof(m_seed));
-			else
-				m_seed = 0;
-		}
+        std::fstream fin( "/dev/urandom", std::ios::in );
+        if ( fin.is_open() )
+            fin.read( (char *) ( &m_seed ), sizeof ( m_seed ) );
+        else
+        {
+            fin.clear();
+            fin.open( "/dev/random", std::ios::in );
+            if ( fin.is_open() )
+                fin.read( (char *) ( &m_seed ), sizeof ( m_seed ) );
+            else
+                m_seed = 0;
+        }
         fin.close();
 #endif
     }
@@ -839,14 +839,14 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     SetSize( pls, plsc->xlength, plsc->ylength );
 
     if ( pls->dev_data )
-      {
+    {
         SetDC( pls, (wxDC *) pls->dev_data );
-	PLPLOT_wxLogDebug( "wxPLDevice(): SetDC done" );
-      }
+        PLPLOT_wxLogDebug( "wxPLDevice(): SetDC done" );
+    }
     else
-      {
+    {
         SetupMemoryMap();
-      }
+    }
 
     PLPLOT_wxLogDebug( "wxPLDevice(): leave" );
     //this must be the absolute last thing that is done
@@ -1555,7 +1555,7 @@ void wxPLDevice::SetupMemoryMap()
         static Rand  randomGenerator;         // make this static so that rapid repeat calls don't use the same seed
         while ( nTries < 10 )
         {
-	    PLPLOT_wxLogDebug( "SetupMemoryMap(): mapName start" );
+            PLPLOT_wxLogDebug( "SetupMemoryMap(): mapName start" );
             for ( int i = 0; i < strlen( m_mfo ); ++i )
             {
                 if ( m_mfo[i] == '?' )
@@ -1563,7 +1563,7 @@ void wxPLDevice::SetupMemoryMap()
                 else
                     mapName[i] = m_mfo[i];
             }
-	    PLPLOT_wxLogDebug( "SetupMemoryMap(): mapName done" );
+            PLPLOT_wxLogDebug( "SetupMemoryMap(): mapName done" );
             mapName[strlen( m_mfo )] = '\0';
             //truncate it earlier if needed
             if ( strlen( m_mfo ) > PLPLOT_MAX_PATH - 4 )
@@ -1572,9 +1572,9 @@ void wxPLDevice::SetupMemoryMap()
             strcpy( mutexName, mapName );
             strcat( mutexName, "mut" );
             pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mutexName = %s\n", nTries, mutexName );
-	    PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create call" );
+            PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create call" );
             m_outputMemoryMap.create( mapName, mapSize, false, true );
-	    PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
+            PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
             if ( m_outputMemoryMap.isValid() )
                 m_mutex.create( mutexName );
             if ( !m_mutex.isValid() )

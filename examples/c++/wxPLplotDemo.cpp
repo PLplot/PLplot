@@ -42,7 +42,7 @@ extern "C" { void CPSEnableForegroundOperation( ProcessSerialNumber* psn ); }
 
 // Application icon as XPM
 // This free icon was taken from http://2pt3.com/news/twotone-icons-for-free/
-static const char            *graph[] = {
+static const char *graph[] = {
 // columns rows colors chars-per-pixel
     "16 16 4 2",
     "   c black",
@@ -69,82 +69,81 @@ static const char            *graph[] = {
 };
 
 template< class WXWINDOW >
-void Plot(wxPLplotwindow<WXWINDOW> *plotwindow);
+void Plot( wxPLplotwindow<WXWINDOW> *plotwindow );
 
 class wxPlDemoFrame : public wxPLplotwindow<wxFrame>
 {
 public:
-	wxPlDemoFrame(const wxString &title);
+    wxPlDemoFrame( const wxString &title );
 private:
     virtual void OnLocate( const PLGraphicsIn &graphicsIn );
-	void OnIdle(wxIdleEvent &event);
-	virtual void plot();
-	bool m_plotted;
+    void OnIdle( wxIdleEvent &event );
+    virtual void plot();
+    bool m_plotted;
 };
 
-wxPlDemoFrame::wxPlDemoFrame(const wxString &title)
+wxPlDemoFrame::wxPlDemoFrame( const wxString &title )
 {
-	Create(NULL, wxID_ANY, title);
-	//give our frame a nice icon
-	SetIcon(wxIcon(graph));
-	Connect(wxEVT_IDLE, wxIdleEventHandler(wxPlDemoFrame::OnIdle));
-	m_plotted = false;
+    Create( NULL, wxID_ANY, title );
+    //give our frame a nice icon
+    SetIcon( wxIcon( graph ) );
+    Connect( wxEVT_IDLE, wxIdleEventHandler( wxPlDemoFrame::OnIdle ) );
+    m_plotted = false;
 }
 
-void wxPlDemoFrame::OnIdle(wxIdleEvent &event)
+void wxPlDemoFrame::OnIdle( wxIdleEvent &event )
 {
-	//We do our plotting in here, but only the first time it is called
-	//This allows us to keep checking if the window is ready and only
-	//plot if it is.
-	if ( !m_plotted && IsReady() )
-	{
-		m_plotted = true;
-		plot();
-	}
+    //We do our plotting in here, but only the first time it is called
+    //This allows us to keep checking if the window is ready and only
+    //plot if it is.
+    if ( !m_plotted && IsReady() )
+    {
+        m_plotted = true;
+        plot();
+    }
 }
 
 void wxPlDemoFrame::plot()
 {
+    if ( !IsReady() )
+    {
+        wxMessageBox( wxT( "Somehow we attempted to plot before the wxPLplotwindow was ready. The plot will not be drawn." ) );
+        return;
+    }
+    wxPLplotstream* pls = GetStream();
+    PLPLOT_wxLogDebug( "wxPlDemoFrame::plot()" );
+    assert( pls );
 
-	if (!IsReady())
-	{
-		wxMessageBox(wxT("Somehow we attempted to plot before the wxPLplotwindow was ready. The plot will not be drawn."));
-		return;
-	}
-	wxPLplotstream* pls = GetStream();
-	PLPLOT_wxLogDebug("wxPlDemoFrame::plot()");
-	assert(pls);
+    const size_t np = 500;
+    PLFLT        x[np], y[np];
+    PLFLT        xmin, xmax;
+    PLFLT        ymin = 1e30, ymax = 1e-30;
 
-	const size_t  np = 500;
-	PLFLT         x[np], y[np];
-	PLFLT         xmin, xmax;
-	PLFLT         ymin = 1e30, ymax = 1e-30;
+    xmin = 0.0;
+    xmax = 100.0;
+    for ( size_t i = 0; i < np; i++ )
+    {
+        x[i] = ( xmax - xmin ) * i / np + xmin;
+        y[i] = 1.0;
+        y[i] = sin( x[i] ) * sin( x[i] / 13.0 );
+        ymin = -1.05;
+        ymax = -ymin;
+    }
 
-	xmin = 0.0;
-	xmax = 100.0;
-	for (size_t i = 0; i < np; i++)
-	{
-		x[i] = (xmax - xmin) * i / np + xmin;
-		y[i] = 1.0;
-		y[i] = sin(x[i]) * sin(x[i]/13.0);
-		ymin = -1.05;
-		ymax = -ymin;
-	}
+    pls->scolbg( 255, 255, 255 );
+    pls->scol0( 1, 0, 0, 0 );
+    pls->scol0( 2, 0, 130, 130 );
 
-	pls->scolbg(255, 255, 255);
-	pls->scol0(1, 0, 0, 0);
-	pls->scol0(2, 0, 130, 130);
+    pls->adv( 0 );
+    pls->col0( 1 );
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->lab( "x", "y", "sin(x) * sin(x/13)" );
 
-	pls->adv(0);
-	pls->col0(1);
-	pls->env(xmin, xmax, ymin, ymax, 0, 0);
-	pls->lab("x", "y", "sin(x) * sin(x/13)");
+    pls->col0( 2 );
+    pls->width( 2 );
+    pls->line( np, x, y );
 
-	pls->col0(2);
-	pls->width(2);
-	pls->line(np, x, y);
-
-	RenewPlot();
+    RenewPlot();
 }
 
 void wxPlDemoFrame::OnLocate( const PLGraphicsIn &graphicsIn )
@@ -212,47 +211,47 @@ bool MyApp::OnInit()
     SetFrontProcess( &psn );
 #endif
 
-	//In this example we will create two frames. The first uses the wxPlDemoFrame class
-	//above which inherits from wxPLwindow<wxFrame>. The majority of the code for this
-	//frame is in the class above and this frame also overrides the virtual OnLocate
-	//method to capture mouse clicks.
-	//The second example shows how you can create a wxPLwindow<wxFrame> directly without
-	//creating a child class. The code is similar, just in a different location and
-	//obviously there is no use of the virtual OnLocate method.
-	//You should note however that in both cases we do not try to grab the wxPLplotstream
-	//until the frame is ready. On some systems (certainly on Windows with wxWidgets 3.0)
-	//this happens immediately after the Create function is called. However on some other
-	//systems (noteably Linux systems using some remote X11 servers) frame creation does
-	//not occur until after the Show() method is called. Then we must still wait for the 
-	//wxEVT_CREATE event to be processed. Up until this point calls to GetStream will
-	//return NULL.
+    //In this example we will create two frames. The first uses the wxPlDemoFrame class
+    //above which inherits from wxPLwindow<wxFrame>. The majority of the code for this
+    //frame is in the class above and this frame also overrides the virtual OnLocate
+    //method to capture mouse clicks.
+    //The second example shows how you can create a wxPLwindow<wxFrame> directly without
+    //creating a child class. The code is similar, just in a different location and
+    //obviously there is no use of the virtual OnLocate method.
+    //You should note however that in both cases we do not try to grab the wxPLplotstream
+    //until the frame is ready. On some systems (certainly on Windows with wxWidgets 3.0)
+    //this happens immediately after the Create function is called. However on some other
+    //systems (noteably Linux systems using some remote X11 servers) frame creation does
+    //not occur until after the Show() method is called. Then we must still wait for the
+    //wxEVT_CREATE event to be processed. Up until this point calls to GetStream will
+    //return NULL.
 
-	//*******The first method using the child class defined above******
-	wxPlDemoFrame *inheritedFrame = new wxPlDemoFrame(wxT("wxPLplotDemo - Interactive Frame With Inheritance"));
-	inheritedFrame->Show();
+    //*******The first method using the child class defined above******
+    wxPlDemoFrame *inheritedFrame = new wxPlDemoFrame( wxT( "wxPLplotDemo - Interactive Frame With Inheritance" ) );
+    inheritedFrame->Show();
 
-	//*******The second method using no inheritance*******
-	//Use two stage window creation to first construct the frame using the wxPLplotwindow
-	//constructor, then pass in the appropriate wxFrame parameters
+    //*******The second method using no inheritance*******
+    //Use two stage window creation to first construct the frame using the wxPLplotwindow
+    //constructor, then pass in the appropriate wxFrame parameters
     wxPLplotwindow<wxFrame> *frame = new wxPLplotwindow<wxFrame>();
     frame->Create( NULL, wxID_ANY, wxT( "wxPLplotDemo - Non-interactive Directly Created Frame" ) );
-    PLPLOT_wxLogDebug("frame->Create");
+    PLPLOT_wxLogDebug( "frame->Create" );
 
-	//give our frame a nice icon
-	frame->SetIcon(wxIcon(graph));
+    //give our frame a nice icon
+    frame->SetIcon( wxIcon( graph ) );
 
-	//Make sure we call Show() before we try to do any plotting
-	frame->Show();
+    //Make sure we call Show() before we try to do any plotting
+    frame->Show();
 
-	//We must wait for the wxEVT_CREATE event to be processed and the
-	//wxPLplotstream to be prepared. 
-	while (!frame->IsReady())
-	{
-		PLPLOT_wxLogDebug("Plot() Yielding");
-		wxGetApp().Yield();
-	}
+    //We must wait for the wxEVT_CREATE event to be processed and the
+    //wxPLplotstream to be prepared.
+    while ( !frame->IsReady() )
+    {
+        PLPLOT_wxLogDebug( "Plot() Yielding" );
+        wxGetApp().Yield();
+    }
 
-	//Now we can set up our frame and do the plotting
+    //Now we can set up our frame and do the plotting
     Plot( frame );
 
     return true;
@@ -261,19 +260,19 @@ bool MyApp::OnInit()
 template< class WXWINDOW >
 void Plot( wxPLplotwindow<WXWINDOW> *plotwindow )
 {
-	if (!plotwindow->IsReady())
-	{
-		wxMessageBox(wxT("Somehow we attempted to plot before the wxPLplotwindow was ready. The plot will not be drawn."));
-		return;
-	}
+    if ( !plotwindow->IsReady() )
+    {
+        wxMessageBox( wxT( "Somehow we attempted to plot before the wxPLplotwindow was ready. The plot will not be drawn." ) );
+        return;
+    }
     wxPLplotstream* pls = plotwindow->GetStream();
-	PLPLOT_wxLogDebug("Plot()");
-    assert(pls);
+    PLPLOT_wxLogDebug( "Plot()" );
+    assert( pls );
 
-    const size_t  np = 500;
-    PLFLT         x[np], y[np];
-    PLFLT         xmin, xmax;
-    PLFLT         ymin = 1e30, ymax = 1e-30;
+    const size_t np = 500;
+    PLFLT        x[np], y[np];
+    PLFLT        xmin, xmax;
+    PLFLT        ymin = 1e30, ymax = 1e-30;
 
     xmin = -2.0;
     xmax = 10.0;

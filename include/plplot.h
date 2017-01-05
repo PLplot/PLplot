@@ -215,7 +215,7 @@ typedef PL_NC_GENERIC_POINTER   PLPointer;
 // an arbitrary number of dimensions.
 
 // mutable version
-typedef PLFLT * PLFLT_NC_FE_POINTER;
+typedef PLFLT *       PLFLT_NC_FE_POINTER;
 // immutable version
 typedef const PLFLT * PLFLT_FE_POINTER;
 
@@ -489,7 +489,7 @@ typedef struct
 typedef struct
 {
     PLFLT_FE_POINTER f;
-    PLINT        nx, ny, nz;
+    PLINT            nx, ny, nz;
 } PLfGrid;
 
 //
@@ -517,7 +517,7 @@ typedef struct
 typedef struct
 {
     PLFLT_NC_FE_POINTER xg, yg, zg;
-    PLINT           nx, ny, nz;
+    PLINT nx, ny, nz;
 } PLcGrid;
 
 //

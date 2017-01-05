@@ -81,7 +81,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize client
     : m_created( false ), m_initialSize( clientSize )
 
 {
-    PLPLOT_wxLogDebug("wxPLplotwindow::wxPLplotwindow");
+    PLPLOT_wxLogDebug( "wxPLplotwindow::wxPLplotwindow" );
     m_memoryDc = NULL;
 #ifdef wxUSE_GRAPHICS_CONTEXT
     m_gcDc = NULL;
@@ -153,11 +153,11 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
             drawDc = m_gcDc;
         }
 #endif
-        if( IsReady() )
+        if ( IsReady() )
             m_stream.SetDC( drawDc );
         drawDc->SetBackground( wxBrush( m_canvasColour ) );
         drawDc->Clear();
-        if( IsReady() )
+        if ( IsReady() )
             m_stream.SetSize( width, height );
     }
 
@@ -188,7 +188,7 @@ void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
-	PLPLOT_wxLogDebug("wxPLplotwindow::OnCreate");
+    PLPLOT_wxLogDebug( "wxPLplotwindow::OnCreate" );
     if ( !m_created )
     {
         //set the client size if requested
@@ -291,7 +291,7 @@ void wxPLplotwindow<WXWINDOW>::OnMouse( wxMouseEvent &event )
         graphicsIn.state |= PL_MASK_SCROLL;
     //Note I can't find a way to catch the windows key
 
-    if( IsReady() )
+    if ( IsReady() )
         m_stream.translatecursor( &graphicsIn );
     this->OnLocate( graphicsIn );
 }
