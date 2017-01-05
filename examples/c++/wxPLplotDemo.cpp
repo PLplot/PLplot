@@ -105,7 +105,46 @@ void wxPlDemoFrame::OnIdle(wxIdleEvent &event)
 
 void wxPlDemoFrame::plot()
 {
-	Plot(this);
+
+	if (!IsReady())
+	{
+		wxMessageBox(wxT("Somehow we attempted to plot before the wxPLplotwindow was ready. The plot will not be drawn."));
+		return;
+	}
+	wxPLplotstream* pls = GetStream();
+	PLPLOT_wxLogDebug("wxPlDemoFrame::plot()");
+	assert(pls);
+
+	const size_t  np = 500;
+	PLFLT         x[np], y[np];
+	PLFLT         xmin, xmax;
+	PLFLT         ymin = 1e30, ymax = 1e-30;
+
+	xmin = 0.0;
+	xmax = 100.0;
+	for (size_t i = 0; i < np; i++)
+	{
+		x[i] = (xmax - xmin) * i / np + xmin;
+		y[i] = 1.0;
+		y[i] = sin(x[i]) * sin(x[i]/13.0);
+		ymin = -1.05;
+		ymax = -ymin;
+	}
+
+	pls->scolbg(255, 255, 255);
+	pls->scol0(1, 0, 0, 0);
+	pls->scol0(2, 0, 130, 130);
+
+	pls->adv(0);
+	pls->col0(1);
+	pls->env(xmin, xmax, ymin, ymax, 0, 0);
+	pls->lab("x", "y", "sin(x) * sin(x/13)");
+
+	pls->col0(2);
+	pls->width(2);
+	pls->line(np, x, y);
+
+	RenewPlot();
 }
 
 void wxPlDemoFrame::OnLocate( const PLGraphicsIn &graphicsIn )
