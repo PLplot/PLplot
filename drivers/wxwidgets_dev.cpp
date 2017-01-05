@@ -1036,24 +1036,23 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
 #if wxVERSION_NUMBER >= 2902
         m_useDcTextTransform = m_dc->CanUseTransformMatrix();
 #endif
-        //If we don't have wxDC tranforms we can use the
-        //underlying wxGCDC if this is a wxGCDC
-        if ( !m_useDcTextTransform )
+        //Prior to some point in wxWidgets 3.1 development wxGCDC didn't
+        //support transformation matrices, but the underlying
+        //wxGraphicsContext had its own transformation matrix ability.
+        //So check if we are using a wxGCDC  using RTTI and if so we can
+        //use this.
+        wxGCDC *gcdc = NULL;
+        try
         {
-            //check to see if m_dc is a wxGCDC by using RTTI
-            wxGCDC *gcdc = NULL;
-            try
-            {
-                //put this in a try block as I'm not sure if it will throw if
-                //RTTI is switched off
-                gcdc = dynamic_cast< wxGCDC* >( m_dc );
-            }
-            catch ( ... )
-            {
-            }
-            if ( gcdc )
-                m_gc = gcdc->GetGraphicsContext();
+            //put this in a try block as I'm not sure if it will throw if
+            //RTTI is switched off
+            gcdc = dynamic_cast< wxGCDC* >( m_dc );
         }
+        catch ( ... )
+        {
+        }
+        if ( gcdc )
+            m_gc = gcdc->GetGraphicsContext();
 
         strcpy( m_mfo, "" );
         SetSize( pls, m_width, m_height );  //call with our current size to set the scaling
@@ -1159,7 +1158,32 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
         Font    font = m_fontGrabber.GetFont( fci, scaledFontSize, underlined );
         m_dc->SetFont( font.getWxFont() );
 
-        if ( m_gc )
+        if ( m_useDcTextTransform )
+        {
+#if wxVERSION_NUMBER >= 2902
+            wxAffineMatrix2D originalDcMatrix = m_dc->GetTransformMatrix();
+
+            wxAffineMatrix2D newMatrix = originalDcMatrix;
+            newMatrix.Translate( xOrigin / m_xScale, m_height - yOrigin / m_yScale );
+            wxAffineMatrix2D textMatrix;
+            //For some reason we don't do the mirroring like in the wxGraphicsContext when we use a wxDC.
+            PLFLT            xTransform = transform[4] / m_xScale;
+            PLFLT            yTransform = transform[5] / m_yScale;
+            textMatrix.Set(
+                wxMatrix2D(
+                    transform[0], transform[2],
+                    transform[1], transform[3] ),
+                wxPoint2DDouble(
+                    xTransform, yTransform ) );
+            newMatrix.Concat( textMatrix );
+            m_dc->SetTransformMatrix( newMatrix );
+
+            m_dc->DrawText( section, x / m_xScale, -y / m_yScale );
+
+            m_dc->SetTransformMatrix( originalDcMatrix );
+#endif
+        }
+        else if ( m_gc )
         {
             wxGraphicsMatrix originalGcMatrix = m_gc->GetTransform();
 
@@ -1202,31 +1226,6 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
             m_gc->DrawText( section, x / m_xScale, -y / m_yScale );
             m_gc->SetTransform( originalGcMatrix );
         }
-#if wxVERSION_NUMBER >= 2902
-        else if ( m_useDcTextTransform )
-        {
-            wxAffineMatrix2D originalDcMatrix = m_dc->GetTransformMatrix();
-
-            wxAffineMatrix2D newMatrix = originalDcMatrix;
-            newMatrix.Translate( xOrigin / m_xScale, m_height - yOrigin / m_yScale );
-            wxAffineMatrix2D textMatrix;
-            //note same issues as for wxGraphicsContext above.
-            PLFLT            xTransform = transform[4] / m_xScale;
-            PLFLT            yTransform = transform[5] / m_yScale;
-            textMatrix.Set(
-                wxMatrix2D(
-                    transform[0], -transform[2],
-                    -transform[1], transform[3] ),
-                wxPoint2DDouble(
-                    xTransform, yTransform ) );
-            newMatrix.Concat( textMatrix );
-            m_dc->SetTransformMatrix( newMatrix );
-
-            m_dc->DrawText( section, x / m_xScale, -y / m_yScale );
-
-            m_dc->SetTransformMatrix( originalDcMatrix );
-        }
-#else
         else
         {
             //If we are stuck with a wxDC that has no transformation abilities then
@@ -1235,9 +1234,11 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
             // text
             PLFLT xTransformed = x / m_xScale * transform[0] + y / m_yScale * transform[2] + transform[4] / m_xScale;
             PLFLT yTransformed = x / m_xScale * transform[1] + y / m_yScale * transform[3] + transform[4] / m_xScale;
-            m_dc->DrawRotatedText( section, xOrigin / m_xScale + xTransformed, m_height - y / m_yScale + yTransformed, angle );
+            //This angle calculation comed from transforming the point (0,0) andany other point on the y = 0 line and
+            //getting the angle from the horizontal of that line.
+            PLFLT angle = atan2( transform[1], transform[0] ) * 180.0 / M_PI;
+            m_dc->DrawRotatedText( section, xOrigin / m_xScale + xTransformed, m_height - yOrigin / m_yScale - yTransformed, angle );
         }
-#endif
     }
 }
 
