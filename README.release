@@ -694,17 +694,17 @@ issues are due to the different ways these examples use the Qt
 libraries and thus find the memory management issues in those
 libraries or not.)  It is encouraging that there are no memory
 management issues for some of our examples for qt linked to Qt5, but
-in contrast when our qt device driver is linked to Qt4 instead (at
-least for the Debian Jessie version 4.8.6) there are no memory
-management issues for _any_ of the examples for the pdfqt device.  We
-have not had time to make similar comprehensive valgrind tests for all
-our examples for other qt devices, but spot checks with valgrind
-indicate a consistent pattern of severe memory management issues with
-Qt5 that just don't occur for Qt4.  Another memory-management issue
-that is likely related to Qt5 is we get a segfault when exiting from
-the pyqt5_example (which is necessarily linked to Qt5) while we have
-no such issues with pyqt4_example (that is necessarily linked to Qt4).
-A final issue with Qt5 that we have noticed is our comprehensive test
+when our qt device driver is linked to Qt4 instead (at least for the
+Debian Jessie version 4.8.6) there are no memory management issues for
+_any_ of the examples for the pdfqt device.  We have not had time to
+make similar comprehensive valgrind tests for all our examples for other
+qt devices, but spot checks with valgrind indicate a consistent pattern
+of severe memory management issues with Qt5 that just don't occur
+for Qt4.  Another memory-management issue that is likely related to Qt5
+is we get a segfault when exiting from the pyqt5_example (which is
+necessarily linked to Qt5) while we have no such issues with
+pyqt4_example (that is necessarily linked to Qt4). A final issue
+with Qt5 that we have noticed is our comprehensive test
 of our qt device driver linked to Qt5 was twice (!) as slow as the
 same test for our qt device driver linked to Qt4.
 
@@ -755,7 +755,7 @@ my all-time favourite TV shows "Hamish Macbeth".  :-)
 This was a massive and intrusive change to our source tree when we
 first did this because years of neglect concerning this issue had left
 trailing whitespace virtually everywhere which git constantly
-complained about.  From now on, our developers our encouraged to run
+complained about.  From now on, our developers are encouraged to run
 scripts/remove_trailing_blanks.sh to deal with this issue before each
 of their commits.  That script excludes all binary files following the
 rules in .gitattributes concerning what constitutes a text file.  In
@@ -888,7 +888,7 @@ Such dashboards should be submitted using, e.g.,
 
 cmake -DBUILD_TEST=ON -DPLPLOT_BUILDNAME_SUFFIX:STRING="-shared library + dynamic devices" ....
 #N.B. the all target must always be built before ctest is run
-make -j4 all  
+make -j4 all
 ctest -j4 -D Experimental
 
 The -DPLPLOT_BUILDNAME_SUFFIX:STRING option is not necessary, but the
@@ -944,9 +944,9 @@ interactive test targets that are reliable.
 2.23 Linux efficiency improvements for the wxwidgets device
 
 The speed of the Linux wxwidgets device (N.B. note the
-time required by wxPLViewer is not counted in any of these comparisons) was not in a good
-state for PLplot-5.11.1; slowdowns of a factor of two compared
-to the qtwidget and xcairo devices were typical while in some cases
+time required by wxPLViewer is not counted in any of these comparisons)
+was not in a good state for PLplot-5.11.1; slowdowns of a factor of two
+compared to the qtwidget and xcairo devices were typical while in some cases
 the slowdown ranged up to two orders of magnitude!  That latter problem
 turned out to be due to our use of the blocking /dev/random device
 to choose the seed for the random names chosen for the shared memory
