@@ -239,8 +239,6 @@ paragraph just after Table-3.5.
 I cannot figure out how to get nroff to work properly with UTF-8 man pages
 so use the man command to test the generated man pages as follows:
 
-From the top of the build tree....
-
 mkdir -p man/man3
 ln -s $(find $(pwd) -name "*.3plplot") man/man3
 for MANPAGE in $(find man/man3 -type l|sort|grep -E '(plot3dcl|plsurf3dl)'); do MANPAGE1=${MANPAGE##*/}; man -M./man ${MANPAGE1%%.3plplot} ; done
@@ -248,32 +246,45 @@ for MANPAGE in $(find man/man3 -type l|sort|grep -E '(plot3dcl|plsurf3dl)'); do 
 Two of our man pages (plot3dcl.3plplot and plsurf3dl.3plplot)
 currently contain UTF-8 symbols (for the math symbols ≤ and ≥) so I
 have selected those in the above example, and those UTF-8 symbols
-render fine (see discussion below), but if you prefer to look at all
+render without issues (see discussion below), but if you prefer to look at all
 man pages that "|grep -E '(plot3dcl|plsurf3dl)'" stanza should be
 dropped.
 
 2. info pages.
 
-info --file doc/docbook/src/plplotdoc.info
+info plplotdoc.info
 
-I suggest searching explicitly for plot3dcl, plsurf3dl, and peace to
-evaluate how the UTF-8 symbols are rendered. Typically, math symbols
-are fine, but the Korean, Hindi, and Mandarin "peace" words are
-missing in the info pages, see discussion below.
+I suggest searching explicitly for "plot3dcl", "plsurf3dl", and
+"peace" to evaluate how the UTF-8 symbols are rendered. I got perfect
+results including the glyph order for the CTL scripts Hebrew, Arabic,
+and Devanagari (the script for Hindi) with konsole (KDE terminal that
+uses client-side TrueType glyphs selected by font-config) except for an extra character after
+the Hindi "Peace" word was rendered correctly.  I got so-so results
+for xterm (X terminal that uses server side X fonts with no
+font-config glyph selection) with Korean, Hindi, and Mandarin glyphs
+missing.  This may be a matter of installing more xfonts-* Debian
+packages, but I tried pretty hard with that (including restarting X
+after the xfonts-* package installation) without any improvement.  So
+the conclusion is to stick to a terminal (such as konsole but NOT
+xterm) that uses X client-side system unicode fonts and you should get
+near-perfect UTF-8 results with info.
 
 3. web pages.
 
 Browse with your favorite browser the <doc/docbook/src/index.html> file
-in your build tree.  To look especially for UTF-8 issues (if any)
+in your build tree.  To look especially for UTF-8 issues
 browse <doc/docbook/src/plot3dcl.html>, <doc/docbook/src/plsurf3dl.html>, and in the
-range of lines near <doc/docbook/src/characters.html#peace>.
+range of lines near <doc/docbook/src/characters.html#peace>.  I got
+perfect UTF-8 results for this case including the glyph order for the
+CTL scripts Hebrew, Arabic, and Devanagari (the script for Hindi).
 
 4. pdf file
 
 Browse with your favorite browser the
 <doc/docbook/src/plplot-$version.pdf> file that is generated in your
 build tree.  To look especially for UTF-8 issues search for
-plot3dcl, plsurf3dl, and peace.
+plot3dcl, plsurf3dl, and peace.  In this case, Korean and Mandarin
+glyphs are missing, and the last-few Hindi glyphs are rendered out of order.
 
 UTF-8 limitations of the current set of backend tools
 =====================================================
@@ -282,40 +293,22 @@ The above set of DocBook backend tools has been chosen with the goal
 of allowing essentially arbitrary UTF-8 strings into our DocBook
 source.  And the advanced.xml part of our DocBook source constitutes a
 simple test of how close we have come to that goal by including the
-"Peace" word in all the human languages expressed in example 24 and by
+"Peace" word in the 12 human languages expressed in example 24 and by
 also including some UTF-8 forms of math symbols.  Here are the current
 results for how well those UTF-8 strings render for our various
 backends.
 
-Man pages.
+Man and info results
 
-These results are not affected since the man pages ignore the advanced
-chapter, but (see discussion above) the api.xml file currently
-contains two functions whose documentation uses UTF-8 math symbols,
-and for those man pages the man command renders those symbols without
-issues.  I assume what is going on here is the UTF-8 math symbols
-are just being cleanly passed through to the man viewer ("less" in
-this case) so with some exceptions (see comments on less below) good
-rendering of arbitrary UTF-8 symbols will occur.
+Should be near-perfect if you are using a
+terminal application (e.g., konsole, but NOT xterm) that uses
+X client-side system unicode fonts.
 
-Info files.
+HTML results
 
-These results are reasonably good.  All math glyphs and all but the
-glyphs occurring in the Korean, Hindi, and Mandarin "Peace" words are
-rendered correctly.  That's exactly the same set of missing glyphs
-that occurs when I use "less" on advanced.xml so it is possible some
-configuration adjustment for the non-GUI component of my system will
-fix the missing glyphs that occur both for the info form of our
-documentation and when using "less".
+Should be perfect.
 
-HTML results.
-
-These are outstanding results with no issues that we are aware of.
-All math glyphs and all the glyphs occurring in the set of "Peace"
-words render without issues including the CTL languages like Hebrew,
-Arabic, and Hindi.
-
-PDF results.
+PDF results
 
 These results are reasonably good.  All math glyphs and all but the
 glyphs occurring in the Korean and Mandarin "Peace" words are present.
@@ -324,15 +317,16 @@ glyphs in the chosen FreeSans, FreeSerif, and FreeMono fonts (more
 about that choice below). The order of the glyphs in the Hindi Peace
 word is not correct (last two glyphs switched) which is a common
 complex text layout (CTL) issue when using unsophisticated software to
-render Hindi.  However, the Peace word is laid out in the correct
-(right-to-left) order for Arabic and Hebrew so there is some CTL
-sophistication in the xelatex layout engine, and probably hope that
-further layout issues such as the one for Hindi will be fixed.
+render Hindi (Devangari script).  However, the Peace word is laid out
+in the correct (right-to-left) order for Arabic and Hebrew so there is
+some CTL sophistication in the xelatex layout engine, and probably
+hope that further layout issues such as the one for Hindi will be
+fixed.
 
 More on the reason for the missing PDF glyphs.
 
-It was a huge step forward in the tex world for the combination of
-xelatex and the fontspec tex package to make a very large number of
+It was a huge step forward in the TeX world for the combination of
+xelatex and the fontspec TeX package to make a very large number of
 UTF-8 glyphs potentially available in pdf results.  So I think the
 above method of using dblatex with the xetex backend (which uses
 xelatex and fontspec internally) is the best we can do to generate the
@@ -358,7 +352,7 @@ FreeSerif, and FreeMono fonts which have reasonable quality but which
 have some missing glyphs (notably CJK glyphs that leave our Korean and
 Mandarin "peace" words empty in the documentation).
 
-The proper way to solve this issue (which would bring tex completely
+The proper way to solve this issue (which would bring TeX completely
 into the modern unicode world) would be to modify fontspec so that
 certain given font names are considered generic, (e.g., the
 "sans-serif", "serif", and "mono-space" font names could be adopted
