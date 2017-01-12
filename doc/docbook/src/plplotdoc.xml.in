@@ -56,8 +56,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-advanced SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/advanced.xml">
 <!ENTITY chap-deploying SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/deploying.xml">
 <!ENTITY chap-drivers SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/drivers.xml">
-<!ENTITY chap-ada SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ada.xml">
 <!ENTITY chap-c SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/c.xml">
+<!ENTITY chap-ada SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ada.xml">
 <!ENTITY chap-cplus SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/cplus.xml">
 <!ENTITY chap-fortran95 SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/fortran95.xml">
 <!ENTITY chap-ocaml SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ocaml.xml">
@@ -275,6 +275,36 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plwind '<link linkend="plwind"><function>plwind</function></link>'>
 <!ENTITY PLGraphicsIn '<link linkend="PLGraphicsIn"><structname>PLGraphicsIn</structname></link>'>
 <!ENTITY PLOptionTable '<link linkend="PLOptionTable"><structname>PLOptionTable</structname></link>'>
+<!ENTITY PLFLT '<link linkend="PLFLT-type"><function>PLFLT</function></link>'>
+<!ENTITY PLINT '<link linkend="PLINT-type"><function>PLINT</function></link>'>
+<!ENTITY PLBOOL '<link linkend="PLBOOL-type"><function>PLBOOL</function></link>'>
+<!ENTITY PLUNICODE '<link linkend="PLUNICODE-type"><function>PLUNICODE</function></link>'>
+<!ENTITY PLFLT_NC_SCALAR '<link linkend="PLFLT_NC_SCALAR-type"><function>PLFLT_NC_SCALAR</function></link>'>
+<!ENTITY PLINT_NC_SCALAR '<link linkend="PLINT_NC_SCALAR-type"><function>PLINT_NC_SCALAR</function></link>'>
+<!ENTITY PLBOOL_NC_SCALAR '<link linkend="PLBOOL_NC_SCALAR-type"><function>PLBOOL_NC_SCALAR</function></link>'>
+<!ENTITY PLUNICODE_NC_SCALAR '<link linkend="PLUNICODE_NC_SCALAR-type"><function>PLUNICODE_NC_SCALAR</function></link>'>
+<!ENTITY PLCHAR_NC_SCALAR '<link linkend="PLCHAR_NC_SCALAR-type"><function>PLCHAR_NC_SCALAR</function></link>'>
+<!ENTITY PLFLT_VECTOR '<link linkend="PLFLT_VECTOR-type"><function>PLFLT_VECTOR</function></link>'>
+<!ENTITY PLINT_VECTOR '<link linkend="PLINT_VECTOR-type"><function>PLINT_VECTOR</function></link>'>
+<!ENTITY PLBOOL_VECTOR '<link linkend="PLBOOL_VECTOR-type"><function>PLBOOL_VECTOR</function></link>'>
+<!ENTITY PLCHAR_VECTOR '<link linkend="PLCHAR_VECTOR-type"><function>PLCHAR_VECTOR</function></link>'>
+<!ENTITY PLFLT_NC_VECTOR '<link linkend="PLFLT_NC_VECTOR-type"><function>PLFLT_NC_VECTOR</function></link>'>
+<!ENTITY PLCHAR_NC_VECTOR '<link linkend="PLCHAR_NC_VECTOR-type"><function>PLCHAR_NC_VECTOR</function></link>'>
+<!ENTITY PLFLT_MATRIX '<link linkend="PLFLT_MATRIX-type"><function>PLFLT_MATRIX</function></link>'>
+<!ENTITY PLCHAR_MATRIX '<link linkend="PLCHAR_MATRIX-type"><function>PLCHAR_MATRIX</function></link>'>
+<!ENTITY PLFLT_NC_MATRIX '<link linkend="PLFLT_NC_MATRIX-type"><function>PLFLT_NC_MATRIX</function></link>'>
+<!ENTITY PLCHAR_NC_MATRIX '<link linkend="PLCHAR_NC_MATRIX-type"><function>PLCHAR_NC_MATRIX</function></link>'>
+<!ENTITY PL_GENERIC_POINTER '<link linkend="PL_GENERIC_POINTER-type"><function>PL_GENERIC_POINTER</function></link>'>
+<!ENTITY PL_NC_GENERIC_POINTER '<link linkend="PL_NC_GENERIC_POINTER-type"><function>PL_NC_GENERIC_POINTER</function></link>'>
+<!ENTITY PLMAPFORM_callback '<link linkend="PLMAPFORM_callback-type"><function>PLMAPFORM_callback</function></link>'>
+<!ENTITY PLTRANSFORM_callback '<link linkend="PLTRANSFORM_callback-type"><function>PLTRANSFORM_callback</function></link>'>
+<!ENTITY PLLABEL_FUNC_callback '<link linkend="PLLABEL_FUNC_callback-type"><function>PLLABEL_FUNC_callback</function></link>'>
+<!ENTITY PLF2EVAL_callback '<link linkend="PLF2EVAL_callback-type"><function>PLF2EVAL_callback</function></link>'>
+<!ENTITY PLFILL_callback '<link linkend="PLFILL_callback-type"><function>PLFILL_callback</function></link>'>
+<!ENTITY PLDEFINED_callback '<link linkend="PLDEFINED_callback-type"><function>PLDEFINED_callback</function></link>'>
+<!ENTITY PLGraphicsIn '<link linkend="PLGraphicsIn-type"><function>PLGraphicsIn</function></link>'>
+<!ENTITY PLF2OPS '<link linkend="PLF2OPS-type"><function>PLF2OPS</function></link>'>
+<!ENTITY PLFLT_FE_POINTER '<link linkend="PLFLT_FE_POINTER-type"><function>PLFLT_FE_POINTER</function></link>'>
 <!ENTITY PLplot-website '@PLPLOT_WEBSITE@'>
 <!ENTITY % Math-Entities SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/math.ent">
 %Math-Entities;
@@ -443,8 +473,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <part id="part_bindings">
     <title> Supported computer languages </title>
-    &chap-ada;
     &chap-c;
+    &chap-ada;
     &chap-cplus;
     &chap-fortran95;
     &chap-ocaml;

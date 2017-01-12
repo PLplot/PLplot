@@ -57,10 +57,10 @@ years old version has been abandoned for quite a few years now.  As we
 now use features from the Fortran 2003 standard, it is no longer
 appropriate to refer to the language as Fortran 95.  </para>
 
-<para>We illustrate the implementation of our Fortran binding with the
-<literal>plstring</literal> example.  The C API for that routine is thoroughly
-documented in <xref linkend="plstring"/>, but the summary of that C
-API which best serves our purposes here is
+<para>We illustrate the implementation of our Fortran binding using the
+<literal>&plstring;</literal> API as an example.  The
+summary of the C
+API for that routine which best serves our purposes here is
 <programlisting>
 void plstring( PLINT n, const PLFLT *x, const PLFLT *y, const char *string );
 </programlisting>
@@ -257,14 +257,7 @@ any conversion that may be necessary.  </para>
 illustrates the way our Fortran binding makes the PLplot C API
 conveniently accessible from Fortran while letting the C binding and
 overloading features of the Fortran compiler hide the complexities of
-the name mangling that occurs.  Developers interested in further
-details (e.g., all the different argument conversions that are done)
-concerning our new Fortran binding should consult the Fortran modules
-defined in <filename>bindings/f95*</filename>, but we highly recommend
-users interested in <emphasis>how to use</emphasis> our Fortran
-binding should primarily consult the Fortran examples in
-<filename>examples/f95/x??f.f90</filename>.  Those examples are all known to work well with our new
-Fortran binding.</para>
+the name mangling that occurs.</para>
 
 <para>Users should be aware that there are a few cases with our new Fortran binding where we provide
 double-precision floating-point entities but no equivalent single-precision floating-point alternative.
@@ -329,9 +322,8 @@ double-precision floating-point entities but no equivalent single-precision floa
 
 <para>Users should be aware that the new Fortran binding for PLplot enforces the following interfacing rules:
     <itemizedlist>
-      <listitem><para>The new Fortran binding interfaces Fortran functions with
-      C routines if and only if that routine provides a return value and interfaces Fortran subroutines
-      with C routines if and only if that routine does not provide a return value.  For example, this rule means
+      <listitem><para>The new Fortran binding interfaces Fortran functions/subroutines with
+      C routines if the C routines provide/do not provide a return value.  For example, this rule means
       that the C &plparseopts; routine that returns an error code must be invoked at the
       Fortran level similarly to the following:
       <programlisting>
@@ -366,8 +358,11 @@ double-precision floating-point entities but no equivalent single-precision floa
     </itemizedlist>
 </para>
 
-<para>In all cases the best source for figuring out how to call PLplot
-routines from Fortran is the the example Fortran programs in
-<filename>/examples/f95/x??f.f90</filename>.  Those examples are all known to
-work well with the new Fortran binding.</para>
+<para>For more information on calling PLplot from Fortran, please consult
+the example Fortran programs in <filename>examples/f95</filename> that are
+distributed with PLplot.  For more information on building your own
+PLplot-related Fortran routines, please consult either the traditional
+(Makefile + pkg-config) or CMake-based build systems that are created
+as part of the install step for our Fortran (and other language)
+examples.</para>
 </chapter>

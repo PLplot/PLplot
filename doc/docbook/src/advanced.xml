@@ -38,9 +38,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="advanced">
   <title>Advanced Use of PLplot</title>
-
-  <para> In this chapter, we describe advanced use of PLplot. </para>
-
+  <para> We describe advanced use of PLplot in this chapter.  Note that
+  throughout this chapter there are references to examples written in C
+  using PLplot C types such as PLFLT and PLINT.  For full documentation
+  of all PLplot C types see <link linkend="plplot-types">here</link>.  For full
+  documentation for our supported languages and the language types
+  corresponding to the PLplot C types see the various chapters in <xref
+  linkend="part_bindings"/>.  Note also that
+  <filename>examples/&lt;language&gt;/x*</filename> contains a large
+  number of standard PLplot examples which demonstrate how the PLplot
+  API should be used for each of our supported languages.</para>
   <sect1 id="arguments">
     <title>Command Line Arguments</title>
 
@@ -107,105 +114,116 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Some options are may not be recognized by individual drivers.  If an option is not recognized but should be, please contact the driver author via the plplot mailing lists.
+      Some options may not be recognized by individual drivers.  If an option is not recognized but should be, please contact the driver author via the plplot mailing lists.
     </para>
 
-    <para>Many drivers have specific options that can be set using the -drvopt command line option or with &plsetopt;.  These options are documented in <xref linkend="x-drivers"/> and <xref linkend="output-drivers"/>.
+    <para>Many drivers have specific options that can be set using the -drvopt command line option or with &plsetopt;.  These options are documented in <xref linkend="file-drivers"/> and <xref linkend="interactive-drivers"/>.
     </para>
 
   </sect1>
 
-  <sect1 id="output-devices">
-    <title>Output Devices</title>
+  <sect1 id="devices">
+    <title>Devices</title>
     <para>
-      PLplot supports a variety of output devices, via a set of device drivers.
-      Each driver is required to emulate a small set of low-level graphics
-      primitives such as initialization, line draw and page advance, as well
-      as be completely independent of the PLplot package as a whole.  Thus a
-      driver may be very simple, as in the case of the many black and white file
-      drivers (tektronix, etc.).  More complicated and/or color systems require a
-      bit more effort by the driver, with the most effort required by an output
-      device with a graphical user interface, including menus for screen dumps,
-      palette manipulation, and so forth.  At present only the tk driver does
-      the latter on Unix systems.  At present we aren't pursuing
-      a Macintosh development effort due to a lack of time and expertise, but
-      will assist anyone wanting to volunteer for the job.
-    </para>
-
-    <para> Note that if you always render to a PLplot metafile, you can always
-    <function>plrender</function> them to new devices as they become available.
+      PLplot implements a set of device drivers which support a wide
+      variety of devices.  Each driver is required to implement a small set
+      of low-level graphics primitives such as initialization, line draw,
+      and page advance for each device it supports.  In addition a driver
+      can implement higher-level features such as rendering unicode text.
+      Thus a driver may be simple or complex depending on the driver
+      capabilities that are implemented.
     </para>
 
     <para>
-      The list of available devices presented when starting PLplot (via
-      <literal>plstar</literal>) is determined at compile time.  When installing PLplot you may wish
-      to exclude devices not available on your system in order to reduce screen
-      clutter.  To include a specified device, simply define the appropriate macro
-      constant when building PLplot (see the installation instructions for your
-      system).
+      The list of available devices is determined at configuration
+      time by our CMake-based build system based on what device drivers are
+      possible and what devices are enabled by default for a given platform.
+      Most users just accept that default list of devices, but it is also
+      possible for users to modify the list of enabled devices in any way
+      they like.  For example, they could use
+      <literal>-DPLD_svg=OFF</literal> to exclude just the svg device from
+      the default list; they could use <literal>-DDEFAULT_NO_DEVICES=ON
+      -DPLD_svg=ON</literal> to enable just the svg device (say if they were
+      interested just in that device and they wanted to save some
+      configuration and build time); or they could use
+      <literal>-DDEFAULT_ALL_DEVICES=ON -DPLD_svg=OFF</literal> to enable
+      all devices other than svg.  Note, however, extreme caution should be
+      used with <literal>-DDEFAULT_ALL_DEVICES=ON</literal> since the result
+      is often one of the "disabled by default" devices below gets enabled
+      which is almost always problematic since those devices are typically
+      unmaintained, deprecated, or just being developed which means they
+      might not even build or if they do build, they might not run properly.
     </para>
 
     <para>
-      The device drivers for PLplot terminal output at present are given in
-      <xref linkend="tab_dev1"/> while
-      drivers for file output are given in
-      <xref linkend="tab_dev2"/>.
-      The driver for OS/2 PM is available separately.  See the section on OS/2 in
-      the Appendix for more details.
+      Most PLplot devices can be classified as either file devices
+      (plot results generated for a <ulink
+      url="&PLplot-website;/#files">particular file format</ulink>) or
+      interactive devices (plot results generated for a <ulink
+      url="&PLplot-website;/#interactive">particular interactive
+      platform</ulink>).  The available file devices are tabulated in <xref
+      linkend="tab_dev1"/> while the available interactive devices are
+      tabulated in <xref linkend="tab_dev2"/>.
 
       <table frame="none" id="tab_dev1">
-	<title>PLplot Terminal Output Devices</title>
-	<tgroup cols="3" align="center">
+	<title>PLplot File Devices</title>
+	<tgroup cols="4" align="center" colsep="1" rowsep="1">
+	  <colspec colwidth="1*"/>
 	  <colspec colwidth="1*"/>
 	  <colspec colwidth="1*"/>
 	  <colspec colwidth="1*"/>
 	  <thead>
-	    <row><entry>Device</entry><entry>keyword</entry><entry>driver file</entry></row>
+	    <row><entry>Description</entry><entry>Keyword</entry><entry>Source code</entry><entry>Default?</entry></row>
 	  </thead>
 	  <tbody>
-	    <row><entry>X-Window Screen</entry><entry>xwin</entry><entry>xwin.c</entry></row>
-	    <row><entry>Tcl/Tk widget</entry><entry>tk</entry><entry>tk.c</entry></row>
-	    <row><entry>Linux console VGA</entry><entry>vga</entry><entry>linuxvga.c</entry></row>
-	    <row><entry>Xterm Window</entry><entry>xterm</entry><entry>tek.c</entry></row>
-	    <row><entry>Tektronix Terminal (4010)</entry><entry>tekt</entry><entry>tek.c</entry></row>
-	    <row><entry>Tektronix Terminal (4105/4107)</entry><entry>tek4107t</entry><entry>tek.c</entry></row>
-	    <row><entry>MS-Kermit emulator</entry><entry>mskermit</entry><entry>tek.c</entry></row>
-	    <row><entry>Versaterm vt100/tek emulator</entry><entry>versaterm</entry><entry>tek.c</entry></row>
-	    <row><entry>VLT vt100/tek emulator</entry><entry>vlt</entry><entry>tek.c</entry></row>
-	    <row><entry>Conex vt320/tek emulator</entry><entry>conex</entry><entry>tek.c</entry></row>
-	    <row><entry>DG300 Terminal</entry><entry>dg300</entry><entry>dg300.c</entry></row>
-	    <row><entry>NeXT display (unsupported)</entry><entry>nx</entry><entry>next.c</entry></row>
+	    <row><entry>PDF (cairo)</entry><entry>pdfcairo</entry><entry>cairo.c</entry><entry>Yes</entry></row>
+	    <row><entry>PNG (cairo)</entry><entry>pngcairo</entry><entry>cairo.c</entry><entry>Yes</entry></row>
+	    <row><entry>PostScript (cairo)</entry><entry>pscairo</entry><entry>cairo.c</entry><entry>Yes</entry></row>
+	    <row><entry>Encapsulated PostScript (cairo)</entry><entry>epscairo</entry><entry>cairo.c</entry><entry>Yes</entry></row>
+	    <row><entry>SVG (cairo)</entry><entry>epscairo</entry><entry>cairo.c</entry><entry>Yes</entry></row>
+	    <row><entry>CGM</entry><entry>cgm</entry><entry>cgm.c</entry><entry>No</entry></row>
+	    <row><entry>Encapsulated PostScript (Qt)</entry><entry>epsqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>PDF (Qt)</entry><entry>pdfqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>BMP (Qt)</entry><entry>bmpqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>JPEG (Qt)</entry><entry>jpgqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>PNG (Qt)</entry><entry>pngqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>PPM (Qt)</entry><entry>ppmqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>TIFF (Qt)</entry><entry>tiffqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>SVG (Qt)</entry><entry>svgqt</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>PNG (GD)</entry><entry>png</entry><entry>gd.c</entry><entry>No</entry></row>
+	    <row><entry>JPEG (GD)</entry><entry>jpeg</entry><entry>gd.c</entry><entry>No</entry></row>
+	    <row><entry>GIF (GD)</entry><entry>gif</entry><entry>gd.c</entry><entry>No</entry></row>
+	    <row><entry>PDF (Haru)</entry><entry>pdf</entry><entry>pdf.c</entry><entry>Yes</entry></row>
+	    <row><entry>PLplot Native Meta-File</entry><entry>plmeta</entry><entry>plmeta.c</entry><entry>No</entry></row>
+	    <row><entry>PostScript (monochrome)</entry><entry>ps</entry><entry>ps.c</entry><entry>Yes</entry></row>
+	    <row><entry>PostScript (color)</entry><entry>psc</entry><entry>ps.c</entry><entry>Yes</entry></row>
+	    <row><entry>PostScript (monochrome), (LASi)</entry><entry>psttf</entry><entry>psttf.cc</entry><entry>Yes</entry></row>
+	    <row><entry>PostScript (color), (LASi)</entry><entry>psttfc</entry><entry>psttf.cc.c</entry><entry>Yes</entry></row>
+	    <row><entry>SVG</entry><entry>svg</entry><entry>svg.c</entry><entry>Yes</entry></row>
+	    <row><entry>XFig</entry><entry>xfig</entry><entry>xfig.c</entry></row>
 	  </tbody>
 	</tgroup>
       </table>
-
       <table frame="none" id="tab_dev2">
-	<title>PLplot File Output Devices</title>
-	<tgroup cols="3" align="center" colsep="0" rowsep="0">
+	<title>PLplot Interactive Devices</title>
+	<tgroup cols="4" align="center" colsep="1" rowsep="1">
+	  <colspec colwidth="1*"/>
 	  <colspec colwidth="1*"/>
 	  <colspec colwidth="1*"/>
 	  <colspec colwidth="1*"/>
 	  <thead>
-	    <row><entry>Device</entry><entry>keyword</entry><entry>driver file</entry></row>
+	    <row><entry>Device</entry><entry>Keyword</entry><entry>Source Code</entry><entry>Default?</entry></row>
 	  </thead>
 	  <tbody>
-	    <row><entry>PLplot Native Meta-File</entry><entry>plmeta</entry><entry>plmeta.c</entry></row>
-	    <row><entry>Tektronix File (4010)</entry><entry>tekf</entry><entry>tek.c</entry></row>
-	    <row><entry>Tektronix File (4105/4107)</entry><entry>tek4107f</entry><entry>tek.c</entry></row>
-	    <row><entry>PostScript File (monochrome)</entry><entry>ps</entry><entry>ps.c</entry></row>
-	    <row><entry>PostScript File (color)</entry><entry>psc</entry><entry>ps.c</entry></row>
-	    <row><entry>XFig file</entry><entry>xfig</entry><entry>xfig.c</entry></row>
-	    <row><entry>LaserJet IIp Bitmap File </entry><entry>ljiip</entry><entry>ljiip.c</entry></row>
-	    <row><entry>LaserJet II Bitmap File (150 dpi)</entry><entry>ljii</entry><entry>ljii.c</entry></row>
-	    <row><entry>HP 7470 Plotter File (HPGL Cartridge Small Plotter)</entry><entry>hp7470</entry><entry>hpgl.c</entry></row>
-	    <row><entry>HP 7580 Plotter File (Large Plotter)</entry><entry>hp7580</entry><entry>hpgl.c</entry></row>
-	    <row><entry>HP Laser Jet, HPGL file</entry><entry>lj_hpgl</entry><entry>hpgl.c</entry></row>
-	    <row><entry>Impress File</entry><entry>imp</entry><entry>impress.c</entry></row>
-	    <row><entry>Portable bitmap file</entry><entry>pbm</entry><entry>pbm.c</entry></row>
-	    <row><entry>Null device</entry><entry>null</entry><entry>null.c</entry></row>
-	    <row><entry>JPEG file</entry><entry>jpeg</entry><entry>gd.c</entry></row>
-	    <row><entry>PNG file</entry><entry>png</entry><entry>gd.c</entry></row>
-	    <row><entry>Computer Graphics Metafile</entry><entry>cgm</entry><entry>cgm.c</entry></row>
+	    <row><entry>Aquaterm</entry><entry>aqt</entry><entry>aqt.c</entry><entry>Yes</entry></row>
+	    <row><entry>X (cairo)</entry><entry>xcairo</entry><entry>cairo.c</entry><entry>Yes</entry></row>
+	    <row><entry>Windows (cairo)</entry><entry>wincairo</entry><entry>cairo.c</entry><entry>Yes</entry></row>
+	    <row><entry>X or Windows (Qt)</entry><entry>qtwidget</entry><entry>qt.cpp</entry><entry>Yes</entry></row>
+	    <row><entry>X</entry><entry>xwin</entry><entry>xwin.c</entry><entry>Yes</entry></row>
+	    <row><entry>Tcl/Tk </entry><entry>tk</entry><entry>tk.c</entry><entry>Yes</entry></row>
+	    <row><entry>New Tcl/Tk</entry><entry>ntk</entry><entry>ntk.c</entry><entry>Yes</entry></row>
+	    <row><entry>Windows</entry><entry>wingcc</entry><entry>wingcc.c</entry><entry>Yes</entry></row>
+	    <row><entry>wxWidgets</entry><entry>wxwidgets</entry><entry>wxwidgets*.cpp</entry><entry></entry></row>
 	  </tbody>
 	</tgroup>
       </table>
@@ -301,169 +319,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     </sect2>
 
-    <sect2 id="metafiles-plrender">
-      <title>PLplot Metafiles and Plrender</title>
-
-      <para>
-	The PLplot metafile is a way to store and transport your graphical data for
-	rendering at a later time or on a different system.  A PLplot metafile is
-	in binary format in order to speed access and keep storage costs
-	reasonable.  All data is stored in device-independent format (written as a
-	stream of bytes); the resulting file is about as portable as a tektronix
-	vector graphics file and only slightly larger.
-      </para>
-
-      <para>
-	Each PLplot metafile begins with a header string that identifies it as
-	such, as well as the version number of the format since
-	this may change in time.  The utility for rendering the metafile,
-	<function>plrender</function>, verifies that the input file is indeed a valid PLplot metafile,
-	and that it <quote>understands</quote> the format the metafile is written in.
-	<function>plrender</function> is part of the PLplot package and should be built at the time of
-	building PLplot, and then put into your search path.  It is capable of
-	high speed rendering of the graphics file, especially if the output device
-	can accept commands at a high rate (e.g. X windows).
-      </para>
-
-      <para>
-	The commands as written by the metafile driver at present are as follows:
-	<itemizedlist>
-	  <listitem><para><literal>INITIALIZE</literal></para></listitem>
-	  <listitem><para><literal>CLOSE</literal></para></listitem>
-	  <listitem><para><literal>SWITCH_TO_TEXT</literal></para></listitem>
-	  <listitem><para><literal>SWITCH_TO_GRAPH</literal></para></listitem>
-	  <listitem><para><literal>CLEAR</literal></para></listitem>
-	  <listitem><para><literal>PAGE</literal></para></listitem>
-	  <listitem><para><literal>NEW_COLOR</literal></para></listitem>
-	  <listitem><para><literal>NEW_WIDTH</literal></para></listitem>
-	  <listitem><para><literal>LINE</literal></para></listitem>
-	  <listitem><para><literal>LINETO</literal></para></listitem>
-	  <listitem><para><literal>ESCAPE</literal></para></listitem>
-	  <listitem><para><literal>ADVANCE</literal></para></listitem>
-	</itemizedlist>
-      </para>
-
-      <para>
-	Each command is written as a single byte, possibly followed by
-	additional data bytes.  The <literal>NEW_COLOR</literal> and
-	<literal>NEW_WIDTH</literal> commands each write 2 data bytes, the
-	<literal>LINETO</literal> command writes 4 data bytes, and the
-	<literal>LINE</literal> command writes 8 data bytes.  The most common
-	instruction in the typical metafile will be the <literal>LINETO</literal>
-	command, which draws a continuation of the previous line to the given point.
-	This data encoding is not quite as efficient as the tektronix format, which
-	uses 4 bytes instead of 5 here (1 command <literal>+</literal> 4 data),
-	however the PLplot encoding is far simpler to implement and more robust. The
-	<literal>ESCAPE</literal> function writes a second command character
-	(opcode) followed by an arbitrary number of data bytes depending on the
-	value of the opcode. Note that any data written must be in device
-	independent form to maintain the transportability of the metafile so
-	floating point numbers are not allowed.
-      </para>
-
-      <para>
-	The short usage message for <function>plrender</function> is printed if one inputs
-	insufficient or invalid arguments, and is as follows:
-	<screen>
-	  <prompt>%</prompt> <userinput>plrender</userinput>
-
-	  No filename specified.
-
-	  Usage:
-	  plrender [options] [files]
-
-	  plrender options:
-	  [-v] [-i name] [-b number] [-e number] [-p page]
-
-	  PLplot options:
-	  [-h] [-v] [-verbose] [-debug] [-dev name] [-o name] [-display name]
-	  [-px number] [-py number] [-geometry geom] [-wplt xl,yl,xr,yr]
-	  [-mar margin] [-a aspect] [-jx justx] [-jy justy] [-ori orient]
-	  [-freeaspect] [-width width] [-bg color] [-ncol0 n] [-ncol1 n] [-fam]
-	  [-fsiz size] [-fbeg number] [-finc number] [-fflen length] [-nopixmap]
-	  [-db] [-np] [-server_name name] [-server_host name] [-server_port name]
-	  [-user name]
-
-
-	  Type plrender -h for a full description.
-
-	</screen>
-      </para>
-
-      <para>
-	The longer usage message goes into more detail, and is as follows:
-	<screen>
-	  <prompt>%</prompt> <userinput>plrender -h</userinput>
-
-	  Usage:
-	  plrender [options] [files]
-
-	  plrender options:
-	  -v                   Print out the plrender version number
-	  -i name              Input filename
-	  -b number            Beginning page number
-	  -e number            End page number
-	  -p page              Plot given page only
-
-	  If the "-i" flag is omitted, unrecognized input will assumed to be filename
-	  parameters.  Specifying "-" for the input or output filename means use stdin
-	  or stdout, respectively.  See the manual for more detail.
-
-	  PLplot options:
-	  -h                   Print out this message
-	  -v                   Print out the PLplot library version number
-	  -verbose             Be more verbose than usual
-	  -debug               Print debugging info (implies -verbose)
-	  -dev name            Output device name
-	  -o name              Output filename
-	  -display name        X server to contact
-	  -px number           Plots per page in x
-	  -py number           Plots per page in y
-	  -geometry geom       Window size, in pixels (e.g. -geometry 400x300)
-	  -wplt xl,yl,xr,yr    Relative coordinates [0-1] of window into plot
-	  -mar margin          Margin space in relative coordinates (0 to 0.5, def 0)
-	  -a aspect            Page aspect ratio (def: same as output device)
-	  -jx justx            Page justification in x (-0.5 to 0.5, def 0)
-	  -jy justy            Page justification in y (-0.5 to 0.5, def 0)
-	  -ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
-	  -freeaspect          Do not preserve aspect ratio on orientation swaps
-	  -portrait            Sets portrait mode (both orientation and aspect ratio)
-	  -width width         Sets pen width (1 &lt;= width &lt;= 10)
-	  -bg color            Background color (0=black, FFFFFF=white)
-	  -ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
-	  -ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
-	  -fam                 Create a family of output files
-	  -fsiz size[kKmMgG]   Output family file size in MB (e.g. -fsiz 0.5G, def MB)
-	  -fbeg number         First family member number on output
-	  -finc number         Increment between family members
-	  -fflen length        Family member number minimum field width
-	  -nopixmap            Don't use pixmaps in X-based drivers
-	  -db                  Double buffer X window output
-	  -np                  No pause between pages
-	  -server_name name    Main window name of PLplot server (tk driver)
-	  -dpi dpi             Resolution, in dots per inch (e.g. -dpi 360x360)
-	  -compression num     Sets compression level in supporting devices
-	  -drvopt option[=value][,option[=value]]* Driver specific options
-	</screen>
-      </para>
-
-      <para>
-	The options are generally self explanatory (family files are explained in
-	<xref linkend="familying"/>).
-	Most of these options have default values, and for those that don't
-	<function>plrender</function> will prompt the user.  The
-	<literal>-px</literal> and <literal>-py</literal> options are
-	not so useful at present, because everything is scaled down by the
-	specified factor --- resulting in labels that are too small (future
-	versions of <function>plrender</function> might allow changing the label size as well).
-      </para>
-
-      <para>
-	Additional options may be added in future releases.
-      </para>
-
-    </sect2>
-
     <sect2 id="familying">
       <title>Family File Output</title>
 
@@ -473,8 +328,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	This can be valuable when generating a large amount of output, so as to not
 	strain network or printer facilities by processing extremely large single
 	files.  Each family member file can be treated as a completely independent
-	file.  In addition, <function>plrender</function> has the ability to process a set of
-	family member files as a single logical file.
+	file.
       </para>
 
       <para> To create a family file, one must simply call &plsfam; with the
@@ -487,13 +341,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <para> If familying is enabled, the name given for the output file (on the
       command line, in response to the &plstar; prompt, as a &plstart; argument,
       or as the result of a call to &plsfnam;) becomes the name template for the
-      family.  Thus, if you request a plmeta output file with name
-      <filename>test-%n.plm</filename>, the files actually created will be
-      <filename>test-1.plm</filename>, <filename>test-2.plm</filename>, and so on,
+      family.  Thus, if you request an svg output file with name
+      <filename>test-%n.svg</filename>, the files actually created will be
+      <filename>test-1.svg</filename>, <filename>test-2.svg</filename>, and so on,
       where <filename>%n</filename> indicates where the member number is replaced.
       If there is no <filename>%n</filename>, then the output file becomes the
-      stem name and the created files will be like
-      <filename>test.plm.1</filename>, <filename>test.plm.2</filename>, and so on.
+      stem name and the created files will be
+      <filename>test.svg.1</filename>, <filename>test.svg.2</filename>, and so on.
       A new file is automatically started once the byte limit for the current file
       is passed, but not until the next page break. One may insure a new file at
       every page break by making the byte limit small enough.  Alternatively, if
@@ -508,84 +362,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	The &plgfam; routine can be used from within the user program to find
 	out more about the graphics file being written.  In particular, by
 	periodically checking the number of the member file currently being written
-	to, one can detect when a new member file is started.  This information
-	might be used in various ways; for example you could spawn a process to
-	automatically plrender each metafile after it is closed (perhaps during a
-	long simulation run) and send it off to be printed.
+	to, one can detect when a new member file is started.
       </para>
 
-      <para> <function>plrender</function> has several options for dealing with
-      family files.  It can process a single member file
-      (<function>plrender</function>  <filename>test.plm.1</filename>)
-      or the entire family if given only the stem name
-      (<function>plrender</function>  <filename>test.plm</filename>)
-      It can also create family files on output, rendering to any
-      device that supports familying, including another metafile if desired.  The
-      size of member files in this case is input through the argument list, and
-      defaults to 1MB if unspecified (this may be changed during the PLplot
-      installation, however). <function>plrender</function> can also create a
-      single output file from a familied input metafile. </para>
-
-    </sect2>
-
-    <sect2 id="interactive-devices">
-      <title>Interactive Output Devices</title>
-
-      <para>
-	Here we shall discuss briefly some of the more common interactive output
-	devices.
-      </para>
-
-      <para>
-	Many popular terminals or terminal emulators at present have a
-	facility for switching between text and graphics <quote>screens</quote>.
-	This includes the xterm emulator under X-windows, vt100's with
-	Retrographics, and numerous emulators for microcomputers which have a dual
-	vt100/tek4010 emulation capability.  On these devices, it is possible to
-	switch between the text and graphics screens by surrounding your PLplot
-	calls by calls to &plgra; and &pltext;.  This will allow your diagnostic and
-	informational code output to not interfere with your graphical output.
-      </para>
-
-      <para>
-	At present, only the xterm driver supports switching between text
-	and graphics screens.  The escape sequences as sent by the xterm driver
-	are fairly standard, however, and have worked correctly on most other
-	popular vt100/tek4010 emulators we've tried.
-      </para>
-
-      <para>
-	When using the xterm driver, hitting a RETURN will advance and clear the
-	page.  If indeed running from an xterm, you may resize, move, cover and
-	uncover the window.  The behavior of the X-window driver is quite different,
-	however.  First, it is much faster, as there is no tty-like handshaking
-	going on.  Second, a mouse click is used to advance and clear the page,
-	rather than a RETURN.
-      </para>
-
-      <para>
-	On a tektronix 4014 compatible device, you may preview tektronix output
-	files via the <function>pltek</function> utility.
-	<function>pltek</function> will let you step through the file interactively,
-	skipping backward or forward if desired.  The help message for
-	<function>pltek</function> is as follows:
-
-	<screen>
-	  <prompt>%</prompt> <userinput>pltek</userinput>
-	  Usage: pltek filename
-	  At the prompt, the following replies are recognized:
-	  h,?    Give this help message.
-	  q     Quit program.
-	  &lt;n>    Go to the specified page number.
-	  -&lt;n>   Go back &lt;n> pages.
-	  +&lt;n>   Go forward &lt;n> pages.
-	  &lt;Return> Go to the next page.
-
-	</screen>
-	The output device is switched to text mode before the prompt is given,
-	which causes the prompt to go to the vt102 window under xterm and
-	most vt100/tek4010 emulators.
-      </para>
     </sect2>
 
     <sect2 id="specifying-devices">
@@ -609,21 +388,37 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  Plotting Options:
 	  &lt; 1> xwin       X-Window (Xlib)
 	  &lt; 2> tk         Tcl/TK Window
-	  &lt; 3> xterm      Xterm Window
-	  &lt; 4> tekt       Tektronix Terminal (4010)
-	  &lt; 5> tek4107t   Tektronix Terminal (4105/4107)
-	  &lt; 6> mskermit   MS-Kermit emulator
-	  &lt; 7> versaterm  Versaterm vt100/tek emulator
-	  &lt; 8> vlt        VLT vt100/tek emulator
-	  &lt; 9> plmeta     PLPLOT Native Meta-File
-	  &lt;10> tekf       Tektronix File (4010)
-	  &lt;11> tek4107f   Tektronix File (4105/4107)
-	  &lt;12> ps         PostScript File (monochrome)
-	  &lt;13> psc        PostScript File (color)
-	  &lt;14> xfig       Xfig file
-	  &lt;15> ljiip      LaserJet IIp/deskjet compressed graphics
-	  &lt;16> ljii       LaserJet II Bitmap File (150 dpi)
-	  &lt;17> null       Null device
+	  &lt; 3> ps         PostScript File (monochrome)
+	  &lt; 4> psc        PostScript File (color)
+	  &lt; 5> xfig       Fig file
+	  &lt; 6> null       Null device
+	  &lt; 7> ntk        New tk driver
+	  &lt; 8> tkwin      New tk driver
+	  &lt; 9> mem        User-supplied memory device
+	  &lt;10> wxwidgets  wxWidgets Driver
+	  &lt;11> psttf      PostScript File (monochrome)
+	  &lt;12> psttfc     PostScript File (color)
+	  &lt;13> svg        Scalable Vector Graphics (SVG 1.1)
+	  &lt;14> pdf        Portable Document Format PDF
+	  &lt;15> bmpqt      Qt Windows bitmap driver
+	  &lt;16> jpgqt      Qt jpg driver
+	  &lt;17> pngqt      Qt png driver
+	  &lt;18> ppmqt      Qt ppm driver
+	  &lt;19> tiffqt     Qt tiff driver
+	  &lt;20> svgqt      Qt SVG driver
+	  &lt;21> qtwidget   Qt Widget
+	  &lt;22> epsqt      Qt EPS driver
+	  &lt;23> pdfqt      Qt PDF driver
+	  &lt;24> extqt      External Qt driver
+	  &lt;25> memqt      Memory Qt driver
+	  &lt;26> xcairo     Cairo X Windows Driver
+	  &lt;27> pdfcairo   Cairo PDF Driver
+	  &lt;28> pscairo    Cairo PS Driver
+	  &lt;29> epscairo   Cairo EPS Driver
+	  &lt;30> svgcairo   Cairo SVG Driver
+	  &lt;31> pngcairo   Cairo PNG Driver
+	  &lt;32> memcairo   Cairo Memory Driver
+	  &lt;33> extcairo   Cairo External Context Driver
 
 	  Enter device number or keyword: <!--
 	  --></screen>
@@ -693,9 +488,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	output stream corresponds to a single logical device to which one
 	plots independent of all other streams.  The function &plsstrm; is
 	used to switch between streams -- you may only write to one output
-	stream at a time.  At present, an output stream is not limited by the
-	type of device, however, it may not be wise to attempt opening two
-	terminal devices.  An example usage for the creation of multiple
+	stream at a time.  An example usage for the creation of multiple
 	streams is as follows:
       </para>
 
@@ -714,8 +507,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	plsstrm(1);
 	plssub(nx, ny);
-	plsdev("plmeta");
-	plsfnam("tst.plm");
+	plsdev("svg");
+	plsfnam("test.svg");
 	plinit();
 
 	<lineannotation>plots for stream 1</lineannotation>
@@ -726,12 +519,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
       <para>
-	and so on, for sending output simultaneously to an X-window and a
-	metafile.  The default stream corresponds to stream number zero.  At
-	present, the majority of output drivers can only be used by a single
-	stream (exceptions include the metafile driver and X-window driver).
-	Also see example program 14 (note: only the C version is available,
-	although it can be done equally well from Fortran).
+	and so on, for sending output simultaneously to an X-window and an
+	SVG file.  See also standard example 14.
       </para>
 
       <para>
@@ -750,6 +539,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
   <sect1 id="FreeType-notes">
     <title>Adding FreeType Library Support to Bitmap Drivers</title>
+
+    <para> N.B. this approach is deprecated because of its inherent
+    font-selection issues (fonts must be specified by filename rather
+    than using the recommended fontconfig approach which automatically
+    selects the best system font that renders the particular unicode glyph)
+    and because it only supports left-to-right layout (i.e., there
+    is no support for complex text layout languages).</para>
 
     <para>Any bitmap driver in the PLplot family should be able to use fonts
     (TrueType and others) that are rendered by the FreeType library just as long
@@ -1112,19 +908,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	leaves enough room for axis labels and a title.  This standard
 	viewport is that used by &plenv; (See <xref
 	linkend="standard-window"/>).
-      </para>
-
-      <para>
-	Another way to get a specified aspect ratio is via the routine
-	<function>plsasp</function> [not!.. fix this], which sets the global
-	aspect ratio and must be called prior to &plstar;.  An aspect ratio
-	of 0.0 corresponds to <quote>natural</quote> dimensions (i.e. fill
-	the page); any positive value will give the specified aspect ratio.
-	This scaling of plots is actually done in the driver, and so may not
-	work for all output devices (note that <function>plrender</function>
-	is capable of scaled aspect ratio plots to any device whether that
-	device supports scaling or not).  In such scaled plots, absolute
-	plotting is done in the scaled coordinate system.
       </para>
 
     </sect2>
@@ -2463,7 +2246,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   </sect1>
 
   <sect1 id="tri-d-plots">
-    <title>Three Dimensional Surface Plots</title>
+    <title>Three-dimensional Plots</title>
+    <para>PLplot includes three-dimensional plot routines that plot
+    <literal>z(x,y)</literal> as a single-valued function of the two independent variables
+    <literal>x</literal> and <literal>y</literal> in a variety of ways, see <xref linkend="surface-plots"/>, <xref linkend="contour-plots"/>, <xref linkend="shade-plots"/>, and <xref linkend="image-plots"/>.
+    For all these cases, <literal>z(x,y)</literal> is normally communicated to the three-dimensional
+    plot routine as a two-dimensional array
+
+    the ,<xref linkend="surface-plots"/>,   </para>
+    <sect2 id="surface-plots">
+      <title>Surface Plots</title>
+
 
     <para>
       PLplot includes routines that will represent a single-valued function
@@ -2577,32 +2370,31 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       plot3d(x, y, z, nx, ny, opt, side);</programlisting>
     </para>
 
-    <para>
-      The values of the function are stored in a two-dimensional array
-      <literal>z[][]</literal> where the array element
-      <literal>z[i][j]</literal> contains the value of the function at the
-      point x<subscript>i</subscript>, y<subscript>j</subscript>.  (The
-      two-dimensional array <literal>z</literal> is a vectored array
-      instead of a fixed size array.  <literal>z</literal> points to an
-      array of pointers which each point to a row of the matrix.)  Note
-      that the values of the independent variables
-      x<subscript>i</subscript> and y<subscript>j</subscript> do not need
-      to be equally spaced, but they must lie on a rectangular grid.  Thus
-      two further arrays <literal>x[nx]</literal> and
-      <literal>y[ny]</literal> are required as arguments to &plot3d; to
-      specify the values of the independent variables.  The values in the
-      arrays x and y must be strictly increasing with the index.  The
-      argument <literal>opt</literal> specifies how the surface is
-      outlined.  If <literal>opt = 1</literal>, a line is drawn
-      representing z as a function of x for each value of y, if
-      <literal>opt = 2</literal>, a line is drawn representing z as a
-      function of y for each value of x, and if <literal>opt = 3</literal>,
-      a net of lines is drawn.  The first two options may be preferable if
-      one of the independent variables is to be regarded as a parameter,
-      whilst the third is better for getting an overall picture of the
-      surface.  If side is equal to one then sides are drawn on the figure
-      so that the graph doesn't appear to float.
-    </para>
+    <para>The values of the function are stored in a vectored two-dimensional matrix
+    <literal>z</literal> where the matrix element
+    <literal>z<subscript>i</subscript><subscript>j</subscript></literal> contains the value of the function at the
+    point x<subscript>i</subscript>, y<subscript>j</subscript>.
+    A vectored two-dimensional matrix is defined
+    as a pointer to an
+    array of pointers which each point to a row (for languages such as C
+    with row major ordering) or column (for languages such as Fortran with
+    column major ordering) of the matrix.  Note that the values of the
+    independent variables x<subscript>i</subscript> and
+    y<subscript>j</subscript> do not need to be equally spaced, but they
+    must lie on a rectangular grid.  Thus two further arrays
+    <literal>x[nx]</literal> and <literal>y[ny]</literal> are required as
+    arguments to &plot3d; to specify the values of the independent
+    variables.  The values in the arrays x and y must be strictly
+    increasing with the index.  The argument <literal>opt</literal>
+    specifies how the surface is outlined.  If <literal>opt = 1</literal>,
+    a line is drawn representing <literal>z</literal> as a function of x for each value of y,
+    if <literal>opt = 2</literal>, a line is drawn representing <literal>z</literal> as a
+    function of <literal>y</literal> for each value of <literal>x</literal>, and if <literal>opt = 3</literal>,
+    a net of lines is drawn.  The first two options may be preferable if
+    one of the independent variables is to be regarded as a parameter,
+    whilst the third is better for getting an overall picture of the
+    surface.  If side is equal to one then sides are drawn on the figure
+    so that the graph doesn't appear to float.</para>
 
     <para>
       The routine &plmesh; is similar to &plot3d;, except that it is used
@@ -2620,29 +2412,19 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       box drawing and labelling.
     </para>
 
-  </sect1>
+  </sect2>
 
-  <sect1 id="contour-plots">
-    <title>Contour and Shade Plots</title>
+  <sect2 id="contour-plots">
+    <title>Contour Plots</title>
 
-    <para>
-      Several routines are available in PLplot which perform a contour or
-      shade plot of data stored in a two-dimensional array.  The contourer
-      uses a contour following algorithm so that it is possible to
-      use non-continuous line styles.  Further, one may specify arbitrary
-      coordinate mappings from array indices to world coordinates, such as
-      for contours in a polar coordinate system.  In this case it is best
-      to draw the distinction between the C and Fortran 95
-      interfaces so these are handled in turn.
-    </para>
+    <para>PLplot provides the &plcont; routine for generating contour
+    plots for data stored in a two-dimensional array.  The contourer uses
+    a contour following algorithm so that it is possible to use
+    non-continuous line styles.  Further, one may specify arbitrary
+    coordinate mappings from array indices to world coordinates, such as
+    for contours in a polar coordinate system.</para>
 
-    <sect2 id="contour-plots-c">
-      <title>Contour Plots from C</title>
-
-      <para>
-	&plcont; is the routine callable from C for plotting contours.
-	This routine has the form:
-      </para>
+    <para>This routine has the form:</para>
 
       <para>
 	<funcsynopsis>
@@ -2666,7 +2448,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
       <para>
-	where <literal>z</literal> is the two-dimensional array of size
+	where <literal>z</literal> is the vectored two-dimensional matrix of size
 	<literal>nx</literal> by <literal>ny</literal> containing samples
 	of the function to be contoured.  (<literal>z</literal> is a
 	vectored two-dimensional array as described in the previous
@@ -2705,38 +2487,21 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	transformation subroutines, it is possible to draw contours wrapped
 	around polar grids etc.
       </para>
+  </sect2>
 
-    </sect2>
-
-    <sect2 id="shade-plots-c">
-      <title>Shade Plots from C</title>
-      <para>
-	NEEDS DOCUMENTATION.  Follow the plshade and plshades usage in
-	<filename>examples/c/x??c.c</filename>.
-      </para>
-    </sect2>
-
-    <sect2 id="contour-plots-f95">
-      <title>Contour Plots from the Fortran 95 interface</title>
-      <para>
-	NEEDS DOCUMENTATION.  Follow the plcont usage (with a variety
-	of overloaded forms available with different arguments) in
-	<filename>examples/f95/x??f.f90</filename>.
-      </para>
-    </sect2>
-
-    <sect2 id="shade-plots-f95">
-      <title>Shade Plots from the Fortran 95 interface</title>
-      <para>
-	NEEDS DOCUMENTATION.  Follow the plshade and plshades usage
-	(with a variety
-	of overloaded forms available with different arguments) in
-	<filename>examples/f95/x??f.f90</filename>.
-      </para>
-    </sect2>
-
-  </sect1>
-
+  <sect2 id="shade-plots">
+    <title>Shade plots</title>
+    <para></para>
+  </sect2>
+  <sect2 id="image-plots">
+    <title>Shade plots</title>
+    <para></para>
+  </sect2>
+  <sect2 id="vector-plots">
+    <title>Vector plots</title>
+    <para></para>
+  </sect2>
+</sect1>
   <sect1 id="legends">
     <title>Legends and color bars</title>
     <para>

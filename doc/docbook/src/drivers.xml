@@ -2,9 +2,10 @@
 <!--
     drivers.xml: "The PLplot X Driver Family" chapter
 
-    Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-    Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin and Rafael Laboissiere
-    Copyright (C) 2003  Joao Cardoso
+    Copyright (C) 1994 Geoffrey Furnish and Maurice LeBrun
+    Copyright (C) 1999-2017 Alan W. Irwin
+    Copyright (C) 1999, 2000, 2001, 2002, 2003 Rafael Laboissiere
+    Copyright (C) 2003 Joao Cardoso
     Copyright (C) 2005 Thomas J. Duck
 
 Redistribution and use in source (XML DocBook) and "compiled" forms
@@ -35,37 +36,315 @@ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS DOCUMENTATION,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
-<chapter id="x-drivers">
-  <title>The PLplot Display Driver Family</title>
+<chapter id="file-drivers">
+  <title>Drivers which implement file devices</title>
 
   <para>
-    Drivers that provide screen displays are described in this chapter.
+    Drivers which produce output files are described in this chapter.
+    Each of the drivers has a list of options, and these may be set as
+    outlined in <xref linkend="arguments" />.
+  </para>
+
+  <sect1 id="qt-driver">
+    <title>The qt driver</title>
+
+    <para>
+      The qt driver uses the <ulink url="https://www.qt.io/">the Qt
+      library</ulink> (either Qt4 or Qt5) to produce plots in the PDF, EPS
+      (Encapsulated PostScript), PNG, JPEG, TIFF, SVG, BMP, and PPM file
+      formats.  Text and graphics are antialised, font selection is done
+      automatically for any given unicode glyph requested using the
+      recommended fontconfig approach, and complex text layout is used to
+      render text.  As a result this driver is considered to be one of our
+      two best (our cairo driver described in <xref linkend="cairo-driver"/>
+      is the other) file device drivers.
+    </para>
+  </sect1>
+
+  <sect1 id="cairo-driver">
+    <title>The cairo driver</title>
+
+    <para>
+      The cairo driver uses the Pango/Cairo subset of the <ulink
+      url="https://www.gtk.org/">GTK+ suite of libraries </ulink> to produce
+      plots in the PDF, PostScript, EPS (Encapsulated PostScript), PNG, and
+      SVG file formats.  Text and graphics are antialised, font selection is
+      done automatically for any given unicode glyph requested using the
+      recommended fontconfig approach, and complex text layout is used to
+      render text.  As a result this driver is considered to be one of our
+      two best (our qt driver described in <xref linkend="qt-driver"/> is
+      the other) file device drivers.
+    </para>
+  </sect1>
+
+  <sect1 id="svg-driver">
+    <title>The svg driver</title>
+
+    <para>
+      The svg driver produces SVG (Scalable Vector Graphics) files that are
+      compliant with the SVG 1.1 specification as defined <ulink
+      url="http://www.w3.org/Graphics/SVG/">here</ulink>.  This driver has
+      no external library dependencies.  The driver is unicode enabled.  As
+      SVG is just an XML based graphics language, the visual quality of the
+      resulting plot (e.g., antialiasing of text and graphics, unicode system font
+      availability, and handling of complex text layout issues) will depend
+      on the SVG rendering engine that is used.
+    </para>
+  </sect1>
+
+  <sect1 id="postscript-driver">
+    <title>The ps driver</title>
+
+    <para>
+      The ps driver produces publication-quality PostScript
+      output but only for a limited selection of glyphs.  The driver
+      provides two devices: the ps device for black-and-white plots, and the
+      psc device for color plots.
+    </para>
+
+    <para>
+      This driver is unicode enabled, and PostScript Type I fonts are
+      used.  This driver has no external
+      library dependencies.  However, a drawback is that text layout is
+      limited to left-to-right scripts (i.e., languages with complex text
+      layout are not supported).  Furthermore, Type I fonts have an
+      extremely limited selection of glyphs compared to, e.g., TrueType
+      fonts (see <xref linkend="truetype-postscript-driver"/>). For this
+      reason, Hershey fonts are used for drawing symbols by default for this
+      device driver, unless specified otherwise using the driver options.
+    </para>
+
+    <para>
+      The available driver options are:
+      <itemizedlist>
+	<listitem><para>
+	  text: Use PostScript text (0|1); default 1
+	</para></listitem>
+	<listitem><para>
+	  color: Use color (0|1); default 1
+	</para></listitem>
+	<listitem><para>
+	  hrshsym: Use Hershey fonts for symbols (0|1); default 1
+	</para></listitem>
+      </itemizedlist>
+    </para>
+
+  </sect1>
+
+  <sect1 id="truetype-postscript-driver">
+    <title>The psttf driver</title>
+
+    <para>
+      This is a PostScript driver that supports TrueType fonts. This
+      allows access to a far greater range of glyphs than
+      is possible using Type 1 PostScript fonts
+      (see <xref linkend="postscript-driver"/>).
+      The driver provides two devices: the psttf device
+      for black-and-white plots and the psttfc device for color plots.
+    </para>
+
+    <para>
+      The driver requires the LASi (v1.0.5), pango and pangoft2 libraries
+      to work. The pango and pangoft2 libraries are widely distributed
+      with most Linux distributions and give the psttf driver full complex
+      text layout (CTL) capability (see
+      <ulink url="&PLplot-website;/examples.php?demo=24">
+      &PLplot-website;/examples.php?demo=24</ulink>
+      for an example of this capability).  The LASi library is not part of
+      most distributions at this time. The source code can be downloaded
+      from <ulink url="https://sourceforge.net/projects/lasi/files/lasi/"></ulink>.
+      The library is small and easy to build and install.
+    </para>
+
+    <para>
+      The available driver options are:
+      <itemizedlist>
+	<listitem><para>
+	  text: Use TrueType fonts for text (0|1); default 1
+	</para></listitem>
+	<listitem><para>
+	  color: Use color (0|1); default 1
+	</para></listitem>
+	<listitem><para>
+	  hrshsym: Use Hershey fonts for symbols (0|1); default 0
+	</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+
+  <sect1 id="pdf-driver">
+    <title>The pdf driver</title>
+    <para>
+      This basic PDF driver is based on the <ulink
+      url="http://libharu.org/"> libharu library</ulink>.  At present only
+      the Hershey fonts are used (i.e., there is no support for pdf or ttf
+      fonts), compression of the pdf output is not enabled, and the paper
+      size can't be chosen.
+    </para>
+  </sect1>
+
+  <sect1 id="gd-driver">
+    <title>The gd driver</title>
+
+    <para>
+      N.B. This driver is disabled by default because it is not
+      maintained and because it depends on the deprecated plfreetype
+      approach (see <xref linkend="FreeType-notes"/>) for rendering unicode
+      text (which implies font-selection issues and no support for complex
+      text layout).
+    </para>
+
+    <para>
+      The gd driver uses the <ulink url="http://libgd.github.io/">GD
+      library</ulink> to produce plots in the PNG, JPEG, and GIF file formats.
+      Text is anti-aliased, but lines and fills are not.
+    </para>
+
+    <para>
+      The available driver options are:
+      <itemizedlist>
+	<listitem><para>
+	  optimize: Optimize PNG palette when possible
+	</para></listitem>
+	<listitem><para>
+	  def_black15: Define idx 15 as black. If the background is
+	  "whiteish" (from "-bg" option), force index 15 (traditionally
+	  white) to be "black"
+	</para></listitem>
+	<listitem><para>
+	  swp_red15: Swap index 1 (usually red) and 1 (usually white);
+	  always done after "black15"; quite useful for quick changes to
+	  web pages
+	</para></listitem>
+	<listitem><para>8bit: Palette (8 bit) mode</para></listitem>
+	<listitem><para>24bit: Truecolor (24 bit) mode</para></listitem>
+	<listitem><para>text: Use driver text (FreeType)</para></listitem>
+	<listitem><para>
+	  smooth: Turn text smoothing on (1) or off (0)
+	</para></listitem>
+      </itemizedlist>
+    </para>
+  </sect1>
+  <sect1 id="latex-postscript-driver">
+    <title>The pstex driver</title>
+
+    <para>
+      N.B. This driver is disabled by default because it is not maintained.
+      This is a PostScript device driver that writes out its results in two
+      files.  (1) The encapsulated postscript (EPS) file contains all the
+      postscript commands for rendering the plot without characters, and (2)
+      the LaTeX file contains a fragment of LaTeX that reads in the EPS file
+      and renders the plot characters using LaTeX commands (and LaTeX
+      fonts!) in alignment with the EPS file to produce a combined result.
+    </para>
+
+    <para>
+
+      Suppose you create the EPS and LaTeX files with the following command:
+      <userinput>./x01c -dev pstex -o x01c.eps</userinput>.  The EPS file
+      is then stored in <filename>x01c.eps</filename> and the LaTeX fragment
+      is stored in <filename>x01c.eps_t</filename>.  Then
+      you may use the generated files with the <filename>x01c.tex</filename>
+      LaTeX code that follows:
+    </para>
+
+    <para>
+      <programlisting>\documentclass{article}
+      \usepackage[dvips]{graphicx}
+      \begin{document}
+      \input{x01c.eps_t}
+      \end{document}
+      </programlisting>
+    </para>
+
+    <para>
+      and generate PostScript results using the LaTeX fonts with the following
+      command: <userinput>latex x01c.tex; dvips -f &lt;x01c.dvi &gt;x01c.ps
+      </userinput>.  The results look good (aside from an obvious bounding-box
+      problem that still needs to be fixed with this device) and should be
+      useful for LaTeX enthusiasts.
+    </para>
+
+    <para>
+      There are no available driver options.
+    </para>
+
+  </sect1>
+
+</chapter>
+
+<chapter id="interactive-drivers">
+  <title>Drivers which implement interactive devices</title>
+
+  <para>
+    Drivers that provide interactive devices are described in this chapter.
     Each of the drivers has a list of options, and these may be set as
     outlined in <xref linkend="arguments" />.
   </para>
 
 
-  <!-- ================================================================== -->
-  <!-- XWIN -->
-
-  <sect1 id="xwin-driver">
-    <title>The Xwin Driver (X-Windows)</title>
+  <sect1 id="interactive-qt-driver">
+    <title>The qt driver</title>
 
     <para>
-      The Xwin driver draws plots in an X-window.  Although some of the
-      newer features are not supported, it remains the reference driver
-      for PLplot.
+      The qt driver uses the <ulink url="https://www.qt.io/">the Qt
+      library</ulink> (either Qt4 or Qt5) to implement the qtwidget
+      interactive device. Text and graphics are antialised, font selection
+      is done automatically for any given unicode glyph requested using the
+      recommended fontconfig approach, and complex text layout is used to
+      render text.  As a result the qtwidget device is considered to be one
+      of our three best (the other two are described in <xref
+      linkend="interactive-cairo-driver"/>) interactive devices in terms of
+      graphical and text rendering quality.  However, this device's raw
+      interactive capabilities are still immature compared to those
+      described in <xref linkend="xwin-driver"/>.  For example, the
+      interactive parts of standard example 20 do not yet work correctly
+      with the qtwidget device.  Furthermore, the GUI capability of this
+      device needs enhancing, e.g., to reorient or zoom plots or to
+      provide a cmap0 and cmap1 palette editor.
+    </para>
+  </sect1>
+
+  <sect1 id="interactive-cairo-driver">
+    <title>The cairo driver</title>
+
+    <para>
+      The cairo driver uses the Pango/Cairo subset of the <ulink
+      url="https://www.gtk.org/">GTK+ suite of libraries </ulink> to
+      implement the xcairo interactive device on platforms with X and the
+      wincairo interactive device on Windows platforms.  Text and graphics
+      are antialised, font selection is done automatically for any given
+      unicode glyph requested using the recommended fontconfig approach, and
+      complex text layout is used to render text.  As a result these devices
+      are two of our three best (the other one is described in <xref
+      linkend="interactive-qt-driver"/>) interactive devices in terms of
+      graphical and text rendering quality.  However, the xcairo and
+      wincairo raw interactive capabilities are still immature compared to
+      those described in <xref linkend="xwin-driver"/>.  For example, the
+      interactive parts of standard example 20 do not yet work correctly
+      with these devices.  Furthermore, the GUI capability of these
+      devices needs enhancing, e.g., to reorient or zoom plots or to
+      provide a cmap0 and cmap1 palette editor.
+    </para>
+  </sect1>
+
+  <sect1 id="xwin-driver">
+    <title>The xwin driver</title>
+
+    <para>
+      The xwin driver directly uses the X library to implement the
+      xwin device.  The graphical quality of this device is poor (e.g.,
+      there is no antialiasing of graphics or text, it uses Hershey fonts
+      rather than unicode-aware system fonts, and it has no complex text
+      layout capabilities).  Nevertheless its raw interactive capabilities
+      are the best of all our devices.  For example, the interactive parts
+      of standard example 20 work correctly with this device.
     </para>
 
     <para>
       Plots are displayed one page at a time.  The pager is advanced by
       pressing the Enter key, and may only be advanced in the forward
       direction.
-    </para>
-
-    <para>
-      Anti-aliasing is not supported, and the Xwin driver is not
-      unicode-enabled.
     </para>
 
     <para>
@@ -90,28 +369,26 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
   </sect1>
 
-  <!-- ================================================================== -->
-  <!-- TK -->
-
-
   <sect1 id="tk-driver">
-    <title>The Tk Driver</title>
+    <title>The tk driver</title>
 
     <para>
-      is the prototype of a whole new interaction paradigm.  See next
-      chapter.
+      The tk driver combines the xwin driver (see <xref
+      linkend="xwin-driver"/>) with Tcl/Tk to implement the tk device.  So
+      it shares the weaknesses (ugly graphics and text) of the xwin device
+      as well as its strength (excellent raw interactive capability).  Also
+      unlike our other interactive devices the tk device provides GUI
+      capabilities such as orient and zoom and a cmap0 and cmap1 palette
+      editor.
     </para>
 
   </sect1>
 
-  <!-- ================================================================== -->
-  <!-- AquaTerm -->
-
   <sect1 id="aqt-driver">
-    <title>The AquaTerm Driver (Mac OS X)</title>
+    <title>The aqt driver</title>
 
     <para>
-      The AquaTerm driver is a Mac OS X specific driver that is used with
+      The AquaTerm driver is a driver that is specific to Mac OS X and
       the AquaTerm Graphics Terminal. It is unicode enabled. Text, lines
       and shades are anti-aliased.
     </para>
@@ -121,11 +398,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
   </sect1>
 
-  <!-- ================================================================== -->
-  <!-- wxWidgets -->
-
   <sect1 id="wxWidgets-driver">
-    <title>The wxWidgets Driver (Linux, Mac OS X, Windows)</title>
+    <title>The wxwidgets driver</title>
 
     <para>
       The basic wxWidgets driver's features and user interface are described
@@ -175,235 +449,4 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
     </sect2>
   </sect1>
-</chapter>
-
-<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-
-
-<chapter id="output-drivers">
-  <title>The PLplot Output Driver Family</title>
-
-  <para>
-    Drivers which produce output files are described in this chapter.
-    Each of the drivers has a list of options, and these may be set as
-    outlined in <xref linkend="arguments" />.
-  </para>
-
-
-  <!-- ================================================================== -->
-  <!-- GD -->
-
-  <sect1 id="gd-driver">
-    <title>The GD Driver</title>
-
-    <para>
-      The GD driver produces png, jpeg, and gif images, using devices by
-      the same name.  The GD driver is unicode enabled.  Text is
-      anti-aliased, but lines and shades are not.
-    </para>
-
-    <para>
-      The available driver options are:
-      <itemizedlist>
-	<listitem><para>
-	  optimize: Optimize PNG palette when possible
-	</para></listitem>
-	<listitem><para>
-	  def_black15: Define idx 15 as black. If the background is
-	  "whiteish" (from "-bg" option), force index 15 (traditionally
-	  white) to be "black"
-	</para></listitem>
-	<listitem><para>
-	  swp_red15: Swap index 1 (usually red) and 1 (usually white);
-	  always done after "black15"; quite useful for quick changes to
-	  web pages
-	</para></listitem>
-	<listitem><para>8bit: Palette (8 bit) mode</para></listitem>
-	<listitem><para>24bit: Truecolor (24 bit) mode</para></listitem>
-	<listitem><para>text: Use driver text (FreeType)</para></listitem>
-	<listitem><para>
-	  smooth: Turn text smoothing on (1) or off (0)
-	</para></listitem>
-      </itemizedlist>
-    </para>
-
-  </sect1>
-
-
-  <!-- ================================================================== -->
-  <!-- PDF -->
-
-  <sect1 id="pdf-driver">
-    <title>The PDF Driver</title>
-
-    <para>
-      A basic version of a pdf driver has been added to PLplot. This driver
-      is based on the libharu library see:
-      <ulink url="http://libharu.org/">
-	libharu.org</ulink>.
-	At present only the Hershey fonts are used and there is no support for
-	pdf or ttf fonts. Compression of the pdf output is not enabled and the
-	paper size can't be chosen. All these issues will be addressed in
-	later releases.
-    </para>
-
-    <para>
-      Options?
-    </para>
-
-  </sect1>
-
-
-  <!-- ================================================================== -->
-  <!-- PS -->
-
-  <sect1 id="postscript-driver">
-    <title>The PostScript Driver</title>
-
-    <para>
-      The PostScript driver produces publication-quality PostScript
-      output.  The driver provides two devices: the ps device for
-      black-and-white plots, and the psc device for color plots.
-    </para>
-
-    <para>
-      This driver is unicode enabled, and PostScript Type I fonts are used.
-      Type I fonts do not have all of the available unicode symbols
-      represented.  For this reason, Hershey fonts are used for drawing
-      symbols by default, unless specified otherwise using the driver options.
-    </para>
-
-    <para>
-      The available driver options are:
-      <itemizedlist>
-	<listitem><para>
-	  text: Use PostScript text (0|1); default 1
-	</para></listitem>
-	<listitem><para>
-	  color: Use color (0|1); default 1
-	</para></listitem>
-	<listitem><para>
-	  hrshsym: Use Hershey fonts for symbols (0|1); default 1
-	</para></listitem>
-      </itemizedlist>
-    </para>
-
-  </sect1>
-
-
-  <!-- ================================================================== -->
-  <!-- PS-TTF -->
-
-  <sect1 id="truetype-postscript-driver">
-    <title>The TrueType PostScript Driver</title>
-
-    <para>
-      This is a PostScript driver that supports TrueType fonts. This
-      allows access to a far greater range of fonts and characters than
-      is possible using Type 1 PostScript fonts
-      (see <xref linkend="postscript-driver"/>).
-      It is the driver to use for generating publication quality output
-      using PLplot. The driver provides two devices: the ps-ttf device
-      for black-and-white plots and the ps-ttfc device for color plots.
-    </para>
-
-    <para>
-      The driver requires the LASi (v1.0.5), pango and pangoft2 libraries
-      to work. The pango and pangoft2 libraries are widely distributed
-      with most Linux distributions and give the psttf driver full complex
-      text layout (CTL) capability (see
-      <ulink url="&PLplot-website;/examples.php?demo=24">
-      &PLplot-website;/examples.php?demo=24</ulink>
-      for an example of this capability).  The LASi library is not part of
-      most distributions at this time. The source code can be downloaded
-      from http://www.unifont.org/lasi/. The library is small and easy to
-      build and install.  Make sure you use LASi-1.0.5.  The psttf device
-      driver uses new capabilities in this version of LASi and no longer
-      works with LASi-1.0.4.
-    </para>
-
-    <para>
-      The available driver options are:
-      <itemizedlist>
-	<listitem><para>
-	  text: Use TrueType fonts for text (0|1); default 1
-	</para></listitem>
-	<listitem><para>
-	  color: Use color (0|1); default 1
-	</para></listitem>
-	<listitem><para>
-	  hrshsym: Use Hershey fonts for symbols (0|1); default 0
-	</para></listitem>
-      </itemizedlist>
-    </para>
-
-  </sect1>
-
-
-  <!-- ================================================================== -->
-  <!-- PS-TeX -->
-
-  <sect1 id="latex-postscript-driver">
-    <title>The LaTeX PostScript Driver</title>
-
-    <para>
-      This is a PostScript device driver that writes out its results in two
-      files.  (1) The encapsulated postscript (EPS) file contains all the
-      postscript commands for rendering the plot without characters, and (2)
-      the LaTeX file contains a fragment of LaTeX that reads in the EPS file
-      and renders the plot characters using LaTeX commands (and LaTeX
-      fonts!) in alignment with the EPS file to produce a combined result.
-    </para>
-
-    <para>
-
-      Suppose you create the EPS and LaTeX files with the following command:
-      <userinput>./x01c -dev pstex -o x01c.eps</userinput>.  The EPS file
-      is then stored in <filename>x01c.eps</filename> and the LaTeX fragment
-      is stored in <filename>x01c.eps_t</filename>.  Then
-      you may use the generated files with the <filename>x01c.tex</filename>
-      LaTeX code that follows:
-    </para>
-
-    <para>
-      <programlisting>\documentclass{article}
-      \usepackage[dvips]{graphicx}
-      \begin{document}
-      \input{x01c.eps_t}
-      \end{document}
-      </programlisting>
-    </para>
-
-    <para>
-      and generate PostScript results using the LaTeX fonts with the following
-      command: <userinput>latex x01c.tex; dvips -f &lt;x01c.dvi &gt;x01c.ps
-      </userinput>.  The results look good (aside from an obvious bounding-box
-      problem that still needs to be fixed with this device) and should be
-      useful for LaTeX enthusiasts.
-    </para>
-
-    <para>
-      There are no available driver options.
-    </para>
-
-  </sect1>
-
-
-  <!-- ================================================================== -->
-  <!-- SVG -->
-
-  <sect1 id="svg-driver">
-    <title>The SVG Driver</title>
-
-    <para>
-      The SVG driver produces Scalable Vector Graphics files that are
-      compliant with the SVG 1.1 specification as defined here:
-      http://www.w3.org/Graphics/SVG/. The driver is unicode enabled
-      and both text and lines are anti-aliased. As SVG is just an
-      XML based graphics language, the visual quality of the resulting
-      plot will depend on the SVG rendering engine that is used and
-      what fonts that are available to it.
-    </para>
-  </sect1>
-
 </chapter>

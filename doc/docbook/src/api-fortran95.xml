@@ -337,7 +337,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>mx</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>&PLINT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -382,7 +382,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>mx</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>&PLINT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -427,7 +427,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>mode</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>&PLINT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>

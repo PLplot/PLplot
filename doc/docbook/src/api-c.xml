@@ -37,20 +37,20 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <chapter id="API-C">
-  <title>The Specialized C API for PLplot</title>
+  <title>The Specialized C/C++ API for PLplot</title>
 
   <para>
-    The purpose of this chapter is to document the PLplot C functions that are
+    The purpose of this chapter is to document the PLplot C/C++ functions that are
     currently not part of the common API,
     either because they are C/C++ specific utility
     functions (e.g. &plAlloc2dGrid;, &plFree2dGrid;) or because they are not
-    easily implemented in other languages (e.g. &plGetCursor;). Some of these
-    functions are used in the examples and may be helpful for other users of
-    plplot.
+    yet implemented in other languages (e.g., &plMergeOpts;). Some of these
+    functions are used in the C or C++ examples and may be helpful to other C/C++ users of
+    PLplot.
   </para>
   <para>
-    This chapter also documents some of the data types and structures
-    defined by plplot and used by the functions.
+    This chapter also documents some of the C/C++ structures
+    defined by PLplot and used by these functions.
   </para>
 
   <sect1 id="plabort" renderas="sect3">
@@ -81,7 +81,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>message</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>&PLCHAR_VECTOR;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -92,11 +92,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C, f95 and python.
-    </para>
-
-    <para>
-      This function is used in example 20.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -104,7 +100,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="plAlloc2dGrid" renderas="sect3">
     <title>
       <function>plAlloc2dGrid</function>: Allocate a block of memory
-    for use as a 2-d grid of type PLFLT.
+    for use as a matrix of type PLFLT_MATRIX.
     </title>
 
     <para>
@@ -121,47 +117,44 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-    Allocates a block of memory for use as a 2-d grid of type
-    PLFLT. The grid is a vectored 2-d C-style array and so can be accessed
-    using syntax like <literal>*f[i][j]</literal>. The memory associated
-    with the grid must be freed by
-    calling &plFree2dGrid; once it is no longer required.
+      Allocates the memory for a matrix of type PLFLT_MATRIX (organized as an <ulink
+      url="https://en.wikipedia.org/wiki/Iliffe_vector">Iliffe column
+      vector</ulink> of pointers to row vectors).  As a result the matrix
+      can be accessed using C/C++ syntax like <literal>*f[i][j]</literal>. The
+      memory associated with this matrix must be freed by calling
+      &plFree2dGrid; once it is no longer required.
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>f</parameter>
-	  (<literal>PLFLT ***</literal>, output)
+	  (<literal>PLFLT_NC_MATRIX *</literal>, output)
 	</term>
 	<listitem>
-	  <para>
-	    Pointer to a PLFLT grid. On success <literal>f</literal>
-	  will point to a pointer to the vectored 2-d array
-	  of type PLFLT. If the allocation fails
-	  <literal>f</literal> will be NULL.
-	  </para>
+	  <para>If the allocation is a success, a pointer to a matrix
+	  (organized as an <ulink
+	  url="https://en.wikipedia.org/wiki/Iliffe_vector">Iliffe column
+	  vector</ulink> of pointers to row vectors) is returned.  If the
+	  allocation is a failure, then the returned value of
+	  <literal>f</literal> will be NULL.</para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>nx, ny</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>&PLINT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	  Dimensions of grid to be allocated.
+	  Dimensions of matrix to be allocated.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function is currently available in C, C++, perl and tk.
-    </para>
-
-    <para>
-      This function is used in examples 8, 9, 11, 14, 16, 20, 21, 22, 28, 30.
+      This function is used in C examples 8, 9, 11, 14, 16, 20, 21, 22, 28, 30.
     </para>
 
   </sect1>
@@ -193,11 +186,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is currently available in C, C++ and Ocaml.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -232,7 +221,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>message</parameter>
-	  (<literal>char *</literal>, input)
+	  (<literal>&PLCHAR_VECTOR;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -243,11 +232,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C and ada.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -255,7 +240,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="plFree2dGrid" renderas="sect3">
     <title>
         <function>plFree2dGrid</function>: Free the memory associated
-	with a 2-d grid allocated using &plAlloc2dGrid;.
+	with a PLFLT matrix allocated using &plAlloc2dGrid;.
     </title>
 
     <para>
@@ -279,91 +264,274 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>f</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>&PLFLT_NC_MATRIX;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    PLFLT grid to be freed.
+	    A matrix to be freed after allocation by &plAlloc2dGrid; and all use
+	    of the matrix has been completed.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>nx, ny</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>&PLINT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	  Dimensions of grid to be freed.
+	  Dimensions of the matrix to be freed.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function is currently available in C, C++, perl and tk.
-    </para>
-
-    <para>
-      This function is used in examples 8, 9, 11, 14, 16, 20, 21, 22, 28, 30.
+      This function is used in C examples 8, 9, 11, 14, 16, 20, 21, 22, 28, 30.
     </para>
 
   </sect1>
 
-
-
-  <sect1 id="plGetCursor" renderas="sect3">
+  <sect1 id="plfsurf3d" renderas="sect3">
     <title>
-      <function>plGetCursor</function>: Wait for graphics input event and translate to world coordinates.
+      <function>plfsurf3d</function>: Plot shaded 3-d surface plot
     </title>
 
     <para>
       <funcsynopsis>
-	<funcprototype>
-	  <funcdef>PLINT
-	    <function>plGetCursor</function>
-	  </funcdef>
-	  <paramdef><parameter>gin</parameter></paramdef>
-	</funcprototype>
+        <funcprototype>
+          <funcdef>
+            <function>plfsurf3d</function>
+          </funcdef>
+          <paramdef>
+            <parameter>x</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>y</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>zops</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>zp</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>nx</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>ny</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>opt</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>clevel</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>nlevel</parameter>
+          </paramdef>
+        </funcprototype>
       </funcsynopsis>
     </para>
 
     <para>
-      Wait for graphics input event and translate to world coordinates.
-      Returns 0 if no translation to world coordinates is possible.
+      Plots a three-dimensional shaded surface plot within the
+      environment set up by &plw3d;. The surface is defined by the
+      two-dimensional function data accessed via the
+      <literal><parameter>zp</parameter></literal> generic pointer argument.
+      How the data in <literal><parameter>zp</parameter></literal> is
+      formatted is determined by the
+      <literal><parameter>zops</parameter></literal> pointer to a struct
+      containing the "get" function that reads that data. The following
+      functions in PLplot core will return an appropriate function pointer:
+      <literal>plf2ops_c()</literal> should be used when
+      <literal><parameter>zp</parameter></literal> is of type
+      <literal>PLFLT_MATRIX</literal> and
+      <literal>plf2ops_grid_c()</literal>,
+      <literal>plf2ops_grid_row_major()</literal>, and
+      <literal>plf2ops_grid_col_major()</literal> should be used when the
+      matrix of two-dimensional function data are organized within a
+      <literal>PLfGrid2</literal> structure as respectively two-dimensional
+      row-major data, one-dimensional row-major data, and one-dimensional
+      column-major data.  The <literal><parameter>nx</parameter></literal>,
+      <literal><parameter>ny</parameter></literal>
+      <literal><parameter>opt</parameter></literal>
+      <literal><parameter>clevel</parameter></literal> and
+      <literal><parameter>nlevel</parameter></literal> parameters are used
+      in the same way as &plsurf3d;.
     </para>
 
     <variablelist>
       <varlistentry>
-	<term>
-	  <parameter>gin</parameter>
-	  (<literal>&PLGraphicsIn; *</literal>, output)
-	</term>
-	<listitem>
-	  <para>
-	    Pointer to &PLGraphicsIn; structure which will contain the
-	    output. The structure is not allocated by the routine
-	    and must exist before the function is called.
-	  </para>
-	</listitem>
+        <term>
+          <parameter>x</parameter>
+          (<literal>&PLFLT_VECTOR;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            A vector containing the x coordinates at which the function is
+            evaluated.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>y</parameter>
+          (<literal>&PLFLT_VECTOR;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            A vector containing the y coordinates at which the function is
+            evaluated.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>zops</parameter>
+          (<literal>PLF2OPS</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Pointer to a <parameter>plf2ops_t</parameter> struct that
+	    contains (amongst other function pointers) a pointer to a "get"
+	    function that is used to evaluate the 2D function data required by
+	    plfsurf3d.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>zp</parameter>
+          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Pointer to the two-dimensional function data in
+	    the format required by the "get" function that is (indirectly) pointed
+	    to by <parameter>zops</parameter>.  The various possibilities have
+	    been discussed above, and examples of such use are given in
+	    <filename>examples/c/x08c.c</filename>.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>nx</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Number of <literal>
+              <parameter>x</parameter>
+            </literal> values at
+            which function is evaluated.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>ny</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Number of <literal>
+              <parameter>y</parameter>
+            </literal> values at
+            which function is evaluated.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>opt</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Determines the way in which the surface is represented. To specify
+            more than one option just add the options, e.g. FACETED + SURF_CONT
+            <itemizedlist>
+              <listitem>
+                <para>
+                  <literal>
+                    <parameter>opt</parameter>=FACETED
+                  </literal>: Network
+                  of lines is drawn connecting points at which function is
+                  defined.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>
+                    <parameter>opt</parameter>=BASE_CONT
+                  </literal>: A contour
+                  plot is drawn at the base XY plane using parameters
+                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>
+                    <parameter>opt</parameter>=SURF_CONT
+                  </literal>: A contour
+                  plot is drawn at the surface plane using parameters
+                  <parameter>nlevel</parameter> and <parameter>clevel</parameter>.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>
+                    <parameter>opt</parameter>=DRAW_SIDES
+                  </literal>: draws a curtain
+                  between the base XY plane and the borders of the plotted function.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <literal>
+                    <parameter>opt</parameter>=MAG_COLOR
+                  </literal>:
+                  the surface is colored according to the value of Z; if
+                  <literal>MAG_COLOR</literal> is not used, then
+                  the surface is colored according to the intensity of the
+                  reflected light in the surface from a light source whose
+                  position is set using &pllightsource;.
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term>
+          <parameter>clevel</parameter>
+          (<literal>&PLFLT_VECTOR;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            A vector containing the contour levels.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>nlevel</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Number of elements in the <literal>clevel</literal> vector.
+          </para>
+        </listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function returns 1 on success and 0 if no translation to world
-      coordinates is possible.
+      This function is optionally used in C example 8.
     </para>
-
-    <para>
-      This function is currently only available with the C, C++, Ocaml,
-      Octave, Perl, Python and Ada language bindings.
-    </para>
-
-    <para>
-      This function is used in examples 1 and 20.
-    </para>
-
-
 
   </sect1>
 
@@ -402,11 +570,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C, C++ and Ocaml.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -431,9 +595,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Merges in a set of user supplied command line options with the
-      internal options table. This allows use options to be used along
-      with the built-in plplot options to set device driver, output file
+      Merges in a set of user-supplied command line options with the
+      internal options table. This allows such options to be used along
+      with the built-in PLplot options to set device driver, output file
       etc. See &plparseopts; for details of how to parse these options in
       a program.
     </para>
@@ -453,7 +617,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>name</parameter>
-	  (<literal>const char *name</literal>, input)
+	  (<literal>&PLCHAR_VECTOR;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -464,11 +628,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>notes</parameter>
-	  (<literal>const char **</literal>, input)
+	  (<literal>PLCHAR_VECTOR *</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    A null-terminated array of notes which appear after
+	    A vector of character strings which appear after
 	    the options in the program help.
 	  </para>
 	</listitem>
@@ -476,11 +640,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C, C++ and Ocaml.
-    </para>
-
-    <para>
-      This function is used in examples 1, 8, 16, 20 and 21.
+      This function is used in C examples 1, 8, 16, 20 and 21.
     </para>
 
   </sect1>
@@ -488,7 +648,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="plMinMax2dGrid" renderas="sect3">
     <title>
       <function>plMinMax2dGrid</function>: Find the minimum and
-    maximum of a 2d grid allocated using &plAlloc2dGrid;.
+    maximum of a PLFLT matrix of type PLFLT_MATRIX allocated using &plAlloc2dGrid;.
     </title>
 
     <para>
@@ -507,25 +667,26 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-    Find the minimum and maximum of a 2d grid allocated using &plAlloc2dGrid;.
+    Find the minimum and maximum of a PLFLT matrix of type
+    PLFLT_MATRIX allocated using &plAlloc2dGrid;.
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>f</parameter>
-	  (<literal>PLFLT **</literal>, input)
+	  (<literal>&PLFLT_MATRIX;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    PLFLT grid to find the maximum / minimum of.
+	    A matrix to find the maximum / minimum of.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>nx, ny</parameter>
-	  (<literal>PLINT</literal>, input)
+	  (<literal>&PLINT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -536,11 +697,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>fmax, fmin</parameter>
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>&PLFLT_NC_SCALAR;</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	  Maximum and minimum values in the grid
+	  Returned maximum and minimum values of the matrix
 	  <literal>f</literal>.
 	  </para>
 	</listitem>
@@ -548,12 +709,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C, C++, Java, Ocaml
-      and Python.
-    </para>
-
-    <para>
-      This function is used in examples 8, 11, 20 and 21.
+      This function is used in C examples 8, 11, 20 and 21.
     </para>
 
   </sect1>
@@ -576,43 +732,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       Prints the usage and syntax message. The message can also be
-      display using the -h command line option. There is a default
-      message describing the default plplot options. The usage
+      displayed using the -h command line option. There is a default
+      message describing the default PLplot options. The usage
       message is also modified by &plSetUsage; and &plMergeOpts;.
     </para>
 
-    <variablelist>
-      <varlistentry>
-	<term>
-	  <parameter>program_string</parameter>
-	  (<literal>const char *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	    String to appear as the name of program.
-	  </para>
-	</listitem>
-      </varlistentry>
-      <varlistentry>
-	<term>
-	  <parameter>usage_string</parameter>
-	  (<literal>const char *</literal>, input)
-	</term>
-	<listitem>
-	  <para>
-	  String to appear as the usage text.
-	  </para>
-	</listitem>
-      </varlistentry>
-    </variablelist>
-
     <para>
-      This function is currently available in C, C++, Java, Ocaml, Octave
-      and Python.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -642,13 +768,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      This function is currently available in C, C++, Java, Ocaml and
-      Octave, although it is not much use in Java or Octave since they
-      don't have plMergeOpts.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -677,7 +797,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>handler</parameter>
-	  (<literal>void (*) (char *)</literal>, input)
+	  (<literal>void (*) (PLCHAR_VECTOR)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -688,18 +808,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C and Ocaml.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
 
   <sect1 id="plSetUsage" renderas="sect3">
     <title>
-      <function>plSetUsage</function>: Set the strings used in usage
+      <function>plSetUsage</function>: Set the ascii character strings used in usage
       and syntax messages.
     </title>
 
@@ -724,34 +840,29 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>program_string</parameter>
-	  (<literal>const char *</literal>, input)
+	  (<literal>&PLCHAR_VECTOR;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    String to appear as the name of program.
+	    An ascii character string to appear as the name of program.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>usage_string</parameter>
-	  (<literal>const char *</literal>, input)
+	  (<literal>&PLCHAR_VECTOR;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	  String to appear as the usage text.
+	  An ascii character string to appear as the usage text.
 	  </para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function is currently available in C, C++, Java, Ocaml, Octave
-      and Python.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -780,7 +891,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>handler</parameter>
-	  (<literal>int (*) (char *)</literal>, input)
+	  (<literal>int (*) (PLCHAR_VECTOR)</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -791,11 +902,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C, C++ and Ocaml.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -841,19 +948,402 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      This function is currently available in C, C++ and Ocaml.
+      This function is not used in any of our C examples.
+    </para>
+
+  </sect1>
+
+  <sect1 id="plshade1" renderas="sect3">
+    <title>
+      <function>plshade1</function>: Shade individual region on the basis of value
+    </title>
+
+    <para>
+      <funcsynopsis>
+        <funcprototype>
+          <funcdef>
+            <function>plshade1</function>
+          </funcdef>
+          <paramdef>
+            <parameter>a</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>nx</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>ny</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>defined</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>xmin</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>xmax</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>ymin</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>ymax</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>shade_min</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>shade_max</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>sh_cmap</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>sh_color</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>sh_width</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>min_color</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>min_width</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>max_color</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>max_width</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>fill</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>rectangular</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>pltr</parameter>
+          </paramdef>
+          <paramdef>
+            <parameter>pltr_data</parameter>
+          </paramdef>
+        </funcprototype>
+      </funcsynopsis>
     </para>
 
     <para>
-      This function is not used in any examples.
+      Shade individual region on the basis of value.  Use &plshades; if you want to
+      shade a number of contiguous regions using continuous colors.  In
+      particular the edge contours are treated properly in &plshades;.
+      If you attempt to do contiguous regions with &plshade1; (or &plshade;)
+      the contours at the edge of the shade are partially obliterated by subsequent
+      plots of contiguous shaded regions.
+      &plshade1; differs from &plshade; only by the type of the first
+      argument.  Look at the argument list below  and &plcont;
+      for more information about the transformation from matrix index to world
+      coordinates.  Shading NEEDS DOCUMENTATION, but
+      as a stopgap look at how &plshade1; (or &plshade;) are used in
+      <filename>examples/c/x15c.c</filename>
+    </para>
+
+    <variablelist>
+      <varlistentry>
+        <term>
+          <parameter>a</parameter>
+          (<literal>&PLFLT_FE_POINTER;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Contains pointer to first element of array to be plotted. The array must have been declared
+            as PLFLT a[nx][ny].
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>nx</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            First dimension of array "a".
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>ny</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Second dimension of array "a".
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>defined</parameter>
+          (<literal>PLDEFINED_callback</literal>, input)
+        </term>
+        <listitem>
+	  <para>Callback function specifying the region that should be plotted in
+	  the shade plot.  This function accepts x and y coordinates as input
+	  arguments and must return 1 if the point is to be included in the
+	  shade plot and 0 otherwise.  If you want to plot the entire
+	  shade plot (the usual case), this argument should be set to NULL.
+	  </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>xmin, xmax, ymin, ymax</parameter>
+          (<literal>&PLFLT;</literal>, input)
+        </term>
+        <listitem>
+          <para>See the discussion of <parameter>pltr</parameter>
+	  below for how these arguments are used (only for the special case when
+	  the callback function <parameter>pltr</parameter> is not
+	  supplied).</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>shade_min</parameter>
+          (<literal>&PLFLT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines the lower end of the interval to be shaded. If
+            shade_max &leq; shade_min, &plshade1; does nothing.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>shade_max</parameter>
+          (<literal>&PLFLT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines the upper end of the interval to be shaded. If
+            shade_max &leq; shade_min, &plshade1; does nothing.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>sh_cmap</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines color map. If
+            <literal>
+              <parameter>sh_cmap</parameter>=0
+            </literal>, then
+            <literal>
+              <parameter>sh_color</parameter>
+            </literal>
+            is interpreted as a color map 0 (integer) index.  If
+            <literal>
+              <parameter>sh_cmap</parameter>=1
+            </literal>, then
+            <literal>
+              <parameter>sh_color</parameter>
+            </literal>
+            is interpreted as a cmap1 argument in range (0.0-1.0).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>sh_color</parameter>
+          (<literal>&PLFLT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines color map index with integer value if cmap0 or
+	    value in range (0.0-1.0) if cmap1.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>sh_width</parameter>
+          (<literal>&PLFLT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines width used by the fill pattern.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>min_color</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines pen color, width used by the boundary of shaded region.
+            The min values are used for the shade_min boundary, and the max
+            values are used on the shade_max boundary.  Set color and width
+            to zero for no plotted boundaries.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>min_width</parameter>
+          (<literal>&PLFLT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines pen color, width used by the boundary of shaded region.
+            The min values are used for the shade_min boundary, and the max
+            values are used on the shade_max boundary.  Set color and width
+            to zero for no plotted boundaries.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>max_color</parameter>
+          (<literal>&PLINT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines pen color, width used by the boundary of shaded region.
+            The min values are used for the shade_min boundary, and the max
+            values are used on the shade_max boundary.  Set color and width
+            to zero for no plotted boundaries.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>max_width</parameter>
+          (<literal>&PLFLT;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Defines pen color, width used by the boundary of shaded region.
+            The min values are used for the shade_min boundary, and the max
+            values are used on the shade_max boundary.  Set color and width
+            to zero for no plotted boundaries.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>fill</parameter>
+          (<literal>PLFILL_callback</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Routine used to fill the region.  Use &plfill;.  Future version of
+            PLplot may have other fill routines.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>rectangular</parameter>
+          (<literal>&PLBOOL;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Set <literal>
+              <parameter>rectangular</parameter>
+            </literal> to true
+            if rectangles map to rectangles after coordinate transformation
+            with <literal><parameter>pltrl</parameter></literal>.  Otherwise,
+            set <literal><parameter>rectangular</parameter></literal> to false.
+            If <literal><parameter>rectangular</parameter></literal>
+            is set to true, plshade1 tries to save time by
+            filling large rectangles.  This optimization fails if
+            the coordinate transformation distorts the shape of rectangles.
+            For example a plot in polar coordinates has to have
+            <literal><parameter>rectangular</parameter></literal>
+            set to false.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>pltr</parameter>
+          (<literal>PLTRANSFORM_callback</literal>, input)
+        </term>
+        <listitem>
+          <para> A callback function that defines the transformation
+	  between the zero-based indices of the matrix
+	  <literal><parameter>a</parameter></literal> and world coordinates.
+	  If <parameter>pltr</parameter> is not supplied (e.g., is set to NULL
+	  in the C case), then the x indices of
+	  <literal><parameter>a</parameter></literal> are mapped to the range
+	  <parameter>xmin</parameter> through <parameter>xmax</parameter> and
+	  the y indices of <literal><parameter>a</parameter></literal> are
+	  mapped to the range <parameter>ymin</parameter> through
+	  <parameter>ymax</parameter>.</para>
+
+	  <para>For the C case, transformation functions are provided
+	  in the PLplot library: &pltr0; for the identity mapping, and &pltr1;
+	  and &pltr2; for arbitrary mappings respectively defined by vectors and
+	  matrices.  In addition, C callback routines for the transformation can
+	  be supplied by the user such as the <literal>mypltr</literal> function
+	  in <filename>examples/c/x09c.c</filename> which provides a general
+	  linear transformation between index coordinates and world
+	  coordinates.</para>
+
+	  <para>For languages other than C you should consult <xref
+	  linkend="part_bindings"/> for the details concerning how
+	  PLTRANSFORM_callback arguments are interfaced.
+	  However, in general, a particular pattern of
+	  callback-associated arguments such as a <literal>tr</literal> vector
+	  with 6 elements; <literal>xg</literal> and <literal>yg</literal>
+	  vectors; or <literal>xg</literal> and <literal>yg</literal> matrices
+	  are respectively interfaced to a linear-transformation routine similar
+	  to the above <literal>mypltr</literal> function; &pltr1;; and &pltr2;.
+	  Furthermore, some of our more sophisticated bindings (see, e.g., <xref
+	  linkend="fortran95"/>) support native language callbacks for handling
+	  index to world-coordinate transformations.  Examples of these various
+	  approaches are given in
+	  <filename>examples/&lt;language&gt;x09*</filename>,
+	  <filename>examples/&lt;language&gt;x16*</filename>,
+	  <filename>examples/&lt;language&gt;x20*</filename>,
+	  <filename>examples/&lt;language&gt;x21*</filename>, and
+	  <filename>examples/&lt;language&gt;x22*</filename>, for all our
+	  supported languages.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>
+          <parameter>pltr_data</parameter>
+          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+        </term>
+        <listitem>
+          <para>
+            Extra parameter to help
+            pass information to &pltr0;, &pltr1;, &pltr2;, or whatever routine
+            that is externally supplied.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+    <para>
+      &plshade1; is currently used in C example 15, but for the rest
+      of our supported languages and also eventually C (once our plan to
+      deprecate &plshade1; comes into effect), &plshade; should be used
+      instead for this example.
     </para>
 
   </sect1>
 
   <sect1 id="pltr0" renderas="sect3">
     <title>
-      <function>pltr0</function>: Identity transformation for grid to world
-      mapping
+      <function>pltr0</function>: Identity transformation for matrix index to world
+      coordinate mapping
     </title>
 
     <para>
@@ -871,88 +1361,80 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </funcsynopsis>
     </para>
 
-    <para>
-      Identity transformation for grid to world mapping.
-      This routine can be used both for &plcont; and &plshade;.
-      See also <xref linkend="contour-plots-c"/> and
-      <xref linkend="shade-plots-c"/>.
-    </para>
+    <para>Identity transformation for matrix index to world coordinate mapping.  This routine
+    can be used for the PLTRANSFORM_callback argument of &plcont;,
+    &plshade;, &plshades;, &plimagefr;, or &plvect;.</para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    X-position in grid coordinates.
+	    X index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Y-position in grid coordinates.
+	    Y index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>tx</parameter>
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>&PLFLT_NC_SCALAR;</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    X-position in world coordinates.
+	    Transformed x value in world coordinates corresponding to x index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>ty</parameter>
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>&PLFLT_NC_SCALAR;</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    Y-position in world coordinates.
+	    Transformed y value in world coordinates corresponding to y index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>PLPointer</literal>, input)
+	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
 	</term>
 	<listitem>
-	  <para>
-	    Pointer to additional input data that is passed as an argument
-	    to &plcont; or &plshade; and then on to the grid to world
-	    transformation routine.
-	  </para>
+	  <para>A pointer to additional data that is passed as an
+	  argument to PLplot routines that potentially could use the &pltr0;
+	  callback (i.e., &plcont;, &plimagefr;, &plshade;,
+	  &plshades;, and &plvect;); which then internally pass that argument on
+	  to this callback.</para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function is currently available in C, C++, Ocaml, Perl, Python
-      and Tcl.
-    </para>
-
-    <para>
-      This function is not used in any examples.
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
 
   <sect1 id="pltr1" renderas="sect3">
     <title>
-      <function>pltr1</function>: Linear interpolation for grid to world
-      mapping using singly dimensioned coordinate arrays
+      <function>pltr1</function>: Linear interpolation for matrix index to world
+      coordinate mapping using singly dimensioned coordinate arrays
     </title>
 
     <para>
@@ -970,81 +1452,74 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </funcsynopsis>
     </para>
 
-    <para>
-      Linear interpolation for grid to world mapping using singly
-      dimensioned coordinate arrays.
-      This routine can be used both for &plcont; and &plshade;.
-      See also <xref linkend="contour-plots-c"/> and
-      <xref linkend="shade-plots-c"/>.
-    </para>
+    <para>Linear interpolation for matrix index to world coordinate mapping using
+    one-dimensional <literal>x</literal> and <literal>y</literal>
+    coordinate arrays.  This routine can be used for the
+    PLTRANSFORM_callback argument of &plcont;, &plshade;, &plshades;,
+    &plimagefr;, or &plvect;.</para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    X-position in grid coordinates.
+	    X index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Y-position in grid coordinates.
+	    Y index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>tx</parameter>
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>&PLFLT_NC_SCALAR;</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    X-position in world coordinates.
+	    Transformed x value in world coordinates corresponding to x index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>ty</parameter>
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>&PLFLT_NC_SCALAR;</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    Y-position in world coordinates.
+	    Transformed y value in world coordinates corresponding to y index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>PLPointer</literal>, input)
+	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
 	</term>
 	<listitem>
-	  <para>
-	    Pointer to additional input data that is passed as an argument
-	    to &plcont; or &plshade; and then on to the grid to world
-	    transformation routine.
-	  </para>
+	  <para>A pointer to additional data that is passed as an
+	  argument to PLplot routines that potentially could use the &pltr1;
+	  callback (i.e., &plcont;, &plimagefr;, &plshade;,
+	  &plshades;, and &plvect;); which then internally pass that argument on
+	  to this callback.</para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function is currently available in C, C++, Ocaml, Perl, Python
-      and Tcl.
-    </para>
-
-    <para>
-      This function is used in examples 9 and 16.
+      This function is used in C examples 9 and 16.
     </para>
 
   </sect1>
@@ -1052,8 +1527,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="pltr2" renderas="sect3">
     <title>
       <function>pltr2</function>: Linear interpolation for grid to world
-      mapping using doubly dimensioned coordinate arrays (column
-      dominant, as per normal C 2d arrays)
+      mapping using doubly dimensioned coordinate arrays (row-major order
+      as per normal C 2d arrays)
     </title>
 
     <para>
@@ -1071,81 +1546,74 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </funcsynopsis>
     </para>
 
-    <para>
-      Linear interpolation for grid to world mapping using doubly
-      dimensioned coordinate arrays (column dominant, as per normal C 2d arrays).
-      This routine can be used both for &plcont; and &plshade;.
-      See also <xref linkend="contour-plots-c"/> and
-      <xref linkend="shade-plots-c"/>.
-    </para>
+    <para>Linear interpolation for grid to world mapping using
+    two-dimensional <literal>x</literal> and <literal>y</literal>
+    coordinate arrays.  This routine can be used for the
+    PLTRANSFORM_callback argument of &plcont;, &plshade;, &plshades;,
+    &plimagefr;, or &plvect;.</para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    X-position in grid coordinates.
+	    X index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>y</parameter>
-	  (<literal>PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
-	    Y-position in grid coordinates.
+	    Y index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>tx</parameter>
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>&PLFLT_NC_SCALAR;</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    X-position in world coordinates.
+	    Transformed x value in world coordinates corresponding to x index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>ty</parameter>
-	  (<literal>PLFLT *</literal>, output)
+	  (<literal>&PLFLT_NC_SCALAR;</literal>, output)
 	</term>
 	<listitem>
 	  <para>
-	    Y-position in world coordinates.
+	    Transformed y value in world coordinates corresponding to y index of matrix.
 	  </para>
 	</listitem>
       </varlistentry>
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>PLPointer</literal>, input)
+	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
 	</term>
 	<listitem>
-	  <para>
-	    Pointer to additional input data that is passed as an argument
-	    to &plcont; or &plshade; and then on to the grid to world
-	    transformation routine.
-	  </para>
+	  <para>A pointer to additional data that is passed as an
+	  argument to PLplot routines that potentially could use the &pltr2;
+	  callback (i.e., &plcont;, &plimagefr;, &plshade;,
+	  &plshades;, and &plvect;); which then internally pass that argument on
+	  to this callback.</para>
 	</listitem>
       </varlistentry>
     </variablelist>
 
     <para>
-      This function is currently available in C, C++, Ocaml, Perl, Python
-      and Tcl.
-    </para>
-
-    <para>
-      This function is used in example 22.
+      This function is used in C examples 9, 16, 20, and 22.
     </para>
 
   </sect1>
@@ -1196,7 +1664,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </variablelist>
 
     <para>
-      Redacted form: <function>plTranslateCursor(gin)</function>
+      This function is not used in any of our C examples.
     </para>
 
   </sect1>
@@ -1278,7 +1746,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Translated string.
+	    Translated ascii character string.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1289,7 +1757,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Absolute device coordinates of pointer.
+	    Absolute device coordinates of mouse pointer.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1300,7 +1768,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    relative device coordinates of pointer.
+	    Relative device coordinates of mouse pointer.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1311,7 +1779,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    World coordinates of pointer.
+	    World coordinates of mouse pointer.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1325,14 +1793,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>
       The <structname>PLOptionTable</structname> structure is used by
       &plMergeOpts; to pass information on user-defined command line
-      options to plplot. The structure contains the following fields:
+      options to PLplot. The structure contains the following fields:
     </para>
 
     <variablelist>
       <varlistentry>
 	<term>
 	  <structfield>opt</structfield>
-	  (<literal>const char*</literal>)
+	  (<literal>PLCHAR_VECTOR</literal>)
 	</term>
 	<listitem>
 	  <para>
@@ -1343,7 +1811,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>handler</structfield>
-	  (<literal>int (*func) (const char *, const char *, void *)</literal>)
+	  (<literal>int (*func) (PLCHAR_VECTOR, PLCHAR_VECTOR, PL_NC_GENERIC_POINTER)</literal>)
 	</term>
 	<listitem>
 	  <para>
@@ -1355,11 +1823,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>client_data</structfield>
-	  (<literal>void *</literal>)
+	  (<literal>PL_NC_GENERIC_POINTER</literal>)
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to client data. A
+	    A pointer to client data. A
 	    NULL value indicates that no client data is required.
 	  </para>
 	</listitem>
@@ -1367,12 +1835,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>var</structfield>
-	  (<literal>void *</literal>)
+	  (<literal>PL_NC_GENERIC_POINTER</literal>)
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to variable to set to the value specified on the
-	    command line option.
+	    A pointer to a variable to be set to the value specified on the
+	    command-line option.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -1392,7 +1860,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>syntax</structfield>
-	  (<literal>const char *</literal>)
+	  (<literal>PLCHAR_VECTOR</literal>)
 	</term>
 	<listitem>
 	  <para>
@@ -1403,7 +1871,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>desc</structfield>
-	  (<literal>const char *</literal>)
+	  (<literal>PLCHAR_VECTOR</literal>)
 	</term>
 	<listitem>
 	  <para>

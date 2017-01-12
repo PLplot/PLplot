@@ -3,7 +3,7 @@
     simple.xml: "Simple Use of PLplot" chapter
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Alan W. Irwin
+Copyright (C) 1999-2016  Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 
@@ -37,7 +37,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="simple">
   <title>Simple Use of PLplot</title>
-
+  <para> We describe simple use of PLplot in this chapter.  Note that
+  throughout this chapter there are references to examples written in C
+  using PLplot C types such as PLFLT and PLINT.  For full documentation
+  of all PLplot C types see <link linkend="plplot-types">here</link>.  For full
+  documentation for our supported languages and the language types
+  corresponding to the PLplot C types see the various chapters in <xref
+  linkend="part_bindings"/>.  Note also that
+  <filename>examples/&lt;language&gt;/x*</filename> contains a large
+  number of standard PLplot examples which demonstrate how the PLplot
+  API should be used for each of our supported languages.</para>
   <sect1 id="simple-graph">
     <title>Plotting a Simple Graph</title>
 
@@ -65,11 +74,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</para>
       </listitem>
     </itemizedlist>
-    <para>
-      In order to draw such a graph, it is necessary to call at least four
-      of the PLplot functions:
-    </para>
-
+    <para>See our standard example 00 for a good example of such a simple
+    graph that is implemented in
+    <filename>examples/&lt;language&gt;/x*00*</filename> for each of our
+    supported languages.</para>
+    <para>In order to draw such a simple graph, it is necessary to
+    call at least four of the PLplot functions: </para>
     <orderedlist>
       <listitem>
 	<para>
@@ -84,9 +94,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </listitem>
       <listitem>
 	<para>
-	  One or more calls to &plline; or &plpoin; to draw lines or points
+	  One or more calls to &plline; or &plstring; to draw lines or points
 	  as needed.  Other more complex routines include &plbin; and
-	  &plhist; to draw histograms, &plerrx; and &plerry; to draw
+	  &plhist; to draw histograms, and &plerrx; and &plerry; to draw
 	  error-bars.
 	</para>
       </listitem>
@@ -400,84 +410,24 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <sect2 id="points">
       <title>Drawing Points</title>
 
-      <para>
-	&plpoin; and &plsym; mark out <literal>n</literal> points
-	<literal>(x[i], y[i])</literal> with the specified symbol.  The
-	routines differ only in the interpretation of the symbol codes.
-	&plpoin; uses an extended ASCII representation, with the printable
-	ASCII codes mapping to the respective characters in the current
-	font, and the codes from 0&ndash;31 mapping to various useful
-	symbols.  In &plsym; however, the code is a Hershey font code
-	number.  Example programs are provided which display each of the
-	symbols available using these routines.
-      </para>
-
-      <!-- ============================================================= -->
-
-      <para>
-	<funcsynopsis>
-	  <funcprototype>
-	    <funcdef>
-	    <function>plpoin</function></funcdef>
-	    <paramdef><parameter>n</parameter></paramdef>
-	    <paramdef><parameter>x</parameter></paramdef>
-	    <paramdef><parameter>y</parameter></paramdef>
-	    <paramdef><parameter>code</parameter></paramdef>
-	  </funcprototype>
-	</funcsynopsis>
-      </para>
-      <para>
-	<funcsynopsis>
-	  <funcprototype>
-	    <funcdef>
-	      <function>plsym</function>
-	    </funcdef>
-	    <paramdef><parameter>n</parameter></paramdef>
-	    <paramdef><parameter>x</parameter></paramdef>
-	    <paramdef><parameter>y</parameter></paramdef>
-	    <paramdef><parameter>code</parameter></paramdef>
-	  </funcprototype>
-	</funcsynopsis>
-      </para>
-
-      <variablelist>
-	<varlistentry>
-	  <term>
-	    <parameter>n</parameter> (<literal>PLINT</literal>, input)
-	  </term>
-	  <listitem>
-	    <para>
-	      The number of points to plot.
-	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>
-	    <parameter>x, y</parameter> (<literal>PLFLT *</literal>, input)
-	  </term>
-	  <listitem>
-	    <para>
-	      Pointers to arrays of the coordinates of the
-	      <literal>n</literal> points.
-	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term> <parameter>code</parameter> (<literal>PLINT</literal>,
-	  input)
-	  </term>
-	  <listitem>
-	    <para>
-	      Code number of symbol to draw
-	    </para>
-	  </listitem>
-	</varlistentry>
-      </variablelist>
-
-      <!-- ============================================================= -->
-
+      <para>&plstring;, &plpoin;, and &plsym; plot <literal>n</literal>
+      points <literal>(x[i], y[i])</literal> using the specified symbol.
+      The routines differ only in how the plotted symbol is specified.
+      &plstring; is now the preferred way of drawing points for
+      unicode-aware devices because it gives users full access via a UTF-8
+      string to any unicode glyph they prefer for the symbol that is is
+      available via system fonts. &plpoin; and &plsym; are limited to
+      Hershey glyphs and are therefore more suitable for device drivers that
+      only use Hershey fonts.  For both of these functions the Hershey glyph
+      is indicated by a code value.  &plpoin; uses an extended ASCII index
+      of Hershey glyphs for that code value, with the printable ASCII codes
+      mapping to the respective characters in the current Hershey font, and
+      the codes from 0&ndash;31 mapping to various useful Hershey glyphs for
+      symbols.  In &plsym; however, the code is a Hershey font code number.
+      Examples 04, 21, and 26 demonstrate use of &plstring; while example 6
+      demonstrates all the Hershey symbols available with &plpoin; and
+      example 7 demonstrates all the Hershey symbols available with
+      &plsym;.</para>
     </sect2>
 
     <sect2 id="lines">
