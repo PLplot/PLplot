@@ -195,7 +195,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</para>
       </listitem>
     </itemizedlist>
-    
+
     Note that in all our supported languages other than C and C++, the
     argument <literal><parameter>n</parameter></literal> (which specifies
     the length of the input vectors
@@ -4009,7 +4009,7 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Draws a set of <literal><parameter>n</parameter></literal> 
+      Draws a set of <literal><parameter>n</parameter></literal>
       error bars in x direction, the <literal>i</literal>'th error bar extending from
       <literal><parameter>xmin</parameter>[i]</literal> to
       <literal><parameter>xmax</parameter>[i]</literal> at y coordinate
@@ -4110,7 +4110,7 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Draws a set of <literal><parameter>n</parameter></literal> 
+      Draws a set of <literal><parameter>n</parameter></literal>
       error bars in the y direction, the <literal>i</literal>'th error bar extending from
       <literal><parameter>ymin</parameter>[i]</literal> to
       <literal><parameter>ymax</parameter>[i]</literal> at x coordinate
@@ -6813,7 +6813,7 @@ device support!)
 
     <para>
       Plots a histogram from <literal><parameter>n</parameter></literal>
-      data points stored in the 
+      data points stored in the
       <literal><parameter>data</parameter></literal> vector.  This routine bins
       the data into <literal><parameter>nbin</parameter></literal> bins
       equally spaced between
@@ -8082,7 +8082,7 @@ device support!)
 	<listitem>
 	  <para>
 	    A vector of <parameter>nlegend</parameter> UTF-8 character strings containing
-	    the legend symbols. 
+	    the legend symbols.
 	    (<parameter>PL_LEGEND_SYMBOL</parameter>).
 	  </para>
 	</listitem>
@@ -11313,7 +11313,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing 
+            A vector containing
             <literal><parameter>nlin</parameter></literal> values
             of the inclination in tenths of a degree.  (Should
             be between -900 and 900).
