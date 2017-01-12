@@ -54,7 +54,14 @@ http://docbook.sourceforge.net/release/xsl/current/doc/html/
 <xsl:param name="use.id.as.filename" select="1"/>
 <xsl:param name="html.stylesheet" select="'stylesheet.css'"/>
 <xsl:param name="funcsynopsis.style" select="'ansi'"/>
-
+<xsl:param name="table.borders.with.css" select="1"></xsl:param>
+<xsl:param name="table.cell.border.thickness">
+  <xsl:choose>
+    <xsl:when test="contains($stylesheet.result.type,'html')">10px</xsl:when>
+    <xsl:otherwise>5pt</xsl:otherwise>
+  </xsl:choose>
+</xsl:param>
+<xsl:param name="table.cell.border.color">white</xsl:param>
 <!-- For this case (anchor tag with a name attribute of
 "over-under") we want the html result to be
 
