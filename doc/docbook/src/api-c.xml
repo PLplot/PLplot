@@ -1138,20 +1138,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </term>
         <listitem>
           <para>
-            Defines color map. If
-            <literal>
-              <parameter>sh_cmap</parameter>=0
-            </literal>, then
-            <literal>
-              <parameter>sh_color</parameter>
-            </literal>
-            is interpreted as a color map 0 (integer) index.  If
-            <literal>
-              <parameter>sh_cmap</parameter>=1
-            </literal>, then
-            <literal>
-              <parameter>sh_color</parameter>
-            </literal>
+            Defines color map. If <literal><parameter>sh_cmap</parameter>=0</literal>, then
+            <literal><parameter>sh_color</parameter></literal>
+            is interpreted as a cmap0 (integer) index.  If
+            <literal><parameter>sh_cmap</parameter>=1</literal>, then
+            <literal><parameter>sh_color</parameter></literal>
             is interpreted as a cmap1 argument in range (0.0-1.0).
           </para>
         </listitem>

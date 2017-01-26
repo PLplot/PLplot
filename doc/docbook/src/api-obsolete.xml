@@ -204,7 +204,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Hue, in degrees on the colour cone (0.0-360.0)
+	    Hue, in degrees on the color cone (0.0-360.0)
 	  </para>
 	</listitem>
       </varlistentry>
@@ -215,7 +215,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Lightness, expressed as a fraction of the axis of the colour
+	    Lightness, expressed as a fraction of the axis of the color
 	    cone (0.0-1.0)
 	  </para>
 	</listitem>
@@ -228,7 +228,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    Saturation, expressed as a fraction of the radius of the
-	    colour cone (0.0-1.0)
+	    color cone (0.0-1.0)
 	  </para>
 	</listitem>
       </varlistentry>
@@ -239,7 +239,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to red intensity (0.0-1.0) of the colour
+	    Pointer to red intensity (0.0-1.0) of the color
 	  </para>
 	</listitem>
       </varlistentry>
@@ -250,7 +250,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to green intensity (0.0-1.0) of the colour
+	    Pointer to green intensity (0.0-1.0) of the color
 	  </para>
 	</listitem>
       </varlistentry>
@@ -261,7 +261,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</term>
 	<listitem>
 	  <para>
-	    Pointer to blue intensity (0.0-1.0) of the colour
+	    Pointer to blue intensity (0.0-1.0) of the color
 	  </para>
 	</listitem>
       </varlistentry>

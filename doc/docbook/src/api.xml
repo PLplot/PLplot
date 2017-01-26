@@ -71,17 +71,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   "non-constant") in the argument type name.</para>
 
   <para> We document our common API below for the C case, but it
-  should be straightforward to infer the corresponding API for any of
-  our supported languages from these results because of the self-documenting
-  names we use for the <link
-  linkend="plplot-types">PLplot C types for arguments</link>.  Of course, full
-  documentation for our supported languages and the language types
-  corresponding to the PLplot C types should ideally be available in the various
-  chapters in <xref linkend="part_bindings"/>.  However, the best source
-  of documentation is our standard set of PLplot examples in
-  <filename>examples/&lt;language&gt;/x*</filename> which demonstrate
-  how the common PLplot API should be used for each of our supported
-  languages.</para>
+  should be fairly straightforward to infer the corresponding API for
+  any of our supported languages from these results because of the
+  self-documenting names we use for the <link
+  linkend="plplot-types">PLplot C types for arguments</link>.  Of
+  course, the best way to learn how to use our common API for the
+  language of your choice is to look at <ulink
+  url="&PLplot-website;/examples.php">our standard set of
+  examples</ulink>.  For additional language documentation you should
+  consult the various chapters in <xref linkend="part_bindings"/> as
+  well.</para>
 
   <para>
     What follows is a list of all common API functions of the latest
@@ -2034,8 +2033,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      <member>14 </member>  <member>salmon</member>
 	      <member>15 </member>  <member>white</member>
 	    </simplelist>
-	    Use &plscmap0; to change the entire map0 color palette and
-	    &plscol0; to change an individual color in the map0 color
+	    Use &plscmap0; to change the entire cmap0 color palette and
+	    &plscol0; to change an individual color in the cmap0 color
 	    palette.
 	  </para>
 	</listitem>
@@ -2081,7 +2080,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  <para>
 	    This value must be in the range (0.0-1.0) and is mapped to
 	    color using the continuous cmap1 palette which by default
-	    ranges from blue to the background color to red.  The map1
+	    ranges from blue to the background color to red.  The cmap1
 	    palette can also be straightforwardly changed by the user with
 	    &plscmap1; or &plscmap1l;.
 	  </para>
@@ -2191,7 +2190,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    is placed on the left or right of the viewport or toward the right if
 	    the colorbar is placed on the top or bottom of the viewport. If the
 	    <literal>PL_COLORBAR_BACKGROUND</literal> bit is set, plot a
-	    (semi-transparent) background for the color bar. If the
+	    (semitransparent) background for the color bar. If the
 	    <literal>PL_COLORBAR_BOUNDING_BOX</literal> bit is set, plot a
 	    bounding box for the color bar. The type of color bar must be
 	    specified with one of <literal>PL_COLORBAR_IMAGE</literal>,
@@ -3274,12 +3273,14 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Sets up plotter environment for simple graphs by calling &pladv; and
-      setting up viewport and window to sensible default values.  &plenv0;
-      leaves enough room around most graphs for axis labels and a title.
-      When these defaults are not suitable, use the individual routines
-      &plvpas;, &plvpor;, or &plvasp; for setting up the viewport, &plwind;
-      for defining the window, and &plbox; for drawing the box.
+      Sets up plotter environment for simple graphs by calling &pladv;
+      and setting up viewport and window to sensible default values.
+      &plenv0; leaves a standard margin (left-hand margin of eight character
+      heights, and a margin around the other three sides of five character
+      heights) around most graphs for axis labels and a title.  When these
+      defaults are not suitable, use the individual routines &plvpas;,
+      &plvpor;, or &plvasp; for setting up the viewport, &plwind; for
+      defining the window, and &plbox; for drawing the box.
     </para>
 
     <variablelist>
@@ -3627,12 +3628,14 @@ time is specified by the following parameters:
     </para>
 
     <para>
-      Sets up plotter environment for simple graphs by calling &pladv; and
-      setting up viewport and window to sensible default values.  &plenv;
-      leaves enough room around most graphs for axis labels and a title.
-      When these defaults are not suitable, use the individual routines
-      &plvpas;, &plvpor;, or &plvasp; for setting up the viewport, &plwind;
-      for defining the window, and &plbox; for drawing the box.
+      Sets up plotter environment for simple graphs by calling &pladv;
+      and setting up viewport and window to sensible default values.
+      &plenv; leaves a standard margin (left-hand margin of eight character
+      heights, and a margin around the other three sides of five character
+      heights) around most graphs for axis labels and a title.  When these
+      defaults are not suitable, use the individual routines &plvpas;,
+      &plvpor;, or &plvasp; for setting up the viewport, &plwind; for
+      defining the window, and &plbox; for drawing the box.
     </para>
 
     <variablelist>
@@ -5894,7 +5897,7 @@ device support!)
     </para>
 
     <para>
-      Draw a linear gradient using colour map 1 inside the polygon
+      Draw a linear gradient using cmap1 inside the polygon
       defined by the <literal><parameter>n</parameter></literal> points
       <literal>(<parameter>x</parameter>[i],
       <parameter>y</parameter>[i])</literal>.  Interpretation of the polygon
@@ -5909,9 +5912,9 @@ device support!)
       can be interpreted as being anywhere on the line corresponding to the
       minimum <literal><parameter>x</parameter></literal> value for the
       vertices in the rotated coordinate system.  The distance along the gradient
-      vector is linearly transformed to the independent variable of colour
+      vector is linearly transformed to the independent variable of color
       map 1 which ranges from 0. at the tail of the gradient vector to 1. at
-      the head of the gradient vector.  What is drawn is the RGBA colour
+      the head of the gradient vector.  What is drawn is the RGBA color
       corresponding to the independent variable of cmap1.  For more
       information about cmap1 (see <xref linkend="color-map-1"/>).
     </para>
@@ -6970,7 +6973,7 @@ device support!)
     </para>
 
     <para>
-      Convert HLS colour coordinates to RGB.
+      Convert HLS color coordinates to RGB.
     </para>
 
     <variablelist>
@@ -6981,7 +6984,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Hue in degrees (0.0-360.0) on the colour cylinder.
+	    Hue in degrees (0.0-360.0) on the color cylinder.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -6992,7 +6995,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Lightness expressed as a fraction (0.0-1.0) of the axis of the colour
+	    Lightness expressed as a fraction (0.0-1.0) of the axis of the color
 	    cylinder.
 	  </para>
 	</listitem>
@@ -7005,7 +7008,7 @@ device support!)
 	<listitem>
 	  <para>
 	    Saturation expressed as a fraction (0.0-1.0) of the radius of the
-	    colour cylinder.
+	    color cylinder.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7016,7 +7019,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Returned value of the red intensity (0.0-1.0) of the colour.
+	    Returned value of the red intensity (0.0-1.0) of the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7027,7 +7030,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Returned value of the green intensity (0.0-1.0) of the colour.
+	    Returned value of the green intensity (0.0-1.0) of the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7038,7 +7041,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Returned value of the blue intensity (0.0-1.0) of the colour.
+	    Returned value of the blue intensity (0.0-1.0) of the color.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7246,7 +7249,7 @@ device support!)
   <sect1 id="plimage" renderas="sect3">
     <title>
       <function>plimage</function>: Plot a 2D matrix using cmap1 with
-      automatic colour adjustment
+      automatic color adjustment
     </title>
 
     <para>
@@ -7666,7 +7669,7 @@ device support!)
 	    right. Otherwise, put the text area on the right of the legend and the
 	    plotted area on the left. If the
 	    <literal>PL_LEGEND_BACKGROUND</literal> bit is set, plot a
-	    (semi-transparent) background for the legend. If the
+	    (semitransparent) background for the legend. If the
 	    <literal>PL_LEGEND_BOUNDING_BOX</literal> bit is set, plot a bounding
 	    box for the legend. If the <literal>PL_LEGEND_ROW_MAJOR</literal> bit
 	    is set and (both of the possibly internally transformed)
@@ -10040,9 +10043,7 @@ device support!)
             Position of the reference point of string, measured outwards
             from the specified viewport edge in units of the current
             character height.  Use negative
-            <literal>
-              <parameter>disp</parameter>
-            </literal> to write within
+	    <literal><parameter>disp</parameter></literal> to write within
             the viewport.
           </para>
         </listitem>
@@ -10231,9 +10232,7 @@ device support!)
             Position of the reference point of string, measured outwards
             from the specified viewport edge in units of the current
             character height.  Use negative
-            <literal>
-              <parameter>disp</parameter>
-            </literal> to write within
+            <literal><parameter>disp</parameter></literal> to write within
             the viewport.
           </para>
         </listitem>
@@ -11263,7 +11262,7 @@ device support!)
 
   <sect1 id="plpat" renderas="sect3">
     <title>
-      <function>plpat</function>: Set area fill pattern
+      <function>plpat</function>: Set area line fill pattern
     </title>
 
     <para>
@@ -11286,12 +11285,13 @@ device support!)
     </para>
 
     <para>
-      Sets the area fill pattern.  The pattern consists of 1 or 2 sets of
+      Sets the area line fill pattern to be used, e.g., for calls to &plfill;.
+      The pattern consists of 1 or 2 sets of
       parallel lines with specified inclinations and spacings.  The
       arguments to this routine are the number of sets to use (1 or 2)
       followed by two vectors (with 1 or 2 elements)
       specifying the inclinations in tenths of a degree and the spacing in
-      micrometers.  (also see &plpsty;)
+      micrometers.  (See also &plpsty;)
     </para>
 
     <variablelist>
@@ -11966,8 +11966,12 @@ device support!)
     </para>
 
     <para>
-      Select one of eight predefined area fill patterns to use (also see
-      &plpat;). Setting the fill style to 0 gives a solid fill.
+      If <parameter>patt</parameter> is zero or less use either a
+      hardware solid fill if the drivers have that capability (virtually all do) or
+      fall back to a software emulation of a solid fill using the
+      eighth area line fill pattern.  If 0 &lt; <parameter>patt</parameter> &le; 8, then
+      select one of eight predefined area line fill patterns to use (see
+      &plpat; if you desire other patterns).
     </para>
 
     <variablelist>
@@ -11978,9 +11982,15 @@ device support!)
         </term>
         <listitem>
           <para>
-            The desired pattern. Pattern 1 consists of horizontal lines,
-            pattern 2 consists of vertical lines, pattern 3 consists of lines
-            at 45 degrees angle (upward), and so on.
+            The desired pattern index. If <parameter>patt</parameter>
+	    is zero or less, then a solid fill is (normally, see qualifiers above)
+	    used.  For <parameter>patt</parameter> in the range from 1 to 8 and
+	    assuming the driver has not supplied line fill capability itself (most
+	    deliberately do not so that line fill patterns look identical for
+	    those drivers), the patterns consist of (1) horizontal lines, (2)
+	    vertical lines, (3) lines at 45 degrees, (4) lines at -45 degrees, (5)
+	    lines at 30 degrees, (6) lines at -30 degrees, (7) both vertical and
+	    horizontal lines, and (8) lines at both 45 degrees and -45 degrees.
           </para>
         </listitem>
       </varlistentry>
@@ -12530,7 +12540,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Red intensity (0.0-1.0) of the colour.
+            Red intensity (0.0-1.0) of the color.
           </para>
         </listitem>
       </varlistentry>
@@ -12541,7 +12551,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Green intensity (0.0-1.0) of the colour.
+            Green intensity (0.0-1.0) of the color.
           </para>
         </listitem>
       </varlistentry>
@@ -12552,7 +12562,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Blue intensity (0.0-1.0) of the colour.
+            Blue intensity (0.0-1.0) of the color.
           </para>
         </listitem>
       </varlistentry>
@@ -12563,7 +12573,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Returned value of the hue in degrees (0.0-360.0) on the colour cylinder.
+            Returned value of the hue in degrees (0.0-360.0) on the color cylinder.
           </para>
         </listitem>
       </varlistentry>
@@ -12574,7 +12584,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Returned value of the lightness expressed as a fraction (0.0-1.0) of the axis of the colour
+            Returned value of the lightness expressed as a fraction (0.0-1.0) of the axis of the color
             cylinder.
           </para>
         </listitem>
@@ -12587,7 +12597,7 @@ device support!)
         <listitem>
           <para>
             Returned value of the saturation expressed as a fraction (0.0-1.0) of the radius of the
-            colour cylinder.
+            color cylinder.
           </para>
         </listitem>
       </varlistentry>
@@ -12923,10 +12933,11 @@ device support!)
     </para>
 
     <para>
-      Set number of colors in color map0 (see <xref linkend="color-map-0"/>). Allocate (or reallocate) color map0,
-      and fill with default values for those colors not previously allocated.
-      The first 16 default colors are given in the &plcol0; documentation.
-      For larger indices the default color is red.
+      Set number of colors in cmap0 (see <xref
+      linkend="color-map-0"/>). Allocate (or reallocate) cmap0, and fill
+      with default values for those colors not previously allocated.  The
+      first 16 default colors are given in the &plcol0; documentation.  For
+      larger indices the default color is red.
     </para>
 
     <para>
@@ -12941,7 +12952,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Number of colors that will be allocated in the map0 palette.
+            Number of colors that will be allocated in the cmap0 palette.
             If this number is zero or less, then the value from the
             previous call to &plscmap0n; is used and if there is no
             previous call, then a default value is used.
@@ -12982,15 +12993,17 @@ device support!)
       </funcsynopsis>
     </para>
 
-    <para>
-      Set the cmap1 argument range for continuous color
-      plots. If <parameter>min_color</parameter> is greater than
-      <parameter>max_color</parameter> or
-      <parameter>max_color</parameter> is greater than 1.0 or
-      <parameter>min_color</parameter> is less than 0.0 then no change
-      is made.  (Use &plgcmap1_range; to get the cmap1
-      argument range.)
-    </para>
+    <para>Set the cmap1 argument range for continuous color plots that
+    corresponds to the range of data values.  The maximum range
+    corresponding to the entire cmap1 palette is 0.0-1.0, and the smaller
+    the cmap1 argument range that is specified with this routine, the
+    smaller the subset of the cmap1 color palette that is used to
+    represent the continuous data being plotted.  If
+    <parameter>min_color</parameter> is greater than
+    <parameter>max_color</parameter> or <parameter>max_color</parameter>
+    is greater than 1.0 or <parameter>min_color</parameter> is less than
+    0.0 then no change is made to the cmap1 argument range.  (Use
+    &plgcmap1_range; to get the cmap1 argument range.)</para>
 
     <variablelist>
       <varlistentry>
@@ -12999,9 +13012,8 @@ device support!)
           (<literal>&PLFLT;</literal>, input)
         </term>
         <listitem>
-          <para>
-            The minimum cmap1 argument.
-          </para>
+          <para>The minimum cmap1 argument.  If less than 0.0, then
+	  0.0 is used instead.</para>
         </listitem>
       </varlistentry>
       <varlistentry>
@@ -13010,9 +13022,8 @@ device support!)
           (<literal>&PLFLT;</literal>, input)
         </term>
         <listitem>
-          <para>
-            The maximum cmap1 argument.
-          </para>
+          <para>The maximum cmap1 argument.  If greater than 1.0,
+	  then 1.0 is used instead.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -13029,7 +13040,7 @@ device support!)
 
   <sect1 id="plscmap1" renderas="sect3">
     <title>
-      <function>plscmap1</function>: Set cmap1 colors using 8-bit RGB
+      <function>plscmap1</function>: Set opaque RGB cmap1 colors
       values
     </title>
 
@@ -13056,8 +13067,15 @@ device support!)
     </para>
 
     <para>
-      Set cmap1 colors using 8-bit RGB values (see <xref
-    linkend="color-map-1"/>).  This also sets the number of colors.
+      Set opaque cmap1 colors (see <xref linkend="color-map-1"/>)
+      using RGB vector values.  This function also sets the
+      number of cmap1 colors.  N.B. Continuous cmap1 colors are indexed with
+      a floating-point index in the range from 0.0-1.0 which is linearly
+      transformed (e.g., by &plcol1;) to an integer index of these RGB
+      vectors in the range from 0 to <parameter>ncol1-1</parameter>.  So in
+      order for this continuous color model to work properly, it is the
+      responsibility of the user of &plscmap1; to insure that these RGB
+      vectors are continuous functions of their integer indices.
     </para>
 
     <variablelist>
@@ -13068,8 +13086,9 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing unsigned 8-bit integers (0-255)
-            representing the degree of red in the color.
+            A vector that represents (using unsigned 8-bit integers in
+	    the range from 0-255) the degree of red in the color as a continuous
+	    function of the integer index of the vector.
           </para>
         </listitem>
       </varlistentry>
@@ -13080,8 +13099,9 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing unsigned 8-bit integers (0-255)
-            representing the degree of green in the color.
+            A vector that represents (using unsigned 8-bit integers in
+	    the range from 0-255) the degree of green in the color as a continuous
+	    function of the integer index of the vector.
           </para>
         </listitem>
       </varlistentry>
@@ -13092,8 +13112,9 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing unsigned 8-bit integers (0-255)
-            representing the degree of blue in the color.
+            A vector that represents (using unsigned 8-bit integers in
+	    the range from 0-255) the degree of blue in the color as a continuous
+	    function of the integer index of the vector.
           </para>
         </listitem>
       </varlistentry>
@@ -13131,8 +13152,7 @@ device support!)
 
   <sect1 id="plscmap1a" renderas="sect3">
     <title>
-      <function>plscmap1a</function>: Set cmap1 colors using 8-bit RGB values
-      and PLFLT alpha transparency values
+      <function>plscmap1a</function>: Set semitransparent cmap1 RGBA colors.
     </title>
 
     <para>
@@ -13161,9 +13181,15 @@ device support!)
     </para>
 
     <para>
-      Set cmap1 colors using 8-bit RGB values (see <xref
-    linkend="color-map-1"/>) and PLFLT alpha transparency values.
-      This also sets the number of colors.
+      Set semitransparent cmap1 colors (see <xref linkend="color-map-1"/>)
+      using RGBA vector values.  This function also sets the
+      number of cmap1 colors.  N.B. Continuous cmap1 colors are indexed with
+      a floating-point index in the range from 0.0-1.0 which is linearly
+      transformed (e.g., by &plcol1;) to an integer index of these RGBA
+      vectors in the range from 0 to <parameter>ncol1-1</parameter>.  So in
+      order for this continuous color model to work properly, it is the
+      responsibility of the user of &plscmap1; to insure that these RGBA
+      vectors are continuous functions of their integer indices.
     </para>
 
     <variablelist>
@@ -13174,8 +13200,9 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing unsigned 8-bit integers (0-255)
-            representing the degree of red in the color.
+            A vector that represents (using unsigned 8-bit integers in
+	    the range from 0-255) the degree of red in the color as a continuous
+	    function of the integer index of the vector.
           </para>
         </listitem>
       </varlistentry>
@@ -13186,8 +13213,9 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing unsigned 8-bit integers (0-255)
-            representing the degree of green in the color.
+            A vector that represents (using unsigned 8-bit integers in
+	    the range from 0-255) the degree of green in the color as a continuous
+	    function of the integer index of the vector.
           </para>
         </listitem>
       </varlistentry>
@@ -13198,8 +13226,9 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing unsigned 8-bit integers (0-255)
-            representing the degree of blue in the color.
+            A vector that represents (using unsigned 8-bit integers in
+	    the range from 0-255) the degree of blue in the color as a continuous
+	    function of the integer index of the vector.
           </para>
         </listitem>
       </varlistentry>
@@ -13210,8 +13239,12 @@ device support!)
         </term>
         <listitem>
           <para>
-            A vector containing PLFLT values (0.0-1.0)
-            representing the alpha transparency value of the color.
+            A vector that represents (using PLFLT values in
+	    the range from 0.0-1.0 where 0.0 corresponds
+	    to completely transparent and 1.0 corresponds to
+	    completely opaque) the alpha transparency
+	    of the color as a continuous function of
+	    the integer index of the vector.
           </para>
         </listitem>
       </varlistentry>
@@ -13692,9 +13725,9 @@ device support!)
     </para>
 
     <para>
-      Set number of colors in cmap1, (re-)allocate color map1, and
-      set default values if this is the first allocation (see <xref
-    linkend="color-map-1"/>).
+      Set number of colors in cmap1, (re-)allocate cmap1, and set
+      default values if this is the first allocation (see <xref
+      linkend="color-map-1"/>).
     </para>
 
     <variablelist>
@@ -13705,7 +13738,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Number of colors that will be allocated in the map1 palette.
+            Number of colors that will be allocated in the cmap1 palette.
             If this number is zero or less, then the value from the
             previous call to &plscmap1n; is used and if there is no
             previous call, then a default value is used.
@@ -13953,7 +13986,7 @@ device support!)
     </para>
 
     <para>
-      Set the background color (color 0 in color map 0) by 8-bit RGB value (see
+      Set the background color (color 0 in cmap0) by 8-bit RGB value (see
       <xref linkend="color-map-0"/>).
     </para>
 
@@ -14035,8 +14068,9 @@ device support!)
     </para>
 
     <para>
-      Set the background color (color 0 in color map 0) by 8-bit RGB value (see
-      <xref linkend="color-map-0"/>) and PLFLT alpha transparency value.
+      Set the background color (color 0 in cmap0) by 8-bit RGB value
+      and PLFLT alpha transparency value (see
+      <xref linkend="color-map-0"/>).
     </para>
 
     <variablelist>
@@ -15793,19 +15827,11 @@ device support!)
         <listitem>
           <para>
             Defines color map. If
-            <literal>
-              <parameter>sh_cmap</parameter>=0
-            </literal>, then
-            <literal>
-              <parameter>sh_color</parameter>
-            </literal>
-            is interpreted as a color map 0 (integer) index.  If
-            <literal>
-              <parameter>sh_cmap</parameter>=1
-            </literal>, then
-            <literal>
-              <parameter>sh_color</parameter>
-            </literal>
+            <literal><parameter>sh_cmap</parameter>=0</literal>, then
+            <literal><parameter>sh_color</parameter></literal>
+            is interpreted as a cmap0 (integer) index.  If
+            <literal><parameter>sh_cmap</parameter>=1</literal>, then
+            <literal><parameter>sh_color</parameter></literal>
             is interpreted as a cmap1 argument in the range (0.0-1.0).
           </para>
         </listitem>
@@ -16594,8 +16620,8 @@ device support!)
 
   <sect1 id="plspal0" renderas="sect3">
     <title>
-      <function>plspal0</function>: Set the colors for color table 0
-      from a cmap0 file
+      <function>plspal0</function>: Set the cmap0 palette using the
+      specified <filename>cmap0*.pal</filename> format file
     </title>
 
     <para>
@@ -16612,7 +16638,8 @@ device support!)
     </para>
 
     <para>
-      Set the colors for color table 0 from a cmap0 file
+      Set the cmap0 palette using the specified
+      <filename>cmap0*.pal</filename> format file.
     </para>
 
     <variablelist>
@@ -16643,8 +16670,8 @@ device support!)
 
   <sect1 id="plspal1" renderas="sect3">
     <title>
-      <function>plspal1</function>: Set the palette for cmap1
-      using the specified <filename>cmap1*.pal</filename> format file
+      <function>plspal1</function>: Set the cmap1 palette using the
+      specified <filename>cmap1*.pal</filename> format file
     </title>
 
     <para>
@@ -16664,7 +16691,8 @@ device support!)
     </para>
 
     <para>
-      Set the palette for cmap1 using the specified <filename>cmap1*.pal</filename> format file.
+      Set the cmap1 palette using the specified
+      <filename>cmap1*.pal</filename> format file.
     </para>
 
     <variablelist>
@@ -19333,11 +19361,9 @@ device support!)
     </para>
 
     <para>
-      Sets the viewport so that the ratio of the length of the y axis to
-      that of the x axis is equal to
-      <literal>
-        <parameter>aspect</parameter>
-      </literal>.
+      Selects the largest viewport with the given aspect ratio within
+      the subpage that leaves a standard margin (left-hand margin of eight character heights,
+      and a margin around the other three sides of five character heights).
     </para>
 
     <variablelist>
@@ -19348,7 +19374,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            Ratio of length of y axis to length of x axis.
+            Ratio of length of y axis to length of x axis of resulting viewport.
           </para>
         </listitem>
       </varlistentry>
@@ -19639,7 +19665,7 @@ device support!)
 
   <sect1 id="plvpor" renderas="sect3">
     <title>
-      <function>plvpor</function>: Specify viewport using coordinates
+      <function>plvpor</function>: Specify viewport using normalized subpage coordinates
     </title>
 
     <para>
@@ -19750,9 +19776,9 @@ device support!)
     </para>
 
     <para>
-      Sets up a standard viewport, leaving a left-hand margin of seven
-      character heights, and four character heights around the other three
-      sides.
+      Selects the largest viewport within the subpage that leaves a
+      standard margin (left-hand margin of eight character heights, and a margin around the
+      other three sides of five character heights).
     </para>
 
     <para>
@@ -19767,7 +19793,7 @@ device support!)
 
   <sect1 id="plw3d" renderas="sect3">
     <title>
-      <function>plw3d</function>: Set up window for 3-d plotting
+      <function>plw3d</function>: Configure the transformations required for projecting a 3D surface on a 2D window
     </title>
 
     <para>
@@ -19813,82 +19839,49 @@ device support!)
       </funcsynopsis>
     </para>
 
-    <para>
-      Sets up a window for a three-dimensional surface plot within the
-      currently defined two-dimensional window.  The enclosing box for the
-      surface plot defined by
-      <literal>
-        <parameter>xmin</parameter>
-      </literal>,
-      <literal>
-        <parameter>xmax</parameter>
-      </literal>,
-      <literal>
-        <parameter>ymin</parameter>
-      </literal>,
-      <literal>
-        <parameter>ymax</parameter>
-      </literal>,
-      <literal>
-        <parameter>zmin</parameter>
-      </literal> and
-      <literal>
-        <parameter>zmax</parameter>
-      </literal> in user-coordinate
-      space is mapped into a box of world coordinate size
-      <literal>
-        <parameter>basex</parameter>
-      </literal> by
-      <literal>
-        <parameter>basey</parameter>
-      </literal> by
-      <literal>
-        <parameter>height</parameter>
-      </literal> so that
-      <literal>
-        <parameter>xmin</parameter>
-      </literal> maps to
-      <literal>
-        -<parameter>basex</parameter>/2
-      </literal>,
-      <literal>
-        <parameter>xmax</parameter>
-      </literal> maps to
-      <literal>
-        <parameter>basex</parameter>/2
-      </literal>,
-      <literal>
-        <parameter>ymin</parameter>
-      </literal> maps to
-      <literal>
-        -<parameter>basey</parameter>/2
-      </literal>,
-      <literal>
-        <parameter>ymax</parameter>
-      </literal> maps to
-      <literal>
-        <parameter>basey</parameter>/2
-      </literal>,
-      <literal>
-        <parameter>zmin</parameter>
-      </literal> maps to
-      <literal>0</literal> and
-      <literal>
-        <parameter>zmax</parameter>
-      </literal> maps to
-      <literal>
-        <parameter>height</parameter>
-      </literal>.  The resulting
-      world-coordinate box is then viewed by an observer at altitude
-      <literal>
-        <parameter>alt</parameter>
-      </literal> and azimuth
-      <literal>
-        <parameter>az</parameter>
-      </literal>.  This routine must be
-      called before &plbox3; or &plot3d;.  For a more complete description
-      of three-dimensional plotting see <xref linkend="tri-d-plots"/>.
-    </para>
+    <para>Configure the transformations required for projecting a 3D
+    surface on an existing 2D window.  Those transformations (see <xref
+    linkend="surface-plots"/>) are done to a rectangular cuboid enclosing
+    the 3D surface which has its limits expressed in 3D world coordinates
+    and also normalized 3D coordinates (used for interpreting the altitude and
+    azimuth of the viewing angle).  The transformations consist of the
+    linear transform from 3D world coordinates to normalized 3D coordinates,
+    and the 3D rotation of normalized coordinates required to align the pole
+    of the new 3D coordinate system with the viewing direction specified
+    by altitude and azimuth so that x and y of the surface elements in
+    that transformed coordinate system are the projection of the 3D
+    surface with given viewing direction on the 2D window.</para>
+
+    <para>The enclosing rectangular cuboid for the surface plot is
+    defined by <literal><parameter>xmin</parameter></literal>,
+    <literal><parameter>xmax</parameter></literal>,
+    <literal><parameter>ymin</parameter></literal>,
+    <literal><parameter>ymax</parameter></literal>,
+    <literal><parameter>zmin</parameter></literal> and
+    <literal><parameter>zmax</parameter></literal> in 3D
+    world coordinates.  It is mapped into the same rectangular
+    cuboid with normalized 3D coordinate sizes of
+    <literal><parameter>basex</parameter></literal> by
+    <literal><parameter>basey</parameter></literal> by
+    <literal><parameter>height</parameter></literal> so that
+    <literal><parameter>xmin</parameter></literal> maps to
+    <literal>-<parameter>basex</parameter>/2</literal>,
+    <literal><parameter>xmax</parameter></literal> maps to
+    <literal><parameter>basex</parameter>/2</literal>,
+    <literal><parameter>ymin</parameter></literal> maps to
+    <literal>-<parameter>basey</parameter>/2</literal>,
+    <literal><parameter>ymax</parameter></literal> maps to
+    <literal><parameter>basey</parameter>/2</literal>,
+    <literal><parameter>zmin</parameter></literal> maps to
+    <literal>0</literal> and
+    <literal><parameter>zmax</parameter></literal> maps to
+    <literal><parameter>height</parameter></literal>.  The resulting
+    rectangular cuboid in normalized coordinates is then viewed by an observer at altitude
+    <literal><parameter>alt</parameter></literal> and azimuth
+    <literal><parameter>az</parameter></literal>.  This routine must be
+    called before &plbox3; or any of the 3D surface plotting routines;
+    &plmesh;, &plmeshc;, &plot3d;,
+    &plot3dc;, &plot3dcl;, &plsurf3d;, &plsurf3dl; or &plfill3;.</para>
 
     <variablelist>
       <varlistentry>
@@ -19898,7 +19891,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The x coordinate size of the world-coordinate box.
+            The normalized x coordinate size of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19909,7 +19902,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The y coordinate size of the world-coordinate box.
+            The normalized y coordinate size of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19920,7 +19913,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The z coordinate size of the world-coordinate box.
+            The normalized z coordinate size of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19931,7 +19924,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The minimum user x coordinate value.
+            The minimum x world coordinate of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19942,7 +19935,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The maximum user x coordinate value.
+            The maximum x world coordinate of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19953,7 +19946,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The minimum user y coordinate value.
+            The minimum y world coordinate of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19964,7 +19957,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The maximum user y coordinate value.
+            The maximum y world coordinate of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19975,7 +19968,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The minimum user z coordinate value.
+            The minimum z world coordinate of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19986,7 +19979,7 @@ device support!)
         </term>
         <listitem>
           <para>
-            The maximum user z coordinate value.
+            The maximum z world coordinate of the rectangular cuboid.
           </para>
         </listitem>
       </varlistentry>
@@ -19997,7 +19990,8 @@ device support!)
         </term>
         <listitem>
           <para>
-            The viewing altitude in degrees above the XY plane.
+            The viewing altitude in degrees above the xy plane of the rectangular
+	    cuboid in normalized coordinates.
           </para>
         </listitem>
       </varlistentry>
@@ -20007,18 +20001,14 @@ device support!)
           (<literal>&PLFLT;</literal>, input)
         </term>
         <listitem>
-          <para>
-            The viewing azimuth in degrees.  When
-            <literal>
-              <parameter>az</parameter>=0
-            </literal>, the observer is
-            looking face onto the ZX plane, and as
-            <literal>
-              <parameter>az</parameter>
-            </literal> is increased, the
-            observer moves clockwise around the box when viewed from above
-            the XY plane.
-          </para>
+          <para>The viewing azimuth in degrees of the rectangular
+	  cuboid in normalized coordinates.  When
+	  <literal><parameter>az</parameter>=0</literal>, the observer is
+	  looking face onto the zx plane of the rectangular
+	  cuboid in normalized coordinates, and as
+	  <literal><parameter>az</parameter></literal> is increased, the
+	  observer moves clockwise around that cuboid when viewed from above
+          the xy plane.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -20092,7 +20082,7 @@ device support!)
 
   <sect1 id="plwind" renderas="sect3">
     <title>
-      <function>plwind</function>: Specify world coordinates of viewport boundaries
+      <function>plwind</function>: Specify window
     </title>
 
     <para>
@@ -20118,7 +20108,7 @@ device support!)
     </para>
 
     <para>
-      Sets up the world coordinates of the edges of the viewport.
+      Specify the window, i.e., the world coordinates of the edges of the viewport.
     </para>
 
     <variablelist>
