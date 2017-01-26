@@ -80,6 +80,7 @@ $api .= "<!ENTITY amp '#38;#38;'>
 <!ENTITY deg ' degrees'>
 <!ENTITY gt '&#x003E;'>
 <!ENTITY leq '&#38;#60;='>
+<!ENTITY le '&#38;#60;='>
 <!ENTITY lt '&#38;#60;'>
 <!ENTITY ndash '--'>
 ]>\n";
