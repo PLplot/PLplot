@@ -37,16 +37,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="simple">
   <title>Simple Use of PLplot</title>
-  <para> We describe simple use of PLplot in this chapter.  Note that
-  throughout this chapter there are references to examples written in C
-  using PLplot C types such as PLFLT and PLINT.  For full documentation
-  of all PLplot C types see <link linkend="plplot-types">here</link>.  For full
-  documentation for our supported languages and the language types
-  corresponding to the PLplot C types see the various chapters in <xref
-  linkend="part_bindings"/>.  Note also that
-  <filename>examples/&lt;language&gt;/x*</filename> contains a large
-  number of standard PLplot examples which demonstrate how the PLplot
-  API should be used for each of our supported languages.</para>
+  <para>We describe simple use of PLplot in this chapter which
+  includes many cross-references to elements of our <link
+  linkend="API">common (C) API</link> that use PLplot C types such as
+  &PLFLT; and &PLINT;.  For full documentation of all PLplot C types see
+  <link linkend="plplot-types">here</link>.  The best way to learn how
+  to use our common API for the language of your choice is to look at
+  <ulink url="&PLplot-website;/examples.php">our standard set of
+  examples</ulink>.  For additional language documentation you should
+  consult the various chapters in <xref linkend="part_bindings"/> as
+  well.</para>
+
   <sect1 id="simple-graph">
     <title>Plotting a Simple Graph</title>
 
@@ -74,10 +75,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</para>
       </listitem>
     </itemizedlist>
-    <para>See our standard example 00 for a good example of such a simple
-    graph that is implemented in
-    <filename>examples/&lt;language&gt;/x*00*</filename> for each of our
-    supported languages.</para>
+    <para>For a good tutorial example of such a simple graph for each
+    of our supported languages, see <ulink
+    url="&PLplot-website;/examples.php?demo=00">our standard example
+    00</ulink>.</para>
+
     <para>In order to draw such a simple graph, it is necessary to
     call at least four of the PLplot functions: </para>
     <orderedlist>
@@ -194,13 +196,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <sect2 id="points">
       <title>Drawing Points</title>
 
-      <para>&plstring;, &plpoin;, and &plsym; plot <literal>n</literal>
-      points <literal>(x[i], y[i])</literal> using the specified symbol.
-      The routines differ only in how the plotted symbol is specified.
-      &plstring; is now the preferred way of drawing points for
-      unicode-aware devices because it gives users full access via a UTF-8
-      string to any unicode glyph they prefer for the symbol that is is
-      available via system fonts. &plpoin; and &plsym; are limited to
+      <para>&plstring;, &plpoin;, and &plsym; plot
+      <literal>n</literal> points <literal>(x[i], y[i])</literal> using the
+      specified symbol.  The routines differ only in how the plotted symbol
+      is specified.  &plstring; is now the preferred way of drawing points
+      for unicode-aware devices because it gives users full access via a
+      UTF-8 string to any unicode glyph they prefer for the symbol that is
+      is available via system fonts. &plpoin; and &plsym; are limited to
       Hershey glyphs and are therefore more suitable for device drivers that
       only use Hershey fonts.  For both of these functions the Hershey glyph
       is indicated by a code value.  &plpoin; uses an extended ASCII index
@@ -208,9 +210,16 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       mapping to the respective characters in the current Hershey font, and
       the codes from 0&ndash;31 mapping to various useful Hershey glyphs for
       symbols.  In &plsym; however, the code is a Hershey font code number.
-      Examples 04, 21, and 26 demonstrate use of &plstring; while example 6
-      demonstrates all the Hershey symbols available with &plpoin; and
-      example 7 demonstrates all the Hershey symbols available with
+      Standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=04">04</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=21">21</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=26">26</ulink>, demonstrate
+      use of &plstring; while <ulink
+      url="&PLplot-website;/examples.php?demo=06">standard example
+      06</ulink> demonstrates all the Hershey symbols available with
+      &plpoin; and <ulink
+      url="&PLplot-website;/examples.php?demo=07">standard example
+      07</ulink> demonstrates all the Hershey symbols available with
       &plsym;.</para>
     </sect2>
 
