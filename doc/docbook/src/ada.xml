@@ -357,13 +357,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       libraries, and BLAS (Basic Linear Algebra System) and LAPACK (Linear
       Algebra Package) are hard-coded. You will have to adjust the paths to
       fit your installation. Some Linux installations which have GNAT 4.3 or
-      later (Ada 2005) pre-installed might have already set the paths to the
+      later (Ada 2005) preinstalled might have already set the paths to the
       BLAS and LAPACK libraries.</para>
       <para>(Note that the G.3 Annex of Ada 2005, in the GNAT version, depends
       heavily on BLAS and LAPACK. These packages are tried-and-true packages
       that are available from several places in either C or Fortran versions.
       The present example is specific to OS X which has both C and Fortran
-      versions pre-installed.)</para>
+      versions preinstalled.)</para>
       <programlisting>
  #!/bin/bash
  /usr/local/ada-4.3/bin/gnatmake simple_example.adb \
@@ -488,12 +488,12 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         call such as <literal>Set_Pen_Color(Red)</literal> will also cause
         drawing in red.</para>
         <para>Color map 1 also gets a easy-to-use makeover for Ada users.
-        There are several pre-built color themes that are useful for quickly
+        There are several prebuilt color themes that are useful for quickly
         making surface and mesh plots,
         <literal>Color_Themes_For_Map_1_Type</literal>. These color themes can
         be quickly applied with
         <literal>Quick_Set_Color_Map_1</literal>.</para>
-        <para>Miscellaneous other Ada features include a pre-built mask
+        <para>Miscellaneous other Ada features include a prebuilt mask
         function for <literal>Shade_Regions</literal> that does no masking;
         perhaps the most useful purpose is to provide a template for writing
         mask functions that do mask. And there is a handy function for
@@ -512,14 +512,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           </listitem>
           <listitem>
             <para>Easy manipulation of color map 1</para>
-            <para>Pre-built color themes for color map 1:
+            <para>Prebuilt color themes for color map 1:
             <literal>Color_Themes_For_Map_1_Type</literal></para>
-            <para>Quick application of pre-built color themes:
+            <para>Quick application of prebuilt color themes:
             <literal>Quick_Set_Color_Map_1</literal></para>
           </listitem>
           <listitem>
             <para>Other features</para>
-            <para>A pre-built mask function for
+            <para>A prebuilt mask function for
             <literal>Shade_Regions</literal> that does no masking:
             <literal>Mask_Function_No_Mask</literal></para>
             <para>An easy way to calculate an array of contour levels for
