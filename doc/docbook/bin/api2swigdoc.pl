@@ -246,6 +246,15 @@ for ($i = 0; $i < $ns; $i++) {
   # Escape double quotes in description and arguments
   $desc =~ s/\"/\\"/g;
   $varlist =~ s/\"/\\"/g;
+  # Perl processing leaves some trailing blanks.  Get rid of those.
+  $title =~ s/ *\n/\n/g;
+  $desc =~ s/ *\n/\n/g;
+  $synopsis =~ s/ *\n/\n/g;
+  $varlist =~ s/ *\n/\n/g;
+  $title =~ s/ *$//;
+  $desc =~ s/ *$//;
+  $synopsis =~ s/ *$//;
+  $varlist =~ s/ *$//;
   print SWIG_DOC "%feature( \"docstring\", \"$title\n";
   print SWIG_DOC "\nDESCRIPTION:\n\n$desc\n";
   print SWIG_DOC "\nSYNOPSIS:\n\n$synopsis\n";
