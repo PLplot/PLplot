@@ -3,8 +3,8 @@
 # Description: Convert the PLplot API chapter (file api.xml of the DocBook
 #              manual) into a swig documentation file.
 #
-# Copyright (C) 2000, 2003  Rafael Laboissiere
-# Copyright (C) 2010 Alan W. Irwin
+# Copyright (C) 2000, 2003 Rafael Laboissiere
+# Copyright (C) 2010-2017 Alan W. Irwin
 #
 # This script relies on the present structure of the API chapter (file
 # ../src/api.xml), where each API function is documented in its own
@@ -91,14 +91,21 @@ while (<MASTER>) {
     $api .= '<?xml version="1.0" standalone="yes"?>
 ';
   }
+# Use entities from MASTER starting with "pl"
   elsif (/^<!ENTITY pl/) {
     $api .= $_;
   }
+# Use entities from MASTER starting with "PL"
+  elsif (/^<!ENTITY PL/) {
+    $api .= $_;
+  }
 }
+# Add a few additional entities that are needed.
 $api .= "<!ENTITY amp '#38;#38;'>
 <!ENTITY deg ' degrees'>
 <!ENTITY gt '&#x003E;'>
 <!ENTITY leq '&#38;#60;='>
+<!ENTITY le '&#38;#60;='>
 <!ENTITY lt '&#38;#60;'>
 <!ENTITY ndash '--'>
 ]>\n";
