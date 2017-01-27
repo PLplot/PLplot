@@ -3,7 +3,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -57,7 +57,7 @@ set(MANVOL "3plplot")
 # For now, must set this (UTC) date by hand before each release.  This value affects
 # only the documentation build so we set it here rather than in some more
 # central place.
-set(RELEASE_DATE "2015-08-12")
+set(RELEASE_DATE "2017-01-28")
 
 foreach(suffix info html print)
   if(suffix STREQUAL "print")
