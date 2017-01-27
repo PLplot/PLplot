@@ -225,7 +225,8 @@ Testing the documentation that has been built.
 
 All tests are performed in the doc/docbook/src subdirectory _of the
 build tree_.  The given test commands are for the bash shell, and
-$version is currently 5.11.1.  For the man pages, look carefully at
+plplot_version is an environment variable that has been set
+to the current PLplot version.  For the man pages, look carefully at
 the style of the results.  For the rest, look carefully at the style
 of the api chapter and the style/results near Table-3.4 in the
 advanced chapter.  In particular look at how the following examples
@@ -233,6 +234,12 @@ render: the overline-underline example just prior to Table-3.4,
 Table-3.4 of Greek symbols, Table-3.5 of the "Peace" word expressed in
 various languages, and the mathematical symbols occurring in the
 paragraph just after Table-3.5.
+
+First, make sure all forms of the DocBook-generated documentation are built using
+
+make -j4 build_docbook_documentation.
+
+Then here are the specific tests for each kind of that generated documentation.
 
 1. man pages.
 
@@ -258,16 +265,16 @@ I suggest searching explicitly for "plot3dcl", "plsurf3dl", and
 "peace" to evaluate how the UTF-8 symbols are rendered. I got perfect
 results including the glyph order for the CTL scripts Hebrew, Arabic,
 and Devanagari (the script for Hindi) with konsole (KDE terminal that
-uses client-side TrueType glyphs selected by font-config) except for an extra character after
-the Hindi "Peace" word was rendered correctly.  I got so-so results
-for xterm (X terminal that uses server side X fonts with no
-font-config glyph selection) with Korean, Hindi, and Mandarin glyphs
-missing.  This may be a matter of installing more xfonts-* Debian
-packages, but I tried pretty hard with that (including restarting X
-after the xfonts-* package installation) without any improvement.  So
-the conclusion is to stick to a terminal (such as konsole but NOT
-xterm) that uses X client-side system unicode fonts and you should get
-near-perfect UTF-8 results with info.
+uses client-side TrueType glyphs selected by font-config) except for
+an extra character after the Hindi "Peace" word was rendered
+correctly.  I got so-so results for xterm (X terminal that uses server
+side X fonts with no font-config glyph selection) with Korean, Hindi,
+and Mandarin glyphs missing.  This may be a matter of installing more
+xfonts-* Debian packages, but I tried pretty hard with that (including
+restarting X after the xfonts-* package installation) without any
+improvement.  So the conclusion is to stick to a terminal (such as
+konsole but NOT xterm) that uses X client-side system unicode fonts
+and you should get near-perfect UTF-8 results with info.
 
 3. web pages.
 
@@ -281,7 +288,7 @@ CTL scripts Hebrew, Arabic, and Devanagari (the script for Hindi).
 4. pdf file
 
 Browse with your favorite browser the
-<doc/docbook/src/plplot-$version.pdf> file that is generated in your
+<doc/docbook/src/plplot-$plplot_version.pdf> file that is generated in your
 build tree.  To look especially for UTF-8 issues search for
 plot3dcl, plsurf3dl, and peace.  In this case, Korean and Mandarin
 glyphs are missing, and the last-few Hindi glyphs are rendered out of order.
