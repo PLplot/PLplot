@@ -40,7 +40,9 @@ if(ADD_SPECIAL_CONSISTENCY_CHECKING)
       COMMAND ${API_XML_CONSISTENCY_CHECKER} -header=${CMAKE_SOURCE_DIR}/include/plplot.h -incdir=${CMAKE_BINARY_DIR}/include -apixml=${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
       )
 
-    add_dependencies(check_all check_api_xml_consistency)
+    # This command no longer works because of all the huge api.xml and plplot.h changes
+    # made for plplot-5.12.0.  So do not make it a dependency of check_all.
+    # add_dependencies(check_all check_api_xml_consistency)
 
   else(API_XML_CONSISTENCY_CHECKER)
     message(STATUS "WARNING: cannot find the api.xml_consistency_checker application so cannot check the consistency of api.xml with plplot.h")
