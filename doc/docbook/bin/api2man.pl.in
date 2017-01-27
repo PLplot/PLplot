@@ -94,7 +94,7 @@ close API;
 $manvol = $ARGV[2];
 $date = `date +"%B, %Y"`;
 $date =~ s/\n.*//;
-$opening = ".\\\" This page was automatically generated.  Do not edit!\n.\\\" \n";
+$opening = ".\\\" This page was automatically generated.  Do not edit!\n.\\\"\n";
 $closing = "
 .SH AUTHORS
 Many developers (who are credited at @PLPLOT_WEBSITE@/credits.php)
@@ -221,6 +221,15 @@ for ($i = 0; $i < $ns; $i++) {
   # Get rid of extra spaces which might be after ":" in title
   # and replace ":" by "-"
   $title =~ s/: */ - /;
+  # Perl processing leaves some trailing blanks.  Get rid of those.
+  $title =~ s/ *\n/\n/g;
+  $desc =~ s/ *\n/\n/g;
+  $synopsis =~ s/ *\n/\n/g;
+  $varlist =~ s/ *\n/\n/g;
+  $title =~ s/ *$//;
+  $desc =~ s/ *$//;
+  $synopsis =~ s/ *$//;
+  $varlist =~ s/ *$//;
   print MAN ".SH NAME\n$title";
   print MAN "\n.SH SYNOPSIS\n$synopsis";
   print MAN "\n.SH DESCRIPTION\n$desc";
@@ -236,6 +245,9 @@ $main = "plplot.$manvol";
 open (MAN, "> $main");
 print MAN $opening;
 print MAN ".TH plplot 3plplot  \"" . $date . '" "" "PLplot API"' . "\n";
+# Perl processing leaves some trailing blanks.  Get rid of those.
+$titles =~ s/ *\n/\n/g;
+$titles =~ s/ *$//;
 print MAN ".SH NAME
 PLplot - Advanced 2D and 3D scientific plotting library
 .SH DESCRIPTION
