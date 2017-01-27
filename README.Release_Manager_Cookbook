@@ -47,8 +47,8 @@ version information.
 
 Also
 
-export plplot_version=5.11.1
-export old_plplot_version=5.11.0
+export plplot_version=5.12.0
+export old_plplot_version=5.11.1
 
 for further use in this file (much of it for real on the command line, but
 some of it symbolic for what you do using GUI's).
@@ -101,11 +101,11 @@ This step depends on the "Update versions" step above.
 Update the doxygen documentation (in our source code) and DocBook
 documentation (in doc/docbook/src) to reflect any changes (new drivers
 or new PLplot functionality) in the current release cycle.  Or
-alternatively, press those who made the changes to update the
+encourage those who made the changes to update the
 documentation.  Generate and test our doxygen form of documentation
 following the instructions in doc/README.doxygen.
 
-Update doc/docbook/src/CMakeLists.txt to reflect the best estimate
+Update doc/docbook/src/CMakeLists.txt to reflect your best estimate
 of the (UTC) release date that will be used in the documentation build.
 
 Update, generate and test our Docbook documentation following the
