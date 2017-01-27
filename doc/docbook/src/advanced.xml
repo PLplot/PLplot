@@ -3,7 +3,7 @@
     advanced.xml: "Advanced Use of PLplot" chapter
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999-2013 Alan W. Irwin
+Copyright (C) 1999-2017 Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003 Rafael Laboissiere
 Copyright (C) 2004 Andrew Roach
 Copyright (C) 2005 Thomas J. Duck
@@ -38,16 +38,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 <chapter id="advanced">
   <title>Advanced Use of PLplot</title>
-  <para> We describe advanced use of PLplot in this chapter.  Note that
-  throughout this chapter there are references to examples written in C
-  using PLplot C types such as PLFLT and PLINT.  For full documentation
-  of all PLplot C types see <link linkend="plplot-types">here</link>.  For full
-  documentation for our supported languages and the language types
-  corresponding to the PLplot C types see the various chapters in <xref
-  linkend="part_bindings"/>.  Note also that
-  <filename>examples/&lt;language&gt;/x*</filename> contains a large
-  number of standard PLplot examples which demonstrate how the PLplot
-  API should be used for each of our supported languages.</para>
+
+  <para>We describe advanced use of PLplot in this chapter which
+  includes many cross-references to elements of our <link
+  linkend="API">common (C) API</link> that use PLplot C types such as
+  &PLFLT; and &PLINT;.  For full documentation of all PLplot C types see
+  <link linkend="plplot-types">here</link>.  The best way to learn how
+  to use our common API for the language of your choice is to look at
+  <ulink url="&PLplot-website;/examples.php">our standard set of
+  examples</ulink>.  For additional language documentation you should
+  consult the various chapters in <xref linkend="part_bindings"/> as
+  well.</para>
+
   <sect1 id="arguments">
     <title>Command Line Arguments</title>
 
@@ -65,47 +67,54 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
     <para>
       <screen>
-	<prompt>%</prompt> <userinput>x01c -h</userinput>
-	Usage:
-	./x01c [options]
+	<prompt>%</prompt> <userinput>x00c -h</userinput>
+Usage:
+        examples/c/x00c [options]
 
-	PLplot options:
-	-h                   Print out this message
-	-v                   Print out the PLplot library version number
-	-verbose             Be more verbose than usual
-	-debug               Print debugging info (implies -verbose)
-	-dev name            Output device name
-	-o name              Output filename
-	-display name        X server to contact
-	-px number           Plots per page in x
-	-py number           Plots per page in y
-	-geometry geom       Window size, in pixels (e.g. -geometry 400x300)
-	-wplt xl,yl,xr,yr    Relative coordinates [0-1] of window into plot
-	-mar margin          Margin space in relative coordinates (0 to 0.5, def 0)
-	-a aspect            Page aspect ratio (def: same as output device)
-	-jx justx            Page justification in x (-0.5 to 0.5, def 0)
-	-jy justy            Page justification in y (-0.5 to 0.5, def 0)
-	-ori orient          Plot orientation (0,2=landscape, 1,3=portrait)
-	-freeaspect          Do not preserve aspect ratio on orientation swaps
-	-portrait            Sets portrait mode (both orientation and aspect ratio)
-	-width width         Sets pen width (1 &lt;= width &lt;= 10)
-	-bg color            Background color (0=black, FFFFFF=white)
-	-ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
-	-ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
-	-fam                 Create a family of output files
-	-fsiz size[kKmMgG]   Output family file size in MB (e.g. -fsiz 0.5G, def MB)
-	-fbeg number         First family member number on output
-	-finc number         Increment between family members
-	-fflen length        Family member number minimum field width
-	-nopixmap            Don't use pixmaps in X-based drivers
-	-db                  Double buffer X window output
-	-np                  No pause between pages
-	-server_name name    Main window name of PLplot server (tk driver)
-	-dpi dpi             Resolution, in dots per inch (e.g. -dpi 360x360)
-	-compression num     Sets compression level in supporting devices
-	-drvopt option[=value][,option[=value]]* Driver specific options
-	-cmap0 name          Sets PLplot color table 0 using the file name
-	-cmap1 name          Sets PLplot color table 1 using the file name
+PLplot options:
+    -h                   Print out this message
+    -v                   Print out the PLplot library version number
+    -verbose             Be more verbose than usual
+    -debug               Print debugging info (implies -verbose)
+    -dev name            Output device name
+    -o name              Output filename
+    -display name        X server to contact
+    -px number           Plots per page in x
+    -py number           Plots per page in y
+    -geometry geom       Window size/position specified as in X, e.g., 400x300, 400x300-100+200, +100-200, etc.
+    -wplt xl,yl,xr,yr    Relative coordinates [0-1] of window into plot
+    -mar margin          Margin space in relative coordinates (0 to 0.5, def 0)
+    -a aspect            Page aspect ratio (def: same as output device)
+    -jx justx            Page justification in x (-0.5 to 0.5, def 0)
+    -jy justy            Page justification in y (-0.5 to 0.5, def 0)
+    -ori orient          Plot orientation (0,1,2,3=landscape,portrait,seascape,upside-down)
+    -freeaspect          Allow aspect ratio to adjust to orientation swaps
+    -portrait            Sets portrait mode (both orientation and aspect ratio)
+    -width width         Sets pen width (0 &lt;= width)
+    -bg color            Background color (FF0000=opaque red, 0000FF_0.1=blue with alpha of 0.1)
+    -ncol0 n             Number of colors to allocate in cmap 0 (upper bound)
+    -ncol1 n             Number of colors to allocate in cmap 1 (upper bound)
+    -fam                 Create a family of output files
+    -fsiz size[kKmMgG]   Output family file size (e.g. -fsiz 0.5G, def MB)
+    -fbeg number         First family member number on output
+    -finc number         Increment between family members
+    -fflen length        Family member number minimum field width
+    -nopixmap            Don't use pixmaps in X-based drivers
+    -db                  Double buffer X window output
+    -np                  No pause between pages
+    -server_name name    Main window name of PLplot server (tk driver)
+    -dpi dpi             Resolution, in dots per inch (e.g. -dpi 360x360)
+    -compression num     Sets compression level in supporting devices
+    -cmap0 file name     Initializes color table 0 from a cmap0.pal format file in one of standard PLplot paths.
+    -cmap1 file name     Initializes color table 1 from a cmap1.pal format file in one of standard PLplot paths.
+    -locale              Use locale environment (e.g., LC_ALL, LC_NUMERIC, or LANG) to set LC_NUMERIC locale (which affects decimal point separator).
+    -eofill              For the case where the boundary of the filled region is self-intersecting, use the even-odd fill rule rather than the default nonzero fill rule.
+    -drvopt option[=value][,option[=value]]* Driver specific options
+    -mfo PLplot metafile name Write the plot to the specified PLplot metafile
+    -mfi PLplot metafile name Read the specified PLplot metafile
+
+All parameters must be white-space delimited.  Some options are driver
+dependent.  Please see the PLplot reference document for more detail.
       </screen>
     </para>
 
@@ -156,12 +165,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Most PLplot devices can be classified as either file devices
-      (plot results generated for a <ulink
-      url="&PLplot-website;/#files">particular file format</ulink>) or
-      interactive devices (plot results generated for a <ulink
-      url="&PLplot-website;/#interactive">particular interactive
-      platform</ulink>).  The available file devices are tabulated in <xref
+      Most PLplot devices can be classified as either &features-noninteractive; file devices
+      or &features-interactive; devices.  The available file devices are tabulated in <xref
       linkend="tab_dev1"/> while the available interactive devices are
       tabulated in <xref linkend="tab_dev2"/>.
 
@@ -232,7 +237,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <sect2 id="driver-functions">
       <title>Driver Functions</title>
 
-      <para> A dispatch table is used to direct function calls to whatever driver
+      <para>A dispatch table is used to direct function calls to whatever driver
       is chosen at run-time.  Below are listed the names of each entry in the
       PLDispatchTable dispatch table struct defined in
       <filename>plcore.h</filename>.  The entries specific to each device (defined
@@ -316,7 +321,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       necessary to add a null routine to all the other drivers to handle the new
       function.
       </para>
-
     </sect2>
 
     <sect2 id="familying">
@@ -331,14 +335,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	file.
       </para>
 
-      <para> To create a family file, one must simply call &plsfam; with the
+      <para>To create a family file, one must simply call &plsfam; with the
       familying flag <literal>fam</literal> set to 1, and the desired maximum
       member size (in bytes) in <literal>bmax</literal>.  &plsfam; also allows
       you to set the current family file number.  If the current output
       driver does not support familying, there will be no effect.  This call must
       be made <emphasis>before</emphasis> calling &plstar; or &plstart;. </para>
 
-      <para> If familying is enabled, the name given for the output file (on the
+      <para>If familying is enabled, the name given for the output file (on the
       command line, in response to the &plstar; prompt, as a &plstart; argument,
       or as the result of a call to &plsfnam;) becomes the name template for the
       family.  Thus, if you request an svg output file with name
@@ -354,9 +358,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       the byte limit is large you can still insure a new file is automatically
       started after a page break if you precede the call to &pleop; with a call to
       &plfamadv;.</para>
-      <para> If familying is not enabled, <filename>%n</filename> is dropped
+      <para>If familying is not enabled, <filename>%n</filename> is dropped
       from the filename if that string appears anywhere in it.</para>
-
 
       <para>
 	The &plgfam; routine can be used from within the user program to find
@@ -364,7 +367,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	periodically checking the number of the member file currently being written
 	to, one can detect when a new member file is started.
       </para>
-
     </sect2>
 
     <sect2 id="specifying-devices">
@@ -462,8 +464,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	Additional start up routines &plstar; and &plstart; are available but
 	these are simply front-ends to &plinit;, and should be avoided.  It
 	is preferable to call &plinit; directly, along with the appropriate
-	setup calls, for the greater amount of control this provides (see the
-	example programs for more info).
+	setup calls, for the greater amount of control this provides (see
+	<ulink url="&PLplot-website;/examples.php">our standard examples</ulink>
+	for more info).
       </para>
 
       <para>
@@ -484,43 +487,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </para>
 
       <para>
-	PLplot has the ability to write to multiple output streams.  An
-	output stream corresponds to a single logical device to which one
+	PLplot has the ability to write to multiple output streams.
+	An output stream corresponds to a single logical device to which one
 	plots independent of all other streams.  The function &plsstrm; is
-	used to switch between streams -- you may only write to one output
-	stream at a time.  An example usage for the creation of multiple
-	streams is as follows:
-      </para>
-
-      <para>
-	<programlisting>#include "plplot.h"
-
-	main()
-	{
-	int nx = 2, ny = 2;
-
-	plssub(nx, ny);
-	plsdev("xwin");
-	plinit();
-
-	<lineannotation>plots for stream 0</lineannotation>
-
-	plsstrm(1);
-	plssub(nx, ny);
-	plsdev("svg");
-	plsfnam("test.svg");
-	plinit();
-
-	<lineannotation>plots for stream 1</lineannotation>
-
-	plsstrm(0);
-
-	<lineannotation>plots for stream 0</lineannotation></programlisting>
-      </para>
-
-      <para>
-	and so on, for sending output simultaneously to an X-window and an
-	SVG file.  See also standard example 14.
+	used to switch between streams.  For any of our supported languages
+	<ulink url="&PLplot-website;/examples.php?demo=14">our standard
+	example 14</ulink> demonstrates of how to use multiple output streams
+	where the same device is used for both streams, but, of course,
+	different devices can be used for different streams as well.
       </para>
 
       <para>
@@ -533,260 +507,35 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	device, an automatic call to &plend1; is made before the new device
 	is opened for the given stream.
       </para>
-
     </sect2>
   </sect1>
 
   <sect1 id="FreeType-notes">
     <title>Adding FreeType Library Support to Bitmap Drivers</title>
 
-    <para> N.B. this approach is deprecated because of its inherent
-    font-selection issues (fonts must be specified by filename rather
-    than using the recommended fontconfig approach which automatically
-    selects the best system font that renders the particular unicode glyph)
-    and because it only supports left-to-right layout (i.e., there
-    is no support for complex text layout languages).</para>
-
-    <para>Any bitmap driver in the PLplot family should be able to use fonts
-    (TrueType and others) that are rendered by the FreeType library just as long
-    as the device supports setting an individual pixel. Note that drivers
-    interact with FreeType using the support routines
-    <literal>plD_FreeType_init</literal>,
-    <literal>plD_render_freetype_text</literal>,
-    <literal>plD_FreeType_Destroy</literal>,
-    <literal>pl_set_extended_cmap0</literal>, and
-    <literal>pl_RemakeFreeType_text_from_buffer</literal> that are coded in
-    <filename>plfreetype.c</filename>.</para>
-
-    <para>The use of these support routines is exemplified by the
-    <filename>gd.c</filename> driver.  Here we make some notes to accompany
-    this driver which should make it easier to migrate other drivers to
-    use the FreeType library.  Every code fragment we mention below should be surrounded
-    with a <literal>#ifdef PL_HAVE_FREETYPE...#endif</literal> to quarantine these
-    fragments for systems without the FreeType library.  For interactive devices that
-    need caching of text drawing, reference should also be made to
-    <filename>wingcc.c</filename>.</para>
-
-    <sect2>
-      <title>Write a call back function to plot a single pixel</title>
-
-      <para>First, write a call back function, of type
-      <literal>plD_pixel_fp</literal>, which specifies how a single pixel is set
-      in the current color. This can be of type static void. For example, in the
-      <filename>gd.c</filename> driver it looks like this:
-
-      <programlisting>
-	void plD_pixel_gd (PLStream *pls, short x, short y)
-	{
-	png_Dev *dev=(png_Dev *)pls->dev;
-
-	gdImageSetPixel(dev->im_out, x, y,dev->colour);
-	}
-      </programlisting>
-      </para>
-    </sect2>
-
-    <sect2>
-      <title>Initialize FreeType</title>
-
-      <para>Next, we have to initialize the FreeType library. For the
-      <filename>gd.c</filename> driver this is done via two separate functions due
-      to the order that dependent information is initialized in the driver.</para>
-
-      <para>The "level 1" initialization of FreeType does two things: 1) calls
-      <literal>plD_FreeType_init(pls)</literal>, which in turn allocates memory to
-      the pls->FT structure; and 2) stores the location of the call back routine.
-      </para>
-
-      <para>
-	<programlisting>
-	  void init_freetype_lv1 (PLStream *pls)
-	  {
-	  FT_Data *FT;
-
-	  plD_FreeType_init(pls);
-
-	  FT=(FT_Data *)pls->FT;
-	  FT->pixel= (plD_pixel_fp)plD_pixel_gd;
-
-	  }
-	</programlisting>
-      </para>
-
-      <para>This initialization routine is called at the end of
-      <literal>plD_init_png_Dev(PLStream *pls)</literal> in the
-      <filename>gd.c</filename> driver:</para>
-
-      <para>
-	<programlisting>
-	  if (freetype)
-	  {
-	  pls->dev_text = 1; /* want to draw text */
-	  init_freetype_lv1(pls);
-	  FT=(FT_Data *)pls->FT;
-	  FT->smooth_text=smooth_text;
-	  }
-	</programlisting>
-      </para>
-
-      <para><literal>"freetype"</literal> is a local variable which is parsed
-      through <literal>plParseDrvOpts</literal> to determine if the user wanted
-      FreeType text. In that case <literal>pls->dev_text</literal> is set to 1 to
-      indicate the driver will be rendering it's own text. After that, we always
-      use <literal>pls->dev_text</literal> to work out if we want FreeType or
-      not.</para>
-
-      <para>Similarly, <literal>"smooth_text"</literal> is a local variable passed
-      through <literal>plParseDrvOpts</literal> to find out if the user wants
-      smoothing. Since there is nothing in PLStream to track smoothing, we have to
-      set the FT->smooth_text flag as well at this time.</para>
-
-      <para>The "level 2" initialization function initializes everything else
-      required for using the FreeType library but has to be called after the
-      screen resolution and dpi have been set. Therefore, it is called at the end
-      of <literal>plD_init_png()</literal>, where it looks like:
-
-      <programlisting>
-	if (pls->dev_text)
-	{
-	init_freetype_lv2(pls);
-	}
-      </programlisting>
-      </para>
-
-      <para>The actual function looks like this:
-
-      <programlisting>
-	static void init_freetype_lv2 (PLStream *pls)
-	{
-	png_Dev *dev=(png_Dev *)pls->dev;
-	FT_Data *FT=(FT_Data *)pls->FT;
-
-	FT->scale=dev->scale;
-	FT->ymax=dev->pngy;
-	FT->invert_y=1;
-
-	if (FT->smooth_text==1)
-	{
-	FT->ncol0_org=pls->ncol0;                                   /* save a copy of the original size of ncol0 */
-	FT->ncol0_xtra=NCOLOURS-(pls->ncol1+pls->ncol0);            /* work out how many free slots we have */
-	FT->ncol0_width=FT->ncol0_xtra/(pls->ncol0-1);              /* find out how many different shades of anti-aliasing we can do */
-	if (FT->ncol0_width>64) FT->ncol0_width=64;                 /* set a maximum number of shades */
-	plscmap0n(FT->ncol0_org+(FT->ncol0_width*pls->ncol0));      /* redefine the size of cmap0 */
-	/* the level manipulations are to turn off the plP_state(PLSTATE_CMAP0)
-	* call in plscmap0 which (a) leads to segfaults since the GD image is
-	* not defined at this point and (b) would be inefficient in any case since
-	* setcmap is always called later (see plD_bop_png) to update the driver
-	* color palette to be consistent with cmap0. */
-	{
-	PLINT level_save;
-	level_save = pls->level;
-	pls->level = 0;
-	pl_set_extended_cmap0(pls, FT->ncol0_width, FT->ncol0_org); /* call the function to add the extra cmap0 entries and calculate stuff */
-	pls->level = level_save;
-	}
-	}
-
-	}
-      </programlisting>
-      </para>
-
-      <para>FT->scale is a scaling factor to convert coordinates. This is used by
-      the <filename>gd.c</filename> and some other drivers to scale back a larger virtual page and this
-      eliminate the "hidden line removal bug". Set it to 1 if your device driver
-      doesn't use any scaling.</para>
-
-      <para>Some coordinate systems have zero on the bottom, others have zero on
-      the top. FreeType does it one way, and most everything else does it the
-      other. To make sure everything is working OK, we have to "flip" the
-      coordinates, and to do this we need to know how big in the Y dimension the
-      page is, and whether we have to invert the page or leave it alone.</para>
-
-      <para> <itemizedlist>
-	<listitem><para>FT->ymax specifies the size of the page</para></listitem>
-	<listitem><para>FT->invert_y=1 tells us to invert the
-	y-coordinates, FT->invert_y=0 will not invert the coordinates.
-      </para></listitem> </itemizedlist></para>
-
-      <para>We also do some computational gymnastics to "expand" cmap0 if the user
-      wants anti-aliased text.  Basically, you have to work out how many spare
-      colors there are in the driver after cmap0 and cmap1 are done, then set a
-      few variables in FT to let the render know how many colors it's going to
-      have at its disposal, and call plscmap0n to resize cmap0.  The call to
-      <literal>pl_set_extended_cmap0</literal> does the remaining part of the
-      work.  Note it essential to protect that call by the
-      <literal>pls->level</literal> manipulations for the reasons stated. </para>
-
-    </sect2>
-
-    <sect2>
-      <title>Add A Command to redraw text (interactive drivers only)</title>
-
-      <para>Plplot only caches drawing commands, not text plotting commands, so
-      for interactive devices which refresh their display by replaying the plot
-      buffer, a separate function has to be called to redraw the text.  plfreetype
-      knows when buffering is being used by a device driver, and will automatically
-      start caching text when necessary.  To redraw this cached text, a call to
-      <literal>pl_RemakeFreeType_text_from_buffer</literal> has to be added after the driver has called
-      <literal>plRemakePlot</literal>.  The following example is from <filename>wingcc.c</filename>.
-
-      <programlisting>
-	if (dev->waiting==1)
-	{
-	plRemakePlot(pls);
-	#ifdef PL_HAVE_FREETYPE
-	pl_RemakeFreeType_text_from_buffer(pls);
-	#endif
-	}
-      </programlisting>
-      </para>
-
-    </sect2>
-
-
-    <sect2>
-      <title>Add Function Prototypes</title>
-
-      <para>Next, to the top of the drivers' source file add the prototype
-      definitions for the functions just written.
-
-      <programlisting>
-	static void plD_pixel_gd (PLStream *pls, short x, short y);
-	static void init_freetype_lv1 (PLStream *pls);
-	static void init_freetype_lv2 (PLStream *pls);
-      </programlisting>
-      </para>
-
-    </sect2>
-
-    <sect2>
-      <title>Add Closing functions</title>
-
-      <para>Finally, add a <literal>plD_FreeType_Destroy(pls)</literal> entry to
-      the device "tidy" function; this command deallocates memory allocated to the
-      FT entry in the stream, closes the FreeType library and any open fonts. It
-      is also a good idea to reset CMAP0 back to it's original size here if
-      anti-aliasing was done. For example, in the <filename>gd.c</filename>
-      driver, it looks like this:
-
-      <programlisting>
-	void plD_tidy_png(PLStream *pls)
-	{
-	fclose(pls->OutFile);
-
-	#ifdef PL_HAVE_FREETYPE
-	FT_Data *FT=(FT_Data *)pls->FT;
-	plscmap0n(FT->ncol0_org);
-
-	plD_FreeType_Destroy(pls);
-	#endif
-
-	free_mem(pls->dev);
-	}
-
-      </programlisting>
-      </para>
-    </sect2>
+    <para>N.B. this FreeType approach is officially deprecated
+    because of its inherent font-selection issues (fonts must be specified
+    by filename) and because it only supports left-to-right layout (i.e.,
+    there is no support for complex text layout languages).  Specialized
+    libraries or system services that automatically find the best system
+    font to render the given (unicode) glyph and which support complex
+    text layout should be used instead.  Those possibilities include
+    <ulink url="https://www.qt.io/">Qt</ulink> (available on all platforms
+    and used by our qt device driver), the pango/cairo subset of the
+    <ulink url="https://www.gtk.org/">GTK+ suite of libraries</ulink>
+    (available on all platforms and used directly by our cairo device
+    driver and indirectly by our psttf device driver), <ulink
+    url="https://en.wikipedia.org/wiki/Uniscribe">Uniscribe</ulink>
+    (available only on Windows for Windows 2000 and later), and <ulink
+    url="https://en.wikipedia.org/wiki/DirectWrite">DirectWrite</ulink>
+    (available only on Windows for Windows 7 and later).  Currently the
+    wingcc and gd device drivers are the only ones that depend on the
+    FreeType approach described here.  Because of the limitations of this
+    approach we have plans to update wingcc to use either Uniscribe or
+    DirectWrite, and once those plans are realized we will likely retire
+    the gd device driver (currently deprecated because of the limitations
+    of the current approach) and also retire this Freetype
+    approach.</para>
   </sect1>
 
   <sect1 id="viewport_window">
@@ -818,14 +567,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <sect2 id="viewports">
       <title>Defining the Viewport</title>
 
-      <para> After defining the view surface and subpage with the appropriate
+      <para>After defining the view surface and subpage with the appropriate
       call to &plinit; or &plstar; (or &plstart;) and a call to &pladv; it
       is necessary to define the portion of this subpage which is to be used
       for plotting the graph (the viewport).  All lines and symbols (except
       for labels drawn by &plbox;, &plmtex; and &pllab;) are clipped at the
       viewport boundaries. </para>
 
-      <para> Viewports are created within the current subpage.  If the
+      <para>Viewports are created within the current subpage.  If the
       division of the output device into equally sized subpages is
       inappropriate, it is best to specify only a single subpage which
       occupies the entire output device (by using &plinit; or by setting
@@ -834,160 +583,60 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       below to place the plot in the desired position on the page. </para>
 
       <para>
-	There are four methods for specifying the viewport size, using the
-	subroutines &plvpor;, &plsvpa;, &plvasp;, and &plvpas; which are
-	called like this:
+	The routines &plvpor;, &plsvpa;, &plvasp;, &plvpas;, and
+	&plvsta; may be used to specify the limits of the viewport within the
+	current subpage.  The &plvpor; routine specifies the viewport limits
+	in normalized subpage coordinates. The &plsvpa; routine (often used in
+	conjunction with the &plgspa; routine which returns the physical
+	limits of the current subpage) specifies the viewport limits in
+	physical coordinates.  The routine &plvasp; specifies the largest
+	viewport with the given aspect ratio that fits in the current subpage
+	while allowing for a standard margins on each side of the viewport.
+	The routine &plvpas; specifies the largest viewport with the given
+	aspect ratio that fits in a region that is specified by normalized
+	subpage coordinates as with &plvpor;.  (The routine &plvpas;
+	is functionally equivalent to &plvpor; when the specified aspect ratio
+	is set to zero.)  The &plvsta; routine specifies the largest viewport
+	that fits in the current subpage while allowing for a standard margins
+	on each side of the viewport.  This standard viewport is that used by
+	&plenv; (See <xref linkend="standard-window"/>).
       </para>
-
-      <para>
-	<programlisting>    plvpor(xmin, xmax, ymin, ymax);
-	plsvpa(xmin, xmax, ymin, ymax);
-	plvasp(aspect);
-	plvpas(xmin, xmax, ymin, ymax, aspect);</programlisting>
-      </para>
-
-      <para>
-	where in the case of &plvpor; and &plvpas;, the arguments are given
-	in <emphasis>normalized subpage coordinates</emphasis> which are
-	defined to run from 0.0 to 1.0 along each edge of the subpage.  Thus
-	for example,
-      </para>
-
-      <para>
-	<programlisting>    plvpor(0.0, 0.5, 0.5, 1.0);</programlisting>
-      </para>
-
-      <para>
-	uses the top left quarter of the current subpage.
-      </para>
-
-      <para>
-	In order to get a graph of known physical size, the routine &plsvpa;
-	defines the viewport in terms of absolute coordinates (millimeters)
-	measured from the bottom left-hand corner of the current subpage.
-	This routine should only be used when the size of the view surface is
-	known, and a definite scaling is required.
-      </para>
-
-      <para>
-	The routine &plvasp; gives the largest viewport with the given aspect
-	ratio that fits in the current subpage (i.e. the ratio of the length
-	of the y axis to that of the x axis is equal to
-	<literal>aspect</literal>).  It also allocates space on the left and
-	top of the viewport for labels.
-      </para>
-
-      <para>
-	The routine &plvpas; gives the largest viewport with the given aspect
-	ratio that fits in the specified region (specified with normalized
-	subpage coordinates, as with &plvpor;).  This routine is functionally
-	equivalent to &plvpor; when a <quote>natural</quote> aspect ratio is
-	chosen (done by setting <literal>aspect</literal> to 0.0).  Unlike
-	&plvasp;, this routine reserves no extra space at the edges for
-	labels.
-      </para>
-
-      <para>
-	To help the user call &plsvpa; correctly, the routine &plgspa; is
-	provided which returns the positions of the extremities of the
-	current subpage measured in millimeters from the bottom left-hand
-	corner of the device.  Thus, if to set up a viewport with a 10.0 mm
-	margin around it within the current subpage, the following sequence
-	of calls may be used:
-      </para>
-
-      <para>
-	<programlisting>    plgspa(xmin, xmax, ymin, ymax);
-	plsvpa(10.0, xmax-xmin-10.0, 10.0, ymax-ymin-10.0);</programlisting>
-      </para>
-
-      <para>
-	A further routine &plvsta; is available which sets up a standard
-	viewport within the current subpage with suitable margins on each
-	side of the viewport.  This may be used for simple graphs, as it
-	leaves enough room for axis labels and a title.  This standard
-	viewport is that used by &plenv; (See <xref
-	linkend="standard-window"/>).
-      </para>
-
     </sect2>
 
     <sect2 id="windows">
       <title>Defining the Window</title>
 
       <para>
-	The window must be defined after the viewport in order to map the
-	world coordinate rectangle into the viewport rectangle.  The routine
-	&plwind; is used to specify the rectangle in world-coordinate space.
-	For example, if we wish to plot a graph showing the collector current
-	I<subscript>C</subscript> as a function of the collector to emitter
-	voltage V<subscript>CE</subscript> for a transistor where 0 &leq;
-	I<subscript>C</subscript> &leq; 10.0&nbsp;mA and 0 &leq;
-	V<subscript>CE</subscript> &leq; 12.0&nbsp;V, we would call the
-	function &plwind; as follows:
-      </para>
-
-      <para>
-	<programlisting>    plwind(0.0, 12.0, 0.0, 10.0);</programlisting>
-      </para>
-
-      <para>
-	Note that each of the arguments is a floating point number, and so
-	the decimal points are required.  If the order of either the X limits
-	or Y limits is reversed, the corresponding axis will point in the
-	opposite sense, (i.e., right to left for X and top to bottom for Y).
-	The window must be defined before any calls to the routines which
-	actually draw the data points.  Note however that &plwind; may also
-	be called to change the window at any time.  This will affect the
+	The routine &plwind; is used to map the world coordinate
+	rectangle into the viewport rectangle.  If the order of either the X
+	limits or Y limits is reversed, the corresponding axis will point in
+	the opposite sense, (i.e., right to left for X and top to bottom for
+	Y).  The window must be defined before any calls to the routines which
+	actually draw the data points.  Note however that &plwind; may also be
+	called to change the window at any time.  This will affect the
 	appearance of objects drawn later in the program, and is useful for
-	drawing two or more graphs with different axes on the same piece of
-	paper.
+	drawing two or more graphs with different axes on the same viewport.
       </para>
-
     </sect2>
 
     <sect2 id="annotation">
       <title>Annotating the Viewport</title>
 
       <para>
-	The routine &plbox; is used to specify whether a frame is drawn
-	around the viewport and to control the positions of the axis
-	subdivisions and numeric labels.  For our simple graph of the
-	transistor characteristics, we may wish to draw a frame consisting of
-	lines on all four sides of the viewport, and to place numeric labels
-	along the bottom and left hand side.  We can also tell PLplot to
-	choose a suitable tick interval and the number of subticks between
-	the major divisions based upon the data range specified to &plwind;.
-	This is done using the following statement
+	The routine &plbox; is used to specify how much (if any) of
+	the frame is drawn around the viewport and to control the positions of
+	the axis subdivisions and numeric labels.  In addition, non-default
+	lengths of major and minor ticks on the axes may be set up by calls to
+	the routines &plsmaj; and &plsmin;.
       </para>
 
       <para>
-	<programlisting>    plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);</programlisting>
-      </para>
-
-      <para>
-	The lengths of major and minor ticks on the axes are set up by the
-	routines &plsmaj; and &plsmin;.
-      </para>
-
-      <para>
-	Another routine &pllab; provides for text labels for the bottom, left
+	The routine &pllab; is used to specify text labels for the bottom, left
 	hand side and top of the viewport.  These labels are not clipped,
 	even though they lie outside the viewport (but they are clipped at
 	the subpage boundaries).  &pllab; actually calls the more general
 	routine &plmtex; which can be used for plotting labels at any point
-	relative to the viewport.  For our example, we may use
-      </para>
-
-      <para>
-	<programlisting>    pllab("V#dCE#u (Volts)", "I#dC#u (mA)", "TRANSISTOR CHARACTERISTICS");</programlisting>
-      </para>
-
-      <para>
-	Note that <literal>#d</literal> and <literal>#u</literal> are escape
-	sequences (see <xref linkend="escape-sequences"/>) which allow
-	subscripts and superscripts to be used in text.  They are described
-	more fully later in this chapter.
+	relative to the viewport.
       </para>
 
       <para>
@@ -1048,35 +697,18 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	current plot is not correct until <emphasis>after</emphasis> the call
 	to &plbox; is complete.
       </para>
-
     </sect2>
 
     <sect2 id="standard-window">
       <title>Setting up a Standard Window</title>
 
       <para>
-	Having to call &pladv;, &plvpor;, &plwind; and &plbox; is excessively
-	cumbersome for drawing simple graphs.  Subroutine &plenv; combines
-	all four of these in one subroutine, using the standard viewport, and
-	a limited subset of the capabilities of &plbox;.  For example, the
-	graph described above could be initiated by the call:
+	Having to call &pladv;, &plvpor;, &plwind; and &plbox; is
+	cumbersome for drawing simple graphs so as an alternative we have
+	implemented &plenv; that combines all four of these capabilities in
+	one routine using the standard viewport and a limited subset of the
+	capabilities of &plbox;.
       </para>
-
-      <para>
-	<programlisting>    plenv(0.0, 12.0, 0.0, 10.0, 0, 0);</programlisting>
-      </para>
-
-      <para>
-	which is equivalent to the following series of calls:
-      </para>
-
-      <para>
-	<programlisting>    pladv(0);
-	plvsta();
-	plwind(0.0, 12.0, 0.0, 10.0);
-	plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0);</programlisting>
-      </para>
-
     </sect2>
   </sect1>
 
@@ -1106,297 +738,260 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>
-      Line style is set using the routine &plstyl; or &pllsty;.  A broken
-      line is specified in terms of a repeated pattern consisting of marks
-      (pen down) and spaces (pen up).  The arguments to this routine are
-      the number of elements in the line, followed by two pointers to
-      integer arrays specifying the mark and space lengths in micrometers.
-      Thus a line consisting of long and short dashes of lengths 4&nbsp;mm
-      and 2&nbsp;mm, separated by spaces of length 1.5&nbsp;mm is specified
-      by:
+      Line style is set using the routine &plstyl; or &pllsty;.  A
+      broken line is specified in terms of a repeated pattern consisting of
+      marks (pen down) and spaces (pen up).  The arguments to this routine
+      are the number of elements in the vectors (dropped for the
+      redacted API) and integer <parameter>mark</parameter> and
+      <parameter>space</parameter> vectors which contain the mark and
+      space lengths in micrometers.  Thus a line consisting of long and
+      short dashes of lengths 4&nbsp;mm and 2&nbsp;mm, separated by spaces
+      of length 1.5&nbsp;mm is specified by <parameter>mark</parameter>
+      vector elements of 4000 and 2000, and <parameter>space</parameter>
+      vector elements of 1500 and 1500.  To return to a continuous line,
+      just call &plstyl; with vectors with no elements.  You can also use
+      &pllsty; to choose between 8 different predefined line styles.
     </para>
-
-    <para>
-      <programlisting>    mark[0] = 4000;
-      mark[1] = 2000;
-      space[0] = 1500;
-      space[1] = 1500;
-      plstyl(2, mark, space);</programlisting>
-    </para>
-
-    <para>
-      To return to a continuous line, just call &plstyl; with first
-      argument set to zero.  You can use &pllsty; to choose between 8
-      different predefined styles.
-    </para>
-
   </sect1>
 
   <sect1 id="fill-pattern">
     <title>Setting the Area Fill Pattern</title>
 
-    <para>
-      The routine &plpat; can be used to set the area fill pattern.  The
-      pattern consists of 1 or 2 sets of parallel lines with specified
-      inclinations and spacings.  The arguments to this routine are the
-      number of sets to use (1 or 2) followed by two pointers to integer
-      arrays (of 1 or 2 elements) specifying the inclinations in tenths of
-      a degree and the spacing in micrometers (the inclination should be
-      between -900 and 900).  Thus to specify an area fill pattern
-      consisting of horizontal lines spaced 2&nbsp;mm apart use:
-    </para>
+    <para>The routine &plpsty; may be used to select either a solid
+    fill or from 1 of 8 predefined area line fill patterns. Additional
+    area line fill patterns using one or two sets of parallel lines at
+    arbitrary inclinations and spacings can be specified with the routine
+    &plpat; The (redacted) arguments to this routine are the integer
+    <parameter>inc</parameter> and <parameter>del</parameter> vectors
+    specifying the inclinations in tenths of a degree and the spacing in
+    micrometers of the pattern(s).  Thus to specify an area line fill
+    pattern consisting of horizontal lines spaced 2&nbsp;mm apart the
+    <parameter>inc</parameter> vector should have single element set to 0,
+    and the <parameter>del</parameter> vector should have a single element
+    set to 2000.  And to specify an area line fill pattern consisting of a
+    symmetrical crosshatch with lines directed 30 degrees above and below
+    the horizontal and spaced 1.5&nbsp;mm apart, the
+    <parameter>inc</parameter> vector should contain the elements 300 and
+    -300, and the <parameter>del</parameter> vector should contain the
+    elements 1500 and 1500.</para>
 
-    <para>
-      <programlisting>    *inc = 0;
-      *del = 2000;
-      plpat(1, inc, del);</programlisting>
-    </para>
-
-    <para>
-      To set up a symmetrical crosshatch pattern with lines directed 30
-      degrees above and below the horizontal and spaced 1.5&nbsp;mm apart
-      use:
-    </para>
-
-    <para>
-      <programlisting>    *inc = 300;
-      *(inc+1) = -300;
-      *del = 1500;
-      *(del+1) = 1500;
-      plpat(2, inc, del);</programlisting>
-    </para>
-
-    <para>
-      The routine &plpsty; can be used to select from 1 of 8 predefined
-      patterns.
-    </para>
-
-    <para>
-      The area fill routines also use the current line style, width and
-      colors to give a virtually infinite number of different patterns.
-    </para>
-
+    <para>N.B. Solid fills use the current (semitransparent) color
+    and line fills use the current line style, width, and
+    (semitransparent) color.  The result is PLplot users have a large
+    choice of different fill patterns.</para>
   </sect1>
 
   <sect1 id="color">
     <title>Setting Color</title>
 
-    <para> Normally, color is used for all drivers and devices that support
+    <para>Normally, color is used for all drivers and devices that support
     it within PLplot subject to the condition that the user has the option
     of globally turning off the color (and subsequently turning it on again
     if so desired) using &plscolor;. </para>
 
-    <para> The PLplot color model allows the user to set the current
+    <para>The PLplot color model allows the user to set the current
     color from a wide range of colors using two distinct color maps.
-    Color map0 (discussed in <xref linkend="color-map-0"/>) has discrete
-    colors with no particular order and is most suited to coloring the
-    background, axes, lines, and labels, and color map1 (discussed in
-    <xref linkend="color-map-1"/>) has continuously changing colors and is
-    most suited to plots (see <xref linkend="contour-plots"/>) in which
-    data values are represented by colors.  Setting the background color
-    is a special case that is handled exclusively by color map 0 (as
-    discussed in <xref linkend="color-map-0"/>).  The user can change the
-    current color (as opposed to the background color) at any point in the
-    plot by selecting any of the colors from either color map 0 or 1 using
-    calls to &plcol0; or &plcol1;. When the current color is changed all
-    subsequent drawing actions will utilize the new color until it is
-    changed again.
-</para>
+    Color map0 (called cmap0 and discussed in <xref
+    linkend="color-map-0"/>) has discrete colors arranged in no particular
+    order with regard to color index and is most suited to coloring
+    discrete elements of the plot.  Color map1 (called cmap1 and discussed
+    in <xref linkend="color-map-1"/>) has colors which are a continuous
+    function of color index and is most suited to coloring continuous
+    elements of the plot. The user can change the current color (as
+    opposed to the background color which is a special case that is
+    discussed in <xref linkend="color-map-0"/>) at any point in the PLplot
+    commands that are used to create a given plot by selecting any of the
+    colors from either cmap0 or cmap1 using calls to &plcol0; or
+    &plcol1;. When the current color is changed all subsequent drawing
+    actions will utilize that new color until it is changed again.</para>
 
     <sect2 id="color-map-0">
       <title>Color Map0</title>
 
-      <para> Color map0 is most suited to coloring the background, axes,
-      lines, and labels.  Generally, the default color map0 palette of 16
-      colors is used. (<filename>examples/c/x02c.c</filename> illustrates
-      these colors.) The default background color is taken from the index 0
-      color which is black by default.  The default foreground color is red.
-      </para>
+      <para>Color map0 is most suited to coloring discrete elements of
+      the plot such as the background, axes, lines, and labels.  The cmap0
+      palette colors are stored using <ulink
+      url="https://en.wikipedia.org/wiki/RGBA_color_space">RGBA</ulink>
+      (i.e., red, green, blue, and alpha transparency) components (although
+      some drivers ignore the alpha transparency data and simply render
+      opaque colors corresponding to the semitransparent ones).  In the
+      discussion that follows all references to cmap0 API functions with a
+      trailing "a" in their names (e.g., &plscol0a;) refers to setting RGBA
+      semitransparent colors while the equivalent function (e.g., &plscol0;)
+      without the trailing "a" in the name refers to setting RGB colors with
+      an assumed opaque alpha transparency of 1.0.</para>
 
-      <para> There are a number of options for changing the default red on
-      black colors.  The user may set the index 0 background color using the
-      command-line <literal>bg</literal> parameter or by calling &plscolbg;
-      (or &plscol0; with a 0 index) <emphasis>before</emphasis> &plinit;.
-      During the course of the plot, the user can change the foreground color
-      as often as desired using &plcol0; to select the index of the desired
-      color. </para>
+      <para>Page 1 of <ulink
+      url="&PLplot-website;/examples.php?demo=02">our standard example
+      02</ulink> illustrates the default 16 colors in the cmap0 palette.
+      The background color is a special case to be discussed below, and the
+      current color of discrete elements of the plot other than the
+      background may be specified by cmap0 index (or cmap1 index, see <xref
+      linkend="color-map-1"/>).  The cmap0 index is 1 by default (and
+      corresponds to opaque red for the default cmap0 palette), but during
+      the course of plotting a page, the user can change that current color
+      as often as desired using &plcol0; to select the desired cmap0 color
+      index from the cmap0 color palette in existence at the time.</para>
 
-      <para> For more advanced use it is possible to define an arbitrary map0
-      palette of colors. The user may set the number of colors in the map0
-      palette using the command-line <literal>ncol0</literal> parameter or by
-      calling &plscmap0n;.  &plscol0; sets the RGB value of the given index
-      which must be less than the maximum number of colors (which is set by
-      default, by command line, by &plscmap0n;, or even by &plscmap0;).
-      Alternatively, &plscmap0; sets up the entire map0 color palette. For
-      all these ways of defining the map0 palette any number of colors are
-      allowed in any order, but it is not guaranteed that the individual
-      drivers will actually be able to use more than 16 colors. </para>
+      <para>The advanced cmap0 use case includes a number of methods
+      for changing the cmap0 color palette.  It is possible to update one
+      index of the cmap0 palette using &plscol0a; or &plscol0;, define a
+      complete cmap0 palette with an arbitrary number of colors using
+      &plscmap0a; or &plscmap0;, or read in a complete cmap0 palette from a
+      special cmap0 palette file with the command-line
+      <literal>cmap0</literal> parameter or by calling &plspal0;.  Our
+      standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=04">04</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=19">19</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=26">26</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=30">30</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=31">31</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=33">33</ulink> illustrate how
+      to use &plscol0a; and &plscol0;.  Our standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=02">02</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=24">24</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=30">30</ulink> illustrate how
+      to use &plscmap0a; and &plscmap0;.  Although the user can define and
+      use any cmap0 palette file they like, predefined cmap0 palette files
+      are given in <filename>data/cmap0*.pal</filename> within the source
+      tree and installed in
+      <filename>&lt;install-prefix&gt;/share/plplot&Project-Version;/cmap0*.pal</filename>
+      in the install tree.  By default the cmap0 palette is set using the
+      predefined <filename>cmap0_default.pal</filename> file, but <ulink
+      url="&PLplot-website;/examples.php?demo=16">our standard example
+      16</ulink> demonstrates use of a number of our other predefined cmap0
+      palette files in the various pages of that example.  Many of the above
+      commands indirectly set the number of cmap0 colors, but it is also
+      possible for the user to specify that number directly with the
+      command-line <literal>ncol0</literal> parameter or by calling
+      &plscmap0n;. For all methods of defining the cmap0 palette any number
+      of colors are allowed in any order, but it is not guaranteed that the
+      individual drivers will actually be able to use more than 16 colors
+      (although most drivers do support more than 16 colors).</para>
+
+      <para>The background color (which always corresponds to index 0
+      of the cmap0 palette) is a special case that must be discussed
+      separately.  The default cmap0 palette index 0 corresponds to opaque
+      black so by default the background is that color.  However, the user
+      may set that background color to something else by using the
+      command-line <literal>bg</literal> parameter, by calling &plscolbga;
+      or &plscolbg;, or by calling &plscol0a; or &plscol0; with a 0 index.
+      In addition, the background color is implicitly set when the whole
+      cmap0 color palette (including index 0) is changed with one of the
+      methods above.  However, since the background is painted at the start
+      of each page any of these methods of changing the background color
+      must be done <emphasis>before</emphasis> that page start.  Note that
+      although our long-term goal is for each device driver that honors
+      semitransparent colors will also honor semitransparent background
+      requests from users the current status is only a few drivers (e.g.,
+      the svg device driver) do that and the rest fall back to replacing the
+      requested semitransparent background with the equivalent opaque
+      background.</para>
 
     </sect2>
     <sect2 id="color-map-1">
       <title>Color Map1</title>
 
-      <para> Color map1 is most suited to plots (see <xref
-      linkend="contour-plots"/>) in which data values are represented by
-      colors. The data are scaled to the input map1 range of floating point
-      numbers between 0. and 1. which in turn are mapped (using &plcol1;) to
-      colors using a default or user-specified map1 color transformation.  Thus,
-      there are calls to &plcol1; from within the code for &plshade; (see
-      <filename>src/plshade.c</filename>) and &plsurf3d; (see
-      <filename>src/plot3d.c</filename>) to give a continuous range of
-      color corresponding to the data being plotted. In addition &plcol1; can
-      be used to specify the foreground color using the map1 continuous color
-      palette (see the commented out section of
-      <filename>examples/c/x12c.c</filename> which gives an example of this
-      for a histogram), but normally &plcol0; is a better tool for this job
-      (see <xref linkend="color-map-0"/>) since discrete colors often give
-      a better-looking result. </para>
+      <para>Color map1 is most suited to coloring elements of plots in
+      which continuous data values are represented by a continuous range of
+      colors.  The cmap1 palette colors are stored using <ulink
+      url="https://en.wikipedia.org/wiki/RGBA_color_space">RGBA</ulink>
+      (i.e., red, green, blue, and alpha transparency) components (although
+      some drivers ignore the alpha transparency data and simply render the
+      opaque colors corresponding to the requested semitransparent color).
+      In the discussion that follows all references to cmap1 API functions
+      with a trailing "a" in their names (e.g., &plscmap1la;) refers to
+      setting RGBA semitransparent colors, while the equivalent function
+      (e.g., &plscmap1l;) without the trailing "a" in the name refers to
+      setting RGB colors with an assumed opaque alpha transparency of 1.0.
+      The cmap1 index is a floating-point number whose default range is
+      0.0-1.0, but to set and get that range use &plscmap1_range; and
+      &plgcmap1_range;.</para>
 
-      <para> For more advanced use it is possible to define an arbitrary map1
-      palette of colors. The user may set the number of colors in this palette
-      using the command-line <literal>ncol1</literal> parameter or by calling
-      &plscmap1n;.  Furthermore, &plscmap1l; can be used to set the map1 color
-      palette using linear interpolation between control points specified in
-      either RGB or HLS space.</para>
+      <para>Page 4 of <ulink
+      url="&PLplot-website;/examples.php?demo=16">our standard example
+      16</ulink> illustrates use of our default cmap1 palette to represent
+      continuous data values as a continuous range of colors using
+      &plshades;.  For this case and also other PLplot API (e.g.,
+      &plsurf3d;) where continuous data are being plotted, the range of
+      continuous data are scaled to the cmap1 color index range which in
+      turn are mapped internally using &plcol1; to continuous colors using
+      the cmap1 color palette.  In addition, during the course of plotting a
+      page, the user can change the current color used for discrete objects
+      as often as desired by directly calling &plcol1; to select the desired
+      cmap1 color index from the cmap1 color palette in existence at the
+      time.  However, use of &plcol0; and the cmap0 palette (see <xref
+      linkend="color-map-0"/>) to set the current color for discrete objects
+      is more usual.</para>
 
-      <para> There is a one-to-one correspondence between RGB and HLS color
-      spaces.  RGB space is characterized by three 8-bit unsigned integers
-      corresponding to the intensity of the red, green, and blue colors. Thus,
-      in hexadecimal notation with the 3 bytes concatenated together the RGB
-      values of FF0000, FFFF00, 00FF00, 00FFFF, 0000FF, FF00FF, 000000, and
-      FFFFFF correspond to red, yellow, green, cyan, blue, magenta, black, and
-      white. </para>
+      <para>The advanced cmap1 use case includes a number of methods
+      of changing the cmap1 palette.  It is possible to define a complete
+      cmap1 palette by using &plscmap1la; or &plscmap1l; (where linear
+      interpolation between control points of given alpha transparency and
+      either RGB or HLS color assures the palette is a continuous function
+      of its index); by using &plscmap1a; or &plscmap1; (where it is the
+      user's responsibility to makes sure that palette is a continuous
+      function of its index); or by reading in a complete cmap1 palette from
+      a special cmap1 palette file with the command-line
+      <literal>cmap1</literal> parameter or by calling &plspal1;.  Our
+      standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=08">08</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=11">11</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=12">12</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=15">15</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=20">20</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=21">21</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=30">30</ulink> illustrate how
+      to use &plscmap1la; and &plscmap1l;.  Our standard example <ulink
+      url="&PLplot-website;/examples.php?demo=31">31</ulink> illustrates how
+      to use &plscmap1a; and &plscmap1; (which are rarely used because of
+      the continuity concern).  Although the user can define and use any
+      cmap1 palette file they like, predefined cmap1 palette files are given
+      in <filename>data/cmap1*.pal</filename> within the source tree and
+      installed in
+      <filename>&lt;install-prefix&gt;/share/plplot&Project-Version;/cmap1*.pal</filename>
+      in the install tree.  By default the cmap1 palette is set using the
+      predefined <filename>cmap1_default.pal</filename> file, but <ulink
+      url="&PLplot-website;/examples.php?demo=16">our standard example
+      16</ulink> demonstrates use of a number of our other predefined cmap1
+      palette files in the various pages of that example.  The default
+      number of cmap1 colors is 128 which supplies sufficient sampling of
+      the continuous cmap1 palette for most purposes, but that number can be
+      set to other values with the command-line <literal>ncol1</literal>
+      parameter or by calling &plscmap1n;.  (That number is also updated by
+      calls to the rarely used &plscmap1a; or &plscmap1;.)</para>
 
-      <para> HLS (hue, lightness, and saturation) space is often conceptually
-      easier to use than RGB space.  One useful way to visualize HLS space is
-      as a volume made up by two cones with their bases joined at the
-      <quote>equator</quote>.  A given RGB point corresponds to HLS point
-      somewhere on or inside the double cones, and vice versa. The hue
-      corresponds to the <quote>longitude</quote> of the point with 0, 60,
-      120, 180, 240, and 300 degrees corresponding to red, yellow, green,
-      cyan, blue, and magenta. The lightness corresponds to the distance along
-      the axis of the figure of a perpendicular dropped from the HLS point to
-      the axis. This values ranges from 0 at the <quote>south pole</quote> to
-      1 at the <quote>north pole</quote>.  The saturation corresponds to the
-      distance of the HLS point from the axis with the on-axis value being 0
-      and the surface value being 1. Full saturation corresponds to full color
-      while reducing the saturation (moving toward the axis of the HLS figure)
-      mixes more gray into the color until at zero saturation on the axis of
-      the figure you have only shades of gray with the variation of lightness
-      along the axis corresponding to a gray scale. </para>
+      <para>There is a one-to-one correspondence between <ulink
+      url="https://en.wikipedia.org/wiki/RGB_color_model">RGB</ulink> and
+      <ulink url="https://en.wikipedia.org/wiki/HLS_color_space">HLS</ulink>
+      color spaces.  Plplot provides &plrgbhls; to convert from RGB to HLS
+      and &plhlsrgb; to convert from HLS to RGB.</para>
 
-      <para> Here are some C-code fragments which use &plscmap1l; to set the
-      map1 color palette. This first example illustrates how to set up a
-      gray-scale palette using linear interpolation in RGB space.
+      <para>RGB space is characterized by three 8-bit unsigned
+      integers corresponding to the intensity of the red, green, and blue
+      colors. Thus, in hexadecimal notation with the 3 bytes concatenated
+      together the RGB values of FF0000, FFFF00, 00FF00, 00FFFF, 0000FF,
+      FF00FF, 000000, and FFFFFF correspond to red, yellow, green, cyan,
+      blue, magenta, black, and white.</para>
 
-      <programlisting>    i[0] = 0.;
-      i[1] = 1.;
-      /* RGB are rescaled to the range from 0 to 1. for input to plscmap1l.*/
-      r[0] = 0.;
-      r[1] = 1.;
-      g[0] = 0.;
-      g[1] = 1.;
-      b[0] = 0.;
-      b[1] = 1.;
-      plscmap1l(1, 2, i, r, g, b, NULL);</programlisting>
-      </para>
-
-      <para> This second example illustrates doing the same thing in HLS
-      space.
-
-      <programlisting>    i[0] = 0.;
-      i[1] = 1.;
-      /* Hue does not matter for zero saturation.*/
-      h[0] = 0.;
-      h[1] = 0.;
-      /* Lightness varies through its full range.*/
-      l[0] = 0.;
-      l[1] = 1.;
-      /* Saturation is zero for a gray scale.*/
-      s[0] = 0.;
-      s[1] = 0.;
-      /* Note the first argument which specifies HLS space.*/
-      plscmap1l(0, 2, i, h, l, s, NULL);</programlisting>
-      </para>
-
-      <para> This final example using &plscmap1l; illustrates how the default
-      map1 color palette is set with just 4 control points (taken from
-      <filename>src/plctrl.c</filename>).
-
-      <programlisting>/*--------------------------------------------------------------------------*\
-      * plcmap1_def()
-      *
-      * Initializes color map 1.
-      *
-      * The default initialization uses 4 control points in HLS space, the two
-      * inner ones being very close to one of the vertices of the HLS double
-      * cone.  The vertex used (black or white) is chosen to be the closer to
-      * the background color.  If you don't like these settings you can always
-      * initialize it yourself.
-      \*--------------------------------------------------------------------------*/
-
-      static void
-      plcmap1_def(void)
-      {
-      PLFLT i[4], h[4], l[4], s[4], vertex = 0.;
-
-      /* Positions of control points */
-
-      i[0] = 0;		/* left boundary */
-      i[1] = 0.45;	/* just before center */
-      i[2] = 0.55;	/* just after center */
-      i[3] = 1;		/* right boundary */
-
-      /* For center control points, pick black or white, whichever is closer to bg */
-      /* Be careful to pick just short of top or bottom else hue info is lost */
-
-      if (plsc->cmap0 != NULL)
-      vertex = ((float) plsc->cmap0[0].r +
-      (float) plsc->cmap0[0].g +
-      (float) plsc->cmap0[0].b) / 3. / 255.;
-
-      if (vertex &lt; 0.5)
-      vertex = 0.01;
-      else
-      vertex = 0.99;
-
-      /* Set hue */
-
-      h[0] = 260;		/* low: blue-violet */
-      h[1] = 260;		/* only change as we go over vertex */
-      h[2] = 0;		/* high: red */
-      h[3] = 0;		/* keep fixed */
-
-      /* Set lightness */
-
-      l[0] = 0.5;		/* low */
-      l[1] = vertex;	/* bg */
-      l[2] = vertex;	/* bg */
-      l[3] = 0.5;		/* high */
-
-      /* Set saturation -- keep at maximum */
-
-      s[0] = 1;
-      s[1] = 1;
-      s[2] = 1;
-      s[3] = 1;
-
-      c_plscmap1l(0, 4, i, h, l, s, NULL);
-      }</programlisting>
-      </para>
-
-      <para> Finally, &plscmap1; is an additional method of setting the map1
-      color palette directly using RGB space.  No interpolation is used with
-      &plscmap1; so it is the programmer's responsibility to make sure that
-      the colors vary smoothly.  Here is an example of the method taken from
-      <filename>examples/c/x08c.c</filename> which sets (yet again) the
-      gray-scale color palette.
-
-      <programlisting>    for (i=0;i&lt;n_col;i++)
-      rr[i] = gg[i] = bb[i] = i*256/n_col;
-      plscmap1(rr,gg,bb,n_col);</programlisting>
-      </para>
-
+      <para>HLS (hue, lightness, and saturation) space is often
+      conceptually easier to use than RGB space.  One useful way to
+      visualize HLS space is as a volume made up by two cones with their
+      bases joined at the <quote>equator</quote>.  A given RGB point
+      corresponds to HLS point somewhere on or inside the double cones, and
+      vice versa. The hue corresponds to the <quote>longitude</quote> of the
+      point with 0, 60, 120, 180, 240, and 300 degrees corresponding to red,
+      yellow, green, cyan, blue, and magenta. The lightness corresponds to
+      the distance along the axis of the figure of a perpendicular dropped
+      from the HLS point to the axis. This values ranges from 0 at the
+      <quote>south pole</quote> to 1 at the <quote>north pole</quote>.  The
+      saturation corresponds to the distance of the HLS point from the axis
+      with the on-axis value being 0 and the surface value being 1. Full
+      saturation corresponds to full color while reducing the saturation
+      (moving toward the axis of the HLS figure) mixes more gray into the
+      color until at zero saturation on the axis of the figure you have only
+      shades of gray with the variation of lightness along the axis
+      corresponding to a gray scale.</para>
     </sect2>
   </sect1>
 
@@ -1535,22 +1130,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<title>The gd and wingcc device drivers</title>
 	<para>
 	  For the png, jpeg, and gif devices (implemented with the gd
-	  device driver) and the wingcc device (implemented with the
-	  wingcc device driver), the plfreetype approach is used for
-	  accessing unicode-aware system fonts.  This approach has two
-	  drawbacks.  (1) text layout is only left-to-right so that complex text
-	  layout languages (such as those used in our standard example 24) are not correctly rendered.
-	  (2) System fonts are only accessed by file name rather than using the
-	  fontconfig approach or something similar to select the best system
-	  font to render the given unicode glyph.  Because of this latter
-	  drawback a configurable relationship must be established between the
-	  FCI (font characterization integer, see <xref linkend="fci"/>) and the
-	  TrueType fontname that is actually used for rendering a unicode glyph.
-	  This can be a considerable inconvenience for the user if they want
-          to specify anything other than a default set of font names.
+	  device driver) and the wingcc device (implemented with the wingcc
+	  device driver), the deprecated plfreetype approach is used for accessing
+	  unicode-aware system fonts.  This approach is deprecated because of its
+	  two major drawbacks.  (1)
+	  text layout is only left-to-right so that complex text layout
+	  languages (such as those used in <ulink
+	  url="&PLplot-website;/examples.php?demo=24">our standard example
+	  24</ulink>) are not correctly rendered.  (2) System fonts are only
+	  accessed by file name rather than using the fontconfig approach or
+	  something similar to select the best system font to render the given
+	  unicode glyph.  Because of this latter drawback a configurable
+	  relationship must be established between the FCI (font
+	  characterization integer, see <xref linkend="fci"/>) and the TrueType
+	  font name that is actually used for rendering a unicode glyph.  This
+	  can be a considerable inconvenience for the user if they want to
+	  specify anything other than a default set of font names.
 	</para>
 	<para>
-	  The TrueType fontnames corresponding to the 30 possible
+	  The TrueType font names corresponding to the 30 possible
 	  valid FCIs can be specified using cmake options. The defaults for the
 	  30 cmake variables PL_FREETYPE_FONT[_MODIFIER] (where FONT is one of
 	  MONO, SANS, SCRIPT, SERIF or SYMBOL and the optional MODIFIER is one
@@ -2143,8 +1741,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	the unicode symbols using UTF-8 encoding of PLplot input strings is
 	much more convenient for users than using the above
 	<literal>#[nnn]</literal> type of escape sequence.  For example, we
-	use UTF-8 strings rather than escape sequences in example 24 to render
-	the word "Peace" in several different languages.
+	use UTF-8 strings rather than escape sequences in <ulink
+	url="&PLplot-website;/examples.php?demo=24">our standard example
+	24</ulink> to render the word "Peace" in several different languages.
       </para>
 
       <table frame="all" id="peace">
@@ -2214,7 +1813,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	to specify the very wide range of mathematical symbols that are
 	typically desired for scientific plots.
       </para>
-
     </sect2>
 
     <sect2 id="character-size">
@@ -2241,267 +1839,126 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	by calls to &plpoin; and &plsym;.  It operates analogously to
 	&plschr; as described above.
       </para>
-
     </sect2>
   </sect1>
 
   <sect1 id="tri-d-plots">
     <title>Three-dimensional Plots</title>
     <para>PLplot includes three-dimensional plot routines that plot
-    <literal>z(x,y)</literal> as a single-valued function of the two independent variables
-    <literal>x</literal> and <literal>y</literal> in a variety of ways, see <xref linkend="surface-plots"/>, <xref linkend="contour-plots"/>, <xref linkend="shade-plots"/>, and <xref linkend="image-plots"/>.
-    For all these cases, <literal>z(x,y)</literal> is normally communicated to the three-dimensional
-    plot routine as a two-dimensional array
-
-    the ,<xref linkend="surface-plots"/>,   </para>
+    functions of the two independent variables <literal>x</literal> and
+    <literal>y</literal> in a variety of ways (see <xref
+    linkend="surface-plots"/>, <xref linkend="contour-plots"/>, <xref
+    linkend="shade-plots"/>, <xref linkend="image-plots"/>, and <xref
+    linkend="vector-plots"/>).</para>
     <sect2 id="surface-plots">
       <title>Surface Plots</title>
 
+      <para>PLplot provides the routines &plmesh;, &plmeshc;,
+      &plot3d;, &plot3dc;, &plot3dcl;, &plsurf3d;, &plsurf3dl; and &plfill3;
+      to plot the projection of a 3D surface on an existing 2D window.  Our
+      standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=08">08</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=11">11</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=15">15</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=21">21</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=28">28</ulink> illustrate how
+      these routines are used.</para>
 
-    <para>
-      PLplot includes routines that will represent a single-valued function
-      of two variables as a surface.  In this section, we shall assume that
-      the function to be plotted is <literal>Z[X][Y]</literal>, where
-      <literal>Z</literal> represents the dependent variable and
-      <literal>X</literal> and <literal>Y</literal> represent the
-      independent variables.
-    </para>
-
-    <para>
-      As usual, we would like to refer to a three dimensional point
-      <literal>(X, Y, Z)</literal> in terms of some meaningful
-      user-specified coordinate system.  These are called
-      <emphasis>three-dimensional world coordinates</emphasis>.  We need to
-      specify the ranges of these coordinates, so that the entire surface is
-      contained within the cuboid defined by <literal>xmin</literal> &lt;
-      <literal>x</literal> &lt; <literal>xmax</literal>,
-      <literal>ymin</literal> &lt; <literal>y</literal> &lt;
-      <literal>ymax</literal>, and <literal>zmin</literal> &lt;
-      <literal>z</literal> &lt; <literal>zmax</literal>.  Typically, we
-      shall want to view the surface from a variety of angles, and to
-      facilitate this, a two-stage mapping of the enclosing cuboid is
-      performed.  Firstly, it is mapped into another cuboid called the
-      <emphasis>normalized box</emphasis> whose size must also be specified
-      by the user, and secondly this normalized box is viewed from a
-      particular azimuth and elevation so that it can be projected onto the
-      two-dimensional window.
-    </para>
-
-    <para>
-      This two-stage transformation process allows considerable flexibility
-      in specifying how the surface is depicted.  The lengths of the sides
-      of the normalized box are independent of the world coordinate ranges
-      of each of the variables, making it possible to use
-      <quote>reasonable</quote> viewing angles even if the ranges of the
-      world coordinates on the axes are very different.  The size of the
-      normalized box is determined essentially by the size of the
-      two-dimensional window into which it is to be mapped.  The normalized
-      box is centered about the origin in the <literal>x</literal> and
+      <para>In all cases the transformations required to plot the
+      projection of a 3D surface on a 2D window are configured by &plw3d;
+      and are done to a rectangular cuboid enclosing the 3D surface which
+      has its limits expressed in 3D world coordinates and also normalized
+      3D coordinates (used for interpreting the altitude and azimuth of the
+      viewing angle).  This representation of the transformation process
+      allows considerable flexibility in specifying how the surface is
+      depicted.  The lengths of the sides of the normalized rectangular
+      cuboid are independent of the 3D world coordinate ranges of each of
+      the variables, making it possible to use <quote>reasonable</quote>
+      viewing angles even if the ranges of the 3D world coordinates on the
+      axes are very different.  The size of the normalized rectangular
+      cuboid is determined essentially by the size of the two-dimensional
+      window into which it is to be mapped.  The normalized cuboid is
+      centered about its origin in the <literal>x</literal> and
       <literal>y</literal> directions, but rests on the plane <literal>z =
       0</literal>.  It is viewed by an observer located at altitude
       <literal>alt</literal> and azimuth <literal>az</literal>, where both
       angles are measured in degrees.  The altitude should be restricted to
       the range zero to ninety degrees for proper operation, and represents
-      the viewing angle above the xy plane.  The azimuth is defined so that
-      when <literal>az = 0</literal>, the observer sees the xz plane face
-      on, and as the angle is increased, the observer moves clockwise
-      around the box as viewed from above the xy plane.  The azimuth can
-      take on any value.
-    </para>
+      the viewing angle above the xy plane of the normalized cuboid.  The
+      azimuth is defined so that when <literal>az = 0</literal>, the
+      observer sees the xz plane face on, and as the angle is increased, the
+      observer moves clockwise around the normalized cuboid as viewed from
+      above the xy plane.  The azimuth can take on any value.  In the above
+      list of examples, we have chosen x and y world-coordinate ranges near
+      (-1.0-1.0) for the 2D window, and x, y, z sizes of the normalized
+      cuboid near (1., 1., 1.), and users will likely want to adopt similar
+      values as well.</para>
+    </sect2>
 
-    <para>
-      The first step in drawing a surface plot is to decide on the size of
-      the two-dimensional window and the normalized box.  For example, we
-      could choose the normalized box to have sides of length
-    </para>
+    <sect2 id="contour-plots">
+      <title>Contour Plots</title>
 
-    <para>
-      <programlisting>    basex = 2.0;
-      basey = 4.0;
-      height = 3.0;</programlisting>
-    </para>
+      <para>PLplot provides the &plcont; routine for generating
+      contour plots and our standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=09">08</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=14">14</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=16">16</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=22">22</ulink> illustrate how
+      this routine is used.  The contourer uses a contour-following
+      algorithm so that it is possible to use non-continuous line styles.
+      Further, one may specify arbitrary coordinate mappings from array
+      indices to world coordinates, such as for contours in a polar
+      coordinate system.</para>
 
-    <para>
-      A reasonable range for the x coordinate of the two-dimensional window
-      is -2.5 to +2.5, since the length of the diagonal across the base of
-      the normalized box is
-      sqrt(2<superscript>2</superscript>+4<superscript>2</superscript>) =
-      2&nbsp;sqrt(5), which fits into this coordinate range.  A reasonable
-      range for the y coordinate of the two dimensional window in this case
-      is -2.5 to +4, as the the projection of the normalized box lies in
-      this range for the allowed range of viewing angles.
-    </para>
+      <para>The path of each contour is initially computed in terms of
+      the values of the indices of the matrix that holds the data to be
+      contoured.  Before these can be drawn in the current window (see <xref
+      linkend="windows"/>), it is necessary to convert from these array
+      indices into world coordinates.  This transformation is normally done
+      by a callback function which is supplied as an argument to &plcont;.
+      For C use of &plcont; we have included directly in the PLplot library
+      the following transformation callback routines: &pltr0; (identity
+      transformation); &pltr1; (linear interpolation in singly dimensioned
+      coordinate arrays); and &pltr2; (linear interpolation in doubly
+      dimensioned coordinate arrays), but other callbacks can be used for
+      the C case instead.  The above list of examples illustrates how this
+      callback argument and associated transformation from index arguments to
+      world coordinates is implemented in each of our supported
+      languages.</para>
+    </sect2>
 
-    <para>
-      The routine &plwind; or &plenv; is used in the usual way to establish
-      the size of the two-dimensional window.  The routine &plw3d; must
-      then be called to establish the range of the three dimensional world
-      coordinates, the size of the normalized box and the viewing angles.
-      After calling &plw3d;, the actual surface is drawn by a call to
-      &plot3d;.
-    </para>
-
-    <para>
-      For example, if the three-dimensional world-coordinate ranges are
-      -10.0 &leq; <literal>x</literal> &leq; 10.0, -3.0 &leq;
-      <literal>y</literal> &leq; +7.0, and 0.0 &leq; <literal>z</literal>
-      &leq; 8.0, we could use the following statements:
-    </para>
-
-    <para>
-      <programlisting>    xmin2d = -2.5;
-      xmax2d =  2.5;
-      ymin2d = -2.5;
-      ymax2d =  4.0;
-      plenv(xmin2d, xmax2d, ymin2d, ymax2d, 0, -2);
-      basex = 2.0;
-      basey = 4.0;
-      height = 3.0;
-      xmin = -10.0;
-      xmax = 10.0;
-      ymin = -3.0;
-      ymax = 7.0;
-      zmin = 0.0;
-      zmax = 8.0;
-      alt = 45.0;
-      az = 30.0;
-      side = 1;
-      plw3d(basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az);
-      plot3d(x, y, z, nx, ny, opt, side);</programlisting>
-    </para>
-
-    <para>The values of the function are stored in a vectored two-dimensional matrix
-    <literal>z</literal> where the matrix element
-    <literal>z<subscript>i</subscript><subscript>j</subscript></literal> contains the value of the function at the
-    point x<subscript>i</subscript>, y<subscript>j</subscript>.
-    A vectored two-dimensional matrix is defined
-    as a pointer to an
-    array of pointers which each point to a row (for languages such as C
-    with row major ordering) or column (for languages such as Fortran with
-    column major ordering) of the matrix.  Note that the values of the
-    independent variables x<subscript>i</subscript> and
-    y<subscript>j</subscript> do not need to be equally spaced, but they
-    must lie on a rectangular grid.  Thus two further arrays
-    <literal>x[nx]</literal> and <literal>y[ny]</literal> are required as
-    arguments to &plot3d; to specify the values of the independent
-    variables.  The values in the arrays x and y must be strictly
-    increasing with the index.  The argument <literal>opt</literal>
-    specifies how the surface is outlined.  If <literal>opt = 1</literal>,
-    a line is drawn representing <literal>z</literal> as a function of x for each value of y,
-    if <literal>opt = 2</literal>, a line is drawn representing <literal>z</literal> as a
-    function of <literal>y</literal> for each value of <literal>x</literal>, and if <literal>opt = 3</literal>,
-    a net of lines is drawn.  The first two options may be preferable if
-    one of the independent variables is to be regarded as a parameter,
-    whilst the third is better for getting an overall picture of the
-    surface.  If side is equal to one then sides are drawn on the figure
-    so that the graph doesn't appear to float.</para>
-
-    <para>
-      The routine &plmesh; is similar to &plot3d;, except that it is used
-      for drawing mesh plots.  Mesh plots allow you to see both the top and
-      bottom sides of a surface mesh, while 3D plots allow you to see the
-      top side only (like looking at a solid object).  The side option is
-      not available with &plmesh;.
-    </para>
-
-    <para>
-      Labelling a three-dimensional or mesh plot is somewhat more
-      complicated than a two dimensional plot due to the need for skewing
-      the characters in the label so that they are parallel to the
-      coordinate axes.  The routine &plbox3; thus combines the functions of
-      box drawing and labelling.
-    </para>
-
-  </sect2>
-
-  <sect2 id="contour-plots">
-    <title>Contour Plots</title>
-
-    <para>PLplot provides the &plcont; routine for generating contour
-    plots for data stored in a two-dimensional array.  The contourer uses
-    a contour following algorithm so that it is possible to use
-    non-continuous line styles.  Further, one may specify arbitrary
-    coordinate mappings from array indices to world coordinates, such as
-    for contours in a polar coordinate system.</para>
-
-    <para>This routine has the form:</para>
-
-      <para>
-	<funcsynopsis>
-	  <funcprototype>
-	    <funcdef>
-	      <function>plcont</function>
-	    </funcdef>
-	    <paramdef><parameter>z</parameter></paramdef>
-	    <paramdef><parameter>nx</parameter></paramdef>
-	    <paramdef><parameter>ny</parameter></paramdef>
-	    <paramdef><parameter>kx</parameter></paramdef>
-	    <paramdef><parameter>lx</parameter></paramdef>
-	    <paramdef><parameter>ky</parameter></paramdef>
-	    <paramdef><parameter>ly</parameter></paramdef>
-	    <paramdef><parameter>clevel</parameter></paramdef>
-	    <paramdef><parameter>nlevel</parameter></paramdef>
-	    <paramdef><parameter>pltr</parameter></paramdef>
-	    <paramdef><parameter>pltr_data</parameter></paramdef>
-	  </funcprototype>
-	</funcsynopsis>
-      </para>
-
-      <para>
-	where <literal>z</literal> is the vectored two-dimensional matrix of size
-	<literal>nx</literal> by <literal>ny</literal> containing samples
-	of the function to be contoured.  (<literal>z</literal> is a
-	vectored two-dimensional array as described in the previous
-	section.  It is <emphasis>not</emphasis> a fixed-size
-	two-dimensional array.) The parameters <literal>kx</literal>,
-	<literal>lx</literal>, <literal>ky</literal> and
-	<literal>ly</literal> specify the portion of <literal>z</literal>
-	that is to be considered.  The array <literal>clevel</literal> of
-	length <literal>nlevel</literal> is a list of the desired contour
-	levels.
-      </para>
-
-      <para>
-	The path of each contour is initially computed in terms of the
-	values of the array indices which range from <literal>0</literal>
-	to <literal>nx-1</literal> in the first index and from
-	<literal>0</literal> to <literal>ny-1</literal> in the second
-	index.  Before these can be drawn in the current window (see <xref
-	linkend="windows"/>), it is necessary to convert from these array
-	indices into world coordinates.  This is done by passing a pointer
-	<literal>pltr</literal> to a user-defined transformation function
-	to &plcont;.  For C use of &plcont; (and &plshade;, see next subsection)
-	we have included directly in
-	the PLplot library the following transformation routines:
-	&pltr0; (identity transformation or you can
-	enter a NULL argument to get the same effect); &pltr1;
-	(linear interpolation in singly dimensioned coordinate arrays);
-	and  &pltr2; (linear interpolation in doubly dimensioned coordinate
-	arrays).  Examples of the use of these transformation
-	routines are given in <filename>examples/c/x09c.c</filename>,
-	<filename>examples/c/x14c.c</filename>, and
-	<filename>examples/c/x16c.c</filename>.  These same three examples
-	also demonstrate a user-defined transformation function
-	<literal>mypltr</literal> which is capable of
-	arbitrary translation, rotation, and/or shear. By defining other
-	transformation subroutines, it is possible to draw contours wrapped
-	around polar grids etc.
-      </para>
-  </sect2>
-
-  <sect2 id="shade-plots">
-    <title>Shade plots</title>
-    <para></para>
-  </sect2>
-  <sect2 id="image-plots">
-    <title>Shade plots</title>
-    <para></para>
-  </sect2>
-  <sect2 id="vector-plots">
-    <title>Vector plots</title>
-    <para></para>
-  </sect2>
-</sect1>
+    <sect2 id="shade-plots">
+      <title>Shade plots</title>
+      <para>PLplot provides the &plshade; and &plshades; routines for
+      generating shade plots and our standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=15">15</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=16">16</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=21">21</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=22">22</ulink> illustrate how
+      those routines are used including how the needed transformation from
+      index arguments to world coordinates is implemented in each of
+      our supported languages.</para>
+    </sect2>
+    <sect2 id="image-plots">
+      <title>Image plots</title>
+      <para>PLplot provides the &plimage; and &plimagefr; routines for
+      generating images plots and our standard example <ulink
+      url="&PLplot-website;/examples.php?demo=20">20</ulink> illustrates how
+      those routines are used including how the needed transformation from
+      index arguments to world coordinates is implemented in each of
+      our supported languages.</para>
+    </sect2>
+    <sect2 id="vector-plots">
+      <title>Vector plots</title>
+      <para>PLplot provides the &plvect; routine for
+      generating vector plots and our standard example <ulink
+      url="&PLplot-website;/examples.php?demo=22">22</ulink> illustrates how
+      that routine is used including how the needed transformation from
+      index arguments to world coordinates is implemented in each of
+      our supported languages.  In addition that routine shows
+      how to call &plsvect; to set the arrow style for vector plots.</para>
+    </sect2>
+  </sect1>
   <sect1 id="legends">
     <title>Legends and color bars</title>
     <para>
@@ -2512,27 +1969,37 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       subplot representing a continuous range of colors within the main
       plot and typically identifying certain colors with certain numerical
       values using an axis). &pllegend; is useful for visually annotating
-      most two-dimensional plots.  See standard examples 4 and 26 for some
+      most two-dimensional plots.  See our standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=04">04</ulink> and<ulink
+      url="&PLplot-website;/examples.php?demo=26">26</ulink> for some
       examples.  &plcolorbar; is especially useful for annotating continuous
-      shade plots generated by &plshades;.  See standard example 16 for an
+      shade plots generated by &plshades;.  See <ulink
+      url="&PLplot-website;/examples.php?demo=16">our standard example 16</ulink>, for an
       example.
     </para>
 
     <para>
-      The &pllegend; and &plcolorbar; routines provide the users complete
-      and convenient control of the size and position of the results on the
-      plot and also return size data that makes it straightforward to stack
-      different legend or colorbar results together on the plot (see
-      standard example 33 for an example of this capability).  Furthermore,
-      the &pllegend; and &plcolorbar; routines provide the user with many
+      The &pllegend; and &plcolorbar; routines provide the users
+      complete and convenient control of the size and position of the
+      results on the plot and also return size data that makes it
+      straightforward to stack different legend or colorbar results together
+      on the plot (see <ulink
+      url="&PLplot-website;/examples.php?demo=33">our standard example
+      33</ulink> for an example of this capability).  Furthermore, the
+      &pllegend; and &plcolorbar; routines provide the user with many
       different style possibilities for the results.  Because of all these
       features, &pllegend; and &plcolorbar; have an extensive argument list.
       So we recommend first-time users of &pllegend; and &plcolorbar; use
-      examples 4, 16, and 26 as a tutorial on how to use these PLplot
-      capabilities in a simple way, and for more advanced use we recommend
-      that users study the &pllegend; and &plcolorbar; documentation and
-      also example 33 which attempts to exercise most capabilities of these
-      two PLplot functions.
+      our standard examples <ulink
+      url="&PLplot-website;/examples.php?demo=04">04</ulink>, <ulink
+      url="&PLplot-website;/examples.php?demo=16">16</ulink>, and <ulink
+      url="&PLplot-website;/examples.php?demo=26">26</ulink> as a tutorial
+      on how to use these PLplot capabilities in a simple way, and for more
+      advanced use we recommend studying the &pllegend; and &plcolorbar;
+      documentation and also <ulink
+      url="&PLplot-website;/examples.php?demo=33">our standard example
+      33</ulink> which attempts to exercise most capabilities of these two
+      PLplot functions.
     </para>
   </sect1>
 
