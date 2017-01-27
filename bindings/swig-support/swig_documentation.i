@@ -78,7 +78,8 @@ DESCRIPTION:
 
     Redacted form: pladv(page)
 
-    This function is used in examples 1,2,4,6-12,14-18,20,21,23-27,29,31.
+    This function is used in examples 1, 2, 4, 6-12, 14-18, 20, 21, 23-27,
+    29, and 31.
 
 
 
@@ -99,10 +100,10 @@ pladv;
 
 DESCRIPTION:
 
-    Draw a possibly filled arc centered at x, y with semimajor axis  a and
-    semiminor axis  b, starting at  angle1 and ending at  angle2.
+    Draw a possibly filled arc centered at x, y with semimajor axis a and
+    semiminor axis b, starting at angle1 and ending at angle2.
 
-    Redacted form:  General: plarc(x, y, a, b, angle1, angle2, rotate,
+    Redacted form: General: plarc(x, y, a, b, angle1, angle2, rotate,
     fill)
 
 
@@ -144,14 +145,14 @@ DESCRIPTION:
     Draws a box around the currently defined viewport with arbitrary
     world-coordinate origin specified by x0 and y0 and labels it with
     world coordinate values appropriate to the window.	Thus plaxes should
-    only be called after defining both viewport and window.  The character
-    strings xopt and yopt specify how the box should be drawn as described
-    below.  If ticks and/or subticks are to be drawn for a particular
-    axis, the tick intervals and number of subintervals may be specified
-    explicitly, or they may be defaulted by setting the appropriate
-    arguments to zero.
+    only be called after defining both viewport and window.  The ascii
+    character strings xopt and yopt specify how the box should be drawn as
+    described below.  If ticks and/or subticks are to be drawn for a
+    particular axis, the tick intervals and number of subintervals may be
+    specified explicitly, or they may be defaulted by setting the
+    appropriate arguments to zero.
 
-    Redacted form:  General: plaxes(x0, y0, xopt, xtick, nxsub, yopt,
+    Redacted form: General: plaxes(x0, y0, xopt, xtick, nxsub, yopt,
     ytick, nysub)
 	    Perl/PDL: plaxes(x0, y0, xtick, nxsub, ytick, nysub, xopt,
     yopt)
@@ -171,15 +172,15 @@ ARGUMENTS:
 
     y0 (PLFLT, input) :    World Y coordinate of origin.
 
-    xopt (const char *, input) :    Pointer to character string specifying
-    options for horizontal axis.  The string can include any
-    combination of the following letters (upper or lower case) in any
-    order: a: Draws axis, X-axis is horizontal line (y=0), and Y-axis
-    is vertical line (x=0).
+    xopt (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    options for the x axis.  The string can include any combination of
+    the following letters (upper or lower case) in any order: a: Draws
+    axis, X-axis is horizontal line (y=0), and Y-axis is vertical line
+    (x=0).
         b: Draws bottom (X) or left (Y) edge of frame.
         c: Draws top (X) or right (Y) edge of frame.
-        d: Plot labels as date / time.  Values are assumed to be
-        seconds since the epoch  (as used by gmtime).
+        d: Plot labels as date / time. Values are assumed to be
+        seconds since the epoch (as used by gmtime).
         f:    Always use fixed point numeric labels.
         g: Draws a grid at the major tick interval.
         h: Draws a grid at the minor tick interval.
@@ -214,11 +215,11 @@ ARGUMENTS:
     ticks for minor ticks.    If it is set to zero, PLplot automatically
     generates a suitable minor tick interval.
 
-    yopt (const char *, input) :    Pointer to character string specifying
-    options for vertical axis.  The string can include any combination
-    of the letters defined above for xopt, and in addition may
-    contain: v: Write numeric labels for vertical axis parallel to the
-    base of the graph, rather than parallel to the axis.
+    yopt (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    options for the y axis.  The string can include any combination of
+    the letters defined above for xopt, and in addition may contain:
+    v: Write numeric labels for the y axis parallel to the base of the
+    graph, rather than parallel to the axis.
 
 
     ytick (PLFLT, input) :    World coordinate interval between major
@@ -240,10 +241,10 @@ DESCRIPTION:
     placed in y[i].  For proper operation, the values in x[i] must form a
     strictly increasing sequence.  By default, x[i] is the left-hand edge
     of the i'th bin. If opt=PL_BIN_CENTRED is used, the bin boundaries are
-    placed midway between the values in the x array.  Also see plhist for
+    placed midway between the values in the x vector.  Also see plhist for
     drawing histograms from unbinned data.
 
-    Redacted form:  General: plbin(x, y, opt)
+    Redacted form: General: plbin(x, y, opt)
 	    Perl/PDL: plbin(nbin, x, y, opt)
 	    Python: plbin(nbin, x, y, opt)
 
@@ -259,15 +260,15 @@ plbin(nbin, x, y, opt)
 ARGUMENTS:
 
     nbin (PLINT, input) :    Number of bins (i.e., number of values in x
-    and y arrays.)
+    and y vectors.)
 
-    x (const PLFLT *, input) :      Pointer to array containing values
-    associated with bins.  These must form a strictly increasing
-    sequence.
+    x (PLFLT_VECTOR, input) :     A vector containing values associated
+    with bins.  These must form a strictly increasing sequence.
 
-    y (const PLFLT *, input) :      Pointer to array containing number of
-    points in bin.    This is a PLFLT (instead of PLINT) array so as to
-    allow histograms of probabilities, etc.
+    y (PLFLT_VECTOR, input) :     A vector containing a number which is
+    proportional to the number of points in each bin.  This is a PLFLT
+    (instead of PLINT) vector so as to allow histograms of
+    probabilities, etc.
 
     opt (PLINT, input) :    Is a combination of several flags:
     opt=PL_BIN_DEFAULT: The x represent the lower bin boundaries, the
@@ -300,7 +301,7 @@ DESCRIPTION:
 
     Redacted form: plbop()
 
-    This function is used in examples 2,20.
+    This function is used in examples 2 and 20.
 
 
 
@@ -316,18 +317,19 @@ DESCRIPTION:
 
     Draws a box around the currently defined viewport, and labels it with
     world coordinate values appropriate to the window.	Thus plbox should
-    only be called after defining both viewport and window.  The character
-    strings xopt and yopt specify how the box should be drawn as described
-    below.  If ticks and/or subticks are to be drawn for a particular
-    axis, the tick intervals and number of subintervals may be specified
-    explicitly, or they may be defaulted by setting the appropriate
-    arguments to zero.
+    only be called after defining both viewport and window.  The ascii
+    character strings xopt and yopt specify how the box should be drawn as
+    described below.  If ticks and/or subticks are to be drawn for a
+    particular axis, the tick intervals and number of subintervals may be
+    specified explicitly, or they may be defaulted by setting the
+    appropriate arguments to zero.
 
-    Redacted form:  General: plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
+    Redacted form: General: plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 	    Perl/PDL: plbox(xtick, nxsub, ytick, nysub, xopt, yopt)
 
 
-    This function is used in examples 1,2,4,6,6-12,14-18,21,23-26,29.
+    This function is used in examples 1, 2, 4, 6, 6-12, 14-18, 21, 23-26,
+    and 29.
 
 
 
@@ -337,15 +339,15 @@ plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
 
 ARGUMENTS:
 
-    xopt (const char *, input) :    Pointer to character string specifying
-    options for horizontal axis.  The string can include any
-    combination of the following letters (upper or lower case) in any
-    order: a: Draws axis, X-axis is horizontal line (y=0), and Y-axis
-    is vertical line (x=0).
+    xopt (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    options for the x axis.  The string can include any combination of
+    the following letters (upper or lower case) in any order: a: Draws
+    axis, X-axis is horizontal line (y=0), and Y-axis is vertical line
+    (x=0).
         b: Draws bottom (X) or left (Y) edge of frame.
         c: Draws top (X) or right (Y) edge of frame.
-        d: Plot labels as date / time.  Values are assumed to be
-        seconds since the epoch  (as used by gmtime).
+        d: Plot labels as date / time. Values are assumed to be
+        seconds since the epoch (as used by gmtime).
         f:    Always use fixed point numeric labels.
         g: Draws a grid at the major tick interval.
         h: Draws a grid at the minor tick interval.
@@ -380,11 +382,11 @@ ARGUMENTS:
     ticks for minor ticks.    If it is set to zero, PLplot automatically
     generates a suitable minor tick interval.
 
-    yopt (const char *, input) :    Pointer to character string specifying
-    options for vertical axis.  The string can include any combination
-    of the letters defined above for xopt, and in addition may
-    contain: v: Write numeric labels for vertical axis parallel to the
-    base of the graph, rather than parallel to the axis.
+    yopt (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    options for the y axis.  The string can include any combination of
+    the letters defined above for xopt, and in addition may contain:
+    v: Write numeric labels for the y axis parallel to the base of the
+    graph, rather than parallel to the axis.
 
 
     ytick (PLFLT, input) :    World coordinate interval between major
@@ -405,13 +407,13 @@ DESCRIPTION:
     plot.  For a more complete description of three-dimensional plotting
     see the PLplot documentation.
 
-    Redacted form:  General: plbox3(xopt, xlabel, xtick, nxsub, yopt,
+    Redacted form: General: plbox3(xopt, xlabel, xtick, nxsub, yopt,
     ylabel, ytick, nysub, zopt, zlabel, ztick, nzsub)
 	    Perl/PDL: plbox3(xtick, nxsub, ytick, nysub, ztick, nzsub,
     xopt, xlabel, yopt, ylabel, zopt, zlabel)
 
 
-    This function is used in examples 8,11,18,21.
+    This function is used in examples 8, 11, 18, and 21.
 
 
 
@@ -421,14 +423,14 @@ plbox3(xopt, xlabel, xtick, nxsub, yopt, ylabel, ytick, nysub, zopt, zlabel, zti
 
 ARGUMENTS:
 
-    xopt (const char *, input) :    Pointer to character string specifying
-    options for the x axis. The string can include any combination of
+    xopt (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    options for the x axis.  The string can include any combination of
     the following letters (upper or lower case) in any order: b: Draws
     axis at base, at height z=
     zmin where zmin is defined by call to plw3d.  This character must be
     specified in order to use any of the other options.
-        d: Plot labels as date / time.  Values are assumed to be
-        seconds since the epoch  (as used by gmtime).
+        d: Plot labels as date / time. Values are assumed to be
+        seconds since the epoch (as used by gmtime).
         f: Always use fixed point numeric labels.
         i: Inverts tick marks, so they are drawn downwards, rather
         than upwards.
@@ -447,9 +449,9 @@ ARGUMENTS:
         written under the axis.
 
 
-    xlabel (const char *, input) :    Pointer to character string
-    specifying text label for the x axis.  It is only drawn if u is in
-    the xopt string.
+    xlabel (PLCHAR_VECTOR, input) :    A UTF-8 character string specifying
+    the text label for the x axis.    It is only drawn if u is in the
+    xopt string.
 
     xtick (PLFLT, input) :    World coordinate interval between major
     ticks on the x axis. If it is set to zero, PLplot automatically
@@ -459,13 +461,13 @@ ARGUMENTS:
     ticks for minor ticks.    If it is set to zero, PLplot automatically
     generates a suitable minor tick interval.
 
-    yopt (const char *, input) :    Pointer to character string specifying
+    yopt (PLCHAR_VECTOR, input) :    An ascii character string specifying
     options for the y axis. The string is interpreted in the same way
     as xopt.
 
-    ylabel (const char *, input) :    Pointer to character string
-    specifying text label for the y axis.  It is only drawn if u is in
-    the yopt string.
+    ylabel (PLCHAR_VECTOR, input) :    A UTF-8 character string specifying
+    the text label for the y axis.    It is only drawn if u is in the
+    yopt string.
 
     ytick (PLFLT, input) :    World coordinate interval between major
     ticks on the y axis. If it is set to zero, PLplot automatically
@@ -475,7 +477,7 @@ ARGUMENTS:
     ticks for minor ticks.    If it is set to zero, PLplot automatically
     generates a suitable minor tick interval.
 
-    zopt (const char *, input) :    Pointer to character string specifying
+    zopt (PLCHAR_VECTOR, input) :    An ascii character string specifying
     options for the z axis. The string can include any combination of
     the following letters (upper or lower case) in any order: b: Draws
     z axis to the left of the surface plot.
@@ -483,8 +485,8 @@ ARGUMENTS:
         d: Draws grid lines parallel to the x-y plane behind the
         figure.  These lines are not drawn until after plot3d or
         plmesh are called because of the need for hidden line removal.
-        e: Plot labels as date / time.  Values are assumed to be
-        seconds since the epoch  (as used by gmtime).  Note this
+        e: Plot labels as date / time. Values are assumed to be
+        seconds since the epoch (as used by gmtime).  Note this
         suboption is interpreted the same as the d suboption for xopt
         and yopt, but it has to be identified as e for zopt since d
         has already been used for the different purpose above.
@@ -495,9 +497,9 @@ ARGUMENTS:
         of data points before passing them to any of the drawing
         routines.
         m: Writes numeric labels at major tick intervals on the
-        right-hand vertical axis.
+        right-hand z axis.
         n: Writes numeric labels at major tick intervals on the
-        left-hand vertical axis.
+        left-hand z axis.
         o: Use custom labelling function to generate axis label text.
         The custom labelling function can be defined with the
         plslabelfunc command.
@@ -510,9 +512,9 @@ ARGUMENTS:
         right-hand axis.
 
 
-    zlabel (const char *, input) :    Pointer to character string
-    specifying text label for the z axis.  It is only drawn if u or v
-    are in the zopt string.
+    zlabel (PLCHAR_VECTOR, input) :    A UTF-8 character string specifying
+    the text label for the z axis.    It is only drawn if u or v are in
+    the zopt string.
 
     ztick (PLFLT, input) :    World coordinate interval between major
     ticks on the z axis. If it is set to zero, PLplot automatically
@@ -528,7 +530,7 @@ plbox3;
 
 DESCRIPTION:
 
-    Calculate broken-down time;  year, month, day, hour, min, sec; from
+    Calculate broken-down time; year, month, day, hour, min, sec; from
     continuous time, ctime for the current stream.  This function is the
     inverse of plctime.
 
@@ -541,7 +543,7 @@ DESCRIPTION:
     epoch of 1970-01-01T00:00:00Z. However, other definitions of
     broken-down and continuous time are possible, see plconfigtime.
 
-    Redacted form:  General: plbtime(year, month, day, hour, min, sec,
+    Redacted form: General: plbtime(year, month, day, hour, min, sec,
     ctime)
 	    Perl/PDL: Not available?
 
@@ -556,19 +558,25 @@ plbtime(year, month, day, hour, min, sec, ctime)
 
 ARGUMENTS:
 
-    year (PLINT *, output) :    Output year.
+    year (PLINT_NC_SCALAR, output) :    Returned value of years with
+    positive values corresponding to CE (i.e., 1 = 1 CE, etc.) and
+    non-negative values corresponding to BCE (e.g., 0 = 1 BCE, -1 = 2
+    BCE, etc.)
 
-    month (PLINT *, output) :     Output month in range from 0 (January) to
-    11 (December).
+    month (PLINT_NC_SCALAR, output) :     Returned value of month within
+    the year in the range from 0 (January) to 11 (December).
 
-    day (PLINT *, output) :    Output day in range from 1 to 31.
+    day (PLINT_NC_SCALAR, output) :    Returned value of day within the
+    month in the range from 1 to 31.
 
-    hour (PLINT *, output) :    Output hour in range from 0 to 23.
+    hour (PLINT_NC_SCALAR, output) :    Returned value of hour within the
+    day in the range from 0 to 23.
 
-    min (PLINT *, output) :    Output minute in range from 0 to 59
+    min (PLINT_NC_SCALAR, output) :    Returned value of minute within the
+    hour in the range from 0 to 59
 
-    sec (PLFLT *, output) :    Output second in floating range from 0. to
-    60.
+    sec (PLFLT_NC_SCALAR, output) :    Returned value of second within the
+    minute in range from 0. to 60.
 
     ctime (PLFLT, input) :    Continous time from which the broken-down
     time is calculated.
@@ -582,7 +590,7 @@ DESCRIPTION:
     Calculate world coordinates, wx and wy, and corresponding window index
     from relative device coordinates, rx and ry.
 
-    Redacted form:  General: plcalc_world(rx, ry, wx, wy, window)
+    Redacted form: General: plcalc_world(rx, ry, wx, wy, window)
 	    Perl/PDL: Not available?
 
 
@@ -596,20 +604,22 @@ plcalc_world(rx, ry, wx, wy, window)
 
 ARGUMENTS:
 
-    rx (PLFLT, input) :    Input relative device coordinate (ranging from
-    0. to 1.) for the x coordinate.
+    rx (PLFLT, input) :    Input relative device coordinate (0.0-1.0) for
+    the x coordinate.
 
-    ry (PLFLT, input) :    Input relative device coordinate (ranging from
-    0. to 1.) for the y coordinate.
+    ry (PLFLT, input) :    Input relative device coordinate (0.0-1.0) for
+    the y coordinate.
 
-    wx (PLFLT *, output) :    Pointer to the returned world coordinate for
-    x corresponding to the relative device coordinates rx and ry.
+    wx (PLFLT_NC_SCALAR, output) :    Returned value of the x world
+    coordinate corresponding to the relative device coordinates rx and
+    ry.
 
-    wy (PLFLT *, output) :    Pointer to the returned world coordinate for
-    y corresponding to the relative device coordinates rx and ry.
+    wy (PLFLT_NC_SCALAR, output) :    Returned value of the y world
+    coordinate corresponding to the relative device coordinates rx and
+    ry.
 
-    window (PLINT *, output) :      Pointer to the returned last defined
-    window index that corresponds to the input relative device
+    window (PLINT_NC_SCALAR, output) :      Returned value of the last
+    defined window index that corresponds to the input relative device
     coordinates (and the returned world coordinates).  To give some
     background on the window index, for each page the initial window
     index is set to zero, and each time plwind is called within the
@@ -625,7 +635,8 @@ ARGUMENTS:
     window created that fulfills the criterion that the relative
     device coordinates are inside it.  Finally, in all cases where the
     input relative device coordinates are not inside any
-    viewport/window, then window is set to -1.
+    viewport/window, then the returned value of the last defined
+    window index is set to -1.
 ")
 plcalc_world;
 
@@ -640,7 +651,7 @@ DESCRIPTION:
     current subpage is erased.	The nth subpage can be selected with
     pladv(n).
 
-    Redacted form:  General: plclear()
+    Redacted form: General: plclear()
 	    Perl/PDL: Not available?
 
 
@@ -662,7 +673,7 @@ DESCRIPTION:
 
     Redacted form: plcol0(icol0)
 
-    This function is used in examples 1-9,11-16,18-27,29.
+    This function is used in examples 1-9, 11-16, 18-27, and 29.
 
 
 
@@ -691,8 +702,8 @@ ARGUMENTS:
     14        salmon
     15        white
 
-      Use plscmap0 to change the entire map0 color palette and plscol0 to
-     change an individual color in the map0 color palette.
+      Use plscmap0 to change the entire cmap0 color palette and plscol0 to
+     change an individual color in the cmap0 color palette.
 ")
 plcol0;
 
@@ -714,10 +725,10 @@ plcol1(col1)
 
 ARGUMENTS:
 
-    col1 (PLFLT, input) :    This value must be in the range from 0. to 1.
-    and is mapped to color using the continuous map1 color palette
-    which by default ranges from blue to the background color to red.
-    The map1 palette can also be straightforwardly changed by the user
+    col1 (PLFLT, input) :    This value must be in the range (0.0-1.0) and
+    is mapped to color using the continuous cmap1 palette which by
+    default ranges from blue to the background color to red.  The
+    cmap1 palette can also be straightforwardly changed by the user
     with plscmap1 or plscmap1l.
 ")
 plcol1;
@@ -736,7 +747,7 @@ DESCRIPTION:
     system used for some of the parameters is defined in the documentation
     of the position parameter.)
 
-    Redacted form: plcolorbar(p_colorbar_width, p_colorbar_height,  opt,
+    Redacted form: plcolorbar(p_colorbar_width, p_colorbar_height, opt,
     position, x, y, x_length, y_length, bg_color, bb_color, bb_style,
     low_cap_color, high_cap_color, cont_color, cont_width, label_opts,
     labels, axis_opts, ticks, sub_ticks, values)
@@ -751,13 +762,11 @@ plcolorbar(p_colorbar_width, p_colorbar_height, opt, position, x, y, x_length, y
 
 ARGUMENTS:
 
-    p_colorbar_width (PLFLT *, output) :    Pointer to a location which
-    contains (after the call) the labelled and decorated color bar
-    width in adopted coordinates.
+    p_colorbar_width (PLFLT_NC_SCALAR, output) :    Returned value of the
+    labelled and decorated color bar width in adopted coordinates.
 
-    p_colorbar_height (PLFLT *, output) :    Pointer to a location which
-    contains (after the call) the labelled and decorated color bar
-    height in adopted coordinates.
+    p_colorbar_height (PLFLT_NC_SCALAR, output) :    Returned value of the
+    labelled and decorated color bar height in adopted coordinates.
 
     opt (PLINT, input) :    opt contains bits controlling the overall
     color bar.  The orientation (direction of the maximum value) of
@@ -767,7 +776,7 @@ ARGUMENTS:
     colorbar is placed on the left or right of the viewport or toward
     the right if the colorbar is placed on the top or bottom of the
     viewport. If the PL_COLORBAR_BACKGROUND bit is set, plot a
-    (semi-transparent) background for the color bar. If the
+    (semitransparent) background for the color bar. If the
     PL_COLORBAR_BOUNDING_BOX bit is set, plot a bounding box for the
     color bar. The type of color bar must be specified with one of
     PL_COLORBAR_IMAGE, PL_COLORBAR_SHADE, or PL_COLORBAR_GRADIENT. If
@@ -847,7 +856,7 @@ ARGUMENTS:
     bar cap, if it is drawn (PL_COLORBAR_CAP_LOW).
 
     high_cap_color (PLFLT, input) :    The cmap1 color of the high-end
-    color bar cap, if it is drawn  (PL_COLORBAR_CAP_HIGH).
+    color bar cap, if it is drawn (PL_COLORBAR_CAP_HIGH).
 
     cont_color (PLINT, input) :    The cmap0 contour color for
     PL_COLORBAR_SHADE plots. This is passed directly to plshades, so
@@ -860,12 +869,13 @@ ARGUMENTS:
     n_labels (PLINT, input) :     Number of labels to place around the
     color bar.
 
-    label_opts (const PLINT *, input) :    Options for each of
+    label_opts (PLINT_VECTOR, input) :      A vector of options for each of
     n_labels labels.
 
-    labels (const char * const *, input) :    n_labels text labels for the
-    color bar. No label is drawn if no label position is specified
-    with one of the PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_LABEL_TOP,
+    labels (PLCHAR_MATRIX, input) :    A vector of
+    n_labels UTF-8 character strings containing the labels for the color
+    bar.  Ignored if no label position is specified with one of the
+    PL_COLORBAR_LABEL_RIGHT, PL_COLORBAR_LABEL_TOP,
     PL_COLORBAR_LABEL_LEFT, or PL_COLORBAR_LABEL_BOTTOM bits in the
     corresponding label_opts field.
 
@@ -875,32 +885,31 @@ ARGUMENTS:
     but it can be larger if multiple numerical axis labels for the
     long edges of the color bar are desired.
 
-    axis_opts (const char * const *, input) :     An array of n_axes axis
-    options (interpreted as for plbox) for the color bar's axis
-    definitions.
+    axis_opts (PLCHAR_MATRIX, input) :      A vector of
+    n_axes ascii character strings containing options (interpreted as for
+    plbox) for the color bar's axis definitions.
 
-    ticks (const PLFLT *, input) :    An array of n_axes values of the
+    ticks (PLFLT_VECTOR, input) :    A vector of n_axes values of the
     spacing of the major tick marks (interpreted as for plbox) for the
     color bar's axis definitions.
 
-    sub_ticks (const PLINT *, input) :      An array of n_axes values of the
+    sub_ticks (PLINT_VECTOR, input) :     A vector of n_axes values of the
     number of subticks (interpreted as for plbox) for the color bar's
     axis definitions.
 
-    n_values (const PLINT *, input) :     An array containing the number of
-    elements in each of the n_axes rows of the two-dimensional values
-    array.
+    n_values (PLINT_VECTOR, input) :    A vector containing the number of
+    elements in each of the n_axes rows of the values matrix.
 
-    values (const PLFLT * const *, input) :    A two-dimensional array
-    containing the numeric values for the data range represented by
-    the color bar. For a row index of i_axis (where 0 < i_axis <
-    n_axes), the number of elements in the row is specified by
-    n_values[i_axis]. For PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT
-    the number of elements is 2, and the corresponding row elements of
-    the values array are the minimum and maximum value represented by
-    the colorbar.  For PL_COLORBAR_SHADE, the number and values of the
-    elements of a row of the values array is interpreted the same as
-    the nlevel and clevel arguments of plshades.
+    values (PLFLT_MATRIX, input) :    A matrix containing the numeric
+    values for the data range represented by the color bar. For a row
+    index of i_axis (where 0 < i_axis < n_axes), the number of
+    elements in the row is specified by n_values[i_axis]. For
+    PL_COLORBAR_IMAGE and PL_COLORBAR_GRADIENT the number of elements
+    is 2, and the corresponding row elements of the values matrix are
+    the minimum and maximum value represented by the colorbar.  For
+    PL_COLORBAR_SHADE, the number and values of the elements of a row
+    of the values matrix is interpreted the same as the nlevel and
+    clevel arguments of plshades.
 ")
 #ifdef SWIG_OCTAVE
 my_plcolorbar;
@@ -916,7 +925,7 @@ DESCRIPTION:
     for the current stream.  This transformation is used by both plbtime
     and plctime.
 
-    Redacted form:  General: plconfigtime(scale, offset1, offset2,
+    Redacted form: General: plconfigtime(scale, offset1, offset2,
     ccontrol, ifbtime_offset, year, month, day, hour, min, sec)
 	    Perl/PDL: Not available?
 
@@ -939,7 +948,7 @@ ARGUMENTS:
     That is, for this special case broken-down time is calculated with
     the proleptic Gregorian calendar with no leap seconds inserted,
     and the continuous time is defined as the number of seconds since
-    the Unix epoch of  1970-01-01T00:00:00Z.
+    the Unix epoch of 1970-01-01T00:00:00Z.
 
     offset1 (PLFLT, input) :    If
     ifbtime_offset is true, the parameters
@@ -993,8 +1002,7 @@ ARGUMENTS:
 
     min (PLINT, input) :    Minute of epoch in range from 0 to 59.
 
-    sec (PLFLT, input) :    Second of epoch in floating range from 0. to
-    60.
+    sec (PLFLT, input) :    Second of epoch in range from 0. to 60.
 ")
 plconfigtime;
 
@@ -1005,22 +1013,19 @@ DESCRIPTION:
     Draws a contour plot of the data in f[
     nx][
     ny], using the nlevel contour levels specified by clevel. Only the
-    region of the array from kx to lx and from ky to ly is plotted out.  A
-    transformation routine pointed to by pltr with a pointer pltr_data for
-    additional data required by the transformation routine is used to map
-    indices within the array to the world coordinates.	See the following
-    discussion of the arguments and the PLplot documentation for more
-    information.
+    region of the matrix from kx to lx and from ky to ly is plotted out
+    where all these index ranges are interpreted as one-based for
+    historical reasons.  A transformation routine pointed to by pltr with
+    a generic pointer pltr_data for additional data required by the
+    transformation routine is used to map indices within the matrix to the
+    world coordinates.
 
-    Redacted form: [PLEASE UPDATE! ONLY PERL INFO IS LIKELY CORRECT!] F95:
-    plcont(f, kx, lx, ky, ly, clevel, tr?) or plcont(f, kx, lx, ky, ly,
-    clevel, xgrid, ygrid)
-	    Java: pls.cont(f, kx, lx, ky, ly, clevel, xgrid, ygrid)
-	    Perl/PDL: plcont(f, kx, lx, ky, ly, clevel, pltr, pltr_data)
-	    Python: plcont2(f, kx, lx, ky, ly, clevel)
+    Redacted form: plcont(f, kx, lx, ky, ly, clevel, pltr, pltr_data)
+    where (see above discussion) the pltr, pltr_data callback arguments
+    are sometimes replaced by a tr vector with 6 elements; xg and yg
+    vectors; or xg and yg matrices.
 
-
-    This function is used in examples 9,14,16,22.
+    This function is used in examples 9, 14, 16, and 22.
 
 
 
@@ -1030,37 +1035,50 @@ plcont(f, nx, ny, kx, lx, ky, ly, clevel, nlevel, pltr, pltr_data)
 
 ARGUMENTS:
 
-    f (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array containing data to be contoured.
+    f (PLFLT_MATRIX, input) :     A matrix containing data to be contoured.
 
-    nx, ny (PLINT, input) :    Physical dimensions of array f.
+    nx, ny (PLINT, input) :    The dimensions of the matrix f.
 
-    kx, lx (PLINT, input) :    Range of x indices to consider.
+    kx, lx (PLINT, input) :    Range of x indices to consider where 0 <=
+    kx-1 < lx-1 < nx.  Values of kx and lx are one-based rather than
+    zero-based for historical backwards-compatibility reasons.
 
-    ky, ly (PLINT, input) :    Range of y indices to consider.
+    ky, ly (PLINT, input) :    Range of y indices to consider where 0 <=
+    ky-1 < ly-1 < ny.  Values of ky and ly are one-based rather than
+    zero-based for historical backwards-compatibility reasons.
 
-    clevel (const PLFLT *, input) :    Pointer to array specifying levels
-    at which to draw contours.
+    clevel (PLFLT_VECTOR, input) :    A vector specifying the levels at
+    which to draw contours.
 
     nlevel (PLINT, input) :    Number of contour levels to draw.
 
-    pltr (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) , input) :
-      Pointer to function that defines transformation between indices
-    in array f and the world coordinates (C only).    Transformation
-    functions are provided in the PLplot library: pltr0 for identity
-    mapping, and pltr1 and pltr2 for arbitrary mappings respectively
-    defined by one- and two-dimensional arrays.  In addition,
-    user-supplied routines for the transformation can be used as well.
-     Examples of all of these approaches are given in the PLplot
-    documentation. The transformation function should have the form
-    given by any of pltr0, pltr1, or pltr2. Note that unlike plshades
-    and similar PLplot functions which have a pltr argument, plcont
-    requires that a transformation function be provided in the C
-    interface.  Leaving  pltr NULL will result in an error.
+    pltr (PLTRANSFORM_callback, input) :    A callback function that
+    defines the transformation between the zero-based indices of the
+    matrix f and the world coordinates.For the C case, transformation
+    functions are provided in the PLplot library: pltr0 for the
+    identity mapping, and pltr1 and pltr2 for arbitrary mappings
+    respectively defined by vectors and matrices.  In addition, C
+    callback routines for the transformation can be supplied by the
+    user such as the mypltr function in examples/c/x09c.c which
+    provides a general linear transformation between index coordinates
+    and world coordinates.For languages other than C you should
+    consult the PLplot documentation for the details concerning how
+    PLTRANSFORM_callback arguments are interfaced. However, in
+    general, a particular pattern of callback-associated arguments
+    such as a tr vector with 6 elements; xg and yg vectors; or xg and
+    yg matrices are respectively interfaced to a linear-transformation
+    routine similar to the above mypltr function; pltr1; and pltr2.
+    Furthermore, some of our more sophisticated bindings (see, e.g.,
+    the PLplot documentation) support native language callbacks for
+    handling index to world-coordinate transformations.  Examples of
+    these various approaches are given in examples/<language>x09*,
+    examples/<language>x16*, examples/<language>x20*,
+    examples/<language>x21*, and examples/<language>x22*, for all our
+    supported languages.
 
-    pltr_data (PLPointer, input) :    Extra parameter to help pass
-    information to pltr0, pltr1, pltr2, or whatever routine that is
-    externally supplied.
+    pltr_data (PL_GENERIC_POINTER, input) :    Extra parameter to help
+    pass information to pltr0, pltr1, pltr2, or whatever callback
+    routine that is externally supplied.
 ")
 #ifdef SWIG_OCTAVE
 my_plcont;
@@ -1121,7 +1139,7 @@ DESCRIPTION:
     broken-down and continuous time are possible, see plconfigtime which
     specifies that transformation for the current stream.
 
-    Redacted form:  General: plctime(year, month, day, hour, min, sec,
+    Redacted form: General: plctime(year, month, day, hour, min, sec,
     ctime)
 	    Perl/PDL: Not available?
 
@@ -1147,10 +1165,11 @@ ARGUMENTS:
 
     min (PLINT, input) :    Input minute in range from 0 to 59.
 
-    sec (PLFLT, input) :    Input second in floating range from 0. to 60.
+    sec (PLFLT, input) :    Input second in range from 0. to 60.
 
-    ctime (PLFLT *, output) :     Continous time calculated from the
-    broken-down time specified by the previous parameters.
+    ctime (PLFLT_NC_SCALAR, output) :     Returned value of the continous
+    time calculated from the broken-down time specified by the
+    previous parameters.
 ")
 plctime;
 
@@ -1162,7 +1181,7 @@ DESCRIPTION:
     interactive devices back into text mode and frees up any memory that
     was allocated.  Must be called before end of program.
 
-    By default, PLplot's interactive devices (Xwin, TK, etc.)  go into a
+    By default, PLplot's interactive devices (Xwin, TK, etc.) go into a
     wait state after a call to plend or other functions which trigger the
     end of a plot page. To avoid this, use the plspause function.
 
@@ -1187,7 +1206,7 @@ DESCRIPTION:
 
     Redacted form: plend1()
 
-    This function is used in examples 1,20.
+    This function is used in examples 1 and 20.
 
 
 
@@ -1202,11 +1221,13 @@ plend1;
 DESCRIPTION:
 
     Sets up plotter environment for simple graphs by calling pladv and
-    setting up viewport and window to sensible default values.	plenv0
-    leaves enough room around most graphs for axis labels and a title.
-    When these defaults are not suitable, use the individual routines
-    plvpas, plvpor, or plvasp for setting up the viewport, plwind for
-    defining the window, and plbox for drawing the box.
+    setting up viewport and window to sensible default values. plenv0
+    leaves a standard margin (left-hand margin of eight character heights,
+    and a margin around the other three sides of five character heights)
+    around most graphs for axis labels and a title.  When these defaults
+    are not suitable, use the individual routines plvpas, plvpor, or
+    plvasp for setting up the viewport, plwind for defining the window,
+    and plbox for drawing the box.
 
     Redacted form: plenv0(xmin, xmax, ymin, ymax, just, axis)
 
@@ -1299,11 +1320,13 @@ plenv0;
 DESCRIPTION:
 
     Sets up plotter environment for simple graphs by calling pladv and
-    setting up viewport and window to sensible default values.	plenv
-    leaves enough room around most graphs for axis labels and a title.
-    When these defaults are not suitable, use the individual routines
-    plvpas, plvpor, or plvasp for setting up the viewport, plwind for
-    defining the window, and plbox for drawing the box.
+    setting up viewport and window to sensible default values. plenv
+    leaves a standard margin (left-hand margin of eight character heights,
+    and a margin around the other three sides of five character heights)
+    around most graphs for axis labels and a title.  When these defaults
+    are not suitable, use the individual routines plvpas, plvpor, or
+    plvasp for setting up the viewport, plwind for defining the window,
+    and plbox for drawing the box.
 
     Redacted form: plenv(xmin, xmax, ymin, ymax, just, axis)
 
@@ -1410,16 +1433,16 @@ pleop()
 ")
 pleop;
 
-%feature( "docstring", "Draw x error bar
+%feature( "docstring", "Draw error bars in x direction
 
 DESCRIPTION:
 
-    Draws a set of n horizontal error bars, the i'th error bar extending
-    from xmin[i] to xmax[i] at y coordinate y[i].  The terminals of the
-    error bar are of length equal to the minor tick length (settable using
-    plsmin).
+    Draws a set of n error bars in x direction, the i'th error bar
+    extending from xmin[i] to xmax[i] at y coordinate y[i].  The terminals
+    of the error bars are of length equal to the minor tick length
+    (settable using plsmin).
 
-    Redacted form:  General: plerrx(xmin, ymax, y)
+    Redacted form: General: plerrx(xmin, ymax, y)
 	    Perl/PDL: plerrx(n, xmin, xmax, y)
 
 
@@ -1435,27 +1458,27 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of error bars to draw.
 
-    xmin (const PLFLT *, input) :    Pointer to array with x coordinates
-    of left-hand endpoint of error bars.
+    xmin (PLFLT_VECTOR, input) :    A vector containing the x coordinates
+    of the left-hand endpoints of the error bars.
 
-    xmax (const PLFLT *, input) :    Pointer to array with x coordinates
-    of right-hand endpoint of error bars.
+    xmax (PLFLT_VECTOR, input) :    A vector containing the x coordinates
+    of the right-hand endpoints of the error bars.
 
-    y (const PLFLT *, input) :      Pointer to array with y coordinates of
-    error bar.
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
+    the error bars.
 ")
 plerrx;
 
-%feature( "docstring", "Draw y error bar
+%feature( "docstring", "Draw error bars in the y direction
 
 DESCRIPTION:
 
-    Draws a set of n vertical error bars, the i'th error bar extending
-    from ymin[i] to ymax[i] at x coordinate x[i].  The terminals of the
-    error bar are of length equal to the minor tick length (settable using
-    plsmin).
+    Draws a set of n error bars in the y direction, the i'th error bar
+    extending from ymin[i] to ymax[i] at x coordinate x[i].  The terminals
+    of the error bars are of length equal to the minor tick length
+    (settable using plsmin).
 
-    Redacted form:  General: plerry(x, ymin, ymax)
+    Redacted form: General: plerry(x, ymin, ymax)
 	    Perl/PDL: plerry(n, x, ymin, ymax)
 
 
@@ -1471,14 +1494,14 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of error bars to draw.
 
-    x (const PLFLT *, input) :      Pointer to array with x coordinates of
-    error bars.
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
+    the error bars.
 
-    ymin (const PLFLT *, input) :    Pointer to array with y coordinates
-    of lower endpoint of error bars.
+    ymin (PLFLT_VECTOR, input) :    A vector containing the y coordinates
+    of the lower endpoints of the error bars.
 
-    ymax (const PLFLT *, input) :    Pointer to array with y coordinate of
-    upper endpoint of error bar.
+    ymax (PLFLT_VECTOR, input) :    A vector containing the y coordinates
+    of the upper endpoints of the error bars.
 ")
 plerry;
 
@@ -1507,13 +1530,13 @@ DESCRIPTION:
     Fills the polygon defined by the n points (
     x[i],
     y[i]) using the pattern defined by plpsty or plpat.  The default fill
-    style is a solid fill.  The routine will automatically close the
+    style is a solid fill. The routine will automatically close the
     polygon between the last and first vertices.  If multiple closed
     polygons are passed in x and y then plfill will fill in between them.
 
     Redacted form: plfill(x,y)
 
-    This function is used in examples 12,13,15,16,21,24,25.
+    This function is used in examples 12, 13, 15, 16, 21, 24, and 25.
 
 
 
@@ -1525,10 +1548,10 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of vertices in polygon.
 
-    x (const PLFLT *, input) :      Pointer to array with x coordinates of
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
     vertices.
 
-    y (const PLFLT *, input) :      Pointer to array with y coordinates of
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
     vertices.
 ")
 plfill;
@@ -1537,13 +1560,13 @@ plfill;
 
 DESCRIPTION:
 
-    Fills the 3D polygon defined by the n points in the x, y, and z arrays
-    using the pattern defined by plpsty or plpat.  The routine will
-    automatically close the polygon between the last and first vertices.
-    If multiple closed polygons are passed in x, y, and z then plfill3
-    will fill in between them.
+    Fills the 3D polygon defined by the n points in the x, y, and z
+    vectors using the pattern defined by plpsty or plpat.  The routine
+    will automatically close the polygon between the last and first
+    vertices.  If multiple closed polygons are passed in x, y, and z then
+    plfill3 will fill in between them.
 
-    Redacted form:  General: plfill3(x, y, z)
+    Redacted form: General: plfill3(x, y, z)
 	    Perl/PDL: plfill3(n, x, y, z)
 
 
@@ -1559,13 +1582,13 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of vertices in polygon.
 
-    x (const PLFLT *, input) :      Pointer to array with x coordinates of
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
     vertices.
 
-    y (const PLFLT *, input) :      Pointer to array with y coordinates of
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
     vertices.
 
-    z (const PLFLT *, input) :      Pointer to array with z coordinates of
+    z (PLFLT_VECTOR, input) :     A vector containing the z coordinates of
     vertices.
 ")
 plfill3;
@@ -1578,7 +1601,7 @@ DESCRIPTION:
 
     Redacted form: plflush()
 
-    This function is used in examples 1,14.
+    This function is used in examples 1 and 14.
 
 
 
@@ -1588,17 +1611,23 @@ plflush()
 ")
 plflush;
 
-%feature( "docstring", "Set character font
+%feature( "docstring", "Set font
 
 DESCRIPTION:
 
-    Sets the default character font for subsequent character drawing. Also
-    affects symbols produced by plpoin.  This routine has no effect unless
-    the extended character set is loaded (see plfontld).
+    Sets the font used for subsequent text and symbols.  For devices that
+    still use Hershey fonts this routine has no effect unless the Hershey
+    fonts with extended character set are loaded (see plfontld). For
+    unicode-aware devices that use system fonts instead of Hershey fonts,
+    this routine calls the plsfci routine with argument set up
+    appropriately for the various cases below.	However, this method of
+    specifying the font for unicode-aware devices is deprecated, and the
+    much more flexible method of calling plsfont directly is recommended
+    instead (where plsfont provides a user-friendly interface to plsfci),
 
     Redacted form: plfont(ifont)
 
-    This function is used in examples 1,2,4,7,13,24,26.
+    This function is used in examples 1, 2, 4, 7, 13, 24, and 26.
 
 
 
@@ -1608,24 +1637,29 @@ plfont(ifont)
 
 ARGUMENTS:
 
-    ifont (PLINT, input) :    Specifies the font: 1: Normal font (simplest
-    and fastest)
-        2: Roman font
+    ifont (PLINT, input) :    Specifies the font: 1: Sans serif font
+    (simplest and fastest)
+        2: Serif font
         3: Italic font
         4: Script font
 ")
 plfont;
 
-%feature( "docstring", "Load character font
+%feature( "docstring", "Load Hershey fonts
 
 DESCRIPTION:
 
-    Sets the character set to use for subsequent character drawing.  May
-    be called before initializing PLplot.
+    Loads the Hershey fonts used for text and symbols.	This routine may
+    be called before or after initializing PLplot.  If not explicitly
+    called before PLplot initialization, then by default that
+    initialization loads Hershey fonts with the extended character set.
+    This routine only has a practical effect for devices that still use
+    Hershey fonts (as opposed to modern devices that use unicode-aware
+    system fonts instead of Hershey fonts).
 
     Redacted form: plfontld(fnt)
 
-    This function is used in examples 1,7.
+    This function is used in examples 1 and 7.
 
 
 
@@ -1635,11 +1669,44 @@ plfontld(fnt)
 
 ARGUMENTS:
 
-    fnt (PLINT, input) :    Specifies the character set to load: 0:
-    Standard character set
-        1: Extended character set
+    fnt (PLINT, input) :    Specifies the type of Hershey fonts to load.
+    A zero value specifies Hershey fonts with the standard character
+    set and a non-zero value (the default assumed if plfontld is never
+    called) specifies Hershey fonts with the extended character set.
 ")
 plfontld;
+
+%feature( "docstring", "Wait for graphics input event and translate to world coordinates.
+
+DESCRIPTION:
+
+    Wait for graphics input event and translate to world coordinates.
+    Returns 0 if no translation to world coordinates is possible.
+
+    This function returns 1 on success and 0 if no translation to world
+    coordinates is possible.
+
+    Redacted form: plGetCursor(gin)
+
+    This function is used in examples 1 and 20.
+
+
+
+SYNOPSIS:
+
+PLINT plGetCursor(gin)
+
+ARGUMENTS:
+
+    gin (PLGraphicsIn *, output) :    Pointer to PLGraphicsIn structure
+    which will contain the output. The structure is not allocated by
+    the routine and must exist before the function is called.
+")
+#ifdef SWIG_OCTAVE
+my_plGetCursor;
+#else
+plGetCursor;
+#endif
 
 %feature( "docstring", "Get character default height and current (scaled) height
 
@@ -1659,10 +1726,11 @@ plgchr(p_def, p_ht)
 
 ARGUMENTS:
 
-    p_def (PLFLT *, output) :     Pointer to default character height (mm).
+    p_def (PLFLT_NC_SCALAR, output) :     Returned value of the default
+    character height (mm).
 
-    p_ht (PLFLT *, output) :    Pointer to current (scaled) character
-    height (mm).
+    p_ht (PLFLT_NC_SCALAR, output) :    Returned value of the scaled
+    character height (mm).
 ")
 plgchr;
 
@@ -1671,7 +1739,7 @@ plgchr;
 DESCRIPTION:
 
     Get the cmap1 argument range for continuous color plots. (Use
-    plgsmap1_range to set the cmap1 argument range.)
+    plscmap1_range to set the cmap1 argument range.)
 
     Redacted form: plgcmap1_range(min_color, max_color)
 
@@ -1685,11 +1753,11 @@ plgcmap1_range(min_color, max_color)
 
 ARGUMENTS:
 
-    min_color (PLFLT *, output) :    Pointer to the current minimum cmap1
-    floating point argument.
+    min_color (PLFLT_NC_SCALAR, output) :    Returned value of the current
+    minimum cmap1 argument.
 
-    max_color (PLFLT *, output) :    Pointer to the current maximum cmap1
-    floating point argument.
+    max_color (PLFLT_NC_SCALAR, output) :    Returned value of the current
+    maximum cmap1 argument.
 ")
 plgcmap1_range;
 
@@ -1715,21 +1783,26 @@ ARGUMENTS:
 
     icol0 (PLINT, input) :    Index of desired cmap0 color.
 
-    r (PLINT *, output) :    Pointer to 8-bit red value.
+    r (PLINT_NC_SCALAR, output) :    Returned value of the 8-bit red
+    value.
 
-    g (PLINT *, output) :    Pointer to 8-bit green value.
+    g (PLINT_NC_SCALAR, output) :    Returned value of the 8-bit green
+    value.
 
-    b (PLINT *, output) :    Pointer to 8-bit blue value.
+    b (PLINT_NC_SCALAR, output) :    Returned value of the 8-bit blue
+    value.
 ")
 plgcol0;
 
-%feature( "docstring", "Returns 8-bit RGB values and double alpha transparency value for given color index from cmap0
+%feature( "docstring", "Returns 8-bit RGB values and PLFLT alpha transparency value for given color index from cmap0
 
 DESCRIPTION:
 
-    Returns 8-bit RGB values (0-255) and double alpha transparency value
-    (0.0 - 1.0) for  given color from cmap0 (see the PLplot
-    documentation).  Values  are negative if an invalid color id is given.
+    Returns 8-bit RGB values (0-255) and PLFLT alpha transparency value
+    (0.0-1.0) for given color from cmap0 (see the PLplot documentation).
+    Values are negative if an invalid color id is given.
+
+    Redacted form: plgcola(r, g, b)
 
     This function is used in example 30.
 
@@ -1743,14 +1816,17 @@ ARGUMENTS:
 
     icol0 (PLINT, input) :    Index of desired cmap0 color.
 
-    r (PLINT *, output) :    Pointer to 8-bit red value.
+    r (PLINT_NC_SCALAR, output) :    Returned value of the red intensity
+    in the range from 0 to 255.
 
-    g (PLINT *, output) :    Pointer to 8-bit green value.
+    g (PLINT_NC_SCALAR, output) :    Returned value of the green intensity
+    in the range from 0 to 255.
 
-    b (PLINT *, output) :    Pointer to 8-bit blue value.
+    b (PLINT_NC_SCALAR, output) :    Returned value of the blue intensity
+    in the range from 0 to 255.
 
-    alpha (PLFLT *, output) :     Pointer to PLFLT alpha transparency
-    value.
+    alpha (PLFLT_NC_SCALAR, output) :     Returned value of the alpha
+    transparency in the range from (0.0-1.0).
 ")
 plgcol0a;
 
@@ -1772,22 +1848,22 @@ plgcolbg(r, g, b)
 
 ARGUMENTS:
 
-    r (PLINT *, output) :    Pointer to an unsigned 8-bit integer (0-255)
-    representing the degree of red in the color.
+    r (PLINT_NC_SCALAR, output) :    Returned value of the red intensity
+    in the range from 0 to 255.
 
-    g (PLINT *, output) :    Pointer to an unsigned 8-bit integer (0-255)
-    representing the degree of green in the color.
+    g (PLINT_NC_SCALAR, output) :    Returned value of the green intensity
+    in the range from 0 to 255.
 
-    b (PLINT *, output) :    Pointer to an unsigned 8-bit integer (0-255)
-    representing the degree of blue in the color.
+    b (PLINT_NC_SCALAR, output) :    Returned value of the blue intensity
+    in the range from 0 to 255.
 ")
 plgcolbg;
 
-%feature( "docstring", "Returns the background color (cmap0[0])  by 8-bit RGB value and double alpha transparency value
+%feature( "docstring", "Returns the background color (cmap0[0]) by 8-bit RGB value and PLFLT alpha transparency value
 
 DESCRIPTION:
 
-    Returns the background color (cmap0[0]) by 8-bit RGB value and double
+    Returns the background color (cmap0[0]) by 8-bit RGB value and PLFLT
     alpha transparency value.
 
     This function is used in example 31.
@@ -1800,17 +1876,17 @@ plgcolbga(r, g, b, alpha)
 
 ARGUMENTS:
 
-    r (PLINT *, output) :    Pointer to an unsigned 8-bit integer (0-255)
-    representing the degree of red in the color.
+    r (PLINT_NC_SCALAR, output) :    Returned value of the red intensity
+    in the range from 0 to 255.
 
-    g (PLINT *, output) :    Pointer to an unsigned 8-bit integer (0-255)
-    representing the degree of green in the color.
+    g (PLINT_NC_SCALAR, output) :    Returned value of the green intensity
+    in the range from 0 to 255.
 
-    b (PLINT *, output) :    Pointer to an unsigned 8-bit integer (0-255)
-    representing the degree of blue in the color.
+    b (PLINT_NC_SCALAR, output) :    Returned value of the blue intensity
+    in the range from 0 to 255.
 
-    alpha (PLFLT *, output) :     Pointer to PLFLT alpha transparency
-    value.
+    alpha (PLFLT_NC_SCALAR, output) :     Returned value of the alpha
+    transparency in the range (0.0-1.0).
 ")
 plgcolbga;
 
@@ -1833,8 +1909,8 @@ plgcompression(compression)
 
 ARGUMENTS:
 
-    compression (PLINT *, output) :    Pointer to a variable to be filled
-    with the current device-compression setting.
+    compression (PLINT_NC_SCALAR, output) :    Returned value of the
+    compression setting for the current device.
 ")
 plgcompression;
 
@@ -1857,7 +1933,9 @@ plgdev(p_dev)
 
 ARGUMENTS:
 
-    p_dev (char *, output) :    Pointer to device (keyword) name string.
+    p_dev (PLCHAR_NC_VECTOR, output) :      Returned ascii character string
+    (with preallocated length of 80 characters or more) containing the
+    device (keyword) name.
 ")
 plgdev;
 
@@ -1882,13 +1960,17 @@ plgdidev(p_mar, p_aspect, p_jx, p_jy)
 
 ARGUMENTS:
 
-    p_mar (PLFLT *, output) :     Pointer to relative margin width.
+    p_mar (PLFLT_NC_SCALAR, output) :     Returned value of the relative
+    margin width.
 
-    p_aspect (PLFLT *, output) :    Pointer to aspect ratio.
+    p_aspect (PLFLT_NC_SCALAR, output) :    Returned value of the aspect
+    ratio.
 
-    p_jx (PLFLT *, output) :    Pointer to relative justification in x.
+    p_jx (PLFLT_NC_SCALAR, output) :    Returned value of the relative
+    justification in x.
 
-    p_jy (PLFLT *, output) :    Pointer to relative justification in y.
+    p_jy (PLFLT_NC_SCALAR, output) :    Returned value of the relative
+    justification in y.
 ")
 plgdidev;
 
@@ -1916,7 +1998,8 @@ plgdiori(p_rot)
 
 ARGUMENTS:
 
-    p_rot (PLFLT *, output) :     Pointer to orientation parameter.
+    p_rot (PLFLT_NC_SCALAR, output) :     Returned value of the orientation
+    parameter.
 ")
 plgdiori;
 
@@ -1940,13 +2023,17 @@ plgdiplt(p_xmin, p_ymin, p_xmax, p_ymax)
 
 ARGUMENTS:
 
-    p_xmin (PLFLT *, output) :      Pointer to relative minimum in x.
+    p_xmin (PLFLT_NC_SCALAR, output) :      Returned value of the relative
+    minimum in x.
 
-    p_ymin (PLFLT *, output) :      Pointer to relative minimum in y.
+    p_ymin (PLFLT_NC_SCALAR, output) :      Returned value of the relative
+    minimum in y.
 
-    p_xmax (PLFLT *, output) :      Pointer to relative maximum in x.
+    p_xmax (PLFLT_NC_SCALAR, output) :      Returned value of the relative
+    maximum in x.
 
-    p_ymax (PLFLT *, output) :      Pointer to relative maximum in y.
+    p_ymax (PLFLT_NC_SCALAR, output) :      Returned value of the relative
+    maximum in y.
 ")
 plgdiplt;
 
@@ -1983,7 +2070,7 @@ DESCRIPTION:
 
     Redacted form: plgfam(p_fam, p_num, p_bmax)
 
-    This function is used in examples 14,31.
+    This function is used in examples 14 and 31.
 
 
 
@@ -1993,13 +2080,14 @@ plgfam(p_fam, p_num, p_bmax)
 
 ARGUMENTS:
 
-    p_fam (PLINT *, output) :     Pointer to variable with the Boolean
-    family flag value.  If nonzero, familying is enabled.
+    p_fam (PLINT_NC_SCALAR, output) :     Returned value of the current
+    family flag value.  If nonzero, familying is enabled for the
+    current device.
 
-    p_num (PLINT *, output) :     Pointer to variable with the current
+    p_num (PLINT_NC_SCALAR, output) :     Returned value of the current
     family file number.
 
-    p_bmax (PLINT *, output) :      Pointer to variable with the maximum
+    p_bmax (PLINT_NC_SCALAR, output) :      Returned value of the maximum
     file size (in bytes) for a family file.
 ")
 plgfam;
@@ -2023,8 +2111,8 @@ plgfci(p_fci)
 
 ARGUMENTS:
 
-    p_fci (PLUNICODE *, output) :    Pointer to PLUNICODE (unsigned 32-bit
-    integer) variable which is updated with current FCI value.
+    p_fci (PLUNICODE_NC_SCALAR, output) :    Returned value of the current
+    FCI value.
 ")
 plgfci;
 
@@ -2046,8 +2134,9 @@ plgfnam(fnam)
 
 ARGUMENTS:
 
-    fnam (char *, output) :    Pointer to file name string (a preallocated
-    string of 80 characters or more).
+    fnam (PLCHAR_NC_VECTOR, output) :     Returned ascii character string
+    (with preallocated length of 80 characters or more) containing the
+    file name.
 ")
 plgfnam;
 
@@ -2070,21 +2159,21 @@ plgfont(p_family, p_style, p_weight)
 
 ARGUMENTS:
 
-    p_family (PLINT *, output) :    Pointer to variable with the current
+    p_family (PLINT_NC_SCALAR, output) :    Returned value of the current
     font family. The available values are given by the PL_FCI_*
     constants in plplot.h. Current options are PL_FCI_SANS,
     PL_FCI_SERIF, PL_FCI_MONO, PL_FCI_SCRIPT and PL_FCI_SYMBOL. If
     p_family is NULL then the font family is not returned.
 
-    p_style (PLINT *, output) :    Pointer to variable with the current
+    p_style (PLINT_NC_SCALAR, output) :    Returned value of the current
     font style. The available values are given by the PL_FCI_*
-    constants in plplot.h. Current options are PL_FCI_UPRIGHT,
-    PL_FCI_ITALIC  and PL_FCI_OBLIQUE. If p_style is NULL then the
-    font style is not returned.
+    constants in plplot.h.    Current options are PL_FCI_UPRIGHT,
+    PL_FCI_ITALIC and PL_FCI_OBLIQUE. If p_style is NULL then the font
+    style is not returned.
 
-    p_weight (PLINT *, output) :    Pointer to variable with the current
+    p_weight (PLINT_NC_SCALAR, output) :    Returned value of the current
     font weight. The available values are given by the PL_FCI_*
-    constants in plplot.h. Current options are PL_FCI_MEDIUM and
+    constants in plplot.h.    Current options are PL_FCI_MEDIUM and
     PL_FCI_BOLD. If p_weight is NULL then the font weight is not
     returned.
 ")
@@ -2112,7 +2201,8 @@ plglevel(p_level)
 
 ARGUMENTS:
 
-    p_level (PLINT *, output) :    Pointer to the run level.
+    p_level (PLINT_NC_SCALAR, output) :    Returned value of the run
+    level.
 ")
 plglevel;
 
@@ -2137,18 +2227,23 @@ plgpage(p_xp, p_yp, p_xleng, p_yleng, p_xoff, p_yoff)
 
 ARGUMENTS:
 
-    p_xp (PLFLT *, output) :    Pointer to number of pixels/inch (DPI), x.
+    p_xp (PLFLT_NC_SCALAR, output) :    Returned value of the number of
+    pixels/inch (DPI) in x.
 
-    p_yp (PLFLT *, output) :    Pointer to number of pixels/inch (DPI) in
-    y.
+    p_yp (PLFLT_NC_SCALAR, output) :    Returned value of the number of
+    pixels/inch (DPI) in y.
 
-    p_xleng (PLINT *, output) :    Pointer to x page length value.
+    p_xleng (PLINT_NC_SCALAR, output) :    Returned value of the x page
+    length.
 
-    p_yleng (PLINT *, output) :    Pointer to y page length value.
+    p_yleng (PLINT_NC_SCALAR, output) :    Returned value of the y page
+    length.
 
-    p_xoff (PLINT *, output) :      Pointer to x page offset.
+    p_xoff (PLINT_NC_SCALAR, output) :      Returned value of the x page
+    offset.
 
-    p_yoff (PLINT *, output) :      Pointer to y page offset.
+    p_yoff (PLINT_NC_SCALAR, output) :      Returned value of the y page
+    offset.
 ")
 plgpage;
 
@@ -2180,8 +2275,8 @@ plgra;
 
 DESCRIPTION:
 
-    Draw a linear gradient using colour map 1 inside the polygon defined
-    by the n points (
+    Draw a linear gradient using cmap1 inside the polygon defined by the n
+    points (
     x[i],
     y[i]).  Interpretation of the polygon is the same as for plfill.  The
     polygon coordinates and the gradient angle are all expressed in world
@@ -2193,14 +2288,14 @@ DESCRIPTION:
     anywhere on the line corresponding to the minimum x value for the
     vertices in the rotated coordinate system.	The distance along the
     gradient vector is linearly transformed to the independent variable of
-    colour map 1 which ranges from 0. at the tail of the gradient vector
-    to 1. at the head of the gradient vector.  What is drawn is the RGBA
-    colour corresponding to the independent variable of colour map 1.  For
-    more information about colour map 1 (see the PLplot documentation).
+    color map 1 which ranges from 0. at the tail of the gradient vector to
+    1. at the head of the gradient vector.  What is drawn is the RGBA
+    color corresponding to the independent variable of cmap1.  For more
+    information about cmap1 (see the PLplot documentation).
 
     Redacted form: plgradient(x,y,angle)
 
-    This function is used in examples 25,30.
+    This function is used in examples 25 and 30.
 
 
 
@@ -2212,10 +2307,10 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of vertices in polygon.
 
-    x (const PLFLT *, input) :      Pointer to array with x coordinates of
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
     vertices.
 
-    y (const PLFLT *, input) :      Pointer to array with y coordinates of
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
     vertices.
 
     angle (PLFLT, input) :    Angle (degrees) of gradient vector from x
@@ -2227,16 +2322,17 @@ plgradient;
 
 DESCRIPTION:
 
-    Real world data is frequently irregularly sampled, but all PLplot 3D
-    plots require data placed in a uniform grid. This function takes
-    irregularly sampled data from three input arrays x[npts], y[npts], and
-    z[npts], reads the desired grid location from input arrays xg[nptsx]
-    and yg[nptsy], and returns the gridded data into output array
-    zg[nptsx][nptsy].  The algorithm used to grid the data is specified
-    with the argument type which can have one parameter specified in
-    argument data.
+    Real world data is frequently irregularly sampled, but PLplot 3D plots
+    require data organized as a grid, i.e., with x sample point values
+    independent of y coordinate and vice versa.  This function takes
+    irregularly sampled data from the x[npts], y[npts], and z[npts]
+    vectors; reads the desired grid location from the input vectors
+    xg[nptsx] and yg[nptsy]; and returns the interpolated result on that
+    grid using the output matrix zg[nptsx][nptsy].  The algorithm used to
+    interpolate the data to the grid is specified with the argument type
+    which can have one parameter specified in argument data.
 
-    Redacted form:  General: plgriddata(x, y, z, xg, yg, zg, type, data)
+    Redacted form: General: plgriddata(x, y, z, xg, yg, zg, type, data)
 	    Perl/PDL: Not available?
 	    Python: zg=plgriddata(x, y, z, xg, yg, type, data)
 
@@ -2251,35 +2347,35 @@ plgriddata(x, y, z, npts, xg, nptsx, yg, nptsy, zg, type, data)
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      The input x array.
+    x (PLFLT_VECTOR, input) :     The input x vector.
 
-    y (const PLFLT *, input) :      The input y array.
+    y (PLFLT_VECTOR, input) :     The input y vector.
 
-    z (const PLFLT *, input) :      The input z array. Each triple x[i],
+    z (PLFLT_VECTOR, input) :     The input z vector. Each triple x[i],
     y[i], z[i] represents one data sample coordinate.
 
     npts (PLINT, input) :    The number of data samples in the x, y and z
-    arrays.
+    vectors.
 
-    xg (const PLFLT *, input) :    The input array that specifies the grid
-    spacing in the x direction. Usually xg has nptsx equally spaced
-    values from the minimum to the maximum values of the x input
-    array.
+    xg (PLFLT_VECTOR, input) :      A vector that specifies the grid spacing
+    in the x direction. Usually xg has nptsx equally spaced values
+    from the minimum to the maximum values of the x input vector.
 
-    nptsx (PLINT, input) :    The number of points in the xg array.
+    nptsx (PLINT, input) :    The number of points in the xg vector.
 
-    yg (const PLFLT *, input) :    The input array that specifies the grid
-    spacing in the y direction. Similar to the xg parameter.
+    yg (PLFLT_VECTOR, input) :      A vector that specifies the grid spacing
+    in the y direction. Similar to the xg parameter.
 
-    nptsy (PLINT, input) :    The number of points in the yg array.
+    nptsy (PLINT, input) :    The number of points in the yg vector.
 
-    zg (PLFLT **, output) :    The output array, where data lies in the
-    regular grid specified by xg and yg. the zg array must exist or be
-    allocated by the user prior to the call, and must have dimension
-    zg[nptsx][nptsy].
+    zg (PLFLT_NC_MATRIX, output) :    The matrix of interpolated results
+    where data lies in the grid specified by xg and yg. Therefore the
+    zg matrix must be dimensioned
+    nptsx by
+    nptsy.
 
-    type (PLINT, input) :    The type of gridding algorithm to use, which
-    can be: GRID_CSA: Bivariate Cubic Spline approximation
+    type (PLINT, input) :    The type of grid interpolation algorithm to
+    use, which can be: GRID_CSA: Bivariate Cubic Spline approximation
         GRID_DTLI: Delaunay Triangulation Linear Interpolation
         GRID_NNI: Natural Neighbors Interpolation
         GRID_NNIDW: Nearest Neighbors Inverse Distance Weighted
@@ -2327,17 +2423,17 @@ plgspa(xmin, xmax, ymin, ymax)
 
 ARGUMENTS:
 
-    xmin (PLFLT *, output) :    Pointer to variable with position of left
-    hand edge of subpage in millimeters.
+    xmin (PLFLT_NC_SCALAR, output) :    Returned value of the position of
+    the left hand edge of the subpage in millimeters.
 
-    xmax (PLFLT *, output) :    Pointer to variable with position of right
-    hand edge of subpage in millimeters.
+    xmax (PLFLT_NC_SCALAR, output) :    Returned value of the position of
+    the right hand edge of the subpage in millimeters.
 
-    ymin (PLFLT *, output) :    Pointer to variable with position of
-    bottom edge of subpage in millimeters.
+    ymin (PLFLT_NC_SCALAR, output) :    Returned value of the position of
+    the bottom edge of the subpage in millimeters.
 
-    ymax (PLFLT *, output) :    Pointer to variable with position of top
-    edge of subpage in millimeters.
+    ymax (PLFLT_NC_SCALAR, output) :    Returned value of the position of
+    the top edge of the subpage in millimeters.
 ")
 plgspa;
 
@@ -2359,7 +2455,8 @@ plgstrm(p_strm)
 
 ARGUMENTS:
 
-    p_strm (PLINT *, output) :      Pointer to current stream value.
+    p_strm (PLINT_NC_SCALAR, output) :      Returned value of the current
+    stream value.
 ")
 plgstrm;
 
@@ -2382,8 +2479,9 @@ plgver(p_ver)
 
 ARGUMENTS:
 
-    p_ver (char *, output) :    Pointer to the current library version
-    number.
+    p_ver (PLCHAR_NC_VECTOR, output) :      Returned ascii character string
+    (with preallocated length of 80 characters or more) containing the
+    PLplot version number.
 ")
 plgver;
 
@@ -2393,7 +2491,7 @@ DESCRIPTION:
 
     Get viewport limits in normalized device coordinates.
 
-    Redacted form:  General: plgvpd(p_xmin, p_xmax, p_ymin, p_ymax)
+    Redacted form: General: plgvpd(p_xmin, p_xmax, p_ymin, p_ymax)
 	    Perl/PDL: Not available?
 
 
@@ -2407,17 +2505,17 @@ plgvpd(p_xmin, p_xmax, p_ymin, p_ymax)
 
 ARGUMENTS:
 
-    p_xmin (PLFLT *, output) :      Lower viewport limit of the normalized
-    device coordinate in x.
+    p_xmin (PLFLT_NC_SCALAR, output) :      Returned value of the lower
+    viewport limit of the normalized device coordinate in x.
 
-    p_xmax (PLFLT *, output) :      Upper viewport limit of the normalized
-    device coordinate in x.
+    p_xmax (PLFLT_NC_SCALAR, output) :      Returned value of the upper
+    viewport limit of the normalized device coordinate in x.
 
-    p_ymin (PLFLT *, output) :      Lower viewport limit of the normalized
-    device coordinate in y.
+    p_ymin (PLFLT_NC_SCALAR, output) :      Returned value of the lower
+    viewport limit of the normalized device coordinate in y.
 
-    p_ymax (PLFLT *, output) :      Upper viewport limit of the normalized
-    device coordinate in y.
+    p_ymax (PLFLT_NC_SCALAR, output) :      Returned value of the upper
+    viewport limit of the normalized device coordinate in y.
 ")
 plgvpd;
 
@@ -2427,7 +2525,7 @@ DESCRIPTION:
 
     Get viewport limits in world coordinates.
 
-    Redacted form:  General: plgvpw(p_xmin, p_xmax, p_ymin, p_ymax)
+    Redacted form: General: plgvpw(p_xmin, p_xmax, p_ymin, p_ymax)
 	    Perl/PDL: Not available?
 
 
@@ -2441,17 +2539,17 @@ plgvpw(p_xmin, p_xmax, p_ymin, p_ymax)
 
 ARGUMENTS:
 
-    p_xmin (PLFLT *, output) :      Lower viewport limit of the world
-    coordinate in x.
+    p_xmin (PLFLT_NC_SCALAR, output) :      Returned value of the lower
+    viewport limit of the world coordinate in x.
 
-    p_xmax (PLFLT *, output) :      Upper viewport limit of the world
-    coordinate in x.
+    p_xmax (PLFLT_NC_SCALAR, output) :      Returned value of the upper
+    viewport limit of the world coordinate in x.
 
-    p_ymin (PLFLT *, output) :      Lower viewport limit of the world
-    coordinate in y.
+    p_ymin (PLFLT_NC_SCALAR, output) :      Returned value of the lower
+    viewport limit of the world coordinate in y.
 
-    p_ymax (PLFLT *, output) :      Upper viewport limit of the world
-    coordinate in y.
+    p_ymax (PLFLT_NC_SCALAR, output) :      Returned value of the upper
+    viewport limit of the world coordinate in y.
 ")
 plgvpw;
 
@@ -2476,12 +2574,12 @@ plgxax(p_digmax, p_digits)
 
 ARGUMENTS:
 
-    p_digmax (PLINT *, output) :    Pointer to variable with the maximum
+    p_digmax (PLINT_NC_SCALAR, output) :    Returned value of the maximum
     number of digits for the x axis.  If nonzero, the printed label
-    has been switched to a floating point representation when the
-    number of digits exceeds p_digmax.
+    has been switched to a floating-point representation when the
+    number of digits exceeds this value.
 
-    p_digits (PLINT *, output) :    Pointer to variable with the actual
+    p_digits (PLINT_NC_SCALAR, output) :    Returned value of the actual
     number of digits for the numeric labels (x axis) from the last
     plot.
 ")
@@ -2506,12 +2604,12 @@ plgyax(p_digmax, p_digits)
 
 ARGUMENTS:
 
-    p_digmax (PLINT *, output) :    Pointer to variable with the maximum
+    p_digmax (PLINT_NC_SCALAR, output) :    Returned value of the maximum
     number of digits for the y axis.  If nonzero, the printed label
-    has been switched to a floating point representation when the
-    number of digits exceeds p_digmax.
+    has been switched to a floating-point representation when the
+    number of digits exceeds this value.
 
-    p_digits (PLINT *, output) :    Pointer to variable with the actual
+    p_digits (PLINT_NC_SCALAR, output) :    Returned value of the actual
     number of digits for the numeric labels (y axis) from the last
     plot.
 ")
@@ -2536,12 +2634,12 @@ plgzax(p_digmax, p_digits)
 
 ARGUMENTS:
 
-    p_digmax (PLINT *, output) :    Pointer to variable with the maximum
+    p_digmax (PLINT_NC_SCALAR, output) :    Returned value of the maximum
     number of digits for the z axis.  If nonzero, the printed label
-    has been switched to a floating point representation when the
-    number of digits exceeds p_digmax.
+    has been switched to a floating-point representation when the
+    number of digits exceeds this value.
 
-    p_digits (PLINT *, output) :    Pointer to variable with the actual
+    p_digits (PLINT_NC_SCALAR, output) :    Returned value of the actual
     number of digits for the numeric labels (z axis) from the last
     plot.
 ")
@@ -2551,7 +2649,7 @@ plgzax;
 
 DESCRIPTION:
 
-    Plots a histogram from n data points stored in the array data.  This
+    Plots a histogram from n data points stored in the data vector.  This
     routine bins the data into nbin bins equally spaced between datmin and
     datmax, and calls plbin to draw the resulting histogram.  Parameter
     opt allows, among other things, the histogram either to be plotted in
@@ -2572,8 +2670,8 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of data points.
 
-    data (const PLFLT *, input) :    Pointer to array with values of the n
-    data points.
+    data (PLFLT_VECTOR, input) :    A vector containing the values of the
+    n data points.
 
     datmin (PLFLT, input) :    Left-hand edge of lowest-valued bin.
 
@@ -2607,7 +2705,7 @@ DESCRIPTION:
 
     Convert HLS color coordinates to RGB.
 
-    Redacted form:  General: plhlsrgb(h, l, s, p_r, p_g, p_b)
+    Redacted form: General: plhlsrgb(h, l, s, p_r, p_g, p_b)
 	    Perl/PDL: Not available? Implemented as plhls?
 
 
@@ -2621,22 +2719,23 @@ plhlsrgb(h, l, s, p_r, p_g, p_b)
 
 ARGUMENTS:
 
-    h (PLFLT, input) :      Hue, in degrees on the colour cone (0.0-360.0)
+    h (PLFLT, input) :      Hue in degrees (0.0-360.0) on the color
+    cylinder.
 
-    l (PLFLT, input) :      Lightness, expressed as a fraction of the axis
-    of the colour cone (0.0-1.0)
+    l (PLFLT, input) :      Lightness expressed as a fraction (0.0-1.0) of
+    the axis of the color cylinder.
 
-    s (PLFLT, input) :      Saturation, expressed as a fraction of the
-    radius of the colour cone (0.0-1.0)
+    s (PLFLT, input) :      Saturation expressed as a fraction (0.0-1.0) of
+    the radius of the color cylinder.
 
-    p_r (PLFLT *, output) :    Pointer to red intensity (0.0-1.0) of the
-    colour
+    p_r (PLFLT_NC_SCALAR, output) :    Returned value of the red intensity
+    (0.0-1.0) of the color.
 
-    p_g (PLFLT *, output) :    Pointer to green intensity (0.0-1.0) of the
-    colour
+    p_g (PLFLT_NC_SCALAR, output) :    Returned value of the green
+    intensity (0.0-1.0) of the color.
 
-    p_b (PLFLT *, output) :    Pointer to blue intensity (0.0-1.0) of the
-    colour
+    p_b (PLFLT_NC_SCALAR, output) :    Returned value of the blue
+    intensity (0.0-1.0) of the color.
 ")
 plhlsrgb;
 
@@ -2646,8 +2745,8 @@ DESCRIPTION:
 
     Plot a 2D matrix using cmap1.
 
-    Redacted form:  General: plimagefr(idata, xmin, xmax, ymin, ymax,
-    zmin, zmax, valuemin, valuemax, pltr, pltr_data)
+    Redacted form: General: plimagefr(idata, xmin, xmax, ymin, ymax, zmin,
+    zmax, valuemin, valuemax, pltr, pltr_data)
 
 
     This function is used in example 20.
@@ -2660,14 +2759,17 @@ plimagefr(idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, valuemin, valuemax,
 
 ARGUMENTS:
 
-    idata (const PLFLT * const *, input) :    A 2D array of values
-    (intensities) to plot.    Should have dimensions idata[nx][ny].
+    idata (PLFLT_MATRIX, input) :    A matrix of values (intensities) to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx, ny (PLINT, input) :    Dimensions of idata
 
-    xmin, xmax, ymin, ymax (PLFLT, input) :    Stretch image data to these
-    Plot coordinates.  idata[0][0] corresponds to (xmin, ymin) and
-    idata[nx - 1][ny - 1] corresponds to (xmax, ymax).
+    xmin, xmax, ymin, ymax (PLFLT, input) :    See the discussion of
+    pltr below for how these arguments are used (only for the special case
+    when the callback function
+    pltr is not supplied).
 
     zmin, zmax (PLFLT, input) :    Only data between zmin and zmax
     (inclusive) will be plotted.
@@ -2676,24 +2778,41 @@ ARGUMENTS:
     values to use for value to color mappings.  A datum equal to or
     less than valuemin will be plotted with color 0.0, while a datum
     equal to or greater than valuemax will be plotted with color 1.0.
-    Data between valuemin and valuemax map linearly to colors between
-    0.0 and 1.0.
+    Data between valuemin and valuemax map linearly to colors in the
+    range (0.0-1.0).
 
-    pltr (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) , input) :
-      Pointer to function that defines a transformation between the
-    data in the array idata and world coordinates.    An input
-    coordinate of (0, 0) corresponds to the \"top-left\" corner of idata
-    while (nx, ny) corresponds to the \"bottom-right\" corner of idata.
-    Some transformation functions are provided in the PLplot library:
-    pltr0 for identity mapping, and pltr1 and pltr2 for arbitrary
-    mappings respectively defined by one- and two-dimensional arrays.
-    In addition, user-supplied routines for the transformation can be
-    used as well.  Examples of all of these approaches are given in
-    the PLplot documentation.  The transformation function should have
-    the form given by any of pltr0, pltr1, or pltr2.
+    pltr (PLTRANSFORM_callback, input) :    A callback function that
+    defines the transformation between the zero-based indices of the
+    matrix idata and world coordinates. If
+    pltr is not supplied (e.g., is set to NULL in the C case), then the x
+    indices of idata are mapped to the range
+    xmin through
+    xmax and the y indices of idata are mapped to the range
+    ymin through
+    ymax.For the C case, transformation functions are provided in the
+    PLplot library: pltr0 for the identity mapping, and pltr1 and
+    pltr2 for arbitrary mappings respectively defined by vectors and
+    matrices.  In addition, C callback routines for the transformation
+    can be supplied by the user such as the mypltr function in
+    examples/c/x09c.c which provides a general linear transformation
+    between index coordinates and world coordinates.For languages
+    other than C you should consult the PLplot documentation for the
+    details concerning how PLTRANSFORM_callback arguments are
+    interfaced. However, in general, a particular pattern of
+    callback-associated arguments such as a tr vector with 6 elements;
+    xg and yg vectors; or xg and yg matrices are respectively
+    interfaced to a linear-transformation routine similar to the above
+    mypltr function; pltr1; and pltr2. Furthermore, some of our more
+    sophisticated bindings (see, e.g., the PLplot documentation)
+    support native language callbacks for handling index to
+    world-coordinate transformations.  Examples of these various
+    approaches are given in examples/<language>x09*,
+    examples/<language>x16*, examples/<language>x20*,
+    examples/<language>x21*, and examples/<language>x22*, for all our
+    supported languages.
 
-    pltr_data (PLPointer, input) :    Extra parameter to help pass
-    information to pltr0, pltr1, pltr2, or whatever routine is
+    pltr_data (PL_GENERIC_POINTER, input) :    Extra parameter to help
+    pass information to pltr0, pltr1, pltr2, or whatever routine is
     externally supplied.
 ")
 #ifdef SWIG_OCTAVE
@@ -2702,15 +2821,15 @@ my_plimagefr;
 plimagefr;
 #endif
 
-%feature( "docstring", "Plot a 2D matrix using cmap1 with automatic colour adjustment
+%feature( "docstring", "Plot a 2D matrix using cmap1 with automatic color adjustment
 
 DESCRIPTION:
 
-    Plot a 2D matrix using color palette 1.  The color scale is
+    Plot a 2D matrix using the cmap1 palette.  The color scale is
     automatically adjusted to use the maximum and minimum values in idata
     as valuemin and valuemax in a call to plimagefr.
 
-    Redacted form:  General: plimage(idata, xmin, xmax, ymin, ymax, zmin,
+    Redacted form: General: plimage(idata, xmin, xmax, ymin, ymax, zmin,
     zmax, Dxmin, Dxmax, Dymin, Dymax)
 
 
@@ -2724,14 +2843,17 @@ plimage(idata, nx, ny, xmin, xmax, ymin, ymax, zmin, zmax, Dxmin, Dxmax, Dymin, 
 
 ARGUMENTS:
 
-    idata (const PLFLT * const *, input) :    A 2D array of values
-    (intensities) to plot.    Should have dimensions idata[nx][ny].
+    idata (PLFLT_MATRIX, input) :    A matrix containing function values
+    to plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx, ny (PLINT, input) :    Dimensions of idata
 
-    xmin, xmax, ymin, ymax (PLFLT, input) :    Plot coordinates to stretch
-    the image data to.  idata[0][0] corresponds to (xmin, ymin) and
-    idata[nx - 1][ny - 1] corresponds to (xmax, ymax).
+    xmin, xmax, ymin, ymax (PLFLT, input) :    The x and y index ranges
+    are linearly transformed to these world coordinate ranges such
+    that idata[0][0] corresponds to (xmin, ymin) and idata[nx - 1][ny
+    - 1] corresponds to (xmax, ymax).
 
     zmin, zmax (PLFLT, input) :    Only data between zmin and zmax
     (inclusive) will be plotted.
@@ -2782,7 +2904,7 @@ DESCRIPTION:
 
     Redacted form: pljoin(x1,y1,x2,y2)
 
-    This function is used in examples 3,14.
+    This function is used in examples 3 and 14.
 
 
 
@@ -2810,7 +2932,7 @@ DESCRIPTION:
 
     Redacted form: pllab(xlabel, ylabel, tlabel)
 
-    This function is used in examples 1,5,9,12,14-16,20-22,29.
+    This function is used in examples 1, 5, 9, 12, 14-16, 20-22, and 29.
 
 
 
@@ -2820,11 +2942,14 @@ pllab(xlabel, ylabel, tlabel)
 
 ARGUMENTS:
 
-    xlabel (const char *, input) :    Label for horizontal axis.
+    xlabel (PLCHAR_VECTOR, input) :    A UTF-8 character string specifying
+    the label for the x axis.
 
-    ylabel (const char *, input) :    Label for vertical axis.
+    ylabel (PLCHAR_VECTOR, input) :    A UTF-8 character string specifying
+    the label for the y axis.
 
-    tlabel (const char *, input) :    Title of graph.
+    tlabel (PLCHAR_VECTOR, input) :    A UTF-8 character string specifying
+    the title of the plot.
 ")
 pllab;
 
@@ -2842,12 +2967,12 @@ DESCRIPTION:
     (N.B. the adopted coordinate system used for some of the parameters is
     defined in the documentation of the position parameter.)
 
-    Redacted form: pllegend(p_legend_width, p_legend_height,  opt,
+    Redacted form: pllegend(p_legend_width, p_legend_height, opt,
     position, x, y, plot_width, bg_color, bb_color, bb_style, nrow,
-    ncolumn, opt_array,  text_offset, text_scale, text_spacing,
-    test_justification, text_colors, text,  box_colors, box_patterns,
+    ncolumn, opt_array, text_offset, text_scale, text_spacing,
+    test_justification, text_colors, text, box_colors, box_patterns,
     box_scales, box_line_widths, line_colors, line_styles, line_widths,
-    symbol_colors, symbol_scales,  symbol_numbers, symbols)
+    symbol_colors, symbol_scales, symbol_numbers, symbols)
 
     This function is used in examples 4, 26, and 33.
 
@@ -2859,25 +2984,23 @@ pllegend(p_legend_width, p_legend_height, opt, position, x, y, plot_width, bg_co
 
 ARGUMENTS:
 
-    p_legend_width (PLFLT *, output) :      Pointer to a location which
-    contains (after the call) the legend width in adopted coordinates.
-    This quantity is calculated from plot_width, text_offset, ncolumn
-    (possibly modified inside the routine depending on nlegend and
-    nrow), and the length (calculated internally) of the longest text
-    string.
+    p_legend_width (PLFLT_NC_SCALAR, output) :      Returned value of the
+    legend width in adopted coordinates. This quantity is calculated
+    from plot_width, text_offset, ncolumn (possibly modified inside
+    the routine depending on nlegend and nrow), and the length
+    (calculated internally) of the longest text string.
 
-    p_legend_height (PLFLT *, output) :    Pointer to a location which
-    contains (after the call) the legend height in adopted
-    coordinates. This quantity is calculated from text_scale,
-    text_spacing, and nrow (possibly modified inside the routine
-    depending on nlegend and nrow).
+    p_legend_height (PLFLT_NC_SCALAR, output) :    Returned value of the
+    legend height in adopted coordinates. This quantity is calculated
+    from text_scale, text_spacing, and nrow (possibly modified inside
+    the routine depending on nlegend and nrow).
 
     opt (PLINT, input) :    opt contains bits controlling the overall
     legend. If the PL_LEGEND_TEXT_LEFT bit is set, put the text area
     on the left of the legend and the plotted area on the right.
     Otherwise, put the text area on the right of the legend and the
     plotted area on the left. If the PL_LEGEND_BACKGROUND bit is set,
-    plot a (semi-transparent) background for the legend. If the
+    plot a (semitransparent) background for the legend. If the
     PL_LEGEND_BOUNDING_BOX bit is set, plot a bounding box for the
     legend. If the PL_LEGEND_ROW_MAJOR bit is set and (both of the
     possibly internally transformed) nrow > 1 and ncolumn > 1, then
@@ -2922,9 +3045,9 @@ ARGUMENTS:
     For positive y, the direction of motion away from the standard
     position is inward/outward from the standard corner positions or
     standard top or bottom positions if the
-    PL_POSITION_INSIDE/PL_POSITION_OUTSIDE bit is set in position.
-    For the standard left or right positions, the  direction of motion
-    is toward positive Y.
+    PL_POSITION_INSIDE/PL_POSITION_OUTSIDE bit is set in position. For
+    the standard left or right positions, the direction of motion is
+    toward positive Y.
 
     plot_width (PLFLT, input) :    Horizontal width in adopted coordinates
     of the plot area (where the colored boxes, lines, and/or lines of
@@ -2950,9 +3073,9 @@ ARGUMENTS:
     internally from nlegend, text_scale (see below), and text_spacing
     (see below).
 
-    opt_array (const PLINT *, input) :      Array of nlegend values of
-    options to control each individual plotted area corresponding to a
-    legend entry.  If the
+    opt_array (PLINT_VECTOR, input) :     A vector of
+    nlegend values of options to control each individual plotted area
+    corresponding to a legend entry.  If the
     PL_LEGEND_NONE bit is set, then nothing is plotted in the plotted
     area.  If the
     PL_LEGEND_COLOR_BOX,
@@ -2990,54 +3113,56 @@ ARGUMENTS:
     is left justified, centred, or right justified within the text
     area, but other values are allowed as well.
 
-    text_colors (const PLINT *, input) :    Array of nlegend cmap0 text
-    colors.
+    text_colors (PLINT_VECTOR, input) :    A vector containing
+    nlegend cmap0 text colors.
 
-    text (const char * const *, input) :    Array of nlegend text string
-    annotations.
+    text (PLCHAR_MATRIX, input) :    A vector of
+    nlegend UTF-8 character strings containing the legend annotations.
 
-    box_colors (const PLINT *, input) :    Array of nlegend cmap0 colors
-    for the discrete colored boxes (
+    box_colors (PLINT_VECTOR, input) :      A vector containing
+    nlegend cmap0 colors for the discrete colored boxes (
     PL_LEGEND_COLOR_BOX).
 
-    box_patterns (const PLINT *, input) :    Array of nlegend patterns
-    (plpsty indices) for the discrete colored boxes (
+    box_patterns (PLINT_VECTOR, input) :    A vector containing
+    nlegend patterns (plpsty indices) for the discrete colored boxes (
     PL_LEGEND_COLOR_BOX).
 
-    box_scales (const PLFLT *, input) :    Array of nlegend scales (units
-    of fraction of character height) for the height of the discrete
-    colored boxes  (
+    box_scales (PLFLT_VECTOR, input) :      A vector containing
+    nlegend scales (units of fraction of character height) for the height
+    of the discrete colored boxes (
     PL_LEGEND_COLOR_BOX).
 
-    box_line_widths (const PLFLT *, input) :    Array of nlegend line
-    widths for the patterns specified by box_patterns (
+    box_line_widths (PLFLT_VECTOR, input) :    A vector containing
+    nlegend line widths for the patterns specified by box_patterns (
     PL_LEGEND_COLOR_BOX).
 
-    line_colors (const PLINT *, input) :    Array of nlegend cmap0 line
-    colors (
+    line_colors (PLINT_VECTOR, input) :    A vector containing
+    nlegend cmap0 line colors (
     PL_LEGEND_LINE).
 
-    line_styles (const PLINT *, input) :    Array of nlegend line styles
-    (plsty indices)  (
+    line_styles (PLINT_VECTOR, input) :    A vector containing
+    nlegend line styles (plsty indices) (
     PL_LEGEND_LINE).
 
-    line_widths (const PLFLT *, input) :    Array of nlegend line widths (
+    line_widths (PLFLT_VECTOR, input) :    A vector containing
+    nlegend line widths (
     PL_LEGEND_LINE).
 
-    symbol_colors (const PLINT *, input) :    Array of nlegend cmap0
-    symbol colors  (
+    symbol_colors (PLINT_VECTOR, input) :    A vector containing
+    nlegend cmap0 symbol colors (
     PL_LEGEND_SYMBOL).
 
-    symbol_scales (const PLFLT *, input) :    Array of nlegend scale
-    values for the symbol height  (
+    symbol_scales (PLFLT_VECTOR, input) :    A vector containing
+    nlegend scale values for the symbol height (
     PL_LEGEND_SYMBOL).
 
-    symbol_numbers (const PLINT *, input) :    Array of nlegend numbers of
-    symbols to be drawn across the width of the plotted area (
+    symbol_numbers (PLINT_VECTOR, input) :    A vector containing
+    nlegend numbers of symbols to be drawn across the width of the plotted
+    area (
     PL_LEGEND_SYMBOL).
 
-    symbols (const char * const *, input) :    Array of nlegend symbols
-    (plpoin indices)  (
+    symbols (PLCHAR_MATRIX, input) :    A vector of
+    nlegend UTF-8 character strings containing the legend symbols. (
     PL_LEGEND_SYMBOL).
 ")
 pllegend;
@@ -3046,7 +3171,8 @@ pllegend;
 
 DESCRIPTION:
 
-    Sets the 3D position of the light source for use with plsurf3d.
+    Sets the 3D position of the light source for use with plsurf3d and
+    plsurf3dl
 
     Redacted form: pllightsource(x, y, z)
 
@@ -3076,7 +3202,8 @@ DESCRIPTION:
 
     Redacted form: plline(x, y)
 
-    This function is used in examples 1,3,4,9,12-14,16,18,20,22,25-27,29.
+    This function is used in examples 1, 3, 4, 9, 12-14, 16, 18, 20, 22,
+    25-27, and 29.
 
 
 
@@ -3088,10 +3215,10 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of points defining line.
 
-    x (const PLFLT *, input) :      Pointer to array with x coordinates of
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
     points.
 
-    y (const PLFLT *, input) :      Pointer to array with y coordinates of
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
     points.
 ")
 plline;
@@ -3119,13 +3246,13 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of points defining line.
 
-    x (const PLFLT *, input) :      Pointer to array with x coordinates of
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
     points.
 
-    y (const PLFLT *, input) :      Pointer to array with y coordinates of
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
     points.
 
-    z (const PLFLT *, input) :      Pointer to array with z coordinates of
+    z (PLFLT_VECTOR, input) :     A vector containing the z coordinates of
     points.
 ")
 plline3;
@@ -3139,7 +3266,7 @@ DESCRIPTION:
 
     Redacted form: pllsty(lin)
 
-    This function is used in examples 9,12,22,25.
+    This function is used in examples 9, 12, 22, and 25.
 
 
 
@@ -3162,17 +3289,17 @@ DESCRIPTION:
 
     Plots continental outlines or shapefile data in world coordinates. A
     demonstration of how to use this function to create different
-    projections can be found in examples/c/x19c. Plplot is provided with
+    projections can be found in examples/c/x19c. PLplot is provided with
     basic coastal outlines and USA state borders. These can be used
-    irrespective of whether Shapefile support is built into Plplot. With
+    irrespective of whether Shapefile support is built into PLplot. With
     Shapefile support this function can also be used with user Shapefiles,
     in which case it will plot the entire contents of a Shapefile joining
     each point of each Shapefile element with a line. Shapefiles have
     become a popular standard for geographical data and data in this
     format can be easily found from a number of online sources. Shapefile
     data is actually provided as three or more files with the same
-    filename, but different extensions.  The .shp and .shx files are
-    required for plotting Shapefile data with Plplot.
+    filename, but different extensions. The .shp and .shx files are
+    required for plotting Shapefile data with PLplot.
 
     Redacted form: plmap(mapform, name, minx, maxx, miny, maxy)
 
@@ -3186,25 +3313,25 @@ plmap(mapform, name, minx, maxx, miny, maxy)
 
 ARGUMENTS:
 
-    mapform (void (*) (PLINT, PLFLT *, PLFLT *), input) :    A user
-    supplied function to transform the original map data coordinates
-    to a new coordinate system. The Plplot supplied  map data is
-    provided as latitudes and longitudes; other Shapefile data may be
-    provided in other coordinate systems as can be found in their .prj
-    plain text files. For example, by using this transform we can
-    change from a longitude, latitude coordinate to a polar
-    stereographic projection. Initially, x[0]..[n-1] are the original
-    x coordinates (longitudes for the Plplot suplied data) and
-    y[0]..y[n-1] are the corresponding y coordinates (latitudes for
-    the Plplot  supplied data).  After the call to mapform(), x[] and
-    y[] should be replaced by the corresponding plot coordinates. If
-    no transform is desired, mapform can be replaced by NULL.
+    mapform (PLMAPFORM_callback, input) :    A user supplied function to
+    transform the original map data coordinates to a new coordinate
+    system. The PLplot-supplied map data is provided as latitudes and
+    longitudes; other Shapefile data may be provided in other
+    coordinate systems as can be found in their .prj plain text files.
+    For example, by using this transform we can change from a
+    longitude, latitude coordinate to a polar stereographic
+    projection. Initially, x[0]..[n-1] are the original x coordinates
+    (longitudes for the PLplot-supplied data) and y[0]..y[n-1] are the
+    corresponding y coordinates (latitudes for the PLplot supplied
+    data).    After the call to mapform(), x[] and y[] should be
+    replaced by the corresponding plot coordinates. If no transform is
+    desired, mapform can be replaced by NULL.
 
-    name (const char *, input) :    A character string which determines
-    the type of map plotted. This is  either one of the Plplot built
-    in maps or the file name of a set of  Shapefile files without the
-    file extensions. For the Plplot built in  maps the possible values
-    are: \"globe\" -- continental outlines
+    name (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    the type of map plotted. This is either one of the PLplot built-in
+    maps or the file name of a set of Shapefile files without the file
+    extensions. For the PLplot built-in maps the possible values are:
+    \"globe\" -- continental outlines
         \"usa\" -- USA and state boundaries
         \"cglobe\" -- continental outlines and countries
         \"usaglobe\" -- USA, state boundaries and continental outlines
@@ -3250,18 +3377,19 @@ plmapfill(mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries)
 
 ARGUMENTS:
 
-    mapform (void (*) (PLINT, PLFLT *, PLFLT *), input) :    A user
-    supplied function to transform the coordinates given in the
-    shapefile into a plot coordinate system. By using this transform,
-    we can change from a longitude, latitude coordinate to a polar
-    stereographic project, for example.  Initially, x[0]..[n-1] are
-    the longitudes and y[0]..y[n-1] are the corresponding latitudes.
-    After the call to mapform(), x[] and y[] should be replaced by the
-    corresponding plot coordinates. If no transform is desired,
-    mapform can be replaced by NULL.
+    mapform (PLMAPFORM_callback, input) :    A user supplied function to
+    transform the coordinates given in the shapefile into a plot
+    coordinate system. By using this transform, we can change from a
+    longitude, latitude coordinate to a polar stereographic project,
+    for example.  Initially, x[0]..[n-1] are the longitudes and
+    y[0]..y[n-1] are the corresponding latitudes.  After the call to
+    mapform(), x[] and y[] should be replaced by the corresponding
+    plot coordinates. If no transform is desired, mapform can be
+    replaced by NULL.
 
-    name (const char *, input) :    The file name of a set of Shapefile
-    files without the file extension.
+    name (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    the file name of a set of Shapefile files without the file
+    extension.
 
     minx (PLFLT, input) :    The minimum x value to be plotted. This must
     be in the same units as used by the Shapefile. You could use a
@@ -3285,13 +3413,14 @@ ARGUMENTS:
     use a very large number to plot everything, but you can improve
     performance by limiting the area drawn.
 
-    plotentries (const PLINT *, input) :    An array of integers
-    indicating the elements of the Shapefile (zero indexed) which will
-    be drawn. Setting plotentries to NULL will plot all elements of
-    the Shapefile.
+    plotentries (PLINT_VECTOR, input) :    A vector containing the
+    zero-based indices of the Shapefile elements which will be drawn.
+    Setting
+    plotentries to NULL will plot all elements of the Shapefile.
 
-    nplotentries (PLINT, input) :    The number of items in plotentries.
-    Ignored if plotentries is NULL.
+    nplotentries (PLINT, input) :    The number of items in
+    plotentries. Ignored if
+    plotentries is NULL.
 ")
 plmapfill;
 
@@ -3300,14 +3429,15 @@ plmapfill;
 DESCRIPTION:
 
     Plot all or a subset of Shapefile data using lines in world
-    coordinates. examples/c/x19c demonstrates how to use this function.
-    This function plots data from a Shapefile using lines as in plmap,
-    however it also has the option of also only drawing specified elements
-    from the Shapefile. The indices of the required elements are passed
-    into the function as an array. The Shapefile data should include a
-    metadata file (extension.dbf) listing all items within the Shapefile.
-    This file can be opened by most popular spreadsheet programs and can
-    be used to decide which indices to pass to this function.
+    coordinates. Our 19th standard example demonstrates how to use this
+    function. This function plots data from a Shapefile using lines as in
+    plmap, however it also has the option of also only drawing specified
+    elements from the Shapefile. The vector of indices of the required
+    elements are passed as a function argument. The Shapefile data should
+    include a metadata file (extension.dbf) listing all items within the
+    Shapefile. This file can be opened by most popular spreadsheet
+    programs and can be used to decide which indices to pass to this
+    function.
 
     Redacted form: plmapline(mapform, name, minx, maxx, miny, maxy,
     plotentries)
@@ -3322,18 +3452,19 @@ plmapline(mapform, name, minx, maxx, miny, maxy, plotentries, nplotentries)
 
 ARGUMENTS:
 
-    mapform (void (*) (PLINT, PLFLT *, PLFLT *), input) :    A user
-    supplied function to transform the coordinates given in the
-    shapefile into a plot coordinate system. By using this transform,
-    we can change from a longitude, latitude coordinate to a polar
-    stereographic project, for example.  Initially, x[0]..[n-1] are
-    the longitudes and y[0]..y[n-1] are the corresponding latitudes.
-    After the call to mapform(), x[] and y[] should be replaced by the
-    corresponding plot coordinates. If no transform is desired,
-    mapform can be replaced by NULL.
+    mapform (PLMAPFORM_callback, input) :    A user supplied function to
+    transform the coordinates given in the shapefile into a plot
+    coordinate system. By using this transform, we can change from a
+    longitude, latitude coordinate to a polar stereographic project,
+    for example.  Initially, x[0]..[n-1] are the longitudes and
+    y[0]..y[n-1] are the corresponding latitudes.  After the call to
+    mapform(), x[] and y[] should be replaced by the corresponding
+    plot coordinates. If no transform is desired, mapform can be
+    replaced by NULL.
 
-    name (const char *, input) :    The file name of a set of Shapefile
-    files without the file extension.
+    name (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    the file name of a set of Shapefile files without the file
+    extension.
 
     minx (PLFLT, input) :    The minimum x value to be plotted. This must
     be in the same units as used by the Shapefile. You could use a
@@ -3357,13 +3488,14 @@ ARGUMENTS:
     use a very large number to plot everything, but you can improve
     performance by limiting the area drawn.
 
-    plotentries (const PLINT *, input) :    An array of integers
-    indicating the elements of the Shapefile (zero indexed) which will
-    be drawn. Setting plotentries to NULL will plot all elements of
-    the Shapefile.
+    plotentries (PLINT_VECTOR, input) :    A vector containing the
+    zero-based indices of the Shapefile elements which will be drawn.
+    Setting
+    plotentries to NULL will plot all elements of the Shapefile.
 
-    nplotentries (PLINT, input) :    The number of items in plotentries.
-    Ignored if plotentries is NULL.
+    nplotentries (PLINT, input) :    The number of items in
+    plotentries.  Ignored if
+    plotentries is NULL.
 ")
 plmapline;
 
@@ -3377,7 +3509,7 @@ DESCRIPTION:
     Redacted form: plmapstring(mapform, name, string, minx, maxx, miny,
     maxy, plotentries)
 
-    This function is used in example 19.
+    This function is not used in any examples.
 
 
 
@@ -3387,21 +3519,22 @@ plmapstring(mapform, name, string, minx, maxx, miny, maxy, plotentries, nplotent
 
 ARGUMENTS:
 
-    mapform (void (*) (PLINT, PLFLT *, PLFLT *), input) :    A user
-    supplied function to transform the coordinates given in the
-    shapefile into a plot coordinate system. By using this transform,
-    we can change from a longitude, latitude coordinate to a polar
-    stereographic project, for example.  Initially, x[0]..[n-1] are
-    the longitudes and y[0]..y[n-1] are the corresponding latitudes.
-    After the call to mapform(), x[] and y[] should be replaced by the
-    corresponding plot coordinates. If no transform is desired,
-    mapform can be replaced by NULL.
+    mapform (PLMAPFORM_callback, input) :    A user supplied function to
+    transform the coordinates given in the shapefile into a plot
+    coordinate system. By using this transform, we can change from a
+    longitude, latitude coordinate to a polar stereographic project,
+    for example.  Initially, x[0]..[n-1] are the longitudes and
+    y[0]..y[n-1] are the corresponding latitudes.  After the call to
+    mapform(), x[] and y[] should be replaced by the corresponding
+    plot coordinates. If no transform is desired, mapform can be
+    replaced by NULL.
 
-    name (const char *, input) :    The file name of a set of Shapefile
-    files without the file extension.
+    name (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    the file name of a set of Shapefile files without the file
+    extension.
 
-    string (const char *, input) :    A NULL terminated string of
-    characters to be drawn.
+    string (PLCHAR_VECTOR, input) :    A UTF-8 character string to be
+    drawn.
 
     minx (PLFLT, input) :    The minimum x value to be plotted. This must
     be in the same units as used by the Shapefile. You could use a
@@ -3425,13 +3558,14 @@ ARGUMENTS:
     use a very large number to plot everything, but you can improve
     performance by limiting the area drawn.
 
-    plotentries (const PLINT *, input) :    An array of integers
-    indicating the elements of the Shapefile (zero indexed) which will
-    be drawn. Setting plotentries to NULL will plot all elements of
-    the Shapefile.
+    plotentries (PLINT_VECTOR, input) :    A vector containing the
+    zero-based indices of the Shapefile elements which will be drawn.
+    Setting
+    plotentries to NULL will plot all elements of the Shapefile.
 
-    nplotentries (PLINT, input) :    The number of items in plotentries.
-    Ignored if plotentries is NULL.
+    nplotentries (PLINT, input) :    The number of items in
+    plotentries.  Ignored if
+    plotentries is NULL.
 ")
 plmapstring;
 
@@ -3455,18 +3589,19 @@ plmaptex(mapform, name, dx, dy, just, text, minx, maxx, miny, maxy, plotentry)
 
 ARGUMENTS:
 
-    mapform (void (*) (PLINT, PLFLT *, PLFLT *), input) :    A user
-    supplied function to transform the coordinates given in the
-    shapefile into a plot coordinate system. By using this transform,
-    we can change from a longitude, latitude coordinate to a polar
-    stereographic project, for example.  Initially, x[0]..[n-1] are
-    the longitudes and y[0]..y[n-1] are the corresponding latitudes.
-    After the call to mapform(), x[] and y[] should be replaced by the
-    corresponding plot coordinates. If no transform is desired,
-    mapform can be replaced by NULL.
+    mapform (PLMAPFORM_callback, input) :    A user supplied function to
+    transform the coordinates given in the shapefile into a plot
+    coordinate system. By using this transform, we can change from a
+    longitude, latitude coordinate to a polar stereographic project,
+    for example.  Initially, x[0]..[n-1] are the longitudes and
+    y[0]..y[n-1] are the corresponding latitudes.  After the call to
+    mapform(), x[] and y[] should be replaced by the corresponding
+    plot coordinates. If no transform is desired, mapform can be
+    replaced by NULL.
 
-    name (const char *, input) :    The file name of a set of Shapefile
-    files without the file extension.
+    name (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    the file name of a set of Shapefile files without the file
+    extension.
 
     dx (PLFLT, input) :    Used to define the slope of the texts which is
     dy/dx.
@@ -3479,8 +3614,7 @@ ARGUMENTS:
     sits at the given point. 0.0 gives left aligned text, 0.5 gives
     centralized text and 1.0 gives right aligned text.
 
-    text (const char *, input) :    A NULL-terminated string of characters
-    to be drawn.
+    text (PLCHAR_VECTOR, input) :    A UTF-8 character string to be drawn.
 
     minx (PLFLT, input) :    The minimum x value to be plotted. This must
     be in the same units as used by the Shapefile. You could use a
@@ -3529,15 +3663,15 @@ plmeridians(mapform, dlong, dlat, minlong, maxlong, minlat, maxlat)
 
 ARGUMENTS:
 
-    mapform (void (*) (PLINT, PLFLT *, PLFLT *), input) :    A user
-    supplied function to transform the coordinate longitudes and
-    latitudes to a plot coordinate system. By using this transform, we
-    can change from a longitude, latitude coordinate to a polar
-    stereographic project, for example.  Initially, x[0]..[n-1] are
-    the longitudes and y[0]..y[n-1] are the corresponding latitudes.
-    After the call to mapform(), x[] and y[] should be replaced by the
-    corresponding plot coordinates. If no transform is desired,
-    mapform can be replaced by NULL.
+    mapform (PLMAPFORM_callback, input) :    A user supplied function to
+    transform the coordinate longitudes and latitudes to a plot
+    coordinate system. By using this transform, we can change from a
+    longitude, latitude coordinate to a polar stereographic project,
+    for example.  Initially, x[0]..[n-1] are the longitudes and
+    y[0]..y[n-1] are the corresponding latitudes.  After the call to
+    mapform(), x[] and y[] should be replaced by the corresponding
+    plot coordinates. If no transform is desired, mapform can be
+    replaced by NULL.
 
     dlong (PLFLT, input) :    The interval in degrees at which the
     longitude lines are to be plotted.
@@ -3570,11 +3704,11 @@ plmeridians;
 DESCRIPTION:
 
     Plots a surface mesh within the environment set up by plw3d.  The
-    surface is defined by the two-dimensional array z[
+    surface is defined by the matrix z[
     nx][
-    ny] , the point z[i][j]  being the value of the function at (
+    ny] , the point z[i][j] being the value of the function at (
     x[i],
-    y[j]) .  Note that the points in arrays x and y do not need to be
+    y[j]). Note that the points in vectors x and y do not need to be
     equally spaced, but must be stored in ascending order.  The parameter
     opt controls the way in which the surface is displayed.  For further
     details see the PLplot documentation.
@@ -3591,19 +3725,21 @@ plmesh(x, y, z, nx, ny, opt)
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates at
     which the function is evaluated.
 
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates at
     which the function is evaluated.
 
-    z (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array with set of function values.
+    z (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
-    nx (PLINT, input) :    Number of x values at which function is
+    nx (PLINT, input) :    Number of x values at which function has been
     evaluated.
 
-    ny (PLINT, input) :    Number of y values at which function is
+    ny (PLINT, input) :    Number of y values at which function has been
     evaluated.
 
     opt (PLINT, input) :    Determines the way in which the surface is
@@ -3641,14 +3777,16 @@ plmeshc(x, y, z, nx, ny, opt, clevel, nlevel)
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates at
     which the function is evaluated.
 
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates at
     which the function is evaluated.
 
-    z (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array with set of function values.
+    z (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx (PLINT, input) :    Number of x values at which function is
     evaluated.
@@ -3666,7 +3804,7 @@ ARGUMENTS:
         at which function is defined.
         opt=MAG_COLOR : Each line in the mesh is colored according to
         the z value being plotted. The color is used from the current
-        color map 1.
+        cmap1.
         opt=BASE_CONT : A contour plot is drawn at the base XY plane
         using parameters
     nlevel and
@@ -3675,10 +3813,10 @@ ARGUMENTS:
         the borders of the plotted function.
 
 
-    clevel (const PLFLT *, input) :    Pointer to the array that defines
-    the contour level spacing.
+    clevel (PLFLT_VECTOR, input) :    A vector containing the contour
+    levels.
 
-    nlevel (PLINT, input) :    Number of elements in the clevel array.
+    nlevel (PLINT, input) :    Number of elements in the clevel vector.
 ")
 #ifdef SWIG_OCTAVE
 my_plmeshc;
@@ -3700,7 +3838,7 @@ DESCRIPTION:
 
     Redacted form: plmkstrm(p_strm)
 
-    This function is used in examples 1,20.
+    This function is used in examples 1 and 20.
 
 
 
@@ -3710,8 +3848,8 @@ plmkstrm(p_strm)
 
 ARGUMENTS:
 
-    p_strm (PLINT *, output) :      Pointer to stream number of the created
-    stream.
+    p_strm (PLINT_NC_SCALAR, output) :      Returned value of the stream
+    number of the created stream.
 ")
 plmkstrm;
 
@@ -3731,7 +3869,8 @@ DESCRIPTION:
 	    Perl/PDL: plmtex(disp, pos, just, side, text)
 
 
-    This function is used in examples 3,4,6-8,11,12,14,18,23,26.
+    This function is used in examples 3, 4, 6-8, 11, 12, 14, 18, 23, and
+    26.
 
 
 
@@ -3741,9 +3880,10 @@ plmtex(side, disp, pos, just, text)
 
 ARGUMENTS:
 
-    side (const char *, input) :    Specifies the side of the viewport
-    along which the text is to be written. The string must be one of:
-    b: Bottom of viewport, text written parallel to edge.
+    side (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    the side of the viewport along which the text is to be written.
+    The string must be one of: b: Bottom of viewport, text written
+    parallel to edge.
         bv: Bottom of viewport, text written at right angles to edge.
         l: Left of viewport, text written parallel to edge.
         lv: Left of viewport, text written at right angles to edge.
@@ -3767,7 +3907,8 @@ ARGUMENTS:
     the left and if just=1. , it is at the right of the string.  Other
     values of just give intermediate justifications.
 
-    text (const char *, input) :    The string to be written out.
+    text (PLCHAR_VECTOR, input) :    A UTF-8 character string to be
+    written out.
 ")
 plmtex;
 
@@ -3795,11 +3936,12 @@ plmtex3(side, disp, pos, just, text)
 
 ARGUMENTS:
 
-    side (const char *, input) :    Specifies the side of the viewport
-    along which the text is to be written. The string should contain
-    one or more of the following characters: [xyz][ps][v]. Only one
-    label is drawn at a time, i.e. xyp will only label the X axis, not
-    both the X and Y axes. x: Label the X axis.
+    side (PLCHAR_VECTOR, input) :    An ascii character string specifying
+    the side of the viewport along which the text is to be written.
+    The string should contain one or more of the following characters:
+    [xyz][ps][v]. Only one label is drawn at a time, i.e. xyp will
+    only label the X axis, not both the X and Y axes. x: Label the X
+    axis.
         y: Label the Y axis.
         z: Label the Z axis.
         p: Label the primary axis. For Z this is the leftmost Z axis.
@@ -3823,7 +3965,8 @@ ARGUMENTS:
     the left and if just=1. , it is at the right of the string.  Other
     values of just give intermediate justifications.
 
-    text (const char *, input) :    The string to be written out.
+    text (PLCHAR_VECTOR, input) :    A UTF-8 character string to be
+    written out.
 ")
 plmtex3;
 
@@ -3831,12 +3974,12 @@ plmtex3;
 
 DESCRIPTION:
 
-    Plots a three dimensional surface plot within the environment set up
-    by plw3d.  The surface is defined by the two-dimensional array z[
+    Plots a three-dimensional surface plot within the environment set up
+    by plw3d.  The surface is defined by the matrix z[
     nx][
-    ny] , the point z[i][j]  being the value of the function at (
+    ny] , the point z[i][j] being the value of the function at (
     x[i],
-    y[j]) .  Note that the points in arrays x and y do not need to be
+    y[j]). Note that the points in vectors x and y do not need to be
     equally spaced, but must be stored in ascending order.  The parameter
     opt controls the way in which the surface is displayed.  For further
     details see the PLplot documentation. The only difference between
@@ -3845,7 +3988,7 @@ DESCRIPTION:
 
     Redacted form: plot3d(x, y, z, opt, side)
 
-    This function is used in examples 11,21.
+    This function is used in examples 11 and 21.
 
 
 
@@ -3855,14 +3998,16 @@ plot3d(x, y, z, nx, ny, opt, side)
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates at
     which the function is evaluated.
 
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates at
     which the function is evaluated.
 
-    z (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array with set of function values.
+    z (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx (PLINT, input) :    Number of x values at which function is
     evaluated.
@@ -3917,14 +4062,16 @@ plot3dc(x, y, z, nx, ny, opt, clevel, nlevel)
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates at
     which the function is evaluated.
 
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates at
     which the function is evaluated.
 
-    z (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array with set of function values.
+    z (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx (PLINT, input) :    Number of x values at which function is
     evaluated.
@@ -3942,7 +4089,7 @@ ARGUMENTS:
         at which function is defined.
         opt=MAG_COLOR : Each line in the mesh is colored according to
         the z value being plotted. The color is used from the current
-        color map 1.
+        cmap1.
         opt=BASE_CONT : A contour plot is drawn at the base XY plane
         using parameters
     nlevel and
@@ -3951,10 +4098,10 @@ ARGUMENTS:
         the borders of the plotted function.
 
 
-    clevel (const PLFLT *, input) :    Pointer to the array that defines
-    the contour level spacing.
+    clevel (PLFLT_VECTOR, input) :    A vector containing the contour
+    levels.
 
-    nlevel (PLINT, input) :    Number of elements in the clevel array.
+    nlevel (PLINT, input) :    Number of elements in the clevel vector.
 ")
 #ifdef SWIG_OCTAVE
 my_plot3dc;
@@ -3989,14 +4136,16 @@ plot3dcl(x, y, z, nx, ny, opt, clevel, nlevel, indexxmin, indexxmax, indexymin, 
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates at
     which the function is evaluated.
 
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates at
     which the function is evaluated.
 
-    z (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array with set of function values.
+    z (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx (PLINT, input) :    Number of x values at which the function is
     evaluated.
@@ -4014,7 +4163,7 @@ ARGUMENTS:
         at which function is defined.
         opt=MAG_COLOR : Each line in the mesh is colored according to
         the z value being plotted. The color is used from the current
-        color map 1.
+        cmap1.
         opt=BASE_CONT : A contour plot is drawn at the base XY plane
         using parameters
     nlevel and
@@ -4023,10 +4172,10 @@ ARGUMENTS:
         the borders of the plotted function.
 
 
-    clevel (const PLFLT *, input) :    Pointer to the array that defines
-    the contour level spacing.
+    clevel (PLFLT_VECTOR, input) :    A vector containing the contour
+    levels.
 
-    nlevel (PLINT, input) :    Number of elements in the clevel array.
+    nlevel (PLINT, input) :    Number of elements in the clevel vector.
 
     indexxmin (PLINT, input) :      The index value (which must be ≥ 0) that
     corresponds to the first x index where z is defined.
@@ -4035,16 +4184,17 @@ ARGUMENTS:
     which corresponds (by convention) to one more than the last x
     index value where z is defined.
 
-    indexymin (const PLINT *, input) :      Array of y index values which
-    all must be ≥ 0.  These values are the first y index where z is
-    defined for a particular x index in the range from indexxmin to
-    indexxmax - 1.    The dimension of indexymin is indexxmax.
+    indexymin (PLINT_VECTOR, input) :     A vector containing y index
+    values which all must be ≥ 0.  These values are the first y index
+    where z is defined for a particular x index in the range from
+    indexxmin to indexxmax - 1. The dimension of indexymin is
+    indexxmax.
 
-    indexymax (const PLINT *, input) :      Array of y index values which
-    all must be ≤ ny.  These values correspond (by convention) to one
-    more than the last y index where z is defined for a particular x
-    index in the range from indexxmin to indexxmax - 1.  The dimension
-    of indexymax is indexxmax.
+    indexymax (PLINT_VECTOR, input) :     A vector containing y index
+    values which all must be ≤ ny. These values correspond (by
+    convention) to one more than the last y index where z is defined
+    for a particular x index in the range from indexxmin to indexxmax
+    - 1.  The dimension of indexymax is indexxmax.
 ")
 #ifdef SWIG_OCTAVE
 my_plot3dcl;
@@ -4091,14 +4241,14 @@ DESCRIPTION:
 
 SYNOPSIS:
 
-int plparseopts(p_argc, argv, mode)
+PLINT plparseopts(p_argc, argv, mode)
 
 ARGUMENTS:
 
-    p_argc (int *, input) :    pointer to number of arguments.
+    p_argc (int *, input/output) :    Number of arguments.
 
-    argv (const char **, input) :    Pointer to character array containing
-    *p_argc command-line arguments.
+    argv (PLCHAR_NC_MATRIX, input/output) :    A vector of character
+    strings containing *p_argc command-line arguments.
 
     mode (PLINT, input) :    Parsing mode with the following
     possibilities: PL_PARSE_FULL (1) -- Full parsing of command line
@@ -4118,16 +4268,16 @@ ARGUMENTS:
 ")
 plparseopts;
 
-%feature( "docstring", "Set area fill pattern
+%feature( "docstring", "Set area line fill pattern
 
 DESCRIPTION:
 
-    Sets the area fill pattern.  The pattern consists of 1 or 2 sets of
-    parallel lines with specified inclinations and spacings.  The
-    arguments to this routine are the number of sets to use (1 or 2)
-    followed by two pointers to integer arrays (of 1 or 2 elements)
-    specifying the inclinations in tenths of a degree and the spacing in
-    micrometers.  (also see plpsty)
+    Sets the area line fill pattern to be used, e.g., for calls to plfill.
+    The pattern consists of 1 or 2 sets of parallel lines with specified
+    inclinations and spacings.	The arguments to this routine are the
+    number of sets to use (1 or 2) followed by two vectors (with 1 or 2
+    elements) specifying the inclinations in tenths of a degree and the
+    spacing in micrometers.  (See also plpsty)
 
     Redacted form: General: plpat(inc, del)
 	    Perl/PDL: plpat(nlin, inc, del)
@@ -4146,13 +4296,12 @@ ARGUMENTS:
     nlin (PLINT, input) :    Number of sets of lines making up the
     pattern, either 1 or 2.
 
-    inc (const PLINT *, input) :    Pointer to array with nlin elements.
-    Specifies the line inclination in tenths of a degree.  (Should be
-    between -900 and 900).
+    inc (PLINT_VECTOR, input) :    A vector containing nlin values of the
+    inclination in tenths of a degree.  (Should be between -900 and
+    900).
 
-    del (const PLINT *, input) :    Pointer to array with nlin elements.
-    Specifies the spacing in micrometers between the lines making up
-    the pattern.
+    del (PLINT_VECTOR, input) :    A vector containing nlin values of the
+    spacing in micrometers between the lines making up the pattern.
 ")
 plpat;
 
@@ -4209,7 +4358,7 @@ DESCRIPTION:
 
     Redacted form: plpoin(x, y, code)
 
-    This function is used in examples 1,6,14,29.
+    This function is used in examples 1, 6, 14, and 29.
 
 
 
@@ -4219,13 +4368,13 @@ plpoin(n, x, y, code)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x and y arrays.
+    n (PLINT, input) :      Number of points in the x and y vectors.
 
-    x (const PLFLT *, input) :      Pointer to an array with X coordinates
-    of points.
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
+    points.
 
-    y (const PLFLT *, input) :      Pointer to an array with Y coordinates
-    of points.
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
+    points.
 
     code (PLINT, input) :    Hershey symbol code (in \"ascii-indexed\" form
     with -1 <= code <= 127) corresponding to a glyph to be plotted at
@@ -4261,16 +4410,16 @@ plpoin3(n, x, y, z, code)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x and y arrays.
+    n (PLINT, input) :      Number of points in the x and y vectors.
 
-    x (const PLFLT *, input) :      Pointer to an array with X coordinates
-    of points.
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
+    points.
 
-    y (const PLFLT *, input) :      Pointer to an array with Y coordinates
-    of points.
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
+    points.
 
-    z (const PLFLT *, input) :      Pointer to an array with Z coordinates
-    of points.
+    z (PLFLT_VECTOR, input) :     A vector containing the z coordinates of
+    points.
 
     code (PLINT, input) :    Hershey symbol code (in \"ascii-indexed\" form
     with -1 <= code <= 127) corresponding to a glyph to be plotted at
@@ -4285,7 +4434,7 @@ DESCRIPTION:
     Draws a polygon in 3 space defined by n points in x, y, and z. Setup
     like plline3, but differs from that function in that plpoly3 attempts
     to determine if the polygon is viewable depending on the order of the
-    points within the arrays and the value of ifcc.  If the back of
+    points within the vector and the value of ifcc.  If the back of
     polygon is facing the viewer, then it isn't drawn.	If this isn't what
     you want, then use plline3 instead.
 
@@ -4316,18 +4465,19 @@ ARGUMENTS:
 
     n (PLINT, input) :      Number of points defining line.
 
-    x (const PLFLT *, input) :      Pointer to array with x coordinates of
-    points.
+    x (PLFLT_VECTOR, input) :     A vector containing
+    n x coordinates of points.
 
-    y (const PLFLT *, input) :      Pointer to array with y coordinates of
-    points.
+    y (PLFLT_VECTOR, input) :     A vector containing
+    n y coordinates of points.
 
-    z (const PLFLT *, input) :      Pointer to array with z coordinates of
-    points.
+    z (PLFLT_VECTOR, input) :     A vector containing
+    n z coordinates of points.
 
-    draw (const PLBOOL *, input) :    Pointer to array which controls
-    drawing the segments of the polygon.  If draw[i] is true, then the
-    polygon segment from index [i] to [i+1] is drawn, otherwise, not.
+    draw (PLBOOL_VECTOR, input) :    A vector containing
+    n-1 Boolean values which control drawing the segments of the polygon.
+    If draw[i] is true, then the polygon segment from index [i] to
+    [i+1] is drawn, otherwise, not.
 
     ifcc (PLBOOL, input) :    If ifcc is true the directionality of the
     polygon is determined by assuming the points are laid out in a
@@ -4369,12 +4519,17 @@ plprec;
 
 DESCRIPTION:
 
-    Select one of eight predefined area fill patterns to use (also see
-    plpat). Setting the fill style to 0 gives a solid fill.
+    If
+    patt is zero or less use either a hardware solid fill if the drivers
+    have that capability (virtually all do) or fall back to a software
+    emulation of a solid fill using the eighth area line fill pattern.	If
+    0 <
+    patt <= 8, then select one of eight predefined area line fill patterns
+    to use (see plpat if you desire other patterns).
 
     Redacted form: plpsty(patt)
 
-    This function is used in examples 12,13,15,16,25.
+    This function is used in examples 12, 13, 15, 16, and 25.
 
 
 
@@ -4384,9 +4539,16 @@ plpsty(patt)
 
 ARGUMENTS:
 
-    patt (PLINT, input) :    The desired pattern. Pattern 1 consists of
-    horizontal lines, pattern 2 consists of vertical lines, pattern 3
-    consists of lines at 45 degrees angle (upward), and so on.
+    patt (PLINT, input) :    The desired pattern index. If
+    patt is zero or less, then a solid fill is (normally, see qualifiers
+    above) used.  For
+    patt in the range from 1 to 8 and assuming the driver has not supplied
+    line fill capability itself (most deliberately do not so that line
+    fill patterns look identical for those drivers), the patterns
+    consist of (1) horizontal lines, (2) vertical lines, (3) lines at
+    45 degrees, (4) lines at -45 degrees, (5) lines at 30 degrees, (6)
+    lines at -30 degrees, (7) both vertical and horizontal lines, and
+    (8) lines at both 45 degrees and -45 degrees.
 ")
 plpsty;
 
@@ -4439,7 +4601,8 @@ ARGUMENTS:
     the left and if just=1. , it is at the right of the string.  Other
     values of just give intermediate justifications.
 
-    text (const char *, input) :    The string to be written out.
+    text (PLCHAR_VECTOR, input) :    A UTF-8 character string to be
+    written out.
 ")
 plptex;
 
@@ -4525,7 +4688,8 @@ ARGUMENTS:
     the left and if just=1. , it is at the right of the string.  Other
     values of just give intermediate justifications.
 
-    text (const char *, input) :    The string to be written out.
+    text (PLCHAR_VECTOR, input) :    A UTF-8 character string to be
+    written out.
 ")
 plptex3;
 
@@ -4543,7 +4707,7 @@ DESCRIPTION:
 
     Redacted form: plrandd()
 
-    This function is used in examples 17,21.
+    This function is used in examples 17 and 21.
 
 
 
@@ -4591,20 +4755,22 @@ plrgbhls(r, g, b, p_h, p_l, p_s)
 
 ARGUMENTS:
 
-    r (PLFLT, input) :      Red intensity (0.0-1.0) of the colour
+    r (PLFLT, input) :      Red intensity (0.0-1.0) of the color.
 
-    g (PLFLT, input) :      Green intensity (0.0-1.0) of the colour
+    g (PLFLT, input) :      Green intensity (0.0-1.0) of the color.
 
-    b (PLFLT, input) :      Blue intensity (0.0-1.0) of the colour
+    b (PLFLT, input) :      Blue intensity (0.0-1.0) of the color.
 
-    p_h (PLFLT *, output) :    Pointer to hue, in degrees on the colour
-    cone (0.0-360.0)
+    p_h (PLFLT_NC_SCALAR, output) :    Returned value of the hue in
+    degrees (0.0-360.0) on the color cylinder.
 
-    p_l (PLFLT *, output) :    Pointer to lightness, expressed as a
-    fraction of the axis of the colour cone (0.0-1.0)
+    p_l (PLFLT_NC_SCALAR, output) :    Returned value of the lightness
+    expressed as a fraction (0.0-1.0) of the axis of the color
+    cylinder.
 
-    p_s (PLFLT *, output) :    Pointer to saturation, expressed as a
-    fraction of the radius of the colour cone (0.0-1.0)
+    p_s (PLFLT_NC_SCALAR, output) :    Returned value of the saturation
+    expressed as a fraction (0.0-1.0) of the radius of the color
+    cylinder.
 ")
 plrgbhls;
 
@@ -4618,7 +4784,7 @@ DESCRIPTION:
 
     Redacted form: plschr(def, scale)
 
-    This function is used in example 2,13,23,24.
+    This function is used in examples 2, 13, 23, and 24.
 
 
 
@@ -4630,7 +4796,10 @@ ARGUMENTS:
 
     def (PLFLT, input) :    The default height of a character in
     millimeters, should be set to zero if the default height is to
-    remain unchanged.
+    remain unchanged. For rasterized drivers the dx and dy values
+    specified in plspage are used to convert from mm to pixels (note
+    the different unit systems used).  This dpi aware scaling is not
+    implemented for all drivers yet.
 
     scale (PLFLT, input) :    Scale factor to be applied to default to get
     actual character height.
@@ -4647,7 +4816,7 @@ DESCRIPTION:
 
     Redacted form: plscmap0(r, g, b)
 
-    This function is used in examples 2,24.
+    This function is used in examples 2 and 24.
 
 
 
@@ -4657,29 +4826,26 @@ plscmap0(r, g, b, ncol0)
 
 ARGUMENTS:
 
-    r (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of red in the
-    color.
+    r (PLINT_VECTOR, input) :     A vector containing unsigned 8-bit
+    integers (0-255) representing the degree of red in the color.
 
-    g (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of green in the
-    color.
+    g (PLINT_VECTOR, input) :     A vector containing unsigned 8-bit
+    integers (0-255) representing the degree of green in the color.
 
-    b (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of blue in the
-    color.
+    b (PLINT_VECTOR, input) :     A vector containing unsigned 8-bit
+    integers (0-255) representing the degree of blue in the color.
 
-    ncol0 (PLINT, input) :    Number of items in the r, g, and b arrays.
+    ncol0 (PLINT, input) :    Number of items in the r, g, and b vectors.
 ")
 plscmap0;
 
-%feature( "docstring", "Set cmap0 colors by 8-bit RGB values and double alpha transparency value
+%feature( "docstring", "Set cmap0 colors by 8-bit RGB values and PLFLT alpha transparency value
 
 DESCRIPTION:
 
     Set cmap0 colors using 8-bit RGB values (see the PLplot documentation)
-    and floating point alpha transparency value.  This sets the entire
-    color map -- only as many colors as specified will be allocated.
+    and PLFLT alpha transparency value.  This sets the entire color map --
+    only as many colors as specified will be allocated.
 
     Redacted form: plscmap0a(r, g, b, alpha)
 
@@ -4693,24 +4859,20 @@ plscmap0a(r, g, b, alpha, ncol0)
 
 ARGUMENTS:
 
-    r (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of red in the
-    color.
+    r (PLINT_VECTOR, input) :     A vector containing unsigned 8-bit
+    integers (0-255) representing the degree of red in the color.
 
-    g (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of green in the
-    color.
+    g (PLINT_VECTOR, input) :     A vector containing unsigned 8-bit
+    integers (0-255) representing the degree of green in the color.
 
-    b (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of blue in the
-    color.
+    b (PLINT_VECTOR, input) :     A vector containing unsigned 8-bit
+    integers (0-255) representing the degree of blue in the color.
 
-    alpha (const PLFLT *, input) :    Pointer to array with set of PLFLT
-    values (0.0 - 1.0) representing the alpha transparency of the
-    color.
+    alpha (PLFLT_VECTOR, input) :    A vector containing values (0.0-1.0)
+    representing the alpha transparency of the color.
 
     ncol0 (PLINT, input) :    Number of items in the r, g, b, and alpha
-    arrays.
+    vectors.
 ")
 plscmap0a;
 
@@ -4718,17 +4880,17 @@ plscmap0a;
 
 DESCRIPTION:
 
-    Set number of colors in color map0 (see the PLplot documentation).
-    Allocate (or reallocate) color map0, and fill with default values for
-    those colors not previously allocated. The first 16 default colors are
-    given in the plcol0 documentation. For larger indices the default
-    color is red.
+    Set number of colors in cmap0 (see the PLplot documentation). Allocate
+    (or reallocate) cmap0, and fill with default values for those colors
+    not previously allocated.  The first 16 default colors are given in
+    the plcol0 documentation.  For larger indices the default color is
+    red.
 
     The drivers are not guaranteed to support more than 16 colors.
 
     Redacted form: plscmap0n(ncol0)
 
-    This function is used in examples 15,16,24.
+    This function is used in examples 15, 16, and 24.
 
 
 
@@ -4739,7 +4901,7 @@ plscmap0n(ncol0)
 ARGUMENTS:
 
     ncol0 (PLINT, input) :    Number of colors that will be allocated in
-    the map0 palette. If this number is zero or less, then the value
+    the cmap0 palette. If this number is zero or less, then the value
     from the previous call to plscmap0n is used and if there is no
     previous call, then a default value is used.
 ")
@@ -4749,12 +4911,17 @@ plscmap0n;
 
 DESCRIPTION:
 
-    Set the cmap1 argument range for continuous color plots. If
+    Set the cmap1 argument range for continuous color plots that
+    corresponds to the range of data values.  The maximum range
+    corresponding to the entire cmap1 palette is 0.0-1.0, and the smaller
+    the cmap1 argument range that is specified with this routine, the
+    smaller the subset of the cmap1 color palette that is used to
+    represent the continuous data being plotted.  If
     min_color is greater than
     max_color or
     max_color is greater than 1.0 or
-    min_color is less than 0.0 then no change is made.	(Use
-    plgcmap1_range to get the cmap1 argument range.)
+    min_color is less than 0.0 then no change is made to the cmap1
+    argument range.  (Use plgcmap1_range to get the cmap1 argument range.)
 
     Redacted form: plscmap1_range(min_color, max_color)
 
@@ -4768,20 +4935,28 @@ plscmap1_range(min_color, max_color)
 
 ARGUMENTS:
 
-    min_color (PLFLT, input) :      The minimum cmap1 floating point
-    argument.
+    min_color (PLFLT, input) :      The minimum cmap1 argument.  If less
+    than 0.0, then 0.0 is used instead.
 
-    max_color (PLFLT, input) :      The maximum cmap1 floating point
-    argument.
+    max_color (PLFLT, input) :      The maximum cmap1 argument.  If greater
+    than 1.0, then 1.0 is used instead.
 ")
 plscmap1_range;
 
-%feature( "docstring", "Set cmap1 colors using 8-bit RGB values
+%feature( "docstring", "Set opaque RGB cmap1 colors values
 
 DESCRIPTION:
 
-    Set cmap1 colors using 8-bit RGB values (see the PLplot
-    documentation).  This also sets the number of colors.
+    Set opaque cmap1 colors (see the PLplot documentation) using RGB
+    vector values.  This function also sets the number of cmap1 colors.
+    N.B. Continuous cmap1 colors are indexed with a floating-point index
+    in the range from 0.0-1.0 which is linearly transformed (e.g., by
+    plcol1) to an integer index of these RGB vectors in the range from 0
+    to
+    ncol1-1.  So in order for this continuous color model to work
+    properly, it is the responsibility of the user of plscmap1 to insure
+    that these RGB vectors are continuous functions of their integer
+    indices.
 
     Redacted form: plscmap1(r, g, b)
 
@@ -4795,29 +4970,36 @@ plscmap1(r, g, b, ncol1)
 
 ARGUMENTS:
 
-    r (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of red in the
-    color.
+    r (PLINT_VECTOR, input) :     A vector that represents (using unsigned
+    8-bit integers in the range from 0-255) the degree of red in the
+    color as a continuous function of the integer index of the vector.
 
-    g (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of green in the
-    color.
+    g (PLINT_VECTOR, input) :     A vector that represents (using unsigned
+    8-bit integers in the range from 0-255) the degree of green in the
+    color as a continuous function of the integer index of the vector.
 
-    b (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of blue in the
-    color.
+    b (PLINT_VECTOR, input) :     A vector that represents (using unsigned
+    8-bit integers in the range from 0-255) the degree of blue in the
+    color as a continuous function of the integer index of the vector.
 
-    ncol1 (PLINT, input) :    Number of items in the r, g, and b arrays.
+    ncol1 (PLINT, input) :    Number of items in the r, g, and b vectors.
 ")
 plscmap1;
 
-%feature( "docstring", "Set cmap1 colors using 8-bit RGB values and double alpha transparency values
+%feature( "docstring", "Set semitransparent cmap1 RGBA colors.
 
 DESCRIPTION:
 
-    Set cmap1 colors using 8-bit RGB values (see the PLplot documentation)
-    and double alpha transparency values. This also sets the number of
-    colors.
+    Set semitransparent cmap1 colors (see the PLplot documentation) using
+    RGBA vector values.  This function also sets the number of cmap1
+    colors.  N.B. Continuous cmap1 colors are indexed with a
+    floating-point index in the range from 0.0-1.0 which is linearly
+    transformed (e.g., by plcol1) to an integer index of these RGBA
+    vectors in the range from 0 to
+    ncol1-1.  So in order for this continuous color model to work
+    properly, it is the responsibility of the user of plscmap1 to insure
+    that these RGBA vectors are continuous functions of their integer
+    indices.
 
     Redacted form: plscmap1a(r, g, b, alpha)
 
@@ -4831,24 +5013,26 @@ plscmap1a(r, g, b, alpha, ncol1)
 
 ARGUMENTS:
 
-    r (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of red in the
-    color.
+    r (PLINT_VECTOR, input) :     A vector that represents (using unsigned
+    8-bit integers in the range from 0-255) the degree of red in the
+    color as a continuous function of the integer index of the vector.
 
-    g (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of green in the
-    color.
+    g (PLINT_VECTOR, input) :     A vector that represents (using unsigned
+    8-bit integers in the range from 0-255) the degree of green in the
+    color as a continuous function of the integer index of the vector.
 
-    b (const PLINT *, input) :      Pointer to array with set of unsigned
-    8-bit integers (0-255) representing the degree of blue in the
-    color.
+    b (PLINT_VECTOR, input) :     A vector that represents (using unsigned
+    8-bit integers in the range from 0-255) the degree of blue in the
+    color as a continuous function of the integer index of the vector.
 
-    alpha (const PLFLT *, input) :    Pointer to array with set of double
-    values (0.0-1.0) representing the alpha transparency value of the
-    color.
+    alpha (PLFLT_VECTOR, input) :    A vector that represents (using PLFLT
+    values in the range from 0.0-1.0 where 0.0 corresponds to
+    completely transparent and 1.0 corresponds to completely opaque)
+    the alpha transparency of the color as a continuous function of
+    the integer index of the vector.
 
     ncol1 (PLINT, input) :    Number of items in the r, g, b, and alpha
-    arrays.
+    vectors.
 ")
 plscmap1a;
 
@@ -4856,10 +5040,9 @@ plscmap1a;
 
 DESCRIPTION:
 
-    Set cmap1 colors using a piece-wise linear relationship between
-    intensity index (from 0. to 1.) of cmap1 and position in HLS or RGB
-    color space (see the PLplot documentation).  May be called at any
-    time.
+    Set cmap1 colors using a piece-wise linear relationship between the
+    cmap1 intensity index (0.0-1.0) and position in HLS or RGB color space
+    (see the PLplot documentation).  May be called at any time.
 
     The idea here is to specify a number of control points that define the
     mapping between input cmap1 intensity indices and HLS (or RGB).
@@ -4905,7 +5088,7 @@ DESCRIPTION:
     Redacted form: plscmap1l(itype, intensity, coord1, coord2, coord3,
     alt_hue_path)
 
-    This function is used in examples 8,11,12,15,20,21.
+    This function is used in examples 8, 11, 12, 15, 20, and 21.
 
 
 
@@ -4919,21 +5102,24 @@ ARGUMENTS:
 
     npts (PLINT, input) :    number of control points
 
-    intensity (const PLFLT *, input) :      intensity index for each control
-    point (between 0.0 and 1.0, in ascending order)
+    intensity (PLFLT_VECTOR, input) :     A vector containing the cmap1
+    intensity index (0.0-1.0) in ascending order for each control
+    point.
 
-    coord1 (const PLFLT *, input) :    first coordinate (H or R) for each
-    control point
+    coord1 (PLFLT_VECTOR, input) :    A vector containing the first
+    coordinate (H or R) for each control point.
 
-    coord2 (const PLFLT *, input) :    second coordinate (L or G) for each
-    control point
+    coord2 (PLFLT_VECTOR, input) :    A vector containing the second
+    coordinate (L or G) for each control point.
 
-    coord3 (const PLFLT *, input) :    third coordinate (S or B) for each
-    control point
+    coord3 (PLFLT_VECTOR, input) :    A vector containing the third
+    coordinate (S or B) for each control point.
 
-    alt_hue_path (const PLBOOL *, input) :    alternative interpolation
-    method flag for each control point. (alt_hue_path[i] refers to the
-    interpolation interval between the i and i + 1 control points).
+    alt_hue_path (PLBOOL_VECTOR, input) :    A vector (with
+    npts - 1 elements) containing the alternative interpolation method
+    Boolean value for each control point interval.    (alt_hue_path[i]
+    refers to the interpolation interval between the i and i + 1
+    control points).
 ")
 plscmap1l;
 
@@ -4943,9 +5129,9 @@ DESCRIPTION:
 
     This is a variant of plscmap1l that supports alpha channel
     transparency. It sets cmap1 colors using a piece-wise linear
-    relationship between cmap1 intensity index (from 0. to 1.) and
-    position in HLS or RGB color space (see the PLplot documentation) with
-    alpha transparency value (0.0 - 1.0). It may be called at any time.
+    relationship between cmap1 intensity index (0.0-1.0) and position in
+    HLS or RGB color space (see the PLplot documentation) with alpha
+    transparency value (0.0-1.0). It may be called at any time.
 
     Redacted form: plscmap1la(itype, intensity, coord1, coord2, coord3,
     alpha, alt_hue_path)
@@ -4962,26 +5148,29 @@ ARGUMENTS:
 
     itype (PLBOOL, input) :    true: RGB, false: HLS.
 
-    npts (PLINT, input) :    number of control points
+    npts (PLINT, input) :    number of control points.
 
-    intensity (const PLFLT *, input) :      position for each control point
-    (between 0.0 and 1.0, in ascending order)
+    intensity (PLFLT_VECTOR, input) :     A vector containing the cmap1
+    intensity index (0.0-1.0) in ascending order for each control
+    point.
 
-    coord1 (const PLFLT *, input) :    first coordinate (H or R) for each
-    control point
+    coord1 (PLFLT_VECTOR, input) :    A vector containing the first
+    coordinate (H or R) for each control point.
 
-    coord2 (const PLFLT *, input) :    second coordinate (L or G) for each
-    control point
+    coord2 (PLFLT_VECTOR, input) :    A vector containing the second
+    coordinate (L or G) for each control point.
 
-    coord3 (const PLFLT *, input) :    third coordinate (S or B) for each
-    control point
+    coord3 (PLFLT_VECTOR, input) :    A vector containing the third
+    coordinate (S or B) for each control point.
 
-    alpha (const PLFLT *, input) :    the alpha transparency value for
-    each control point
+    alpha (PLFLT_VECTOR, input) :    A vector containing the alpha
+    transparency value (0.0-1.0) for each control point.
 
-    alt_hue_path (const PLBOOL *, input) :    alternative interpolation
-    method flag for each control point. (alt_hue_path[i] refers to the
-    interpolation interval between the i and i + 1 control points).
+    alt_hue_path (PLBOOL_VECTOR, input) :    A vector (with
+    npts - 1 elements) containing the alternative interpolation method
+    Boolean value for each control point interval.    (alt_hue_path[i]
+    refers to the interpolation interval between the i and i + 1
+    control points).
 ")
 plscmap1la;
 
@@ -4989,13 +5178,12 @@ plscmap1la;
 
 DESCRIPTION:
 
-    Set number of colors in cmap1, (re-)allocate color map1, and set
-    default values if this is the first allocation (see the PLplot
-    documentation).
+    Set number of colors in cmap1, (re-)allocate cmap1, and set default
+    values if this is the first allocation (see the PLplot documentation).
 
     Redacted form: plscmap1n(ncol1)
 
-    This function is used in examples 8,11,20,21.
+    This function is used in examples 8, 11, 20, and 21.
 
 
 
@@ -5006,7 +5194,7 @@ plscmap1n(ncol1)
 ARGUMENTS:
 
     ncol1 (PLINT, input) :    Number of colors that will be allocated in
-    the map1 palette. If this number is zero or less, then the value
+    the cmap1 palette. If this number is zero or less, then the value
     from the previous call to plscmap1n is used and if there is no
     previous call, then a default value is used.
 ")
@@ -5048,14 +5236,14 @@ ARGUMENTS:
 ")
 plscol0;
 
-%feature( "docstring", "Set 8-bit RGB values and double alpha transparency value for given cmap0 color index
+%feature( "docstring", "Set 8-bit RGB values and PLFLT alpha transparency value for given cmap0 color index
 
 DESCRIPTION:
 
-    Set 8-bit RGB value and double alpha transparency value for given
-    cmap0 (see the PLplot documentation) index.  Overwrites the previous
-    color value for the given index and, thus, does not result in any
-    additional allocation of space for colors.
+    Set 8-bit RGB value and PLFLT alpha transparency value for given cmap0
+    (see the PLplot documentation) index.  Overwrites the previous color
+    value for the given index and, thus, does not result in any additional
+    allocation of space for colors.
 
     This function is used in example 30.
 
@@ -5080,8 +5268,8 @@ ARGUMENTS:
     b (PLINT, input) :      Unsigned 8-bit integer (0-255) representing the
     degree of blue in the color.
 
-    alpha (PLFLT, input) :    double value (0.0-1.0) representing the
-    alpha transparency value of the color.
+    alpha (PLFLT, input) :    Value of the alpha transparency in the range
+    (0.0-1.0).
 ")
 plscol0a;
 
@@ -5089,12 +5277,12 @@ plscol0a;
 
 DESCRIPTION:
 
-    Set the background color (color 0 in color map 0) by 8-bit RGB value
-    (see the PLplot documentation).
+    Set the background color (color 0 in cmap0) by 8-bit RGB value (see
+    the PLplot documentation).
 
     Redacted form: plscolbg(r, g, b)
 
-    This function is used in examples 15,31.
+    This function is used in examples 15 and 31.
 
 
 
@@ -5115,12 +5303,12 @@ ARGUMENTS:
 ")
 plscolbg;
 
-%feature( "docstring", "Set the background color by 8-bit RGB value and double alpha transparency value.
+%feature( "docstring", "Set the background color by 8-bit RGB value and PLFLT alpha transparency value.
 
 DESCRIPTION:
 
-    Set the background color (color 0 in color map 0) by 8-bit RGB value
-    (see the PLplot documentation) and double alpha transparency value.
+    Set the background color (color 0 in cmap0) by 8-bit RGB value and
+    PLFLT alpha transparency value (see the PLplot documentation).
 
     This function is used in example 31.
 
@@ -5141,8 +5329,8 @@ ARGUMENTS:
     b (PLINT, input) :      Unsigned 8-bit integer (0-255) representing the
     degree of blue in the color.
 
-    alpha (PLFLT, input) :    double value (0.0-1.0) representing the
-    alpha transparency value of the color.
+    alpha (PLFLT, input) :    Value of the alpha transparency in the range
+    (0.0-1.0).
 ")
 plscolbga;
 
@@ -5212,7 +5400,7 @@ DESCRIPTION:
 
     Redacted form: plsdev(devname)
 
-    This function is used in examples 1,14,20.
+    This function is used in examples 1, 14, and 20.
 
 
 
@@ -5222,8 +5410,11 @@ plsdev(devname)
 
 ARGUMENTS:
 
-    devname (const char *, input) :    Pointer to device (keyword) name
-    string.
+    devname (PLCHAR_VECTOR, input) :    An ascii character string
+    containing the device name keyword of the required output device.
+    If
+    devname is NULL or if the first character of the string is a ``?'',
+    the normal (prompted) start up is used.
 ")
 plsdev;
 
@@ -5504,15 +5695,15 @@ DESCRIPTION:
 
 SYNOPSIS:
 
-int plsetopt(opt, optarg)
+PLINT plsetopt(opt, optarg)
 
 ARGUMENTS:
 
-    opt (const char *, input) :    Pointer to string containing the
-    command-line option.
+    opt (PLCHAR_VECTOR, input) :    An ascii character string containing
+    the command-line option.
 
-    optarg (const char *, input) :    Pointer to string containing the
-    argument of the command-line option.
+    optarg (PLCHAR_VECTOR, input) :    An ascii character string
+    containing the argument of the command-line option.
 ")
 plsetopt;
 
@@ -5527,7 +5718,7 @@ DESCRIPTION:
 
     Redacted form: plsfam(fam, num, bmax)
 
-    This function is used in examples 14,31.
+    This function is used in examples 14 and 31.
 
 
 
@@ -5552,8 +5743,9 @@ plsfam;
 DESCRIPTION:
 
     Sets font characteristics to be used at the start of the next string
-    using the FCI approach. See the PLplot documentation for more
-    information.
+    using the FCI approach.  See the PLplot documentation for more
+    information.  Note, plsfont (which calls plsfci internally) provides a
+    more user-friendly API for setting the font characterisitics.
 
     Redacted form: General: plsfci(fci)
 	    Perl/PDL: Not available?
@@ -5586,7 +5778,7 @@ DESCRIPTION:
 
     Redacted form: plsfnam(fnam)
 
-    This function is used in examples 1,20.
+    This function is used in examples 1 and 20.
 
 
 
@@ -5596,7 +5788,8 @@ plsfnam(fnam)
 
 ARGUMENTS:
 
-    fnam (const char *, input) :    Pointer to file name string.
+    fnam (PLCHAR_VECTOR, input) :    An ascii character string containing
+    the file name.
 ")
 plsfnam;
 
@@ -5621,19 +5814,19 @@ ARGUMENTS:
 
     family (PLINT, input) :    Font family to select for the current font.
     The available values are given by the PL_FCI_* constants in
-    plplot.h. Current options are PL_FCI_SANS, PL_FCI_SERIF,
+    plplot.h.  Current options are PL_FCI_SANS, PL_FCI_SERIF,
     PL_FCI_MONO, PL_FCI_SCRIPT and PL_FCI_SYMBOL. A negative value
     signifies that the font family should not be altered.
 
     style (PLINT, input) :    Font style to select for the current font.
     The available values are given by the PL_FCI_* constants in
-    plplot.h. Current options are PL_FCI_UPRIGHT, PL_FCI_ITALIC and
+    plplot.h.  Current options are PL_FCI_UPRIGHT, PL_FCI_ITALIC and
     PL_FCI_OBLIQUE. A negative value signifies that the font style
     should not be altered.
 
     weight (PLINT, input) :    Font weight to select for the current font.
     The available values are given by the PL_FCI_* constants in
-    plplot.h. Current options are PL_FCI_MEDIUM and PL_FCI_BOLD. A
+    plplot.h.  Current options are PL_FCI_MEDIUM and PL_FCI_BOLD. A
     negative value signifies that the font weight should not be
     altered.
 ")
@@ -5644,11 +5837,10 @@ plsfont;
 DESCRIPTION:
 
     Shade regions on the basis of value.  This is the high-level routine
-    for making continuous color shaded plots with cmap1 while plshade (or
-    plshade1) are used for individual shaded regions using either cmap0 or
-    cmap1. examples/c/x16c.c shows a number of examples for using this
-    function. See the following discussion of the arguments and the PLplot
-    documentation for more information.
+    for making continuous color shaded plots with cmap1 while plshade
+    should be used to plot individual shaded regions using either cmap0 or
+    cmap1. examples/;<language>/x16* shows how to use plshades for each of
+    our supported languages.
 
     Redacted form: General: plshades(a, defined, xmin, xmax, ymin, ymax,
     clevel, fill_width, cont_color, cont_width, fill, rectangular, pltr,
@@ -5658,7 +5850,7 @@ DESCRIPTION:
     pltr_data)
 
 
-    This function is used in examples 16,21.
+    This function is used in examples 16, 21, and 22.
 
 
 
@@ -5668,50 +5860,42 @@ plshades(a, nx, ny, defined, xmin, xmax, ymin, ymax, clevel, nlevel, fill_width,
 
 ARGUMENTS:
 
-    a (const PLFLT * const *, input) :      Contains ** pointer to array to
-    be plotted. The array must have been declared as PLFLT a[nx][ny].
+    a (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
-    nx (PLINT, input) :    First dimension of array \"a\".
+    nx (PLINT, input) :    First dimension of matrix \"a\".
 
-    ny (PLINT, input) :    Second dimension of array \"a\".
+    ny (PLINT, input) :    Second dimension of matrix \"a\".
 
-    defined (PLINT (*) (PLFLT, PLFLT), input) :    User function
-    specifying regions excluded from the shading plot.  This function
-    accepts x and y coordinates as input arguments and must return 0
-    if the point is in the excluded region or 1 otherwise. This
-    argument can be NULL if all the values are valid.
+    defined (PLDEFINED_callback, input) :    Callback function specifying
+    the region that should be plotted in the shade plot.  This
+    function accepts x and y coordinates as input arguments and must
+    return 1 if the point is to be included in the shade plot and 0
+    otherwise.  If you want to plot the entire shade plot (the usual
+    case), this argument should be set to NULL.
 
-    xmin (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
+    xmin, xmax, ymin, ymax (PLFLT, input) :    See the discussion of
+    pltr below for how these arguments are used (only for the special case
+    when the callback function
+    pltr is not supplied).
 
-    xmax (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
-
-    ymin (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
-
-    ymax (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
-
-    clevel (const PLFLT *, input) :    Pointer to array containing the
-    data levels corresponding to the edges of each shaded region that
-    will be plotted by this function.  To work properly the levels
-    should be monotonic.
+    clevel (PLFLT_VECTOR, input) :    A vector containing the data levels
+    corresponding to the edges of each shaded region that will be
+    plotted by this function.  To work properly the levels should be
+    monotonic.
 
     nlevel (PLINT, input) :    Number of shades plus 1 (i.e., the number
     of shade edge values in clevel).
 
-    fill_width (PLFLT, input) :    Defines line width used by the fill
+    fill_width (PLFLT, input) :    Defines the line width used by the fill
     pattern.
 
-    cont_color (PLINT, input) :    Defines pen color used for contours
-    defining edges of shaded regions.  The pen color is only temporary
-    set for the contour drawing.  Set this value to zero or less if no
-    shade edge contours are wanted.
+    cont_color (PLINT, input) :    Defines cmap0 pen color used for
+    contours defining edges of shaded regions.  The pen color is only
+    temporary set for the contour drawing.    Set this value to zero or
+    less if no shade edge contours are wanted.
 
     cont_width (PLFLT, input) :    Defines line width used for contours
     defining edges of shaded regions.  This value may not be honored
@@ -5719,32 +5903,50 @@ ARGUMENTS:
     contour drawing.  Set this value to zero or less if no shade edge
     contours are wanted.
 
-    fill (void (*) (PLINT, const PLFLT *, const PLFLT *), input) :
-    Routine used to fill the region.  Use plfill.  Future version of
-    PLplot may have other fill routines.
+    fill (PLFILL_callback, input) :    Callback routine used to fill the
+    region.  Use plfill for this purpose.
 
     rectangular (PLBOOL, input) :    Set rectangular to true if rectangles
     map to rectangles after coordinate transformation with pltrl.
     Otherwise, set rectangular to false. If rectangular is set to
     true, plshade tries to save time by filling large rectangles.
     This optimization fails if the coordinate transformation distorts
-    the shape of rectangles. For example a plot in polar coordinates
+    the shape of rectangles.  For example a plot in polar coordinates
     has to have rectangular set to false.
 
-    pltr (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) , input) :
-      Pointer to function that defines transformation between indices
-    in array z and the world coordinates (C only).    Transformation
-    functions are provided in the PLplot library: pltr0 for identity
-    mapping, and pltr1 and pltr2 for arbitrary mappings respectively
-    defined by one- and two-dimensional arrays.  In addition,
-    user-supplied routines for the transformation can be used as well.
-     Examples of all of these approaches are given in the PLplot
-    documentation. The transformation function should have the form
-    given by any of pltr0, pltr1, or pltr2.
+    pltr (PLTRANSFORM_callback, input) :    A callback function that
+    defines the transformation between the zero-based indices of the
+    matrix a and world coordinates. If
+    pltr is not supplied (e.g., is set to NULL in the C case), then the x
+    indices of a are mapped to the range
+    xmin through
+    xmax and the y indices of a are mapped to the range
+    ymin through
+    ymax.For the C case, transformation functions are provided in the
+    PLplot library: pltr0 for the identity mapping, and pltr1 and
+    pltr2 for arbitrary mappings respectively defined by vectors and
+    matrices.  In addition, C callback routines for the transformation
+    can be supplied by the user such as the mypltr function in
+    examples/c/x09c.c which provides a general linear transformation
+    between index coordinates and world coordinates.For languages
+    other than C you should consult the PLplot documentation for the
+    details concerning how PLTRANSFORM_callback arguments are
+    interfaced. However, in general, a particular pattern of
+    callback-associated arguments such as a tr vector with 6 elements;
+    xg and yg vectors; or xg and yg matrices are respectively
+    interfaced to a linear-transformation routine similar to the above
+    mypltr function; pltr1; and pltr2. Furthermore, some of our more
+    sophisticated bindings (see, e.g., the PLplot documentation)
+    support native language callbacks for handling index to
+    world-coordinate transformations.  Examples of these various
+    approaches are given in examples/<language>x09*,
+    examples/<language>x16*, examples/<language>x20*,
+    examples/<language>x21*, and examples/<language>x22*, for all our
+    supported languages.
 
-    pltr_data (PLPointer, input) :    Extra parameter to help pass
-    information to pltr0, pltr1, pltr2, or whatever routine that is
-    externally supplied.
+    pltr_data (PL_GENERIC_POINTER, input) :    Extra parameter to help
+    pass information to pltr0, pltr1, pltr2, or whatever routine that
+    is externally supplied.
 ")
 #ifdef SWIG_OCTAVE
 my_plshades;
@@ -5757,14 +5959,15 @@ plshades;
 DESCRIPTION:
 
     Shade individual region on the basis of value.  Use plshades if you
-    want to shade a number of regions using continuous colors. plshade is
-    identical to plshade1 except for the type of the first parameter. See
-    plshade1 for further discussion.
+    want to shade a number of contiguous regions using continuous colors.
+    In particular the edge contours are treated properly in plshades.  If
+    you attempt to do contiguous regions with plshade the contours at the
+    edge of the shade are partially obliterated by subsequent plots of
+    contiguous shaded regions.
 
     Redacted form: General: plshade(a, defined, xmin, xmax, ymin, ymax,
     shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color,
     min_width, max_color, max_width, fill, rectangular, pltr, pltr_data)
-	    Perl/PDL: Not available?
 
 
     This function is used in example 15.
@@ -5777,130 +5980,40 @@ plshade(a, nx, ny, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cma
 
 ARGUMENTS:
 
-    a (const PLFLT * const *, input) :
+    a (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
-    nx (PLINT, input) :
+    nx (PLINT, input) :    First dimension of the matrix \"a\".
 
-    ny (PLINT, input) :
+    ny (PLINT, input) :    Second dimension of the matrix \"a\".
 
-    defined (PLINT (*) (PLFLT, PLFLT), input) :
+    defined (PLDEFINED_callback, input) :    Callback function specifying
+    the region that should be plotted in the shade plot.  This
+    function accepts x and y coordinates as input arguments and must
+    return 1 if the point is to be included in the shade plot and 0
+    otherwise.  If you want to plot the entire shade plot (the usual
+    case), this argument should be set to NULL.
 
-    xmin (PLFLT, input) :
-
-    xmax (PLFLT, input) :
-
-    ymin (PLFLT, input) :
-
-    ymax (PLFLT, input) :
-
-    shade_min (PLFLT, input) :
-
-    shade_max (PLFLT, input) :
-
-    sh_cmap (PLINT, input) :
-
-    sh_color (PLFLT, input) :
-
-    sh_width (PLFLT, input) :
-
-    min_color (PLINT, input) :
-
-    min_width (PLFLT, input) :
-
-    max_color (PLINT, input) :
-
-    max_width (PLFLT, input) :
-
-    fill (void (*) (PLINT, const PLFLT *, const PLFLT *), input) :
-
-    rectangular (PLBOOL, input) :
-
-    pltr (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) , input) :
-
-    pltr_data (PLPointer, input) :
-")
-#ifdef SWIG_OCTAVE
-my_plshade;
-#else
-plshade;
-#endif
-
-%feature( "docstring", "Shade individual region on the basis of value
-
-DESCRIPTION:
-
-    Shade individual region on the basis of value.  Use plshades if you
-    want to shade a number of contiguous regions using continuous colors.
-    In particular the edge contours are treated properly in plshades. If
-    you attempt to do contiguous regions with plshade1 (or plshade) the
-    contours at the edge of the shade are partially obliterated by
-    subsequent plots of contiguous shaded regions. plshade1 differs from
-    plshade by the type of the first argument.	Look at the argument list
-    below, plcont and the PLplot documentation for more information about
-    the transformation from grid to world coordinates.	Shading NEEDS
-    DOCUMENTATION, but as a stopgap look at how plshade is used in
-    examples/c/x15c.c
-
-    Redacted form: General: plshade1(a, defined, xmin, xmax, ymin, ymax,
-    shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color,
-    min_width, max_color, max_width, fill, rectangular, pltr, pltr_data)
-	    Perl/PDL: plshade1(a, xmin, xmax, ymin, ymax, shade_min,
-    shade_max, sh_cmap, sh_color, sh_width, min_color, min_width,
-    max_color, max_width, fill, rectangular, defined, pltr, pltr_data)
-
-
-    This function is used in example 15.
-
-
-
-SYNOPSIS:
-
-plshade1(a, nx, ny, defined, xmin, xmax, ymin, ymax, shade_min, shade_max, sh_cmap, sh_color, sh_width, min_color, min_width, max_color, max_width, fill, rectangular, pltr, pltr_data)
-
-ARGUMENTS:
-
-    a (const PLFLT *, input) :      Contains array to be plotted. The array
-    must have been declared as PLFLT a[nx][ny].
-
-    nx (PLINT, input) :    First dimension of array \"a\".
-
-    ny (PLINT, input) :    Second dimension of array \"a\".
-
-    defined (PLINT (*) (PLFLT, PLFLT), input) :    User function
-    specifying regions excluded from the shading plot.  This function
-    accepts x and y coordinates as input arguments and must return 0
-    if the point is in the excluded region or 1 otherwise. This
-    argument can be NULL if all the values are valid.
-
-    xmin (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
-
-    xmax (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
-
-    ymin (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
-
-    ymax (PLFLT, input) :    Defines the \"grid\" coordinates.  The data
-    a[0][0] has a position of (xmin,ymin), a[nx-1][0] has a position
-    at (xmax,ymin) and so on.
+    xmin, xmax, ymin, ymax (PLFLT, input) :    See the discussion of
+    pltr below for how these arguments are used (only for the special case
+    when the callback function
+    pltr is not supplied).
 
     shade_min (PLFLT, input) :      Defines the lower end of the interval to
-    be shaded. If shade_max <= shade_min, plshade1 does nothing.
+    be shaded. If shade_max <= shade_min, plshade does nothing.
 
     shade_max (PLFLT, input) :      Defines the upper end of the interval to
-    be shaded. If shade_max <= shade_min, plshade1 does nothing.
+    be shaded. If shade_max <= shade_min, plshade does nothing.
 
-    sh_cmap (PLINT, input) :    Defines color map. If sh_cmap=0 , then
-    sh_color is interpreted as a color map 0 (integer) index.  If
-    sh_cmap=1 , then sh_color is interpreted as a color map 1
-    floating-point index which ranges from 0. to 1.
+    sh_cmap (PLINT, input) :    Defines color map. If sh_cmap=0, then
+    sh_color is interpreted as a cmap0 (integer) index.  If sh_cmap=1,
+    then sh_color is interpreted as a cmap1 argument in the range
+    (0.0-1.0).
 
-    sh_color (PLFLT, input) :     Defines color map index if cmap0 or color
-    map input value (ranging from 0. to 1.) if cmap1.
+    sh_color (PLFLT, input) :     Defines color map index with integer
+    value if cmap0 or value in range (0.0-1.0) if cmap1.
 
     sh_width (PLFLT, input) :     Defines width used by the fill pattern.
 
@@ -5924,9 +6037,9 @@ ARGUMENTS:
     shade_min boundary, and the max values are used on the shade_max
     boundary.  Set color and width to zero for no plotted boundaries.
 
-    fill (void (*) (PLINT, const PLFLT *, const PLFLT *), input) :
-    Routine used to fill the region.  Use plfill.  Future version of
-    plplot may have other fill routines.
+    fill (PLFILL_callback, input) :    Routine used to fill the region.
+    Use plfill.  Future version of PLplot may have other fill
+    routines.
 
     rectangular (PLBOOL, input) :    Set rectangular to true if rectangles
     map to rectangles after coordinate transformation with pltrl.
@@ -5936,25 +6049,44 @@ ARGUMENTS:
     the shape of rectangles. For example a plot in polar coordinates
     has to have rectangular set to false.
 
-    pltr (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) , input) :
-      Pointer to function that defines transformation between indices
-    in array z and the world coordinates (C only).    Transformation
-    functions are provided in the PLplot library: pltr0 for identity
-    mapping, and pltr1 and pltr2 for arbitrary mappings respectively
-    defined by one- and two-dimensional arrays.  In addition,
-    user-supplied routines for the transformation can be used as well.
-     Examples of all of these approaches are given in the PLplot
-    documentation. The transformation function should have the form
-    given by any of pltr0, pltr1, or pltr2.
+    pltr (PLTRANSFORM_callback, input) :    A callback function that
+    defines the transformation between the zero-based indices of the
+    matrix a and world coordinates. If
+    pltr is not supplied (e.g., is set to NULL in the C case), then the x
+    indices of a are mapped to the range
+    xmin through
+    xmax and the y indices of a are mapped to the range
+    ymin through
+    ymax.For the C case, transformation functions are provided in the
+    PLplot library: pltr0 for the identity mapping, and pltr1 and
+    pltr2 for arbitrary mappings respectively defined by vectors and
+    matrices.  In addition, C callback routines for the transformation
+    can be supplied by the user such as the mypltr function in
+    examples/c/x09c.c which provides a general linear transformation
+    between index coordinates and world coordinates.For languages
+    other than C you should consult the PLplot documentation for the
+    details concerning how PLTRANSFORM_callback arguments are
+    interfaced. However, in general, a particular pattern of
+    callback-associated arguments such as a tr vector with 6 elements;
+    xg and yg vectors; or xg and yg matrices are respectively
+    interfaced to a linear-transformation routine similar to the above
+    mypltr function; pltr1; and pltr2. Furthermore, some of our more
+    sophisticated bindings (see, e.g., the PLplot documentation)
+    support native language callbacks for handling index to
+    world-coordinate transformations.  Examples of these various
+    approaches are given in examples/<language>x09*,
+    examples/<language>x16*, examples/<language>x20*,
+    examples/<language>x21*, and examples/<language>x22*, for all our
+    supported languages.
 
-    pltr_data (PLPointer, input) :    Extra parameter to help pass
-    information to pltr0, pltr1, pltr2, or whatever routine that is
-    externally supplied.
+    pltr_data (PL_GENERIC_POINTER, input) :    Extra parameter to help
+    pass information to pltr0, pltr1, pltr2, or whatever routine that
+    is externally supplied.
 ")
 #ifdef SWIG_OCTAVE
-my_plshade1;
+my_plshade;
 #else
-plshade1;
+plshade;
 #endif
 
 %feature( "docstring", "Assign a function to use for generating custom axis labels
@@ -5977,12 +6109,11 @@ plslabelfunc(label_func, label_data)
 
 ARGUMENTS:
 
-    label_func (void (*) (PLINT, PLFLT, char *, PLINT, PLPointer), input)
-    :    This is the custom label function.  In order to reset to the
-    default labelling, set this to NULL. The labelling function
-    parameters are, in order: axis:    This indicates which axis a
-    label is being requested for. The value will be one of PL_X_AXIS,
-    PL_Y_AXIS or PL_Z_AXIS.
+    label_func (PLLABEL_FUNC_callback, input) :    This is the custom
+    label function.  In order to reset to the default labelling, set
+    this to NULL. The labelling function parameters are, in order:
+    axis:     This indicates which axis a label is being requested for.
+    The value will be one of PL_X_AXIS, PL_Y_AXIS or PL_Z_AXIS.
 
     value:    This is the value along the axis which is being labelled.
 
@@ -5991,8 +6122,8 @@ ARGUMENTS:
     length:    The maximum length in characters allowed for label_text.
 
 
-    label_data (PLPointer, input) :    This parameter may be used to pass
-    data to the label_func function.
+    label_data (PL_GENERIC_POINTER, input) :    This parameter may be used
+    to pass data to the label_func function.
 ")
 plslabelfunc;
 
@@ -6054,8 +6185,8 @@ ARGUMENTS:
 
     maxy (PLINT, input) :    Size of memory area in the Y coordinate.
 
-    plotmem (void *, input) :     Pointer to the beginning of the
-    user-supplied memory area.
+    plotmem (PL_NC_GENERIC_POINTER, input) :    Pointer to the beginning
+    of a user-supplied writeable memory area.
 ")
 plsmem;
 
@@ -6088,8 +6219,8 @@ ARGUMENTS:
 
     maxy (PLINT, input) :    Size of memory area in the Y coordinate.
 
-    plotmem (void *, input) :     Pointer to the beginning of the
-    user-supplied memory area.
+    plotmem (PL_NC_GENERIC_POINTER, input) :    Pointer to the beginning
+    of a user-supplied writeable memory area.
 ")
 plsmema;
 
@@ -6128,7 +6259,7 @@ DESCRIPTION:
 
     Set integer plot orientation parameter.  This function is identical to
     plsdiori except for the type of the argument, and should be used in
-    the same way.  See the PLplot documentation for details.
+    the same way.  See the documentation of plsdiori for details.
 
     Redacted form: plsori(ori)
 
@@ -6157,10 +6288,19 @@ DESCRIPTION:
     recognized by all drivers and the interpretation is device-dependent.
     The X-window driver uses the length and offset parameters to determine
     the window size and location.  The length and offset values are
-    expressed in units that are specific to the current driver. For
+    expressed in units that are specific to the current driver.  For
     instance: screen drivers will usually interpret them as number of
-    pixels, whereas printer drivers will usually use mm. This routine, if
-    used, must be called before initializing PLplot.
+    pixels, whereas printer drivers will usually use mm.
+
+    This routine, if used, must be called before initializing PLplot.  It
+    may be called at later times for interactive drivers to change only
+    the dpi for subsequent redraws which you can force via a call to
+    plreplot.  If this function is not called then the page size defaults
+    to landscape A4 for drivers which use real world page sizes and 744
+    pixels wide by 538 pixels high for raster drivers. The default value
+    for dx and dy is 90 pixels per inch for raster drivers.
+
+
 
     Redacted form: plspage(xp, yp, xleng, yleng, xoff, yoff)
 
@@ -6174,11 +6314,15 @@ plspage(xp, yp, xleng, yleng, xoff, yoff)
 
 ARGUMENTS:
 
-    xp (PLFLT, input) :    Number of pixels/inch (DPI), x.
+    xp (PLFLT, input) :    Number of pixels per inch (DPI), x. Used only
+    by raster drivers, ignored by drivers which use \"real world\" units
+    (e.g. mm).
 
-    yp (PLFLT, input) :    Number of pixels/inch (DPI), y.
+    yp (PLFLT, input) :    Number of pixels per inch (DPI), y.    Used only
+    by raster drivers, ignored by drivers which use \"real world\" units
+    (e.g. mm).
 
-    xleng (PLINT , input) :    Page length, x.
+    xleng (PLINT, input) :    Page length, x.
 
     yleng (PLINT, input) :    Page length, y.
 
@@ -6188,11 +6332,11 @@ ARGUMENTS:
 ")
 plspage;
 
-%feature( "docstring", "Set the colors for color table 0 from a cmap0 file
+%feature( "docstring", "Set the cmap0 palette using the specified cmap0*.pal format file
 
 DESCRIPTION:
 
-    Set the colors for color table 0 from a cmap0 file
+    Set the cmap0 palette using the specified cmap0*.pal format file.
 
     Redacted form: plspal0(filename)
 
@@ -6206,16 +6350,17 @@ plspal0(filename)
 
 ARGUMENTS:
 
-    filename (const char *, input) :    The name of the cmap0 file, or a
-    empty to string to specify the default cmap0 file.
+    filename (PLCHAR_VECTOR, input) :     An ascii character string
+    containing the name of the cmap0*.pal file.  If this string is
+    empty, use the default cmap0*.pal file.
 ")
 plspal0;
 
-%feature( "docstring", "Set the palette for cmap1 using the specified cmap1*.pal format file
+%feature( "docstring", "Set the cmap1 palette using the specified cmap1*.pal format file
 
 DESCRIPTION:
 
-    Set the palette for cmap1 using the specified cmap1*.pal format file.
+    Set the cmap1 palette using the specified cmap1*.pal format file.
 
     Redacted form: plspal1(filename, interpolate)
 
@@ -6229,8 +6374,9 @@ plspal1(filename, interpolate)
 
 ARGUMENTS:
 
-    filename (const char *, input) :    The name of the cmap1*.pal file,
-    or an empty string to specify the default cmap1.pal file.
+    filename (PLCHAR_VECTOR, input) :     An ascii character string
+    containing the name of the cmap1*.pal file.  If this string is
+    empty, use the default cmap1*.pal file.
 
     interpolate (PLBOOL, input) :    If this parameter is true, the
     columns containing the intensity index, r, g, b, alpha and
@@ -6373,10 +6519,10 @@ plstar(nx, ny)
 ARGUMENTS:
 
     nx (PLINT, input) :    Number of subpages to divide output page in the
-    horizontal direction.
+    x direction.
 
     ny (PLINT, input) :    Number of subpages to divide output page in the
-    vertical direction.
+    y direction.
 ")
 plstar;
 
@@ -6407,15 +6553,17 @@ plstart(devname, nx, ny)
 
 ARGUMENTS:
 
-    devname (const char *, input) :    Device name keyword of the required
-    output device.    If NULL or if the first character is a ``?'', the
-    normal (prompted) start up is used.
+    devname (PLCHAR_VECTOR, input) :    An ascii character string
+    containing the device name keyword of the required output device.
+    If
+    devname is NULL or if the first character of the string is a ``?'',
+    the normal (prompted) start up is used.
 
     nx (PLINT, input) :    Number of subpages to divide output page in the
-    horizontal direction.
+    x direction.
 
     ny (PLINT, input) :    Number of subpages to divide output page in the
-    vertical direction.
+    y direction.
 ")
 plstart;
 
@@ -6424,9 +6572,9 @@ plstart;
 DESCRIPTION:
 
     This function can be used to define a coordinate transformation which
-    affects all elements drawn within the current plot window. The
-    coordinate_transform function is similar to that provided for the
-    plmap and plmeridians functions.  The coordinate_transform_data
+    affects all elements drawn within the current plot window.	The
+    coordinate_transform callback function is similar to that provided for
+    the plmap and plmeridians functions.  The coordinate_transform_data
     parameter may be used to pass extra data to coordinate_transform.
 
     Redacted form: General: plstransform(coordinate_transform,
@@ -6443,14 +6591,14 @@ plstransform(coordinate_transform, coordinate_transform_data)
 
 ARGUMENTS:
 
-    coordinate_transform (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *,
-    PLPointer) , input) :     Pointer to a function that defines a
-    transformation from the input (x, y) coordinate to a new plot
-    world coordinate. A NULL pointer means that no transform is
-    applied.
+    coordinate_transform (PLTRANSFORM_callback, input) :    A callback
+    function that defines the transformation from the input (x, y)
+    world coordinates to new PLplot world coordinates.  If
+    coordinate_transform is not supplied (e.g., is set to NULL in the C
+    case), then no transform is applied.
 
-    coordinate_transform_data (PLPointer, input) :    Optional extra data
-    for
+    coordinate_transform_data (PL_GENERIC_POINTER, input) :    Optional
+    extra data for
     coordinate_transform.
 ")
 plstransform;
@@ -6481,16 +6629,16 @@ plstring(n, x, y, string)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x and y arrays.
+    n (PLINT, input) :      Number of points in the x and y vectors.
 
-    x (const PLFLT *, input) :      Pointer to an array with X coordinates
-    of points.
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
+    the points.
 
-    y (const PLFLT *, input) :      Pointer to an array with Y coordinates
-    of points.
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
+    the points.
 
-    string (const char *, input) :    PLplot user string corresponding to
-    the glyph to be plotted at each of the n points.
+    string (PLCHAR_VECTOR, input) :    A UTF-8 character string containing
+    the glyph(s) to be plotted at each of the n points.
 ")
 plstring;
 
@@ -6521,19 +6669,19 @@ plstring3(n, x, y, z, string)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x, y, and z arrays.
+    n (PLINT, input) :      Number of points in the x, y, and z vectors.
 
-    x (const PLFLT *, input) :      Pointer to an array with X coordinates
-    of points.
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
+    the points.
 
-    y (const PLFLT *, input) :      Pointer to an array with Y coordinates
-    of points.
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
+    the points.
 
-    z (const PLFLT *, input) :      Pointer to an array with Z coordinates
-    of points.
+    z (PLFLT_VECTOR, input) :     A vector containing the z coordinates of
+    the points.
 
-    string (const char *, input) :    PLplot user string corresponding to
-    the glyph to be plotted at each of the n points.
+    string (PLCHAR_VECTOR, input) :    A UTF-8 character string containing
+    the glyph(s) to be plotted at each of the n points. points.
 ")
 plstring3;
 
@@ -6593,12 +6741,14 @@ plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, 
 
 ARGUMENTS:
 
-    id (PLINT *, output) :    Identification number of strip chart to use
-    on plstripa and plstripd.
+    id (PLINT_NC_SCALAR, output) :    Returned value of the identification
+    number of the strip chart to use on plstripa and plstripd.
 
-    xspec (const char *, input) :    X-axis specification as in plbox.
+    xspec (PLCHAR_VECTOR, input) :    An ascii character string containing
+    the x-axis specification as in plbox.
 
-    yspec (const char *, input) :    Y-axis specification as in plbox.
+    yspec (PLCHAR_VECTOR, input) :    An ascii character string containing
+    the y-axis specification as in plbox.
 
     xmin (PLFLT, input) :    Initial coordinates of plot box; they will
     change as data are added.
@@ -6630,20 +6780,23 @@ ARGUMENTS:
 
     collab (PLINT, input) :    Legend color index (cmap0).
 
-    colline (const PLINT *, input) :    Pointer to array with color
-    indices (cmap0) for the 4 pens.
+    colline (PLINT_VECTOR, input) :    A vector containing the cmap0 color
+    indices for the 4 pens.
 
-    styline (const PLINT *, input) :    Pointer to array with line styles
-    for the 4 pens.
+    styline (PLINT_VECTOR, input) :    A vector containing the line style
+    indices for the 4 pens.
 
-    legline (const char **, input) :    Pointer to character array
-    containing legends for the 4 pens.
+    legline (PLCHAR_MATRIX, input) :    A vector of UTF-8 character
+    strings containing legends for the 4 pens.
 
-    labx (const char *, input) :    X-axis label.
+    labx (PLCHAR_VECTOR, input) :    A UTF-8 character string containing
+    the label for the x axis.
 
-    laby (const char *, input) :    Y-axis label.
+    laby (PLCHAR_VECTOR, input) :    A UTF-8 character string containing
+    the label for the y axis.
 
-    labtop (const char *, input) :    Plot title.
+    labtop (PLCHAR_VECTOR, input) :    A UTF-8 character string containing
+    the plot title.
 ")
 #ifdef SWIG_OCTAVE
 my_plstripc;
@@ -6679,14 +6832,14 @@ DESCRIPTION:
 
     This sets up the line style for all lines subsequently drawn.  A line
     consists of segments in which the pen is alternately down and up. The
-    lengths of these segments are passed in the arrays mark and space
+    lengths of these segments are passed in the vectors mark and space
     respectively.  The number of mark-space pairs is specified by nms.	In
     order to return the line style to the default continuous line, plstyl
-    should be called with nms=0 .(see also pllsty)
+    should be called with nms =0 .(see also pllsty)
 
     Redacted form: plstyl(mark, space)
 
-    This function is used in examples 1,9,14.
+    This function is used in examples 1, 9, and 14.
 
 
 
@@ -6700,11 +6853,10 @@ ARGUMENTS:
     line.  Thus a simple broken line can be obtained by setting nms=1
     .  A continuous line is specified by setting nms=0 .
 
-    mark (const PLINT *, input) :    Pointer to array with the lengths of
-    the segments during which the pen is down, measured in
-    micrometers.
+    mark (PLINT_VECTOR, input) :    A vector containing the lengths of the
+    segments during which the pen is down, measured in micrometers.
 
-    space (const PLINT *, input) :    Pointer to array with the lengths of
+    space (PLINT_VECTOR, input) :    A vector containing the lengths of
     the segments during which the pen is up, measured in micrometers.
 ")
 plstyl;
@@ -6713,13 +6865,13 @@ plstyl;
 
 DESCRIPTION:
 
-    Plots a three dimensional shaded surface plot within the environment
-    set up by plw3d.  The surface is defined by the two-dimensional array
+    Plots a three-dimensional shaded surface plot within the environment
+    set up by plw3d.  The surface is defined by the two-dimensional matrix
     z[
     nx][
-    ny] , the point z[i][j]  being the value of the function at (
+    ny], the point z[i][j] being the value of the function at (
     x[i],
-    y[j]) .  Note that the points in arrays x and y do not need to be
+    y[j]). Note that the points in vectors x and y do not need to be
     equally spaced, but must be stored in ascending order. For further
     details see the PLplot documentation.
 
@@ -6735,14 +6887,16 @@ plsurf3d(x, y, z, nx, ny, opt, clevel, nlevel)
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates at
     which the function is evaluated.
 
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates at
     which the function is evaluated.
 
-    z (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array with set of function values.
+    z (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx (PLINT, input) :    Number of x values at which function is
     evaluated.
@@ -6765,16 +6919,16 @@ ARGUMENTS:
         opt=DRAW_SIDES : draws a curtain between the base XY plane and
         the borders of the plotted function.
         opt=MAG_COLOR : the surface is colored according to the value
-        of Z; if MAG_COLOR is not used, then the default the surface
-        is colored according to the intensity of the reflected light
-        in the surface from a light source whose position is set using
+        of Z; if MAG_COLOR is not used, then the surface is colored
+        according to the intensity of the reflected light in the
+        surface from a light source whose position is set using
         pllightsource.
 
 
-    clevel (const PLFLT *, input) :    Pointer to the array that defines
-    the contour level spacing.
+    clevel (PLFLT_VECTOR, input) :    A vector containing the contour
+    levels.
 
-    nlevel (PLINT, input) :    Number of elements in the clevel array.
+    nlevel (PLINT, input) :    Number of elements in the clevel vector.
 ")
 #ifdef SWIG_OCTAVE
 my_plsurf3d;
@@ -6805,14 +6959,16 @@ plsurf3dl(x, y, z, nx, ny, opt, clevel, nlevel, indexxmin, indexxmax, indexymin,
 
 ARGUMENTS:
 
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates at
     which the function is evaluated.
 
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates at
     which the function is evaluated.
 
-    z (const PLFLT * const *, input) :      Pointer to a vectored
-    two-dimensional array with set of function values.
+    z (PLFLT_MATRIX, input) :     A matrix containing function values to
+    plot.  Should have dimensions of
+    nx by
+    ny.
 
     nx (PLINT, input) :    Number of x values at which function is
     evaluated.
@@ -6835,16 +6991,16 @@ ARGUMENTS:
         opt=DRAW_SIDES : draws a curtain between the base XY plane and
         the borders of the plotted function.
         opt=MAG_COLOR : the surface is colored according to the value
-        of Z; if MAG_COLOR is not used, then the default the surface
-        is colored according to the intensity of the reflected light
-        in the surface from a light source whose position is set using
+        of Z; if MAG_COLOR is not used, then the surface is colored
+        according to the intensity of the reflected light in the
+        surface from a light source whose position is set using
         pllightsource.
 
 
-    clevel (const PLFLT *, input) :    Pointer to the array that defines
-    the contour level spacing.
+    clevel (PLFLT_VECTOR, input) :    A vector containing the contour
+    levels.
 
-    nlevel (PLINT, input) :    Number of elements in the clevel array.
+    nlevel (PLINT, input) :    Number of elements in the clevel vector.
 
     indexxmin (PLINT, input) :      The index value (which must be ≥ 0) that
     corresponds to the first x index where z is defined.
@@ -6853,98 +7009,23 @@ ARGUMENTS:
     which corresponds (by convention) to one more than the last x
     index value where z is defined.
 
-    indexymin (const PLINT *, input) :      Array of y index values which
-    all must be ≥ 0.  These values are the first y index where z is
-    defined for a particular x index in the range from indexxmin to
-    indexxmax - 1.    The dimension of indexymin is indexxmax.
+    indexymin (PLINT_VECTOR, input) :     A vector containing the y index
+    values which all must be ≥ 0.  These values are the first y index
+    where z is defined for a particular x index in the range from
+    indexxmin to indexxmax - 1.  The dimension of indexymin is
+    indexxmax.
 
-    indexymax (const PLINT *, input) :      Array of y index values which
-    all must be ≤ ny.  These values correspond (by convention) to one
-    more than the last y index where z is defined for a particular x
-    index in the range from indexxmin to indexxmax - 1.  The dimension
-    of indexymax is indexxmax.
+    indexymax (PLINT_VECTOR, input) :     A vector containing the y index
+    values which all must be ≤ ny.    These values correspond (by
+    convention) to one more than the last y index where z is defined
+    for a particular x index in the range from indexxmin to indexxmax
+    - 1.  The dimension of indexymax is indexxmax.
 ")
 #ifdef SWIG_OCTAVE
 my_plsurf3dl;
 #else
 plsurf3dl;
 #endif
-
-%feature( "docstring", "Plot shaded 3-d surface plot
-
-DESCRIPTION:
-
-    Plots a three dimensional shaded surface plot within the environment
-    set up by plw3d. The surface is defined by the data contained in the
-    2D const PLFLT * const * matrix or the PLfGrid2 structure zp. How the
-    data in zp is rendered is determined by the zops parameter. zops is a
-    pointer to a function that reads the data out of the grid structure.
-    The following functions in PLplot core will return an appropriate
-    function pointer: plf2ops_c() (use when zp is of type const PLFLT *
-    const *), plf2ops_grid_c() (use when zp is a pointer to a row-major
-    PLfGrid2 structure), plf2ops_grid_row_major() (same as
-    plf2ops_grid_c()?) and plf2ops_grid_col_major() (use when zp is a
-    pointer to a column-major PLfGrid2 structure). nx, nyoptclevel and
-    nlevel are the same as in for example plsurf3d.
-
-    Redacted form? plfsurf3d(x, y, zops, zp, opt, clevel)
-
-    This function is used in example 8.
-
-
-
-SYNOPSIS:
-
-plfsurf3d(x, y, zops, zp, nx, ny, opt, clevel, nlevel)
-
-ARGUMENTS:
-
-    x (const PLFLT *, input) :      Pointer to set of x coordinate values at
-    which the function is evaluated.
-
-    y (const PLFLT *, input) :      Pointer to set of y coordinate values at
-    which the function is evaluated.
-
-    zops (PLF2OPS, input) :    Pointer to a function for processing the
-    data contained in zp.
-
-    zp (PLPointer, input) :    Pointer to the data to be plotted, either
-    as a vectored two-dimensional array with set of function values or
-    as a PLfGrid2 structure.
-
-    nx (PLINT, input) :    Number of x values at which function is
-    evaluated.
-
-    ny (PLINT, input) :    Number of y values at which function is
-    evaluated.
-
-    opt (PLINT, input) :    Determines the way in which the surface is
-    represented. To specify more than one option just add the options,
-    e.g. FACETED + SURF_CONT opt=FACETED : Network of lines is drawn
-    connecting points at which function is defined.
-        opt=BASE_CONT : A contour plot is drawn at the base XY plane
-        using parameters
-    nlevel and
-    clevel.
-        opt=SURF_CONT : A contour plot is drawn at the surface plane
-        using parameters
-    nlevel and
-    clevel.
-        opt=DRAW_SIDES : draws a curtain between the base XY plane and
-        the borders of the plotted function.
-        opt=MAG_COLOR : the surface is colored according to the value
-        of Z; if MAG_COLOR is not used, then the default the surface
-        is colored according to the intensity of the reflected light
-        in the surface from a light source whose position is set using
-        pllightsource.
-
-
-    clevel (const PLFLT *, input) :    Pointer to the array that defines
-    the contour level spacing.
-
-    nlevel (PLINT, input) :    Number of elements in the clevel array.
-")
-plfsurf3d;
 
 %feature( "docstring", "Set arrow style for vector plots
 
@@ -6964,17 +7045,17 @@ plsvect(arrowx, arrowy, npts, fill)
 
 ARGUMENTS:
 
-    arrowx, arrowy (const PLFLT *,input) :    Pointers to a pair of arrays
-    containing the x and y points which make up the arrow. The arrow
-    is plotted by joining these points to form a polygon. The scaling
-    assumes that the x and y points in the arrow lie in the range -0.5
-    <= x,y <= 0.5. If both arrowx and arrowy are NULL then the arrow
-    style will be reset to its default.
+    arrowx, arrowy (PLFLT_VECTOR, input) :    A pair of vectors containing
+    the x and y points which make up the arrow. The arrow is plotted
+    by joining these points to form a polygon. The scaling assumes
+    that the x and y points in the arrow lie in the range -0.5 <= x,y
+    <= 0.5. If both arrowx and arrowy are NULL then the arrow style
+    will be reset to its default.
 
-    npts (PLINT,input) :    Number of points in the arrays arrowx and
+    npts (PLINT, input) :    Number of points in the vectors arrowx and
     arrowy.
 
-    fill (PLBOOL,input) :    If fill is true then the arrow is closed, if
+    fill (PLBOOL, input) :    If fill is true then the arrow is closed, if
     fill is false then the arrow is open.
 ")
 plsvect;
@@ -7035,7 +7116,7 @@ ARGUMENTS:
 
     digmax (PLINT, input) :    Variable to set the maximum number of
     digits for the x axis.    If nonzero, the printed label will be
-    switched to a floating point representation when the number of
+    switched to a floating-point representation when the number of
     digits exceeds digmax.
 
     digits (PLINT, input) :    Field digits value.  Currently, changing
@@ -7054,7 +7135,7 @@ DESCRIPTION:
 
     Redacted form: plsyax(digmax, digits)
 
-    This function is used in examples 1,14,31.
+    This function is used in examples 1, 14, and 31.
 
 
 
@@ -7066,7 +7147,7 @@ ARGUMENTS:
 
     digmax (PLINT, input) :    Variable to set the maximum number of
     digits for the y axis.    If nonzero, the printed label will be
-    switched to a floating point representation when the number of
+    switched to a floating-point representation when the number of
     digits exceeds digmax.
 
     digits (PLINT, input) :    Field digits value.  Currently, changing
@@ -7095,13 +7176,13 @@ plsym(n, x, y, code)
 
 ARGUMENTS:
 
-    n (PLINT, input) :      Number of points in the x and y arrays.
+    n (PLINT, input) :      Number of points in the x and y vectors.
 
-    x (const PLFLT *, input) :      Pointer to an array with X coordinates
-    of points.
+    x (PLFLT_VECTOR, input) :     A vector containing the x coordinates of
+    the points.
 
-    y (const PLFLT *, input) :      Pointer to an array with Y coordinates
-    of points.
+    y (PLFLT_VECTOR, input) :     A vector containing the y coordinates of
+    the points.
 
     code (PLINT, input) :    Hershey symbol code corresponding to a glyph
     to be plotted at each of the n points.
@@ -7129,7 +7210,7 @@ ARGUMENTS:
 
     digmax (PLINT, input) :    Variable to set the maximum number of
     digits for the z axis.    If nonzero, the printed label will be
-    switched to a floating point representation when the number of
+    switched to a floating-point representation when the number of
     digits exceeds digmax.
 
     digits (PLINT, input) :    Field digits value.  Currently, changing
@@ -7186,15 +7267,16 @@ pltimefmt(fmt)
 
 ARGUMENTS:
 
-    fmt (const char *, fmt) :     This string is interpreted similarly to
-    the format specifier of typical system strftime routines except
-    that PLplot ignores locale and also supplies some useful
-    extensions in the context of plotting.    All text in the string is
-    printed as-is other than conversion specifications which take the
-    form of a '%' character followed by further conversion
-    specification character.  The conversion specifications which are
-    similar to those provided by system strftime routines are the
-    following: %a: The abbreviated (English) weekday name.
+    fmt (PLCHAR_VECTOR, input) :    An ascii character string which is
+    interpreted similarly to the format specifier of typical system
+    strftime routines except that PLplot ignores locale and also
+    supplies some useful extensions in the context of plotting.  All
+    text in the string is printed as-is other than conversion
+    specifications which take the form of a '%' character followed by
+    further conversion specification character.  The conversion
+    specifications which are similar to those provided by system
+    strftime routines are the following: %a: The abbreviated (English)
+    weekday name.
         %A: The full (English) weekday name.
         %b: The abbreviated (English) month name.
         %B: The full (English) month name.
@@ -7269,8 +7351,10 @@ pltimefmt;
 
 DESCRIPTION:
 
-    Sets the viewport so that the ratio of the length of the y axis to
-    that of the x axis is equal to aspect.
+    Selects the largest viewport with the given aspect ratio within the
+    subpage that leaves a standard margin (left-hand margin of eight
+    character heights, and a margin around the other three sides of five
+    character heights).
 
     Redacted form: plvasp(aspect)
 
@@ -7285,7 +7369,7 @@ plvasp(aspect)
 ARGUMENTS:
 
     aspect (PLFLT, input) :    Ratio of length of y axis to length of x
-    axis.
+    axis of resulting viewport.
 ")
 plvasp;
 
@@ -7293,7 +7377,7 @@ plvasp;
 
 DESCRIPTION:
 
-    Draws a vector plot of the vector (
+    Draws a plot of vector data contained in the matrices (
     u[
     nx][
     ny],
@@ -7301,11 +7385,14 @@ DESCRIPTION:
     nx][
     ny]) . The scaling factor for the vectors is given by scale. A
     transformation routine pointed to by pltr with a pointer pltr_data for
-    additional data required by the transformation routine is used to map
-    indices within the array to the world coordinates. The style of the
-    vector arrow may be set using plsvect.
+    additional data required by the transformation routine to map indices
+    within the matrices to the world coordinates. The style of the vector
+    arrow may be set using plsvect.
 
-    Redacted form: plvect(u, v, scale, pltr, pltr_data)
+    Redacted form: plvect(u, v, scale, pltr, pltr_data) where (see above
+    discussion) the pltr, pltr_data callback arguments are sometimes
+    replaced by a tr vector with 6 elements, or xg and yg array arguments
+    with either one or two dimensions.
 
     This function is used in example 22.
 
@@ -7317,33 +7404,46 @@ plvect(u, v, nx, ny, scale, pltr, pltr_data)
 
 ARGUMENTS:
 
-    u, v (const PLFLT * const *, input) :    Pointers to a pair of
-    vectored two-dimensional arrays containing the x and y components
-    of the vector data to be plotted.
+    u, v (PLFLT_MATRIX, input) :    A pair of matrices containing the x
+    and y components of the vector data to be plotted.
 
-    nx, ny (PLINT, input) :    Physical dimensions of the arrays u and v.
+    nx, ny (PLINT, input) :    Dimensions of the matrices u and v.
 
     scale (PLFLT, input) :    Parameter to control the scaling factor of
     the vectors for plotting. If scale = 0    then the scaling factor is
-    automatically calculated for the data. If scale < 0  then the
+    automatically calculated for the data. If scale < 0 then the
     scaling factor is automatically calculated for the data and then
     multiplied by -
-    scale. If scale > 0  then the scaling factor is set to scale.
+    scale. If scale > 0 then the scaling factor is set to scale.
 
-    pltr (void (*) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer) , input) :
-      Pointer to function that defines transformation between indices
-    in array z and the world coordinates (C only).    Transformation
-    functions are provided in the PLplot library: pltr0 for identity
-    mapping, and pltr1 and pltr2 for arbitrary mappings respectively
-    defined by one- and two-dimensional arrays.  In addition,
-    user-supplied routines for the transformation can be used as well.
-     Examples of all of these approaches are given in the PLplot
-    documentation. The transformation function should have the form
-    given by any of pltr0, pltr1, or pltr2.
+    pltr (PLTRANSFORM_callback, input) :    A callback function that
+    defines the transformation between the zero-based indices of the
+    matrices u and v and world coordinates.For the C case,
+    transformation functions are provided in the PLplot library: pltr0
+    for the identity mapping, and pltr1 and pltr2 for arbitrary
+    mappings respectively defined by vectors and matrices.    In
+    addition, C callback routines for the transformation can be
+    supplied by the user such as the mypltr function in
+    examples/c/x09c.c which provides a general linear transformation
+    between index coordinates and world coordinates.For languages
+    other than C you should consult the PLplot documentation for the
+    details concerning how PLTRANSFORM_callback arguments are
+    interfaced. However, in general, a particular pattern of
+    callback-associated arguments such as a tr vector with 6 elements;
+    xg and yg vectors; or xg and yg matrices are respectively
+    interfaced to a linear-transformation routine similar to the above
+    mypltr function; pltr1; and pltr2. Furthermore, some of our more
+    sophisticated bindings (see, e.g., the PLplot documentation)
+    support native language callbacks for handling index to
+    world-coordinate transformations.  Examples of these various
+    approaches are given in examples/<language>x09*,
+    examples/<language>x16*, examples/<language>x20*,
+    examples/<language>x21*, and examples/<language>x22*, for all our
+    supported languages.
 
-    pltr_data (PLPointer, input) :    Extra parameter to help pass
-    information to pltr0, pltr1, pltr2, or whatever routine that is
-    externally supplied.
+    pltr_data (PL_GENERIC_POINTER, input) :    Extra parameter to help
+    pass information to pltr0, pltr1, pltr2, or whatever callback
+    routine that is externally supplied.
 ")
 #ifdef SWIG_OCTAVE
 my_plvect;
@@ -7391,7 +7491,7 @@ ARGUMENTS:
 ")
 plvpas;
 
-%feature( "docstring", "Specify viewport using coordinates
+%feature( "docstring", "Specify viewport using normalized subpage coordinates
 
 DESCRIPTION:
 
@@ -7403,8 +7503,8 @@ DESCRIPTION:
 
     Redacted form: plvpor(xmin, xmax, ymin, ymax)
 
-    This function is used in examples
-    2,6-8,10,11,15,16,18,21,23,24,26,27,31.
+    This function is used in examples 2, 6-8, 10, 11, 15, 16, 18, 21, 23,
+    24, 26, 27, and 31.
 
 
 
@@ -7432,13 +7532,13 @@ plvpor;
 
 DESCRIPTION:
 
-    Sets up a standard viewport, leaving a left-hand margin of seven
-    character heights, and four character heights around the other three
-    sides.
+    Selects the largest viewport within the subpage that leaves a standard
+    margin (left-hand margin of eight character heights, and a margin
+    around the other three sides of five character heights).
 
     Redacted form: plvsta()
 
-    This function is used in examples 1,12,14,17,25,29.
+    This function is used in examples 1, 12, 14, 17, 25, and 29.
 
 
 
@@ -7448,26 +7548,40 @@ plvsta()
 ")
 plvsta;
 
-%feature( "docstring", "Set up window for 3-d plotting
+%feature( "docstring", "Configure the transformations required for projecting a 3D surface on a 2D window
 
 DESCRIPTION:
 
-    Sets up a window for a three-dimensional surface plot within the
-    currently defined two-dimensional window.  The enclosing box for the
-    surface plot defined by xmin, xmax, ymin, ymax, zmin and zmax in
-    user-coordinate space is mapped into a box of world coordinate size
-    basex by basey by height so that xmin maps to -
-    basex/2 , xmax maps to basex/2 , ymin maps to -
-    basey/2 , ymax maps to basey/2 , zmin maps to 0 and zmax maps to
-    height.  The resulting world-coordinate box is then viewed by an
-    observer at altitude alt and azimuth az.  This routine must be called
-    before plbox3 or plot3d.  For a more complete description of
-    three-dimensional plotting see the PLplot documentation.
+    Configure the transformations required for projecting a 3D surface on
+    an existing 2D window.  Those transformations (see the PLplot
+    documentation) are done to a rectangular cuboid enclosing the 3D
+    surface which has its limits expressed in 3D world coordinates and
+    also normalized 3D coordinates (used for interpreting the altitude and
+    azimuth of the viewing angle).  The transformations consist of the
+    linear transform from 3D world coordinates to normalized 3D
+    coordinates, and the 3D rotation of normalized coordinates required to
+    align the pole of the new 3D coordinate system with the viewing
+    direction specified by altitude and azimuth so that x and y of the
+    surface elements in that transformed coordinate system are the
+    projection of the 3D surface with given viewing direction on the 2D
+    window.
+
+    The enclosing rectangular cuboid for the surface plot is defined by
+    xmin, xmax, ymin, ymax, zmin and zmax in 3D world coordinates.  It is
+    mapped into the same rectangular cuboid with normalized 3D coordinate
+    sizes of basex by basey by height so that xmin maps to -
+    basex/2, xmax maps to basex/2, ymin maps to -
+    basey/2, ymax maps to basey/2, zmin maps to 0 and zmax maps to height.
+     The resulting rectangular cuboid in normalized coordinates is then
+    viewed by an observer at altitude alt and azimuth az.  This routine
+    must be called before plbox3 or any of the 3D surface plotting
+    routines; plmesh, plmeshc, plot3d, plot3dc, plot3dcl, plsurf3d,
+    plsurf3dl or plfill3.
 
     Redacted form: plw3d(basex, basey, height, xmin, xmax, ymin, ymax,
     zmin, zmax, alt, az)
 
-    This function is examples 8,11,18,21.
+    This function is examples 8, 11, 18, and 21.
 
 
 
@@ -7477,34 +7591,42 @@ plw3d(basex, basey, height, xmin, xmax, ymin, ymax, zmin, zmax, alt, az)
 
 ARGUMENTS:
 
-    basex (PLFLT, input) :    The x coordinate size of the
-    world-coordinate box.
+    basex (PLFLT, input) :    The normalized x coordinate size of the
+    rectangular cuboid.
 
-    basey (PLFLT, input) :    The y coordinate size of the
-    world-coordinate box.
+    basey (PLFLT, input) :    The normalized y coordinate size of the
+    rectangular cuboid.
 
-    height (PLFLT, input) :    The z coordinate size of the
-    world-coordinate box.
+    height (PLFLT, input) :    The normalized z coordinate size of the
+    rectangular cuboid.
 
-    xmin (PLFLT, input) :    The minimum user x coordinate value.
+    xmin (PLFLT, input) :    The minimum x world coordinate of the
+    rectangular cuboid.
 
-    xmax (PLFLT, input) :    The maximum user x coordinate value.
+    xmax (PLFLT, input) :    The maximum x world coordinate of the
+    rectangular cuboid.
 
-    ymin (PLFLT, input) :    The minimum user y coordinate value.
+    ymin (PLFLT, input) :    The minimum y world coordinate of the
+    rectangular cuboid.
 
-    ymax (PLFLT, input) :    The maximum user y coordinate value.
+    ymax (PLFLT, input) :    The maximum y world coordinate of the
+    rectangular cuboid.
 
-    zmin (PLFLT, input) :    The minimum user z coordinate value.
+    zmin (PLFLT, input) :    The minimum z world coordinate of the
+    rectangular cuboid.
 
-    zmax (PLFLT, input) :    The maximum user z coordinate value.
+    zmax (PLFLT, input) :    The maximum z world coordinate of the
+    rectangular cuboid.
 
-    alt (PLFLT, input) :    The viewing altitude in degrees above the XY
-    plane.
+    alt (PLFLT, input) :    The viewing altitude in degrees above the xy
+    plane of the rectangular cuboid in normalized coordinates.
 
-    az (PLFLT, input) :    The viewing azimuth in degrees.  When az=0 ,
-    the observer is looking face onto the ZX plane, and as az is
-    increased, the observer moves clockwise around the box when viewed
-    from above the XY plane.
+    az (PLFLT, input) :    The viewing azimuth in degrees of the
+    rectangular cuboid in normalized coordinates.  When az=0, the
+    observer is looking face onto the zx plane of the rectangular
+    cuboid in normalized coordinates, and as az is increased, the
+    observer moves clockwise around that cuboid when viewed from above
+    the xy plane.
 ")
 plw3d;
 
@@ -7516,7 +7638,7 @@ DESCRIPTION:
 
     Redacted form: plwidth(width)
 
-    This function is used in examples 1,2.
+    This function is used in examples 1 and 2.
 
 
 
@@ -7534,15 +7656,17 @@ ARGUMENTS:
 ")
 plwidth;
 
-%feature( "docstring", "Specify world coordinates of viewport boundaries
+%feature( "docstring", "Specify window
 
 DESCRIPTION:
 
-    Sets up the world coordinates of the edges of the viewport.
+    Specify the window, i.e., the world coordinates of the edges of the
+    viewport.
 
     Redacted form: plwind(xmin, xmax, ymin, ymax)
 
-    This function is used in examples 1,2,4,6-12,14-16,18,21,23-27,29,31.
+    This function is used in examples 1, 2, 4, 6-12, 14-16, 18, 21, 23-27,
+    29, and 31.
 
 
 
@@ -7577,7 +7701,7 @@ DESCRIPTION:
 
     Redacted form: plxormod(mode, status)
 
-    This function is used in examples 1,20.
+    This function is used in examples 1 and 20.
 
 
 
@@ -7590,8 +7714,9 @@ ARGUMENTS:
     mode (PLBOOL, input) :    mode is true means enter xor mode and mode
     is false means leave xor mode.
 
-    status (PLBOOL *, output) :    Pointer to status. Returned modestatus
-    of true (false) means driver is capable (incapable) of xor mode.
+    status (PLBOOL_NC_SCALAR, output) :    Returned value of the status.
+    modestatus of true (false) means driver is capable (incapable) of
+    xor mode.
 ")
 plxormod;
 

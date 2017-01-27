@@ -223,7 +223,7 @@ situations where xmlto's call to xmllint will segfault.
 Testing the documentation that has been built.
 ==============================================
 
-All tests are performed in the doc/docbook/src subdirectory _of the
+The following tests are performed in the doc/docbook/src subdirectory _of the
 build tree_.  The given test commands are for the bash shell, and
 plplot_version is an environment variable that has been set
 to the current PLplot version.  For the man pages, look carefully at
@@ -292,6 +292,84 @@ Browse with your favorite browser the
 build tree.  To look especially for UTF-8 issues search for
 plot3dcl, plsurf3dl, and peace.  In this case, Korean and Mandarin
 glyphs are missing, and the last-few Hindi glyphs are rendered out of order.
+
+The following tests of our swig documentation are done with python and octave
+in separate directories:
+
+1. Preliminaries
+
+Use the cmake option -DADD_SPECIAL_CONSISTENCY_CHECKING=ON and build
+the check_swig_documentation target.  That target uses the api2swigdoc.pl perl
+script to generate from api.xml a check file bindings/swig-support/swig_documentation.i_compare
+in the build tree as the basis of a consistency check with bindings/swig-support/swig_documentation.i
+in the source tree.  Copy that check file to the source file to resolve
+any of those inconsistencies.  N.B. that source file is the basis
+for the python and octave documentation checked below.
+
+2. Check the python documentation
+
+Build the test_python_psc target in order to build
+all the required /prerequisites.
+
+cd to examples/python in the build tree and invoke
+the python interpreter
+
+software@raven> python
+Python 2.7.9 (default, Jun 29 2016, 13:08:31)
+[GCC 4.9.2] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+>>> from plplot_python_start import *
+>>> import plplot as w
+>>> # list out all possible constants and commands for the plplot binding
+>>> dir(w)
+>>> # Check documentation strings for some of those commands
+>>> print(w.plw3d.__doc__)
+>>> print(w.plot3dcl.__doc__)
+>>> print(w.plsurf3dl.__doc__)
+>>> # etc 
+
+These documentation strings should be consistent with the latest
+version of the api.xml file.  Also the last two should show the expected
+UTF-8 symbols ≤ and ≥.
+
+3. Check the octave documentation
+
+* Build the test_octave_psc target in order to build
+  all the required prerequisites.
+
+* Determine the octavedir environment variable
+
+SRC_EXAMPLES_DIR should point to the examples subdirectory of the source tree,
+and EXAMPLES_DIR should point to the examples subdirectory of the build tree.
+e.g.,
+
+export SRC_EXAMPLES_DIR=/home/software/plplot/HEAD/plplot.git/examples
+export EXAMPLES_DIR=/home/software/plplot/HEAD/build_dir/examples
+export octavedir=\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot/support:\
+"$SRC_EXAMPLES_DIR"/../bindings/octave/misc:\
+"$SRC_EXAMPLES_DIR"/octave:\
+"$EXAMPLES_DIR"/../bindings/octave:\
+"$EXAMPLES_DIR"/../bindings/octave/PLplot
+
+* Invoke the octave interpreter, load PLplot, and printout help strings for various
+  PLplot commands.
+
+software@raven> octave -f -q
+octave:1> warning("off","Octave:shadowed-function");
+octave:2> addpath(getenv("octavedir"));
+octave:3> plplot_stub;
+octave:4> help plw3d
+[...]
+octave:5> help plot3dcl
+[...]
+octave:6> help plsurf3dl
+[...]
+
+These documentation strings should be consistent with the latest
+version of the api.xml file.  Also the last two should show the expected
+UTF-8 symbols ≤ and ≥.
 
 UTF-8 limitations of the current set of backend tools
 =====================================================
