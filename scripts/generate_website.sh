@@ -67,12 +67,14 @@ git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index --all --
 echo ""
 echo "Configure and build PLplot documentation.  This may take a while depending on your cpu speed...."
 cd /tmp/plplotdoc/build
+
+# Do NOT exclude all bindings and devices since some of the bindings are dependencies of the
+# doxygen build and some of the bindings depend on certain devices being enabled.
 cmake \
     -DWWW_USER=$USERNAME \
     -DWWW_GROUP=$GROUPNAME \
     -DWWW_HOST=$HOSTNAME \
     -DWWW_DIR=$WEBSITE_PREFIX \
-    -DDEFAULT_NO_BINDINGS=ON -DDEFAULT_NO_DEVICES=ON \
     -DPREBUILD_DIST=ON \
     -DBUILD_DOC=ON \
     -DBUILD_DOX_DOC=ON \
