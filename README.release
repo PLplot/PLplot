@@ -1,9 +1,3 @@
-N.B. These release notes now should be complete except for the one
-section below (our documentation improvements) which likely will NEED
-REVISION after our actual work on the documentation improvements has
-been completed.  This paragraph should be removed for the release once
-that documentation work has been completed.
-
 PLplot Release 5.12.0
 
 This is a release of the PLplot plotting package. It represents the
@@ -56,7 +50,7 @@ CONTENTS
 2.7 Changes to our Ada bindings and examples
 2.8 Changes to our tclmatrix library
 2.9 Backwards-incompatible changes to our Tcl/Tk bindings and examples
-2.10 Substantially updated the DocBook documentation
+2.10 Substantial rewrite of the DocBook documentation
 2.11 Default page size consistency
 2.12 Updated D language support
 2.13 Modernized build-system support for Qt4 and Qt5
@@ -606,37 +600,78 @@ just gone through that process for our Tcl/Tk examples (which should
 be your first guide concerning how to use the new redacted API for
 Tcl/Tk).
 
-2.10 Substantially updated the DocBook documentation
+2.10 Substantial rewrite of the DocBook documentation
 
-N.B. this documents what has gone on in a private documentation branch
-which has not yet been pushed.  So this section likely will NEED REVISION for
-the actual release.
+The fundamental principle used for this rewrite is to rely heavily on
+cross-references.  Most of these are internal to the DocBook
+documentation, but some (such as references to our examples on our
+website and platform-dependent build quirks documented in our wiki)
+are external.  The result is much less repeating of material (which
+substantially reduces maintenance issues) and use of the best source
+of documentation in all cases.  For example, the simple and advanced
+use of PLplot chapters previously contained large chunks of C code from the C
+examples.  All that C code is gone and instead references to our
+standard examples on our website are used instead.  The result is much
+less C specific since the website user has ready access to the example
+code in each of our supported languages.  Furthermore, the website
+gives the expected plot results for the example.  Of course, the
+downside of this new documentation approach is each section of the
+DocBook documentation is much less self-contained.  But the advantages
+of the new "cross-reference" documentation approach far outweigh that.
 
-* The introduction has been completely rewritten to be consistent with
-  modern PLplot.  In particular instead of copying documentation
-  actually implemented elsewhere so our DocBook version of that is
-  typically inconsistent/out-of-date, this chapter is greatly
-  simplified by referring to documentation that is actually
-  implemented elsewhere.  The result is less self-contained but much
-  easier to maintain.
+Here are the parts of the DocBook documentation that have been rewritten
+with the new approach.
 
-* The C chapter has been completely rewritten to be consistent with
+* The introduction has been rewritten to be consistent with
+  modern PLplot.  For example, modern CMake-based build generic build
+  instructions are given, and a reference to our wiki is given for
+  those users who encounter platform-dependent build quirks.
+
+* The simple and advanced use of PLplot chapters have been rewritten
+  as referred to above.
+
+* The chapters referring to drivers which implement file devices and
+  interactive devices have been rewritten to be consistent with modern
+  PLplot.  For example, the list of devices that was egregiously
+  outdated has now been updated.
+
+* The C chapter has been rewritten to be consistent with
   modern PLplot.  In particular, the new self-describing names for
   PLplot C argument types (see 2.19 and 2.20) are documented.
 
-* The Fortran chapter has been completely rewritten to be consistent
+* The Fortran chapter has been rewritten to be consistent
   with modern PLplot, i.e., the new Fortran binding that has just been
   implemented.
 
-* A number of documentation improvements have been made to the api
-  chapter.  In particular, the new self-describing names for PLplot
+* The tclmatrix subchapter of the Tcl chapter has been rewritten
+  to be consistent with the recent tclmatrix changes (2.8).
+
+* The previous chapter entitled "Notes for each Operating System that We Support"
+  has now been dropped since this material is already covered
+  in the introduction with reference to the wiki as appropriate
+  for platform details (see above discussion of the introduction).
+
+Here are some additional significant updates to our documentation that
+(unlike the changes above) did not constitute a complete rewrite.
+
+* The Ada chapter has been updated to be consistent with the
+  recent Ada changes (2.7).
+
+* The Tcl chapter as a whole has been updated to be
+  consistent with the recent redacted API change (2.9).
+
+* A number of documentation improvements have been made to the common
+  API chapter.  For example, the new self-describing names for PLplot
   C argument types (see 2.19 and 2.20) are now used to document all
   arguments which makes it much simpler to document those arguments.
+  Also, reference to those types now link to the appropriate part
+  of the C chapter which describes the PLplot types.
 
-* An important short paragraph of text was inserted in the simple,
-  advanced, and api chapters to clarify how the API for all our supported
-  languages corresponds with the self-describing names for PLplot
-  C argument types (see 2.19 and 2.20).
+* An important short paragraph of text was inserted in the simple
+  usage, advanced usage, and common API chapters to clarify how the
+  API for all our supported languages corresponds with the
+  self-describing names for PLplot C argument types (see 2.19 and
+  2.20).
 
 2.11 Default page sizes
 
