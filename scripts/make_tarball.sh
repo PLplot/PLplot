@@ -77,6 +77,7 @@ do_check=no
 prefix=""
 PREBUILD_ARG="-DPREBUILD_DIST=ON"
 PREBUILT_DOC_ARG="-DPREBUILT_DOC=ON"
+PREBUILT_DOX_DOC_ARG="-DPREBUILT_DOX_DOC=ON"
 do_prebuild_dist=yes
 
 while getopts "cdhi:no:u:" option
@@ -86,7 +87,7 @@ do
 	d) print_defaults ;;
 	h) usage 0 ;;
 	i) test -n "$OPTARG" || usage 1 ; prefix=$OPTARG ;;
-	n) DOC_ARG=;PREBUILD_ARG=;PREBUILT_DOC_ARG=;do_prebuild_dist=no ;;
+	n) DOC_ARG=;PREBUILD_ARG=;PREBUILT_DOC_ARG=;PREBUILT_DOX_DOC_ARG=;do_prebuild_dist=no ;;
 	o) config_opt="$config_opt $OPTARG" ;;
 	*) usage 1 ;;
     esac
@@ -138,7 +139,7 @@ git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index --all --
 	&& mkdir ctest_build_dir \
 	&& ( cd ctest_build_dir \
 	&& cmake ${config_opt} -DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
-        -DCMAKE_VERBOSE_MAKEFILE=ON ${PREBUILT_DOC_ARG} -DBUILD_DOX_DOC=ON \
+        -DCMAKE_VERBOSE_MAKEFILE=ON ${PREBUILT_DOC_ARG} ${PREBUILT_DOX_DOC_ARG}  \
 	-DBUILD_TEST=ON \
 	../${UNPACKED_TARBALL_DIR} >& cmake.out \
 	&& make ${parallel_opt} >& make.out \

@@ -117,7 +117,21 @@ if(BUILD_DOX_DOC)
   if(ENABLE_qt)
     add_dependencies(build_doxygen plplotqt)
   endif(ENABLE_qt)
+elseif(PREBUILT_DOX_DOC)
+  # For prebuilt doxygen documentation copy from source tree
+  # to build tree just as if that doxygen documentation had been
+  # generated.
+  if(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+    add_custom_target(build_doxygen ALL)
+  else(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+    add_custom_target(build_doxygen ALL
+      COMMAND ${CMAKE_COMMAND} -E copy_directory
+      ${CMAKE_CURRENT_SOURCE_DIR}/doxygen ${CMAKE_CURRENT_BINARY_DIR}/doxygen
+      )
+  endif(CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+endif(BUILD_DOX_DOC)
 
+if(BUILD_DOX_DOC OR PREBUILT_DOX_DOC)
   install(CODE "
 message(STATUS \"Installing: \$ENV{DESTDIR}${DOC_DIR}/doxygen tree\")
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINARY_DIR}/doxygen \$ENV{DESTDIR}${DOC_DIR}/doxygen)
@@ -130,4 +144,4 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_BINAR
       )
     add_dependencies(www-install-doxygen build_doxygen)
   endif(DEFINED WWW_USER AND DEFINED WWW_HOST AND DEFINED WWW_DIR)
-endif(BUILD_DOX_DOC)
+endif(BUILD_DOX_DOC OR PREBUILT_DOX_DOC)
