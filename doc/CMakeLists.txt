@@ -102,7 +102,7 @@ if(BUILD_DOX_DOC)
   # Generated C (and C++ in the Octave case) code for the
   # swig-generated bindings.
   if(ENABLE_python)
-    add_dependencies(build_doxygen _plplotcmodule)
+    add_dependencies(build_doxygen _plplotcmodule_fixed)
   endif(ENABLE_python)
   if(ENABLE_java)
     add_dependencies(build_doxygen plplotjavac_wrap)
