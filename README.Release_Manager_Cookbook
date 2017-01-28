@@ -1,10 +1,10 @@
 INDEX
 ** Update versions
 ** Prepare a (preliminary) version of the ChangeLog file for this release
-** Prepare the README.release file and/or press those who have made
-   changes in this release cycle to update that file
 ** Prepare and test the documentation
 ** Check and potentially fix internal consistency
+** Prepare the README.release file and/or encourage those who have made
+   changes in this release cycle to update that file
 ** Update website-related files
 ** Install and test a (preliminary) local copy of the PLplot website
 ** Update this file (README.Release_Manager_CookBook)
@@ -58,10 +58,9 @@ _________________________________________________________________________
 
 This step does not depend on other steps.
 
-Review previous release tags (which recently have been in the form
-plplot-L.M.N).
+Confirm previous release tag.
 
-git tag --list |grep '^plplot'
+git tag --list |grep '^plplot-${old_plplot_version}'
 
 Checkout an up-to-date master branch or a topic branch that is rebased on
 up-to-date master, then create the preliminary ChangeLog from that.
@@ -80,18 +79,6 @@ be in chronological order.  But it is traditional for the final
 version ChangeLog to have the result in default reverse
 chronological order so the --reverse option is not used in that case
 (see below).
-_________________________________________________________________________
-
-** Prepare the README.release file and/or press those who have made
-   changes in this release cycle to update that file
-
-This step depends on the step above entitled
-
-"Prepare a (preliminary) version of the ChangeLog file for this release".
-
-To double-check that file is complete with regards to all major
-developments during this release cycle, skim all the commit messages in
-ChangeLog.release_preliminary determined above.
 _________________________________________________________________________
 
 ** Prepare and test the documentation
@@ -135,16 +122,38 @@ in the build tree.  The current result of that command should be
 ... check_all
 ... check_api_xml_consistency
 ... check_f95_parameters
+... check_ifort_definitions_file
+... check_libtclmatrix_capabilities
 ... check_plplot_h.inc
 ... check_plplotcapi_defines
 ... check_swig_documentation
 ... check_tcl_parameters
 
+
+check_api_xml_consistency and check_plplot_h.inc currently (5.12.0) fail so
+have been excluded from the dependencies of check_all.
+
 Note the check_api_xml_consistency checker only exists if
 -DADD_SPECIAL_CONSISTENCY_CHECKING=ON and our build system finds the
 golang application api.xml_consistency_checker.  For more details
 concerning how to install that application see the Appendix section
-entitled "The golang API consistency checker".
+entitled "The golang API consistency checker".  Currently (5.12.0),
+that checker finds two inconsistencies which are:
+
+c_plshade1 is not documented.
+para 0 of func plGetCursor type mismatch [ PLGraphicsIn * ] vs. [
+struct PLGraphicsIn * ]
+
+The first inconsistency is expected (plshade1 is C only so it
+is not part of the common API, and will likely be deprecated
+soon in any case).  The solution here is probably to drop
+all references to c_plshade1.
+
+The second api_xml inconsistency has no immediately obvious cause
+so needs further study.
+
+The plplot_h.inc inconsistency from bindings/ocaml has no immediately obvious cause
+so needs further study.
 
 Note the check_plplot_h.inc target only exists
 because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
@@ -168,38 +177,40 @@ all the above targets should run with no cmp or other errors/warnings
 at all, e.g.,
 
 software@raven> make check_all
-Check that doc/docbook/src/api.xml is consistent with include/plplot.h
-Built target check_api_xml_consistency
-Check that bindings/swig-support/swig_documentation.i is consistent with doc/docbook/src/api.xml
-Built target check_swig_documentation
-Check that numerical #defines in bindings/swig-support/plplotcapi.i are consistent with the numerical #defines in include/plplot.h
-An error for this target implies the numerical #defines section of bindings/swig-support/plplotcapi.i needs updating following the directions in that file
-Built target check_plplotcapi_defines
-Check that bindings/f95/plplot_parameters.inc is consistent with the #defines in bindings/swig-support/plplotcapi.i
-Built target check_f95_parameters
-Check that bindings/tcl/plplot_parameters.h is consistent with the #defines in bindings/swig-support/plplotcapi.i
-Built target check_tcl_parameters
-Check that bindings/ocaml/plplot_h.inc is consistent with bindings/ocaml/touchup.ml and bindings/ocaml/plplot_h
-Built target check_plplot_h.inc
-Built target check_all
 
+should just work without errors.
+_________________________________________________________________________
+
+** Prepare the README.release file and/or encourage those who have made
+   changes in this release cycle to update that file
+
+This step depends on the step above entitled
+
+"Prepare a (preliminary) version of the ChangeLog file for this release".
+
+To double-check that file is complete with regards to all major
+developments during this release cycle, skim all the commit messages in
+ChangeLog.release_preliminary determined above.
 _________________________________________________________________________
 
 ** Update website-related files
 
 This step does not depend on other steps.
 
-Use "git diff" on the examples directory with appropriate commit id
-limits to discover whether there is a necessity to update the examples
-list in scripts/htdocs-gen_plot-examples.sh. And if so, do that
-update.  That list is used to generate the website example-related
-files and copy the results to the website. The list automatically
-controls what example source code is configured (for source code that
-needs that), as well as what example plots and example thumbnails are
-generated.  The list also automatically controls what examples-related
-files are copied to the website.
+Use "git diff" and "git log" on the examples directory (or some
+subdirectory of that such as examples/lua which normally has little
+activity unless some real changes to the standard examples have been
+made) with appropriate commit id limits to discover whether there is a
+necessity to update the examples list in
+scripts/htdocs-gen_plot-examples.sh. And if so, do that update.  That
+list is used to generate the website example-related files and copy
+the results to the website. The list automatically controls what
+example source code is configured (for source code that needs that),
+as well as what example plots and example thumbnails are generated.
+The list also automatically controls what examples-related files are
+copied to the website.
 
-Update the project web page, including the examples: edit
+Update the project web page including the examples.  For example, edit
 www/examples.php to reflect any changes to the examples themselves
 (i.e. pages added or removed from an existing example or entirely new
 examples).
@@ -259,11 +270,26 @@ HOSTNAME = raven
 WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
 (raven is my local computer name, and /home/irwin/public_html is a location
-where I can store various websites).  The above command took ~2 minutes to run
-on my computer.  You can check for errors (e.g., due
+where I can store various websites).  The above command took ~10 minutes to run
+on my computer (up from ~2 minutes because of the greater time now required to
+build the doxygen documentation including building the plots of the
+PLplot call and caller graphs).
+
+You can check for warnings by
+
+find /tmp/plplotdoc -name '*.out' |xargs grep -i warning |less
+
+This turned up quite a few warnings including 3 from doxygen,
+but all of these warnings seemed ignorable.
+
+You can check for errors (e.g., due
 to missing commands that need to be installed) by running
 
-find /tmp/plplotdoc -name '*.out' |xargs grep -i error
+find /tmp/plplotdoc -name '*.out' |xargs grep -i error |grep -vE 'unable to read file loc from|Generating call.*graph for function'
+
+(Those grep -vE stanzas are to remove output lines from doxygen that tend to
+include some case variants of "error" in the string because the
+referred to function name contains that substring.)
 
 The above location translates to the following URL
 <http://raven/~irwin/plplot/htdocs>, and I test that URL by clicking on most links,
@@ -507,15 +533,23 @@ Assuming all is well with the release tarball tests, then tag HEAD of master
 and push it.
 
 git checkout master
-git tag plplot-$plplot_version
+git tag --sign --message="PLplot ${plplot_version} release" plplot-${plplot_version} 
 # Note, a tag simply tags a particular commit so if I checkout some
 # other branch (such as maint) that has the same tagged commit as
 # as master, then the "git tag --list" command will find the tag
 # (which I proved was actually true for maint).
 
+# Show tag message and digital signature
+
+git show plplot-${plplot_version}
+
+# Verify signature
+
+git tag --verify plplot-${plplot_version}
+
 # Irrevocable step since no pushed tags can ever be deleted from
 # upstream repository.
-git push --tags origin master
+git push origin plplot-${plplot_version}
 
 (Note we are changing release tag names here from the old scheme
 which would have been v5_11_0 to a more informative scheme for names.)
@@ -525,12 +559,11 @@ which would have been v5_11_0 to a more informative scheme for names.)
 A list of your GPG keys can be obtained using, e.g.,
 
 software@raven> gpg --list-keys Alan
-pub   2048R/BB159E92 2011-08-19 [expires: 2016-08-17]
+pub   2048R/BB159E92 2011-08-19 [expires: 2021-12-12]
 uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
 uid                  Alan W. Irwin (libLASi key) <airwin@users.sourceforge.net>
 uid                  Alan W. Irwin (FreeEOS key) <airwin@users.sourceforge.net>
 uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
-sub   2048R/C5ECCF77 2011-08-19 [expires: 2016-08-17]
 
 gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
 
@@ -642,15 +675,15 @@ The instructions for installing this golang application
 are taken from doc/docbook/src/CMakeLists.txt.
 
 To build Hǎiliàng Wang's "check" application (which is written in the Go language)
-follow these simple directions (which worked fine on 2014-01-26):
+follow these simple directions (which worked fine on 2017-01-27):
 
-# Install go-lang package from your distro (I used the Debian Jessie
-# version, go-lang version 1.2).
+# Install golang AND gccxml packages from Debian Jessie (other distros
+# may use different package names from these).
 
 cd /home/software/golang_apps #(or wherever you like)
 export GOPATH=$(pwd)
-go get -u github.com/hailiang/go-plplot/c/check
-go build github.com/hailiang/go-plplot/c/check
+go get -u h12.me/go-plplot/c/check
+go build h12.me/go-plplot/c/check
 
 # The above creates the "check" executable in $GOPATH/bin
 # That is too generic a name so symlink a more individual name
@@ -659,7 +692,7 @@ cd $GOPATH/bin; ln -s check api.xml_consistency_checker;
 # Now put $GOPATH/bin on your PATH and CMake should do the rest
 # by finding the api.xml_consistency_checker application on your
 # PATH and running that appropriately when you build the
-# check_all or check_api_xml_consistency targets (see above).
+# check_api_xml_consistency target (see above).
 _________________________________________________________________________
 
 ** GNU Privacy Guard (gpg)
@@ -808,7 +841,7 @@ gpg --refresh-keys
       Then verified that refresh worked using, e.g.,
 
 gpg --list-keys irwin
-gpg --verify plplot-5.11.1.tar.gz.asc
+gpg --verify plplot-${plplot_version}.tar.gz.asc
 
       etc.
 
