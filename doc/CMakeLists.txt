@@ -113,6 +113,10 @@ if(BUILD_DOX_DOC)
   if(ENABLE_octave)
     add_dependencies(build_doxygen plplot_octave)
   endif(ENABLE_octave)
+  # Generated automoc code for the plplotqt library.
+  if(ENABLE_qt)
+    add_dependencies(build_doxygen plplotqt)
+  endif(ENABLE_qt)
 
   install(CODE "
 message(STATUS \"Installing: \$ENV{DESTDIR}${DOC_DIR}/doxygen tree\")
