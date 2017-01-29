@@ -270,10 +270,8 @@ HOSTNAME = raven
 WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
 (raven is my local computer name, and /home/irwin/public_html is a location
-where I can store various websites).  The above command took ~10 minutes to run
-on my computer (up from ~2 minutes because of the greater time now required to
-build the doxygen documentation including building the plots of the
-PLplot call and caller graphs).
+where I can store various websites).  The above command took ~3 minutes to run
+on my computer.
 
 You can check for warnings by
 
@@ -341,14 +339,28 @@ initially.
 
 scripts/make_tarball.sh -c -i /tmp/plplot_install
 
-This script takes roughly 8 minutes to complete on my computer.
+This script took ~8 minutes to complete on my computer.
 
-Check for errors....
+Check for warnings.
 
-find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error
+find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i warning |less
 
-If the above find command discovers any errors, then those errors
-need to be fixed and this step needs to be repeated.
+Those appear to be fairly numerous, but in all cases expected
+such as known cmake warnings, known doxygen warnings due to its
+poor code parsing ability, etc.
+
+find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error |less
+
+This search found some hits, but all seem to be innocuous except possibly
+for the following doxygen error
+
+/tmp/plplot-dist-prep/build_dir/make_prebuild_dist.out:error: NamespaceDef::insertMembers(): member `_swig_property' with class scope `' inserted in namespace scope `plplotc'!
+/tmp/plplot-dist-prep/build_dir/make_prebuild_dist.out:error: NamespaceDef::insertMembers(): member `_swig_property' with class scope `' inserted in namespace scope `plplotc_fixed'!
+
+(I count this as one error because those two python files are duplicates of each other.)
+However, I can find no issues with the doxygen-produced documentation of plplotc.py (and
+plplotc_fixed.py).  So I attribute this error to some issue with doxygen parsing
+of python.
 
 Browse the following install locations that were generated from the
 tarball:
