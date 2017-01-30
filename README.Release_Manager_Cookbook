@@ -339,7 +339,7 @@ initially.
 
 scripts/make_tarball.sh -c -i /tmp/plplot_install
 
-This script took ~8 minutes to complete on my computer.
+This script takes ~10 minutes to complete on my computer.
 
 Check for warnings.
 
@@ -362,6 +362,11 @@ However, I can find no issues with the doxygen-produced documentation of plplotc
 plplotc_fixed.py).  So I attribute this error to some issue with doxygen parsing
 of python.
 
+Look at the ctest results:
+
+less /tmp/plplot-dist-prep/ctest_build_dir/ctest.out
+less /tmp/plplot-dist-prep/ctest_build_dir/Testing/Temporary/LastTest.log
+
 Browse the following install locations that were generated from the
 tarball:
 
@@ -375,6 +380,12 @@ what is intended.
 
 less /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
 
+Also compare the table of contents of that tarball for the previous release with the present release.
+
+tar ztf ../export/plplot-$old_plplot_version.tar.gz |sort >| /tmp/${old_plplot_version}.out
+tar ztf /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz |sed -e "s?${plplot_version}?${old_plplot_version}?g" |sort >| /tmp/${plplot_version}.out
+diff -au /tmp/${old_plplot_version}.out /tmp/${plplot_version}.out
+
 Look at a few man pages that were generated from the tarball, e.g.,
 
 man -M/tmp/plplot_install/share/man pllegend
@@ -383,6 +394,10 @@ man -M/tmp/plplot_install/share/man plsurf3dl
 Look at the info pages that were generated from the tarball using
 
 info /tmp/plplot_install/share/info/plplotdoc.info
+
+Look at the ctest results
+
+
 _________________________________________________________________________
 
 ** Do comprehensive test of PLplot
@@ -463,7 +478,7 @@ to validate those pages.
 
 _________________________________________________________________________
 
-** Create ChangeLog.release
+** Create ChangeLog.release and update ChangeLog.cumulated_release
 
 N.B. commit all local changes to the repository so they will be
 reflected in the ChangeLog, tagged version of the release, and the
@@ -492,6 +507,12 @@ where <commit_id> is the last commit id of the log of commits for the
 previous release cycle (i.e., plplot-$old_plplot_version for the $plplot_version release).  Note
 this result (unlike the prelimary version above) will be in the
 traditional reverse chronological order.
+
+Preserve the historical record of the significant changes between versions of PLplot in one file by
+prepending README.release for $plplot_version to README.cumulated_release
+
+cat README.release README.cumulated_release > README.cumulated_release_new
+mv README.cumulated_release_new README.cumulated_release
 
 # Commit, fast-forward merge to master, and push
 
@@ -541,21 +562,29 @@ created for that commit (if all is well).
 
    ++ Tag the release
 
-Assuming all is well with the release tarball tests, then tag HEAD of master
-and push it.
+Assuming all is well with the release tarball tests, then tag (with
+signed key) HEAD of master and push it.
 
 git checkout master
-git tag --sign --message="PLplot ${plplot_version} release" plplot-${plplot_version} 
+
+A list of your GPG keys can be obtained using, e.g.,
+
+software@raven> gpg --list-keys Alan
+pub   2048R/BB159E92 2011-08-19 [expires: 2021-12-12]
+uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
+uid                  Alan W. Irwin (libLASi key) <airwin@users.sourceforge.net>
+uid                  Alan W. Irwin (FreeEOS key) <airwin@users.sourceforge.net>
+uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
+
+The BB159E92 field above is the key one.
+
+git tag --local-user=BB159E92 --message="PLplot ${plplot_version} release" plplot-${plplot_version} 
 # Note, a tag simply tags a particular commit so if I checkout some
 # other branch (such as maint) that has the same tagged commit as
 # as master, then the "git tag --list" command will find the tag
 # (which I proved was actually true for maint).
 
-# Show tag message and digital signature
-
-git show plplot-${plplot_version}
-
-# Verify signature
+# Verify signature (which also confirms the above tag message)
 
 git tag --verify plplot-${plplot_version}
 
@@ -568,18 +597,10 @@ which would have been v5_11_0 to a more informative scheme for names.)
 
    ++ Sign the release with your plplot Release Manager gpg key
 
-A list of your GPG keys can be obtained using, e.g.,
 
-software@raven> gpg --list-keys Alan
-pub   2048R/BB159E92 2011-08-19 [expires: 2021-12-12]
-uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
-uid                  Alan W. Irwin (libLASi key) <airwin@users.sourceforge.net>
-uid                  Alan W. Irwin (FreeEOS key) <airwin@users.sourceforge.net>
-uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
+gpg --default-key BB159E92 --detach-sign --armor /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
 
-gpg --default-key YYYYYYYY --detach-sign --armor /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
-
-where YYYYYYYY is BB159E92 for Alan W. Irwin as taken from the above key list.
+where BB159E92 refers to the public key for Alan W. Irwin as taken from the above key list.
 
    ++ Verify the release tarball signing
 
@@ -601,7 +622,7 @@ EOF
 
 # Save a local copy of the release tarball for future reference and
 # also check it.
-cd /home/software/plplot_svn/HEAD/export #(or wherever)
+cd /home/software/plplot/HEAD/export #(or wherever)
 cp -a /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz* .
 gpg --verify plplot-$plplot_version.tar.gz.asc
 
@@ -629,17 +650,17 @@ EOF
 
 Make, e.g., plplot-$plplot_version.tar.gz, the "latest" version.
 
-login to SF website
+login to SF website with firefox
 files ==> plplot ==> ${plplot_version} Source ==> view details (the "i" icon) for
-plplot-${plplot_version}.tar.gz ==> select "all" for the default
+plplot-${plplot_version}.tar.gz and hit the "select all" button and "save" button
 
-The above used to spin indefinitely with iceweasel.  Now it finishes
-with a "properties updated" message, and appears to "take"
+It finishes with a "file properties updated" message, and appears to "take"
 immediately.
 
-Note also, the above does not work with konqueror (perhaps because we
-take care of security issues with cookies and javascript with that browser
-while iceweasel is wide open).
+Note also, the above does not work with konqueror because enabling ".sourceforge.net" under
+javascript does not appear to cover all the javascript stuff that the sourceforge site users.
+(firefox accepts javascript from any source so does not have this problem, but is insecure
+as a result).
 
    ++ Make a SourceForge news item concerning this release
 
@@ -651,9 +672,15 @@ news item will then be available on the menu bar.  Click that, then
 "new post".
 
 Enter the title (e.g., PLplot Release $plplot_version) and the text.
-The text is in markdown format so cutting and pasting from
-previous news items is a very efficient way to create the
-new news item.
+The text is in markdown format so copying and pasting from a previous
+news item (using the ctrl-c command on the editing area of the old
+release notes to copy and ctrl-v command on the new release notes
+editing area since normal cutting and pasting no longer works) is a
+very efficient way to create the new news item.  After that copy and
+paste, remember to change all occurrences of $old_plplot_version to
+$plplot_version within the text, and also to update the highlights
+area (by copying from the list of "2. Improvements relative to the previous release)
+in README.release and changing all the numbers to "*").
 
    ++ Publicize the release announcement
 
@@ -667,15 +694,7 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
      that did not make it into the official tarball of the release or
      official tag of the release.
 
-  b. Preserve the historical record of the
-     significant changes between versions of PLplot in one file by
-     prepending README.release for $plplot_version to OLD-README.release
-
-cat README.release OLD-README.release > OLD-README.release_new
-mv OLD-README.release_new OLD-README.release
-
-
-  c. Update README.release file to reflect the start of a new release
+  b. Update README.release file to reflect the start of a new release
      cycle.
 
 --- Appendix ---

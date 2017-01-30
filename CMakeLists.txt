@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -239,6 +239,7 @@ set(top_level_DOCFILES
   PROBLEMS
   README
   README.release
+  README.cumulated_release
   README.testing
   )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
