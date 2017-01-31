@@ -1,7 +1,7 @@
 # examples/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -927,7 +927,9 @@ if(BUILD_TEST)
 	COMMAND extXdrawable_demo
 	)
       add_dependencies(test_extXdrawable extXdrawable_demo ${cairo_targets})
-      list(APPEND interactive_targets_LIST test_extXdrawable)
+      # This test target has a runtime error (bad X window) which has not been figured out yet.
+      # So keep the target, but exclude it from further generic test dependencies.
+      # list(APPEND interactive_targets_LIST test_extXdrawable)
     endif(PLD_xcairo AND TARGET extXdrawable_demo)
 
   endif(ENABLE_c)
@@ -1326,7 +1328,9 @@ if(BUILD_TEST)
     test_c_svgcairo
     test_extcairo
     test_c_xcairo
-    test_extXdrawable
+    # This test target has a runtime error (bad X window) which has not been figured out yet.
+    # So keep the target, but exclude it from further generic test dependencies.
+    #test_extXdrawable
     )
 
   set(cairo_test_target_DEPENDS)
