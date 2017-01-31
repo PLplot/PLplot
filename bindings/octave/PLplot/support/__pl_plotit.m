@@ -46,7 +46,7 @@ function __pl_plotit
   __pl_lxm = __pl.lxm(strm); __pl_lxM = __pl.lxM(strm);
   __pl_lym = __pl.lym(strm); __pl_lyM = __pl.lyM(strm);
 
-  if (__pl_lxm == __pl_lxM)		
+  if (__pl_lxm == __pl_lxM)
     __pl_lxm = __pl_lxm - 10*eps; __pl_lxM = __pl_lxM + 10*eps;
   endif
   if (__pl_lym == __pl_lyM)
@@ -74,7 +74,7 @@ function __pl_plotit
   if (__pl.type(strm) == 10 || __pl.type(strm) == 30)
     __pl_lxm = log10(__pl_lxm); __pl_lxM = log10(__pl_lxM);
   endif
-  if (__pl.type(strm) == 20 || __pl.type(strm) == 30)		
+  if (__pl.type(strm) == 20 || __pl.type(strm) == 30)
     __pl_lym = log10(__pl_lym); __pl_lyM = log10(__pl_lyM);
   endif
 
@@ -104,7 +104,7 @@ function __pl_plotit
       t = 1 + __pl.grid(strm);
     endif
     __pl_plenv(__pl_lxm, __pl_lxM, __pl_lym, __pl_lyM, 0, __pl.type(strm) + t);
-  endif			
+  endif
 
   ## get the plots to be done, previously stored in the __pl_struct structure
   for items=1:__pl.items(strm)-1
@@ -137,21 +137,21 @@ function __pl_plotit
       if (style != 9 && (xc != yc || rows(x) != rows(y)))
 	error ("__pl_plotit: matrix dimensions must match.");
       endif
-      range = "i;";	
+      range = "i;";
     elseif (isvector(x) || isvector(y))
       range ="1:yc;";
     endif
 
     for i=1:xc
       for j=eval(range)
-	
+
 	if (is_strmatrix(fmt) && !is_strvector(fmt))
 	  [style, color, symbol, key_title] = __pl_opt(fmt(rem(j-1,rows(fmt))+1,:));
 	  if (color != 20)
 	    __pl.plcol(strm) = color;
 	  endif
 	endif
-	
+
 	if (isempty(key_title))
 	  if (!isvector(x) || !isvector(y))
 	    lab = sprintf("line %d.%d", __pl.line_count(strm), (i-1)*yc+j);
@@ -188,7 +188,7 @@ function __pl_plotit
 	    __pl.lab_sym(strm, __pl.lab_pos(strm)-1) = 0;
 	  endif
 	endif
-	
+
 	if (lab != "") ## log plots may have a CTRL-A as the label plot
 	  plcol0(__pl.plcol(strm));
 	  __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
@@ -213,29 +213,29 @@ function __pl_plotit
 	    plpoin(x(:,i),y(:,j), symbol);
 
 	  case (6) ## dots
-	    plpoin(x(:,i),y(:,j), -1);								
+	    plpoin(x(:,i),y(:,j), -1);
 
 	  case (7) ## impulses
 	    for j=1:rows(x)
 	      xs = [x(j,i); x(j,i)];
 	      ys = [0; y(j,i)];
 	      plline(xs,ys);
-	    endfor	
+	    endfor
 
 	  case (8) ## steps
             xs = ys = [];
 	    for j=1:rows(x)-1
 	      xs = [xs; x(j,i); x(j+1,i); x(j+1,i)];
-	      ys = [ys; y(j,i); y(j,i); y(j+1,i)];			
-	    endfor	
-	    plline(xs,ys);	
+	      ys = [ys; y(j,i); y(j,i); y(j+1,i)];
+	    endfor
+	    plline(xs,ys);
 
-	  case (9) ## errorbars	
+	  case (9) ## errorbars
 	    if ( (xc == 1 && yc == 1) || xc > 3 || yc > 3)
 	      error("plot with errorbars: either x or y or both must be 2 or 3 columns.\n\
 		  If x (or y) has two columns, then it is interpreted as (x, dx),\n\
 		  and a bar is plotted from x-dx to x+dx;\n\
-		  if it has three columns, it is interpreted as (x, xmin, xmax)");			
+		  if it has three columns, it is interpreted as (x, xmin, xmax)");
 	    endif
 
 	    pllsty(1); # solid bars
@@ -244,13 +244,13 @@ function __pl_plotit
 	    elseif (xc == 3)
 	      xm = x(:,2); xM = x(:,3);
 	    endif
-	
+
 	    if (yc == 2)
 	      ym = y(:,1) .- y(:,2); yM = y(:,1) .+ y(:,2);
 	    elseif (yc == 3)
 	      ym = y(:,2); yM = y(:,3);
 	    endif
-	
+
 	    if (xc != 1)
 	      plerrx( xm, xM, y(:,1));
 	    endif
@@ -258,7 +258,7 @@ function __pl_plotit
 	      plerry( x(:,1), ym, yM);
 	    endif
 	    pllsty(__pl.pllsty(strm)); # recover linestyle
-	
+
 	  otherwise
 	    plline(x(:,i),y(:,j));
 	    warning("__pl_plotit: FIXME: format '%s' not implemented",fmt);

@@ -212,7 +212,7 @@ proc plw::setup_defaults {w} {
 
     bind $w.plwin <B3-Motion> \
 	"plw::user_mouse $w %b %s %x %y"
-	
+
     bind $w.plwin <Any-Enter> \
 	"focus $w.plwin"
 }

@@ -41,7 +41,7 @@ tr = {}
 function mypltr(x, y)
 	tx = tr[1] * x + tr[2] * y + tr[3]
 	ty = tr[4] * x + tr[5] * y + tr[6]
-	
+
 	return tx, ty
 end
 

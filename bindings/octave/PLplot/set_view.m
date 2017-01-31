@@ -48,7 +48,7 @@ function set_view (alt, az, varargin)
     return
   elseif (nargin >= 2 && ischar(alt))
     cmd = alt;
-    arg1 = az;	
+    arg1 = az;
     callback = 1;
   endif
 

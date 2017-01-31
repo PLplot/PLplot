@@ -196,7 +196,7 @@ function f2mnmx(f, nx, ny)
 	    fmin = math.min(fmin, f[i][j])
 		end
 	end
-		
+
 	return fmin, fmax
 end
 

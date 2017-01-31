@@ -37,22 +37,22 @@ Page and family related code fragments:
         plsc->nsuby = 1;
 
     plsc->cursub = 0;
-			
+
 * plP_bop (continued) does nothing after above plP_subpInit call
   if already at beginning of page (as set by plP_init above)
 
     if (plsc->page_status == AT_BOP)
         return;
-	
+
     plsc->page_status = AT_BOP;
-		
+
 * plP_eop is a no-op if already at eop.
 
     if (plsc->page_status == AT_EOP)
         return;
-	
+
     plsc->page_status = AT_EOP;
-		
+
 * plbop
     plP_bop();
     plsc->cursub = 1;
@@ -61,7 +61,7 @@ Page and family related code fragments:
 
     plsc->cursub = plsc->nsubx * plsc->nsuby;
     plP_eop();
-	
+
 
 * pladv(0) calls plP_eop and plP_bop IF the subpages on the current page
   have been completed as indicated by plsc->cursub.  Note, because of

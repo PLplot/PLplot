@@ -165,7 +165,7 @@ function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width
             x_length = 0.5;
             y_length = 0.05;
 	endif
-	
+
         # Set appropriate labelling options.
         if ( ifn )
             if ( cont_color == 0 || cont_width == 0. )

@@ -96,7 +96,7 @@ EXECUTABLES_list = \
 	xstandard30a$(EXEEXT) \
 	xstandard31a$(EXEEXT) \
 	xstandard33a$(EXEEXT)
-		
+
 all: $(EXECUTABLES_list)
 
 clean:

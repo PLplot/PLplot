@@ -7,7 +7,7 @@
 
 <xsl:import
   href="/usr/share/sgml/docbook/stylesheet/xsl/nwalsh/fo/docbook.xsl"/>
-	
+
 <xsl:template name="footer.table">
   <xsl:param name="pageclass" select="''"/>
   <xsl:param name="sequence" select="''"/>

@@ -296,7 +296,7 @@ while test $# -gt 0; do
 		    do_clean_first=$2
 		    shift
 		    ;;
-		
+
 		*)
 		    usage 1 1>&2
 		    ;;
@@ -320,7 +320,7 @@ while test $# -gt 0; do
 		    do_shared=$2
 		    shift
 		    ;;
-		
+
 		*)
 		    usage 1 1>&2
 		    ;;

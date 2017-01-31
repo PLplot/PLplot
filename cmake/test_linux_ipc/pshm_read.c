@@ -69,7 +69,7 @@ main(int argc, char *argv[])
 	    fprintf(stderr, "sem_wait\n");
 	    exit(EXIT_FAILURE);
 	  }
-	
+
 	// pshm_write encountered an EOF.
 	if(shmp->cnt == 0)
 	  break;

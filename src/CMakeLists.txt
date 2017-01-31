@@ -141,7 +141,7 @@ if(NOT ENABLE_DYNDRIVERS)
 	# Qt4 or Qt5.
 	list(APPEND plplot_LIB_SRCS ${CMAKE_SOURCE_DIR}/include/qt.h)
 	list(APPEND pc_libplplot_COMPILE_FLAGS ${pc_qt_COMPILE_FLAGS})
-	
+
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build static qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)

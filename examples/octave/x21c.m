@@ -125,7 +125,7 @@ function ix21c
 	    if isnan(zg(i,j))
 	      zg(i,j) = 0.;
 	      dist = 0.;
-		
+
 	      for ii=i-1:i+1
 		for jj=j-1:j+1
 		  if (ii >= 1 && jj >= 1 && ii<=xp && jj <=yp && !isnan(zg(ii,jj)))

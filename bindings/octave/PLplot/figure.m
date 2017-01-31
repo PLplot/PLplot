@@ -176,7 +176,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       if (struct_contains(__pl, "intp"))
-	__pl.intp = __pl_matstr(__pl.intp, " ", strm); # tk interpreter name		
+	__pl.intp = __pl_matstr(__pl.intp, " ", strm); # tk interpreter name
       else
 	__pl.intp(strm,:) = " ";
       endif
@@ -202,7 +202,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 	  fprintf(fp, "send -async $octave_interp to_octave \"$a $args\";\n");
 	  fprintf(fp, "#exec kill -16 $octave_interp_pid}\n");
 	endif
-	
+
 	if (nargin == 6)
 	  fprintf(fp, "source {%s}\n", tk_file);
 	  fclose(fp);
@@ -235,7 +235,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
 
       if ( 0 && exist("__tk_name") && (strcmp("tk", sprintf("%s",plgdev'))))
 	eval(tk_receive(1));
-	__pl.intp = __pl_matstr(__pl.intp, intp, strm);	# tk interpreter name					
+	__pl.intp = __pl_matstr(__pl.intp, intp, strm);	# tk interpreter name
 	unlink(init_file);
       else
 	intp = deblank(__pl.intp(strm,:));

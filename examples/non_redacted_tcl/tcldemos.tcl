@@ -43,18 +43,18 @@ set  utf8_examples {4 18 24 26 33}
 for {set i 0} {$i <= 33} {incr i} {
     if {$i != 32} {
 	set demo x[format "%02d" $i]
-	
+
 	#
 	# If the source code contains UTF-8 characters (beyond the
 	# ASCII-7 encoding), take special measures
 	#
-	
+
 	if { [lsearch $utf8_examples $i] < 0 } {
 	    source $demo.tcl
 	} else {
 	    sourceUtf8 $demo.tcl
 	}
-	
+
 	# restore defaults
 	proc $i {} "
             $demo

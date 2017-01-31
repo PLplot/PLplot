@@ -34,7 +34,7 @@ function pldef
   ## The DISPLAY name. Not needed
   ## plSetOpt("display", getenv("DISPLAY"));
 
-  ## The window geometry								
+  ## The window geometry
   ## plSetOpt("geometry", "400x400+800+1");
 
   ## bytes sent before flushing output

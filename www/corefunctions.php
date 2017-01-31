@@ -15,7 +15,7 @@
 	    $part = (($sub != '') ? ' ' : '') . $word;
 	    $sub .= $part;
 	    $len += strlen($part);
-	
+
 	    if(strlen($word) > $minword && strlen($sub) >= $length) {
 	    	break;
 	    }
@@ -87,7 +87,7 @@ END;
 		echo '      </p>';
 		echo '		</div>';
 	}
-	
+
 	//
 	// Print News from project page
 	// $newscount - number of news itmes to be shown
@@ -114,7 +114,7 @@ END;
 				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>' . "\n";
 				echo '<p>' . _substr(strip_tags($item->get_content()), $contentlength) . ' ';
 				echo '<a href="' . $item->get_permalink() . '">Read more</a> (' . $item->get_date('j M Y') . ')</p>' . "\n";
-				
+
 				$i = $i + 1;
 				if( $i >= $newscount )
 					break;

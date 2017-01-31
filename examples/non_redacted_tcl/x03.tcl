@@ -37,7 +37,7 @@ proc x03 {{w loopback}} {
 	} else {
 	    set offset 0.15
 	}
-		
+
 # Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
 	if {$xg >= -0.00001} {
 	    set dx $xg

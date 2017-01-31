@@ -32,7 +32,7 @@ function __pl_store(x, y, fmt)
     minx = min(min(x)); maxx = max(max(x));
   endif
 
-  if (__pl.type(strm) == 20 || __pl.type(strm) == 30)		
+  if (__pl.type(strm) == 20 || __pl.type(strm) == 30)
     miny = min(min(y(y>0))); maxy = max(max(y(y>0)));
   else
     miny = min(min(y)); maxy = max(max(y));

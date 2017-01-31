@@ -254,7 +254,7 @@ proc plserver_start {{use_dp 0}} {
 
     } else {
 	global client_name server_name
-	
+
 	#puts stderr "Please start client with flags: "
 	#puts stderr "  -server_name $server_name"
 	tkwait variable client_name

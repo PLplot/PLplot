@@ -54,7 +54,7 @@ function ix25c
 	pladv(0);
 	plvsta;
 	plwind(xextreme(i,1), xextreme(i,2), yextreme(i,1), yextreme(i,2));
-	
+
 	plcol0(2) ;
 	plbox("bc", 1.0, 0, "bcnv", 10.0, 0);
 	plcol0(1) ;

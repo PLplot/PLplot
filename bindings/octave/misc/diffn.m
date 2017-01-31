@@ -55,15 +55,15 @@ if (order == 1)
 elseif (order == 2)
 	coef = [-1;16;-30;16;-1]; div = 12*step^2; win = 2;
 	h_coef = [2;-5;4;-1]; h_div = step^2; h_win = 3;
-	t_coef = flipud(h_coef);	
+	t_coef = flipud(h_coef);
 elseif (order == 3)
 	coef = [1;-8;13;0;-13;8;-1]; div = 8*step^3; win = 3;
 	h_coef = [-5;18;-24;14;-3]; h_div = 2*step^3; h_win = 4;
-	t_coef = -flipud(h_coef);	
+	t_coef = -flipud(h_coef);
 elseif (order == 4)
 	coef = [-1;12;-39;56;-39;12;-1]; div = 6*step^4; win = 3;
 	h_coef = [3;-14;26;-24;11;-2]; h_div = step^4; h_win = 5;
-	t_coef = flipud(h_coef);	
+	t_coef = flipud(h_coef);
 endif
 
 for i=win+1:n_cols-win
@@ -79,7 +79,7 @@ endfor
 # tail: and backward differences here
 for i=n_cols-win+1:n_cols
 	datal(i) = (data(i-h_win:i) * t_coef)/h_div;
-#	datal(i) = mean(datal(win+1:n_cols-win));	
+#	datal(i) = mean(datal(win+1:n_cols-win));
 endfor
 
 if (row_f)

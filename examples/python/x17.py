@@ -120,8 +120,8 @@ def main(w):
 
         # There is no need for all pens to have the same number of
         # points or beeing equally time spaced.
-		
-        if n%2:	
+
+        if n%2:
 	    w.plstripa(id1, 0, t, y1)
 	if n%3:
 	    w.plstripa(id1, 1, t, y2)

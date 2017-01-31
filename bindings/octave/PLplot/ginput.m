@@ -65,6 +65,6 @@ function [x, y, but] = ginput(n)
 
   ## if this is issued out of the function, in the *command line*,
   ## the cross-hair disapears!
-  plflush;pleop;		
+  plflush;pleop;
 
 endfunction

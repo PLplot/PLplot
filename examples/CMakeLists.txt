@@ -703,7 +703,7 @@ if(BUILD_TEST)
 	list(APPEND device_depends ${targets_examples_c})
       endif(targets_examples_c)
     endif(files_examples_c)
-	
+
     # FILE_DEVICES_LIST is set in cmake/modules/drivers-finish.cmake
     # for all enabled _file_ devices and adjusted above for the
     # special case of the psttfc device.  It is thus available for the
@@ -874,7 +874,7 @@ if(BUILD_TEST)
 	  list(APPEND tkwin_targets test_tkwin_dyndriver)
 	endif(TARGET test_tkwin_dyndriver)
       endif(TARGET tkwin)
-	
+
       if(TARGET cairo)
 	# <driver>_file_depends only needed for custom command DEPENDS.  This is
 	# the only one of these interactive devices that has a noninteractive

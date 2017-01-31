@@ -119,7 +119,7 @@ if(ENABLE_DYNDRIVERS)
 	  if(NOT QT_LIBRARIES)
 	    message(FATAL_ERROR "Internal build system inconsistency. QT_LIBRARIESis empty but it should be populated")
 	  endif(NOT QT_LIBRARIES)
-	
+
 	  target_link_libraries(
 	    ${SOURCE_ROOT_NAME}
 	    plplot
@@ -149,7 +149,7 @@ if(ENABLE_DYNDRIVERS)
 	  INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
 	  )
       endif(PLD_wxwidgets OR PLD_wxpng)
-	    
+
     else(SOURCE_ROOT_NAME STREQUAL "qt")
       add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
       target_link_libraries(

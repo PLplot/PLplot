@@ -20,7 +20,7 @@
 global	XPTS=35;		## Data points in x
 global	YPTS=46;		## Datat points in y
 
-global	tr = [2/(XPTS-1); 0.0; -1.0; 0.0; 2/(YPTS-1); -1.0];	
+global	tr = [2/(XPTS-1); 0.0; -1.0; 0.0; 2/(YPTS-1); -1.0];
 
 function [tx ty] = mypltr(x, y)
 
@@ -180,7 +180,7 @@ function potential
   pllab("", "", "Shielded potential of charges in a conducting sphere");
 
 endfunction
-	
+
 function ix09c
 
 	  global	XPTS
@@ -251,7 +251,7 @@ endif
 
 	    xg3(i+1,:) = xx .+ distort .* cos(argx);
 	    yg3(i+1,:) = yy .- distort .* cos(argy);
-	
+
 	    xg2(i+1,:) = xx .+ distort .* cos(argx) .* cos(argy);
 	    yg2(i+1,:) = yy .- distort .* cos(argx) .* cos(argy);
 	  endfor

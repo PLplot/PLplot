@@ -54,6 +54,6 @@ function arrow (coord, mag, rot, col)
     plcol0(col);plline(xx,yy);
     plflush; pleop;
 
-  endif	
+  endif
 
 endfunction

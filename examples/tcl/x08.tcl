@@ -211,7 +211,7 @@ proc x08 {{w loopback}} {
 	    # magnitude colored plot
 	    } elseif {$ifshade == 1} {
 	       cmap1_init_8 $w 0
-	
+
 	       # Note: the [expr] command is essential here - plsurf3d doesn't accept
 	       # the hexadecimal form apparently!
 	       $w cmd plsurf3d x y z [expr {$::PLPLOT::MAG_COLOR}]

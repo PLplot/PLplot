@@ -100,7 +100,7 @@ def main():
 	# We must call pladv() to advance to the first (and only) subpage.
 	# You might want to use plenv() instead of the pladv(), plvpor(),
 	# plwind() sequence.
-	
+
 	pl.adv(0)
 
 	# Set up the viewport.  This is the window into which the data is

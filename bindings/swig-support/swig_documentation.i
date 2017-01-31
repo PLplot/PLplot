@@ -4218,7 +4218,7 @@ DESCRIPTION:
 
     The default action taken by plparseopts is as follows:
     Returns with an error if an unrecognized option or badly formed
-    option-value pair are encountered.	
+    option-value pair are encountered.
     Returns immediately (return code 0) when the first non-option command
     line argument is found.
     Returns with the return code of the option handler, if one was called.

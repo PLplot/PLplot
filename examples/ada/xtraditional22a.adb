@@ -99,7 +99,7 @@ procedure xtraditional22a is
         xmax := Long_Float( nx / 2) * dx;
         ymin := Long_Float(-ny / 2) * dy;
         ymax := Long_Float( ny / 2) * dy;
-	
+
         Q := 2.0;
         for i in 0 .. nx - 1 loop
             x := (Long_Float(i - nx / 2) + 0.5) * dx;

@@ -90,14 +90,14 @@ function geolocation_labeler(axis, value)
 			end
 		end
 	end
-	
+
 	if axis==pl.PL_Y_AXIS and value==0 then
 		-- A special case for the equator
 		label = direction_label
 	else
 		label = math.abs(label_val) .. direction_label
 	end
-	
+
 	return label
 end
 

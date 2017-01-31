@@ -94,7 +94,7 @@ itcl_class FileSelect {
 
 	pack $fs(filterf).label -side top -anchor w
 	pack $fs(filterf).entry -side bottom -fill x -expand yes
-		
+
 	#
 	# Create directory list, scrollbar, and label for the directory
 	# frame.  Make the list single select.
@@ -158,7 +158,7 @@ itcl_class FileSelect {
 
 	pack $fs(self).label -side top -anchor w
 	pack $fs(self).entry -side bottom -fill x -expand yes
-		
+
 	#
 	# Add the separator and create the buttons in the button frame.
 	# Each button is within a frame used to display as default.
@@ -166,7 +166,7 @@ itcl_class FileSelect {
 	# locations.
 	#
 	frame $f.line -height 2 -width 2 -borderwidth 1 -relief sunken
-	
+
 	frame $fs(btnf).okf -borderwidth 1
 	set fs(okbtn) [button $fs(btnf).okf.ok -text OK -width 8]
 	pack $fs(btnf).okf.ok -padx 2 -pady 2

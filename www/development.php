@@ -30,7 +30,7 @@
              users but also for developers.</li>
          </ul>
       </p>
-			
+
       <h3>Developing drivers</h3>
       <p>If one wants to develop a new driver it's always best to start with the
          code from an old driver. The minimal code needed for a driver can be

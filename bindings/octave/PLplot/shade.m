@@ -81,7 +81,7 @@ function shade(x, y, z, levels, cont )
         xmm = min(x);
       endif
 
-      if (length(__pl.axis(strm,:)) >= 4)	
+      if (length(__pl.axis(strm,:)) >= 4)
 	ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
         if (xymat == 0)
 	  iy = find(y >= ym & y <= yM);
@@ -99,7 +99,7 @@ function shade(x, y, z, levels, cont )
     else	# make axis() return current axis
       __pl.axis(strm,1) = xm; __pl.axis(strm,2) = xM;
       __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
-      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
+      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;
     endif
 
     __pl.plcol(strm) = 1;
@@ -142,7 +142,7 @@ function shade(x, y, z, levels, cont )
   __pl.type(strm) = -2;
   __pl.lab_str = "";
   __pl.plcol(strm) = 1;
-  __pl.pllsty(strm) = 1;	
+  __pl.pllsty(strm) = 1;
   __pl.lab_pos(strm) = 1;
 
   plpsty(0);
@@ -167,7 +167,7 @@ function shade(x, y, z, levels, cont )
     __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", cclevel(i))];
     __pl.lab_col(strm,__pl.lab_pos(strm)) = __pl.plcol(strm);
     __pl.lab_lsty(strm,__pl.lab_pos(strm)) = __pl.pllsty(strm);
-    __pl.lab_pos(strm) = __pl.lab_pos(strm) + 1;				
+    __pl.lab_pos(strm) = __pl.lab_pos(strm) + 1;
     __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
     if  (__pl.line_style(strm))
       __pl.pllsty(strm) = rem(__pl.pllsty(strm), 8)+1;

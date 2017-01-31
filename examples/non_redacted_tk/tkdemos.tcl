@@ -79,13 +79,13 @@ for {set i 0} {$i <= 33} {incr i} {
 	# If the source code contains UTF-8 characters (beyond the
 	# ASCII-7 encoding), take special measures
 	#
-	
+
 	if { [lsearch $utf8_examples $i] < 0 } {
 	    source $demo.tcl
 	} else {
 	    sourceUtf8 $demo.tcl
 	}
-	
+
 	proc $i {} "
             global plwin
             $demo $plwin

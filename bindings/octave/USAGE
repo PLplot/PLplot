@@ -31,7 +31,7 @@ change the legend:
 	plot(x,sin(x),';Sin(x);')
 
 set the title and plot data points
-	
+
 	title "My first plot";
 	plot(x,sin(x),'-o;Sin(x);')
 
@@ -45,7 +45,7 @@ save you plot in color postscript
 	save_fig ("~/sin.ps","psc")
 
 and see the result
-	
+
 	system("gv ~/sin.ps")
 
 create a new plot window using the tk driver
@@ -160,7 +160,7 @@ arrow		-- Plot one arrow.
 zoom		-- Select left botton and right top area for setting axis.
 
 --- Multiple plots
-multiplot	-- Sets and resets multiplot mode. 	
+multiplot	-- Sets and resets multiplot mode.
 oneplot		-- Switches from multiplot to single plot mode.
 subplot		-- Sets plot in multiplot mode.
 subwindow	-- Sets subwindow position in multiplot mode for next plot.

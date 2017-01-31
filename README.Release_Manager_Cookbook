@@ -578,7 +578,7 @@ uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
 
 The BB159E92 field above is the key one.
 
-git tag --local-user=BB159E92 --message="PLplot ${plplot_version} release" plplot-${plplot_version} 
+git tag --local-user=BB159E92 --message="PLplot ${plplot_version} release" plplot-${plplot_version}
 # Note, a tag simply tags a particular commit so if I checkout some
 # other branch (such as maint) that has the same tagged commit as
 # as master, then the "git tag --list" command will find the tag

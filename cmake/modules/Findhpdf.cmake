@@ -29,7 +29,7 @@ if(hpdf_INCLUDE_DIR)
     set(hpdf_LIBRARIES ${hpdf_LIBRARY})
   endif(hpdf_LIBRARY)
 endif(hpdf_INCLUDE_DIR)
-	
+
 if(hpdf_FOUND)
   if(NOT hpdf_FIND_QUIETLY)
     message(STATUS "Findhpdf: Found haru header directory, ${hpdf_INCLUDE_DIR}, and library, ${hpdf_LIBRARIES}.")

@@ -57,17 +57,17 @@ function x06c
 
       k = 0;
       for i=0:12
-	
+
 	## Write the digits to the left of the frame */
-	
+
 	text=sprintf("%d", 10 * i);
 	plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, text);
 	for j=0:9
 	  x = 0.1 * j + 0.05;
 	  y = 1.25 - 0.1 * i;
-	
+
 	  ## Display the symbols
-	
+
 	  if (k < 128)
 	    plpoin(x, y, k);
 	  endif

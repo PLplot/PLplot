@@ -241,7 +241,7 @@ proc x29_plot4 {{w loopback}} {
     # time-representation issues.
 
     matrix x f 1001
-    matrix y f 1001	
+    matrix y f 1001
 
     for {set kind 0} {$kind < 7} {incr kind} {
 	if {$kind == 0} {
@@ -372,9 +372,9 @@ proc x29_plot4 {{w loopback}} {
 	set title "@frPLplot Example 29 - TAI-UTC "
 	append title $title_suffix
 	$w cmd pllab $xtitle "TAI-UTC (sec)" $title
-	
+
 	$w cmd plcol0 4
-	
+
 	$w cmd plline $npts x y
     }
 

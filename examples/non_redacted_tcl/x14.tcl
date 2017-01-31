@@ -8,7 +8,7 @@ proc x14 {{w loopback}} {
 
     $w cmd plssub 2 2
     $w cmd plinit
-	
+
     $w cmd plgdev driver
     $w cmd plgfam fam num bmax
     puts "Demo of multiple output streams via the $driver driver."
@@ -16,7 +16,7 @@ proc x14 {{w loopback}} {
     puts ""
 
 # Start next stream
-	
+
     $w cmd plsstrm 1
 
 # Turn off pause to make this a slave (must follow master)
@@ -47,7 +47,7 @@ proc x14 {{w loopback}} {
     set xscale 1.
     set yscale 1.e+6
     plot141 $w
-	
+
 # Set up the data & plot
 
     set xscale 1.

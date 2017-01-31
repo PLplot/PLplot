@@ -67,7 +67,7 @@ function p19
     ## there is no need for all pens to have the same number of points
     ## or beeing equally time spaced.
 
-    if (rem(t,2))	
+    if (rem(t,2))
       stripc_add(id1, 0, t, y1);
     endif
     if rem(t,3)

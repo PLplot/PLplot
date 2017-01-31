@@ -387,7 +387,7 @@ itcl::body Plplotwin::create_pmenu_file {} {
     for {set i 0} {$i < $ndevs} {incr i} {
 	set devnam [lindex $devnames $i]
 	set devkey [lindex $devkeys $i]
-	
+
 	$m.sdev add radio -label $devnam \
 	  -variable [itcl::scope saveOpts($this,savedevice)] -value $devkey
     }
@@ -657,22 +657,22 @@ itcl::body Plplotwin::user_key {keycode state x y keyname ascii} {
     global client
 
     if { [info exists client] } {
-	
+
 	# calculate relative window coordinates.
-	
+
 	set xw [expr "$x / [winfo width [plwin]]."]
 	set yw [expr "1.0 - $y / [winfo height [plwin]]."]
-	
+
 	# calculate normalized device coordinates into original window.
-	
+
 	set view [[plwin] view]
 	set xrange [expr "[lindex $view 2] - [lindex $view 0]"]
 	set xnd [expr "($xw * $xrange) + [lindex $view 0]"]
 	set yrange [expr "[lindex $view 3] - [lindex $view 1]"]
 	set ynd [expr "($yw * $yrange ) + [lindex $view 1]"]
-	
+
 	# send them back to the client.
-	
+
 	# puts "keypress $keycode $state $x $y $xnd $ynd $keyname $ascii"
 	client_cmd \
 	  [list keypress $keycode $state $x $y $xnd $ynd $keyname $ascii]
@@ -690,22 +690,22 @@ itcl::body Plplotwin::user_mouse {button state x y} {
     global client
 
     if { [info exists client] } {
-	
+
 	# calculate relative window coordinates.
-	
+
 	set xw [expr "$x / [winfo width [plwin]]."]
 	set yw [expr "1.0 - $y / [winfo height [plwin]]."]
-	
+
 	# calculate normalized device coordinates into original window.
-	
+
 	set view [[plwin] view]
 	set xrange [expr "[lindex $view 2] - [lindex $view 0]"]
 	set xnd [expr "($xw * $xrange) + [lindex $view 0]"]
 	set yrange [expr "[lindex $view 3] - [lindex $view 1]"]
 	set ynd [expr "($yw * $yrange ) + [lindex $view 1]"]
-	
+
 	# send them back to the client.
-	
+
 	client_cmd \
 	  [list buttonpress $button $state $x $y $xnd $ynd]
     }
@@ -811,9 +811,9 @@ itcl::body Plplotwin::save_as {{file ""}} {
 	    cmd plscmap0 16 #000000
 	    for {set i 1} {$i <= 15} {incr i} {
 		cmd plscol0 $i [lindex $c0 [expr $i +1]]
-	    }	
+	    }
 	}
-	
+
 	if { $saveOpts($this,savemanyplotsperfile) == 0 } {
 	    [plwin] save close
 	} else {
@@ -1077,43 +1077,43 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
     # Two-corners zoom.
 
     if { $itk_option(-zoomfromcenter) == 0 } {
-	
+
 	# Get box lengths
-	
+
 	set dx [expr $x1 - $x0]
 	set dy [expr $y1 - $y0]
-	
+
 	set sign_dx [expr ($dx > 0) ? 1 : -1]
 	set sign_dy [expr ($dy > 0) ? 1 : -1]
-	
+
 	set xl $x0
 	set yl $y0
-	
+
 	# Constant aspect ratio
-	
+
 	if { $itk_option(-zoompreservesaspect)} {
-	
+
 	    # Scale factors used to maintain plot aspect ratio
-	
+
 	    set xscale [expr $xmax - $xmin]
 	    set yscale [expr $ymax - $ymin]
-	
+
 	    # Adjust box size for proper aspect ratio
-	
+
 	    set rx [expr double(abs($dx)) / $xscale]
 	    set ry [expr double(abs($dy)) / $yscale]
-	
+
 	    if { $rx > $ry } {
 		set dy [expr $yscale * $rx * $sign_dy]
 	    } else {
 		set dx [expr $xscale * $ry * $sign_dx]
 	    }
-	
+
 	    set xr [expr $xl + $dx]
 	    set yr [expr $yl + $dy]
-	
+
 	    # Now check again to see if in bounds, and adjust if not
-	
+
 	    if { $xr < $xmin || $xr > $xmax } {
 		if { $xr < $xmin } {
 		    set dx [expr $xmin - $x0]
@@ -1123,7 +1123,7 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 		set rx [expr double(abs($dx)) / $xscale]
 		set dy [expr $yscale * $rx * $sign_dy]
 	    }
-	
+
 	    if { $yr < $ymin || $yr > $ymax } {
 		if { $yr < $ymin } {
 		    set dy [expr $ymin - $y0]
@@ -1134,26 +1134,26 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 		set dx [expr $xscale * $ry * $sign_dx]
 	    }
 	}
-	
+
 	# Final box coordinates
-	
+
 	set xr [expr $xl + $dx]
 	set yr [expr $yl + $dy]
-	
+
 	# zoom from center out, preserving aspect ratio
-	
+
     } else {
-	
+
 	# Get box lengths, adjusting downward if necessary to keep in bounds
-	
+
 	set dx [expr abs($x1 - $x0)]
 	set dy [expr abs($y1 - $y0)]
-	
+
 	set xr [expr $x0 + $dx]
 	set xl [expr $x0 - $dx]
 	set yr [expr $y0 + $dy]
 	set yl [expr $y0 - $dy]
-	
+
 	if { $xl < $xmin } {
 	    set dx [expr {$x0 - $xmin}]
 	}
@@ -1166,18 +1166,18 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 	if { $yr > $ymax } {
 	    set dy [expr {$ymax - $y0}]
 	}
-	
+
 	# Constant aspect ratio
-	
+
 	if { $itk_option(-zoompreservesaspect) } {
-	
+
 	    # Scale factors used to maintain plot aspect ratio
-	
+
 	    set xscale [expr {$xmax - $xmin}]
 	    set yscale [expr {$ymax - $ymin}]
-	
+
 	    # Adjust box size for proper aspect ratio
-	
+
 	    set rx [expr {double($dx) / $xscale}]
 	    set ry [expr {double($dy) / $yscale}]
 	    if { $rx > $ry } {
@@ -1185,14 +1185,14 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 	    } else {
 		set dx [expr {$xscale * $ry}]
 	    }
-	
+
 	    set xr [expr $x0 + $dx]
 	    set xl [expr $x0 - $dx]
 	    set yr [expr $y0 + $dy]
 	    set yl [expr $y0 - $dy]
-	
+
 	    # Now check again to see if in bounds, and adjust downward if not
-	
+
 	    if { $xl < $xmin } {
 		set dx [expr $x0 - $xmin]
 		set rx [expr double($dx) / $xscale]
@@ -1214,9 +1214,9 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 		set dx [expr $xscale * $ry]
 	    }
 	}
-	
+
 	# Final box coordinates
-	
+
 	set xr [expr {$x0 + $dx}]
 	set xl [expr {$x0 - $dx}]
 	set yr [expr {$y0 + $dy}]
@@ -1230,7 +1230,7 @@ itcl::body Plplotwin::zoom_coords {x0 y0 x1 y1 opt} {
 	set wxr [expr {$xr / double($Lx)} ]
 	set wyl [expr {1.0 - $yr / double($Ly)} ]
 	set wyr [expr {1.0 - $yl / double($Ly)} ]
-	
+
     } else {
 	# These 'int' are required, because if we have a very low
 	# tcl_precision, our numbers can be turned to floating point
@@ -1352,7 +1352,7 @@ itcl::body Plplotwin::view_zoom {x0 y0 x1 y1} {
 	}
 	set xl $nxl
 	set xr $nxr
-	
+
 	set nyl [expr $yl - 0.5 * $stdzoom]
 	set nyr [expr $yl + 0.5 * $stdzoom]
 	if { $nyl < 0.0 } {
@@ -1467,14 +1467,14 @@ itcl::body Plplotwin::view_scroll {dx dy s} {
 
     if {($dx != 0) && \
       [winfo exists $itk_interior.hscroll] && [winfo ismapped $itk_interior.hscroll] } then {
-	
+
 	set dx [expr $dx * $mult]
 	set first [lindex [$itk_interior.hscroll get] 2]
 	[plwin] xview scroll [expr $first+$dx] units
     }
     if {($dy != 0) && \
       [winfo exists $itk_interior.vscroll] && [winfo ismapped $itk_interior.vscroll] } then {
-	
+
 	set dy [expr $dy * $mult]
 	set first [lindex [$itk_interior.vscroll get] 2]
 	[plwin] yview scroll [expr $first+$dy] units
@@ -1507,7 +1507,7 @@ itcl::body Plplotwin::fixview {hscroll vscroll} {
     if { ($hscroll && ! [winfo ismapped $itk_interior.hscroll]) || \
       ($vscroll && ! [winfo ismapped $itk_interior.vscroll]) } {
 	#update
-	
+
 	if { $hscroll } {
 	    grid $itk_interior.hscroll -column 0 -row 2 -sticky swe
 	}

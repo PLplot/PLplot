@@ -65,7 +65,7 @@ function __pl_mesh(caller, varargin)
         msg = sprintf ("%s\ncolumns (z) must be the same as length (y).\n", msg);
         error (msg);
       endif
-    elseif (ismatrix (x) && ismatrix (y) && ismatrix (z))			
+    elseif (ismatrix (x) && ismatrix (y) && ismatrix (z))
       error("x,y and z all matrices not yet implemented.\n")
     else
       error ("mesh: x and y must be vectors and z must be a matrix.\n");

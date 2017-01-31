@@ -245,7 +245,7 @@ proc x23 {{w loopback}} {
     set weight(1) "bold"
 
     for {set page 0} {$page<11} {incr page} {
-	
+
 	$w cmd pladv 0
 
 	# Set up viewport and window
@@ -302,7 +302,7 @@ proc x23 {{w loopback}} {
 
     for {set page 11} {$page<16} {incr page} {
 	set dy 0.030
-	
+
 	$w cmd pladv 0
 	$w cmd plvpor 0.02 0.98 0.02 0.90
 	$w cmd plwind 0.0 1.0 0.0 1.0

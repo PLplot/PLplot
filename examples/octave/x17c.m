@@ -89,7 +89,7 @@ function x17c
     ## there is no need for all pens to have the same number of points
     ## or beeing equally time spaced.
 
-    if (rem(n,2))	
+    if (rem(n,2))
       plstripa(id1, 0, t, y1);
     endif
     if rem(n,3)

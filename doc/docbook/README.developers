@@ -326,7 +326,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> print(w.plw3d.__doc__)
 >>> print(w.plot3dcl.__doc__)
 >>> print(w.plsurf3dl.__doc__)
->>> # etc 
+>>> # etc
 
 These documentation strings should be consistent with the latest
 version of the api.xml file.  Also the last two should show the expected

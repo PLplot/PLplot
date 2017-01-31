@@ -128,9 +128,9 @@ class PyDemo(Frame):
 ####	    exec( """
 ####    def x""" + n + """m(s):
 ####	print "xxx" """ )
-##	
+##
 ##	    exec( "s.x" + n + " = Button( s, {" +
-##		  "'text' : 'Example " + `i` + "'," +	
+##		  "'text' : 'Example " + `i` + "'," +
 ##		  "'command' : s.x" + n + "m" +
 ##		  "} )", globals(), locals() )
 ##	    exec( "s.x"+ n +".pack()" )

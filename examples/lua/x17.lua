@@ -64,7 +64,7 @@ colline = { 2, 3, 4, 5 } -- pens color
 legline= { "sum", "sin", "sin*noi", "sin+noi" } -- pens legend
 
 xlab = 0 -- legend position
-ylab = 0.25	
+ylab = 0.25
 
 autoy = 1	-- autoscale y
 acc = 1	-- don't scrip, accumulate

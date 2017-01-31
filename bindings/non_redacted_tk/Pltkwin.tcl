@@ -3,7 +3,7 @@
  #
  #  FILE: "Pltkwin.tcl"
  #				      created: 19/7/96 {1:43:00	pm}
- #				  last update: 4/10/96 {1:41:46 pm} pm}	
+ #				  last update: 4/10/96 {1:41:46 pm} pm}
  #  Author: Vince Darley
  #  E-mail: <vince@das.harvard.edu>
  #    mail: Division of	Applied	Sciences, Harvard University
@@ -125,7 +125,7 @@ body Pltkwin::constructor {args} {
     } {
 	#keep -background -cursor
     }
-    label_reset	
+    label_reset
     pack append	$itk_interior.ftop  $itk_interior.ftop.lstat \
 	{right expand fill}
 
@@ -209,11 +209,11 @@ body Pltkwin::setup_defaults	{}  {
 #----------------------------------------------------------------------------
 
 body Pltkwin::create_pmenu {}	{
-    create_pmenu_print	
-    create_pmenu_save	
-    create_pmenu_orient	
-    create_pmenu_zoom	
-    create_pmenu_page	
+    create_pmenu_print
+    create_pmenu_save
+    create_pmenu_orient
+    create_pmenu_zoom
+    create_pmenu_page
     create_pmenu_options
 }
 
@@ -442,10 +442,10 @@ body Pltkwin::create_pmenu_options {} {
     menu $m
 
     $m add command -label "Palette 0" \
-	-command "plcmap0_edit [plwin]"	
+	-command "plcmap0_edit [plwin]"
 
     $m add command -label "Palette 1" \
-	-command "plcmap1_edit [plwin]"	
+	-command "plcmap1_edit [plwin]"
 }
 
 #----------------------------------------------------------------------------
@@ -797,7 +797,7 @@ body Pltkwin::zoom_enter    {}	{
 body Pltkwin::zoom_reset    {}	{
     global def_button_cmd
 
-    label_reset	
+    label_reset
     bind [plwin] <ButtonPress>	$def_button_cmd
     [plwin] view reset
     if { [winfo	exists $itk_interior.hscroll] && [winfo	ismapped $itk_interior.hscroll]	}   then {
@@ -1132,7 +1132,7 @@ body Pltkwin::zoom_mouse_end	{wx0 wy0 wx1 wy1}   {
 
     bind [plwin] <B1-ButtonRelease> {}
     bind [plwin] <B1-Motion> {}
-    label_reset	
+    label_reset
     [plwin] draw end
 
 # Select new plot region

@@ -111,7 +111,7 @@ proc shade {} {
 	.plw plshade x $xmin $xmax $ymin $ymax $sh_min $sh_max 1 $sh_col 0 \
 	    1 0 0 0 \
 	    1 "NULL"
-	
+
     }
 
     .plw plcol0 1

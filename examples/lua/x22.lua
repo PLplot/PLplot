@@ -49,9 +49,9 @@ function circulation()
 	cgrid2["ny"] = ny
 	u = {}
 	v = {}
-	
+
 	-- Create data - circulation around the origin.
-	for i = 1, nx do	
+	for i = 1, nx do
 		x = (i-1-nx/2+0.5)*dx
 		cgrid2["xg"][i] = {}
 		cgrid2["yg"][i] = {}
@@ -94,9 +94,9 @@ function constriction( astyle )
 	cgrid2["ny"] = ny
 	u = {}
 	v = {}
-	
+
 	Q = 2
-	for i = 1, nx do	
+	for i = 1, nx do
 		x = (i-1-nx/2+0.5)*dx
 		cgrid2["xg"][i] = {}
 		cgrid2["yg"][i] = {}
@@ -129,7 +129,7 @@ end
 -- Note this function uses the global variable xmax rather than passing
 -- data as in C.
 function transform(x,y)
-	
+
 	xt = x
 	yt = y / 4.0 * ( 3 - math.cos( math.pi * x / xmax ))
 
@@ -160,9 +160,9 @@ function constriction2()
 	cgrid2["ny"] = ny
 	u = {}
 	v = {}
-	
+
 	Q = 2
-	for i = 1, nx do	
+	for i = 1, nx do
 		x = (i-1-nx/2+0.5)*dx
 		cgrid2["xg"][i] = {}
 		cgrid2["yg"][i] = {}
@@ -207,7 +207,7 @@ function f2mnmx(f, nx, ny)
 	    fmin = math.min(fmin, f[i][j])
 		end
 	end
-		
+
 	return fmin, fmax
 end
 

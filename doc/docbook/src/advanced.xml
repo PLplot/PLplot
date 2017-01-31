@@ -386,7 +386,7 @@ dependent.  Please see the PLplot reference document for more detail.
       <para>
 	<screen>
 	  <prompt>%</prompt> <userinput>x01c</userinput>
-	
+
 	  Plotting Options:
 	  &lt; 1> xwin       X-Window (Xlib)
 	  &lt; 2> tk         Tcl/TK Window
@@ -457,7 +457,7 @@ dependent.  Please see the PLplot reference document for more detail.
 	    </para>
 	  </listitem>
 	</itemizedlist>
-	
+
       </para>
 
       <para>

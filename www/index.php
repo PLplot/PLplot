@@ -85,7 +85,7 @@ label plots.</p>
 			</div>
 			<div class="clear"></div>
 
-		
+
       <!-- show some plots using the lightbox js script -->
 			<h3>Screenshots</h3>
 			<p>

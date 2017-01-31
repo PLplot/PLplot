@@ -75,7 +75,7 @@ function __pl_draw_legend(xm, xM, ym, yM)
     plline([xxl;xxr;xxr;xxl;xxl], [yyb; yyb; yyt; yyt;yyb]);
   endif
 
-  k=0.5;	
+  k=0.5;
   for i=1:__pl.lab_pos(strm)-1
     if (length(tdeblank(__pl.lab_str(i,:))) != 0)
       xx = __pl.legend_xpos(strm);

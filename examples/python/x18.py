@@ -42,7 +42,7 @@ def main(w):
 		test_poly(w, k)
 
 	# From the mind of a sick and twisted physicist...
-	
+
 	z = -1. + (2./NPTS) * arange(NPTS)
 	x = z*cos((2.*pi*6./NPTS)*arange(NPTS))
 	y = z*sin((2.*pi*6./NPTS)*arange(NPTS))
@@ -121,26 +121,26 @@ def test_poly(w, k):
 	x0 = cosi0*sinj0
 	y0 = sini0*sinj0
 	z0 = cosj0
-	
+
 	x1 = cosi0*sinj1
 	y1 = sini0*sinj1
 	z1 = cosj1
-	
+
 	x2 = cosi1*sinj1
 	y2 = sini1*sinj1
 	z2 = cosj1
-	
+
 	x3 = cosi1*sinj0
 	y3 = sini1*sinj0
 	z3 = cosj0
-	
+
 	x4 = x0
 	y4 = y0
 	z4 = z0
-	
+
 	for i in range(20):
 		for j in range(20):
-		
+
 			x = [x0[i,j],x1[i,j],x2[i,j],x3[i,j],x4[i,j]]
 			y = [y0[i,j],y1[i,j],y2[i,j],y3[i,j],y4[i,j]]
 			z = [z0[j],z1[j],z2[j],z3[j],z4[j]]

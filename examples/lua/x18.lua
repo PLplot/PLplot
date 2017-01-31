@@ -54,19 +54,19 @@ function test_poly(k)
 	    x[1] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
 	    y[1] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
 	    z[1] = math.cos( math.pi*j/20.1 )
-	
+
 	    x[2] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*i/20 )
 	    y[2] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*i/20 )
 	    z[2] = math.cos( math.pi*(j+1)/20.1 )
-	
+
 	    x[3] = math.sin( math.pi*(j+1)/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
 	    y[3] = math.sin( math.pi*(j+1)/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
 	    z[3] = math.cos( math.pi*(j+1)/20.1 )
-	
+
 	    x[4] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*(i+1)/20 )
 	    y[4] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*(i+1)/20 )
 	    z[4] = math.cos( math.pi*j/20.1 )
-	
+
 	    x[5] = math.sin( math.pi*j/20.1 ) * math.cos( 2*math.pi*i/20 )
 	    y[5] = math.sin( math.pi*j/20.1 ) * math.sin( 2*math.pi*i/20 )
 	    z[5] = math.cos( math.pi*j/20.1 )

@@ -48,7 +48,7 @@ def main(w):
     # Must be done independently because otherwise this changes output files
     # and destroys agreement with C examples.
     #w.plcol0(1)
-	
+
 def plot1(w, z, zmin, zmax):
 # Illustrates a single shaded region
 
@@ -73,7 +73,7 @@ def plot1(w, z, zmin, zmax):
     w.plshade( z, -1., 1., -1., 1.,
     shade_min, shade_max, sh_cmap, sh_color, sh_width,
     min_color, min_width, max_color, max_width, 1, None, None)
-							
+
     w.plcol0(1)
     w.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)
     w.plcol0(2)

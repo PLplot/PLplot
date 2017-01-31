@@ -87,11 +87,11 @@ class QPlot(QtGui.QMainWindow):
 
 	plplot.plcol0(2)
 	plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
-	
+
 	plplot.plcol0(1)
 	plplot.plwidth(2)
 	plplot.plline(indexes, sine)
-	
+
 	plplot.plcol0(3)
 	plplot.plwidth(1)
 	plplot.pllsty(2)
@@ -99,7 +99,7 @@ class QPlot(QtGui.QMainWindow):
 	plplot.pllsty(1)
 
 	plplot.plcol0(2)
-	
+
 	plplot.plmtex("t", 1., 0.5, 0.5, "Sines")
 
         # 2nd plot
@@ -109,22 +109,22 @@ class QPlot(QtGui.QMainWindow):
 
 	plplot.plvpor(0.05, 0.95, 0.55, 0.95)
 	plplot.plwind(-1., 1., -1., 1.)
-	
+
 	plplot.plcol0(2)
 	plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
-	
+
 	plplot.plcol0(1)
 	plplot.plwidth(2)
 	plplot.plline(indexes, square)
-	
+
 	plplot.plcol0(3)
 	plplot.plwidth(1)
 	plplot.pllsty(2)
 	plplot.plline(indexes, cubic)
 	plplot.pllsty(1)
-	
+
 	plplot.plcol0(2)
-	
+
 	plplot.plmtex("t", 1., 0.5, 0.5, "Square & Cubic")
 
         self.update()
@@ -149,9 +149,9 @@ class QPlot(QtGui.QMainWindow):
 
 	plplot.pladv(0)
 	plplot.plvsta()
-	
+
 	plplot.plcol0(2)
-	
+
 	plplot.plwind(1980.0, 1990.0, 0.0, 35.0)
 	plplot.plbox("bc", 1.0, 0, "bcnv", 10.0, 0)
 	plplot.plcol0(2)

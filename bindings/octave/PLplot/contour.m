@@ -54,7 +54,7 @@ function contour (z, n, x, y)
       lines = n;
     elseif (nargin == 3)	# matlab syntax
       temp1 = z; y = n; z = x; x = temp1;
-    endif	
+    endif
     if (isvector (x) && isvector (y) && ismatrix (z))
       if (length (x) == columns (z) && length (y) == rows (z))
 	if (rows (x) == 1)
@@ -63,7 +63,7 @@ function contour (z, n, x, y)
 	if (rows (y) == 1)
 	  y = y';
 	endif
-	
+
 	__pl_contour(x, y, z', lines);
       else
         msg = "contour: rows (z) must be the same as length (x) and";

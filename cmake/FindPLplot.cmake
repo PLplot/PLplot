@@ -54,7 +54,7 @@ IF( PLplot_INCLUDE_DIR )
     set( PLplot_LIBRARIES ${PLplot_LIBRARIES} ${PLplot_wxwidgets_LIBRARY} )
   endif( PLplot_wxwidgets_LIBRARY )
 endif(PLplot_INCLUDE_DIR)
-	
+
 if(PLplot_FOUND)
   if(NOT PLplot_FIND_QUIETLY)
     message(STATUS "FindPLplot: Found both PLplot headers and library")

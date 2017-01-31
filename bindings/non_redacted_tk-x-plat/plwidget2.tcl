@@ -843,7 +843,7 @@ proc plw::save_as {w} {
 	    $w.plwin cmd plscmap0 16 #000000
 	    for {set i 1} {$i <= 15} {incr i} {
 		$w.plwin cmd plscol0 $i [lindex $c0 [expr $i +1]]
-	    }	
+	    }
 	}
 
 	if { $saveopts($w,1) == 0 } {

@@ -260,9 +260,9 @@ function [ret, xi, xe, yi, ye] = get_clip
 	if (start)
 	  plline(sx, sy); ## clear previous rectangle
 	endif
-	
+
 	start = 1;
-	
+
 	sx(3) = xe; sy(3) = ye;
 	sx(2) = xe; sy(2) = yi;
 	sx(4) = xi; sy(4) = ye;

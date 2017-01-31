@@ -41,7 +41,7 @@ function __pl_plot3(x, y, z, c)
     if (__pl.axis_st(strm))
       xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);	# at least x always exist
 
-      if (length(__pl.axis) >= 4)	
+      if (length(__pl.axis) >= 4)
 	ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
       else
 	__pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
@@ -49,12 +49,12 @@ function __pl_plot3(x, y, z, c)
       if (length(__pl.axis) == 6)
 	zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
       else
-	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
+	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;
       endif
     else # make axis() return current axis
       __pl.axis(strm,1) = xm; __pl.axis(strm,2) = xM;
       __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
-      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
+      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;
     endif
 
     if (!ishold)

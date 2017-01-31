@@ -200,7 +200,7 @@ END;
     // view code
 	  echo "<object id=\"codebox\" type=\"text/plain\" data=\"$demo_dir/$fname\">\n";
 		echo "Your browser is not able to display text!\n</object>\n";
-			
+
     // show plots for chosen example
 	  echo "<p>Select to view full-size image</p>\n";
 		echo "<p>\n";

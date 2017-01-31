@@ -114,7 +114,7 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
     case 2
       xopt="bcnstag"; yopt="bcnstvag";
     case 3
-      xopt="bcnstagh"; yopt="bcnstvagh";		
+      xopt="bcnstagh"; yopt="bcnstvagh";
     case 10
       xopt="bcnstl"; yopt="bcnstv";
     case 11
@@ -122,7 +122,7 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
     case 12
       xopt="bcgnstl"; yopt="bcnstvag";
     case 13
-      xopt="bcgnstlh"; yopt="bcnstvagh";		
+      xopt="bcgnstlh"; yopt="bcnstvagh";
     case 20
       xopt="bcnst"; yopt="bcnstvl";
     case 21
@@ -130,7 +130,7 @@ function __pl_plenv(xm, xM, ym, yM, scale, axis)
     case 22
       xopt="bcnstg"; yopt="bcnstvagl";
     case 23
-      xopt="bcnstgh"; yopt="bcnstvaglh";		
+      xopt="bcnstgh"; yopt="bcnstvaglh";
     case 30
       xopt="bcnstl"; yopt="bcnstvl";
     case 31

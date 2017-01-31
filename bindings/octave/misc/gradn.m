@@ -47,5 +47,5 @@ endfor
 for i=1:nc
 	gy(:,i) = diffn(z(:,i), dy, order);
 endfor
-	
+
 endfunction

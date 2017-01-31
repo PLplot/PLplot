@@ -31,7 +31,7 @@
 ## To clear the plot buffer type `plclearplot' or `plclg'
 ##
 ## *Usual* devices are:
-##	
+##
 ##	ps         PostScript File (monochrome)
 ##	psc        PostScript File (color)
 ##	plmeta     PLPLOT Native Meta-File (can be displayed with 'plrender')
@@ -60,7 +60,7 @@ function save_fig(file, device, rev)
   endif
 
   if (nargin < 2 )
-    device = "psc";	
+    device = "psc";
     ix = rindex(file, '.');
     if (ix)
       device = file(ix+1:length(file));
@@ -147,6 +147,6 @@ function save_fig(file, device, rev)
     endif
   else
     help save_fig
-  endif	
+  endif
 
 endfunction

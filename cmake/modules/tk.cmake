@@ -66,7 +66,7 @@ if(PLD_tk OR PLD_ntk OR PLD_tkwin)
   string(REGEX REPLACE ";" "\" -I\"" TKLIB_COMPILE_FLAGS "-I\"${TK_INCLUDE_PATH}\"")
   message(STATUS "TKLIB_COMPILE_FLAGS = ${TKLIB_COMPILE_FLAGS}")
 endif(PLD_tk OR PLD_ntk OR PLD_tkwin)
-	
+
 if(PLD_tk)
   set(tk_COMPILE_FLAGS
   "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/${TCL_TK_SRC_PREFIX}tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/${TCL_TK_SRC_PREFIX}tk"

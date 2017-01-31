@@ -87,14 +87,14 @@ main(int argc, char *argv[])
 	  fprintf(stderr, "sem_wait\n");
 	  exit(EXIT_FAILURE);
 	}
-	
+
       shmp->cnt = read(STDIN_FILENO, shmp->buf, BUF_SIZE);
       if(shmp->cnt == -1)
 	{
 	  fprintf(stderr, "read\n");
 	  exit(EXIT_FAILURE);
 	}
-	
+
       // Give pshm_read a turn
       if(sem_post(&shmp->rsem) == -1)
 	{

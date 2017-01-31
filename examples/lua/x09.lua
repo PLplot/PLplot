@@ -48,7 +48,7 @@ tr = { XSPA, 0, -1, 0, YSPA, -1 }
 function mypltr(x, y)
 	tx = tr[1] * x + tr[2] * y + tr[3]
 	ty = tr[4] * x + tr[5] * y + tr[6]
-	
+
 	return tx, ty
 end
 
@@ -60,7 +60,7 @@ function polar()
 
 	pl.env(-1, 1, -1, 1, 0, -2)
 	pl.col0(1)
-		
+
 	--Perimeter
 	for i=1, PERIMETERPTS do
 		t = (2*math.pi/(PERIMETERPTS-1))*(i-1)
@@ -68,7 +68,7 @@ function polar()
 		py[i] = math.sin(t)
   end
   pl.line(px, py)
-	
+
 	--create data to be contoured.
   cgrid2["xg"] = {}
   cgrid2["yg"] = {}
@@ -115,7 +115,7 @@ function f2mnmx(f, nx, ny)
 	    fmin = math.min(fmin, f[i][j])
 		end
 	end
-		
+
 	return fmin, fmax
 end
 

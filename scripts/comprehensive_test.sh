@@ -430,7 +430,7 @@ while test $# -gt 0; do
 		    do_clean_first=$2
 		    shift
 		    ;;
-		
+
 		*)
 		    usage 1 1>&2
 		    ;;
@@ -442,7 +442,7 @@ while test $# -gt 0; do
 		    do_clean_as_you_go=$2
 		    shift
 		    ;;
-		
+
 		*)
 		    usage 1 1>&2
 		    ;;
@@ -474,7 +474,7 @@ while test $# -gt 0; do
 		    do_submit_dashboard=$2
 		    shift
 		    ;;
-		
+
 		*)
 		    usage 1 1>&2
 		    ;;
@@ -486,7 +486,7 @@ while test $# -gt 0; do
 		    do_shared=$2
 		    shift
 		    ;;
-		
+
 		*)
 		    usage 1 1>&2
 		    ;;

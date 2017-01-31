@@ -36,10 +36,10 @@ function __pl_contour(x, y, z, n)
 
     if (__pl.axis_st(strm))
       ## at least x always exist
-      xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);	
+      xm = __pl.axis(strm,1); xM = __pl.axis(strm,2);
       z = z(find(x >= xm & x <= xM), :);
 
-      if (length(__pl.axis) >= 4)	
+      if (length(__pl.axis) >= 4)
 	ym = __pl.axis(strm,3); yM = __pl.axis(strm,4);
 	z = z(:, find(y >= ym & y <= yM));
       else
@@ -48,17 +48,17 @@ function __pl_contour(x, y, z, n)
       if (length(__pl.axis) == 6)
 	zm = __pl.axis(strm,5); zM = __pl.axis(strm,6);
       else
-	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
+	__pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;
       endif
     else	# make axis() return current axis
       __pl.axis(strm,1) = xm; __pl.axis(strm,2) = xM;
       __pl.axis(strm,3) = ym; __pl.axis(strm,4) = yM;
-      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;		
+      __pl.axis(strm,5) = zm; __pl.axis(strm,6) = zM;
     endif
 
     __pl.type(strm) = 0; ## was -3 ??
     __pl.plcol(strm) = 1;
-    __pl.pllsty(strm) = 1;	
+    __pl.pllsty(strm) = 1;
     __pl.lab_pos(strm) = 1;
     __pl.lab_str = "";
     plcol0(15); pllsty(1);
@@ -82,7 +82,7 @@ function __pl_contour(x, y, z, n)
   else
     st = (zM-zm)/n/2;
     clevel = (linspace(zm+st, zM-st, n))';
-  endif	
+  endif
 
   for i=1:n
     plcol0(__pl.plcol(strm)); pllsty(__pl.pllsty(strm));
@@ -90,14 +90,14 @@ function __pl_contour(x, y, z, n)
     __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", clevel(i))];
     __pl.lab_col(strm,__pl.lab_pos(strm)) = __pl.plcol(strm);
     __pl.lab_lsty(strm,__pl.lab_pos(strm)) = __pl.pllsty(strm);
-    __pl.lab_pos(strm) = __pl.lab_pos(strm) + 1;				
+    __pl.lab_pos(strm) = __pl.lab_pos(strm) + 1;
     __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
     if  (__pl.line_style(strm))
       __pl.pllsty(strm) = rem(__pl.pllsty(strm), 8)+1;
     endif
   endfor
 
-  ## to not mess up the legend, print it only after ploting all contour lines	
+  ## to not mess up the legend, print it only after ploting all contour lines
   if (__pl.legend(strm))
     __pl_draw_legend
   endif

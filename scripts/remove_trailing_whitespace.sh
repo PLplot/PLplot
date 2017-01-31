@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script potentially can be quite intrusive since it
-# unconditionally removes trailing blanks from essentially all text files
+# unconditionally removes trailing blanks and tabs from essentially all text files
 # in the source tree.  So after running this script you should use
 # "git diff" to make sure you agree with the source file changes generated
 # by this script before committing these generated changes.
@@ -38,7 +38,7 @@ cd "${ORIGINAL_PATH}"
 SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
 cd $SOURCE_TREE
 
-# Remove trailing blanks on all files in source tree with the following exceptions.
+# Remove trailing blanks and tabs on all files in source tree with the following exceptions.
 # * Exclude all files in the .git tree (don't want to mess with our repository).
 # * Exclude all binary files recognized in .gitattributes.
 # * Exclude all files in the debian, rpm, and lib trees (may review lib later).
@@ -48,4 +48,4 @@ cd $SOURCE_TREE
 # * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
 #   that does generate lines with some trailing blanks).
 
-sed -i -e 's?  *$??' $(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|debian/|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l '  *$')
+sed -i -e $'s?[\t ][\t ]*$??' $(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|debian/|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')

@@ -63,7 +63,7 @@ def main(w):
     w.plsfam(fam, num, bmax)
     w.plsetopt("fflen","2")
     w.plinit()
-		
+
     # Set up the data & plot
     # Original case
 
@@ -74,23 +74,23 @@ def main(w):
     xoff = 0.
     yoff = 0.
     plot1(w, xscale, yscale, xoff, yoff)
-			
+
     # Set up the data & plot
-			
+
     xscale = 1.
     yscale = 1.e+6
     plot1(w, xscale, yscale, xoff, yoff)
-				
+
     # Set up the data & plot
-				
+
     xscale = 1.
     yscale = 1.e-6
     digmax = 2
     w.plsyax(digmax, 0)
     plot1(w, xscale, yscale, xoff, yoff)
-							
+
     # Set up the data & plot
-							
+
     xscale = 1.
     yscale = 0.0014
     yoff = 0.0185
@@ -104,21 +104,21 @@ def main(w):
     w.plsstrm(1)
     plot4(w)
     w.pleop()
-		
+
     # Back to master
-		
+
     w.plsstrm(0)
     plot2(w)
     plot3(w)
-			
+
     # To slave
-			
+
     w.plsstrm(1)
     plot5(w)
     w.pleop()
-					
+
     # Back to master to wait for user to advance
-					
+
     w.plsstrm(0)
     w.pleop()
     # Restore defaults

@@ -23,7 +23,7 @@
 
 function x00c
 
-    NSIZE = 101;		
+    NSIZE = 101;
 
     xmin = 0.; xmax = 1.; ymin = 0.; ymax = 100.;
 

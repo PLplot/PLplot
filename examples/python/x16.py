@@ -37,7 +37,7 @@ def mypltr(x, y, data):
     result0 = data[0] * x + data[1] * y + data[2]
     result1 = data[3] * x + data[4] * y + data[5]
     return array((result0, result1))
-		
+
 def main(w):
 
     fill_width = 2.
@@ -78,7 +78,7 @@ def main(w):
     # and mypltr(i,j,tr)[1] is only function of j.
     xg0 = mypltr(arange(NX),0,tr)[0]
     yg0 = mypltr(0,arange(NY),tr)[1]
-	
+
     # Build the 1-d coord arrays.
 
     distort = .4
@@ -170,7 +170,7 @@ def main(w):
     w.plcol0(1)
     w.plbox( "bcnst", 0.0, 0, "bcnstv", 0.0, 0 )
     w.plcol0(2)
-	
+
     w.pllab( "distance", "altitude", "Bogon density" )
 
     # Plot using 2d coordinate transform

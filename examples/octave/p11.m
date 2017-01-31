@@ -42,8 +42,8 @@ function p11
     stripc_add(id1, 0, t, y1);
     stripc_add(id1, 1, t, y2);
     stripc_add(id1, 2, t, y3);
-    stripc_add(id1, 3, t, y4);			
-    pleop;	
+    stripc_add(id1, 3, t, y4);
+    pleop;
   endfor
 
   ## Destroy strip chart and it's memory */

@@ -764,11 +764,11 @@ itcl::class ColorPalette1 {
 	}
 	set l [expr $i-1]
 	set r [expr $i+1]
-	
+
 	set prev [$w.l.$l.scale get]
 	set curr [$w.l.$i.scale get]
 	set next [$w.l.$r.scale get]
-	
+
 	while { $curr < $prev } {
 	    if { $l == 0 } break
 	    $w.l.$l.scale set $curr
