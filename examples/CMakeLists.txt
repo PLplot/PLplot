@@ -927,9 +927,7 @@ if(BUILD_TEST)
 	COMMAND extXdrawable_demo
 	)
       add_dependencies(test_extXdrawable extXdrawable_demo ${cairo_targets})
-      # This test target has a runtime error (bad X window) which has not been figured out yet.
-      # So keep the target, but exclude it from further generic test dependencies.
-      # list(APPEND interactive_targets_LIST test_extXdrawable)
+      list(APPEND interactive_targets_LIST test_extXdrawable)
     endif(PLD_xcairo AND TARGET extXdrawable_demo)
 
   endif(ENABLE_c)
@@ -1328,9 +1326,7 @@ if(BUILD_TEST)
     test_c_svgcairo
     test_extcairo
     test_c_xcairo
-    # This test target has a runtime error (bad X window) which has not been figured out yet.
-    # So keep the target, but exclude it from further generic test dependencies.
-    #test_extXdrawable
+    test_extXdrawable
     )
 
   set(cairo_test_target_DEPENDS)

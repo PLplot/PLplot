@@ -2091,9 +2091,6 @@ void plD_eop_xcairo( PLStream *pls )
 
     // Blit the offscreen image to the X window.
     blit_to_x( pls, 0.0, 0.0, pls->xlength, pls->ylength );
-
-    if ( aStream->xdrawable_mode )
-        return;
 }
 
 //--------------------------------------------------------------------------
@@ -2143,6 +2140,9 @@ void plD_wait_xcairo( PLStream *pls )
     XExposeEvent   *expose;
 
     aStream = (PLCairo *) pls->dev;
+
+    if ( aStream->xdrawable_mode )
+        return;
 
     aStream->exit_event_loop = 0;
 
