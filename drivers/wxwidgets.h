@@ -209,6 +209,7 @@ void plD_init_wxpng( PLStream * );
 void plD_line_wxwidgets( PLStream *, short, short, short, short );
 void plD_polyline_wxwidgets( PLStream *, short *, short *, PLINT );
 void plD_eop_wxwidgets( PLStream * );
+void plD_wait_wxwidgets( PLStream * );
 void plD_bop_wxwidgets( PLStream * );
 void plD_tidy_wxwidgets( PLStream * );
 void plD_state_wxwidgets( PLStream *, PLINT );

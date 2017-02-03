@@ -132,6 +132,7 @@ void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt )
     pdt->pl_line     = (plD_line_fp) plD_line_wxwidgets;
     pdt->pl_polyline = (plD_polyline_fp) plD_polyline_wxwidgets;
     pdt->pl_eop      = (plD_eop_fp) plD_eop_wxwidgets;
+    pdt->pl_wait     = (plD_wait_fp) plD_wait_wxwidgets;
     pdt->pl_bop      = (plD_bop_fp) plD_bop_wxwidgets;
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_wxwidgets;
     pdt->pl_state    = (plD_state_fp) plD_state_wxwidgets;
@@ -339,7 +340,8 @@ void plD_eop_wxwidgets( PLStream *pls )
         wxPLDevice *device = (wxPLDevice *) pls->dev;
         if ( !device )
             throw( "plD_eop_wxwidgets called before initialization." );
-        device->EndPage( pls );
+        if ( pls->nopause )
+            device->EndPage( pls );
     }
     catch ( char* message )
     {
@@ -351,6 +353,33 @@ void plD_eop_wxwidgets( PLStream *pls )
     }
 }
 
+
+//--------------------------------------------------------------------------
+//  void plD_wait_wxwidgets( PLStream *pls )
+//
+//  Wait for user input. This command is ignored if we have the plot embedded in a
+//  wxWidgets application, otherwise the application created by the device
+//  takes over.
+//--------------------------------------------------------------------------
+void plD_wait_wxwidgets( PLStream *pls )
+{
+    // PLPLOT_wxLogDebug( "plD_wait_wxwidgets()" );
+    try
+    {
+        wxPLDevice *device = (wxPLDevice *) pls->dev;
+        if ( !device )
+            throw( "plD_wait_wxwidgets called before initialization." );
+        device->EndPage( pls );
+    }
+    catch ( char* message )
+    {
+        plabort( message );
+    }
+    catch ( ... )
+    {
+        plabort( "unknown error in plD_wait_wxwidgets." );
+    }
+}
 
 //--------------------------------------------------------------------------
 //  void plD_bop_wxwidgets( PLStream *pls )
