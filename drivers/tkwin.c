@@ -541,9 +541,6 @@ plD_eop_tkwin( PLStream *pls )
     XFlush( tkwd->display );
     if ( pls->db )
         ExposeCmd( pls, NULL );
-
-    if ( !pls->nopause )
-        WaitForPage( pls );
 }
 
 //--------------------------------------------------------------------------
@@ -562,8 +559,7 @@ plD_wait_tkwin( PLStream *pls )
     if ( dev->flags & 1 )
         return;
 
-    if ( !pls->nopause )
-        WaitForPage( pls );
+    WaitForPage( pls );
 }
 
 //--------------------------------------------------------------------------
