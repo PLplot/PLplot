@@ -3248,6 +3248,7 @@ void plD_dispatch_init_wincairo( PLDispatchTable *pdt );
 void plD_init_wincairo( PLStream * );
 //void plD_bop_extcairo( PLStream * );
 void plD_eop_wincairo( PLStream * );
+void plD_wait_wincairo( PLStream * );
 void plD_esc_wincairo( PLStream *, PLINT, void * );
 void plD_tidy_wincairo( PLStream * );
 
@@ -3419,6 +3420,7 @@ void plD_dispatch_init_wincairo( PLDispatchTable *pdt )
     pdt->pl_tidy     = (plD_tidy_fp) plD_tidy_wincairo;
     pdt->pl_state    = (plD_state_fp) plD_state_cairo;
     pdt->pl_esc      = (plD_esc_fp) plD_esc_wincairo;
+    pdt->pl_wait     = (plD_wait_fp) plD_wait_wincairo;
 }
 
 //--------------------------------------------------------------------------
@@ -3567,28 +3569,37 @@ void plD_init_wincairo( PLStream *pls )
 void
 plD_eop_wincairo( PLStream *pls )
 {
+    // Nothing to do for the pls->nopause true case.
+}
+
+//--------------------------------------------------------------------------
+// plD_wait_wincairo()
+//
+// Processing of wait (only occurs when pls->nopause false) for the Cairo Microsoft Windows driver.
+//--------------------------------------------------------------------------
+
+void
+plD_wait_wincairo( PLStream *pls )
+{
     PLCairo *aStream = (PLCairo *) pls->dev;
 
-    if ( !pls->nopause )
+    while ( GetMessage( &aStream->msg, NULL, 0, 0 ) )
     {
-        while ( GetMessage( &aStream->msg, NULL, 0, 0 ) )
+        TranslateMessage( &aStream->msg );
+        switch ( (int) aStream->msg.message )
         {
-            TranslateMessage( &aStream->msg );
-            switch ( (int) aStream->msg.message )
+        case WM_CHAR:
+            if ( ( (TCHAR) ( aStream->msg.wParam ) == 13 ) ||
+                 ( (TCHAR) ( aStream->msg.wParam ) == 'q' ) ||
+                 ( (TCHAR) ( aStream->msg.wParam ) == 'Q' ) )
             {
-            case WM_CHAR:
-                if ( ( (TCHAR) ( aStream->msg.wParam ) == 13 ) ||
-                     ( (TCHAR) ( aStream->msg.wParam ) == 'q' ) ||
-                     ( (TCHAR) ( aStream->msg.wParam ) == 'Q' ) )
-                {
-                    PostQuitMessage( 0 );
-                }
-                break;
-
-            default:
-                DispatchMessage( &aStream->msg );
-                break;
+                PostQuitMessage( 0 );
             }
+            break;
+
+        default:
+            DispatchMessage( &aStream->msg );
+            break;
         }
     }
 }
