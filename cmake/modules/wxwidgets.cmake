@@ -1,7 +1,7 @@
 # cmake/modules/wxwidgets.cmake
 #
 # Copyright (C) 2006 Werner Smekal
-# Copyright (C) 2015-2016 Alan W. Irwin
+# Copyright (C) 2015-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -208,14 +208,20 @@ if(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 endif(ENABLE_wxwidgets AND NOT PLD_wxwidgets)
 
 if(ENABLE_wxwidgets)
-  option(PLPLOT_WX_DEBUG_OUTPUT "Enable debug output for wxwidgets device driver, binding, and example" OFF)
-  option(PLPLOT_WX_NANOSEC "Experimental option (because it may lead to build failures (!)) for nanosec timestamp for wx debug output" OFF)
   set(wxwidgets_true "")
 
   set(wxwidgets_SOURCE)
   if(OLD_WXWIDGETS)
     set(wxdemo_name deprecated_wxPLplotDemo)
   else(OLD_WXWIDGETS)
+    # These options only suitable if the new wxwidgets is enabled.
+    option(PLPLOT_WX_DEBUG_OUTPUT "Enable debug output for wxwidgets device driver, binding, and example" OFF)
+    option(PLPLOT_WX_NANOSEC "Experimental option (because it may lead to build failures (!)) for nanosec timestamp for wx debug output" OFF)
+    # When use of unnamed POSIX semaphores is no longer experimental (i.e., the relevant code
+    # is reliable), then should determine PL_HAVE_UNAMED_POSIX_SEMAPHORES
+    # with a test because at least some proprietary POSIX systems (e.g., Mac OS X) do not support
+    # unnamed POSIX semaphores.
+    option(PL_HAVE_UNNAMED_POSIX_SEMAPHORES "Experimental option to use unnamed POSIX semaphores" OFF)
     set(wxdemo_name wxPLplotDemo)
     if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
       # This is added to later by drivers_finish with

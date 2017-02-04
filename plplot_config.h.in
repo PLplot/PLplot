@@ -302,3 +302,7 @@
 
 // Define if the PLplot build uses Qt5 (rather than Qt4).
 #cmakedefine PLPLOT_USE_QT5
+
+// Define if unnamed POSIX semaphores are going to be used for
+// IPC between -dev wxwidgets and wxPLViewer.
+#cmakedefine PL_HAVE_UNNAMED_POSIX_SEMAPHORES

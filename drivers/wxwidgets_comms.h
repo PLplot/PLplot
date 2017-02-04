@@ -1,5 +1,7 @@
-// Copyright (C) 2008  Werner Smekal
-//
+// Copyright (C) 2015-2017 Phil Rosenberg
+// Copyright (C) 2017 Alan W. Irwin
+// Copyright (C) 2008 Werner Smekal
+
 // This file is part of PLplot.
 //
 // PLplot is free software; you can redistribute it and/or modify
@@ -73,6 +75,17 @@ struct MemoryMapHeader
     PLGraphicsIn graphicsIn;
     TextSizeInfo textSizeInfo;
 };
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+#define PL_SHARED_ARRAY_SIZE    1024 * 1024
+// Shared memory buffer type
+typedef struct
+{
+    sem_t  wsem;                      // Writer semaphore
+    sem_t  rsem;                      // Reader semaphore
+    size_t cnt;                       // Number of bytes used in 'buf'
+    char   buf[PL_SHARED_ARRAY_SIZE]; // Data being transferred
+} shmbuf;
+#endif
 
 const PLINT plMemoryMapReservedSpace = sizeof ( MemoryMapHeader );
 
@@ -84,16 +97,22 @@ public:
     void create( const char *name, PLINT size, bool mustExist, bool mustNotExist );
     void close();
     ~PLMemoryMap();
-    char *getBuffer() { return (char *) m_buffer; }
     bool isValid() { return m_buffer != NULL; }
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+    char *getBuffer() { return ( (shmbuf *) m_buffer )->buf; }
+    size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
+#else
+    char *getBuffer() { return (char *) m_buffer; }
     size_t getSize() { return m_size; }
+#endif
 private:
 #ifdef WIN32
     HANDLE m_mapFile;
 #else
     int m_mapFile;
-    char   * m_name;
+    char * m_name;
 #endif
+    // Size of shared memory buffer
     size_t m_size;
     void   *m_buffer;
 };

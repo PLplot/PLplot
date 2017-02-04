@@ -1,7 +1,8 @@
-// Copyright (C) 2015  Phil Rosenberg
-// Copyright (C) 2005  Werner Smekal, Sjaak Verdoold
-// Copyright (C) 2005  Germain Carrera Corraleche
-// Copyright (C) 1999  Frank Huebner
+// Copyright (C) 2015-2017 Phil Rosenberg
+// Copyright (C) 2017 Alan W. Irwin
+// Copyright (C) 2005 Werner Smekal, Sjaak Verdoold
+// Copyright (C) 2005 Germain Carrera Corraleche
+// Copyright (C) 1999 Frank Huebner
 //
 // This file is part of PLplot.
 //
@@ -1548,12 +1549,16 @@ void wxPLDevice::SetupMemoryMap()
     PLPLOT_wxLogDebug( "SetupMemoryMap(): enter" );
     if ( strlen( m_mfo ) > 0 )
     {
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+        const size_t mapSize = sizeof ( shmbuf );
+#else
         const size_t mapSize = 1024 * 1024;
+#endif
         //create a memory map to hold the data and add it to the array of maps
-        int          nTries = 0;
-        char         mapName[PLPLOT_MAX_PATH];
-        char         mutexName[PLPLOT_MAX_PATH];
-        static Rand  randomGenerator;         // make this static so that rapid repeat calls don't use the same seed
+        int         nTries = 0;
+        char        mapName[PLPLOT_MAX_PATH];
+        char        mutexName[PLPLOT_MAX_PATH];
+        static Rand randomGenerator;          // make this static so that rapid repeat calls don't use the same seed
         while ( nTries < 10 )
         {
             PLPLOT_wxLogDebug( "SetupMemoryMap(): mapName start" );
