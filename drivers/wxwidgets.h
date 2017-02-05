@@ -76,11 +76,7 @@ private:
 class PlDevice
 {
 public:
-    // Need to initialize m_prevSymbol to invalid value so initial test
-    // involving this value will (correctly) fail and valgrind complaints
-    // about this uninitialized value will cease.  So initialize in
-    // constructor:
-    PlDevice( void ) { m_prevSymbol = 0;}
+	PlDevice();
     virtual ~PlDevice() {}
     virtual void DrawLine( short x1a, short y1a, short x2a, short y2a ) {}
     virtual void DrawPolyline( short *xa, short *ya, PLINT npts ){}

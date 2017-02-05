@@ -53,6 +53,21 @@
 #include <limits>
 
 //--------------------------------------------------------------------------
+// PlDevice::PlDevice()
+//
+// Constructor for wxPLDevice
+//--------------------------------------------------------------------------
+PlDevice::PlDevice()
+{
+	m_prevSymbol = 0;
+	m_prevBaseFontSize = 0;
+	m_prevSuperscriptLevel = 0;
+	m_prevFci = 0;
+	m_prevSymbolWidth = 0;
+	m_prevSymbolHeight = 0;
+}
+
+//--------------------------------------------------------------------------
 //  void wxPLDevice::DrawText( PLStream* pls, EscText* args )
 //
 //  This is the main function which processes the unicode text strings.
