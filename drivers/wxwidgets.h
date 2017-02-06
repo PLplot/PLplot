@@ -76,7 +76,7 @@ private:
 class PlDevice
 {
 public:
-	PlDevice();
+    PlDevice();
     virtual ~PlDevice() {}
     virtual void DrawLine( short x1a, short y1a, short x2a, short y2a ) {}
     virtual void DrawPolyline( short *xa, short *ya, PLINT npts ){}

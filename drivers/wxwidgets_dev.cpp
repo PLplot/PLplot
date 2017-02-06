@@ -59,12 +59,12 @@
 //--------------------------------------------------------------------------
 PlDevice::PlDevice()
 {
-	m_prevSymbol = 0;
-	m_prevBaseFontSize = 0;
-	m_prevSuperscriptLevel = 0;
-	m_prevFci = 0;
-	m_prevSymbolWidth = 0;
-	m_prevSymbolHeight = 0;
+    m_prevSymbol           = 0;
+    m_prevBaseFontSize     = 0;
+    m_prevSuperscriptLevel = 0;
+    m_prevFci          = 0;
+    m_prevSymbolWidth  = 0;
+    m_prevSymbolHeight = 0;
 }
 
 //--------------------------------------------------------------------------
@@ -1598,9 +1598,9 @@ void wxPLDevice::SetupMemoryMap()
             PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
             if ( m_outputMemoryMap.isValid() )
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-	      m_mutex.create(m_outputMemoryMap.getwsem());
+                m_mutex.create( m_outputMemoryMap.getwsem() );
 #else
-	      m_mutex.create( mutexName );
+                m_mutex.create( mutexName );
 #endif
             if ( !m_mutex.isValid() )
                 m_outputMemoryMap.close();
