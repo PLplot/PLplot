@@ -100,6 +100,7 @@ public:
     bool isValid() { return m_buffer != NULL; }
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     char *getBuffer() { return ( (shmbuf *) m_buffer )->buf; }
+    sem_t *getwsem() { return & ( ( (shmbuf *) m_buffer )->wsem); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
 #else
     char *getBuffer() { return (char *) m_buffer; }
@@ -121,9 +122,14 @@ class PLNamedMutex
 {
 public:
     PLNamedMutex();
-    PLNamedMutex( const char *name, bool aquireOnCreate = false );
     ~PLNamedMutex();
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+    PLNamedMutex( sem_t * wsem );
+    void create( sem_t * wsem );
+#else    
+    PLNamedMutex( const char *name, bool aquireOnCreate = false );
     void create( const char *name, bool aquireOnCreate = false );
+#endif
     void clear();
     void aquire();
     bool aquire( unsigned long millisecs );

@@ -605,7 +605,7 @@ private:
 
 //--------------------------------------------------------------------------
 // class Rand
-// This is a simple random number generator class, created soley so that
+// This is a simple random number generator class, created solely so that
 // random numbers can be generated in this file without "contaminating" the
 // global series of random numbers with a new seed.
 // It uses an algorithm that apparently used to be used in gcc rand()
@@ -1597,7 +1597,11 @@ void wxPLDevice::SetupMemoryMap()
             m_outputMemoryMap.create( mapName, mapSize, false, true );
             PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
             if ( m_outputMemoryMap.isValid() )
-                m_mutex.create( mutexName );
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+	      m_mutex.create(m_outputMemoryMap.getwsem());
+#else
+	      m_mutex.create( mutexName );
+#endif
             if ( !m_mutex.isValid() )
                 m_outputMemoryMap.close();
             if ( m_outputMemoryMap.isValid() )
