@@ -100,7 +100,7 @@ public:
     bool isValid() { return m_buffer != NULL; }
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     char *getBuffer() { return ( (shmbuf *) m_buffer )->buf; }
-    sem_t *getwsem() { return & ( ( (shmbuf *) m_buffer )->wsem); }
+    sem_t *getwsem() { return &( ( (shmbuf *) m_buffer )->wsem ); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
 #else
     char *getBuffer() { return (char *) m_buffer; }
@@ -126,7 +126,7 @@ public:
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     PLNamedMutex( sem_t * wsem );
     void create( sem_t * wsem );
-#else    
+#else
     PLNamedMutex( const char *name, bool aquireOnCreate = false );
     void create( const char *name, bool aquireOnCreate = false );
 #endif
@@ -140,8 +140,11 @@ private:
     bool   m_haveLock;
 #ifdef WIN32
     HANDLE m_mutex;
+#elif defined ( PL_HAVE_UNNAMED_POSIX_SEMAPHORES )
+    sem_t  * m_mutex;
 #else
     sem_t  * m_mutex;
+    char   m_mutexName[251];
 #endif
 };
 

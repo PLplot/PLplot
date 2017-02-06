@@ -174,7 +174,7 @@ void PLNamedMutex::create( sem_t * wsem )
     if ( !isValid() )
     {
         m_mutex = wsem;
-        sem_init(m_mutex, 1, 1);
+        sem_init( m_mutex, 1, 1 );
     }
 }
 
@@ -191,12 +191,11 @@ void PLNamedMutex::create( const char *name, bool aquireOnCreate )
 #ifdef WIN32
     m_mutex = CreateMutexA( NULL, aquireOnCreate ? TRUE : FALSE, name );
 #else
-    m_mutex = NULL;
-    char mutexName[251];
-    mutexName[0] = '/';
-    strncpy( mutexName + 1, name, 250 );
-    mutexName[250] = '\0';
-    m_mutex        = sem_open( mutexName, O_CREAT, S_IRWXU, 1 );
+    m_mutex        = NULL;
+    m_mutexName[0] = '/';
+    strncpy( m_mutexName + 1, name, 250 );
+    m_mutexName[250] = '\0';
+    m_mutex          = sem_open( m_mutexName, O_CREAT, S_IRWXU, 1 );
 #endif
 }
 
@@ -253,10 +252,12 @@ void PLNamedMutex::clear()
     release();
 #ifdef WIN32
     CloseHandle( m_mutex );
-#elif defined(PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
+#elif defined ( PL_HAVE_UNNAMED_POSIX_SEMAPHORES )
     sem_destroy( m_mutex );
 #else
     sem_close( m_mutex );
+    // Needed to release shared memory resources used by named semaphores.
+    sem_unlink( m_mutexName );
 #endif
 }
 
