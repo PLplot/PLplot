@@ -161,24 +161,6 @@ PLNamedMutex::PLNamedMutex()
     m_haveLock = false;
 }
 
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-PLNamedMutex::PLNamedMutex( sem_t * wsem )
-{
-    m_mutex    = NULL;
-    m_haveLock = false;
-    create( wsem );
-}
-
-void PLNamedMutex::create( sem_t * wsem )
-{
-    if ( !isValid() )
-    {
-        m_mutex = wsem;
-        sem_init( m_mutex, 1, 1 );
-    }
-}
-
-#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 PLNamedMutex::PLNamedMutex( const char *name, bool aquireOnCreate )
 {
     m_mutex    = NULL;
@@ -198,8 +180,6 @@ void PLNamedMutex::create( const char *name, bool aquireOnCreate )
     m_mutex          = sem_open( m_mutexName, O_CREAT, S_IRWXU, 1 );
 #endif
 }
-
-#endif //#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 
 void PLNamedMutex::aquire()
 {
@@ -252,8 +232,6 @@ void PLNamedMutex::clear()
     release();
 #ifdef WIN32
     CloseHandle( m_mutex );
-#elif defined ( PL_HAVE_UNNAMED_POSIX_SEMAPHORES )
-    sem_destroy( m_mutex );
 #else
     sem_close( m_mutex );
     // Needed to release shared memory resources used by named semaphores.

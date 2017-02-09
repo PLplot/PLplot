@@ -60,12 +60,8 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         m_memoryMap.create( file.mb_str(), m_fileSize, true, false );
         if ( m_memoryMap.isValid() )
         {
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-            m_mutex.create( m_memoryMap.getwsem() );
-#else
             wxString mutexName = file + wxT( "mut" );
             m_mutex.create( mutexName.mb_str() );
-#endif
             if ( !m_mutex.isValid() )
                 m_memoryMap.close();
         }

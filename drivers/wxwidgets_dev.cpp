@@ -1597,11 +1597,7 @@ void wxPLDevice::SetupMemoryMap()
             m_outputMemoryMap.create( mapName, mapSize, false, true );
             PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
             if ( m_outputMemoryMap.isValid() )
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-                m_mutex.create( m_outputMemoryMap.getwsem() );
-#else
                 m_mutex.create( mutexName );
-#endif
             if ( !m_mutex.isValid() )
                 m_outputMemoryMap.close();
             if ( m_outputMemoryMap.isValid() )
