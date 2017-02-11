@@ -186,7 +186,9 @@ private:
     //variables for dealing with sending/receiving commands
     //via a memory map
     char         m_mfo[PLPLOT_MAX_PATH];
+#ifndef PL_WXWIDGETS_IPC2
     PLNamedMutex m_mutex;
+#endif
     size_t       m_localBufferPosition;
     PLMemoryMap  m_outputMemoryMap;
 };

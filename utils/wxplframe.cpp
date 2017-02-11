@@ -1,4 +1,5 @@
-// Copyright (C) 2015  Phil Rosenberg
+// Copyright (C) 2015-2017 Phil Rosenberg
+// Copyright (C) 2017 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -60,10 +61,19 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         m_memoryMap.create( file.mb_str(), m_fileSize, true, false );
         if ( m_memoryMap.isValid() )
         {
+#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+            PLTwoSemaphores two_semaphores( m_memoryMap.getWriteSemaphore(), m_memoryMap.getReadSemaphore( ), true );
+#else
+#error IPC2 with named semaphores is currently unimplemented
+#endif
+
+#else           // #ifdef PL_WXWIDGETS_IPC2
             wxString mutexName = file + wxT( "mut" );
             m_mutex.create( mutexName.mb_str() );
             if ( !m_mutex.isValid() )
                 m_memoryMap.close();
+#endif
         }
     }
     if ( !m_memoryMap.isValid() )
@@ -144,6 +154,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 //true indicating that the program may want to read some more.
 bool wxPlFrame::ReadTransmission()
 {
+#ifndef PL_WXWIDGETS_IPC2
     //avoid reentrant behaviour if some function yields allowing the
     //timer to call this function again
     if ( m_inCheckTimerFunction )
@@ -268,6 +279,7 @@ bool wxPlFrame::ReadTransmission()
     m_inCheckTimerFunction = false;
 
     return true;
+#endif //#ifndef PL_WXWIDGETS_IPC2
 }
 void wxPlFrame::OnToggleFixAspect( wxCommandEvent &event )
 {
@@ -308,6 +320,7 @@ void wxPlFrame::OnPrevPage( wxCommandEvent& event )
 
 void wxPlFrame::OnMouse( wxMouseEvent &event )
 {
+#ifndef PL_WXWIDGETS_IPC2
     //save the mouse position for use in key presses
     m_cursorPosition = event.GetPosition();
 
@@ -344,10 +357,12 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         header->locateModeFlag = 0;
         m_locateMode           = false;
     }
+#endif //#ifndef PL_WXWIDGETS_IPC2
 }
 
 void wxPlFrame::OnKey( wxKeyEvent &event )
 {
+#ifndef PL_WXWIDGETS_IPC2
     //This only works on Windows, unfortunately on wxGTK, wxFrames cannot catch key presses
     if ( m_locateMode )
     {
@@ -372,6 +387,7 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
         header->locateModeFlag = 0;
         m_locateMode           = false;
     }
+#endif //#ifndef PL_WXWIDGETS_IPC2
 }
 
 void wxPlFrame::SetPageAndUpdate( size_t page )

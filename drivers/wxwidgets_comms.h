@@ -75,17 +75,37 @@ struct MemoryMapHeader
     PLGraphicsIn graphicsIn;
     TextSizeInfo textSizeInfo;
 };
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+
+#ifdef PL_WXWIDGETS_IPC2
 #define PL_SHARED_ARRAY_SIZE    1024 * 1024
 // Shared memory buffer type
-typedef struct
+struct shmbuf
 {
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     sem_t  wsem;                      // Writer semaphore
     sem_t  rsem;                      // Reader semaphore
-    size_t cnt;                       // Number of bytes used in 'buf'
-    char   buf[PL_SHARED_ARRAY_SIZE]; // Data being transferred
-} shmbuf;
 #endif
+    size_t cnt;                       // Number of bytes used in 'buf'
+    size_t total;                     // Total number of bytes to be transferred
+    char   buf[PL_SHARED_ARRAY_SIZE]; // Data being transferred
+};
+
+class PLTwoSemaphores
+{
+public:
+    PLTwoSemaphores( sem_t *wsem, sem_t *rsem, bool mustExist );
+    ~PLTwoSemaphores();
+    void postWriteSemaphore();
+    void waitWriteSemaphore();
+    void postReadSemaphore();
+    void waitReadSemaphore();
+
+private:
+    sem_t * m_wsem;
+    sem_t * m_rsem;
+};
+
+#endif //#ifdef PL_WXWIDGETS_IPC2
 
 const PLINT plMemoryMapReservedSpace = sizeof ( MemoryMapHeader );
 
@@ -98,13 +118,21 @@ public:
     void close();
     ~PLMemoryMap();
     bool isValid() { return m_buffer != NULL; }
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+#ifdef PL_WXWIDGETS_IPC2
     char *getBuffer() { return ( (shmbuf *) m_buffer )->buf; }
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+    sem_t *getWriteSemaphore() { return &( ( (shmbuf *) m_buffer )->wsem ); }
+    sem_t *getReadSemaphore() { return &( ( (shmbuf *) m_buffer )->rsem ); }
+#endif
+    size_t *getBytesUsed() { return &( ( (shmbuf *) m_buffer )->cnt ); }
+    size_t *getBytesTotal() { return &( ( (shmbuf *) m_buffer )->total ); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
-#else
+    void sendBytes( PLTwoSemaphores two_semaphores, size_t nbytes, const void * bytes );
+    void receiveBytes( PLTwoSemaphores two_semaphores, size_t *p_nbytes, void * bytes );
+#else // #ifdef PL_WXWIDGETS_IPC2
     char *getBuffer() { return (char *) m_buffer; }
     size_t getSize() { return m_size; }
-#endif
+#endif // #ifdef PL_WXWIDGETS_IPC2
 private:
 #ifdef WIN32
     HANDLE m_mapFile;
@@ -116,6 +144,8 @@ private:
     size_t m_size;
     void   *m_buffer;
 };
+
+#ifndef PL_WXWIDGETS_IPC2
 
 class PLNamedMutex
 {
@@ -152,5 +182,6 @@ private:
     PLNamedMutexLocker( const PLNamedMutexLocker & );
     PLNamedMutexLocker & operator =( const PLNamedMutex & );
 };
+#endif //ifndef PL_WXWIDGETS_IPC2
 
 #endif

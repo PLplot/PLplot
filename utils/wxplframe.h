@@ -72,7 +72,9 @@ private:
     size_t            m_fileSize;
 
     PLMemoryMap       m_memoryMap;
+#ifndef PL_WXWIDGETS_IPC2
     PLNamedMutex      m_mutex;
+#endif
     wxTimer           m_checkTimer;
     int m_currentTimerInterval;
     static const int  m_idleTimerInterval = 100;

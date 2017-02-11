@@ -113,6 +113,19 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
         m_size = size;
 }
 
+#ifdef PL_WXWIDGETS_IPC2
+
+// Send bytes via two-semaphore IPC.
+void PLMemoryMap::sendBytes( PLTwoSemaphores two_semaphores, size_t nbytes, const void * bytes )
+{
+}
+
+// Receive bytes via two-semaphore IPC.
+void PLMemoryMap::receiveBytes( PLTwoSemaphores two_semaphores, size_t *p_nbytes, void * bytes )
+{
+}
+
+#endif // #ifdef PL_WXWIDGETS_IPC2
 //--------------------------------------------------------------------------
 //  Close an area of mapped memory. When all processes have closed their
 //  connections the area will be removed by the OS.
@@ -154,6 +167,124 @@ PLMemoryMap::~PLMemoryMap()
     close();
 }
 
+#ifdef PL_WXWIDGETS_IPC2
+
+// Only constructor
+PLTwoSemaphores::PLTwoSemaphores( sem_t *wsem, sem_t *rsem, bool mustExist )
+{
+    if ( wsem == NULL )
+    {
+        // Error: requested wsem must be non-NULL.
+        return;
+    }
+    else
+    {
+        // Requesting a new wsem semaphore using a non-NULL address
+        m_wsem = wsem;
+    }
+
+    if ( !mustExist )
+    {
+        // Writer gets first turn
+        if ( sem_init( wsem, 1, 1 ) != 0 )
+        {
+            // Error: wsem sem_init failed
+            return;
+        }
+    }
+
+    if ( rsem == NULL )
+    {
+        // Error: requested rsem must be non-NULL.
+        return;
+    }
+    else
+    {
+        // Requesting a new rsem semaphore using a non-NULL address
+        m_rsem = rsem;
+    }
+
+    if ( !mustExist )
+    {
+        // Reader does not get first turn
+        if ( sem_init( rsem, 1, 0 ) != 0 )
+        {
+            // Error: rsem sem_init failed
+            return;
+        }
+    }
+}
+
+// Only destructor
+PLTwoSemaphores::~PLTwoSemaphores()
+{
+    sem_destroy( m_wsem );
+    sem_destroy( m_rsem );
+    m_wsem = NULL;
+    m_rsem = NULL;
+}
+
+void PLTwoSemaphores::postWriteSemaphore()
+{
+    if ( m_wsem == NULL )
+    {
+        // Error: m_wsem must be non-NULL.
+        return;
+    }
+    else if ( sem_post( m_wsem ) != 0 )
+        ;
+    {
+        // Error: m_wsem sem_post failed.
+        return;
+    }
+}
+
+void PLTwoSemaphores::waitWriteSemaphore()
+{
+    if ( m_wsem == NULL )
+    {
+        // Error: m_wsem must be non-NULL.
+        return;
+    }
+    else if ( sem_wait( m_wsem ) != 0 )
+        ;
+    {
+        // Error: m_wsem sem_wait failed.
+        return;
+    }
+}
+
+void PLTwoSemaphores::postReadSemaphore()
+{
+    if ( m_rsem == NULL )
+    {
+        // Error: m_rsem must be non-NULL.
+        return;
+    }
+    else if ( sem_post( m_rsem ) != 0 )
+        ;
+    {
+        // Error: m_rsem sem_post failed.
+        return;
+    }
+}
+
+void PLTwoSemaphores::waitReadSemaphore()
+{
+    if ( m_rsem == NULL )
+    {
+        // Error: m_rsem must be non-NULL.
+        return;
+    }
+    else if ( sem_wait( m_rsem ) != 0 )
+        ;
+    {
+        // Error: m_rsem sem_wait failed.
+        return;
+    }
+}
+
+#else //ifdef PL_WXWIDGETS_IPC2
 
 PLNamedMutex::PLNamedMutex()
 {
@@ -180,6 +311,7 @@ void PLNamedMutex::create( const char *name, bool aquireOnCreate )
     m_mutex          = sem_open( m_mutexName, O_CREAT, S_IRWXU, 1 );
 #endif
 }
+
 
 void PLNamedMutex::aquire()
 {
@@ -260,3 +392,4 @@ PLNamedMutexLocker::~PLNamedMutexLocker( )
     m_mutex->release();
     m_mutex = NULL;
 }
+#endif //ifdef PL_WXWIDGETS_IPC2

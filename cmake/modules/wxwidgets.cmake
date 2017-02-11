@@ -217,11 +217,21 @@ if(ENABLE_wxwidgets)
     # These options only suitable if the new wxwidgets is enabled.
     option(PLPLOT_WX_DEBUG_OUTPUT "Enable debug output for wxwidgets device driver, binding, and example" OFF)
     option(PLPLOT_WX_NANOSEC "Experimental option (because it may lead to build failures (!)) for nanosec timestamp for wx debug output" OFF)
-    # When use of unnamed POSIX semaphores is no longer experimental (i.e., the relevant code
-    # is reliable), then should determine PL_HAVE_UNAMED_POSIX_SEMAPHORES
-    # with a test because at least some proprietary POSIX systems (e.g., Mac OS X) do not support
-    # unnamed POSIX semaphores.
-    option(PL_HAVE_UNNAMED_POSIX_SEMAPHORES "Experimental option to use unnamed POSIX semaphores" OFF)
+    option(PL_WXWIDGETS_IPC2 "Experimental option to use two-semaphores approach for wxwidgets IPC" OFF)
+    if(PL_WXWIDGETS_IPC2)
+      # When the two semaphores (currently implemented with unnamed
+      # semaphores) approach is no longer experimental (i.e., the
+      # relevant code is reliable) and assuming it is an improvement
+      # on the one-semaphore approach in turns of simplicity and
+      # efficiency, then I plan to modify the approach to supply a
+      # named semaphores variant because some proprietary POSIX
+      # systems (e.g., Mac OS X) do not support unnamed POSIX
+      # semaphores.  But for now, turn
+      # PL_HAVE_UNNAMED_POSIX_SEMAPHORES ON when PL_WXWIDGETS_IPC2 is
+      # true because the implementation of the two-semaphores approach
+      # currently depends completely on unnamed semaphores.
+      option(PL_HAVE_UNNAMED_POSIX_SEMAPHORES "Use unnamed POSIX semaphores for two semaphores implementation" ON)
+    endif(PL_WXWIDGETS_IPC2)
     set(wxdemo_name wxPLplotDemo)
     if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
       # This is added to later by drivers_finish with

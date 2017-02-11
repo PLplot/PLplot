@@ -870,7 +870,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     pls->dev = (void *) this;
 }
 
-
 //--------------------------------------------------------------------------
 //  wxPLDevice::~wxPLDevice( void )
 //
@@ -1371,21 +1370,22 @@ void wxPLDevice::Flush( PLStream *pls )
         TransmitBuffer( pls, transmissionComplete );
 }
 
-//This function transmits the remaining buffer to the gui program via a memory map
-//If the buffer is too big for the memory map then it will loop round waiting for
-//the gui to catch up each time
-// note that this function can be called with pls set to NULL for transmissions
-//of jsut a flag for e.g. page end or begin
+// This function transmits data to the gui program via a memory map.
+// This function can be called with pls set to NULL for transmission
+// of just a flag for e.g. page end or begin.
 void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
 {
     if ( !m_outputMemoryMap.isValid() )
         return;
+    // Amount of plbuf buffer to copy.
     size_t       amountToCopy = pls ? pls->plbuf_top - m_localBufferPosition : 0;
     bool         first        = true;
     size_t       counter      = 0;
     const size_t counterLimit = 10000;
     const size_t headerSize   = sizeof ( transmissionType ) + sizeof ( size_t );
     bool         completed    = false;
+#ifdef PL_WXWIDGETS_IPC2
+#else // #ifdef PL_WXWIDGETS_IPC2
     while ( !completed && counter < counterLimit )
     {
         //if we are doing multiple loops then pause briefly before we
@@ -1394,7 +1394,6 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
         if ( !first )
             wxMilliSleep( 10 );
         first = false;
-
 
         size_t copyAmount = 0;
         size_t freeSpace  = 0;
@@ -1557,6 +1556,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
         plwarn( "Communication timeout with wxPLViewer - disconnecting" );
         m_outputMemoryMap.close();
     }
+#endif // #ifdef PL_WXWIDGETS_IPC2
 }
 
 void wxPLDevice::SetupMemoryMap()
@@ -1564,15 +1564,15 @@ void wxPLDevice::SetupMemoryMap()
     PLPLOT_wxLogDebug( "SetupMemoryMap(): enter" );
     if ( strlen( m_mfo ) > 0 )
     {
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+#ifdef PL_WXWIDGETS_IPC2
         const size_t mapSize = sizeof ( shmbuf );
 #else
         const size_t mapSize = 1024 * 1024;
+        char         mutexName[PLPLOT_MAX_PATH];
 #endif
         //create a memory map to hold the data and add it to the array of maps
         int         nTries = 0;
         char        mapName[PLPLOT_MAX_PATH];
-        char        mutexName[PLPLOT_MAX_PATH];
         static Rand randomGenerator;          // make this static so that rapid repeat calls don't use the same seed
         while ( nTries < 10 )
         {
@@ -1590,16 +1590,20 @@ void wxPLDevice::SetupMemoryMap()
             if ( strlen( m_mfo ) > PLPLOT_MAX_PATH - 4 )
                 mapName[PLPLOT_MAX_PATH - 4] = '\0';
             pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mapName = %s\n", nTries, mapName );
-            strcpy( mutexName, mapName );
-            strcat( mutexName, "mut" );
-            pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mutexName = %s\n", nTries, mutexName );
             PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create call" );
             m_outputMemoryMap.create( mapName, mapSize, false, true );
             PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
             if ( m_outputMemoryMap.isValid() )
+            {
+#ifndef PL_WXWIDGETS_IPC2
+                strcpy( mutexName, mapName );
+                strcat( mutexName, "mut" );
+                pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mutexName = %s\n", nTries, mutexName );
                 m_mutex.create( mutexName );
-            if ( !m_mutex.isValid() )
-                m_outputMemoryMap.close();
+                if ( !m_mutex.isValid() )
+                    m_outputMemoryMap.close();
+#endif          // #ifndef PL_WXWIDGETS_IPC2
+            }
             if ( m_outputMemoryMap.isValid() )
                 break;
             ++nTries;
@@ -1654,11 +1658,11 @@ void wxPLDevice::SetupMemoryMap()
 
         if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
             plwarn( "Failed to run wxPLViewer - no plots will be shown" );
-#else   //WIN32
+#else           //WIN32
         //Linux doesn't like using wxExecute without a wxApp, so use system instead
         command << wxT( " &" );
         system( command.mb_str() );
-#endif  //WIN32
+#endif          //WIN32
         size_t   maxTries = 1000;
 #else //WXPLVIEWER_DEBUG
         wxString runMessage;
@@ -1666,7 +1670,7 @@ void wxPLDevice::SetupMemoryMap()
             mapSize << " " << m_width << " " << m_height;
         fprintf( stdout, runMessage );
         size_t maxTries = 100000;
-#endif  //WXPLVIEWER_DEBUG
+#endif          //WXPLVIEWER_DEBUG
         //wait until the viewer signals it has opened the map file
         size_t  counter      = 0;
         size_t &viewerSignal = header->viewerOpenFlag;
@@ -1681,8 +1685,9 @@ void wxPLDevice::SetupMemoryMap()
     PLPLOT_wxLogDebug( "SetupMemoryMap(): leave" );
 }
 
-void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )
+void wxPLDevice::Locate( PLStream * pls, PLGraphicsIn * graphicsIn )
 {
+#ifndef PL_WXWIDGETS_IPC2
     if ( !m_dc && m_outputMemoryMap.isValid() )
     {
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
@@ -1706,6 +1711,7 @@ void wxPLDevice::Locate( PLStream* pls, PLGraphicsIn *graphicsIn )
         graphicsIn->pX = -1;
         graphicsIn->pY = -1;
     }
+#endif //ifndef PL_WXWIDGETS_IPC2
 }
 
 //--------------------------------------------------------------------------
