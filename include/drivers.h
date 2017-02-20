@@ -83,7 +83,6 @@ PLDLLIMPEXP_DRIVER void plD_dispatch_init_wxwidgets( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_xfig( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_xw( PLDispatchTable *pdt );
 PLDLLIMPEXP_DRIVER void plD_dispatch_init_wingdi( PLDispatchTable *pdt );
->>>>>>> Implement a new Windows GDI (wingdi) driver
 
 // Prototypes for plot buffer calls.
 
