@@ -52,6 +52,14 @@ enum _dev_state
    DEV_DRAWING        // Device is actively drawing
 };
 
+// Enumerated type to indicate the status of the displayed plot
+enum _page_state
+{
+	PAGE_ACTIVE,		// Page is ready for use or in use
+	PAGE_WAITING,		// Page is finished and waiting for user input
+	PAGE_FINISH			// Page is finished
+};
+
 // Enumerated type used to indicate the device type
 // for updating page metrics
 enum _dev_type
@@ -85,10 +93,11 @@ struct wingdi_Dev
     PLINT        height;     // Window Height
 
 	enum _dev_type  type;     
-	enum _dev_state state;      // Current state of the device
-	enum _dev_state prev_state; // Previous state of the device
-							    // Used to restore after redraw
-								  
+	enum _dev_state state;      	// Current state of the device
+	enum _dev_state prev_state; 	// Previous state of the device
+									// Used to restore after redraw
+	enum _page_state page_state;	// Status of the current page
+	
     //
     // WIN32 API variables
     //
@@ -426,6 +435,7 @@ wait_for_user_input( PLStream *pls )
 	
 	// Update the state and the message in the status bar
     dev->state = DEV_WAITING;
+	dev->page_state = PAGE_WAITING;
 	update_status_bar( dev );
 				 
 	// Process messages in the queue or until we are no longer waiting
@@ -496,6 +506,8 @@ wait_for_user_input( PLStream *pls )
     }
 	
 	pldebug( "wingdi", "Done waiting\n" );
+	dev->state = DEV_ACTIVE;
+	dev->page_state = PAGE_FINISH;
 }
 			
 //--------------------------------------------------------------------------
@@ -799,6 +811,7 @@ LRESULT CALLBACK PlplotPlotAreaProc( HWND hwnd, UINT nMsg, WPARAM wParam, LPARAM
 					 ps.rcPaint.right, ps.rcPaint.bottom );
 			pldebug( "wingdi", "  Erase status = %d\n", ps.fErase );
 			pldebug( "wingdi", "  Device state = %d\n", dev->state );
+			pldebug( "wingdi", "  Page state = %d\n", dev->page_state );
 			
 			// If we have a valid bitmap and are not currently drawing
 			// a new plot, then we can blit the bitmap to handle the 
@@ -1246,6 +1259,7 @@ plD_init_wingdi( PLStream *pls )
 
 	// Indicate that the plot window is active
 	dev->state = DEV_ACTIVE;
+	dev->page_state = PAGE_ACTIVE;
 	update_status_bar( dev );
 }
 
@@ -1962,7 +1976,9 @@ plD_eop_wingdi( PLStream *pls )
 	// Set the cursor to normal to indicate that the window is not busy
     NormalCursor( dev );
 
-    if ( !pls->nopause )
+	// If the user wants pauses between pages and the page is not
+	// currently in a wait state
+    if ( !pls->nopause && dev->page_state != PAGE_WAITING )
     {
 		// Wait for the user to indicate the next action
 		wait_for_user_input( pls );
