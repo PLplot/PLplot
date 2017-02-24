@@ -67,8 +67,13 @@ struct TextSizeInfo
 
 struct MemoryMapHeader
 {
+#ifdef PL_WXWIDGETS_IPC2
+    size_t       transmissionType;
+    size_t       plbufAmountToTransmit;
+#else
     size_t       readLocation;
     size_t       writeLocation;
+#endif
     size_t       viewerOpenFlag;
     size_t       locateModeFlag;
     size_t       completeFlag;
@@ -77,30 +82,69 @@ struct MemoryMapHeader
 };
 
 #ifdef PL_WXWIDGETS_IPC2
+// I plan to reduce this size in the future if that reduction
+// does not significantly affect efficiency.
 #define PL_SHARED_ARRAY_SIZE    1024 * 1024
-// Shared memory buffer type
+
+// In the two-semaphores method of IPC, the shared memory area must
+// correspond to this shmbuf struct which contains some control data
+// explicitly used for the communication, e.g., at least the total
+// number of bytes of data to be transferred, and limited size
+// data areas to be transferred under two-semaphore control.
 struct shmbuf
 {
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-    sem_t  wsem;                      // Writer semaphore
-    sem_t  rsem;                      // Reader semaphore
+    // control data
+    sem_t           wsem;             // Writer semaphore
+    sem_t           rsem;             // Reader semaphore
 #endif
-    size_t cnt;                       // Number of bytes used in 'buf'
-    size_t total;                     // Total number of bytes to be transferred
-    char   buf[PL_SHARED_ARRAY_SIZE]; // Data being transferred
+    size_t          nbytes;           // Total number of data bytes to be transferred
+    // header data to be transferred under two-semaphore control.
+    MemoryMapHeader header;
+    // plbuf data to be transferred under two-semaphore control.
+    char            data[PL_SHARED_ARRAY_SIZE];
 };
 
 class PLTwoSemaphores
 {
 public:
-    PLTwoSemaphores( sem_t *wsem, sem_t *rsem, bool mustExist );
+    // Default constructor: Initialize m_wsem and m_rsem to NULL
+    // to mark those as invalid semaphore locations.
+    PLTwoSemaphores();
+    // Update the m_wsem and m_rsem locations and conditionally (when
+    // mustExist is false) initialize those locations as semaphores.
+    void initializeToValid( sem_t *wsem, sem_t *rsem, bool mustExist );
+    // call initializeToInvalid.
     ~PLTwoSemaphores();
+    // If the m_wsem and m_rsem locations are non-NULL destroy those
+    // semaphores.  Also, unconditionally set both m_wsem and m_rsem
+    // to NULL to mark those as invalid semaphore locations.
+    void initializeToInvalid();
+    bool isWriteSemaphoreValid();
+    bool isReadSemaphoreValid();
+    // Return true if both semaphores are valid.
+    // Return false if both semaphores are invalid.
+    // Throw an exception otherwise.
+    bool areBothSemaphoresValid();
+    // Check whether both semaphores are valid and blocked.
+    bool areBothSemaphoresBlocked();
+    // Get value of Write semaphore.
+    int getValueWriteSemaphore();
+    // Get value of Read semaphore.
+    int getValueReadSemaphore();
     void postWriteSemaphore();
     void waitWriteSemaphore();
     void postReadSemaphore();
     void waitReadSemaphore();
-
 private:
+    // Attempts to test semaphore initialization validity using
+    // sem_getvalue on Linux proved fruitless since as far as I can tell
+    // with gdb that function always returns zero, i.e., always signals
+    // success, and returns a 0 or 1 value argument ___so long as its
+    // sem_t * argument points to _any_ accessible memory area that is
+    // cast to sem_t *__!  So here is the alternative plan we are using:
+    // m_wsem and m_rsem should always be NULL unless the non-NULL
+    // locations they point to are properly initialized semaphores.
     sem_t * m_wsem;
     sem_t * m_rsem;
 };
@@ -119,16 +163,19 @@ public:
     ~PLMemoryMap();
     bool isValid() { return m_buffer != NULL; }
 #ifdef PL_WXWIDGETS_IPC2
-    char *getBuffer() { return ( (shmbuf *) m_buffer )->buf; }
+    char *getBuffer() { return ( (shmbuf *) m_buffer )->data; }
+    MemoryMapHeader *getHeader() { return &( ( (shmbuf *) m_buffer )->header ); }
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     sem_t *getWriteSemaphore() { return &( ( (shmbuf *) m_buffer )->wsem ); }
     sem_t *getReadSemaphore() { return &( ( (shmbuf *) m_buffer )->rsem ); }
 #endif
-    size_t *getBytesUsed() { return &( ( (shmbuf *) m_buffer )->cnt ); }
-    size_t *getBytesTotal() { return &( ( (shmbuf *) m_buffer )->total ); }
+    size_t *getTotalDataBytes() { return &( ( (shmbuf *) m_buffer )->nbytes ); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
-    void sendBytes( PLTwoSemaphores two_semaphores, size_t nbytes, const void * bytes );
-    void receiveBytes( PLTwoSemaphores two_semaphores, size_t *p_nbytes, void * bytes );
+    void moveBytesWriter( bool ifHeader, const void *src, size_t n );
+    void moveBytesReader( bool ifHeader, void *dest, size_t n );
+    void moveBytesReaderReversed( bool ifHeader, const void *src, size_t n );
+    void moveBytesWriterReversed( bool ifHeader, void *dest, size_t n );
+    void initializeSemaphoresToValid( sem_t *wsem, sem_t *rsem, bool mustExist ) { m_twoSemaphores.initializeToValid( wsem, rsem, mustExist ); }
 #else // #ifdef PL_WXWIDGETS_IPC2
     char *getBuffer() { return (char *) m_buffer; }
     size_t getSize() { return m_size; }
@@ -136,6 +183,12 @@ public:
 private:
 #ifdef WIN32
     HANDLE m_mapFile;
+#elif defined ( PL_WXWIDGETS_IPC2 )
+    int m_mapFile;
+    char * m_name;
+    // instantiate m_twoSemaphores private object (with default
+    // constructor) when PLMemoryMap is instantiated.
+    PLTwoSemaphores m_twoSemaphores;
 #else
     int m_mapFile;
     char * m_name;

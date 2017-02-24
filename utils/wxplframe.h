@@ -72,22 +72,25 @@ private:
     size_t            m_fileSize;
 
     PLMemoryMap       m_memoryMap;
-#ifndef PL_WXWIDGETS_IPC2
-    PLNamedMutex      m_mutex;
+#ifdef PL_WXWIDGETS_IPC2
+    // Private variable to hold all components of a MemoryMapHeader struct for a wxPlframe instance.
+    MemoryMapHeader  m_header;
+#else
+    PLNamedMutex     m_mutex;
 #endif
-    wxTimer           m_checkTimer;
-    int m_currentTimerInterval;
-    static const int  m_idleTimerInterval = 100;
-    static const int  m_busyTimerInterval = 0;
-    int m_nothingToDoCounter;
-    static const int  m_nothingToDoCounterLimit = 5000;
-    bool              m_transferComplete;
-    bool              m_inCheckTimerFunction;
+    wxTimer          m_checkTimer;
+    int              m_currentTimerInterval;
+    static const int m_idleTimerInterval = 100;
+    static const int m_busyTimerInterval = 0;
+    int              m_nothingToDoCounter;
+    static const int m_nothingToDoCounterLimit = 5000;
+    bool             m_transferComplete;
+    bool             m_inCheckTimerFunction;
 
-    wxPoint           m_cursorPosition;
-    bool              m_locateMode;
-    size_t            m_plottedBufferAmount;
-    unsigned char     m_previousTransmissionType;
+    wxPoint          m_cursorPosition;
+    bool             m_locateMode;
+    size_t           m_plottedBufferAmount;
+    unsigned char    m_previousTransmissionType;
 
     DECLARE_EVENT_TABLE();
 };
