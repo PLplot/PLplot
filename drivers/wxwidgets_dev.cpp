@@ -888,7 +888,7 @@ wxPLDevice::~wxPLDevice()
     {
 #ifdef PL_WXWIDGETS_IPC2
         m_header.completeFlag = 1;
-        TransmitBuffer( NULL, transmissionClose );
+        TransmitBuffer( NULL, transmissionComplete );
 #else
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
         header->completeFlag = 1;
@@ -1379,7 +1379,11 @@ void wxPLDevice::FixAspectRatio( bool fix )
 void wxPLDevice::Flush( PLStream *pls )
 {
     if ( !m_dc )
+#ifdef PL_WXWIDGETS_IPC2
+        TransmitBuffer( pls, transmissionFlush );
+#else
         TransmitBuffer( pls, transmissionComplete );
+#endif
 }
 
 // This function transmits data to the gui program via a memory map.
@@ -1417,6 +1421,8 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
         case transmissionBeginPage:
         case transmissionEndOfPage:
         case transmissionEndOfPageNoPause:
+        case transmissionComplete:
+        case transmissionFlush:
             break;
 
         // Invalid cases.

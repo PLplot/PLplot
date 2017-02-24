@@ -47,6 +47,9 @@ const unsigned char transmissionComplete         = 6;
 const unsigned char transmissionRequestTextSize  = 7;
 const unsigned char transmissionEndOfPageNoPause = 8;
 const unsigned char transmissionClose            = 9;
+#ifdef PL_WXWIDGETS_IPC2
+const unsigned char transmissionFlush = 10;
+#endif
 
 #define TEXTSIZEINFO_MAX_LENGTH    500
 

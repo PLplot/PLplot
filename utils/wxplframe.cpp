@@ -160,8 +160,15 @@ wxPlFrame::~wxPlFrame()
 
 void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 {
-    //repeatedly call ReadTransmission until there is nothing
-    //left to read
+#ifdef PL_WXWIDGETS_IPC2
+    // call ReadTransmission once which should stop timer
+    // and return false
+    if ( ReadTransmission() )
+        throw ( "wxPlFrame::OnCheckTimer (internal error): ReadTransmission should always return false" );
+
+#else // #ifdef PL_WXWIDGETS_IPC2
+      //repeatedly call ReadTransmission until there is nothing
+      //left to read
     PLINT nFalses = 0;
     while ( nFalses < 100 )
     {
@@ -173,6 +180,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
             wxMilliSleep( 1 );
         }
     }
+#endif // #ifdef PL_WXWIDGETS_IPC2
 }
 
 //This function reads any transmissions from the shared memory and acts upon
@@ -208,6 +216,51 @@ bool wxPlFrame::ReadTransmission()
         std::cerr << "viewerOpenFlag = " << m_header.viewerOpenFlag << std::endl;
         std::cerr << "locateModeFlag = " << m_header.locateModeFlag << std::endl;
         std::cerr << "completeFlag = " << m_header.completeFlag << std::endl;
+        switch ( m_header.transmissionType )
+        {
+        // Three valid cases which should be handled after plbuf has been received and processed.
+        case transmissionEndOfPage:
+        case transmissionEndOfPageNoPause:
+        case transmissionLocate:
+            break;
+            // Other valid cases which should be handled before plbuf has been received and processed.
+#if 0
+        case transmissionRequestTextSize:
+            wxClientDC dc( this );
+            wxCoord    width;
+            wxCoord    height;
+            wxCoord    depth;
+            wxCoord    leading;
+            wxFont     *font = wxTheFontList->FindOrCreateFont( m_header.textSizeInfo.pt, m_header.textSizeInfo.family,
+                m_header.textSizeInfo.style, m_header.textSizeInfo.weight, m_header.textSizeInfo.underlined );
+            dc.GetTextExtent( wxString( m_header.textSizeInfo.text ), &width, &height, &depth, &leading, font );
+            m_header.textSizeInfo.width   = long(width);
+            m_header.textSizeInfo.height  = long(height);
+            m_header.textSizeInfo.depth   = long(depth);
+            m_header.textSizeInfo.leading = long(leading);
+            m_header.textSizeInfo.written = true;
+            break;
+#endif      // #if 0
+        // Used only to transmit  m_header.completeFlag != 0 to terminate this loop
+        case transmissionComplete:
+        // Used only for flush.
+        case transmissionFlush:
+            break;
+        case transmissionClose:
+            Close( 0 );
+            break;
+        case transmissionBeginPage:
+            m_pageBuffers.resize( m_pageBuffers.size() + 1 );
+            m_bufferValidFlags.push_back( false );
+            m_writingPage = m_pageBuffers.size() - 1;
+            break;
+
+        // Invalid cases.
+        default:
+            throw( "wxPlFrame::ReadTransmission: read invalid value of transmissionType" );
+            break;
+        }
+
         if ( m_header.plbufAmountToTransmit > 0 )
         {
             char * plbufBuffer = (char *) malloc( m_header.plbufAmountToTransmit );
@@ -215,13 +268,32 @@ bool wxPlFrame::ReadTransmission()
                 throw( "wxPlFrame::ReadTransmission: malloc of plbufBuffer failed" );
             m_memoryMap.moveBytesReader( false, plbufBuffer, m_header.plbufAmountToTransmit );
             std::cerr << "Successful read of plbuf" << std::endl;
+            m_pageBuffers[m_writingPage].insert( m_pageBuffers[m_writingPage].end(),
+                plbufBuffer, plbufBuffer + m_header.plbufAmountToTransmit );
+            m_bufferValidFlags[m_writingPage] = true;
+            // Conditionally plot buffer, but I (AWI) have no clue where the 1024 below
+            // comes from.
+            if ( m_writingPage == m_viewingPage &&
+                 ( m_plottedBufferAmount + 1024 ) < m_pageBuffers[ m_writingPage ].size() )
+                SetPageAndUpdate();
             free( plbufBuffer );
+        }
+        if ( m_header.transmissionType == transmissionEndOfPage || m_header.transmissionType == transmissionEndOfPageNoPause )
+        {
+            if ( m_header.plbufAmountToTransmit == 0 )
+                throw( "wxPlFrame::ReadTransmission: Received an end of page transmission after no draw instructions" );
+            if ( m_header.transmissionType == transmissionEndOfPage )
+                SetPageAndUpdate();
+            else
+                SetPageAndUpdate( m_writingPage );
+        }
+        if ( m_header.transmissionType == transmissionLocate )
+        {
+            SetPageAndUpdate();
+            m_locateMode = true;
         }
     }
     while ( m_header.completeFlag == 0 );
-    //FIXME
-    //throw( "wxPlFrame::ReadTransmission: completeFlag >0 detected, done for now." );
-    exit( 1 );
 
     //Once the complete flag is set to non-zero then stop looking
     m_transferComplete = true;
