@@ -1675,16 +1675,14 @@ void wxPLDevice::SetupMemoryMap()
             PLPLOT_wxLogDebug( "SetupMemoryMap(): m_outputMemoryMap.create done" );
             if ( m_outputMemoryMap.isValid() )
             {
-#ifdef PL_WXWIDGETS_IPC2
-                m_outputMemoryMap.initializeSemaphoresToValid( m_outputMemoryMap.getWriteSemaphore(), m_outputMemoryMap.getReadSemaphore(), false );
-#else           // #ifdef PL_WXWIDGETS_IPC2
+#ifndef PL_WXWIDGETS_IPC2
                 strcpy( mutexName, mapName );
                 strcat( mutexName, "mut" );
                 pldebug( "wxPLDevice::SetupMemoryMap", "nTries = %d, mutexName = %s\n", nTries, mutexName );
                 m_mutex.create( mutexName );
                 if ( !m_mutex.isValid() )
                     m_outputMemoryMap.close();
-#endif                  // #ifdef PL_WXWIDGETS_IPC2
+#endif                  // #ifndef PL_WXWIDGETS_IPC2
             }
             if ( m_outputMemoryMap.isValid() )
                 break;
@@ -1698,6 +1696,10 @@ void wxPLDevice::SetupMemoryMap()
             return;
         }
 
+#ifdef PL_WXWIDGETS_IPC2
+        // Should only be executed once per valid Memory map before wxPLViewer is launched.
+        m_outputMemoryMap.initializeSemaphoresToValid( m_outputMemoryMap.getWriteSemaphore(), m_outputMemoryMap.getReadSemaphore(), false );
+#endif
         //zero out the reserved area
 #ifdef PL_WXWIDGETS_IPC2
         m_header.viewerOpenFlag = 0;
