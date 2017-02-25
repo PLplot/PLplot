@@ -362,7 +362,7 @@ static void PrintPage( PLStream *pls )
 //    PrintPropSheet.dwFlags =
 //
 //    hPrintPropSheetList[0] = CreatePropertySheetPage( &PrintPropSheet );
-   //
+//
 
     // Set the defaults for the printer device
     // Allocate a moveable block of memory.  Must use GlobalAlloc because
@@ -2377,7 +2377,7 @@ plD_esc_wingdi( PLStream *pls, PLINT op, void *ptr )
 //                                                                                          dev->raster_rect.right,
 //                                                                                      dev->raster_rect.bottom );
 //    SelectObject( dev->hdc, dev->raster_bmp );
-       //
+        //
         break;
 
     case PLESC_END_RASTERIZE:
@@ -2399,7 +2399,7 @@ plD_esc_wingdi( PLStream *pls, PLINT op, void *ptr )
 //
 //        // Restore the original DC
 //        dev->hdc = dev->save_hdc;
-       //
+        //
         break;
 
     case PLESC_TELLME:
