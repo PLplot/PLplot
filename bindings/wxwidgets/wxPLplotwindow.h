@@ -85,6 +85,9 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize client
     m_memoryDc = NULL;
 #ifdef wxUSE_GRAPHICS_CONTEXT
     m_gcDc = NULL;
+    // Force initialization of m_useGraphicsContext and
+    // drawDc when setUseGraphicsContext is called below.
+    m_useGraphicsContext = !useGraphicsContext;
 #endif
     setUseGraphicsContext( useGraphicsContext );
     m_canvasColour = *wxBLACK;
