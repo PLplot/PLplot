@@ -91,7 +91,19 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
 #ifdef PL_WXWIDGETS_IPC2
     try
     {
+        // Initialize all of m_header to beat valgrind uninitialized noise with
+        // shared memory definitions of m_header.
+        // This one let's -dev wxwidgets know we have made contact),
         m_header.viewerOpenFlag = 1;
+        // The rest of these are sensible defaults.
+        m_header.locateModeFlag        = 0;
+        m_header.completeFlag          = 0;
+        m_header.plbufAmountToTransmit = 0;
+        // This is actually an invalid value that if not overwritten
+        // would throw an exception later on.
+        m_header.transmissionType = transmissionRegular;
+        // We leave uninitialized, the graphicsIn and textSizeInfo structs
+        // that are part of m_header.
         m_memoryMap.moveBytesReaderReversed( true, &m_header, sizeof ( MemoryMapHeader ) );
     }
     catch ( const char *message )
