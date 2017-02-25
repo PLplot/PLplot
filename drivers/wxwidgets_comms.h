@@ -70,18 +70,18 @@ struct TextSizeInfo
 
 struct MemoryMapHeader
 {
+    size_t        viewerOpenFlag;
+    size_t        locateModeFlag;
+    size_t        completeFlag;
 #ifdef PL_WXWIDGETS_IPC2
-    size_t       transmissionType;
-    size_t       plbufAmountToTransmit;
+    size_t        plbufAmountToTransmit;
+    unsigned char transmissionType;
 #else
-    size_t       readLocation;
-    size_t       writeLocation;
+    size_t        readLocation;
+    size_t        writeLocation;
 #endif
-    size_t       viewerOpenFlag;
-    size_t       locateModeFlag;
-    size_t       completeFlag;
-    PLGraphicsIn graphicsIn;
-    TextSizeInfo textSizeInfo;
+    PLGraphicsIn  graphicsIn;
+    TextSizeInfo  textSizeInfo;
 };
 
 #ifdef PL_WXWIDGETS_IPC2
