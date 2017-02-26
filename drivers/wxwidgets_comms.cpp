@@ -20,7 +20,7 @@
 
 #include "wxwidgets_comms.h"
 #include <assert.h>
-
+#include <wx/utils.h> //Needed for wxMilliSleep
 //--------------------------------------------------------------------------
 //  Constructor, creates the object but does not actually create or link to
 //  any shared memory.
@@ -166,8 +166,26 @@ void PLMemoryMap::moveBytesWriter( bool ifHeader, const void *src, size_t n )
     if ( ifHeader && n != sizeof ( MemoryMapHeader ) )
         throw( "PLMemoryMap::moveBytesWriter: ifHeader true has invalid n value" );
 
+    if ( getReverseDataFlow() )
+    {
+        // The previous data transfer was initiated with moveBytesReaderReversed
+        // so must wait for the OS scheduler to let that routine finish to
+        // avoid a race condition.
+        // Mark this forthcoming data transfer as in the non-reversed direction.
+        setReverseDataFlow( false );
+        // Attempt to avoid the above race by using the wxwidgets
+        // library to wait (at least) 10 system ticks on millsecond tick
+        // systems and much more than that on systems with higher tick
+        // resolutions.  So it is likely this is way more than enough.
+        // Note, this code is only executed when the direction of data
+        // flow is disrupted, and usually that only occurs for an
+        // initialization handshake and interactive use of -dev
+        // wxwidgets.  For both cases we should not be concerned about
+        // speed.
+        wxMilliSleep( 10 );
+    }
     if ( !m_twoSemaphores.areBothSemaphoresBlocked() )
-        throw( "PLMemoryMap::moveBytesWriter: attempt to start transfer with semaphores not in correct blocked state." );
+        throw( "PLMemoryMap::moveBytesWriter: attempt to start transfer with semaphores not in correct blocked state (likely due to a race condition)." );
     // Read side is blocked and initialize write side to go first.
     m_twoSemaphores.postWriteSemaphore();
 
@@ -365,8 +383,26 @@ void PLMemoryMap::moveBytesReaderReversed( bool ifHeader, const void *src, size_
     if ( ifHeader && n != sizeof ( MemoryMapHeader ) )
         throw( "PLMemoryMap::moveBytesReaderReversed: ifHeader true has invalid n value" );
 
+    if ( !getReverseDataFlow() )
+    {
+        // The previous data transfer was initiated with moveBytesWriter
+        // so must wait for the OS scheduler to let that routine finish to
+        // avoid a race condition.
+        // Mark this forthcoming data transfer as in the reversed direction.
+        setReverseDataFlow( true );
+        // Attempt to avoid the above race by using the wxwidgets
+        // library to wait (at least) 10 system ticks on millsecond tick
+        // systems and much more than that on systems with higher tick
+        // resolutions.  So it is likely this is way more than enough.
+        // Note, this code is only executed when the direction of data
+        // flow is disrupted, and usually that only occurs for an
+        // initialization handshake and interactive use of -dev
+        // wxwidgets.  For both cases we should not be concerned about
+        // speed.
+        wxMilliSleep( 10 );
+    }
     if ( !m_twoSemaphores.areBothSemaphoresBlocked() )
-        throw( "PLMemoryMap::moveBytesReaderReversed: attempt to start transfer with semaphores not in correct blocked state." );
+        throw( "PLMemoryMap::moveBytesReaderReversed: attempt to start transfer with semaphores not in correct blocked state (likely due to a race condition." );
     // Write side is blocked and initialize read side to go first.
     m_twoSemaphores.postReadSemaphore();
 

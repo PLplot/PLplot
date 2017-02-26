@@ -98,10 +98,14 @@ struct shmbuf
 {
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     // control data
-    sem_t           wsem;             // Writer semaphore
-    sem_t           rsem;             // Reader semaphore
+    sem_t  wsem;                      // Writer semaphore
+    sem_t  rsem;                      // Reader semaphore
 #endif
-    size_t          nbytes;           // Total number of data bytes to be transferred
+    size_t nbytes;                    // Total number of data bytes to be transferred
+    // Keep track of whether data flow is reversed (from wxPLViewer to
+    // -dev wxwidgets) or not when entering moveBytesWriter or
+    // moveBytesReaderReversed to help avoid a race condition.
+    bool            reversed;
     // header data to be transferred under two-semaphore control.
     MemoryMapHeader header;
     // plbuf data to be transferred under two-semaphore control.
@@ -172,6 +176,8 @@ public:
     sem_t *getWriteSemaphore() { return &( ( (shmbuf *) m_buffer )->wsem ); }
     sem_t *getReadSemaphore() { return &( ( (shmbuf *) m_buffer )->rsem ); }
 #endif
+    bool getReverseDataFlow() { return ( (shmbuf *) m_buffer )->reversed; }
+    void setReverseDataFlow( bool reversed ) { ( (shmbuf *) m_buffer )->reversed = reversed; }
     size_t *getTotalDataBytes() { return &( ( (shmbuf *) m_buffer )->nbytes ); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
     void moveBytesWriter( bool ifHeader, const void *src, size_t n );

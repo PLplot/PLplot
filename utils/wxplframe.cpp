@@ -104,6 +104,10 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         m_header.transmissionType = transmissionRegular;
         // We leave uninitialized, the graphicsIn and textSizeInfo structs
         // that are part of m_header.
+
+        // This is the initial transfer of date via shared memory.  Initialize
+        // the variable that keeps track of the direction of data flow.
+        m_memoryMap.setReverseDataFlow( true );
         m_memoryMap.moveBytesReaderReversed( true, &m_header, sizeof ( MemoryMapHeader ) );
     }
     catch ( const char *message )
