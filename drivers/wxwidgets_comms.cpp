@@ -20,7 +20,256 @@
 
 #include "wxwidgets_comms.h"
 #include <assert.h>
-#include <wx/utils.h> //Needed for wxMilliSleep
+
+#ifdef PL_WXWIDGETS_IPC2
+
+// Default constructor: Initialize m_wsem, m_rsem, and m_tsem to
+// NULL to mark those as invalid semaphore locations.
+PLThreeSemaphores::PLThreeSemaphores()
+{
+    m_wsem = NULL;
+    m_rsem = NULL;
+    m_tsem = NULL;
+}
+
+// Update the m_wsem, m_rsem, and m_tsem locations and
+// conditionally (when mustExist is false) initialize those
+// locations as semaphores.
+void PLThreeSemaphores::initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist )
+{
+    if ( wsem == NULL || rsem == NULL || tsem == NULL )
+        throw ( "PLThreeSemaphores::initializeToValid: the requested sem_t * arguments must be non-NULL." );
+
+    if ( !mustExist )
+    {
+        // Check the current semaphores are not valid.
+        if ( areSemaphoresValid() )
+            throw ( "PLThreeSemaphores::initializeToValid, mustExist false: attempt to initialize already valid semaphores" );
+        m_wsem = wsem;
+        m_rsem = rsem;
+	m_tsem = tsem;
+        // Middle argument of 1 ==> semaphore resident in shared memory.
+        // Last argument ==> Both read and write semaphores initially blocked, transmit semaphore
+	// initially unblocked.
+        if ( sem_init( m_wsem, 1, 0 ) || sem_init( m_rsem, 1, 0 ) || sem_init( m_tsem, 1, 1 ) )
+            throw ( "PLThreeSemaphores::initializeToValid, mustExist false: sem_init failed for at least one of the three semaphores" );
+    }
+    else
+    {
+        m_wsem = wsem;
+        m_rsem = rsem;
+	m_tsem = tsem;
+        int value;
+        // We want to test that these are semaphore locations that
+        // have already been properly initialized in blocked state as above.
+        // Attempt to test that assumption with sem_getvalue, but I
+        // have gdb evidence that at least one OS implementation (that on Linux)
+        // of sem_getvalue does not check that the given location is
+        // a valid semaphore, and it is fairly likely in that case that
+        // you will return a value of 0 so this test is not as rigourous as
+        // it should be.
+        if ( !( sem_getvalue( m_wsem, &value ) == 0 && value == 0 && sem_getvalue( m_rsem, &value ) == 0 && value == 0 && sem_getvalue( m_tsem, &value ) == 0 && value == 1 ) )
+            throw( "PLThreeSemaphores::initializeToValid, mustExist true: at least one semaphore not valid or not set at correct initial value" );
+    }
+}
+
+// Only destructor
+PLThreeSemaphores::~PLThreeSemaphores()
+{
+    initializeToInvalid();
+}
+
+// If the m_wsem, m_rsem, and m_tsem locations are non-NULL
+// destroy those semaphores.  Also, unconditionally set
+// m_wsem, m_rsem, and m_tsem to NULL to mark those as invalid
+// semaphore locations.
+void PLThreeSemaphores::initializeToInvalid()
+{
+    if ( areSemaphoresValid() )
+    {
+        if ( sem_destroy( m_wsem ) )
+            throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on write semaphore" );
+        if ( sem_destroy( m_rsem ) )
+            throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on read semaphore" );
+        if ( sem_destroy( m_tsem ) )
+            throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on transmit semaphore" );
+    }
+    m_wsem = NULL;
+    m_rsem = NULL;
+    m_tsem = NULL;
+}
+
+// Attempts to test semaphore validity using sem_getvalue on Linux
+// proved fruitless since as far as I can tell with gdb that function
+// always returns zero, i.e., always signals success ___so long as its
+// sem_t * argument points to _any_ non-NULL accessible memory area that is
+// cast to sem_t *__!  And when called with a NULL argument sem_getvalue
+// segfaults rather than returning with a non-zero value!  So Linux
+// sem_getvalue is pretty crude.
+
+// So instead of checking the return value of sem_getvalue, we instead
+// only check whether m_wsem and m_rsem are not NULL (signalling
+// valid) or NULL (signalling invalid).
+
+// N.B. the default PLThreeSemaphores constructor sets these locations
+// to NULL, and the alternative constructor or initializeToValid must
+// be called with mustExist argument false to change these locations
+// to valid semaphores that are initially blocked.
+
+bool PLThreeSemaphores::isWriteSemaphoreValid()
+{
+    return m_wsem != NULL;
+}
+
+bool PLThreeSemaphores::isReadSemaphoreValid()
+{
+    return m_rsem != NULL;
+}
+
+bool PLThreeSemaphores::isTransmitSemaphoreValid()
+{
+    return m_tsem != NULL;
+}
+
+// Return true if all semaphores are valid.
+// Return false if all semaphores are invalid.
+// Throw an exception otherwise.
+
+bool PLThreeSemaphores::areSemaphoresValid()
+{
+    if ( isWriteSemaphoreValid() && isReadSemaphoreValid() && isTransmitSemaphoreValid() )
+    {
+        return true;
+    }
+    else if ( !isWriteSemaphoreValid() && !isReadSemaphoreValid() && !isTransmitSemaphoreValid() )
+    {
+        return false;
+    }
+
+    throw( "PLThreeSemaphores::areSemaphoresValid: invalid combination of read, write, and transmit semaphore validity" );
+
+    // Should never reach this statement, but include it anyway to quiet possible compiler warnings.
+    return false;
+}
+
+// Check whether write and read semaphores are valid and blocked.
+bool PLThreeSemaphores::areWriteReadSemaphoresBlocked()
+{
+    if ( areSemaphoresValid() )
+    {
+        int wvalue, rvalue;
+        // We want to test that these are semaphore locations that
+        // have already been properly initialized in blocked state as above.
+        // Attempt to test that assumption with sem_getvalue, but I
+        // have gdb evidence that at least one OS implementation (that on Linux)
+        // of sem_getvalue does not check that the given location is
+        // a valid semaphore, and it is fairly likely in that case that
+        // you will return a value of 0 so this test is not as rigourous as
+        // it should be.
+        if ( sem_getvalue( m_wsem, &wvalue ) != 0 || sem_getvalue( m_rsem, &rvalue ) != 0 )
+            throw( "PLThreeSemaphores::areSemaphoresBlocked: sem_getvalue error on one of the write or read semaphores" );
+        if ( wvalue == 0 && rvalue == 0 )
+            return true;
+        else
+            return false;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+// Get value of Write semaphore.
+int PLThreeSemaphores::getValueWriteSemaphore()
+{
+    // Initialize to wacko value to quiet compiler uninitialized complaints
+    // for the case of the throws below.
+    int ret_value = -42;
+    if ( !isWriteSemaphoreValid() )
+    {
+        throw( "PLThreeSemaphores::getValueWriteSemaphore: attempt to get value for invalid semaphore." );
+    }
+    else
+    {
+        if ( sem_getvalue( m_wsem, &ret_value ) != 0 )
+            throw( "PLThreeSemaphores::getValueWriteSemaphore: sem_getvalue failed" );
+    }
+    return ret_value;
+}
+
+// Get value of Read semaphore.
+int PLThreeSemaphores::getValueReadSemaphore()
+{
+    // Initialize to wacko value to quiet compiler uninitialized complaints
+    // for the case of the throws below.
+    int ret_value = -42;
+    if ( !isReadSemaphoreValid() )
+    {
+        throw( "PLThreeSemaphores::getValueReadSemaphore: attempt to get value for invalid semaphore." );
+    }
+    else
+    {
+        if ( sem_getvalue( m_rsem, &ret_value ) != 0 )
+            throw( "PLThreeSemaphores::getValueReadSemaphore: sem_getvalue failed" );
+    }
+    return ret_value;
+}
+
+void PLThreeSemaphores::postWriteSemaphore()
+{
+    if ( !isWriteSemaphoreValid() )
+        throw( "PLThreeSemaphores::postWriteSemaphore: invalid write semaphore" );
+
+    if ( sem_post( m_wsem ) )
+        throw( "PLThreeSemaphores::postWriteSemaphore: sem_post failed for write semaphore" );
+}
+
+void PLThreeSemaphores::waitWriteSemaphore()
+{
+    if ( !isWriteSemaphoreValid() )
+        throw( "PLThreeSemaphores::waitWriteSemaphore: invalid write semaphore" );
+
+    if ( sem_wait( m_wsem ) )
+        throw( "PLThreeSemaphores::waitWriteSemaphore: sem_wait failed for write semaphore" );
+}
+
+void PLThreeSemaphores::postReadSemaphore()
+{
+    if ( !isReadSemaphoreValid() )
+        throw( "PLThreeSemaphores::postReadSemaphore: invalid read semaphore" );
+
+    if ( sem_post( m_rsem ) )
+        throw( "PLThreeSemaphores::postReadSemaphore: sem_post failed for read semaphore" );
+}
+
+void PLThreeSemaphores::waitReadSemaphore()
+{
+    if ( !isReadSemaphoreValid() )
+        throw( "PLThreeSemaphores::waitReadSemaphore: invalid read semaphore" );
+
+    if ( sem_wait( m_rsem ) )
+        throw( "PLThreeSemaphores::waitReadSemaphore: sem_wait failed for read semaphore" );
+}
+
+void PLThreeSemaphores::postTransmitSemaphore()
+{
+    if ( !isTransmitSemaphoreValid() )
+        throw( "PLThreeSemaphores::postTransmitSemaphore: invalid transmit semaphore" );
+
+    if ( sem_post( m_tsem ) )
+        throw( "PLThreeSemaphores::postTransmitSemaphore: sem_post failed for transmit semaphore" );
+}
+
+void PLThreeSemaphores::waitTransmitSemaphore()
+{
+    if ( !isTransmitSemaphoreValid() )
+        throw( "PLThreeSemaphores::waitTransmitSemaphore: invalid transmit semaphore" );
+
+    if ( sem_wait( m_tsem ) )
+        throw( "PLThreeSemaphores::waitTransmitSemaphore: sem_wait failed for transmit semaphore" );
+}
+#endif //#ifdef PL_WXWIDGETS_IPC2
+
 //--------------------------------------------------------------------------
 //  Constructor, creates the object but does not actually create or link to
 //  any shared memory.
@@ -118,36 +367,35 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
 // This IPC method is an adaptation of the method used in
 // cmake/test_linux_ipc/pshm_write.c.
 
-// This moveBytesWriter method on the writer side
-// should be used in tandem with the moveBytesReader
-// method on the reader side.
+// This transmitBytes method on the transmitting side should be used
+// in tandem with the receiveBytes method on the receiving side.
 
-// Transmit data via two-semaphore IPC from the writer side (i.e., the
-// side that creates the shared memory area and the shared semaphores
-// (unnamed or named)) to the reader side (i.e., the side that checks
-// the shared memory area and shared semaphores that have been created
-// by the writer side).  It is the responsibility of moveBytesWriter to
-// initialize the semaphores to the correct values, and check at the
-// end that they are left in the correct blocked state.
+// Transmit data via three-semaphore IPC from the transmitting side to
+// the receiving side. It is the responsibility of transmitBytes to
+// check the semaphores are in the correct blocked state at the start
+// and end of the transmission of data.
 
-// In the two-semaphores method of IPC, the shared memory area must
+// In the three-semaphores method of IPC, the shared memory area must
 // correspond to the shmbuf struct which contains some control data
 // explicitly used for the communication, e.g., at least the total
 // number of bytes of data to be transferred, and limited size
 // non-control data areas to be used for transferring an unlimited
 // number of data bytes.
 
-// if ifHeader is true, then src is a MemoryMapHeader header which is
-// transferred to the corresponding area of shared memory (the
-// internal dest in this case).  Otherwise, src is a char array of
-// unlimited size whose transfer is staged through the data area (the
-// internal dest in this case) of shared memory.
+// If ifHeader is true, then src is a MemoryMapHeader header
+// which is transferred to the corresponding area of shared memory
+// (the internal dest in this case).  Otherwise, src is a char array
+// of unlimited size whose transfer is staged through the data area
+// (the internal dest in this case) of shared memory.
+
+// The src argument must always be a pointer to general rather than
+// shared memory to avoid overlaps between src and internal dest in
+// shared memory not only for code logic clarity but also because
+// memcpy rather than memmove is used inside transmitBytes.
 
 // n is the total number of bytes that will be moved.
 
-// N.B. memcpy used inside so src cannotoverlap with (the internal) dest.
-
-void PLMemoryMap::moveBytesWriter( bool ifHeader, const void *src, size_t n )
+void PLMemoryMap::transmitBytes( bool ifHeader, const void *src, size_t n )
 {
     size_t     chunk, nbytes_chunk, transmitted_bytes;
     const char * csrc  = (const char *) src;
@@ -155,7 +403,7 @@ void PLMemoryMap::moveBytesWriter( bool ifHeader, const void *src, size_t n )
     void       * bdest = (void *) getBuffer();
 
     if ( !isValid() )
-        throw ( "PLMemoryMap::moveBytesWriter: invalid memory map" );
+        throw ( "PLMemoryMap::transmitBytes: invalid memory map" );
 
     size_t size_area;
     if ( ifHeader )
@@ -164,35 +412,21 @@ void PLMemoryMap::moveBytesWriter( bool ifHeader, const void *src, size_t n )
         size_area = PL_SHARED_ARRAY_SIZE;
 
     if ( ifHeader && n != sizeof ( MemoryMapHeader ) )
-        throw( "PLMemoryMap::moveBytesWriter: ifHeader true has invalid n value" );
+        throw( "PLMemoryMap::transmitBytes: ifHeader true has invalid n value" );
 
-    if ( getReverseDataFlow() )
-    {
-        // The previous data transfer was initiated with moveBytesReaderReversed
-        // so must wait for the OS scheduler to let that routine finish to
-        // avoid a race condition.
-        // Mark this forthcoming data transfer as in the non-reversed direction.
-        setReverseDataFlow( false );
-        // Attempt to avoid the above race by using the wxwidgets
-        // library to wait (at least) 10 system ticks on millsecond tick
-        // systems and much more than that on systems with higher tick
-        // resolutions.  So it is likely this is way more than enough.
-        // Note, this code is only executed when the direction of data
-        // flow is disrupted, and usually that only occurs for an
-        // initialization handshake and interactive use of -dev
-        // wxwidgets.  For both cases we should not be concerned about
-        // speed.
-        wxMilliSleep( 10 );
-    }
-    if ( !m_twoSemaphores.areBothSemaphoresBlocked() )
-        throw( "PLMemoryMap::moveBytesWriter: attempt to start transfer with semaphores not in correct blocked state (likely due to a race condition)." );
-    // Read side is blocked and initialize write side to go first.
-    m_twoSemaphores.postWriteSemaphore();
+    // Wait until previous call (by either side) of transmitBytes has been completed
+    // to avoid a potential race condition.
+    m_threeSemaphores.waitTransmitSemaphore();
+
+    if ( !m_threeSemaphores.areWriteReadSemaphoresBlocked() )
+        throw( "PLMemoryMap::transmitBytes: attempt to start transfer with semaphores not in correct blocked state." );
+    // Receiving side is blocked and initialize this transmitting side to go first.
+    m_threeSemaphores.postWriteSemaphore();
 
     for ( chunk = 0, transmitted_bytes = 0;; chunk++, csrc += nbytes_chunk )
     {
         // Wait for our turn to change the shared memory shmbuf.
-        m_twoSemaphores.waitWriteSemaphore();
+        m_threeSemaphores.waitWriteSemaphore();
 
         if ( chunk == 0 )
         {
@@ -209,9 +443,9 @@ void PLMemoryMap::moveBytesWriter( bool ifHeader, const void *src, size_t n )
                 memcpy( bdest, csrc, nbytes_chunk );
         }
 
-        // Give the moveBytesReader method a turn to process the shared
+        // Give the receiveBytes method a turn to process the shared
         // memory shmbuf we have just changed.
-        m_twoSemaphores.postReadSemaphore();
+        m_threeSemaphores.postReadSemaphore();
 
         if ( !( nbytes_chunk > 0 ) )
         {
@@ -221,29 +455,27 @@ void PLMemoryMap::moveBytesWriter( bool ifHeader, const void *src, size_t n )
     }
 
     // All shared memory shmbuf changes have been transmitted so wait
-    // for moveBytesReader to process the last of those.
-    m_twoSemaphores.waitWriteSemaphore();
+    // for receiveBytes to process the last of those.
+    m_threeSemaphores.waitWriteSemaphore();
 
-    // If the transfer has been a success, then both semaphores should
+    // If the transfer has been a success, then write and read semaphores should
     // end up as blocked.  Check that:
-    if ( !m_twoSemaphores.areBothSemaphoresBlocked() )
-        throw( "PLMemoryMap::moveBytesWriter (internal error): transfer finished with semaphores not in correct blocked state." );
+    if ( !m_threeSemaphores.areWriteReadSemaphoresBlocked() )
+        throw( "PLMemoryMap::transmitBytes (internal error): transfer finished with write and read semaphores not in correct blocked state." );
+
+    // Allow a subsequent call of transmitBytes (by either side) to start executing.
+    m_threeSemaphores.postTransmitSemaphore();
 }
 
 // This IPC method is an adaptation of the method used in
 // cmake/test_linux_ipc/pshm_read.c.
 
-// This moveBytesReader method on the reader side
-// should be used in tandem with the moveBytesWriter
-// method on the writer side.
+// This receiveBytes method on the receiving side should be used in
+// tandem with the transmitBytes method on the transmitting side.
 
-// Receive data via two-semaphore IPC from the writer side (i.e., the
-// side that creates the shared memory area and the shared semaphores
-// (unnamed or named)) that is sent to the reader side (i.e., the side
-// that checks the shared memory area and shared semaphores that have
-// been created by the writer side).
+// Receive data via three-semaphore IPC from the transmitting side.
 
-// In the two-semaphores method of IPC, the shared memory area must
+// In the three-semaphores method of IPC, the shared memory area must
 // correspond to the shmbuf struct which contains some control data
 // explicitly used for the communication, e.g., at least the total
 // number of bytes of data to be transferred, and limited size
@@ -252,20 +484,19 @@ void PLMemoryMap::moveBytesWriter( bool ifHeader, const void *src, size_t n )
 
 // if ifHeader is true, then (the internal) src is the MemoryMapHeader
 // header area of shared memory which is transferred to a
-// corresponding area (in general memory or the shared memory header)
+// corresponding area 
 // pointed to by the dest argument.  Otherwise, (the internal) src is
 // the char * data area of shared memory which is a staging area for
 // the transfer of n bytes into the location pointed to by dest.
 
-// dest must be a pointer to a destination address which can be in
-// general memory or correspond to a data area within the shared
-// memory area.
+// The dest argument must always be a pointer to general rather than
+// shared memory to avoid overlaps between internal src in shared
+// memory and dest not only for code logic clarity but also because
+// memcpy rather than memmove is used inside receiveBytes.
 
 // n is the total number of bytes that will be moved.
 
-// N.B. memcpy used inside so (internal) src cannot overlap with dest.
-
-void PLMemoryMap::moveBytesReader( bool ifHeader, void *dest, size_t n )
+void PLMemoryMap::receiveBytes( bool ifHeader, void *dest, size_t n )
 {
     size_t chunk, nbytes, nbytes_chunk, received_bytes;
     char   * cdest = (char *) dest;
@@ -273,7 +504,7 @@ void PLMemoryMap::moveBytesReader( bool ifHeader, void *dest, size_t n )
     void   * bsrc  = (void *) getBuffer();
 
     if ( !isValid() )
-        throw( "PLMemoryMap::moveBytesReader: invalid memory map" );
+        throw( "PLMemoryMap::receiveBytes: invalid memory map" );
 
     size_t size_area;
     if ( ifHeader )
@@ -282,23 +513,23 @@ void PLMemoryMap::moveBytesReader( bool ifHeader, void *dest, size_t n )
         size_area = PL_SHARED_ARRAY_SIZE;
 
     if ( ifHeader && n != sizeof ( MemoryMapHeader ) )
-        throw( "PLMemoryMap::moveBytesReader: ifHeader true has invalid n value" );
-    // N.B. it is the responsibility of moveBytesWriter to initialize the semaphores
+        throw( "PLMemoryMap::receiveBytes: ifHeader true has invalid n value" );
+    // N.B. it is the responsibility of transmitBytes to initialize the semaphores
     // to the correct values, but we at least check here that the semaphores are valid.
-    m_twoSemaphores.areBothSemaphoresValid();
+    m_threeSemaphores.areSemaphoresValid();
 
     for ( chunk = 0, received_bytes = 0;; chunk++, cdest += nbytes_chunk )
     {
         // Wait for our turn to process the shared memory shmbuf that has been updated
-        // by moveBytesWriter.
-        m_twoSemaphores.waitReadSemaphore();
+        // by transmitBytes.
+        m_threeSemaphores.waitReadSemaphore();
 
         if ( chunk == 0 )
         {
             // Update *nbytes from the nbytes control data part of that shared memory shmbuf.
             nbytes = ( (shmbuf *) m_buffer )->nbytes;
             if ( nbytes > n )
-                throw ( "PLMemoryMap::moveBytesReader: n too small to receive results" );
+                throw ( "PLMemoryMap::receiveBytes: n too small to receive results" );
         }
 
         nbytes_chunk = MIN( size_area, nbytes - received_bytes );
@@ -315,241 +546,18 @@ void PLMemoryMap::moveBytesReader( bool ifHeader, void *dest, size_t n )
             else
                 memcpy( cdest, bsrc, nbytes_chunk );
             // Give the transmitter a turn to send another chunk of bytes.
-            m_twoSemaphores.postWriteSemaphore();
+            m_threeSemaphores.postWriteSemaphore();
         }
     }
     // All chunks have been received and processed so signal transmitter
     // we are done.
-    m_twoSemaphores.postWriteSemaphore();
+    m_threeSemaphores.postWriteSemaphore();
 
-    // The moveBytesWriter checks after all transactions with this
-    // moveBytesReader routine are completed that the semaphores are
-    // in the correct blocked state.  So there is nothing for us to
-    // check here.
+    // The transmitBytes checks after all transactions with this
+    // receiveBytes routine are completed that the semaphores are in
+    // the correct blocked state.  So there is nothing further for us
+    // to check here.
 }
-
-// This IPC method is an adaptation of the method used in
-// cmake/test_linux_ipc/pshm_write.c.
-// N.B. The moveBytesReaderReversed method is identical to
-// moveBytesWriter except that the roles of the write and
-// read semaphores have been swapped so this can be used
-// to send data from the reader side to the writer side.
-
-// This moveBytesReaderReversed method on the reader side
-// should be used in tandem with the moveBytesWriterReversed
-// method on the writer side.
-
-// Transmit data via two-semaphore IPC to the writer side (i.e., the
-// side that creates the shared memory area and the shared semaphores
-// (unnamed or named)) from the reader side (i.e., the side that checks
-// the shared memory area and shared semaphores that have been created
-// by the writer side).  It is the responsibility of moveBytesReaderReversed to
-// initialize the semaphores to the correct values, and check at the
-// end that they are left in the correct blocked state.
-
-// In the two-semaphores method of IPC, the shared memory area must
-// correspond to the shmbuf struct which contains some control data
-// explicitly used for the communication, e.g., at least the total
-// number of bytes of data to be transferred, and limited size
-// non-control data areas to be used for transferring an unlimited
-// number of data bytes.
-
-// if ifHeader is true, then src is a MemoryMapHeader header which is
-// transferred to the corresponding area of shared memory (the
-// internal dest in this case).  Otherwise, src is a char array of
-// unlimited size whose transfer is staged through the data area (the
-// internal dest in this case) of shared memory.
-
-// n is the total number of bytes that will be moved.
-
-// N.B. memcpy used inside so src cannot overlap with (the internal) dest.
-
-void PLMemoryMap::moveBytesReaderReversed( bool ifHeader, const void *src, size_t n )
-{
-    size_t     chunk, nbytes_chunk, transmitted_bytes;
-    const char * csrc  = (const char *) src;
-    void       * hdest = (void *) getHeader();
-    void       * bdest = (void *) getBuffer();
-
-    if ( !isValid() )
-        throw ( "PLMemoryMap::moveBytesReaderReversed: invalid memory map" );
-
-    size_t size_area;
-    if ( ifHeader )
-        size_area = sizeof ( MemoryMapHeader );
-    else
-        size_area = PL_SHARED_ARRAY_SIZE;
-
-    if ( ifHeader && n != sizeof ( MemoryMapHeader ) )
-        throw( "PLMemoryMap::moveBytesReaderReversed: ifHeader true has invalid n value" );
-
-    if ( !getReverseDataFlow() )
-    {
-        // The previous data transfer was initiated with moveBytesWriter
-        // so must wait for the OS scheduler to let that routine finish to
-        // avoid a race condition.
-        // Mark this forthcoming data transfer as in the reversed direction.
-        setReverseDataFlow( true );
-        // Attempt to avoid the above race by using the wxwidgets
-        // library to wait (at least) 10 system ticks on millsecond tick
-        // systems and much more than that on systems with higher tick
-        // resolutions.  So it is likely this is way more than enough.
-        // Note, this code is only executed when the direction of data
-        // flow is disrupted, and usually that only occurs for an
-        // initialization handshake and interactive use of -dev
-        // wxwidgets.  For both cases we should not be concerned about
-        // speed.
-        wxMilliSleep( 10 );
-    }
-    if ( !m_twoSemaphores.areBothSemaphoresBlocked() )
-        throw( "PLMemoryMap::moveBytesReaderReversed: attempt to start transfer with semaphores not in correct blocked state (likely due to a race condition." );
-    // Write side is blocked and initialize read side to go first.
-    m_twoSemaphores.postReadSemaphore();
-
-    for ( chunk = 0, transmitted_bytes = 0;; chunk++, csrc += nbytes_chunk )
-    {
-        // Wait for our turn to change the shared memory shmbuf.
-        m_twoSemaphores.waitReadSemaphore();
-
-        if ( chunk == 0 )
-        {
-            // Update nbytes control data part of that shared memory shmbuf.
-            ( (shmbuf *) m_buffer )->nbytes = n;
-        }
-
-        nbytes_chunk = MIN( size_area, n - transmitted_bytes );
-        if ( nbytes_chunk > 0 )
-        {
-            if ( ifHeader )
-                memcpy( hdest, csrc, nbytes_chunk );
-            else
-                memcpy( bdest, csrc, nbytes_chunk );
-        }
-
-        // Give the moveBytesWriter method a turn to process the shared
-        // memory shmbuf we have just changed.
-        m_twoSemaphores.postWriteSemaphore();
-
-        if ( !( nbytes_chunk > 0 ) )
-        {
-            break;
-        }
-        transmitted_bytes += nbytes_chunk;
-    }
-
-    // All shared memory shmbuf changes have been transmitted so wait
-    // for moveBytesWriterReversed to process the last of those.
-    m_twoSemaphores.waitReadSemaphore();
-
-    // If the transfer has been a success, then both semaphores should
-    // end up as blocked.  Check that:
-    if ( !m_twoSemaphores.areBothSemaphoresBlocked() )
-        throw( "PLMemoryMap::moveBytesReaderReversed (internal error): transfer finished with semaphores not in correct blocked state." );
-}
-
-// This IPC method is an adaptation of the method used in
-// cmake/test_linux_ipc/pshm_read.c.
-// N.B. The moveBytesWriterReversed method is identical to
-// moveBytesReader except that the roles of the write and
-// read semaphores have been swapped so this can be used
-// to receive data on the writer side that is sent
-// from the reader side.
-
-// This moveBytesWriterReversed method on the writer side
-// should be used in tandem with the moveBytesReaderReversed
-// method on the reader side.
-
-// Receive data via two-semaphore IPC on the writer side (i.e., the
-// side that creates the shared memory area and the shared semaphores
-// (unnamed or named)) that is sent from the reader side (i.e., the side
-// that checks the shared memory area and shared semaphores that have
-// been created by the writer side).
-
-// In the two-semaphores method of IPC, the shared memory area must
-// correspond to the shmbuf struct which contains some control data
-// explicitly used for the communication, e.g., at least the total
-// number of bytes of data to be transferred, and limited size
-// non-control data areas to be used for transferring an unlimited
-// number of data bytes.
-
-// if ifHeader is true, then (the internal) src is the MemoryMapHeader
-// header area of shared memory which is transferred to a
-// corresponding area (in general memory or the shared memory header)
-// pointed to by the dest argument.  Otherwise, (the internal) src is
-// the char * data area of shared memory which is a staging area for
-// the transfer of n bytes into the location pointed to by dest.
-
-// dest must be a pointer to a destination address which can be in
-// general memory or correspond to a data area within the shared
-// memory area.
-
-// n is the total number of bytes that will be moved.
-
-// N.B. memcpy used inside so (internal) src cannot overlap with dest.
-
-void PLMemoryMap::moveBytesWriterReversed( bool ifHeader, void *dest, size_t n )
-{
-    size_t chunk, nbytes, nbytes_chunk, received_bytes;
-    char   * cdest = (char *) dest;
-    void   * hsrc  = (void *) getHeader();
-    void   * bsrc  = (void *) getBuffer();
-
-    if ( !isValid() )
-        throw( "PLMemoryMap::moveBytesWriterReversed: invalid memory map" );
-
-    size_t size_area;
-    if ( ifHeader )
-        size_area = sizeof ( MemoryMapHeader );
-    else
-        size_area = PL_SHARED_ARRAY_SIZE;
-
-    if ( ifHeader && n != sizeof ( MemoryMapHeader ) )
-        throw( "PLMemoryMap::moveBytesWriterReversed: ifHeader true has invalid n value" );
-    // N.B. it is the responsibility of PLMemoryMap::moveBytesReaderReversed to initialize the semaphores
-    // to the correct values, but we at least check here that the semaphores are valid.
-    m_twoSemaphores.areBothSemaphoresValid();
-
-    for ( chunk = 0, received_bytes = 0;; chunk++, cdest += nbytes_chunk )
-    {
-        // Wait for our turn to process the shared memory shmbuf that has been updated
-        // by moveBytesReaderReversed.
-        m_twoSemaphores.waitWriteSemaphore();
-
-        if ( chunk == 0 )
-        {
-            // Update *nbytes from the nbytes control data part of that shared memory shmbuf.
-            nbytes = ( (shmbuf *) m_buffer )->nbytes;
-            if ( nbytes > n )
-                throw ( "PLMemoryMap::moveBytesWriterReversed: n too small to receive results" );
-        }
-
-        nbytes_chunk = MIN( size_area, nbytes - received_bytes );
-        if ( !( nbytes_chunk > 0 ) )
-        {
-            break;
-        }
-        else
-        {
-            received_bytes += nbytes_chunk;
-
-            if ( ifHeader )
-                memcpy( cdest, hsrc, nbytes_chunk );
-            else
-                memcpy( cdest, bsrc, nbytes_chunk );
-            // Give the transmitter a turn to send another chunk of bytes.
-            m_twoSemaphores.postReadSemaphore();
-        }
-    }
-    // All chunks have been received and processed so signal transmitter
-    // we are done.
-    m_twoSemaphores.postReadSemaphore();
-
-    // The moveBytesReaderReversed routine checks after all transactions with this
-    // moveBytesWriterReversed routine are completed that the semaphores are
-    // in the correct blocked state.  So there is nothing for us to
-    // check here.
-}
-
 #endif // #ifdef PL_WXWIDGETS_IPC2
 //--------------------------------------------------------------------------
 //  Close an area of mapped memory. When all processes have closed their
@@ -592,222 +600,7 @@ PLMemoryMap::~PLMemoryMap()
     close();
 }
 
-#ifdef PL_WXWIDGETS_IPC2
-
-// Default constructor: Initialize m_wsem and m_rsem to NULL;
-PLTwoSemaphores::PLTwoSemaphores()
-{
-    m_wsem = NULL;
-    m_rsem = NULL;
-}
-
-// Update the m_wsem and m_rsem locations and conditionally (when
-// mustExist is false) initialize those locations as semaphores.
-void PLTwoSemaphores::initializeToValid( sem_t *wsem, sem_t *rsem, bool mustExist )
-{
-    if ( wsem == NULL || rsem == NULL )
-        throw ( "PLTwoSemaphores::initializeToValid: both the requested wsem and rsem values must be non-NULL." );
-
-    if ( !mustExist )
-    {
-        // Check the current semaphores are not valid.
-        if ( areBothSemaphoresValid() )
-            throw ( "PLTwoSemaphores::initializeToValid, mustExist false: attempt to initialize already valid semaphores" );
-        m_wsem = wsem;
-        m_rsem = rsem;
-        // Middle argument of 1 ==> semaphore resident in shared memory.
-        // Last argument of 0 ==> Both reader and writer initially blocked.
-        if ( sem_init( m_wsem, 1, 0 ) || sem_init( m_rsem, 1, 0 ) )
-            throw ( "PLTwoSemaphores::initializeToValid, mustExist false: sem_init failed for one of the two semaphores" );
-    }
-    else
-    {
-        m_wsem = wsem;
-        m_rsem = rsem;
-        int value;
-        // We want to test that these are semaphore locations that
-        // have already been properly initialized in blocked state as above.
-        // Attempt to test that assumption with sem_getvalue, but I
-        // have gdb evidence that at least one OS implementation (that on Linux)
-        // of sem_getvalue does not check that the given location is
-        // a valid semaphore, and it is fairly likely in that case that
-        // you will return a value of 0 so this test is not as rigourous as
-        // it should be.
-        if ( !( sem_getvalue( m_wsem, &value ) == 0 && value == 0 && sem_getvalue( m_rsem, &value ) == 0 && value == 0 ) )
-            throw( "PLTwoSemaphores::initializeToValid, mustExist true: semaphores not valid or not set at correct blocked values" );
-    }
-}
-
-// Only destructor
-PLTwoSemaphores::~PLTwoSemaphores()
-{
-    initializeToInvalid();
-}
-
-// Conditionally destroy the m_wsem and m_rsem locations as
-// semaphores.  Unconditionally set both m_wsem and m_rsem to NULL
-// to mark those as invalid semaphore locations.
-void PLTwoSemaphores::initializeToInvalid()
-{
-    if ( areBothSemaphoresValid() )
-    {
-        if ( sem_destroy( m_wsem ) )
-            throw( "PLTwoSemaphores::initializeToInvalid: sem_destroy failed on write semaphore" );
-        if ( sem_destroy( m_rsem ) )
-            throw( "PLTwoSemaphores::initializeToInvalid: sem_destroy failed on read semaphore" );
-    }
-    m_wsem = NULL;
-    m_rsem = NULL;
-}
-
-// Attempts to test semaphore validity using sem_getvalue on Linux
-// proved fruitless since as far as I can tell with gdb that function
-// always returns zero, i.e., always signals success ___so long as its
-// sem_t * argument points to _any_ non-NULL accessible memory area that is
-// cast to sem_t *__!  And when called with a NULL argument sem_getvalue
-// segfaults rather than returning with a non-zero value!  So Linux
-// sem_getvalue is pretty crude.
-
-// So instead of checking the return value of sem_getvalue, we instead
-// only check whether m_wsem and m_rsem are not NULL (signalling
-// valid) or NULL (signalling invalid).
-
-// N.B. the default PLTwoSemaphores constructor sets these locations
-// to NULL, and the alternative constructor or initializeToValid must
-// be called with mustExist argument false to change these locations
-// to valid semaphores that are initially blocked.
-
-bool PLTwoSemaphores::isWriteSemaphoreValid()
-{
-    return m_wsem != NULL;
-}
-
-bool PLTwoSemaphores::isReadSemaphoreValid()
-{
-    return m_rsem != NULL;
-}
-
-// Return true if both semaphores are valid.
-// Return false if both semaphores are invalid.
-// Throw an exception otherwise.
-
-bool PLTwoSemaphores::areBothSemaphoresValid()
-{
-    if ( isWriteSemaphoreValid() && isReadSemaphoreValid() )
-    {
-        return true;
-    }
-    else if ( !isWriteSemaphoreValid() && !isReadSemaphoreValid() )
-    {
-        return false;
-    }
-
-    throw( "PLTwoSemaphores::areBothSemaphoresValid: invalid combination of read and write semaphore validity" );
-
-    // Should never reach this statement, but include it anyway to quiet possible compiler warnings.
-    return false;
-}
-
-// Check whether both semaphores are valid and blocked.
-bool PLTwoSemaphores::areBothSemaphoresBlocked()
-{
-    if ( areBothSemaphoresValid() )
-    {
-        int wvalue, rvalue;
-        // We want to test that these are semaphore locations that
-        // have already been properly initialized in blocked state as above.
-        // Attempt to test that assumption with sem_getvalue, but I
-        // have gdb evidence that at least one OS implementation (that on Linux)
-        // of sem_getvalue does not check that the given location is
-        // a valid semaphore, and it is fairly likely in that case that
-        // you will return a value of 0 so this test is not as rigourous as
-        // it should be.
-        if ( sem_getvalue( m_wsem, &wvalue ) != 0 || sem_getvalue( m_rsem, &rvalue ) != 0 )
-            throw( "PLTwoSemaphores::areBothSemaphoresBlocked: sem_getvalue error on one of the semaphores" );
-        if ( wvalue == 0 && rvalue == 0 )
-            return true;
-        else
-            return false;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-// Get value of Write semaphore.
-int PLTwoSemaphores::getValueWriteSemaphore()
-{
-    // Initialize to wacko value to quiet compiler uninitialized complaints
-    // for the case of the throws below.
-    int ret_value = -42;
-    if ( !isWriteSemaphoreValid() )
-    {
-        throw( "PLTwoSemaphores::getValueWriteSemaphore: attempt to get value for invalid semaphore." );
-    }
-    else
-    {
-        if ( sem_getvalue( m_wsem, &ret_value ) != 0 )
-            throw( "PLTwoSemaphores::getValueWriteSemaphore: sem_getvalue failed" );
-    }
-    return ret_value;
-}
-
-// Get value of Read semaphore.
-int PLTwoSemaphores::getValueReadSemaphore()
-{
-    // Initialize to wacko value to quiet compiler uninitialized complaints
-    // for the case of the throws below.
-    int ret_value = -42;
-    if ( !isReadSemaphoreValid() )
-    {
-        throw( "PLTwoSemaphores::getValueReadSemaphore: attempt to get value for invalid semaphore." );
-    }
-    else
-    {
-        if ( sem_getvalue( m_rsem, &ret_value ) != 0 )
-            throw( "PLTwoSemaphores::getValueReadSemaphore: sem_getvalue failed" );
-    }
-    return ret_value;
-}
-
-void PLTwoSemaphores::postWriteSemaphore()
-{
-    if ( !isWriteSemaphoreValid() )
-        throw( "PLTwoSemaphores::postWriteSemaphore: invalid write semaphore" );
-
-    if ( sem_post( m_wsem ) )
-        throw( "PLTwoSemaphores::postWriteSemaphore: sem_post failed for write semaphore" );
-}
-
-void PLTwoSemaphores::waitWriteSemaphore()
-{
-    if ( !isWriteSemaphoreValid() )
-        throw( "PLTwoSemaphores::waitWriteSemaphore: invalid write semaphore" );
-
-    if ( sem_wait( m_wsem ) )
-        throw( "PLTwoSemaphores::waitWriteSemaphore: sem_wait failed for write semaphore" );
-}
-
-void PLTwoSemaphores::postReadSemaphore()
-{
-    if ( !isReadSemaphoreValid() )
-        throw( "PLTwoSemaphores::postReadSemaphore: invalid read semaphore" );
-
-    if ( sem_post( m_rsem ) )
-        throw( "PLTwoSemaphores::postReadSemaphore: sem_post failed for read semaphore" );
-}
-
-void PLTwoSemaphores::waitReadSemaphore()
-{
-    if ( !isReadSemaphoreValid() )
-        throw( "PLTwoSemaphores::waitReadSemaphore: invalid read semaphore" );
-
-    if ( sem_wait( m_rsem ) )
-        throw( "PLTwoSemaphores::waitReadSemaphore: sem_wait failed for read semaphore" );
-}
-
-#else //ifdef PL_WXWIDGETS_IPC2
+#ifndef PL_WXWIDGETS_IPC2
 
 PLNamedMutex::PLNamedMutex()
 {
@@ -914,4 +707,4 @@ PLNamedMutexLocker::~PLNamedMutexLocker( )
     m_mutex->release();
     m_mutex = NULL;
 }
-#endif //ifdef PL_WXWIDGETS_IPC2
+#endif //#ifndef PL_WXWIDGETS_IPC2

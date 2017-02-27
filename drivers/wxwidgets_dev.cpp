@@ -1431,18 +1431,18 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
             break;
         }
 
-        std::cerr << "Before moveBytesWriter" << std::endl;
+        std::cerr << "Before transmitBytes" << std::endl;
         std::cerr << "transmissionType = " << m_header.transmissionType << std::endl;
         std::cerr << "plbufAmountToTransmit = " << m_header.plbufAmountToTransmit << std::endl;
         std::cerr << "viewerOpenFlag = " << m_header.viewerOpenFlag << std::endl;
         std::cerr << "locateModeFlag = " << m_header.locateModeFlag << std::endl;
         std::cerr << "completeFlag = " << m_header.completeFlag << std::endl;
-        m_outputMemoryMap.moveBytesWriter( true, &m_header, sizeof ( MemoryMapHeader ) );
+        m_outputMemoryMap.transmitBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
         if ( m_header.plbufAmountToTransmit > 0 )
         {
             // N.B. the above condition implies pls is non-NULL.
             // Transmit m_header.plbufAmountToTransmit bytes of plbuf to the reader process.
-            m_outputMemoryMap.moveBytesWriter( false, (char *) pls->plbuf_buffer + m_localBufferPosition, m_header.plbufAmountToTransmit );
+            m_outputMemoryMap.transmitBytes( false, (char *) pls->plbuf_buffer + m_localBufferPosition, m_header.plbufAmountToTransmit );
             m_localBufferPosition += m_header.plbufAmountToTransmit;
         }
     } // End of try block
@@ -1698,7 +1698,7 @@ void wxPLDevice::SetupMemoryMap()
 
 #ifdef PL_WXWIDGETS_IPC2
         // Should only be executed once per valid Memory map before wxPLViewer is launched.
-        m_outputMemoryMap.initializeSemaphoresToValid( m_outputMemoryMap.getWriteSemaphore(), m_outputMemoryMap.getReadSemaphore(), false );
+        m_outputMemoryMap.initializeSemaphoresToValid( m_outputMemoryMap.getWriteSemaphore(), m_outputMemoryMap.getReadSemaphore(), m_outputMemoryMap.getTransmitSemaphore(), false );
 #endif
         //zero out the reserved area
 #ifdef PL_WXWIDGETS_IPC2
@@ -1767,19 +1767,19 @@ void wxPLDevice::SetupMemoryMap()
         size_t nbytes;
         try
         {
-            // Update the memory map (i.e., header) from the read (i.e.,
+            // Update the header from the read (i.e.,
             // wxPLViewer) side.  Warning, this will block indefinitely
             // until the read side sends the required data.  So
             // theoretically you could wait until the next day to launch
             // wxPLViewer using gdb and -dev wxwidgets would happily
             // wake up and start communicating with it.  N.B. we could
             // change this infinite timeout later (by changing all
-            // sem_wait calls in PLTwoSemaphores to sem_timedwait with a
+            // sem_wait calls in PLThreeSemaphores to sem_timedwait with a
             // generic timeout of say 2 minutes before it throws an
             // exception).  But regardless of the ultimate resolution of
             // that issue, the following will not require any
             // wxMilliSleep loops.
-            m_outputMemoryMap.moveBytesWriterReversed( true, &m_header, sizeof ( MemoryMapHeader ) );
+            m_outputMemoryMap.receiveBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
         }
         catch ( const char *message )
         {

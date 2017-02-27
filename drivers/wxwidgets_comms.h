@@ -89,52 +89,52 @@ struct MemoryMapHeader
 // does not significantly affect efficiency.
 #define PL_SHARED_ARRAY_SIZE    1024 * 1024
 
-// In the two-semaphores method of IPC, the shared memory area must
+// In the three-semaphores method of IPC, the shared memory area must
 // correspond to this shmbuf struct which contains some control data
 // explicitly used for the communication, e.g., at least the total
 // number of bytes of data to be transferred, and limited size
-// data areas to be transferred under two-semaphore control.
+// data areas to be transferred under three-semaphore control.
 struct shmbuf
 {
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     // control data
-    sem_t  wsem;                      // Writer semaphore
-    sem_t  rsem;                      // Reader semaphore
+    sem_t           wsem;             // Writer semaphore
+    sem_t           rsem;             // Reader semaphore
+    sem_t           tsem;             // Transmit semaphore
 #endif
-    size_t nbytes;                    // Total number of data bytes to be transferred
-    // Keep track of whether data flow is reversed (from wxPLViewer to
-    // -dev wxwidgets) or not when entering moveBytesWriter or
-    // moveBytesReaderReversed to help avoid a race condition.
-    bool            reversed;
-    // header data to be transferred under two-semaphore control.
+    size_t          nbytes;           // Total number of data bytes to be transferred
+    // header data to be transferred under three-semaphore control.
     MemoryMapHeader header;
-    // plbuf data to be transferred under two-semaphore control.
+    // plbuf data to be transferred under three-semaphore control.
     char            data[PL_SHARED_ARRAY_SIZE];
 };
 
-class PLTwoSemaphores
+class PLThreeSemaphores
 {
 public:
-    // Default constructor: Initialize m_wsem and m_rsem to NULL
-    // to mark those as invalid semaphore locations.
-    PLTwoSemaphores();
-    // Update the m_wsem and m_rsem locations and conditionally (when
-    // mustExist is false) initialize those locations as semaphores.
-    void initializeToValid( sem_t *wsem, sem_t *rsem, bool mustExist );
+    // Default constructor: Initialize m_wsem, m_rsem, and m_tsem to
+    // NULL to mark those as invalid semaphore locations.
+    PLThreeSemaphores();
+    // Update the m_wsem, m_rsem, and m_tsem locations and
+    // conditionally (when mustExist is false) initialize those
+    // locations as semaphores.
+    void initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist );
     // call initializeToInvalid.
-    ~PLTwoSemaphores();
-    // If the m_wsem and m_rsem locations are non-NULL destroy those
-    // semaphores.  Also, unconditionally set both m_wsem and m_rsem
-    // to NULL to mark those as invalid semaphore locations.
+    ~PLThreeSemaphores();
+    // If the m_wsem, m_rsem, and m_tsem locations are non-NULL
+    // destroy those semaphores.  Also, unconditionally set
+    // m_wsem, m_rsem, and m_tsem to NULL to mark those as invalid
+    // semaphore locations.
     void initializeToInvalid();
     bool isWriteSemaphoreValid();
     bool isReadSemaphoreValid();
-    // Return true if both semaphores are valid.
-    // Return false if both semaphores are invalid.
+    bool isTransmitSemaphoreValid();
+    // Return true if all semaphores are valid.
+    // Return false if all semaphores are invalid.
     // Throw an exception otherwise.
-    bool areBothSemaphoresValid();
-    // Check whether both semaphores are valid and blocked.
-    bool areBothSemaphoresBlocked();
+    bool areSemaphoresValid();
+    // Check whether write and read semaphores are valid and blocked.
+    bool areWriteReadSemaphoresBlocked();
     // Get value of Write semaphore.
     int getValueWriteSemaphore();
     // Get value of Read semaphore.
@@ -143,6 +143,8 @@ public:
     void waitWriteSemaphore();
     void postReadSemaphore();
     void waitReadSemaphore();
+    void postTransmitSemaphore();
+    void waitTransmitSemaphore();
 private:
     // Attempts to test semaphore initialization validity using
     // sem_getvalue on Linux proved fruitless since as far as I can tell
@@ -150,10 +152,11 @@ private:
     // success, and returns a 0 or 1 value argument ___so long as its
     // sem_t * argument points to _any_ accessible memory area that is
     // cast to sem_t *__!  So here is the alternative plan we are using:
-    // m_wsem and m_rsem should always be NULL unless the non-NULL
+    // m_wsem, m_rsem, and m_tsem should always be NULL unless the non-NULL
     // locations they point to are properly initialized semaphores.
-    sem_t * m_wsem;
-    sem_t * m_rsem;
+    sem_t *m_wsem;
+    sem_t *m_rsem;
+    sem_t *m_tsem;
 };
 
 #endif //#ifdef PL_WXWIDGETS_IPC2
@@ -175,16 +178,13 @@ public:
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     sem_t *getWriteSemaphore() { return &( ( (shmbuf *) m_buffer )->wsem ); }
     sem_t *getReadSemaphore() { return &( ( (shmbuf *) m_buffer )->rsem ); }
+    sem_t *getTransmitSemaphore() { return &( ( (shmbuf *) m_buffer )->tsem ); }
 #endif
-    bool getReverseDataFlow() { return ( (shmbuf *) m_buffer )->reversed; }
-    void setReverseDataFlow( bool reversed ) { ( (shmbuf *) m_buffer )->reversed = reversed; }
     size_t *getTotalDataBytes() { return &( ( (shmbuf *) m_buffer )->nbytes ); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
-    void moveBytesWriter( bool ifHeader, const void *src, size_t n );
-    void moveBytesReader( bool ifHeader, void *dest, size_t n );
-    void moveBytesReaderReversed( bool ifHeader, const void *src, size_t n );
-    void moveBytesWriterReversed( bool ifHeader, void *dest, size_t n );
-    void initializeSemaphoresToValid( sem_t *wsem, sem_t *rsem, bool mustExist ) { m_twoSemaphores.initializeToValid( wsem, rsem, mustExist ); }
+    void transmitBytes( bool ifHeader, const void *src, size_t n );
+    void receiveBytes( bool ifHeader, void *dest, size_t n );
+    void initializeSemaphoresToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist ) { m_threeSemaphores.initializeToValid( wsem, rsem, tsem, mustExist ); }
 #else // #ifdef PL_WXWIDGETS_IPC2
     char *getBuffer() { return (char *) m_buffer; }
     size_t getSize() { return m_size; }
@@ -195,9 +195,9 @@ private:
 #elif defined ( PL_WXWIDGETS_IPC2 )
     int m_mapFile;
     char * m_name;
-    // instantiate m_twoSemaphores private object (with default
+    // instantiate m_threeSemaphores private object (with default
     // constructor) when PLMemoryMap is instantiated.
-    PLTwoSemaphores m_twoSemaphores;
+    PLThreeSemaphores m_threeSemaphores;
 #else
     int m_mapFile;
     char * m_name;

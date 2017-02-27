@@ -65,7 +65,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         {
 #ifdef PL_WXWIDGETS_IPC2
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-            m_memoryMap.initializeSemaphoresToValid( m_memoryMap.getWriteSemaphore(), m_memoryMap.getReadSemaphore(), true );
+	  m_memoryMap.initializeSemaphoresToValid( m_memoryMap.getWriteSemaphore(), m_memoryMap.getReadSemaphore(), m_memoryMap.getTransmitSemaphore(), true );
 #else
 #error IPC2 with named semaphores is currently unimplemented
 #endif
@@ -100,15 +100,11 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         m_header.completeFlag          = 0;
         m_header.plbufAmountToTransmit = 0;
         // This is actually an invalid value that if not overwritten
-        // would throw an exception later on.
+        // by the -dev wxwidgets side would throw an exception later on.
         m_header.transmissionType = transmissionRegular;
         // We leave uninitialized, the graphicsIn and textSizeInfo structs
         // that are part of m_header.
-
-        // This is the initial transfer of date via shared memory.  Initialize
-        // the variable that keeps track of the direction of data flow.
-        m_memoryMap.setReverseDataFlow( true );
-        m_memoryMap.moveBytesReaderReversed( true, &m_header, sizeof ( MemoryMapHeader ) );
+        m_memoryMap.transmitBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
     }
     catch ( const char *message )
     {
@@ -224,9 +220,9 @@ bool wxPlFrame::ReadTransmission()
     {
         // First read complete data header to find out everything we need to know
         // about the transmitBuffer call.
-        m_memoryMap.moveBytesReader( true, &m_header, sizeof ( MemoryMapHeader ) );
+        m_memoryMap.receiveBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
         //FIXME
-        std::cerr << "After moveBytesReader" << std::endl;
+        std::cerr << "After receiveBytes" << std::endl;
         std::cerr << "transmissionType = " << m_header.transmissionType << std::endl;
         std::cerr << "plbufAmountToTransmit = " << m_header.plbufAmountToTransmit << std::endl;
         std::cerr << "viewerOpenFlag = " << m_header.viewerOpenFlag << std::endl;
@@ -282,7 +278,7 @@ bool wxPlFrame::ReadTransmission()
             char * plbufBuffer = (char *) malloc( m_header.plbufAmountToTransmit );
             if ( plbufBuffer == NULL )
                 throw( "wxPlFrame::ReadTransmission: malloc of plbufBuffer failed" );
-            m_memoryMap.moveBytesReader( false, plbufBuffer, m_header.plbufAmountToTransmit );
+            m_memoryMap.receiveBytes( false, plbufBuffer, m_header.plbufAmountToTransmit );
             std::cerr << "Successful read of plbuf" << std::endl;
             m_pageBuffers[m_writingPage].insert( m_pageBuffers[m_writingPage].end(),
                 plbufBuffer, plbufBuffer + m_header.plbufAmountToTransmit );
