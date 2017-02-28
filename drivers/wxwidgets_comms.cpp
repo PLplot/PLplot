@@ -47,10 +47,10 @@ void PLThreeSemaphores::initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem
             throw ( "PLThreeSemaphores::initializeToValid, mustExist false: attempt to initialize already valid semaphores" );
         m_wsem = wsem;
         m_rsem = rsem;
-	m_tsem = tsem;
+        m_tsem = tsem;
         // Middle argument of 1 ==> semaphore resident in shared memory.
         // Last argument ==> Both read and write semaphores initially blocked, transmit semaphore
-	// initially unblocked.
+        // initially unblocked.
         if ( sem_init( m_wsem, 1, 0 ) || sem_init( m_rsem, 1, 0 ) || sem_init( m_tsem, 1, 1 ) )
             throw ( "PLThreeSemaphores::initializeToValid, mustExist false: sem_init failed for at least one of the three semaphores" );
     }
@@ -58,7 +58,7 @@ void PLThreeSemaphores::initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem
     {
         m_wsem = wsem;
         m_rsem = rsem;
-	m_tsem = tsem;
+        m_tsem = tsem;
         int value;
         // We want to test that these are semaphore locations that
         // have already been properly initialized in blocked state as above.
@@ -484,7 +484,7 @@ void PLMemoryMap::transmitBytes( bool ifHeader, const void *src, size_t n )
 
 // if ifHeader is true, then (the internal) src is the MemoryMapHeader
 // header area of shared memory which is transferred to a
-// corresponding area 
+// corresponding area
 // pointed to by the dest argument.  Otherwise, (the internal) src is
 // the char * data area of shared memory which is a staging area for
 // the transfer of n bytes into the location pointed to by dest.
