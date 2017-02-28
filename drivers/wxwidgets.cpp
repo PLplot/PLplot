@@ -199,9 +199,10 @@ void plD_init_wxwidgets( PLStream* pls )
         }
         pls->has_string_length = 1;
     }
-    catch ( char *message )
+    catch ( const char *message )
     {
         plabort( message );
+        plabort( "error in plD_init_wxwidgets." );
         pls->dev = NULL;
     }
     catch ( ... )
@@ -286,9 +287,10 @@ void plD_line_wxwidgets( PLStream *pls, short x1a, short y1a, short x2a, short y
             throw( "plD_line_wxwidgets called before initialization." );
         device->DrawLine( x1a, y1a, x2a, y2a );
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_line_wxwidgets." );
     }
     catch ( ... )
     {
@@ -313,9 +315,10 @@ void plD_polyline_wxwidgets( PLStream *pls, short *xa, short *ya, PLINT npts )
             throw( "plD_polyline_wxwidgets called before initialization." );
         device->DrawPolyline( xa, ya, npts );
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_polyline_wxwidgets." );
     }
     catch ( ... )
     {
@@ -343,9 +346,10 @@ void plD_eop_wxwidgets( PLStream *pls )
         if ( pls->nopause )
             device->EndPage( pls );
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_eop_wxwidgets." );
     }
     catch ( ... )
     {
@@ -371,9 +375,10 @@ void plD_wait_wxwidgets( PLStream *pls )
             throw( "plD_wait_wxwidgets called before initialization." );
         device->EndPage( pls );
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_wait_wxwidgets." );
     }
     catch ( ... )
     {
@@ -400,16 +405,16 @@ void plD_bop_wxwidgets( PLStream *pls )
             throw( "plD_bop_wxwidgets called before initialization." );
         device->BeginPage( pls );
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_bop_wxwidgets." );
     }
     catch ( ... )
     {
         plabort( "unknown error in plD_bop_wxwidgets." );
     }
 }
-
 
 //--------------------------------------------------------------------------
 //  void plD_tidy_wxwidgets( PLStream *pls )
@@ -433,16 +438,16 @@ void plD_tidy_wxwidgets( PLStream *pls )
         if ( g_weInitializedWx )
             wxEntryCleanup();
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_tidy_wxwidgets." );
     }
     catch ( ... )
     {
         plabort( "unknown error in plD_tidy_wxwidgets." );
     }
 }
-
 
 //--------------------------------------------------------------------------
 //  void plD_state_wxwidgets( PLStream *pls, PLINT op )
@@ -473,16 +478,16 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
             break;
         }
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_state_wxwidgets." );
     }
     catch ( ... )
     {
         plabort( "unknown error in plD_state_wxwidgets." );
     }
 }
-
 
 //--------------------------------------------------------------------------
 //  void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
@@ -555,9 +560,10 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
             break;
         }
     }
-    catch ( char* message )
+    catch ( const char* message )
     {
         plabort( message );
+        plabort( "error in plD_tidy_wxwidgets." );
     }
     catch ( ... )
     {

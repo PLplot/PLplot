@@ -791,7 +791,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     catch ( ... )
     {
         delete gc;
-        throw;
+        throw( "wxPLDevice::wxPLDevice: unknown failure in new wxGCDC( gc )" );
     }
     PLPLOT_wxLogDebug( "wxPLDevice(): m_interactiveTextGcdc done" );
 
@@ -1077,6 +1077,7 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
         }
         catch ( ... )
         {
+            throw( "unknown failure in dynamic_cast< wxGCDC* >( m_dc )" );
         }
         if ( gcdc )
             m_gc = gcdc->GetGraphicsContext();
@@ -1432,7 +1433,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
         }
 
         std::cerr << "Before transmitBytes" << std::endl;
-        std::cerr << "transmissionType = " << m_header.transmissionType << std::endl;
+        std::cerr << "transmissionType = " << static_cast<unsigned int>( m_header.transmissionType ) << std::endl;
         std::cerr << "plbufAmountToTransmit = " << m_header.plbufAmountToTransmit << std::endl;
         std::cerr << "viewerOpenFlag = " << m_header.viewerOpenFlag << std::endl;
         std::cerr << "locateModeFlag = " << m_header.locateModeFlag << std::endl;
@@ -1451,6 +1452,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
     catch ( const char *message )
     {
         plwarn( message );
+        plwarn( "wxPLDevice::TransmitBuffer: error" );
     }
 
     catch ( ... )
@@ -1780,12 +1782,18 @@ void wxPLDevice::SetupMemoryMap()
             // that issue, the following will not require any
             // wxMilliSleep loops.
             m_outputMemoryMap.receiveBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
+            std::cerr << "After receiveBytes" << std::endl;
+            std::cerr << "transmissionType = " << static_cast<unsigned int>( m_header.transmissionType ) << std::endl;
+            std::cerr << "plbufAmountToTransmit = " << m_header.plbufAmountToTransmit << std::endl;
+            std::cerr << "viewerOpenFlag = " << m_header.viewerOpenFlag << std::endl;
+            std::cerr << "locateModeFlag = " << m_header.locateModeFlag << std::endl;
+            std::cerr << "completeFlag = " << m_header.completeFlag << std::endl;
         }
         catch ( const char *message )
         {
             plwarn( message );
+            plwarn( "wxPLDevice::SetupMemoryMap: error" );
         }
-
         catch ( ... )
         {
             plwarn( "wxPLDevice::SetupMemoryMap: Unknown error" );

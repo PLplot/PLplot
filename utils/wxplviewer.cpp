@@ -20,6 +20,8 @@
 #include "wxplframe.h"
 #include <wx/wx.h>
 #include <vector>
+// Needed for cerr and endl below
+#include <iostream>
 
 class wxPlViewerApp : public wxApp
 {
@@ -66,8 +68,14 @@ bool wxPlViewerApp::OnInit()
         frame->fixAspect( true );
         frame->Show();
     }
+    catch ( const char* message )
+    {
+        std::cerr << "wxPlViewerApp::OnInit: error when creating wxPlFrame instance.  " << "The message was " << message << std::endl;
+        return false;
+    }
     catch ( ... )
     {
+        std::cerr << "wxPlViewerApp::OnInit: unknown error when creating wxPlFrame instance." << std::endl;
         return false;
     }
     return true;

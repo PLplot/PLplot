@@ -21,7 +21,7 @@
 #include "wxplframe.h"
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
-// FIXME, temporarily needed for cerr and endl below
+// Needed for cerr and endl below
 #include <iostream>
 
 const int wxPlFrame::ID_FILE_EXIT      = ::wxNewId();
@@ -65,7 +65,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         {
 #ifdef PL_WXWIDGETS_IPC2
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-	  m_memoryMap.initializeSemaphoresToValid( m_memoryMap.getWriteSemaphore(), m_memoryMap.getReadSemaphore(), m_memoryMap.getTransmitSemaphore(), true );
+            m_memoryMap.initializeSemaphoresToValid( m_memoryMap.getWriteSemaphore(), m_memoryMap.getReadSemaphore(), m_memoryMap.getTransmitSemaphore(), true );
 #else
 #error IPC2 with named semaphores is currently unimplemented
 #endif
@@ -80,8 +80,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     }
     if ( !m_memoryMap.isValid() )
     {
-        wxMessageBox( wxT( "Error initializing the shared memory and/or mutex needed for the application. The application will close" ) );
-        throw( 1 );
+        throw ( "Error initializing the shared memory and/or mutex needed for the application. The application will close" );
     }
 
     m_locateMode          = false;
@@ -93,33 +92,37 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
     {
         // Initialize all of m_header to beat valgrind uninitialized noise with
         // shared memory definitions of m_header.
-        // This one let's -dev wxwidgets know we have made contact),
-        m_header.viewerOpenFlag = 1;
-        // The rest of these are sensible defaults.
-        m_header.locateModeFlag        = 0;
-        m_header.completeFlag          = 0;
-        m_header.plbufAmountToTransmit = 0;
+
         // This is actually an invalid value that if not overwritten
         // by the -dev wxwidgets side would throw an exception later on.
         m_header.transmissionType = transmissionRegular;
+        // Sensible default
+        m_header.plbufAmountToTransmit = 0;
+        // This one let's -dev wxwidgets know we have made contact
+        m_header.viewerOpenFlag = 1;
+        // Sensible default
+        m_header.locateModeFlag = 0;
+        // Sensible default
+        m_header.completeFlag = 0;
         // We leave uninitialized, the graphicsIn and textSizeInfo structs
         // that are part of m_header.
+        std::cerr << "Before transmitBytes" << std::endl;
+        std::cerr << "transmissionType = " << static_cast<unsigned int>( m_header.transmissionType ) << std::endl;
+        std::cerr << "plbufAmountToTransmit = " << m_header.plbufAmountToTransmit << std::endl;
+        std::cerr << "viewerOpenFlag = " << m_header.viewerOpenFlag << std::endl;
+        std::cerr << "locateModeFlag = " << m_header.locateModeFlag << std::endl;
+        std::cerr << "completeFlag = " << m_header.completeFlag << std::endl;
         m_memoryMap.transmitBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
     }
     catch ( const char *message )
     {
-        // FIXME!
-        // wxMessageBox command commented out because it does not work with message
-        // for some unknown reason.
-        // So use cerr instead, until the wxMessageBox issue can be fixed.
-        // wxMessageBox( wxT( "Caught exception when attempting to signal that we have opened the shared memory.  The message was "), wxT( message) );
         std::cerr << "Caught exception when attempting to signal that we have opened the shared memory.  The message was " << message << std::endl;
         throw( 1 );
     }
 
     catch ( ... )
     {
-        wxMessageBox( wxT( "Caught unknown exception when attempting to signal that we have opened the shared memory" ) );
+        std::cerr << "Caught unknown exception when attempting to signal that we have opened the shared memory" << std::endl;
         throw( 1 );
     }
 #else // #ifdef PL_WXWIDGETS_IPC2
@@ -173,10 +176,24 @@ wxPlFrame::~wxPlFrame()
 void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 {
 #ifdef PL_WXWIDGETS_IPC2
-    // call ReadTransmission once which should stop timer
-    // and return false
-    if ( ReadTransmission() )
-        throw ( "wxPlFrame::OnCheckTimer (internal error): ReadTransmission should always return false" );
+    try
+    {
+        // call ReadTransmission once which should stop timer
+        // and return false
+        if ( ReadTransmission() )
+            throw ( "wxPlFrame::OnCheckTimer (internal error): ReadTransmission should always return false" );
+    }
+    catch ( const char *message )
+    {
+        std::cerr << "Caught exception in wxPlFrame::OnCheckTimer.  The message was " << message << std::endl;
+        throw( 1 );
+    }
+
+    catch ( ... )
+    {
+        std::cerr << "Caught unknown exception in wxPlFrame::OnCheckTimer" << std::endl;
+        throw( 1 );
+    }
 
 #else // #ifdef PL_WXWIDGETS_IPC2
       //repeatedly call ReadTransmission until there is nothing
@@ -223,7 +240,7 @@ bool wxPlFrame::ReadTransmission()
         m_memoryMap.receiveBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
         //FIXME
         std::cerr << "After receiveBytes" << std::endl;
-        std::cerr << "transmissionType = " << m_header.transmissionType << std::endl;
+        std::cerr << "transmissionType = " << static_cast<unsigned int>( m_header.transmissionType ) << std::endl;
         std::cerr << "plbufAmountToTransmit = " << m_header.plbufAmountToTransmit << std::endl;
         std::cerr << "viewerOpenFlag = " << m_header.viewerOpenFlag << std::endl;
         std::cerr << "locateModeFlag = " << m_header.locateModeFlag << std::endl;
@@ -292,8 +309,9 @@ bool wxPlFrame::ReadTransmission()
         }
         if ( m_header.transmissionType == transmissionEndOfPage || m_header.transmissionType == transmissionEndOfPageNoPause )
         {
-            if ( m_header.plbufAmountToTransmit == 0 )
-                throw( "wxPlFrame::ReadTransmission: Received an end of page transmission after no draw instructions" );
+            // N.B. can receive (e.g., example 2) two transmissionEndOfPage commands in a row
+            // with the second one having m_header.plbufAmountToTransmit == 0.  But I assume
+            // SetPageAndUpdate should be able to handle this case.
             if ( m_header.transmissionType == transmissionEndOfPage )
                 SetPageAndUpdate();
             else
