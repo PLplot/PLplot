@@ -1824,9 +1824,13 @@ void wxPLDevice::SetupMemoryMap()
 
 void wxPLDevice::Locate( PLStream * pls, PLGraphicsIn * graphicsIn )
 {
-#ifndef PL_WXWIDGETS_IPC2
     if ( !m_dc && m_outputMemoryMap.isValid() )
     {
+#ifdef PL_WXWIDGETS_IPC2
+        TransmitBuffer( pls, transmissionLocate );
+        m_outputMemoryMap.receiveBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
+        *graphicsIn = m_header.graphicsIn;
+#else   // #ifdef PL_WXWIDGETS_IPC2
         MemoryMapHeader *header = (MemoryMapHeader *) ( m_outputMemoryMap.getBuffer() );
         TransmitBuffer( pls, transmissionLocate );
         bool            gotResponse = false;
@@ -1839,6 +1843,7 @@ void wxPLDevice::Locate( PLStream * pls, PLGraphicsIn * graphicsIn )
 
         PLNamedMutexLocker lock( &m_mutex );
         *graphicsIn = header->graphicsIn;
+#endif  //ifdef PL_WXWIDGETS_IPC2
     }
     else
     {
@@ -1848,7 +1853,6 @@ void wxPLDevice::Locate( PLStream * pls, PLGraphicsIn * graphicsIn )
         graphicsIn->pX = -1;
         graphicsIn->pY = -1;
     }
-#endif      //ifndef PL_WXWIDGETS_IPC2
 }
 
 //--------------------------------------------------------------------------

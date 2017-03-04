@@ -323,13 +323,28 @@ bool wxPlFrame::ReadTransmission()
             m_locateMode = true;
         }
     }
-    while ( m_header.completeFlag == 0 );
+    while ( !( m_header.transmissionType == transmissionLocate || m_header.completeFlag != 0 || m_header.transmissionType == transmissionRequestTextSize ) );
 
-    //Once the complete flag is set to non-zero then stop looking
-    m_transferComplete = true;
-    m_checkTimer.Stop();
-    //nothing to do so return
+    if ( m_header.completeFlag != 0 )
+    {
+        //Once the complete flag is set to non-zero then stop looking
+        m_transferComplete = true;
+        m_checkTimer.Stop();
+    }
+    else if ( m_currentTimerInterval != m_busyTimerInterval )
+    {
+        //If we have something to read then make sure
+        //we keep checking regularly for more
+        m_checkTimer.Stop();
+        m_checkTimer.Start( m_busyTimerInterval );
+        m_currentTimerInterval = m_busyTimerInterval;
+        m_nothingToDoCounter   = 0;
+    }
+
+    // Allow the timer to call this function again
     m_inCheckTimerFunction = false;
+
+    // Always return false.
     return false;
 
 #else // #ifdef PL_WXWIDGETS_IPC2
@@ -487,16 +502,42 @@ void wxPlFrame::OnPrevPage( wxCommandEvent& event )
 
 void wxPlFrame::OnMouse( wxMouseEvent &event )
 {
-#ifndef PL_WXWIDGETS_IPC2
     //save the mouse position for use in key presses
     m_cursorPosition = event.GetPosition();
 
     //If the mouse button was clicked then
     if ( m_locateMode && event.ButtonDown() )
     {
+        wxSize clientSize = GetClientSize();
+#ifdef PL_WXWIDGETS_IPC2
+        m_header.graphicsIn.pX = m_cursorPosition.x;
+        m_header.graphicsIn.pY = m_cursorPosition.y;
+        m_header.graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
+        m_header.graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
+
+        if ( event.LeftDown() )
+        {
+            m_header.graphicsIn.button = 1;      // X11/X.h: #define Button1	1
+            m_header.graphicsIn.state  = 1 << 8; // X11/X.h: #define Button1Mask	(1<<8)
+        }
+        else if ( event.MiddleDown() )
+        {
+            m_header.graphicsIn.button = 2;      // X11/X.h: #define Button2	2
+            m_header.graphicsIn.state  = 1 << 9; // X11/X.h: #define Button2Mask	(1<<9)
+        }
+        else if ( event.RightDown() )
+        {
+            m_header.graphicsIn.button = 3;       // X11/X.h: #define Button3	3
+            m_header.graphicsIn.state  = 1 << 10; // X11/X.h: #define Button3Mask	(1<<10)
+        }
+
+        m_header.graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
+
+        m_header.locateModeFlag = 0;
+        m_memoryMap.transmitBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
+#else   // #ifdef PL_WXWIDGETS_IPC2
         PLNamedMutexLocker locker( &m_mutex );
-        MemoryMapHeader    *header    = (MemoryMapHeader *) m_memoryMap.getBuffer();
-        wxSize             clientSize = GetClientSize();
+        MemoryMapHeader    *header = (MemoryMapHeader *) m_memoryMap.getBuffer();
         //PLGraphicsIn &     graphicsIn = header->graphicsIn;
         header->graphicsIn.pX = m_cursorPosition.x;
         header->graphicsIn.pY = m_cursorPosition.y;
@@ -522,9 +563,9 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         header->graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
         header->locateModeFlag = 0;
-        m_locateMode           = false;
+#endif  // #ifdef PL_WXWIDGETS_IPC2
+        m_locateMode = false;
     }
-#endif //#ifndef PL_WXWIDGETS_IPC2
 }
 
 void wxPlFrame::OnKey( wxKeyEvent &event )
