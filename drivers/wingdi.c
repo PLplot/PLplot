@@ -164,9 +164,11 @@ static void plD_wait_wingdi( PLStream * );
 static void plD_state_wingdi( PLStream *, PLINT );
 static void plD_esc_wingdi( PLStream *, PLINT, void * );
 
-#define CommandPrint       0x08A1
-#define CommandNextPage    0x08A2
-#define CommandQuit        0x08A3
+enum commands {
+    CommandPrint = 0x08A1,
+    CommandNextPage = 0x08A2,
+    CommandQuit = 0x08A3
+};
 #define PlotAreaId         0x08F0
 #define StatusBarId        0x08F1
 
@@ -344,8 +346,6 @@ static void PrintPage( PLStream *pls )
 {
     struct wingdi_Dev *dev = (struct wingdi_Dev *) pls->dev;
     PRINTDLGEX        Printer;
-    //PROPSHEETPAGE PrintPropSheet;
-    //HPROPSHEETPAGE hPrintPropSheetList[1];
     DOCINFO           docinfo;
     DEVMODE           * hDevMode;
     struct wingdi_Dev *push;      // A copy of the entire structure
@@ -356,14 +356,6 @@ static void PrintPage( PLStream *pls )
     docinfo.cbSize      = sizeof ( docinfo );
     docinfo.lpszDocName = _T( "Plplot Page" );
 
-    // Create a page setup property sheet
-    //ZeroMemory( &PrintPropSheet, sizeof( PROPSHEETPAGE ) );
-//    PrintPropSheet.dwSize = sizeof( PROPSHEETPAGE );
-//    PrintPropSheet.dwFlags =
-//
-//    hPrintPropSheetList[0] = CreatePropertySheetPage( &PrintPropSheet );
-//
-
     // Set the defaults for the printer device
     // Allocate a moveable block of memory.  Must use GlobalAlloc because
     // HeapAlloc is not moveable.
@@ -371,7 +363,9 @@ static void PrintPage( PLStream *pls )
     if ( hDevMode == NULL )
     {
         plwarn( "wingdi:  Failed to allocate memory for printer defaults\n" );
+		return;
     }
+	ZeroMemory(hDevMode, sizeof(DEVMODE));
     hDevMode->dmSpecVersion = DM_SPECVERSION;
     hDevMode->dmSize        = sizeof ( DEVMODE );
     hDevMode->dmFields      = DM_ORIENTATION;
@@ -382,14 +376,22 @@ static void PrintPage( PLStream *pls )
     Printer.lStructSize = sizeof ( PRINTDLGEX );
     Printer.hwndOwner   = dev->plot;
     Printer.hDevMode    = hDevMode;
-    Printer.Flags       = PD_NOPAGENUMS | PD_NOSELECTION | PD_COLLATE
-                          | PD_RETURNDC;
-    // Place holder for page ranges
+	// Disable page ranges, default to collated output,
+	// and return the device context (used to generate the output)
+    Printer.Flags       = PD_NOPAGENUMS | PD_NOCURRENTPAGE | PD_NOSELECTION
+						  | PD_COLLATE| PD_RETURNDC;
+    // Currently, page ranges is disabled.  This code
+	// is left as a placeholder in case print ranges
+	// is allowed in the future. There is no mechanism
+	// implemented that facilitates the user interaction
+	// on selecting pages, so it is best to turn it off
+	// for now.
     Printer.nPageRanges    = 0;
     Printer.nMaxPageRanges = 0;
     Printer.lpPageRanges   = NULL;
-    Printer.nMinPage       = 1;
-    Printer.nMaxPage       = 1000;
+    Printer.nMinPage       = 0;
+    Printer.nMaxPage       = 0;
+	// Other print parameter defaults
     Printer.nCopies        = 1;
     //Printer.nPropertyPages = ARRAY_SIZE( hPrintPropSheetList ),
     //Printer.lphPropertyPages = hPrintPropSheetList;
@@ -436,8 +438,10 @@ static void PrintPage( PLStream *pls )
             //RedrawWindow( dev->plot,
             //			  NULL, NULL,
             //			  RDW_ERASE | RDW_INVALIDATE | RDW_ERASENOW );
-        }
-    }
+		} else {
+			plwarn("wingdi: Unable to save state for print");
+		}
+	}
 
     // Cleanup after printing
     if ( Printer.hDC != NULL )
@@ -446,6 +450,9 @@ static void PrintPage( PLStream *pls )
         DeleteDC( Printer.hDevMode );
     if ( Printer.hDevNames != NULL )
         DeleteDC( Printer.hDevNames );
+	// Free allocated memory
+	if (hDevMode)
+		GlobalFree(hDevMode);
 }
 
 static void
