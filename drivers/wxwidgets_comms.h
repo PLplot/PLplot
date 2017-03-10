@@ -47,7 +47,7 @@ const unsigned char transmissionComplete         = 6;
 const unsigned char transmissionRequestTextSize  = 7;
 const unsigned char transmissionEndOfPageNoPause = 8;
 const unsigned char transmissionClose            = 9;
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
 const unsigned char transmissionFlush = 10;
 #endif
 
@@ -73,7 +73,7 @@ struct MemoryMapHeader
     size_t        viewerOpenFlag;
     size_t        locateModeFlag;
     size_t        completeFlag;
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
     size_t        plbufAmountToTransmit;
     unsigned char transmissionType;
 #else
@@ -84,7 +84,7 @@ struct MemoryMapHeader
     TextSizeInfo  textSizeInfo;
 };
 
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
 // I plan to reduce this size in the future if that reduction
 // does not significantly affect efficiency.
 #define PL_SHARED_ARRAY_SIZE    1024 * 1024
@@ -115,11 +115,21 @@ public:
     // Default constructor: Initialize m_wsem, m_rsem, and m_tsem to
     // NULL to mark those as invalid semaphore locations.
     PLThreeSemaphores();
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     // Update the m_wsem, m_rsem, and m_tsem locations and
     // conditionally (when mustExist is false) initialize those
     // locations as semaphores.
     void initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist );
-    // call initializeToInvalid.
+#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+      // Named semaphores.
+      // Create three semaphore names from basename, and open and (only
+      // on creation which happens automatically for both the Windows
+      // and POSIX API cases) initialize the corresponding named
+      // semaphores with the read and write semaphores initially blocked
+      // and the transmit semaphore initially unblocked.
+    void initializeToValid( const char * baseName );
+#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+       // call initializeToInvalid.
     ~PLThreeSemaphores();
     // If the m_wsem, m_rsem, and m_tsem locations are non-NULL
     // destroy those semaphores.  Also, unconditionally set
@@ -135,10 +145,12 @@ public:
     bool areSemaphoresValid();
     // Check whether write and read semaphores are valid and blocked.
     bool areWriteReadSemaphoresBlocked();
+#ifndef WIN32
     // Get value of Write semaphore.
     int getValueWriteSemaphore();
     // Get value of Read semaphore.
     int getValueReadSemaphore();
+#endif // #ifndef WIN32
     void postWriteSemaphore();
     void waitWriteSemaphore();
     void postReadSemaphore();
@@ -154,12 +166,30 @@ private:
     // cast to sem_t *__!  So here is the alternative plan we are using:
     // m_wsem, m_rsem, and m_tsem should always be NULL unless the non-NULL
     // locations they point to are properly initialized semaphores.
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+    sem_t * m_wsem;
+    sem_t *m_rsem;
+    sem_t *m_tsem;
+#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+#define PL_SEMAPHORE_NAME_LENGTH    250 // Maximum length excluding terminating NULL byte
+    char m_wsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
+    char m_rsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
+    char m_tsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
+#ifdef WIN32
+    // Windows named semaphores.
+    HANDLE m_wsem;
+    HANDLE m_rsem;
+    HANDLE m_tsem;
+#else // #ifdef WIN32
+      // POSIX named semaphores.
     sem_t *m_wsem;
     sem_t *m_rsem;
     sem_t *m_tsem;
+#endif // #ifdef WIN32
+#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 };
 
-#endif //#ifdef PL_WXWIDGETS_IPC2
+#endif //#ifdef PL_WXWIDGETS_IPC3
 
 const PLINT plMemoryMapReservedSpace = sizeof ( MemoryMapHeader );
 
@@ -172,27 +202,29 @@ public:
     void close();
     ~PLMemoryMap();
     bool isValid() { return m_buffer != NULL; }
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
     char *getBuffer() { return ( (shmbuf *) m_buffer )->data; }
     MemoryMapHeader *getHeader() { return &( ( (shmbuf *) m_buffer )->header ); }
 #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     sem_t *getWriteSemaphore() { return &( ( (shmbuf *) m_buffer )->wsem ); }
     sem_t *getReadSemaphore() { return &( ( (shmbuf *) m_buffer )->rsem ); }
     sem_t *getTransmitSemaphore() { return &( ( (shmbuf *) m_buffer )->tsem ); }
-#endif
+    void initializeSemaphoresToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist ) { m_threeSemaphores.initializeToValid( wsem, rsem, tsem, mustExist ); }
+#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+    void initializeSemaphoresToValid( const char *baseName ) { m_threeSemaphores.initializeToValid( baseName ); }
+#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     size_t *getTotalDataBytes() { return &( ( (shmbuf *) m_buffer )->nbytes ); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
     void transmitBytes( bool ifHeader, const void *src, size_t n );
     void receiveBytes( bool ifHeader, void *dest, size_t n );
-    void initializeSemaphoresToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist ) { m_threeSemaphores.initializeToValid( wsem, rsem, tsem, mustExist ); }
-#else // #ifdef PL_WXWIDGETS_IPC2
+#else // #ifdef PL_WXWIDGETS_IPC3
     char *getBuffer() { return (char *) m_buffer; }
     size_t getSize() { return m_size; }
-#endif // #ifdef PL_WXWIDGETS_IPC2
+#endif // #ifdef PL_WXWIDGETS_IPC3
 private:
 #ifdef WIN32
     HANDLE m_mapFile;
-#elif defined ( PL_WXWIDGETS_IPC2 )
+#elif defined ( PL_WXWIDGETS_IPC3 )
     int m_mapFile;
     char * m_name;
     // instantiate m_threeSemaphores private object (with default
@@ -207,7 +239,7 @@ private:
     void   *m_buffer;
 };
 
-#ifndef PL_WXWIDGETS_IPC2
+#ifndef PL_WXWIDGETS_IPC3
 
 class PLNamedMutex
 {
@@ -244,6 +276,6 @@ private:
     PLNamedMutexLocker( const PLNamedMutexLocker & );
     PLNamedMutexLocker & operator =( const PLNamedMutex & );
 };
-#endif //ifndef PL_WXWIDGETS_IPC2
+#endif //ifndef PL_WXWIDGETS_IPC3
 
 #endif

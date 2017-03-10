@@ -21,7 +21,7 @@
 #include "wxwidgets_comms.h"
 #include <assert.h>
 
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
 
 // Default constructor: Initialize m_wsem, m_rsem, and m_tsem to
 // NULL to mark those as invalid semaphore locations.
@@ -32,6 +32,7 @@ PLThreeSemaphores::PLThreeSemaphores()
     m_tsem = NULL;
 }
 
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 // Update the m_wsem, m_rsem, and m_tsem locations and
 // conditionally (when mustExist is false) initialize those
 // locations as semaphores.
@@ -73,6 +74,44 @@ void PLThreeSemaphores::initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem
     }
 }
 
+#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+// Named semaphores.
+// Create three semaphore names from basename, and open and (only
+// on creation which happens automatically for both the Windows
+// and POSIX API cases) initialize the corresponding named
+// semaphores with the read and write semaphores initially blocked
+// and the transmit semaphore initially unblocked.
+void PLThreeSemaphores::initializeToValid( const char * baseName )
+{
+    // For POSIX named semaphores, name has to start with "/".
+    // FIXME.  Remove following comment if this works for Windows.
+    // Does this leading slash affect the Windows case?
+    strcpy( m_wsemName, "/wsem" );
+    strncpy( m_wsemName + 5, baseName, PL_SEMAPHORE_NAME_LENGTH - 5 );
+    m_wsemName[PL_SEMAPHORE_NAME_LENGTH] = '\0';
+
+    strcpy( m_rsemName, "/rsem" );
+    strncpy( m_rsemName + 5, baseName, PL_SEMAPHORE_NAME_LENGTH - 5 );
+    m_rsemName[PL_SEMAPHORE_NAME_LENGTH] = '\0';
+
+    strcpy( m_tsemName, "/tsem" );
+    strncpy( m_tsemName + 5, baseName, PL_SEMAPHORE_NAME_LENGTH - 5 );
+    m_tsemName[PL_SEMAPHORE_NAME_LENGTH] = '\0';
+
+#ifdef WIN32
+    // Windows named semaphores.
+    m_wsem = CreateMutexA( NULL, false, m_wsemName );
+    m_rsem = CreateMutexA( NULL, false, m_rsemName );
+    m_tsem = CreateMutexA( NULL, true, m_tsemName );
+#else // #ifdef WIN32
+      // Posix named semaphores.
+    m_wsem = sem_open( m_wsemName, O_CREAT, S_IRWXU, 0 );
+    m_rsem = sem_open( m_rsemName, O_CREAT, S_IRWXU, 0 );
+    m_tsem = sem_open( m_tsemName, O_CREAT, S_IRWXU, 1 );
+#endif // #ifdef WIN32
+}
+#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+
 // Only destructor
 PLThreeSemaphores::~PLThreeSemaphores()
 {
@@ -87,12 +126,45 @@ void PLThreeSemaphores::initializeToInvalid()
 {
     if ( areSemaphoresValid() )
     {
+#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
         if ( sem_destroy( m_wsem ) )
             throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on write semaphore" );
         if ( sem_destroy( m_rsem ) )
             throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on read semaphore" );
         if ( sem_destroy( m_tsem ) )
             throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on transmit semaphore" );
+#else   // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+#ifdef WIN32
+        // Windows named semaphores.
+        if ( m_wsem )
+            ReleaseMutex( m_wsem );
+        CloseHandle( m_wsem );
+
+        if ( m_rsem )
+            ReleaseMutex( m_rsem );
+        CloseHandle( m_rsem );
+
+        if ( m_tsem )
+            ReleaseMutex( m_tsem );
+        CloseHandle( m_tsem );
+
+#else   // #ifdef WIN32
+        // POSIX named semaphores.
+
+        // sem_unlink calls needed to release shared memory resources
+        // used by named semaphores.
+        sem_close( m_wsem );
+        sem_unlink( m_wsemName );
+
+        sem_close( m_rsem );
+        sem_unlink( m_rsemName );
+
+        sem_close( m_tsem );
+        sem_unlink( m_tsemName );
+
+#endif // #ifdef WIN32
+
+#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     }
     m_wsem = NULL;
     m_rsem = NULL;
@@ -157,6 +229,12 @@ bool PLThreeSemaphores::areWriteReadSemaphoresBlocked()
 {
     if ( areSemaphoresValid() )
     {
+#ifdef WIN32
+        // There is no non-destructive way to get the value of Windows named semaphores
+        // so return true when the semaphores are all valid on the assumption that
+        // the write and read semaphore values are zero, i.e., correctly blocked.
+        return true;
+#else   // #ifdef WIN32
         int wvalue, rvalue;
         // We want to test that these are semaphore locations that
         // have already been properly initialized in blocked state as above.
@@ -172,6 +250,7 @@ bool PLThreeSemaphores::areWriteReadSemaphoresBlocked()
             return true;
         else
             return false;
+#endif  // #ifdef WIN32
     }
     else
     {
@@ -179,6 +258,7 @@ bool PLThreeSemaphores::areWriteReadSemaphoresBlocked()
     }
 }
 
+#ifndef WIN32
 // Get value of Write semaphore.
 int PLThreeSemaphores::getValueWriteSemaphore()
 {
@@ -214,14 +294,19 @@ int PLThreeSemaphores::getValueReadSemaphore()
     }
     return ret_value;
 }
+#endif // #ifndef WIN32
 
 void PLThreeSemaphores::postWriteSemaphore()
 {
     if ( !isWriteSemaphoreValid() )
         throw( "PLThreeSemaphores::postWriteSemaphore: invalid write semaphore" );
 
+#ifdef WIN32
+    ReleaseMutex( m_wsem );
+#else // #ifdef WIN32
     if ( sem_post( m_wsem ) )
         throw( "PLThreeSemaphores::postWriteSemaphore: sem_post failed for write semaphore" );
+#endif // #ifdef WIN32
 }
 
 void PLThreeSemaphores::waitWriteSemaphore()
@@ -229,8 +314,12 @@ void PLThreeSemaphores::waitWriteSemaphore()
     if ( !isWriteSemaphoreValid() )
         throw( "PLThreeSemaphores::waitWriteSemaphore: invalid write semaphore" );
 
+#ifdef WIN32
+    DWORD result = WaitForSingleObject( m_wsem, INFINITE );
+#else // #ifdef WIN32
     if ( sem_wait( m_wsem ) )
         throw( "PLThreeSemaphores::waitWriteSemaphore: sem_wait failed for write semaphore" );
+#endif // #ifdef WIN32
 }
 
 void PLThreeSemaphores::postReadSemaphore()
@@ -238,8 +327,12 @@ void PLThreeSemaphores::postReadSemaphore()
     if ( !isReadSemaphoreValid() )
         throw( "PLThreeSemaphores::postReadSemaphore: invalid read semaphore" );
 
+#ifdef WIN32
+    ReleaseMutex( m_rsem );
+#else // #ifdef WIN32
     if ( sem_post( m_rsem ) )
         throw( "PLThreeSemaphores::postReadSemaphore: sem_post failed for read semaphore" );
+#endif // #ifdef WIN32
 }
 
 void PLThreeSemaphores::waitReadSemaphore()
@@ -247,8 +340,12 @@ void PLThreeSemaphores::waitReadSemaphore()
     if ( !isReadSemaphoreValid() )
         throw( "PLThreeSemaphores::waitReadSemaphore: invalid read semaphore" );
 
+#ifdef WIN32
+    DWORD result = WaitForSingleObject( m_rsem, INFINITE );
+#else // #ifdef WIN32
     if ( sem_wait( m_rsem ) )
         throw( "PLThreeSemaphores::waitReadSemaphore: sem_wait failed for read semaphore" );
+#endif // #ifdef WIN32
 }
 
 void PLThreeSemaphores::postTransmitSemaphore()
@@ -256,8 +353,12 @@ void PLThreeSemaphores::postTransmitSemaphore()
     if ( !isTransmitSemaphoreValid() )
         throw( "PLThreeSemaphores::postTransmitSemaphore: invalid transmit semaphore" );
 
+#ifdef WIN32
+    ReleaseMutex( m_tsem );
+#else // #ifdef WIN32
     if ( sem_post( m_tsem ) )
         throw( "PLThreeSemaphores::postTransmitSemaphore: sem_post failed for transmit semaphore" );
+#endif // #ifdef WIN32
 }
 
 void PLThreeSemaphores::waitTransmitSemaphore()
@@ -265,10 +366,14 @@ void PLThreeSemaphores::waitTransmitSemaphore()
     if ( !isTransmitSemaphoreValid() )
         throw( "PLThreeSemaphores::waitTransmitSemaphore: invalid transmit semaphore" );
 
+#ifdef WIN32
+    DWORD result = WaitForSingleObject( m_tsem, INFINITE );
+#else // #ifdef WIN32
     if ( sem_wait( m_tsem ) )
         throw( "PLThreeSemaphores::waitTransmitSemaphore: sem_wait failed for transmit semaphore" );
+#endif // #ifdef WIN32
 }
-#endif //#ifdef PL_WXWIDGETS_IPC2
+#endif //#ifdef PL_WXWIDGETS_IPC3
 
 //--------------------------------------------------------------------------
 //  Constructor, creates the object but does not actually create or link to
@@ -362,7 +467,7 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
         m_size = size;
 }
 
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
 
 // This IPC method is an adaptation of the method used in
 // cmake/test_linux_ipc/pshm_write.c.
@@ -558,7 +663,7 @@ void PLMemoryMap::receiveBytes( bool ifHeader, void *dest, size_t n )
     // the correct blocked state.  So there is nothing further for us
     // to check here.
 }
-#endif // #ifdef PL_WXWIDGETS_IPC2
+#endif // #ifdef PL_WXWIDGETS_IPC3
 //--------------------------------------------------------------------------
 //  Close an area of mapped memory. When all processes have closed their
 //  connections the area will be removed by the OS.
@@ -600,7 +705,7 @@ PLMemoryMap::~PLMemoryMap()
     close();
 }
 
-#ifndef PL_WXWIDGETS_IPC2
+#ifndef PL_WXWIDGETS_IPC3
 
 PLNamedMutex::PLNamedMutex()
 {
@@ -707,4 +812,4 @@ PLNamedMutexLocker::~PLNamedMutexLocker( )
     m_mutex->release();
     m_mutex = NULL;
 }
-#endif //#ifndef PL_WXWIDGETS_IPC2
+#endif //#ifndef PL_WXWIDGETS_IPC3

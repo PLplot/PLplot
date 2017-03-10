@@ -186,7 +186,7 @@ private:
     //variables for dealing with sending/receiving commands
     //via a memory map
     char m_mfo[PLPLOT_MAX_PATH];
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
     // Private variable to hold all components of a MemoryMapHeader struct for a wxPLDevice instance.
     MemoryMapHeader m_header;
 #else

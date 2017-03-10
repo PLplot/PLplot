@@ -303,8 +303,8 @@
 // Define if the PLplot build uses Qt5 (rather than Qt4).
 #cmakedefine PLPLOT_USE_QT5
 
-// Define if the POSIX two-semaphores approach is to be used for wxwidgets IPC
-#cmakedefine PL_WXWIDGETS_IPC2
+// Define if the POSIX three-semaphores approach is to be used for wxwidgets IPC
+#cmakedefine PL_WXWIDGETS_IPC3
 
 // Define if unnamed POSIX semaphores are going to be used for
 // IPC between -dev wxwidgets and wxPLViewer.

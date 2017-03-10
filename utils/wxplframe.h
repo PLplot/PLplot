@@ -72,7 +72,7 @@ private:
     size_t            m_fileSize;
 
     PLMemoryMap       m_memoryMap;
-#ifdef PL_WXWIDGETS_IPC2
+#ifdef PL_WXWIDGETS_IPC3
     // Private variable to hold all components of a MemoryMapHeader struct for a wxPlframe instance.
     MemoryMapHeader  m_header;
 #else

@@ -217,25 +217,22 @@ if(ENABLE_wxwidgets)
     # These options only suitable if the new wxwidgets is enabled.
     option(PLPLOT_WX_DEBUG_OUTPUT "Enable debug output for wxwidgets device driver, binding, and example" OFF)
     option(PLPLOT_WX_NANOSEC "Experimental option (because it may lead to build failures (!)) for nanosec timestamp for wx debug output" OFF)
-    option(PL_WXWIDGETS_IPC2 "Experimental option to use two-semaphores approach for wxwidgets IPC" OFF)
-    if(PL_WXWIDGETS_IPC2)
-      # When the two semaphores (currently implemented with unnamed
-      # semaphores) approach is no longer experimental (i.e., the
-      # relevant code is reliable) and assuming it is an improvement
-      # on the one-semaphore approach in turns of simplicity and
-      # efficiency, then I plan to modify the approach to supply a
-      # named semaphores variant because some proprietary POSIX
-      # systems (e.g., Mac OS X) do not support unnamed POSIX
-      # semaphores.  But for now, turn
-      # PL_HAVE_UNNAMED_POSIX_SEMAPHORES ON when PL_WXWIDGETS_IPC2 is
-      # true because the implementation of the two-semaphores approach
-      # currently depends completely on unnamed semaphores.
-      option(PL_HAVE_UNNAMED_POSIX_SEMAPHORES "Use unnamed POSIX semaphores for two semaphores implementation" ON)
-    endif(PL_WXWIDGETS_IPC2)
+    # This option works well on Linux (except for problems with locate mode that also appear
+    # in slightly different form when PL_WXWIDGETS_IPC3 is OFF).  So after that issue is fixed
+    # and further testing occurs on Windows, the experimental "moniker" should be dropped.
+    option(PL_WXWIDGETS_IPC3 "Experimental option to use the three-semaphores approach for wxwidgets IPC" OFF)
+    if(PL_WXWIDGETS_IPC3)
+      # Unnamed semaphores appear to work fine on Linux, but they are
+      # known to be unimplemented on Mac OS X (and presumably other
+      # proprietary Unix systems).  And named semaphores work fine on
+      # all Unix and (subject to further testing) Windows platforms so
+      # by default use the named semaphores approach.
+      option(PL_HAVE_UNNAMED_POSIX_SEMAPHORES "Use unnamed POSIX semaphores for three-semaphores implementation" OFF)
+    endif(PL_WXWIDGETS_IPC3)
     set(wxdemo_name wxPLplotDemo)
     if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
       # This is added to later by drivers_finish with
-      # the standard source code for the device driver.
+      # the standard source code for this device driver.
       set(wxwidgets_SOURCE ${CMAKE_SOURCE_DIR}/bindings/wxwidgets/wxPLplot_nanosec.cpp)
     endif((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
   endif(OLD_WXWIDGETS)
