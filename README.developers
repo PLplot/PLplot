@@ -18,30 +18,46 @@ Installation of git is straightforward as described at
 <http://git-scm.com/book/en/Getting-Started-Installing-Git>
 
 To summarize that page, on Linux platforms git is available from a
-system install; on Mac OS X platforms git is available from the
-git-osx-installer project, MacPorts, and Homebrew; and on Windows
-platforms git is available from the msysGit project.  In all cases, it
-is highly recommended that git is run from the command line rather
-than from a GUI.
+system install; on Mac OS X platforms git is available as part of
+Xcode, the git-osx-installer project, and additional free software
+repositories (i.e., MacPorts, Homebrew, and Fink); and on Windows
+platforms git is available from the [Git for
+Windows](https://git-for-windows.github.io/) project as well as Cygwin
+and MinGW-w64/MSYS2.
 
-Furthermore, our general advice is to ignore non-standard extensions
-to git such as git-lfs since they are not needed, and a lean git means
-there is less to go wrong.
+In all cases, it is highly recommended that git is run from the
+command line rather than from a GUI because the git command line is
+powerful, extremely well documented, and is the standard way most git users
+(including PLplot developers) use git.
 
-In fact, before we formulated this advice one of our developers
-installed and used git-lfs (from Macports) inadvertently with the
-result that a .git/hooks/pre-push shell script was run to execute
-git-lfs before each of his pushes, and his local git configuration was
-changed. He reverted back to the lean git that is also available from
-Macports by the following measures (which may be useful to others who
-have inadvertently installed git-lfs):
+Command-line versions of git are readily available on all platforms.
+The Linux packages for git, the Mac OS X free software repository
+packages for git, and the Cygwin and MinGW-w64/MSYS2 Windows packages
+for git all include command-line versions.  In addition, the Xcode
+version of git on Mac OS X and the Git for Windows version of git can
+both be used from the command line (see
+<http://www.appcoda.com/git-source-control-in-xcode/> and
+<https://git-for-windows.github.io/>).
+
+Continuing with the git theme that "simpler is better", our general
+advice is to ignore non-standard extensions to git such as github
+versions or git-lfs since they are not needed, and use of standard git
+means there is less to go wrong.  In fact, before we formulated this
+advice one of our developers installed and used git-lfs (from
+Macports) inadvertently with the result that a .git/hooks/pre-push
+shell script was run to execute git-lfs before each of his pushes, and
+he ran into trouble with that complication.  He reverted back to the
+lean git that is also available from Macports by the following
+measures (which may be useful to others who have inadvertently
+installed git-lfs):
 
 "I did git lfs uninstall and it cleaned up the lines it had added to
 ~/.gitconfig. I also uninstalled git-lfs from my MacPorts stuff.  Then
 I got a fresh clone."
 
 As expected (since git-lfs adds nothing that is truly needed for PLplot git
-needs) that lean git command-line environment has been working well for him.
+needs) that lean git command-line environment has been working well for him
+ever since.
 
 Local configuration of git
 --------------------------
