@@ -1,6 +1,6 @@
 # cmake/modules/csiro.cmake
 #
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2017  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -40,15 +40,20 @@ if(PL_HAVE_QHULL OR WITH_CSA)
   endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86")
   if(NOT DEFINED NaNAwareCCompiler)
     message(STATUS "Check for NaN awareness in C compiler")
-    try_run(NaNAwareCCompiler COMPILE_RESULT
+    try_run(RUN_RESULT COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_SOURCE_DIR}/cmake/modules/TestNaNAware.c
       CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=${NAN_CFLAGS} -I\"${CMAKE_SOURCE_DIR}\"/lib/csa ${MATH_LIB}"
       OUTPUT_VARIABLE OUTPUT
       )
-    if(NOT COMPILE_RESULT)
-      set(NaNAwareCCompiler ${COMPILE_RESULT})
-    endif(NOT COMPILE_RESULT)
+    #message(STATUS "COMPILE_RESULT = ${COMPILE_RESULT}")
+    #message(STATUS "RUN_RESULT = ${RUN_RESULT}")
+    if(COMPILE_RESULT AND NOT RUN_RESULT MATCHES "FAILED_TO_RUN" AND RUN_RESULT)
+      set(NaNAwareCCompiler ON)
+    else(COMPILE_RESULT AND NOT RUN_RESULT MATCHES "FAILED_TO_RUN" AND RUN_RESULT)
+      set(NaNAwareCCompiler OFF)
+    endif(COMPILE_RESULT AND NOT RUN_RESULT MATCHES "FAILED_TO_RUN" AND RUN_RESULT)
+
     if(NaNAwareCCompiler)
       message(STATUS "Check for NaN awareness in C compiler - found")
       file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
