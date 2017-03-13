@@ -287,7 +287,7 @@ main(void)
 	    )
 	endif(PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
       endif(NOT DEFINED PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
-    endif(PL_WXWIDGETS_IPC3 and NOT WIN32)
+    endif(PL_WXWIDGETS_IPC3 AND NOT WIN32)
     set(wxdemo_name wxPLplotDemo)
     if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
       # This is added to later by drivers_finish with
