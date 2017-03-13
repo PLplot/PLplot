@@ -24,6 +24,9 @@
 // Needed for cerr and endl below
 #include <iostream>
 
+// If want to test IPC speed without plotting anything.
+//#define PLPLOT_WX_NOPLOT
+
 const int wxPlFrame::ID_FILE_EXIT      = ::wxNewId();
 const int wxPlFrame::ID_HELP_ABOUT     = ::wxNewId();
 const int wxPlFrame::ID_PAGE_NEXT      = ::wxNewId();
@@ -302,8 +305,10 @@ bool wxPlFrame::ReadTransmission()
 #ifdef PLPLOT_WX_DEBUG_OUTPUT
             std::cerr << "Successful read of plbuf" << std::endl;
 #endif      // #ifdef PLPLOT_WX_DEBUG_OUTPUT
+#ifndef PLPLOT_WX_NOPLOT
             m_pageBuffers[m_writingPage].insert( m_pageBuffers[m_writingPage].end(),
                 plbufBuffer, plbufBuffer + m_header.plbufAmountToTransmit );
+#endif      // #ifndef PLPLOT_WX_NOPLOT
             m_bufferValidFlags[m_writingPage] = true;
             // Conditionally plot buffer, but I (AWI) have no clue where the 1024 below
             // comes from.
@@ -442,9 +447,11 @@ bool wxPlFrame::ReadTransmission()
         size_t dataSize;
         dataSize = *(size_t *) ( (unsigned char *) ( m_memoryMap.getBuffer() + header->readLocation +
                                                      sizeof ( transmissionType ) ) );
+#ifndef PLPLOT_WX_NOPLOT
         m_pageBuffers[m_writingPage].insert( m_pageBuffers[m_writingPage].end(),
             m_memoryMap.getBuffer() + header->readLocation + sizeof ( transmissionType ) + sizeof ( dataSize ),
             m_memoryMap.getBuffer() + header->readLocation + sizeof ( transmissionType ) + sizeof ( dataSize ) + dataSize );
+#endif  // #ifndef PLPLOT_WX_NOPLOT
         nRead += sizeof ( dataSize ) + dataSize;
         if ( transmissionType == transmissionComplete )
             m_bufferValidFlags[m_writingPage] = true;
