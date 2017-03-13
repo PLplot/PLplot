@@ -85,9 +85,14 @@ struct MemoryMapHeader
 };
 
 #ifdef PL_WXWIDGETS_IPC3
-// I plan to reduce this size in the future if that reduction
-// does not significantly affect efficiency.
-#define PL_SHARED_ARRAY_SIZE    1024 * 1024
+// Tuned such that total length of time to do all 35 C examples
+// (except for 17 and 20) with PLPLOT_WX_NOPLOT #defined in
+// utils/wxplframe.cpp is not increased significantly beyond the
+// measurement noise of ~2 per cent between identical runs.  In fact
+// sizes of 1024*1024 and 1024 were not different by more than the ~2
+// per cent measurement noise and a size of 128 was only ~4 per cent
+// larger than 1024.  So 10 * 1024 should already be gross overkill.
+#define PL_SHARED_ARRAY_SIZE    10 * 1024
 
 // In the three-semaphores method of IPC, the shared memory area must
 // correspond to this shmbuf struct which contains some control data
