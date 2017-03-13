@@ -230,7 +230,7 @@ if(ENABLE_wxwidgets)
       # project, but unnamed semaphores only supported in that case
       # for shared threads and not shared memory according to
       # <https://www.sourceware.org/pthreads-win32/manual/sem_init.html>
-      
+
       if(NOT DEFINED PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
 	message(STATUS "Check for unnamed POSIX semaphores")
 	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Check_unnamed_posix_semaphores.c "
