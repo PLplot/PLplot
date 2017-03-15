@@ -27,7 +27,7 @@
 #include <vector>
 #include "../drivers/wxwidgets_comms.h"
 
-//Note that this header is not part of the PLPlot public API and is likely to
+//Note that this header is not part of the PLplot public API and is likely to
 //change without warning
 
 

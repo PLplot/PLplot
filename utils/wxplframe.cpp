@@ -222,7 +222,7 @@ void wxPlFrame::OnCheckTimer( wxTimerEvent &event )
 //true indicating that the program may want to read some more.
 bool wxPlFrame::ReadTransmission()
 {
-    //avoid reentrant behaviour if some function yields allowing the
+    //avoid re-entrant behaviour if some function yields allowing the
     //timer to call this function again
     if ( m_inCheckTimerFunction )
         return true;
@@ -458,8 +458,8 @@ bool wxPlFrame::ReadTransmission()
         else
             m_bufferValidFlags[m_writingPage] = false;
 
-        //if we have new buffer unplotted then it is due to either a flush, or we have so much
-        // data we have wrapped the buffer or we have had a flush so plot the buffer
+        // If we have a new unplotted buffer, then it is due to either
+        // a flush or we have so much data we have wrapped the buffer.
         if ( m_writingPage == m_viewingPage &&
              ( m_plottedBufferAmount + 1024 ) < m_pageBuffers[ m_writingPage ].size() )
             SetPageAndUpdate();
@@ -629,8 +629,9 @@ void wxPlFrame::SetPageAndUpdate( size_t page )
         }
     }
 
-    //if there is unplotted buffer and the buffer is valid (contains some instructions and ends with a
-    //valid instruction) then send that buffer to the driver and replot the page.
+    // If there is an unplotted buffer and the buffer is valid
+    // (contains some instructions and ends with a valid instruction)
+    // then send that buffer to the driver and replot the page.
     if ( m_bufferValidFlags[m_viewingPage] && m_plottedBufferAmount < m_pageBuffers[m_viewingPage].size() )
     {
         //GetStream()->ImportBuffer( &m_pageBuffers[m_viewingPage][0], m_pageBuffers[m_viewingPage].size() );

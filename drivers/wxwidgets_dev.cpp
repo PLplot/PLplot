@@ -24,23 +24,22 @@
 #define DEBUG
 #define NEED_PLDEBUG
 
-//set this to help when debugging wxPLViewer issues
-//it uses a memory map name without random characters
-//and does not execute the viewer, allowing the user to do
-//it in a debugger
+// Set this to help when debugging wxPLViewer issues.  It uses a memory
+// map name without random characters and does not execute the viewer,
+// allowing the user to execute the viewer in a debugger
 //#define WXPLVIEWER_DEBUG
 
-//headers needed for Rand
+// Headers needed for Rand
 #ifdef WIN32
-//this include must occur before any other include of stdlib.h
-//due to the #define _CRT_RAND_S
+// This include must occur before any other include of stdlib.h due to
+// the #define _CRT_RAND_S
 #define _CRT_RAND_S
 #include <stdlib.h>
 #else
 #include <fstream>
 #endif
 
-//plplot headers
+// PLplot headers
 #include "plDevs.h"
 #include "wxwidgets.h" // includes wx/wx.h
 
@@ -114,7 +113,7 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
     // Plplot saves it in mm (bizarre units!)
     PLFLT baseFontSize = pls->chrht * PLPLOT_POINTS_PER_INCH / PLPLOT_MM_PER_INCH;
 
-    //initialise the text state
+    //initialize the text state
     PLINT     currentSuperscriptLevel  = 0;
     PLFLT     currentSuperscriptScale  = 1.0;
     PLFLT     currentSuperscriptOffset = 0.0;
@@ -245,7 +244,7 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
 //  On return textWidth, textHeigth and textDepth will be filled with the width,
 //  ascender height and descender depth of the text string.
 //  If drawText is true the text will actually be drawn. If it is false the size
-//  will be calsulated but the text will not be rendered.
+//  will be calculated but the text will not be rendered.
 //--------------------------------------------------------------------------
 void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth )
 {
@@ -284,7 +283,7 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCo
         {
             //we found an escape character. Move to the next character to see what we need to do next
             ++i;
-            if ( ucs4[i] == (PLUNICODE) plplotEsc )                      // draw the actual excape character
+            if ( ucs4[i] == (PLUNICODE) plplotEsc )                      // draw the actual escape character
             {
                 //add it to the string
                 section += wxUString( (wxChar32) ucs4[i] );
@@ -381,7 +380,7 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCo
 // Scaler class
 // This class changes the logical scale of a dc on construction and resets
 // it to its original value on destruction. It is ideal for making temporary
-// changes to the scale and guarenteeing that the scale gets set back.
+// changes to the scale and guaranteeing that the scale gets set back.
 //--------------------------------------------------------------------------
 class Scaler
 {
@@ -412,7 +411,7 @@ private:
 // OriginChanger class
 // This class changes the logical origin of a dc on construction and resets
 // it to its original value on destruction. It is ideal for making temporary
-// changes to the origin and guarenteeing that the scale gets set back.
+// changes to the origin and guaranteeing that the scale gets set back.
 //--------------------------------------------------------------------------
 class OriginChanger
 {
@@ -443,7 +442,7 @@ private:
 // DrawingObjectsChanger class
 // This class changes the pen and brush of a dc on construction and resets
 // them to their original values on destruction. It is ideal for making temporary
-// changes to the pen and brush and guarenteeing that they get set back.
+// changes to the pen and brush and guaranteeing that they get set back.
 //--------------------------------------------------------------------------
 class DrawingObjectsChanger
 {
@@ -516,7 +515,7 @@ private:
 // TextObjectsChanger class
 // This class changes the font and text colours of a dc on construction and resets
 // them to their original values on destruction. It is ideal for making temporary
-// changes to the text and guarenteeing that they get set back.
+// changes to the text and guaranteeing that they get set back.
 //--------------------------------------------------------------------------
 class TextObjectsChanger
 {
@@ -558,11 +557,11 @@ private:
 // Clipper class
 // This class changes the clipping region of a dc on construction and restores
 // it to its previous region on destruction. It is ideal for making temporary
-// changes to the clip region and guarenteeing that the scale gets set back.
+// changes to the clip region and guaranteeing that the scale gets set back.
 //
 // It turns out that clipping is mostly broken for wxGCDC - see
 // http://trac.wxwidgets.org/ticket/17013. So there are a lot of things in
-// this class to work aound those bugs. In particular you should check
+// this class to work around those bugs. In particular you should check
 // isEveryThingClipped before drawing as I'm not sure if non-overlapping
 //clip regions behave properly.
 //--------------------------------------------------------------------------
@@ -823,7 +822,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
     pls->dev_clear   = 1;                               // driver supports clear
     pls->plbuf_write = 1;                               // use the plot buffer!
     pls->termin      = ( strlen( m_mfo ) ) > 0 ? 0 : 1; // interactive device unless we are writing to memory - pretty sure this is an unused option though
-    pls->graphx      = GRAPHICS_MODE;                   //  This indicates this is a graphics driver. PLPlot with therefore cal pltext() before outputting text, however we currently have not implemented catching that text.
+    pls->graphx      = GRAPHICS_MODE;                   //  This indicates this is a graphics driver. PLplot will therefore call pltext() before outputting text, however we currently have not implemented catching that text.
 
     if ( text )
     {
@@ -878,7 +877,7 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
 //--------------------------------------------------------------------------
 //  wxPLDevice::~wxPLDevice( void )
 //
-//  The deconstructor frees memory allocated by the device.
+//  The destructor frees memory allocated by the device.
 //--------------------------------------------------------------------------
 wxPLDevice::~wxPLDevice()
 {
@@ -1192,9 +1191,10 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
             wxAffineMatrix2D newMatrix = originalDcMatrix;
             newMatrix.Translate( xOrigin / m_xScale, m_height - yOrigin / m_yScale );
             wxAffineMatrix2D textMatrix;
-            //For some reason we don't do the mirroring like in the wxGraphicsContext when we use a wxDC.
-            PLFLT            xTransform = transform[4] / m_xScale;
-            PLFLT            yTransform = transform[5] / m_yScale;
+            // For some reason we don't do the mirroring like in the
+            // wxGraphicsContext when we use a wxDC.
+            PLFLT xTransform = transform[4] / m_xScale;
+            PLFLT yTransform = transform[5] / m_yScale;
             textMatrix.Set(
                 wxMatrix2D(
                     transform[0], transform[2],
@@ -1216,7 +1216,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
             m_gc->Translate( xOrigin / m_xScale, m_height - yOrigin / m_yScale );              //move to text starting position
             //Create a wxGraphicsMatrix from our plplot transformation matrix.
             //Note the different conventions
-            //1) plpot tranforms use notation x' = Mx, where x and x' are column vectors,
+            //1) plplot transforms use notation x' = Mx, where x and x' are column vectors,
             //   wxGraphicsContext uses xM = x' where x and x' are row vectors. This means
             //   we must transpose the matrix.
             //2) plplot Affine matrices a represented by 6 values which start at the top left
@@ -1225,7 +1225,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
             //   row. The 3rd column is implied as 0 0 1. This means we must transpose the
             //   matrix.
             //3) Items 1 and 2 cancel out so we don't actually need to do anything about them.
-            //4) The wxGrasphicsContext has positive y in the downward direction, but plplot
+            //4) The wxGraphicsContext has positive y in the downward direction, but plplot
             //   has positive y in the upwards direction. This means we must do a reflection
             //   in the y direction before and after applying the transform. Also we must scale
             //   the translation parts to match the pixel scale.
@@ -1254,14 +1254,16 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
         }
         else
         {
-            //If we are stuck with a wxDC that has no transformation abilities then
-            // all we can really do is rotate the text - this is a bit of a poor state
-            // really, but to be honest it is better than defaulting to hershey for all
+            // If we are stuck with a wxDC that has no transformation
+            // abilities then all we can really do is rotate the text
+            // - this is a bit of a poor state really, but to be
+            // honest it is better than defaulting to Hershey for all
             // text
             PLFLT xTransformed = x / m_xScale * transform[0] + y / m_yScale * transform[2] + transform[4] / m_xScale;
             PLFLT yTransformed = x / m_xScale * transform[1] + y / m_yScale * transform[3] + transform[4] / m_xScale;
-            //This angle calculation comed from transforming the point (0,0) andany other point on the y = 0 line and
-            //getting the angle from the horizontal of that line.
+            // This angle calculation comes from transforming the
+            // point (0,0) and any other point on the y = 0 line and
+            // getting the angle from the horizontal of that line.
             PLFLT angle = atan2( transform[1], transform[0] ) * 180.0 / M_PI;
             m_dc->DrawRotatedText( section, xOrigin / m_xScale + xTransformed, m_height - yOrigin / m_yScale - yTransformed, angle );
         }
@@ -1322,7 +1324,7 @@ void wxPLDevice::SetSize( PLStream* pls, int width, int height )
     //split the scaling into an overall scale, the same in both dimensions
     //and an aspect part which differs in both directions.
     //We will apply the aspect ratio part, and let the DC do the overall
-    //scaling. This gives us subpixel accuray, but ensures line thickness
+    //scaling. This gives us subpixel accuracy, but ensures line thickness
     //remains consistent in both directions
     m_xScale = width > 0 ? (PLFLT) ( xmax - xmin ) / (PLFLT) width : 0.0;
     m_yScale = height > 0 ? (PLFLT) ( ymax - ymin ) / (PLFLT) height : 0.0;
@@ -1581,7 +1583,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
             }
 
             //if we have looped round stay 1 character behind the read buffer - it makes it
-            //easier to test whether the reading has caught up with the writing or vica versa
+            //easier to test whether the reading has caught up with the writing or vice versa
             if ( mapHeader.writeLocation < mapHeader.readLocation && mapHeader.readLocation > 0 )
                 freeSpace = mapHeader.readLocation - mapHeader.writeLocation - 1;
 

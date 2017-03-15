@@ -34,7 +34,7 @@
 
 class wxPLplotFrame;
 
-// A font class which encapsulates the PlPlot font metrics and
+// A font class which encapsulates the PLplot font metrics and
 // a wxFont object. Importantly however the creation of the
 // wxFont is delayed until it is actually requested. This is
 // useful because on Linux in wxWidgets 3.0 creation of a wxFont
@@ -57,7 +57,7 @@ private:
     bool      m_hasFont;
 };
 //check equivalence of two fonts. Note that a font created
-//with the default constructor always campares false to any
+//with the default constructor always compares false to any
 //other font and that whether the wxFont has been created is
 //not included in the test.
 bool operator ==( const Font &lhs, const Font &rhs );

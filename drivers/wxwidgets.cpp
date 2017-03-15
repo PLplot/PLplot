@@ -64,7 +64,7 @@ void Log_Verbose( const char *fmt, ... )
     va_end( args );
     fflush( stderr );
 #else
-    (void) fmt;        // Cast to void to silence compiler warnings about unused paraemeter
+    (void) fmt;        // Cast to void to silence compiler warnings about unused parameter
 #endif
 }
 
@@ -85,7 +85,7 @@ void Log_Debug( const char *fmt, ... )
     va_end( args );
     fflush( stderr );
 #else
-    (void) fmt;        // Cast to void to silence compiler warnings about unused paraemeter
+    (void) fmt;        // Cast to void to silence compiler warnings about unused parameter
 #endif
 }
 
@@ -155,7 +155,7 @@ void plD_init_wxwidgets( PLStream* pls )
             throw( "plD_init_wxwidgets called when a initialization has already occurred." );
 
         //initialise wxWidgets - this is required in order to allow some wxWidgets functions to
-        //be called frm within the driver when the user isn't passing a wxDC in. See e.g
+        //be called from within the driver when the user isn't passing a wxDC in. See e.g
         //http://stackoverflow.com/questions/208373
         if ( !wxTheApp )
         {
@@ -434,7 +434,7 @@ void plD_tidy_wxwidgets( PLStream *pls )
             device->PreDestructorTidy( pls );
             delete device;
         }
-        pls->dev = NULL;         //so it doesn't get freed elswhere
+        pls->dev = NULL;         //so it doesn't get freed elsewhere
         if ( g_weInitializedWx )
             wxEntryCleanup();
     }
@@ -462,7 +462,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
     {
         wxPLDevice *device = (wxPLDevice *) pls->dev;
         if ( !device )
-            return;             //we can call state functions befor initialization so just return
+            return;             //we can call state functions before initialization so just return
         switch ( op )
         {
         case PLSTATE_WIDTH:         // 1
@@ -494,7 +494,7 @@ void plD_state_wxwidgets( PLStream *pls, PLINT op )
 //
 //  Handler for several escape codes. Here we take care of filled polygons,
 //  XOR or copy mode, initialize device (install dc from outside), and if
-//  there is freetype support, rerendering of text.
+//  there is freetype support, re-rendering of text.
 //--------------------------------------------------------------------------
 void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
 {

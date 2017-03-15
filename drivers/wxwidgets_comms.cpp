@@ -67,7 +67,7 @@ void PLThreeSemaphores::initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem
         // have gdb evidence that at least one OS implementation (that on Linux)
         // of sem_getvalue does not check that the given location is
         // a valid semaphore, and it is fairly likely in that case that
-        // you will return a value of 0 so this test is not as rigourous as
+        // you will return a value of 0 so this test is not as rigorous as
         // it should be.
         if ( !( sem_getvalue( m_wsem, &value ) == 0 && value == 0 && sem_getvalue( m_rsem, &value ) == 0 && value == 0 && sem_getvalue( m_tsem, &value ) == 0 && value == 1 ) )
             throw( "PLThreeSemaphores::initializeToValid, mustExist true: at least one semaphore not valid or not set at correct initial value" );
@@ -104,7 +104,7 @@ void PLThreeSemaphores::initializeToValid( const char * baseName )
     m_rsem = CreateMutexA( NULL, false, m_rsemName );
     m_tsem = CreateMutexA( NULL, true, m_tsemName );
 #else // #ifdef WIN32
-      // Posix named semaphores.
+      // POSIX named semaphores.
     m_wsem = sem_open( m_wsemName, O_CREAT, S_IRWXU, 0 );
     m_rsem = sem_open( m_rsemName, O_CREAT, S_IRWXU, 0 );
     m_tsem = sem_open( m_tsemName, O_CREAT, S_IRWXU, 1 );

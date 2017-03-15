@@ -73,9 +73,11 @@ private:
 };
 
 
-//! Constructor initialises variables, creates the wxStream and connects
-// methods with events. The WXWINDOW default constructor is used.
-//
+//! Constructor initialises variables, creates the wxStream and
+//! connects methods with events. The WXWINDOW default constructor is
+//! used.
+//!
+
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize clientSize )
     : m_created( false ), m_initialSize( clientSize )
@@ -92,7 +94,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize client
     setUseGraphicsContext( useGraphicsContext );
     m_canvasColour = *wxBLACK;
 
-    //We use connect instead of Bind for compatiblity with wxWidgets 2.8
+    //We use connect instead of Bind for compatibility with wxWidgets 2.8
     //but should move to bind in the future.
     WXWINDOW::Connect( wxEVT_SIZE, wxSizeEventHandler( wxPLplotwindow<WXWINDOW>::OnSize ) );
     WXWINDOW::Connect( wxEVT_PAINT, wxPaintEventHandler( wxPLplotwindow<WXWINDOW>::OnPaint ) );
@@ -106,7 +108,8 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize client
 
 
 //! Destructor - delete the dc and gcdc if needed.
-//
+//!
+
 template<class WXWINDOW>
 wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
 {
@@ -116,10 +119,12 @@ wxPLplotwindow<WXWINDOW>::~wxPLplotwindow( void )
         delete m_gcDc;
 }
 
-//! In the OnPaint Method we check if the Windows was resized (will be moved to OnSize() sometimes
-//  later), we also implement our own double buffering here (since the PLplot wxWidgets driver draws
-//  into a wxMemoryDC)
-//
+//! In the OnPaint Method we check if the Windows was resized (will be
+//! moved to OnSize() sometimes later), we also implement our own
+//! double buffering here (since the PLplot wxWidgets driver draws
+//! into a wxMemoryDC).
+//!
+
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 {
@@ -168,7 +173,8 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
 }
 
 //! This is called when the plot is resized
-//
+//!
+
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
 {
@@ -178,16 +184,20 @@ void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
 }
 
 //! This is called before each paint event
-//
+//!
+
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnErase( wxEraseEvent& WXUNUSED( event ) )
 {
     //Do nothing. This stops screen flicker.
 }
 
-//! This is called when the widow is created i.e. after WXWINDOW::Create
-//  has been called. We note that this has been called to avoid attempting
-//  to redraw a plot on a window that hasn't been created yet.
+//! This is called when the window is created, i.e., after
+//! WXWINDOW::Create has been called. We note that this has been
+//! called to avoid attempting to redraw a plot on a window that
+//! hasn't been created yet.
+//!
+
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
 {
@@ -300,7 +310,8 @@ void wxPLplotwindow<WXWINDOW>::OnMouse( wxMouseEvent &event )
 }
 
 //! Redo the whole plot, only if the window has been Created
-//
+//!
+
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::RenewPlot( void )
 {
@@ -312,7 +323,8 @@ void wxPLplotwindow<WXWINDOW>::RenewPlot( void )
 
 
 //! Save plot.
-//
+//!
+
 template<class WXWINDOW>
 bool wxPLplotwindow<WXWINDOW>::SavePlot( const wxString& devname, const wxString& filename )
 {
@@ -344,7 +356,9 @@ bool wxPLplotwindow<WXWINDOW>::SavePlot( const wxString& devname, const wxString
     return true;
 }
 
-//! Set whether we wish to use wxGCDC instead of a wxDC
+//! Set whether we wish to use wxGCDC instead of a wxDC.
+//!
+
 template<class WXWINDOW>
 void wxPLplotwindow<WXWINDOW>::setUseGraphicsContext( bool useGraphicsContext )
 {

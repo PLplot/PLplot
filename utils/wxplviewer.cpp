@@ -53,11 +53,11 @@ bool wxPlViewerApp::OnInit()
 #ifdef __WXGTK__
         //This is to deal with the bug described at
         //https://forums.wxwidgets.org/viewtopic.php?t=37151&p=151356
-        //Although this bug has been fixed acording to
+        //Although this bug has been fixed according to
         //http://trac.wxwidgets.org/ticket/16202 and
         //http://trac.wxwidgets.org/changeset/76398/svn-wx
         //I currently don't know which wxWidgets version it is
-        //included in so I am applyin gthis to all wxGTK
+        //included in so I am applying this to all wxGTK
         //builds
         wxMilliSleep( 100 );
 #endif
