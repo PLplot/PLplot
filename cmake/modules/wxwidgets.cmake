@@ -217,6 +217,16 @@ if(ENABLE_wxwidgets)
     # These options only suitable if the new wxwidgets is enabled.
     option(PLPLOT_WX_DEBUG_OUTPUT "Enable debug output for wxwidgets device driver, binding, and example" OFF)
     option(PLPLOT_WX_NANOSEC "Experimental option (because it may lead to build failures (!)) for nanosec timestamp for wx debug output" OFF)
+
+    # Permanently enable the three named semaphores approach which should
+    # work on all platforms.
+    set(PL_WXWIDGETS_IPC3 ON CACHE BOOL "Use the three-semaphores approach for wxwidgets IPC" FORCE)
+    # Unlike named semaphores, unnamed semaphores are not supported on all POSIX platforms and
+    # are also not supported on Windows.  Therefore permanently disable this variant of the
+    # three semapharoes approach.
+    set(PL_HAVE_UNNAMED_POSIX_SEMAPHORES OFF CACHE BOOL "Use unnamed semaphores for wxwidgets IPC" FORCE)
+    
+    if(0)
     # This option works well on Linux (except for problems with locate mode that also appear
     # in slightly different form when PL_WXWIDGETS_IPC3 is OFF).  So after that issue is fixed
     # and further testing occurs on Windows, the experimental "moniker" should be dropped.
@@ -288,6 +298,7 @@ main(void)
 	endif(PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
       endif(NOT DEFINED PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
     endif(PL_WXWIDGETS_IPC3 AND NOT WIN32)
+    endif(0)
     set(wxdemo_name wxPLplotDemo)
     if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)
       # This is added to later by drivers_finish with
