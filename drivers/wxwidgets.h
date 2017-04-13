@@ -95,15 +95,16 @@ public:
 
     void drawText( PLStream* pls, EscText* args );
 private:
-    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth );
+    void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth );
     virtual void DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth ) {}
 
     PLUNICODE m_prevSymbol;
     PLFLT     m_prevBaseFontSize;
-    PLINT     m_prevSuperscriptLevel;
+    PLINT     m_prevLevel;
     PLUNICODE m_prevFci;
     wxCoord   m_prevSymbolWidth;
     wxCoord   m_prevSymbolHeight;
+    wxCoord   m_prevSymbolDepth;
 };
 
 // base device class
@@ -167,12 +168,6 @@ private:
     FontGrabber      m_fontGrabber;
     //wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
     //PLUNICODE        m_fci;
-
-    //memory of previous single character string (likely plot point)
-    wxChar m_prevSingleCharString;
-    PLINT  m_prevSingleCharStringWidth;
-    PLINT  m_prevSingleCharStringHeight;
-    PLINT  m_prevSingleCharStringDepth;
 
     //Text positioning related variables
     //wxCoord m_superscriptHeight;          //distance between superscript top and baseline

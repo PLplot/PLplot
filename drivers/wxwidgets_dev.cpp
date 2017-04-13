@@ -63,9 +63,9 @@
 //--------------------------------------------------------------------------
 PlDevice::PlDevice()
 {
-    m_prevSymbol           = 0;
-    m_prevBaseFontSize     = 0;
-    m_prevSuperscriptLevel = 0;
+    m_prevSymbol       = 0;
+    m_prevBaseFontSize = 0.;
+    m_prevLevel        = 0;
     m_prevFci          = 0;
     m_prevSymbolWidth  = 0;
     m_prevSymbolHeight = 0;
@@ -94,7 +94,6 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
         }
     }
 
-
     // Check that we got unicode, warning message and return if not
     if ( args->unicode_array_len == 0 )
     {
@@ -110,13 +109,10 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
     }
 
     // Calculate the font size (in pt)
-    // Plplot saves it in mm (bizarre units!)
+    // PLplot saves it in mm (bizarre units!)
     PLFLT baseFontSize = pls->chrht * PLPLOT_POINTS_PER_INCH / PLPLOT_MM_PER_INCH;
 
     //initialize the text state
-    PLINT     currentSuperscriptLevel  = 0;
-    PLFLT     currentSuperscriptScale  = 1.0;
-    PLFLT     currentSuperscriptOffset = 0.0;
     PLUNICODE currentFci;
     plgfci( &currentFci );
     bool      currentUnderlined = false;
@@ -126,30 +122,31 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
     std::vector<wxCoord> lineWidths( lines.size() );
     std::vector<wxCoord> lineHeights( lines.size() );
     std::vector<wxCoord> lineDepths( lines.size() );
-    wxCoord paraWidth  = 0;
-    wxCoord paraHeight = 0;
     {
-        PLINT testSuperscriptLevel  = currentSuperscriptLevel;
-        PLFLT testSuperscriptScale  = currentSuperscriptScale;
-        PLFLT testSuperscriptOffset = currentSuperscriptOffset;
+        // Get the text length without drawing it.  Also, determine
+        // lineWidths, lineHeights, and lineDepths arrays that are required
+        // for the actual draw.
+        wxCoord   paraWidth      = 0;
+        wxCoord   paraHeight     = 0;
+        PLUNICODE testFci        = currentFci;
+        bool      testUnderlined = currentUnderlined = false;
+        PLFLT     identityMatrix[6];
+        plP_affine_identity( identityMatrix );
         for ( size_t i = 0; i < lines.size(); ++i )
         {
-            //get text size
-            PLUNICODE testFci        = currentFci;
-            bool      testUnderlined = currentUnderlined = false;
-            PLFLT     identityMatrix[6];
-            plP_affine_identity( identityMatrix );
             DrawTextLine( lines[i].first, lines[i].second - lines[i].first, 0, 0, 0, 0, identityMatrix, baseFontSize, false,
-                testSuperscriptLevel, testSuperscriptScale, testSuperscriptOffset, testUnderlined, testFci,
+                testUnderlined, testFci,
                 0, 0, 0, 0.0, lineWidths[i], lineHeights[i], lineDepths[i] );
             paraWidth   = MAX( paraWidth, lineWidths[i] );
             paraHeight += lineHeights[i] + lineDepths[i];
         }
+        pls->string_length = paraWidth / pls->xpmm;
     }
 
-    //draw the text if plplot requested it
     if ( !pls->get_string_length )
     {
+        // Draw the text string if requested by PLplot.  The needed lineWidths,
+        // lineHeights, and lineDepths arrays are determined above.
         wxCoord cumSumHeight = 0;
         //Plplot doesn't include plot orientation in args->xform, so we must
         //rotate the text if needed;
@@ -214,50 +211,51 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
                 args->y,
                 -lineWidths[i] * args->just, lineHeights[i] * 0.5 - cumSumHeight,
                 finalTransform, baseFontSize, true,
-                currentSuperscriptLevel, currentSuperscriptScale, currentSuperscriptOffset, currentUnderlined,
+                currentUnderlined,
                 currentFci, pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a, lineWidths[i],
                 lineHeights[i], lineDepths[i] );
 
             cumSumHeight += lineHeights[i] + lineDepths[i];
         }
     }
-
-    //set the size of the string in mm
-    if ( pls->get_string_length )
-        pls->string_length = paraWidth / pls->xpmm;
 }
 
-//--------------------------------------------------------------------------
-//  void wxPLDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord x,
-//      wxCoord y, PLFLT angle, PLFLT baseFontSize, bool drawText,
-//      PLINT &superscriptLevel, PLFLT &superscriptScale,
-//      PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci,
-//      wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth )
-//
 //  This function will draw a line of text given by ucs4 with ucs4Len
 //  characters. The function must not contain any newline characters.
-//  basefontSize is the size of a full size character, superscriptLevel,
-//  superscriptScale and superscriptOffset are the parameters for
-//  plP_script_scale, i.e 0, 1., 0. for full size text. Pass in the
-//  superscript parameters, underlined flag and fci for the beginning of the
-//  line. On return they will be filled with the values at the end of the line.
-//  On return textWidth, textHeigth and textDepth will be filled with the width,
-//  ascender height and descender depth of the text string.
-//  If drawText is true the text will actually be drawn. If it is false the size
-//  will be calculated but the text will not be rendered.
-//--------------------------------------------------------------------------
-void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, PLINT &superscriptLevel, PLFLT &superscriptScale, PLFLT &superscriptOffset, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth )
+//  basefontSize is the size of a full size character in points. Pass
+//  in underlined flag and fci for the beginning of the line. On
+//  return they will be filled with the values at the end of the line.
+//  On return textWidth, textHeigth and textDepth will be filled with
+//  the width, ascender height and descender depth of the text string.
+//  If drawText is true the text will actually be drawn. If it is
+//  false the size will be calculated but the text will not be
+//  rendered.
+
+void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth )
 {
+    PLINT level = 0;
+    PLFLT scaleOld;
+    PLFLT scale          = 1.;
+    PLFLT scaledFontSize = baseFontSize;
+    PLFLT offsetOld;
+    PLFLT offset;
+    PLFLT offsetActual = 0.0;
+    // Adjusted so that utf8 "heavy multiplication x", "number sign",
+    // "four teardrop-spoked asterisk", and "8-spoked asterisk" are
+    // aligned properly in examples/python/test_circle.py -dev
+    // wxwidgets.
+    PLFLT empiricalYOffset = -1. * baseFontSize;
     //check if we have the same symbol as last time - only do this for single characters
     if ( !drawText
          && ucs4Len == 1
          && ucs4[0] == m_prevSymbol
          && baseFontSize == m_prevBaseFontSize
-         && superscriptLevel == m_prevSuperscriptLevel
+         && level == m_prevLevel
          && fci == m_prevFci )
     {
         textWidth  = m_prevSymbolWidth;
         textHeight = m_prevSymbolHeight;
+        textDepth  = m_prevSymbolDepth;
         return;
     }
 
@@ -274,9 +272,8 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCo
     textWidth  = 0;
     textHeight = 0;
     textDepth  = 0;
-    PLFLT actualSuperscriptOffset = 0.0;
 
-    int   i = 0;
+    int i = 0;
     while ( i < ucs4Len )
     {
         if ( ucs4[i] == (PLUNICODE) plplotEsc )
@@ -294,29 +291,48 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCo
                 wxCoord sectionWidth;
                 wxCoord sectionHeight;
                 wxCoord sectionDepth;
-                DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + actualSuperscriptOffset, transform,
-                    baseFontSize * superscriptScale, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
+                DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + empiricalYOffset + offsetActual, transform,
+                    scaledFontSize, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
                 textWidth += sectionWidth;
-                textHeight = MAX( textHeight, sectionHeight );
-                textDepth  = MAX( textDepth, sectionDepth - superscriptOffset * baseFontSize );
+                textHeight = MAX( textHeight, sectionHeight + offset * baseFontSize );
+                textDepth  = MAX( textDepth, sectionDepth - offset * baseFontSize );
                 section    = wxEmptyString;
 
                 //act on the escape character
                 if ( ucs4[i] == (PLUNICODE) 'u' )               // Superscript
                 {
-                    PLFLT oldScale;
-                    PLFLT oldOffset;
-                    plP_script_scale( TRUE, &superscriptLevel, &oldScale, &superscriptScale,
-                        &oldOffset, &superscriptOffset );
-                    actualSuperscriptOffset = superscriptOffset * baseFontSize * 0.75 * ( superscriptLevel > 0 ? 1.0 : -1.0 );
+                    plP_script_scale( TRUE, &level, &scaleOld, &scale, &offsetOld, &offset );
+                    scaledFontSize = baseFontSize * scale;
+                    // Factor of 1.2 is an empirical correction to work
+                    // around a bug where the calculated symmetrical
+                    // subscript and superscript offset arguments of
+                    // DrawTextSection are rendered in that routine in
+                    // an asymmetical way (with subscript levels having
+                    // a differently rendered offset than the
+                    // corresponding superscript level).  Of course,
+                    // fixing this DrawTextSection bug is far preferred
+                    // to this workaround, but I have been unable to
+                    // find the bug in DrawTextSection so I am leaving
+                    // this ultimate fix as Phil's responsibility.
+                    //
+                    // Factor of 60. is an empirical correction to force
+                    // scale of superscript AND subscript offsets to be
+                    // similar to other devices.  This is close to size
+                    // of m_yScale=62.532442748091604 as determined by
+                    // gdb for the test case
+                    // examples/python/test_superscript_subscript.py
+                    // -dev wxwidgets.  So this is likely a workaround
+                    // for a scaling issue in DrawTextSection, and I
+                    // leave the fix of that issue, and the
+                    // corresponding removal of the empirical scaling
+                    // factor here to Phil.
+                    offsetActual = 60. * offset * baseFontSize * ( level > 0 ? 1.0 / 1.2 : -1.2 );
                 }
                 if ( ucs4[i] == (PLUNICODE) 'd' )               // Subscript
                 {
-                    PLFLT oldScale;
-                    PLFLT oldOffset;
-                    plP_script_scale( FALSE, &superscriptLevel, &oldScale, &superscriptScale,
-                        &oldOffset, &superscriptOffset );
-                    actualSuperscriptOffset = superscriptOffset * baseFontSize * 0.75 * ( superscriptLevel > 0 ? 1.0 : -1.0 );
+                    plP_script_scale( FALSE, &level, &scaleOld, &scale, &offsetOld, &offset );
+                    scaledFontSize = baseFontSize * scale;
+                    offsetActual   = 60. * offset * baseFontSize * ( level > 0 ? 1.0 / 1.2 : -1.2 );
                 }
                 if ( ucs4[i] == (PLUNICODE) '-' )               // underline
                     underlined = !underlined;
@@ -332,11 +348,11 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCo
             wxCoord sectionWidth;
             wxCoord sectionHeight;
             wxCoord sectionDepth;
-            DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + actualSuperscriptOffset, transform,
-                baseFontSize * superscriptScale, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
+            DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + empiricalYOffset + offsetActual, transform,
+                scaledFontSize, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
             textWidth += sectionWidth;
-            textHeight = MAX( textHeight, sectionHeight + superscriptOffset * baseFontSize );
-            textDepth  = MAX( textDepth, sectionDepth - superscriptOffset * baseFontSize );
+            textHeight = MAX( textHeight, sectionHeight + offset * baseFontSize );
+            textDepth  = MAX( textDepth, sectionDepth - offset * baseFontSize );
             section    = wxEmptyString;
 
             // get new fci
@@ -356,25 +372,25 @@ void PlDevice::DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCo
     wxCoord sectionWidth;
     wxCoord sectionHeight;
     wxCoord sectionDepth;
-    DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + actualSuperscriptOffset, transform,
-        baseFontSize * superscriptScale, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
+    DrawTextSection( section, xOrigin, yOrigin, x + textWidth, y + empiricalYOffset + offsetActual, transform,
+        scaledFontSize, drawText, underlined, fci, red, green, blue, alpha, sectionWidth, sectionHeight, sectionDepth );
     textWidth += sectionWidth;
-    textHeight = MAX( textHeight, sectionHeight + superscriptOffset * baseFontSize );
-    textDepth  = MAX( textDepth, sectionDepth - superscriptOffset * baseFontSize );
+    textHeight = MAX( textHeight, sectionHeight + offset * baseFontSize );
+    textDepth  = MAX( textDepth, sectionDepth - offset * baseFontSize );
 
     //if this was a single character remember its size as it is likely to be requested
     //repeatedly
     if ( ucs4Len == 1 )
     {
-        m_prevSymbol           = ucs4[0];
-        m_prevBaseFontSize     = baseFontSize;
-        m_prevSuperscriptLevel = superscriptLevel;
+        m_prevSymbol       = ucs4[0];
+        m_prevBaseFontSize = baseFontSize;
+        m_prevLevel        = level;
         m_prevFci          = fci;
         m_prevSymbolWidth  = textWidth;
         m_prevSymbolHeight = textHeight;
+        m_prevSymbolDepth  = textDepth;
     }
 }
-
 
 //--------------------------------------------------------------------------
 // Scaler class
@@ -747,7 +763,7 @@ FontGrabber::FontGrabber( )
 //--------------------------------------------------------------------------
 //  Font FontGrabber::GetFont( PLUNICODE fci )
 //
-//  Get the requested font either fresh of from the cache.
+//  Get the requested font either fresh or from the cache.
 //--------------------------------------------------------------------------
 Font FontGrabber::GetFont( PLUNICODE fci, PLFLT scaledFontSize, bool underlined )
 {
@@ -791,11 +807,6 @@ wxPLDevice::wxPLDevice( PLStream *pls, char * mfo, PLINT text, PLINT hrshsym )
         throw( "wxPLDevice::wxPLDevice: unknown failure in new wxGCDC( gc )" );
     }
     PLPLOT_wxLogDebug( "wxPLDevice(): m_interactiveTextGcdc done" );
-
-    m_prevSingleCharString       = 0;
-    m_prevSingleCharStringWidth  = 0;
-    m_prevSingleCharStringDepth  = 0;
-    m_prevSingleCharStringHeight = 0;
 
     if ( mfo )
         strcpy( m_mfo, mfo );
@@ -1089,29 +1100,9 @@ void wxPLDevice::SetDC( PLStream *pls, wxDC* dc )
     }
 }
 
-PLFLT getTextOffset( PLINT superscriptLevel, PLFLT baseFontSize )
-{
-    if ( superscriptLevel == 0 )
-        return 0;
-    else
-    {
-        PLFLT fontScale = pow( 0.8, abs( superscriptLevel ) );
-        if ( superscriptLevel > 0 )
-            return getTextOffset( superscriptLevel - 1, baseFontSize ) + baseFontSize * fontScale / 2.;
-        else
-            return getTextOffset( superscriptLevel + 1, baseFontSize ) - baseFontSize * fontScale * 0.8 / 2.;
-    }
-}
-
-
-
-
-//--------------------------------------------------------------------------
-//  void wxPLDevice::DrawTextSection( char* utf8_string, bool drawText )
-//
 //  This function will draw a section of text given by section at location
 //  x, y relative to the origin xOrigin, yOrigin. The function must not
-//  contain any newline characters or plplot escapes.
+//  contain any newline characters or PLplot escapes.
 //  transform is a transformation to be applied to the device context AFTER
 //  the origin of the device context has been moved to xOrigin, yOrigin. The
 //  purpose of having this origin is to allow the units used by wxWidgets to
@@ -1144,7 +1135,7 @@ void wxPLDevice::DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOr
         wxFont theFont = font.getWxFont();
         m_dc->GetTextExtent( section, &sectionWidth, &sectionHeight,
             &sectionDepth, &leading, &theFont );
-        sectionHeight -= sectionDepth + leading;                         //The height reported is the line spacing
+        sectionHeight -= leading;
         sectionDepth  += leading;
         sectionWidth  *= m_xScale;
         sectionHeight *= m_yScale;
