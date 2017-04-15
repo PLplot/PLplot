@@ -237,29 +237,50 @@ http://sourceforge.net/p/plplot/wiki/
 Coding standards for PLplot
 ---------------------------
 
-When writing / contributing code for PLplot the following standards are
-followed:
+Adherence to coding standards should help make code more portable.
+Therefore when writing / contributing code for PLplot the following standards
+should be followed:
 
 C: ISO C99 standards with POSIX.1-2001 base specification (required
 for a number of functions)
-C++: ISO C++ 1998 standard plus amendents
-Fortran 95: Fortran 95 standard
 
-To check code it is recommended to try compiling with suitable compiler
+C++: ISO C++ 1998 standard plus amendments
+
+Fortran 95: Fortran 2003 standard (especially including support for
+the ISO_C_BINDING module that we use to implement the new fortran
+binding).
+
+To check code conforms to standards it is recommended to try compiling with suitable compiler
 flags to enforce these standards and to enable compiler warnings to check
 for dubious code.
 
 For gcc / g++ / gfortran the following flags can be used
 
-CFLAGS='-O3 -std=c99 -pedantic -D_POSIX_C_SOURCE=200112L -Wall  \
--Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs \
--Wconversion -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings'
-CCFLAGS='-O3 -fvisibility=hidden -std=c++98 -pedantic -Wall -Wextra'
+export CFLAGS="-O3 -fvisibility=hidden -std=c99 -D_POSIX_C_SOURCE=200112L -pedantic -Wall -Wextra -Wmissing-prototypes -Wstrict-prototypes -Wnested-externs -Wconversion -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings"
 
-FFLAGS='-std=f95 -O3 -fall-intrinsics -fvisibility=hidden -pedantic \
--Wall -Wextra'
+export CXXFLAGS="-O3 -fvisibility=hidden -std=c++98 -pedantic -Wall -Wextra"
 
-Adherence to the standards should help make the code more portable.
+export FFLAGS="-O3 -Wall -Wextra"
+
+N.B. adding the options -std=f2003 -pedantic to FFLAGS would normally
+be used to check compliance with the Fortran 2003 standard, but those
+gfortran options do not currently work for our new Fortran binding
+because that compiler generates build errors in that case where the
+associated message is
+
+Error: Fortran 2008: Array of interoperable type at (1) to C_LOC which is nonallocatable and neither assumed size nor explicit size
+
+A google check for that error message found
+<https://gcc.gnu.org/ml/gcc-patches/2013-04/msg00110.html> where
+apparently the interoperability concern was that an assumed shape
+array might not be continous.  But we feel that should not be a
+concern for this singly dimensioned case, and the NAG compiler
+(notorious for its ability to check for standards compliance) builds
+our fortran binding and examples without any errors or warnings.  So
+for now we can only avoid what we believe is this spurious gfortran
+build error by dropping the -std=f2003 -pedantic options.  Which means
+we cannot check compliance with Fortran 2003 with that compiler and
+must rely on a different Fortran compiler (NAG) to do that.
 
 Some notes and recommendations
 ------------------------------
