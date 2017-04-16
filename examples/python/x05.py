@@ -38,7 +38,7 @@ def main(w):
     w.plhist(data, -1.1, 1.1, 44, 0)
     w.plcol0(2)
     w.pllab("#frValue", "#frFrequency",
-	   "#frPLplot Example 5 - Probability function of Oscillator")
+           "#frPLplot Example 5 - Probability function of Oscillator")
 
     # Restore defaults
     # Must be done independently because otherwise this changes output files

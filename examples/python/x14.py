@@ -42,9 +42,9 @@ def main(w):
     driver = w.plgdev()
     (fam, num, bmax) = w.plgfam()
 
-    print "Demo of multiple output streams via the %s driver." % driver
-    print "Running with the second stream as slave to the first."
-    print ""
+    print("Demo of multiple output streams via the %s driver." % driver)
+    print("Running with the second stream as slave to the first.")
+    print("")
 
     # Set up the first stream.
     w.plsetopt("geometry", geometry_master)
@@ -179,8 +179,8 @@ def plot2(w):
 
     x = (arange(100)-19)/6.0
     if 0.0 in x:
-	#replace 0.0 by small value that gives the same sinc(x) result.
-	x[list(x).index(0.0)] = 1.e-30
+        #replace 0.0 by small value that gives the same sinc(x) result.
+        x[list(x).index(0.0)] = 1.e-30
     y = sin(x)/x
 
     # Draw the line
@@ -247,26 +247,26 @@ def plot4(w):
 
     # Draw circles for polar grid
     for i in range(10):
-	w.plline(x[i], y[i])
+        w.plline(x[i], y[i])
 
     w.plcol0(2)
     for i in range(12):
-	theta = 30.0 * i
-	dx = cos(dtr * theta)
-	dy = sin(dtr * theta)
+        theta = 30.0 * i
+        dx = cos(dtr * theta)
+        dy = sin(dtr * theta)
 
-	# Draw radial spokes for polar grid
+        # Draw radial spokes for polar grid
 
-	w.pljoin(0.0, 0.0, dx, dy)
+        w.pljoin(0.0, 0.0, dx, dy)
 
-	# Write labels for angle
+        # Write labels for angle
 
-	text = `int(theta)`
+        text = str(int(theta))
 #Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
-	if dx >= -0.00001:
-	    w.plptex(dx, dy, dx, dy, -0.15, text)
-	else:
-	    w.plptex(dx, dy, -dx, -dy, 1.15, text)
+        if dx >= -0.00001:
+            w.plptex(dx, dy, dx, dy, -0.15, text)
+        else:
+            w.plptex(dx, dy, -dx, -dy, 1.15, text)
 
     # Draw the graph
 

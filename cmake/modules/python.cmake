@@ -75,7 +75,7 @@ if(ENABLE_python)
     # Check for numpy installation.
     execute_process(
       COMMAND
-      ${PYTHON_EXECUTABLE} -c "import numpy; print numpy.get_include()"
+      ${PYTHON_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
       OUTPUT_VARIABLE NUMPY_INCLUDE_PATH_PARENT
       RESULT_VARIABLE NUMPY_ERR
       OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -123,7 +123,7 @@ if(ENABLE_python)
   # using distutils.
   execute_process(
     COMMAND
-    ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${PYTHON_INSTALL_TEMPLATE}')"
+    ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${PYTHON_INSTALL_TEMPLATE}'))"
     OUTPUT_VARIABLE PYTHON_INSTDIR
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )

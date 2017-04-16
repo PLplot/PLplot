@@ -45,14 +45,14 @@ def main(w):
     w.plscmap1l(1, pos, red, green, blue)
 
     for i in range(10):
-	# w.plcol0(i + 1)
+        # w.plcol0(i + 1)
         w.plcol1(i / 9.0)
-	w.plpsty(0)
-	fbox(w, (1980. + i), y0[i] )
-	string = `y0[i]`
-	w.plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, string)
-	string = `1980 + i`
-	w.plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
+        w.plpsty(0)
+        fbox(w, (1980. + i), y0[i] )
+        string = str(y0[i])
+        w.plptex((1980. + i + .5), (y0[i] + 1.), 1.0, 0.0, .5, string)
+        string = str(1980 + i)
+        w.plmtex("b", 1.0, ((i + 1) * .1 - .05), 0.5, string)
 
     # Restore defaults
     # cmap1 default color palette.

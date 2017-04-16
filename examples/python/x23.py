@@ -207,46 +207,46 @@ weight = (
 def main(w):
 
     for page in range(11):
-	w.pladv(0)
+        w.pladv(0)
 
-	# Set up viewport and window
+        # Set up viewport and window
 
-	w.plvpor(0.02, 0.98, 0.02, 0.90)
-	w.plwind(0.0, 1.0, 0.0, 1.0)
-	mm = w.plgspa()
-	w.plschr(0., 0.8)
-	ycharacter_scale = (1.0 - 0.0)/(mm[3]-mm[2])
-	# Factor should be 0.5, but heuristically it turns out to be larger.
-	yoffset = 1.0*w.plgchr()[1]*ycharacter_scale
+        w.plvpor(0.02, 0.98, 0.02, 0.90)
+        w.plwind(0.0, 1.0, 0.0, 1.0)
+        mm = w.plgspa()
+        w.plschr(0., 0.8)
+        ycharacter_scale = (1.0 - 0.0)/(mm[3]-mm[2])
+        # Factor should be 0.5, but heuristically it turns out to be larger.
+        yoffset = 1.0*w.plgchr()[1]*ycharacter_scale
 
-	# Draw the grid using w.plbox
+        # Draw the grid using w.plbox
 
-	w.plcol0(2)
-	deltax = 1./float(nxcells[page])
-	deltay = 1./float(nycells[page])
-	w.plbox("bcg", deltax, 0, "bcg", deltay, 0)
-	w.plcol0(15)
-	length = int(hi[page],16) - int(lo[page],16)
-	slice = 0
-	for y in (0.5+arange(nycells[page]-1,-1,-1))*deltay:
-	    for x in (0.5+arange(nxcells[page]))*deltax:
-		if slice < length:
-	            if page == 0:
-		        # Greek letters.
-		        CommandString = str(Greek[slice]);
-	            elif 1 <= page and page <= 3:
-	    		# Unicode for Type 1 Symbol Glyphs.
-			CommandString = "#[" + str(Type1\
-	    		[offset[page]+slice]) + "]"
-		    elif page >= 4:
-			CommandString = "#[" + hex(int(lo[page],16)+slice) + "]"
-		    w.plptex(x,y+yoffset,1.,0.,0.5, CommandString)
-		    w.plptex(x,y-yoffset,1.,0.,0.5, "#" +CommandString)
-		slice += 1
+        w.plcol0(2)
+        deltax = 1./float(nxcells[page])
+        deltay = 1./float(nycells[page])
+        w.plbox("bcg", deltax, 0, "bcg", deltay, 0)
+        w.plcol0(15)
+        length = int(hi[page],16) - int(lo[page],16)
+        slice = 0
+        for y in (0.5+arange(nycells[page]-1,-1,-1))*deltay:
+            for x in (0.5+arange(nxcells[page]))*deltax:
+                if slice < length:
+                    if page == 0:
+                        # Greek letters.
+                        CommandString = str(Greek[slice]);
+                    elif 1 <= page and page <= 3:
+                        # Unicode for Type 1 Symbol Glyphs.
+                        CommandString = "#[" + str(Type1\
+                        [offset[page]+slice]) + "]"
+                    elif page >= 4:
+                        CommandString = "#[" + hex(int(lo[page],16)+slice) + "]"
+                    w.plptex(x,y+yoffset,1.,0.,0.5, CommandString)
+                    w.plptex(x,y-yoffset,1.,0.,0.5, "#" +CommandString)
+                slice += 1
 
-	w.plschr(0., 1.0)
-	# Page title
-	w.plmtex("t", 1.5, 0.5, 0.5, title[page])
+        w.plschr(0., 1.0)
+        # Page title
+        w.plmtex("t", 1.5, 0.5, 0.5, title[page])
 
     # Demonstrate methods of getting the current fonts
 
@@ -255,8 +255,8 @@ def main(w):
     ifamily = font[0]
     istyle = font[1]
     iweight = font[2]
-    print "For example 23 prior to page 12 the FCI is",hex(fci_old)
-    print "For example 23 prior to page 12 the font family, style and weight are %s %s %s" % (family[ifamily],style[istyle],weight[iweight])
+    print("For example 23 prior to page 12 the FCI is",hex(fci_old))
+    print("For example 23 prior to page 12 the font family, style and weight are %s %s %s" % (family[ifamily],style[istyle],weight[iweight]))
 
     FCI_COMBINATIONS = 30
     dy = 0.030
@@ -274,12 +274,12 @@ def main(w):
         elif(page == 14):
             w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<0xmn> constructs")
         elif(page == 15):
-	  w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs")
+          w.plmtex("t", 1.5, 0.5, 0.5,"#<0x10>PLplot Example 23 - Set Font with ##<FCI COMMAND STRING/> constructs")
         w.plschr(0., 0.75)
         for i in range(0,FCI_COMBINATIONS):
             family_index = i % 5
-            style_index = (i/5) % 3
-            weight_index = ((i/5)/3) % 2
+            style_index = int((i/5) % 3)
+            weight_index = int(((i/5)/3) % 2)
             if(page == 11):
                 w.plsfci(fci[i])
                 string = "Page 12, "+family[family_index]+", "+style[style_index]+", "+weight[weight_index]+":  "+"The quick brown fox jumps over the lazy dog"

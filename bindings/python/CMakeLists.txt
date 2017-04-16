@@ -78,6 +78,17 @@ if(ENABLE_python)
 
   swig_link_libraries(plplotcmodule plplot ${PYTHON_LIBRARIES})
 
+  # This creates the _plplotc.so library that Python3 will look for. It
+  # will not find the _plplotcmodule.so that Python2 would fine. Ideally
+  # we'd probably just generate this library, but for now it is safer(?)
+  # and easier just to make them both.
+  set_target_properties(
+    _plplotcmodule
+    PROPERTIES
+    SUFFIX ".so"
+    OUTPUT_NAME "_plplotc"
+    )
+
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(

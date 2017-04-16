@@ -21,8 +21,8 @@
 
 from numpy import *
 
-XPTS = 35		# Data points in x
-YPTS = 46		# Data points in y
+XPTS = 35               # Data points in x
+YPTS = 46               # Data points in y
 
 
 def main(w):
@@ -104,17 +104,17 @@ def plot2(w, z, zmin, zmax):
     max_width = 0.
 
     for i in range(10):
-	shade_min = zmin + (zmax - zmin) * i / 10.0
-	shade_max = zmin + (zmax - zmin) * (i +1) / 10.0
-	sh_color = i+6
+        shade_min = zmin + (zmax - zmin) * i / 10.0
+        shade_max = zmin + (zmax - zmin) * (i +1) / 10.0
+        sh_color = i+6
         n = nlin[i]
-	w.plpat(inc[i][0:n], spa[i][0:n])
+        w.plpat(inc[i][0:n], spa[i][0:n])
 
-	# Just use identity transform on indices of z mapped to -1, 1 range
-	# in X and Y coordinates
-	w.plshade( z, -1., 1., -1., 1.,
-	shade_min, shade_max, sh_cmap, sh_color, sh_width,
-	min_color, min_width, max_color, max_width, 1, None, None)
+        # Just use identity transform on indices of z mapped to -1, 1 range
+        # in X and Y coordinates
+        w.plshade( z, -1., 1., -1., 1.,
+        shade_min, shade_max, sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width, 1, None, None)
 
     w.plcol0(1)
     w.plbox("bcnst", 0.0, 0, "bcnstv", 0.0, 0)

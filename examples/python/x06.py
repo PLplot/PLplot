@@ -53,14 +53,14 @@ def main(w):
 
             w.plcol0(15)
             for i in range(10):
-                w.plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, `i`)
+                w.plmtex("b", 1.5, (0.1 * i + 0.05), 0.5, str(i))
 
             k = 0
             for i in range(13):
 
                 # Write the digits to the left of the frame
 
-                w.plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, `10 * i`)
+                w.plmtex("lv", 1.0, (1.0 - (2 * i + 1) / 26.0), 1.0, str(10 * i))
 
                 for j in range(10):
                     x = 0.1 * j + 0.05

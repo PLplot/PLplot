@@ -25,15 +25,15 @@ from numpy import *
 # to correspond to the exact floating point centre
 # of the sombrero.
 
-XPTS = 35		# Data points in x
-YPTS = 45		# Data points in y
+XPTS = 35               # Data points in x
+YPTS = 45               # Data points in y
 
 alt = [60.0, 40.0]
 
 az = [30.0, -30.0]
 
 title = ["#frPLplot Example 8 - Alt=60, Az=30",
-	 "#frPLplot Example 8 - Alt=40, Az=-30"]
+         "#frPLplot Example 8 - Alt=40, Az=-30"]
 
 # Routine for defining a specific color map 1 in HLS space.
 # if gray is true, use basic grayscale variation from half-dark to light.
@@ -42,18 +42,18 @@ def cmap1_init(w, gray):
     # Independent variable of control points.
     i = array((0., 1.))
     if gray:
-	# Hue for control points.  Doesn't matter since saturation is zero.
-	h = array((0., 0.))
-	# Lightness ranging from half-dark (for interest) to light.
-	l = array((0.5, 1.))
-	# Gray scale has zero saturation
-	s = array((0., 0.))
+        # Hue for control points.  Doesn't matter since saturation is zero.
+        h = array((0., 0.))
+        # Lightness ranging from half-dark (for interest) to light.
+        l = array((0.5, 1.))
+        # Gray scale has zero saturation
+        s = array((0., 0.))
     else:
-	# Hue ranges from blue (240 deg) to red (0 or 360 deg)
-	h = array((240., 0.))
-	# Lightness and saturation are constant (values taken from C example).
-	l = array((0.6, 0.6))
-	s = array((0.8, 0.8))
+        # Hue ranges from blue (240 deg) to red (0 or 360 deg)
+        h = array((240., 0.))
+        # Lightness and saturation are constant (values taken from C example).
+        l = array((0.6, 0.6))
+        s = array((0.8, 0.8))
 
     # number of cmap1 colours is 256 in this case.
     w.plscmap1n(256)
@@ -73,16 +73,16 @@ def main(w):
     x = -1. + dx*arange(XPTS)
     y = -1. + dy*arange(YPTS)
     if rosen == 1:
-	x = 1.5*x
-	y = 0.5 + y
+        x = 1.5*x
+        y = 0.5 + y
     x.shape = (-1,1)
     r2 = (x*x) + (y*y)
     if rosen == 1:
-	z = (1. - x)*(1. - x) + 100 * (x*x - y)*(x*x - y)
-	# The log argument might be zero for just the right grid.
-	z = log(choose(greater(z,0.), (exp(-5.), z)))
+        z = (1. - x)*(1. - x) + 100 * (x*x - y)*(x*x - y)
+        # The log argument might be zero for just the right grid.
+        z = log(choose(greater(z,0.), (exp(-5.), z)))
     else:
-	z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
+        z = exp(-r2)*cos((2.0*pi)*sqrt(r2))
 
     x.shape = (-1,)
     zmin = min(z.flat)
@@ -116,45 +116,45 @@ def main(w):
     w.pllightsource(1., 1., 1.)
 
     for k in range(2):
-	for ifshade in range(5):
-	    w.pladv(0)
-	    w.plvpor(0.0, 1.0, 0.0, 0.9)
-	    w.plwind(-1.0, 1.0, -0.9, 1.1)
-	    w.plcol0(3)
-	    w.plmtex("t", 1.0, 0.5, 0.5, title[k])
-	    w.plcol0(1)
-	    if rosen == 1:
-		w.plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
-		alt[k], az[k])
-	    else:
-		w.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
-		alt[k], az[k])
-	    w.plbox3("bnstu", "x axis", 0.0, 0,
-	    "bnstu", "y axis", 0.0, 0,
-	    "bcdmnstuv", "z axis", 0.0, 0)
+        for ifshade in range(5):
+            w.pladv(0)
+            w.plvpor(0.0, 1.0, 0.0, 0.9)
+            w.plwind(-1.0, 1.0, -0.9, 1.1)
+            w.plcol0(3)
+            w.plmtex("t", 1.0, 0.5, 0.5, title[k])
+            w.plcol0(1)
+            if rosen == 1:
+                w.plw3d(1.0, 1.0, 1.0, -1.5, 1.5, -0.5, 1.5, zmin, zmax,
+                alt[k], az[k])
+            else:
+                w.plw3d(1.0, 1.0, 1.0, -1.0, 1.0, -1.0, 1.0, zmin, zmax,
+                alt[k], az[k])
+            w.plbox3("bnstu", "x axis", 0.0, 0,
+            "bnstu", "y axis", 0.0, 0,
+            "bcdmnstuv", "z axis", 0.0, 0)
 
-	    w.plcol0(2)
-	    if ifshade == 0:
-		# diffuse light surface plot.
-		# set up modified gray scale cmap1.
-		cmap1_init(w, 1)
-		w.plsurf3d(x, y, z, 0, ())
-	    elif ifshade == 1:
-		# magnitude colored plot.
-		cmap1_init(w, 0)
-		w.plsurf3d(x, y, z, w.MAG_COLOR, ())
-	    elif ifshade == 2:
-		# magnitude colored plot with faceted squares
-		cmap1_init(w, 0)
-		w.plsurf3d(x, y, z, w.MAG_COLOR | w.FACETED, ())
-	    elif ifshade == 3:
-		# magnitude colored plot with contours
-		cmap1_init(w, 0)
-		w.plsurf3d(x, y, z, w.MAG_COLOR | w.SURF_CONT | w.BASE_CONT, clevel)
-	    elif ifshade == 4:
-		# magnitude colored plot with contoursmagnitude colored plot and index limits
-		cmap1_init(w, 0)
-		w.plsurf3dl(x, y, zlimited, w.MAG_COLOR | w.SURF_CONT | w.BASE_CONT, clevel, indexxmin, indexymin, indexymax)
+            w.plcol0(2)
+            if ifshade == 0:
+                # diffuse light surface plot.
+                # set up modified gray scale cmap1.
+                cmap1_init(w, 1)
+                w.plsurf3d(x, y, z, 0, ())
+            elif ifshade == 1:
+                # magnitude colored plot.
+                cmap1_init(w, 0)
+                w.plsurf3d(x, y, z, w.MAG_COLOR, ())
+            elif ifshade == 2:
+                # magnitude colored plot with faceted squares
+                cmap1_init(w, 0)
+                w.plsurf3d(x, y, z, w.MAG_COLOR | w.FACETED, ())
+            elif ifshade == 3:
+                # magnitude colored plot with contours
+                cmap1_init(w, 0)
+                w.plsurf3d(x, y, z, w.MAG_COLOR | w.SURF_CONT | w.BASE_CONT, clevel)
+            elif ifshade == 4:
+                # magnitude colored plot with contoursmagnitude colored plot and index limits
+                cmap1_init(w, 0)
+                w.plsurf3dl(x, y, zlimited, w.MAG_COLOR | w.SURF_CONT | w.BASE_CONT, clevel, indexxmin, indexymin, indexymax)
 
     # Restore defaults
     # cmap1 default color palette.

@@ -1123,7 +1123,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 
     void do_label_callback( PLINT axis, PLFLT value, char *string, PLINT len, PLPointer data )
     {
-        PyObject *pdata, *arglist, *result;
+        PyObject *pdata, *arglist, *result, *unicode_string;
         char     *pystring;
 
         // the data argument is acutally a pointer to a python object
@@ -1152,16 +1152,24 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 fprintf( stderr, "label callback failed with 3 arguments\n" );
                 PyErr_SetString( PyExc_RuntimeError, "label callback must take 3 arguments." );
             }
-            else if ( !PyString_Check( result ) )
-            {
-                fprintf( stderr, "label callback must return a string\n" );
-                PyErr_SetString( PyExc_RuntimeError, "label callback must return a string." );
-            }
-            else
-            {
+            else if ( PyString_Check( result ) )
+	    {
                 // should I test the type here?
                 pystring = PyString_AsString( result );
                 strncpy( string, pystring, len );
+	    }
+	    else if ( PyUnicode_Check( result ))
+	    {
+	        // unicode_string is never freed? memory leak here?
+	      	unicode_string = PyUnicode_AsEncodedString( result , "utf-8", "Error ~");
+		pystring = PyBytes_AS_STRING( unicode_string );
+		// len may be different then the byte string length w/ unicode?
+                strncpy( string, pystring, len );
+	    }
+	    else
+	    {
+                fprintf( stderr, "label callback must return a string\n" );
+                PyErr_SetString( PyExc_RuntimeError, "label callback must return a string." );
             }
             // release the result
             Py_CLEAR( result );
@@ -1258,7 +1266,15 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         PyObject  * rep  = PyObject_Repr( input );
         if ( rep )
         {
-            char* str = PyString_AsString( rep );
+	    // Memory leaks here? str and uni_str are not freed?
+	    char* str;
+	    if ( PyUnicode_Check( rep ) ){
+                PyObject *uni_str = PyUnicode_AsEncodedString( rep , "utf-8", "Error ~");
+		str = PyBytes_AS_STRING( uni_str );
+	    }
+	    else {
+                str = PyString_AsString( rep );
+	    }
             if ( strcmp( str, "<built-in function pltr0>" ) == 0 )
             {
                 result      = pltr0;
@@ -1558,6 +1574,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 %typemap( in ) const char *legline[4] ( char** tmp = NULL )
 {
     int i;
+    PyObject *elt, *unicode_string;
+    
     if ( !PySequence_Check( $input ) || PySequence_Size( $input ) != 4 )
     {
         PyErr_SetString( PyExc_ValueError, "Requires a sequence of 4 strings." );
@@ -1574,7 +1592,15 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     $1 = tmp;
     for ( i = 0; i < 4; i++ )
     {
-        $1[i] = PyString_AsString( PySequence_Fast_GET_ITEM( $input, i ) );
+        $1[i] = NULL;
+        elt = PySequence_Fast_GET_ITEM( $input, i );
+	if ( PyString_Check( elt ) ){
+	    $1[i] = PyString_AsString( elt );
+	}
+	else if ( PyUnicode_Check( elt ) ){
+	    unicode_string = PyUnicode_AsEncodedString( elt , "utf-8", "Error ~");
+	    $1[i] = PyBytes_AS_STRING( unicode_string );	     
+	}
         if ( $1[i] == NULL )
         {
             free( tmp );
@@ -1592,6 +1618,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 %typemap ( in ) ( int *p_argc, char **argv ) ( int tmp )
 {
     int i;
+    PyObject *unicode_string;
+    
     if ( !PyList_Check( $input ) )
     {
         PyErr_SetString( PyExc_ValueError, "Expecting a list" );
@@ -1603,13 +1631,20 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
     for ( i = 0; i < tmp; i++ )
     {
         PyObject *s = PyList_GetItem( $input, i );
-        if ( !PyString_Check( s ) )
-        {
+        if ( PyString_Check( s ) ){
+	    $2[i] = PyString_AsString( s );
+	}
+	else if ( PyUnicode_Check( s ) ){
+	    // unicode_string is never freed? memory leak here?
+	    unicode_string = PyUnicode_AsEncodedString( s , "utf-8", "Error ~");
+	    $2[i] = PyBytes_AS_STRING( unicode_string );
+	}
+	else{
             free( $2 );
             PyErr_SetString( PyExc_ValueError, "List items must be strings" );
             return NULL;
         }
-        $2[i] = PyString_AsString( s );
+
     }
     $2[i] = 0;
 }

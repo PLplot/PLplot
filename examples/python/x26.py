@@ -54,6 +54,8 @@
 # (5) decade represents a factor of 10, see
 #     http://en.wikipedia.org/wiki/Decade_(log_scale) .
 
+import sys
+
 from numpy import *
 
 # main
@@ -93,13 +95,13 @@ def main(w):
     len(alty_label) != nlang or \
     len(title_label) != nlang or \
     len(line_label) != nlang:
-	raise RuntimeError, "Internal inconsistency in label dimension"
+        raise RuntimeError("Internal inconsistency in label dimension")
 
     w.plfont(2)
 
     for i in range(nlang):
-	plot1(w, 0, x_label[i], y_label[i], alty_label[i], \
-	title_label[i], line_label[i], legend_text[i])
+        plot1(w, 0, x_label[i], y_label[i], alty_label[i], \
+        title_label[i], line_label[i], legend_text[i])
 
     # Restore defaults
     w.plfont(1)
@@ -122,11 +124,11 @@ def plot1(w, type, x_label, y_label, alty_label, title_label, line_label, legend
     w.plwind(-2., 3.0, -80.0, 0.0)
     w.plcol0(1)
     if type == 0:
-	w.plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0)
+        w.plbox("bclnst", 0.0, 0, "bnstv", 0.0, 0)
     elif type == 1:
-	w.plbox("bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0)
+        w.plbox("bcfghlnst", 0.0, 0, "bcghnstv", 0.0, 0)
     else:
-	print "error: type must be either 0 or 1"
+        print("error: type must be either 0 or 1")
     w.plcol0(2)
     w.plline(freql, ampl)
     w.plcol0(2)
@@ -142,13 +144,13 @@ def plot1(w, type, x_label, y_label, alty_label, title_label, line_label, legend
     # For the gridless case, put phase vs freq on same plot
     if type == 0:
         w.plcol0(1)
-	w.plwind(-2.0, 3.0, -100.0, 0.0)
-	w.plbox("", 0.0, 0, "cmstv", 30.0, 3)
-	w.plcol0(3)
-	w.plline(freql, phase)
-	w.plstring(freql, phase, "#(728)")
-	w.plcol0(3)
-	w.plmtex("r", 5.0, 0.5, 0.5, alty_label)
+        w.plwind(-2.0, 3.0, -100.0, 0.0)
+        w.plbox("", 0.0, 0, "cmstv", 30.0, 3)
+        w.plcol0(3)
+        w.plline(freql, phase)
+        w.plstring(freql, phase, "#(728)")
+        w.plcol0(3)
+        w.plmtex("r", 5.0, 0.5, 0.5, alty_label)
         nlegend = 2
     else:
         nlegend = 1
@@ -177,7 +179,7 @@ def plot1(w, type, x_label, y_label, alty_label, title_label, line_label, legend
     # Data for first legend entry.
     opt_array[0] = w.PL_LEGEND_LINE
     text_colors[0] = 2
-    text[0] = legend_text[0]
+    text[0] = legend_text[0].encode() if (sys.version_info > (3, 0)) else legend_text[0]
     line_colors[0] = 2
     line_styles[0] = 1
     line_widths[0] = 1.
@@ -186,7 +188,7 @@ def plot1(w, type, x_label, y_label, alty_label, title_label, line_label, legend
     if nlegend > 1:
         opt_array[1]      = w.PL_LEGEND_LINE | w.PL_LEGEND_SYMBOL
         text_colors[1]    = 3
-        text[1] = legend_text[1]
+        text[1] = legend_text[1].encode() if (sys.version_info > (3, 0)) else legend_text[1]
         line_colors[1]    = 3
         line_styles[1]    = 1
         line_widths[1]    = 1.

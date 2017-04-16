@@ -90,8 +90,8 @@ def main(w):
     #w.plcol0(1)
 
 def gcd(a, b):
-    if not (type(a) is  types.IntType and type(b) is types.IntType):
-        raise RuntimeError, "gcd arguments must be integers"
+    if not isinstance(a, int) and isinstance(b, int):
+        raise RuntimeError("gcd arguments must be integers")
     a = abs(a);
     b = abs(b);
     while(b != 0):

@@ -61,7 +61,7 @@ def main(w):
 
     tmin = 0.
     tmax = 10.
-    tjump = 0.3	# percentage of plot to jump
+    tjump = 0.3 # percentage of plot to jump
 
 # Axes options same as w.plbox.
 # Only automatic tick generation and label placement allowed
@@ -75,10 +75,10 @@ def main(w):
     legline = ["sum", "sin", "sin*noi", "sin+noi"]
 
     xlab = 0.
-    ylab = 0.25	# legend position
+    ylab = 0.25 # legend position
 
-    autoy = 1	# autoscale y
-    acc = 1	# don t scrip, accumulate
+    autoy = 1   # autoscale y
+    acc = 1     # don t scrip, accumulate
 
     w.pladv(0)
     w.plvsta()
@@ -100,8 +100,8 @@ def main(w):
 
     #w.plsError(NULL, NULL)
 
-    autoy = 0	# autoscale y
-    acc = 1	# accumulate
+    autoy = 0   # autoscale y
+    acc = 1     # accumulate
 
 # This is to represent a loop over time
 # Let's try a random walk process
@@ -111,24 +111,24 @@ def main(w):
 
     for n in range(nsteps):
         sleep(0.01)
-	t = n * dt
-	noise = w.plrandd() - 0.5
-	y1 = y1 + noise
-	y2 = sin(t*pi/18.)
-	y3 = y2 * noise
-	y4 = y2 + noise/3.
+        t = n * dt
+        noise = w.plrandd() - 0.5
+        y1 = y1 + noise
+        y2 = sin(t*pi/18.)
+        y3 = y2 * noise
+        y4 = y2 + noise/3.
 
         # There is no need for all pens to have the same number of
         # points or beeing equally time spaced.
 
         if n%2:
-	    w.plstripa(id1, 0, t, y1)
-	if n%3:
-	    w.plstripa(id1, 1, t, y2)
-	if n%4:
-	    w.plstripa(id1, 2, t, y3)
-	if n%5:
-	    w.plstripa(id1, 3, t, y4)
+            w.plstripa(id1, 0, t, y1)
+        if n%3:
+            w.plstripa(id1, 1, t, y2)
+        if n%4:
+            w.plstripa(id1, 2, t, y3)
+        if n%5:
+            w.plstripa(id1, 3, t, y4)
 
     # Destroy strip chart and it's memory
 

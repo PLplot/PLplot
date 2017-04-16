@@ -30,7 +30,7 @@ import plplot as w
 # Parse and process command line arguments
 w.plparseopts(sys.argv, w.PL_PARSE_FULL)
 version = w.plgver()
-print "PLplot library version: " + version
+print("PLplot library version: " + version)
 
 # Initialize plplot
 w.plinit()
