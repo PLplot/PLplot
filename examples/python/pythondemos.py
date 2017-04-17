@@ -45,7 +45,7 @@ for i in range(0,34):
     try:
         module.main(w)
     except:
-	failed.append(script)
+        failed.append(script)
 
     restore.main(w)
 

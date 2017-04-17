@@ -85,47 +85,47 @@ class QPlot(QtGui.QMainWindow):
         plplot.plvpor(0.05, 0.95, 0.05, 0.45)
         plplot.plwind(0.0, 360.0, -1.2, 1.2)
 
-	plplot.plcol0(2)
-	plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
+        plplot.plcol0(2)
+        plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
 
-	plplot.plcol0(1)
-	plplot.plwidth(2)
-	plplot.plline(indexes, sine)
+        plplot.plcol0(1)
+        plplot.plwidth(2)
+        plplot.plline(indexes, sine)
 
-	plplot.plcol0(3)
-	plplot.plwidth(1)
-	plplot.pllsty(2)
-	plplot.plline(indexes, cosine)
-	plplot.pllsty(1)
+        plplot.plcol0(3)
+        plplot.plwidth(1)
+        plplot.pllsty(2)
+        plplot.plline(indexes, cosine)
+        plplot.pllsty(1)
 
-	plplot.plcol0(2)
+        plplot.plcol0(2)
 
-	plplot.plmtex("t", 1., 0.5, 0.5, "Sines")
+        plplot.plmtex("t", 1., 0.5, 0.5, "Sines")
 
         # 2nd plot
         indexes = numpy.arange(-1.0, 1.0, 0.01)
         square = indexes * indexes
         cubic = square * indexes
 
-	plplot.plvpor(0.05, 0.95, 0.55, 0.95)
-	plplot.plwind(-1., 1., -1., 1.)
+        plplot.plvpor(0.05, 0.95, 0.55, 0.95)
+        plplot.plwind(-1., 1., -1., 1.)
 
-	plplot.plcol0(2)
-	plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
+        plplot.plcol0(2)
+        plplot.plbox("bcnst", 0., 0, "bcnst", 0., 0)
 
-	plplot.plcol0(1)
-	plplot.plwidth(2)
-	plplot.plline(indexes, square)
+        plplot.plcol0(1)
+        plplot.plwidth(2)
+        plplot.plline(indexes, square)
 
-	plplot.plcol0(3)
-	plplot.plwidth(1)
-	plplot.pllsty(2)
-	plplot.plline(indexes, cubic)
-	plplot.pllsty(1)
+        plplot.plcol0(3)
+        plplot.plwidth(1)
+        plplot.pllsty(2)
+        plplot.plline(indexes, cubic)
+        plplot.pllsty(1)
 
-	plplot.plcol0(2)
+        plplot.plcol0(2)
 
-	plplot.plmtex("t", 1., 0.5, 0.5, "Square & Cubic")
+        plplot.plmtex("t", 1., 0.5, 0.5, "Square & Cubic")
 
         self.update()
 
@@ -147,19 +147,19 @@ class QPlot(QtGui.QMainWindow):
         green = numpy.array([1.0, 0.5, 0.5, 0.5, 1.0])
         blue = numpy.array([1.0, 1.0, 0.5, 0.25, 0.0])
 
-	plplot.pladv(0)
-	plplot.plvsta()
+        plplot.pladv(0)
+        plplot.plvsta()
 
-	plplot.plcol0(2)
+        plplot.plcol0(2)
 
-	plplot.plwind(1980.0, 1990.0, 0.0, 35.0)
-	plplot.plbox("bc", 1.0, 0, "bcnv", 10.0, 0)
-	plplot.plcol0(2)
-	plplot.pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
+        plplot.plwind(1980.0, 1990.0, 0.0, 35.0)
+        plplot.plbox("bc", 1.0, 0, "bcnv", 10.0, 0)
+        plplot.plcol0(2)
+        plplot.pllab("Year", "Widget Sales (millions)", "#frPLplot Example 12")
 
- 	plplot.plscmap1l(1,pos,red,green,blue)
+        plplot.plscmap1l(1,pos,red,green,blue)
 
-	for i in range(10):
+        for i in range(10):
             plplot.plcol1(i/9.0)
             plplot.plpsty(0)
             plfbox((1980. + i), y0[i])

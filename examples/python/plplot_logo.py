@@ -34,8 +34,10 @@ w.plinit()
 
 from numpy import *
 
-XPTS = 35		# Data points in x
-YPTS = 46		# Data points in y
+# Data points in x
+XPTS = 35
+# Data points in 
+YPTS = 46
 
 alt = 60.0
 az = 30.0
@@ -46,18 +48,18 @@ def cmap1_init(w, gray):
     # Independent variable of control points.
     i = array((0., 1.))
     if gray:
-	# Hue for control points.  Doesn't matter since saturation is zero.
-	h = array((0., 0.))
-	# Lightness ranging from half-dark (for interest) to light.
-	l = array((0.5, 1.))
-	# Gray scale has zero saturation
-	s = array((0., 0.))
+        # Hue for control points.  Doesn't matter since saturation is zero.
+        h = array((0., 0.))
+        # Lightness ranging from half-dark (for interest) to light.
+        l = array((0.5, 1.))
+        # Gray scale has zero saturation
+        s = array((0., 0.))
     else:
-	# Hue ranges from blue (240 deg) to red (0 or 360 deg)
-	h = array((240., 0.))
-	# Lightness and saturation are constant (values taken from C example).
-	l = array((0.6, 0.6))
-	s = array((0.8, 0.8))
+        # Hue ranges from blue (240 deg) to red (0 or 360 deg)
+        h = array((240., 0.))
+        # Lightness and saturation are constant (values taken from C example).
+        l = array((0.6, 0.6))
+        s = array((0.8, 0.8))
 
     # number of cmap1 colours is 256 in this case.
     w.plscmap1n(256)
