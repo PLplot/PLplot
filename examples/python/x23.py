@@ -1,4 +1,4 @@
-#  Copyright (C) 2005-2016 Alan W. Irwin
+#  Copyright (C) 2005-2017 Alan W. Irwin
 
 #  Displays Greek letters and mathematically interesting Unicode ranges.
 #
@@ -255,7 +255,7 @@ def main(w):
     ifamily = font[0]
     istyle = font[1]
     iweight = font[2]
-    print("For example 23 prior to page 12 the FCI is",hex(fci_old))
+    print("For example 23 prior to page 12 the FCI is 0x%x" % (fci_old))
     print("For example 23 prior to page 12 the font family, style and weight are %s %s %s" % (family[ifamily],style[istyle],weight[iweight]))
 
     FCI_COMBINATIONS = 30

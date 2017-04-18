@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 
-#  Copyright (C) 2010-2016 Alan W. Irwin
+#  Copyright (C) 2010-2017 Alan W. Irwin
 
 #  Demonstrate most pllegend capability including unicode symbols.
 
@@ -577,7 +577,7 @@ def main(w):
     # Set up symbol legend entries with various symbols.
     for i in range(nlegend):
         opt_array[i] = w.PL_LEGEND_SYMBOL
-        text[i] = "Symbol ".encode() if (sys.version_info > (3, 0)) else "Symbol"
+        text[i] = "Symbol ".encode() if (sys.version_info > (3, 0)) else "Symbol "
         text[i] += special_symbols[i].encode() if (sys.version_info > (3, 0)) else special_symbols[i]
         text_colors[i] = i+1
         symbol_colors[i] = i+1
