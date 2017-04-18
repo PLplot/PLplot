@@ -37,6 +37,7 @@ CONTENTS
 2. Improvements relative to the previous release
 
 2.1 Bug fixes
+2.2 The Python binding and examples now work for both Python 2 and 3
 
 3. PLplot testing
 ________________________________________________________________
@@ -71,6 +72,29 @@ ________________________________________________________________
 The bug fixes in this release are noted in the ??? commit messages
 collected in ChangeLog.release.
 
+2.2 The Python binding and examples now work for both Python 2 and 3
+
+We have generalized our previous Python 2 binding and examples so they
+work now with both Python 2 and 3.  The minimum versions of Python we
+support are 2.7 for Python 2 and 3.4 for Python 3.  Our build system
+by default now finds the "python" executable and finds the python
+library and numpy versions that are consistent with whether that
+python executable is Python 2 or Python 3.  If the user prefers a
+different version of Python than what is found by default, then
+specifying the cmake option -DPython_ADDITIONAL_VERSIONS:STRING=3 (to
+force Python 3) or -DPython_ADDITIONAL_VERSIONS:STRING=2 (to force
+Python 2) is recommended.
+
+As a result of these changes we get perfect PostScript difference
+reports between Python and C, i.e.,
+
+python
+  Missing examples            : 
+  Differing graphical output  : 
+  Missing stdout              : 
+  Differing stdout            : 
+
+for both Python 2 and 3.
 ________________________________________________________________
 
 3. PLplot testing

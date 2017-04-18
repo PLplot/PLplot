@@ -1,4 +1,4 @@
-#  Copyright (C) 2001-2016 Alan W. Irwin
+#  Copyright (C) 2001-2017 Alan W. Irwin
 
 #  plshade demo, using color fill.
 #
@@ -60,9 +60,9 @@ def main(w):
 
     # Set up data array
 
-    x = (arange(NX) - (NX/2)) / float(NX/2)
+    x = (arange(NX) - (NX//2)) / float(NX//2)
     x.shape = (-1,1)
-    y = (arange(NY) - (NY/2)) / float(NY/2) - 1.
+    y = (arange(NY) - (NY//2)) / float(NY//2) - 1.
     zz = -sin(7.*x) * cos(7.*y) + x*x - y*y
     ww = -cos(7.*x) * sin(7.*y) + 2.*x*y
 

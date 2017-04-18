@@ -1,4 +1,4 @@
-#  Copyright (C) 2001-2016 Alan W. Irwin
+#  Copyright (C) 2001-2017 Alan W. Irwin
 
 #  Multiple window and color map 0 demo.
 #
@@ -69,7 +69,7 @@ def demo2(w):
 
     for i in range(100):
         h = (360./10.) * (i%10)
-        l = lmin + (lmax-lmin)*(i/10)/9
+        l = lmin + (lmax-lmin)*(i//10)/9.
         s = 1.0
 
         rgb = w.plhlsrgb(h, l, s)

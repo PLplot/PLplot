@@ -1,4 +1,4 @@
-#  Copyright (C) 2001-2016 Alan W. Irwin
+#  Copyright (C) 2001-2017 Alan W. Irwin
 
 #  Shade plot demo.
 #
@@ -32,8 +32,8 @@ def main(w):
     # Furthermore, if you do fiddle with cmap1, it will screw up other
     # plots (unless you return to default cmap1 like is done with eighth
     # example.
-    x = (arange(XPTS) - (XPTS / 2)) / float(XPTS / 2)
-    y = ((arange(YPTS) - (YPTS / 2)) / float(YPTS / 2)) - 1.
+    x = (arange(XPTS) - (XPTS // 2)) / float(XPTS // 2)
+    y = ((arange(YPTS) - (YPTS // 2)) / float(YPTS // 2)) - 1.
     x.shape = (-1,1)
     z = x*x - y*y + (x - y)/(x*x+y*y + 0.1)
     x.shape = (-1,)

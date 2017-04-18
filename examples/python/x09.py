@@ -1,4 +1,4 @@
-#  Copyright (C) 2001-2016 Alan W. Irwin
+#  Copyright (C) 2001-2017 Alan W. Irwin
 
 #  Contour plot demo.
 #
@@ -177,8 +177,8 @@ def main(w):
 
     clevel = -1. + 0.2*arange(11)
 
-    xx = (arange(XPTS) - XPTS/2) / float((XPTS/2))
-    yy = (arange(YPTS) - YPTS/2) / float((YPTS/2)) - 1.
+    xx = (arange(XPTS) - XPTS//2) / float((XPTS//2))
+    yy = (arange(YPTS) - YPTS//2) / float((YPTS//2)) - 1.
     xx.shape = (-1,1)
     z = (xx*xx)-(yy*yy)
     # 2.*outerproduct(xx,yy) for new versions of Numeric which have outerproduct.
