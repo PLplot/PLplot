@@ -74,12 +74,16 @@ set(COMPILED_LANGUAGE_INFO_LIST
 "java:Java:Java:OFF"
 )
 
+# C++ is a special language case that needs to be enabled if at all
+# possible regardless of ENABLE_CXX (see cmake/modules/c++.cmake.)
+# Hence the (language STREQUAL "cxx" OR ENABLE_${language}) logic below.
+
 foreach(COMPILED_LANGUAGE_INFO ${COMPILED_LANGUAGE_INFO_LIST})
   string(REGEX REPLACE "^(.*):.*:.*:.*$" "\\1" language ${COMPILED_LANGUAGE_INFO})
   string(REGEX REPLACE "^.*:(.*):.*:.*$" "\\1" Language ${COMPILED_LANGUAGE_INFO})
   string(REGEX REPLACE "^.*:.*:(.*):.*$" "\\1" language_output ${COMPILED_LANGUAGE_INFO})
   string(REGEX REPLACE "^.*:.*:.*:(.*)$" "\\1" fatal_language ${COMPILED_LANGUAGE_INFO})
-  if(ENABLE_${language} AND NOT PLPLOT_${Language}_COMPILER_WORKS)
+  if((language STREQUAL "cxx" OR ENABLE_${language}) AND NOT PLPLOT_${Language}_COMPILER_WORKS)
     workaround_9220(${Language} PLPLOT_${Language}_COMPILER_WORKS)
     if(NOT PLPLOT_${Language}_COMPILER_WORKS)
       if(fatal_language)
@@ -88,9 +92,9 @@ foreach(COMPILED_LANGUAGE_INFO ${COMPILED_LANGUAGE_INFO_LIST})
       message(STATUS "WARNING: no working ${language_output} compiler so disabling ${language} examples.")
       set(ENABLE_${language} OFF CACHE BOOL "Enable ${language} bindings" FORCE)
     endif(NOT PLPLOT_${Language}_COMPILER_WORKS)
-  endif(ENABLE_${language} AND NOT PLPLOT_${Language}_COMPILER_WORKS)
+  endif((language STREQUAL "cxx" OR ENABLE_${language}) AND NOT PLPLOT_${Language}_COMPILER_WORKS)
 
-  if(ENABLE_${language})
+  if(language STREQUAL "cxx" OR ENABLE_${language})
     # Find and check ${Language} compiler
     enable_language(${Language} OPTIONAL)
     if(NOT CMAKE_${Language}_COMPILER_WORKS)
@@ -100,7 +104,7 @@ foreach(COMPILED_LANGUAGE_INFO ${COMPILED_LANGUAGE_INFO_LIST})
       message(STATUS "WARNING: no working ${language_output} compiler so disabling ${language} examples.")
       set(ENABLE_${language} OFF CACHE BOOL "Enable ${language} bindings" FORCE)
     endif(NOT CMAKE_${Language}_COMPILER_WORKS)
-  endif(ENABLE_${language})
+  endif(language STREQUAL "cxx" OR ENABLE_${language})
 endforeach(COMPILED_LANGUAGE_INFO ${COMPILED_LANGUAGE_INFO_LIST})
 
 if(ENABLE_ada)
