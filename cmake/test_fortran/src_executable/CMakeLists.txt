@@ -5,7 +5,7 @@ if(BUILD_TEST)
   if(CORE_BUILD)
     include_directories(${CMAKE_BINARY_DIR}/src_lib)
   else(CORE_BUILD)
-    include_directories(${F95_MOD_DIR})
+    include_directories(${FORTRAN_MOD_DIR})
   endif(CORE_BUILD)
 
   add_executable(hello hello.f90)

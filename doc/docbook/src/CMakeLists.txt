@@ -80,13 +80,13 @@ set(
   ${CMAKE_CURRENT_SOURCE_DIR}/api.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/api-c.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/api-compat.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/api-fortran95.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/api-fortran.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/api-internal.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/api-obsolete.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/bibliography.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/c.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/deploying.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/fortran95.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/fortran.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/cplus.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/drivers.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/gui.xml

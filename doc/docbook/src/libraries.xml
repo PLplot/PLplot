@@ -95,10 +95,10 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	</row>
 	<row>
 	  <entry>
-	    Fortran 95
+	    Fortran
 	  </entry>
 	  <entry>
-	    libplplotf95, libplplotf95c
+	    libplplotfortran
 	  </entry>
 	</row>
 	<row>

@@ -246,7 +246,7 @@ for a number of functions)
 
 C++: ISO C++ 1998 standard plus amendments
 
-Fortran 95: Fortran 2003 standard (especially including support for
+Fortran: Fortran 2003 standard (especially including support for
 the ISO_C_BINDING module that we use to implement the new fortran
 binding).
 

@@ -808,14 +808,14 @@ RECURSIVE              = YES
 
 # Exclude old Fortran binding and examples, deprecated code files in
 # src and deprecated wxwidgets source code.  Exclude included f90 code
-# in bindings/f95 that appears to cause doxygen errors (including a
+# in bindings/fortran that appears to cause doxygen errors (including a
 # segfault).  Exclude java (too many syntax warnings).
 # Exclude Plframe.py (Unsupported xml/html tag <ButtonPress> found).
 
 EXCLUDE                = "@CMAKE_SOURCE_DIR@/bindings/python/plplot.py" \
                          "@CMAKE_BINARY_DIR@/bindings/python/plplot.py" \
-			 "@CMAKE_SOURCE_DIR@/bindings/old_f95" \
-			 "@CMAKE_SOURCE_DIR@/examples/old_f95" \
+			 "@CMAKE_SOURCE_DIR@/bindings/old_fortran" \
+			 "@CMAKE_SOURCE_DIR@/examples/old_fortran" \
 			 "@CMAKE_SOURCE_DIR@/src/deprecated_plmap.c" \
 			 "@CMAKE_SOURCE_DIR@/src/pldeprecated.c" \
 			 "@CMAKE_SOURCE_DIR@/drivers/deprecated_wxwidgets.cpp" \
@@ -829,10 +829,10 @@ EXCLUDE                = "@CMAKE_SOURCE_DIR@/bindings/python/plplot.py" \
 			 "@CMAKE_BINARY_DIR@/bindings/wxwidgets/deprecated_wxPLplotstream.h" \
 			 "@CMAKE_SOURCE_DIR@/bindings/wxwidgets/deprecated_wxPLplotwindow.cpp" \
 			 "@CMAKE_SOURCE_DIR@/bindings/wxwidgets/deprecated_wxPLplotwindow.h" \
-			 "@CMAKE_SOURCE_DIR@/bindings/f95/included_plplot_configured_types.f90.in" \
-			 "@CMAKE_BINARY_DIR@/bindings/f95/included_plplot_configured_types.f90" \
-			 "@CMAKE_SOURCE_DIR@/bindings/f95/included_plplot_parameters.f90" \
-			 "@CMAKE_SOURCE_DIR@/bindings/f95/included_plplot_real_interfaces.f90" \
+			 "@CMAKE_SOURCE_DIR@/bindings/fortran/included_plplot_configured_types.f90.in" \
+			 "@CMAKE_BINARY_DIR@/bindings/fortran/included_plplot_configured_types.f90" \
+			 "@CMAKE_SOURCE_DIR@/bindings/fortran/included_plplot_parameters.f90" \
+			 "@CMAKE_SOURCE_DIR@/bindings/fortran/included_plplot_real_interfaces.f90" \
 			 "@CMAKE_SOURCE_DIR@/bindings/java" \
 			 "@CMAKE_BINARY_DIR@/bindings/java" \
 			 "@CMAKE_SOURCE_DIR@/examples/java" \

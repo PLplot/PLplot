@@ -46,7 +46,7 @@ label plots.</p>
 				  <li>Ada</li>
 				  <li>C++</li>
 				  <li>D</li>
-				  <li>Fortran 95</li>
+				  <li>Fortran</li>
 				  <li>Java</li>
 				  <li><a href="http://common-lisp.net/project/cl-plplot/">Lisp</a></li>
 				  <li>Lua</li>

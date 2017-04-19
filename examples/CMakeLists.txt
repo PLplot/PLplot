@@ -42,9 +42,9 @@ if(CORE_BUILD)
       set(PSC_D_COMMENT "#")
     endif(NOT ENABLE_d)
 
-    if(NOT ENABLE_f95)
-      set(PSC_F95_COMMENT "#")
-    endif(NOT ENABLE_f95)
+    if(NOT ENABLE_fortran)
+      set(PSC_FORTRAN_COMMENT "#")
+    endif(NOT ENABLE_fortran)
 
     if(NOT ENABLE_java)
       set(PSC_JAVA_COMMENT "#")
@@ -79,7 +79,7 @@ if(CORE_BUILD)
     set(PSC_C_COMMENT "#")
     set(PSC_CXX_COMMENT "#")
     set(PSC_D_COMMENT "#")
-    set(PSC_F95_COMMENT "#")
+    set(PSC_FORTRAN_COMMENT "#")
     set(PSC_JAVA_COMMENT "#")
     set(PSC_OCAML_COMMENT "#")
     set(PSC_OCTAVE_COMMENT "#")
@@ -303,7 +303,7 @@ if(CORE_BUILD)
     c:c:c
     cxx:c++:cxx
     d:d:d
-    f95:f95:f95
+    fortran:fortran:f
     java:java:j
     lua:lua:lua
     ocaml:ocaml:ocaml
@@ -476,17 +476,17 @@ foreach(language_info ${language_info_LIST} "tk:tk:nothing")
   #message(STATUS "DEBUG: language, subdir = ${language},${subdir}")
   if(ENABLE_${language})
     if(NOT ${language} STREQUAL "plrender")
-      if(${language} STREQUAL "f95")
-	if(PL_DEPRECATED_f95)
+      if(${language} STREQUAL "fortran")
+	if(PL_DEPRECATED_fortran)
 	  add_subdirectory(old_${subdir})
-	else(PL_DEPRECATED_f95)
+	else(PL_DEPRECATED_fortran)
 	  add_subdirectory(${subdir})
-	endif(PL_DEPRECATED_f95)
+	endif(PL_DEPRECATED_fortran)
       elseif(${language} STREQUAL "tcl" OR ${language} STREQUAL "tk")
 	add_subdirectory(${TCL_TK_SRC_PREFIX}${subdir} ${subdir})
-      else(${language} STREQUAL "f95")
+      else(${language} STREQUAL "fortran")
 	add_subdirectory(${subdir})
-      endif(${language} STREQUAL "f95")
+      endif(${language} STREQUAL "fortran")
     endif(NOT ${language} STREQUAL "plrender")
     get_property(targets_examples_${language} GLOBAL PROPERTY TARGETS_examples_${language})
     get_property(files_examples_${language} GLOBAL PROPERTY FILES_examples_${language})
@@ -1398,7 +1398,7 @@ ENABLE_ada:		${ENABLE_ada}
 ENABLE_c:		${ENABLE_c}
 ENABLE_cxx:		${ENABLE_cxx}
 ENABLE_d:		${ENABLE_d}
-ENABLE_f95:		${ENABLE_f95}
+ENABLE_fortran:		${ENABLE_fortran}
 ENABLE_java:		${ENABLE_java}
 ENABLE_lua:		${ENABLE_lua}
 ENABLE_ocaml:		${ENABLE_ocaml}

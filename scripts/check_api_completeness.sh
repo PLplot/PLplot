@@ -83,16 +83,16 @@ case $1 in
     diff -au /tmp/plplot_api.txt -
   ;;
 
-  f95)
-    # Prepare API list from bindings/f95/plstubs.h
+  fortran)
+    # Prepare API list from bindings/fortran/plstubs.h
     # and compare with previous
-    echo "f95 API differences (if any)"
+    echo "fortran API differences (if any)"
     # After obtaining the basic name with paranthesis appended, we get rid of
     # that paranthesis and any trailing "_", and "7".  We then do a unique
     # sort to get rid of duplicates, and specifically exclude some added special
     # fortran functions (whose original form may have had a "7" appended).
     # We also remove the plhls, plrgb, and plrgb1 deprecated functions.
-    grep 'FNAME.*,pl.*)' bindings/f95/plstubs.h |\
+    grep 'FNAME.*,pl.*)' bindings/fortran/plstubs.h |\
     cut --delimiter="," --fields=2 |\
     sed -e 's?)??' -e 's?_$??' -e 's?7$??' |\
     sort -u |\
@@ -148,7 +148,7 @@ case $1 in
     $0 docbook
     $0 swig
     $0 java
-    $0 f95
+    $0 fortran
     $0 c++
     $0 tcl
   ;;
@@ -156,7 +156,7 @@ case $1 in
   *)
   echo "First argument was $1"
   echo "Instead, it must be one of the following:"
-  echo "docbook, swig, java, f95, c++, tcl or all"
+  echo "docbook, swig, java, fortran, c++, tcl or all"
   ;;
 esac
 #rm /tmp/plplot_api.txt

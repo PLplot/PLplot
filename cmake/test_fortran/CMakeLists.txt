@@ -60,7 +60,7 @@ set(BIN_DIR ${CMAKE_INSTALL_BINDIR})
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 
 # Module files.
-set(F95_MOD_DIR ${LIB_DIR}/fortran/modules/test_fortran)
+set(FORTRAN_MOD_DIR ${LIB_DIR}/fortran/modules/test_fortran)
 
 option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
 

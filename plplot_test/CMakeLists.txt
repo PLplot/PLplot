@@ -72,7 +72,7 @@ if(SH_EXECUTABLE)
 
   #Build-tree configuration
   set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
-  set(configured_PL_DEPRECATED_f95 ${PL_DEPRECATED_f95})
+  set(configured_PL_DEPRECATED_fortran ${PL_DEPRECATED_fortran})
   configure_file(
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
@@ -132,7 +132,7 @@ if(SH_EXECUTABLE)
   set(TCL_TK_SRC_PREFIX)
 
   set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
-  set(configured_PL_DEPRECATED_f95 OFF)
+  set(configured_PL_DEPRECATED_fortran OFF)
   configure_file(
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install
@@ -191,22 +191,22 @@ if(SH_EXECUTABLE)
     endif(PLD_TEST_DEVICE)
   endif(ENABLE_cxx)
 
-  if(ENABLE_f95)
+  if(ENABLE_fortran)
     configure_file(
-      test_f95.sh.in
-      ${CMAKE_CURRENT_BINARY_DIR}/test_f95.sh
+      test_fortran.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/test_fortran.sh
       @ONLY
       NEWLINE_STYLE UNIX
       )
-    list(APPEND SCRIPTS test_f95.sh)
+    list(APPEND SCRIPTS test_fortran.sh)
     if(PLD_TEST_DEVICE)
-      add_test(NAME examples_f95
+      add_test(NAME examples_fortran
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=f95"
+	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=fortran"
 	)
-      list(APPEND examples_compare_DEPENDS examples_f95)
+      list(APPEND examples_compare_DEPENDS examples_fortran)
     endif(PLD_TEST_DEVICE)
-  endif(ENABLE_f95)
+  endif(ENABLE_fortran)
 
   if(ENABLE_java)
     configure_file(

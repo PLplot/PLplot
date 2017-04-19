@@ -74,13 +74,13 @@ _output_results
 CMAKE_CXX_COMPILER CMAKE_CXX_FLAGS:		${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS}")
 endif(CMAKE_CXX_COMPILER_WORKS)
 
-if(ENABLE_f95)
+if(ENABLE_fortran)
 set(
 _output_results
 "${_output_results}
 CMAKE_Fortran_COMPILER CMAKE_Fortran_FLAGS:	${CMAKE_Fortran_COMPILER} ${CMAKE_Fortran_FLAGS}
 Target Fortran:	${TARGET_FORTRAN}")
-endif(ENABLE_f95)
+endif(ENABLE_fortran)
 
 if(ENABLE_python)
 set(
@@ -112,7 +112,7 @@ Language Bindings:
 ENABLE_ada:		${ENABLE_ada}
 ENABLE_cxx:		${ENABLE_cxx}
 ENABLE_d:		${ENABLE_d}
-ENABLE_f95:		${ENABLE_f95}
+ENABLE_fortran:		${ENABLE_fortran}
 ENABLE_java:		${ENABLE_java}
 ENABLE_lua:		${ENABLE_lua}
 ENABLE_ocaml:		${ENABLE_ocaml}

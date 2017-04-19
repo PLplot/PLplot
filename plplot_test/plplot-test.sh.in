@@ -1,7 +1,7 @@
 #!@SH_EXECUTABLE@
 # -*- mode: shell-script -*-
 #
-# Copyright (C) 2004-2016 Alan W. Irwin
+# Copyright (C) 2004-2017 Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 #
 # This file is part of PLplot.
@@ -53,7 +53,7 @@ Usage: plplot-test.sh [OPTIONS]
 
 Options:
    [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
-   [--front-end=FE]  (FE = one of c, cxx, f95 java, octave, python, tcl, pdl, ada, ocaml, lua, d or plrender)
+   [--front-end=FE]  (FE = one of c, cxx, fortran java, octave, python, tcl, pdl, ada, ocaml, lua, d or plrender)
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
@@ -121,7 +121,7 @@ while test $# -gt 0; do
          for i in $FRONT_END ; do
            [ $i = "c"         \
              -o $i = "cxx"    \
-             -o $i = "f95"    \
+             -o $i = "fortran"    \
              -o $i = "java"   \
              -o $i = "octave" \
              -o $i = "python" \
@@ -258,10 +258,10 @@ fi
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
 cdir="$EXAMPLES_DIR"/c$VC_CTEST_DIRECTORY
 cxxdir="$EXAMPLES_DIR"/c++$VC_CTEST_DIRECTORY
-if [ "@configured_PL_DEPRECATED_f95@" = "ON" ] ; then
-    f95dir="$EXAMPLES_DIR"/old_f95
+if [ "@configured_PL_DEPRECATED_fortran@" = "ON" ] ; then
+    fortrandir="$EXAMPLES_DIR"/old_fortran
 else
-    f95dir="$EXAMPLES_DIR"/f95
+    fortrandir="$EXAMPLES_DIR"/fortran
 fi
 pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
 tclexamplesdir="$EXAMPLES_DIR"/@TCL_TK_SRC_PREFIX@tcl
@@ -295,7 +295,7 @@ else
 	octavedir=$octavedir:"@BIN_DIR@"
     fi
 fi
-export cdir cxxdir f95dir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir
+export cdir cxxdir fortrandir pythondir javadir octave octavedir tcldir perldir adadir ocamldir luadir ddir
 
 fe=""
 
@@ -389,7 +389,7 @@ export dsuffix options
 if [ -z "$FRONT_END" ] ; then
    FRONT_END=c
    test "@ENABLE_cxx@" = "ON" && FRONT_END="$FRONT_END cxx"
-   test "@ENABLE_f95@" = "ON"    && FRONT_END="$FRONT_END f95"
+   test "@ENABLE_fortran@" = "ON"    && FRONT_END="$FRONT_END fortran"
    test "@ENABLE_java@" = "ON"   && FRONT_END="$FRONT_END java"
    test "@ENABLE_octave@" = "ON" && FRONT_END="$FRONT_END octave"
    test "@ENABLE_python@" = "ON" && FRONT_END="$FRONT_END python"

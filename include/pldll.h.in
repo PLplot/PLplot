@@ -82,12 +82,12 @@
   #define PLDLLIMPEXP_CXX_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotf95c_EXPORTS )
-  #define PLDLLIMPEXP_F95C    PLDLLEXPORT
-  #define PLDLLIMPEXP_F95C_DATA( type )    PLDLLEXPORT type
+#if defined ( plplotfortranc_EXPORTS )
+  #define PLDLLIMPEXP_FORTRANC    PLDLLEXPORT
+  #define PLDLLIMPEXP_FORTRANC_DATA( type )    PLDLLEXPORT type
 #else
-  #define PLDLLIMPEXP_F95C    PLDLLIMPORT
-  #define PLDLLIMPEXP_F95C_DATA( type )    PLDLLIMPORT type
+  #define PLDLLIMPEXP_FORTRANC    PLDLLIMPORT
+  #define PLDLLIMPEXP_FORTRANC_DATA( type )    PLDLLIMPORT type
 #endif
 
 #if defined ( plplotwxwidgets_EXPORTS )

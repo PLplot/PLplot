@@ -38,6 +38,7 @@ CONTENTS
 
 2.1 Bug fixes
 2.2 The Python binding and examples now work for both Python 2 and 3
+2.3 Changed Fortran naming convention
 
 3. PLplot testing
 ________________________________________________________________
@@ -95,6 +96,21 @@ python
   Differing stdout            : 
 
 for both Python 2 and 3.
+
+2.3 Changed Fortran naming convention
+
+Our Fortran binding and examples are written for the Fortran 2003
+standard so the previous references in our build system, source code,
+documentation, and even names of files and directories to "f95",
+"F95", or Fortran 95 are all misnomers which we have addressed by
+replacing essentially all occurrences of those with "fortran" or
+"Fortran" as appropriate.  For example, our Fortran binding and
+examples are now stored in the subdirectories bindings/fortran and
+examples/fortran rather than bindings/f95 and examples/f95 that we
+used before, and our build system enables our Fortran binding and
+examples with the CMake variable ENABLE_fortran rather than the
+ENABLE_f95 CMake variable that we used for this purpose before.
+
 ________________________________________________________________
 
 3. PLplot testing

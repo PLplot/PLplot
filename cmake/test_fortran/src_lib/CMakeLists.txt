@@ -48,7 +48,7 @@ install(FILES test_fortranConfig.cmake DESTINATION ${LIB_DIR}/cmake/test_fortran
 install(
   FILES
   ${CMAKE_CURRENT_BINARY_DIR}/hello_module.mod
-    DESTINATION ${F95_MOD_DIR}
+    DESTINATION ${FORTRAN_MOD_DIR}
     )
 
 

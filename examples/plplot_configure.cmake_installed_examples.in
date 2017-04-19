@@ -37,7 +37,7 @@ set(ENABLE_ada @ENABLE_ada@)
 set(ENABLE_c @ENABLE_c@)
 set(ENABLE_cxx @ENABLE_cxx@)
 set(ENABLE_d @ENABLE_d@)
-set(ENABLE_f95 @ENABLE_f95@)
+set(ENABLE_fortran @ENABLE_fortran@)
 set(ENABLE_java @ENABLE_java@)
 set(ENABLE_lua @ENABLE_lua@)
 set(ENABLE_ocaml @ENABLE_ocaml@)
@@ -70,7 +70,7 @@ set(COMPILED_LANGUAGE_INFO_LIST
 "ada:Ada:Ada:OFF"
 "cxx:CXX:C++:OFF"
 "d:D:D:OFF"
-"f95:Fortran:Fortran:OFF"
+"fortran:Fortran:Fortran:OFF"
 "java:Java:Java:OFF"
 )
 
@@ -112,9 +112,9 @@ if(ENABLE_ada)
   set(ADA_LIB_DIR "@ADA_LIB_DIR@")
 endif(ENABLE_ada)
 
-if(ENABLE_f95)
-  set(F95_MOD_DIR "@F95_MOD_DIR@")
-endif(ENABLE_f95)
+if(ENABLE_fortran)
+  set(FORTRAN_MOD_DIR "@FORTRAN_MOD_DIR@")
+endif(ENABLE_fortran)
 
 if(ENABLE_java)
   find_package(JNI)

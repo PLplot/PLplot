@@ -49,7 +49,7 @@ PLplot bindings exist for the following compiled and interpreted languages:
 
 Ada
 C/C++/D
-Fortran 95
+Fortran
 Java
 Lisp
 Lua

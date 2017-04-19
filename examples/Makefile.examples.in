@@ -82,18 +82,18 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_D_COMMENT@test_noninteractive: x01d.psc
 @PSC_D_COMMENT@@COMPARE_COMMENT@compare: x01d.psc
 
-@PSC_F95_COMMENT@all: f95/x01f@EXEEXT@
-@PSC_F95_COMMENT@f95/x01f@EXEEXT@:
-@PSC_F95_COMMENT@	cd f95; $(MAKE)
-@PSC_F95_COMMENT@f95_clean:
-@PSC_F95_COMMENT@	cd f95; $(MAKE) clean
-@PSC_F95_COMMENT@.PHONY: f95_clean
-@PSC_F95_COMMENT@clean: f95_clean
-@PSC_F95_COMMENT@x01f95.psc: f95/x01f@EXEEXT@
-@PSC_F95_COMMENT@	@echo Generate Fortran 95 results for psc device
-@PSC_F95_COMMENT@	./plplot-test.sh --verbose --front-end=f95 --device=psc
-@PSC_F95_COMMENT@test_noninteractive: x01f95.psc
-@PSC_F95_COMMENT@@COMPARE_COMMENT@compare: x01f95.psc
+@PSC_FORTRAN_COMMENT@all: fortran/x01f@EXEEXT@
+@PSC_FORTRAN_COMMENT@fortran/x01f@EXEEXT@:
+@PSC_FORTRAN_COMMENT@	cd fortran; $(MAKE)
+@PSC_FORTRAN_COMMENT@fortran_clean:
+@PSC_FORTRAN_COMMENT@	cd fortran; $(MAKE) clean
+@PSC_FORTRAN_COMMENT@.PHONY: fortran_clean
+@PSC_FORTRAN_COMMENT@clean: fortran_clean
+@PSC_FORTRAN_COMMENT@x01f.psc: fortran/x01f@EXEEXT@
+@PSC_FORTRAN_COMMENT@	@echo Generate Fortran results for psc device
+@PSC_FORTRAN_COMMENT@	./plplot-test.sh --verbose --front-end=fortran --device=psc
+@PSC_FORTRAN_COMMENT@test_noninteractive: x01f.psc
+@PSC_FORTRAN_COMMENT@@COMPARE_COMMENT@compare: x01f.psc
 
 @PSC_JAVA_COMMENT@all: java/x01.class
 @PSC_JAVA_COMMENT@java/x01.class:

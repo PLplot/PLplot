@@ -39,7 +39,7 @@ examples/ocaml/xplot01.ml
 Copyright
 README.Release_Manager_Cookbook
 examples/python/test_circle.py
-doc/docbook/src/fortran95.xml
+doc/docbook/src/fortran.xml
 bindings/swig-support/swig_documentation.i
 bindings/octave/PLplot/support/__makeinfo__.m
 data/ss/ss64ne_Height_Contours.dbf

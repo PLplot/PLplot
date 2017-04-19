@@ -136,7 +136,7 @@ for exe in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 21 22 
         examples/c/x${exe}c.c \
 	examples/c++/x${exe}.cc \
 	examples/d/x${exe}d.d \
-	examples/f95/x${exe}f.f90 \
+	examples/fortran/x${exe}f.f90 \
         examples/java/x${exe}.java \
         examples/lua/x${exe}.lua \
         examples/ocaml/x${exe}.ml \

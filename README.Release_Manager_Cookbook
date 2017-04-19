@@ -121,7 +121,7 @@ in the build tree.  The current result of that command should be
 
 ... check_all
 ... check_api_xml_consistency
-... check_f95_parameters
+... check_fortran_parameters
 ... check_ifort_definitions_file
 ... check_libtclmatrix_capabilities
 ... check_plplot_h.inc

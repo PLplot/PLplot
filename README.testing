@@ -20,9 +20,9 @@ You should search test results for obvious errors such as segfaults. In addition
 
 Results for -dev psc are a special case. To illustrate this, here are typical -dev psc results for example 1.
 
-x01a.psc, x01c.psc, x01cxx.psc, x01d.psc, x01f95.psc, x01j.psc, x01lua.psc, x01o.psc, x01ocaml.psc, x01p.psc, x01pdl.psc, and x01t.psc.
+x01a.psc, x01c.psc, x01cxx.psc, x01d.psc, x01f.psc, x01j.psc, x01lua.psc, x01o.psc, x01ocaml.psc, x01p.psc, x01pdl.psc, and x01t.psc.
 
-These correspond to Ada, C, C++, D, Fortran 95, Java, Lua, Octave, OCaml, Python, Perl/PDL, and Tcl -dev psc (colour PostScript) results for our standard example 1. The test referred to above compares everything in this list, but x01c.psc against that file so rendering errors only need to be looked for in x01c.psc (with your favorite Postscript viewing application), and any of these files which the report shows are different from x01c.psc. And similarly for the -dev psc results for the rest of our 31 standard examples.
+These correspond to Ada, C, C++, D, Fortran, Java, Lua, Octave, OCaml, Python, Perl/PDL, and Tcl -dev psc (colour PostScript) results for our standard example 1. The test referred to above compares everything in this list, but x01c.psc against that file so rendering errors only need to be looked for in x01c.psc (with your favorite Postscript viewing application), and any of these files which the report shows are different from x01c.psc. And similarly for the -dev psc results for the rest of our 31 standard examples.
 
 Here are typical plot file results from our standard example 1 for devices other than -dev psc.
 
@@ -120,7 +120,7 @@ to obtain the following results:
     ... test_diff_psc
     ... test_extXdrawable
     ... test_extcairo
-    ... test_f95_psc
+    ... test_fortran_psc
     ... test_interactive
     ... test_java_psc
     ... test_lua_psc

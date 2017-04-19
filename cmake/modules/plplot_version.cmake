@@ -61,8 +61,8 @@ set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.0.0)
 set(plplotdmd_SOVERSION 3)
 set(plplotdmd_VERSION ${plplotdmd_SOVERSION}.0.0)
 
-set(plplotf95_SOVERSION 13)
-set(plplotf95_VERSION ${plplotf95_SOVERSION}.0.0)
+set(plplotfortran_SOVERSION 13)
+set(plplotfortran_VERSION ${plplotfortran_SOVERSION}.0.0)
 
 set(plplotqt_SOVERSION 2)
 set(plplotqt_VERSION ${plplotqt_SOVERSION}.0.2)
@@ -83,6 +83,6 @@ set(plplotada_SOVERSION 2)
 set(plplotada_VERSION ${plplotada_SOVERSION}.1.0)
 
 # Fixed from now on since this is a frozen library that
-# is only used if PL_DEPRECATED_f95 is ON.
-set(plplotf95c_SOVERSION 12)
-set(plplotf95c_VERSION ${plplotf95c_SOVERSION}.0.0)
+# is only used if PL_DEPRECATED_fortran is ON.
+set(plplotfortranc_SOVERSION 12)
+set(plplotfortranc_VERSION ${plplotfortranc_SOVERSION}.0.0)

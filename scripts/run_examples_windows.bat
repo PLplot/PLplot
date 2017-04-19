@@ -27,7 +27,7 @@ for %%i in (x*.exe) do (
 rem
 rem Run the C++ examples and compare the PostScript files against the C reference files
 rem
-if not exist ..\c++ goto f95
+if not exist ..\c++ goto fortran
 cd ..\c++
 echo --------------------------------------------
 echo C++ examples
@@ -46,9 +46,9 @@ echo ----
 rem
 rem Run the Fortran examples and compare the PostScript files against the C reference files
 rem
-:f95
-if not exist ..\f95 goto tcl
-cd ..\f95
+:fortran
+if not exist ..\fortran goto tcl
+cd ..\fortran
 echo --------------------------------------------
 echo Fortran examples
 echo --------------------------------------------

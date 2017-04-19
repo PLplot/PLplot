@@ -82,18 +82,18 @@ else
     firstpage=""
 fi
 
-# Compare C results with c++, f95, java, octave, python, tcl, perl,
+# Compare C results with c++, fortran, java, octave, python, tcl, perl,
 # ada, ocaml, lua and d results
-for lang in c++ f95 java octave python tcl perl adastandard adatraditional ocaml lua d plrender; do
+for lang in c++ fortran java octave python tcl perl adastandard adatraditional ocaml lua d plrender; do
   # Check which suffix is used for this binding
   case $lang in
 	c++)
 	    xsuffix=
 	    suffix=cxx
 	    ;;
-	f95)
+	fortran)
 	    xsuffix=
-	    suffix=f95
+	    suffix=f
 	    ;;
 	java)
 	    xsuffix=

@@ -171,7 +171,7 @@ filled).
 		<input type="submit" name="lbind" value="C" />
 		<input type="submit" name="lbind" value="C++" />
 		<input type="submit" name="lbind" value="D" />
-		<input type="submit" name="lbind" value="F95" />
+		<input type="submit" name="lbind" value="Fortran" />
 		<input type="submit" name="lbind" value="Java" />
 		<input type="submit" name="lbind" value="Lua" />
 		<input type="submit" name="lbind" value="Ocaml" />
@@ -187,7 +187,7 @@ END;
 	  case ("C"):      $fname = "x" . $demo_str . "c.c.txt"; break;
 	  case ("C++"):$fname = "x" . $demo_str . ".cc.txt"; break;
 	  case ("D"):$fname = "x" . $demo_str . "d.d.txt"; break;
-	  case ("F95"):    $fname = "x" . $demo_str . "f.f90.txt"; break;
+	  case ("Fortran"):    $fname = "x" . $demo_str . "f.f90.txt"; break;
 	  case ("Java"):   $fname = "x" . $demo_str . ".java.txt"; break;
 	  case ("Lua"):    $fname = "x" . $demo_str . ".lua.txt"; break;
 	  case ("Ocaml"):  $fname = "x" . $demo_str . ".ml.txt"; break;

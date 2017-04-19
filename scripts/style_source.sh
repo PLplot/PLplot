@@ -214,7 +214,7 @@ csource_LIST="$csource_LIST fonts/*.c"
 # C source in utils.
 csource_LIST="$csource_LIST utils/*.c"
 
-csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/old_f95/*.c bindings/old_f95/plstubs.h bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch]"
+csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/old_fortran/*.c bindings/old_fortran/plstubs.h bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widgetmodule.c bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch]"
 
 export cppsource_LIST
 

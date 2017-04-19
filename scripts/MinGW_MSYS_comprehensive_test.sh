@@ -109,21 +109,21 @@ export FFLAGS=$CFLAGS
 # Now no longer disable Tcl because you force it to find the
 # Windows version (see above).
 
-# Must disable f95 because of some gfortran module parsing problem
+# Must disable fortran because of some gfortran module parsing problem
 # under wine.  (1.3.8 last wine version checked).
 
 # Set DEBUG_COMPREHENSIVE_TEST_RESULT to some value before sourcing
 # this script if you want to set up all environment variables as
 # they are for a normal run of comprehensive_test.sh without
 # actually running that script.
-#	--cmake_added_options "-DENABLE_f95=OFF -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON" \
-#	--cmake_added_options "-DENABLE_f95=OFF"\
+#	--cmake_added_options "-DENABLE_fortran=OFF -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON" \
+#	--cmake_added_options "-DENABLE_fortran=OFF"\
 
 if [ -z "$DEBUG_COMPREHENSIVE_TEST_RESULT" ] ; then
     bash $PLPLOT_SOURCE_PREFIX/scripts/comprehensive_test.sh \
 	--prefix $TEST_RESULTS_PREFIX \
 	--generator_string "MSYS Makefiles" --build_command "make -j4" \
-	--cmake_added_options "-DENABLE_f95=OFF -DDEFAULT_NO_BINDINGS=ON -DENABLE_octave=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON $cmake_extra_options" \
+	--cmake_added_options "-DENABLE_fortran=OFF -DDEFAULT_NO_BINDINGS=ON -DENABLE_octave=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON $cmake_extra_options" \
 	--do_shared yes --do_nondynamic no --do_static no \
 	--do_ctest no --do_test_noninteractive yes --do_test_interactive no --do_test_build_tree yes --do_test_install_tree no --do_test_traditional_install_tree no
 

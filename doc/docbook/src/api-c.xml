@@ -1297,7 +1297,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  are respectively interfaced to a linear-transformation routine similar
 	  to the above <literal>mypltr</literal> function; &pltr1;; and &pltr2;.
 	  Furthermore, some of our more sophisticated bindings (see, e.g., <xref
-	  linkend="fortran95"/>) support native language callbacks for handling
+	  linkend="fortran"/>) support native language callbacks for handling
 	  index to world-coordinate transformations.  Examples of these various
 	  approaches are given in
 	  <filename>examples/&lt;language&gt;x09*</filename>,

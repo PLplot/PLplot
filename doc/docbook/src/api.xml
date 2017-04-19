@@ -155,7 +155,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       </listitem>
       <listitem>
 	<para>
-	  F95: <function>plline( x, y )</function>
+	  Fortran: <function>plline( x, y )</function>
 	</para>
       </listitem>
       <listitem>
@@ -2924,7 +2924,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	  are respectively interfaced to a linear-transformation routine similar
 	  to the above <literal>mypltr</literal> function; &pltr1;; and &pltr2;.
 	  Furthermore, some of our more sophisticated bindings (see, e.g., <xref
-	  linkend="fortran95"/>) support native language callbacks for handling
+	  linkend="fortran"/>) support native language callbacks for handling
 	  index to world-coordinate transformations.  Examples of these various
 	  approaches are given in
 	  <filename>examples/&lt;language&gt;x09*</filename>,
@@ -7199,7 +7199,7 @@ device support!)
 	  are respectively interfaced to a linear-transformation routine similar
 	  to the above <literal>mypltr</literal> function; &pltr1;; and &pltr2;.
 	  Furthermore, some of our more sophisticated bindings (see, e.g., <xref
-	  linkend="fortran95"/>) support native language callbacks for handling
+	  linkend="fortran"/>) support native language callbacks for handling
 	  index to world-coordinate transformations.  Examples of these various
 	  approaches are given in
 	  <filename>examples/&lt;language&gt;x09*</filename>,
@@ -14900,7 +14900,7 @@ device support!)
 
     <para>
       Set the escape character for text strings.  From C (in contrast to
-      Fortran 95, see &plsescfortran95;) you pass
+      Fortran, see &plsescfortran;) you pass
       <literal><parameter>esc</parameter></literal> as a character.
       Only selected characters are allowed to prevent the user from shooting
       himself in the foot (For example, a <quote>\</quote> isn't allowed since it conflicts with C's use
@@ -15600,7 +15600,7 @@ device support!)
 	  are respectively interfaced to a linear-transformation routine similar
 	  to the above <literal>mypltr</literal> function; &pltr1;; and &pltr2;.
 	  Furthermore, some of our more sophisticated bindings (see, e.g., <xref
-	  linkend="fortran95"/>) support native language callbacks for handling
+	  linkend="fortran"/>) support native language callbacks for handling
 	  index to world-coordinate transformations.  Examples of these various
 	  approaches are given in
 	  <filename>examples/&lt;language&gt;x09*</filename>,
@@ -15986,7 +15986,7 @@ device support!)
 	  are respectively interfaced to a linear-transformation routine similar
 	  to the above <literal>mypltr</literal> function; &pltr1;; and &pltr2;.
 	  Furthermore, some of our more sophisticated bindings (see, e.g., <xref
-	  linkend="fortran95"/>) support native language callbacks for handling
+	  linkend="fortran"/>) support native language callbacks for handling
 	  index to world-coordinate transformations.  Examples of these various
 	  approaches are given in
 	  <filename>examples/&lt;language&gt;x09*</filename>,
@@ -19517,7 +19517,7 @@ device support!)
 	  are respectively interfaced to a linear-transformation routine similar
 	  to the above <literal>mypltr</literal> function; &pltr1;; and &pltr2;.
 	  Furthermore, some of our more sophisticated bindings (see, e.g., <xref
-	  linkend="fortran95"/>) support native language callbacks for handling
+	  linkend="fortran"/>) support native language callbacks for handling
 	  index to world-coordinate transformations.  Examples of these various
 	  approaches are given in
 	  <filename>examples/&lt;language&gt;x09*</filename>,
