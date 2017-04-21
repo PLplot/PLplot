@@ -1,7 +1,7 @@
 # bindings/python/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -63,36 +63,21 @@ if(ENABLE_python)
 
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
-  set(SWIG_MODULE_plplotcmodule_EXTRA_DEPS
+  set(SWIG_MODULE_plplotc_EXTRA_DEPS
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/swig_documentation.i
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
     )
 
-  set_source_files_properties(plplotcmodule.i
-    PROPERTIES SWIG_MODULE_NAME plplotc
-    )
-
   # Set up swig + c wrapper.
   # N.B. the python target has an underscore prepended automatically.
-  swig_add_module(plplotcmodule python plplotcmodule.i)
+  swig_add_module(plplotc python plplotc.i)
 
-  swig_link_libraries(plplotcmodule plplot ${PYTHON_LIBRARIES})
-
-  # This creates the _plplotc.so library that Python3 will look for. It
-  # will not find the _plplotcmodule.so that Python2 would fine. Ideally
-  # we'd probably just generate this library, but for now it is safer(?)
-  # and easier just to make them both.
-  set_target_properties(
-    _plplotcmodule
-    PROPERTIES
-    SUFFIX ".so"
-    OUTPUT_NAME "_plplotc"
-    )
+  swig_link_libraries(plplotc plplot ${PYTHON_LIBRARIES})
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(
-      _plplotcmodule
+      _plplotc
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
@@ -100,14 +85,14 @@ if(ENABLE_python)
 
   if(WIN32_AND_NOT_CYGWIN)
     set_target_properties(
-      _plplotcmodule
+      _plplotc
       PROPERTIES
       SUFFIX ".pyd"
       OUTPUT_NAME "_plplotc"
       )
   elseif(CYGWIN)
     set_target_properties(
-      _plplotcmodule
+      _plplotc
       PROPERTIES
       SUFFIX ".dll"
       OUTPUT_NAME "_plplotc"
@@ -117,7 +102,7 @@ if(ENABLE_python)
   # Fixup required to deal with UTF-8 help strings.  Note the DEPENDS
   # only brings in a file dependency on the shared object and
   # not ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py that is also built
-  # by swig.  Therefore, when the _plplotcmodule_fixed target is run the
+  # by swig.  Therefore, when the _plplotc_fixed target is run the
   # following command is only executed if
   # ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py is outdated relative
   # to the shared object and it ignores the dating of
@@ -129,30 +114,30 @@ if(ENABLE_python)
     ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
     COMMAND ${SED_EXECUTABLE} -e "1s?^\\(.*\\)\$?\\1  It uses coding: utf-8?" < ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py > ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
-    DEPENDS _plplotcmodule
+    DEPENDS _plplotc
     VERBATIM
     )
   add_custom_target(
-    _plplotcmodule_fixed ALL
+    _plplotc_fixed ALL
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
     )
-  add_dependencies(_plplotcmodule_fixed _plplotcmodule)
+  add_dependencies(_plplotc_fixed _plplotc)
 
   # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
-  # insure correct code to support plplot_widgetmodule is in
+  # insure correct code to support plplot_widget module is in
   # libplplot if ENABLE_DYNDRIVERS is OFF.
   if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
-    add_library(plplot_widgetmodule MODULE plplot_widgetmodule.c)
+    add_library(plplot_widget MODULE plplot_widget.c)
     if(BUILD_SHARED_LIBS)
-      set_target_properties(plplot_widgetmodule PROPERTIES
+      set_target_properties(plplot_widget PROPERTIES
 	COMPILE_DEFINITIONS "USINGDLL"
 	)
     endif(BUILD_SHARED_LIBS)
-    set_target_properties(plplot_widgetmodule PROPERTIES PREFIX "")
+    set_target_properties(plplot_widget PROPERTIES PREFIX "")
 
     if(ENABLE_DYNDRIVERS)
-      target_link_libraries( plplot_widgetmodule
+      target_link_libraries( plplot_widget
 	plplot
 	plplottcltk
 	${PYTHON_LIBRARIES}
@@ -161,7 +146,7 @@ if(ENABLE_python)
       # Don't link to plplottcltk if ENABLE_tkX is false since all of
       # the plplottcltk code is already in plplot.  Therefore this
       # rule avoids redundant linking.
-      target_link_libraries( plplot_widgetmodule
+      target_link_libraries( plplot_widget
 	plplot
 	${PYTHON_LIBRARIES}
 	)
@@ -169,20 +154,20 @@ if(ENABLE_python)
 
     if(USE_RPATH)
       set_target_properties(
-	plplot_widgetmodule
+	plplot_widget
 	PROPERTIES
 	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 	)
     else(USE_RPATH)
       set_target_properties(
-	plplot_widgetmodule
+	plplot_widget
 	PROPERTIES
 	INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
 	)
     endif(USE_RPATH)
 
     install(
-      TARGETS plplot_widgetmodule _plplotcmodule
+      TARGETS plplot_widget _plplotc
       EXPORT export_plplot
       LIBRARY
       DESTINATION ${PYTHON_INSTDIR}

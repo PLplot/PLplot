@@ -971,7 +971,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt4_example
 	plplot_pyqt4
 	python_examples
-	_plplotcmodule_fixed
+	_plplotc_fixed
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -981,7 +981,7 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_pyqt4_example
 	plplot_pyqt4
-	_plplotcmodule
+	_plplotc
 	${qt_targets}
 	)
     endif(CORE_BUILD)
@@ -998,7 +998,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt5_example
 	plplot_pyqt5
 	python_examples
-	_plplotcmodule_fixed
+	_plplotc_fixed
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -1008,7 +1008,7 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_pyqt5_example
 	plplot_pyqt5
-	_plplotcmodule
+	_plplotc
 	${qt_targets}
 	)
     endif(CORE_BUILD)
@@ -1121,7 +1121,7 @@ if(BUILD_TEST)
     list(APPEND targets_examples_tk test_plserver_standard_examples)
 
     # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
-    # insure correct code to support plplot_widgetmodule is in
+    # insure correct code to support the plplot_widget module is in
     # libplplot if ENABLE_DYNDRIVERS is OFF.
     if(ENABLE_python AND (ENABLE_DYNDRIVERS OR PLD_tk))
       if(CORE_BUILD)
@@ -1130,8 +1130,8 @@ if(BUILD_TEST)
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	  )
 	add_dependencies(test_pytkdemo
-	  _plplotcmodule_fixed
-	  plplot_widgetmodule
+	  _plplotc_fixed
+	  plplot_widget
 	  python_examples
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
@@ -1142,8 +1142,8 @@ if(BUILD_TEST)
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	  )
 	add_dependencies(test_pytkdemo
-	  _plplotcmodule
-	  plplot_widgetmodule
+	  _plplotc
+	  plplot_widget
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
 	  )

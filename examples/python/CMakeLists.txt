@@ -1,6 +1,6 @@
 # examples/python/CMakeLists.txt
 
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -93,7 +93,7 @@ set(
   )
 
 # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
-# insure correct code to support plplot_widgetmodule is in
+# insure correct code to support the plplot_widget module is in
 # libplplot if ENABLE_DYNDRIVERS is OFF.
 
 if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
@@ -147,10 +147,10 @@ if(CORE_BUILD)
     endforeach(file ${python_SCRIPTS} ${python_DATA})
     add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
     set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
-      _plplotcmodule_fixed)
+      _plplotc_fixed)
     if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
       set_property(GLOBAL APPEND PROPERTY TARGETS_examples_python python_examples
-      plplot_widgetmodule)
+      plplot_widget)
     endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
     set_property(GLOBAL PROPERTY FILES_examples_python ${command_DEPENDS})
   endif(BUILD_TEST)
@@ -278,9 +278,9 @@ if(BUILD_TEST)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.jpg
     )
   if(CORE_BUILD)
-    add_dependencies(plplot_logo python_examples _plplotcmodule_fixed)
+    add_dependencies(plplot_logo python_examples _plplotc_fixed)
   else(CORE_BUILD)
-    add_dependencies(plplot_logo _plplotcmodule)
+    add_dependencies(plplot_logo _plplotc)
   endif(CORE_BUILD)
 
 endif(BUILD_TEST)
