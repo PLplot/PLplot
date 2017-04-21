@@ -986,7 +986,15 @@ if(BUILD_TEST)
 	)
     endif(CORE_BUILD)
 
-    list(APPEND interactive_targets_LIST test_pyqt4_example)
+    if(${PYTHON_VERSION} VERSION_LESS "3.0.0")
+      list(APPEND interactive_targets_LIST test_pyqt4_example)
+    else(${PYTHON_VERSION} VERSION_LESS "3.0.0")
+      message(STATUS "WARNING: The test_pyqt4_example target can be run
+   independently but for unknown reasons it does not work for (this) Python 3
+   case so it is temporarily excluded from being a dependency of
+   other more general interactive test targets")
+    endif(${PYTHON_VERSION} VERSION_LESS "3.0.0")
+
   endif(ENABLE_pyqt4)
 
   if(ENABLE_pyqt5)
@@ -1012,11 +1020,18 @@ if(BUILD_TEST)
 	${qt_targets}
 	)
     endif(CORE_BUILD)
-    message(STATUS "WARNING: The test_pyqt5_example target can be run
+    if(${PYTHON_VERSION} VERSION_LESS "3.0.0")
+      message(STATUS "WARNING: The test_pyqt5_example target can be run
    independently but it intermittently segfaults (at least for
    Qt-5.3.2) so it is temporarily excluded from being a dependency of
    other more general interactive test targets")
-    # list(APPEND interactive_targets_LIST test_pyqt5_example)
+      # list(APPEND interactive_targets_LIST test_pyqt5_example)
+    else(${PYTHON_VERSION} VERSION_LESS "3.0.0")
+      message(STATUS "WARNING: The test_pyqt5_example target can be run
+   independently but for unknown reasons it does not work for (this) Python 3
+   case so it is temporarily excluded from being a dependency of
+   other more general interactive test targets")
+    endif(${PYTHON_VERSION} VERSION_LESS "3.0.0")
   endif(ENABLE_pyqt5)
 
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
