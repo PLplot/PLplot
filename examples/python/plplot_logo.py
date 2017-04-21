@@ -36,7 +36,7 @@ from numpy import *
 
 # Data points in x
 XPTS = 35
-# Data points in 
+# Data points in
 YPTS = 46
 
 alt = 60.0

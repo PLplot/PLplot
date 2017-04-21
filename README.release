@@ -90,10 +90,10 @@ As a result of these changes we get perfect PostScript difference
 reports between Python and C, i.e.,
 
 python
-  Missing examples            : 
-  Differing graphical output  : 
-  Missing stdout              : 
-  Differing stdout            : 
+  Missing examples            :
+  Differing graphical output  :
+  Missing stdout              :
+  Differing stdout            :
 
 for both Python 2 and 3.
 

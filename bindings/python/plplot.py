@@ -626,7 +626,7 @@ def plscmap1l(itype, pos, coord1, coord2, coord3, *args):
     pos = numpy.asarray(pos)
     if len(pos.shape) != 1:
         raise ValueError("Expected 1D pos array")
-                
+
     if len(args) == 0:
         # Default alt_hue_path
         alt_hue_path = numpy.zeros(pos.shape[0]-1,dtype="int")

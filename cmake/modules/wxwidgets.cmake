@@ -225,7 +225,7 @@ if(ENABLE_wxwidgets)
     # are also not supported on Windows.  Therefore permanently disable this variant of the
     # three semapharoes approach.
     set(PL_HAVE_UNNAMED_POSIX_SEMAPHORES OFF CACHE BOOL "Use unnamed semaphores for wxwidgets IPC" FORCE)
-    
+
     if(0)
     # This option works well on Linux (except for problems with locate mode that also appear
     # in slightly different form when PL_WXWIDGETS_IPC3 is OFF).  So after that issue is fixed

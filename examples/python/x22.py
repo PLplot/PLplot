@@ -201,7 +201,7 @@ def potential(w):
 
     ug = (-q1*(x-d1)/div1**3 - q1i*(x-d1i)/div1i**3
           - q2*(x-d2)/div2**3 - q2i*(x-d2i)/div2i**3 )
-    vg = (-q1*(y-d1)/div1**3 - q1i*(y-d1i)/div1i**3 
+    vg = (-q1*(y-d1)/div1**3 - q1i*(y-d1i)/div1i**3
           - q2*(y+d2)/div2**3 - q2i*(y+d2i)/div2i**3 )
 
     umin = min(ug.flat)
