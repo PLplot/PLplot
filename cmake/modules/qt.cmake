@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009-2016 Alan W. Irwin
+# Copyright (C) 2009-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -18,8 +18,8 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # Module for determining all configuration variables related to the qt
-# device driver, the plplotqt library, and the plplot_pyqt4 Python extension
-# module.
+# device driver, the plplotqt library, and either the plplot_pyqt4 or
+# plplot_pyqt5 Python extension modules.
 # The following variables are set/modified:
 # PLD_bmpqt		  - ON means the bmpqt device is enabled.
 # PLD_jpgqt		  - ON means the jpgqt device is enabled.
@@ -414,7 +414,7 @@ endif(ENABLE_pyqt4 OR ENABLE_pyqt5)
 
 if(ENABLE_pyqt4)
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt4 import pyqtconfig; print pyqtconfig.Configuration().pyqt_sip_dir"
+    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt4 import pyqtconfig; print(pyqtconfig.Configuration().pyqt_sip_dir)"
     OUTPUT_VARIABLE PYQT_SIP_DIR
     RESULT_VARIABLE PYQT_SIP_DIR_ERR
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -433,7 +433,7 @@ if(ENABLE_pyqt5)
   # Hope that the .sip files are in the standard place as PyQt5
   # does not provide a way to determine where they are.
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print sys.prefix"
+    COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(sys.prefix)"
     OUTPUT_VARIABLE PYQT_SIP_DIR
     RESULT_VARIABLE PYQT_SIP_DIR_ERR
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -458,7 +458,7 @@ endif(ENABLE_pyqt5)
 
 if(ENABLE_pyqt4)
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt4 import pyqtconfig; print pyqtconfig.Configuration().pyqt_sip_flags"
+    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt4 import pyqtconfig; print(pyqtconfig.Configuration().pyqt_sip_flags)"
     OUTPUT_VARIABLE PYQT_SIP_FLAGS
     RESULT_VARIABLE PYQT_SIP_FLAGS_ERR
     OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -478,7 +478,7 @@ endif(ENABLE_pyqt4)
 
 if(ENABLE_pyqt5)
   execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt5.QtCore import PYQT_CONFIGURATION; print PYQT_CONFIGURATION['sip_flags']"
+    COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt5.QtCore import PYQT_CONFIGURATION; print(PYQT_CONFIGURATION['sip_flags'])"
     OUTPUT_VARIABLE PYQT_SIP_FLAGS
     RESULT_VARIABLE PYQT_SIP_FLAGS_ERR
     OUTPUT_STRIP_TRAILING_WHITESPACE
