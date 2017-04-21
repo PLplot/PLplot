@@ -239,3 +239,8 @@ set(WIN32_OR_CYGWIN @WIN32_OR_CYGWIN@)
 
 # Needed for Tcl/Tk linking decisions.
 set(tcltk_in_plplot_library @tcltk_in_plplot_library@)
+
+# Needed for running Python scripts if PYTHON_EXECUTABLE is different
+# from /usr/bin/env python (which often happens if both python2 and python3
+# are installed).
+set(PYTHON_EXECUTABLE @PYTHON_EXECUTABLE@)

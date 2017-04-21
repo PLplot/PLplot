@@ -965,7 +965,7 @@ if(BUILD_TEST)
   if(ENABLE_pyqt4)
     if(CORE_BUILD)
       add_custom_target(test_pyqt4_example
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt4_example.py
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt4_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	)
       add_dependencies(test_pyqt4_example
@@ -976,7 +976,7 @@ if(BUILD_TEST)
 	)
     else(CORE_BUILD)
       add_custom_target(test_pyqt4_example
-	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt4_example.py
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt4_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	)
       add_dependencies(test_pyqt4_example
@@ -992,7 +992,7 @@ if(BUILD_TEST)
   if(ENABLE_pyqt5)
     if(CORE_BUILD)
       add_custom_target(test_pyqt5_example
-	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt5_example.py
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt5_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	)
       add_dependencies(test_pyqt5_example
@@ -1003,7 +1003,7 @@ if(BUILD_TEST)
 	)
     else(CORE_BUILD)
       add_custom_target(test_pyqt5_example
-	COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt5_example.py
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt5_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	)
       add_dependencies(test_pyqt5_example
@@ -1126,7 +1126,7 @@ if(BUILD_TEST)
     if(ENABLE_python AND (ENABLE_DYNDRIVERS OR PLD_tk))
       if(CORE_BUILD)
 	add_custom_target(test_pytkdemo
-	  COMMAND ${CMAKE_CURRENT_BINARY_DIR}/python/pytkdemo
+	  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/python/pytkdemo
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	  )
 	add_dependencies(test_pytkdemo
@@ -1138,7 +1138,7 @@ if(BUILD_TEST)
 	  )
       else(CORE_BUILD)
 	add_custom_target(test_pytkdemo
-	  COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/python/pytkdemo
+	  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/pytkdemo
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	  )
 	add_dependencies(test_pytkdemo
