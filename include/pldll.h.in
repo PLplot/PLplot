@@ -120,14 +120,6 @@
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplot_widget_EXPORTS )
-  #define PLDLLIMPEXP_PLPLOT_WIDGET    PLDLLEXPORT
-  #define PLDLLIMPEXP_PLPLOT_WIDGET_DATA( type )    PLDLLEXPORT type
-#else
-  #define PLDLLIMPEXP_PLPLOT_WIDGET    PLDLLIMPORT
-  #define PLDLLIMPEXP_PLPLOT_WIDGET_DATA( type )    PLDLLIMPORT type
-#endif
-
 // Note for the case when ENABLE_DYNDRIVERS is not defined, the
 // libplplot build specifically includes bindings/qt-gui/plqt.cpp (see
 // cmake/modules/qt.cmake).

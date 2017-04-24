@@ -93,7 +93,7 @@ set(
   )
 
 # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
-# insure correct code to support the plplot_widget module is in
+# insure correct code to support the _Pltk_init module is in
 # libplplot if ENABLE_DYNDRIVERS is OFF.
 
 if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
@@ -150,7 +150,7 @@ if(CORE_BUILD)
       _plplotc_fixed)
     if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
       set_property(GLOBAL APPEND PROPERTY TARGETS_examples_python python_examples
-      plplot_widget)
+      _Pltk_init)
     endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
     set_property(GLOBAL PROPERTY FILES_examples_python ${command_DEPENDS})
   endif(BUILD_TEST)

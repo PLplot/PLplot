@@ -1136,7 +1136,7 @@ if(BUILD_TEST)
     list(APPEND targets_examples_tk test_plserver_standard_examples)
 
     # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
-    # insure correct code to support the plplot_widget module is in
+    # insure correct code to support the _Pltk_init module is in
     # libplplot if ENABLE_DYNDRIVERS is OFF.
     if(ENABLE_python AND (ENABLE_DYNDRIVERS OR PLD_tk))
       if(CORE_BUILD)
@@ -1146,7 +1146,7 @@ if(BUILD_TEST)
 	  )
 	add_dependencies(test_pytkdemo
 	  _plplotc_fixed
-	  plplot_widget
+	  _Pltk_init
 	  python_examples
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
@@ -1158,7 +1158,7 @@ if(BUILD_TEST)
 	  )
 	add_dependencies(test_pytkdemo
 	  _plplotc
-	  plplot_widget
+	  _Pltk_init
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
 	  )

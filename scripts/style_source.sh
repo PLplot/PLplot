@@ -214,7 +214,7 @@ csource_LIST="$csource_LIST fonts/*.c"
 # C source in utils.
 csource_LIST="$csource_LIST utils/*.c"
 
-csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/old_fortran/*.c bindings/old_fortran/plstubs.h bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/python/plplot_widget.c bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch]"
+csource_LIST="$csource_LIST bindings/tcl/*.[ch] bindings/old_fortran/*.c bindings/old_fortran/plstubs.h bindings/ocaml/plplot_impl.c bindings/ocaml/plcairo/plcairo_impl.c bindings/tk/*.[ch] bindings/tk-x-plat/*.[ch]"
 
 export cppsource_LIST
 
@@ -264,7 +264,7 @@ swig_csource_LIST=bindings/swig-support/plplotcapi.i
 # since that C++-like file goes under swig_cppsource_LIST.
 swig_csource_LIST="$swig_csource_LIST bindings/java/plplotjavac.i"
 swig_csource_LIST="$swig_csource_LIST bindings/lua/plplotluac.i"
-swig_csource_LIST="$swig_csource_LIST bindings/python/plplotc.i"
+swig_csource_LIST="$swig_csource_LIST bindings/python/plplotc.i bindings/python/Pltk_init.i"
 
 export swig_cppsource_LIST
 swig_cppsource_LIST=bindings/octave/plplot_octave.i

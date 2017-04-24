@@ -1,4 +1,10 @@
-from Tkinter import *
+# Python 2 name is Tkinter, Python 3 name is tkinter (sigh).
+import sys
+if sys.version_info[:2] >= (3, 0):
+    from tkinter import *
+else:
+    from Tkinter import *
+
 from plplot import *
 from TclSup import *
 
@@ -39,7 +45,8 @@ class Plframe(Widget):
 
     def cmd( s, *args ):
         "Invoke a subcommand on the plframe widget."
-        apply( s.tk.call, (s._w, 'cmd',) + _flatten(args) )
+        #apply( s.tk.call, (s._w, 'cmd',) + _flatten(args) )
+        s.tk.call( s._w, 'cmd', *args)
 
     def info(s, what):
         return s.tk.call( s._w, 'info', what )
@@ -157,7 +164,7 @@ class PlXframe(Frame):
         s.plf.bind( "<Any-Enter>", s.set_focus )
 
     def set_focus(s,e):
-        # print "in set_focus"
+        # print("in set_focus")
         s.plf.focus()
 
     def build_menu_bar(s):
@@ -232,9 +239,9 @@ class PlXframe(Frame):
         devnamlst = TclList2Py( devnames )
         devkeylst = TclList2Py( devkeys )
 
-        #print "devnamlst = ", devnamlst
-        #print "devkeylst = ", devkeylst
-        #print "len(devnamlst) = ", len(devnamlst)
+        #print("devnamlst = ", devnamlst)
+        #print("devkeylst = ", devkeylst)
+        #print("len(devnamlst) = ", len(devnamlst))
 
 ##      for i in range( len(devnamlst) ):
 ##          devnam = devnamlst[i]
@@ -392,10 +399,10 @@ class PlXframe(Frame):
             s.zoom_reset()
         else:
             pass
-            print "Unknown keyname ", kn
+            print("Unknown keyname ", kn)
 
     def user_mouse( s, e ):
-        print "in user_mouse"
+        print("in user_mouse")
 
 ## flash
 
@@ -410,7 +417,7 @@ class PlXframe(Frame):
 
         s.tk.call( s.plf._w, 'save', 'as', 'ps', 'xx.ps' )
         s.tk.call( s.plf._w, 'save', 'close' )
-        print "Plot saved to xx.ps"
+        print("Plot saved to xx.ps")
 
     def save_as(s): pass
     def save_again(s): pass
@@ -427,17 +434,17 @@ class PlXframe(Frame):
         zframes = len( s.zxl )
 
         if s.zidx == 0:
-            #print "disable back"
+            #print("disable back")
             m.entryconfig( 2, state=DISABLED )
         else:
-            #print "enable back"
+            #print("enable back")
             m.entryconfig( 2, state=ACTIVE )
 
         if s.zidx == zframes-1:
-            #print "disable forward"
+            #print("disable forward")
             m.entryconfig( 3, state=DISABLED )
         else:
-            #print "enable forward"
+            #print("enable forward")
             m.entryconfig( 3, state=ACTIVE )
 
     def zoom_select(s):
@@ -460,7 +467,7 @@ class PlXframe(Frame):
             s.plf.bind( "<ButtonPress>", s.zoom_start )
 
     def zoom_enter(s):
-        print "zoom_enter"
+        print("zoom_enter")
 
 ##----------------------------------------------------------------------------
 ## zoom_reset
@@ -521,10 +528,10 @@ class PlXframe(Frame):
             s.tk.call( s.plf._w, 'orient', rots )
 
     def page_enter(s):
-        print "in page_enter"
+        print("in page_enter")
 
     def page_reset(s):
-        print "in page_reset"
+        print("in page_reset")
 
     def zoom_start( s, e ):
         "Starts plot zoom."
@@ -794,7 +801,7 @@ class PlXframe(Frame):
 ##      """Handles change of view into plot.
 ##      Given in relative plot window coordinates."""
 ##
-##      print "in view_select"
+##      print("in view_select")
 ####body Pltkwin::view_select {x0 y0 x1 y1} {
 ##
 #### Adjust arguments to be in bounds and properly ordered (xl < xr, etc)
@@ -986,7 +993,7 @@ class PlXframe(Frame):
         s.tk.call( s.plf._w, 'view', 'select', xl, yl, xr, yr )
 
     def view_scroll(s):
-        print "in view_scroll"
+        print("in view_scroll")
 
     def fixview( s, hscroll, vscroll ):
         "Handles updates of scrollbars & plot after view change."
@@ -1038,7 +1045,7 @@ class PlXframe(Frame):
 ##      Results in scrollbars being added if they are appropriate.
 ##      Does nothing if the plot window is unchanged from the default."""
 ##
-##      print "in update_view"
+##      print("in update_view")
 ####    set coords [[plwin] view]
 ####
 ####    set xl [lindex "$coords" 0]
@@ -1060,10 +1067,10 @@ class PlXframe(Frame):
         s.ftop.lstat.config( text=msg )
 
     def plcmap0_edit(s):
-        print "in plcmap0_edit"
+        print("in plcmap0_edit")
 
     def plcmap1_edit(s):
-        print "in plcmap1_edit"
+        print("in plcmap1_edit")
 
     def clearpage(s):
         s.plf.setvar( 'wv', 1 )
@@ -1262,7 +1269,8 @@ class PlXframe(Frame):
 
     def cmd( s, *args ):
         "Invoke a subcommand on the plframe widget."
-        apply( s.tk.call, (s.plf._w, 'cmd',) + _flatten(args) )
+        #apply( s.tk.call, (s.plf._w, 'cmd',) + _flatten(args) )
+        s.tk.call( s.plf._w, 'cmd', *args)
 
     def pl_setcontlabelformat(s, lexp, sigdig):
         s.cmd( 'pl_setcontlabelformat', lexp, sigdig )
@@ -1309,7 +1317,8 @@ class PlXframe(Frame):
 
     def plcont( s, *args ):
         plsstrm( s.strm )
-        apply( plcont, args )
+        #apply( plcont, args )
+        plcont(*args)
 
     def plfcont( s ): pass
     def plcpstream( s ): pass
@@ -1319,12 +1328,12 @@ class PlXframe(Frame):
 
     def pleop(s):
         s.cmd( 'pleop' )
-        #print "should've waited here, but it didn't."
+        #print("should've waited here, but it didn't.")
         s.plf.setvar( 'wv', '0' )
         s.label_set( "Plotting paused ... (Hit Clear to continue)" )
-        #print "preparing to wait for wv to change"
+        #print("preparing to wait for wv to change")
         s.plf.waitvar( 'wv' )
-        #print "it changed."
+        #print("it changed.")
         s.label_reset()
         s.update()
 
@@ -1439,11 +1448,13 @@ class PlXframe(Frame):
 
     def plshade( s, *args ):
         plsstrm( s.strm )
-        apply( plshade, args )
+        #apply( plshade, args )
+        plshade(*args)
 
     def plshades( s, *args ):
         plsstrm( s.strm )
-        apply( plshades, args )
+        #apply( plshades, args )
+        plshades(*args)
 
     def plscmap0(s, r, g, b):
         plsstrm( s.strm )
@@ -1542,7 +1553,7 @@ class PlXframe(Frame):
         s.cmd( 'plwind', xmin, xmax, ymin, ymax )
 
     def debug(s):
-        print "Debugging dump for PlXframe:"
-        print "s.saveopt_dev = ", s.saveopt_dev
+        print("Debugging dump for PlXframe:")
+        print("s.saveopt_dev = ", s.saveopt_dev)
 
 ## End of Plframe.py
