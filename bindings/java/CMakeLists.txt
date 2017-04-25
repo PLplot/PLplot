@@ -160,9 +160,11 @@ if(ENABLE_java)
   swig_link_libraries(plplotjavac_wrap plplot)
 
   # Create config.java.  Other generated java files created by swig above.
-  configure_file(
+  set(PLPLOTJAVAC_WRAP_DLL $<TARGET_FILE_NAME:plplotjavac_wrap>)
+  configure_file_generate(
     ${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
     ${CMAKE_CURRENT_BINARY_DIR}/config.java
+    @ONLY
     )
 
   if(USE_RPATH)

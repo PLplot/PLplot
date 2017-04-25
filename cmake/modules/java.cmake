@@ -96,11 +96,6 @@ if(ENABLE_java)
     CACHE PATH "PLplot java plugin install location"
     )
   get_filename_component(JAVAWRAPPER_HARDDIR ${JAVAWRAPPER_DIR} ABSOLUTE)
-  # Library name suffix is system dependent.  Tests have shown
-  # that ${CMAKE_SHARED_LIBRARY_SUFFIX} gives the correct suffix on both
-  # Linux and windows, and from CMAKEPREFIX/share/cmake-2.4/Modules/Platform
-  # it appears this CMake variable is defined on Mac OS X and other platforms.
-  set(PLPLOTJAVAC_WRAP_DLL plplotjavac_wrap${CMAKE_SHARED_LIBRARY_SUFFIX})
 endif(ENABLE_java)
 
 # Set up java compiler flags and turn into a list suitable for add_custom_command
