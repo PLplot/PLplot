@@ -244,3 +244,5 @@ set(tcltk_in_plplot_library @tcltk_in_plplot_library@)
 # from /usr/bin/env python (which often happens if both python2 and python3
 # are installed).
 set(PYTHON_EXECUTABLE @PYTHON_EXECUTABLE@)
+# Needed for Python testing
+set(PYTHON_VERSION @PYTHON_VERSION@)
