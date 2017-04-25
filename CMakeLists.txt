@@ -30,55 +30,46 @@ set(
   ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
   )
 
-# MAINTENANCE 2016-12-12
+# Note, that if you are using a platform that does not supply our
+# designated minimum version of CMake for that platform, then your
+# best bet is to build a recent version of CMake for yourself or even
+# download a binary version of it from Kitware that is suitable for
+# your platform.
+
+# MAINTENANCE 2017-04
 # We prefer to support only recent CMake versions and latest CMake
 # policies to keep our build system as simple and as bug free as
 # possible.  However, as a special concession for our modern (not
 # enterprise or LTS) Linux distro users we allow them to use the
-# system version of CMake which at this time is typically 3.0.2 (on
-# Debian stable = Jessie) or later.  So we adopt 3.0.2 for the minimum
+# system version of CMake which at this time is typically 3.7.2 (on
+# Debian testing = Stretch which should become the Debian stable version
+# some time later this year) or later.  So normally we would adopt 3.7.2 for the minimum
 # CMake version on Linux and also that version for CMake policies on
-# all platforms for CMake policy uniformity.  For non-Linux platforms
-# we adopt 3.6.2 for the minimum version at this time.  3.6.2 is the
-# version of CMake that is supplied by Cygwin at this time and note
-# that rolling releases such as Debian testing and also
-# MinGW-w64/MSYS2 already supply CMake-3.7.0.  Note, that if you
-# are using a platform that does not supply CMake-3.0.2 (Linux)
-# or CMake-3.6.2 (non-Linux) or later, then your best bet is
-# to build a recent version of CMake for yourself or even download
-# a binary version of it from Kitware that is suitable for your
-# platform.
-
-# Additional notes for Linux users of older CMake versions.  There is
-# a CMake bug for 3.0 (a permissions issue for file(GENERATE...), see
-# cmake/modules/plplot_functions.cmake for details) that has a
-# workaround that works on Linux but that bug was fixed as of CMake
-# 3.2.  In addition, CMake 3.3.2 solves a fundamental and quite nasty
-# CMake find regression that occurred from 3.2.0 through 3.3.1. See
-# threads entitled "[BUG] HINTS not correctly handled in find_program"
-# and "find_program HINTS no longer preferred over PATH" on the
-# cmake-devel list.  So for Linux users we warn of potential find
-# issues if the actual CMake version they are running is in the range
-# from 3.2.0 through 3.3.1.
+# all platforms for CMake policy uniformity.  However, for non-Linux platforms
+# we adopt 3.6.2 for the minimum version at this time because that is
+# the maximum CMake version supported by Cygwin.  So as a temporary
+# measure we adopt 3.6.2 as the Linux minimum version as well, but
+# as soon as Cygwin bumps their CMake version to 3.7.2 or higher
+# we will bump our Linux minimum to 3.7.2, and our non-linux minimum
+# to the minimum version supported by both Cygwin and MinGW-w64/MSYS2
+# (which is currently 3.7.2 in the latter case, but CMake-3.8.0 has been
+# released so that may change.)
 
 # Adapted method suggested by Brad King for using
-# different minimum versions for different platforms.
+# potentially different minimum versions for different platforms.
 
-cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
-cmake_policy(VERSION 3.0.2)
+set(MINIMUM_LINUX_CMAKE_VERSION 3.6.2)
+# Latest CMake version for all platforms other than Linux.
+# Must be greater than or equal to MINIMUM_LINUX_CMAKE_VERSION
+set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.6.2)
+cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
+cmake_policy(VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
 project(plplot NONE)
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  if(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
-    message(STATUS "WARNING: CMAKE_VERSION = ${CMAKE_VERSION} is in the range from 3.2 through 3.3.1 which has
-   a compromised find ability that was fixed in 3.3.2.  Please upgrade to 3.3.2 or greater.")
-  endif(NOT CMAKE_VERSION VERSION_LESS 3.2 AND CMAKE_VERSION VERSION_LESS 3.3.2)
-else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  # Latest CMake version as of 2016-12-12 for all platforms
-  # other than Linux.
-  cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
   # Keep policy consistent for all platforms.
-  cmake_policy(VERSION 3.0.2)
-endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  cmake_policy(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION})
+endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers
@@ -278,7 +269,6 @@ add_subdirectory(data)
 add_subdirectory(bindings)
 add_subdirectory(drivers)
 add_subdirectory(utils)
-# plplot_test before examples because of workaround_file_generate_bug target
 add_subdirectory(plplot_test)
 add_subdirectory(examples)
 add_subdirectory(scripts)

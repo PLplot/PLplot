@@ -210,23 +210,6 @@ if(MINGW)
   endfunction(determine_msys_path)
 endif(MINGW)
 
-if(${CMAKE_VERSION} VERSION_LESS 3.2 AND (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux"))
-  # N.B. file(GENERATE ...) has a bug (fixed in CMake 3.2)
-  # where permissions were not copied from INPUT to OUTPUT.
-  # So for CMake version less than 3.2 implement a permissions fixup
-  # at run-time using the --reference option for chmod which is a GNU
-  # extension for chmod only available on Cygwin and Linux.
-  # Thus, for all other platforms the minimum CMake version must be 3.2, see
-  # top-level CMakeLists.txt file.
-  # Establish GLOBAL property which will be appended to each time
-  # the configure_file_generate function is called below.
-  set(WORKAROUND_FILE_GENERATE_BUG ON)
-  set_property(GLOBAL PROPERTY FILES_WORKAROUND_FILE_GENERATE_BUG)
-endif(${CMAKE_VERSION} VERSION_LESS 3.2 AND (CYGWIN OR CMAKE_SYSTEM_NAME STREQUAL "Linux"))
-
-# Must set this variable globally because also used outside configure_file_generate
-# when WORKAROUND_FILE_GENERATE_BUG is ON.
-set(configure_file_generate_suffix "_cf_only")
 function(configure_file_generate)
   # Configure files that contain both normal items
   # to configure (referenced as ${VAR} or @VAR@) as well as
@@ -236,6 +219,7 @@ function(configure_file_generate)
 
   list(GET ARGV 0 input_file)
   list(GET ARGV 1 output_file)
+  set(configure_file_generate_suffix "_cf_only")
   set(intermediate_file ${output_file}${configure_file_generate_suffix})
 
   # Locally modify ARGV so that output file for configure file is
@@ -253,16 +237,6 @@ function(configure_file_generate)
     OUTPUT ${output_file}
     INPUT ${intermediate_file}
     )
-  if(WORKAROUND_FILE_GENERATE_BUG)
-    # Collect all filenames whose permissions must be updated
-    # from corresponding file name with ${configure_file_generate_suffix}
-    # appended.
-    set_property(GLOBAL APPEND
-      PROPERTY FILES_WORKAROUND_FILE_GENERATE_BUG
-      ${output_file}
-      )
-  endif(WORKAROUND_FILE_GENERATE_BUG)
-
 endfunction(configure_file_generate)
 
 function(set_library_properties library)
