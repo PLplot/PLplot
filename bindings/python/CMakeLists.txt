@@ -50,6 +50,7 @@ if(ENABLE_python)
       )
   endif(ENABLE_tkX)
   include_directories(${python_interface_INCLUDE_PATHS})
+  get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
 
   # Implement _Pltk_init swig-generated Python extension module
   # that allows calling our Tcl/Tk code from python.  This result
@@ -115,6 +116,10 @@ if(ENABLE_python)
       LIBRARY
       DESTINATION ${PYTHON_INSTDIR}
       )
+    install(
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/Pltk_init.py
+      DESTINATION ${PYTHON_INSTDIR}
+    )
   endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
 
   # Implement _plplotc swig-generated extension module
@@ -143,7 +148,6 @@ if(ENABLE_python)
   swig_link_libraries(plplotc plplot ${PYTHON_LIBRARIES})
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(
       _plplotc
       PROPERTIES
