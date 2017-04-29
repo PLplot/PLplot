@@ -403,13 +403,25 @@ endif(ANY_QT_DEVICE)
 if(ENABLE_pyqt4 OR ENABLE_pyqt5)
   find_program(SIP_EXECUTABLE sip)
   message(STATUS "pyqt: SIP_EXECUTABLE = ${SIP_EXECUTABLE}")
-  if(NOT SIP_EXECUTABLE)
+  if(SIP_EXECUTABLE)
+    execute_process(
+      COMMAND ${SIP_EXECUTABLE} -V
+      OUTPUT_VARIABLE SIP_VERSION
+      RESULT_VARIABLE SIP_VERSION_ERR
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    if(SIP_VERSION_ERR)
+      message(AUTHOR_WARNING "sip -V command could not determine sip version")
+    else(SIP_VERSION_ERR)
+      message(STATUS "SIP_VERSION = ${SIP_VERSION}")
+    endif(SIP_VERSION_ERR)
+  else(SIP_EXECUTABLE)
     message(STATUS
       "WARNING: sip not found so setting ENABLE_pyqt4 / ENABLE_pyqt5 to OFF."
       )
     set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
     set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
-  endif(NOT SIP_EXECUTABLE)
+  endif(SIP_EXECUTABLE)
 endif(ENABLE_pyqt4 OR ENABLE_pyqt5)
 
 if(ENABLE_pyqt4)
