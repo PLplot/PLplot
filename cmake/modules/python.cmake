@@ -1,6 +1,6 @@
 # cmake/modules/python.cmake
 #
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2017  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -48,7 +48,15 @@ endif(ENABLE_python AND NOT SWIG_FOUND)
 
 if(ENABLE_python)
   # Check for Python interpreter (which also defines PYTHON_EXECUTABLE)
-  find_package(PythonInterp)
+  # We prefer Python 3 if it is available because that (according
+  # to one Python developer, and his opinion makes sense) is
+  # better maintained than python 2.
+  option(FORCE_PYTHON2 "Force Python2 even when Python 3 is present" OFF)
+  if(NOT FORCE_PYTHON2)
+    find_package(PythonInterp 3)
+  endif(NOT FORCE_PYTHON2)
+  # Fall back to Python 2 if Python 3 not found or FORCE_PYTHON2 option is set to ON.
+  find_package(PythonInterp 2)
   if(NOT PYTHONINTERP_FOUND)
     message(STATUS "WARNING: "
       "Python interpreter not found. Disabling Python binding")
