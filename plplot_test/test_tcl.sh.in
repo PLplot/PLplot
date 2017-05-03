@@ -1,9 +1,9 @@
 #!@SH_EXECUTABLE@
 # Test suite for Tcl examples.
 #
-# Copyright (C) 2004-2015  Alan W. Irwin
-# Copyright (C) 2004  Rafael Laboissiere
-# Copyright (C) 2004  Andrew Ross
+# Copyright (C) 2004-2017 Alan W. Irwin
+# Copyright (C) 2004 Rafael Laboissiere
+# Copyright (C) 2004 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -28,17 +28,15 @@ PLATFORM=@PLATFORM@
 
 # Put pltcl on the PATH.
 PLTCL_DIR="@PLTCL_DIR@"
-# Escape blanks anywhere in fullpathname.
-PLTCL_DIR=${PLTCL_DIR// /\\ }
 if [ "$PLATFORM" = "CYGWIN" -o "$PLATFORM" = "MSYS" -o "$PLATFORM" = "MINGW" ] ; then
     # Convert from "<drive_letter>:/" to "/<drive_letter>/" form.
     re='^([a-zA-Z]):/(.*)'
-    if [[ $PLTCL_DIR =~ $re ]] ; then
-	PLTCL_DIR=/${BASH_REMATCH[1]}/${BASH_REMATCH[2]}
+    if [[ "$PLTCL_DIR" =~ $re ]] ; then
+	PLTCL_DIR=/"${BASH_REMATCH[1]}/${BASH_REMATCH[2]}"
     fi
 fi
 
-PATH=$PLTCL_DIR:$PATH
+PATH="$PLTCL_DIR":"$PATH"
 if [ "$PLATFORM" = "MSVC" ] ; then
     cp test_tcl_caller.bat "$tcldir"
 fi
@@ -54,7 +52,7 @@ if [ "$PLATFORM" = "CYGWIN" -o "$PLATFORM" = "MSYS" -o "$PLATFORM" = "MINGW" ] ;
     cd "$tcldir"
 else
     cd "${OUTPUT_DIR}"
-    results=$(pwd)
+    results="$(pwd)"
     cd "$tcldir"
 fi
 export results
