@@ -13,8 +13,9 @@ usage () {
     local prog=`basename $0`
     echo "Usage: $prog [OPTIONS]
 OPTIONS:
-  The next option specifies the directory prefix which controls where
-  all files produced by this script are located.
+  The next option specifies the directory prefix (absolute or relative to
+  the original directory from which this script was invoked) which controls
+  where all files produced by this script are located.
   [--prefix (defaults to the 'comprehensive_test_disposeable'
                   subdirectory of the directory just above the
                   top-level source-tree directory)]
@@ -133,17 +134,17 @@ CMAKE_BUILD_TYPE_OPTION = $CMAKE_BUILD_TYPE_OPTION
 TEST_TYPE = ${TEST_TYPE}
 
 The location below is where all the important *.out files will be found.
-OUTPUT_TREE = $OUTPUT_TREE
+OUTPUT_TREE = \"$OUTPUT_TREE\"
 
 The location below is the top-level build-tree directory.
-BUILD_TREE = $BUILD_TREE
+BUILD_TREE = \"$BUILD_TREE\"
 
 The location below is the top-level install-tree directory.
-INSTALL_TREE = $INSTALL_TREE
+INSTALL_TREE = \"$INSTALL_TREE\"
 
 The location below is the top-level directory of the build tree used
 for the CMake-based build and test of the installed examples.
-INSTALL_BUILD_TREE = $INSTALL_BUILD_TREE"
+INSTALL_BUILD_TREE = \"$INSTALL_BUILD_TREE\""
 
     echo_tee "
 This variable specifies whether any windows platform has been detected
@@ -152,7 +153,7 @@ ANY_WINDOWS_PLATFORM=$ANY_WINDOWS_PLATFORM"
     echo_tee "
 Each of the steps in this comprehensive test may take a while...."
 
-    PATH_SAVE=$PATH
+    PATH_SAVE="$PATH"
     mkdir -p "$OUTPUT_TREE"
     # Clean start with nonexistent install tree and empty build tree(s).
     rm -rf "$INSTALL_TREE"
@@ -172,8 +173,8 @@ Each of the steps in this comprehensive test may take a while...."
     rm -f "$output"
 
     if [ "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
-	echo_tee "Prepend $BUILD_TREE/dll to the original PATH"
-	PATH=$BUILD_TREE/dll:$PATH_SAVE
+	echo_tee "Prepend \"$BUILD_TREE/dll\" to the original PATH"
+	PATH="$BUILD_TREE/dll:$PATH_SAVE"
     fi
 
     # Process $cmake_added_options into $* to be used on the ${cmake_command} command
@@ -216,8 +217,9 @@ Each of the steps in this comprehensive test may take a while...."
 	if [ "$make_rc" -eq 0 ] ; then
 	    output="$OUTPUT_TREE"/ctest.out
 	    rm -f "$output"
-	    echo_tee "$ctest_command --extra-verbose ${dashboard_option}in the build tree"
-	    $ctest_command --extra-verbose ${dashboard_option}>& "$output"
+	    # N.B. dashboard_option always has at least a trailing blank
+	    echo_tee "$ctest_command --extra-verbose${dashboard_option}in the build tree"
+	    $ctest_command --extra-verbose${dashboard_option}>& "$output"
 	    ctest_rc=$?
 	    if [ "$ctest_rc" -eq 0 ] ; then
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
@@ -232,7 +234,7 @@ Each of the steps in this comprehensive test may take a while...."
 		    fi
 		fi
 	    else
-		echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the build tree"
+		echo_tee "ERROR: $ctest_command --extra-verbose${dashboard_option}failed in the build tree"
 		collect_exit 1
 	    fi
 	else
@@ -298,15 +300,15 @@ Each of the steps in this comprehensive test may take a while...."
     fi
 
     if [ "$do_test_install_tree" = "yes" -o "$do_test_traditional_install_tree" = "yes" ] ; then
-	echo_tee "Prepend $INSTALL_TREE/bin to the original PATH"
-	PATH="$INSTALL_TREE/bin":$PATH_SAVE
+	echo_tee "Prepend \"$INSTALL_TREE/bin\" to the original PATH"
+	PATH="$INSTALL_TREE/bin:$PATH_SAVE"
 
 	if [ "$CMAKE_BUILD_TYPE_OPTION" = "-DBUILD_SHARED_LIBS=ON" -a "$ANY_WINDOWS_PLATFORM" = "true" ] ; then
 	    # Use this logic to be as version-independent as possible.
-	    current_dir=$(pwd)
+	    current_dir="$(pwd)"
 	    # Wild cards must not be inside quotes.
 	    cd "$INSTALL_TREE"/lib/plplot[0-9].[0-9]*.[0-9]*/drivers*
-	    echo_tee "Prepend $(pwd) to the current PATH"
+	    echo_tee "Prepend \"$(pwd)\" to the current PATH"
 	    PATH="$(pwd):$PATH"
 	    cd $current_dir
 	fi
@@ -371,7 +373,7 @@ Each of the steps in this comprehensive test may take a while...."
 	fi
     fi
     echo_tee "Restore PATH to its original form"
-    PATH=$PATH_SAVE
+    PATH="$PATH_SAVE"
 }
 
 # Start of actual script after functions are defined.
@@ -603,6 +605,10 @@ fi
 
 # Create $prefix directory if it does not exist already
 mkdir -p "$prefix"
+# Convert $prefix to absolute path (if it is not already that).
+cd "$prefix"
+prefix="$(pwd)"
+cd "${ORIGINAL_PATH}"
 
 # Establish names of output files.  We do this here (as soon as
 # possible after $prefix is determined) because
@@ -709,7 +715,7 @@ fi
 
 if [ "$do_clean_first" = "yes" ] ; then
     echo_tee "WARNING: The shared, nondynamic, and static subdirectory trees of
-$prefix
+\"$prefix\"
 are about to be removed!
 "
 fi
@@ -761,14 +767,19 @@ fi
 
 # Collect selected important environment variable results prior to testing.
 rm -f "$ENVIRONMENT_LOG"
-echo "PATH=$PATH" > "$ENVIRONMENT_LOG"
-echo "CC=$CC" >> "$ENVIRONMENT_LOG"
-echo "CXX=$CXX" >> "$ENVIRONMENT_LOG"
-echo "FC=$FC" >> "$ENVIRONMENT_LOG"
 if [ "$HAS_PRINTENV" = "false" ] ; then
     echo_tee "WARNING: printenv not on PATH so cannot collect certain important environment variables in $ENVIRONMENT_LOG"
 else
-    printenv |grep -E '^CMAKE_.*PATH=|^.*FLAGS=|^PKG_CONFIG_PATH=|^LD_LIBRARY_PATH=|PLPLOT' >> "$ENVIRONMENT_LOG"
+    echo "# Look for the following subset of environment variables:
+    # Java-related,
+    # non-Java compilers,
+    # compiler flags,
+    # PATH-related variables,
+    # current directory, and
+    # PLplot-related." > "$ENVIRONMENT_LOG"
+    for ENVVAR in "$(printenv |grep -E '^JAVA.*=|^ADA=|^CC=|^CXX=|^DC=|^FC=|^.*FLAGS=|^PATH=|^CMAKE_.*PATH=|^PKG_CONFIG_PATH=|^LD_LIBRARY_PATH=|^PWD=|PLPLOT' | sort -u)"; do
+	echo "${ENVVAR}" | sed -e 's?=?="?' -e 's?\(.*\)$?\1"?' >> "$ENVIRONMENT_LOG"
+    done
 fi
 
 test_types=
