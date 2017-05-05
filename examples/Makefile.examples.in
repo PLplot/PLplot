@@ -2,7 +2,7 @@
 # configured by our CMake-based build system to examples/Makefile.examples
 # in the build tree and installed as examples/Makefile in the install tree.
 
-# Copyright (C) 2004-2015  Alan W. Irwin
+# Copyright (C) 2004-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -104,7 +104,7 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_JAVA_COMMENT@clean: java_clean
 @PSC_JAVA_COMMENT@x01j.psc: java/x01.class
 @PSC_JAVA_COMMENT@	@echo Generate Java results for psc device
-@PSC_JAVA_COMMENT@	./plplot-test.sh --verbose --front-end=java --device=psc
+@PSC_JAVA_COMMENT@	env PLPLOT_JAVA_WRAP_DIR="@LIB_DIR@/" ./plplot-test.sh --verbose --front-end=java --device=psc
 @PSC_JAVA_COMMENT@test_noninteractive: x01j.psc
 @PSC_JAVA_COMMENT@@COMPARE_COMMENT@compare: x01j.psc
 

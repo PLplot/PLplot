@@ -119,6 +119,7 @@ endif(ENABLE_fortran)
 if(ENABLE_java)
   find_package(JNI)
   set(JAR_DIR "@JAR_DIR@")
+  set(LIB_DIR "@LIB_DIR@")
 endif(ENABLE_java)
 
 if(ENABLE_ocaml)

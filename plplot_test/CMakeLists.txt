@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -53,8 +53,6 @@ if(SH_EXECUTABLE)
 
   set(TEST_SCRIPT "./plplot-test.sh --verbose")
   set(TEST_SCRIPT_DEVICE "${TEST_SCRIPT} --device=${PLPLOT_TEST_DEVICE}")
-
-  set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${CMAKE_BINARY_DIR}/bindings/java/ PLPLOT_CLASSPATH=${CMAKE_BINARY_DIR}/examples/java/plplot.jar")
 
   if(CYGWIN)
     set(PLATFORM CYGWIN)
@@ -217,6 +215,10 @@ if(SH_EXECUTABLE)
       )
     list(APPEND SCRIPTS test_java.sh)
     if(PLD_TEST_DEVICE)
+      string(REPLACE " " "\\ " PLPLOT_JAVA_WRAP_DIR_ESCAPED ${CMAKE_BINARY_DIR}/bindings/java/)
+      string(REPLACE " " "\\ " PLPLOT_CLASSPATH_ESCAPED ${CMAKE_BINARY_DIR}/examples/java/plplot.jar)
+      set(JAVA_TEST_ENVIRONMENT "${TEST_ENVIRONMENT} PLPLOT_JAVA_WRAP_DIR=${PLPLOT_JAVA_WRAP_DIR_ESCAPED} PLPLOT_CLASSPATH=${PLPLOT_CLASSPATH_ESCAPED}")
+
       add_test(NAME examples_java
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 	COMMAND ${SH_EXECUTABLE} -c "${JAVA_TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=java"

@@ -536,7 +536,7 @@ if(BUILD_TEST)
   else(CORE_BUILD)
     set(custom_test_script ${CMAKE_CURRENT_SOURCE_DIR}/plplot-test.sh)
     set(custom_env SRC_EXAMPLES_DIR=${CMAKE_CURRENT_SOURCE_DIR} OUTPUT_DIR=${TEST_EXAMPLES_OUTPUT_DIR})
-    set(java_custom_env ${custom_env})
+    set(java_custom_env ${custom_env} PLPLOT_JAVA_WRAP_DIR=${LIB_DIR}/)
     set(compare_script ${CMAKE_CURRENT_SOURCE_DIR}/test_diff.sh)
   endif(CORE_BUILD)
 
