@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Hezekiah M. Carty
-# Copyright (C) 2009-2016 Alan W. Irwin
+# Copyright (C) 2009-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -204,8 +204,9 @@ if(ENABLE_ocaml)
       option(OCAML_HAS_CAIRO "OCaml has the cairo package" ON)
       # Disable since substantial maintenance is required before this component
       # of PLplot will configure, build, and/or run.
-      message(AUTHOR_WARNING "PLplot OCaml Cairo support currently requires substantial development effort so is indefinitely disabled")
+      message(STATUS "WARNING: PLplot OCaml Cairo support currently requires substantial development effort so is indefinitely disabled")
       set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
+
       if(OCAML_HAS_CAIRO)
 	set(text_cairo "module C = Cairo")
 	file(WRITE ${CMAKE_BINARY_DIR}/test_cairo.ml ${text_cairo})
@@ -243,16 +244,11 @@ if(ENABLE_ocaml)
             "pkg-config not found.  Disabling Plcairo module")
 	  set(OCAML_HAS_CAIRO OFF CACHE BOOL "OCaml has the cairo package" FORCE)
 	endif(PKG_CONFIG_EXECUTABLE)
-      else(OCAML_HAS_CAIRO)
-        message(STATUS "WARNING: "
-          "Cairo OCaml library not found.  Disabling Plcairo module")
       endif(OCAML_HAS_CAIRO)
 
       if(OCAML_HAS_CAIRO)
 	option(OCAML_HAS_GTK "OCaml has the cairo2.lablgtk2 package" ON)
       else(OCAML_HAS_CAIRO)
-        message(STATUS "WARNING: "
-          "Cairo OCaml library not found.  Disabling lablgtk2 support")
 	set(OCAML_HAS_GTK OFF CACHE BOOL "OCaml has the cairo2.lablgtk2 package" FORCE)
       endif(OCAML_HAS_CAIRO)
 
@@ -282,7 +278,7 @@ if(ENABLE_ocaml)
       if(OCAML_HAS_GTK)
         message(STATUS "lablgtk2 OCaml library found")
       else(OCAML_HAS_GTK)
-        message(STATUS "WARNING: lablgtk2 OCaml library not found.")
+        # permanently disabled: message(STATUS "WARNING: lablgtk2 OCaml library not found.")
       endif(OCAML_HAS_GTK)
     endif (PLD_extcairo)
   else(OCAMLFIND)
