@@ -4,7 +4,7 @@
 #
 #
 # Copyright (C) 2008 Andrew Ross
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2017 Alan W. Irwin
 # Copyright (C) 2009 Hezekiah M. Carty
 #
 # This file is part of PLplot.
@@ -27,6 +27,13 @@
 # examples build.  The core build has BUILD_TEST OFF or ON at user option
 # and CORE_BUILD always ON.  The installed examples build always has
 # BUILD_TEST ON and CORE_BUILD OFF.
+
+# Need these escaped versions when there is a space in the full pathname of these variables.
+string(REPLACE " " "\\ " CMAKE_SOURCE_DIR_ESCAPED ${CMAKE_SOURCE_DIR})
+string(REPLACE " " "\\ " CMAKE_CURRENT_SOURCE_DIR_ESCAPED ${CMAKE_CURRENT_SOURCE_DIR})
+string(REPLACE " " "\\ " CMAKE_BINARY_DIR_ESCAPED ${CMAKE_BINARY_DIR})
+string(REPLACE " " "\\ " CMAKE_INSTALL_LIBDIR_ESCAPED ${CMAKE_INSTALL_LIBDIR})
+string(REPLACE " " "\\ " OCAML_INSTALL_DIR_ESCAPED ${OCAML_INSTALL_DIR})
 
 set(ocaml_STRING_INDICES
   "00"
@@ -111,26 +118,27 @@ if(BUILD_TEST)
   if (OCAMLOPT)
     set(ocaml_compiler ${OCAMLOPT})
     set(ocaml_lib_extension cmxa)
-    set(ocaml_cleanup_extensions cmx cmi o)
+    set(ocaml_extra_extensions cmx cmi o)
   else (OCAMLOPT)
     set(ocaml_compiler ${OCAMLC})
     set(ocaml_lib_extension cma)
-    set(ocaml_cleanup_extensions cmo cmi)
+    set(ocaml_extra_extensions cmo cmi)
   endif (OCAMLOPT)
 
-  set(ocaml_EXTRA_CLEAN_FILES)
   if(CORE_BUILD)
+    # The unescaped I option works for both ocamlopt and ocamlc, but the escaped version
+    # does not work for ocamlopt (and ocamlc?).  WTF?
     set(I_OPTION ${CMAKE_BINARY_DIR}/bindings/ocaml)
     if(BUILD_SHARED_LIBS)
-      set(ccopt_OPTION -ccopt "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR}/src ")
+      set(ccopt_OPTION -ccopt "-L ${CMAKE_BINARY_DIR_ESCAPED}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR_ESCAPED}/src")
     endif()
   else(CORE_BUILD)
     set(I_OPTION ${OCAML_INSTALL_DIR}/plplot)
     if(BUILD_SHARED_LIBS)
       if(USE_RPATH)
-	set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR} ")
+	set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR_ESCAPED} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR_ESCAPED}")
       else(USE_RPATH)
-	set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR} ")
+	set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR_ESCAPED} ")
       endif(USE_RPATH)
     endif()
   endif(CORE_BUILD)
@@ -141,11 +149,10 @@ if(BUILD_TEST)
   foreach(STRING_INDEX ${ocaml_STRING_INDICES})
     set(EXECUTABLE_NAME x${STRING_INDEX}ocaml)
     set(SOURCE_FILE x${STRING_INDEX}.ml)
-    foreach(EXTENSION ${ocaml_cleanup_extensions})
-      set(ocaml_EXTRA_CLEAN_FILES ${ocaml_EXTRA_CLEAN_FILES} x${STRING_INDEX}.${EXTENSION})
-    endforeach(EXTENSION ocaml_cleanup_extensions)
-    # Copy source code to build tree since ocamlc is a bit broken and will
-    # otherwise litter the source tree with intermediate files
+    set(ocaml_EXTRA_GENERATED_FILES)
+    foreach(EXTENSION ${ocaml_extra_extensions})
+      list(APPEND ocaml_EXTRA_GENERATED_FILES ${CMAKE_CURRENT_BINARY_DIR}/x${STRING_INDEX}.${EXTENSION})
+    endforeach(EXTENSION ocaml_extra_extensions)
     if(STRING_INDEX STREQUAL "17")
       set(unix_lib unix.${ocaml_lib_extension})
     else(STRING_INDEX STREQUAL "17")
@@ -153,31 +160,31 @@ if(BUILD_TEST)
     endif(STRING_INDEX STREQUAL "17")
 
     add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-      COMMAND ${CMAKE_COMMAND}
-      -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
-      )
-
-    add_custom_command(
-      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
+      OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      ${ocaml_EXTRA_GENERATED_FILES}
+      ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
+      # Need source file in build tree in order for OCaml build tools to work.
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       COMMAND ${ocaml_compiler}
       -g
       -I ${I_OPTION}
       ${ccopt_OPTION}
       plplot.${ocaml_lib_extension}
       ${unix_lib}
-      -o ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
-      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      -o ${EXECUTABLE_NAME}
+      ${SOURCE_FILE}
       DEPENDS
-      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       ${files_plplot_ocaml}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       VERBATIM
       )
     add_custom_target(
       target_${EXECUTABLE_NAME} ALL
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      ${ocaml_EXTRA_GENERATED_FILES}
+      ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
       )
     if(CORE_BUILD)
       add_dependencies(target_${EXECUTABLE_NAME} plplot_ocaml)
@@ -188,7 +195,7 @@ if(BUILD_TEST)
   set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ocaml_EXTRA_CLEAN_FILES}")
 endif(BUILD_TEST)
 
-# Plcairo examples
+# Plcairo examples  (N.B. OCAML_HAS_CAIRO is indefinitely disabled so the stanzas below are unmaintained.)
 if(OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
 
   if(CORE_BUILD)
@@ -245,7 +252,8 @@ if(OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
       # Copy source code to build tree since ocamlc is a bit broken and will
       # otherwise litter the source tree with intermediate files
       add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+	OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
 	COMMAND ${CMAKE_COMMAND}
 	-E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
 	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
@@ -281,6 +289,5 @@ if(OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
       set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ocaml target_${EXECUTABLE_NAME})
       set_property(GLOBAL APPEND PROPERTY FILES_examples_ocaml ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME})
     endforeach(STRING_INDEX ${ocaml_STRING_INDICES})
-    set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${ocaml_EXTRA_CLEAN_FILES}")
   endif(BUILD_TEST)
 endif(OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
