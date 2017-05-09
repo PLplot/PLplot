@@ -62,20 +62,22 @@ if(ENABLE_ocaml)
   if(GENERATE_PLPLOT_H_INC)
     add_custom_target(
       check_plplot_h.inc
-      COMMAND ${CMAKE_COMMAND} -E echo "Check that bindings/ocaml/plplot_h.inc is consistent with bindings/ocaml/touchup.ml and bindings/ocaml/plplot_h"
+      COMMAND ${CMAKE_COMMAND} -E echo "Check that ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h.inc is consistent with what should be same file generated with ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml and ${CMAKE_CURRENT_SOURCE_DIR}/bindings/ocaml/plplot_h"
       COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
-      COMMAND ${OCAML} ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
+      # For space in pathname case quoted escaped touch.ml does not
+      # work for some reason so must copy it to the WORKING_DIRECTORY.
+      # Furthermore, for this same case must remove absolute directory
+      # location from generated_plplot_h.inc.  But plplot_h is fine in
+      # its present quoted and escaped form, go figure.
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml ${CMAKE_CURRENT_BINARY_DIR}/touchup.ml
+      # N.B. This only works on Debian if the libpcre-ocaml-dev package is installed.
+      COMMAND ${OCAML} touchup.ml "${CMAKE_CURRENT_SOURCE_DIR_ESCAPED}/plplot_h" generated_plplot_h.inc
       COMMAND cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h.inc ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      VERBATIM
       )
 
-    # This no longer works for unknown reasons as of plplot-5.12.0
-    # (The error message was "Error: Unbound module Pcre" so
-    # perhaps that namespace should be named "pcre" instead or
-    # else there might be an installation issue.)  But there
-    # is no time to investigate this now so drop this custom
-    # target as a dependency of check_all
-    # add_dependencies(check_all check_plplot_h.inc)
+    add_dependencies(check_all check_plplot_h.inc)
 
   endif(GENERATE_PLPLOT_H_INC)
 
