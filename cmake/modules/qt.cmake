@@ -35,8 +35,9 @@
 # PLPLOT_USE_Qt5          - ON means the Qt5 libraries are used rather than the default Qt4.
 # pc_qt_COMPILE_FLAGS	  - Space-separated Qt-related COMPILE_FLAGS used strictly
 #                           just for the pkg-config configuration case.
-# pc_qt_LIBRARIES_LIST    - List of Qt-related libraries used strictly
-#                           just for the pkg-config configuration case.  Note it is the same as
+# pc_qt_LIBRARIES_LIST    - List of Qt-related libraries used for just
+#                           the pkg-config configuration and ocaml static build cases.
+#                           Note it is the same as
 #                           QT_LIBRARIES for the Qt4 case so for src/CMakeLists.txt
 #                           logic is required to avoid this redundancy.
 # qt_COMPILE_FLAGS	  - empty.  Not needed. COMPILE_FLAGS are taken care of explicitly in the
@@ -110,7 +111,6 @@ if(ENABLE_qt)
       # QT_LIBRARIES (used wherever link with qt libraries is needed)
       # are now defined.
 
-      # Only used for pkg-config case.
       set(pc_qt_COMPILE_FLAGS ${QT_COMPILE_DEFINES} ${QT_INCLUDE_DIRECTORIES})
       string(REGEX REPLACE ";" " " pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS}")
       # Work around pkg-config issues (see bug report
@@ -146,8 +146,7 @@ if(ENABLE_qt)
       message(STATUS "Attempting to use Qt5 so have set PLD_epsqt to OFF since Qt5 does not support PostScript")
       set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
 
-      # Calculate Qt5_library_COMPILE_FLAGS and Qt5_library_LINK_FLAGS
-      # to be used for the pkg-config case.
+      # Calculate pc_qt_COMPILE_FLAGS and pc_qt_LIBRARIES_LIST
 
       # Note that theoretically you could use execute_process and cmake
       # --find-package option to determine these flags, but
@@ -216,6 +215,10 @@ if(ENABLE_qt)
 	  list(APPEND pc_qt_LIBRARIES_LIST ${Qt5_library_fullpath})
 	endif(Qt5_library_fullpath MATCHES "^Qt5::")
       endforeach(Qt5_library_name ${Qt5_library_name_list})
+
+      # Convert from .so[.0-9]* form (if that is the form of the full pathname of the library) to .so
+      # form.
+      string(REGEX REPLACE "\.so[.0-9]*" ".so" pc_qt_LIBRARIES_LIST "${pc_qt_LIBRARIES_LIST}")
 
       message(STATUS "Qt5 pc_qt_LIBRARIES_LIST = ${pc_qt_LIBRARIES_LIST}")
     else(Qt5_FOUND)
@@ -376,11 +379,11 @@ if(ENABLE_pyqt5 AND NOT PLD_extqt)
 endif(ENABLE_pyqt5 AND NOT PLD_extqt)
 
 
-if(ENABLE_qt)
+if(PLD_extqt)
   set(qt_gui_true "")
-else(ENABLE_qt)
+else(PLD_extqt)
   set(qt_gui_true "#")
-endif(ENABLE_qt)
+endif(PLD_extqt)
 
 if(ANY_QT_DEVICE)
   if(ENABLE_DYNDRIVERS)

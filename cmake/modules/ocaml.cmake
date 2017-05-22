@@ -27,21 +27,6 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_ocaml "Enable OCaml binding" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-option(ENABLE_ocaml_static "Enable OCaml binding for the static build case" OFF)
-
-if(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
-    message(STATUS "WARNING: "
-      "Static build with ENABLE_ocaml_static false.  Therefore, disabling OCaml binding")
-    set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
-endif(NOT ENABLE_ocaml_static AND NOT BUILD_SHARED_LIBS)
-
-if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
-  message(STATUS "NOTICE: "
-    "OCaml requires -fPIC flag when building static PLplot. Forcing -fPIC for C and C++ compilation.")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
-
 if(ENABLE_ocaml AND NOT PL_DOUBLE)
   message(STATUS "WARNING: "
     "Only single-precision floating point. Disabling Ocaml binding because of run-time errors in this case.")

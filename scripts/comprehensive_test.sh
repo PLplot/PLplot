@@ -258,30 +258,31 @@ Each of the steps in this comprehensive test may take a while...."
 	if [[ "$OSTYPE" =~ ^linux && "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" ]]; then
 	    # The above install and the above "if" assure there are
 	    # *.so files in both the build and install trees for the
-	    # linux case that can be analyzed with ldd -r.
-	    # N.B. we deliberately drop dllplplot_stubs.so from the
-	    # reports because there is no known way to set the rpath
-	    # for that ocamlmklib-generated shared object at the
-	    # moment.  See plplot-devel mailing discusion on
-	    # 2016-12-09 with the subject line
-	    # "Setting rpath for dllplplot_stubs.so appears not to be possible".
+	    # linux case that can be analyzed with ldd -r.  N.B. we
+	    # deliberately drop dllplplot_stubs.so and
+	    # dllinstalled_plplotstubs.so from the reports because
+	    # there is no known way to set the rpath for that
+	    # ocamlmklib-generated shared object at the moment.  See
+	    # plplot-devel mailing discusion on 2016-12-09 with the
+	    # subject line "Setting rpath for dllplplot_stubs.so
+	    # appears not to be possible".
 	    output="$OUTPUT_TREE"/build_tree_ldd.out
 	    rm -f "$output"
-	    echo_tee "find \"$BUILD_TREE\" -name \"*.so\" -a ! -name dllplplot_stubs.so -a -print0 |xargs -0 ldd -r >& \"$output\" in the build tree just after the install for TEST_TYPE = ${TEST_TYPE})"
-	    find "$BUILD_TREE" -name "*.so" -a ! -name dllplplot_stubs.so -a -print0 | xargs -0 ldd -r >& "$output"
+	    echo_tee "find \"$BUILD_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" in the build tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+	    find "$BUILD_TREE" -name "*.so" -a ! -name "dll*plplot_stubs.so" -a -print0 | xargs -0 ldd -r >& "$output"
 	    ldd_rc=$?
 	    if [ "$ldd_rc" -ne 0 ] ; then
-		echo_tee "ERROR: find \"$BUILD_TREE\" -name \"*.so\" -a ! -name dllplplot_stubs.so -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the build tree"
+		echo_tee "ERROR: find \"$BUILD_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the build tree"
 		collect_exit 1
 	    fi
 
 	    output="$OUTPUT_TREE"/install_tree_ldd.out
 	    rm -f "$output"
-	    echo_tee "find \"$INSTALL_TREE\" -name \"*.so\" -a ! -name dllplplot_stubs.so -a -print0 |xargs -0 ldd -r >& \"$output\" in the install tree just after the install for TEST_TYPE = ${TEST_TYPE})"
-	    find "$INSTALL_TREE" -name "*.so" -a ! -name dllplplot_stubs.so -a -print0 | xargs -0 ldd -r >& "$output"
+	    echo_tee "find \"$INSTALL_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" in the install tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+	    find "$INSTALL_TREE" -name "*.so" -a ! -name "dll*plplot_stubs.so" -a -print0 | xargs -0 ldd -r >& "$output"
 	    ldd_rc=$?
 	    if [ "$ldd_rc" -ne 0 ] ; then
-		echo_tee "ERROR: find \"$INSTALL_TREE\" -name \"*.so\" -a ! -name dllplplot_stubs.so -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the install tree"
+		echo_tee "ERROR: find \"$INSTALL_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the install tree"
 		collect_exit 1
 	    fi
 	fi
