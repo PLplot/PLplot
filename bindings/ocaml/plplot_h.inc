@@ -56,7 +56,7 @@
 [mlname(plgxax)] void c_plgxax ( [out] int * p_digmax, [out] int * p_digits );
 [mlname(plgyax)] void c_plgyax ( [out] int * p_digmax, [out] int * p_digits );
 [mlname(plgzax)] void c_plgzax ( [out] int * p_digmax, [out] int * p_digits );
-[mlname(plhist)] void c_plhist ( int n, [in, size_is(n), size_is(n)] double * data, double datmin, double datmax, int nbin, plplot_hist_style opt );
+[mlname(plhist)] void c_plhist ( int n, [in, size_is(n)] double * data, double datmin, double datmax, int nbin, plplot_hist_style opt );
 [mlname(plhlsrgb)] void c_plhlsrgb ( double h, double l, double s, [out] double * p_r, [out] double * p_g, [out] double * p_b );
 [mlname(plinit)] void c_plinit ( void );
 [mlname(pljoin)] void c_pljoin ( double x1, double y1, double x2, double y2 );

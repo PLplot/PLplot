@@ -13,11 +13,6 @@ type attribute_spec = {
 let manual_function_attributes =
   [
     {
-      function_name = "c_plhist";
-      function_attrs = None;
-      parameter_attrs = Some ["data", ["size_is(n)"]];
-    };
-    {
       function_name = "c_plimage";
       function_attrs = None;
       parameter_attrs = Some ["idata", ["in"; "size_is(nx, ny)"]];
