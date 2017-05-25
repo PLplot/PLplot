@@ -334,22 +334,22 @@ c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
   PLINT nx, PLINT ny, plplot3d_style opt,
   PLFLT *clevel, PLINT nlevel);
 
+ void
+c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
+  PLINT nx, PLINT ny, plplot3d_style opt,
+  PLFLT *clevel, PLINT nlevel,
+  PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax);
+
 /*
  void
 plfplot3dc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-            PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel );
-
- void
-c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
-  PLINT nx, PLINT ny, PLINT opt,
-  PLFLT *clevel, PLINT nlevel,
-  PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
+            PLINT nx, PLINT ny, plplot3d_style opt, PLFLT *clevel, PLINT nlevel );
 
  void
 plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-             PLINT nx, PLINT ny, PLINT opt,
+             PLINT nx, PLINT ny, plplot3d_style opt,
              PLFLT *clevel, PLINT nlevel,
-             PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax );
+             PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax );
 */
 
  void
@@ -663,20 +663,20 @@ c_plstyl(PLINT nms, PLINT *mark, PLINT *space);
 c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plplot3d_style opt, PLFLT *clevel, PLINT nlevel);
 
-/*
- void
-plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-           PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel );
-
  void
 c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
-    PLINT opt, PLFLT *clevel, PLINT nlevel,
-    PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT*indexymax);
+    plplot3d_style opt, PLFLT *clevel, PLINT nlevel,
+    PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax);
+
+/*
+ void
+plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
+           plplot3d_style opt, PLFLT *clevel, PLINT nlevel );
 
  void
 plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-            PLINT opt, PLFLT *clevel, PLINT nlevel,
-            PLINT ixstart, PLINT ixn, PLINT *indexymin, PLINT *indexymax );
+            plplot3d_style opt, PLFLT *clevel, PLINT nlevel,
+	    PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax);
 */
 
  void

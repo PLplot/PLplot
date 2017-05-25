@@ -72,6 +72,7 @@
 [mlname(plmtex3)] void c_plmtex3 ( [string] const char * side, double disp, double pos, double just, [string] const char * text );
 [mlname(plot3d)] void c_plot3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, boolean side );
 [mlname(plot3dc)] void c_plot3dc ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel );
+[mlname(plot3dcl)] void c_plot3dcl ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel, int indexxmin, int indexxmax, [size_is(indexxmax), in] int * indexymin, [size_is(indexxmax), in] int * indexymax );
 [mlname(plpat)] void c_plpat ( int nlin, [in, size_is(nlin)] int * inc, [in, size_is(nlin)] int * del );
 [mlname(plpath)] void c_plpath ( int n, double x1, double y1, double x2, double y2 );
 [mlname(plpoin)] void c_plpoin ( int n, [in, size_is(n)] double * x, [in, size_is(n)] double * y, int code );
@@ -131,6 +132,7 @@
 [mlname(plimage)] void c_plimage ( [in, size_is(nx, ny)] double ** idata, int nx, int ny, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax, double Dxmin, double Dxmax, double Dymin, double Dymax );
 [mlname(plstyl)] void c_plstyl ( int nms, [size_is(nms)] int * mark, [size_is(nms)] int * space );
 [mlname(plsurf3d)] void c_plsurf3d ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel );
+[mlname(plsurf3dl)] void c_plsurf3dl ( [size_is(nx), in] double * x, [size_is(ny), in] double * y, [size_is(nx, ny), in] double ** z, int nx, int ny, plplot3d_style opt, [size_is(nlevel), in] double * clevel, int nlevel, int indexxmin, int indexxmax, [size_is(indexxmax), in] int * indexymin, [size_is(indexxmax), in] int * indexymax );
 [mlname(plsvect)] void c_plsvect ( [in, size_is(npts)] double * arrowx, [in, size_is(npts)] double * arrowy, int npts, boolean fill );
 [mlname(plsvpa)] void c_plsvpa ( double xmin, double xmax, double ymin, double ymax );
 [mlname(plsxax)] void c_plsxax ( int digmax, int digits );

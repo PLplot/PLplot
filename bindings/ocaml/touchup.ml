@@ -339,6 +339,12 @@ let parameter_attributes function_name types names =
       true,
       true,
       ["out"];
+      (* Index limits *)
+      true,
+      pmatch "\\*" p_type,
+      List.mem p_name ["indexymin"; "indexymax"],
+      true,
+      ["size_is(indexxmax)"; "in"];
     ]
   in
 

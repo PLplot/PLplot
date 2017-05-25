@@ -28,15 +28,15 @@ open Plplot
 let pi = atan 1.0 *. 4.0
 
 let xpts = 35               (* Data points in x *)
-let ypts = 46               (* Data points in y *)
+let ypts = 45               (* Data points in y *)
 
-let alt = [|60.0; 20.0|]
-let az = [|30.0; 60.0|]
+let alt = [|60.0; 40.0|]
+let az = [|30.0; -30.0|]
 
 let title =
   [|
     "#frPLplot Example 8 - Alt=60, Az=30";
-    "#frPLplot Example 8 - Alt=20, Az=60";
+    "#frPLplot Example 8 - Alt=40, Az=-30";
   |]
 
 (*--------------------------------------------------------------------------*\
@@ -81,7 +81,7 @@ let levels = 10
 \*--------------------------------------------------------------------------*)
 let () =
   let nlevel = levels in
-  let rosen = true in
+  let rosen = false in
 
   (* Parse and process command line arguments *)
   plparseopts Sys.argv [PL_PARSE_FULL];
@@ -91,6 +91,8 @@ let () =
 
   (* Allocate data structures *)
   let z = Array.make_matrix xpts ypts 0.0 in
+  (* initialize to large value to make sure index limits are working correctly *)
+  let z_limited = Array.make_matrix xpts ypts 1.e30 in
 
   let x =
     Array.init xpts (
@@ -133,6 +135,30 @@ let () =
     done
   done;
 
+  let indexxmin = 0 in
+  let indexxmax = xpts in
+  let indexymin = Array.make indexxmax 0 in
+  let indexymax = Array.make indexxmax ypts in
+  (* parameters of ellipse (in x, y index coordinates) that limits the data.
+     x0, y0 correspond to the exact floating point centre of the index range. *)
+  let x0 = 0.5 *. float_of_int ( xpts - 1 ) in
+  let a = 0.9 *. x0 in
+  let y0 = 0.5 *. float_of_int( ypts - 1 ) in
+  let b = 0.7 *. y0 in
+
+  for i = indexxmin to indexxmax - 1 do
+    let square_root = sqrt ( 1. -. (min 1. ((( float_of_int i -. x0 ) /. a)**2.))) in
+    (* Add 0.5 to find nearest integer and therefore preserve symmetry
+       with regard to lower and upper bound of y range. *)
+    indexymin.(i) <- max 0 (int_of_float (0.5 +. y0 -. b *. square_root));
+    (* indexymax calculated with the convention that it is 1
+       greater than highest valid index. *)
+    indexymax.(i) <- min ypts (1 + int_of_float (0.5 +. y0 +. b *. square_root));
+    for j = indexymin.(i) to indexymax.(i) - 1 do
+      z_limited.(i).(j) <- z.(i).(j)
+    done
+  done;
+
   let zmax, zmin = plMinMax2dGrid z in
   let step = (zmax -. zmin) /. float_of_int (nlevel + 1) in
   let clevel =
@@ -142,7 +168,7 @@ let () =
   pllightsource 1.0 1.0 1.0;
 
   for k = 0 to 1 do
-    for ifshade = 0 to 3 do
+    for ifshade = 0 to 4 do
       pladv 0;
       plvpor 0.0 1.0 0.0 0.9;
       plwind (-1.0) 1.0 (-0.9) 1.1;
@@ -160,6 +186,7 @@ let () =
       plcol0 2;
 
       match ifshade with
+
           0 -> (* diffuse light surface plot *)
             cmap1_init true;
             plsurf3d x y z  [PL_DIFFUSE] [||];
@@ -170,13 +197,15 @@ let () =
                   squares *)
             cmap1_init false;
             plsurf3d x y z [PL_MAG_COLOR; PL_FACETED] [||];
-        | _ -> (* magnitude colored plot with contours *)
+        | 3 -> (* magnitude colored plot with contours and index limits*)
             cmap1_init false;
             plsurf3d x y z [PL_MAG_COLOR; PL_SURF_CONT; PL_BASE_CONT] clevel;
+        | _ -> (* magnitude colored plot with contours *)
+            cmap1_init false;
+            plsurf3dl x y z [PL_MAG_COLOR; PL_SURF_CONT; PL_BASE_CONT] clevel indexxmin indexymin indexymax;
     done
   done;
 
   (* Clean up *)
   plend ();
   ()
-

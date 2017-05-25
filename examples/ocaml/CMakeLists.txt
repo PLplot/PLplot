@@ -175,6 +175,7 @@ if(BUILD_TEST)
       -o ${EXECUTABLE_NAME}
       ${SOURCE_FILE}
       DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
       ${files_plplot_ocaml}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       VERBATIM

@@ -812,6 +812,10 @@ external plot3dc :
   float array ->
   float array -> float array array -> plplot3d_style -> float array -> unit
   = "camlidl_plplot_core_c_plot3dc"
+external plot3dcl :
+  float array ->
+  float array -> float array array -> plplot3d_style -> float array -> int -> int array -> int array -> unit
+  = "camlidl_plplot_core_c_plot3dcl_bytecode" "camlidl_plplot_core_c_plot3dcl"
 external plpat : int array -> int array -> unit
   = "camlidl_plplot_core_c_plpat"
 external plpath : int -> float -> float -> float -> float -> unit
@@ -929,6 +933,9 @@ external plsurf3d :
   float array ->
   float array -> float array array -> plplot3d_style -> float array -> unit
   = "camlidl_plplot_core_c_plsurf3d"
+external plsurf3dl :
+  float array -> float array -> float array array -> plplot3d_style -> float array -> int -> int array -> int array -> unit
+  = "camlidl_plplot_core_c_plsurf3dl_bytecode" "camlidl_plplot_core_c_plsurf3dl"
 external plsvect : float array -> float array -> bool -> unit
   = "camlidl_plplot_core_c_plsvect"
 external plsvpa : float -> float -> float -> float -> unit
