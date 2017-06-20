@@ -1,8 +1,8 @@
 #!@SH_EXECUTABLE@
 # Test subset of c examples for interactive devices.
 #
-# Copyright (C) 2004-2009  Alan W. Irwin
-# Copyright (C) 2004  Andrew Ross
+# Copyright (C) 2004-2017 Alan W. Irwin
+# Copyright (C) 2004 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -38,7 +38,24 @@ for index in $INDEX; do
     if [ "$verbose_test" ] ; then
 	echo "x${index}${lang}"
     fi
-    $DEBUG_CMD "$cdir"/x${index}${lang} -dev $device -np \
+
+    NP_OPTION=-np
+    if [ "@PAUSE_CERTAIN_INTERACTIVE_DEVICES@" = "ON" ] ; then
+	# Both the wxwidgets and wingcc devices currently render a
+	# blank plot when the -np option is used.  Until that device
+	# issue is fixed, i.e., those devices render the actual plot
+	# rather than a blank when -np is specified, provide the
+	# PAUSE_CERTAIN_INTERACTIVE_DEVICES option (normally OFF) so
+	# you can actually see the plot being rendered for interactive
+	# tests of these devices at the expense of much more
+	# interaction required (e.g., hitting the "enter" key) to get
+	# through the plot.
+	if [ "$device" = "wxwidgets" -o "$device" = "wingcc" ] ; then
+	    NP_OPTION=
+	fi
+    fi
+
+    $DEBUG_CMD "$cdir"/x${index}${lang} -dev $device $NP_OPTION \
 	2> test.error >| "${OUTPUT_DIR}"/x${index}${lang}_${device}.txt
     # Look for any status codes (segfaults, plexit) from the examples
     # themselves.

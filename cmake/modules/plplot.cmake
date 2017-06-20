@@ -19,6 +19,13 @@
 
 # Module for determining all configuration variables for PLplot.
 
+# The "certain devices" I have in mind at the moment are wxwidgets and wingcc since both
+# of those devices simply show a blank screen rather than the plot actively being rendered when -np is
+# used.  So once those -np issues are fixed for wxwidgets and wingcc, this option will no longer
+# be necessary.
+
+option(PAUSE_CERTAIN_INTERACTIVE_DEVICES "Experimental option to drop the -np option for interactive tests of certain devices where -np is currently not implemented well" OFF)
+
 option(ADD_SPECIAL_CONSISTENCY_CHECKING "Add extra source-tree consistency checking targets that require special tools" OFF)
 
 option(DROP_GTK_PLUS_2_BUILDS "Drop builds of gtk+2-only targets that clash with gtk+3 dependencies" OFF)
