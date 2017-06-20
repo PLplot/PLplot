@@ -221,83 +221,12 @@ if(ENABLE_wxwidgets)
     # Permanently enable the three named semaphores approach which should
     # work on all platforms.
     set(PL_WXWIDGETS_IPC3 ON CACHE BOOL "Use the three-semaphores approach for wxwidgets IPC" FORCE)
-    # Unlike named semaphores, unnamed semaphores are not supported on all POSIX platforms and
-    # are also not supported on Windows.  Therefore permanently disable this variant of the
-    # three semapharoes approach.
-    set(PL_HAVE_UNNAMED_POSIX_SEMAPHORES OFF CACHE BOOL "Use unnamed semaphores for wxwidgets IPC" FORCE)
 
     if(0)
     # This option works well on Linux (except for problems with locate mode that also appear
     # in slightly different form when PL_WXWIDGETS_IPC3 is OFF).  So after that issue is fixed
     # and further testing occurs on Windows, the experimental "moniker" should be dropped.
     option(PL_WXWIDGETS_IPC3 "Experimental option to use the three-semaphores approach for wxwidgets IPC" OFF)
-    if(PL_WXWIDGETS_IPC3 AND NOT WIN32)
-      # Unnamed POSIX semaphores appear to work fine on Linux, but
-      # they are an optional POSIX standard which is known to be
-      # unimplemented on Mac OS X (and presumably other proprietary
-      # Unix systems).  These type of semaphores are also not
-      # supported on Windows.  (Well, there is the POSIX threads for Windows
-      # project, but unnamed semaphores only supported in that case
-      # for shared threads and not shared memory according to
-      # <https://www.sourceware.org/pthreads-win32/manual/sem_init.html>
-
-      if(NOT DEFINED PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
-	message(STATUS "Check for unnamed POSIX semaphores")
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Check_unnamed_posix_semaphores.c "
-#include <semaphore.h>
-// Test that sem_init and sem_destroy (API exclusively used for unnamed POSIX
-// semaphores) both work.  This test is for the shared thread case (where second
-// argument of sem_init must be 0) since that test is much easier to implement
-// than the shared memory case.  N.B. Our build system assumes that if the shared
-// threads case works, the shared memory case (which is the only
-// cased used by PLplot code) will also work.
-
-// Must be global variable for the shared threads case.
-sem_t semaphore;
-
-// main must return 1 on success and 0 on failure
-int
-main(void)
-{
-     // Return value not necessarily defined to be zero on success
-     // on some POSIX platforms (ugh!), but must be defined (to -1)
-     // on failure for all POSIX platforms.  So test only for failure case.
-     if( sem_init(&semaphore, 0, 0) != 0 || sem_destroy(&semaphore) != 0 )
-         return 0;
-     else
-         return 1;
-}
-	  ")
-	try_run(RUN_RESULT COMPILE_RESULT
-	  ${CMAKE_BINARY_DIR}
-	  ${CMAKE_CURRENT_BINARY_DIR}/Check_unnamed_posix_semaphores.c
-	  # N.B. linking this way might only work on Linux.
-	  LINK_LIBRARIES "-pthread"
-	  OUTPUT_VARIABLE OUTPUT
-	  )
-	#message(STATUS "COMPILE_RESULT = ${COMPILE_RESULT}")
-	#message(STATUS "RUN_RESULT = ${RUN_RESULT}")
-	if(COMPILE_RESULT AND NOT RUN_RESULT MATCHES "FAILED_TO_RUN" AND RUN_RESULT)
-	  set(PL_HAVE_UNNAMED_POSIX_SEMAPHORES ON)
-	else(COMPILE_RESULT AND NOT RUN_RESULT MATCHES "FAILED_TO_RUN" AND RUN_RESULT)
-	  set(PL_HAVE_UNNAMED_POSIX_SEMAPHORES OFF)
-	endif(COMPILE_RESULT AND NOT RUN_RESULT MATCHES "FAILED_TO_RUN" AND RUN_RESULT)
-
-	if(PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
-	  message(STATUS "Check for unnamed POSIX semaphores - found")
-	  file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeOutput.log
-	    "Determining whether unnamed POSIX semaphores are supported succeeded with "
-	    "the following output:\n${OUTPUT}\n\n"
-	    )
-	else(PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
-	  message(STATUS "Check for unnamed POSIX semaphores - not found")
-	  file(APPEND ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeError.log
-	    "Determining whether unnamed POSIX semaphores are supported failed with "
-	    "the following output:\n${OUTPUT}\n\n"
-	    )
-	endif(PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
-      endif(NOT DEFINED PL_HAVE_UNNAMED_POSIX_SEMAPHORES)
-    endif(PL_WXWIDGETS_IPC3 AND NOT WIN32)
     endif(0)
     set(wxdemo_name wxPLplotDemo)
     if((PLD_wxwidgets OR PLD_wxpng) AND PLPLOT_WX_DEBUG_OUTPUT AND PLPLOT_WX_NANOSEC)

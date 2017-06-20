@@ -101,12 +101,6 @@ struct MemoryMapHeader
 // data areas to be transferred under three-semaphore control.
 struct shmbuf
 {
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-    // control data
-    sem_t           wsem;             // Writer semaphore
-    sem_t           rsem;             // Reader semaphore
-    sem_t           tsem;             // Transmit semaphore
-#endif
     size_t          nbytes;           // Total number of data bytes to be transferred
     // header data to be transferred under three-semaphore control.
     MemoryMapHeader header;
@@ -120,12 +114,6 @@ public:
     // Default constructor: Initialize m_wsem, m_rsem, and m_tsem to
     // NULL to mark those as invalid semaphore locations.
     PLThreeSemaphores();
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-    // Update the m_wsem, m_rsem, and m_tsem locations and
-    // conditionally (when mustExist is false) initialize those
-    // locations as semaphores.
-    void initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist );
-#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
       // Named semaphores.
       // Create three semaphore names from basename, and open and (only
       // on creation which happens automatically for both the Windows
@@ -133,7 +121,6 @@ public:
       // semaphores with the read and write semaphores initially blocked
       // and the transmit semaphore initially unblocked.
     void initializeToValid( const char * baseName );
-#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
        // call initializeToInvalid.
     ~PLThreeSemaphores();
     // If the m_wsem, m_rsem, and m_tsem locations are non-NULL
@@ -171,11 +158,6 @@ private:
     // cast to sem_t *__!  So here is the alternative plan we are using:
     // m_wsem, m_rsem, and m_tsem should always be NULL unless the non-NULL
     // locations they point to are properly initialized semaphores.
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-    sem_t * m_wsem;
-    sem_t *m_rsem;
-    sem_t *m_tsem;
-#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 #define PL_SEMAPHORE_NAME_LENGTH    250 // Maximum length excluding terminating NULL byte
     char m_wsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
     char m_rsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
@@ -191,7 +173,6 @@ private:
     sem_t *m_rsem;
     sem_t *m_tsem;
 #endif // #ifdef WIN32
-#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 };
 
 #endif //#ifdef PL_WXWIDGETS_IPC3
@@ -210,14 +191,7 @@ public:
 #ifdef PL_WXWIDGETS_IPC3
     char *getBuffer() { return ( (shmbuf *) m_buffer )->data; }
     MemoryMapHeader *getHeader() { return &( ( (shmbuf *) m_buffer )->header ); }
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-    sem_t *getWriteSemaphore() { return &( ( (shmbuf *) m_buffer )->wsem ); }
-    sem_t *getReadSemaphore() { return &( ( (shmbuf *) m_buffer )->rsem ); }
-    sem_t *getTransmitSemaphore() { return &( ( (shmbuf *) m_buffer )->tsem ); }
-    void initializeSemaphoresToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist ) { m_threeSemaphores.initializeToValid( wsem, rsem, tsem, mustExist ); }
-#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     void initializeSemaphoresToValid( const char *baseName ) { m_threeSemaphores.initializeToValid( baseName ); }
-#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     size_t *getTotalDataBytes() { return &( ( (shmbuf *) m_buffer )->nbytes ); }
     size_t getSize() { return PL_SHARED_ARRAY_SIZE; }
     void transmitBytes( bool ifHeader, const void *src, size_t n );

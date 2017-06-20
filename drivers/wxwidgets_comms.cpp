@@ -32,49 +32,6 @@ PLThreeSemaphores::PLThreeSemaphores()
     m_tsem = NULL;
 }
 
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-// Update the m_wsem, m_rsem, and m_tsem locations and
-// conditionally (when mustExist is false) initialize those
-// locations as semaphores.
-void PLThreeSemaphores::initializeToValid( sem_t *wsem, sem_t *rsem, sem_t *tsem, bool mustExist )
-{
-    if ( wsem == NULL || rsem == NULL || tsem == NULL )
-        throw ( "PLThreeSemaphores::initializeToValid: the requested sem_t * arguments must be non-NULL." );
-
-    if ( !mustExist )
-    {
-        // Check the current semaphores are not valid.
-        if ( areSemaphoresValid() )
-            throw ( "PLThreeSemaphores::initializeToValid, mustExist false: attempt to initialize already valid semaphores" );
-        m_wsem = wsem;
-        m_rsem = rsem;
-        m_tsem = tsem;
-        // Middle argument of 1 ==> semaphore resident in shared memory.
-        // Last argument ==> Both read and write semaphores initially blocked, transmit semaphore
-        // initially unblocked.
-        if ( sem_init( m_wsem, 1, 0 ) || sem_init( m_rsem, 1, 0 ) || sem_init( m_tsem, 1, 1 ) )
-            throw ( "PLThreeSemaphores::initializeToValid, mustExist false: sem_init failed for at least one of the three semaphores" );
-    }
-    else
-    {
-        m_wsem = wsem;
-        m_rsem = rsem;
-        m_tsem = tsem;
-        int value;
-        // We want to test that these are semaphore locations that
-        // have already been properly initialized in blocked state as above.
-        // Attempt to test that assumption with sem_getvalue, but I
-        // have gdb evidence that at least one OS implementation (that on Linux)
-        // of sem_getvalue does not check that the given location is
-        // a valid semaphore, and it is fairly likely in that case that
-        // you will return a value of 0 so this test is not as rigorous as
-        // it should be.
-        if ( !( sem_getvalue( m_wsem, &value ) == 0 && value == 0 && sem_getvalue( m_rsem, &value ) == 0 && value == 0 && sem_getvalue( m_tsem, &value ) == 0 && value == 1 ) )
-            throw( "PLThreeSemaphores::initializeToValid, mustExist true: at least one semaphore not valid or not set at correct initial value" );
-    }
-}
-
-#else // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 // Named semaphores.
 // Create three semaphore names from basename, and open and (only
 // on creation which happens automatically for both the Windows
@@ -110,7 +67,6 @@ void PLThreeSemaphores::initializeToValid( const char * baseName )
     m_tsem = sem_open( m_tsemName, O_CREAT, S_IRWXU, 1 );
 #endif // #ifdef WIN32
 }
-#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 
 // Only destructor
 PLThreeSemaphores::~PLThreeSemaphores()
@@ -126,14 +82,6 @@ void PLThreeSemaphores::initializeToInvalid()
 {
     if ( areSemaphoresValid() )
     {
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-        if ( sem_destroy( m_wsem ) )
-            throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on write semaphore" );
-        if ( sem_destroy( m_rsem ) )
-            throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on read semaphore" );
-        if ( sem_destroy( m_tsem ) )
-            throw( "PLThreeSemaphores::initializeToInvalid: sem_destroy failed on transmit semaphore" );
-#else   // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
 #ifdef WIN32
         // Windows named semaphores.
         if ( m_wsem )
@@ -164,7 +112,6 @@ void PLThreeSemaphores::initializeToInvalid()
 
 #endif // #ifdef WIN32
 
-#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     }
     m_wsem = NULL;
     m_rsem = NULL;

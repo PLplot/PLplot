@@ -1693,11 +1693,7 @@ void wxPLDevice::SetupMemoryMap()
 
 #ifdef PL_WXWIDGETS_IPC3
         // Should only be executed once per valid Memory map before wxPLViewer is launched.
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-        m_outputMemoryMap.initializeSemaphoresToValid( m_outputMemoryMap.getWriteSemaphore(), m_outputMemoryMap.getReadSemaphore(), m_outputMemoryMap.getTransmitSemaphore(), false );
-#else   // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
         m_outputMemoryMap.initializeSemaphoresToValid( mapName );
-#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
        //zero out the reserved area
         m_header.viewerOpenFlag = 0;
         m_header.locateModeFlag = 0;

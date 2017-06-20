@@ -67,11 +67,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         if ( m_memoryMap.isValid() )
         {
 #ifdef PL_WXWIDGETS_IPC3
-#ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-            m_memoryMap.initializeSemaphoresToValid( m_memoryMap.getWriteSemaphore(), m_memoryMap.getReadSemaphore(), m_memoryMap.getTransmitSemaphore(), true );
-#else       // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-            m_memoryMap.initializeSemaphoresToValid( file.mb_str() );
-#endif // #ifdef PL_HAVE_UNNAMED_POSIX_SEMAPHORES
+	    m_memoryMap.initializeSemaphoresToValid( file.mb_str() );
 
 #else           // #ifdef PL_WXWIDGETS_IPC3
             wxString mutexName = file + wxT( "mut" );
