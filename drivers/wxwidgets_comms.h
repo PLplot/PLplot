@@ -229,15 +229,14 @@ public:
 private:
 #ifdef WIN32
     HANDLE m_mapFile;
-#elif defined ( PL_WXWIDGETS_IPC3 )
-    int m_mapFile;
-    char * m_name;
-    // instantiate m_threeSemaphores private object (with default
-    // constructor) when PLMemoryMap is instantiated.
-    PLThreeSemaphores m_threeSemaphores;
 #else
     int m_mapFile;
     char * m_name;
+#endif
+#ifdef PL_WXWIDGETS_IPC3
+    // instantiate m_threeSemaphores private object (with default
+    // constructor) when PLMemoryMap is instantiated.
+    PLThreeSemaphores m_threeSemaphores;
 #endif
     // Size of shared memory buffer
     size_t m_size;
