@@ -1,7 +1,7 @@
 
 #=============================================================================
 # Copyright 2002-2009 Kitware, Inc.
-# Copyright 2015 Alan W. Irwin
+# Copyright 2015-2017 Alan W. Irwin
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -37,11 +37,11 @@
 # which project these Ada modules are distributed with and what
 # conventions that project uses for the location of language-support modules.
 # Location if these files are distributed by CMake itself (some day) ....
-#set(CMAKE_Ada_MODULES ${CMAKE_ROOT}/Modules)
+#set(CMAKE_Ada_MODULES "${CMAKE_ROOT}/Modules")
 # Location if these files are distributed by the test_ada project....
-set(CMAKE_Ada_MODULES ${CMAKE_SOURCE_DIR}/cmake/Modules)
+set(CMAKE_Ada_MODULES "${CMAKE_SOURCE_DIR}/cmake/Modules")
 # Location if these files are distributed by the PLplot project....
-#set(CMAKE_Ada_MODULES ${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake)
+#set(CMAKE_Ada_MODULES "${CMAKE_SOURCE_DIR}/cmake/modules/language_support/cmake")
 
 # determine the compiler to use for Ada programs
 # NOTE, a generator may set CMAKE_Ada_COMPILER before

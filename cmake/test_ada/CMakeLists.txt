@@ -5,11 +5,11 @@
 # MAINTENANCE
 # Use same minimum version for all platforms as the non-Linux platform minimum adopted for
 # the PLplot project.
-cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
 
 # Before the project command must specify the location where
 # the test_ada project looks for CMake Ada language support files.
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
 # Add C to list of languages enabled to work around some issues with
 # CMake language support for Ada.  CMake uses compiler introspection

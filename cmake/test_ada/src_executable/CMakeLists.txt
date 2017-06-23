@@ -36,14 +36,14 @@ if(BUILD_TEST)
       hello
       PROPERTIES
       LINK_FLAGS
-      "-aI${CMAKE_CURRENT_SOURCE_DIR} -aI${CMAKE_SOURCE_DIR}/src_lib -aL${CMAKE_BINARY_DIR}/src_lib/CMakeFiles/hello_1.dir"
+      "\"-aI${CMAKE_CURRENT_SOURCE_DIR}\" \"-aI${CMAKE_SOURCE_DIR}/src_lib\" \"-aL${CMAKE_BINARY_DIR}/src_lib/CMakeFiles/hello_1.dir\""
       )
   else(CORE_BUILD)
     set_target_properties(
       hello
       PROPERTIES
       LINK_FLAGS
-      "-aI${CMAKE_CURRENT_SOURCE_DIR} -aI${ADA_INCLUDE_DIR} -aL${ADA_LIB_DIR}"
+      "\"-aI${CMAKE_CURRENT_SOURCE_DIR}\" \"-aI${ADA_INCLUDE_DIR}\" \"-aL${ADA_LIB_DIR}\""
       )
   endif(CORE_BUILD)
   target_link_libraries(hello hello_1)
