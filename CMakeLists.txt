@@ -96,11 +96,10 @@ endif(WIN32 OR CYGWIN)
 
 set(PACKAGE plplot)
 
-# Locations where PLplot cmake build system first looks for cmake modules.
+# Locations where the PLplot build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH
-  ${PROJECT_SOURCE_DIR}/cmake/modules
-  ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
-  ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
+  "${PROJECT_SOURCE_DIR}/cmake/modules"
+  "${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake"
   )
 
 # We need the path to the MinGW/Borland compiler in order to find

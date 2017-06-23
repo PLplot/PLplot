@@ -2,7 +2,7 @@
 ###
 ### Process this file with configure to produce Makefile.examples
 ###
-# Copyright (C) 2002-2016  Alan W. Irwin
+# Copyright (C) 2002-2017  Alan W. Irwin
 # Copyright (C) 2004  Rafael Laboissiere
 # Copyright (C) 2004  Andrew Ross
 #
@@ -23,7 +23,7 @@
 
 SHELL = @SH_EXECUTABLE@
 GNAT_EXECUTABLE_BUILDER = @GNAT_EXECUTABLE_BUILDER@ \
-	-aI@ADA_INCLUDE_DIR@ -aL@ADA_LIB_DIR@
+	"-aI@ADA_INCLUDE_DIR@" "-aL@ADA_LIB_DIR@"
 EXEEXT = @EXEEXT@
 
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@

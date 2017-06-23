@@ -430,11 +430,10 @@ else(CORE_BUILD)
   message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
 
   message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
-  # Locations where PLplot cmake build system first looks for cmake modules.
+  # Locations where the PLplot build system first looks for cmake modules.
   set(CMAKE_MODULE_PATH
-    ${PROJECT_SOURCE_DIR}/cmake/modules
-    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
-    ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
+    "${PROJECT_SOURCE_DIR}/cmake/modules"
+    "${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake"
     )
 
   #Configure variables and enable languages as needed.

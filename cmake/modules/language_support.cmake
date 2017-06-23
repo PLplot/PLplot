@@ -14,20 +14,13 @@ if(ENABLE_workaround_9220)
     #message("DEBUG: language = ${language}")
     # MAINTENANCE of minimum version
     set(text
-      "cmake_minimum_required(VERSION 3.0.2 FATAL_ERROR)
+      "cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
 project(test NONE)
 # Locations where PLplot cmake build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH
-  ${PROJECT_SOURCE_DIR}/cmake/modules
-  ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake
-  ${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-2.8
+  \"${PROJECT_SOURCE_DIR}/cmake/modules\"
+  \"${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake\"
   )
-
-# Need to define CMAKE_PLATFORM_INFO_DIR for all CMake versions less than 2.8.10
-if(NOT CMAKE_PLATFORM_INFO_DIR)
-  set(CMAKE_PLATFORM_INFO_DIR \${CMAKE_BINARY_DIR}\${CMAKE_FILES_DIRECTORY})
-  message(STATUS 'CMAKE_PLATFORM_INFO_DIR = \${CMAKE_PLATFORM_INFO_DIR}')
-endif(NOT CMAKE_PLATFORM_INFO_DIR)
 
 message(STATUS \"CMAKE_GENERATOR = ${CMAKE_GENERATOR}\")
 #enable_language(${language} OPTIONAL)

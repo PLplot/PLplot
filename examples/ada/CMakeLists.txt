@@ -105,9 +105,9 @@ if(BUILD_TEST)
   # indefinitely for future versions of CMake.)
 
   if(CORE_BUILD)
-    set(adalinkflags "-aI${CMAKE_CURRENT_SOURCE_DIR} -aI${CMAKE_SOURCE_DIR}/bindings/ada -aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada.dir")
+    set(adalinkflags "\"-aI${CMAKE_CURRENT_SOURCE_DIR}\" \"-aI${CMAKE_SOURCE_DIR}/bindings/ada\" \"-aL${CMAKE_BINARY_DIR}/bindings/ada/CMakeFiles/plplotada.dir\"")
   else(CORE_BUILD)
-    set(adalinkflags "-aI${CMAKE_CURRENT_SOURCE_DIR} -aI${ADA_INCLUDE_DIR} -aL${ADA_LIB_DIR}")
+    set(adalinkflags "\"-aI${CMAKE_CURRENT_SOURCE_DIR}\" \"-aI${ADA_INCLUDE_DIR}\" \"-aL${ADA_LIB_DIR}\"")
   endif(CORE_BUILD)
 
   set(ada_extra_clean_files)
