@@ -5,7 +5,7 @@
 # MAINTENANCE
 # Use same minimum version for all platforms as the non-Linux platform minimum adopted for
 # the PLplot project.
-cmake_minimum_required(VERSION 3.3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
 
 project(test_fortran Fortran)
 
