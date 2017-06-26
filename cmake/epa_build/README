@@ -78,14 +78,15 @@ throughout this file) would be happy to accept patches to make that so
 software so until I receive such patches, the instructions below refer
 only to free software toolchains.
 
-1. Install latest MinGW/MSYS using the automatic installer
+1. Install MinGW/MSYS using the automatic installer
 
-Use the latest automatic installer (currently
-mingw-get-inst-20120426.exe which can be obtained from
+(These notes are for my ancient 4.7.2 version snapshot of MinGW/MSYS.  Later versions
+did not work so well for me so I stuck with this snapshot, but others may want to
+try the latest MinGW/MSYS.)  I downloaded
 http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/mingw-get-inst-20120426/).
 Specify obtaining the latest updates, all relevant compilers,
 (everythiing except objc) and also specify the MSYS development
-software.  This should install, for example, version 4.7.2 of gcc,
+software.  This installed version 4.7.2 of gcc,
 g++, Ada, and gfortran.
 
 2. Downgrade one component of MSYS.
@@ -114,9 +115,13 @@ the automatic installer.
 
 mingw-get.exe --recursive install msys-unzip
 
-4. Download a recent cmake.exe version from
-http://www.cmake.org/files.  I am currently using
-v2.8/cmake-2.8.12.1-win32-x86.zip.  Unpack this using the unzip
+4. Download a recent cmake.exe version from Kitware.
+I am currently using
+export CMAKE_MAJOR_VERSION=3.8
+export CMAKE_VERSION=3.8.2
+
+"http://www.cmake.org/files/v$CMAKE_MAJOR_VERSION/cmake-$CMAKE_VERSION-win32-x86.zip"
+Unpack this using the unzip
 command you just installed and put cmake.exe on your PATH.
 
 5. [OPTIONAL] Copy the MinGW-4.7.2/msys/1.0/bin directory to
@@ -190,10 +195,10 @@ II. Non-Cygwin Windows platforms:
 * MinGW/MSYS for the Wine version of Windows
 
 Tailor the indicated values (which are appropriate for my particular
-Wine system) in setup_mingw_msys_wine_toolchain and
-setup/setup_msys_makefiles for your own system.  Then execute something
-similar to the following from Linux to get into the bash.exe shell
-on Wine:
+Wine system) in setup/setup_mingw_msys_wine_toolchain and
+setup/setup_msys_makefiles for your own system.  Then execute
+something similar to the following from Linux to get into the bash.exe
+shell on Wine:
 
 wineserver -p
 nice -19 wineconsole --backend=curses MinGW-4.7.2/msys/1.0/bin/bash.exe
@@ -234,113 +239,12 @@ I. Unix platforms
 
 * Linux
 
-Note that setup_linux_makefiles (which needs to be tailored by each
+N.B. setup/setup_linux_makefiles (which needs to be tailored by each
 individual who uses epa_build) sets up all the important environment
-variables listed above.
+variables used below.
 
-A. [OPTIONAL] build necessary additional buildtools whose versions you
-prefer compared to the versions available on your Linux distro.
-
-# Insure you start with an empty build tree and vacant install tree
-# Set <Build tree prefix> to any convenient directory under your control
-# where you would like build results to be collected.
-mkdir -p <Build tree prefix>/build_dir-linux_buildtools
-rm -rf <Build tree prefix>/build_dir-linux_buildtools/* ${INSTALL_PREFIX}_buildtools
-cd <Build tree prefix>/build_dir-linux_buildtools
-
-# N.B. The epa_build system sets the CMake cache variable
-# NUMBER_PARALLEL_JOBS to 4 by default which is suitable for most
-# entry-level PC's.  However, users with a high-level computer with
-# more than say 2 cpu's may wish to increase this cache value by,
-# e.g., setting the cmake option
-# -DNUMBER_PARALLEL_JOBS:STRING=<some integer value larger than 4>
-# to make efficient use of all those different cpu's.
-
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}_buildtools -DBUILD_THE_BUILDTOOLS=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
-
-# Check cmake.out for any errors
-less cmake.out
-
-# Figure out which buildtools you want to build
-${BUILD_COMMAND} help
-
-# I recommend building all of them on Linux.
-${BUILD_COMMAND} build_all >& build_all.out
-
-# Check build_all.out for any errors
-less build_all.out
-
-B. Build and test a lite version of PLplot (without building or using
-major soft dependencies such as pango/cairo, Qt4, and wxwidgets)
-and [OPTIONAL] a fully configured PLplot version (where currently
-pango/cairo, wxwidgets, and Qt4 are built and used and the system
-version of octave is used).
-
-# Insure you start with an empty build tree and vacant install tree
-# Set <Build tree prefix> to any convenient directory under your control
-# where you would like build results to be collected.
-mkdir -p <Build tree prefix>/build_dir-linux
-rm -rf <Build tree prefix>/build_dir-linux/* ${INSTALL_PREFIX}
-cd <Build tree prefix>/build_dir-linux
-
-
-# N.B. the -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON and
-# -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON options below
-# configure runs of the comprehensive test script (either for the
-# interactive case, the noninteractive case, or both) just after the
-# PLplot source tree is copied.  This test script (familiar to PLplot
-# developers) requires substantial interaction from the user for the
-# interactive case and substantial extra CPU time and ~4GB of extra
-# disk space to run for the noninteractive case.  If you prefer only
-# to build and install PLplot without doing any run-time testing of
-# the results do not set these options or else use
-# -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=OFF and
-# -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=OFF
-
-# N.B. The epa_build system sets the CMake cache variable
-# NUMBER_PARALLEL_JOBS to 4 by default which is suitable for most
-# entry-level PC's.  However, users with a high-level computer with
-# more than say 2 cpu's may wish to increase this cache value by,
-# e.g., setting the cmake option
-# -DNUMBER_PARALLEL_JOBS:STRING=<some integer value larger than 4>
-# to make efficient use of all those different cpu's.
-
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
-
-# Check cmake.out for any errors
-less cmake.out
-
-# Figure out which packages you want to build
-${BUILD_COMMAND} help
-
-# Build and test the "lite" version of PLplot.
-
-# Comprehensive interactive checks of PLplot will be performed if
-# you have set -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON above, but
-# that will require substantial interaction from you with those interactive
-# tests that are run.
-
-# Comprehensive noninteractive checks of PLplot will be performed if
-# you have set -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON above, but
-# that will take substantial time and disk space to complete this
-# comprehensive check.
-
-${BUILD_COMMAND} build_plplot_lite >& build_plplot_lite.out
-
-# Check build_plplot_lite.out for any errors
-less build_plplot_lite.out
-
-# Check detailed results from comprehensive tests by looking at the *.out
-# files in
-# epa_build/Source/comprehensive_test_disposeable/shared/output_tree,
-# epa_build/Source/comprehensive_test_disposeable/nondynamic/output_tree, and
-# epa_build/Source/comprehensive_test_disposeable/static/output_tree,
-
-# [OPTIONAL] Build and test the complete version of PLplot.
-${BUILD_COMMAND} build_plplot >& build_plplot.out
-
-# Check build_plplot.out for any errors
-less build_plplot.out
+Follow the generic build instructions below for the optional buildtools
+and one of the ordinary (non buildtool) packages.
 
 * Mac OS X and Cygwin
 
@@ -399,6 +303,119 @@ effort) will be required to get all of the epa_build configurations to
 work for the Windows case, and the success I have achieved with a
 limited group of projects for the plplot_lite case on MinGW/MSYS/Wine
 is a promising start.
+
+Generic epa_build instructions:
+
+A. [OPTIONAL] build necessary additional buildtools whose versions you
+prefer compared to the versions available on your Linux distro.
+
+# Insure you start with an empty build tree and vacant install tree
+# for the buildtools case.
+# Verify these environment variables are set properly since you are
+# using a dangerous command (rm -rf) with them.
+echo ${BUILD_PREFIX}
+echo ${INSTALL_PREFIX}
+mkdir -p ${BUILD_PREFIX}_buildtools
+rm -rf ${BUILD_PREFIX}_buildtools/* ${INSTALL_PREFIX}_buildtools
+cd  ${BUILD_PREFIX}_buildtools
+
+# N.B. The epa_build system sets the CMake cache variable
+# NUMBER_PARALLEL_JOBS to 4 by default which is suitable for most
+# entry-level PC's.  However, users with a high-level computer with
+# more than say 2 cpu's may wish to increase this cache value by,
+# e.g., setting the cmake option
+# -DNUMBER_PARALLEL_JOBS:STRING=<some integer value larger than 4>
+# to make efficient use of all those different cpu's.
+
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=${INSTALL_PREFIX}_buildtools -DBUILD_THE_BUILDTOOLS=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
+
+# Check cmake.out for any errors
+less cmake.out
+
+# Figure out which buildtools you want to build
+${BUILD_COMMAND} help
+
+# For most platforms I recommend building all build tools.
+${BUILD_COMMAND} build_all >& build_all.out
+
+# Check build_all.out for any errors
+less build_all.out
+
+B. Build and test a lite version of PLplot (without building or using
+major soft dependencies such as pango/cairo, Qt4, and wxwidgets)
+and [OPTIONAL] a fully configured PLplot version (where currently
+pango/cairo, wxwidgets, and Qt4 are built and used and the system
+version of octave is used).
+
+# Insure you start with an empty build tree and vacant install tree.
+# Verify these environment variables are set properly since you are
+# using a dangerous command (rm -rf) with them.
+echo ${BUILD_PREFIX}
+echo ${INSTALL_PREFIX}
+mkdir -p ${BUILD_PREFIX}
+rm -rf ${BUILD_PREFIX}/* ${INSTALL_PREFIX}
+cd  ${BUILD_PREFIX}
+
+# N.B. the -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON and
+# -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON options below
+# configure runs of the comprehensive test script (either for the
+# interactive case, the noninteractive case, or both) just after the
+# PLplot source tree is copied.  This test script (familiar to PLplot
+# developers) requires substantial interaction from the user for the
+# interactive case and substantial extra CPU time and ~4GB of extra
+# disk space to run for the noninteractive case.  If you prefer only
+# to build and install PLplot without doing any run-time testing of
+# the results do not set these options or else use
+# -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=OFF and
+# -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=OFF
+
+# N.B. The epa_build system sets the CMake cache variable
+# NUMBER_PARALLEL_JOBS to 4 by default which is suitable for most
+# entry-level PC's.  However, users with a high-level computer with
+# more than say 2 cpu's may wish to increase this cache value by,
+# e.g., setting the cmake option
+# -DNUMBER_PARALLEL_JOBS:STRING=<some integer value larger than 4>
+# to make efficient use of all those different cpu's.  On the
+# other hand parallel builds have issues on every Windows platform
+# we have tried (Cygwin, MinGW/MSYS, and MinGW-w64/MSYS2) so for
+# those casees set -DNUMBER_PARALLEL_JOBS:STRING=1
+
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -G"$GENERATOR_STRING" -DCMAKE_INSTALL_PREFIX:PATH=$INSTALL_PREFIX -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON $EPA_BUILD_SOURCE_PATH >& cmake.out
+
+# Check cmake.out for any errors
+less cmake.out
+
+# Figure out which packages you want to build
+${BUILD_COMMAND} help
+
+# Build and test the "lite" version of PLplot.
+
+# Comprehensive interactive checks of PLplot will be performed if
+# you have set -DCOMPREHENSIVE_PLPLOT_TEST_INTERACTIVE=ON above, but
+# that will require substantial interaction from you with those interactive
+# tests that are run.
+
+# Comprehensive noninteractive checks of PLplot will be performed if
+# you have set -DCOMPREHENSIVE_PLPLOT_TEST_NONINTERACTIVE=ON above, but
+# that will take substantial time and disk space to complete this
+# comprehensive check.
+
+${BUILD_COMMAND} build_plplot_lite >& build_plplot_lite.out
+
+# Check build_plplot_lite.out for any errors
+less build_plplot_lite.out
+
+# Check detailed results from comprehensive tests by looking at the *.out
+# files in
+# epa_build/Source/comprehensive_test_disposeable/shared/output_tree,
+# epa_build/Source/comprehensive_test_disposeable/nondynamic/output_tree, and
+# epa_build/Source/comprehensive_test_disposeable/static/output_tree,
+
+# [OPTIONAL] Build and test the complete version of PLplot.
+${BUILD_COMMAND} build_plplot >& build_plplot.out
+
+# Check build_plplot.out for any errors
+less build_plplot.out
 
 ===============================================================================
 Making good bug reports for epa_build

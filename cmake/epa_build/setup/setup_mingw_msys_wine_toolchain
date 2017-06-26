@@ -4,15 +4,18 @@
 
 # Tailor these values to be appropriate for your local Windows platform.
 
-#CMAKE_VERSION=2.8.12.1
-CMAKE_VERSION=3.0.2
+# The wine account prefix we use as a prefix for everything else
+#WINE_ACCOUNT_PREFIX=/z/home/wine/newstart
+WINE_ACCOUNT_PREFIX=/z/home/wine/wine_staging
+
+CMAKE_VERSION=3.8.2
 
 # This is the downloaded version we are testing rather than a bootstrapped
 # version.
-CMAKE_PATH=/z/home/wine/newstart/cmake-${CMAKE_VERSION}-win32-x86/bin
+CMAKE_PATH=$WINE_ACCOUNT_PREFIX/cmake-${CMAKE_VERSION}-win32-x86/bin
 
 MINGW_VERSION=4.7.2
-MINGW_PREFIX=/z/home/wine/newstart/MinGW-$MINGW_VERSION
+MINGW_PREFIX=$WINE_ACCOUNT_PREFIX/MinGW-$MINGW_VERSION
 
 # MinGW gcc, g++, and gfortran flags you might want to tailor to
 # different values.
@@ -22,20 +25,26 @@ export FFLAGS='-O3 -Wuninitialized'
 
 # Note $WINEVERSION propagates as an environment
 # variable from the Linux to Wine environment.
-BUILDTOOLS_PREFIX=/z/home/wine/newstart/build_script/install-${WINEVERSION}_buildtools
+BUILDTOOLS_PREFIX=$WINE_ACCOUNT_PREFIX/build_results/install-${WINEVERSION}_buildtools
 
 # Directory where python.exe can be found
-PYTHON_PATH=/z/home/wine/newstart/python/python-2.7.5
+PYTHON_PATH=$WINE_ACCOUNT_PREFIX/python/install_anaconda_4.2.0
 
 # Directory for top of source tree for epa_build
 export EPA_BUILD_SOURCE_PATH=/z/home/software/plplot/HEAD/plplot.git/cmake/epa_build
+
+# Directory prefix for Wine installation
+# Prefix of my own wine build
+#WINE_INSTALL_PREFIX=/z/home/wine/wine_build/install-$WINEVERSION
+# Prefix for the wine-staging-dev package
+WINE_INSTALL_PREFIX=/z/opt/wine-staging
 
 # End of tailored values.
 
 # For MinGW on Wine, set up CMAKE_INCLUDE_PATH to find the
 # the MinGW, MSYS, and standard system headers.
 # N.B. $MINGW_PREFIX/msys/1.0/include is equivalent to /usr/include on bash.
-export CMAKE_INCLUDE_PATH=$MINGW_PREFIX/msys/1.0/include:$MINGW_PREFIX/include:$MINGW_PREFIX/lib/gcc/mingw32/$MINGW_VERSION/include:/z/home/wine/wine_build/install-$WINEVERSION/include/wine/msvcrt:/z/home/wine/wine_build/install-$WINEVERSION/include/wine/windows
+export CMAKE_INCLUDE_PATH=$MINGW_PREFIX/msys/1.0/include:$MINGW_PREFIX/include:$MINGW_PREFIX/lib/gcc/mingw32/$MINGW_VERSION/include:$WINE_INSTALL_PREFIX/include/wine/msvcrt:$WINE_INSTALL_PREFIX/include/wine/windows
 
 # For MinGW on Wine, normally no help is required to find mingw, msys,
 # or wine libraries because the appropriate dll's are on the PATH.
@@ -62,4 +71,4 @@ PATH=$CMAKE_PATH:$PATH
 PATH=$PYTHON_PATH:$PATH
 PATH=$MINGW_PREFIX/bin/:$PATH
 
-export PKG_CONFIG_PATH=/z/home/wine/newstart/MinGW-4.7.2/msys/1.0/lib/pkgconfig:$BUILDTOOLS_PREFIX/share/pkgconfig:$BUILDTOOLS_PREFIX/lib/pkgconfig
+export PKG_CONFIG_PATH=$WINE_ACCOUNT_PREFIX/MinGW-4.7.2/msys/1.0/lib/pkgconfig:$BUILDTOOLS_PREFIX/share/pkgconfig:$BUILDTOOLS_PREFIX/lib/pkgconfig

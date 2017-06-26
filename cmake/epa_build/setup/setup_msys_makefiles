@@ -4,8 +4,9 @@
 
 source setup_mingw_msys_wine_toolchain
 
-# Tailor this install location for "MSYS Makefiles" builds to your local needs:
-export INSTALL_PREFIX=/z/home/wine/newstart/build_script/install-$WINEVERSION
+# Tailor these install prefixes for "MSYS Makefiles" builds to your local needs:
+export INSTALL_PREFIX=$WINE_ACCOUNT_PREFIX/build_results/install-$WINEVERSION
+export BUILD_PREFIX=$WINE_ACCOUNT_PREFIX/build_results/build_dir-$WINEVERSION
 
 # End of tailored values.
 

@@ -3,7 +3,7 @@
 # below this one using ExternalProject_Add commands configured with
 # the appropriate build, test, and dependency information.
 
-# Copyright (C) 2013-2015 Alan W. Irwin
+# Copyright (C) 2013-2017 Alan W. Irwin
 
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -429,8 +429,12 @@ else(BUILD_THE_BUILDTOOLS)
     # qt4_lite
     qt5_lite
     freetype
-    octave_lite
     )
+  if(NOT MSYS_PLATFORM)
+    # octave_lite install depends on lapack_blas install with
+    # build tools but that only available for the current case:
+    list(APPEND subdirectories_LIST octave_lite)
+  endif(NOT MSYS_PLATFORM)
 endif(BUILD_THE_BUILDTOOLS)
 
 set_property(GLOBAL PROPERTY EPA_started_subdirectories_LIST)
