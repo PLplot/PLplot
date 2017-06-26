@@ -1,225 +1,419 @@
-#.rst:
-# ExternalProject
-# ---------------
-#
-# Create custom targets to build projects in external trees
-#
-# The ``ExternalProject_Add`` function creates a custom target to drive
-# download, update/patch, configure, build, install and test steps of an
-# external project:
-#
-# .. code-block:: cmake
-#
-#  ExternalProject_Add(<name>    # Name for custom target
-#    [DEPENDS projects...]       # Targets on which the project depends
-#    [PREFIX dir]                # Root dir for entire project
-#    [LIST_SEPARATOR sep]        # Sep to be replaced by ; in cmd lines
-#    [TMP_DIR dir]               # Directory to store temporary files
-#    [STAMP_DIR dir]             # Directory to store step timestamps
-#    [EXCLUDE_FROM_ALL 1]        # The "all" target does not depend on this
-#   #--Download step--------------
-#    [DOWNLOAD_NAME fname]       # File name to store (if not end of URL)
-#    [DOWNLOAD_DIR dir]          # Directory to store downloaded files
-#    [DOWNLOAD_COMMAND cmd...]   # Command to download source tree
-#    [DOWNLOAD_NO_PROGRESS 1]    # Disable download progress reports
-#    [CVS_REPOSITORY cvsroot]    # CVSROOT of CVS repository
-#    [CVS_MODULE mod]            # Module to checkout from CVS repo
-#    [CVS_TAG tag]               # Tag to checkout from CVS repo
-#    [SVN_REPOSITORY url]        # URL of Subversion repo
-#    [SVN_REVISION -r<rev>]      # Revision to checkout from Subversion repo
-#    [SVN_USERNAME john ]        # Username for Subversion checkout and update
-#    [SVN_PASSWORD doe ]         # Password for Subversion checkout and update
-#    [SVN_TRUST_CERT 1 ]         # Trust the Subversion server site certificate
-#    [GIT_REPOSITORY url]        # URL of git repo
-#    [GIT_TAG tag]               # Git branch name, commit id or tag
-#    [GIT_SUBMODULES modules...] # Git submodules that shall be updated, all if empty
-#    [HG_REPOSITORY url]         # URL of mercurial repo
-#    [HG_TAG tag]                # Mercurial branch name, commit id or tag
-#    [URL /.../src.tgz]          # Full path or URL of source
-#    [URL_HASH ALGO=value]       # Hash of file at URL
-#    [URL_MD5 md5]               # Equivalent to URL_HASH MD5=md5
-#    [TLS_VERIFY bool]           # Should certificate for https be checked
-#    [TLS_CAINFO file]           # Path to a certificate authority file
-#    [TIMEOUT seconds]           # Time allowed for file download operations
-#   #--Update/Patch step----------
-#    [UPDATE_COMMAND cmd...]     # Source work-tree update command
-#    [PATCH_COMMAND cmd...]      # Command to patch downloaded source
-#   #--Configure step-------------
-#    [SOURCE_DIR dir]            # Source dir to be used for build
-#    [CONFIGURE_COMMAND cmd...]  # Build tree configuration command
-#    [CMAKE_COMMAND /.../cmake]  # Specify alternative cmake executable
-#    [CMAKE_GENERATOR gen]       # Specify generator for native build
-#    [CMAKE_GENERATOR_TOOLSET t] # Generator-specific toolset name
-#    [CMAKE_ARGS args...]        # Arguments to CMake command line
-#    [CMAKE_CACHE_ARGS args...]  # Initial cache arguments, of the form -Dvar:string=on
-#   #--Build step-----------------
-#    [BINARY_DIR dir]            # Specify build dir location
-#    [BUILD_COMMAND cmd...]      # Command to drive the native build
-#    [BUILD_IN_SOURCE 1]         # Use source dir for build dir
-#    [BUILD_ALWAYS 1]            # No stamp file, build step always runs
-#   #--Install step---------------
-#    [INSTALL_DIR dir]           # Installation prefix
-#    [INSTALL_COMMAND cmd...]    # Command to drive install after build
-#   #--Test step------------------
-#    [TEST_BEFORE_INSTALL 1]     # Add test step executed before install step
-#    [TEST_AFTER_INSTALL 1]      # Add test step executed after install step
-#    [TEST_COMMAND cmd...]       # Command to drive test
-#   #--Output logging-------------
-#    [LOG_DOWNLOAD 1]            # Wrap download in script to log output
-#    [LOG_UPDATE 1]              # Wrap update in script to log output
-#    [LOG_CONFIGURE 1]           # Wrap configure in script to log output
-#    [LOG_BUILD 1]               # Wrap build in script to log output
-#    [LOG_TEST 1]                # Wrap test in script to log output
-#    [LOG_INSTALL 1]             # Wrap install in script to log output
-#   #--Custom targets-------------
-#    [STEP_TARGETS st1 st2 ...]  # Generate custom targets for these steps
-#    )
-#
-# The ``*_DIR`` options specify directories for the project, with default
-# directories computed as follows.  If the ``PREFIX`` option is given to
-# ``ExternalProject_Add()`` or the ``EP_PREFIX`` directory property is set,
-# then an external project is built and installed under the specified prefix::
-#
-#  TMP_DIR      = <prefix>/tmp
-#  STAMP_DIR    = <prefix>/src/<name>-stamp
-#  DOWNLOAD_DIR = <prefix>/src
-#  SOURCE_DIR   = <prefix>/src/<name>
-#  BINARY_DIR   = <prefix>/src/<name>-build
-#  INSTALL_DIR  = <prefix>
-#
-# Otherwise, if the ``EP_BASE`` directory property is set then components
-# of an external project are stored under the specified base::
-#
-#  TMP_DIR      = <base>/tmp/<name>
-#  STAMP_DIR    = <base>/Stamp/<name>
-#  DOWNLOAD_DIR = <base>/Download/<name>
-#  SOURCE_DIR   = <base>/Source/<name>
-#  BINARY_DIR   = <base>/Build/<name>
-#  INSTALL_DIR  = <base>/Install/<name>
-#
-# If no ``PREFIX``, ``EP_PREFIX``, or ``EP_BASE`` is specified then the
-# default is to set ``PREFIX`` to ``<name>-prefix``.  Relative paths are
-# interpreted with respect to the build directory corresponding to the
-# source directory in which ``ExternalProject_Add`` is invoked.
-#
-# If ``SOURCE_DIR`` is explicitly set to an existing directory the project
-# will be built from it.  Otherwise a download step must be specified
-# using one of the ``DOWNLOAD_COMMAND``, ``CVS_*``, ``SVN_*``, or ``URL``
-# options.  The ``URL`` option may refer locally to a directory or source
-# tarball, or refer to a remote tarball (e.g. ``http://.../src.tgz``).
-#
-# The ``ExternalProject_Add_Step`` function adds a custom step to an
-# external project:
-#
-# .. code-block:: cmake
-#
-#  ExternalProject_Add_Step(<name> <step> # Names of project and custom step
-#    [COMMAND cmd...]        # Command line invoked by this step
-#    [COMMENT "text..."]     # Text printed when step executes
-#    [DEPENDEES steps...]    # Steps on which this step depends
-#    [DEPENDERS steps...]    # Steps that depend on this step
-#    [DEPENDS files...]      # Files on which this step depends
-#    [ALWAYS 1]              # No stamp file, step always runs
-#    [EXCLUDE_FROM_MAIN 1]   # Main target does not depend on this step
-#    [WORKING_DIRECTORY dir] # Working directory for command
-#    [LOG 1]                 # Wrap step in script to log output
-#    )
-#
-# The command line, comment, and working directory of every standard and
-# custom step is processed to replace tokens ``<SOURCE_DIR>``,
-# ``<BINARY_DIR>``, ``<INSTALL_DIR>``, and ``<TMP_DIR>`` with
-# corresponding property values.
-#
-# Any builtin step that specifies a ``<step>_COMMAND cmd...`` or custom
-# step that specifies a ``COMMAND cmd...`` may specify additional command
-# lines using the form ``COMMAND cmd...``.  At build time the commands
-# will be executed in order and aborted if any one fails.  For example::
-#
-#  ... BUILD_COMMAND make COMMAND echo done ...
-#
-# specifies to run ``make`` and then ``echo done`` during the build step.
-# Whether the current working directory is preserved between commands is
-# not defined.  Behavior of shell operators like ``&&`` is not defined.
-#
-# The ``ExternalProject_Get_Property`` function retrieves external project
-# target properties::
-#
-#  ExternalProject_Get_Property(<name> [prop1 [prop2 [...]]])
-#
-# It stores property values in variables of the same name.  Property
-# names correspond to the keyword argument names of
-# ``ExternalProject_Add``.
-#
-# The ``ExternalProject_Add_StepTargets`` function generates custom
-# targets for the steps listed::
-#
-#  ExternalProject_Add_StepTargets(<name> [step1 [step2 [...]]])
-#
-# If ``STEP_TARGETS`` is set then ``ExternalProject_Add_StepTargets`` is
-# automatically called at the end of matching calls to
-# ``ExternalProject_Add_Step``.  Pass ``STEP_TARGETS`` explicitly to
-# individual ``ExternalProject_Add`` calls, or implicitly to all
-# ``ExternalProject_Add`` calls by setting the directory property
-# ``EP_STEP_TARGETS``.
-#
-# If ``STEP_TARGETS`` is not set, clients may still manually call
-# ``ExternalProject_Add_StepTargets`` after calling
-# ``ExternalProject_Add`` or ``ExternalProject_Add_Step``.
-#
-# This functionality is provided to make it easy to drive the steps
-# independently of each other by specifying targets on build command
-# lines.  For example, you may be submitting to a sub-project based
-# dashboard, where you want to drive the configure portion of the build,
-# then submit to the dashboard, followed by the build portion, followed
-# by tests.  If you invoke a custom target that depends on a step
-# halfway through the step dependency chain, then all the previous steps
-# will also run to ensure everything is up to date.
-#
-# For example, to drive configure, build and test steps independently
-# for each ``ExternalProject_Add`` call in your project, write the following
-# line prior to any ``ExternalProject_Add`` calls in your ``CMakeLists.txt``
-# file::
-#
-#  set_property(DIRECTORY PROPERTY EP_STEP_TARGETS configure build test)
+# Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
+# file Copyright.txt or https://cmake.org/licensing for details.
 
-#=============================================================================
-# Copyright 2008-2013 Kitware, Inc.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-#
-# * Redistributions of source code must retain the above copyright
-#   notice, this list of conditions and the following disclaimer.
-#
-# * Redistributions in binary form must reproduce the above copyright
-#   notice, this list of conditions and the following disclaimer in the
-#   documentation and/or other materials provided with the distribution.
-#
-# * Neither the names of Kitware, Inc., the Insight Software Consortium,
-#   nor the names of their contributors may be used to endorse or promote
-#   products derived from this software without specific prior written
-#   permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#[=======================================================================[.rst:
+ExternalProject
+---------------
+
+Create custom targets to build projects in external trees
+
+.. command:: ExternalProject_Add
+
+  The ``ExternalProject_Add`` function creates a custom target to drive
+  download, update/patch, configure, build, install and test steps of an
+  external project::
+
+   ExternalProject_Add(<name> [<option>...])
+
+  General options are:
+
+  ``DEPENDS <projects>...``
+    Targets on which the project depends
+  ``PREFIX <dir>``
+    Root dir for entire project
+  ``LIST_SEPARATOR <sep>``
+    Sep to be replaced by ; in cmd lines
+  ``TMP_DIR <dir>``
+    Directory to store temporary files
+  ``STAMP_DIR <dir>``
+    Directory to store step timestamps
+  ``EXCLUDE_FROM_ALL 1``
+    The "all" target does not depend on this
+
+  Download step options are:
+
+  ``DOWNLOAD_NAME <fname>``
+    File name to store (if not end of URL)
+  ``DOWNLOAD_DIR <dir>``
+    Directory to store downloaded files
+  ``DOWNLOAD_COMMAND <cmd>...``
+    Command to download source tree
+  ``DOWNLOAD_NO_PROGRESS 1``
+    Disable download progress reports
+  ``CVS_REPOSITORY <cvsroot>``
+    CVSROOT of CVS repository
+  ``CVS_MODULE <mod>``
+    Module to checkout from CVS repo
+  ``CVS_TAG <tag>``
+    Tag to checkout from CVS repo
+  ``SVN_REPOSITORY <url>``
+    URL of Subversion repo
+  ``SVN_REVISION -r<rev>``
+    Revision to checkout from Subversion repo
+  ``SVN_USERNAME <username>``
+    Username for Subversion checkout and update
+  ``SVN_PASSWORD <password>``
+    Password for Subversion checkout and update
+  ``SVN_TRUST_CERT 1``
+    Trust the Subversion server site certificate
+  ``GIT_REPOSITORY <url>``
+    URL of git repo
+  ``GIT_TAG <tag>``
+    Git branch name, commit id or tag
+  ``GIT_REMOTE_NAME <name>``
+    The optional name of the remote, default to ``origin``
+  ``GIT_SUBMODULES <module>...``
+    Git submodules that shall be updated, all if empty
+  ``GIT_SHALLOW 1``
+    Tell Git to clone with ``--depth 1``.  Use when ``GIT_TAG`` is not
+    specified or when it names a branch in order to download only the
+    tip of the branch without the rest of its history.
+  ``GIT_PROGRESS 1``
+    Tell Git to clone with ``--progress``.  For large projects, the clone step
+    does not output anything which can make the build appear to have stalled.
+    This option forces Git to output progress information during the clone step
+    so that forward progress is indicated.
+  ``GIT_CONFIG <option>...``
+    Tell Git to clone with ``--config <option>``.  Use additional configuration
+    parameters when cloning the project (``key=value`` as expected by ``git
+    config``).
+  ``HG_REPOSITORY <url>``
+    URL of mercurial repo
+  ``HG_TAG <tag>``
+    Mercurial branch name, commit id or tag
+  ``URL /.../src.tgz [/.../src.tgz]...``
+    Full path or URL(s) of source.  Multiple URLs are allowed as mirrors.
+  ``URL_HASH ALGO=value``
+    Hash of file at URL
+  ``URL_MD5 md5``
+    Equivalent to URL_HASH MD5=md5
+  ``HTTP_USERNAME <username>``
+    Username for download operation
+  ``HTTP_PASSWORD <username>``
+    Password for download operation
+  ``HTTP_HEADER <header>``
+    HTTP header for download operation. Suboption can be repeated several times.
+  ``TLS_VERIFY <bool>``
+    Should certificate for https be checked
+  ``TLS_CAINFO <file>``
+    Path to a certificate authority file
+  ``TIMEOUT <seconds>``
+    Time allowed for file download operations
+  ``DOWNLOAD_NO_EXTRACT 1``
+    Just download the file and do not extract it; the full path to the
+    downloaded file is available as ``<DOWNLOADED_FILE>``.
+
+  Update/Patch step options are:
+
+  ``UPDATE_COMMAND <cmd>...``
+    Source work-tree update command
+  ``UPDATE_DISCONNECTED 1``
+    Never update automatically from the remote repository
+  ``PATCH_COMMAND <cmd>...``
+    Command to patch downloaded source
+
+  Configure step options are:
+
+  ``SOURCE_DIR <dir>``
+    Source dir to be used for build
+  ``SOURCE_SUBDIR <dir>``
+    Path to source CMakeLists.txt relative to ``SOURCE_DIR``
+  ``CONFIGURE_COMMAND <cmd>...``
+    Build tree configuration command
+  ``CMAKE_COMMAND /.../cmake``
+    Specify alternative cmake executable
+  ``CMAKE_GENERATOR <gen>``
+    Specify generator for native build
+  ``CMAKE_GENERATOR_PLATFORM <platform>``
+    Generator-specific platform name
+  ``CMAKE_GENERATOR_TOOLSET <toolset>``
+    Generator-specific toolset name
+  ``CMAKE_ARGS <arg>...``
+    Arguments to CMake command line.
+    These arguments are passed to CMake command line, and can contain
+    arguments other than cache values, see also
+    :manual:`CMake Options <cmake(1)>`. Arguments in the form
+    ``-Dvar:string=on`` are always passed to the command line, and
+    therefore cannot be changed by the user.
+    Arguments may use
+    :manual:`generator expressions <cmake-generator-expressions(7)>`.
+  ``CMAKE_CACHE_ARGS <arg>...``
+    Initial cache arguments, of the form ``-Dvar:string=on``.
+    These arguments are written in a pre-load a script that populates
+    CMake cache, see also :manual:`cmake -C <cmake(1)>`. This allows one to
+    overcome command line length limits.
+    These arguments are :command:`set` using the ``FORCE`` argument,
+    and therefore cannot be changed by the user.
+    Arguments may use
+    :manual:`generator expressions <cmake-generator-expressions(7)>`.
+  ``CMAKE_CACHE_DEFAULT_ARGS <arg>...``
+    Initial default cache arguments, of the form ``-Dvar:string=on``.
+    These arguments are written in a pre-load a script that populates
+    CMake cache, see also :manual:`cmake -C <cmake(1)>`. This allows one to
+    overcome command line length limits.
+    These arguments can be used as default value that will be set if no
+    previous value is found in the cache, and that the user can change
+    later.
+    Arguments may use
+    :manual:`generator expressions <cmake-generator-expressions(7)>`.
+
+  Build step options are:
+
+  ``BINARY_DIR <dir>``
+    Specify build dir location
+  ``BUILD_COMMAND <cmd>...``
+    Command to drive the native build
+  ``BUILD_IN_SOURCE 1``
+    Use source dir for build dir
+  ``BUILD_ALWAYS 1``
+    No stamp file, build step always runs
+  ``BUILD_BYPRODUCTS <file>...``
+    Files that will be generated by the build command but may or may
+    not have their modification time updated by subsequent builds.
+
+  Install step options are:
+
+  ``INSTALL_DIR <dir>``
+    Installation prefix to be placed in the ``<INSTALL_DIR>`` placeholder.
+    This does not actually configure the external project to install to
+    the given prefix.  That must be done by passing appropriate arguments
+    to the external project configuration step, e.g. using ``<INSTALL_DIR>``.
+  ``INSTALL_COMMAND <cmd>...``
+    Command to drive installation of the external project after it has been
+    built.  This only happens at the *build* time of the calling project.
+    In order to install files from the external project alongside the
+    locally-built files, a separate local :command:`install` call must be
+    added to pick the files up from one of the external project trees.
+
+  Test step options are:
+
+  ``TEST_BEFORE_INSTALL 1``
+    Add test step executed before install step
+  ``TEST_AFTER_INSTALL 1``
+    Add test step executed after install step
+  ``TEST_EXCLUDE_FROM_MAIN 1``
+    Main target does not depend on the test step
+  ``TEST_COMMAND <cmd>...``
+    Command to drive test
+
+  Output logging options are:
+
+  ``LOG_DOWNLOAD 1``
+    Wrap download in script to log output
+  ``LOG_UPDATE 1``
+    Wrap update in script to log output
+  ``LOG_CONFIGURE 1``
+    Wrap configure in script to log output
+  ``LOG_BUILD 1``
+    Wrap build in script to log output
+  ``LOG_TEST 1``
+    Wrap test in script to log output
+  ``LOG_INSTALL 1``
+    Wrap install in script to log output
+
+  Steps can be given direct access to the terminal if possible.  With
+  the :generator:`Ninja` generator, this places the steps in the
+  ``console`` :prop_gbl:`pool <JOB_POOLS>`.  Options are:
+
+  ``USES_TERMINAL_DOWNLOAD 1``
+    Give download terminal access.
+  ``USES_TERMINAL_UPDATE 1``
+    Give update terminal access.
+  ``USES_TERMINAL_CONFIGURE 1``
+    Give configure terminal access.
+  ``USES_TERMINAL_BUILD 1``
+    Give build terminal access.
+  ``USES_TERMINAL_TEST 1``
+    Give test terminal access.
+  ``USES_TERMINAL_INSTALL 1``
+    Give install terminal access.
+
+  Other options are:
+
+  ``STEP_TARGETS <step-target>...``
+    Generate custom targets for these steps
+  ``INDEPENDENT_STEP_TARGETS <step-target>...``
+    Generate custom targets for these steps that do not depend on other
+    external projects even if a dependency is set
+
+  The ``*_DIR`` options specify directories for the project, with default
+  directories computed as follows.  If the ``PREFIX`` option is given to
+  ``ExternalProject_Add()`` or the ``EP_PREFIX`` directory property is set,
+  then an external project is built and installed under the specified prefix::
+
+   TMP_DIR      = <prefix>/tmp
+   STAMP_DIR    = <prefix>/src/<name>-stamp
+   DOWNLOAD_DIR = <prefix>/src
+   SOURCE_DIR   = <prefix>/src/<name>
+   BINARY_DIR   = <prefix>/src/<name>-build
+   INSTALL_DIR  = <prefix>
+
+  Otherwise, if the ``EP_BASE`` directory property is set then components
+  of an external project are stored under the specified base::
+
+   TMP_DIR      = <base>/tmp/<name>
+   STAMP_DIR    = <base>/Stamp/<name>
+   DOWNLOAD_DIR = <base>/Download/<name>
+   SOURCE_DIR   = <base>/Source/<name>
+   BINARY_DIR   = <base>/Build/<name>
+   INSTALL_DIR  = <base>/Install/<name>
+
+  If no ``PREFIX``, ``EP_PREFIX``, or ``EP_BASE`` is specified then the
+  default is to set ``PREFIX`` to ``<name>-prefix``.  Relative paths are
+  interpreted with respect to the build directory corresponding to the
+  source directory in which ``ExternalProject_Add`` is invoked.
+
+  If ``SOURCE_SUBDIR`` is set and no ``CONFIGURE_COMMAND`` is specified, the
+  configure command will run CMake using the ``CMakeLists.txt`` located in the
+  relative path specified by ``SOURCE_SUBDIR``, relative to the ``SOURCE_DIR``.
+  If no ``SOURCE_SUBDIR`` is given, ``SOURCE_DIR`` is used.
+
+  If ``SOURCE_DIR`` is explicitly set to an existing directory the project
+  will be built from it.  Otherwise a download step must be specified
+  using one of the ``DOWNLOAD_COMMAND``, ``CVS_*``, ``SVN_*``, or ``URL``
+  options.  The ``URL`` option may refer locally to a directory or source
+  tarball, or refer to a remote tarball (e.g. ``http://.../src.tgz``).
+
+  If ``UPDATE_DISCONNECTED`` is set, the update step is not executed
+  automatically when building the main target. The update step can still
+  be added as a step target and called manually. This is useful if you
+  want to allow one to build the project when you are disconnected from the
+  network (you might still need the network for the download step).
+  This is disabled by default.
+  The directory property ``EP_UPDATE_DISCONNECTED`` can be used to change
+  the default value for all the external projects in the current
+  directory and its subdirectories.
+
+.. command:: ExternalProject_Add_Step
+
+  The ``ExternalProject_Add_Step`` function adds a custom step to an
+  external project::
+
+   ExternalProject_Add_Step(<name> <step> [<option>...])
+
+  Options are:
+
+  ``COMMAND <cmd>...``
+    Command line invoked by this step
+  ``COMMENT "<text>..."``
+    Text printed when step executes
+  ``DEPENDEES <step>...``
+    Steps on which this step depends
+  ``DEPENDERS <step>...``
+    Steps that depend on this step
+  ``DEPENDS <file>...``
+    Files on which this step depends
+  ``BYPRODUCTS <file>...``
+    Files that will be generated by this step but may or may not
+    have their modification time updated by subsequent builds.
+  ``ALWAYS 1``
+    No stamp file, step always runs
+  ``EXCLUDE_FROM_MAIN 1``
+    Main target does not depend on this step
+  ``WORKING_DIRECTORY <dir>``
+    Working directory for command
+  ``LOG 1``
+    Wrap step in script to log output
+  ``USES_TERMINAL 1``
+    Give the step direct access to the terminal if possible.
+
+  The command line, comment, working directory, and byproducts of every
+  standard and custom step are processed to replace tokens ``<SOURCE_DIR>``,
+  ``<SOURCE_SUBDIR>``,  ``<BINARY_DIR>``, ``<INSTALL_DIR>``, and ``<TMP_DIR>``
+  with corresponding property values.
+
+Any builtin step that specifies a ``<step>_COMMAND cmd...`` or custom
+step that specifies a ``COMMAND cmd...`` may specify additional command
+lines using the form ``COMMAND cmd...``.  At build time the commands
+will be executed in order and aborted if any one fails.  For example::
+
+ ... BUILD_COMMAND make COMMAND echo done ...
+
+specifies to run ``make`` and then ``echo done`` during the build step.
+Whether the current working directory is preserved between commands is
+not defined.  Behavior of shell operators like ``&&`` is not defined.
+
+Arguments to ``<step>_COMMAND`` or ``COMMAND`` options may use
+:manual:`generator expressions <cmake-generator-expressions(7)>`.
+
+.. command:: ExternalProject_Get_Property
+
+  The ``ExternalProject_Get_Property`` function retrieves external project
+  target properties::
+
+    ExternalProject_Get_Property(<name> [prop1 [prop2 [...]]])
+
+  It stores property values in variables of the same name.  Property
+  names correspond to the keyword argument names of
+  ``ExternalProject_Add``.
+
+.. command:: ExternalProject_Add_StepTargets
+
+  The ``ExternalProject_Add_StepTargets`` function generates custom
+  targets for the steps listed::
+
+    ExternalProject_Add_StepTargets(<name> [NO_DEPENDS] [step1 [step2 [...]]])
+
+If ``NO_DEPENDS`` is set, the target will not depend on the
+dependencies of the complete project. This is usually safe to use for
+the download, update, and patch steps that do not require that all the
+dependencies are updated and built.  Using ``NO_DEPENDS`` for other
+of the default steps might break parallel builds, so you should avoid,
+it.  For custom steps, you should consider whether or not the custom
+commands requires that the dependencies are configured, built and
+installed.
+
+If ``STEP_TARGETS`` or ``INDEPENDENT_STEP_TARGETS`` is set then
+``ExternalProject_Add_StepTargets`` is automatically called at the end
+of matching calls to ``ExternalProject_Add_Step``.  Pass
+``STEP_TARGETS`` or ``INDEPENDENT_STEP_TARGETS`` explicitly to
+individual ``ExternalProject_Add`` calls, or implicitly to all
+``ExternalProject_Add`` calls by setting the directory properties
+``EP_STEP_TARGETS`` and ``EP_INDEPENDENT_STEP_TARGETS``.  The
+``INDEPENDENT`` version of the argument and of the property will call
+``ExternalProject_Add_StepTargets`` with the ``NO_DEPENDS`` argument.
+
+If ``STEP_TARGETS`` and ``INDEPENDENT_STEP_TARGETS`` are not set,
+clients may still manually call ``ExternalProject_Add_StepTargets``
+after calling ``ExternalProject_Add`` or ``ExternalProject_Add_Step``.
+
+This functionality is provided to make it easy to drive the steps
+independently of each other by specifying targets on build command
+lines.  For example, you may be submitting to a sub-project based
+dashboard, where you want to drive the configure portion of the build,
+then submit to the dashboard, followed by the build portion, followed
+by tests.  If you invoke a custom target that depends on a step
+halfway through the step dependency chain, then all the previous steps
+will also run to ensure everything is up to date.
+
+For example, to drive configure, build and test steps independently
+for each ``ExternalProject_Add`` call in your project, write the following
+line prior to any ``ExternalProject_Add`` calls in your ``CMakeLists.txt``
+file::
+
+ set_property(DIRECTORY PROPERTY EP_STEP_TARGETS configure build test)
+
+.. command:: ExternalProject_Add_StepDependencies
+
+  The ``ExternalProject_Add_StepDependencies`` function add some
+  dependencies for some external project step::
+
+    ExternalProject_Add_StepDependencies(<name> <step> [target1 [target2 [...]]])
+
+  This function takes care to set both target and file level
+  dependencies, and will ensure that parallel builds will not break.
+  It should be used instead of :command:`add_dependencies()` when adding
+  a dependency for some of the step targets generated by
+  ``ExternalProject``.
+#]=======================================================================]
 
 # Pre-compute a regex to match documented keywords for each command.
 math(EXPR _ep_documentation_line_count "${CMAKE_CURRENT_LIST_LINE} - 16")
 file(STRINGS "${CMAKE_CURRENT_LIST_FILE}" lines
      LIMIT_COUNT ${_ep_documentation_line_count}
-     REGEX "^#  (  \\[[A-Z0-9_]+ [^]]*\\] +#.*$|[A-Za-z0-9_]+\\()")
+     REGEX "^\\.\\. command:: [A-Za-z0-9_]+|^  ``[A-Z0-9_]+ .*``$")
 foreach(line IN LISTS lines)
-  if("${line}" MATCHES "^#  ([A-Za-z0-9_]+)\\(")
+  if("${line}" MATCHES "^\\.\\. command:: ([A-Za-z0-9_]+)")
     if(_ep_func)
       set(_ep_keywords_${_ep_func} "${_ep_keywords_${_ep_func}})$")
     endif()
@@ -227,8 +421,8 @@ foreach(line IN LISTS lines)
     #message("function [${_ep_func}]")
     set(_ep_keywords_${_ep_func} "^(")
     set(_ep_keyword_sep)
-  else()
-    string(REGEX REPLACE "^#    \\[([A-Z0-9_]+) .*" "\\1" _ep_key "${line}")
+  elseif("${line}" MATCHES "^  ``([A-Z0-9_]+) .*``$")
+    set(_ep_key "${CMAKE_MATCH_1}")
     #message("  keyword [${_ep_key}]")
     set(_ep_keywords_${_ep_func}
       "${_ep_keywords_${_ep_func}}${_ep_keyword_sep}${_ep_key}")
@@ -240,8 +434,11 @@ if(_ep_func)
 endif()
 
 # Save regex matching supported hash algorithm names.
-set(_ep_hash_algos "MD5|SHA1|SHA224|SHA256|SHA384|SHA512")
+set(_ep_hash_algos "MD5|SHA1|SHA224|SHA256|SHA384|SHA512|SHA3_224|SHA3_256|SHA3_384|SHA3_512")
 set(_ep_hash_regex "^(${_ep_hash_algos})=([0-9A-Fa-f]+)$")
+
+set(_ExternalProject_SELF "${CMAKE_CURRENT_LIST_FILE}")
+get_filename_component(_ExternalProject_SELF_DIR "${_ExternalProject_SELF}" PATH)
 
 function(_ep_parse_arguments f name ns args)
   # Transfer the arguments to this function into target properties for the
@@ -257,7 +454,7 @@ function(_ep_parse_arguments f name ns args)
     set(is_value 1)
 
     if(arg MATCHES "^[A-Z][A-Z0-9_][A-Z0-9_]+$" AND
-        NOT ((arg STREQUAL "${key}") AND (key STREQUAL "COMMAND")) AND
+        NOT (("x${arg}x" STREQUAL "x${key}x") AND ("x${key}x" STREQUAL "xCOMMANDx")) AND
         NOT arg MATCHES "^(TRUE|FALSE)$")
       if(_ep_keywords_${f} AND arg MATCHES "${_ep_keywords_${f}}")
         set(is_value 0)
@@ -307,12 +504,33 @@ define_property(DIRECTORY PROPERTY "EP_STEP_TARGETS" INHERITED
   BRIEF_DOCS
   "List of ExternalProject steps that automatically get corresponding targets"
   FULL_DOCS
+  "These targets will be dependent on the main target dependencies"
   "See documentation of the ExternalProject_Add_StepTargets() function in the "
   "ExternalProject module."
   )
 
+define_property(DIRECTORY PROPERTY "EP_INDEPENDENT_STEP_TARGETS" INHERITED
+  BRIEF_DOCS
+  "List of ExternalProject steps that automatically get corresponding targets"
+  FULL_DOCS
+  "These targets will not be dependent on the main target dependencies"
+  "See documentation of the ExternalProject_Add_StepTargets() function in the "
+  "ExternalProject module."
+  )
 
-function(_ep_write_gitclone_script script_filename source_dir git_EXECUTABLE git_repository git_tag git_submodules src_name work_dir gitclone_infofile gitclone_stampfile)
+define_property(DIRECTORY PROPERTY "EP_UPDATE_DISCONNECTED" INHERITED
+  BRIEF_DOCS "Never update automatically from the remote repo."
+  FULL_DOCS
+  "See documentation of the ExternalProject_Add() function in the "
+  "ExternalProject module."
+  )
+
+function(_ep_write_gitclone_script script_filename source_dir git_EXECUTABLE git_repository git_tag git_remote_name git_submodules git_shallow git_progress git_config src_name work_dir gitclone_infofile gitclone_stampfile tls_verify)
+  if(NOT GIT_VERSION_STRING VERSION_LESS 1.7.10)
+    set(git_clone_shallow_options "--depth 1 --no-single-branch")
+  else()
+    set(git_clone_shallow_options "--depth 1")
+  endif()
   file(WRITE ${script_filename}
 "if(\"${git_tag}\" STREQUAL \"\")
   message(FATAL_ERROR \"Tag for git checkout should not be empty.\")
@@ -337,12 +555,38 @@ if(error_code)
   message(FATAL_ERROR \"Failed to remove directory: '${source_dir}'\")
 endif()
 
+set(git_options)
+
+# disable cert checking if explicitly told not to do it
+set(tls_verify \"${tls_verify}\")
+if(NOT \"x${tls_verify}\" STREQUAL \"x\" AND NOT tls_verify)
+  list(APPEND git_options
+    -c http.sslVerify=false)
+endif()
+
+set(git_clone_options)
+
+set(git_shallow \"${git_shallow}\")
+if(git_shallow)
+  list(APPEND git_clone_options ${git_clone_shallow_options})
+endif()
+
+set(git_progress \"${git_progress}\")
+if(git_progress)
+  list(APPEND git_clone_options --progress)
+endif()
+
+set(git_config \"${git_config}\")
+foreach(config IN LISTS git_config)
+  list(APPEND git_clone_options --config \${config})
+endforeach()
+
 # try the clone 3 times incase there is an odd git clone issue
 set(error_code 1)
 set(number_of_tries 0)
 while(error_code AND number_of_tries LESS 3)
   execute_process(
-    COMMAND \"${git_EXECUTABLE}\" clone \"${git_repository}\" \"${src_name}\"
+    COMMAND \"${git_EXECUTABLE}\" \${git_options} clone \${git_clone_options} --origin \"${git_remote_name}\" \"${git_repository}\" \"${src_name}\"
     WORKING_DIRECTORY \"${work_dir}\"
     RESULT_VARIABLE error_code
     )
@@ -356,8 +600,11 @@ if(error_code)
   message(FATAL_ERROR \"Failed to clone repository: '${git_repository}'\")
 endif()
 
+# Use `git checkout <branch>` even though this risks ambiguity with a
+# local path.  Unfortunately we cannot use `git checkout <tree-ish> --`
+# because that will not search for remote branch names, a common use case.
 execute_process(
-  COMMAND \"${git_EXECUTABLE}\" checkout ${git_tag}
+  COMMAND \"${git_EXECUTABLE}\" \${git_options} checkout ${git_tag}
   WORKING_DIRECTORY \"${work_dir}/${src_name}\"
   RESULT_VARIABLE error_code
   )
@@ -366,7 +613,7 @@ if(error_code)
 endif()
 
 execute_process(
-  COMMAND \"${git_EXECUTABLE}\" submodule init
+  COMMAND \"${git_EXECUTABLE}\" \${git_options} submodule init ${git_submodules}
   WORKING_DIRECTORY \"${work_dir}/${src_name}\"
   RESULT_VARIABLE error_code
   )
@@ -375,7 +622,7 @@ if(error_code)
 endif()
 
 execute_process(
-  COMMAND \"${git_EXECUTABLE}\" submodule update --recursive ${git_submodules}
+  COMMAND \"${git_EXECUTABLE}\" \${git_options} submodule update --recursive --init ${git_submodules}
   WORKING_DIRECTORY \"${work_dir}/${src_name}\"
   RESULT_VARIABLE error_code
   )
@@ -427,7 +674,7 @@ if(error_code)
 endif()
 
 execute_process(
-  COMMAND \"${hg_EXECUTABLE}\" clone \"${hg_repository}\" \"${src_name}\"
+  COMMAND \"${hg_EXECUTABLE}\" clone -U \"${hg_repository}\" \"${src_name}\"
   WORKING_DIRECTORY \"${work_dir}\"
   RESULT_VARIABLE error_code
   )
@@ -463,7 +710,12 @@ endif()
 endfunction()
 
 
-function(_ep_write_gitupdate_script script_filename git_EXECUTABLE git_tag git_submodules git_repository work_dir)
+function(_ep_write_gitupdate_script script_filename git_EXECUTABLE git_tag git_remote_name git_submodules git_repository work_dir)
+  if(NOT GIT_VERSION_STRING VERSION_LESS 1.7.6)
+    set(git_stash_save_options --all --quiet)
+  else()
+    set(git_stash_save_options --quiet)
+  endif()
   file(WRITE ${script_filename}
 "if(\"${git_tag}\" STREQUAL \"\")
   message(FATAL_ERROR \"Tag for git checkout should not be empty.\")
@@ -500,7 +752,7 @@ if(\"\${show_ref_output}\" MATCHES \"refs/remotes/${git_tag}\")
   set(git_remote \"\${CMAKE_MATCH_1}\")
   set(git_tag \"\${CMAKE_MATCH_2}\")
 else()
-  set(git_remote \"origin\")
+  set(git_remote \"${git_remote_name}\")
   set(git_tag \"${git_tag}\")
 endif()
 
@@ -542,7 +794,7 @@ if(error_code OR is_remote_ref OR NOT (\"\${tag_sha}\" STREQUAL \"\${head_sha}\"
     # perform git pull --rebase
     if(need_stash)
       execute_process(
-        COMMAND \"${git_EXECUTABLE}\" stash save --all --quiet
+        COMMAND \"${git_EXECUTABLE}\" stash save ${git_stash_save_options}
         WORKING_DIRECTORY \"${work_dir}\"
         RESULT_VARIABLE error_code
         )
@@ -616,7 +868,7 @@ if(error_code OR is_remote_ref OR NOT (\"\${tag_sha}\" STREQUAL \"\${head_sha}\"
   endif()
 
   execute_process(
-    COMMAND \"${git_EXECUTABLE}\" submodule update --recursive ${git_submodules}
+    COMMAND \"${git_EXECUTABLE}\" submodule update --recursive --init ${git_submodules}
     WORKING_DIRECTORY \"${work_dir}/${src_name}\"
     RESULT_VARIABLE error_code
     )
@@ -630,32 +882,38 @@ endif()
 
 endfunction(_ep_write_gitupdate_script)
 
-function(_ep_write_downloadfile_script script_filename remote local timeout no_progress hash tls_verify tls_cainfo)
+function(_ep_write_downloadfile_script script_filename REMOTE LOCAL timeout no_progress hash tls_verify tls_cainfo userpwd http_headers)
   if(timeout)
-    set(timeout_args TIMEOUT ${timeout})
-    set(timeout_msg "${timeout} seconds")
+    set(TIMEOUT_ARGS TIMEOUT ${timeout})
+    set(TIMEOUT_MSG "${timeout} seconds")
   else()
-    set(timeout_args "# no TIMEOUT")
-    set(timeout_msg "none")
+    set(TIMEOUT_ARGS "# no TIMEOUT")
+    set(TIMEOUT_MSG "none")
   endif()
 
   if(no_progress)
-    set(show_progress "")
+    set(SHOW_PROGRESS "")
   else()
-    set(show_progress "SHOW_PROGRESS")
+    set(SHOW_PROGRESS "SHOW_PROGRESS")
   endif()
 
   if("${hash}" MATCHES "${_ep_hash_regex}")
-    set(hash_args EXPECTED_HASH ${CMAKE_MATCH_1}=${CMAKE_MATCH_2})
+    set(ALGO "${CMAKE_MATCH_1}")
+    string(TOLOWER "${CMAKE_MATCH_2}" EXPECT_VALUE)
   else()
-    set(hash_args "# no EXPECTED_HASH")
+    set(ALGO "")
+    set(EXPECT_VALUE "")
   endif()
+
+  set(TLS_VERIFY_CODE "")
+  set(TLS_CAINFO_CODE "")
+
   # check for curl globals in the project
   if(DEFINED CMAKE_TLS_VERIFY)
-    set(tls_verify "set(CMAKE_TLS_VERIFY ${CMAKE_TLS_VERIFY})")
+    set(TLS_VERIFY_CODE "set(CMAKE_TLS_VERIFY ${CMAKE_TLS_VERIFY})")
   endif()
   if(DEFINED CMAKE_TLS_CAINFO)
-    set(tls_cainfo "set(CMAKE_TLS_CAINFO \"${CMAKE_TLS_CAINFO}\")")
+    set(TLS_CAINFO_CODE "set(CMAKE_TLS_CAINFO \"${CMAKE_TLS_CAINFO}\")")
   endif()
 
   # now check for curl locals so that the local values
@@ -664,92 +922,67 @@ function(_ep_write_downloadfile_script script_filename remote local timeout no_p
   # check for tls_verify argument
   string(LENGTH "${tls_verify}" tls_verify_len)
   if(tls_verify_len GREATER 0)
-    set(tls_verify "set(CMAKE_TLS_VERIFY ${tls_verify})")
+    set(TLS_VERIFY_CODE "set(CMAKE_TLS_VERIFY ${tls_verify})")
   endif()
   # check for tls_cainfo argument
   string(LENGTH "${tls_cainfo}" tls_cainfo_len)
   if(tls_cainfo_len GREATER 0)
-    set(tls_cainfo "set(CMAKE_TLS_CAINFO \"${tls_cainfo}\")")
+    set(TLS_CAINFO_CODE "set(CMAKE_TLS_CAINFO \"${tls_cainfo}\")")
   endif()
 
-  file(WRITE ${script_filename}
-"message(STATUS \"downloading...
-     src='${remote}'
-     dst='${local}'
-     timeout='${timeout_msg}'\")
+  if(userpwd STREQUAL ":")
+    set(USERPWD_ARGS)
+  else()
+    set(USERPWD_ARGS USERPWD "${userpwd}")
+  endif()
 
-${tls_verify}
-${tls_cainfo}
+  set(HTTP_HEADERS_ARGS "")
+  if(NOT http_headers STREQUAL "")
+    foreach(header ${http_headers})
+      set(
+          HTTP_HEADERS_ARGS
+          "HTTPHEADER \"${header}\"\n        ${HTTP_HEADERS_ARGS}"
+      )
+    endforeach()
+  endif()
 
-file(DOWNLOAD
-  \"${remote}\"
-  \"${local}\"
-  ${show_progress}
-  ${hash_args}
-  ${timeout_args}
-  STATUS status
-  LOG log)
-
-list(GET status 0 status_code)
-list(GET status 1 status_string)
-
-if(NOT status_code EQUAL 0)
-  message(FATAL_ERROR \"error: downloading '${remote}' failed
-  status_code: \${status_code}
-  status_string: \${status_string}
-  log: \${log}
-\")
-endif()
-
-message(STATUS \"downloading... done\")
-"
-)
-
+  # Used variables:
+  # * TLS_VERIFY_CODE
+  # * TLS_CAINFO_CODE
+  # * ALGO
+  # * EXPECT_VALUE
+  # * REMOTE
+  # * LOCAL
+  # * SHOW_PROGRESS
+  # * TIMEOUT_ARGS
+  # * TIMEOUT_MSG
+  # * USERPWD_ARGS
+  # * HTTP_HEADERS_ARGS
+  configure_file(
+      "${_ExternalProject_SELF_DIR}/ExternalProject-download.cmake.in"
+      "${script_filename}"
+      @ONLY
+  )
 endfunction()
 
-
-function(_ep_write_verifyfile_script script_filename local hash retries download_script)
+function(_ep_write_verifyfile_script script_filename LOCAL hash)
   if("${hash}" MATCHES "${_ep_hash_regex}")
-    set(algo "${CMAKE_MATCH_1}")
-    string(TOLOWER "${CMAKE_MATCH_2}" expect_value)
-    set(script_content "set(expect_value \"${expect_value}\")
-set(attempt 0)
-set(succeeded 0)
-while(\${attempt} LESS ${retries} OR \${attempt} EQUAL ${retries} AND NOT \${succeeded})
-  file(${algo} \"\${file}\" actual_value)
-  if(\"\${actual_value}\" STREQUAL \"\${expect_value}\")
-    set(succeeded 1)
-  elseif(\${attempt} LESS ${retries})
-    message(STATUS \"${algo} hash of \${file}
-does not match expected value
-  expected: \${expect_value}
-    actual: \${actual_value}
-Retrying download.
-\")
-    file(REMOVE \"\${file}\")
-    execute_process(COMMAND \${CMAKE_COMMAND} -P \"${download_script}\")
-  endif()
-  math(EXPR attempt \"\${attempt} + 1\")
-endwhile()
-
-if(\${succeeded})
-  message(STATUS \"verifying file... done\")
-else()
-  message(FATAL_ERROR \"error: ${algo} hash of
-  \${file}
-does not match expected value
-  expected: \${expect_value}
-    actual: \${actual_value}
-\")
-endif()")
+    set(ALGO "${CMAKE_MATCH_1}")
+    string(TOLOWER "${CMAKE_MATCH_2}" EXPECT_VALUE)
   else()
-    set(script_content "message(STATUS \"verifying file... warning: did not verify file - no URL_HASH specified?\")")
+    set(ALGO "")
+    set(EXPECT_VALUE "")
   endif()
-  file(WRITE ${script_filename} "set(file \"${local}\")
-message(STATUS \"verifying file...
-     file='\${file}'\")
-${script_content}
-")
+
+  # Used variables:
+  # * ALGO
+  # * EXPECT_VALUE
+  # * LOCAL
+  configure_file(
+      "${_ExternalProject_SELF_DIR}/ExternalProject-verify.cmake.in"
+      "${script_filename}"
+      @ONLY
+  )
 endfunction()
 
 
@@ -809,6 +1042,7 @@ endif()
 #
 message(STATUS \"extracting... [analysis]\")
 file(GLOB contents \"\${ut_dir}/*\")
+list(REMOVE_ITEM contents \"\${ut_dir}/.DS_Store\")
 list(LENGTH contents n)
 if(NOT n EQUAL 1 OR NOT IS_DIRECTORY \"\${contents}\")
   set(contents \"\${ut_dir}\")
@@ -880,6 +1114,17 @@ function(_ep_set_directories name)
     endif()
     set_property(TARGET ${name} PROPERTY _EP_${VAR}_DIR "${${var}_dir}")
   endforeach()
+  get_property(source_subdir TARGET ${name} PROPERTY _EP_SOURCE_SUBDIR)
+  if(NOT source_subdir)
+    set_property(TARGET ${name} PROPERTY _EP_SOURCE_SUBDIR "")
+  elseif(IS_ABSOLUTE "${source_subdir}")
+    message(FATAL_ERROR
+      "External project ${name} has non-relative SOURCE_SUBDIR!")
+  else()
+    # Prefix with a slash so that when appended to the source directory, it
+    # behaves as expected.
+    set_property(TARGET ${name} PROPERTY _EP_SOURCE_SUBDIR "/${source_subdir}")
+  endif()
   if(build_in_source)
     get_property(source_dir TARGET ${name} PROPERTY _EP_SOURCE_DIR)
     set_property(TARGET ${name} PROPERTY _EP_BINARY_DIR "${source_dir}")
@@ -911,7 +1156,7 @@ macro(_ep_replace_location_tags target_name)
   set(vars ${ARGN})
   foreach(var ${vars})
     if(${var})
-      foreach(dir SOURCE_DIR BINARY_DIR INSTALL_DIR TMP_DIR)
+      foreach(dir SOURCE_DIR SOURCE_SUBDIR BINARY_DIR INSTALL_DIR TMP_DIR DOWNLOADED_FILE)
         get_property(val TARGET ${target_name} PROPERTY _EP_${dir})
         string(REPLACE "<${dir}>" "${val}" ${var} "${${var}}")
       endforeach()
@@ -920,18 +1165,21 @@ macro(_ep_replace_location_tags target_name)
 endmacro()
 
 
-function(_ep_write_initial_cache target_name script_filename args)
-  # Write out values into an initial cache, that will be passed to CMake with -C
+function(_ep_command_line_to_initial_cache var args force)
   set(script_initial_cache "")
   set(regex "^([^:]+):([^=]+)=(.*)$")
   set(setArg "")
+  set(forceArg "")
+  if(force)
+    set(forceArg "FORCE")
+  endif()
   foreach(line ${args})
     if("${line}" MATCHES "^-D(.*)")
       set(line "${CMAKE_MATCH_1}")
       if(setArg)
         # This is required to build up lists in variables, or complete an entry
-        set(setArg "${setArg}${accumulator}\" CACHE ${type} \"Initial cache\" FORCE)")
-        set(script_initial_cache "${script_initial_cache}\n${setArg}")
+        string(APPEND setArg "${accumulator}\" CACHE ${type} \"Initial cache\" ${forceArg})")
+        string(APPEND script_initial_cache "\n${setArg}")
         set(accumulator "")
         set(setArg "")
       endif()
@@ -945,31 +1193,36 @@ function(_ep_write_initial_cache target_name script_filename args)
       endif()
     else()
       # Assume this is a list to append to the last var
-      set(accumulator "${accumulator};${line}")
+      string(APPEND accumulator ";${line}")
     endif()
   endforeach()
   # Catch the final line of the args
   if(setArg)
-    set(setArg "${setArg}${accumulator}\" CACHE ${type} \"Initial cache\" FORCE)")
-    set(script_initial_cache "${script_initial_cache}\n${setArg}")
+    string(APPEND setArg "${accumulator}\" CACHE ${type} \"Initial cache\" ${forceArg})")
+    string(APPEND script_initial_cache "\n${setArg}")
   endif()
+  set(${var} ${script_initial_cache} PARENT_SCOPE)
+endfunction()
+
+
+function(_ep_write_initial_cache target_name script_filename script_initial_cache)
+  # Write out values into an initial cache, that will be passed to CMake with -C
   # Replace location tags.
   _ep_replace_location_tags(${target_name} script_initial_cache)
+  _ep_replace_location_tags(${target_name} script_filename)
   # Write out the initial cache file to the location specified.
-  if(NOT EXISTS "${script_filename}.in")
-    file(WRITE "${script_filename}.in" "\@script_initial_cache\@\n")
-  endif()
-  configure_file("${script_filename}.in" "${script_filename}")
+  file(GENERATE OUTPUT "${script_filename}" CONTENT "${script_initial_cache}")
 endfunction()
 
 
 function(ExternalProject_Get_Property name)
   foreach(var ${ARGN})
     string(TOUPPER "${var}" VAR)
-    get_property(${var} TARGET ${name} PROPERTY _EP_${VAR})
-    if(NOT ${var})
+    get_property(is_set TARGET ${name} PROPERTY _EP_${VAR} SET)
+    if(NOT is_set)
       message(FATAL_ERROR "External project \"${name}\" has no ${var}")
     endif()
+    get_property(${var} TARGET ${name} PROPERTY _EP_${VAR})
     set(${var} "${${var}}" PARENT_SCOPE)
   endforeach()
 endfunction()
@@ -1002,66 +1255,84 @@ endfunction()
 
 
 function(_ep_get_build_command name step cmd_var)
-  set(cmd "${${cmd_var}}")
-  if(NOT cmd)
-    set(args)
-    _ep_get_configure_command_id(${name} cfg_cmd_id)
-    if(cfg_cmd_id STREQUAL "cmake")
-      # CMake project.  Select build command based on generator.
-      get_target_property(cmake_generator ${name} _EP_CMAKE_GENERATOR)
-      if("${CMAKE_GENERATOR}" MATCHES "Make" AND
-         ("${cmake_generator}" MATCHES "Make" OR NOT cmake_generator))
-        # The project uses the same Makefile generator.  Use recursive make.
-        set(cmd "$(MAKE)")
-        if(step STREQUAL "INSTALL")
-          set(args install)
-        endif()
-        if(step STREQUAL "TEST")
-          set(args test)
-        endif()
-      else()
-        # Drive the project with "cmake --build".
-        get_target_property(cmake_command ${name} _EP_CMAKE_COMMAND)
-        if(cmake_command)
-          set(cmd "${cmake_command}")
-        else()
-          set(cmd "${CMAKE_COMMAND}")
-        endif()
-        set(args --build ${binary_dir} --config ${CMAKE_CFG_INTDIR})
-        if(step STREQUAL "INSTALL")
-          list(APPEND args --target install)
-        endif()
-        # But for "TEST" drive the project with corresponding "ctest".
-        if(step STREQUAL "TEST")
-          string(REGEX REPLACE "^(.*/)cmake([^/]*)$" "\\1ctest\\2" cmd "${cmd}")
-          set(args "")
-        endif()
-      endif()
-    else()
-      # Non-CMake project.  Guess "make" and "make install" and "make test".
-      if("${CMAKE_GENERATOR}" MATCHES "Makefiles")
-        # Try to get the parallel arguments
-        set(cmd "$(MAKE)")
-      else()
-        set(cmd "make")
-      endif()
+  set(cmd "")
+  set(args)
+  _ep_get_configure_command_id(${name} cfg_cmd_id)
+  if(cfg_cmd_id STREQUAL "cmake")
+    # CMake project.  Select build command based on generator.
+    get_target_property(cmake_generator ${name} _EP_CMAKE_GENERATOR)
+    if("${CMAKE_GENERATOR}" MATCHES "Make" AND
+       ("${cmake_generator}" MATCHES "Make" OR NOT cmake_generator))
+      # The project uses the same Makefile generator.  Use recursive make.
+      set(cmd "$(MAKE)")
       if(step STREQUAL "INSTALL")
         set(args install)
       endif()
-      if(step STREQUAL "TEST")
+      if("x${step}x" STREQUAL "xTESTx")
         set(args test)
       endif()
+    else()
+      # Drive the project with "cmake --build".
+      get_target_property(cmake_command ${name} _EP_CMAKE_COMMAND)
+      if(cmake_command)
+        set(cmd "${cmake_command}")
+      else()
+        set(cmd "${CMAKE_COMMAND}")
+      endif()
+      set(args --build ".")
+      if(CMAKE_CONFIGURATION_TYPES)
+        if (CMAKE_CFG_INTDIR AND
+            NOT CMAKE_CFG_INTDIR STREQUAL "." AND
+            NOT CMAKE_CFG_INTDIR MATCHES "\\$")
+          # CMake 3.4 and below used the CMAKE_CFG_INTDIR placeholder value
+          # provided by multi-configuration generators.  Some projects were
+          # taking advantage of that undocumented implementation detail to
+          # specify a specific configuration here.  They should use
+          # BUILD_COMMAND to change the default command instead, but for
+          # compatibility honor the value.
+          set(config ${CMAKE_CFG_INTDIR})
+          message(AUTHOR_WARNING "CMAKE_CFG_INTDIR should not be set by project code.\n"
+            "To get a non-default build command, use the BUILD_COMMAND option.")
+        else()
+          set(config $<CONFIG>)
+        endif()
+        list(APPEND args --config ${config})
+      endif()
+      if(step STREQUAL "INSTALL")
+        list(APPEND args --target install)
+      endif()
+      # But for "TEST" drive the project with corresponding "ctest".
+      if("x${step}x" STREQUAL "xTESTx")
+        string(REGEX REPLACE "^(.*/)cmake([^/]*)$" "\\1ctest\\2" cmd "${cmd}")
+        set(args "")
+        if(CMAKE_CONFIGURATION_TYPES)
+          list(APPEND args -C ${config})
+        endif()
+      endif()
     endif()
-
-    # Use user-specified arguments instead of default arguments, if any.
-    get_property(have_args TARGET ${name} PROPERTY _EP_${step}_ARGS SET)
-    if(have_args)
-      get_target_property(args ${name} _EP_${step}_ARGS)
+  else()
+    # Non-CMake project.  Guess "make" and "make install" and "make test".
+    if("${CMAKE_GENERATOR}" MATCHES "Makefiles")
+      # Try to get the parallel arguments
+      set(cmd "$(MAKE)")
+    else()
+      set(cmd "make")
     endif()
-
-    list(APPEND cmd ${args})
+    if(step STREQUAL "INSTALL")
+      set(args install)
+    endif()
+    if("x${step}x" STREQUAL "xTESTx")
+      set(args test)
+    endif()
   endif()
 
+  # Use user-specified arguments instead of default arguments, if any.
+  get_property(have_args TARGET ${name} PROPERTY _EP_${step}_ARGS SET)
+  if(have_args)
+    get_target_property(args ${name} _EP_${step}_ARGS)
+  endif()
+
+  list(APPEND cmd ${args})
   set(${cmd_var} "${cmd}" PARENT_SCOPE)
 endfunction()
 
@@ -1071,7 +1342,7 @@ function(_ep_write_log_script name step cmd_var)
 
   set(make "")
   set(code_cygpath_make "")
-  if("${command}" MATCHES "^\\$\\(MAKE\\)")
+  if(command MATCHES "^\\$\\(MAKE\\)")
     # GNU make recognizes the string "$(MAKE)" as recursive make, so
     # ensure that it appears directly in the makefile.
     string(REGEX REPLACE "^\\$\\(MAKE\\)" "\${make}" command "${command}")
@@ -1103,7 +1374,7 @@ endif()
 
   # Wrap multiple 'COMMAND' lines up into a second-level wrapper
   # script so all output can be sent to one log file.
-  if("${command}" MATCHES ";COMMAND;")
+  if(command MATCHES "(^|;)COMMAND;")
     set(code_execute_process "
 ${code_cygpath_make}
 execute_process(COMMAND \${command} RESULT_VARIABLE result)
@@ -1120,23 +1391,25 @@ endif()
     set(sep "")
     foreach(arg IN LISTS command)
       if("x${arg}" STREQUAL "xCOMMAND")
-        set(code "${code}set(command \"${cmd}\")${code_execute_process}")
+        if(NOT "x${cmd}" STREQUAL "x")
+          string(APPEND code "set(command \"${cmd}\")${code_execute_process}")
+        endif()
         set(cmd "")
         set(sep "")
       else()
-        set(cmd "${cmd}${sep}${arg}")
+        string(APPEND cmd "${sep}${arg}")
         set(sep ";")
       endif()
     endforeach()
-    set(code "${code}set(command \"${cmd}\")${code_execute_process}")
-    file(WRITE ${stamp_dir}/${name}-${step}-impl.cmake "${code}")
-    set(command ${CMAKE_COMMAND} "-Dmake=\${make}" "-Dconfig=\${config}" -P ${stamp_dir}/${name}-${step}-impl.cmake)
+    string(APPEND code "set(command \"${cmd}\")${code_execute_process}")
+    file(GENERATE OUTPUT "${stamp_dir}/${name}-${step}-$<CONFIG>-impl.cmake" CONTENT "${code}")
+    set(command ${CMAKE_COMMAND} "-Dmake=\${make}" "-Dconfig=\${config}" -P ${stamp_dir}/${name}-${step}-$<CONFIG>-impl.cmake)
   endif()
 
   # Wrap the command in a script to log output to files.
-  set(script ${stamp_dir}/${name}-${step}.cmake)
+  set(script ${stamp_dir}/${name}-${step}-$<CONFIG>.cmake)
   set(logbase ${stamp_dir}/${name}-${step})
-  file(WRITE ${script} "
+  set(code "
 ${code_cygpath_make}
 set(command \"${command}\")
 execute_process(
@@ -1150,13 +1423,14 @@ if(result)
   foreach(arg IN LISTS command)
     set(msg \"\${msg} '\${arg}'\")
   endforeach()
-  set(msg \"\${msg}\\nSee also\\n  ${logbase}-*.log\\n\")
+  set(msg \"\${msg}\\nSee also\\n  ${logbase}-*.log\")
   message(FATAL_ERROR \"\${msg}\")
 else()
-  set(msg \"${name} ${step} command succeeded.  See also ${logbase}-*.log\\n\")
+  set(msg \"${name} ${step} command succeeded.  See also ${logbase}-*.log\")
   message(STATUS \"\${msg}\")
 endif()
 ")
+  file(GENERATE OUTPUT "${script}" CONTENT "${code}")
   set(command ${CMAKE_COMMAND} ${make} ${config} -P ${script})
   set(${cmd_var} "${command}" PARENT_SCOPE)
 endfunction()
@@ -1190,19 +1464,28 @@ endfunction()
 
 function(ExternalProject_Add_StepTargets name)
   set(steps ${ARGN})
-
+  if(ARGC GREATER 1 AND "${ARGV1}" STREQUAL "NO_DEPENDS")
+    set(no_deps 1)
+    list(REMOVE_AT steps 0)
+  endif()
   foreach(step ${steps})
+    if(no_deps  AND  "${step}" MATCHES "^(configure|build|install|test)$")
+      message(AUTHOR_WARNING "Using NO_DEPENDS for \"${step}\" step  might break parallel builds")
+    endif()
     _ep_get_step_stampfile(${name} ${step} stamp_file)
     add_custom_target(${name}-${step}
       DEPENDS ${stamp_file})
+    set_property(TARGET ${name}-${step} PROPERTY _EP_IS_EXTERNAL_PROJECT_STEP 1)
     set_property(TARGET ${name}-${step} PROPERTY LABELS ${name})
     set_property(TARGET ${name}-${step} PROPERTY FOLDER "ExternalProjectTargets/${name}")
 
     # Depend on other external projects (target-level).
-    get_property(deps TARGET ${name} PROPERTY _EP_DEPENDS)
-    foreach(arg IN LISTS deps)
-      add_dependencies(${name}-${step} ${arg})
-    endforeach()
+    if(NOT no_deps)
+      get_property(deps TARGET ${name} PROPERTY _EP_DEPENDS)
+      foreach(arg IN LISTS deps)
+        add_dependencies(${name}-${step} ${arg})
+      endforeach()
+    endif()
   endforeach()
 endfunction()
 
@@ -1238,6 +1521,9 @@ function(ExternalProject_Add_Step name step)
   # Dependencies on files.
   get_property(depends TARGET ${name} PROPERTY _EP_${step}_DEPENDS)
 
+  # Byproducts of the step.
+  get_property(byproducts TARGET ${name} PROPERTY _EP_${step}_BYPRODUCTS)
+
   # Dependencies on steps.
   get_property(dependees TARGET ${name} PROPERTY _EP_${step}_DEPENDEES)
   foreach(dependee IN LISTS dependees)
@@ -1261,7 +1547,7 @@ function(ExternalProject_Add_Step name step)
   endif()
 
   # Replace location tags.
-  _ep_replace_location_tags(${name} comment command work_dir)
+  _ep_replace_location_tags(${name} comment command work_dir byproducts)
 
   # Custom comment?
   get_property(comment_set TARGET ${name} PROPERTY _EP_${step}_COMMENT SET)
@@ -1269,11 +1555,28 @@ function(ExternalProject_Add_Step name step)
     get_property(comment TARGET ${name} PROPERTY _EP_${step}_COMMENT)
   endif()
 
+  # Uses terminal?
+  get_property(uses_terminal TARGET ${name} PROPERTY _EP_${step}_USES_TERMINAL)
+  if(uses_terminal)
+    set(uses_terminal USES_TERMINAL)
+  else()
+    set(uses_terminal "")
+  endif()
+
   # Run every time?
   get_property(always TARGET ${name} PROPERTY _EP_${step}_ALWAYS)
   if(always)
     set_property(SOURCE ${stamp_file} PROPERTY SYMBOLIC 1)
     set(touch)
+    # Remove any existing stamp in case the option changed in an existing tree.
+    if(CMAKE_CONFIGURATION_TYPES)
+      foreach(cfg ${CMAKE_CONFIGURATION_TYPES})
+        string(REPLACE "/${CMAKE_CFG_INTDIR}" "/${cfg}" stamp_file_config "${stamp_file}")
+        file(REMOVE ${stamp_file_config})
+      endforeach()
+    else()
+      file(REMOVE ${stamp_file})
+    endif()
   else()
     set(touch ${CMAKE_COMMAND} -E touch ${stamp_file})
   endif()
@@ -1284,15 +1587,27 @@ function(ExternalProject_Add_Step name step)
     _ep_write_log_script(${name} ${step} command)
   endif()
 
+  if("${command}" STREQUAL "")
+    # Some generators (i.e. Xcode) will not generate a file level target
+    # if no command is set, and therefore the dependencies on this
+    # target will be broken.
+    # The empty command is replaced by an echo command here in order to
+    # avoid this issue.
+    set(command ${CMAKE_COMMAND} -E echo_append)
+  endif()
+
   add_custom_command(
     OUTPUT ${stamp_file}
+    BYPRODUCTS ${byproducts}
     COMMENT ${comment}
     COMMAND ${command}
     COMMAND ${touch}
     DEPENDS ${depends}
     WORKING_DIRECTORY ${work_dir}
     VERBATIM
+    ${uses_terminal}
     )
+  set_property(TARGET ${name} APPEND PROPERTY _EP_STEPS ${step})
 
   # Add custom "step target"?
   get_property(step_targets TARGET ${name} PROPERTY _EP_STEP_TARGETS)
@@ -1305,6 +1620,69 @@ function(ExternalProject_Add_Step name step)
       break()
     endif()
   endforeach()
+
+  get_property(independent_step_targets TARGET ${name} PROPERTY _EP_INDEPENDENT_STEP_TARGETS)
+  if(NOT independent_step_targets)
+    get_property(independent_step_targets DIRECTORY PROPERTY EP_INDEPENDENT_STEP_TARGETS)
+  endif()
+  foreach(st ${independent_step_targets})
+    if("${st}" STREQUAL "${step}")
+      ExternalProject_Add_StepTargets(${name} NO_DEPENDS ${step})
+      break()
+    endif()
+  endforeach()
+endfunction()
+
+
+function(ExternalProject_Add_StepDependencies name step)
+  set(dependencies ${ARGN})
+
+  # Sanity checks on "name" and "step".
+  if(NOT TARGET ${name})
+    message(FATAL_ERROR "Cannot find target \"${name}\". Perhaps it has not yet been created using ExternalProject_Add.")
+  endif()
+
+  get_property(type TARGET ${name} PROPERTY TYPE)
+  if(NOT type STREQUAL "UTILITY")
+    message(FATAL_ERROR "Target \"${name}\" was not generated by ExternalProject_Add.")
+  endif()
+
+  get_property(is_ep TARGET ${name} PROPERTY _EP_IS_EXTERNAL_PROJECT)
+  if(NOT is_ep)
+    message(FATAL_ERROR "Target \"${name}\" was not generated by ExternalProject_Add.")
+  endif()
+
+  get_property(steps TARGET ${name} PROPERTY _EP_STEPS)
+  list(FIND steps ${step} is_step)
+  if(NOT is_step)
+    message(FATAL_ERROR "External project \"${name}\" does not have a step \"${step}\".")
+  endif()
+
+  if(TARGET ${name}-${step})
+    get_property(type TARGET ${name}-${step} PROPERTY TYPE)
+    if(NOT type STREQUAL "UTILITY")
+      message(FATAL_ERROR "Target \"${name}-${step}\" was not generated by ExternalProject_Add_StepTargets.")
+    endif()
+    get_property(is_ep_step TARGET ${name}-${step} PROPERTY _EP_IS_EXTERNAL_PROJECT_STEP)
+    if(NOT is_ep_step)
+      message(FATAL_ERROR "Target \"${name}-${step}\" was not generated by ExternalProject_Add_StepTargets.")
+    endif()
+  endif()
+
+  # Always add file-level dependency, but add target-level dependency
+  # only if the target exists for that step.
+  _ep_get_step_stampfile(${name} ${step} stamp_file)
+  foreach(dep ${dependencies})
+    add_custom_command(APPEND
+      OUTPUT ${stamp_file}
+      DEPENDS ${dep})
+    if(TARGET ${name}-${step})
+      foreach(dep ${dependencies})
+        add_dependencies(${name}-${step} ${dep})
+      endforeach()
+    endif()
+  endforeach()
+
 endfunction()
 
 
@@ -1323,20 +1701,6 @@ function(_ep_add_mkdir_command name)
     COMMAND ${CMAKE_COMMAND} -E make_directory ${stamp_dir}${cfgdir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${download_dir}
     )
-endfunction()
-
-
-function(_ep_get_git_version git_EXECUTABLE git_version_var)
-  if(git_EXECUTABLE)
-    execute_process(
-      COMMAND "${git_EXECUTABLE}" --version
-      OUTPUT_VARIABLE ov
-      ERROR_VARIABLE ev
-      OUTPUT_STRIP_TRAILING_WHITESPACE
-      )
-    string(REGEX REPLACE "^git version (.+)$" "\\1" version "${ov}")
-    set(${git_version_var} "${version}" PARENT_SCOPE)
-  endif()
 endfunction()
 
 
@@ -1363,7 +1727,7 @@ function(_ep_add_download_command name)
   get_property(fname TARGET ${name} PROPERTY _EP_DOWNLOAD_NAME)
 
   # TODO: Perhaps file:// should be copied to download dir before extraction.
-  string(REGEX REPLACE "^file://" "" url "${url}")
+  string(REGEX REPLACE "file://" "" url "${url}")
 
   set(depends)
   set(comment)
@@ -1435,6 +1799,7 @@ function(_ep_add_download_command name)
       --non-interactive ${svn_trust_cert_args} ${svn_user_pw_args} ${src_name})
     list(APPEND depends ${stamp_dir}/${name}-svninfo.txt)
   elseif(git_repository)
+    unset(CMAKE_MODULE_PATH) # Use CMake builtin find module
     find_package(Git QUIET)
     if(NOT GIT_EXECUTABLE)
       message(FATAL_ERROR "error: could not find git for clone of ${name}")
@@ -1442,9 +1807,8 @@ function(_ep_add_download_command name)
 
     # The git submodule update '--recursive' flag requires git >= v1.6.5
     #
-    _ep_get_git_version("${GIT_EXECUTABLE}" git_version)
-    if(git_version VERSION_LESS 1.6.5)
-      message(FATAL_ERROR "error: git version 1.6.5 or later required for 'git submodule update --recursive': git_version='${git_version}'")
+    if(GIT_VERSION_STRING VERSION_LESS 1.6.5)
+      message(FATAL_ERROR "error: git version 1.6.5 or later required for 'git submodule update --recursive': GIT_VERSION_STRING='${GIT_VERSION_STRING}'")
     endif()
 
     get_property(git_tag TARGET ${name} PROPERTY _EP_GIT_TAG)
@@ -1452,6 +1816,19 @@ function(_ep_add_download_command name)
       set(git_tag "master")
     endif()
     get_property(git_submodules TARGET ${name} PROPERTY _EP_GIT_SUBMODULES)
+
+    get_property(git_remote_name TARGET ${name} PROPERTY _EP_GIT_REMOTE_NAME)
+    if(NOT git_remote_name)
+      set(git_remote_name "origin")
+    endif()
+
+    get_property(tls_verify TARGET ${name} PROPERTY _EP_TLS_VERIFY)
+    if("x${tls_verify}" STREQUAL "x" AND DEFINED CMAKE_TLS_VERIFY)
+      set(tls_verify "${CMAKE_TLS_VERIFY}")
+    endif()
+    get_property(git_shallow TARGET ${name} PROPERTY _EP_GIT_SHALLOW)
+    get_property(git_progress TARGET ${name} PROPERTY _EP_GIT_PROGRESS)
+    get_property(git_config TARGET ${name} PROPERTY _EP_GIT_CONFIG)
 
     # For the download step, and the git clone operation, only the repository
     # should be recorded in a configured RepositoryInfo file. If the repo
@@ -1476,8 +1853,8 @@ function(_ep_add_download_command name)
     # The script will delete the source directory and then call git clone.
     #
     _ep_write_gitclone_script(${tmp_dir}/${name}-gitclone.cmake ${source_dir}
-      ${GIT_EXECUTABLE} ${git_repository} ${git_tag} "${git_submodules}" ${src_name} ${work_dir}
-      ${stamp_dir}/${name}-gitinfo.txt ${stamp_dir}/${name}-gitclone-lastrun.txt
+      ${GIT_EXECUTABLE} ${git_repository} ${git_tag} ${git_remote_name} "${git_submodules}" "${git_shallow}" "${git_progress}" "${git_config}" ${src_name} ${work_dir}
+      ${stamp_dir}/${name}-gitinfo.txt ${stamp_dir}/${name}-gitclone-lastrun.txt "${tls_verify}"
       )
     set(comment "Performing download step (git clone) for '${name}'")
     set(cmd ${CMAKE_COMMAND} -P ${tmp_dir}/${name}-gitclone.cmake)
@@ -1540,31 +1917,48 @@ function(_ep_add_download_command name)
     set(repository "external project URL")
     set(module "${url}")
     set(tag "${hash}")
-    set(retries 0)
-    set(download_script "")
     configure_file(
       "${CMAKE_ROOT}/Modules/RepositoryInfo.txt.in"
       "${stamp_dir}/${name}-urlinfo.txt"
       @ONLY
       )
     list(APPEND depends ${stamp_dir}/${name}-urlinfo.txt)
+
+    list(LENGTH url url_list_length)
+    if(NOT "${url_list_length}" STREQUAL "1")
+      foreach(entry ${url})
+        if(NOT "${entry}" MATCHES "^[a-z]+://")
+          message(FATAL_ERROR "At least one entry of URL is a path (invalid in a list)")
+        endif()
+      endforeach()
+      if("x${fname}" STREQUAL "x")
+        list(GET url 0 fname)
+      endif()
+    endif()
+
     if(IS_DIRECTORY "${url}")
       get_filename_component(abs_dir "${url}" ABSOLUTE)
       set(comment "Performing download step (DIR copy) for '${name}'")
       set(cmd   ${CMAKE_COMMAND} -E remove_directory ${source_dir}
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${abs_dir} ${source_dir})
     else()
+      get_property(no_extract TARGET "${name}" PROPERTY _EP_DOWNLOAD_NO_EXTRACT SET)
       if("${url}" MATCHES "^[a-z]+://")
         # TODO: Should download and extraction be different steps?
         if("x${fname}" STREQUAL "x")
-          string(REGEX MATCH "[^/\\?]*$" fname "${url}")
+          set(fname "${url}")
         endif()
-        if(NOT "${fname}" MATCHES "(\\.|=)(7z|tar|tar\\.bz2|tar\\.gz|tar\\.xz|tbz2|tgz|txz|zip)$")
-          string(REGEX MATCH "([^/\\?]+(\\.|=)(7z|tar|tar\\.bz2|tar\\.gz|tar\\.xz|tbz2|tgz|txz|zip))/.*$" match_result "${url}")
+        if("${fname}" MATCHES [[([^/\?#]+(\.|=)(7z|tar|tar\.bz2|tar\.gz|tar\.xz|tbz2|tgz|txz|zip))([/?#].*)?$]])
           set(fname "${CMAKE_MATCH_1}")
-        endif()
-        if(NOT "${fname}" MATCHES "(\\.|=)(7z|tar|tar\\.bz2|tar\\.gz|tar\\.xz|tbz2|tgz|txz|zip)$")
-          message(FATAL_ERROR "Could not extract tarball filename from url:\n  ${url}")
+        elseif(no_extract)
+          get_filename_component(fname "${fname}" NAME)
+        else()
+          # Fall back to a default file name.  The actual file name does not
+          # matter because it is used only internally and our extraction tool
+          # inspects the file content directly.  If it turns out the wrong URL
+          # was given that will be revealed during the build which is an easier
+          # place for users to diagnose than an error here anyway.
+          set(fname "archive.tar")
         endif()
         string(REPLACE ";" "-" fname "${fname}")
         set(file ${download_dir}/${fname})
@@ -1572,26 +1966,54 @@ function(_ep_add_download_command name)
         get_property(no_progress TARGET ${name} PROPERTY _EP_DOWNLOAD_NO_PROGRESS)
         get_property(tls_verify TARGET ${name} PROPERTY _EP_TLS_VERIFY)
         get_property(tls_cainfo TARGET ${name} PROPERTY _EP_TLS_CAINFO)
+        get_property(http_username TARGET ${name} PROPERTY _EP_HTTP_USERNAME)
+        get_property(http_password TARGET ${name} PROPERTY _EP_HTTP_PASSWORD)
+        get_property(http_headers TARGET ${name} PROPERTY _EP_HTTP_HEADER)
         set(download_script "${stamp_dir}/download-${name}.cmake")
-        _ep_write_downloadfile_script("${download_script}" "${url}" "${file}" "${timeout}" "${no_progress}" "${hash}" "${tls_verify}" "${tls_cainfo}")
+        _ep_write_downloadfile_script("${download_script}" "${url}" "${file}" "${timeout}" "${no_progress}" "${hash}" "${tls_verify}" "${tls_cainfo}" "${http_username}:${http_password}" "${http_headers}")
         set(cmd ${CMAKE_COMMAND} -P "${download_script}"
           COMMAND)
-        set(retries 3)
-        set(comment "Performing download step (download, verify and extract) for '${name}'")
+        if (no_extract)
+          set(steps "download and verify")
+        else ()
+          set(steps "download, verify and extract")
+        endif ()
+        set(comment "Performing download step (${steps}) for '${name}'")
+        file(WRITE "${stamp_dir}/verify-${name}.cmake" "") # already verified by 'download_script'
       else()
         set(file "${url}")
-        set(comment "Performing download step (verify and extract) for '${name}'")
+        if (no_extract)
+          set(steps "verify")
+        else ()
+          set(steps "verify and extract")
+        endif ()
+        set(comment "Performing download step (${steps}) for '${name}'")
+        _ep_write_verifyfile_script("${stamp_dir}/verify-${name}.cmake" "${file}" "${hash}")
       endif()
-      _ep_write_verifyfile_script("${stamp_dir}/verify-${name}.cmake" "${file}" "${hash}" "${retries}" "${download_script}")
       list(APPEND cmd ${CMAKE_COMMAND} -P ${stamp_dir}/verify-${name}.cmake
         COMMAND)
-      _ep_write_extractfile_script("${stamp_dir}/extract-${name}.cmake" "${name}" "${file}" "${source_dir}")
-      list(APPEND cmd ${CMAKE_COMMAND} -P ${stamp_dir}/extract-${name}.cmake)
+      if (NOT no_extract)
+        _ep_write_extractfile_script("${stamp_dir}/extract-${name}.cmake" "${name}" "${file}" "${source_dir}")
+        list(APPEND cmd ${CMAKE_COMMAND} -P ${stamp_dir}/extract-${name}.cmake)
+      else ()
+        set_property(TARGET ${name} PROPERTY _EP_DOWNLOADED_FILE ${file})
+      endif ()
     endif()
   else()
     _ep_is_dir_empty("${source_dir}" empty)
     if(${empty})
-      message(SEND_ERROR "error: no download info for '${name}' -- please specify existing/non-empty SOURCE_DIR or one of URL, CVS_REPOSITORY and CVS_MODULE, SVN_REPOSITORY, GIT_REPOSITORY, HG_REPOSITORY or DOWNLOAD_COMMAND")
+      message(SEND_ERROR
+        "No download info given for '${name}' and its source directory:\n"
+        " ${source_dir}\n"
+        "is not an existing non-empty directory.  Please specify one of:\n"
+        " * SOURCE_DIR with an existing non-empty directory\n"
+        " * URL\n"
+        " * GIT_REPOSITORY\n"
+        " * HG_REPOSITORY\n"
+        " * CVS_REPOSITORY and CVS_MODULE\n"
+        " * SVN_REVISION\n"
+        " * DOWNLOAD_COMMAND"
+        )
     endif()
   endif()
 
@@ -1602,6 +2024,14 @@ function(_ep_add_download_command name)
     set(log "")
   endif()
 
+  get_property(uses_terminal TARGET ${name} PROPERTY
+    _EP_USES_TERMINAL_DOWNLOAD)
+  if(uses_terminal)
+    set(uses_terminal USES_TERMINAL 1)
+  else()
+    set(uses_terminal "")
+  endif()
+
   ExternalProject_Add_Step(${name} download
     COMMENT ${comment}
     COMMAND ${cmd}
@@ -1609,6 +2039,7 @@ function(_ep_add_download_command name)
     DEPENDS ${depends}
     DEPENDEES mkdir
     ${log}
+    ${uses_terminal}
     )
 endfunction()
 
@@ -1622,6 +2053,12 @@ function(_ep_add_update_command name)
   get_property(svn_repository TARGET ${name} PROPERTY _EP_SVN_REPOSITORY)
   get_property(git_repository TARGET ${name} PROPERTY _EP_GIT_REPOSITORY)
   get_property(hg_repository  TARGET ${name} PROPERTY _EP_HG_REPOSITORY )
+  get_property(update_disconnected_set TARGET ${name} PROPERTY _EP_UPDATE_DISCONNECTED SET)
+  if(update_disconnected_set)
+    get_property(update_disconnected TARGET ${name} PROPERTY _EP_UPDATE_DISCONNECTED)
+  else()
+    get_property(update_disconnected DIRECTORY PROPERTY EP_UPDATE_DISCONNECTED)
+  endif()
 
   set(work_dir)
   set(comment)
@@ -1629,6 +2066,9 @@ function(_ep_add_update_command name)
 
   if(cmd_set)
     set(work_dir ${source_dir})
+    if(NOT "x${cmd}" STREQUAL "x")
+      set(always 1)
+    endif()
   elseif(cvs_repository)
     if(NOT CVS_EXECUTABLE)
       message(FATAL_ERROR "error: could not find cvs for update of ${name}")
@@ -1662,6 +2102,8 @@ function(_ep_add_update_command name)
       --non-interactive ${svn_trust_cert_args} ${svn_user_pw_args})
     set(always 1)
   elseif(git_repository)
+    unset(CMAKE_MODULE_PATH) # Use CMake builtin find module
+    find_package(Git QUIET)
     if(NOT GIT_EXECUTABLE)
       message(FATAL_ERROR "error: could not find git for fetch of ${name}")
     endif()
@@ -1671,9 +2113,13 @@ function(_ep_add_update_command name)
     if(NOT git_tag)
       set(git_tag "master")
     endif()
+    get_property(git_remote_name TARGET ${name} PROPERTY _EP_GIT_REMOTE_NAME)
+    if(NOT git_remote_name)
+      set(git_remote_name "origin")
+    endif()
     get_property(git_submodules TARGET ${name} PROPERTY _EP_GIT_SUBMODULES)
     _ep_write_gitupdate_script(${tmp_dir}/${name}-gitupdate.cmake
-      ${GIT_EXECUTABLE} ${git_tag} "${git_submodules}" ${git_repository} ${work_dir}
+      ${GIT_EXECUTABLE} ${git_tag} ${git_remote_name} "${git_submodules}" ${git_repository} ${work_dir}
       )
     set(cmd ${CMAKE_COMMAND} -P ${tmp_dir}/${name}-gitupdate.cmake)
     set(always 1)
@@ -1707,14 +2153,40 @@ Update to Mercurial >= 2.1.1.
     set(log "")
   endif()
 
+  get_property(uses_terminal TARGET ${name} PROPERTY
+    _EP_USES_TERMINAL_UPDATE)
+  if(uses_terminal)
+    set(uses_terminal USES_TERMINAL 1)
+  else()
+    set(uses_terminal "")
+  endif()
+
   ExternalProject_Add_Step(${name} update
     COMMENT ${comment}
     COMMAND ${cmd}
     ALWAYS ${always}
+    EXCLUDE_FROM_MAIN ${update_disconnected}
     WORKING_DIRECTORY ${work_dir}
     DEPENDEES download
     ${log}
+    ${uses_terminal}
     )
+
+  if(update_disconnected)
+    _ep_get_step_stampfile(${name} skip-update skip-update_stamp_file)
+    string(REPLACE "Performing" "Skipping" comment "${comment}")
+    ExternalProject_Add_Step(${name} skip-update
+      COMMENT ${comment}
+      ALWAYS ${always}
+      EXCLUDE_FROM_MAIN 1
+      WORKING_DIRECTORY ${work_dir}
+      DEPENDEES download
+      ${log}
+      ${uses_terminal}
+    )
+    set_property(SOURCE ${skip-update_stamp_file} PROPERTY SYMBOLIC 1)
+  endif()
+
 endfunction()
 
 
@@ -1738,21 +2210,7 @@ function(_ep_add_patch_command name)
 endfunction()
 
 
-# TODO: Make sure external projects use the proper compiler
-function(_ep_add_configure_command name)
-  ExternalProject_Get_Property(${name} source_dir binary_dir tmp_dir)
-
-  # Depend on other external projects (file-level).
-  set(file_deps)
-  get_property(deps TARGET ${name} PROPERTY _EP_DEPENDS)
-  foreach(dep IN LISTS deps)
-    get_property(is_ep TARGET ${dep} PROPERTY _EP_IS_EXTERNAL_PROJECT)
-    if(is_ep)
-      _ep_get_step_stampfile(${dep} "done" done_stamp_file)
-      list(APPEND file_deps ${done_stamp_file})
-    endif()
-  endforeach()
-
+function(_ep_extract_configure_command var name)
   get_property(cmd_set TARGET ${name} PROPERTY _EP_CONFIGURE_COMMAND SET)
   if(cmd_set)
     get_property(cmd TARGET ${name} PROPERTY _EP_CONFIGURE_COMMAND)
@@ -1767,18 +2225,31 @@ function(_ep_add_configure_command name)
     get_property(cmake_args TARGET ${name} PROPERTY _EP_CMAKE_ARGS)
     list(APPEND cmd ${cmake_args})
 
-    # If there are any CMAKE_CACHE_ARGS, write an initial cache and use it
+    # If there are any CMAKE_CACHE_ARGS or CMAKE_CACHE_DEFAULT_ARGS,
+    # write an initial cache and use it
     get_property(cmake_cache_args TARGET ${name} PROPERTY _EP_CMAKE_CACHE_ARGS)
-    if(cmake_cache_args)
-      set(_ep_cache_args_script "${tmp_dir}/${name}-cache.cmake")
-      _ep_write_initial_cache(${name} "${_ep_cache_args_script}" "${cmake_cache_args}")
+    get_property(cmake_cache_default_args TARGET ${name} PROPERTY _EP_CMAKE_CACHE_DEFAULT_ARGS)
+
+    if(cmake_cache_args OR cmake_cache_default_args)
+      set(_ep_cache_args_script "<TMP_DIR>/${name}-cache-$<CONFIG>.cmake")
+      if(cmake_cache_args)
+        _ep_command_line_to_initial_cache(script_initial_cache_force "${cmake_cache_args}" 1)
+      endif()
+      if(cmake_cache_default_args)
+        _ep_command_line_to_initial_cache(script_initial_cache_default "${cmake_cache_default_args}" 0)
+      endif()
+      _ep_write_initial_cache(${name} "${_ep_cache_args_script}" "${script_initial_cache_force}${script_initial_cache_default}")
       list(APPEND cmd "-C${_ep_cache_args_script}")
     endif()
 
     get_target_property(cmake_generator ${name} _EP_CMAKE_GENERATOR)
+    get_target_property(cmake_generator_platform ${name} _EP_CMAKE_GENERATOR_PLATFORM)
     get_target_property(cmake_generator_toolset ${name} _EP_CMAKE_GENERATOR_TOOLSET)
     if(cmake_generator)
       list(APPEND cmd "-G${cmake_generator}")
+      if(cmake_generator_platform)
+        list(APPEND cmd "-A${cmake_generator_platform}")
+      endif()
       if(cmake_generator_toolset)
         list(APPEND cmd "-T${cmake_generator_toolset}")
       endif()
@@ -1788,6 +2259,12 @@ function(_ep_add_configure_command name)
       else()
         list(APPEND cmd "-G${CMAKE_GENERATOR}")
       endif()
+      if(cmake_generator_platform)
+        message(FATAL_ERROR "Option CMAKE_GENERATOR_PLATFORM not allowed without CMAKE_GENERATOR.")
+      endif()
+      if(CMAKE_GENERATOR_PLATFORM)
+        list(APPEND cmd "-A${CMAKE_GENERATOR_PLATFORM}")
+      endif()
       if(cmake_generator_toolset)
         message(FATAL_ERROR "Option CMAKE_GENERATOR_TOOLSET not allowed without CMAKE_GENERATOR.")
       endif()
@@ -1796,12 +2273,35 @@ function(_ep_add_configure_command name)
       endif()
     endif()
 
-    list(APPEND cmd "${source_dir}")
+    list(APPEND cmd "<SOURCE_DIR><SOURCE_SUBDIR>")
   endif()
+
+  set("${var}" "${cmd}" PARENT_SCOPE)
+endfunction()
+
+# TODO: Make sure external projects use the proper compiler
+function(_ep_add_configure_command name)
+  ExternalProject_Get_Property(${name} binary_dir tmp_dir)
+
+  # Depend on other external projects (file-level).
+  set(file_deps)
+  get_property(deps TARGET ${name} PROPERTY _EP_DEPENDS)
+  foreach(dep IN LISTS deps)
+    get_property(dep_type TARGET ${dep} PROPERTY TYPE)
+    if(dep_type STREQUAL "UTILITY")
+      get_property(is_ep TARGET ${dep} PROPERTY _EP_IS_EXTERNAL_PROJECT)
+      if(is_ep)
+        _ep_get_step_stampfile(${dep} "done" done_stamp_file)
+        list(APPEND file_deps ${done_stamp_file})
+      endif()
+    endif()
+  endforeach()
+
+  _ep_extract_configure_command(cmd ${name})
 
   # If anything about the configure command changes, (command itself, cmake
   # used, cmake args or cmake generator) then re-run the configure step.
-  # Fixes issue http://public.kitware.com/Bug/view.php?id=10258
+  # Fixes issue https://gitlab.kitware.com/cmake/cmake/issues/10258
   #
   if(NOT EXISTS ${tmp_dir}/${name}-cfgcmd.txt.in)
     file(WRITE ${tmp_dir}/${name}-cfgcmd.txt.in "cmd='\@cmd\@'\n")
@@ -1817,12 +2317,33 @@ function(_ep_add_configure_command name)
     set(log "")
   endif()
 
+  get_property(uses_terminal TARGET ${name} PROPERTY
+    _EP_USES_TERMINAL_CONFIGURE)
+  if(uses_terminal)
+    set(uses_terminal USES_TERMINAL 1)
+  else()
+    set(uses_terminal "")
+  endif()
+
+  get_property(update_disconnected_set TARGET ${name} PROPERTY _EP_UPDATE_DISCONNECTED SET)
+  if(update_disconnected_set)
+    get_property(update_disconnected TARGET ${name} PROPERTY _EP_UPDATE_DISCONNECTED)
+  else()
+    get_property(update_disconnected DIRECTORY PROPERTY EP_UPDATE_DISCONNECTED)
+  endif()
+  if(update_disconnected)
+    set(update_dep skip-update)
+  else()
+    set(update_dep update)
+  endif()
+
   ExternalProject_Add_Step(${name} configure
     COMMAND ${cmd}
     WORKING_DIRECTORY ${binary_dir}
-    DEPENDEES update patch
+    DEPENDEES ${update_dep} patch
     DEPENDS ${file_deps}
     ${log}
+    ${uses_terminal}
     )
 endfunction()
 
@@ -1844,6 +2365,14 @@ function(_ep_add_build_command name)
     set(log "")
   endif()
 
+  get_property(uses_terminal TARGET ${name} PROPERTY
+    _EP_USES_TERMINAL_BUILD)
+  if(uses_terminal)
+    set(uses_terminal USES_TERMINAL 1)
+  else()
+    set(uses_terminal "")
+  endif()
+
   get_property(build_always TARGET ${name} PROPERTY _EP_BUILD_ALWAYS)
   if(build_always)
     set(always 1)
@@ -1851,12 +2380,16 @@ function(_ep_add_build_command name)
     set(always 0)
   endif()
 
+  get_property(build_byproducts TARGET ${name} PROPERTY _EP_BUILD_BYPRODUCTS)
+
   ExternalProject_Add_Step(${name} build
     COMMAND ${cmd}
+    BYPRODUCTS ${build_byproducts}
     WORKING_DIRECTORY ${binary_dir}
     DEPENDEES configure
     ALWAYS ${always}
     ${log}
+    ${uses_terminal}
     )
 endfunction()
 
@@ -1878,11 +2411,20 @@ function(_ep_add_install_command name)
     set(log "")
   endif()
 
+  get_property(uses_terminal TARGET ${name} PROPERTY
+    _EP_USES_TERMINAL_INSTALL)
+  if(uses_terminal)
+    set(uses_terminal USES_TERMINAL 1)
+  else()
+    set(uses_terminal "")
+  endif()
+
   ExternalProject_Add_Step(${name} install
     COMMAND ${cmd}
     WORKING_DIRECTORY ${binary_dir}
     DEPENDEES build
     ${log}
+    ${uses_terminal}
     )
 endfunction()
 
@@ -1892,12 +2434,13 @@ function(_ep_add_test_command name)
 
   get_property(before TARGET ${name} PROPERTY _EP_TEST_BEFORE_INSTALL)
   get_property(after TARGET ${name} PROPERTY _EP_TEST_AFTER_INSTALL)
+  get_property(exclude TARGET ${name} PROPERTY _EP_TEST_EXCLUDE_FROM_MAIN)
   get_property(cmd_set TARGET ${name} PROPERTY _EP_TEST_COMMAND SET)
 
   # Only actually add the test step if one of the test related properties is
   # explicitly set. (i.e. the test step is omitted unless requested...)
   #
-  if(cmd_set OR before OR after)
+  if(cmd_set OR before OR after OR exclude)
     if(cmd_set)
       get_property(cmd TARGET ${name} PROPERTY _EP_TEST_COMMAND)
     else()
@@ -1905,9 +2448,21 @@ function(_ep_add_test_command name)
     endif()
 
     if(before)
-      set(dep_args DEPENDEES build DEPENDERS install)
+      set(dependees_args DEPENDEES build)
     else()
-      set(dep_args DEPENDEES install)
+      set(dependees_args DEPENDEES install)
+    endif()
+
+    if(exclude)
+      set(dependers_args "")
+      set(exclude_args EXCLUDE_FROM_MAIN 1)
+    else()
+      if(before)
+        set(dependers_args DEPENDERS install)
+      else()
+        set(dependers_args "")
+      endif()
+      set(exclude_args "")
     endif()
 
     get_property(log TARGET ${name} PROPERTY _EP_LOG_TEST)
@@ -1917,11 +2472,22 @@ function(_ep_add_test_command name)
       set(log "")
     endif()
 
+    get_property(uses_terminal TARGET ${name} PROPERTY
+      _EP_USES_TERMINAL_TEST)
+    if(uses_terminal)
+      set(uses_terminal USES_TERMINAL 1)
+    else()
+      set(uses_terminal "")
+    endif()
+
     ExternalProject_Add_Step(${name} test
       COMMAND ${cmd}
       WORKING_DIRECTORY ${binary_dir}
-      ${dep_args}
+      ${dependees_args}
+      ${dependers_args}
+      ${exclude_args}
       ${log}
+      ${uses_terminal}
       )
   endif()
 endfunction()
