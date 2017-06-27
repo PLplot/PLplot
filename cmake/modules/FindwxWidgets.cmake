@@ -915,8 +915,17 @@ if (_wx_lib_missing)
 endif()
 unset(_wx_lib_missing)
 
-# Check if a specfic version was requested by find_package().
+# Check if a specific version was requested by find_package().
 if(wxWidgets_FOUND)
+  # On at least one Windows platform (MinGW/MSYS) find_file fails
+  # unless convert from /<drive_letter>/ form to <drive_letter>:/
+  # form.  So use both forms to be sure on that platform without
+  # disrupting other platforms.
+  string(REGEX REPLACE ";/([a-zA-z])/" ";\\1:/" wxWidgets_search_path ";${wxWidgets_INCLUDE_DIRS}")
+  list(REMOVE_AT wxWidgets_search_path 0)
+  if(NOT "${wxWidgets_search_path}" STREQUAL "${wxWidgets_INCLUDE_DIRS}")
+    list(APPEND wxWidgets_INCLUDE_DIRS ${wxWidgets_search_path})
+  endif(NOT "${wxWidgets_search_path}" STREQUAL "${wxWidgets_INCLUDE_DIRS}")
   find_file(_filename wx/version.h PATHS ${wxWidgets_INCLUDE_DIRS} NO_DEFAULT_PATH)
   dbg_msg("_filename:  ${_filename}")
 
