@@ -114,14 +114,14 @@ public:
     // Default constructor: Initialize m_wsem, m_rsem, and m_tsem to
     // NULL to mark those as invalid semaphore locations.
     PLThreeSemaphores();
-      // Named semaphores.
-      // Create three semaphore names from basename, and open and (only
-      // on creation which happens automatically for both the Windows
-      // and POSIX API cases) initialize the corresponding named
-      // semaphores with the read and write semaphores initially blocked
-      // and the transmit semaphore initially unblocked.
+    // Named semaphores.
+    // Create three semaphore names from basename, and open and (only
+    // on creation which happens automatically for both the Windows
+    // and POSIX API cases) initialize the corresponding named
+    // semaphores with the read and write semaphores initially blocked
+    // and the transmit semaphore initially unblocked.
     void initializeToValid( const char * baseName );
-       // call initializeToInvalid.
+    // call initializeToInvalid.
     ~PLThreeSemaphores();
     // If the m_wsem, m_rsem, and m_tsem locations are non-NULL
     // destroy those semaphores.  Also, unconditionally set
@@ -144,10 +144,10 @@ public:
     int getValueReadSemaphore();
 #endif // #ifndef WIN32
     void postWriteSemaphore();
-    void waitWriteSemaphore();
     void postReadSemaphore();
-    void waitReadSemaphore();
     void postTransmitSemaphore();
+    void waitWriteSemaphore();
+    void waitReadSemaphore();
     void waitTransmitSemaphore();
 private:
     // Attempts to test semaphore initialization validity using

@@ -57,9 +57,9 @@ void PLThreeSemaphores::initializeToValid( const char * baseName )
 
 #ifdef WIN32
     // Windows named semaphores.
-    m_wsem = CreateMutexA( NULL, false, m_wsemName );
-    m_rsem = CreateMutexA( NULL, false, m_rsemName );
-    m_tsem = CreateMutexA( NULL, true, m_tsemName );
+    m_wsem = CreateSemaphoreA( NULL, 0, 1, m_wsemName );
+    m_rsem = CreateSemaphoreA( NULL, 0, 1, m_rsemName );
+    m_tsem = CreateSemaphoreA( NULL, 1, 1, m_tsemName );
 #else // #ifdef WIN32
       // POSIX named semaphores.
     m_wsem = sem_open( m_wsemName, O_CREAT, S_IRWXU, 0 );
@@ -84,16 +84,8 @@ void PLThreeSemaphores::initializeToInvalid()
     {
 #ifdef WIN32
         // Windows named semaphores.
-        if ( m_wsem )
-            ReleaseMutex( m_wsem );
         CloseHandle( m_wsem );
-
-        if ( m_rsem )
-            ReleaseMutex( m_rsem );
         CloseHandle( m_rsem );
-
-        if ( m_tsem )
-            ReleaseMutex( m_tsem );
         CloseHandle( m_tsem );
 
 #else   // #ifdef WIN32
@@ -110,8 +102,7 @@ void PLThreeSemaphores::initializeToInvalid()
         sem_close( m_tsem );
         sem_unlink( m_tsemName );
 
-#endif // #ifdef WIN32
-
+#endif  // #ifdef WIN32
     }
     m_wsem = NULL;
     m_rsem = NULL;
@@ -249,10 +240,39 @@ void PLThreeSemaphores::postWriteSemaphore()
         throw( "PLThreeSemaphores::postWriteSemaphore: invalid write semaphore" );
 
 #ifdef WIN32
-    ReleaseMutex( m_wsem );
+    if ( !ReleaseSemaphore( m_wsem, 1, NULL ) )
+        throw( "PLThreeSemaphores::postWriteSemaphore: ReleaseSemaphore failed for write semaphore" );
 #else // #ifdef WIN32
     if ( sem_post( m_wsem ) )
         throw( "PLThreeSemaphores::postWriteSemaphore: sem_post failed for write semaphore" );
+#endif // #ifdef WIN32
+}
+
+void PLThreeSemaphores::postReadSemaphore()
+{
+    if ( !isReadSemaphoreValid() )
+        throw( "PLThreeSemaphores::postReadSemaphore: invalid read semaphore" );
+
+#ifdef WIN32
+    if ( !ReleaseSemaphore( m_rsem, 1, NULL ) )
+        throw( "PLThreeSemaphores::postReadSemaphore: ReleaseSemaphore failed for read semaphore" );
+#else // #ifdef WIN32
+    if ( sem_post( m_rsem ) )
+        throw( "PLThreeSemaphores::postReadSemaphore: sem_post failed for read semaphore" );
+#endif // #ifdef WIN32
+}
+
+void PLThreeSemaphores::postTransmitSemaphore()
+{
+    if ( !isTransmitSemaphoreValid() )
+        throw( "PLThreeSemaphores::postTransmitSemaphore: invalid transmit semaphore" );
+
+#ifdef WIN32
+    if ( !ReleaseSemaphore( m_tsem, 1, NULL ) )
+        throw( "PLThreeSemaphores::postTransmitSemaphore: ReleaseSemaphore failed for transmit semaphore" );
+#else // #ifdef WIN32
+    if ( sem_post( m_tsem ) )
+        throw( "PLThreeSemaphores::postTransmitSemaphore: sem_post failed for transmit semaphore" );
 #endif // #ifdef WIN32
 }
 
@@ -263,22 +283,11 @@ void PLThreeSemaphores::waitWriteSemaphore()
 
 #ifdef WIN32
     DWORD result = WaitForSingleObject( m_wsem, INFINITE );
+    if ( result == WAIT_FAILED )
+        throw( "PLThreeSemaphores::waitWriteSemaphore: WaitForSingleObject failed for write semaphore" );
 #else // #ifdef WIN32
     if ( sem_wait( m_wsem ) )
         throw( "PLThreeSemaphores::waitWriteSemaphore: sem_wait failed for write semaphore" );
-#endif // #ifdef WIN32
-}
-
-void PLThreeSemaphores::postReadSemaphore()
-{
-    if ( !isReadSemaphoreValid() )
-        throw( "PLThreeSemaphores::postReadSemaphore: invalid read semaphore" );
-
-#ifdef WIN32
-    ReleaseMutex( m_rsem );
-#else // #ifdef WIN32
-    if ( sem_post( m_rsem ) )
-        throw( "PLThreeSemaphores::postReadSemaphore: sem_post failed for read semaphore" );
 #endif // #ifdef WIN32
 }
 
@@ -289,22 +298,11 @@ void PLThreeSemaphores::waitReadSemaphore()
 
 #ifdef WIN32
     DWORD result = WaitForSingleObject( m_rsem, INFINITE );
+    if ( result == WAIT_FAILED )
+        throw( "PLThreeSemaphores::waitReadSemaphore: WaitForSingleObject failed for read semaphore" );
 #else // #ifdef WIN32
     if ( sem_wait( m_rsem ) )
         throw( "PLThreeSemaphores::waitReadSemaphore: sem_wait failed for read semaphore" );
-#endif // #ifdef WIN32
-}
-
-void PLThreeSemaphores::postTransmitSemaphore()
-{
-    if ( !isTransmitSemaphoreValid() )
-        throw( "PLThreeSemaphores::postTransmitSemaphore: invalid transmit semaphore" );
-
-#ifdef WIN32
-    ReleaseMutex( m_tsem );
-#else // #ifdef WIN32
-    if ( sem_post( m_tsem ) )
-        throw( "PLThreeSemaphores::postTransmitSemaphore: sem_post failed for transmit semaphore" );
 #endif // #ifdef WIN32
 }
 
@@ -315,6 +313,8 @@ void PLThreeSemaphores::waitTransmitSemaphore()
 
 #ifdef WIN32
     DWORD result = WaitForSingleObject( m_tsem, INFINITE );
+    if ( result == WAIT_FAILED )
+        throw( "PLThreeSemaphores::waitTransmitSemaphore: WaitForSingleObject failed for transmit semaphore" );
 #else // #ifdef WIN32
     if ( sem_wait( m_tsem ) )
         throw( "PLThreeSemaphores::waitTransmitSemaphore: sem_wait failed for transmit semaphore" );
