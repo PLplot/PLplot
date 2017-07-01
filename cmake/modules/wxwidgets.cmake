@@ -50,7 +50,7 @@ if(PLD_wxwidgets OR PLD_wxpng)
   if(WIN32)
     list(APPEND wxWidgets_DEFINITIONS UNICODE _UNICODE)
   endif(WIN32)
-    
+
   message(STATUS "wxWidgets_FOUND             : ${wxWidgets_FOUND}")
   message(STATUS "wxWidgets_INCLUDE_DIRS      : ${wxWidgets_INCLUDE_DIRS}")
   message(STATUS "wxWidgets_LIBRARIES         : ${wxWidgets_LIBRARIES}")
