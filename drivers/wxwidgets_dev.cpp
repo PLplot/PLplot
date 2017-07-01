@@ -1694,7 +1694,7 @@ void wxPLDevice::SetupMemoryMap()
 #ifdef PL_WXWIDGETS_IPC3
         // Should only be executed once per valid Memory map before wxPLViewer is launched.
         m_outputMemoryMap.initializeSemaphoresToValid( mapName );
-       //zero out the reserved area
+        //zero out the reserved area
         m_header.viewerOpenFlag = 0;
         m_header.locateModeFlag = 0;
         m_header.completeFlag   = 0;

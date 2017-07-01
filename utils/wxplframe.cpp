@@ -67,7 +67,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         if ( m_memoryMap.isValid() )
         {
 #ifdef PL_WXWIDGETS_IPC3
-	    m_memoryMap.initializeSemaphoresToValid( file.mb_str() );
+            m_memoryMap.initializeSemaphoresToValid( file.mb_str() );
 
 #else           // #ifdef PL_WXWIDGETS_IPC3
             wxString mutexName = file + wxT( "mut" );
