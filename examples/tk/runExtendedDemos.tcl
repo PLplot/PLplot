@@ -15,7 +15,7 @@ if {[catch {file readlink [info script]} path]} {
     set path [info script]
 }
 cd [file join [file dirname $path] .. tcl]
-lappend auto_path [pwd]
+lappend auto_path "[pwd]"
 catch {package require Plplotter}
 Plplotwin .p
 grid .p -columnspan 5 -sticky news

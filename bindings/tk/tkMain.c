@@ -386,7 +386,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
 
     if ( fileName != NULL )
     {
-        code = Tcl_VarEval( interp, "source ", fileName, (char *) NULL );
+        code = Tcl_VarEval( interp, "source \"", fileName, "\"", (char *) NULL );
         if ( code != TCL_OK )
         {
             goto error;

@@ -17,7 +17,7 @@ set greyedOut {14 31 32}
 if {[catch {file readlink [info script]} path]} {
     set path [info script]
 }
-lappend auto_path [file join [file dirname $path] .. tcl]
+lappend auto_path "[file join [file dirname $path] .. tcl]"
 
 # In order to distinguish whether this is a plserver or wish
 # environment we assume that [info nameofexecutable] has the string

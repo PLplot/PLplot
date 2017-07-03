@@ -991,9 +991,13 @@ if(BUILD_TEST)
   endif(ENABLE_pyqt5)
 
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
+    # Some of the custom target commands below need this escaped version
+    string(REPLACE " " "\\ " CMAKE_CURRENT_BINARY_DIR_ESCAPED ${CMAKE_CURRENT_BINARY_DIR})
+
     add_custom_target(test_pltcl_standard_examples
-      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev ${generic_interactive_device} -np
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/pltcl_standard_examples -dev ${generic_interactive_device} -np
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+      VERBATIM
       )
     add_dependencies(test_pltcl_standard_examples
       pltcl
@@ -1010,8 +1014,9 @@ if(BUILD_TEST)
     # tests that use "package require Pltcl" only work if
     # BUILD_SHARED_LIBS is true and PLD_tk is true.
     add_custom_target(test_tclsh_standard_examples
-      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tcl/tclsh_standard_examples
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+      VERBATIM
       )
 
     if(tcltk_in_plplot_library)
@@ -1038,7 +1043,8 @@ if(BUILD_TEST)
     set(targets_examples_tk)
 
     add_custom_target(test_tk_01
-      COMMAND xtk01 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk01
+      COMMAND xtk01 -f ${CMAKE_CURRENT_BINARY_DIR_ESCAPED}/tk/tk01
+      VERBATIM
       )
     add_dependencies(test_tk_01
       ${TARGET_tclIndex_tcl}
@@ -1049,6 +1055,7 @@ if(BUILD_TEST)
 
     add_custom_target(test_tk_03
       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/tk03
+      VERBATIM
       )
     add_dependencies(test_tk_03
       plserver
@@ -1061,6 +1068,7 @@ if(BUILD_TEST)
     add_custom_target(test_tk_plgrid
       COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plgrid
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tcl
+      VERBATIM
       )
 
     add_dependencies(test_tk_plgrid
@@ -1073,8 +1081,9 @@ if(BUILD_TEST)
     list(APPEND targets_examples_tk test_tk_plgrid)
 
     add_custom_target(test_plserver_standard_examples
-      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_standard_examples
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_standard_examples
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+      VERBATIM
       )
     add_dependencies(test_plserver_standard_examples
       plserver
@@ -1094,6 +1103,7 @@ if(BUILD_TEST)
 	add_custom_target(test_pytkdemo
 	  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/python/pytkdemo
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+	  VERBATIM
 	  )
 	add_dependencies(test_pytkdemo
 	  _plplotc_fixed
@@ -1106,6 +1116,7 @@ if(BUILD_TEST)
 	add_custom_target(test_pytkdemo
 	  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/pytkdemo
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
+	  VERBATIM
 	  )
 	add_dependencies(test_pytkdemo
 	  _plplotc
@@ -1125,8 +1136,9 @@ if(BUILD_TEST)
       # tests that use "package require Pltk" only work if
       # BUILD_SHARED_LIBS is true and PLD_tk is true.
       add_custom_target(test_wish_standard_examples
-	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_standard_examples
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+	VERBATIM
 	)
       add_dependencies(test_wish_standard_examples
 	${plplottcltk_target}
@@ -1154,6 +1166,7 @@ if(BUILD_TEST)
     if(ENABLE_itkX)
       add_custom_target(test_tk_02
 	COMMAND xtk02 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk02
+	VERBATIM
 	)
       add_dependencies(test_tk_02
 	${TARGET_tclIndex_tcl}
@@ -1171,6 +1184,7 @@ if(BUILD_TEST)
 
       add_custom_target(test_tk_04
 	COMMAND xtk04 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk04
+	VERBATIM
 	)
       add_dependencies(test_tk_04
 	${TARGET_tclIndex_tcl}
@@ -1187,8 +1201,9 @@ if(BUILD_TEST)
     endif(ENABLE_itkX)
 
     add_custom_target(test_plserver_runAllDemos
-      COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_runAllDemos
+      COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/plserver_runAllDemos
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+      VERBATIM
       )
     add_dependencies(test_plserver_runAllDemos
       plserver
@@ -1208,8 +1223,9 @@ if(BUILD_TEST)
       # tests that use "package require Plplotter" only work if
       # BUILD_SHARED_LIBS is true and PLD_tkwin is true.
       add_custom_target(test_wish_runAllDemos
-	COMMAND env ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos
+	COMMAND ${CMAKE_CURRENT_BINARY_DIR}/tk/wish_runAllDemos
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/tk
+	VERBATIM
 	)
       add_dependencies(test_wish_runAllDemos
 	${plplottcltk_target}

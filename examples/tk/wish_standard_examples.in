@@ -6,7 +6,7 @@
 # is possible because all comment lines are ignored by wish including
 # continued ones with a trailing backslash like this one \
 exec @TK_WISH@ "$0" "$@"
-lappend auto_path @pkgIndex_LOCATION@
+lappend auto_path "@pkgIndex_LOCATION@"
 package require Pltk
 source tkdemos.tcl
 # Note wish currently disables pauses so no special method is

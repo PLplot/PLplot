@@ -4,7 +4,7 @@
 # is possible because all comment lines are ignored by tclsh including
 # continued ones with a trailing backslash like this one \
 exec "@TCL_TCLSH@" "$0" "$@"
-lappend auto_path @pkgIndex_LOCATION@
+lappend auto_path "@pkgIndex_LOCATION@"
 package require Pltcl
 source tcldemos.tcl
 plsdev "@generic_interactive_device@"

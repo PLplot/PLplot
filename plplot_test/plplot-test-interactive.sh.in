@@ -1,6 +1,6 @@
 #!@SH_EXECUTABLE@
 # -*- mode: shell-script -*-
-# Copyright (C) 2009-2016 Alan W. Irwin
+# Copyright (C) 2009-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -332,7 +332,7 @@ EOF
         # Drop 32 since it has not been propagated (for the present by
         # design) from C.
 	tclsh <<EOF
-lappend auto_path @pkgIndex_LOCATION@
+lappend auto_path "@pkgIndex_LOCATION@"
 package require Pltcl
 source tcldemos.tcl
 plsdev "xwin"
@@ -453,7 +453,7 @@ EOF
         # those examples for now.  Example 20 enables plspause so
         # we comment that out for now.
 	wish <<EOF
-lappend auto_path @pkgIndex_LOCATION@
+lappend auto_path "@pkgIndex_LOCATION@"
 package require Pltk
 source tkdemos.tcl
 # Note wish currently disables pauses so no special method is
@@ -524,7 +524,7 @@ EOF
         # Just in case EXAMPLES_DIR is a relative path such as the default ".".
 	cd "${EXAMPLES_DIR}"/tk
 	wish <<EOF
-lappend auto_path @pkgIndex_LOCATION@
+lappend auto_path "@pkgIndex_LOCATION@"
 package require Plplotter
 source runAllDemos.tcl
 EOF

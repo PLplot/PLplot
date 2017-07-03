@@ -1,7 +1,7 @@
 # examples/tk/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -218,13 +218,14 @@ if(BUILD_TEST)
   # pkgIndex_LOCATION is the directory where the relevant pkgIndex.tcl
   # file is located.  In the Plplotter package case two build-tree
   # locations must be given, and we use the pkgIndex_LOCATIONS variable
-  # to configure that case.
+  # (appropriately quoted for the space in source, build, or install tree prefix
+  # case) to configure that case.
   if(CORE_BUILD)
     set(pkgIndex_LOCATION ${CMAKE_BINARY_DIR}/bindings/tk)
-    set(pkgIndex_LOCATIONS "${CMAKE_BINARY_DIR}/bindings/tk ${CMAKE_BINARY_DIR}/bindings/tk-x-plat")
+    set(pkgIndex_LOCATIONS "\"${CMAKE_BINARY_DIR}/bindings/tk\" \"${CMAKE_BINARY_DIR}/bindings/tk-x-plat\"")
   else(CORE_BUILD)
     set(pkgIndex_LOCATION ${DATA_DIR})
-    set(pkgIndex_LOCATIONS ${DATA_DIR})
+    set(pkgIndex_LOCATIONS "\"${DATA_DIR}\"")
   endif(CORE_BUILD)
 
   foreach(tk_related_target xtk01 plserver xtk02 xtk04)

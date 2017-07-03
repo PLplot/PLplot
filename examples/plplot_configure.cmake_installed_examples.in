@@ -137,7 +137,7 @@ if(ENABLE_tcl OR ENABLE_tk)
   set(MKTCLINDEX ${CMAKE_SOURCE_DIR}/tcl/mktclIndex)
   set(MKTCLINDEX_ARGS @MKTCLINDEX_ARGS@)
   # Needed to configure tclsh_standard_examples and wish_standard_examples
-  set(DATA_DIR @DATA_DIR@)
+  set(DATA_DIR "@DATA_DIR@")
 endif(ENABLE_tcl OR ENABLE_tk)
 
 if(ENABLE_tk)
