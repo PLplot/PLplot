@@ -1,11 +1,11 @@
 PLplot Release 5.13.0 (N.B. the wording below will be substantially
-changed if the next release is a bugfix one, i.e., 5.12.1).
+changed if the next release is a bugfix one, i.e., 5.13.1).
 
 This is a release of the PLplot plotting package. It represents the
 ongoing best efforts of the PLplot development community (roughly ???
 commits since the last release) to improve this package, and it is the
 only version of PLplot that we attempt to support.  Releases in the
-5.x.y series should be available several times per year.
+5.x.y series should be available roughly two times per year.
 
 Note that PLplot has been continuously developed since 1986 so it has
 accumulated a lot of cruft since that time that we are now slowing
@@ -39,6 +39,7 @@ CONTENTS
 2.1 Bug fixes
 2.2 The Python binding and examples now work for both Python 2 and 3
 2.3 Changed Fortran naming convention
+2.4 Fixed many "space in prefix" issues
 
 3. PLplot testing
 ________________________________________________________________
@@ -48,21 +49,21 @@ ________________________________________________________________
 1.1 CMake version compatibility
 
 Our build system is implemented using CMake.  The minimum version of
-CMake we allow is 3.0.2 on Linux and 3.6.2 on all other platforms.
-(And it is likely we will bump those minimum versions to at least
-3.7.0 for our next release.)
+CMake we allow is 3.6.2 on all platforms.  (And it is likely we will
+bump that minimum version to at least 3.7.0 for our next release.)
 
 This particular PLplot release has been comprehensively tested for
-CMake versions 3.0.2 through 3.7.0 on a variety of platforms (see
+CMake versions 3.6.2 through 3.8.2 on a variety of platforms (see
 <http://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>).
-So if your CMake version is <= 3.7.0 and satisfies the above minimum
+So if your CMake version is <= 3.8.2 and satisfies the above minimum
 CMake version requirement there is an excellent chance that our build
 system will work well.  Furthermore, if you try later CMake versions
 as they are released during the life of this PLplot release, our build
 system might continue to work well because CMake has an excellent
 reputation for preserving backwards compatibility.  But if you get
-build-system trouble for versions of CMake greater than 3.7.0, the
-first thing you should try is the well-tested CMake-3.7.0.
+build-system trouble for versions of CMake greater than 3.8.2, the
+first thing you should try is CMake-3.8.2 which has been well-tested
+by PLplot builds.
 
 ________________________________________________________________
 
@@ -78,13 +79,21 @@ collected in ChangeLog.release.
 We have generalized our previous Python 2 binding and examples so they
 work now with both Python 2 and 3.  The minimum versions of Python we
 support are 2.7 for Python 2 and 3.4 for Python 3.  Our build system
-by default now finds the "python" executable and finds the python
+finds Python 3 by default, but if the user prefers Python 2, they
+can arrange that by using the cmake option -DFORCE_PYTHON2=ON.
+
+We arrived at the Python 3 default choice because I (AWI) was having
+trouble with corruption of the Python-generated file
+bindings/python/Plframe.pyc fairly often with Python 2 while that
+corruption has never happened with Python 3.  (This result is exactly
+consistent with a Python developer's prediction when consulted about
+that corruption bug that it was unlikely to occur for Python 3 because
+that version was better maintained in general than Python 2.)
+
+After our build system finds the Python executable, it then
+finds the Python
 library and numpy versions that are consistent with whether that
-python executable is Python 2 or Python 3.  If the user prefers a
-different version of Python than what is found by default, then
-specifying the cmake option -DPython_ADDITIONAL_VERSIONS:STRING=3 (to
-force Python 3) or -DPython_ADDITIONAL_VERSIONS:STRING=2 (to force
-Python 2) is recommended.
+Python executable corresponds to Python 2 or Python 3.
 
 As a result of these changes we get perfect PostScript difference
 reports between Python and C, i.e.,
@@ -110,6 +119,20 @@ examples/fortran rather than bindings/f95 and examples/f95 that we
 used before, and our build system enables our Fortran binding and
 examples with the CMake variable ENABLE_fortran rather than the
 ENABLE_f95 CMake variable that we used for this purpose before.
+
+2.4 Fixed many "space in prefix" issues
+
+As a result of these fixes we can execute
+
+scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank"
+
+from a source tree whose prefix has a space in it without any errors on Linux.
+
+This is a comprehensive test of all components of PLplot available on a fully loaded Linux platform
+where the prefixes for the source, build, and install trees all contain spaces.  However, this
+test does not test components of PLplot that are only available on other platforms, and does not
+test the case where external libraries that PLplot depends on have spaces in their full pathnames.
+So this "space" work is a large step in the right direction but is not complete.
 
 ________________________________________________________________
 
