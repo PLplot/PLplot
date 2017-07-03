@@ -6,7 +6,7 @@
 # "git diff" to make sure you agree with the source file changes generated
 # by this script before committing these generated changes.
 
-# Copyright (C) 2016 Alan W. Irwin
+# Copyright (C) 2016-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -28,15 +28,15 @@
 # not available on all platforms).  Followed advice at
 # http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
 ORIGINAL_PATH="$(pwd)"
-cd "$(dirname $0)"
+cd $(dirname "$0")
 # Absolute Path of the script
 SCRIPT_PATH="$(pwd)"
 cd "${ORIGINAL_PATH}"
 
 # Assumption: top-level source tree is parent directory of where script
 # is located.
-SOURCE_TREE="$(dirname ${SCRIPT_PATH})"
-cd $SOURCE_TREE
+SOURCE_TREE=$(dirname "${SCRIPT_PATH}")
+cd "$SOURCE_TREE"
 
 # Remove trailing blanks and tabs on all files in source tree with the following exceptions.
 # * Exclude all files in the .git tree (don't want to mess with our repository).
