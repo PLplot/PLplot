@@ -531,6 +531,8 @@ if(wxWidgets_FIND_STYLE STREQUAL "win32")
         ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_ARCH}_dll                 # prefer shared
         ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_TOOLVER}${_WX_ARCH}_lib
         ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_ARCH}_lib
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_TOOLVER}_dll
+        ${WX_ROOT_DIR}/lib/${_WX_TOOL}${_WX_TOOLVER}_lib
         DOC "Path to wxWidgets libraries"
         NO_DEFAULT_PATH
         )
