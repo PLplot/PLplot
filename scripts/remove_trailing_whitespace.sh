@@ -48,4 +48,21 @@ cd "$SOURCE_TREE"
 # * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
 #   that does generate lines with some trailing blanks).
 
-sed -i -e $'s?[\t ][\t ]*$??' $(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|debian/|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
+filelist=$(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|debian/|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
+if [ -z "$filelist" ] ; then
+    echo "No files found with trailing whitespace"
+    exit
+fi
+echo "The following list of files have trailing white space"
+echo $filelist
+ANSWER=
+while [ "$ANSWER" != "yes" -a "$ANSWER" != "no" ] ; do
+    echo -n "Remove trailing whitespace from all those files (yes/no)? "
+    read ANSWER
+done
+if [ "$ANSWER" = "no" ] ; then
+    echo "Immediate exit specified!"
+    exit
+fi
+
+sed -i -e $'s?[\t ][\t ]*$??' $filelist
