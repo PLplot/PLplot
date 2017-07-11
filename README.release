@@ -1,5 +1,4 @@
-PLplot Release 5.13.0 (N.B. the wording below will be substantially
-changed if the next release is a bugfix one, i.e., 5.13.1).
+PLplot Release 5.13.0
 
 This is a release of the PLplot plotting package. It represents the
 ongoing best efforts of the PLplot development community (roughly ???
@@ -33,6 +32,7 @@ CONTENTS
 1. OFFICIAL NOTICES FOR USERS
 
 1.1 CMake version compatibility
+1.2 Notice of dropping our plan to introduce a generic C pointer with const attribute
 
 2. Improvements relative to the previous release
 
@@ -65,6 +65,32 @@ build-system trouble for versions of CMake greater than 3.8.2, the
 first thing you should try is CMake-3.8.2 which has been well-tested
 by PLplot builds.
 
+1.2 Notice of dropping our plan to introduce a generic C pointer with const attribute
+
+This plan (first mentioned in the 5.12.0 release notes) has been
+dropped because the const attribute on generic pointers obviously
+disallows users from using our generic pointer arguments to pass back
+information from their callback routines.  As a result of this change
+we have the following situation for our generic pointer arguments.
+
+5.11.1 and before: PLPointer (typedef'd to void *) was our generic pointer argument
+
+5.12.0: PLPointer was deprecated, and PL_GENERIC_POINTER
+and PL_NC_GENERIC_POINTER were introduced with both typedef'd to void *, but
+the plan (since dropped) going forward was to typedef PL_GENERIC_POINTER as
+const void * (since the NC in the name of PL_NC_GENERIC_POINTER is
+meant to signal non-const, that implies when NC is dropped as in
+PL_GENERIC_POINTER that the
+type in question has a const attribute similar to many other
+typedef pairs with and without the const attribute that are
+defined in include/plplot.h).
+
+5.13.0.  Due to the change in plan, PLPointer is now preferred again,
+and PL_GENERIC_POINTER and PL_NC_GENERIC_POINTER are officially
+deprecated and are likely to be removed in the next release since they
+were only introduced in non-deprecated form for one release.  All
+three continue to be typedefed as void *.
+
 ________________________________________________________________
 
 2. Improvements relative to the previous release
@@ -90,10 +116,9 @@ consistent with a Python developer's prediction when consulted about
 that corruption bug that it was unlikely to occur for Python 3 because
 that version was better maintained in general than Python 2.)
 
-After our build system finds the Python executable, it then
-finds the Python
-library and numpy versions that are consistent with whether that
-Python executable corresponds to Python 2 or Python 3.
+After our build system finds the Python executable, it then finds the
+Python library and numpy versions that are consistent with whether
+that Python executable corresponds to Python 2 or Python 3.
 
 As a result of these changes we get perfect PostScript difference
 reports between Python and C, i.e.,

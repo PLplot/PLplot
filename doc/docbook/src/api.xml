@@ -2898,7 +2898,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
         <term>
           <parameter>pltr</parameter>
-          (<literal>PLTRANSFORM_callback</literal>, input)
+          (<literal>&PLTRANSFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para> A callback function that defines the transformation
@@ -2916,7 +2916,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	  <para>For languages other than C you should consult <xref
 	  linkend="part_bindings"/> for the details concerning how
-	  PLTRANSFORM_callback arguments are interfaced.
+	  &PLTRANSFORM_callback; arguments are interfaced.
 	  However, in general, a particular pattern of
 	  callback-associated arguments such as a <literal>tr</literal> vector
 	  with 6 elements; <literal>xg</literal> and <literal>yg</literal>
@@ -2938,7 +2938,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
+	  (<literal>&PLPointer;</literal>, input)
 	</term>
 	<listitem>
 	  <para>Extra parameter to help pass information to &pltr0;, &pltr1;,
@@ -7166,7 +7166,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>pltr</parameter>
-          (<literal>PLTRANSFORM_callback</literal>, input)
+          (<literal>&PLTRANSFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para> A callback function that defines the transformation
@@ -7191,7 +7191,7 @@ device support!)
 
 	  <para>For languages other than C you should consult <xref
 	  linkend="part_bindings"/> for the details concerning how
-	  PLTRANSFORM_callback arguments are interfaced.
+	  &PLTRANSFORM_callback; arguments are interfaced.
 	  However, in general, a particular pattern of
 	  callback-associated arguments such as a <literal>tr</literal> vector
 	  with 6 elements; <literal>xg</literal> and <literal>yg</literal>
@@ -7213,7 +7213,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
+	  (<literal>&PLPointer;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -8443,7 +8443,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>mapform</parameter>
-          (<literal>PLMAPFORM_callback</literal>, input)
+          (<literal>&PLMAPFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -8610,7 +8610,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>mapform</parameter>
-          (<literal>PLMAPFORM_callback</literal>, input)
+          (<literal>&PLMAPFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -8791,7 +8791,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>mapform</parameter>
-          (<literal>PLMAPFORM_callback</literal>, input)
+          (<literal>&PLMAPFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -8967,7 +8967,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>mapform</parameter>
-          (<literal>PLMAPFORM_callback</literal>, input)
+          (<literal>&PLMAPFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -9160,7 +9160,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>mapform</parameter>
-          (<literal>PLMAPFORM_callback</literal>, input)
+          (<literal>&PLMAPFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -9363,7 +9363,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>mapform</parameter>
-          (<literal>PLMAPFORM_callback</literal>, input)
+          (<literal>&PLMAPFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -15451,7 +15451,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>defined</parameter>
-          (<literal>PLDEFINED_callback</literal>, input)
+          (<literal>&PLDEFINED_callback;</literal>, input)
         </term>
         <listitem>
 	  <para>Callback function specifying the region that should be plotted in
@@ -15538,7 +15538,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>fill</parameter>
-          (<literal>PLFILL_callback</literal>, input)
+          (<literal>&PLFILL_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -15567,7 +15567,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>pltr</parameter>
-          (<literal>PLTRANSFORM_callback</literal>, input)
+          (<literal>&PLTRANSFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para> A callback function that defines the transformation
@@ -15592,7 +15592,7 @@ device support!)
 
 	  <para>For languages other than C you should consult <xref
 	  linkend="part_bindings"/> for the details concerning how
-	  PLTRANSFORM_callback arguments are interfaced.
+	  &PLTRANSFORM_callback; arguments are interfaced.
 	  However, in general, a particular pattern of
 	  callback-associated arguments such as a <literal>tr</literal> vector
 	  with 6 elements; <literal>xg</literal> and <literal>yg</literal>
@@ -15614,7 +15614,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>pltr_data</parameter>
-          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -15771,7 +15771,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>defined</parameter>
-          (<literal>PLDEFINED_callback</literal>, input)
+          (<literal>&PLDEFINED_callback;</literal>, input)
         </term>
         <listitem>
 	  <para>Callback function specifying the region that should be plotted in
@@ -15918,7 +15918,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>fill</parameter>
-          (<literal>PLFILL_callback</literal>, input)
+          (<literal>&PLFILL_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -15953,7 +15953,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>pltr</parameter>
-          (<literal>PLTRANSFORM_callback</literal>, input)
+          (<literal>&PLTRANSFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para> A callback function that defines the transformation
@@ -15978,7 +15978,7 @@ device support!)
 
 	  <para>For languages other than C you should consult <xref
 	  linkend="part_bindings"/> for the details concerning how
-	  PLTRANSFORM_callback arguments are interfaced.
+	  &PLTRANSFORM_callback; arguments are interfaced.
 	  However, in general, a particular pattern of
 	  callback-associated arguments such as a <literal>tr</literal> vector
 	  with 6 elements; <literal>xg</literal> and <literal>yg</literal>
@@ -16000,7 +16000,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>pltr_data</parameter>
-          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -16062,7 +16062,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>label_func</parameter>
-          (<literal>PLLABEL_FUNC_callback</literal>, input)
+          (<literal>&PLLABEL_FUNC_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -16122,7 +16122,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>label_data</parameter>
-          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -16267,7 +16267,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>plotmem</parameter>
-          (<literal>&PL_NC_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -16350,7 +16350,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>plotmem</parameter>
-          (<literal>&PL_NC_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -17181,7 +17181,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>coordinate_transform</parameter>
-          (<literal>PLTRANSFORM_callback</literal>, input)
+          (<literal>&PLTRANSFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para>A callback function that defines the transformation from
@@ -17193,7 +17193,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>coordinate_transform_data</parameter>
-          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -19490,7 +19490,7 @@ device support!)
       <varlistentry>
         <term>
           <parameter>pltr</parameter>
-          (<literal>PLTRANSFORM_callback</literal>, input)
+          (<literal>&PLTRANSFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para> A callback function that defines the transformation
@@ -19509,7 +19509,7 @@ device support!)
 
 	  <para>For languages other than C you should consult <xref
 	  linkend="part_bindings"/> for the details concerning how
-	  PLTRANSFORM_callback arguments are interfaced.
+	  &PLTRANSFORM_callback; arguments are interfaced.
 	  However, in general, a particular pattern of
 	  callback-associated arguments such as a <literal>tr</literal> vector
 	  with 6 elements; <literal>xg</literal> and <literal>yg</literal>
@@ -19531,7 +19531,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
+	  (<literal>&PLPointer;</literal>, input)
 	</term>
 	<listitem>
 	  <para>Extra parameter to help pass information to &pltr0;, &pltr1;,

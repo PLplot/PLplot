@@ -138,21 +138,9 @@ typedef char ** PLCHAR_NC_MATRIX;
   url="https://en.wikipedia.org/wiki/Iliffe_vector">Iliffe column
   vector</ulink> of pointers to row vectors.</para>
   </listitem>
-  <listitem><itemizedlist><title>Argument types for generic pointers</title>
-    <listitem><para><anchor id="PL_GENERIC_POINTER-type"/>Input generic pointer<programlisting>
-typedef void * PL_GENERIC_POINTER;
-    </programlisting>
-    Note in the interest of preserving backwards compatibility the
-    above typedef currently does not have the const attribute.
-    Nevertheless we use this type only for generic pointer arguments that
-    in fact point to memory areas that the given function does not change.
-    So in the near future we plan to make the following
-    backwards-incompatible change to the C API as part of a project to
-    insure the const correctness of that API:<programlisting>
-typedef const void * PL_GENERIC_POINTER;
-    </programlisting></para></listitem>
-    <listitem><para><anchor id="PL_NC_GENERIC_POINTER-type"/>Input/output generic pointer<programlisting>
-typedef void * PL_NC_GENERIC_POINTER;
+  <listitem><itemizedlist><title>Argument type for a generic pointer</title>
+    <listitem><para><anchor id="PLPointer-type"/>Input/output generic pointer<programlisting>
+typedef void * PLPointer;
     </programlisting></para></listitem>
   </itemizedlist></listitem>
   <listitem><itemizedlist><title>Argument types for callback functions</title>
@@ -194,7 +182,7 @@ typedef void ( *PLMAPFORM_callback )( PLINT n, PLFLT_NC_VECTOR x, PLFLT_NC_VECTO
     </variablelist>
     </listitem>
     <listitem><para><anchor id="PLTRANSFORM_callback-type"/>Coordinate transformation callback type<programlisting>
-typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PLFLT_NC_SCALAR ty, PL_GENERIC_POINTER data);
+typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PLFLT_NC_SCALAR ty, PLPointer data);
     </programlisting>where the callback arguments are the following:</para>
     <variablelist>
       <varlistentry>
@@ -244,7 +232,7 @@ typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PL
       <varlistentry>
         <term>
           <parameter>data</parameter>
-          (<literal>PL_NC_GENERIC_POINTER</literal>, input)
+          (<literal>PLPointer</literal>, input)
         </term>
         <listitem>
           <para>
@@ -256,7 +244,7 @@ typedef void ( *PLTRANSFORM_callback )( PLFLT x, PLFLT y, PLFLT_NC_SCALAR tx, PL
     </variablelist>
     </listitem>
     <listitem><para><anchor id="PLLABEL_FUNC_callback-type"/>Custom label callback type<programlisting>
-typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, PLCHAR_NC_VECTOR label, PLINT length, PL_GENERIC_POINTER data);
+typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, PLCHAR_NC_VECTOR label, PLINT length, PLPointer data);
     </programlisting>where the callback arguments are the following:</para>
     <variablelist>
       <varlistentry>
@@ -312,7 +300,7 @@ typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, PLCHAR_NC_VECT
       <varlistentry>
         <term>
           <parameter>data</parameter>
-          (<literal>PL_GENERIC_POINTER</literal>, input)
+          (<literal>PLPointer</literal>, input)
         </term>
         <listitem>
           <para>
@@ -324,7 +312,7 @@ typedef void ( *PLLABEL_FUNC_callback )( PLINT axis, PLFLT value, PLCHAR_NC_VECT
     </variablelist>
     </listitem>
     <listitem><para><anchor id="PLF2EVAL_callback-type"/>Two-dimensional function array lookup callback type<programlisting>
-typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PL_GENERIC_POINTER data);
+typedef PLFLT ( *PLF2EVAL_callback )( PLINT ix, PLINT iy, PLPointer data);
     </programlisting>where the callback function returns the looked-up value, and the
 callback arguments are the following:</para>
     <variablelist>
@@ -349,7 +337,7 @@ callback arguments are the following:</para>
       <varlistentry>
         <term>
           <parameter>data</parameter>
-          (<literal>PL_GENERIC_POINTER</literal>, input)
+          (<literal>PLPointer</literal>, input)
         </term>
         <listitem>
 	  <para>Generic pointer to the two-dimensional function input data that
@@ -437,22 +425,22 @@ typedef struct
     </programlisting></para></listitem>
     <listitem><para><anchor id="PLF2OPS-type"/>Input/output pointer to a struct that holds pointers to functions that are used to
     get, set, modify, and test individual 2-D data points referenced by
-    a PL_NC_GENERIC_POINTER or PL_GENERIC_POINTER<programlisting>
+    a PLPointer or PLPointer<programlisting>
 typedef struct
 {
-    PLFLT ( *get )( PL_GENERIC_POINTER p, PLINT ix, PLINT iy );
-    PLFLT ( *set )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *add )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *sub )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *mul )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
-    PLFLT ( *div )( PL_NC_GENERIC_POINTER p, PLINT ix, PLINT iy, PLFLT z );
-    PLINT ( *is_nan )( PL_GENERIC_POINTER p, PLINT ix, PLINT iy );
-    void ( *minmax )( PL_GENERIC_POINTER p, PLINT nx, PLINT ny, PLFLT_NC_SCALAR zmin, PLFLT_NC_SCALAR zmax );
+    PLFLT ( *get )( PLPointer p, PLINT ix, PLINT iy );
+    PLFLT ( *set )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *add )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *sub )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *mul )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLFLT ( *div )( PLPointer p, PLINT ix, PLINT iy, PLFLT z );
+    PLINT ( *is_nan )( PLPointer p, PLINT ix, PLINT iy );
+    void ( *minmax )( PLPointer p, PLINT nx, PLINT ny, PLFLT_NC_SCALAR zmin, PLFLT_NC_SCALAR zmax );
     //
     // f2eval is backwards compatible signature for "f2eval" functions that
     // existed before plf2ops "operator function families" were used.
     //
-    PLFLT ( *f2eval )( PLINT ix, PLINT iy, PL_GENERIC_POINTER p );
+    PLFLT ( *f2eval )( PLINT ix, PLINT iy, PLPointer p );
 } plf2ops_t;
 
 typedef plf2ops_t * PLF2OPS;

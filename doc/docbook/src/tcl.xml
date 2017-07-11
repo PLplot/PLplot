@@ -820,8 +820,8 @@ Combination of previously defined matrices, deep lists, and space-separated numb
       <programlisting>
 	void plcont( PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 	PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PL_NC_GENERIC_POINTER),
-	PL_NC_GENERIC_POINTER pltr_data);
+	void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
+	PLPointer pltr_data);
       </programlisting>
       <para>
       </para>

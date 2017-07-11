@@ -2,11 +2,11 @@
 <!--
     api-c.xml: "The Specialized C API for PLplot" chapter
 
-Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999, 2000, 2001, 2002, 2003  Alan W. Irwin
-Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
-Copyright (C) 2003  Joao Cardoso
-Copyright (C) 2008  Andrew Ross
+Copyright (C) 1994 Geoffrey Furnish and Maurice LeBrun
+Copyright (C) 1999-2017 Alan W. Irwin
+Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004 Rafael Laboissiere
+Copyright (C) 2003 Joao Cardoso
+Copyright (C) 2008 Andrew Ross
 
 Redistribution and use in source (XML DocBook) and "compiled" forms
 (HTML, PDF, PostScript, DVI, TeXinfo and so forth) with or without
@@ -403,7 +403,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
         <term>
           <parameter>zp</parameter>
-          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -1084,7 +1084,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
         <term>
           <parameter>defined</parameter>
-          (<literal>PLDEFINED_callback</literal>, input)
+          (<literal>&PLDEFINED_callback;</literal>, input)
         </term>
         <listitem>
 	  <para>Callback function specifying the region that should be plotted in
@@ -1229,7 +1229,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
         <term>
           <parameter>fill</parameter>
-          (<literal>PLFILL_callback</literal>, input)
+          (<literal>&PLFILL_callback;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -1264,7 +1264,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
         <term>
           <parameter>pltr</parameter>
-          (<literal>PLTRANSFORM_callback</literal>, input)
+          (<literal>&PLTRANSFORM_callback;</literal>, input)
         </term>
         <listitem>
           <para> A callback function that defines the transformation
@@ -1289,7 +1289,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 	  <para>For languages other than C you should consult <xref
 	  linkend="part_bindings"/> for the details concerning how
-	  PLTRANSFORM_callback arguments are interfaced.
+	  &PLTRANSFORM_callback; arguments are interfaced.
 	  However, in general, a particular pattern of
 	  callback-associated arguments such as a <literal>tr</literal> vector
 	  with 6 elements; <literal>xg</literal> and <literal>yg</literal>
@@ -1311,7 +1311,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
         <term>
           <parameter>pltr_data</parameter>
-          (<literal>&PL_GENERIC_POINTER;</literal>, input)
+          (<literal>&PLPointer;</literal>, input)
         </term>
         <listitem>
           <para>
@@ -1353,7 +1353,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </para>
 
     <para>Identity transformation for matrix index to world coordinate mapping.  This routine
-    can be used for the PLTRANSFORM_callback argument of &plcont;,
+    can be used for the &PLTRANSFORM_callback; argument of &plcont;,
     &plshade;, &plshades;, &plimagefr;, or &plvect;.</para>
 
     <variablelist>
@@ -1404,7 +1404,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
+	  (<literal>&PLPointer;</literal>, input)
 	</term>
 	<listitem>
 	  <para>A pointer to additional data that is passed as an
@@ -1446,7 +1446,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>Linear interpolation for matrix index to world coordinate mapping using
     one-dimensional <literal>x</literal> and <literal>y</literal>
     coordinate arrays.  This routine can be used for the
-    PLTRANSFORM_callback argument of &plcont;, &plshade;, &plshades;,
+    &PLTRANSFORM_callback; argument of &plcont;, &plshade;, &plshades;,
     &plimagefr;, or &plvect;.</para>
 
     <variablelist>
@@ -1497,7 +1497,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
+	  (<literal>&PLPointer;</literal>, input)
 	</term>
 	<listitem>
 	  <para>A pointer to additional data that is passed as an
@@ -1540,7 +1540,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <para>Linear interpolation for grid to world mapping using
     two-dimensional <literal>x</literal> and <literal>y</literal>
     coordinate arrays.  This routine can be used for the
-    PLTRANSFORM_callback argument of &plcont;, &plshade;, &plshades;,
+    &PLTRANSFORM_callback; argument of &plcont;, &plshade;, &plshades;,
     &plimagefr;, or &plvect;.</para>
 
     <variablelist>
@@ -1591,7 +1591,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>pltr_data</parameter>
-	  (<literal>&PL_GENERIC_POINTER;</literal>, input)
+	  (<literal>&PLPointer;</literal>, input)
 	</term>
 	<listitem>
 	  <para>A pointer to additional data that is passed as an
@@ -1802,7 +1802,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>handler</structfield>
-	  (<literal>int (*func) (PLCHAR_VECTOR, PLCHAR_VECTOR, PL_NC_GENERIC_POINTER)</literal>)
+	  (<literal>int (*func) (PLCHAR_VECTOR, PLCHAR_VECTOR, PLPointer)</literal>)
 	</term>
 	<listitem>
 	  <para>
@@ -1814,7 +1814,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>client_data</structfield>
-	  (<literal>PL_NC_GENERIC_POINTER</literal>)
+	  (<literal>PLPointer</literal>)
 	</term>
 	<listitem>
 	  <para>
@@ -1826,7 +1826,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <structfield>var</structfield>
-	  (<literal>PL_NC_GENERIC_POINTER</literal>)
+	  (<literal>PLPointer</literal>)
 	</term>
 	<listitem>
 	  <para>
