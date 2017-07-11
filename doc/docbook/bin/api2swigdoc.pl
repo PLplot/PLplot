@@ -55,12 +55,13 @@
 
 #  Call this script by giving the swig *.i file defining the
 #  octave binding of PLplot as the first argument, the master file (typically
-#  plplotdoc.xml) as the second argument, and the API chapter file
-#  (typically api.xml) as the third argument, and output file
+#  plplotdoc.xml) as the second argument, the API chapter file
+#  (typically api.xml) as the third argument, and the output file
 #  (typically swig_documentation.i) as the fourth argument.
 
 %rename_hash = ();
 
+# Figure out the octave renames.
 open (PLPLOT_OCTAVE_I, "< $ARGV[0]") or die "Can't open $ARGV[0] : $!";
 while( <PLPLOT_OCTAVE_I>){
     if(/^%rename\( *([\w]*) *\) *([\w]*);$/){
@@ -78,8 +79,7 @@ use XML::Parser;
 use XML::DOM;
 use Text::Wrap;
 $Text::Wrap::columns = 75;
-use Text::Tabs;
-$tabstop = 4;
+$Text::Wrap::unexpand = 0;
 
 $api = "";
 open (MASTER, "< $ARGV[1]");
