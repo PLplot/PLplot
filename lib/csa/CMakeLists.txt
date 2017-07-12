@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -46,9 +46,7 @@ if(WITH_CSA)
 
   set(csa_DOCFILES
     README
-    README.1st
     )
   install(FILES README DESTINATION ${DOC_DIR} RENAME README.csa)
-  install(FILES README.1st DESTINATION ${DOC_DIR} RENAME README.1st.csa)
 
 endif(WITH_CSA)
