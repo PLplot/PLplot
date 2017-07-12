@@ -1,7 +1,0 @@
-usr/lib/*/lib*tcl*
-usr/include/plplot/pltcl.h
-usr/include/plplot/pltk.h
-usr/include/plplot/tclMatrix.h
-usr/share/doc/plplot-tcl-dev
-usr/share/doc/libplplot12/examples/*tcl*
-usr/share/doc/libplplot12/examples/tk

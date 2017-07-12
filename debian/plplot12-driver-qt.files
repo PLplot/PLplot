@@ -1,4 +1,0 @@
-usr/lib/*/plplot*/driversd/qt.*
-usr/lib/*/libplplotqtd.so.*
-usr/share/doc/plplot12-driver-qt
-usr/lib/python*/plplot_pyqt4.so

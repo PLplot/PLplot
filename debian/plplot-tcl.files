@@ -1,8 +1,0 @@
-usr/lib/*/lib*tcl*.so.*
-usr/lib/*/plplot*/bin/plserver
-usr/share/man/man1/plserver.1
-usr/share/man/man1/pltcl.1
-usr/share/plplot*/pkgIndex.tcl
-usr/share/plplot*/tcl
-usr/lib/*/plplot*/driversd/*tk*
-usr/share/doc/plplot-tcl

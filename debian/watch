@@ -1,3 +1,0 @@
-version=3
-opts="uversionmangle=s/-/~/,dversionmangle=s/\+dfsg$//" \
-  http://sf.net/plplot/plplot-(.*)\.tar\.gz debian debian/repack
