@@ -1,44 +1,18 @@
-csa
-Bivariate Cubic Spline approximation library + standalone utility
-Version 0.05
+The files in this directory originated with Joao Cardoso's 2003
+download of Pavel Sakov's csa library which was immediately stripped
+down by Joao to just the parts he needed to help implement the
+plgriddata API for the 'plplot' C library.  The PLplot development
+team have been maintaining that stripped version of the csa library
+ever since with no further contribution (except for the new LICENSE
+text referred to below) from Pavel Sakov.
 
-Copyright 2002 CSIRO Marine Research
-GPO 1538 Hobart
-TAS 7001
-Australia
-Please send comments and bugs to Pavel.Sakov@csiro.au
-
-There is no warranty whatsoever.  Use at your own risk.
-
-These code may be freely redistributed under the condition that the copyright
-notices are not removed. You may distribute modified versions of this code
-UNDER THE CONDITION THAT THIS CODE AND ANY MODIFICATIONS MADE TO IT IN THE
-SAME FILE REMAIN UNDER COPYRIGHT OF CSIRO, BOTH SOURCE AND OBJECT CODE ARE
-MADE FREELY AVAILABLE WITHOUT CHARGE, AND CLEAR NOTICE IS GIVEN OF THE
-MODIFICATIONS.
-
-To compile, run:
-
-configure
-make
-(make install)
-
-Apart from the `csa' library, this code contains `csabathy' -- an
-approximation utility based on `csa'.
-
-For a quick test, see examples/*/README.
-
-Acknowledgments:
-
-*The algorithm used is described in paper by J. Haber, F. Zeilfelder, O.Davydov
-and H.-P. Seidel, Smooth approximation and rendering of large scattered data
-sets, in  ``Proceedings of IEEE Visualization 2001'' (Th.Ertl, K.Joy and
-A.Varshney, Eds.), pp.341-347, 571, IEEE Computer Society, 2001.
-http://www.uni-giessen.de/www-Numerische-Mathematik/davydov/VIS2001.ps.gz
-http://www.math.uni-mannheim.de/~lsmath4/paper/VIS2001.pdf.gz
-
-*The singular value decomposition code was borrowed from "Numerical Recipes in
- C".
-
-Good luck!
-Pavel Sakov
+As of 2017-07-11 Pavel Sakov gave us permission to update the license
+of our stripped version of csa to be the same as the current licence
+of his modern csa version which we cut and pasted on that date from
+<https://github.com/sakov/csa-c/blob/master/csa/LICENSE> and stored in
+the LICENSE file in this directory.  The only additional changes we
+have made to that file are to add additional lines to the copyright
+notice at the top reflecting Joao Cardoso's initial commit in 2003 and
+the further commits since then (as recorded in our software repository
+log) to this stripped version of the csa library by him and other
+members of the PLplot development team.
