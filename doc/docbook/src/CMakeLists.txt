@@ -21,19 +21,17 @@
 
 if(ADD_SPECIAL_CONSISTENCY_CHECKING)
   # For this special case, must have access to a build of Hǎiliàng Wang's
-  # "check" application.  To build that tool (written in the Go language)
-  # follow these simple directions (which worked fine on 2014-01-26):
-  # Install go-lang package from your distro (I used the Debian testing
-  # version, go-lang version 1.2).
+  # "plplot-doc-check" application.  To build that tool (written in the Go language)
+  # follow these simple directions (which worked fine on 2017-07-13):
+  # Install golang package from your distro (I used the Debian Jessie
+  # version, golang version 1.3.3).
   # cd /home/software/golang_apps #(or wherever you like)
   # export GOPATH=$(pwd)
-  # go get -u github.com/hailiang/go-plplot/c/check
-  # go build github.com/hailiang/go-plplot/c/check
-  ## The above creates the "check" executable in $GOPATH/bin
-  ## That is too generic a name so symlink a more individual name
-  # cd $GOPATH/bin; ln -s check api.xml_consistency_checker;
+  # go get -u -v h12.me/go-plplot/c/plplot-doc-check
+  # go build h12.me/go-plplot/c/plplot-doc-check
+  ## The above creates the "plplot-doc-check" executable in $GOPATH/bin
   ## Now put $GOPATH/bin on your PATH and CMake should do the rest.
-  find_program(API_XML_CONSISTENCY_CHECKER api.xml_consistency_checker)
+  find_program(API_XML_CONSISTENCY_CHECKER plplot-doc-check)
   if(API_XML_CONSISTENCY_CHECKER)
     add_custom_target(check_api_xml_consistency
       COMMAND ${CMAKE_COMMAND} -E echo "Check that doc/docbook/src/api.xml is consistent with include/plplot.h"
@@ -45,7 +43,7 @@ if(ADD_SPECIAL_CONSISTENCY_CHECKING)
     # add_dependencies(check_all check_api_xml_consistency)
 
   else(API_XML_CONSISTENCY_CHECKER)
-    message(STATUS "WARNING: cannot find the api.xml_consistency_checker application so cannot check the consistency of api.xml with plplot.h")
+    message(STATUS "WARNING: cannot find the plplot-doc-check application so cannot check the consistency of api.xml with plplot.h")
   endif(API_XML_CONSISTENCY_CHECKER)
 endif(ADD_SPECIAL_CONSISTENCY_CHECKING)
 
