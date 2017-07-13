@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2009 Hazen Babcock
-# Copyright (C) 2009-2016 Alan W. Irwin
+# Copyright (C) 2009-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -69,6 +69,19 @@ if(ENABLE_pyqt4)
       )
   endif(BUILD_SHARED_LIBS)
 
+  if(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+    # The combination of python3 (at least for version 3.4) and sip
+    # creates a useless shared object with no externally accessible
+    # symbols when g++ with the -fvisibility=hidden option is used to
+    # compile the module. As a result, python3 cannot load this
+    # module.  Work around this issue by appending
+    # -fvisibility=default to the compiler options for this target for
+    # all python 3 cases (although it is not clear if this bug has
+    # been fixed for python 3 versions higher than 3.4). This
+    # visibility bug does not occur for Python 2.
+    target_compile_options(plplot_pyqt4 PRIVATE "-fvisibility=default")
+  endif(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  
   if(WIN32_OR_CYGWIN)
     set_target_properties(
       plplot_pyqt4
