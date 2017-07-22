@@ -217,9 +217,8 @@ Each of the steps in this comprehensive test may take a while...."
 	if [ "$make_rc" -eq 0 ] ; then
 	    output="$OUTPUT_TREE"/ctest.out
 	    rm -f "$output"
-	    # N.B. dashboard_option always has at least a trailing blank
-	    echo_tee "$ctest_command --extra-verbose${dashboard_option}in the build tree"
-	    $ctest_command --extra-verbose${dashboard_option}>& "$output"
+	    echo_tee "$ctest_command --extra-verbose ${dashboard_option}in the build tree"
+	    $ctest_command --extra-verbose ${dashboard_option}>& "$output"
 	    ctest_rc=$?
 	    if [ "$ctest_rc" -eq 0 ] ; then
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
@@ -234,7 +233,7 @@ Each of the steps in this comprehensive test may take a while...."
 		    fi
 		fi
 	    else
-		echo_tee "ERROR: $ctest_command --extra-verbose${dashboard_option}failed in the build tree"
+		echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the build tree"
 		collect_exit 1
 	    fi
 	else
@@ -703,14 +702,13 @@ the high-water mark of disk usage can still be as high as 4GB so be
 sure you have enough free disk space to run this test!
 "
 
-# N.B. dashboard_option must always have a trailing blank
 if [ "$do_submit_dashboard" = "yes" ] ; then
-    echo_tee "WARNING: Because you have specified \"do_submit_dashboard $do_submit_dashboard\" above, all details concerning each
+    echo_tee "WARNING: Because you have specified \"do_submit_dashboard $do_submit_dashboard\" above, all (anonymized) details concerning each
 of your ctest results will be published at <http://my.cdash.org/index.php?project=PLplot_git>
 "
     dashboard_option="-D Experimental "
 else
-    dashboard_option=" "
+    dashboard_option=""
 fi
 
 
