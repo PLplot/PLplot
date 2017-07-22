@@ -81,7 +81,7 @@ if(ENABLE_pyqt4)
     # visibility bug does not occur for Python 2.
     target_compile_options(plplot_pyqt4 PRIVATE "-fvisibility=default")
   endif(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-  
+
   if(WIN32_OR_CYGWIN)
     set_target_properties(
       plplot_pyqt4
