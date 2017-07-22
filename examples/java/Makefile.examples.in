@@ -21,7 +21,7 @@
 
 SHELL = @SH_EXECUTABLE@
 JAVAC = @JAVAC@
-PLPLOT_CLASSPATH = "@JAVADATA_HARDDIR@/plplot.jar"
+PLPLOT_CLASSPATH = "@JAR_HARDDIR@/plplot.jar"
 
 example_classes = \
 	x00.class \

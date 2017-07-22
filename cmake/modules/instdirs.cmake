@@ -1,6 +1,6 @@
 # cmake/modules/instdirs.cmake
 #
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2017  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -29,97 +29,135 @@
 # CMAKE_INSTALL_OLDINCLUDEDIR not set because PLplot does not use those
 # install locations).
 
-set(
-CMAKE_INSTALL_EXEC_PREFIX
-${CMAKE_INSTALL_PREFIX}
-CACHE PATH "install location for architecture-dependent files"
-)
+# N.B. This autotools-like set of variables not directly used for
+# installations, but they are used to determine default install
+# locations below (without the CMAKE_INSTALL prefix) that are directly
+# used for installations.
 
+set(INSTALL_LOCATION_VARIABLES_LIST)
 set(
-CMAKE_INSTALL_BINDIR
-${CMAKE_INSTALL_EXEC_PREFIX}/bin
-CACHE PATH "install location for user executables"
-)
-
-set(
-CMAKE_INSTALL_DATADIR
-${CMAKE_INSTALL_PREFIX}/share
-CACHE PATH "install location for read-only architecture-independent data"
-)
+  CMAKE_INSTALL_EXEC_PREFIX
+  ${CMAKE_INSTALL_PREFIX}
+  CACHE PATH "General install location for architecture-dependent files"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_EXEC_PREFIX)
 
 set(
-CMAKE_INSTALL_LIBDIR
-${CMAKE_INSTALL_EXEC_PREFIX}/lib
-CACHE PATH "install location for object code libraries"
-)
+  CMAKE_INSTALL_BINDIR
+  ${CMAKE_INSTALL_EXEC_PREFIX}/bin
+  CACHE PATH "General install location for user executables"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_BINDIR)
 
 set(
-CMAKE_INSTALL_INCLUDEDIR
-${CMAKE_INSTALL_PREFIX}/include
-CACHE PATH "install location for C header files"
-)
+  CMAKE_INSTALL_DATADIR
+  ${CMAKE_INSTALL_PREFIX}/share
+  CACHE PATH "General install location for read-only architecture-independent data"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_DATADIR)
 
 set(
-CMAKE_INSTALL_INFODIR
-${CMAKE_INSTALL_DATADIR}/info
-CACHE PATH "install location for info documentation"
-)
+  CMAKE_INSTALL_LIBDIR
+  ${CMAKE_INSTALL_EXEC_PREFIX}/lib
+  CACHE PATH "General install location for object code libraries"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_LIBDIR)
 
 set(
-CMAKE_INSTALL_MANDIR
-${CMAKE_INSTALL_DATADIR}/man
-CACHE PATH "install location for man documentation"
-)
+  CMAKE_INSTALL_INCLUDEDIR
+  ${CMAKE_INSTALL_PREFIX}/include
+  CACHE PATH "General install location for C header files"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_INCLUDEDIR)
 
 set(
-CMAKE_INSTALL_PKG_CONFIG_DIR
-${CMAKE_INSTALL_LIBDIR}/pkgconfig
-CACHE PATH "install location for pkg-config *.pc files"
-)
+  CMAKE_INSTALL_INFODIR
+  ${CMAKE_INSTALL_DATADIR}/info
+  CACHE PATH "General install location for info documentation"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_INFODIR)
 
-# Configured PLplot install locations determined from user-updatable
-# cached values above.
+set(
+  CMAKE_INSTALL_MANDIR
+  ${CMAKE_INSTALL_DATADIR}/man
+  CACHE PATH "General install location for man documentation"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_MANDIR)
 
-# Data.
-set(DATA_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${PLPLOT_VERSION})
+set(
+  CMAKE_INSTALL_PKG_CONFIG_DIR
+  ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+  CACHE PATH "General install location for pkg-config *.pc files"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST CMAKE_INSTALL_PKG_CONFIG_DIR)
 
-# Libraries.
-set(LIB_DIR ${CMAKE_INSTALL_LIBDIR})
+# Configured PLplot install locations with default values
+# determined from the more general user-updatable cached values above.
+# These are the actual install locations used by PLplot.
+# Make these values cached as well so the user
+# can change from these defaults if necessary.
 
-# Headers.
-set(INCLUDE_DIR ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE})
+set(
+  DATA_DIR
+  ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${PLPLOT_VERSION}
+  CACHE PATH "PLplot install location for architecture-independent data"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST DATA_DIR)
 
-# Binaries.
-set(BIN_DIR ${CMAKE_INSTALL_BINDIR})
+set(
+  LIB_DIR
+  ${CMAKE_INSTALL_LIBDIR}
+  CACHE PATH "PLplot install location for object code libraries"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST LIB_DIR)
 
-# Shared library path.
-set(SHLIB_DIR ${CMAKE_INSTALL_LIBDIR})
+set(
+  INCLUDE_DIR
+  ${CMAKE_INSTALL_INCLUDEDIR}/${PACKAGE}
+  CACHE PATH "PLplot install location for C header files"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST INCLUDE_DIR)
 
-# Tcl files.
-set(TCL_DIR ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${PLPLOT_VERSION}/tcl)
+set(
+  BIN_DIR
+  ${CMAKE_INSTALL_BINDIR}
+  CACHE PATH "PLplot install location for user executables"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST BIN_DIR)
 
-# Ada source files (*.adb, *.ads) (following recommendations in
-# http://www.ada-france.org/debian/debian-ada-policy.html
-set(ADA_INCLUDE_DIR ${CMAKE_INSTALL_DATADIR}/ada/adainclude/plplotada)
+set(
+  DRV_DIR
+  ${CMAKE_INSTALL_LIBDIR}/${PACKAGE}${PLPLOT_VERSION}/drivers
+  CACHE PATH "PLplot install location for dynamically loaded devices"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST DRV_DIR)
 
-# Ada library information files (*.ali) (following recommendations in
-# http://www.ada-france.org/debian/debian-ada-policy.html
-set(ADA_LIB_DIR ${CMAKE_INSTALL_LIBDIR}/ada/adalib/plplotada)
+set(
+  DOC_DIR
+  ${CMAKE_INSTALL_DATADIR}/doc/${PACKAGE}
+  CACHE PATH "PLplot install location for (architecture-independent) documentation files"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST DOC_DIR)
 
-# Drivers.
-set(DRV_DIR ${CMAKE_INSTALL_LIBDIR}/${PACKAGE}${PLPLOT_VERSION}/drivers)
+set(
+  INFO_DIR
+  ${CMAKE_INSTALL_INFODIR}
+  CACHE PATH "PLplot install location for (architecture-independent) info files"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST INFO_DIR)
 
-# Documentation.
-set(DOC_DIR ${CMAKE_INSTALL_DATADIR}/doc/${PACKAGE})
+set(
+  MAN_DIR
+  ${CMAKE_INSTALL_MANDIR}
+  CACHE PATH "PLplot install location for (architecture-independent) man files"
+  )
+list(APPEND INSTALL_LOCATION_VARIABLES_LIST MAN_DIR)
 
-# Info pages.
-set(INFO_DIR ${CMAKE_INSTALL_INFODIR})
-
-# Man pages.
-set(MAN_DIR ${CMAKE_INSTALL_MANDIR})
-
-# pkg-config *.pc files
-set(PKG_CONFIG_DIR ${CMAKE_INSTALL_PKG_CONFIG_DIR})
+# End of fundamental user-settable install locations here, but
+# additional cached install locations are added later (with
+# appropriate append of the relevant variable name to
+# INSTALL_LOCATION_VARIABLES_LIST) depending on what capabilities of
+# PLplot are enabled.
 
 # Other path-related variables.
 

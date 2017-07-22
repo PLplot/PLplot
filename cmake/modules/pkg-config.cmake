@@ -39,6 +39,13 @@ if(PKG_CONFIG_EXECUTABLE)
   message(STATUS "Looking for pkg-config - found")
   set(env_PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
 
+  set(
+    PKG_CONFIG_DIR
+    ${CMAKE_INSTALL_PKG_CONFIG_DIR}
+    CACHE PATH "PLplot install location for (architecture-independent) pkg-config files (*.pc)"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST PKG_CONFIG_DIR)
+
   # Will likely need WIN32 and CYGWIN stanzas as well
   if(MINGW)
     if(env_PKG_CONFIG_PATH)
@@ -367,11 +374,12 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
   # PKG_CONFIG_EXECUTABLE
   # PL_DOUBLE
   # NON_TRANSITIVE
+  # PKG_CONFIG_DIR
+  # These last non-argument CMake variables required for configuring
+  # pkgcfg/plplot-template.pc.in
   # PLPLOT_VERSION
-  # SHLIB_DIR
   # INCLUDE_DIR
   # LIB_DIR
-  # PKG_CONFIG_DIR
 
   if(PKG_CONFIG_EXECUTABLE)
     #message(STATUS "pkg_config_file called with ARGV = ${ARGV}")

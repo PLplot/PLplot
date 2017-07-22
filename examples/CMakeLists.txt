@@ -261,8 +261,7 @@ if(CORE_BUILD)
     FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Chloe.pgm
     ${CMAKE_CURRENT_SOURCE_DIR}/README.Chloe
-    DESTINATION
-    ${DATA_DIR}/examples
+    DESTINATION ${DATA_DIR}/examples
     )
 
 endif(CORE_BUILD)

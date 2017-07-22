@@ -127,15 +127,18 @@ if(ENABLE_ocaml)
     set(ENABLE_ocaml OFF CACHE BOOL "Enable OCaml binding" FORCE)
   endif(CAMLIDL_LIB_DIR)
 
-  # Installation follows the Debian ocaml policy for want of a better
-  # standard.
-  set(OCAML_INSTALL_DIR ${CMAKE_INSTALL_PREFIX}/lib/ocaml
-    CACHE PATH "install location for ocaml files"
-    )
-
 endif(ENABLE_ocaml)
 
 if(ENABLE_ocaml)
+  # Installation follows the Debian ocaml policy for want of a better
+  # standard.
+  set(
+    OCAML_INSTALL_DIR
+    ${CMAKE_INSTALL_PREFIX}/lib/ocaml
+    CACHE PATH "PLplot install location for ocaml files"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST OCAML_INSTALL_DIR)
+
   if(ADD_SPECIAL_CONSISTENCY_CHECKING)
     option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" ON)
   else(ADD_SPECIAL_CONSISTENCY_CHECKING)

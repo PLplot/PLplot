@@ -23,29 +23,31 @@ macro(summary)
 set(_output_results "
 Summary of CMake build system results for PLplot
 
-Install location variables which can be set by the user:
-CMAKE_INSTALL_PREFIX:      ${CMAKE_INSTALL_PREFIX}
-CMAKE_INSTALL_EXEC_PREFIX  ${CMAKE_INSTALL_EXEC_PREFIX}
-CMAKE_INSTALL_BINDIR 	   ${CMAKE_INSTALL_BINDIR}
-CMAKE_INSTALL_DATADIR 	   ${CMAKE_INSTALL_DATADIR}
-CMAKE_INSTALL_LIBDIR 	   ${CMAKE_INSTALL_LIBDIR}
-CMAKE_INSTALL_INCLUDEDIR   ${CMAKE_INSTALL_INCLUDEDIR}
-CMAKE_INSTALL_INFODIR 	   ${CMAKE_INSTALL_INFODIR}
-CMAKE_INSTALL_MANDIR 	   ${CMAKE_INSTALL_MANDIR}
+Install location variables which can be set by the user.  N.B. These
+variables are ordered by decreasing degree of generality, with the
+_default_ values of the later ones in the list determined by the
+values of variables earlier in the list.  So, for example, it is
+usually sufficient in the vast majority of cases to just set
+CMAKE_INSTALL_PREFIX, and the rest of these variables are adjusted
+accordingly (at least for a fresh configuration), and it is rare
+indeed that is is necessary for a user to set any variable here whose
+name does not start with \"CMAKE_INSTALL_\".
 
-Derived install location variables:
-DATA_DIR	${DATA_DIR}
-LIB_DIR		${LIB_DIR}
-INCLUDE_DIR	${INCLUDE_DIR}
-BIN_DIR		${BIN_DIR}
-TCL_DIR		${TCL_DIR}
-ADA_INCLUDE_DIR	${ADA_INCLUDE_DIR}
-ADA_LIB_DIR	${ADA_LIB_DIR}
-PYTHON_INSTDIR	${PYTHON_INSTDIR}
-DRV_DIR		${DRV_DIR}
-DOC_DIR		${DOC_DIR}
-MAN_DIR		${MAN_DIR}
-INFO_DIR	${INFO_DIR}
+")
+message("${_output_results}")
+
+foreach(INSTALL_LOCATION_VARIABLE CMAKE_INSTALL_PREFIX ${INSTALL_LOCATION_VARIABLES_LIST})
+  message("${INSTALL_LOCATION_VARIABLE}: ${${INSTALL_LOCATION_VARIABLE}}")
+
+  # Check for prefix consistency for the install locations.
+  if(NOT "${${INSTALL_LOCATION_VARIABLE}}" MATCHES "^${CMAKE_INSTALL_PREFIX}.*")
+    message(WARNING "${INSTALL_LOCATION_VARIABLE} = ${${INSTALL_LOCATION_VARIABLE}} has prefix inconsistency with CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
+  endif(NOT "${${INSTALL_LOCATION_VARIABLE}}" MATCHES "^${CMAKE_INSTALL_PREFIX}.*")
+endforeach(INSTALL_LOCATION_VARIABLE ${INSTALL_LOCATION_VARIABLES_LIST})
+
+set(
+_output_results
+"
 
 Other important CMake variables:
 
@@ -119,9 +121,23 @@ ENABLE_ocaml:		${ENABLE_ocaml}
 ENABLE_octave:		${ENABLE_octave}
 ENABLE_pdl:		${ENABLE_pdl}
 ENABLE_python:		${ENABLE_python}
-ENABLE_qt:		${ENABLE_qt}
-ENABLE_pyqt4:		${ENABLE_pyqt4}
-ENABLE_pyqt5:		${ENABLE_pyqt5}
+ENABLE_qt:		${ENABLE_qt}")
+
+if(PLPLOT_USE_QT5)
+  set(
+_output_results
+"${_output_results}
+ENABLE_pyqt5:		${ENABLE_pyqt5}")
+else(PLPLOT_USE_QT5)
+  set(
+_output_results
+"${_output_results}
+ENABLE_pyqt4:		${ENABLE_pyqt4}")
+endif(PLPLOT_USE_QT5)
+
+set(
+_output_results
+"${_output_results}
 ENABLE_tcl:		${ENABLE_tcl}
 ENABLE_itcl:		${ENABLE_itcl}
 ENABLE_tk:		${ENABLE_tk}

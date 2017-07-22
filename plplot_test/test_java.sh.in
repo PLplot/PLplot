@@ -38,7 +38,7 @@ if [ -n "$PLPLOT_JAVA_WRAP_DIR" ]; then
     JAVA_TEST_OPTS="-Dplplot.libdir=$PLPLOT_JAVA_WRAP_DIR"
 fi
 if [ -z "$PLPLOT_CLASSPATH" ] ; then
-    PLPLOT_CLASSPATH="@JAVADATA_HARDDIR@"/plplot.jar
+    PLPLOT_CLASSPATH="@JAR_HARDDIR@"/plplot.jar
 fi
 if [ "@WIN32@" != "1" ]; then
     PLPLOT_CLASSPATH="${javadir}:${PLPLOT_CLASSPATH}"

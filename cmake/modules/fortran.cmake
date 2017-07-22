@@ -56,11 +56,15 @@ if(ENABLE_fortran)
     )
     set(ENABLE_fortran OFF CACHE BOOL "Enable fortran binding" FORCE)
   endif(ENABLE_fortran AND NOT CMAKE_Fortran_COMPILER_SUPPORTS_F90)
+endif(ENABLE_fortran)
 
-  # Set installation location for fortran modules.
-  set(FORTRAN_MOD_DIR ${LIB_DIR}/fortran/modules/${PACKAGE}
-    CACHE PATH "installation location for fortran modules"
+if(ENABLE_fortran)
+  set(
+    FORTRAN_MOD_DIR
+    ${LIB_DIR}/fortran/modules/${PACKAGE}
+    CACHE PATH "PLplot installation location for fortran modules"
     )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST FORTRAN_MOD_DIR)
 
   # Check if isnan is available as a fortran function
   include(TestFortranIsnan)

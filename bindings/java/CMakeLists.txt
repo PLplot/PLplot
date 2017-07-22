@@ -178,7 +178,7 @@ if(ENABLE_java)
     set_target_properties(
       plplotjavac_wrap
       PROPERTIES
-      INSTALL_NAME_DIR "${JAVAWRAPPER_HARDDIR}"
+      INSTALL_NAME_DIR "${JAVAWRAPPER_DIR}"
       )
   endif(USE_RPATH)
 
@@ -191,7 +191,7 @@ if(ENABLE_java)
       )
   endif(APPLE)
 
-  install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_HARDDIR})
+  install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_DIR})
 
   set(JAVA_CLASSES)
   foreach( srcfile ${JAVA_FILES_FULL} )

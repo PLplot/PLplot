@@ -239,7 +239,7 @@ script with DEVICE='"$device"'.
             export octavedir=\
 "@PLPLOT_OCTAVE_DIR@":\
 "@PLPLOT_OCTAVE_DIR@"/support:\
-"@OCTAVE_M_DIR@"/PLplot:\
+"@OCTAVE_M_DIR@":\
 "@OCTAVE_OCT_DIR@":\
 "$SRC_EXAMPLES_DIR"/octave
             if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then
@@ -288,7 +288,7 @@ else
     export octavedir=\
 "@PLPLOT_OCTAVE_DIR@":\
 "@PLPLOT_OCTAVE_DIR@"/support:\
-"@OCTAVE_M_DIR@"/PLplot:\
+"@OCTAVE_M_DIR@":\
 "@OCTAVE_OCT_DIR@":\
 "$SRC_EXAMPLES_DIR"/octave
     if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then

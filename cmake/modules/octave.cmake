@@ -1,6 +1,6 @@
 # cmake/modules/octave.cmake
 #
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -217,12 +217,8 @@ if(ENABLE_octave)
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
-  # PLPLOT_OCTAVE_DIR is the directory for installation of the PLplot_Octave
-  # specific m files
-  set(PLPLOT_OCTAVE_DIR ${CMAKE_INSTALL_DATADIR}/plplot_octave)
-  message(STATUS "PLPLOT_OCTAVE_DIR = ${PLPLOT_OCTAVE_DIR}")
 
-  # OCTAVE_PREFIX is the prefix where octave was installed.
+  # Determine OCTAVE_PREFIX which is the prefix where octave was installed.
   # N.B. this file method is really clunky, but we are forced to use
   # this method because as far as I know there is no method
   # of invoking octave scripts from the octave command line other than
@@ -236,51 +232,72 @@ if(ENABLE_octave)
   OUTPUT_VARIABLE OCTAVE_PREFIX
   )
   #message(STATUS "OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
-  file(TO_CMAKE_PATH ${OCTAVE_PREFIX} OCTAVE_PREFIX)
+  file(TO_CMAKE_PATH "${OCTAVE_PREFIX}" OCTAVE_PREFIX)
   #message(STATUS "(CMake) OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
 
+  # Determine _octave_m_dir, the uncached version of OCTAVE_M_DIR
   # octave-2.1 (or higher) logic.
-  #_OCTAVE_M_DIR
   file(WRITE ${CMAKE_BINARY_DIR}/octave_command
   "printf(octave_config_info(\"localfcnfiledir\"));"
   )
   execute_process(
   COMMAND ${OCTAVE} -q -f octave_command
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  OUTPUT_VARIABLE _OCTAVE_M_DIR
+  OUTPUT_VARIABLE _octave_m_dir
   )
-  #message(STATUS "_OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")
-  file(TO_CMAKE_PATH ${_OCTAVE_M_DIR} _OCTAVE_M_DIR)
-  #message(STATUS "(CMake) _OCTAVE_M_DIR = ${_OCTAVE_M_DIR}")
+  #message(STATUS "_octave_m_dir = ${_octave_m_dir}")
+  file(TO_CMAKE_PATH "${_octave_m_dir}" _octave_m_dir)
+  #message(STATUS "(CMake) _octave_m_dir = ${_octave_m_dir}")
 
-  #OCTAVE_OCT_DIR
-  if(NOT DEFINED OCTAVE_OCT_DIR)
+  # Replace the OCTAVE_PREFIX with the PLplot prefix in _octave_m_dir
+  # and append "/PLplot"
+  string(REPLACE
+  "${OCTAVE_PREFIX}"
+  "${CMAKE_INSTALL_PREFIX}"
+  _octave_m_dir
+  "${_octave_m_dir}"/PLplot
+  )
+  #message(STATUS "Transformed _octave_m_dir = ${_octave_m_dir}")
+
+  # Determine _octave_oct_dir, the uncached version of OCTAVE_OCT_DIR
     file(WRITE ${CMAKE_BINARY_DIR}/octave_command
       "printf(octave_config_info(\"localoctfiledir\"));"
       )
     execute_process(
       COMMAND ${OCTAVE} -q -f octave_command
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-      OUTPUT_VARIABLE OCTAVE_OCT_DIR
+      OUTPUT_VARIABLE _octave_oct_dir
       )
-    #message(STATUS "OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
-    file(TO_CMAKE_PATH ${OCTAVE_OCT_DIR} OCTAVE_OCT_DIR)
-    #message(STATUS "(CMake) OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
-  endif(NOT DEFINED OCTAVE_OCT_DIR)
+    #message(STATUS "_octave_oct_dir = ${_octave_oct_dir}")
+    file(TO_CMAKE_PATH "${_octave_oct_dir}" _octave_oct_dir)
+    #message(STATUS "(CMake) _octave_oct_dir = ${_octave_oct_dir}")
 
-  # Replace the OCTAVE_PREFIX with the PLplot prefix in OCTAVE_M_DIR
-  string(REPLACE
-  "${OCTAVE_PREFIX}"
-  "${CMAKE_INSTALL_PREFIX}"
-  OCTAVE_M_DIR
-  ${_OCTAVE_M_DIR}
-  )
-  message(STATUS "OCTAVE_M_DIR = ${OCTAVE_M_DIR}")
-
-  # Transform OCTAVE_OCT_DIR if prefixes not the same.
+  # Specify _octave_oct_dir if prefixes not the same.
   if(NOT CMAKE_INSTALL_PREFIX STREQUAL "${OCTAVE_PREFIX}")
-    set(OCTAVE_OCT_DIR ${CMAKE_INSTALL_LIBDIR}/octave)
+    set(_octave_oct_dir ${CMAKE_INSTALL_LIBDIR}/octave)
+    #message(STATUS "Specified _octave_oct_dir = ${_octave_oct_dir}")
   endif(NOT CMAKE_INSTALL_PREFIX STREQUAL "${OCTAVE_PREFIX}")
-  message(STATUS "OCTAVE_OCT_DIR = ${OCTAVE_OCT_DIR}")
+
+  # Results for cached installation directory variables.
+  set(
+    PLPLOT_OCTAVE_DIR
+    "${CMAKE_INSTALL_DATADIR}/plplot_octave"
+    CACHE PATH "PLplot install location for (*.m) files needed for the PLplot octave binding"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST PLPLOT_OCTAVE_DIR)
+
+  set(
+    OCTAVE_M_DIR
+    "${_octave_m_dir}"
+    CACHE PATH "PLplot install location for (*.m) files that provide useful additional functionality"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST OCTAVE_M_DIR)
+
+  set(
+    OCTAVE_OCT_DIR
+    "${_octave_oct_dir}"
+    CACHE PATH "PLplot install location for Octave binding shared object (plplot_octave.oct) file"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST OCTAVE_OCT_DIR)
 
 endif(ENABLE_octave)

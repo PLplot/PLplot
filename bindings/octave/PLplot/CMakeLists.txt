@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -127,4 +127,4 @@ use_plplot.m
 ${CMAKE_CURRENT_BINARY_DIR}/plplot_octave_path.m
 toggle_plplot_use.m
 )
-install(FILES ${user_m_files} DESTINATION ${OCTAVE_M_DIR}/PLplot)
+install(FILES ${user_m_files} DESTINATION ${OCTAVE_M_DIR})

@@ -2,7 +2,8 @@
 #
 # Lua binding configuration
 #
-# Copyright (C) 2008  Werner Smekal
+# Copyright (C) 2008 Werner Smekal
+# Copyright (C) 2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -79,8 +80,17 @@ if(ENABLE_lua)
   # Unless some better convention comes along, follow what Debian does for
   # install location of Lua wrapper shared object.
   if(LUA_VERSION MATCHES "5\\.0")
-    set(LUA_DIR ${LIB_DIR}/lua/50/plplot)
+    set(
+      LUA_DIR
+      ${LIB_DIR}/lua/50/plplot
+      CACHE PATH "PLplot install location for Lua wrapper shared object"
+      )
   else(LUA_VERSION MATCHES "5\\.0")
-    set(LUA_DIR ${LIB_DIR}/lua/${LUA_VERSION}/plplot)
+    set(
+      LUA_DIR
+      ${LIB_DIR}/lua/${LUA_VERSION}/plplot
+      CACHE PATH "PLplot install location for Lua wrapper shared object"
+      )
   endif(LUA_VERSION MATCHES "5\\.0")
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST LUA_DIR)
 endif(ENABLE_lua)

@@ -49,6 +49,22 @@ if(ENABLE_ada)
 endif(ENABLE_ada)
 
 if(ENABLE_ada)
+  # The following two default Ada install locations follow the recommendations in
+  # <http://www.ada-france.org/debian/debian-ada-policy.html>.
+  set(
+    ADA_INCLUDE_DIR
+    ${CMAKE_INSTALL_DATADIR}/ada/adainclude/plplotada
+    CACHE PATH "PLplot install location for (architecture-independent) Ada source files"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST ADA_INCLUDE_DIR)
+
+  set(
+    ADA_LIB_DIR
+    ${CMAKE_INSTALL_LIBDIR}/ada/adalib/plplotada
+    CACHE PATH "PLplot install location for Ada library information files (*.ali)"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST ADA_LIB_DIR)
+
   # Find the gnat version used in order to search for the right version of libgnat
   execute_process(COMMAND ${CMAKE_Ada_COMPILER} --version OUTPUT_VARIABLE ADA_OUTPUT)
   string(REGEX MATCH "gcc.* [(][^)]*[)] ([0-9]*)([.][0-9]*)[.][0-9]" ADA_OUTPUT_TRIM ${ADA_OUTPUT})

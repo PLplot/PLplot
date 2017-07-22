@@ -71,7 +71,6 @@ if(CORE_BUILD)
     )
 
   set(JAVAC ${CMAKE_Java_COMPILER})
-  set(JAVADATA_HARDDIR ${JAR_DIR})
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

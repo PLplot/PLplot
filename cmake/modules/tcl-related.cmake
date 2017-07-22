@@ -1,6 +1,6 @@
 # cmake/modules/tcl-related.cmake
 #
-# Copyright (C) 2006-2016  Alan W. Irwin
+# Copyright (C) 2006-2017  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -598,6 +598,16 @@ else(ENABLE_tcl)
   set(ENABLE_itcl OFF CACHE BOOL "Enable Itcl interface code" FORCE)
   set(ENABLE_tk OFF CACHE BOOL "Enable Tk interface code" FORCE)
   set(ENABLE_itk OFF CACHE BOOL "Enable Itk interface code" FORCE)
+endif(ENABLE_tcl)
+
+
+if(ENABLE_tcl)
+  set(
+    TCL_DIR
+    ${CMAKE_INSTALL_DATADIR}/${PACKAGE}${PLPLOT_VERSION}/tcl
+    CACHE PATH "PLplot install location for Tcl/Tk architecture-independent data"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST TCL_DIR)
 endif(ENABLE_tcl)
 
 if(ENABLE_tk AND X11_FOUND)

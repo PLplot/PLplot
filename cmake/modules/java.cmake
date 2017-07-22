@@ -2,7 +2,8 @@
 #
 # Java binding configuration
 #
-# Copyright (C) 2006  Andrew Ross
+# Copyright (C) 2006 Andrew Ross
+# Copyright (C) 2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -85,16 +86,31 @@ if(ENABLE_java)
 endif(ENABLE_java)
 
 if(ENABLE_java)
-  # Set up installation locations for java specific files.
-  # Java .jar files.
-  set(JAR_DIR ${CMAKE_INSTALL_DATADIR}/java
+  set(
+    JAR_DIR
+    ${CMAKE_INSTALL_DATADIR}/java
     CACHE PATH "PLplot jar file install location"
     )
-  get_filename_component(JAVADATA_HARDDIR ${JAR_DIR} ABSOLUTE)
-  # JNI .so files.
-  set(JAVAWRAPPER_DIR ${LIB_DIR}/jni
-    CACHE PATH "PLplot java plugin install location"
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST JAR_DIR)
+
+  set(
+    JAVAWRAPPER_DIR
+    ${LIB_DIR}/jni
+    CACHE PATH "PLplot java plugin (JNI *.so) install location"
     )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST JAVAWRAPPER_DIR)
+
+  # These "HARDDIR" directory locations are designed to be used for
+  # hard-coded java install locations in configured files which should
+  # refer to the final absolute install location rather than some
+  # intermediate staging area location for the install that is
+  # typically used by package builders.
+
+  # These variables are uncached (i.e., not settable by users) since
+  # they should be exactly consistent with the absolute locations
+  # corresponding to JAR_DIR and JAVAWRAPPER_DIR
+
+  get_filename_component(JAR_HARDDIR ${JAR_DIR} ABSOLUTE)
   get_filename_component(JAVAWRAPPER_HARDDIR ${JAVAWRAPPER_DIR} ABSOLUTE)
 endif(ENABLE_java)
 

@@ -132,9 +132,18 @@ if(ENABLE_python)
   execute_process(
     COMMAND
     ${PYTHON_EXECUTABLE} -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${PYTHON_INSTALL_TEMPLATE}'))"
-    OUTPUT_VARIABLE PYTHON_INSTDIR
+    OUTPUT_VARIABLE _python_instdir
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+
+  # Convert result to a cached variable.
+  set(
+    PYTHON_INSTDIR
+    "${_python_instdir}"
+    CACHE PATH "PLplot install location for Python extension modules"
+    )
+  list(APPEND INSTALL_LOCATION_VARIABLES_LIST PYTHON_INSTDIR)
+
   # Get the Python version.
   execute_process(
     COMMAND
