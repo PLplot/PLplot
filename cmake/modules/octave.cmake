@@ -255,7 +255,7 @@ if(ENABLE_octave)
   "${OCTAVE_PREFIX}"
   "${CMAKE_INSTALL_PREFIX}"
   _octave_m_dir
-  "${_octave_m_dir}"/PLplot
+  "${_octave_m_dir}/PLplot"
   )
   #message(STATUS "Transformed _octave_m_dir = ${_octave_m_dir}")
 
