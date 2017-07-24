@@ -231,7 +231,7 @@ function(pkg_config_link_flags link_flags_out link_flags_in)
     "/System/Library/Frameworks/([^ ]*)\\.framework"
     "-framework \\1"
     link_flags
-    ${link_flags}
+    "${link_flags}"
     )
     #message("(frameworks) link_flags = ${link_flags}")
   endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
