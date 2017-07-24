@@ -273,7 +273,7 @@ Error: Fortran 2008: Array of interoperable type at (1) to C_LOC which is nonall
 A google check for that error message found
 <https://gcc.gnu.org/ml/gcc-patches/2013-04/msg00110.html> where
 apparently the interoperability concern was that an assumed shape
-array might not be continous.  But we feel that should not be a
+array might not be continuous.  But we feel that should not be a
 concern for this singly dimensioned case, and the NAG compiler
 (notorious for its ability to check for standards compliance) builds
 our fortran binding and examples without any errors or warnings.  So

@@ -127,7 +127,7 @@ static void set_plplot_parameters( Tcl_Interp *interp )
         "variable PL_Z_AXIS [expr 3]\n"
         "# Obsolete\n"
         "variable PL_OPT_ENABLED [expr 0x0001]\n"
-        "# Option has an argment\n"
+        "# Option has an argument\n"
         "variable PL_OPT_ARG [expr 0x0002]\n"
         "# Don't delete after processing\n"
         "variable PL_OPT_NODELETE [expr 0x0004]\n"

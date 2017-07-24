@@ -2919,7 +2919,7 @@ but will be issued when option -debug is specified.  Also, the message
 "Can't open <filename>" is sent now to stderr instead of stdout.
 
 In function plLibOpenPdfstr, two calls to pldebug are fixed now (called with
-two argments instead of three).
+two arguments instead of three).
 
   plplot  src/plctrl.c  1.74
 

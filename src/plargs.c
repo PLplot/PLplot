@@ -216,7 +216,7 @@ static char opttmp[OPTMAX];
 //!
 //! The mode bits are:
 //!
-//! PL_OPT_ARG		Option has an argment
+//! PL_OPT_ARG		Option has an argument
 //! PL_OPT_NODELETE	Don't delete after processing
 //! PL_OPT_INVISIBLE	Make invisible (usually for debugging)
 //! PL_OPT_DISABLED	Ignore this option

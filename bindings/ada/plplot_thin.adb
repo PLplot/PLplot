@@ -91,7 +91,7 @@ package body PLplot_Thin is
     -- departing from the usual method of simply pragma Import-ing as in
     -- most or all of the other interfaces to C is because of the need to
     -- figure out what the command lines arguments are by also pragma
-    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argment version is made
+    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argument version is made
     -- at the request of the development team rather than the three-argument
     -- version of the documetation. The caller specifies only the parse mode.
 

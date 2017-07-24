@@ -1141,7 +1141,7 @@ class PlXframe(Frame):
     PL_Y_AXIS                        = 2      # The y-axis
     PL_Z_AXIS                        = 3      # The z-axis
     PL_OPT_ENABLED                   = 0x0001 # Obsolete
-    PL_OPT_ARG                       = 0x0002 # Option has an argment
+    PL_OPT_ARG                       = 0x0002 # Option has an argument
     PL_OPT_NODELETE                  = 0x0004 # Don't delete after processing
     PL_OPT_INVISIBLE                 = 0x0008 # Make invisible
     PL_OPT_DISABLED                  = 0x0010 # Processing is disabled

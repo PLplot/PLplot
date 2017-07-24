@@ -157,7 +157,7 @@ void plbox3( string xopt, string xlabel, PLFLT xtick, PLINT nsubx,
         toStringz( zopt ), toStringz( zlabel ), ztick, nsubz );
 }
 
-// Routine for drawing continous colour legends
+// Routine for drawing continuous colour legends
 void plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                  PLINT opt, PLINT position, PLFLT x, PLFLT y,
                  PLFLT x_length, PLFLT y_length,
@@ -1881,7 +1881,7 @@ void c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
                  PLINT *symbol_colors, PLFLT *symbol_scales,
                  PLINT *symbol_numbers, const char **symbols );
 
-// Routine for drawing continous colour legends
+// Routine for drawing continuous colour legends
 void c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
                    PLINT opt, PLINT position, PLFLT x, PLFLT y,
                    PLFLT x_length, PLFLT y_length,

@@ -2031,7 +2031,7 @@ package body PLplot_Standard is
     end Create_Legend;
 
 
-    -- Routine for drawing continous colour legends
+    -- Routine for drawing continuous colour legends
     -- plcolorbar
     procedure Create_Colorbar
        (Colorbar_Width, Colorbar_Height      : out Long_Float;

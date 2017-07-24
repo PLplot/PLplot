@@ -965,7 +965,7 @@ extensions into account, is *THE* way to program X-based applications
 (IMO).  Sophisticated user interfaces to scientific codes under X, using
 the PLplot widget (among others) are just waiting to be built...
 
-Color map 1 support -- this is designed to enable the type of continous
+Color map 1 support -- this is designed to enable the type of continuous
 color plots you can get in other graphics packages (e.g. I'm thinking of
 NCSA Ximage) but in a more flexible way, allowing intuitive modification,
 and display on a number of devices.  This capability comes in through the

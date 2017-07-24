@@ -578,7 +578,7 @@ ARGUMENTS:
     sec (PLFLT_NC_SCALAR, output) :    Returned value of second within the
         minute in range from 0. to 60.
 
-    ctime (PLFLT, input) :    Continous time from which the broken-down
+    ctime (PLFLT, input) :    Continuous time from which the broken-down
         time is calculated.
 ")
 plbtime;
@@ -1167,7 +1167,7 @@ ARGUMENTS:
 
     sec (PLFLT, input) :    Input second in range from 0. to 60.
 
-    ctime (PLFLT_NC_SCALAR, output) :    Returned value of the continous
+    ctime (PLFLT_NC_SCALAR, output) :    Returned value of the continuous
         time calculated from the broken-down time specified by the
         previous parameters.
 ")

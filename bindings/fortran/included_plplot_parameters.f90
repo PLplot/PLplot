@@ -64,7 +64,7 @@
     integer, parameter :: PL_Y_AXIS = 2 ! The y-axis
     integer, parameter :: PL_Z_AXIS = 3 ! The z-axis
     integer, parameter :: PL_OPT_ENABLED = 1 ! Obsolete
-    integer, parameter :: PL_OPT_ARG = 2 ! Option has an argment
+    integer, parameter :: PL_OPT_ARG = 2 ! Option has an argument
     integer, parameter :: PL_OPT_NODELETE = 4 ! Don't delete after processing
     integer, parameter :: PL_OPT_INVISIBLE = 8 ! Make invisible
     integer, parameter :: PL_OPT_DISABLED = 1*16 ! Processing is disabled

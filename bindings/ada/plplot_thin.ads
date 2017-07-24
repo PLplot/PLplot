@@ -275,7 +275,7 @@ package PLplot_Thin is
     -- Option-specific settings
 
     PL_OPT_ENABLED   : constant Integer := 16#0001#; -- Obsolete
-    PL_OPT_ARG       : constant Integer := 16#0002#; -- Option has an argment
+    PL_OPT_ARG       : constant Integer := 16#0002#; -- Option has an argument
     PL_OPT_NODELETE  : constant Integer := 16#0004#; -- Don't delete after processing
     PL_OPT_INVISIBLE : constant Integer := 16#0008#; -- Make invisible
     PL_OPT_DISABLED  : constant Integer := 16#0010#; -- Processing is disabled
@@ -1119,7 +1119,7 @@ package PLplot_Thin is
     pragma Import(C, pllegend, "c_pllegend");
 
 
-    -- Routine for drawing continous colour legends
+    -- Routine for drawing continuous colour legends
     procedure
     plcolorbar
        (p_colorbar_width : out PLFLT; p_colorbar_height : out PLFLT;
@@ -2100,7 +2100,7 @@ package PLplot_Thin is
     -- departing from the usual method of simply pragma Import-ing as in
     -- most or all of the other interfaces to C is because of the need to
     -- figure out what the command lines arguments are by also pragma
-    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argment version is made
+    -- Import-ing Gnat_Argc and Gnat_Argv. A single-argument version is made
     -- at the request of the development team rather than the three-argument
     -- version of the documetation. The caller specifies only the parse mode.
 

@@ -341,7 +341,7 @@ typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y );
 // Option-specific settings
 
 #define PL_OPT_ENABLED      0x0001      // Obsolete
-#define PL_OPT_ARG          0x0002      // Option has an argment
+#define PL_OPT_ARG          0x0002      // Option has an argument
 #define PL_OPT_NODELETE     0x0004      // Don't delete after processing
 #define PL_OPT_INVISIBLE    0x0008      // Make invisible
 #define PL_OPT_DISABLED     0x0010      // Processing is disabled
@@ -1357,7 +1357,7 @@ c_pllegend( PLFLT_NC_SCALAR p_legend_width, PLFLT_NC_SCALAR p_legend_height,
             PLINT_VECTOR symbol_colors, PLFLT_VECTOR symbol_scales,
             PLINT_VECTOR symbol_numbers, PLCHAR_MATRIX symbols );
 
-// Routine for drawing continous colour legends
+// Routine for drawing continuous colour legends
 PLDLLIMPEXP void
 c_plcolorbar( PLFLT_NC_SCALAR p_colorbar_width, PLFLT_NC_SCALAR p_colorbar_height,
               PLINT opt, PLINT position, PLFLT x, PLFLT y,

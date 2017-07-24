@@ -102,7 +102,7 @@ typedef void*  PLPointer;
 #define PL_Y_AXIS                        2      // The y-axis
 #define PL_Z_AXIS                        3      // The z-axis
 #define PL_OPT_ENABLED                   0x0001 // Obsolete
-#define PL_OPT_ARG                       0x0002 // Option has an argment
+#define PL_OPT_ARG                       0x0002 // Option has an argument
 #define PL_OPT_NODELETE                  0x0004 // Don't delete after processing
 #define PL_OPT_INVISIBLE                 0x0008 // Make invisible
 #define PL_OPT_DISABLED                  0x0010 // Processing is disabled

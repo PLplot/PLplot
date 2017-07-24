@@ -1057,7 +1057,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             if ( result == NULL )
             {
                 fprintf( stderr, "call to python pltr function with 3 arguments failed\n" );
-                PyErr_SetString( PyExc_RuntimeError, "pltr callback must take 3 argments." );
+                PyErr_SetString( PyExc_RuntimeError, "pltr callback must take 3 arguments." );
                 *tx = *ty = 0;
             }
             else

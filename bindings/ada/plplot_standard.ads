@@ -1349,7 +1349,7 @@ package PLplot_Standard is
         Symbols                               : Legend_String_Array_Type);
 
 
-    -- Routine for drawing continous colour legends
+    -- Routine for drawing continuous colour legends
     -- plcolorbar
     procedure Create_Colorbar
         (Colorbar_Width, Colorbar_Height      : out Long_Float;
