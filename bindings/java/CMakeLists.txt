@@ -2,6 +2,8 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
+# Copyright (C) 2017 Alan W. Irwin
+
 #
 # This file is part of PLplot.
 #
@@ -155,7 +157,7 @@ if(ENABLE_java)
   # Create swig-generated java files and swig-generated C wrapper source
   # code.  Also, build that source code into a shared object (a.k.a. plug-in)
   # that can be dynamically loaded by java.
-  swig_add_module(plplotjavac_wrap java plplotjavac.i)
+  swig_add_library(plplotjavac_wrap LANGUAGE java TYPE MODULE SOURCES plplotjavac.i)
   # The shared object must be linked against the core PLplot library.
   swig_link_libraries(plplotjavac_wrap plplot)
 

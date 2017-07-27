@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2017 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -91,7 +91,7 @@ if(ENABLE_octave)
     )
 
   # Set up swig + c wrapper.
-  swig_add_module(plplot_octave octave plplot_octave.i)
+  swig_add_library(plplot_octave LANGUAGE octave TYPE MODULE SOURCES plplot_octave.i)
   swig_link_libraries(
     plplot_octave
     plplot

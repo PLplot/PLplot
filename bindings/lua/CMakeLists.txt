@@ -1,7 +1,9 @@
 # bindings/lua/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2008  Werner Smekal
+# Copyright (C) 2008 Werner Smekal
+# Copyright (C) 2017 Alan W. Irwin
+
 #
 # This file is part of PLplot.
 #
@@ -43,7 +45,7 @@ if(ENABLE_lua)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 
   # Set up swig + c wrapper.
-  swig_add_module(plplotluac lua plplotluac.i)
+  swig_add_library(plplotluac LANGUAGE lua TYPE MODULE SOURCES plplotluac.i)
   swig_link_libraries(plplotluac plplot ${LUA_LIBRARIES})
 
   if(USE_RPATH)

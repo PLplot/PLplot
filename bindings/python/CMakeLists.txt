@@ -63,7 +63,7 @@ if(ENABLE_python)
   # libplplot if ENABLE_DYNDRIVERS is OFF.
   if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
     # Build _Pltk_init extension module with swig.
-    swig_add_module(Pltk_init python Pltk_init.i)
+    swig_add_library(Pltk_init LANGUAGE python TYPE MODULE SOURCES Pltk_init.i)
     if(ENABLE_DYNDRIVERS)
       swig_link_libraries( Pltk_init
 	plplot
@@ -143,7 +143,7 @@ if(ENABLE_python)
 
   # Set up swig + c wrapper.
   # N.B. the python target has an underscore prepended automatically.
-  swig_add_module(plplotc python plplotc.i)
+  swig_add_library(plplotc LANGUAGE python TYPE MODULE SOURCES plplotc.i)
 
   swig_link_libraries(plplotc plplot ${PYTHON_LIBRARIES})
 
