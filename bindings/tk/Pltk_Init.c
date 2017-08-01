@@ -1,4 +1,6 @@
-// Copyright (C) 2004  Joao Cardoso
+// Copyright (C) 2004 Joao Cardoso
+// Copyright (C) 2017 Alan W. Irwin
+
 //
 // This file is part of PLplot.
 //
@@ -36,8 +38,6 @@
 //
 
 #include "plserver.h"
-
-extern int Matrix_Init( Tcl_Interp* interp );
 
 //--------------------------------------------------------------------------
 // Pltk_Init
