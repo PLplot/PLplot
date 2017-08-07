@@ -217,9 +217,24 @@ if(CORE_BUILD)
     RENAME Makefile
     )
 
-  # Sort out RPATH issues for traditional build of installed examples using
-  # */Makefiles configured in each * subdirectory from */Makefile.examples.in.
-  if(USE_RPATH)
+
+  if(USE_RPATH AND NOT WIN32_OR_CYGWIN)
+    # Sort out RPATH issues for the traditional build of the installed
+    # examples using */Makefiles configured in each * subdirectory
+    # from */Makefile.examples.in.  N.B. We specifically exclude
+    # WIN32_OR_CYGWIN here for the traditional build of the installed
+    # examples to follow CMake's lead where our evidence is the
+    # INSTALL_RPATH property (always set by us when USE_RPATH is ON)
+    # is ignored (presumably because CMake developers do not feel
+    # rpath is [sufficiently well] supported on those platforms.
+    # Note, WIN32_OR_CYGWIN users normally deal with what would be
+    # rpath issues on POSIX systems by adjusting their PATH to include
+    # all library locations.  And normally PLplot packagers on POSIX
+    # systems set USE_RPATH to OFF because setting rpath interferes
+    # with using LD_LIBRARY_PATH (a concern for some packagers) and
+    # installed library locations are system locations that are
+    # automatically searched for libraries by the run-time loader in
+    # any case.
     get_target_property(_LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     if(_LIB_INSTALL_RPATH)
       string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
@@ -246,13 +261,28 @@ if(CORE_BUILD)
 	  set(plplottcltk_Main_RPATHCMD)
 	endif(_plplottcltk_Main_INSTALL_RPATH)
       endif(ENABLE_tcl)
+      if(ENABLE_fortran)
+	if(CMAKE_Fortran_COMPILER MATCHES "nagfor")
+	  # Extra layer of -Wl indirection required for the nagfor compiler
+	  string(REPLACE "-Wl," "-Wl,-Wl,," FORTRAN_RPATHCMD "${RPATHCMD}")
+	else(CMAKE_Fortran_COMPILER MATCHES "nagfor")
+	  set(FORTRAN_RPATHCMD "${RPATHCMD}")
+	endif(CMAKE_Fortran_COMPILER MATCHES "nagfor")
+      endif(ENABLE_fortran)
+      if(ENABLE_ocaml)
+	# Ocaml compiler requires blank escaped form of directories:
+	string(REPLACE " " "\\ " LIB_INSTALL_RPATH_ESCAPED "${LIB_INSTALL_RPATH}")
+	# Ocaml compiler requires -ccopt in front of every -Wl option:
+	set(ocaml_RPATHCMD "-ccopt -Wl,-rpath -ccopt -Wl,\"${LIB_INSTALL_RPATH_ESCAPED}\"")
+      endif(ENABLE_ocaml)
     else(_LIB_INSTALL_RPATH)
       set(RPATHCMD)
       set(qt_RPATHCMD)
       set(plplottcltk_Main_RPATHCMD)
+      set(FORTRAN_RPATHCMD)
+      set(ocaml_RPATHCMD)
     endif(_LIB_INSTALL_RPATH)
-
-  endif(USE_RPATH)
+  endif(USE_RPATH AND NOT WIN32_OR_CYGWIN)
 
   # Install Chloe.pgm in installed examples directory so that all implementations
   # of example 20 in the various examples subdirectories can conveniently

@@ -121,12 +121,6 @@ if(CORE_BUILD)
     )
 
   set(FC "${CMAKE_Fortran_COMPILER} ${CMAKE_Fortran_COMPILER_ARG1} ${CMAKE_Fortran_FLAGS}")
-  if(CMAKE_Fortran_COMPILER MATCHES "nagfor")
-    # Extra layer of -Wl indirection required for the nagfor compiler
-    string(REPLACE "-Wl," "-Wl,-Wl,," FORTRAN_RPATHCMD ${RPATHCMD})
-  else(CMAKE_Fortran_COMPILER MATCHES "nagfor")
-    set(FORTRAN_RPATHCMD ${RPATHCMD})
-  endif(CMAKE_Fortran_COMPILER MATCHES "nagfor")
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples
