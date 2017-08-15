@@ -96,7 +96,7 @@ public:
     void drawText( PLStream* pls, EscText* args );
 private:
     void DrawTextLine( PLUNICODE* ucs4, int ucs4Len, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT baseFontSize, bool drawText, bool &underlined, PLUNICODE &fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &textWidth, wxCoord &textHeight, wxCoord &textDepth );
-    virtual void DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth ) {}
+    virtual void DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, PLFLT &yScale, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth ) {}
 
     PLUNICODE m_prevSymbol;
     PLFLT     m_prevBaseFontSize;
@@ -130,7 +130,7 @@ public:
     void PreDestructorTidy( PLStream *pls );
 
 private:
-    void DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth );
+    void DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, PLFLT &yScale, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth );
     void TransmitBuffer( PLStream* pls, unsigned char transmissionType );
     void SetupMemoryMap();
     wxRegion GetClipRegion();
