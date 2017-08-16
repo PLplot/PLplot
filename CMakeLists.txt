@@ -183,8 +183,20 @@ if(BUILD_TEST)
     endif()
     set(BUILDNAME "${BUILD_NAME_SYSTEM_NAME}-${DART_COMPILER_NAME}")
   endif()
-  # This is only logic that is different.
+
+  # This is only BUILDNAME logic that is different.
   set(BUILDNAME "${BUILDNAME}${PLPLOT_BUILDNAME_SUFFIX}")
+
+  # Change the default ctest timeout from 1500 to 15000 to accommodate
+  # our users who happen to have extraordinarily slow computers (such
+  # as the Raspberry Pi) or our users with anomalous platform issues
+  # where some tests are extraordinarily slow (such as test_c_epsqt
+  # and test_c_pdfqt for the static library build on MinGW-w64/MSYS2
+  # [as of 2017-08]).
+
+  # (This change must also be done before the following include)
+  set(DART_TESTING_TIMEOUT 15000 CACHE STRING
+    "Maximum time allowed before CTest will kill the test.")
 
   # According to
   # <https://cmake.org/Wiki/CMake_Testing_With_CTest>
