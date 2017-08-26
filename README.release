@@ -80,7 +80,7 @@ ________________________________________________________________
 3. PLplot testing
 
 Comprehensive tests of this release are documented in
-<http://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>.
+<https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>.
 In addition, developers and users who have used the git master tip
 version for all their plotting needs during this release cycle have
 provided additional important testing of this release of PLplot.
