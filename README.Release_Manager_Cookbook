@@ -22,7 +22,7 @@ INDEX
 ** Do comprehensive test of PLplot
 ** Install and test a local copy of the PLplot website
 ** Upload the local website to SourceForge
-** Create ChangeLog.release
+** Create new version of ChangeLog.release for this release
 ** Create the PLplot Release
    ++ Preliminaries
    ++ Create a final release tarball and check the result for errors
@@ -57,11 +57,11 @@ Checkout an up-to-date master branch, then create the preliminary
 ChangeLog from that.
 
 git checkout master
-git log --name-status --reverse plplot-${old_plplot_version}..HEAD >| /tmp/ChangeLog.release_preliminary
+git log --name-status --reverse plplot-${old_plplot_version}..master >| /tmp/ChangeLog.release_preliminary
 
 Also, create a summary of all the commits topics for quick reference.
 
-git log --oneline --reverse plplot-${old_plplot_version}..HEAD >| /tmp/ChangeLog.release_preliminary_summary
+git log --oneline --reverse plplot-${old_plplot_version}..master >| /tmp/ChangeLog.release_preliminary_summary
 
 This file is useful for counting commits for this release cycle.
 
@@ -82,6 +82,14 @@ This step depends on the step above entitled
 Skim /tmp/ChangeLog.release_preliminary to make sure README.release is
 complete with regards to all major developments during this release
 cycle including and especially all API changes.
+
+Once you are completely satisfied with README.release, then preserve
+the historical record of the significant changes between versions of
+PLplot in one file by prepending README.release for $plplot_version to
+README.cumulated_release.
+
+cat README.release README.cumulated_release > README.cumulated_release_new
+mv README.cumulated_release_new README.cumulated_release
 _________________________________________________________________________
 
 ** Update versions
@@ -158,7 +166,7 @@ concerning how to build and install "plplot-doc-check see the commentary
 in doc/docbook/src/CMakeLists.txt.
 
 Currently (5.13.0),
-plplot-doc-check (and therefore the 
+plplot-doc-check (and therefore the
 check_api_xml_consistency target) finds two inconsistencies which are:
 
 c_plshade1 is not documented.
@@ -430,7 +438,7 @@ consistent with the remarks in README.release.
 (Note is is assumed here that the cmake version was determined by
 manipulating the PATH, but you can also specify the cmake version
 explicitly by using the "--cmake_command" option for the comprehensive
-test script.)  
+test script.)
 
 Run (from a source tree with a space in the prefix)
 
@@ -523,7 +531,7 @@ to validate those pages.
 
 _________________________________________________________________________
 
-** Create ChangeLog.release and update ChangeLog.cumulated_release
+** Create new version of ChangeLog.release for this release
 
 N.B. commit all local changes to the repository so they will be
 reflected in the ChangeLog, tagged version of the release, and the
@@ -535,6 +543,7 @@ current file, README.Release_Manager_Cookbook).
 Prepare the ChangeLog.release file to keep track of all changes
 made for the release.  Make sure master and maint are up to date using
 
+git checkout master
 git fetch
 git log --oneline -1 origin/master
 git log --oneline -1 master
@@ -543,21 +552,13 @@ git log --oneline -1 maint
 Create final ChangeLog for this release
 
 # maint is a private topic branch I use for maintenance which I keep
-# identical to master (confirmed with above git log command) before I
+# identical to master (confirmed with above git log commands) before I
 # start using it.
 git checkout maint
-git log --name-status <commit_id>..master >| ChangeLog.release
+git log --name-status plplot-${old_plplot_version}..master >| ChangeLog.release
 
-where <commit_id> is the last commit id of the log of commits for the
-previous release cycle (i.e., plplot-$old_plplot_version for the $plplot_version release).  Note
-this result (unlike the prelimary version above) will be in the
+Note this result (unlike the prelimary version above) will be in the
 traditional reverse chronological order.
-
-Preserve the historical record of the significant changes between versions of PLplot in one file by
-prepending README.release for $plplot_version to README.cumulated_release
-
-cat README.release README.cumulated_release > README.cumulated_release_new
-mv README.cumulated_release_new README.cumulated_release
 
 # Commit, fast-forward merge to master, and push
 
@@ -579,10 +580,7 @@ git fetch
 git merge --ff-only maint
 git push origin master
 
-The above command destroys the ChangeLog.release file
-from the previous release and the associated commit on
-master (and origin/master) should be the last commit of
-this release.
+This should be the last push for this release.
 _________________________________________________________________________
 
 ** Create the PLplot Release
@@ -716,16 +714,17 @@ Point your browser to http://sf.net/projects/plplot and login.  A
 news item will then be available on the menu bar.  Click that, then
 "new post".
 
-Enter the title (e.g., PLplot Release $plplot_version) and the text.
-The text is in markdown format so copying and pasting from a previous
-news item (using the ctrl-c command on the editing area of the old
-release notes to copy and ctrl-v command on the new release notes
-editing area since normal cutting and pasting no longer works) is a
-very efficient way to create the new news item.  After that copy and
-paste, remember to change all occurrences of $old_plplot_version to
-$plplot_version within the text, and also to update the highlights
-area (by copying from the list of "2. Improvements relative to the previous release)
-in README.release and changing all the numbers to "*").
+Enter the title (e.g., PLplot $plplot_version has been released) and
+the text.  The text is in markdown format so copying and pasting from
+a previous news item (using the ctrl-c command on the editing area of
+the old release notes to copy and ctrl-v command on the new release
+notes editing area since normal cutting and pasting no longer works)
+is a very efficient way to create the new news item.  After that copy
+and paste, remember to change all occurrences of $old_plplot_version
+to $plplot_version within the text, and also to update the highlights
+area (by copying from the list of "2. Improvements relative to the
+previous release) in README.release and changing all the numbers to
+"*").
 
    ++ Publicize the release announcement
 
