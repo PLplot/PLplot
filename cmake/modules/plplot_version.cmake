@@ -1,7 +1,7 @@
 # Version data that need review and possible modification for each release.
 
 set(PLPLOT_VERSION_MAJOR 5)
-set(PLPLOT_VERSION_MINOR 12)
+set(PLPLOT_VERSION_MINOR 13)
 set(PLPLOT_VERSION_PATCH 0)
 
 # Overall PLplot version number.
@@ -15,7 +15,7 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 # PLplot library version information.
 
 # Use git log and git diff with appropriate limits on
-# the list of revisions and in appropriate directores for
+# the list of revisions and in appropriate directories for
 # each of the libraries below to determine an overview of the source code
 # changes have been made in the current release cycle.
 
@@ -51,7 +51,7 @@ set(qsastime_SOVERSION 0)
 set(qsastime_VERSION ${qsastime_SOVERSION}.0.1)
 
 # Library with source code in the src subdirectory.
-set(plplot_SOVERSION 14)
+set(plplot_SOVERSION 15)
 set(plplot_VERSION ${plplot_SOVERSION}.0.0)
 
 # Libraries with source code in the bindings subdirectory tree.
@@ -59,9 +59,9 @@ set(plplotcxx_SOVERSION 13)
 set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.0.0)
 
 set(plplotdmd_SOVERSION 3)
-set(plplotdmd_VERSION ${plplotdmd_SOVERSION}.0.0)
+set(plplotdmd_VERSION ${plplotdmd_SOVERSION}.0.1)
 
-set(plplotfortran_SOVERSION 13)
+set(plplotfortran_SOVERSION 0)
 set(plplotfortran_VERSION ${plplotfortran_SOVERSION}.0.0)
 
 set(plplotqt_SOVERSION 2)
@@ -71,16 +71,16 @@ set(tclmatrix_SOVERSION 10)
 set(tclmatrix_VERSION ${tclmatrix_SOVERSION}.3.0)
 
 set(plplottcltk_SOVERSION 13)
-set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.0.0)
+set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.0.1)
 
 set(plplottcltk_Main_SOVERSION 1)
-set(plplottcltk_Main_VERSION ${plplottcltk_Main_SOVERSION}.0.0)
+set(plplottcltk_Main_VERSION ${plplottcltk_Main_SOVERSION}.0.1)
 
 set(plplotwxwidgets_SOVERSION 1)
-set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.2.0)
+set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.2.1)
 
 set(plplotada_SOVERSION 2)
-set(plplotada_VERSION ${plplotada_SOVERSION}.1.0)
+set(plplotada_VERSION ${plplotada_SOVERSION}.1.1)
 
 # Fixed from now on since this is a frozen library that
 # is only used if PL_DEPRECATED_fortran is ON.
