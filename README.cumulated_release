@@ -1,3 +1,282 @@
+PLplot Release 5.13.0
+
+This is a release of the PLplot plotting package. It represents the
+ongoing best efforts (roughly 100 commits since the last release) of
+the PLplot development community to improve this package, and it is
+the only version of PLplot that we attempt to support.  Releases in
+the 5.x.y series should be available roughly two times per year.
+
+Note that PLplot has been continuously developed since 1986 so it has
+accumulated a lot of cruft since that time that we are now slowing
+dealing with to improve the lot of both new users and new members of
+the development team.  As a result virtually every PLplot release has
+some backwards incompatibilities introduced to help clean it up so
+please pay careful attention to the OFFICIAL NOTICES FOR USERS below
+where we document such incompatibilities to make life easier
+for those who have prior experience with older PLplot releases.
+
+If you encounter a problem with this release that is not already
+documented on our bug tracker, then please send bug reports to PLplot
+developers via our mailing lists (preferred for initial discussion of
+issues) at <http://sourceforge.net/p/plplot/mailman/>. If it turns out
+no quick resolution is possible via mailing-list discussion, then the
+issue should be placed on our bug tracker at
+<http://sourceforge.net/p/plplot/bugs/>.
+
+This software is primarily distributed under the LGPL.  See the
+Copyright file for all licensing details.
+________________________________________________________________
+
+CONTENTS
+
+1. OFFICIAL NOTICES FOR USERS
+
+1.1 CMake version compatibility
+1.2 Notice of dropping our plan to introduce a generic C pointer with const attribute
+
+2. Improvements relative to the previous release
+
+2.1 Bug fixes
+2.2 The Python binding and examples now work for both Python 2 and 3
+2.3 Change the Fortran naming convention
+2.4 Fix many "space in prefix" issues
+2.5 Complete rewrite of IPC between -dev wxwidgets and wxPLViewer
+2.6 Implement a new Windows GDI (wingdi) device driver
+2.7 Implement new Python extension module to support pytkdemo
+2.8 Fix OCaml inconsistencies for example 8
+2.9 Improve the implementation of the OCaml binding
+
+3. PLplot testing
+________________________________________________________________
+
+1. OFFICIAL NOTICES FOR USERS
+
+1.1 CMake version compatibility
+
+Our build system is implemented using CMake.  The minimum version of
+CMake we allow is 3.6.2 on all platforms.  (And it is likely we will
+bump that minimum version to at least 3.7.2 for our next release.)
+
+This particular PLplot release has been comprehensively tested for
+CMake versions 3.6.2 through 3.9.1 on a variety of platforms (see
+<http://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>).
+So if your CMake version is <= 3.9.1 and satisfies the above minimum
+CMake version requirement there is an excellent chance that our build
+system will work well.  Furthermore, if you try later CMake versions
+as they are released during the life of this PLplot release, our build
+system will likely continue to work well because CMake has an excellent
+reputation for preserving backwards compatibility.  But if you get
+build-system trouble for versions of CMake greater than 3.9.1, the
+first thing you should try is CMake-3.9.1 which has been well-tested
+by PLplot builds.
+
+1.2 Notice of dropping our plan to introduce a generic C pointer with const attribute
+
+This plan (first mentioned in the 5.12.0 release notes) has been
+dropped because the const attribute on generic pointers obviously
+disallows users from using our generic pointer arguments to pass back
+information from their callback routines.  As a result of this change
+we have the following situation for our generic pointer arguments.
+
+5.11.1 and before: PLPointer (typedef'd to void *) was our generic pointer argument
+
+5.12.0: PLPointer was deprecated (in retrospect, not a good idea), and
+PL_GENERIC_POINTER and PL_NC_GENERIC_POINTER were introduced with both
+typedef'd to void *, but with the plan (since dropped) going forward
+to typedef PL_GENERIC_POINTER as const void * (since the NC in the
+name of PL_NC_GENERIC_POINTER is meant to signal non-const, that
+implies when NC is dropped as in PL_GENERIC_POINTER that the type in
+question has a const attribute similar to many other typedef pairs
+with and without the const attribute that are defined in
+include/plplot.h).
+
+5.13.0.  Due to the change in plan, PLPointer is now preferred again,
+and PL_GENERIC_POINTER and PL_NC_GENERIC_POINTER are officially
+deprecated and are likely to be removed in the next release since they
+were only introduced in non-deprecated form for one release.  All
+three continue to be typedefed as void *.
+
+________________________________________________________________
+
+2. Improvements relative to the previous release
+
+2.1 Bug fixes
+
+The bug fixes in this release are noted in the roughly 100 commit messages
+collected in ChangeLog.release.
+
+2.2 The Python binding and examples now work for both Python 2 and 3
+
+We have generalized our previous Python 2 binding and examples so they
+work now with both Python 2 and 3.  The minimum versions of Python we
+support are 2.7 for Python 2 and 3.4 for Python 3.  Our build system
+finds Python 3 by default, but if the user prefers Python 2, they
+can arrange that by using the cmake option -DFORCE_PYTHON2=ON.
+
+We arrived at the Python 3 default choice because I (AWI) was having
+trouble with corruption of the Python-generated file
+bindings/python/Plframe.pyc fairly often with Python 2 while that
+corruption has never happened with Python 3.  (This result is exactly
+consistent with a Python developer's prediction when consulted about
+that corruption bug that it was unlikely to occur for Python 3 because
+that version was better maintained in general than Python 2.)
+
+After our build system finds the Python executable, it then finds the
+Python library and numpy versions that are consistent with whether
+that Python executable corresponds to Python 2 or Python 3.
+
+As a result of these changes we get perfect PostScript difference
+reports between Python and C, i.e.,
+
+python
+  Missing examples            :
+  Differing graphical output  :
+  Missing stdout              :
+  Differing stdout            :
+
+for both Python 2 and 3.
+
+2.3 Change the Fortran naming convention
+
+Our Fortran binding and examples are written for the Fortran 2003
+standard so the previous references in our build system, source code,
+documentation, and even names of files and directories to "f95",
+"F95", or Fortran 95 are all misnomers which we have addressed by
+replacing essentially all occurrences of those with "fortran" or
+"Fortran" as appropriate.  For example, our Fortran binding and
+examples are now stored in the subdirectories bindings/fortran and
+examples/fortran rather than bindings/f95 and examples/f95 that we
+used before, and our build system enables our Fortran binding and
+examples with the CMake variable ENABLE_fortran rather than the
+ENABLE_f95 CMake variable that we used for this purpose before.
+
+2.4 Fix many "space in prefix" issues
+
+As a result of these fixes we can execute
+
+scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank"
+
+from a source tree whose prefix has a space in it without any errors on Linux.
+
+This is a successful comprehensive test of all components of PLplot
+available on a fully loaded Linux platform where the prefixes for the
+source, build, and install trees all contain spaces.  However, this
+test does not test components of PLplot that are only available on
+other platforms, and does not test the case where external libraries
+that PLplot depends on have spaces in their full pathnames.  So this
+"space" work is a large step in the right direction but is not
+complete.
+
+2.5 Complete rewrite of IPC between -dev wxwidgets and wxPLViewer
+
+The inter-process communication (IPC) between -dev wxwidgets and
+wxPLViewer was previously implemented using a circular shared memory
+buffer with a mutex controlling access to that buffer.  That complex
+IPC logic has now been completely rewritten in a much simpler way
+using a three-semaphore approach.  One of those semaphores is used to
+control the overall process of transmitting the bytes in either
+direction between the two IPC partners via a shared memory buffer.
+The remaining two semaphores are used to control the details of
+sending bytes from -dev wxwidgets to wxPLViewer (or vice versa)
+following the ideas described on page 73 and following of
+<http://man7.org/conf/lca2013/IPC_Overview-LCA-2013-printable.pdf>.
+However, the unnamed semaphores advocated at that site has been
+replaced with named semaphores in our three-semaphore approach since
+support for unnamed semaphores is not available on Mac OS X (and
+likely other POSIX systems) or Windows and since all POSIX systems and
+Windows support named semaphores.  Our tests show this new IPC
+approach works well on Linux (and presumably all other POSIX
+platforms) and Windows.  Also, we have found that it remains efficient
+even when the shared memory buffer size is reduced by a factor of 100
+(!) when compared with the corresponding buffer size used in the old
+IPC approach.  Therefore, we have deprecated the old IPC approach and
+plan to remove it (likely for the next release).  But for this release
+that old IPC approach can still be accessed using the cmake option
+-DPL_WXWIDGETS_IPC3=OFF.
+
+2.6 Implement a new Windows GDI (wingdi) device driver
+
+This implementation is based on the wingcc device driver, but unlike
+that driver it does not use the deprecated plfreetype approach to
+handle Unicode text.  Instead, it is a pure GDI driver which is not
+currently Unicode-aware but which is a first step to a Unicode-aware
+driver that uses the GDI+ API (along with the Uniscribe API to handle
+Unicode text).  Because Microsoft has deprecated GDI+ and Uniscribe,
+we also plan eventually to develop a device driver based on wingdi
+which uses the Microsoft-recommendend Direct2D API (along with their
+recommended DirectWrite API to handle Unicode text).
+
+2.7 Implement new Python extension module to support pytkdemo
+
+The pytkdemo example was previously supported by the hand-crafted
+plplot_widget Python extension module, but that module had not been
+maintained for a long time and was based on such old Python standards
+that it did not work with Python3.  Therefore, I removed that
+"plplot_widget" module and replaced it with the swig-generated
+"Pltk_init" module which is really simple (since it is based on swig
+wrapping of a small C routine that just calls Pltk_Init from the
+plplottcltk library) and which is compatible with both Python3 and
+Python2.
+
+2.8 Fix OCaml inconsistencies for example 8
+
+This change consisted of adding plsurf3dl (and plot3dcl) to the
+ocaml binding, and using that new binding API to add an additional
+page to examples/ocaml/x08.ml to make the result consistent
+with the results from examples/c/x08c.c.  The PostScript
+differences have now been reduced to
+
+ocaml
+  Missing examples            :
+  Differing graphical output  :  16 19 33
+  Missing stdout              :
+  Differing stdout            :
+
+i.e., the long-standing example 8 difference has now been removed from this report.
+
+The above differences are the only ones left in our PostScript
+difference report generated by, e.g., building the test_diff_psc
+target.  So when these remaining differences are removed (with luck in
+the next release cycle) using similar bindings/ocaml and
+examples/ocaml changes as used in commit 45fdd53 to deal with the
+example 8 case, we should finally have a clean overall PostScript
+difference report after many years of living with the above issues.
+
+2.9 Improve the implementation of the OCaml binding
+
+Our build system implements the OCaml binding using a series of custom
+commands and associated custom target.  Those custom commands have
+been greatly improved with regards to consistency, dependencies, and
+elimination of all space in prefix (see 2.4) issues.
+
+In addition our build system now properly supports the OCaml binding
+for the static build of PLplot.  Previously this support was
+experimental (enabled only if the user specified
+-DENABLE_ocaml_static=ON), and frankly did not work because this
+capability was completely unmaintained.  For example, the list of
+libraries to link was incomplete and contained the old "plplotd" name
+for the PLplot library rather than the correct modern "plplot" name.
+Also, the CMake logic that processed those libraries used the
+<libname>_LIB_DEPENDS form of variables which are now deprecated by
+CMake in favor of using the INTERFACE_LINK_LIBRARIES properties of
+libraries.  Therefore, the build-system logic implementing the OCaml
+binding for the static build case was completely rewritten taken all
+these issues into account, and as a result the ENABLE_ocaml_static
+option has now been removed because the OCaml bindings now work
+without issues for the static build case.
+
+________________________________________________________________
+
+3. PLplot testing
+
+Comprehensive tests of this release are documented in
+<http://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>
+and
+<https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Fortran%20Testing%20Reports>.
+In addition, developers and users who have used the git master tip
+version for all their plotting needs during this release cycle have
+provided additional important testing of this release of PLplot.
+________________________________________________________________
 PLplot Release 5.12.0
 
 This is a release of the PLplot plotting package. It represents the
