@@ -1,10 +1,19 @@
+Configuration of these instructions.
+
+export plplot_version=5.13.0
+export old_plplot_version=5.12.0
+
+This configuration is obviously real for the command-line commands
+below that use these environment variables, but only symbolic for the
+few cases below where a GUI is used.
+
 INDEX
-** Update versions
 ** Prepare a (preliminary) version of the ChangeLog file for this release
-** Prepare and test the documentation
-** Check and potentially fix internal consistency
 ** Prepare the README.release file and/or encourage those who have made
    changes in this release cycle to update that file
+** Update versions
+** Prepare and test the documentation
+** Check and potentially fix internal consistency
 ** Update website-related files
 ** Install and test a (preliminary) local copy of the PLplot website
 ** Update this file (README.Release_Manager_CookBook)
@@ -25,7 +34,6 @@ INDEX
 ** Prepare immediately for the next release cycle
 
 INDEX for Appendix
-** The golang API consistency checker
 ** GNU Privacy Guard (gpg)
 ** Correct computer time
 ** System prerequisites for viewing local website
@@ -37,48 +45,54 @@ final release tarball and ChangeLog which depend on virtually all
 prior steps).
 _________________________________________________________________________
 
-** Update versions
-
-This step depends on no others.
-
-Update PLplot version in www/examples.php.  Also follow the
-instructions in cmake/modules/plplot_version.cmake to update all
-version information.
-
-Also
-
-export plplot_version=5.12.0
-export old_plplot_version=5.11.1
-
-for further use in this file (much of it for real on the command line, but
-some of it symbolic for what you do using GUI's).
-_________________________________________________________________________
-
 ** Prepare a (preliminary) version of the ChangeLog file for this release
 
 This step does not depend on other steps.
 
 Confirm previous release tag.
 
-git tag --list |grep '^plplot-${old_plplot_version}'
+git tag --list |grep "^plplot-${old_plplot_version}"
 
-Checkout an up-to-date master branch or a topic branch that is rebased on
-up-to-date master, then create the preliminary ChangeLog from that.
+Checkout an up-to-date master branch, then create the preliminary
+ChangeLog from that.
 
 git checkout master
-git log --name-status --reverse <tag-name>..HEAD >| /tmp/ChangeLog.release_preliminary
-
-where <tag-name> is the tag-name for the tag corresponding to the
-last release.
+git log --name-status --reverse plplot-${old_plplot_version}..HEAD >| /tmp/ChangeLog.release_preliminary
 
 Also, create a summary of all the commits topics for quick reference.
-git log --oneline --reverse <tag-name>..HEAD >| /tmp/ChangeLog.release_preliminary_summary
+
+git log --oneline --reverse plplot-${old_plplot_version}..HEAD >| /tmp/ChangeLog.release_preliminary_summary
+
+This file is useful for counting commits for this release cycle.
 
 Note because of the --reverse option above the order of these logs will
 be in chronological order.  But it is traditional for the final
 version ChangeLog to have the result in default reverse
 chronological order so the --reverse option is not used in that case
 (see below).
+_________________________________________________________________________
+
+** Prepare the README.release file and/or encourage those who have made
+   changes in this release cycle to update that file
+
+This step depends on the step above entitled
+
+"Prepare a (preliminary) version of the ChangeLog file for this release".
+
+Skim /tmp/ChangeLog.release_preliminary to make sure README.release is
+complete with regards to all major developments during this release
+cycle including and especially all API changes.
+_________________________________________________________________________
+
+** Update versions
+
+This step depends on the step above entitled
+
+"Prepare the README.release file ..."
+
+Update PLplot version in www/examples.php.  Also follow the
+instructions in cmake/modules/plplot_version.cmake to update all
+version information.
 _________________________________________________________________________
 
 ** Prepare and test the documentation
@@ -89,11 +103,15 @@ Update the doxygen documentation (in our source code) and DocBook
 documentation (in doc/docbook/src) to reflect any changes (new drivers
 or new PLplot functionality) in the current release cycle.  Or
 encourage those who made the changes to update the
-documentation.  Generate and test our doxygen form of documentation
-following the instructions in doc/README.doxygen.
+documentation.
 
-Update doc/docbook/src/CMakeLists.txt to reflect your best estimate
-of the (UTC) release date that will be used in the documentation build.
+Generate and test our doxygen form of documentation following the
+instructions in doc/README.doxygen.
+
+Update your best estimate of the UTC release date which is specified
+as RELEASE_DATE in doc/docbook/src/CMakeLists.txt.  That value might
+need further revision when generating the the final website result
+below.
 
 Update, generate and test our Docbook documentation following the
 instructions in doc/docbook/README.developers.
@@ -129,33 +147,35 @@ in the build tree.  The current result of that command should be
 ... check_swig_documentation
 ... check_tcl_parameters
 
-
-check_api_xml_consistency and check_plplot_h.inc currently (5.12.0) fail so
-have been excluded from the dependencies of check_all.
-
-Note the check_api_xml_consistency checker only exists if
+The check_api_xml_consistency target currently (5.13.0) fails
+so that target has been excluded from the dependencies of check_all.
+Note the check_api_xml_consistency target only exists if
 -DADD_SPECIAL_CONSISTENCY_CHECKING=ON and our build system finds the
-golang application api.xml_consistency_checker.  For more details
-concerning how to install that application see the Appendix section
-entitled "The golang API consistency checker".  Currently (5.12.0),
-that checker finds two inconsistencies which are:
+golang application "plplot-doc-check" which has been developed
+by Hǎiliàng Wang and which is executed by
+that check_api_xml_consistency target.  For more details
+concerning how to build and install "plplot-doc-check see the commentary
+in doc/docbook/src/CMakeLists.txt.
+
+Currently (5.13.0),
+plplot-doc-check (and therefore the 
+check_api_xml_consistency target) finds two inconsistencies which are:
 
 c_plshade1 is not documented.
 para 0 of func plGetCursor type mismatch [ PLGraphicsIn * ] vs. [
 struct PLGraphicsIn * ]
 
-The first inconsistency is expected (plshade1 is C only so it
-is not part of the common API, and will likely be deprecated
-soon in any case).  The solution here is probably to drop
-all references to c_plshade1.
+The first inconsistency is expected (plshade1 is C only so it is not
+part of the common API, and my plan is to deprecate it for our next
+release.  This issue will be resolved when c_plshade1 is removed from
+our source tree, but it must go through a deprecation period first.
 
-The second api_xml inconsistency has no immediately obvious cause
-so needs further study.
+The second api_xml inconsistency has no immediately obvious cause and
+is likely due to the old version of golang that I have installed on
+Debian Jessie since Hǎiliàng Wang does not confirm this issue for his
+latest version of golang.
 
-The plplot_h.inc inconsistency from bindings/ocaml has no immediately obvious cause
-so needs further study.
-
-Note the check_plplot_h.inc target only exists
+Note the above check_plplot_h.inc target only exists
 because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
 -DGENERATE_PLPLOT_H_INC=ON by default which in turn requires
 that at least the OCaml version of the Perl regular expression library
@@ -163,52 +183,52 @@ be installed.  (On Debian the associated package name is
 libpcre-ocaml-dev.)  Normally, GENERATE_PLPLOT_H_INC is OFF by default
 to reduce build dependencies.
 
-To actually do the internal consistency checks, run each of the above
-targets by running the check_all target.  Each individual check target
-typically generates a file in the build tree which is
-then compared (using the Unix cmp command) with the file that is being
-checked in the source tree.  If the two files are inconsistent (which
-can be caused by documentation updates, for example), the cmp command
-complains, and you should follow up by doing a diff between the two
-files to confirm that the changes are reasonable followed by copying
-the build-tree version of the file on top of the source-tree version
-and committing the source-tree version.  When this process is completed,
-all the above targets should run with no cmp or other errors/warnings
-at all, e.g.,
+To actually do the internal consistency checks, configure PLplot with
+the -DADD_SPECIAL_CONSISTENCY_CHECKING=ON option and build each of the
+above targets (except for check_api_xml_consistency) by building the
+check_all target.  Each individual check target typically generates a
+file in the build tree which is then compared (using the Unix cmp
+command) with the file that is being checked in the source tree.  If
+the two files are inconsistent (which can be caused by documentation
+updates, for example), the cmp command complains, and you should
+follow up by doing a diff between the two files to confirm that the
+changes are reasonable followed by copying the build-tree version of
+the file on top of the source-tree version and committing the
+source-tree version.  When this process is completed, all the above
+targets (except for check_api_xml_consistency should run with no cmp
+or other errors/warnings at all, e.g.,
 
 software@raven> make check_all
 
-should just work without errors.
-_________________________________________________________________________
+should "just work" without errors.
 
-** Prepare the README.release file and/or encourage those who have made
-   changes in this release cycle to update that file
-
-This step depends on the step above entitled
-
-"Prepare a (preliminary) version of the ChangeLog file for this release".
-
-To double-check that file is complete with regards to all major
-developments during this release cycle, skim all the commit messages in
-ChangeLog.release_preliminary determined above.
+Then (as of plplot-5.13.0) finish up such checking by building the
+check_api_xml_consistency target which should reveal the known
+c_plshade1 issue above and possibly (depending on what golang version
+you have) the second plGetCursor "issue".
 _________________________________________________________________________
 
 ** Update website-related files
 
 This step does not depend on other steps.
 
-Use "git diff" and "git log" on the examples directory (or some
-subdirectory of that such as examples/lua which normally has little
-activity unless some real changes to the standard examples have been
-made) with appropriate commit id limits to discover whether there is a
-necessity to update the examples list in
-scripts/htdocs-gen_plot-examples.sh. And if so, do that update.  That
-list is used to generate the website example-related files and copy
-the results to the website. The list automatically controls what
-example source code is configured (for source code that needs that),
-as well as what example plots and example thumbnails are generated.
-The list also automatically controls what examples-related files are
-copied to the website.
+Look for any fundamental standard examples changes using
+
+git diff --ignore-all-space plplot-$old_plplot_version -- examples/lua
+
+(I chose examples/lua here rather than examples/c since the lua
+examples are normally kept right up to date with any fundamental
+changes in the C examples, but without the churn that sometimes occurs
+in examples/c.)
+
+If the above test shows there is a necessity to update the examples
+list in scripts/htdocs-gen_plot-examples.sh, then do that.  That list
+is used to generate the website example-related files and copy the
+results to the website. The list automatically controls what example
+source code is configured (for source code that needs that), as well
+as what example plots and example thumbnails are generated.  The list
+also automatically controls what examples-related files are copied to
+the website.
 
 Update the project web page including the examples.  For example, edit
 www/examples.php to reflect any changes to the examples themselves
@@ -230,10 +250,6 @@ This step depends on the steps above entitled
 "Prepare and test the documentation" and
 "Update website-related files"
 
-Also you should use your best estimate of the UTC release_date
-which is configured as RELEASE_DATE in doc/docbook/src/CMakeLists.txt.
-That value will likely require modification to generate the final
-website result below.
 
 N.B. The git checkout-index command exports everything from the
 working directory that is in the index or committed, but it will
@@ -283,9 +299,9 @@ but all of these warnings seemed ignorable.
 You can check for errors (e.g., due
 to missing commands that need to be installed) by running
 
-find /tmp/plplotdoc -name '*.out' |xargs grep -i error |grep -vE 'unable to read file loc from|Generating call.*graph for function'
+find /tmp/plplotdoc -name '*.out' |xargs grep -i error |grep -vE 'unable to read file loc from'
 
-(Those grep -vE stanzas are to remove output lines from doxygen that tend to
+(That grep -vE stanza is to remove output lines from doxygen that tend to
 include some case variants of "error" in the string because the
 referred to function name contains that substring.)
 
@@ -349,7 +365,10 @@ Those appear to be fairly numerous, but in all cases expected
 such as known cmake warnings, known doxygen warnings due to its
 poor code parsing ability, etc.
 
-find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error |less
+find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error |grep -Ev 'unable to read file loc'
+
+(The last stanza is to remove some spurious doxygen warnings for the Debian Jessie version of
+doxygen).
 
 This search found some hits, but all seem to be innocuous except possibly
 for the following doxygen error
@@ -395,9 +414,6 @@ Look at the info pages that were generated from the tarball using
 
 info /tmp/plplot_install/share/info/plplotdoc.info
 
-Look at the ctest results
-
-
 _________________________________________________________________________
 
 ** Do comprehensive test of PLplot
@@ -407,18 +423,47 @@ This step depends on the steps above entitled
 "Check and potentially fix internal consistency"
 "Update date/versions"
 
-Do a comprehensive test of the interactive and noninteractive
-results.
+Do the following comprehensive test (and check of that test) twice, once
+for the minimum CMake version and once for the latest CMake version
+to check our build system works fine for this range of CMake versions
+consistent with the remarks in README.release.
+(Note is is assumed here that the cmake version was determined by
+manipulating the PATH, but you can also specify the cmake version
+explicitly by using the "--cmake_command" option for the comprehensive
+test script.)  
 
-scripts/comprehensive_test.sh --do_ctest no --do_test_noninteractive no
-find ../comprehensive_test_disposeable -name "*.out" |grep -v a.out |xargs grep -i error
-scripts/comprehensive_test.sh  --do_test_interactive no
-find ../comprehensive_test_disposeable -name "*.out" |grep -v a.out |xargs grep -i error
+Run (from a source tree with a space in the prefix)
 
-Alternatively, on platforms (such as MinGW/MSYS) with
-limited system libraries or platforms (such as CentOS) with system libraries which are too old for
-PLplot's needs you can also do comprehensive testing using epa_build
-(see cmake/epa_build/README for details).
+scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank" --do_submit_dashboard yes)
+
+(Note because of the choice of a "spaced" source tree and --prefix, this test has a space in the prefixes of the source, build, and install trees.)
+
+Check the results:
+
+# Check for any regressions in the warnings in the cmake output.
+less ../comprehensive_test_disposeable\ blank/shared/noninteractive/output_tree/cmake.out
+
+# Check for some non-standard warnings:
+grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
+
+# Check for all errors:
+grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
+
+# Check for any ldd issues for the shared and nondynamic cases.
+grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
+
+# Check for any PostScript or Text differences between all non-C languages and the corresponding
+# C results.
+grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
+
+These checks showed no issues other than long-standing PostScript
+differences for ocaml (and therefore no PostScript difference
+regressions) in the ctest results.  In addition, 3 dashboards (for the
+shared, nondynamic, and static cases) were correctly posted to
+<http://my.cdash.org/index.php?project=PLplot_git> although with
+long-standing spurious warning counts for the cmake step which I have
+been unable to figure out, yet.
+
 
 Enter results of these and all other tests at
 <https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>
@@ -698,32 +743,6 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
      cycle.
 
 --- Appendix ---
-_________________________________________________________________________
-
-** The golang API consistency checker
-
-The instructions for installing this golang application
-are taken from doc/docbook/src/CMakeLists.txt.
-
-To build Hǎiliàng Wang's "check" application (which is written in the Go language)
-follow these simple directions (which worked fine on 2017-01-27):
-
-# Install golang AND gccxml packages from Debian Jessie (other distros
-# may use different package names from these).
-
-cd /home/software/golang_apps #(or wherever you like)
-export GOPATH=$(pwd)
-go get -u h12.me/go-plplot/c/check
-go build h12.me/go-plplot/c/check
-
-# The above creates the "check" executable in $GOPATH/bin
-# That is too generic a name so symlink a more individual name
-cd $GOPATH/bin; ln -s check api.xml_consistency_checker;
-
-# Now put $GOPATH/bin on your PATH and CMake should do the rest
-# by finding the api.xml_consistency_checker application on your
-# PATH and running that appropriately when you build the
-# check_api_xml_consistency target (see above).
 _________________________________________________________________________
 
 ** GNU Privacy Guard (gpg)
