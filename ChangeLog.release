@@ -11,10 +11,10 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Aug 25 17:52:43 2017 -0700
 
     Update notes for the release manager
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie).
-    
+
     Do the following comprehensive test (and check of that test) twice,
     once for CMake version 3.6.1 (done on 2017-08-15) and once for CMake
     version 3.9.1 (done on 2017-08-25) to check our build system works
@@ -23,31 +23,31 @@ Date:   Fri Aug 25 17:52:43 2017 -0700
     determined by manipulating the PATH, but you can also specify the
     cmake version explicitly by using the "--cmake_command" option for the
     comprehensive test script.)
-    
+
     Run (from a source tree with a space in the prefix)
-    
+
     scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank" --do_submit_dashboard yes)
-    
+
     (Note because of the choice of a "spaced" source tree and --prefix, this test has a space in the prefixes of the source, build, and install trees.)
-    
+
     Check the results:
-    
+
     # Check for any regressions in the warnings in the cmake output.
     less ../comprehensive_test_disposeable\ blank/shared/noninteractive/output_tree/cmake.out
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
-    
+
     These checks showed no issues other than long-standing PostScript
     differences for ocaml (and therefore no PostScript difference
     regressions) in the ctest results.  In addition, 3 dashboards (for the
@@ -89,7 +89,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Aug 16 14:16:43 2017 -0700
 
     ctest: Change default timeout from 1500 to 15000 seconds
-    
+
     This change should accommodate our users who happen to have
     extraordinarily slow computers (such as the Raspberry Pi) or our users
     with anomalous platform issues where a few tests are extraordinarily
@@ -103,90 +103,90 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Aug 14 23:37:40 2017 -0700
 
     wxwidgets device driver: superscript/subscript logic improvement
-    
+
     The logic improvements were as follows:
-    
+
     * yScale, the value of the Y scaling parameter used in DrawTextSection
       is now returned as an argument of that routine since identical Y
       scaling (instead of the empirical factor of 60 that was used before) has
       to be done to calculate scaledOffset in DrawTextLine (the only
       routine that calls DrawTextSection).
-    
+
     * When calculating textHeight and textDepth inside DrawTextLine, use
       properly Y-scaled and initialized scaledOffset value rather than uninitialized (on first
       loop) Offset value that is not Y-scaled.
-    
+
     * The empirical Y offset is now implemented inside DrawTextSection so
       that it can be expressed in Y-scaled coordinates.  The value (which
       is quite small, i.e., 50 times smaller than a character height) is
-    
+
     empiricalYOffset = -0.020 * scaledFontSize * m_yScale;
-    
+
       was recalibrated so that the utf8 "heavy multiplication x", "number
       sign", "four teardrop-spoked asterisk", and "8-spoked asterisk" (all
       of which appear to be centred symbols for my particular system
       fonts) have correct vertical alignment when running
-    
+
     python3 examples/python/test_circle.py -dev wxwidgets
-    
+
     * The empirical factor of 1.2 which is used to enforce symmetry in
       vertical alignment between superscript and corresponding subscript
       levels is now expressed as the "empiricalSymmetricFactor"
       variable.
-    
+
     I also took this opportunity to update examples/python/test_superscript_subscript.py
     to make that example a much more exacting test of superscript/subscript/linebreak logic.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the x01c, wxwidgets, and wxPLViewer
     targets and running
-    
+
     valgrind examples/c/x01c -dev wxwidgets with
-    
+
     which showed long-standing memory leak issues, but no memory management errors, e.g.,
-    
+
     ==1032== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
-    
+
     I also built all prerequisite targets for python examples
     (_plplotc_fixed and python_examples) and ran both
-    
+
     python3 examples/python/test_circle.py -dev wxwidgets
-    
+
     and
-    
+
     python3 examples/python/test_superscript_subscript.py -dev wxwidgets
-    
+
     That first Python example allows extremely precise checking of the vertical
     alignment for the above 4 centred utf8 symbols and showed no discernible
     misalignment with the above value of empiricalYOffset.
-    
+
     That second Python example shows good relative and absolute vertical
     alignment of characters such as "p", "o", and "b" with a descender,
     with no ascender or descender, and with an ascender.  However, there
     are still the following vertical alignment and linebreak issues.
-    
+
     * A string with just superscripts and the corresponding string with
       identical subscripts show inconsistent vertical alignment relative
       to each other (the superscript string is rendered too high, and the
       subscript string is rendered too low by the same amount compared to
       the absolute vertical position where these two string should be
       rendered).
-    
+
     * Two strings that have a symmetrical range of both superscripts and
       subscripts but in different orders have consistent vertical
       alignment with each other which is nevertheless incorrect when
       compared to the correct absolute vertical positioning of simple
       strings such as "p", "o", and "b".
-    
+
     * linebreak vertical spacing does not appear to be correct since
       superscripts on the lower line are currently superimposed on
       subscripts from the upper line.
-    
+
     * The current logic reinitializes superscript/subscript state after
       each linebreak and eventually should be changed so that
       superscript/subscript level state is properly maintained through
       linebreaks (i.e., independent of linebreaks).
-    
+
     I don't view any of these issues as release showstoppers so my plan is
     to deal with these issues in the indefinite long-term as a low
     priority.
@@ -200,7 +200,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Aug 8 15:32:19 2017 -0700
 
     Build system: Actually fix Java issue for CMake versions > 3.7.2
-    
+
     This commit replaces a workaround for a CMake bug with the actual
     CMake fix for this CMake bug.  See thread on the cmake-developer list
     started on 2017-07-21 with the subject line "Java language support
@@ -214,7 +214,7 @@ Date:   Tue Aug 8 15:32:19 2017 -0700
     or higher, to remove the cmake/modules version of UseSWIG.cmake
     so our users can just use the official version(s) of that file
     that come with their CMake installation instead.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_diff_psc target which had no
     build or run errors and no PostScript difference regressions (i.e.,
@@ -230,9 +230,9 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Aug 6 17:21:35 2017 -0700
 
     Traditional build system for the installed examples: Fix some rpath issues
-    
+
     Namely the following:
-    
+
     * Do not use rpath at all for WIN32_OR_CYGWIN platforms.  This should
       fix the gcc "Bad address" bug on the MinGW-w64/MSYS2 that has been
       reported by Arjen.  There is some possibility I could address that
@@ -243,41 +243,41 @@ Date:   Sun Aug 6 17:21:35 2017 -0700
       our WIN32_OR_CYGWIN platform users are already used to the
       alternative which is to set PATH appropriately to find PLplot
       libraries (and device drivers when those exist separately).
-    
+
     * Consolidate Fortran RPATHCMD logic in examples/CMakeLists.txt. I also
       took this opportunity to fix some potential quoting bugs.
-    
+
     * Consolidate ocaml RPATHCMD logic in examples/CMakeLists.txt.  My preliminary
       tests showed -ccopt and blank escape bugs in this case, and I have
       no idea how the previous logic in examples/ocaml/CMakeLists.txt passed
       my previous tests.  But the new logic is rock-solid and consistent
       with how we treat -copt options for the ocaml bindings.
-    
+
     Tested by: Alan W. Irwin <airwin@user.sourceforge.net> on Linux
     (Debian Jessie) by running (from a source tree with space in the prefix)
-    
+
     scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank" --do_submit_dashboard yes --do_test_interactive no --do_test_noninteractive no --do_test_install_tree no --do_test_traditional_install_tree no
-    
+
     (note this test has a space in the prefixes of the source, build, and install tree)
-    
+
     The results were checked as follows:
-    
+
     # Check for any warning regressions in the cmake output.
     less ../comprehensive_test_disposeable\ blank/shared/noninteractive/output_tree/cmake.out
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
-    
+
     These checks showed no issues other than long-standing PostScript
     differences for ocaml (and therefore no PostScript difference
     regressions) in the ctest results.  In addition, 3 dashboards (for the
@@ -295,40 +295,40 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jul 31 23:53:17 2017 -0700
 
     Attempt to quiet compile warning on Cygwin
-    
+
     That warning (reported by Arjen Markus) was
-    
+
     bindings/tk/Pltk_Init.c:40:12:
     warning: ‘Matrix_Init’ redeclared without dllimport attribute:
     previous dllimport ignored [-Wattributes]
      extern int Matrix_Init( Tcl_Interp* interp );
                 ^
-    
+
     However, Matrix_Init is already correctly declared in
     bindings/tcl/tclMatrix.h, and the chain of includes starting at
     bindings/tk/Pltk_Init.c does include that file. So the above line
     should be completely unnecessary (as implied by the Cygwin compile
     warning), and I have therefore removed it in this commit.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) for the following compile flags:
-    
+
     CXXFLAGS=-O3 -fvisibility=hidden -Wuninitialized
     CFLAGS=-O3 -fvisibility=hidden -Wuninitialized
     FFLAGS=-O3 -Wuninitialized -Wunused
-    
+
     and for the build tree in the shared libraries case.
-    
+
     The results were checked by
-    
+
     grep -i warning test_noninteractive.out |grep -vE 'PRIVATE|Wdeprecated|PLPLOT WARNING|Resource leak:|2 problems \(2 warnings\)|Some graphical or stdout results were different'
     grep -i error test_noninteractive.out
     grep -B1 -A3 "Missing examples" test_noninteractive.out |less
-    
+
     The first two showed no serious build or run-time issues, and the last
     one showed no regressions in the PostScript differences, i.e., this
     test was a complete success on Debian Jessie.
-    
+
     However, additional testing of this commit on all Windows platforms is
     requested to confirm no additional issues were introduced for those
     platforms by this change and also to confirm the above compile
@@ -349,20 +349,20 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jul 27 10:22:55 2017 -0700
 
     Build system: Work around Java issue for CMake versions > 3.7.2
-    
+
     See thread on the cmake-developer list started on 2017-07-21 with
     the subject line "Java language support regression (compared with 3.7.x and 3.8.x) for 3.9.0"
     for more details.  The upshot is the following line was inserted into the official UseSWIG.cmake
     after version 3.7.2
-    
+
     set(SWIG_JAVA_EXTRA_FILE_EXTENSIONS ".java" "JNI.java")
-    
+
     which generates the following CMake error not only for PLplot but a simple test project.
-    
+
     CMake Error: Error required internal CMake variable not set, cmake may not be built correctly.
     Missing variable is:
     CMAKE_Java_CREATE_SHARED_MODULE
-    
+
     There is a deeper Java language support issue here which I assume the
     CMake developers will eventually fix, but for now a workaround is
     simply to comment out the above line.  To make sure our users have
@@ -371,13 +371,13 @@ Date:   Thu Jul 27 10:22:55 2017 -0700
     the official plan for this file is to simply delete it again (so our users
     use the official UseSWIG.cmake) once the version of CMake with the
     proper fix for the Java issue becomes our minimum version.
-    
+
     A by-product of the above change is that the swig_add_module commands we have
     been using in all our swig-generated bindings generated deprecation warning
     messages so to quiet those I also changed all instances of swig_add_module to
     the equivalent swig_add_library command which is now defined in this
     latest version of UseSWIG.cmake.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_diff_psc target which
     had no build or run errors and no PostScript difference regressions (i.e.,
@@ -385,35 +385,35 @@ Date:   Thu Jul 27 10:22:55 2017 -0700
     Ocaml differences).  I performed that test for both CMake-3.6.2 (our minimum
     version) and CMake-3.6.2.  In addition (to thoroughly test CMake-3.9.0 for the
     first time) I ran
-    
+
     scripts/comprehensive_test.sh --cmake_command ~/cmake/install-3.9.0/bin/cmake --do_submit_dashboard yes
-    
+
     (By accident I forgot to set up this test to use a space in source,
     build, and install tree prefixes, but that extra test step was done
     for the other recent unconstrained comprehensive test so this
     limitation of the present test is noted here but does not justify
     redoing this test.)
-    
+
     These comprehensive test results were perfect (except for the
     long-standing OCaml PostScript differences) as measured by the
     following commands:
-    
+
     # Check for any warning regressions in the cmake output.
     less ../comprehensive_test_disposeable/shared/noninteractive/output_tree/cmake.out
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable/*/*/output_tree/*.out |less
-    
+
     The ctest part of these tests were also successfully published at
     <http://my.cdash.org/index.php?project=PLplot_git> because of the
     above --do_submit_dashboard yes option.
@@ -429,7 +429,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jul 24 14:00:59 2017 -0700
 
     Build system: Fix duplicate bugs 182 and 163 for pkg-config.cmake
-    
+
     The last argument of string(REGEX REPLACE...) must be quoted (in case
     it is empty).  I thought I had gotten all of these non-quoted issues
     before in pkg-config.cmake, but there was one instance still remaining
@@ -442,25 +442,25 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Jul 23 22:34:45 2017 -0700
 
     Spelling changes throughout source tree
-    
+
     Fix bad variants of the spelling of "continuous" and "argument" that were kindly
     reported by Ole Streicher from his Debian packaging lint results.
-    
+
     These changes were implemented automatically as follows:
-    
+
     sed -i -e 's?Continous?Continuous?g' $(find . -type f|grep -v .git |xargs grep -l Continous)
     sed -i -e 's?continous?continuous?g' $(find . -type f|grep -v .git |xargs grep -l continous)
     sed -i -e 's?argment?argument?g' $(find . -type f|grep -v .git |xargs grep -l argment)
-    
+
     Afterwards
-    
+
     find . -type f|grep -v .git |xargs grep -lE 'argment|continous'
-    
+
     found no files (as expected).  Furthermore, git diff showed these
     changes in the 22 files that were updated with the sed
     commands above were for either documentation files, or
     for comments and error messages in non-documentation files.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by configuring PLplot with the CMake option
     -DADD_SPECIAL_CONSISTENCY_CHECKING=ON, and by building the check_all
@@ -472,15 +472,15 @@ Date:   Sun Jul 23 22:34:45 2017 -0700
     consistency between our DocBook documentation of our API, and our
     actual API in include/plplot.h have been introduced by these spelling
     changes.
-    
+
     The final two tests I ran of this commit were
-    
+
     scripts/remove_trailing_whitespace.sh
-    
+
     and
-    
+
     scripts/style_source.sh
-    
+
     which demonstrated no style or trailing whitespace issues have
     been introduced by this commit.
 
@@ -512,30 +512,30 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jul 22 00:06:45 2017 -0700
 
     Build system: Quiet cmake developer warning
-    
+
     The change I made was to replace the fifth argument of the CMake
     string (REPLACE ...) signature command as follows:
-    
+
     -  "${_octave_m_dir}"/PLplot
     +  "${_octave_m_dir}/PLplot"
-    
+
     That first form generated
-    
+
     CMake Warning (dev) at cmake/modules/octave.cmake:258:
       Syntax Warning in cmake code at column 21
-    
+
       Argument not separated from preceding token by whitespace.
     Call Stack (most recent call first):
       cmake/modules/plplot.cmake:491 (include)
       CMakeLists.txt:129 (include)
     This warning is for project developers.  Use -Wno-dev to suppress it.
-    
+
     The second unambiguous form (with everything inside quotes) suppressed
     that warning, but appending that "/PLplot" is necessary for getting
     all Octave components installed in the correct place, and a check of
     the recent full comprehensive test results without this fix showed
     that was happening properly even for the first ambiguous form.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by configuring PLplot with cmake and showing
     the developer warning is now gone from those cmake results.
@@ -547,53 +547,53 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Jul 21 23:31:59 2017 -0700
 
     Comprehensive test script: Fix ctest options when submitting a dashboard
-    
+
     For the --do_submit_dashboard yes script option, this bug was screwing up the ctest command-line options
     (by jamming the -extra-verbose and -D Experimental options together without a space separator).
     I fixed this issue by changing the bash variable dashboard_option to be an empty string
     when a dashboard is not submitted, and leaving it as "-D Experimental " (note the trailing space)
     when a dashboard is submitted, and then prepending a space to all uses of $dashboard_option and leaving
     no space afterward.  The result is that
-    
+
     echo_tee "$ctest_command --extra-verbose ${dashboard_option}in the build tree"
     $ctest_command --extra-verbose ${dashboard_option}>& "$output"
-    
+
     is correctly translated to
-    
+
     echo_tee "$ctest_command --extra-verbose in the build tree"
     $ctest_command --extra-verbose >& "$output"
-    
+
     when there is no dashboard submitted and
-    
+
     echo_tee "$ctest_command --extra-verbose -D Experimental in the build tree"
     $ctest_command --extra-verbose -D Experimental >& "$output"
-    
+
     when there is a dashboard submitted.
-    
+
     Tested by: Alan W. Irwin <airwin@user.sourceforge.net> on Linux
     (Debian Jessie) by repeating the previous comprehensive test
     except for limiting it to ctest only (and build tree only), i.e.,
     by running (from a source tree with space in the prefix)
-    
+
     scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank" --do_submit_dashboard yes --do_test_interactive no --do_test_noninteractive no --do_test_install_tree no --do_test_traditional_install_tree no
-    
+
     (note this test has a space in the prefixes of the source, build, and install tree)
-    
+
     The results were checked as follows:
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
-    
+
     These checks showed no issues other than long-standing PostScript
     differences for ocaml (and therefore no PostScript difference
     regressions) in the ctest results.  In addition, 3 dashboards (for the
@@ -616,63 +616,63 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Jul 21 22:09:26 2017 -0700
 
     Build system updates concerning install locations
-    
+
     The big change here is all install locations are now cached
     so that any of them can be controlled by the user by
     setting the appropriate -D cmake option.  These
     install location variables have been found using
-    
+
     find . -type f|grep -v .git |grep -v epa_build |xargs grep -h DESTINATION |sed -e 's?  *? ?g' -e 's?^ ??'|sort -u |less
-    
+
     to find all instances of DESTINATION (the CMake install command option which
     determines install locations).
-    
+
     I also took this opportunity to make the following related changes:
-    
+
     * I automated checking that all install locations had a common prefix
       as part of summarizing all install locations in summary.cmake.
-    
+
     * I added many optional install location variables (e.g.,
       FORTRAN_MOD_DIR determined in cmake/modules/fortran.cmake when
       ENABLE_fortran is ON) to the list of such variables being processed by
       summary.cmake for the case when such variables are defined.
-    
+
     * I converted mandatory install locations to optional where
       appropriate, e.g., I moved the determination of ADA_INCLUDE_DIR and
       ADA_LIB_DIR from cmake/modules/instdirs.cmake to
       cmake/modules/ada.cmake, and only when ENABLE_ada was ON.
-    
+
     * I reserved JAVAWRAPPER_HARDDIR for configured files (where
       hard-coded install locations are needed) and replaced it with
       JAVAWRAPPER_DIR for other use cases that were subject to the DESTDIR
       staging area mechanism.
-    
+
     * I replaced SHLIB_DIR everywhere with LIB_DIR.
-    
+
     * I replaced ${OCTAVE_M_DIR}/PLplot everywhere with ${OCTAVE_M_DIR}
       (and appended "/PLplot" to the definition of OCTAVE_M_DIR).
-    
+
     * I renamed JAVADATA_HARDDIR by JAR_HARDIR since that is the "hard"
       version of JAR_DIR to be used to configure files with hard-coded
       Java install locations.
-    
+
     * I removed an unneeded determination of what is now named
       JAR_HARDIR from examples/java/CMakeLists.txt
-    
+
     I also took this opportunity to change summary.cmake to display either
     ENABLE_pyqt5 or ENABLE_pyqt4 (but not both) depending on the value of
     PLPLOT_USE_QT5.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank" --do_submit_dashboard yes
-    
+
     from a source tree with a space in its prefix.  Because of the lack of
     any limiting options above this comprehensively tested all interactive
     and noninteractive components of PLplot that are available by default
     on a fully loaded Linux system.
-    
+
     I chose to make the test that extensive because of the intrusive
     nature of the above changes.  Furthermore, because of that choice of
     source tree and the above --prefix option this test checked there
@@ -680,28 +680,28 @@ Date:   Fri Jul 21 22:09:26 2017 -0700
     build, or install trees.  (The above test repeated the success I had
     with an identical (except for --do_submit_dashboard yes option) test
     just after commit 58bc02e in early July.)
-    
+
     These test results were perfect as measured by the following commands:
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/build_tree/Testing/Temporary/LastTest.log |less
-    
+
     (That last grep command was necessary because of a minor bug in the script which
     meant the actual ctest commands executed  was
-    
+
     ctest -j4 --extra-verbose-D Experimental <message>
-    
+
     rather than the correct command with the space between the
     --extra-verbose and -D options.  The net effect was no verbose results
     in the ctest.out files and no dashboards submitted, but, otherwise
@@ -734,9 +734,9 @@ Author: Arjen Markus <arjen.markus@deltares.nl>
 Date:   Sun Jul 16 14:38:18 2017 +0200
 
     Revert the earlier change which added two possible paths for finding the wxWidgets libraries. These paths are in fact already covered by the _WX_ARCH_ macro being set to an empty string if the build architecture is "32-bits" instead of "64-bits". The alternatives made it possible to find libraries for the wrong "bitness", leading to link problems that are awkward to diagnose.
-    
+
     The bottom line is: get the wxWidgets installation for the right platform and architecture - and be careful about it.
-    
+
     Tested by Arjen Markus (arjenmarkus@users.sourceforge.net) on Windows with MSVC
 
 M	cmake/modules/FindwxWidgets.cmake
@@ -746,17 +746,17 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jul 13 01:15:14 2017 -0700
 
     Adjust for the new "plplot-doc-check" name of Hǎiliàng Wang's API consistency checker for PLplot
-    
+
     That golang programme checks for consistency between our DocBook documentation of our API
     in doc/docbook/src/api.xml and the include/plplot.h header that defines our C API.
     Hǎiliàng upgraded that programme today to correctly handle callback function
     arguments, and he took the opportunity to change the name of the programme from "check"
     (which I had symlinked to a unique name because that name was too generic) to
     "plplot-doc-check" (which is sufficiently unique that it doesn't require a symlink).
-    
+
     This commit adjusts for that new name, and I also took this opportunity to document
     how the new plplot-doc-check should be built in the comments in this CMakeLists.txt file.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building plplot-doc-check and putting it on the
     PATH, configuring the PLplot
@@ -765,10 +765,10 @@ Date:   Thu Jul 13 01:15:14 2017 -0700
     our API by building the check_api_xml_consistency target.  The
     result was _almost_ a succes with two inconsistencies found which
     are as follows:
-    
+
     c_plshade1 is not documented.
     para 0 of func plGetCursor TYPE mismatch doc[ PLGraphicsIn * ] vs. header[ struct PLGraphicsIn * ]
-    
+
     The first corresponds to a real inconsistency which will be fixed when plshade1 is deprecated
     (the documentation is ahead of the C code in that regard).  The second is a spurious warning
     which I have brought to the attention of Hǎiliàng Wang.
@@ -780,7 +780,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 12 21:53:04 2017 -0700
 
     Work around plplot_pyqt4.so and plplot_pyqt5.so symbol visibility issues for GNU C++ compiler
-    
+
     The combination of python3 (at least for version 3.4) and sip creates
     a useless shared object with no externally accessible symbols when the
     GNU version of the C++ compiler (i.e., g++ or the ccache version of
@@ -794,24 +794,24 @@ Date:   Wed Jul 12 21:53:04 2017 -0700
     this workaround should be tested periodically for later versions of
     Python (and sip).  But google searches have so far found no
     bug reports concerning this visibility issue.
-    
+
     Since this fix makes it possible to reliably build the test_pyqt4_example
     target, make that target a dependency of the test_interactive generic
     target.  I have not made a similar change for the test_pyqt5_example
     target (despite its visibility issue being solved by this commit)
     because there is past evidence of segfaults for that target.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running the following commands:
-    
+
     scripts/comprehensive_test.sh --cmake_command /home/software/cmake/install-3.6.2/bin/cmake --cmake_added_options "-DPLPLOT_USE_QT5=OFF -DFORCE_PYTHON2=OFF -DDEFAULT_NO_DEVICES=ON -DPLD_extqt=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_python=ON -DENABLE_qt=ON -DENABLE_pyqt4=ON" --do_test_noninteractive no --do_ctest no
-    
+
     scripts/comprehensive_test.sh --cmake_command /home/software/cmake/install-3.6.2/bin/cmake --cmake_added_options "-DPLPLOT_USE_QT5=ON -DFORCE_PYTHON2=OFF -DDEFAULT_NO_DEVICES=ON -DPLD_extqt=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_python=ON -DENABLE_qt=ON -DENABLE_pyqt5=ON" --do_test_noninteractive no --do_ctest no
-    
+
     (The last of these commands was run with a local change to
     examples/CMakeLists.txt to temporarily make the test_pyqt5_example
     target a dependency of the test_interactive target.)
-    
+
     For the shared and nondynamic overall configurations and for the build
     tree and installed examples tree with CMake-based build system, I
     obtained the expected good interactive test_pyqt4_example example
@@ -820,24 +820,24 @@ Date:   Wed Jul 12 21:53:04 2017 -0700
     latter case, there was no sign of segfaults so it is possible the past
     issue with those has been cured but more investigation will be
     required to come to a definitive conclusion about that issue.
-    
+
     The results of both the first and second commands above also showed
     the expected results for the following checks:
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     N.B. The above GNU C++ compiler workaround has only been tested on a
     Linux platform (with the ccache version of g++) so far so similar
     tests are requested on other platforms which use GNU C++ compilers
     (e.g., Cygwin, MinGW-w64/MSYS2, Mac OS X, and Linux without ccache).
-    
+
     N.B. The above workaround has no effect on any platform (e.g., MSVC)
     which does not use GNU compilers, and such platforms also need to be
     tested with Python 3 to see if a similar visibility issue needs to
@@ -852,7 +852,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 12 14:14:30 2017 -0700
 
     Replace out-dated Debian packaging files with documentation of where to find the latest Debian packaging information
-    
+
     As a result of this change, the debian subdirectory is removed.
     Therefore, I have dropped the redundant build-system constraint
     that the debian subdirectory is not included in our source release
@@ -929,12 +929,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 12 13:52:03 2017 -0700
 
     Build system: bug fix: do not attempt to install non-existent README.1st files
-    
+
     These README.1st files in the lib/csa and lib/nn subdirectories
     were removed in the last commit, and this commit fixes the
     install error caused by attempting to install those files
     which no longer exist.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the install target with success.
 
@@ -946,7 +946,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jul 11 23:06:55 2017 -0700
 
     Update the license for the PLplot version of the csa and nn libraries
-    
+
     These libraries are substantially modified versions of the 2003
     versons of Pavel Sakov's csa and nn libraries that are used to help
     provide our plgriddata API for our core plplot library.  The license
@@ -960,20 +960,20 @@ Date:   Tue Jul 11 23:06:55 2017 -0700
     of Ole Streicher, that this license is free and compliant with the
     DFSG (Debian Free Software Guidelines) which should allow him to close
     a critical bug for his Debian package of PLplot.
-    
+
     Since those 2003 libraries were copyright Pavel Sakov we needed his permission to do
     this licensing update which he kindly gave us with the following e-mail text:
-    
+
     Date: Wed, 12 Jul 2017 14:08:28 +1000
     Subject: Re: Request to update the licensing for our stripped down and substantially modified 2003 versions of nn and csa to your modern licenses for nn and csa
     ----------------------------------------
-    
+
     Hi Alan,
-    
+
     I agree with the changes in the libraries nn and csa used in PLplot as
     proposed in your message and quote below the first paragraph from your
     message as you requested to confirm my agreement.
-    
+
     "On behalf of the PLplot developers I request your agreement for
     updating the licensing of our stripped-down and substantially modified
     versions of your 2003 version of the csa and nn libraries to be
@@ -984,7 +984,7 @@ Date:   Tue Jul 11 23:06:55 2017 -0700
     note lines concerning triangle dropped because we use the free qhull
     library rather than non-free triangle software <
     http://www.cs.cmu.edu/~quake/triangle.html>)."
-    
+
     Best regards,
     Pavel Sakov
 
@@ -1000,7 +1000,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jul 11 01:26:59 2017 -0700
 
     Documentation: get rid of tabs in the generated file bindings/swig-support/swig_documentation.i
-    
+
     I noticed a number of tabs randomly sprinkled through the
     perl-generated file bindings/swig-support/swig_documentation.i so
     following the Linux man pages for Text::Tabs and Text::Wrap it
@@ -1012,7 +1012,7 @@ Date:   Tue Jul 11 01:26:59 2017 -0700
     and used $Text::Wrap::unexpand = 0 to avoid tabs in output as
     documented in the Text::Wrap man page.  The (good) result is better
     space indentation for arguments and no tabs in the output.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the check_swig_documentation target,
     looking at the result
@@ -1028,7 +1028,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jul 11 01:17:21 2017 -0700
 
     Use PLPointer for our single recommended generic pointer type
-    
+
     The plan (first announced in the release notes for 5.12.0) for
     introducing two new types of generic pointers (one with the const
     attribute and one not) has now been dropped.  However, as a side
@@ -1037,37 +1037,37 @@ Date:   Tue Jul 11 01:17:21 2017 -0700
     typedef'd where the first one is recommended, the last two (introduced
     in 5.12.0) are now deprecated and scheduled for removal in the first
     release after 5.13.0, and all three continue to be typedef'd as void *.
-    
+
     Consistent with that deprecation, this commit replaces all references
     to PL_GENERIC_POINTER and PL_NC_GENERIC_POINTER in our source tree by
     PLPointer except for cases (i.e., include/plplot.h and README.release
     as well as historical log files and cumulated release notes) where
     PL_GENERIC_POINTER and PL_NC_GENERIC_POINTER must necessarily be
     mentioned.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) fairly extensively (since this is an intrusive
     commit) by setting the environment variables
-    
+
     CXXFLAGS=-O3 -fvisibility=hidden -Wuninitialized
     CFLAGS=-O3 -fvisibility=hidden -Wuninitialized
     FFLAGS=-O3 -Wuninitialized -Wunused
-    
+
     before configuration using the -DBUILD_DOC=ON
     -DADD_SPECIAL_CONSISTENCY_CHECKING=ON cmake options.  This was
     followed by
-    
+
     * Building the test_interactive and test_noninteractive targets in the
       build tree for the default shared library case without build or
       run-time errors and without regressions in warning messages or
       PostScript difference results.
-    
+
     * Building the build_docbook_documentation target (made available
       because of the above -DBUILD_DOC=ON cmake option) and checking those
       results (paying special attention to use of PLPointer) by using a
       browser to browse the resulting doc/docbook/src/plplot-5.12.0.pdf in
       the build tree.
-    
+
     * Building the check_api_xml_consistency target (made available
       because of the above -DADD_SPECIAL_CONSISTENCY_CHECKING=ON cmake
       option).  That revealed ~30 API inconsistencies between
@@ -1092,11 +1092,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jul 10 12:17:18 2017 -0700
 
     Increase sophistication of script for trailing whitespace removal
-    
+
     The user is now presented with a list of files that have trailing
     whitespace, and is given the option of removing that whitespace
     for all those files.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running the script with and without files with
     trailing whitespace and for the "with" case optionally removing that whitespace.
@@ -1108,9 +1108,9 @@ Author: Arjen Markus <arjen.markus@deltares.nl>
 Date:   Fri Jul 7 08:06:19 2017 +0200
 
     Add two plausible forms for the installation directories of wxWidgets under Windows/MSVC. The base form was observed in an "official" installation of wxWidgets for MSVC. So to be able to find these libraries I added these two forms (for DLLS and for static libraries).
-    
+
     Note: This change only affects the Windows style of searching for the libraries.
-    
+
     Tested by Arjen Markus (arjenmarkus@users.sourceforge.net) using MSVC 2012.
 
 M	cmake/modules/FindwxWidgets.cmake
@@ -1120,21 +1120,21 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Jul 5 14:19:28 2017 -0700
 
     Test system: Temporarily ignore example 14 for wxwidgets tests
-    
+
     For example 14 on Windows, Arjen's run of
-    
+
     examples/c/x14c -dev wxwidgets
-    
+
     hung for -DPL_WXWIDGETS_IPC3=ON.
-    
+
     On Linux that same command does not hang, but it does show
     (regardless of whether -DPL_WXWIDGETS_IPC3=ON or OFF) a
     bug where the slave GUI shows briefly than disappears.
-    
+
     Because of these bugs and in the interest of allowing
     Arjen to complete his comprehensive tests of wxwidgets on Windows,
     The current commit temporarily ignores example 14 for wxwidgets tests.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_c_xwin, test_c_xcairo, test_c_qtwidget,
     and test_c_wxwidgets targets and showing all of them other
@@ -1147,16 +1147,16 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jul 3 04:48:54 2017 -0700
 
     Update release notes
-    
+
     These changes include the following:
-    
+
     * Update the "CMake version compatibility" section
-    
+
     * Update the "The Python binding and examples now work for both Python 2 and 3"
       section
-    
+
     * Introduce a new section entitled 'Fixed many "space in prefix" issues'
-    
+
     N.B. these release notes are known to still be incomplete.
 
 M	README.release
@@ -1166,7 +1166,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jul 3 01:34:44 2017 -0700
 
     Tcl/Tk build system, bindings, and examples: Fix space issues in prefixes of source, build, or install trees
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_wish_runAllDemos,
     test_plserver_runAllDemos, and test_wish_standard_examples targets in
@@ -1175,9 +1175,9 @@ Date:   Mon Jul 3 01:34:44 2017 -0700
     for individual tests, but are not run as part of comprehensive testing
     because of certain errors for these targets.)  In addition I ran
     the piecemeal equivalent of a (successful) run of
-    
+
     scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank" --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_xwin=ON -DPLD_tk=ON -DPLD_ntk=ON -DPLD_tkwin=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_tcl=ON -DENABLE_tk=ON -DENABLE_itcl=ON -DENABLE_itk=ON -DENABLE_python=ON"  --do_test_noninteractive no --do_ctest no
-    
+
     (note the space in the prefix option) from a source tree with a space
     in its prefix.  As a result, this test checked there were no issues
     concerning spaces in the prefixes of source, build, or install trees
@@ -1189,13 +1189,13 @@ Date:   Mon Jul 3 01:34:44 2017 -0700
     script output indicated there were no run-time errors captured by the
     tests.  In addition the third test (comprising 2/3rds of the above
     overall test) was evaluated using
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
 
@@ -1225,7 +1225,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Jul 1 13:07:19 2017 -0700
 
     wxwidgets IPC3: Replace Windows mutexes by named Windows semaphores
-    
+
     The three-semaphores approach really does need to use the semantics of
     two-state semaphores so the previous attempt to use Windows mutexes
     for this purpose (which have slightly different semantics than
@@ -1238,13 +1238,13 @@ Date:   Sat Jul 1 13:07:19 2017 -0700
     semaphores API calls (following the documentation in
     <https://msdn.microsoft.com/en-us/library/windows/desktop/ms686946(v=vs.85).aspx>
     and links from that page).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_c_wxwidgets and test_wxPLplotDemo
     targets and running
-    
+
     examples/c/x00c -dev wxwidgets
-    
+
     N.B. These tests simply confirm that wxwidgets-related PLplot components
     continue to work on Linux, but the above changes are not even build-tested
     by these tests so further tests on MinGW-w64/MSYS2 are required to see
@@ -1275,7 +1275,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jun 26 22:40:53 2017 -0700
 
     Build system: Fix various wxwidgets find and build issues on Wine/MinGW/MSYS
-    
+
     The find issue on this platform was that find_file(... PATHS
     ${wxWidgets_INCLUDE_DIRS}) did not work correctly when
     ${wxWidgets_INCLUDE_DIRS} was in POSIX drive letter form (e.g.,
@@ -1286,48 +1286,48 @@ Date:   Mon Jun 26 22:40:53 2017 -0700
     form and append that converted list to the original, i.e., both forms
     are in the list where it is assumed one or the other will work on all
     platforms.
-    
+
     Another independent build issue concerned "cannot convert" LPCTSTR
     LPCWSTR issues.  This happened because the CMake logic line
-    
+
     list(APPEND wxWidgets_DEFINITIONS UNICODE _UNICODE)
-    
+
     in cmake/modules/FindwxWidgets.cmake was buried so deep in Boolean
     logic that it was not executed for this platform (at least for the
     "MSYS Makefiles" case).
-    
+
     I cured that issue by inserting (in cmake/modules/wxwidgets.cmake)
     if(WIN32)
       list(APPEND wxWidgets_DEFINITIONS UNICODE _UNICODE)
     endif(WIN32)
-    
+
     where the Boolean logic is much simpler/clearer.  But we may need
     to review this fix later.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Wine/MinGW/MSYS
     where  the Wine version was Wine Staging 2.10, the MinGW/MSYS
     version was a still-working 4.7.2 snapshot from years ago, and
     the wxwidgets-3.0.2 libraries were epa_built (without issues)
     on this platform.  The test was to run
-    
+
     bash.exe-3.1$ pushd /z/home/software/plplot/HEAD/plplot.git/cmake/epa_build/setup; source setup_msys_makefiles ; popd
-    
+
     to set up all necessary environment variables for this platform.  Then run
-    
+
     bash.exe-3.1$ ${EPA_BUILD_SOURCE_PATH}/../../scripts/comprehensive_test.sh --prefix comprehensive_test_disposable --generator_string "MSYS Makefiles" --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_wxwidgets=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_wxwidgets=ON -DENABLE_cxx=ON -DPAUSE_CERTAIN_INTERACTIVE_DEVICES=ON" --build_command make --ctest_command ctest --do_nondynamic no --do_static no --do_test_noninteractive no --do_ctest no --do_test_install_tree no --do_test_traditional_install_tree no
-    
+
     These script options mean the results are limited to the wxwidgets components
     of PLplot, and to speed the test (for now) just interactive testing is
     done for just the shared libraries case and just the build tree.
-    
+
     The test_interactive target failed in the build tree, and
     comprehensive_test_disposable/shared/interactive/output_tree/make_interactive.out
     showed there were no more "cannot convert" LPCTSTR
     LPCWSTR issues, but also showed the following issue:
-    
+
     z:/home/software/plplot/HEAD/plplot.git/drivers/wxwidgets_dev.cpp: In constructor 'Rand::Rand()':
     z:/home/software/plplot/HEAD/plplot.git/drivers/wxwidgets_dev.cpp:640:25: error: 'rand_s' was not declared in this scope
-    
+
     I followed up by attempting to build the simple rand_s example given at
     <https://msdn.microsoft.com/en-us/library/sxtz2fa8.aspx>, but that failed
     with similar errors.  The above line was actually in code that worked for
@@ -1335,7 +1335,7 @@ Date:   Mon Jun 26 22:40:53 2017 -0700
     and I suspect it still works for that platform, but perhaps g++ is much more
     stringent about scoping issues?  Anyhow, we may need some C++ scoping expertise
     (which I don't have) to sort out this issue.
-    
+
     N.B. Further tests on MSVC and MinGW-w64/MSYS2 are requested, and I currently
     predict the former will work, and the latter will run into the above scoping
     issue detected by g++.
@@ -1348,19 +1348,19 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Jun 25 22:45:25 2017 -0700
 
     epa_build: Update so that it works with my latest combination of Wine/MinGW/MSYS, python, and cmake.
-    
+
     The Wine version is Wine Staging 2.10 from the winehq alternative Debian Jessie repository
     (via installing the winehq-staging and wine-staging-dev packages).
-    
+
     The MinGW/MSYS version is my ancient (4.7.2) snapshot of MinGW/MSYS that was pretty
     reliable three years ago.  (I currently use this version because my preferred free software
     distribution for Windows, MinGW-w64/MSYS2, does not work on Wine.)
-    
+
     Python is version 3.5 (since 3.6 has the issue <https://bugs.python.org/issue30186> which
     causes issues for Windows systems that are not Windows 8 or later [such as Wine]).
-    
+
     CMake is version 3.8.2 for Windows downloaded from Kitware.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Windows
     (Wine Staging 2.10) by a successful epa_build of wxwidgets.
 
@@ -1374,12 +1374,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Jun 25 22:24:42 2017 -0700
 
     epa_build: Update ExternalProject.cmake to official 3.8.2 version
-    
+
     This means those using anywhere from 3.6.2 and upward will be using
     the 3.8.2 version for their epa_build.  This solves the substantial
     number of cmake-3.8.2 developer warnings that were obtained for the
     previous adopted version of ExternalProject.cmake.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Windows
     (Wine Staging 2.10 from the winehq-staging and wine-staging-dev
     packages available for Debian Jessie from the winehq.org Debian
@@ -1392,13 +1392,13 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jun 22 19:32:48 2017 -0700
 
     Update minimum CMake version to 3.6.2 everywhere in source tree (other than epa_build projects)
-    
+
     This version of 3.6.2 was chosen to be consistent with the overall PLplot minimum cmake version.
-    
+
     The source tree locations that needed changing were found as follows:
-    
+
     find . -type f |grep -v .git |xargs grep -i cmake_minimum_required |grep -v 3.6.2 |grep -v epa_build |grep -v CMAKE_VERSION
-    
+
     i.e., find all source tree locations (other than epa_build ones) where cmake_minimum_required is used, but where 3.6.2 or CMAKE_VERSION are not used.  After this change, the above command yielded no results.
 
 M	cmake/test_automoc/CMakeLists.txt
@@ -1411,35 +1411,35 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jun 22 19:11:31 2017 -0700
 
     Build system: Ada: Fix multiple issues when a space is in the source, build, or install tree prefixes
-    
+
     These issues included appropriately quoting fullpaths in
     CMAKE_MODULE_PATH, the fundamental CMake language support files for
     Ada, and Ada link flags.
-    
+
     Also, the minimum CMake version was bumped from 3.0.2 to 3.6.2 in the
     language support files to be consistent with the minimum CMake version
     adopted for the PLplot project.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ada=ON" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     (note the space in the build and install-tree prefixes) from a source
     tree (e.g., /home/software/plplot/HEAD/plplot\ blank\ .git/cmake/test_ada)
     with a space in the prefix.
-    
+
     The (good) results of this script run were checked as follows:
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
@@ -1457,26 +1457,26 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jun 22 18:51:30 2017 -0700
 
     test_ada project: Fix multiple issues when a space is in the source, build, or install tree prefixes
-    
+
     These "space" issue fixes are for the Ada language support files, the
     build system, and the comprehensive test script for the test_ada project.
     Equivalent fixes for the PLplot project are the next order of business.
-    
+
     Also bump minimum CMake version for the test_ada project from 3.0.2 to 3.6.2
     to be consistent with the PLplot project.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --prefix "/home/software/plplot/HEAD/plplot blank .git/cmake/test_ada/../../../comprehensive_test_ada_disposeable blank"
-    
+
     (note the space in the build and install-tree prefixes).
-    
+
     from a source tree (e.g., /home/software/plplot/HEAD/plplot blank .git/cmake/test_ada)
     with a space in the prefix.  The command
-    
+
     grep -i error ../../../comprehensive_test_ada_disposeable\ blank/*/*/output_tree/*.out
-    
+
     showed no issues.  Also, the files comprehensive_test.sh.out,
     comprehensive_test_env.out, comprehensive_test.tar.gz,
     comprehensive_test_listing.out, shared/noninteractive/build_tree/install_manifest.txt ,
@@ -1496,7 +1496,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 20 17:00:28 2017 -0700
 
     IPC for wxwidgets: Reenable the PL_WXWIDGETS_IPC3 option
-    
+
     Previously this build system option had been disabled by forcing
     PL_WXWIDGETS_IPC3 to ON with no associated code changes.  So
     reenabling this option requires only a minor build system change.
@@ -1507,13 +1507,13 @@ Date:   Tue Jun 20 17:00:28 2017 -0700
     (using -DPL_WXWIDGETS_IPC3=OFF).  However, once those tests are
     completed successfully on all platforms the intention is to purge the
     one semaphore IPC + circular buffer approach completely.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by setting the -DPAUSE_CERTAIN_INTERACTIVE_DEVICES=ON
     cmake option and setting either the -DPL_WXWIDGETS_IPC3=ON or
     -DPL_WXWIDGETS_IPC3=OFF cmake option and for each of those two cases
     building the test_c_wxwidgets target.
-    
+
     N.B. platforms that use a native Windows approach such as MSVC or MinGW-w64/MSYS2
     also should be tested with both -DPL_WXWIDGETS_IPC3=ON and
     -DPL_WXWIDGETS_IPC3=OFF
@@ -1525,21 +1525,21 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 20 16:57:58 2017 -0700
 
     IPC for wxwidgets: Purge PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-    
+
     This change purges all references to PL_HAVE_UNNAMED_POSIX_SEMAPHORES
     and associated code stanzas in the source tree in an effort to help
     simplify that tree.  However, this change should have no practical
     effect on users and developers who are following the git version of
     PLplot since the PL_HAVE_UNNAMED_POSIX_SEMAPHORES option has been
     permanently disabled for some time now.
-    
+
     The motivation for that disablement (and purge now) is because
     although the unnamed semaphores version of the PL_WXWIDGETS_IPC3
     version of our code worked on Linux, not all POSIX systems provide
     access to unnamed semaphores and the corresponding named semaphores
     approach works with the PL_WXWIDGETS_IPC3 version of our code on all
     POSIX systems including Linux.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by setting the -DPAUSE_CERTAIN_INTERACTIVE_DEVICES=ON
     cmake option and building the test_c_wxwidgets target.
@@ -1556,16 +1556,16 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 20 16:00:39 2017 -0700
 
     IPC for wxwidgets: Fix use of WIN32 and PL_WXWIDGETS_IPC3 preprocessor macros
-    
+
     Fix an obvious issue concerning one instance of how WIN32 and
     PL_WXWIDGETS_IPC3 preprocessor code stanzas are nested together.  This
     should likely cure a build bug for IPC that was discovered by Arjen
     Markus for the MinGW-w64/MSYS2 platform.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by setting the -DPAUSE_CERTAIN_INTERACTIVE_DEVICES=ON
     cmake option and building the test_c_wxwidgets target.
-    
+
     N.B. This procedure merely tests that this IPC code fix does not
     interfere with the previously good -dev wxwidgets results on Linux,
     and further testing is obviously required for native Windows platforms
@@ -1578,7 +1578,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Jun 20 13:48:36 2017 -0700
 
     Build System: Implement the PAUSE_CERTAIN_INTERACTIVE_DEVICES option
-    
+
     This experimental option defaults to OFF, but if the user specifies
     -DPAUSE_CERTAIN_INTERACTIVE_DEVICES=ON, then for the wingcc and
     wxwidgets devices the -np option is not used for test targets, e.g.,
@@ -1592,7 +1592,7 @@ Date:   Tue Jun 20 13:48:36 2017 -0700
     result is the plots are rendered properly for tests of these devices
     at the expense of much additional user interaction (e.g., hitting the
     enter key to get through the plot pages for each example that is run).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by specifying the CMake option
     -DPAUSE_CERTAIN_INTERACTIVE_DEVICES=ON and building the
@@ -1610,24 +1610,24 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Jun 15 14:57:24 2017 -0700
 
     Update FindwxWidgets.cmake to version v3.9.0-rc3
-    
+
     This change means all our CMake users regardless of the cmake version
     they are using will effectively be using the official CMake version of
     this find module from CMake-3.9.0-rc3.
-    
+
     Note this is exactly the official version except for the following
     change (which is necessary for local versions of find modules)
-    
+
     software@raven> diff -au ~/cmake/cmake.git/Modules/FindwxWidgets.cmake cmake/modules/FindwxWidgets.cmake
     --- /home/software/cmake/cmake.git/Modules/FindwxWidgets.cmake  2017-06-15 14:48:31.338368008 -0700
     +++ cmake/modules/FindwxWidgets.cmake   2017-06-15 14:53:49.233142629 -0700
     @@ -948,7 +948,7 @@
      #=====================================================================
      #=====================================================================
-    
+
     -include(${CMAKE_CURRENT_LIST_DIR}/FindPackageHandleStandardArgs.cmake)
     +include(FindPackageHandleStandardArgs)
-    
+
      find_package_handle_standard_args(wxWidgets
        REQUIRED_VARS wxWidgets_LIBRARIES wxWidgets_INCLUDE_DIRS
 
@@ -1638,33 +1638,33 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 24 17:22:13 2017 -0700
 
     Update OCaml binding and examples to eliminate example 8 inconsistencies with C version
-    
+
     This change was implemented as follows:
-    
+
     * Edit plplot_h and touchup.ml to add plsurf3dl (and plot3dcl) to
       the OCaml API.
-    
+
     * Generate plplot_h.inc in the way described in the README file.
-    
+
     * Edit plplot.mli to add descriptions of the OCaml module interface definitions
      of plsurf3dl (and plot3dcl).
-    
+
     * Update CMakeLists.txt to fix a dependency bug so that a change of
       an example regenerates the build of that example.
-    
+
     * Update x08.ml to make OCaml results for this example equivalent to
       the corresponding C results.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_diff_psc target whose
     summary of PostScript differences is now reduced to
-    
+
     ocaml
       Missing examples            :
       Differing graphical output  :  16 19 33
       Missing stdout              :
       Differing stdout
-    
+
     i.e., the long-standing example 8 differences have now been
     fixed!
 
@@ -1681,32 +1681,32 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 22 16:41:31 2017 -0700
 
     ocaml binding: drop special handling of plhist array argument
-    
+
     The generic rules in touchup.ml appear to work well for plline (which
     has similar array arguments as plhist) so I tried using those generic rules for
     touching up the plhist arguments, and the result is different, i.e.,
-    
+
     -[mlname(plhist)] void c_plhist ( int n, [in, size_is(n), size_is(n)] double * data, double datmin, double datmax, int nbin, plplot_hist_style opt );
     +[mlname(plhist)] void c_plhist ( int n, [in, size_is(n)] double * data, double datmin, double datmax, int nbin, plplot_hist_style opt );
-    
+
     with the extra size_is(n) removed, but I think that is likely a good
     thing.  (In fact, I don't understand how the interface to plhist
     worked before.)  So this simplifying commit is a small step in the direction
     of understanding what is needed to generate the ocaml binding.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by using the DGENERATE_PLPLOT_H_INC=ON option, building
     the check_plplot_h.inc target to check that plplot_h.inc is consistent
     with touchup.ml, and building
     the test_diff_psc target which generated
     the (long-standing) PostScript difference result:
-    
+
     ocaml
       Missing examples            :
       Differing graphical output  :  08 16 19 33
       Missing stdout              :
       Differing stdout            :
-    
+
     That is, this change to plhist introduced no differences in example 5
     (the only example that uses plhist).
 
@@ -1718,38 +1718,38 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun May 21 17:40:02 2017 -0700
 
     Build system: Fix "space in full pathname" and other bugs for the static OCaml binding and examples
-    
+
     The fundamental issues I solved for the static library case were as
     follows:
-    
+
     * Specify the properly quoted and escaped build-tree locations and
       install-tree locations for respectively the build-tree and
       install-tree ocaml bindings.
-    
+
     * Specify the plplot library, other internal libraries, and external
       libraries in exactly that order for the OCaml linking flags (because
       order matters for static linking).
-    
+
     * Use the same set of (build-tree or install-tree as appropriate)
       OCaml link flags for all ocaml build commands (ocamlmklib, ocamlc
       -a, and ocamlopt -a) that use those flags.
-    
+
     Some minor issues I solved were as follows:
-    
+
     * The previously used <libname>_LIB_DEPENDS variables have been
       replaced by the corresponding INTERFACE_LINK_LIBRARIES target
       property for each relevant internal library.  This is a substantial
       improvement in approach because the <libname>_LIB_DEPENDS variables
       are now strongly deprecated.
-    
+
     * The target name for the plplot library is plplot and no longer
       plplotd (!)
-    
+
     * Added C++ libraries that are typically used by C++ compilers to the
       OCaml link flags.
-    
+
     * Properly handled Qt5 (and Qt4 as before) libraries.
-    
+
     * Our build system now necessarily generates both dllplplot_stubs.so
       (to be used in the build tree) and dllinstalled_plplot_stubs.so
       (installed in renamed form in the install tree and used there); both
@@ -1757,21 +1757,21 @@ Date:   Sun May 21 17:40:02 2017 -0700
       bindings/ocaml/CMakeLists.txt commentary about this issue), so
       scripts/comprehensive_test.sh had to be adjusted to ignore both of
       these files when looking for ldd issues.
-    
+
     * The value of the qt_gui_true CMake variable (which controls whether
       the qt_example application is built or not in the traditional build
       of the installed examples) is set depending on the correct PLD_extqt
       variable rather than the incorrect ENABLE_qt variable.
-    
+
     * Many minor dependency fixups.
-    
+
     As a result of these changes the combination of static PLplot and
     ocaml bindings appears to work well on Linux for all of our major
     configurations (see test results below) so the former
     ENABLE_ocaml_static experimental option has now been dropped.  The
     result is the ocaml binding and examples are now always built for the
     static case.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_diff_psc target for the static
     libraries case and with all default bindings and device drivers
@@ -1784,46 +1784,46 @@ Date:   Sun May 21 17:40:02 2017 -0700
     were a complete success for all 4 cases showing our processing of the libraries
     for the ocaml case has no known issues for this complex case.
     For the record the usual ocaml PostScript difference results, e.g.,
-    
+
     ocaml
       Missing examples            :
       Differing graphical output  :  08 16 19 33
       Missing stdout              :
       Differing stdout            :
-    
+
     were obtained for all 4 cases.  These OCaml issues are long-standing
     ones for the shared and nondynamic cases so do not represent a
     regression from those results for the static case.
-    
+
     I also tested all our major configurations for a limited external libraries case by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DPLD_svgqt=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON -DFORCE_OCAMLC=OFF -DPLPLOT_USE_QT5=OFF" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DPLD_svgqt=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON -DFORCE_OCAMLC=ON -DPLPLOT_USE_QT5=OFF" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DPLD_svgqt=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON -DFORCE_OCAMLC=OFF -DPLPLOT_USE_QT5=ON" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DPLD_svgqt=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON -DFORCE_OCAMLC=ON -DPLPLOT_USE_QT5=ON" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     from a source tree with a space in the prefix.  That condition plus
     the above --prefix option insures these four tests were carried out
     with source, build, and install tree having a space in their prefixes.
-    
+
     These four script runs were a success as measured by the following commands:
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
-    
+
     In the latter case the result (12 times now since the 4 tests for the
     static case are now added to the previous 8 tests that worked) for the
     PostScript differences was the same as above.  These OCaml issues are
@@ -1842,7 +1842,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue May 9 15:07:45 2017 -0700
 
     Build system: Fix "space in full pathname" bug for the check_plplot_h.inc target
-    
+
     This target checks the consistency of the OCaml source code files.
     For the previous release 5.12.0, I thought I had discovered a bug in
     this target so I dropped the dependency of the check_all target on
@@ -1859,17 +1859,17 @@ Date:   Tue May 9 15:07:45 2017 -0700
     tree path in quoted and escaped form so that is what I did.  But why
     these inconsistencies in what is allowed for "spaced" pathnames or
     not?
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by configuring PLplot from a source tree with
     spaces in its prefix using a build tree with
     spaces in its prefix as follows:
-    
+
     cmake "-DCMAKE_INSTALL_PREFIX=/home/software/plplot/installcmake blank" -DBUILD_TEST=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DGENERATE_PLPLOT_H_INC=ON "../plplot blank .git" >& cmake.out
-    
+
     (the GENERATE_PLPLOT_H_INC option allows the check_plplot_h.inc target to be built.)
     That was followed by a successful build of the check_plplot_h.inc target
-    
+
     This target checks the consistency of the OCaml source code files.
     For the previous release 5.12.0, I thought I had discovered a bug in
     this target so I dropped the dependency of the check_all target on
@@ -1886,17 +1886,17 @@ Date:   Tue May 9 15:07:45 2017 -0700
     tree path in quoted and escaped form so that is what I did.  But why
     these inconsistencies in what is allowed for "spaced" pathnames or
     not?
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by configuring PLplot from a source tree with
-    
+
     cmake "-DCMAKE_INSTALL_PREFIX=/home/software/plplot/installcmake blank" -DBUILD_TEST=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON -DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DGENERATE_PLPLOT_H_INC=ON "../plplot blank .git" >& cmake.out
-    
+
     That configuration of the PLplot build was followed by a successful build of the
     check_plplot_h.inc target, i.e.,
-    
+
     make check_plplot_h.inc
-    
+
     Note the prefixes of the source and build trees (and also the install
     tree but that is irrelevant for this particular test) contained spaces
     for this successful test.
@@ -1908,51 +1908,51 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon May 8 20:08:29 2017 -0700
 
     Build system: Fix "space in full pathname" bugs for the OCaml binding and examples
-    
+
     These fixes consisted of quoting some strings with embedded blanks and
     quoting other strings with embedded escaped blanks.  (Some OCaml build tool
     options demanded the one form, others the other form.)
-    
+
     I also fixed some minor dependency and "clean" build-system issues for the
     OCaml binding and examples.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     and
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_ocaml=ON -DFORCE_OCAMLC=ON" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     from a source tree with a space in the prefix.  That condition plus
     the above --prefix option insures these two tests (one with
     FORCE_OCAMLC false and one with that value true) were carried out with
     source, build, and install tree having a space in their prefixes.
-    
+
     These script runs were a success as measured by the following commands:
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
-    
+
     In the latter case the result (8 times with ocaml automatically skipped for the static case) was
-    
+
     ocaml
       Missing examples            :
       Differing graphical output  :  08 16 19 33
       Missing stdout              :
       Differing stdout            :
-    
+
     but those OCaml issues are long-standing ones so these results do
     not represent a regression when there is a space in all of the
     above prefixes.
@@ -1966,7 +1966,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu May 4 22:47:52 2017 -0700
 
     Build system: simplify/eliminate messages generated by long-term disablement of PLplot OCaml Cairo support
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by examining warning messages generated by cmake that
     are associated with the disabled OCaml Cairo component of PLplot.
@@ -1978,11 +1978,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu May 4 17:08:02 2017 -0700
 
     Build system: Fix Java-related "space in full pathname" bugs
-    
+
     These Java related issues that were fixed showed up when testing of
     source, build, and install trees which all contained spaces in their
     full pathnames.
-    
+
     Most of these fixes involved simply quoting variables appropriately,
     but one necessary fix was rather curious which was to supply the
     PLPLOT_JAVA_WRAP_DIR variable (the location of the dll wrapper
@@ -1993,7 +1993,7 @@ Date:   Thu May 4 17:08:02 2017 -0700
     to work around a Java bug where it cannot find its shared object
     wrapper as normal if the location of that object is in a directory
     with spaces in the fullpath name.
-    
+
     N.B. This change has not been tested on any Windows platform yet, and
     since dll locations are different on such platforms, I am virtually
     positive that all of plplot_test/test_java.sh.in,
@@ -2002,21 +2002,21 @@ Date:   Thu May 4 17:08:02 2017 -0700
     PLPLOT_JAVA_WRAP_DIR occurs now in our source tree) should be looked
     at to see what changes need to be made for the various Windows
     platforms.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DENABLE_ada=OFF -DENABLE_d=OFF -DENABLE_ocaml=OFF" --do_test_interactive no --prefix "../comprehensive_test_disposeable blank"
-    
+
     from a symlink to my local PLplot git repository that has at least one
     space in all full pathnames.  So because of the --prefix option above
     with a space in the prefix, this is a comprehensive test on a fully
     loaded Linux platform of cases (1), (2), and (3) where all files of
     respectively the source, build, and install trees have a space in the
     full pathname.
-    
+
     Caveats for this comprehensive test:
-    
+
     * Cases (1), (2), and (3) are only comprehensively tested for the
       noninteractive components of PLplot and for only the components that
       occur for a fully-loaded Linux system.  So to insure safety for
@@ -2024,12 +2024,12 @@ Date:   Thu May 4 17:08:02 2017 -0700
       needs to be repeated on Mac OS X, and the various Windows platforms.
       And a follow up using an interactive comprehensive test for these
       combined cases needs to be done on all platforms.
-    
+
     * Case (4) is defined as the case where a blank occurs in the full
       pathname of _all_ external libraries [e.g., the QT5 suite of
       libraries], and executables [e.g., pkg-config] required by PLplot.
       This case is not tested yet!
-    
+
       (One could do this test pretty straightforwardly on either Cygwin or
       MinGW-w64/MSYS2 platforms by installing the whole platform (which
       contains virtually all the external libraries and executables used
@@ -2039,30 +2039,30 @@ Date:   Thu May 4 17:08:02 2017 -0700
       compatible and MinGW-w64/MSYS2 being fundamentally compatible
       instead with native Windows.)  Because of those fundamental differences
       tests on these two platforms complement each other.
-    
+
     * Case (5) (which is where a blank occurs in the full pathname of
       fundamental system libraries such as the C library) is difficult to
       test on Linux, but is likely not an issue since this case surely has
       already occurred on some Windows platforms.
-    
+
     * Ada, D, and OCaml were dropped from the above test because of known
       "space in full pathname" issues with PLplot's implementation of
       CMake support for these three languages.  Sorting out these issues
       is difficult (because sorting out bugs in language support is
       difficult) but is on my future agenda.
-    
+
     The following commands were used to determine the above comprehensive test
     was a complete success:
-    
+
     # Check for some non-standard warnings:
     grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     # Check for all errors:
     grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-    
+
     # Check for any ldd issues for the shared and nondynamic cases.
     grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-    
+
     # Check for any PostScript or Text differences between all non-C languages and the corresponding
     # C results.
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
@@ -2079,19 +2079,19 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu May 4 15:40:08 2017 -0700
 
     Comprehensive test script: Fix additional whitespace bugs and allow the --prefix option to be relative
-    
+
     The bug fixes were to put quotes around all references to the $PATH
     variable (since that environment variable can have whitespace in it
     which is rare on Linux but fairly common on Windows) and also put
     quotes around all use of the pwd command output.
-    
+
     The --prefix option change was to allow the user to specify either an
     absolute prefix or a relative (to the directory where the script
     invocation occurs) prefix.  The trick is in all cases to convert the
     prefix variable (just as soon as it is completely determined by the
     script) to absolute form so the rest of the script can continue to use
     this prefix variable in an absolute form as previously.
-    
+
     In addition, I quoted all directory locations that are echoed;
     collected additional Java, Ada, D, and PWD environment variables;
     systematically processed all environment variable collection using
@@ -2103,7 +2103,7 @@ Date:   Thu May 4 15:40:08 2017 -0700
     path-related information and compiler flags); and fixed a minor issue
     (a double space rather than single space to separate components of the
     command) with use of the dashboard_option variable.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) using a constrained comprehensive test.  Details of
     those constraints to follow in a subsequent commit message for the
@@ -2116,16 +2116,16 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 3 16:34:56 2017 -0700
 
     Fix "spaces in full pathname" issues with the test_tcl_psc target
-    
+
     The fundamental fix done here was to replace some complex bash
     logic to escape spaces in some (but not all) of the pathnames by
     simply quoting all relevant pathnames.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_tcl_psc target without
     run-time issues for a source tree and build tree which both
     had spaces in their full pathnames.
-    
+
     N.B. Some of these logic changes are Windows only so need additional testing
     on _all_ Windows platforms.
 
@@ -2136,16 +2136,16 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed May 3 14:21:00 2017 -0700
 
     Comprehensive test script: Fix "Blank in pathname" bugs
-    
+
     These fixes consisted almost entirely of quoting variables that
     contained full pathnames.  In addition, the ldd-relevant find ... xargs
     commands were changed to deal with possible blanks in path names.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DENABLE_ada=OFF -DENABLE_d=OFF -DENABLE_ocaml=OFF" --do_test_interactive no --do_ctest no --do_test_build_tree no
-    
+
     from the "plplot blank .git" directory symlink to the "plplot.git"
     working directory of my local git repository for PLplot.  So this only
     tested the case of running this script from a source tree with blanks
@@ -2156,10 +2156,10 @@ Date:   Wed May 3 14:21:00 2017 -0700
     eventually cover this part of the comprehensive tests as well as any
     remaining issues with build tree or install tree with blanks in the
     full pathname.
-    
+
     Ada, D, and OCaml were dropped from this test because of known "blank in full pathname" issues for
     our CMake language support for those languages.  (I plan to address those issues later.)
-    
+
     N.B. Even the planned test with prefix with blanks in the full
     pathname does not check for the case where system libraries needed by
     PLplot have blanks in their full pathname (a common issue for the Windows
@@ -2167,16 +2167,16 @@ Date:   Wed May 3 14:21:00 2017 -0700
     on a Cygwin, MinGW-w64/MSYS2, or Linux epa_build platform where the installation
     prefix for all external libraries used by PLplot is deliberately designed
     to have a blank in the full pathname).
-    
+
     Keeping in mind all these limitations on the current test, nevertheless, the
     above test did produce a successful result as measured by
-    
+
     grep -i warning ../comprehensive_test_disposeable/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     grep -i error ../comprehensive_test_disposeable/*/*/output_tree/*.out
-    
+
     grep -iE 'found|symbol|undefined' $(find ../comprehensive_test_disposeable -name "build*ldd.out")
-    
+
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable/*/*/output_tree/*.out |less
 
 M	scripts/comprehensive_test.sh
@@ -2186,7 +2186,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Apr 29 15:17:25 2017 -0700
 
     Build system: Output sip version
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by looking at cmake output.
 
@@ -2197,7 +2197,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Apr 29 13:55:59 2017 -0700
 
     Build system: Make Python 3 the default choice
-    
+
     It makes general sense to me that Python developers far prefer to work
     on Python 3 rather than the legacy Python 2 so any Python-2 only bugs
     left in the latter are likely not going to be addressed.  That general
@@ -2208,14 +2208,14 @@ Date:   Sat Apr 29 13:55:59 2017 -0700
     attempt to replicate the problem with Python 3 since that is very
     likely the only version the Python developers would be willing to find
     a fix for.
-    
+
     Also, Python 3 now generally works for us.  Accordingly I am making it
     the default choice when both Python 3 and Python 2 are available on
     the system with a fallback to Python 2 if that is the only version
     available on the system.  but I am allowing users to override that
     behaviour if they specify -DFORCE_PYTHON2=ON (which does what its name
     implies which is to only look for a Python 2 version).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie with both Python 2 and 3 installed) by running CMake
     with and without -DFORCE_PYTHON2=ON and observing the correct results
@@ -2229,7 +2229,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Apr 25 11:25:53 2017 -0700
 
     Build system: Use official CMake swig support rather than our own
-    
+
     Our own swig support (the FindSWIG.cmake and UseSwig.cmake that have
     been removed by this commit) was extraordinarily dated (these files
     started life as individually recommended versions from the CMake bug
@@ -2237,45 +2237,45 @@ Date:   Tue Apr 25 11:25:53 2017 -0700
     discovered contamination of _plplotc rules by _Pltk_init that did
     not occur for the official versions.  So this commit avoids
     that issue by moving to official CMake support for swig.
-    
+
     That move did cause a build issue for our Lua binding just for
     CMake-3.0.2 that did not occur for CMake-3.6.2 and above.  That issue
     was (indirectly) addressed by the previous commit to bump our minimum
     version of CMake from 3.0.2 to 3.6.2.
-    
+
     That move also changed the naming convention for the resulting Java
     dll (which caused run-time errors because the differently named dll
     could not be found) so this commit also addresses that changed naming
     convention as well.
-    
+
     Tested by: Alan W. Irwin (airwin@users.sourceforge.net) on Linux
     (Debian Jessie) by running a comprehensive test of all interactive
     and noninteractive components of PLplot that are available on this
     platform, i.e.,
-    
+
     scripts/comprehensive_test.sh --cmake_command ~/cmake/install-3.6.2/bin/cmake --do_submit_dashboard yes)
-    
+
     where ~/cmake/install-3.6.2/bin/cmake refers to a cmake-3.6.2 version
     that I built myself using my normal bootstrap method (to check that
     our newly adopted minimum version of CMake passes all comprehensive
     tests on this platform).  Also, --do_submit_dashboard yes does what it
     says.
-    
+
     The dashboard results showed no error issues at all (see those good dashboard results at
     <http://my.cdash.org/index.php?project=PLplot_git&date=2017-04-24>).  Also the CMake warnings
     for that report simply reflect the number of times "warning" appears in our CMake output and
     does not truly reflect official CMake warnings except in one case concerning OCaml support
     for a badly maintained feature which we will likely take care of in future by removing
     that feature.
-    
+
     The above comprehensive test was analyzed with the following commands:
-    
+
     grep -i warning ../comprehensive_test_disposeable/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-    
+
     grep -i error ../comprehensive_test_disposeable/*/*/output_tree/*.out
-    
+
     grep -iE 'found|symbol|undefined' $(find ../comprehensive_test_disposeable -name "build*ldd.out")
-    
+
     No issues were found other than the long-known OCaml PostScript
     differences found (again) by that last grep command.
 
@@ -2289,7 +2289,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Apr 25 11:24:01 2017 -0700
 
     Bump the minimum version of CMake from 3.0.2 to 3.6.2 for the Linux platform
-    
+
     Normally I keep this minimum version consistent with the version of
     CMake provided by Debian stable, i.e., I only bump this minimum
     version whenever a new Debian stable is released in an effort to
@@ -2300,19 +2300,19 @@ Date:   Tue Apr 25 11:24:01 2017 -0700
     that has not happened yet).  Also, I have bumped to 3.6.2 rather than
     3.7.2 because the minimum version of Linux should not exceed the
     minimum version adopted for non-Linux platforms (currently 3.6.2).
-    
+
     Note that Cygwin only provides CMake 3.6.2 at this time as a binary
     package (as opposed to MinGW-w64/MSYS2 that provides CMake-3.7.2).  I
     plan to review the CMake minimum versions we adopt for both Linux and
     non-Linux platforms again once Cygwin provides CMake-3.7.2 or beyond.
-    
+
     Note, the reason why I am bumping the Linux version now is older
     CMake-3.x.y versions tend to have a lot of bugs compared to CMake-3.6
     and beyond.  The file generate permissions problem is one of those we
     worked around, and versions just after 3.0.2 provided even more bugs
     (in that case with find modules) so we warned users to avoid all CMake
     versions from 3.2 through 3.3.1.
-    
+
     I recently discovered one more issue with CMake-3.0.2 (the official
     UseSWIG.cmake for that version of CMake caused a build error for our
     Lua bindings which kept us from adopting official UseSWIG.cmake
@@ -2323,7 +2323,7 @@ Date:   Tue Apr 25 11:24:01 2017 -0700
     remove CMAKE_VERSION-dependent changes in our pkg-config support that
     depended on the internal details of CMake support for pkg-config that
     has changed with CMAKE_VERSION.)
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net>
 
 M	CMakeLists.txt
@@ -2337,11 +2337,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Apr 25 09:58:03 2017 -0700
 
     Build system: Bug fixes for installation of files related to _Pltk_init target
-    
+
     * Fix install rpath.
-    
+
     * Install swig-generated Pltk_init.py file.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net>
 
 M	bindings/python/CMakeLists.txt
@@ -2351,10 +2351,10 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Apr 25 09:49:42 2017 -0700
 
     Installed examples build system:PYTHON_VERSION bug fix
-    
+
     This fix provides PYTHON_VERSION (which is now needed to avoid CMake
     errors) for this CMake-based build system.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net>
 
 M	examples/plplot_configure.cmake_installed_examples.in
@@ -2364,13 +2364,13 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Apr 23 17:12:28 2017 -0700
 
     Make all software associated with the test_pytkdemo target work properly for Python 3
-    
+
     The changes in the bindings/python/Plframe.py and examples/python/pytkdemo Python source code
     included using parentheses for all Python print(...) statements, replacing all
     tabs with blanks (no mixed tab/blank indentation is allowed by Python 3), and replacing
     the apply command (which is deprecated in Python 2 and not present for Python 3) with
     the corresponding function call.
-    
+
     The hand-crafted plplot_widget Python extension that was used to glue
     everything together in the pytkdemo example of using the PLplot Tcl/Tk
     code from python was unmaintable and did not work for Python 3.  I
@@ -2379,17 +2379,17 @@ Date:   Sun Apr 23 17:12:28 2017 -0700
     and Python 3 and which provides a Python interface routine between the
     Python Pltk_init command and a ~5-line C routine that calls Pltk_Init
     from the plplottcltk library.
-    
+
     Since plplot_widget had been replaced, I dropped all references
     to plplot_widget from our source tree (excluding historical
     files such as ChangeLogs and excluding for now some
     README files I am still working on).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_pytkdemo target with complete
     success for both the Python2 (CMake option DPython_ADDITIONAL_VERSIONS:STRING=2)
     and Python3 (CMake option DPython_ADDITIONAL_VERSIONS:STRING=3) cases.
-    
+
     In all cases I hammered the GUI pretty hard by exercising all demos
     without issues.  There were no problems with that GUI hanging (either
     with Python 2 or Python3) on exit like occurred roughly half the time
@@ -2400,16 +2400,16 @@ Date:   Sun Apr 23 17:12:28 2017 -0700
     conclusion.  And, of course, the new interface and all the other
     Python 3-related changes allows the test_pytkdemo target to be built
     without errors for the very first time for Python 3.
-    
+
     To be addressed later: One remaining issue is a peculiar contamination
     of plplotc Makefile rules by some of the _Pltk_init Makefile rules.
     The resulting run-time warning messages are
-    
+
     bindings/python/CMakeFiles/_plplotc.dir/build.make:77: warning: overriding recipe for target 'bindings/python/Pltk_init.py'
     bindings/python/CMakeFiles/_plplotc.dir/build.make:67: warning: ignoring old recipe for target 'bindings/python/Pltk_init.py'
     bindings/python/CMakeFiles/_plplotc.dir/build.make:77: warning: overriding recipe for target 'bindings/python/Pltk_init.py'
     bindings/python/CMakeFiles/_plplotc.dir/build.make:67: warning: ignoring old recipe for target 'bindings/python/Pltk_init.py'
-    
+
     I have proved these warnings are due to PLplot's use of special (but
     extraordinarily dated) versions of FindSWIG.cmake and UseSWIG.cmake,
     but (temporary) replacement of those with the official versions
@@ -2434,11 +2434,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Apr 21 12:49:30 2017 -0700
 
     Build system: Temporarily remove the test_interactive target dependence on test_pyqt[45]_example targets for the Python 3 case
-    
+
     For the Python 3 case the test_pyqt[45]_example targets currently
     don't work for unknown reasons.  So for the Python 3 case this measure
     is necessary to insure the test_interactive target continues to work.
-    
+
     temporarily excluded from being a dependency of
     +   other more general interactive test targets
 
@@ -2461,17 +2461,17 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Apr 21 11:17:55 2017 -0700
 
     Drop "module" from basenames for _plplotc and plplot_widget Python extension modules
-    
+
     The "module" part of basenames for Python extension modules is
     optional so we removed it completely.  This change simplifies our
     build system from the previous mixed basename case where sometimes the
     basename included "module" and sometimes not depending on context.
-    
+
     As a byproduct of this change I discovered a visibility bug for the
     plplot_widget extension module in include/pldll.h.in that would have
     had an effect in the Windows case.  This bug was fixed (along with
     dropping "module" and "MODULE) as follows:
-    
+
     -#if defined ( plplot_widgetmodule_EXPORTS )
     -  #define PLDLLIMPEXP_PLPLOT_WIDGETMODULE    PLDLLEXPORT
     -  #define PLDLLIMPEXP_PLPLOT_MODULE_DATA( type )    PLDLLEXPORT type
@@ -2484,7 +2484,7 @@ Date:   Fri Apr 21 11:17:55 2017 -0700
     +  #define PLDLLIMPEXP_PLPLOT_WIDGET    PLDLLIMPORT
     +  #define PLDLLIMPEXP_PLPLOT_WIDGET_DATA( type )    PLDLLIMPORT type
      #endif
-    
+
     The (typographical) bug was the old code sometimes used MODULE when it
     should have consistently used WIDGET_MODULE.  The _DATA part of this
     bug was inconsequential because that construct was never used in the
@@ -2494,7 +2494,7 @@ Date:   Fri Apr 21 11:17:55 2017 -0700
     But that bug was not detected because nobody has tested the pytkdemo
     application (which uses the plplot_widget extension module) on Windows
     (yet).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_pytkdemo target (which tests the
     plplot_widget extension module), the test_diff_psc target (which tests
@@ -2527,15 +2527,15 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Apr 21 00:04:05 2017 -0700
 
     Build system: Fix pyqt4 and pyqt5 configuration so it works properly for both Python 2 and 3
-    
+
     This fix was simple.  Use parentheses around Python print arguments.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) for the Python 2 case by successfully building the
     test_pyqt4_example target for the (default) Qt4 case, and the
     test_pyqt5_example target for the Qt5 case (selected by specifying
     -DPLPLOT_USE_QT5=ON).
-    
+
     Similarly tested for the Python 3 case (selected by using the cmake
     option -DPython_ADDITIONAL_VERSIONS:STRING=3) but with only partial
     success.  The build system worked properly to build the
@@ -2554,7 +2554,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Apr 20 23:41:45 2017 -0700
 
     Build and test system: Run all standalone Python scripts with ${PYTHON_EXECUTABLE}
-    
+
     Because typically #!/usr/bin/env python (the "bang" line on our Python
     scripts) chooses python2, this change still allows the script to run
     when ${PYTHON_EXECUTABLE} refers to python3.  Alternative ways to fix
@@ -2564,7 +2564,7 @@ Date:   Thu Apr 20 23:41:45 2017 -0700
     these methods seem overkill to me since it is so straightforward (as in
     this commit) to change our test system so it always executes Python
     scripts using ${PYTHON_EXECUTABLE}.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) for the Python 2 case by successfully building the
     test_pyqt4_example target for the (default) Qt4 case, and the
@@ -2579,11 +2579,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Apr 19 14:25:55 2017 -0700
 
     Change virtually all references to Fortran 95 to Fortran
-    
+
     These extensive changes include renaming any directory or file
     with "f95" embedded in the name to the "fortran" equivalent.  Renaming
     the CMake variable ENABLE_f95 to ENABLE_fortran, etc., etc.
-    
+
     The reason for these changes (except for historical files such as
     ChangeLogs) is that all references to f95, F95, Fortran 95, etc.  are
     misnomers since our Fortran binding and examples are now Fortran 2003
@@ -2593,49 +2593,49 @@ Date:   Wed Apr 19 14:25:55 2017 -0700
     change (e.g., to Fortran 2008) the Fortran standard which we support.
     Note, this commit is intrusive so substantial testing was done for
     it, see below.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) with the following tests:
-    
+
     * Test PL_DEPRECATED_fortran option using
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_fortran=ON -DPL_DEPRECATED_fortran=ON" --do_test_interactive no
-    
+
     Note I checked this and the other comprehensive test results below for
     warnings, errors, ldd issues, and PostScript difference results using
-    
+
     grep -i warning ../comprehensive_test_disposeable/*/*/output_tree/*.out |grep -vE 'PLPLOT WARNING|\-\- WARNING|PRIVATE|octave|java|cmake.out' |less
-    
+
     grep -i error ../comprehensive_test_disposeable/*/*/output_tree/*.out
-    
+
     grep -iE 'found|symbol|undefined' $(find ../comprehensive_test_disposeable -name "build*ldd.out")
-    
+
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable/*/*/output_tree/*.out |less
-    
+
     There were some PostScript difference results for examples 20 and 29 that have crept in since
     that old deprecated Fortran binding and examples code that is used when -DPL_DEPRECATED_fortran=ON
     was frozen.  But otherwise this result was good.
-    
+
     * Full comprehensive test of default PLplot
-    
+
     scripts/comprehensive_test.sh
-    
+
     I did this full test because of the possibility of some error
     introduced by the extensive "sed -i" automatic editing commands I used
     on lists of files found with the find and grep -l commands, but all
     was well, i.e., no obvious build or run-time errors, and no PostScript
     difference regressions (i.e., perfect PostScript difference results
     other than for the long-standing ocaml issues).
-    
+
     * Successful repeat of the first (-DPL_DEPRECATED_fortran=ON) test as well as
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_ps=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_fortran=ON" --do_test_interactive no
-    
+
     to check minor old_fortran and fortran changes made after the above full comprehensive test
     was completed successfully.
-    
+
     * Additional fortran-related target checks:
-    
+
     I built the target check_fortran_parameters with complete success.  I also
     built the test_plfortrandemolib (which builds the executable of that name)
     and then ran examples/fortran/test_plfortrandemolib with complete success.
@@ -2903,7 +2903,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Apr 18 19:06:32 2017 -0700
 
     CMake-based build system for installed examples: Fix bug when ENABLE_CXX is OFF
-    
+
     C++ is a special language case in that we enable that language in the
     CMake-build system used for the build tree if at all possible
     regardless of the value of ENABLE_cxx.  For ENABLE_cxx OFF, this
@@ -2915,12 +2915,12 @@ Date:   Tue Apr 18 19:06:32 2017 -0700
     logic so the result was linking errors for any example that linked to
     libplplot (when that library contained C++ code) when ENABLE_cxx was
     OFF.  This fix addresses that issue.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_BINDINGS=ON -DENABLE_fortran=ON" --do_test_interactive no
-    
+
     Before the fix, there were libLasi linking errors for the static case
     when building the installed examples with the CMake-based build system
     for those examples.  (I don't quite understand how I avoided the
@@ -2935,7 +2935,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Apr 17 22:57:05 2017 -0700
 
     Python examples: Use floor division for division of two integers to remove Python 2 versus Python 3 inconsistency
-    
+
     For both Python 2 and 3 "//" stands for floor division (where the
     floor of the result is taken).  However, when two integers are being
     divided using the ordinary division sign "/", Python 2 uses floor
@@ -2948,14 +2948,14 @@ Date:   Mon Apr 17 22:57:05 2017 -0700
     This fix for the first
     time gives complete numerical consistency between our standard example
     results for Python 2 and Python 3.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_diff_psc target for both
     Python 2 (default) and Python 3 (obtained with the cmake option
     -DPython_ADDITIONAL_VERSIONS:STRING=3).  In both cases, perfect
     PostScript difference results were obtained with the corresponding
     C examples, i.e.,
-    
+
     python
       Missing examples            :
       Differing graphical output  :
@@ -2975,30 +2975,30 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Apr 17 17:25:19 2017 -0700
 
     Fix recently introduced Python 2 PostScript difference regressions
-    
+
     For Python 2, the recently introduced text issue with example 23 and
     PostScript difference issue with example 33 have now been fixed.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_python_psc target for both the
     (default) Python 2 and the Python 3 (obtained with the cmake option
     -DPython_ADDITIONAL_VERSIONS:STRING=3) cases.  We now have the
     following perfect PostScript difference report for Python 2.
-    
+
     python
       Missing examples            :
       Differing graphical output  :
       Missing stdout              :
       Differing stdout            :
-    
+
     while the (inconsistent) Python 3 result says the same, namely
-    
+
     python
       Missing examples            :
       Differing graphical output  :  02 09 11 14a 15 16
       Missing stdout              :
       Differing stdout            :
-    
+
     ToDo.  Fix the Python 2 to Python 3 conversion issues in these 6 different examples.
 
 M	examples/python/x23.py
@@ -3009,26 +3009,26 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Apr 17 16:01:53 2017 -0700
 
     Python binding and examples: replace all remaining tab indentation with blank indentation
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_diff_psc target for both the
     (default) Python 2 and Python 3 (obtained using the cmake option
     DPython_ADDITIONAL_VERSIONS:STRING=3) cases.  No build or obvious run
     time errors occurred for either case, but there were the following
     PostScript differences for the two cases:
-    
+
     python (2)
       Missing examples            :
       Differing graphical output  :  33
       Missing stdout              :
       Differing stdout            :  23
-    
+
     python (3)
       Missing examples            :
       Differing graphical output  :  02 09 11 14a 15 16
       Missing stdout              :
       Differing stdout            :
-    
+
     These results were identical to the same test used for Hazen's recent
     commit so the further tab to space changes in this commit do not
     introduce any additional regressions.  However, the above issues
@@ -3051,7 +3051,7 @@ Author: Hazen Babcock <hbabcock@mac.com>
 Date:   Sun Apr 16 16:43:06 2017 -0400
 
     Support for Python3.
-    
+
     Tested on linux (lubuntu 16.04) with Python 3.5 and Python 2.7 using
     'ctest' and 'make test_python_psc'.
 
@@ -3088,7 +3088,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Apr 14 20:10:49 2017 -0700
 
     Developer documentation: rework recommended gcc/g++/gfortran compiler options
-    
+
     The principal change is the prior suggestions for the gfortran case
     had to be changed to be consistent with our new Fortran binding.  In
     particular the -std=f???? -pedantic options had to be dropped because
@@ -3103,18 +3103,18 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Apr 13 14:09:29 2017 -0700
 
     -dev wxwidgets: work around character alignment issues that need a proper fix from Phil
-    
+
     I discovered by running
-    
+
     python examples/python/test_superscript_subscript.py -dev wxwidgets
-    
+
     that the rendered superscript offset was too small and the rendered
     subscript offset was completely in the wrong direction (i.e., gave the
     same upward offset as the corresponding superscript level rather than
     the correct downward offset of the same absolutel magnitude as the
     corresponding superscript offset).  Further investigation of the code
     showed a number of issues that had to be addressed.
-    
+
     1. "Old" arguments to plP_script_scale were incorrectly destroyed
     between calls to that routine.  One fix for that issue would have been
     to initialize all plP_script_scale and associated arguments such as
@@ -3130,14 +3130,14 @@ Date:   Thu Apr 13 14:09:29 2017 -0700
     then I have outlined above how that should be done which is obviously
     quite different than what was implemented previously for the old
     semantics.
-    
+
     2. The offsetActual variable had no discernible effect on rendered
     superscript and subscript levels until it was multiplied by a
     substantial factor (which was later empirically determined to be near
     60).  Presumably this "fix" is a workaround to some gross scaling bug
     which I have not been able to find so I leave finding the true cause
     of this issue and fixing it properly to Phil.
-    
+
     3. When offsetActual was zeroed (or effectively zeroed by bad
     underscaling as in the original test) DrawTextSection renders the
     identical upward offset for the same absolute magnitude of level.  So
@@ -3151,30 +3151,30 @@ Date:   Thu Apr 13 14:09:29 2017 -0700
     worked around this issue by reducing superscript offsets and
     increasing subscript offsets by an empirical factor of 1.2.  I leave
     it to Phil to determine a proper fix for this issue.
-    
+
     4. Apply an overall empirical vertical offset to all strings to give
     good vertical alignment results for the utf8 "heavy multiplication x",
     "number sign", "four teardrop-spoked asterisk", and "8-spoked
     asterisk" characters for a large range of character sizes when running
-    
+
     python examples/python/test_circle.py -dev wxwidgets
-    
+
     Changes 1 through 3 constitute a fix and two workarounds to deal
     with <https://sourceforge.net/p/plplot/bugs/165/> (incorrectly
     classified as previously fixed), and Change 4 constitutes a
     workaround for <https://sourceforge.net/p/plplot/bugs/185/>.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running (after building the test_c_wxwidgets
     and test_python_psc prerequisite targets)
-    
+
     python examples/python/test_superscript_subscript.py -dev wxwidgets
     python examples/python/test_circle.py -dev wxwidgets
-    
+
     with good alignment results for each case as stated above, and
-    
+
     examples/c/x??c -dev wxwidgets
-    
+
     (where ?? is 01, 02, 04, and 26) where all these results had
     noticeably improved vertical alignment of text.  So these empirical
     workarounds appear to be a success for at least all these particular
@@ -3189,28 +3189,28 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Mar 30 12:36:34 2017 -0700
 
     wxwidgets IPC: Force three named semaphores approach on all platforms
-    
+
     This change insures everyone will be testing the same IPC method
     on all platforms from now on and is the first step in a planned
     IPC code cleanup where all variants of IPC other than the three named
     semaphores approach will be completely removed.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --cmake_added_options "-DDEFAULT_NO_DEVICES=ON -DPLD_wxwidgets=ON -DDEFAULT_NO_BINDINGS=ON -DENABLE_wxwidgets=ON -DENABLE_cxx=ON -DPLPLOT_WX_DEBUG_OUTPUT=ON -DPLPLOT_WX_NANOSEC=ON" --do_test_noninteractive no --do_ctest no
-    
+
     There were no obvious build or run-time issues with this test which
     took only 15 minutes to complete.  However, this test uses the -np
     option when running examples which means (because of a -dev wxwidgets
     bug for that option) effectively no visible rendering of the result.
     Therefore, for an additional test without the -np option I built the
     wxwidgets, wxPLViewer, and x08c targets and ran
-    
+
     examples/c/x08c -dev wxwidgets
-    
+
     without any obvious build, run-time, or rendering issues.
-    
+
     N.B. The three named semaphores approach should "just work" on all
     platforms, but so far it has only been tested on Linux so testing on
     the various Windows platforms (MSVC, Cygwin, and MinGW-w64/MSYS2) and
@@ -3223,11 +3223,11 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Wed Mar 15 12:20:57 2017 -0700
 
     Spelling fixes for all wxwidgets source code
-    
+
     I made these changes using
-    
+
     for FILE in $(ls drivers/wx* utils/wx* bindings/wxwidgets/wx* |grep -v driver_info); do aspell check $FILE; done
-    
+
     The aspell command automatically recognized C/C++ files and confines
     its spelling changes to comments and string constants.  However, it
     turned out that that none of the spelling changes I authorized were in
@@ -3250,27 +3250,27 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Mar 13 11:48:55 2017 -0700
 
     wxwidgets 3-semaphore IPC: tuned PL_SHARED_ARRAY_SIZE to 10*1024
-    
+
     I measured the total IPC time (roughly 18 seconds on my system) taken
     to execute all our C standard examples (except for 17 and 20) with
     -dev wxwidgets as follows:
-    
+
     * I locally modified utils/wxplframe.cpp to #define PLPLOT_WX_NOPLOT
       (to stop the rendering inefficiency of wxPLViewer from interfering
       with the timing test).
-    
+
     * I built all prerequisites using the test_c_wxwidgets target at first
       (which builds the wxwidgets and wxPLViewer targets as well as all the
       C examples).  Later I just rebuilt the wxwidgets and wxPLViewer targets
       for each change in PL_SHARED_ARRAY_SIZE.
-    
+
     * For each of those builds, I measured the total IPC time using
-    
+
     time(for N in $(seq --format='%02.0f' 0 34|grep -vE '17|20'); do examples/c/x${N}c -dev wxwidgets >&/dev/null; killall -9 wxPLViewer; done)
-    
+
     where the killall command was required to get rid of the empty wxPLViewer GUI left by running
     the standard example with PLPLOT_WX_NOPLOT #defined.
-    
+
     By repeating the above test for the same value of
     PL_SHARED_ARRAY_SIZE, I discovered that the repeatibility of the total
     time results was typically within 2 per cent or less.  Comparison of
@@ -3281,7 +3281,7 @@ Date:   Mon Mar 13 11:48:55 2017 -0700
     commit which is 10*1024 is very likely gross overkill, but still it is
     one hundred times smaller than the 1024*1024 size of the circular
     buffer used for the -DPL_WXWIDGETS_IPC3=OFF case.
-    
+
     Normally, this large reduction in the amount of shared memory size
     that is consumed by -dev wxwidgets and wxPLViewer IPC would not be a
     significant advantage on systems with substantial amounts of shared
@@ -3305,7 +3305,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Mar 13 09:15:01 2017 -0700
 
     Build system: make endif label consistent
-    
+
     This fixes a developer warning.
 
 M	cmake/modules/wxwidgets.cmake
@@ -3315,7 +3315,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sun Mar 12 18:15:29 2017 -0700
 
     wxPLViewer app: implement PLPLOT_WX_NOPLOT macro which if #defined suppresses rendering for timing purposes
-    
+
     By default the #define for this macro is commented out, but if that
     between -dev wxwidgets and wxPLViewer can be measured much more
     accurately because the currently inefficient plot rendering done by
@@ -3346,7 +3346,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Mar 11 14:27:09 2017 -0800
 
     Build system: implement try_run test to determine PL_HAVE_UNNAMED_POSIX_SEMAPHORES
-    
+
     On Windows platforms (i.e., those where the CMake variable WIN32 is
     true) the result of this test is the CMake variable
     PL_HAVE_UNNAMED_POSIX_SEMAPHORES is undefined and the equivalent C
@@ -3355,11 +3355,11 @@ Date:   Sat Mar 11 14:27:09 2017 -0800
     run-time success of sem_init and sem_destroy with CMake variable
     PL_HAVE_UNNAMED_POSIX_SEMAPHORES and equivalent C macro set
     accordingly.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running cmake with the -DPL_WXWIDGETS_IPC3=ON option
     and looking at the (correct) results for PL_HAVE_UNNAMED_POSIX_SEMAPHORES.
-    
+
     N.B. a platform concern is the -pthread linking option used for the
     try_run test.  Other linking options might have to be used on other
     platforms to obtain linking success for the sem_init and sem_destroy
@@ -3375,26 +3375,26 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Mar 11 14:26:36 2017 -0800
 
     Build system: improve style of try_run tests
-    
+
     As a matter of style for all try_run tests from now on, implement a
     proper "FAILED_TO_RUN" test for (unlikely but still potentially
     possible) run-time errors during the test.  As it happens, there is
     currently only one try_run test used in our build system right now (in
     cmake/modules/csiro.cmake), but I am planning at least one more.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by trying local modifications of the test C code so
     that it failed to compile, produced a false (0) result, or failed to
     run.  The latter result was achieved by introducing a segfault using
     the method in <https://en.wikipedia.org/wiki/Segmentation_fault>,
     e.g.,
-    
+
     char *s = "hello world";
     //Attempt to write to read-only memory
     *s = 'H';
-    
+
     ).
-    
+
     The resulting RUN_RESULT and COMPILE_RESULT variables for these local
     variations took on the expected values, i.e., this improved style for
     using try_run should work fine on all platforms for this csiro library
@@ -3409,13 +3409,13 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Mar 10 10:03:58 2017 -0800
 
     README.developers: updated git availability and git command-line paragraphs
-    
+
     With regard to git availability, I have now added Xcode and Fink as
     sources of git packages on Mac OS X and "Git for Windows", Cygwin, and
     MinGW-w64/MSYS2 as sources of git packages on Windows.  I have removed
     the msysGit project as a source for git packages on Windows since that
     project has now been superseded by "Git for Windows".
-    
+
     With regard to the git command-line, I have improved the justification
     for using that rather than some non-standard git GUI, and I have added
     more information about how to obtain access to the git command line
@@ -3430,12 +3430,12 @@ Date:   Fri Mar 10 10:27:57 2017 -0500
     Fixed the bug that caused the application to crash when printing
       - The printer device was not zero initialized, which resulted in
         in a bogus values being passed to windows
-    
+
     Removed dead code
       - There was code that was put in as a placeholder for selecting
         a print range, however, the PLplot library is not setup to
         handle such a request at this time.
-    
+
     Changed some #defines to an enumerated data type as a transition to
     getting the compiler to check for invalid values
 
@@ -3446,46 +3446,46 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Mar 9 21:50:19 2017 -0800
 
     wxwidgets three-semaphore IPC: implement named POSIX and named Windows semaphore variants of the current unnamed semaphore implementation
-    
+
     These variants were determined by copying how semaphores were
     initialized, posted, waited for, and destroyed for the
     -DPL_WXWIDGETS_IPC3=OFF case.
-    
+
     I also took this opportunity to replace all mention of two semaphores with three semaphores.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building (for the three cases
     1. -DPL_WXWIDGETS_IPC3=ON -DPL_HAVE_UNNAMED_POSIX_SEMAPHORES=ON
     2. -DPL_WXWIDGETS_IPC3=ON -DPL_HAVE_UNNAMED_POSIX_SEMAPHORES=OFF
     3. -DPL_WXWIDGETS_IPC3=OFF
     ) test_c_wxwidgets and by running timing tests using
-    
+
     export TIMEFORMAT=$'real\t%3R'
-    
+
     to replace the default
-    
+
     export TIMEFORMAT=$'\nreal\t%3lR\nuser\t%3lU\nsys\t%3lS'
-    
+
     and commands similar to
-    
+
     (for N in $(seq --format='%02.0f' 0 30 |grep -vE '08|17|20|25'); do echo $N; (time examples/c/x${N}c -dev wxwidgets  >&/dev/null); sleep 5; done) >| ../IPC3_timing_ON_OFF_alt5.txt 2>&1
-    
+
     to measure timing (both with and without the -np option for the
     examples/c/x${N}c command) and to look at rendered results when the
     -np option was not used.  There were no obvious run-time errors such
     as segfaults with any of these tests, and the rendered results seemed
     consistent in all cases.  (The timing results, however, were
     inconclusive as discussed on list.)
-    
+
     Build and run-time testing is requested for the
     -DPL_WXWIDGETS_IPC3=ON -DPL_HAVE_UNNAMED_POSIX_SEMAPHORES=OFF
     case for Windows platforms (i.e., when the macro WIN32 is
-    
+
     Bug fixing is requested (for both -DPL_WXWIDGETS_IPC3=ON
     and -DPL_WXWIDGETS_IPC3=OFF) for the
-    
+
     examples/c/x01c -locate -dev wxwidgets
-    
+
     case as discussed further on the plplot-devel list.
 
 M	cmake/modules/wxwidgets.cmake
@@ -3502,29 +3502,29 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Mar 4 11:17:48 2017 -0800
 
     wxwidgets three-semaphore IPC: first attempt at implementing interactivity
-    
+
     Here is what should be happening as a result of this
     attempted implementation:
-    
+
     * In example 1 using the -locate option after all normal PLplot calls
     to generate the plot have been called (which fills up plbuf with 24272
     bytes of information, see below), the locate mode loop generates a
     series of plGetCursor calls.
-    
+
     * Each of those plGetCursor calls ends up (for -dev wxwidgets) as a call to
     wxPLDevice::Locate which has the following code:
-    
+
     TransmitBuffer( pls, transmissionLocate );
     m_outputMemoryMap.receiveBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
     *graphicsIn = m_header.graphicsIn;
-    
+
     * TransmitBuffer calls transmitBytes to send header information
     (including transmissionLocate = 4 and  plbufAmountToTransmit = 24272
     bytes in plbuf to be received by wxPlFrame::ReadTransmission (which is called
     by wxPlFrame::OnCheckTimer on a timer event loop) using receiveBytes.
-    
+
     The results are
-    
+
     Before transmitBytes
     transmissionType = 4
     plbufAmountToTransmit = 24272
@@ -3538,10 +3538,10 @@ Date:   Sat Mar 4 11:17:48 2017 -0800
     locateModeFlag = 1
     completeFlag = 0
     Successful read of plbuf
-    
+
     i.e., that transmission of the plbuf information and
     transmissionLocate to wxPlFrame::ReadTransmission was a complete success.
-    
+
     * Because plbufAmountToTransmit is non-zero, wxPLViewer appends that
     plbuf information to the correct element of the m_pageBuffers array
     and conditionally (although the result is the condition is true
@@ -3549,7 +3549,7 @@ Date:   Sat Mar 4 11:17:48 2017 -0800
     calls SetPageAndUpdate as per normal which should update all the
     required plotbuf information and configure all the plotbuf data to be
     plotted using the Refresh method.
-    
+
     * After plbuf is processed, then wxPlFrame::ReadTransmission
     for the transmissionLocate case calls
     SetPageAndUpdate one more time (which should have no effect because
@@ -3557,11 +3557,11 @@ Date:   Sat Mar 4 11:17:48 2017 -0800
     previous call to SetPageAndUpdate), then sets m_locateMode = true
     before exiting wxPlFrame::ReadTransmission and wxPlFrame::OnCheckTimer
     to complete processing of that timer event.
-    
+
     * After that exit from wxPlFrame::OnCheckTimer the plot should be
     automatically plotted (because of the above call to the Refresh
     method), but for some reason (likely a bug) that does not happen.
-    
+
     * Then once a mouse click causes another event, wxPlFrame::OnMouse
     collects information about that click into the m_header.graphicsIn
     struct, and then the whole header is sent back to -dev wxwidgets with
@@ -3573,21 +3573,21 @@ Date:   Sat Mar 4 11:17:48 2017 -0800
     out values collected for a particular mouse click, then (unless there
     is an exit from locate mode by a mouse click off of a viewport keeps
     repeating the whole process indefinitely.
-    
+
     The above is the theory, but in practice the plot never shows and everything
     just hangs.  So there is likely some small bug in the implementation, but
     I haven't found it yet.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building wxwidgets, wxPLViewer, and x01c for the
     -DPL_WXWIDGETS_IPC2=ON case and running
-    
+
     examples/c/x01c -dev wxwidgets
-    
+
     with complete success, but
-    
+
     examples/c/x01c -dev wxwidgets -locate
-    
+
     produces the above-mentioned hang with no plot being displayed yet
     also the above evidence that all the data was transmitted from -dev
     wxwidgets to wxPLViewer without issues (except possibly that
@@ -3596,7 +3596,7 @@ Date:   Sat Mar 4 11:17:48 2017 -0800
     currently appears that all you need to do to get this fixed is display
     the plot after wxPlFrame::OnCheckTimer so that any mouse click after
     that on that display will end up as a call to wxPlFrame::OnMouse.
-    
+
     N.B. this issue of the plot not being displayed also occurs for
     the -DPL_WXWIDGETS_IPC2=OFF case.  So presumably the same fix
     with fix both the -DPL_WXWIDGETS_IPC2=ON and OFF cases.
@@ -3609,7 +3609,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Feb 28 10:43:42 2017 -0800
 
     wxwidgets three-semaphore IPC: three fixes
-    
+
     1. I fixed the "Caught unhandled unknown exception; terminating" exception
     that was thrown only for examples 02 and 14 which was
     due to those examples ending by sending a transmissionEndOfPage
@@ -3618,7 +3618,7 @@ Date:   Tue Feb 28 10:43:42 2017 -0800
     method threw an unnecessary exception for this case, and the fix was
     to remove that throw, and trust SetPageAndUpdate to handle this case
     (which it did).
-    
+
     2. Obviously the above error message was way too generic so I
     made the treatment of exceptions much more specific by
     also fixing a bug in some of the catch statements (char * message ==>
@@ -3626,43 +3626,43 @@ Date:   Tue Feb 28 10:43:42 2017 -0800
     The resulting specific error message, "wxPlFrame::ReadTransmission:
     Received an end of page transmission after no draw instructions", was
     the key in finding the solution to 1.
-    
+
     3. I fixed a subtle error which was introduced for the cerr commands
     when the type of transmissionType was changed from size_t to unsigned
     char.  It turns out cerr interprets unsigned char as an ascii control
     character to be sent to the screen so the fix was to cast
     transmissionType to unsigned int for all cerr statements that were
     outputting the transmissionType.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) for the -DPL_WXWIDGETS_IPC2=OFF case by building the
     test_c_wxwidgets target (to demonstrate the -DPL_WXWIDGETS_IPC2=ON
     changes did not affect the-DPL_WXWIDGETS_IPC2=OFF case).
-    
+
     In addition the -DPL_WXWIDGETS_IPC2=ON case was extensively tested.
-    
+
     I ran both
-    
+
     examples/c/x02c -dev wxwidgets
-    
+
     and wxPLViewer under valgrind control with no memory management errors
     being reported (i.e., "ERROR SUMMARY: 0 errors from 0 contexts
     (suppressed: 0 from 0)") for either case.
-    
+
     I did the same experiment for example 14 with the same good valgrind reports.
-    
+
     I ran
-    
+
     examples/c/x02c -dev wxwidgets
-    
+
     on its own (i.e., without valgrind) and the rendered results looked the
     same (small character size which might be correct, but also some character
     misalignment which is wrong) as for the -DPL_WXWIDGETS_IPC2=OFF case.
-    
+
     I ran
-    
+
     examples/c/x14c -dev wxwidgets
-    
+
     on its own (i.e., without valgrind) and the rendered results looked
     the same as for the -DPL_WXWIDGETS_IPC2=OFF case, i.e., there is a
     wxwidgets bug exposed here where the wxPLViewer instance corresponding to the
@@ -3671,7 +3671,7 @@ Date:   Tue Feb 28 10:43:42 2017 -0800
     -DPL_WXWIDGETS_IPC2=OFF case, the fix for it obviously has nothing to
     do with the -DPL_WXWIDGETS_IPC2=ON code (and more likely has something
     to do with a PLplot stream safety issue for -dev wxwidgets).
-    
+
     As a final check for the -DPL_WXWIDGETS_IPC2=ON case I built the
     test_c_wxwidgets target with no obvious build or run-time issues.
 
@@ -3693,7 +3693,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Feb 27 15:08:16 2017 -0800
 
     wxwidgets three-semaphore IPC: Fix race when data flow reverses
-    
+
     The previous two-semaphore approach had a race condition when the data
     flow between -dev wxwidgets and wxPLViewer was reversed which
     previously was worked around by inserting a 10 ms wait.  This commit
@@ -3709,14 +3709,14 @@ Date:   Mon Feb 27 15:08:16 2017 -0800
     the previous race in that regard impossible.  N.B. everywhere in the
     code that used to refer to the two-semaphores approach now refers to
     the three-semaphores approach.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) for the -DPL_WXWIDGETS_IPC2=ON case by building the
     relevant x??c targets as well as the wxwidgets and wxPLViewer
     targets and then running
-    
+
     examples/c/x??c -dev wxwidgets
-    
+
     for standard examples 00, 08, 09, and 16 with complete success (i.e.,
     no exceptions were thrown, and the plotted results showed some known
     rendering bugs for the wxwidgets case (e.g., the first page of example
@@ -3733,7 +3733,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Feb 25 17:18:04 2017 -0800
 
     wxwidgets two-semaphore IPC: Attempt to avoid race when data flow reverses
-    
+
     When data flow is all in the same direction (e.g., moveBytesWriter
     calls followed consecutively by additional such calls on the writer
     (-dev wxwidgets) side) each moveBytesWriter call sets up the next with
@@ -3747,7 +3747,7 @@ Date:   Sat Feb 25 17:18:04 2017 -0800
     moveBytesWriter is started.  And similarly there is an equivalent race
     when a call to moveBytesWriter on the writer side is followed by a
     call to moveBytesReaderReversed on the reader side.
-    
+
     This commit attempts to avoid those races by inserting (whenever there
     is a reverse in the flow of data) a 10 ms sleep.  This should not be
     an efficiency concern in the slightest because the sleep is only
@@ -3755,15 +3755,15 @@ Date:   Sat Feb 25 17:18:04 2017 -0800
     occurs for an initialization handshake now and interactive use of -dev
     wxwidgets (later when interactive capabilities are implemented for the
     -DPL_WXWIDGETS_IPC2=ON case).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by rebuilding for the -DPL_WXWIDGETS_IPC2=ON case
     the wxwidgets, wxPLViewer, and x09c targets and running
-    
+
     examples/c/x09c -dev wxwidgets
-    
+
     without issues.
-    
+
     N.B. my current thinking is the above 10 ms sleep is way more than
     enough.  The score is currently that it has worked once in the above
     test, but only time will tell whether the
@@ -3781,7 +3781,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Feb 25 13:44:30 2017 -0800
 
     wxwidgets two-semaphore IPC: quiet valgrind uninitialized false alarms
-    
+
     When wxPLViewer was run under valgrind, there were many uninitialized
     variable false alarms due (apparently) to valgrind not realizing that
     m_header could be updated with properly initialized values from the
@@ -3790,7 +3790,7 @@ Date:   Sat Feb 25 13:44:30 2017 -0800
     consistently clean ("ERROR SUMMARY: 0 errors from 0 contexts
     (suppressed: 0 from 0)") valgrind reports from wxPLViewer (as well as
     -dev wxwidgets).
-    
+
     By the way, these clean valgrind results for both -dev wxwidgets and
     wxPLViewer completely shoot down my previous hypothesis concerning
     the "PLMemoryMap::moveBytesWriter: attempt to start transfer
@@ -3798,13 +3798,13 @@ Date:   Sat Feb 25 13:44:30 2017 -0800
     was being thrown in a tiny minority of cases.  So Phil's suggestion
     to look for a race condition to explain this exception is what
     I am focussing on now.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by rebuilding for the -DPL_WXWIDGETS_IPC2=ON case
     the wxwidgets, wxPLViewer, and x09c targets and running
-    
+
     examples/c/x09c -dev wxwidgets
-    
+
     without issues.
 
 M	utils/wxplframe.cpp
@@ -3814,20 +3814,20 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Feb 25 13:42:41 2017 -0800
 
     wxwidgets two-semaphore IPC: initialize semaphores only once per memory map creation.
-    
+
     This semaphores initialization (implemented by calling
     m_outputMemoryMap.initializeSemaphoresToValid with a false 3rd
     argument) occurs in wxPLDevice::SetupMemoryMap.  Previously this call
     was done as part of a loop to establish the memory map.  This fix
     moves that call from the loop (where any repeat of the call would have
     been invalid) to just after the loop.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by rebuilding for the -DPL_WXWIDGETS_IPC2=ON case
     the wxwidgets, wxPLViewer, and x09c targets and running
-    
+
     examples/c/x09c -dev wxwidgets
-    
+
     without issues.
 
 M	drivers/wxwidgets_dev.cpp
@@ -3837,19 +3837,19 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Feb 25 13:20:37 2017 -0800
 
     wxwidgets two-semaphore IPC: use consistent transmission types
-    
+
     Change the type of transmissionType in the MemoryMapHeader struct from
     size_t to unsigned char (and reorder the elements of that struct to
     reduce padding for this case) to be consistent with the unsigned char
     type of the possible transmission flags constants that are compared
     with transmissionType.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by rebuilding for the -DPL_WXWIDGETS_IPC2=ON case
     the wxwidgets, wxPLViewer, and x09c targets and running
-    
+
     examples/c/x09c -dev wxwidgets
-    
+
     without issues.
 
 M	drivers/wxwidgets_comms.h
@@ -3859,7 +3859,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Feb 24 16:41:23 2017 -0800
 
     Solve uninitialized m_useGraphicsContext
-    
+
     This memory management issue (which could lead to random initialization issues for
     drawDc in wxPLplotwindow<WXWINDOW>::setUseGraphicsContext) was turned
     up by a valgrind run on wxPLViewer.  As expected, this fix (which insures that
@@ -3874,7 +3874,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Feb 24 16:33:25 2017 -0800
 
     wingdi device driver: minor style fixup
-    
+
     For some reason, the previous styling of drivers/wingdi.c was not
     complete and there are a few minor additional changes that
     are made when scripts/style_source.sh is run again, and
@@ -3887,21 +3887,21 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Feb 23 23:06:03 2017 -0800
 
     wxwidgets IPC: enable (with limitations) plots for the wxwidgets two-semaphore IPC approach
-    
+
     For the case when -DPL_WXWIDGETS_IPC2=ON I tweaked -dev wxwidgets to
     use transmissionFlush (rather than transmissionComplete) for flushes
     and use transmissionComplete for the case when
     m_header.completeFlag = 1 needs to be transmitted to wxPLViewer,
     made the corresponding WxPLViewer changes, and updated wxPlViewer
     to actually plot the plbuf data that are being sent.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by specifying the -DPL_WXWIDGETS_IPC2=ON cmake option,
     building all the C examples, wxwidgets, and
     wxPLViewer and running
-    
+
     examples/c/x??c -dev wxwidgets
-    
+
     There were good plot results for one-page examples such as x00c, x01c,
     and x24c but unexpected bad results (an uncaught wxPLViewer exception
     which needs further investigation) for multiple-page examples such as
@@ -3916,45 +3916,45 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Feb 23 17:46:54 2017 -0800
 
     wxwidgets IPC: implement a lot more of the wxwidgets two-semaphore IPC approach
-    
+
     For the case when -DPL_WXWIDGETS_IPC2=ON the IPC is now implmeented as
     follows:
-    
+
     * The PLTwoSemaphores class has been matured with the addition of a
       number of methods (such as initializeToValid, initializeToInvalid,
       areBothSemaphoresValid, and areBothSemaphoresBlocked) that have
       proved useful for IPC using the two-semaphores approach.
       Furthermore, The alternative constructor has been dropped, and the
       destructor has been simplified.
-    
+
     * Add transmissionType and plbufAmountToTransmit fields to the
       MemoryMapHeader struct rather than having such header-type fields
       mixed with plbuf information in the data transmitted back and forth
       via IPC between writer (-dev wxwidgets) and reader (wxPLViewer).
-    
+
     * Separate header data from plbuf data in the data that are
       transmitted between writer and reader.  This means that within the
       shmbuf struct that MemoryMapHeader header data are transmitted via
       the header field, and plbuf data are transmitted via the data field.
-    
+
     * Separate header data (as a private MemoryMapHeader m_header variable
       within the wxPLDevice class) from shmbuf data (which is strictly
       used just to transmit the header data and not store it).  The same
       change has implemented for the wxPlFrame class.  The net result of
       these changes is a complete separation of instance header
       information from shmbuf header information.
-    
+
     * Change all use of memmove to memcpy (since we now have complete
       separation of storage of header information (i.e., in the private
       instance m_header variables) from the staging area in shmbuf used to
       tranfer that header information.
-    
+
     * For the PLMemoryMap class implement the moveBytesWriter,
       moveBytesReader, moveBytesReaderReversed, and
       moveBytesWriterReversed methods where the first two implement
       transmission from writer to reader and the second two implement
       transmission from reader to writer.
-    
+
     For the case when -DPL_WXWIDGETS_IPC2=ON, the current status is this
     new IPC method is used in a mature way on the writer (-dev wxwidgets)
     side but so far is mostly just used to confirm the data transmissions
@@ -3968,14 +3968,14 @@ Date:   Thu Feb 23 17:46:54 2017 -0800
     wxPlFrame::ReadTransmission, dumping out some key header values (to
     show the data were received), but not acting on that data except to
     exit when header completeFlag = 1 is received at the end.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the wxwidgets and wxPLViewer targets for
     the case when -DPL_WXWIDGETS_IPC2=ON, and run-time testing the
     result using
-    
+
     examples/c/x08c -dev wxwidget
-    
+
     The result shows correct transmission of the header viewerOpenFlag = 1
     from reader to writer, correct transmission of BOP, plbuf data, and
     EOP trom writer to reader (once per page), and correct transmission of header
@@ -3984,14 +3984,14 @@ Date:   Thu Feb 23 17:46:54 2017 -0800
     example) are assembled and transferred in less than a second so it
     appears the transmission speed is already comparable with the
     -DPL_WXWIDGETS_IPC2=OFF case.
-    
+
     For the -DPL_WXWIDGETS_IPC2=OFF case, the test_c_wxwidgets target built
     without issues and
-    
+
     examples/c/x08c -dev wxwidgets
-    
+
     (note no -np option) executed with no issues.
-    
+
     So it appears the large code changes for the -DPL_WXWIDGETS_IPC2=ON
     case are not affecting the -DPL_WXWIDGETS_IPC2=OFF case.
 
@@ -4007,26 +4007,26 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Tue Feb 21 11:55:03 2017 -0800
 
     Remove trailing white space and style wingdi.c
-    
+
     The recent flurry of commits that implemented the wingdi device driver
     left wingdi.c with some trailing whitespace and styling issues that
     this commit fixes.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running:
-    
+
     scripts/comprehensive_test.sh
     grep -i warning ../comprehensive_test_disposeable/*/*/output_tree/*.out |grep -v cmake.out |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems'
     grep -i error ../comprehensive_test_disposeable/*/*/output_tree/*.out
     grep -iE 'found|symbol|undefined' $(find ../comprehensive_test_disposeable -name "build*ldd.out")
     grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable/*/*/output_tree/*.out |less
-    
+
     (The subsequent commands after running the script check for unusual warnings, any errors, any
     ldd issues, and any PostScript difference issues.)  All of those checks showed no obvious
     build or run-time issues, and no regressions in PostScript difference issues except for
     a one-time *.pyc file corruption issue [when I first tried to
     run the script] that I have discussed recently on list.)
-    
+
     N.B. This comprehensive testing was done with no constraints on the
     test to make sure that the changes to common files that all device
     drivers depend on that were made in this recent series of
@@ -4041,7 +4041,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Sun Feb 19 23:13:49 2017 -0500
 
     Removed extraneous characters left when doing rebase
-    
+
     Signed-off-by: Jim Dishaw <jim@dishaw.org>
 
 M	include/drivers.h
@@ -4052,7 +4052,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Tue Jul 28 22:09:02 2015 -0400
 
     Incremental improvement to wingdi
-    
+
     Signed-off-by: Jim Dishaw <jim@dishaw.org>
 
 M	drivers/wingdi.c
@@ -4062,7 +4062,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Thu Jun 18 21:59:49 2015 -0400
 
     Added the wait for input function
-    
+
     Signed-off-by: Jim Dishaw <jim@dishaw.org>
 
 M	drivers/wingdi.c
@@ -4072,7 +4072,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Sun Jun 14 21:33:26 2015 -0400
 
     Minor corrections to the status bar layout
-    
+
     Signed-off-by: Jim Dishaw <jim@dishaw.org>
 
 M	drivers/wingdi.c
@@ -4082,7 +4082,7 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Mon Feb 20 00:01:19 2017 -0500
 
     Fixes the multiple keypress bug -- However this patch relies on a change in plbuf.c that is not in the plplot master branch. -- I am creating this patch without the plbuf.c changes to avoid making changes in plbuf.c because I'm not sure if they are needed given the other changes in plbuf.c -- The required changes are:
-    
+
              remove "plbuf_tidy( pls );" in plbuf_bop()
     	 add "plP_eop();" in rdbuf_eop()
 
@@ -4093,10 +4093,10 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Fri Jun 12 10:22:41 2015 -0400
 
     Added status bar to wingdi and improvements to printing
-    
+
     - Modified the window to a parent with two children (plot area & status bar)
     - Preserved aspect ratio when printing
-    
+
     Signed-off-by: Jim Dishaw <jim@dishaw.org>
 
 M	cmake/modules/wingdi.cmake
@@ -4108,10 +4108,10 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Tue Jun 9 21:33:28 2015 -0400
 
     Revised version of the wingdi driver that uses Windows text rendering
-    
+
     - Added text rendering to replace text rendered by the PLplot core
     - Fixed print output
-    
+
     Signed-off-by: Jim Dishaw <jim@dishaw.org>
 
 M	drivers/wingdi.c
@@ -4121,12 +4121,12 @@ Author: Jim Dishaw <jim@dishaw.org>
 Date:   Sat Jun 6 00:11:52 2015 -0400
 
     Implement a new Windows GDI (wingdi) driver
-    
+
     - Based on the wingcc driver
     - Is a pure GDI driver and does not use Freetype
     - Fixes problems that the wingcc driver (e.g. resizes can get clipped)
     - Intermediate step to using the GDI+ or DirectDraw API
-    
+
     Signed-off-by: Jim Dishaw <jim@dishaw.org>
 
 M	cmake/modules/drivers-init.cmake
@@ -4146,14 +4146,14 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Feb 11 12:57:59 2017 -0800
 
     wxwidgets IPC: Start implementation of two-semaphore approach
-    
+
     For the -DPL_WXWIDGETS_IPC2=ON case, drop all references to mutexes,
     and implement (but don't yet use) the PLTwoSemaphores class.
-    
+
     N.B. this is just the first step toward the goal of getting the
     two-semaphores wxwidgets IPC method implemented and working
     properly.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) in the -DPL_WXWIDGETS_IPC2=ON case by a simple build
     test (using the wxwidgets and wxPLViewer targets) and in the
@@ -4161,11 +4161,11 @@ Date:   Sat Feb 11 12:57:59 2017 -0800
     affecting that case) of building the test_c_wxwidgets target (without
     obvious build or run-time issues) and (afterwards so all prerequisties
     were built) by running
-    
+
     valgrind examples/c/x24c -dev wxwidgets
-    
+
     with a valgrind error summary of
-    
+
     ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 M	cmake/modules/wxwidgets.cmake
@@ -4182,7 +4182,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Thu Feb 9 14:41:48 2017 -0800
 
     wxwidgets IPC: Drop use of unnamed semaphores for the one-semaphore case
-    
+
     Implementation of unnamed semaphores for the one-semaphore case was a
     useful proof of concept, but ultimately if the two-semaphores case
     works, all the one-semaphore code will be removed, and if the
@@ -4191,16 +4191,16 @@ Date:   Thu Feb 9 14:41:48 2017 -0800
     in that one-semaphore case.  So before embarking on the two-semaphore
     implementation simplify the one-semaphore case by dropping the
     unnamed semaphores alternative for it.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_c_wxwidgets target (without obvious
     build or run-time issues) and
     (afterwards so all prerequisties were built) by running
-    
+
     valgrind examples/c/x24c -dev wxwidgets
-    
+
     with a valgrind error summary of
-    
+
     ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 M	drivers/wxwidgets_comms.cpp
@@ -4223,10 +4223,10 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Feb 6 14:26:34 2017 -0800
 
     wxwidgets IPC: Fix named semaphores shared memory leak
-    
+
     Before this fix, here was a recent result for the shared memory
     location on my (Linux) system.
-    
+
     software@raven> ls -lt /dev/shm/sem* |head
     -rwx------ 1 software software 32 Feb  6 13:34 /dev/shm/sem.plplotMemoryMapAFJTJFKNBFmut*
     -rwx------ 1 software software 32 Feb  6 13:34 /dev/shm/sem.plplotMemoryMapNXUTQOHHYYmut*
@@ -4235,7 +4235,7 @@ Date:   Mon Feb 6 14:26:34 2017 -0800
     -rwx------ 1 software software 32 Feb  6 12:51 /dev/shm/sem.plplotMemoryMapGVUGAQOFORmut*
     -rwx------ 1 software software 32 Feb  6 12:50 /dev/shm/sem.plplotMemoryMapBGRGBXRBHFmut*
     -rwx------ 1 software software 32 Feb  6 12:50 /dev/shm/sem.plplotMemoryMapDGHOQFIRQSmut*
-    
+
     where each example run with -dev wxwidgets (using the default
     -DPL_HAVE_UNNAMED_POSIX_SEMAPHORES=OFF) permanently created one of
     these.  Because of the small size of each of these shared memory areas
@@ -4243,9 +4243,9 @@ Date:   Mon Feb 6 14:26:34 2017 -0800
     this cleaned up by following the call to sem_close in the PLNamedMutex
     destructor with a call to sem_unlink.  According to the Linux man
     page for sem_overview
-    
+
     "POSIX named semaphores have kernel persistence: if not removed by sem_unlink(3), a semaphore will exist until the system is shut down."
-    
+
     After this change and as expected from the above man page remark about
     sem_unlink /dev/shm showed no additional persistent shared memory
     areas were being left behind by each example run with -dev wxwidgets,
@@ -4259,18 +4259,18 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Feb 6 12:53:43 2017 -0800
 
     wxwidgets IPC: implement use of unnamed semaphores
-    
+
     This commit completes case 1 that was discussed on list where for
     the present one-semaphore approach (which requires use of sleep and
     mutex API) an unnamed semaphore is used (if
     -DPL_HAVE_UNNAMED_POSIX_SEMAPHORES=ON) instead of a named semaphore.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the target test_c_wxwidgets and
     subsequently running
-    
+
     examples/c/x16c -dev wxwidgets
-    
+
     For both the -DPL_HAVE_UNNAMED_POSIX_SEMAPHORES=ON and
     -DPL_HAVE_UNNAMED_POSIX_SEMAPHORES=OFF cases.  As expected (since the
     same fundamental single-semaphore approach is used in both cases) I
@@ -4290,13 +4290,13 @@ Author: Phil Rosenberg <p.d.rosenberg@gmail.com>
 Date:   Sun Feb 5 09:23:53 2017 +0000
 
     Initialised remaining member variables in PlDevice
-    
+
     although Alan had good valgrind results. It looked to me like if someone
     happened to try to draw unicode character 0x0000 for their first
     string then the current check for the size of the previous character
     could succeed and return garbage. Plus it is good practiace to initilise
     memer variables to sensible initial values.
-    
+
     All these variables are now initialised to 0. Which means if the first
     size requested is of a 0x0000 character with size 0 and FCI 0 then the
     check for an existing size will succeed and will return sizes of 0,
@@ -4310,22 +4310,22 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Feb 4 18:30:32 2017 -0800
 
     wxwidgets driver: Fix uninitialized variable issue reported by valgrind
-    
+
     The variable m_prevSymbol was uninitialized for its first test in
     PlDevice::DrawTextLine (reported by valgrind but also obvious by
     inspection).  The solution was to initialize it (in the constructor
     thanks to a tip from Phil) to an invalid value (so the initial test
     fails as it should before further tests are done with valid values of
     m_prevSymbol determined later in PlDevice::DrawTextLine).
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building test_c_wxwidgets (to build all prerequisites)
     then executing
-    
+
     valgrind examples/c/x00c -dev wxwidgets
-    
+
     with a good (unlike before this fix) valgrind summary,
-    
+
     ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 
 M	drivers/wxwidgets.h
@@ -4335,23 +4335,23 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Sat Feb 4 13:59:51 2017 -0800
 
     wxwidgets IPC: Use a struct for the shared memory area
-    
+
     If the PL_HAVE_UNNAMED_POSIX_SEMAPHORES macro is #defined
     use a shmbuf struct for the shared memory buffer that contains
     a fixed-size character array buf and some other essential
     fields.
-    
+
     This change potentially allows (a) (with the cnt element of the shmbuf
     struct) keeping track of how many bytes are used in the char array,
     and (b) (with the wsem and rsem elemenst of the shmbuf struct) use of
     two unnamed semaphores to control the IPC.  But for now cnt, wsem, and
     rsem remain unused.
-    
+
     If the PL_HAVE_UNNAMED_POSIX_SEMAPHORES macro is #defined
     this change means that the getBuffer and getSize methods
     of the PLMemoryMap class respectively return the location
     and size of the character array buf within the shmbuf struct.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building test_c_wxwidgets (to build all prerequisites)
     and then running various C examples with -dev wxwidgets without
@@ -4373,7 +4373,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Feb 3 11:59:32 2017 -0800
 
     cairo driver: implement eop-wait split for wincairo device
-    
+
     As of commit 5867959 "Fix to the multiple keypress bug on page
     advance" (2015-06-15) by Jim Dishaw the former EOP state was split for
     interactive devices between EOP (used for all code that ran at EOP
@@ -4383,7 +4383,7 @@ Date:   Fri Feb 3 11:59:32 2017 -0800
     page).  If interactive drivers were not adjusted for this change, they
     would continue to work in legacy mode except that the new EOP call
     that was inserted into plbuf would incorrectly generate wait activity.
-    
+
     This commit finally adjusts the wincairo device for this eop-wait
     split, i.e., it should no longer be a legacy mode device with regard
     to the eop-wait split.  The former plD_eop_wincairo function has now
@@ -4394,7 +4394,7 @@ Date:   Fri Feb 3 11:59:32 2017 -0800
     EOP activity for the pls->nopause false case, i.e., all code that used
     to be in plD_eop_wincairo without the redundant check that
     pls->nopause was false.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the cairo device (to test that these code
     changes did not affect that build.  However, that build completely
@@ -4410,13 +4410,13 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Feb 3 10:27:35 2017 -0800
 
     tkwin driver: fix obvious bug in eop-wait split implementation
-    
+
     The pls->nopause false part of the eop code was previously copied
     (rather than moved) from plD_eop_tkwin to plD_wait_tkwin.  Address
     this issue by removing the pls->nopause false code from plD_eop_tkwin.
     Also remove the redundant check for pls->nopause false from
     plD_wait_tkwin.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by building the test_wish_runAllDemos (to build
     all prerequisites) and then following the test procedure
@@ -4432,7 +4432,7 @@ Date:   Fri Feb 3 10:27:35 2017 -0800
     properly for a long time.  So all that is claimed here is this change
     does not affect dynamic loading of the tkwin shared object and does
     not appear to introduce any regressions for an already bad test case.
-    
+
     test_plserver_runAllDemos target
     (which uses
     The (not very good) GUI result seems to work as well as before.
@@ -4444,7 +4444,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Fri Feb 3 10:06:46 2017 -0800
 
     wxwidgets driver: implement eop-wait split
-    
+
     As of commit 5867959 "Fix to the multiple keypress bug on page advance"
     (2015-06-15) by Jim Dishaw the former EOP state was split for interactive
     devices between EOP (used for all code that ran at EOP with pls->nopause
@@ -4453,7 +4453,7 @@ Date:   Fri Feb 3 10:06:46 2017 -0800
     the enter key to advance the page).  If interactive drivers were not adjusted
     for this change, they would continue to work in legacy mode except that the
     new EOP call that was inserted into plbuf would incorrectly generate wait activity.
-    
+
     This commit finally adjusts the wxwidgets driver for this eop-wait
     split, i.e., it should no longer be a legacy mode driver with regard
     to the eop-wait split.  The former plD_eop_wxwidgets function has now
@@ -4461,7 +4461,7 @@ Date:   Fri Feb 3 10:06:46 2017 -0800
     plD_wait_wxwidgets with the former reserved for all former EOP
     activity for the pls->nopause true case, and the latter reserved for
     all former EOP activity for the pls->nopause false case.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by spot checking a number of different C examples with
     -dev wxwidgets with and without this commit, with and without the -np
@@ -4485,24 +4485,24 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jan 30 23:14:07 2017 -0800
 
     The cairo device driver: fix bug in aStream->xdrawable_mode logic
-    
+
     The test for aStream->xdrawable_mode had to be moved from
     plD_eop_xcairo (where it effectively did nothing) to
     the start of plD_wait_xcairo where it returns immediately
     if aStream->xdrawable_mode is true.
-    
+
     aStream->xdrawable_mode is only true if external_drawable is true
     and that value is only set by the extXdrawable_demo application.
     So the net effect of this bug fix is essentially all of
     plD_wait_xcairo is skipped for the extXdrawable_demo application
     case which is consistent with all of that code being skipped
     in like case when it was part of plD_eop_xcairo.
-    
+
     As a result of this change the run-time error for the
     test_extXdrawable has been addressed (see below) so
     I have reinstated test_extXdrawable as a dependency of generic
     test targets again.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian testing) by building the test_c_xcairo, test_extcairo, and
     test_extXdrawable targets.  The first two are unaffected
@@ -4519,12 +4519,12 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jan 30 21:11:32 2017 -0800
 
     Reinstate "5867959 Fix to the multiple keypress bug on page advance" for cairo device driver
-    
+
     This reinstated (and unchanged) fix adjusts the cairo device driver
     (specifically the xcairo device) for Jim Dishaw's plbuf change similar
     to all the other changes he made for the other interactive devices
     (other than wxwidgets where this issue has yet to be addressed).
-    
+
     As before the result of this change is there are no issues for -dev
     xcairo or the ext-cairo-test application you can build and run by
     building the test_extcairo target.  However, the extXdrawable_demo
@@ -4536,9 +4536,9 @@ Date:   Mon Jan 30 21:11:32 2017 -0800
     it rather than limping along with having an xcairo device that was
     fundamentally inconsistent in a subtle way with plbuf like we were
     doing before.
-    
+
     The run-time error that needs to be addressed with extXdrawable_demo is as follows:
-    
+
     The program 'extXdrawable_demo' received an X Window System error.
     This probably reflects a bug in the program.
     The error was 'BadWindow (invalid Window parameter)'.
@@ -4556,7 +4556,7 @@ Date:   Mon Jan 30 21:11:32 2017 -0800
     make[1]: *** [examples/CMakeFiles/test_extXdrawable.dir/rule] Error 2
     Makefile:1846: recipe for target 'test_extXdrawable' failed
     make: *** [test_extXdrawable] Error 2
-    
+
     Note the test_extXdrawable target continues to exist, but
     because of this known run-time error with this target I have removed it
     from the dependency lists of other more generic test targets so
@@ -4570,24 +4570,24 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jan 30 18:32:22 2017 -0800
 
     Remove trailing whitespace (blanks and tabs)
-    
+
     The previous script to do this has been renamed
     scripts/remove_trailing_blanks.sh ->
     scripts/remove_trailing_whitespace.sh
-    
+
     That script has been modified so that instead of removing just trailing
     blanks it now removes both trailing blanks AND tabs.
-    
+
     Running this script corrected a substantial number of trailing
     whitespace (tabs in this case) issues, and those changed files are
     included in this commit.  An unconstrained comprehensive test was done
     below to confirm no issues were introduced by this intrusive commit.
-    
+
     Tested by: Alan W. Irwin <airwin@users.sourceforge.net> on Linux
     (Debian Jessie) by running
-    
+
     scripts/comprehensive_test.sh --do_submit_dashboard yes
-    
+
     This test showed no obvious configure, build, or run-time issues,
     no ldd -r issues, no PostScript difference regressions, and no
     dashboard issues, i.e., this test was a
@@ -4723,7 +4723,7 @@ Author: Alan W. Irwin <airwin@users.sourceforge.net>
 Date:   Mon Jan 30 14:24:08 2017 -0800
 
     Release process: change when cumulated release notes are stored.
-    
+
     Those cumulated release notes were previously stored in
     OLD-README.release but now that file is renamed as
     README.cumulated_release, and the final README.release notes are
