@@ -46,7 +46,7 @@ if(PLD_wxwidgets OR PLD_wxpng)
   if(FORCE_EXTERNAL_STATIC)
     set(wxWidgets_USE_STATIC ON)
   endif(FORCE_EXTERNAL_STATIC)
-  find_package(wxWidgets COMPONENTS base core QUIET)
+  find_package(wxWidgets 3.0.0 COMPONENTS base core)
   if(WIN32)
     list(APPEND wxWidgets_DEFINITIONS UNICODE _UNICODE)
   endif(WIN32)
@@ -70,39 +70,6 @@ if(PLD_wxwidgets OR PLD_wxpng)
     # Check if stdint.h can be used from c++ (PL_HAVE_CXX_STDINT_H)
     include(TestForStdintCXX)
   endif(NOT wxWidgets_FOUND OR NOT wxwidgets_LINK_FLAGS)
-endif(PLD_wxwidgets OR PLD_wxpng)
-
-if(PLD_wxwidgets OR PLD_wxpng)
-  # Determine wxwidgets version in cross-platform way.
-  set(check_wxwidgets_version_source "
-#include <wx/version.h>
-int main(void)
-{
-// True if version is 3.0.0 or later....
-#if  wxCHECK_VERSION(3, 0, 0)
-// Return success
-  return 0;
-#else
-// Return failure
-  return 1;
-#endif
-}
-")
-  include(CheckCSourceRuns)
-
-  cmake_push_check_state()
-  list(APPEND CMAKE_REQUIRED_INCLUDES ${wxWidgets_INCLUDE_DIRS})
-  message(STATUS "Checking whether wxwidgets version >= 3.0.0")
-  check_c_source_runs("${check_wxwidgets_version_source}" WX_VERSION_LARGE_ENOUGH)
-  cmake_pop_check_state()
-  if(NOT WX_VERSION_LARGE_ENOUGH)
-    message(STATUS
-      "WARNING: wxWidgets version is less than 3.0.0 so "
-      "setting all wxwidgets devices to OFF."
-      )
-    set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
-    set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
-  endif(NOT WX_VERSION_LARGE_ENOUGH)
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(PLD_wxwidgets OR PLD_wxpng)
