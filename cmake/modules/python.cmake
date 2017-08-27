@@ -47,20 +47,43 @@ if(ENABLE_python AND NOT SWIG_FOUND)
 endif(ENABLE_python AND NOT SWIG_FOUND)
 
 if(ENABLE_python)
-  # Check for Python interpreter (which also defines PYTHON_EXECUTABLE)
-  # We prefer Python 3 if it is available because that (according
-  # to one Python developer, and his opinion makes sense) is
-  # better maintained than python 2.
-  option(FORCE_PYTHON2 "Force Python2 even when Python 3 is present" OFF)
-  if(NOT FORCE_PYTHON2)
-    find_package(PythonInterp 3)
-  endif(NOT FORCE_PYTHON2)
-  # Fall back to Python 2 if Python 3 not found or FORCE_PYTHON2 option is set to ON.
-  find_package(PythonInterp 2)
+  # Check for the Python interpreter (which also defines PYTHON_EXECUTABLE)
+
+  # Document the user-settable value PLPLOT_PYTHON_EXACT_VERSION in the cache and set the type
+  # of this cached variable.
+  set(PLPLOT_PYTHON_EXACT_VERSION "" CACHE STRING "Search for this exact version of Python first")
+  if(NOT PYTHONINTERP_FOUND AND
+      PLPLOT_PYTHON_EXACT_VERSION AND
+      NOT PLPLOT_PYTHON_EXACT_VERSION VERSION_LESS "2.0.0" AND
+      PLPLOT_PYTHON_EXACT_VERSION VERSION_LESS "4.0.0"
+      )
+    # Check first for and exact version (if specified by the user).
+    find_package(PythonInterp ${PLPLOT_PYTHON_EXACT_VERSION} EXACT)
+
+  endif(NOT PYTHONINTERP_FOUND AND
+    PLPLOT_PYTHON_EXACT_VERSION AND
+    NOT PLPLOT_PYTHON_EXACT_VERSION VERSION_LESS "2.0.0" AND
+    PLPLOT_PYTHON_EXACT_VERSION VERSION_LESS "4.0.0"
+    )
+
   if(NOT PYTHONINTERP_FOUND)
-    message(STATUS "WARNING: "
-      "Python interpreter not found. Disabling Python binding")
-    set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
+    # We prefer Python 3 if it is available because that (according
+    # to one Python developer, and his opinion makes sense) is
+    # better maintained than Python 2.
+    option(FORCE_PYTHON2 "Force Python2 even when Python 3 is present" OFF)
+    if(NOT FORCE_PYTHON2)
+      find_package(PythonInterp 3)
+    endif(NOT FORCE_PYTHON2)
+  endif(NOT PYTHONINTERP_FOUND)
+
+  if(NOT PYTHONINTERP_FOUND)
+    # Fall back to Python 2 if Python 3 not found or FORCE_PYTHON2 option is set to ON.
+    find_package(PythonInterp 2)
+    if(NOT PYTHONINTERP_FOUND)
+      message(STATUS "WARNING: "
+	"Python interpreter not found. Disabling Python binding")
+      set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
+    endif(NOT PYTHONINTERP_FOUND)
   endif(NOT PYTHONINTERP_FOUND)
 endif(ENABLE_python)
 

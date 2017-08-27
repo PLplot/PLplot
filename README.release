@@ -42,6 +42,7 @@ CONTENTS
 2. Improvements relative to the previous release
 
 2.1 Bug fixes
+2.2 Update control of Python version
 
 3. PLplot testing
 ________________________________________________________________
@@ -75,6 +76,21 @@ ________________________________________________________________
 The bug fixes in this release are noted in the roughly 100 ??? commit messages
 collected in ChangeLog.release.
 
+2.2 Update control of Python version
+
+The build system now takes the following steps to search for a suitable
+Python version.
+
+* The build system searches for the PLPLOT_PYTHON_EXACT_VERSION version
+  of Python where PLPLOT_PYTHON_EXACT_VERSION is specified by the
+  user.  If this string is not specified by the user it defaults to
+  "", and this exact search therefore always fails in this case.
+
+* If that first exact search is a failure and the option FORCE_PYTHON2
+  is not ON, the build system searches for PYTHON 3.
+
+* If neither of the above two searches is a success, then the build
+  system searches for Python 2.
 ________________________________________________________________
 
 3. PLplot testing
