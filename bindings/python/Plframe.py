@@ -5,7 +5,7 @@ if sys.version_info[:2] >= (3, 0):
 else:
     from Tkinter import *
 
-from plplot import *
+import plplot as plplot_Plframe
 from TclSup import *
 
 from string import *
@@ -41,7 +41,7 @@ class Plframe(Widget):
 
         Widget.__init__( self, master, 'plframe', cnf, kw )
 
-        self.strm = plgstrm()
+        self.strm = plplot_Plframe.plgstrm()
 
     def cmd( s, *args ):
         "Invoke a subcommand on the plframe widget."
@@ -54,7 +54,7 @@ class Plframe(Widget):
 ## Now implement the PLplot API.  For simple functions, can call
 ## straight to Tk, which is probably the most straightforward way, in
 ## the sense of making the Python/Tk widget look and act most like
-## it's older brother the Tcl version.  However, functions which rely
+## it's older brothplplot_Plframe.plot_Plframe. the Tcl version.  However, functions which rely
 ## on the Numeric extensions cannot work this way, so for those we
 ## call straight to the Python compiled interface to the PLplot API.
 
@@ -132,7 +132,7 @@ class PlXframe(Frame):
 
         s.build_menu_bar()
 
-        s.strm = plgstrm()
+        s.strm = plplot_Plframe.plgstrm()
 
         s.setup_bindings()
 
@@ -1312,13 +1312,13 @@ class PlXframe(Frame):
         s.cmd( 'plcol1', col1 )
 
     def plcolorbar( s, *args ):
-        plsstrm( s.strm )
-        return plcolorbar( *args )
+        plplot_Plframe.plsstrm( s.strm )
+        return plplot_Plframe.plcolorbar( *args )
 
     def plcont( s, *args ):
-        plsstrm( s.strm )
+        plplot_Plframe.plsstrm( s.strm )
         #apply( plcont, args )
-        plcont(*args)
+        plplot_Plframe.plcont(*args)
 
     def plfcont( s ): pass
     def plcpstream( s ): pass
@@ -1338,8 +1338,8 @@ class PlXframe(Frame):
         s.update()
 
     def plfill( s, x, y ):
-        plsstrm( s.strm )
-        plfill( x, y )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plfill( x, y )
 
     def plfont( s, ifnt ):
         s.cmd( 'plfont', ifnt )
@@ -1348,23 +1348,23 @@ class PlXframe(Frame):
         s.cmd( 'plfontld', fnt )
 
     def plgcol0(s, i):
-        plsstrm( s.strm )
-        return plgcol0(i)
+        plplot_Plframe.plsstrm( s.strm )
+        return plplot_Plframe.plgcol0(i)
 
     def plgcolbg(s):
-        plsstrm( s.strm )
-        return plgcolbg()
+        plplot_Plframe.plsstrm( s.strm )
+        return plplot_Plframe.plgcolbg()
 
     def plhist( s, data, datmin, datmax, nbin, oldwin ):
-        plsstrm( s.strm )
-        plhist( data, datmin, datmax, nbin, oldwin )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plhist( data, datmin, datmax, nbin, oldwin )
 
     def plhls( s, h, l, sat ):
         s.cmd( 'plhls', h, l, sat )
 
     def plhlsrgb(namespace, h, l, s):
-        plsstrm( namespace.strm )
-        return plhlsrgb(h, l, s)
+        plplot_Plframe.plsstrm( namespace.strm )
+        return plplot_Plframe.plhlsrgb(h, l, s)
 
     def pljoin( s, x1, y1, x2, y2 ):
         s.cmd( 'pljoin', x1, y1, x2, y2 )
@@ -1373,19 +1373,19 @@ class PlXframe(Frame):
         s.cmd( 'pllab', xlab, ylab, tlab )
 
     def pllegend(s, opt, position, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols):
-        plsstrm( s.strm )
-        return pllegend(opt, position, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
+        plplot_Plframe.plsstrm( s.strm )
+        return plplot_Plframe.pllegend(opt, position, x, y, plot_width, bg_color, bb_color, bb_style, nrow, ncolumn, opt_array, text_offset, text_scale, text_spacing, test_justification, text_colors, text, box_colors, box_patterns, box_scales, box_line_widths, line_colors, line_styles, line_widths, symbol_colors, symbol_scales, symbol_numbers, symbols)
 
     def pllightsource( s, x, y, z ):
         s.cmd( 'pllightsource', x, y, z )
 
     def plline( s, x, y ):
-        plsstrm( s.strm )
-        plline( x, y )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plline( x, y )
 
     def plline3( s, x, y, z ):
-        plsstrm( s.strm )
-        plline3( x, y, z )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plline3( x, y, z )
 
     def pllsty( s, lin ):
         s.cmd( 'pllsty', lin )
@@ -1393,31 +1393,31 @@ class PlXframe(Frame):
     # map and merridians ommitted.
 
     def plmesh( s, x, y, z, opt ):
-        plsstrm( s.strm )
-        plmesh( x, y, z, opt )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plmesh( x, y, z, opt )
 
     def plmeshc( s, x, y, z, opt, clevel ):
-        plsstrm( s.strm )
-        plmeshc( x, y, z, opt, clevel )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plmeshc( x, y, z, opt, clevel )
 
     def plmtex( s, side, disp, pos, just, text ):
         s.cmd( 'plmtex', side, disp, pos, just, text )
 
     def plot3d( s, x, y, z, opt, side ):
-        plsstrm( s.strm )
-        plot3d( x, y, z, opt, side )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plot3d( x, y, z, opt, side )
 
     def plpoin( s, xs, ys, mark ):
-        plsstrm( s.strm )
-        plpoin( xs, ys, mark )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plpoin( xs, ys, mark )
 
     def plpoin3( s, x, y, z, code ):
-        plsstrm( s.strm )
-        plpoin3( x, y, z, code )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plpoin3( x, y, z, code )
 
     def plpoly3( s, x, y, z, draw, ifcc ):
-        plsstrm( s.strm )
-        plpoly3( x, y, z, draw, ifcc )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plpoly3( x, y, z, draw, ifcc )
 
     def plprec( s, setp, prec ):
         s.cmd( 'plprec', setp, prec )
@@ -1447,25 +1447,25 @@ class PlXframe(Frame):
         s.cmd( 'plsmin', dflt, scale )
 
     def plshade( s, *args ):
-        plsstrm( s.strm )
+        plplot_Plframe.plsstrm( s.strm )
         #apply( plshade, args )
-        plshade(*args)
+        plplot_Plframe.plshade(*args)
 
     def plshades( s, *args ):
-        plsstrm( s.strm )
+        plplot_Plframe.plsstrm( s.strm )
         #apply( plshades, args )
-        plshades(*args)
+        plplot_Plframe.plshades(*args)
 
     def plscmap0(s, r, g, b):
-        plsstrm( s.strm )
-        plscmap0(r, g, b)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plscmap0(r, g, b)
 
     def plscmap0n(s, ncol1):
         s.cmd( 'plscmap0n', ncol1 )
 
     def plscmap1l(s, itype, intensity, coord1, coord2, coord3, *alt_hue_path):
-        plsstrm( s.strm )
-        plscmap1l(itype, intensity, coord1, coord2, coord3, *alt_hue_path)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plscmap1l(itype, intensity, coord1, coord2, coord3, *alt_hue_path)
 
     def plscmap1n(s, ncol1):
         s.cmd( 'plscmap1n', ncol1 )
@@ -1477,12 +1477,12 @@ class PlXframe(Frame):
         s.cmd( 'plscol0a', icol0, r, g, b, a )
 
     def plspal0(s, filename):
-        plsstrm( s.strm )
-        plspal0(filename)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plspal0(filename)
 
     def plspal1(s, filename, interpolate):
-        plsstrm( s.strm )
-        plspal1(filename, interpolate)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plspal1(filename, interpolate)
 
     def plssub( s, nx, ny ):
         s.cmd( 'plssub', nx, ny )
@@ -1493,24 +1493,24 @@ class PlXframe(Frame):
     # plstar and plstart not relevant
 
     def plstring(s, x, y, string):
-        plsstrm( s.strm )
-        plstring(x, y, string)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plstring(x, y, string)
 
     def plstring3(s, x, y, z, string):
-        plsstrm( s.strm )
-        plstring3(x, y, z, string)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plstring3(x, y, z, string)
 
     def plstyl( s, mark, space ):
-        plsstrm( s.strm )
-        plstyl( mark, space )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plstyl( mark, space )
 
     def plsurf3d(s, x, y, z, opt, clevel):
-        plsstrm( s.strm )
-        plsurf3d(x, y, z, opt, clevel)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plsurf3d(x, y, z, opt, clevel)
 
     def plsurf3dl(s, x, y, z, opt, clevel, indexxmin, indexymin, indexymax):
-        plsstrm( s.strm )
-        plsurf3dl(x, y, z, opt, clevel,indexxmin, indexymin, indexymax)
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plsurf3dl(x, y, z, opt, clevel,indexxmin, indexymin, indexymax)
 
     def plsvpa( s, xmin, xmax, ymin, ymax ):
         s.cmd( 'plsvpa', xmin, xmax, ymin, ymax )
@@ -1522,8 +1522,8 @@ class PlXframe(Frame):
         s.cmd( 'plsyax', digmax, digits )
 
     def plsym( s, x, y, code ):
-        plsstrm( s.strm )
-        plsym( x, y, code )
+        plplot_Plframe.plsstrm( s.strm )
+        plplot_Plframe.plsym( x, y, code )
 
     def plszax( s, digmax, digits ):
         s.cmd( 'plszax', digmax, digits )

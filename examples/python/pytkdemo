@@ -5,7 +5,7 @@
 # A Python/Tk script to interactively run the various Python demos.
 
 # Append to effective python path so that can find plplot modules.
-from plplot_python_start import *
+import plplot_python_start
 
 # Python 2 name is Tkinter, Python 3 name is tkinter (sigh).
 import sys
@@ -14,11 +14,22 @@ if sys.version_info[:2] >= (3, 0):
 else:
     from Tkinter import *
 
-from plplot import *
-from Pltk_init import *
+# According to the discussion at
+# <https://stackoverflow.com/questions/437589/how-do-i-unload-reload-a-python-module>
+# reload is just part of Python2, it is part of the imp module (deprecated as of
+# Python 3.4) for Python3 version < 3.4.0, and it is part of the importlib module
+# that is available for Python3 version >= 3.4.0
+
+if sys.version_info[:3] < (3, 0, 0):
+    pass
+elif  sys.version_info[:3] < (3, 4, 0):
+    from imp import reload
+else:
+    from importlib import reload
+
+import Pltk_init
 
 import Plframe
-from Plframe import *
 
 import restore
 import x00
@@ -58,9 +69,9 @@ class DemoApp(Frame):
         s.make_demo_bar( s.f )
 
         #print("Time to register the plframe with the interp...")
-        Pltk_init( s.tk.interpaddr() );
+        Pltk_init.Pltk_init( s.tk.interpaddr() );
 
-        s.plf = PlXframe(s, width="17c", height="17c" )
+        s.plf = Plframe.PlXframe(s, width="17c", height="17c" )
 
         s.f2 = Frame(s)
         s.f2.clone = Button( s.f2, text="Clone", command=s.clone )
