@@ -41,14 +41,15 @@ cd "$SOURCE_TREE"
 # Remove trailing blanks and tabs on all files in source tree with the following exceptions.
 # * Exclude all files in the .git tree (don't want to mess with our repository).
 # * Exclude all binary files recognized in .gitattributes.
-# * Exclude all files in the debian, rpm, and lib trees (may review lib later).
+# * Exclude *.pyc binary files recognized in .gitignore.
+# * Exclude all files in the rpm, and lib trees (may review lib later).
 # * Exclude all *.patch files.
 # * Exclude libqhull/src/mem.h (may review this later when epa_build is updated).
 # * Exclude COPYING.LIB (since we want to preserve exact LGPL licensing text).
 # * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
 #   that does generate lines with some trailing blanks).
 
-filelist=$(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|debian/|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
+filelist=$(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|\.pyc|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
 if [ -z "$filelist" ] ; then
     echo "No files found with trailing whitespace"
     exit
