@@ -38,6 +38,7 @@ CONTENTS
 1. OFFICIAL NOTICES FOR USERS
 
 1.1 CMake version compatibility
+1.2 Fortran cruft removal
 
 2. Improvements relative to the previous release
 
@@ -67,6 +68,24 @@ build-system trouble for versions of CMake greater than 3.9.1 ???, the
 first thing you should try is CMake-3.9.1 ??? which has been well-tested
 by PLplot builds.
 
+1.2 Fortran cruft removal
+
+As of PLplot-5.12.0, a new Fortran binding was implemented using the
+powerful capabilities of the Fortran 2003 iso_c_binding module which
+was the replacement for the old binding that was implemented using a
+combination of Fortran and C code.  The new binding is much simpler,
+more consistent, and more standards-compliant than the old binding and
+has some powerful new features (e.g., both single and double
+precisions Fortran floating-point arguments are accepted).  Therefore,
+the new binding is necessarily backwards incompatible with the old
+binding.  For PLplot-5.12.0 we implemented the CMake option
+-DPL_DEPRECATED_fortran=ON to provide temporary deprecated access to
+the old Fortran binding, and that form of backwards compatibility
+continued to be provided for the PLplot-5.13.0 release.  However, it
+appears our users are generally satisfied with the new binding, and we
+no longer want to maintain or test that old binding.  So for this
+release the old binding has been completely removed from our source
+tree.
 ________________________________________________________________
 
 2. Improvements relative to the previous release

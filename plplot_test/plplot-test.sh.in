@@ -258,11 +258,7 @@ fi
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
 cdir="$EXAMPLES_DIR"/c$VC_CTEST_DIRECTORY
 cxxdir="$EXAMPLES_DIR"/c++$VC_CTEST_DIRECTORY
-if [ "@configured_PL_DEPRECATED_fortran@" = "ON" ] ; then
-    fortrandir="$EXAMPLES_DIR"/old_fortran
-else
-    fortrandir="$EXAMPLES_DIR"/fortran
-fi
+fortrandir="$EXAMPLES_DIR"/fortran
 pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
 tclexamplesdir="$EXAMPLES_DIR"/@TCL_TK_SRC_PREFIX@tcl
 tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl

@@ -70,7 +70,6 @@ if(SH_EXECUTABLE)
 
   #Build-tree configuration
   set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
-  set(configured_PL_DEPRECATED_fortran ${PL_DEPRECATED_fortran})
   configure_file(
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
@@ -130,7 +129,6 @@ if(SH_EXECUTABLE)
   set(TCL_TK_SRC_PREFIX)
 
   set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
-  set(configured_PL_DEPRECATED_fortran OFF)
   configure_file(
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install

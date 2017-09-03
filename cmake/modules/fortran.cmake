@@ -22,8 +22,6 @@
 
 # Module for determining Fortran binding configuration options
 
-option(PL_DEPRECATED_fortran "Use deprecated version of Fortran 95 binding and examples" OFF)
-
 # Options to enable Fortran binding
 if(DEFAULT_NO_BINDINGS)
   option(ENABLE_fortran "Enable fortran binding" OFF)

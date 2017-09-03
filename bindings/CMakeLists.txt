@@ -23,11 +23,7 @@
 # python, java, lua, and octave).
 add_subdirectory(swig-support)
 add_subdirectory(c++)
-if(PL_DEPRECATED_fortran)
-  add_subdirectory(old_fortran)
-else(PL_DEPRECATED_fortran)
-  add_subdirectory(fortran)
-endif(PL_DEPRECATED_fortran)
+add_subdirectory(fortran)
 add_subdirectory(${TCL_TK_SRC_PREFIX}tcl tcl)
 add_subdirectory(${TCL_TK_SRC_PREFIX}tk tk)
 add_subdirectory(${TCL_TK_SRC_PREFIX}tk-x-plat tk-x-plat)

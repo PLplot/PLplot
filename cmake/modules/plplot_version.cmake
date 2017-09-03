@@ -81,8 +81,3 @@ set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.2.1)
 
 set(plplotada_SOVERSION 2)
 set(plplotada_VERSION ${plplotada_SOVERSION}.1.1)
-
-# Fixed from now on since this is a frozen library that
-# is only used if PL_DEPRECATED_fortran is ON.
-set(plplotfortranc_SOVERSION 12)
-set(plplotfortranc_VERSION ${plplotfortranc_SOVERSION}.0.0)
