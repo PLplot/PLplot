@@ -1,6 +1,6 @@
 # cmake/modules/tk.cmake
 #
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -69,7 +69,7 @@ endif(PLD_tk OR PLD_ntk OR PLD_tkwin)
 
 if(PLD_tk)
   set(tk_COMPILE_FLAGS
-  "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/${TCL_TK_SRC_PREFIX}tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/${TCL_TK_SRC_PREFIX}tk"
+  "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
   )
   set(tk_LINK_FLAGS plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY})
   set(tk_RPATH ${TCL_TK_RPATH})
@@ -78,18 +78,18 @@ if(PLD_tk)
     # All source that is in libplplottcltk
     set(
     tk_SOURCE
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/tclAPI.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/Pltk_Init.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/plframe.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/plr.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/tcpip.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclAPI.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
     )
     # All source that is in libtclmatrix
     set(
     tk_SOURCE
     ${tk_SOURCE}
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/tclMatrix.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/matrixInit.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMatrix.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/matrixInit.c
     )
     if(ENABLE_itcl)
 	  #note tk_compile flags already has its quote marks
@@ -123,7 +123,7 @@ endif(PLD_ntk)
 
 if(PLD_tkwin)
   set(tkwin_COMPILE_FLAGS
-    "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/${TCL_TK_SRC_PREFIX}tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/${TCL_TK_SRC_PREFIX}tk-x-plat -I\"${CMAKE_SOURCE_DIR}\"/bindings/${TCL_TK_SRC_PREFIX}tk"
+    "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk-x-plat -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
     )
 
   if(USE_TCL_TK_STUBS)
@@ -141,26 +141,26 @@ if(PLD_tkwin)
   message(STATUS "tkwin_RPATH = ${tkwin_RPATH}")
   set(
   tkwin_SOURCE
-  ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk-x-plat/Plplotter_Init.c
-  ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk-x-plat/plplotter.c
+  ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/Plplotter_Init.c
+  ${CMAKE_SOURCE_DIR}/bindings/tk-x-plat/plplotter.c
   )
   if(NOT ENABLE_DYNDRIVERS AND NOT PLD_tk)
     # All source that is in libplplottcltk
     set(
     tkwin_SOURCE
     ${tkwin_SOURCE}
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/tclAPI.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/Pltk_Init.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/plframe.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/plr.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tk/tcpip.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclAPI.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/Pltk_Init.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plframe.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/plr.c
+    ${CMAKE_SOURCE_DIR}/bindings/tk/tcpip.c
     )
     # All source that is in libtclmatrix
     set(
     tkwin_SOURCE
     ${tkwin_SOURCE}
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/tclMatrix.c
-    ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/matrixInit.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/tclMatrix.c
+    ${CMAKE_SOURCE_DIR}/bindings/tcl/matrixInit.c
     )
     if(ENABLE_itcl)
       set(tkwin_COMPILE_FLAGS

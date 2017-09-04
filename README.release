@@ -39,6 +39,7 @@ CONTENTS
 
 1.1 CMake version compatibility
 1.2 Fortran cruft removal
+1.3 Tcl/Tk cruft removal
 
 2. Improvements relative to the previous release
 
@@ -84,8 +85,42 @@ the old Fortran binding, and that form of backwards compatibility
 continued to be provided for the PLplot-5.13.0 release.  However, it
 appears our users are generally satisfied with the new binding, and we
 no longer want to maintain or test that old binding.  So for this
-release the old binding has been completely removed from our source
-tree.
+release the old Fortran binding (and an old set of Fortran standard
+examples that depended on it) has been completely removed from our
+source tree.
+
+1.3 Tcl/Tk cruft removal
+
+As of PLplot-5.12.0, a new Tcl binding was implemented that used the
+"redacted" PLplot API where all dimension arguments for arrays are
+dropped from argument lists since those data are redundant (already
+supplied by the arrays themselves).  As a result of this change, Tcl
+calls to the PLplot API in the old binding such as
+
+$w cmd plline $nsize x y
+
+now have to be replaced in the new binding by
+
+$w cmd plline x y
+
+and similarly for all other Tcl calls to the PLplot API that involve
+array (tclmatrix) arguments.  The advantages of this new binding are
+it is cleaner, it is safer (i.e., automatically self-consistent with
+regard to array dimensions), and it makes our Tcl binding compatible
+with the rest of our bindings.  (The only exception to this is our C++
+binding which currently still uses simple C-style arrays and therefore
+must use the non-redacted form of the PLplot API, but that may also
+change in the future.)  However, the disadvantage of this change is
+our new binding is obviously backwards-incompatible with the old
+binding.  Therefore, for PLplot-5.12.0 we implemented the CMake option
+-DUSE_NON_REDACTED_TCL_TK=ON to provide temporary deprecated access to
+the old Tcl binding, and that form of backwards compatibility
+continued to be provided for the PLplot-5.13.0 release.  However, it
+appears our users are generally satisfied with the new binding, and we
+no longer want to maintain or test that old binding.  So for this
+release the old Tcl binding (and old versions of the Tcl standard
+examples and Tk source code that depended on it) have been completely
+removed from our source tree.
 ________________________________________________________________
 
 2. Improvements relative to the previous release

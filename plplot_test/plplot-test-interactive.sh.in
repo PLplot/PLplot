@@ -1,6 +1,6 @@
 #!@SH_EXECUTABLE@
 # -*- mode: shell-script -*-
-# Copyright (C) 2009-2017 Alan W. Irwin
+# Copyright (C) 2009-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -244,7 +244,7 @@ done
 
 if [ "@ENABLE_tkX@" = "ON" ] ; then
 
-    cd "${SRC_EXAMPLES_DIR}"/@TCL_TK_SRC_PREFIX@tcl
+    cd "${SRC_EXAMPLES_DIR}"/tcl
     plserver <<EOF
 plstdwin .
 plxframe .plw

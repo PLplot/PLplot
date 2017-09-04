@@ -1,7 +1,7 @@
 # examples/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -501,11 +501,7 @@ foreach(language_info ${language_info_LIST} "tk:tk:nothing")
   #message(STATUS "DEBUG: language, subdir = ${language},${subdir}")
   if(ENABLE_${language})
     if(NOT ${language} STREQUAL "plrender")
-      if(${language} STREQUAL "tcl" OR ${language} STREQUAL "tk")
-	add_subdirectory(${TCL_TK_SRC_PREFIX}${subdir} ${subdir})
-      else(${language} STREQUAL "tcl" OR ${language} STREQUAL "tk")
-	add_subdirectory(${subdir})
-      endif(${language} STREQUAL "tcl" OR ${language} STREQUAL "tk")
+      add_subdirectory(${subdir})
     endif(NOT ${language} STREQUAL "plrender")
     get_property(targets_examples_${language} GLOBAL PROPERTY TARGETS_examples_${language})
     get_property(files_examples_${language} GLOBAL PROPERTY FILES_examples_${language})

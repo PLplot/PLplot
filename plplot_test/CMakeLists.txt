@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -124,9 +124,6 @@ if(SH_EXECUTABLE)
     )
 
   # Install-tree configuration of plplot-test.sh and plplot-test-interactive.sh
-  # No Tcl/Tk prefix for these cases.
-  set(SAVE_TCL_TK_SRC_PREFIX ${TCL_TK_SRC_PREFIX})
-  set(TCL_TK_SRC_PREFIX)
 
   set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
   configure_file(
@@ -142,7 +139,6 @@ if(SH_EXECUTABLE)
     @ONLY
     NEWLINE_STYLE UNIX
     )
-  set(TCL_TK_SRC_PREFIX ${SAVE_TCL_TK_SRC_PREFIX})
 
   configure_file(
     test_c.sh.in

@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -119,12 +119,12 @@ if(NOT ENABLE_DYNDRIVERS)
     add_custom_command(
       OUTPUT ${tclgenfiles}
       COMMAND ${TCL_TCLSH}
-      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/pltclgen.tcl
-      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl
       DEPENDS
-      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/pltclgen.tcl
-      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/plapi.tpl
-      ${CMAKE_SOURCE_DIR}/bindings/${TCL_TK_SRC_PREFIX}tcl/tclcmd.tpl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/pltclgen.tcl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/plapi.tpl
+      ${CMAKE_SOURCE_DIR}/bindings/tcl/tclcmd.tpl
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bindings/tcl
       )
   endif(ENABLE_tcl)
