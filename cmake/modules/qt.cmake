@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009-2017 Alan W. Irwin
+# Copyright (C) 2009-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -441,30 +441,43 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
         # case where the hints fail.
       endif(WIN32_AND_NOT_CYGWIN)
 
-      # Further assumption that the sip subdirectory for PyQt4 or
-      # PyQt5 has the respective names "PyQt4" or "PyQt5".  But if
-      # that assumption is wrong, there is a chance for user
-      # workaround and feedback to us as a result of the messages
-      # below.
+      # Here is the MinGW-w64/MSYS2 pyqt sip file location information
+      # from the following results from Arjen's run of "pkgfile -v QtCoremod.sip".
+      # mingw32/mingw-w64-i686-python2-pyqt4 4.11.4-2 /mingw32/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
+      # mingw32/mingw-w64-i686-python2-pyqt5 5.8-1 /mingw32/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
+      # mingw32/mingw-w64-i686-python3-pyqt4 4.11.4-2 /mingw32/share/sip/PyQt4/QtCore/QtCoremod.sip
+      # mingw32/mingw-w64-i686-python3-pyqt5 5.8-1 /mingw32/share/sip/PyQt5/QtCore/QtCoremod.sip
+      # mingw64/mingw-w64-x86_64-python2-pyqt4 4.11.4-2 /mingw64/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
+      # mingw64/mingw-w64-x86_64-python2-pyqt5 5.8-1 /mingw64/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
+      # mingw64/mingw-w64-x86_64-python3-pyqt4 4.11.4-2 /mingw64/share/sip/PyQt4/QtCore/QtCoremod.sip
+      # mingw64/mingw-w64-x86_64-python3-pyqt5 5.8-1 /mingw64/share/sip/PyQt5/QtCore/QtCoremod.sip
+      # The sip_dir_HINTS list (above) and pyqt_NAMES list (below) are derived from this result.
+
+      # I have made the further assumption below that the pyqt_module_name for PyQt4 or
+      # PyQt5 always has the respective name of "PyQt4" or "PyQt5".
+      
       if(ENABLE_pyqt4)
-        set(pyqt_subdirectory PyQt4)
+        set(pyqt_module_name PyQt4)
+        set(pyqt_NAMES Py2-Qt4)
       elseif(ENABLE_pyqt5)
-        set(pyqt_subdirectory PyQt5)
+        set(pyqt_module_name PyQt5)
+        set(pyqt_NAMES Py2-Qt5)
       else(ENABLE_pyqt4)
         # N.B. at this stage either ENABLE_pyqt4 or ENABLE_pyqt4 is
         # true but not both.
         message(AUTHOR_ERROR "Both ENABLE_pyqt4 and ENABLE_pyqt5 are true which should be impossible at this stage in the logic")
       endif(ENABLE_pyqt4)
+      list(APPEND pyqt_NAMES ${pyqt_module_name})
 
-      # Use sip_dir_HINTS to find ${pyqt_subdirectory} directory.
+      # Use pyqt_NAMES and sip_dir_HINTS to find PYQT_SIP_DIR
 
-      find_file(PYQT_SIP_DIR ${pyqt_subdirectory} HINTS ${sip_dir_HINTS})
+      find_file(PYQT_SIP_DIR NAMES ${pyqt_NAMES} HINTS ${sip_dir_HINTS})
 
       message(STATUS "PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
       if(PYQT_SIP_DIR)
         if(EXISTS ${PYQT_SIP_DIR}/QtCore/QtCoremod.sip AND EXISTS ${PYQT_SIP_DIR}/QtGui/QtGuimod.sip AND (ENABLE_pyqt4 OR EXISTS ${PYQT_SIP_DIR}/QtWidgets/QtWidgetsmod.sip))
           execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} -c "from ${pyqt_subdirectory}.QtCore import PYQT_CONFIGURATION; print(PYQT_CONFIGURATION['sip_flags'])"
+            COMMAND ${PYTHON_EXECUTABLE} -c "from ${pyqt_module_name}.QtCore import PYQT_CONFIGURATION; print(PYQT_CONFIGURATION['sip_flags'])"
             OUTPUT_VARIABLE PYQT_SIP_FLAGS
             RESULT_VARIABLE PYQT_SIP_FLAGS_ERR
             OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -473,7 +486,7 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
             # Must change from blank-delimited string to CMake list so that sip
             # COMMAND will work properly with these flags later on.
             string(REGEX REPLACE " " ";" PYQT_SIP_FLAGS "${PYQT_SIP_FLAGS}")
-            message(STATUS "${pyqt_subdirectory}: PYQT_SIP_FLAGS = ${PYQT_SIP_FLAGS}")
+            message(STATUS "${pyqt_module_name}: PYQT_SIP_FLAGS = ${PYQT_SIP_FLAGS}")
           else(NOT PYQT_SIP_FLAGS_ERR)
             message(STATUS
               "WARNING: could not find sip flags so setting ENABLE_pyqt4 / ENABLE_pyqt5 to OFF"
@@ -492,10 +505,10 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
         endif(EXISTS ${PYQT_SIP_DIR}/QtCore/QtCoremod.sip AND EXISTS ${PYQT_SIP_DIR}/QtGui/QtGuimod.sip AND (ENABLE_pyqt4 OR EXISTS ${PYQT_SIP_DIR}/QtWidgets/QtWidgetsmod.sip))
       else(PYQT_SIP_DIR)
         if(ENABLE_pyqt4)
-          message(STATUS "WARNING: The ${pyqt_subdirectory} subdirectory of one of the directories in sip_dir_HINTS = ${sip_dir_HINTS} not found.  Therefore setting  ENABLE_pyqt4 to OFF.  The issue might be you need to install the system package containing QtCore/QtCoremod.sip and QtGui/QtGuimod.sip.  But if those files are installed on your platform, then work around the PLplot build system not being able to find those files by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
+          message(STATUS "WARNING: The ${pyqt_NAMES} subdirectories of one of the directories in sip_dir_HINTS = ${sip_dir_HINTS} not found.  Therefore setting  ENABLE_pyqt4 to OFF.  The issue might be you need to install the system package containing QtCore/QtCoremod.sip and QtGui/QtGuimod.sip.  But if those files are installed on your platform, then work around the PLplot build system not being able to find those files by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
           set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
         elseif(ENABLE_pyqt5)
-          message(STATUS "WARNING: The ${pyqt_subdirectory} subdirectory of one of the directories in sip_dir_HINTS = ${sip_dir_HINTS} not found.  Therefore setting  ENABLE_pyqt5 to OFF. The issue might be you need to install the system package containing QtCore/QtCoremod.sip, QtGui/QtGuimod.sip, and QtWidgets/QtWidgetsmod.sip.  But if those files are installed on your platform, then work around the PLplot build system not being able to find those files by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
+          message(STATUS "WARNING: The ${pyqt_NAMES} subdirectories of one of the directories in sip_dir_HINTS = ${sip_dir_HINTS} not found.  Therefore setting  ENABLE_pyqt5 to OFF. The issue might be you need to install the system package containing QtCore/QtCoremod.sip, QtGui/QtGuimod.sip, and QtWidgets/QtWidgetsmod.sip.  But if those files are installed on your platform, then work around the PLplot build system not being able to find those files by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
           set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
         endif(ENABLE_pyqt4)
       endif(PYQT_SIP_DIR)
