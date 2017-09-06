@@ -38,6 +38,7 @@ set(plplot_LIB_SRCS
   plhist.c
   plimage.c
   plline.c
+  plmap.c
   plmetafile.c
   plot3d.c
   plpage.c
@@ -57,9 +58,7 @@ set(plplot_LIB_SRCS
   pllegend.c
   )
 if(PL_DEPRECATED)
-  list(APPEND plplot_LIB_SRCS pldeprecated.c deprecated_plmap.c)
-  else(PL_DEPRECATED)
-  list(APPEND plplot_LIB_SRCS plmap.c)
+  list(APPEND plplot_LIB_SRCS pldeprecated.c)
 endif(PL_DEPRECATED)
 if(LTDL_WIN32)
   list(APPEND plplot_LIB_SRCS ltdl_win32.c)

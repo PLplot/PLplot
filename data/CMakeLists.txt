@@ -88,15 +88,6 @@ if(HAVE_SHAPELIB)
     ss/ss64ne_Water_Line.shp
     ss/ss64ne_Water_Line.shx
     )
-
-else(HAVE_SHAPELIB)
-  set(data_DATAFILES
-    ${data_DATAFILES}
-    cglobe.map
-    globe.map
-    usa.map
-    usaglobe.map
-    )
 endif(HAVE_SHAPELIB)
 
 install(FILES ${data_DATAFILES} DESTINATION ${DATA_DIR})

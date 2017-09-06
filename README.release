@@ -40,6 +40,7 @@ CONTENTS
 1.1 CMake version compatibility
 1.2 Fortran cruft removal
 1.3 Tcl/Tk cruft removal
+1.4 plmap cruft removal
 
 2. Improvements relative to the previous release
 
@@ -121,6 +122,22 @@ no longer want to maintain or test that old binding.  So for this
 release the old Tcl binding (and old versions of the Tcl standard
 examples and Tk source code that depended on it) have been completely
 removed from our source tree.
+
+1.4 plmap cruft removal
+
+As of PLplot-5.9.10, a new version of plmap was implemented that used
+shapefile format (accessed via shapelib) for maps.  In addition other
+powerful map API (see the last page of standard example 19) that
+depended on shapelib map data was implemented as well.  However, we
+still made the old plmap implemention that depended on the
+(undocumented) binary format of our *.map files available when the
+user specified -DPL_DEPRECATED=ON, and this arrangement continued
+through PLplot-5.13.0.  However, it appears our users are generally
+satisfied with the new shapefile-based plmap functionality and we no
+longer want to maintain or test that old plmap functionality based on
+the *.map format.  So for this release that old plmap functionality
+and associated *.map files have been completely removed from our
+source tree.
 ________________________________________________________________
 
 2. Improvements relative to the previous release
