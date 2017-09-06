@@ -21,9 +21,6 @@
 # Binary graphical format in lib/nistcd/*.cgm
 *.cgm -text
 
-# Atari 68xxx CPX file (the original binary format in data/*.map)
-*.map -text
-
 # Shapefile binary formats in the data subdirectory tree
 *.dbf -text
 *.prj -text

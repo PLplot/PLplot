@@ -6,7 +6,7 @@
 # "git diff" to make sure you agree with the source file changes generated
 # by this script before committing these generated changes.
 
-# Copyright (C) 2016-2017 Alan W. Irwin
+# Copyright (C) 2016-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -49,7 +49,7 @@ cd "$SOURCE_TREE"
 # * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
 #   that does generate lines with some trailing blanks).
 
-filelist=$(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.map|\.dbf|\.prj|\.shp|\.shx|\.fnt|\.pyc|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
+filelist=$(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.dbf|\.prj|\.shp|\.shx|\.fnt|\.pyc|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
 if [ -z "$filelist" ] ; then
     echo "No files found with trailing whitespace"
     exit
