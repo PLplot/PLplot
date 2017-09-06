@@ -455,7 +455,7 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
 
       # I have made the further assumption below that the pyqt_module_name for PyQt4 or
       # PyQt5 always has the respective name of "PyQt4" or "PyQt5".
-      
+
       if(ENABLE_pyqt4)
         set(pyqt_module_name PyQt4)
         set(pyqt_NAMES Py2-Qt4)
