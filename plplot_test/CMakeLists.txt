@@ -292,23 +292,6 @@ if(SH_EXECUTABLE)
       )
   endif(ENABLE_tcl)
 
-  if(ENABLE_pdl)
-    configure_file(
-      test_pdl.sh.in
-      ${CMAKE_CURRENT_BINARY_DIR}/test_pdl.sh
-      @ONLY
-      NEWLINE_STYLE UNIX
-      )
-    list(APPEND SCRIPTS test_pdl.sh)
-    if(PLD_TEST_DEVICE)
-      add_test(NAME examples_pdl
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=pdl"
-	)
-      list(APPEND examples_compare_DEPENDS examples_pdl)
-    endif(PLD_TEST_DEVICE)
-  endif(ENABLE_pdl)
-
   if(ENABLE_ada)
     configure_file(
       test_ada.sh.in

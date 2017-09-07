@@ -41,6 +41,7 @@ CONTENTS
 1.2 Fortran cruft removal
 1.3 Tcl/Tk cruft removal
 1.4 plmap cruft removal
+1.5 Perl/PDL examples removal
 
 2. Improvements relative to the previous release
 
@@ -138,6 +139,16 @@ longer want to maintain or test that old plmap functionality based on
 the *.map format.  So for this release that old plmap functionality
 and associated *.map files have been completely removed from our
 source tree.
+
+1.5 Perl/PDL examples removal
+
+By historical accident and for just a limited time we actively
+developed a set of standard examples written in Perl/PDL to help test
+Doug Hunt's external PDL::Graphics::PLplot project.  But we have now
+removed those examples from our project since we have long since
+stopped testing PDL::Graphics::PLplot with those examples, and, in any
+case, such examples should be part of PDL::Graphics::PLplot rather
+than PLplot.
 ________________________________________________________________
 
 2. Improvements relative to the previous release

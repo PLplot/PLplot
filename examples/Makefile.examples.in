@@ -2,7 +2,7 @@
 # configured by our CMake-based build system to examples/Makefile.examples
 # in the build tree and installed as examples/Makefile in the install tree.
 
-# Copyright (C) 2004-2017 Alan W. Irwin
+# Copyright (C) 2004-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -126,12 +126,6 @@ test_interactive: c/x01c@EXEEXT@
 @PSC_OCTAVE_COMMENT@	./plplot-test.sh --verbose --front-end=octave --device=psc
 @PSC_OCTAVE_COMMENT@test_noninteractive: x01o.psc
 @PSC_OCTAVE_COMMENT@@COMPARE_COMMENT@compare: x01o.psc
-
-@PSC_PERL_COMMENT@x01pdl.psc: perl/x01.pl
-@PSC_PERL_COMMENT@	@echo Generate Perl/PDL results for psc device
-@PSC_PERL_COMMENT@	./plplot-test.sh --verbose --front-end=pdl --device=psc
-@PSC_PERL_COMMENT@test_noninteractive: x01pdl.psc
-@PSC_PERL_COMMENT@@COMPARE_COMMENT@compare: x01pdl.psc
 
 @PSC_PYTHON_COMMENT@x01p.psc: python/x01
 @PSC_PYTHON_COMMENT@	@echo Generate Python results for psc device

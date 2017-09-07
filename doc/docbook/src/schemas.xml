@@ -22,7 +22,6 @@
   <uri resource="libraries.xml" typeId="DocBook"/>
   <uri resource="ocaml.xml" typeId="DocBook"/>
   <uri resource="os_notes.xml" typeId="DocBook"/>
-  <uri resource="perl.xml" typeId="DocBook"/>
   <uri resource="python.xml" typeId="DocBook"/>
   <uri resource="simple.xml" typeId="DocBook"/>
   <uri resource="tcl.xml" typeId="DocBook"/>

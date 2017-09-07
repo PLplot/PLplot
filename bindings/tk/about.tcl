@@ -58,7 +58,7 @@ other Unices and Windows (2000, XP and Vista).  PLplot is built on
 these platforms using our CMake-based build system.
 
 Language Bindings: The core C PLplot library has language bindings in
-Ada, C/C++/D, Fortran 77/90, Java, Lisp, Lua, OCaml, Octave, Perl,
+Ada, C/C++/D, Fortran 77/90, Java, Lisp, Lua, OCaml, Octave,
 Python, and Tcl/Tk.
 
 File Devices: PLplot has devices that produce files in the CGM, GIF,

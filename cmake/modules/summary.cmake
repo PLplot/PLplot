@@ -1,6 +1,6 @@
 # cmake/modules/summary.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -119,7 +119,6 @@ ENABLE_java:		${ENABLE_java}
 ENABLE_lua:		${ENABLE_lua}
 ENABLE_ocaml:		${ENABLE_ocaml}
 ENABLE_octave:		${ENABLE_octave}
-ENABLE_pdl:		${ENABLE_pdl}
 ENABLE_python:		${ENABLE_python}
 ENABLE_qt:		${ENABLE_qt}")
 

@@ -58,10 +58,6 @@ if(CORE_BUILD)
       set(PSC_OCTAVE_COMMENT "#")
     endif(NOT ENABLE_octave)
 
-    if(NOT ENABLE_pdl)
-      set(PSC_PERL_COMMENT "#")
-    endif(NOT ENABLE_pdl)
-
     if(NOT ENABLE_python)
       set(PSC_PYTHON_COMMENT "#")
     endif(NOT ENABLE_python)
@@ -83,7 +79,6 @@ if(CORE_BUILD)
     set(PSC_JAVA_COMMENT "#")
     set(PSC_OCAML_COMMENT "#")
     set(PSC_OCTAVE_COMMENT "#")
-    set(PSC_PERL_COMMENT "#")
     set(PSC_PYTHON_COMMENT "#")
     set(PSC_TCL_COMMENT "#")
     set(PSC_LUA_COMMENT "#")
@@ -337,7 +332,6 @@ if(CORE_BUILD)
     lua:lua:lua
     ocaml:ocaml:ocaml
     octave:octave:o
-    pdl:perl:pdl
     python:python:p
     tcl:tcl:t
     plrender:c:plm
@@ -1387,7 +1381,6 @@ ENABLE_java:		${ENABLE_java}
 ENABLE_lua:		${ENABLE_lua}
 ENABLE_ocaml:		${ENABLE_ocaml}
 ENABLE_octave:		${ENABLE_octave}
-ENABLE_pdl:		${ENABLE_pdl}
 ENABLE_python:		${ENABLE_python}
 ENABLE_tcl:		${ENABLE_tcl}
 

@@ -54,7 +54,7 @@ came to be.
 In which [language(s)|platform(s)] is PLplot developed?
 
 PLplot is developed in primarily C, with language bindings for Ada, C++,
-D, Fortran, Java, Lua, Perl, Python, OCaml, Octave and Tcl/Tk. Every effort
+D, Fortran, Java, Lua, Python, OCaml, Octave and Tcl/Tk. Every effort
 is made to support the Linux, OS-X, and Windows platforms.
 
 Also answering the question from the human language perspective,

@@ -2,6 +2,7 @@
 # Test suite to compare C examples with other language bindings
 #
 # Copyright (C) 2008 Andrew Ross
+# Copyright (C) 2008-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -82,9 +83,8 @@ else
     firstpage=""
 fi
 
-# Compare C results with c++, fortran, java, octave, python, tcl, perl,
-# ada, ocaml, lua and d results
-for lang in c++ fortran java octave python tcl perl adastandard adatraditional ocaml lua d plrender; do
+# Compare C results with the following list of languages
+for lang in c++ fortran java octave python tcl adastandard adatraditional ocaml lua d plrender; do
   # Check which suffix is used for this binding
   case $lang in
 	c++)
@@ -110,10 +110,6 @@ for lang in c++ fortran java octave python tcl perl adastandard adatraditional o
 	tcl)
 	    xsuffix=
 	    suffix=t
-	    ;;
-	perl)
-	    xsuffix=
-	    suffix=pdl
 	    ;;
 	adastandard)
 	    xsuffix=standard

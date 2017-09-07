@@ -1,6 +1,6 @@
 # cmake/modules/plplot.cmake
 #
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -491,7 +491,6 @@ include(python)
 include(octave)
 # tcl-related must come after c++ and fortran because of use of filter_rpath
 include(tcl-related)
-include(pdl)
 include(ada)
 # OCaml support is included after the check for output drivers in order to
 # check for extcairo support.

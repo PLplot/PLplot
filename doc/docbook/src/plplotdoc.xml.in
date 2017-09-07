@@ -4,7 +4,7 @@ plplotdoc.xml.in: Master file for the PLplot documentation
 
 Copyright (C) 1994 Maurice J. LeBrun and Geoffrey Furnish
 Copyright (C) 2000-2005 Rafael Laboissiere
-Copyright (C) 2000-2017 Alan W. Irwin
+Copyright (C) 2000-2018 Alan W. Irwin
 Copyright (C) 2001-2003 Joao Cardoso
 Copyright (C) 2004 Andrew Roach
 Copyright (C) 2004-2013 Andrew Ross
@@ -61,7 +61,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY chap-cplus SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/cplus.xml">
 <!ENTITY chap-fortran SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/fortran.xml">
 <!ENTITY chap-ocaml SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/ocaml.xml">
-<!ENTITY chap-perl SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/perl.xml">
 <!ENTITY chap-python SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/python.xml">
 <!ENTITY chap-tcl SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/tcl.xml">
 <!ENTITY chap-wish SYSTEM "@CMAKE_CURRENT_SOURCE_DIR@/wish.xml">
@@ -482,7 +481,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     &chap-cplus;
     &chap-fortran;
     &chap-ocaml;
-    &chap-perl;
     &chap-python;
     &chap-tcl;
     &chap-wish;

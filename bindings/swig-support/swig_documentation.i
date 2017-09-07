@@ -154,8 +154,6 @@ DESCRIPTION:
 
     Redacted form: General: plaxes(x0, y0, xopt, xtick, nxsub, yopt,
     ytick, nysub)
-            Perl/PDL: plaxes(x0, y0, xtick, nxsub, ytick, nysub, xopt,
-    yopt)
 
 
     This function is not used in any examples.
@@ -245,7 +243,6 @@ DESCRIPTION:
     drawing histograms from unbinned data.
 
     Redacted form: General: plbin(x, y, opt)
-            Perl/PDL: plbin(nbin, x, y, opt)
             Python: plbin(nbin, x, y, opt)
 
 
@@ -325,7 +322,6 @@ DESCRIPTION:
     appropriate arguments to zero.
 
     Redacted form: General: plbox(xopt, xtick, nxsub, yopt, ytick, nysub)
-            Perl/PDL: plbox(xtick, nxsub, ytick, nysub, xopt, yopt)
 
 
     This function is used in examples 1, 2, 4, 6, 6-12, 14-18, 21, 23-26,
@@ -409,8 +405,6 @@ DESCRIPTION:
 
     Redacted form: General: plbox3(xopt, xlabel, xtick, nxsub, yopt,
     ylabel, ytick, nysub, zopt, zlabel, ztick, nzsub)
-            Perl/PDL: plbox3(xtick, nxsub, ytick, nysub, ztick, nzsub,
-    xopt, xlabel, yopt, ylabel, zopt, zlabel)
 
 
     This function is used in examples 8, 11, 18, and 21.
@@ -545,7 +539,6 @@ DESCRIPTION:
 
     Redacted form: General: plbtime(year, month, day, hour, min, sec,
     ctime)
-            Perl/PDL: Not available?
 
 
     This function is used in example 29.
@@ -591,7 +584,6 @@ DESCRIPTION:
     from relative device coordinates, rx and ry.
 
     Redacted form: General: plcalc_world(rx, ry, wx, wy, window)
-            Perl/PDL: Not available?
 
 
     This function is used in example 31.
@@ -652,7 +644,6 @@ DESCRIPTION:
     pladv(n).
 
     Redacted form: General: plclear()
-            Perl/PDL: Not available?
 
 
     This function is not used in any examples.
@@ -927,7 +918,6 @@ DESCRIPTION:
 
     Redacted form: General: plconfigtime(scale, offset1, offset2,
     ccontrol, ifbtime_offset, year, month, day, hour, min, sec)
-            Perl/PDL: Not available?
 
 
     This function is used in example 29.
@@ -1141,7 +1131,6 @@ DESCRIPTION:
 
     Redacted form: General: plctime(year, month, day, hour, min, sec,
     ctime)
-            Perl/PDL: Not available?
 
 
     This function is used in example 29.
@@ -1443,7 +1432,6 @@ DESCRIPTION:
     (settable using plsmin).
 
     Redacted form: General: plerrx(xmin, ymax, y)
-            Perl/PDL: plerrx(n, xmin, xmax, y)
 
 
     This function is used in example 29.
@@ -1479,7 +1467,6 @@ DESCRIPTION:
     (settable using plsmin).
 
     Redacted form: General: plerry(x, ymin, ymax)
-            Perl/PDL: plerry(n, x, ymin, ymax)
 
 
     This function is used in example 29.
@@ -1567,7 +1554,6 @@ DESCRIPTION:
     plfill3 will fill in between them.
 
     Redacted form: General: plfill3(x, y, z)
-            Perl/PDL: plfill3(n, x, y, z)
 
 
     This function is used in example 15.
@@ -2333,7 +2319,6 @@ DESCRIPTION:
     which can have one parameter specified in argument data.
 
     Redacted form: General: plgriddata(x, y, z, xg, yg, zg, type, data)
-            Perl/PDL: Not available?
             Python: zg=plgriddata(x, y, z, xg, yg, type, data)
 
 
@@ -2492,7 +2477,6 @@ DESCRIPTION:
     Get viewport limits in normalized device coordinates.
 
     Redacted form: General: plgvpd(p_xmin, p_xmax, p_ymin, p_ymax)
-            Perl/PDL: Not available?
 
 
     This function is used in example 31.
@@ -2526,7 +2510,6 @@ DESCRIPTION:
     Get viewport limits in world coordinates.
 
     Redacted form: General: plgvpw(p_xmin, p_xmax, p_ymin, p_ymax)
-            Perl/PDL: Not available?
 
 
     This function is used in example 31.
@@ -2706,7 +2689,6 @@ DESCRIPTION:
     Convert HLS color coordinates to RGB.
 
     Redacted form: General: plhlsrgb(h, l, s, p_r, p_g, p_b)
-            Perl/PDL: Not available? Implemented as plhls?
 
 
     This function is used in example 2.
@@ -3866,7 +3848,6 @@ DESCRIPTION:
     relative to the viewport is set by disp and pos.
 
     Redacted form: General: plmtex(side, disp, pos, just, text)
-            Perl/PDL: plmtex(disp, pos, just, side, text)
 
 
     This function is used in examples 3, 4, 6-8, 11, 12, 14, 18, 23, and
@@ -4049,7 +4030,6 @@ DESCRIPTION:
     top.
 
     Redacted form: General: plot3dc(x, y, z, opt, clevel)
-            Perl/PDL: Not available?
 
 
     This function is used in example 21.
@@ -4123,7 +4103,6 @@ DESCRIPTION:
 
     Redacted form: General: plot3dcl(x, y, z, opt, clevel, indexxmin,
     indexymin, indexymax)
-            Perl/PDL: Not available?
 
 
     This function is not used in any example.
@@ -4232,7 +4211,6 @@ DESCRIPTION:
     mode argument.
 
     Redacted form: General: plparseopts(argv, mode)
-            Perl/PDL: Not available?
 
 
     This function is used in all of the examples.
@@ -4280,7 +4258,6 @@ DESCRIPTION:
     spacing in micrometers.  (See also plpsty)
 
     Redacted form: General: plpat(inc, del)
-            Perl/PDL: plpat(nlin, inc, del)
 
 
     This function is used in example 15.
@@ -4742,7 +4719,6 @@ DESCRIPTION:
     Convert RGB color coordinates to HLS
 
     Redacted form: General: plrgbhls(r, g, b, p_h, p_l, p_s)
-            Perl/PDL: Not available? Implemented as plrgb/plrgb1?
 
 
     This function is used in example 2.
@@ -5659,7 +5635,6 @@ DESCRIPTION:
 
 
     Redacted form: General: plsesc(esc)
-            Perl/PDL: Not available?
 
 
     This function is used in example 29.
@@ -5747,7 +5722,6 @@ DESCRIPTION:
     more user-friendly API for setting the font characterisitics.
 
     Redacted form: General: plsfci(fci)
-            Perl/PDL: Not available?
 
 
     This function is used in example 23.
@@ -5843,9 +5817,6 @@ DESCRIPTION:
 
     Redacted form: General: plshades(a, defined, xmin, xmax, ymin, ymax,
     clevel, fill_width, cont_color, cont_width, fill, rectangular, pltr,
-    pltr_data)
-            Perl/PDL: plshades(a, xmin, xmax, ymin, ymax, clevel,
-    fill_width, cont_color, cont_width, fill, rectangular, defined, pltr,
     pltr_data)
 
 
@@ -6539,7 +6510,6 @@ DESCRIPTION:
     pladv is used to advance from one subpage to the next.
 
     Redacted form: General: plstart(devname, nx, ny)
-            Perl/PDL: plstart(nx, ny, devname)
 
 
     This function is not used in any examples.
@@ -6725,9 +6695,6 @@ DESCRIPTION:
     Redacted form: General: plstripc(id, xspec, yspec, xmin, xmax, xjump,
     ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline,
     styline, legline, labx, laby, labz)
-            Perl/PDL: plstripc(xmin, xmax, xjump, ymin, ymax, xlpos,
-    ylpos, y_ascl, acc, colbox, collab, colline, styline, id, xspec,
-    ypsec, legline, labx, laby, labtop)
 
 
     This function is used in example 17.

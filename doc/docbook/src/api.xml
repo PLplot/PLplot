@@ -3,7 +3,7 @@
     api.xml: "The Common API for PLplot" chapter
 
 Copyright (C) 1994  Geoffrey Furnish and Maurice LeBrun
-Copyright (C) 1999-2017 Alan W. Irwin
+Copyright (C) 1999-2018 Alan W. Irwin
 Copyright (C) 1999, 2000, 2001, 2002, 2003, 2004  Rafael Laboissiere
 Copyright (C) 2003  Joao Cardoso
 Copyright (C) 2004, 2007  Andrew Ross
@@ -176,11 +176,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <listitem>
 	<para>
 	  Octave: <function>plline( x', y' );</function>
-	</para>
-      </listitem>
-      <listitem>
-	<para>
-	  Perl/PDL: <function>plline( $x, $y );</function>
 	</para>
       </listitem>
       <listitem>
@@ -814,11 +809,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    General: <function>plaxes(x0, y0, xopt, xtick, nxsub, yopt, ytick, nysub)</function>
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: <function>plaxes(x0, y0, xtick, nxsub, ytick, nysub, xopt, yopt)</function>
-	  </para>
-	</listitem>
       </itemizedlist>
     </para>
 
@@ -956,11 +946,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    General: <function>plbin(x, y, opt)</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: <function>plbin(nbin, x, y, opt)</function>
 	  </para>
 	</listitem>
 	<listitem>
@@ -1253,11 +1238,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    General: <function>plbox(xopt, xtick, nxsub, yopt, ytick, nysub)</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: <function>plbox(xtick, nxsub, ytick, nysub, xopt, yopt)</function>
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -1636,11 +1616,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    General: <function>plbox3(xopt, xlabel, xtick, nxsub, yopt, ylabel, ytick, nysub, zopt, zlabel, ztick, nzsub)</function>
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: <function>plbox3(xtick, nxsub, ytick, nysub, ztick, nzsub, xopt, xlabel, yopt, ylabel, zopt, zlabel)</function>
-	  </para>
-	</listitem>
       </itemizedlist>
     </para>
 
@@ -1786,11 +1761,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    General: <function>plbtime(year, month, day, hour, min, sec, ctime)</function>
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available?
-	  </para>
-	</listitem>
       </itemizedlist>
     </para>
 
@@ -1925,11 +1895,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    General: <function>plcalc_world(rx, ry, wx, wy, window)</function>
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available?
-	  </para>
-	</listitem>
       </itemizedlist>
     </para>
 
@@ -1969,11 +1934,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<listitem>
 	  <para>
 	    General: <function>plclear()</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available?
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -2767,11 +2727,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	    General: <function>plconfigtime(scale, offset1, offset2, ccontrol, ifbtime_offset, year, month, day, hour, min, sec)</function>
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available?
-	  </para>
-	</listitem>
       </itemizedlist>
     </para>
 
@@ -3165,11 +3120,6 @@ time is specified by the following parameters:
 	<listitem>
 	  <para>
 	    General: <function>plctime(year, month, day, hour, min, sec, ctime)</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available?
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -4079,11 +4029,6 @@ time is specified by the following parameters:
 	    General: <function>plerrx(xmin, ymax, y)</function>
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: <function>plerrx(n, xmin, xmax, y)</function>
-	  </para>
-	</listitem>
       </itemizedlist>
     </para>
 
@@ -4177,11 +4122,6 @@ time is specified by the following parameters:
 	<listitem>
 	  <para>
 	    General: <function>plerry(x, ymin, ymax)</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: <function>plerry(n, x, ymin, ymax)</function>
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -4392,11 +4332,6 @@ time is specified by the following parameters:
 	<listitem>
 	  <para>
 	    General: <function>plfill3(x, y, z)</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: <function>plfill3(n, x, y, z)</function>
 	  </para>
 	</listitem>
 	<!--
@@ -6229,11 +6164,6 @@ device support!)
 	</listitem>
 	<listitem>
 	  <para>
-	    Perl/PDL: Not available?
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
 	    Python: <literal><parameter>zg</parameter>=<function>plgriddata(x, y, z, xg, yg, type, data)</function></literal>
 	  </para>
 	</listitem>
@@ -6502,11 +6432,6 @@ device support!)
 	    General: <function>plgvpd(p_xmin, p_xmax, p_ymin, p_ymax)</function>
 	  </para>
 	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available?
-	  </para>
-	</listitem>
       </itemizedlist>
     </para>
 
@@ -6592,11 +6517,6 @@ device support!)
 	<listitem>
 	  <para>
 	    General: <function>plgvpw(p_xmin, p_xmax, p_ymin, p_ymax)</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available?
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -7053,11 +6973,6 @@ device support!)
 	<listitem>
 	  <para>
 	    General: <function>plhlsrgb(h, l, s, p_r, p_g, p_b)</function>
-	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-	    Perl/PDL: Not available? Implemented as plhls?
 	  </para>
 	</listitem>
       </itemizedlist>
@@ -10104,11 +10019,6 @@ device support!)
             General: <function>plmtex(side, disp, pos, just, text)</function>
           </para>
         </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: <function>plmtex(disp, pos, just, side, text)</function>
-          </para>
-        </listitem>
       </itemizedlist>
     </para>
 
@@ -10724,11 +10634,6 @@ device support!)
             General: <function>plot3dc(x, y, z, opt, clevel)</function>
           </para>
         </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: Not available?
-          </para>
-        </listitem>
       </itemizedlist>
     </para>
 
@@ -11073,11 +10978,6 @@ device support!)
             </function>
           </para>
         </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: Not available?
-          </para>
-        </listitem>
       </itemizedlist>
     </para>
 
@@ -11246,11 +11146,6 @@ device support!)
             General: <function>plparseopts(argv, mode)</function>
           </para>
         </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: Not available?
-          </para>
-        </listitem>
       </itemizedlist>
     </para>
 
@@ -11342,11 +11237,6 @@ device support!)
         <listitem>
           <para>
             General: <function>plpat(inc, del)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: <function>plpat(nlin, inc, del)</function>
           </para>
         </listitem>
       </itemizedlist>
@@ -12609,11 +12499,6 @@ device support!)
         <listitem>
           <para>
             General: <function>plrgbhls(r, g, b, p_h, p_l, p_s)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: Not available? Implemented as plrgb/plrgb1?
           </para>
         </listitem>
       </itemizedlist>
@@ -14977,11 +14862,6 @@ device support!)
             General: <function>plsesc(esc)</function>
           </para>
         </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: Not available?
-          </para>
-        </listitem>
       </itemizedlist>
     </para>
 
@@ -15182,11 +15062,6 @@ device support!)
         <listitem>
           <para>
             General: <function>plsfci(fci)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: Not available?
           </para>
         </listitem>
       </itemizedlist>
@@ -15632,11 +15507,6 @@ device support!)
         <listitem>
           <para>
             General: <function>plshades(a, defined, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, fill, rectangular, pltr, pltr_data)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: <function>plshades(a, xmin, xmax, ymin, ymax, clevel, fill_width, cont_color, cont_width, fill, rectangular, defined, pltr, pltr_data)</function>
           </para>
         </listitem>
       </itemizedlist>
@@ -17132,11 +17002,6 @@ device support!)
             General: <function>plstart(devname, nx, ny)</function>
           </para>
         </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: <function>plstart(nx, ny, devname)</function>
-          </para>
-        </listitem>
       </itemizedlist>
     </para>
 
@@ -17859,11 +17724,6 @@ device support!)
         <listitem>
           <para>
             General: <function>plstripc(id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, legline, labx, laby, labz)</function>
-          </para>
-        </listitem>
-        <listitem>
-          <para>
-            Perl/PDL: <function>plstripc(xmin, xmax, xjump, ymin, ymax, xlpos, ylpos, y_ascl, acc, colbox, collab, colline, styline, id, xspec, ypsec, legline, labx, laby, labtop)</function>
           </para>
         </listitem>
       </itemizedlist>

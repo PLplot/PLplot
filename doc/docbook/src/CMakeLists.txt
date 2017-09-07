@@ -3,7 +3,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -91,7 +91,6 @@ set(
   ${CMAKE_CURRENT_SOURCE_DIR}/intro.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/libraries.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/ocaml.xml
-  ${CMAKE_CURRENT_SOURCE_DIR}/perl.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/python.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/simple.xml
   ${CMAKE_CURRENT_SOURCE_DIR}/tcl.xml
