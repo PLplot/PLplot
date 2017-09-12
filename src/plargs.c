@@ -3,7 +3,7 @@
 //
 //  Copyright (C) 1993-2004 Maurice LeBrun
 //  Copyright (C) 2004 Andrew Ross
-//  Copyright (C) 2015 Alan W. Irwin
+//  Copyright (C) 2015-2018 Alan W. Irwin
 //
 //  This file is part of PLplot.
 //
@@ -736,27 +736,6 @@ static DrvOptCmd drv_opt = { NULL, NULL, NULL };
 
 static int       tables = 1;
 
-#ifdef PL_DEPRECATED
-//--------------------------------------------------------------------------
-// plSetOpt()
-//
-//! Process input strings, treating them as an option and argument pair.
-//! Returns 1 on an error.
-//!
-//! @param opt The option.
-//! @param opt_arg The value to set it to.
-//!
-//! @returns 1 on an error.
-//!
-//--------------------------------------------------------------------------
-
-int
-plSetOpt( PLCHAR_VECTOR opt, PLCHAR_VECTOR opt_arg )
-{
-    return ( c_plsetopt( opt, opt_arg ) );
-}
-#endif //#ifdef PL_DEPRECATED
-
 PLINT
 c_plsetopt( PLCHAR_VECTOR opt, PLCHAR_VECTOR opt_arg )
 {
@@ -775,7 +754,7 @@ c_plsetopt( PLCHAR_VECTOR opt, PLCHAR_VECTOR opt_arg )
     status = plparseopts( &argc, argv, mode );
     if ( status )
     {
-        fprintf( stderr, "plSetOpt: Unrecognized option %s\n", opt );
+        fprintf( stderr, "plsetopt: Unrecognized option %s\n", opt );
     }
     return status;
 }

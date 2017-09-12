@@ -844,8 +844,6 @@ plSetUsage(const char *program_string, const char *usage_string);
 c_plsetopt(const char *opt, const char *optarg);
 
 /*
- PLINT
-plSetOpt(const char *opt, const char *optarg);
 
  PLINT
 c_plparseopts(int *p_argc, char **argv, PLINT mode);

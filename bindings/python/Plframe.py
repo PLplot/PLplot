@@ -1359,9 +1359,6 @@ class PlXframe(Frame):
         plplot_Plframe.plsstrm( s.strm )
         plplot_Plframe.plhist( data, datmin, datmax, nbin, oldwin )
 
-    def plhls( s, h, l, sat ):
-        s.cmd( 'plhls', h, l, sat )
-
     def plhlsrgb(namespace, h, l, s):
         plplot_Plframe.plsstrm( namespace.strm )
         return plplot_Plframe.plhlsrgb(h, l, s)
@@ -1430,12 +1427,6 @@ class PlXframe(Frame):
 
     def plreplot( s ):
         s.cmd( 'plreplot' )
-
-    def plrgb( s, r, g, b ):
-        s.cmd( 'plrgb', r, g, b )
-
-    def plrgb1( s, r, g, b ):
-        s.cmd( 'plrgb1', r, g, b )
 
     def plschr( s, dflt, scale ):
         s.cmd( 'plschr', dflt, scale )

@@ -6,10 +6,10 @@
 //  things to the externally callable C function names.  This shouldn't
 //  affect any user programs in C as long as this file is included.
 //
-//  Copyright (C) 1992  Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-//  Copyright (C) 2004-2017  Alan W. Irwin
-//  Copyright (C) 2004  Rafael Laboissiere
-//  Copyright (C) 2004  Andrew Ross
+//  Copyright (C) 1992 Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
+//  Copyright (C) 2004-2018 Alan W. Irwin
+//  Copyright (C) 2004 Rafael Laboissiere
+//  Copyright (C) 2004 Andrew Ross
 //
 //  This file is part of PLplot.
 //
@@ -392,16 +392,6 @@ typedef PLINT ( *PLDEFINED_callback )( PLFLT x, PLFLT y );
 #define PL_FCI_MEDIUM                 0x0
 #define PL_FCI_BOLD                   0x1
 
-#ifdef PL_DEPRECATED
-
-// Obsolete names
-
-#define plParseInternalOpts( a, b, c )    c_plparseopts( a, b, c )
-#define plSetInternalOpt( a, b )          c_plsetopt( a, b )
-
-#endif  // PL_DEPRECATED
-
-
 // Option table definition
 
 typedef struct
@@ -745,9 +735,6 @@ typedef struct
 #define    plgyax                   c_plgyax
 #define    plgzax                   c_plgzax
 #define    plhist                   c_plhist
-#ifdef PL_DEPRECATED
-#define    plhls                    c_plhls
-#endif
 #define    plhlsrgb                 c_plhlsrgb
 #define    plimage                  c_plimage
 #define    plimagefr                c_plimagefr
@@ -785,10 +772,6 @@ typedef struct
 #define    plptex3                  c_plptex3
 #define    plrandd                  c_plrandd
 #define    plreplot                 c_plreplot
-#ifdef PL_DEPRECATED
-#define    plrgb                    c_plrgb
-#define    plrgb1                   c_plrgb1
-#endif
 #define    plrgbhls                 c_plrgbhls
 #define    plschr                   c_plschr
 #define    plscmap0                 c_plscmap0
@@ -862,9 +845,6 @@ typedef struct
 #define    plvpor                   c_plvpor
 #define    plvsta                   c_plvsta
 #define    plw3d                    c_plw3d
-#ifdef PL_DEPRECATED
-#define    plwid                    c_plwid
-#endif
 #define    plwidth                  c_plwidth
 #define    plwind                   c_plwind
 #define    plxormod                 c_plxormod
@@ -872,29 +852,6 @@ typedef struct
 #endif  // __PLSTUBS_H__
 
 #endif  // BRAINDEAD
-
-// Redefine some old function names for backward compatibility
-
-#ifndef __PLSTUBS_H__   // i.e. do not expand this in the stubs
-
-#ifdef PL_DEPRECATED
-
-#define    plclr      pleop
-#define    plpage     plbop
-#define    plcol      plcol0
-#define    plcontf    plfcont
-// Comment out these as they can upset the C++ bindings since the C++
-// bindings use the function names without the pl prefix.
-//#define    Alloc2dGrid     plAlloc2dGrid
-//#define    Free2dGrid      plFree2dGrid
-//#define    MinMax2dGrid    plMinMax2dGrid
-#define    plP_gvpd    plgvpd
-#define    plP_gvpw    plgvpw
-#define    plotsh3d( x, y, z, nx, ny, opt )    plsurf3d( x, y, z, nx, ny, opt, NULL, 0 )
-
-#endif // PL_DEPRECATED
-
-#endif // __PLSTUBS_H__
 
 //--------------------------------------------------------------------------
 //		Function Prototypes
@@ -2100,13 +2057,6 @@ c_plw3d( PLFLT basex, PLFLT basey, PLFLT height, PLFLT xmin,
          PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin,
          PLFLT zmax, PLFLT alt, PLFLT az );
 
-#ifdef PL_DEPRECATED
-// Set pen width with deprecated integer width
-
-PLDLLIMPEXP void
-c_plwid( PLINT width );
-#endif
-
 // Set pen width.
 
 PLDLLIMPEXP void
@@ -2329,13 +2279,6 @@ plSetUsage( PLCHAR_VECTOR program_string, PLCHAR_VECTOR usage_string );
 PLDLLIMPEXP PLINT
 c_plsetopt( PLCHAR_VECTOR opt, PLCHAR_VECTOR optarg );
 
-#ifdef PL_DEPRECATED
-
-PLDLLIMPEXP int
-plSetOpt( PLCHAR_VECTOR opt, PLCHAR_VECTOR optarg );
-
-#endif // PL_DEPRECATED
-
 // Process options list using current options info.
 
 PLDLLIMPEXP PLINT
@@ -2431,29 +2374,6 @@ plTranslateCursor( PLGraphicsIn *gin );
 
 PLDLLIMPEXP void
 plsdevdata( PLPointer data );
-
-#ifdef PL_DEPRECATED
-
-// These functions are deprecated and only retained for backwards
-// compatibility - do not use in new code.
-
-// Set current color (map 0) by hue, lightness, and saturation.
-
-PLDLLIMPEXP void
-c_plhls( PLFLT h, PLFLT l, PLFLT s );
-
-// Set line color by red, green, blue from  0. to 1.
-
-PLDLLIMPEXP void
-c_plrgb( PLFLT r, PLFLT g, PLFLT b );
-
-// Set line color by 8 bit RGB values.
-
-PLDLLIMPEXP void
-c_plrgb1( PLINT r, PLINT g, PLINT b );
-
-#endif // PL_DEPRECATED
-
 
 #ifdef __cplusplus
 }

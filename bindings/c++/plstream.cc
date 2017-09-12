@@ -2,8 +2,8 @@
 // Geoffrey Furnish
 // Sep 21 1994
 //
-// Copyright (C) 2004,2005  Andrew Ross
-// Copyright (C) 2004-2014 Alan W. Irwin
+// Copyright (C) 2004,2005 Andrew Ross
+// Copyright (C) 2004-2018 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -985,15 +985,6 @@ void plstream::hist( PLINT n, const PLFLT *data, PLFLT datmin, PLFLT datmax,
 
 // Set current color (map 0) by hue, lightness, and saturation.
 
-#ifdef PL_DEPRECATED
-void plstream::hls( PLFLT h, PLFLT l, PLFLT s )
-{
-    set_stream();
-
-    plhls( h, l, s );
-}
-#endif // PL_DEPRECATED
-
 // Initializes PLplot, using preset or default options
 
 void plstream::init()
@@ -1438,28 +1429,6 @@ void plstream::replot()
 
     plreplot();
 }
-
-// Set line color by red, green, blue from  0. to 1.
-
-#ifdef PL_DEPRECATED
-void plstream::rgb( PLFLT r, PLFLT g, PLFLT b )
-{
-    set_stream();
-
-    plrgb( r, g, b );
-}
-#endif // PL_DEPRECATED
-
-// Set line color by 8 bit RGB values.
-
-#ifdef PL_DEPRECATED
-void plstream::rgb( PLINT r, PLINT g, PLINT b )
-{
-    set_stream();
-
-    plrgb1( r, g, b );
-}
-#endif // PL_DEPRECATED
 
 // Set character height.
 
@@ -2649,16 +2618,6 @@ PLINT plstream::setopt( const char *opt, const char *optarg )
 
     return ::plsetopt( opt, optarg );
 }
-
-// Deprecated version - use setopt instead.
-#ifdef PL_DEPRECATED
-int plstream::SetOpt( const char *opt, const char *optarg )
-{
-    set_stream();
-
-    return ::plsetopt( opt, optarg );
-}
-#endif // PL_DEPRECATED
 
 // Print usage & syntax message.
 

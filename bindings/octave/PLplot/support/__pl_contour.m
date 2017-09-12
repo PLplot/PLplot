@@ -57,7 +57,7 @@ function __pl_contour(x, y, z, n)
     endif
 
     __pl.type(strm) = 0; ## was -3 ??
-    __pl.plcol(strm) = 1;
+    __pl.plcol0(strm) = 1;
     __pl.pllsty(strm) = 1;
     __pl.lab_pos(strm) = 1;
     __pl.lab_str = "";
@@ -85,13 +85,13 @@ function __pl_contour(x, y, z, n)
   endif
 
   for i=1:n
-    plcol0(__pl.plcol(strm)); pllsty(__pl.pllsty(strm));
+    plcol0(__pl.plcol0(strm)); pllsty(__pl.pllsty(strm));
     plcont(z, 1, xlen, 1, ylen, clevel(i), tr);
     __pl.lab_str = [__pl.lab_str; sprintf("%#+.2G", clevel(i))];
-    __pl.lab_col(strm,__pl.lab_pos(strm)) = __pl.plcol(strm);
+    __pl.lab_col(strm,__pl.lab_pos(strm)) = __pl.plcol0(strm);
     __pl.lab_lsty(strm,__pl.lab_pos(strm)) = __pl.pllsty(strm);
     __pl.lab_pos(strm) = __pl.lab_pos(strm) + 1;
-    __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
+    __pl.plcol0(strm) = rem(__pl.plcol0(strm), 15)+1;
     if  (__pl.line_style(strm))
       __pl.pllsty(strm) = rem(__pl.pllsty(strm), 8)+1;
     endif

@@ -54,7 +54,7 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E echo "If this target cannot be built, update the numerical #defines section of bindings/swig-support/plplotcapi.i following the directions in that file"
   COMMAND ${CMAKE_COMMAND} -E remove -f
   ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
-  COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_SOURCE_DIR}/include/plplot.h | grep -v plotsh3d > ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
+  COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_SOURCE_DIR}/include/plplot.h > ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
   COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_CURRENT_SOURCE_DIR}/plplotcapi.i | diff -qw - ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
   VERBATIM
 )

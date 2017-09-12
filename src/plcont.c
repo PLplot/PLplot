@@ -184,7 +184,7 @@ cont_clean_store( CONT_LEVEL *ct )
             cline = clevel->line;
             do
             {
-#ifdef CONT_PLOT_DEBUG // for 2D plots. For 3D plots look at plot3.c:plotsh3di()
+#ifdef CONT_PLOT_DEBUG
                 plP_movwor( cline->x[0], cline->y[0] );
                 for ( j = 1; j < cline->npts; j++ )
                     plP_drawor( cline->x[j], cline->y[j] );
@@ -528,7 +528,7 @@ c_plcont( PLFLT_MATRIX f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
 //
 // Note that the fortran-like minimum and maximum indices (kx, lx, ky, ly)
 // are translated into more C-like ones.  I've only kept them as they are
-// for the plcontf() argument list because of backward compatibility.
+// for the plfcont() argument list because of backward compatibility.
 //--------------------------------------------------------------------------
 
 void

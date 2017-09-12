@@ -81,7 +81,7 @@ function __pl_plotit
   ## start from the beginning
 
   if (__pl.items(strm) != 1)
-    __pl.plcol(strm) = 1;
+    __pl.plcol0(strm) = 1;
     __pl.pllsty(strm) = 1;
     __pl.lab_pos(strm) = 1;
     __pl.lab_sym(strm,:) = 0;
@@ -128,7 +128,7 @@ function __pl_plotit
     endif
 
     if (color != 20)
-      __pl.plcol(strm) = color;
+      __pl.plcol0(strm) = color;
     endif
 
     xc = columns(x); yc = columns(y);
@@ -148,7 +148,7 @@ function __pl_plotit
 	if (is_strmatrix(fmt) && !is_strvector(fmt))
 	  [style, color, symbol, key_title] = __pl_opt(fmt(rem(j-1,rows(fmt))+1,:));
 	  if (color != 20)
-	    __pl.plcol(strm) = color;
+	    __pl.plcol0(strm) = color;
 	  endif
 	endif
 
@@ -178,7 +178,7 @@ function __pl_plotit
 	  else
 	    __pl.lab_str = [__pl.lab_str; lab];
 	  endif
-	  __pl.lab_col(strm, __pl.lab_pos(strm)) = __pl.plcol(strm);
+	  __pl.lab_col(strm, __pl.lab_pos(strm)) = __pl.plcol0(strm);
 	  __pl.lab_lsty(strm, __pl.lab_pos(strm)) = __pl.pllsty(strm);
 	  __pl.lab_pos(strm) = __pl.lab_pos(strm)+1;
 
@@ -190,8 +190,8 @@ function __pl_plotit
 	endif
 
 	if (lab != "") ## log plots may have a CTRL-A as the label plot
-	  plcol0(__pl.plcol(strm));
-	  __pl.plcol(strm) = rem(__pl.plcol(strm), 15)+1;
+	  plcol0(__pl.plcol0(strm));
+	  __pl.plcol0(strm) = rem(__pl.plcol0(strm), 15)+1;
 	  pllsty(__pl.pllsty(strm));
 	  if  (__pl.line_style(strm))
 	    __pl.pllsty(strm) = rem(__pl.pllsty(strm), 8)+1;

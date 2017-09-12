@@ -48,7 +48,7 @@
 //!
 //!   PLFLT **z;
 //!
-//!   Alloc2dGrid(&z, XPTS, YPTS);
+//!   plAlloc2dGrid(&z, XPTS, YPTS);
 //!
 //! @param f Location of the storage (address of a **).
 //! @param nx Size of the grid in x.
@@ -72,9 +72,9 @@ plAlloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 }
 
 //--------------------------------------------------------------------------
-// Free2dGrid()
+// plFree2dGrid()
 //
-//! Frees a block of memory allocated with Alloc2dGrid().
+//! Frees a block of memory allocated with plAlloc2dGrid().
 //!
 //! @param f The [][] to the storage.
 //! @param nx Size of the grid in x.
@@ -93,9 +93,9 @@ plFree2dGrid( PLFLT **f, PLINT nx, PLINT PL_UNUSED( ny ) )
 }
 
 //--------------------------------------------------------------------------
-// MinMax2dGrid()
+// plMinMax2dGrid()
 //
-//! Finds the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
+//! Finds the maximum and minimum of a 2d matrix allocated with plAlloc2dGrid().
 //! NaN and +/- infinity values are ignored.
 //!
 //! param f 2d matrix pointer.

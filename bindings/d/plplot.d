@@ -1438,7 +1438,6 @@ alias c_plgxax         plgxax;
 alias c_plgyax         plgyax;
 alias c_plgzax         plgzax;
 //alias c_plhist plhist;
-alias c_plhls          plhls;
 alias c_plhlsrgb       plhlsrgb;
 //alias c_plimage plimage;
 //alias c_plimagefr plimagefr;
@@ -1472,8 +1471,6 @@ alias c_plpsty plpsty;
 //alias c_plptex3 plptex3;
 alias c_plrandd  plrandd;
 alias c_plreplot plreplot;
-alias c_plrgb    plrgb;
-alias c_plrgb1   plrgb1;
 alias c_plrgbhls plrgbhls;
 alias c_plschr   plschr;
 //alias c_plscmap0 plscmap0;
@@ -1546,20 +1543,6 @@ alias c_plwidth  plwidth;
 alias c_plwind   plwind;
 
 alias c_plxormod plxormod;
-
-
-// Redefine some old function names for backward compatibility
-
-
-alias pleop          plclr;
-alias plbop          plpage;
-alias plcol0         plcol;
-alias plfcont        plcontf;
-alias plAlloc2dGrid  Alloc2dGrid;
-alias plFree2dGrid   Free2dGrid;
-alias plMinMax2dGrid MinMax2dGrid;
-alias plgvpd         plP_gvpd;
-alias plgvpw         plP_gvpw;
 
 
 //--------------------------------------------------------------------------* *		Function Prototypes
@@ -1810,9 +1793,6 @@ const PL_HIST_NOEMPTY         = 16;
 // Draws a histogram of n values of a variable in array data[0..n-1]
 void c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt );
 
-// Set current color (map 0) by hue, lightness, and saturation.
-void c_plhls( PLFLT h, PLFLT l, PLFLT s );
-
 // Functions for converting between HLS and RGB color space
 void c_plhlsrgb( PLFLT h, PLFLT l, PLFLT s, PLFLT *p_r, PLFLT *p_g, PLFLT *p_b );
 
@@ -2030,14 +2010,6 @@ PLFLT c_plrandd();
 
 // Replays contents of plot buffer to current device/file.
 void c_plreplot();
-
-// Set line color by red, green, blue from  0. to 1.
-
-void  c_plrgb( PLFLT r, PLFLT g, PLFLT b );
-
-// Set line color by 8 bit RGB values.
-
-void  c_plrgb1( PLINT r, PLINT g, PLINT b );
 
 // Functions for converting between HLS and RGB color space
 

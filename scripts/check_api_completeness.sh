@@ -8,16 +8,9 @@
 # Prepare API list from include/plplot.h to be compared with all others.
 # Be sure to remove officially deprecated functions.
 grep '^#define.*pl.*c_pl' include/plplot.h |\
-grep -v plParseInternalOpts |\
 tr '\t' " " |\
 tr -s " " |\
 cut --delimiter=" " --fields=2 |\
-grep -v 'plclr$' |\
-grep -v 'plcol$' |\
-grep -v 'plhls$' |\
-grep -v 'plpage$' |\
-grep -v 'plrgb$' |\
-grep -v 'plrgb1$' |\
 sort \
 >| /tmp/plplot_api.txt
 
@@ -60,9 +53,6 @@ case $1 in
     grep -v pltr0f |\
     grep -v pltr2f |\
     grep -v pltr2p |\
-    grep -v 'plhls$' |\
-    grep -v 'plrgb$' |\
-    grep -v 'plrgb1$' |\
     sort |\
     diff -au /tmp/plplot_api.txt -
   ;;
@@ -73,13 +63,11 @@ case $1 in
     echo "java API differences (if any)"
     # The grep -v '[A-Z]' stanza gets rid of some of the non-public API that
     # is exposed.
-    # Also get rid of the deprecated plhls from the comparison.
     grep 'plplotjavac.pl.*(' bindings/java/PLStream.java |\
     cut --delimiter='(' --fields=1 |\
     cut --delimiter='.' --fields=2 |\
     sort -u |\
     grep -v '[A-Z]' |\
-    grep -v 'plhls$' |\
     diff -au /tmp/plplot_api.txt -
   ;;
 
@@ -91,13 +79,10 @@ case $1 in
     # that paranthesis and any trailing "_", and "7".  We then do a unique
     # sort to get rid of duplicates, and specifically exclude some added special
     # fortran functions (whose original form may have had a "7" appended).
-    # We also remove the plhls, plrgb, and plrgb1 deprecated functions.
     grep 'FNAME.*,pl.*)' bindings/fortran/plstubs.h |\
     cut --delimiter="," --fields=2 |\
     sed -e 's?)??' -e 's?_$??' -e 's?7$??' |\
     sort -u |\
-    grep -v plclr |\
-    grep -v 'plcol$' |\
     grep -v plcon0 |\
     grep -v plcon1 |\
     grep -v plcon2 |\
@@ -111,9 +96,6 @@ case $1 in
     grep -v plvec0 |\
     grep -v plvec1 |\
     grep -v plvec2 |\
-    grep -v 'plhls$' |\
-    grep -v 'plrgb$' |\
-    grep -v 'plrgb1$' |\
     diff -au /tmp/plplot_api.txt -
   ;;
 

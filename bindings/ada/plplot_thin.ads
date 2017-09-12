@@ -1007,13 +1007,6 @@ package PLplot_Thin is
     pragma Import(C, plhist, "c_plhist");
 
 
-    -- Set current color (map 0) by hue, lightness, and saturation.
-
-    -- procedure
-    -- plhls(h : PLFLT; l : PLFLT; s : PLFLT);
-    -- pragma Import(C, plhls, "c_plhls");
-
-
     -- Functions for converting between HLS and RGB color space
 
     procedure
@@ -1399,20 +1392,6 @@ package PLplot_Thin is
     procedure
     plreplot;
     pragma Import(C, plreplot, "c_plreplot");
-
-
-    -- Set line color by red, green, blue from  0. to 1.
-
-    -- procedure
-    -- plrgb(r : PLFLT; g : PLFLT; b : PLFLT);
-    -- pragma Import(C, plrgb, "c_plrgb");
-
-
-    -- Set line color by 8 bit RGB values.
-
-    -- procedure
-    -- plrgb1(r : PLINT; g : PLINT; b : PLINT);
-    -- pragma Import(C, plrgb1, "c_plrgb1");
 
 
     -- Functions for converting between HLS and RGB color space

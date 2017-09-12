@@ -19,20 +19,5 @@ function arrows( X, Y, dx, dy)
 
   __pl_init;
 
-  if(0)
-    of = do_fortran_indexing; do_fortran_indexing = 1;
-    for i = 1:rows(X)*columns(X)
-      xx = [X(i); X(i) + dx(i)];
-      yy = [Y(i); Y(i) + dy(i)];
-      plline(xx,yy); plpoin(X(i) + dx(i),  Y(i) + dy(i), 20);
-    endfor
-    plflush; pleop;
-    do_fortran_indexing = of;
-  else
-#    for i = 1:columns(X)
-#      plarrows(dx(:,i), dy(:,i), X(:,i), Y(:,i), 1, 1, 1);
-#    endfor
-     plvect2(dx,dy,1,X,Y);
-  endif
-
+  plvect2(dx,dy,1,X,Y);
 endfunction

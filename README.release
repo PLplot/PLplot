@@ -149,6 +149,28 @@ removed those examples from our project since we have long since
 stopped testing PDL::Graphics::PLplot with those examples, and, in any
 case, such examples should be part of PDL::Graphics::PLplot rather
 than PLplot.
+
+1.6 Remove all officially deprecated functions
+
+I removed plParseInternalOpts, plSetInternalOpt, plclr, plpage, plcol,
+plcontf, plP_gvpd, plP_gvpw, plotsh3d, plSetOpt, plrgb, plrgb1, plhls,
+and plwid.  These functions were officially deprecated (i.e., only
+accessible if the user specifed the -DPL_DEPRECATED=ON cmake option)
+as of the PLplot-5.9.10 release (and in some cases even before that
+release) so it is long past the time to remove them.  I also edited
+the source tree files to remove all mentions of these functions (as well
+as plParseOpts, plHLS_RGB, plRGB_HLS, and plarrows that had
+been previously removed).  As a result
+
+find . -type f |grep -v .git |xargs grep -E 'plParseInternalOpts|plSetInternalOpt|plclr|plpage|plcol|plcontf|plP_gvpd|plP_gvpw|plotsh3d|plSetOpt|plrgb|plrgb1|plhls|plwid' |grep -vE 'plcol0|plcol1|plcolorbar' |less
+
+and
+
+find . -type f |grep -v .git |xargs grep -E 'plParseOpts|plHLS_RGB|plRGB_HLS|plarrows' |less
+
+now only find non-relevant hits or else hits for historical references
+(e.g., change logs and release notes) to these functions.
+
 ________________________________________________________________
 
 2. Improvements relative to the previous release

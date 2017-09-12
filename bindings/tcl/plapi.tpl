@@ -476,13 +476,6 @@ oldwin	PLINT
 !consistency {n <= sz(data)} {Length of the vector must be at least n}
 !consistency {type(data) == TYPE_FLOAT} {The vector must be of type float}
 
-# Set current color (map 0) by hue, lightness, and saturation.
-
-#pltclcmd plhls void
-#h	PLFLT
-#l	PLFLT
-#s	PLFLT
-
 # Function to transform from HLS to RGB color space.
 
 pltclcmd plhlsrgb void
@@ -669,20 +662,6 @@ text	const char *
 # Replays contents of plot buffer to current device/file.
 
 pltclcmd plreplot void
-
-# Set line color by red, green, blue from  0. to 1.
-
-#pltclcmd plrgb void
-#r	PLFLT
-#g	PLFLT
-#b	PLFLT
-
-# Set line color by 8 bit RGB values.
-
-#pltclcmd plrgb1 void
-#r	PLINT
-#g	PLINT
-#b	PLINT
 
 # Function to transform from RGB to HLS color space.
 

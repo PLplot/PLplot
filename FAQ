@@ -1314,7 +1314,7 @@ an HP 720 color console and graphics speed is usually not a problem :-).
 >            I'd like this to read SuperCode
 
 It uses the name of the main window if nothing else is set.  You can set
-it two ways.  One, use plParseOpts to parse your command line, then it
+it two ways.  One, use plparseopts to parse your command line, then it
 will use argv[0] out of that list.  Two, just glom pls->program directly,
 via:
 

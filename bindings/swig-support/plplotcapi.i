@@ -1063,12 +1063,6 @@ plMergeOpts( PLOptionTable *options, const char *name, const char **notes );
 void
 plSetUsage( const char *program_string, const char *usage_string );
 
-#if 0
-// This is wrapped by common API plsetopt so ignore.
-PLINT
-plSetOpt( const char *opt, const char *optarg );
-#endif
-
 // Print usage & syntax message.
 
 void

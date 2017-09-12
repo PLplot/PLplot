@@ -2,8 +2,8 @@
 // Geoffrey Furnish
 // Sep 21 1994
 //
-// Copyright (C) 2004,2005  Andrew Ross
-// Copyright (C) 2004-2014 Alan W. Irwin
+// Copyright (C) 2004,2005 Andrew Ross
+// Copyright (C) 2004-2018 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -152,12 +152,6 @@ public:
 
     void arc( PLFLT x, PLFLT y, PLFLT a, PLFLT b, PLFLT angle1, PLFLT angle2,
               PLFLT rotate, PLBOOL fill );
-
-// Simple arrow plotter
-#ifdef PL_DEPRECATED
-    void arrows( const PLFLT *u, const PLFLT *v, const PLFLT *x, const PLFLT *y, PLINT n,
-                 PLFLT scale, PLFLT dx, PLFLT dy );
-#endif // PL_DEPRECATED
 
     void vect( const PLFLT * const *u, const PLFLT * const *v, PLINT nx, PLINT ny, PLFLT scale,
                PLTRANSFORM_callback pltr, PLPointer pltr_data );
@@ -434,12 +428,6 @@ public:
     void hist( PLINT n, const PLFLT *data, PLFLT datmin, PLFLT datmax,
                PLINT nbin, PLINT oldwin );
 
-// Set current color (map 0) by hue, lightness, and saturation.
-
-#ifdef PL_DEPRECATED
-    void hls( PLFLT h, PLFLT l, PLFLT s );
-#endif // PL_DEPRECATED
-
 // Initializes PLplot, using preset or default options
 
     void init( void );
@@ -640,18 +628,6 @@ public:
 // Replays contents of plot buffer to current device/file.
 
     void replot( void );
-
-// Set line color by red, green, blue from  0. to 1.
-
-#ifdef PL_DEPRECATED
-    void rgb( PLFLT r, PLFLT g, PLFLT b );
-#endif // PL_DEPRECATED
-
-// Set line color by 8 bit RGB values.
-
-#ifdef PL_DEPRECATED
-    void rgb( PLINT r, PLINT g, PLINT b );
-#endif // PL_DEPRECATED
 
 // Set character height.
 
@@ -1147,10 +1123,6 @@ public:
 // This version is for backward compatibility only - don't use in new code
 
     int SetOpt( const char *opt, const char *optarg );
-
-// Process options list using current options info.
-
-    int ParseOpts( int *p_argc, const char **argv, PLINT mode );
 
 // Print usage & syntax message.
 
