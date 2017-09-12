@@ -365,15 +365,6 @@ set(CPACK_SOURCE_IGNORE_FILES
   "\\\\.DS_Store"
   "\\\\._\\\\.DS_Store"
   "^${PROJECT_SOURCE_DIR}.*/\\\\.git/"
-  "^${PROJECT_SOURCE_DIR}/old/"
-  "^${PROJECT_SOURCE_DIR}/sys/mac"
-  "^${PROJECT_SOURCE_DIR}/sys/os2"
-  "^${PROJECT_SOURCE_DIR}/sys/unix"
-  "^${PROJECT_SOURCE_DIR}/sys/dos/msc"
-  "^${PROJECT_SOURCE_DIR}/sys/dos/bcc"
-  "^${PROJECT_SOURCE_DIR}/sys/dos/emx"
-  "^${PROJECT_SOURCE_DIR}/sys/win-tk"
-  "^${PROJECT_SOURCE_DIR}/sys/win32"
   )
 #message("CPACK_SOURCE_IGNORE_FILES = ${CPACK_SOURCE_IGNORE_FILES}")
 include(CPack)
