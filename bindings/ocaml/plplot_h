@@ -59,35 +59,11 @@ c_plcol1(PLFLT col1);
  void
 c_plconfigtime(PLFLT scale, PLFLT offset1, PLFLT offset2, PLINT ccontrol, PLBOOL ifbtime_offset, PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec);
 
-/*
- void
-c_plcont(PLFLT **f, PLINT nx, PLINT ny, PLINT kx, PLINT lx,
-  PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
-  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-  PLPointer pltr_data);
-
- void
-plfcont(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
- PLPointer f2eval_data,
- PLINT nx, PLINT ny, PLINT kx, PLINT lx,
- PLINT ky, PLINT ly, PLFLT *clevel, PLINT nlevel,
- void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
- PLPointer pltr_data);
-*/
-
  void
 c_plcpstrm(PLINT iplsr, PLBOOL flags);
 
  void
 c_plctime(PLINT year, PLINT month, PLINT day, PLINT hour, PLINT min, PLFLT sec, PLFLT *ctime);
-
-/*
- void
-pldid2pc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
-
- void
-pldip2dc(PLFLT *xmin, PLFLT *ymin, PLFLT *xmax, PLFLT *ymax);
-*/
 
  void
 c_plend(void);
@@ -191,18 +167,6 @@ c_plgra(void);
  void
 c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
 
-/*
- void
-c_plgriddata(PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
-    PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
-    PLFLT **zg, PLINT type, PLFLT data);
-
- void
-plfgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts,
-             PLFLT *xg, PLINT nptsx, PLFLT *yg, PLINT nptsy,
-             PLF2OPS zops, PLPointer zgp, PLINT type, PLFLT data );
-*/
-
  void
 c_plgspa(PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax);
 
@@ -243,35 +207,6 @@ c_pljoin(PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2);
  void
 c_pllab(const char *xlabel, const char *ylabel, const char *tlabel);
 
-/*
- void
-c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
-            plplot_legend_opt opt, PLFLT x, PLFLT y, PLFLT plot_width,
-            PLINT bg_color, PLINT bb_color, PLINT bb_style,
-            PLINT nrow, PLINT ncolumn,
-            PLINT nlegend, const plplot_legend_opt *opt_array,
-            PLFLT text_offset, PLFLT text_scale, PLFLT text_spacing,
-            PLFLT text_justification,
-            const PLINT *text_colors, const char **text,
-            const PLINT *box_colors, const PLINT *box_patterns,
-            const PLFLT *box_scales, const PLFLT *box_line_widths,
-            const PLINT *line_colors, const PLINT *line_styles,
-            const PLFLT *line_widths,
-            const PLINT *symbol_colors, const PLFLT *symbol_scales,
-            const PLINT *symbol_numbers, const char **symbols );
-
- void
-c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
-              plplot_colorbar_opt opt, plplot_position_opt position, PLFLT x, PLFLT y,
-              PLFLT x_length, PLFLT y_length,
-              PLINT bg_color, PLINT bb_color, PLINT bb_style,
-              PLFLT low_cap_color, PLFLT high_cap_color,
-              PLINT cont_color, PLFLT cont_width,
-              PLFLT ticks, PLINT sub_ticks,
-              const char *axis_opts, const char *label,
-              PLINT n_values, const PLFLT *values );
-*/
-
  void
 c_pllightsource(PLFLT x, PLFLT y, PLFLT z);
 
@@ -284,29 +219,12 @@ c_plline3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z);
  void
 c_pllsty(PLINT lin);
 
-/*
- void
-c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
-         PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
-
- void
-c_plmeridians( void (*mapform)(PLINT, PLFLT *, PLFLT *),
-               PLFLT dlong, PLFLT dlat,
-               PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
-*/
-
  void
 c_plmesh(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, plplot3d_style opt);
 
  void
 c_plmeshc(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, plplot3d_style opt,
    PLFLT *clevel, PLINT nlevel);
-
-/*
- void
-plfmeshc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-          PLINT nx, PLINT ny, PLINT opt, PLFLT *clevel, PLINT nlevel );
-*/
 
  void
 c_plmkstrm(PLINT *p_strm);
@@ -323,12 +241,6 @@ c_plmtex3(const char *side, PLFLT disp, PLFLT pos, PLFLT just,
 c_plot3d(PLFLT *x, PLFLT *y, PLFLT **z,
   PLINT nx, PLINT ny, plplot3d_style opt, PLBOOL side);
 
-/*
- void
-plfplot3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-           PLINT nx, PLINT ny, PLINT opt, PLBOOL side );
-*/
-
  void
 c_plot3dc(PLFLT *x, PLFLT *y, PLFLT **z,
   PLINT nx, PLINT ny, plplot3d_style opt,
@@ -339,18 +251,6 @@ c_plot3dcl(PLFLT *x, PLFLT *y, PLFLT **z,
   PLINT nx, PLINT ny, plplot3d_style opt,
   PLFLT *clevel, PLINT nlevel,
   PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax);
-
-/*
- void
-plfplot3dc( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-            PLINT nx, PLINT ny, plplot3d_style opt, PLFLT *clevel, PLINT nlevel );
-
- void
-plfplot3dcl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp,
-             PLINT nx, PLINT ny, plplot3d_style opt,
-             PLFLT *clevel, PLINT nlevel,
-             PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax );
-*/
 
  void
 c_plpat(PLINT nlin, PLINT *inc, PLINT *del);
@@ -363,11 +263,6 @@ c_plpoin(PLINT n, PLFLT *x, PLFLT *y, PLINT code);
 
  void
 c_plpoin3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLINT code);
-
-/*
- void
-c_plpoly3(PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, PLBOOL *draw, PLBOOL ifcc);
-*/
 
  void
 c_plprec(PLINT setp, PLINT prec);
@@ -478,90 +373,8 @@ c_plsfnam(const char *fnam);
  void
 c_plsfont( enum plplot_fci_family_enum family, enum plplot_fci_style_enum style, enum plplot_fci_weight_enum weight);
 
-/*
- void
-c_plshade(PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
-   PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-   PLFLT shade_min, PLFLT shade_max,
-   PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-   PLINT min_color, PLFLT min_width,
-   PLINT max_color, PLFLT max_width,
-   void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
-   void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-   PLPointer pltr_data);
-
- void
-c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
-  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-  PLFLT shade_min, PLFLT shade_max,
-  PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-  PLINT min_color, PLFLT min_width,
-  PLINT max_color, PLFLT max_width,
-  void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
-  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-  PLPointer pltr_data);
-
- void
-c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
-   PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-   PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
-   PLINT cont_color, PLFLT cont_width,
-   void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
-   void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-   PLPointer pltr_data);
-
- void
-plfshades( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-           PLINT ( *defined )( PLFLT, PLFLT ),
-           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-           PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
-           PLINT cont_color, PLFLT cont_width,
-           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
-           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-           PLPointer pltr_data );
-
- void
-plfshade(PLFLT (*f2eval) (PLINT, PLINT, PLPointer),
-  PLPointer f2eval_data,
-  PLFLT (*c2eval) (PLINT, PLINT, PLPointer),
-  PLPointer c2eval_data,
-  PLINT nx, PLINT ny,
-  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-  PLFLT shade_min, PLFLT shade_max,
-  PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-  PLINT min_color, PLFLT min_width,
-  PLINT max_color, PLFLT max_width,
-  void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
-  void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-  PLPointer pltr_data);
-
- void
-plfshade1( PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-           PLINT ( *defined )( PLFLT, PLFLT ),
-           PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-           PLFLT shade_min, PLFLT shade_max,
-           PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-           PLINT min_color, PLFLT min_width,
-           PLINT max_color, PLFLT max_width,
-           void ( *fill )( PLINT, PLFLT *, PLFLT * ), PLINT rectangular,
-           void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-           PLPointer pltr_data );
-
- void
-c_plslabelfunc(void (*label_func)(PLINT, PLFLT, char *, PLINT, PLPointer),
-               PLPointer label_data);
-*/
-
  void
 c_plsmaj(PLFLT def, PLFLT scale);
-
-/*
- void
-c_plsmem(PLINT maxx, PLINT maxy, void *plotmem);
-
- void
-c_plsmema( PLINT maxx, PLINT maxy, void *plotmem );
-*/
 
  void
 c_plsmin(PLFLT def, PLFLT scale);
@@ -600,11 +413,6 @@ c_plstar(PLINT nx, PLINT ny);
  void
 c_plstart(const char *devname, PLINT nx, PLINT ny);
 
-/*
- void
-c_plstransform( void ( *coordinate_transform )( PLFLT, PLFLT, PLFLT*, PLFLT*, PLPointer ), PLPointer coordinate_transform_data );
-*/
-
  void
 c_plstring( PLINT n, PLFLT *x, PLFLT *y, const char *string );
 
@@ -614,47 +422,13 @@ c_plstring3( PLINT n, PLFLT *x, PLFLT *y, PLFLT *z, const char *string );
  void
 c_plstripa(PLINT id, PLINT pen, PLFLT x, PLFLT y);
 
-/*
- void
-c_plstripc(PLINT *id, const char *xspec, const char *yspec,
- PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
- PLFLT xlpos, PLFLT ylpos,
- PLBOOL y_ascl, PLBOOL acc,
- PLINT colbox, PLINT collab,
- PLINT colline[], PLINT styline[], const char *legline[],
- const char *labx, const char *laby, const char *labtop);
-*/
-
  void
 c_plstripd(PLINT id);
-
-/*
- void
-c_plimagefr(PLFLT **idata, PLINT nx, PLINT ny,
-        PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-        PLFLT valuemin, PLFLT valuemax,
-        void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-        PLPointer pltr_data);
-
- void
-plfimagefr( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
-            PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-            PLFLT valuemin, PLFLT valuemax,
-            void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-            PLPointer pltr_data );
-*/
 
  void
 c_plimage(PLFLT **idata, PLINT nx, PLINT ny,
         PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
         PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax);
-
-/*
- void
-plfimage( PLF2OPS idataops, PLPointer idatap, PLINT nx, PLINT ny,
-          PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT zmin, PLFLT zmax,
-          PLFLT Dxmin, PLFLT Dxmax, PLFLT Dymin, PLFLT Dymax );
-*/
 
  void
 c_plstyl(PLINT nms, PLINT *mark, PLINT *space);
@@ -667,17 +441,6 @@ c_plsurf3d(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
 c_plsurf3dl(PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny,
     plplot3d_style opt, PLFLT *clevel, PLINT nlevel,
     PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax);
-
-/*
- void
-plfsurf3d( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-           plplot3d_style opt, PLFLT *clevel, PLINT nlevel );
-
- void
-plfsurf3dl( PLFLT *x, PLFLT *y, PLF2OPS zops, PLPointer zp, PLINT nx, PLINT ny,
-            plplot3d_style opt, PLFLT *clevel, PLINT nlevel,
-	    PLINT indexxmin, PLINT indexxmax, PLINT *indexymin, PLINT *indexymax);
-*/
 
  void
 c_plsvect(PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill);
@@ -709,20 +472,6 @@ c_pltimefmt(const char *fmt);
  void
 c_plvasp(PLFLT aspect);
 
-/*
- void
-c_plvect(PLFLT **u, PLFLT **v, PLINT nx, PLINT ny, PLFLT scale,
- void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-        PLPointer pltr_data);
-
- void
-plfvect( PLFLT ( *getuv )( PLINT, PLINT, PLPointer ),
-         PLPointer up, PLPointer vp,
-         PLINT nx, PLINT ny, PLFLT scale,
-         void ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer ),
-         PLPointer pltr_data );
-*/
-
  void
 c_plvpas(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax, PLFLT aspect);
 
@@ -746,153 +495,10 @@ c_plwind(PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax);
  void
 c_plxormod(PLBOOL mode, PLBOOL *status);
 
-/*
- void
-c_plget( enum PLAttributeName attrName, PLAttribute *attr );
-
- void
-c_plset( enum PLAttributeName attrName, PLAttribute attr );
-*/
-
-/*
- void
-plgFileDevs(const char ***p_menustr, const char ***p_devname, int *p_ndev);
-
- void
-plgDevs(const char ***p_menustr, const char ***p_devname, int *p_ndev);
-
- void
-plsKeyEH(void (*KeyEH) (PLGraphicsIn *, void *, int *), void *KeyEH_data);
-
- void
-plsButtonEH(void (*ButtonEH) (PLGraphicsIn *, void *, int *),
-     void *ButtonEH_data);
-
- void
-plsbopH(void (*handler) (void *, int *), void *handler_data);
-
- void
-plseopH(void (*handler) (void *, int *), void *handler_data);
-
- void
-plsError(PLINT *errcode, char *errmsg);
-
- void
-plsexit(int (*handler) (const char *));
-
- void
-plsabort(void (*handler) (const char *));
-
- void
-pltr0(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
- void
-pltr1(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
- void
-pltr2(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
- void
-pltr2p(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data);
-
- void
-pltr0f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
-
- void
-pltr2f(PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data);
-
- PLF2OPS
-plf2ops_c();
-
- PLF2OPS
-plf2ops_grid_c();
-
- PLF2OPS
-plf2ops_grid_row_major();
-
- PLF2OPS
-plf2ops_grid_col_major();
-
- PLFLT
-plf2eval1( PLINT ix, PLINT iy, PLPointer plf2eval_data );
-
- PLFLT
-plf2eval2(PLINT ix, PLINT iy, PLPointer plf2eval_data);
-
- PLFLT
-plf2eval(PLINT ix, PLINT iy, PLPointer plf2eval_data);
-
- PLFLT
-plf2evalr(PLINT ix, PLINT iy, PLPointer plf2eval_data);
-
- void
-plClearOpts(void);
-
- void
-plResetOpts(void);
-
- PLINT
-plMergeOpts(PLOptionTable *options, const char *name, const char **notes);
-
- void
-plSetUsage(const char *program_string, const char *usage_string);
-*/
-
 /* NOTE WARNING XXX: The return type is changed MANUALLY to indicate that any
    non-zero return value is an error. */
  nonzero_error_int
 c_plsetopt(const char *opt, const char *optarg);
 
-/*
-
- PLINT
-c_plparseopts(int *p_argc, char **argv, PLINT mode);
-
- void
-plOptUsage(void);
-
- void
-plgfile(FILE **p_file);
-
- void
-plsfile(FILE *file);
-
- void
-plgesc(char *p_esc);
-
- void
-pl_cmd(PLINT op, void *ptr);
-
- PLINT
-plFindName(char *p);
-
- char *
-plFindCommand(const char *fn);
-
- void
-plGetName(const char *dir, const char *subdir, const char *filename, char **filespec);
-
- PLINT
-plGetInt(const char *s);
-
- PLFLT
-plGetFlt(const char *s);
-
- void
-plAlloc2dGrid(PLFLT ***f, PLINT nx, PLINT ny);
-
- void
-plFree2dGrid(PLFLT **f, PLINT nx, PLINT ny);
-*/
-
  void
 plMinMax2dGrid(PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin);
-
-/*
- PLINT
-plGetCursor(PLGraphicsIn *gin);
-
- PLINT
-plTranslateCursor(PLGraphicsIn *gin);
-
-*/
