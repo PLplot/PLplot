@@ -426,19 +426,6 @@ void ml_plshade( const PLFLT **a, PLINT nx, PLINT ny,
 
 //
 // void
-// c_plshade1(PLFLT *a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
-// PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-// PLFLT shade_min, PLFLT shade_max,
-// PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-// PLINT min_color, PLINT min_width,
-// PLINT max_color, PLINT max_width,
-// void (*fill) (PLINT, PLFLT *, PLFLT *), PLBOOL rectangular,
-// void (*pltr) (PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer),
-// PLPointer pltr_data);
-//
-
-//
-// void
 // c_plshades( PLFLT **a, PLINT nx, PLINT ny, PLINT (*defined) (PLFLT, PLFLT),
 // PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
 // PLFLT *clevel, PLINT nlevel, PLINT fill_width,

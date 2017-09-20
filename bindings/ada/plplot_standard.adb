@@ -1541,7 +1541,7 @@ package body PLplot_Standard is
 
     -- Other "fill" routines similar to plfill could be written in Ada if
     -- desired, but if they are intended to be used as callbacks in subprograms
-    -- such as plshade, plshade1, and plshades, they should be called with C
+    -- such as plshade and plshades, they should be called with C
     -- calling conventions.
 
     -- Pattern fills the polygon bounded by the input points.
@@ -3029,42 +3029,6 @@ package body PLplot_Standard is
             Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer,
             Transformation_Procedure_Pointer, Transformation_Data_Pointer);
     end Shade_Region;
-
-
-    -- plshade1
-    procedure Shade_Region_1
-       (z                                        : Real_Matrix;
-        Mask_Function_Pointer                    : Mask_Function_Pointer_Type;
-        x_Min, x_Max, y_Min, y_Max               : Long_Float; -- world mins and maxes
-        Shade_Min, Shade_Max                     : Long_Float;
-        Select_Color_Map                         : Natural; -- should be 0 or 1
-        Color                                    : Long_Float;
-        Fill_Pattern_Pen_Width                   : Long_Float;
-        Shade_Min_Pen_Color                      : Natural;
-        Shade_Min_Pen_Width                      : Long_Float;
-        Shade_Max_Pen_Color                      : Natural;
-        Shade_Max_Pen_Width                      : Long_Float;
-        Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
-        Preserve_Rectangles                      : Boolean;
-        Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer              : PL_Pointer) is
-
-        Preserve_Rectangles_As_Integer : Integer;
-    begin
-        if Preserve_Rectangles then
-            Preserve_Rectangles_As_Integer := 1;
-        else
-            Preserve_Rectangles_As_Integer := 0;
-        end if;
-
-        plshade1(z, z'Length(1), z'Length(2), Mask_Function_Pointer,
-            x_Min, x_Max, y_Min, y_Max, Shade_Min, Shade_Max, Select_Color_Map,
-            Color, Fill_Pattern_Pen_Width,
-            Shade_Min_Pen_Color, Shade_Min_Pen_Width,
-            Shade_Max_Pen_Color, Shade_Max_Pen_Width,
-            Fill_Procedure_Pointer, Preserve_Rectangles_As_Integer,
-            Transformation_Procedure_Pointer, Transformation_Data_Pointer);
-    end Shade_Region_1;
 
 
     -- plshades

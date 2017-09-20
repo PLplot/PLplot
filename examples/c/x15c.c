@@ -1,23 +1,23 @@
-//      Shade plot demo.
-//
-//      Maurice LeBrun
-//      IFS, University of Texas at Austin
-//      31 Aug 1993
-//
+// Shade plot demo.
+
+// Copyright (C) 1993-2001 Maurice LeBrun
+// Copyright (C) 2000-2018 Alan W. Irwin
+// Copyright (C) 2004 Rafael Laboissiere
+// Copyright (C) 2007-2011 Andrew Ross
+// Copyright (C) 2010 Hezekiah M. Carty
 
 #include "plcdemos.h"
 
 #define XPTS    35              // Data points in x
 #define YPTS    46              // Data points in y
 
-PLFLT z[XPTS][YPTS], zmin, zmax;
-
+PLFLT           z[XPTS][YPTS], zmin, zmax;
+PLFLT_NC_VECTOR zIliffe[XPTS];
 // Function prototypes
 
 static void     plot1( void );
 static void     plot2( void );
 static void     plot3( void );
-static void     f2mnmx( PLFLT *, PLINT, PLINT, PLFLT *, PLFLT * );
 //static void     cmap1_init1( void );
 static void     cmap1_init2( void );
 
@@ -50,7 +50,7 @@ main( int argc, char *argv[] )
 
     plinit();
 
-// Set up data array
+// Calculate z data array that is statically allocated above.
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -62,7 +62,10 @@ main( int argc, char *argv[] )
             z[i][j] = xx * xx - yy * yy + ( xx - yy ) / ( xx * xx + yy * yy + 0.1 );
         }
     }
-    f2mnmx( &z[0][0], XPTS, YPTS, &zmin, &zmax );
+
+    // Calculate corresponding Iliffe vector, maximum, and minimum.
+    plStatic2dGrid( (PLFLT_NC_MATRIX) zIliffe, (PLFLT_VECTOR) ( &z[0][0] ), XPTS, YPTS );
+    plMinMax2dGrid( (PLFLT_MATRIX) zIliffe, XPTS, YPTS, &zmax, &zmin );
 
     plot1();
     plot2();
@@ -184,7 +187,7 @@ plot1( void )
     max_width = 2.;
 
     plpsty( 8 );
-    plshade1( &z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1.,
+    plshade( (PLFLT_MATRIX) zIliffe, XPTS, YPTS, NULL, -1., 1., -1., 1.,
         shade_min, shade_max,
         sh_cmap, sh_color, sh_width,
         min_color, min_width, max_color, max_width,
@@ -235,7 +238,7 @@ plot2( void )
         sh_color  = i + 6;
         plpat( nlin[i], inc[i], del[i] );
 
-        plshade1( &z[0][0], XPTS, YPTS, NULL, -1., 1., -1., 1.,
+        plshade( (PLFLT_MATRIX) zIliffe, XPTS, YPTS, NULL, -1., 1., -1., 1.,
             shade_min, shade_max,
             sh_cmap, sh_color, sh_width,
             min_color, min_width, max_color, max_width,
@@ -284,30 +287,4 @@ plot3( void )
     plpsty( 2 );
     plline3( 5, xx[1], yy[1], zz[1] );
     plfill3( 4, xx[1], yy[1], zz[1] );
-}
-
-//--------------------------------------------------------------------------
-// f2mnmx
-//
-// Returns min & max of input 2d array.
-//--------------------------------------------------------------------------
-
-#define F( a, b )    ( f[a * ny + b] )
-
-static void
-f2mnmx( PLFLT *f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax )
-{
-    int i, j;
-
-    *fnmax = F( 0, 0 );
-    *fnmin = *fnmax;
-
-    for ( i = 0; i < nx; i++ )
-    {
-        for ( j = 0; j < ny; j++ )
-        {
-            *fnmax = MAX( *fnmax, F( i, j ) );
-            *fnmin = MIN( *fnmin, F( i, j ) );
-        }
-    }
 }

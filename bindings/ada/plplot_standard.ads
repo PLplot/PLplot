@@ -56,7 +56,7 @@ package PLplot_Standard is
     subtype Unicode is PLplot_Thin.PLUNICODE;
 
     -- Rename Plplot_Thin.plfill so that a pointer to it can be passed to
-    -- procedures such as Shade_Region, Shade_Region_1, and Shade_Regions and called with C
+    -- procedures such as Shade_Region and Shade_Regions and called with C
     -- conventions. Note that Plplot_Thin.plfill is already in C so that it does
     -- not have to be re-written like e.g. pltr1 was for plcont. The Ada
     -- procedure Fill_Polygon in this package can't be used because it does not carry
@@ -1063,7 +1063,7 @@ package PLplot_Standard is
 
     -- Other "fill" routines similar to Fill_Polygon could be written in Ada if
     -- desired, but if they are intended to be used as callbacks in subprograms
-    -- such as Shade_Region, Shade_Region_1, and Shade_Regions, they should be called with C
+    -- such as Shade_Region and Shade_Regions, they should be called with C
     -- calling conventions.
 
     -- Pattern fills the polygon bounded by the input points.
@@ -1900,25 +1900,6 @@ package PLplot_Standard is
         Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
         Preserve_Rectangles                      : Boolean;
         Transformation_Procedure_Pointer          : Transformation_Procedure_Pointer_Type;
-        Transformation_Data_Pointer              : PL_Pointer);
-
-
-    -- plshade1
-    procedure Shade_Region_1
-       (z                                        : Real_Matrix;
-        Mask_Function_Pointer                    : Mask_Function_Pointer_Type;
-        x_Min, x_Max, y_Min, y_Max               : Long_Float; -- world mins and maxes
-        Shade_Min, Shade_Max                     : Long_Float;
-        Select_Color_Map                         : Natural; -- should be 0 or 1
-        Color                                    : Long_Float;
-        Fill_Pattern_Pen_Width                   : Long_Float;
-        Shade_Min_Pen_Color                      : Natural;
-        Shade_Min_Pen_Width                      : Long_Float;
-        Shade_Max_Pen_Color                      : Natural;
-        Shade_Max_Pen_Width                      : Long_Float;
-        Fill_Procedure_Pointer                   : Fill_Procedure_Pointer_Type;
-        Preserve_Rectangles                      : Boolean;
-        Transformation_Procedure_Pointer         : Transformation_Procedure_Pointer_Type;
         Transformation_Data_Pointer              : PL_Pointer);
 
 

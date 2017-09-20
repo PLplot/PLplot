@@ -1,9 +1,15 @@
 //----------------------------------*-C++-*----------------------------------//
-// Geoffrey Furnish
-// Sep 21 1994
 //
-// Copyright (C) 2004,2005 Andrew Ross
-// Copyright (C) 2004-2018 Alan W. Irwin
+// Copyright (C) 1995 Geoffrey Furnish
+// Copyright (C) 1995-2002 Maurice LeBrun
+// Copyright (C) 2000-2018 Alan W. Irwin
+// Copyright (C) 2003 Joao Cardoso
+// Copyright (C) 2003-2013 Andrew Ross
+// Copyright (C) 2004-2005 Rafael Laboissiere
+// Copyright (C) 2006-2008 Werner Smekal
+// Copyright (C) 2009 Hazen Babcock
+// Copyright (C) 2010-2011 Hezekiah M. Carty
+// Copyright (C) 2014-2015 Phil Rosenberg
 //
 // This file is part of PLplot.
 //
@@ -1924,6 +1930,7 @@ plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
         Coord_Xform_evaluator, pcxf );
 }
 
+#ifdef PL_DEPRECATED
 void
 plstream::shade1( const PLFLT *a, PLINT nx, PLINT ny,
                   PLDEFINED_callback defined,
@@ -1966,6 +1973,7 @@ plstream::shade1( const PLFLT *a, PLINT nx, PLINT ny,
         min_color, min_width, max_color, max_width,
         fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
+#endif //PL_DEPRECATED
 
 void
 plstream::fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
@@ -2714,9 +2722,19 @@ PLFLT plstream::GetFlt( char *s )
     return plGetFlt( s );
 }
 
-// Nice way to allocate space for a vectored 2d grid
+// Determine the Iliffe column vector of pointers to PLFLT row
+// vectors corresponding to a 2D matrix of PLFLT's that is statically
+// allocated.
 
-// Allocates a block of memory for use as a 2-d grid of PLFLT's.
+void plstream::Static2dGrid( PLFLT_NC_MATRIX zIliffe, PLFLT_VECTOR zStatic, PLINT nx, PLINT ny )
+{
+    set_stream();
+
+    ::plStatic2dGrid( zIliffe, zStatic, nx, ny );
+}
+
+// Allocate a block of memory for use as a 2-d grid of PLFLT's organized
+// as an Iliffe column vector of pointers to PLFLT row vectors.
 
 void plstream::Alloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny )
 {

@@ -1,6 +1,10 @@
 //--------------------------------------------------------------------------
-// Copyright (C) 2004  Andrew Ross
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 1993-2001 Maurice LeBrun
+// Copyright (C) 2000-2018 Alan W. Irwin
+// Copyright (C) 2003-2013 Andrew Ross
+// Copyright (C) 2004-2005 Rafael Laboissiere
+// Copyright (C) 2010 Hezekiah M. Carty
+// Copyright (C) 2014 Phil Rosenberg
 //
 // This file is part of PLplot.
 //
@@ -31,8 +35,8 @@ using namespace std;
 class x15 {
 public:
     x15( int, char ** );
-    void plot1( PLFLT * *, PLFLT, PLFLT );
-    void plot2( PLFLT * *, PLFLT, PLFLT );
+    void plot1( PLFLT_MATRIX z, PLFLT zmin, PLFLT zmax );
+    void plot2( PLFLT_MATRIX z, PLFLT zmin, PLFLT zmax );
     void plot3();
 
 private:
@@ -46,18 +50,17 @@ private:
 const int x15::  XPTS = 35;
 const int x15::  YPTS = 46;
 
-
 x15::x15( int argc, char ** argv )
 {
-    int   i, j;
+    int             i, j;
 
-    PLFLT xx;
-    PLFLT yy;
-    PLFLT **z;
-    PLFLT zmin, zmax;
+    PLFLT           xx;
+    PLFLT           yy;
+    PLFLT           z[XPTS][YPTS];
+    PLFLT_NC_VECTOR zIliffe[XPTS];
+    PLFLT           zmin, zmax;
 
-
-    // plplot initialization
+    // PLplot initialization
 
     pls = new plstream();
 
@@ -70,7 +73,7 @@ x15::x15( int argc, char ** argv )
     // and the cmap1 fiddling that x15c.c does is completely irrelevant
     // (although interesting).
 
-    pls->Alloc2dGrid( &z, XPTS, YPTS );
+    // Calculate z data array that is statically allocated above.
 
     for ( i = 0; i < XPTS; i++ )
     {
@@ -82,23 +85,22 @@ x15::x15( int argc, char ** argv )
         }
     }
 
-    pls->MinMax2dGrid( z, XPTS, YPTS, &zmax, &zmin );
+    // Calculate corresponding Iliffe vector, maximum, and minimum.
+    pls->Static2dGrid( (PLFLT_NC_MATRIX) zIliffe, (PLFLT_VECTOR) ( &z[0][0] ), XPTS, YPTS );
+    pls->MinMax2dGrid( (PLFLT_MATRIX) zIliffe, XPTS, YPTS, &zmax, &zmin );
 
-    plot1( z, zmin, zmax );
-    plot2( z, zmin, zmax );
+    plot1( (PLFLT_MATRIX) zIliffe, zmin, zmax );
+    plot2( (PLFLT_MATRIX) zIliffe, zmin, zmax );
     plot3();
 
     //pls->end();
-
-    // Tidy up allocated grids
-    pls->Free2dGrid( z, XPTS, YPTS );
 
     delete pls;
 }
 
 // Illustrates a single shaded region.
 
-void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
+void x15::plot1( PLFLT_MATRIX z, PLFLT zmin, PLFLT zmax )
 {
     PLFLT shade_min, shade_max, sh_color;
     int   sh_cmap = 0;
@@ -138,7 +140,7 @@ void x15::plot1( PLFLT **z, PLFLT zmin, PLFLT zmax )
 // Illustrates multiple adjacent shaded regions, using different fill
 // patterns for each region.
 
-void x15::plot2( PLFLT **z, PLFLT zmin, PLFLT zmax )
+void x15::plot2( PLFLT_MATRIX z, PLFLT zmin, PLFLT zmax )
 {
     PLFLT        shade_min, shade_max, sh_color;
     int          sh_cmap = 0;

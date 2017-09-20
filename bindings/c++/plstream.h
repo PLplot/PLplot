@@ -1,9 +1,13 @@
 //----------------------------------*-C++-*----------------------------------//
-// Geoffrey Furnish
-// Sep 21 1994
-//
-// Copyright (C) 2004,2005 Andrew Ross
-// Copyright (C) 2004-2018 Alan W. Irwin
+// Copyright (C) 1995 Geoffrey Furnish
+// Copyright (C) 1995-2002 Maurice LeBrun
+// Copyright (C) 2000-2018 Alan W. Irwin
+// Copyright (C) 2003-2013 Andrew Ross
+// Copyright (C) 2004-2005 Rafael Laboissiere
+// Copyright (C) 2006-2008 Werner Smekal
+// Copyright (C) 2009 Hazen Babcock
+// Copyright (C) 2010-2011 Hezekiah M. Carty
+// Copyright (C) 2014-2015 Phil Rosenberg
 //
 // This file is part of PLplot.
 //
@@ -802,6 +806,7 @@ public:
                 bool rectangular,
                 Coord_Xformer *pcxf );
 
+#ifdef PL_DEPRECATED
     void shade1( const PLFLT * a, PLINT nx, PLINT ny,
                  PLDEFINED_callback defined,
                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
@@ -812,6 +817,17 @@ public:
                  PLFILL_callback fill, bool rectangular,
                  PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
+    void shade1( const PLFLT * a, PLINT nx, PLINT ny,
+                 PLDEFINED_callback defined,
+                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                 PLFLT shade_min, PLFLT shade_max,
+                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                 PLINT min_color, PLFLT min_width,
+                 PLINT max_color, PLFLT max_width,
+                 PLFILL_callback fill, PLINT rectangular,
+                 PLTRANSFORM_callback pltr, PLPointer pltr_data );
+
+#endif //PL_DEPRECATED
     void fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                  PLPointer f2eval_data,
                  PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
@@ -1167,18 +1183,23 @@ public:
 
     PLFLT GetFlt( char *s );
 
-    // Nice way to allocate space for a vectored 2d grid
+// Determine the Iliffe column vector of pointers to PLFLT row
+// vectors corresponding to a 2D matrix of PLFLT's that is statically
+// allocated.
 
-// Allocates a block of memory for use as a 2-d grid of PLFLT's.
+    void Static2dGrid( PLFLT_NC_MATRIX zIliffe, PLFLT_VECTOR zStatic, PLINT nx, PLINT ny );
 
-    void Alloc2dGrid( PLFLT ***f, PLINT nx, PLINT ny );
+// Allocate a block of memory for use as a 2-d grid of PLFLT's organized
+// as an Iliffe column vector of pointers to PLFLT row vectors.
+
+    void Alloc2dGrid( PLFLT_NC_MATRIX *f, PLINT nx, PLINT ny );
 
 // Frees a block of memory allocated with plAlloc2dGrid().
 
     void Free2dGrid( PLFLT **f, PLINT nx, PLINT ny );
 
 // Find the maximum and minimum of a 2d matrix allocated with plAllc2dGrid().
-    void MinMax2dGrid( const PLFLT * const *f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
+    void MinMax2dGrid( PLFLT_MATRIX f, PLINT nx, PLINT ny, PLFLT *fmax, PLFLT *fmin );
 
 // Functions for converting between HLS and RGB color space
 
@@ -1225,16 +1246,6 @@ public:
                 PLINT max_color, PLFLT max_width,
                 PLINT rectangular,
                 Coord_Xformer *pcxf );
-
-    void shade1( const PLFLT * a, PLINT nx, PLINT ny,
-                 PLDEFINED_callback defined,
-                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-                 PLFLT shade_min, PLFLT shade_max,
-                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-                 PLINT min_color, PLFLT min_width,
-                 PLINT max_color, PLFLT max_width,
-                 PLFILL_callback fill, PLINT rectangular,
-                 PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
     void fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                  PLPointer f2eval_data,

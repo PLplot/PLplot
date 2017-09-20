@@ -55,13 +55,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   defined in <filename>plplot.h</filename> using <link
   linkend="plplot-types">PLplot C types for arguments</link>.  The names
   for these types have been chosen to be self-documenting.  So
-  <parameter>PLINT</parameter> refers to the PLplot integer type;
-  <parameter>PLFLT</parameter> refers to the PLplot floating-point type;
-  if the name has a <parameter>_VECTOR</parameter> or
-  <parameter>_MATRIX</parameter> suffix, the type corresponds to a
-  one-dimensional array argument or two-dimensional array argument
-  (PLplot has no 3-dimensional array arguments); if the name does not
-  have either of those two suffixes or if it has a suffix of
+  <parameter>PLINT</parameter> refers to the PLplot integer type, and
+  <parameter>PLFLT</parameter> refers to the PLplot floating-point type.
+  If the name has a <parameter>_VECTOR</parameter> or
+  <parameter>_MATRIX</parameter> suffix the type corresponds to the
+  one-dimensional or two-dimensional array argument type native to the
+  language being supported by PLplot.  If the name does not have either
+  of those two suffixes or if it has a suffix of
   <parameter>_SCALAR</parameter>, then it refers to a scalar quantity.
   Finally, note that most of our common API arguments are input only and
   are guaranteed not to be changed by the PLplot routine.  However, in

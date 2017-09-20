@@ -804,7 +804,9 @@ typedef struct
 #define    plsfnam                  c_plsfnam
 #define    plsfont                  c_plsfont
 #define    plshade                  c_plshade
+#ifdef PL_DEPRECATED
 #define    plshade1                 c_plshade1
+#endif // PL_DEPRECATED
 #define    plshades                 c_plshades
 #define    plslabelfunc             c_plslabelfunc
 #define    plsmaj                   c_plsmaj
@@ -1725,6 +1727,7 @@ c_plshade( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
            PLFILL_callback fill, PLBOOL rectangular,
            PLTRANSFORM_callback pltr, PLPointer pltr_data );
 
+#ifdef PL_DEPRECATED
 PLDLLIMPEXP void
 c_plshade1( PLFLT_FE_POINTER a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
             PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
@@ -1734,6 +1737,7 @@ c_plshade1( PLFLT_FE_POINTER a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
             PLINT max_color, PLFLT max_width,
             PLFILL_callback fill, PLBOOL rectangular,
             PLTRANSFORM_callback pltr, PLPointer pltr_data );
+#endif // PL_DEPRECATED
 
 PLDLLIMPEXP void
 c_plshades( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
@@ -2337,9 +2341,15 @@ plGetInt( PLCHAR_VECTOR s );
 PLDLLIMPEXP PLFLT
 plGetFlt( PLCHAR_VECTOR s );
 
-// Nice way to allocate space for a vectored 2d grid
+// C, C++ only.  Determine the Iliffe column vector of pointers to PLFLT row
+// vectors corresponding to a 2D matrix of PLFLT's that is statically
+// allocated.
 
-// Allocates a block of memory for use as a 2-d grid of PLFLT's.
+PLDLLIMPEXP void
+plStatic2dGrid( PLFLT_NC_MATRIX zIliffe, PLFLT_VECTOR zStatic, PLINT nx, PLINT ny );
+
+// C, C++ only.  Allocate a block of memory for use as a 2-d grid of PLFLT's organized
+// as an Iliffe column vector of pointers to PLFLT row vectors.
 
 PLDLLIMPEXP void
 plAlloc2dGrid( PLFLT_NC_MATRIX *f, PLINT nx, PLINT ny );

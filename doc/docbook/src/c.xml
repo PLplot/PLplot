@@ -115,10 +115,7 @@ typedef const char * const * PLCHAR_MATRIX;
     </programlisting>These strings are NULL-terminated in C.</para></listitem>
   </itemizedlist>
     Note that for the C language case the above
-    definitions allow input matrices to be organized either in the
-    traditional <ulink
-    url="https://en.wikipedia.org/wiki/Row-major_order">row-major</ulink>
-    order or as an <ulink
+    input matrices must be organized as an <ulink
     url="https://en.wikipedia.org/wiki/Iliffe_vector">Iliffe column
     vector</ulink> of pointers to row vectors.
   </para></listitem>
@@ -130,14 +127,11 @@ typedef PLFLT ** PLFLT_NC_MATRIX;
 typedef char ** PLCHAR_NC_MATRIX;
   </programlisting>These strings are NULL-terminated in C.</para></listitem>
   </itemizedlist>
-  Note that for the C language case the above
-  definitions allow input/output matrices to be organized either in the
-  traditional <ulink
-  url="https://en.wikipedia.org/wiki/Row-major_order">row-major</ulink>
-  order or as an <ulink
-  url="https://en.wikipedia.org/wiki/Iliffe_vector">Iliffe column
-  vector</ulink> of pointers to row vectors.</para>
-  </listitem>
+    Note that for the C language case the above
+    input/output matrices must be organized as an <ulink
+    url="https://en.wikipedia.org/wiki/Iliffe_vector">Iliffe column
+    vector</ulink> of pointers to row vectors.
+  </para></listitem>
   <listitem><itemizedlist><title>Argument type for a generic pointer</title>
     <listitem><para><anchor id="PLPointer-type"/>Input/output generic pointer<programlisting>
 typedef void * PLPointer;

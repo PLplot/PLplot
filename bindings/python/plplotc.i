@@ -1,9 +1,9 @@
 %module plplotc
 
 //
-//Copyright (C) 2002  Gary Bishop
-//Copyright (C) 2004-2016  Alan W. Irwin
-//Copyright (C) 2004  Andrew Ross
+//Copyright (C) 2002 Gary Bishop
+//Copyright (C) 2004-2018 Alan W. Irwin
+//Copyright (C) 2004 Andrew Ross
 //
 //This file is part of PLplot.
 //
@@ -603,21 +603,6 @@ typedef PLINT          PLBOOL;
 %typemap( freearg ) const PLFLT * *Matrix {
     Py_CLEAR( tmp$argnum );
     free( $1 );
-}
-
-// for plshade1, note the difference in the type for the first arg
-%typemap ( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( PyArrayObject * tmp = NULL )
-{
-    tmp = (PyArrayObject *) myArray_ContiguousFromObject( $input, NPY_PLFLT, 2, 2 );
-    if ( tmp == NULL )
-        return NULL;
-    Xlen = $2 = PyArray_DIMS( tmp )[0];
-    Ylen = $3 = PyArray_DIMS( tmp )[1];
-    $1   = (PLFLT *) PyArray_DATA( tmp );
-}
-%typemap ( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
-{
-    Py_CLEAR( tmp$argnum );
 }
 
 // 2D array, check for consistency

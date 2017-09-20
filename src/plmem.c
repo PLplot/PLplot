@@ -37,13 +37,44 @@
 #include "plplotP.h"
 
 //--------------------------------------------------------------------------
-// plAlloc2dGrid()
 //
-//! Allocates a block of memory for use as a 2-d grid of PLFLT's.
-//! Resulting array can be indexed as f[i][j] anywhere.  This is to be used
-//! instead of PLFLT f[nx][ny], which is less useful.  Note that this type
-//! of allocation is required by the PLplot functions which take a 2-d
-//! grids of PLFLT's as an argument, such as plcont() and plot3d().
+//! Determine the Iliffe column vector of pointers to PLFLT row
+//! vectors corresponding to a 2D matrix of PLFLT's that is statically
+//! allocated. As a result the matrix can be accessed using C/C++
+//! syntax like zIliffe[i][j].
+//! Example usage:
+//!
+//!   PLFLT zStatic[XPTS][YPTS];
+//!   PLFLT_NC_VECTOR zIliffe[XPTS];
+//!
+//!   plStatic2dGrid((PLFLT_NC_MATRIX)zIliffe, (PLFLT_VECTOR)(&zStatic[0][0]), XPTS, YPTS);
+//!   plshade((PLFLT_NC_MATRIX)zIliffe,....);
+//!
+//! @param zIliffe Pre-existing location of the storage for the Iliffe column vectors.
+//! @param zMatrix Pre-existing location of the storage for the 2D z array that is statically allocated.
+//! @param nx Size of the grid in x = length of the (Iliffe) column vectors.
+//! @param ny Size of the grid in y = length of the row vectors.
+//!
+//--------------------------------------------------------------------------
+
+void
+plStatic2dGrid( PLFLT_NC_MATRIX zIliffe, PLFLT_VECTOR zStatic, PLINT nx, PLINT ny )
+{
+    PLINT i;
+
+    for ( i = 0; i < nx; i++ )
+    {
+        zIliffe[i] = (PLFLT_NC_SCALAR) ( zStatic + i * ny );
+    }
+}
+
+//--------------------------------------------------------------------------
+//
+//! Allocate a block of memory for use as a matrix of type
+//! PLFLT_MATRIX (organized as an Iliffe column vector of pointers to
+//! row vectors).  As a result the matrix can be accessed using C/C++
+//! syntax like *f[i][j]. The memory associated with this matrix must
+//! be freed by calling plFree2dGrid once it is no longer required.
 //! Example usage:
 //!
 //!   PLFLT **z;

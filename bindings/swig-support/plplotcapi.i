@@ -835,24 +835,6 @@ plwind( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax );
 void
 plxormod( PLBOOL mode, PLBOOL *OUTPUT );
 
-#if 0
-
-// Deprecated functions that are in common API, but we don't want to
-// propagate them to the python API.
-
-void
-plshade1( const PLFLT *Matrix, PLINT nx, PLINT ny, defined_func df,
-          PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-          PLFLT shade_min, PLFLT shade_max,
-          PLINT sh_cmap, PLFLT sh_color, PLINT sh_width,
-          PLINT min_color, PLINT min_width,
-          PLINT max_color, PLINT max_width,
-          fill_func ff, PLBOOL rectangular,
-          pltr_func pltr,
-          PLPointer SWIG_OBJECT_DATA );
-
-#endif
-
 //--------------------------------------------------------------------------
 //  Functions for use from C or C++ only
 //  N.B. If you want these in python, they should be officially put in

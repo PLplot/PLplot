@@ -165,23 +165,16 @@ that check_api_xml_consistency target.  For more details
 concerning how to build and install "plplot-doc-check see the commentary
 in doc/docbook/src/CMakeLists.txt.
 
-Currently (5.13.0),
-plplot-doc-check (and therefore the
-check_api_xml_consistency target) finds two inconsistencies which are:
+Currently (for Debian Jessie), plplot-doc-check (and therefore the
+check_api_xml_consistency target) finds an inconsistency which is:
 
-c_plshade1 is not documented.
 para 0 of func plGetCursor type mismatch [ PLGraphicsIn * ] vs. [
 struct PLGraphicsIn * ]
 
-The first inconsistency is expected (plshade1 is C only so it is not
-part of the common API, and my plan is to deprecate it for our next
-release.  This issue will be resolved when c_plshade1 is removed from
-our source tree, but it must go through a deprecation period first.
-
-The second api_xml inconsistency has no immediately obvious cause and
-is likely due to the old version of golang that I have installed on
-Debian Jessie since Hǎiliàng Wang does not confirm this issue for his
-latest version of golang.
+This inconsistency has no immediately obvious cause and Hǎiliàng Wang
+does not confirm this issue for his latest version of golang.
+Therefore, it is likely due to the old version of golang that I have
+installed on Debian Jessie.
 
 Note the above check_plplot_h.inc target only exists
 because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
@@ -210,10 +203,10 @@ software@raven> make check_all
 
 should "just work" without errors.
 
-Then (as of plplot-5.13.0) finish up such checking by building the
-check_api_xml_consistency target which should reveal the known
-c_plshade1 issue above and possibly (depending on what golang version
-you have) the second plGetCursor "issue".
+Then (as of plplot-5.14.0) finish up such checking by building the
+check_api_xml_consistency target which (depending on what golang
+version you have) should give a clean result or reveal the above
+plGetCursor "issue".
 _________________________________________________________________________
 
 ** Update website-related files

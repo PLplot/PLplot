@@ -368,6 +368,9 @@ void c_plshade( PLFLT_MATRIX a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
         fill, rectangular, pltr, pltr_data );
 }
 
+#ifdef PL_DEPRECATED
+// plshade1 deprecated as of plplot-5.14.0
+
 //--------------------------------------------------------------------------
 // plshade1()
 //
@@ -400,6 +403,7 @@ void c_plshade1( PLFLT_VECTOR a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
         min_color, min_width, max_color, max_width,
         fill, rectangular, pltr, pltr_data );
 }
+#endif //PL_DEPRECATED
 
 //--------------------------------------------------------------------------
 // plfshade()

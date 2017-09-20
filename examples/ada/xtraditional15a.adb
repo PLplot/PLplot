@@ -101,7 +101,7 @@ procedure xtraditional15a is
 
         plpsty(8);
 
-        plshade1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0,
+        plshade(z, Null, -1.0, 1.0, -1.0, 1.0,
              shade_min, shade_max,
              sh_cmap, sh_color, sh_width,
              min_color, min_width, max_color, max_width,
@@ -164,7 +164,7 @@ procedure xtraditional15a is
             else
                 plpat(inc_5_To_9(i), del_5_To_9(i));
             end if;
-            plshade1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0,
+            plshade(z, Null, -1.0, 1.0, -1.0, 1.0,
                  shade_min, shade_max,
                  sh_cmap, sh_color, sh_width,
                  min_color, min_width, max_color, max_width,

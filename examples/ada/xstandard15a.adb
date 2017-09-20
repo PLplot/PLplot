@@ -101,7 +101,7 @@ procedure xstandard15a is
 
         Select_Fill_Pattern(8);
 
-        Shade_Region_1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0,
+        Shade_Region(z, Null, -1.0, 1.0, -1.0, 1.0,
              shade_min, shade_max,
              sh_cmap, sh_color, sh_width,
              min_color, min_width, max_color, max_width,
@@ -164,7 +164,7 @@ procedure xstandard15a is
             else
                 Set_Fill_Pattern(inc_5_To_9(i), del_5_To_9(i));
             end if;
-            Shade_Region_1(z, Mask_Function_No_Mask'access, -1.0, 1.0, -1.0, 1.0,
+            Shade_Region(z, Null, -1.0, 1.0, -1.0, 1.0,
                  shade_min, shade_max,
                  sh_cmap, sh_color, sh_width,
                  min_color, min_width, max_color, max_width,

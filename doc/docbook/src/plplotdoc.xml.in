@@ -243,6 +243,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!ENTITY plssub '<link linkend="plssub"><function>plssub</function></link>'>
 <!ENTITY plssym '<link linkend="plssym"><function>plssym</function></link>'>
 <!ENTITY plstar '<link linkend="plstar"><function>plstar</function></link>'>
+<!ENTITY plStatic2dGrid '<link linkend="plStatic2dGrid"><function>plStatic2dGrid</function></link>'>
 <!ENTITY plstripa '<link linkend="plstripa"><function>plstripa</function></link>'>
 <!ENTITY plstring '<link linkend="plstring"><function>plstring</function></link>'>
 <!ENTITY plstring3 '<link linkend="plstring3"><function>plstring3</function></link>'>

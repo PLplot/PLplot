@@ -139,7 +139,7 @@ package PLplot_Thin is
     pragma Convention (Convention => C, Entity => Transformation_Procedure_Pointer_Type);
 
 
-    -- Access-to-procedure to e.g. to plfill, used by plshade, plshade1, plshades.
+    -- Access-to-procedure to e.g. to plfill, used by plshade and plshades.
     -- Needs C calling convention because it is passed eventually to plfill aka
     -- c_plfill in plplot.h. plfill is said in the documentation to be possibly
     -- supplemented in the future.
@@ -420,7 +420,7 @@ package PLplot_Thin is
     -- stored, with a maximum of 3 dimensions assumed for now.
 
     -- This variant record emulates PLcGrid. Use it in plvect, plcont, plfcont,
-    -- plshade, c_plshade1, c_plshades, plfshade, plf2eval2, plf2eval, plf2evalr,
+    -- plshade, c_plshades, plfshade, plf2eval2, plf2eval, plf2evalr,
     -- PLcGrid and Ada counterparts thereof.
     type Transformation_Data_Type (x_Last, y_Last, z_Last : Natural) is
         record
@@ -1625,18 +1625,6 @@ package PLplot_Thin is
           fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
           pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
     pragma Import(C, plshade, "c_plshade");
-
-
-    procedure
-    plshade1(a : PL_Float_Array_2D; nx : PLINT; ny : PLINT; defined : Mask_Function_Pointer_Type;
-          left : PLFLT; right : PLFLT; bottom : PLFLT; top : PLFLT;
-          shade_min : PLFLT; shade_max : PLFLT;
-          sh_cmap : PLINT; sh_color : PLFLT; sh_width : PLFLT;
-          min_color : PLINT; min_width : PLFLT;
-          max_color : PLINT; max_width : PLFLT;
-          fill : Fill_Procedure_Pointer_Type; rectangular : PLINT;
-          pltr : Transformation_Procedure_Pointer_Type; pltr_data : PL_Pointer);
-    pragma Import(C, plshade1, "c_plshade1");
 
 
     procedure
