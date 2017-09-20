@@ -38,15 +38,19 @@ CONTENTS
 1. OFFICIAL NOTICES FOR USERS
 
 1.1 CMake version compatibility
-1.2 Fortran cruft removal
-1.3 Tcl/Tk cruft removal
-1.4 plmap cruft removal
-1.5 Perl/PDL examples removal
+1.2 Remove Fortran cruft
+1.3 Remove Tcl/Tk cruft
+1.4 Remove plmap cruft
+1.5 Remove Perl/PDL examples
+1.6 Remove all previously deprecated functions
+1.7 Official deprecation of plshade1
 
 2. Improvements relative to the previous release
 
 2.1 Bug fixes
 2.2 Update control of Python version
+2.3 Rewrite the build-system logic for determining PYQT_SIP_DIR and PYQT_SIP_FLAGS
+2.4 Implementation of plStatic2dGrid
 
 3. PLplot testing
 ________________________________________________________________
@@ -71,7 +75,7 @@ build-system trouble for versions of CMake greater than 3.9.1 ???, the
 first thing you should try is CMake-3.9.1 ??? which has been well-tested
 by PLplot builds.
 
-1.2 Fortran cruft removal
+1.2 Remove Fortran cruft
 
 As of PLplot-5.12.0, a new Fortran binding was implemented using the
 powerful capabilities of the Fortran 2003 iso_c_binding module which
@@ -91,7 +95,7 @@ release the old Fortran binding (and an old set of Fortran standard
 examples that depended on it) has been completely removed from our
 source tree.
 
-1.3 Tcl/Tk cruft removal
+1.3 Remove Tcl/Tk cruft
 
 As of PLplot-5.12.0, a new Tcl binding was implemented that used the
 "redacted" PLplot API where all dimension arguments for arrays are
@@ -124,7 +128,7 @@ release the old Tcl binding (and old versions of the Tcl standard
 examples and Tk source code that depended on it) have been completely
 removed from our source tree.
 
-1.4 plmap cruft removal
+1.4 Remove plmap cruft
 
 As of PLplot-5.9.10, a new version of plmap was implemented that used
 shapefile format (accessed via shapelib) for maps.  In addition other
@@ -140,17 +144,17 @@ the *.map format.  So for this release that old plmap functionality
 and associated *.map files have been completely removed from our
 source tree.
 
-1.5 Perl/PDL examples removal
+1.5 Remove Perl/PDL examples
 
 By historical accident and for just a limited time we actively
 developed a set of standard examples written in Perl/PDL to help test
 Doug Hunt's external PDL::Graphics::PLplot project.  But we have now
 removed those examples from our project since we have long since
 stopped testing PDL::Graphics::PLplot with those examples, and, in any
-case, such examples should be part of PDL::Graphics::PLplot rather
+case, such examples should be part of the PDL::Graphics::PLplot package rather
 than PLplot.
 
-1.6 Remove all officially deprecated functions
+1.6 Remove all previously deprecated functions
 
 I removed plParseInternalOpts, plSetInternalOpt, plclr, plpage, plcol,
 plcontf, plP_gvpd, plP_gvpw, plotsh3d, plSetOpt, plrgb, plrgb1, plhls,
@@ -171,6 +175,13 @@ find . -type f |grep -v .git |xargs grep -E 'plParseOpts|plHLS_RGB|plRGB_HLS|pla
 now only find non-relevant hits or else hits for historical references
 (e.g., change logs and release notes) to these functions.
 
+1.7 Official deprecation of plshade1
+
+The implementation of plStatic2dGrid (see 2.4) has made
+the C routine plshade1 and its C++ wrapper pls->shade1 redundant.
+Therefore, plshade1 and its C++ wrapper have now been officially
+deprecated, i.e., only available if the CMake option -DPL_DEPRECATED=ON
+is used.
 ________________________________________________________________
 
 2. Improvements relative to the previous release
@@ -195,6 +206,54 @@ Python version.
 
 * If neither of the above two searches is a success, then the build
   system searches for Python 2.
+
+2.3 Rewrite the build-system logic for determining PYQT_SIP_DIR and PYQT_SIP_FLAGS
+
+For pyqt4 the pyqtconfig module useful for determining PYQT_SIP_DIR
+and PYQT_SIP_FLAGS has been deprecated and has therefore already
+completely disappeared from some software platforms (e.g.,
+MinGW-w64/MSYS2).  Therefore, in this release we have replaced that
+approach with an approach very similar to what we currently use for
+pyqt5 (where the pyqtconfig module has never been available).
+
+For both the pyqt4 and pyqt5 cases, PYQT_SIP_FLAGS is straightforward
+to determine but determination of PYQT_SIP_DIR, the location where the
+PyQT sip files are located, is not completely straightforward.  For
+Linux, Cygwin, and MinGW-w64/MSYS2, we feel we have the correct HINTS
+in place to find this directory for either the pyqt4 or pyqt5 cases,
+but for other platforms users can specify the correct PYQT_SIP_DIR
+directly and are invited to communicate that information to us so we
+can update our HINTS appropriately.
+
+2.4 Implementation of plStatic2dGrid
+
+The 2D matrix arguments of plshade, plshades, plcont, plimage, plvect,
+etc., for our C API and corresponding C++ API must currently be
+organized as Iliffe column vectors (see
+<https://en.wikipedia.org/wiki/Iliffe_vector>) containing pointers to
+PLFLT row vectors.  And these matrices are normally in the C case
+dynamically allocated with plAlloc2dGrid and freed with plFree2dGrid,
+and in the C++ case the same thing is done with C++ wrappers for
+plAlloc2dGrid and plFree2dGrid.  However, that dynamically allocated
+approach does not allow our C and C++ users to call plshade, etc.,
+with statically allocated 2D matrices.
+
+Historically we have partially addressed that issue by implementing a
+plshade1 variant of plshade that could be called with a statically
+allocated 2D matrix.  Expanding that approach with plshades1, plcont1,
+etc., variants is possible, but does considerably clutter our C and
+C++ API.  So instead for this release we have implemented the
+plStatic2dGrid C function and associated C++ wrapper which allows C
+and C++ users to determine the Iliffe column vector corresponding to a
+2D statically allocated array. The examples/c/x15c.c and
+examples/c++/x15.cc standard examples demonstrate how to use this new
+approach to call plshade using 2D data that have been statically
+allocated, and although none of our examples illustrate these
+additional possibilities, this same approach could also be used to
+call plshades, etc., with 2D data that have been statically allocated.
+And since this new approach completely supersedes plshade1, we have
+officially deprecated that function and its C++ wrapper, see 1.7.
+
 ________________________________________________________________
 
 3. PLplot testing
