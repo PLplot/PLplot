@@ -395,15 +395,6 @@ plstream::svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, bool fi
     plsvect( arrow_x, arrow_y, npts, (PLBOOL) fill );
 }
 
-// Deprecated version using PLINT instead of bool
-void
-plstream::svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, PLINT fill )
-{
-    set_stream();
-
-    plsvect( arrow_x, arrow_y, npts, (PLBOOL) fill );
-}
-
 // This functions similarly to plbox() except that the origin of the axes is
 // placed at the user-specified point (x0, y0).
 
@@ -514,6 +505,7 @@ void plstream::col1( PLFLT c )
     plcol1( c );
 }
 
+#ifdef PL_DEPRECATED
 // Old (incorrect) version retained only for compatibility
 void plstream::col( PLFLT c )
 {
@@ -525,6 +517,7 @@ void plstream::col( PLFLT c )
 
     plcol1( c );
 }
+#endif //PL_DEPRECATED
 
 // Configure transformation between continuous and broken-down time (and
 // vice versa) for current stream.
@@ -574,14 +567,6 @@ void plstream::fcont( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
 // Copies state parameters from the reference stream to the current stream.
 
 void plstream::cpstrm( plstream & pls, bool flags )
-{
-    set_stream();
-
-    plcpstrm( pls.stream, (PLBOOL) flags );
-}
-
-// Deprecated version using PLINT not bool
-void plstream::cpstrm( plstream & pls, PLINT flags )
 {
     set_stream();
 
@@ -1263,15 +1248,6 @@ void plstream::plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
     ::plot3d( x, y, z, nx, ny, opt, (PLBOOL) side );
 }
 
-// Deprecated version using PLINT not bool
-void plstream::plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
-                       PLINT nx, PLINT ny, PLINT opt, PLINT side )
-{
-    set_stream();
-
-    ::plot3d( x, y, z, nx, ny, opt, (PLBOOL) side );
-}
-
 // Plots a 3-d representation of the function z[x][y] with contour.
 
 void plstream::plot3dc( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
@@ -1347,23 +1323,6 @@ void plstream::poin3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, P
 
 void plstream::poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z,
                       const bool *draw, bool ifcc )
-{
-    PLBOOL *loc_draw = new PLBOOL[n - 1];
-    for ( int i = 0; i < n - 1; i++ )
-    {
-        loc_draw[i] = (PLBOOL) draw[i];
-    }
-
-    set_stream();
-
-    plpoly3( n, x, y, z, loc_draw, (PLBOOL) ifcc );
-
-    delete [] loc_draw;
-}
-
-// Deprecated version using PLINT not bool
-void plstream::poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z,
-                      const PLINT *draw, PLINT ifcc )
 {
     PLBOOL *loc_draw = new PLBOOL[n - 1];
     for ( int i = 0; i < n - 1; i++ )
@@ -1578,29 +1537,6 @@ void plstream::scmap1la( bool itype, PLINT npts, const PLFLT *intensity,
 //  plscmap1l((PLBOOL) itype,npts,intensity,coord1,coord2,coord3,NULL);
 //
 // }
-
-// Deprecated version using PLINT instead of bool
-void plstream::scmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
-                        const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3,
-                        const PLINT *alt_hue_path )
-{
-    PLBOOL *loc_alt_hue_path = NULL;
-    if ( alt_hue_path != NULL )
-    {
-        loc_alt_hue_path = new PLBOOL[npts - 1];
-        for ( int i = 0; i < npts - 1; i++ )
-        {
-            loc_alt_hue_path[i] = (PLBOOL) alt_hue_path[i];
-        }
-    }
-
-    set_stream();
-
-    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_alt_hue_path );
-
-    if ( loc_alt_hue_path != NULL )
-        delete [] loc_alt_hue_path;
-}
 
 // Set a given color from color map 0 by 8 bit RGB value
 
@@ -1817,27 +1753,6 @@ plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
         fill, (PLBOOL) rectangular, pltr, pltr_data );
 }
 
-// Deprecated version using PLINT instead of bool
-void
-plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
-                 PLDEFINED_callback defined,
-                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-                 PLFLT shade_min, PLFLT shade_max,
-                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-                 PLINT min_color, PLFLT min_width,
-                 PLINT max_color, PLFLT max_width,
-                 PLFILL_callback fill, PLINT rectangular,
-                 PLTRANSFORM_callback pltr, PLPointer pltr_data )
-{
-    set_stream();
-
-    plshade( a, nx, ny, defined, left, right, bottom, top,
-        shade_min, shade_max,
-        sh_cmap, sh_color, sh_width,
-        min_color, min_width, max_color, max_width,
-        fill, (PLBOOL) rectangular, pltr, pltr_data );
-}
-
 void
 plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
                   PLDEFINED_callback defined,
@@ -1845,23 +1760,6 @@ plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
                   const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
                   PLINT cont_color, PLFLT cont_width,
                   PLFILL_callback fill, bool rectangular,
-                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
-{
-    set_stream();
-
-    plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax,
-        clevel, nlevel, fill_width, cont_color, cont_width,
-        fill, (PLBOOL) rectangular, pltr, pltr_data );
-}
-
-// Deprecated version using PLINT instead of bool
-void
-plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
-                  PLDEFINED_callback defined,
-                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-                  const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
-                  PLINT cont_color, PLFLT cont_width,
-                  PLFILL_callback fill, PLINT rectangular,
                   PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
@@ -1903,31 +1801,6 @@ plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
             min_color, min_width, max_color, max_width,
             plcallback::fill, rectangular,
             NULL, NULL );
-}
-
-// Deprecated version using PLINT not bool
-void
-plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
-                 PLFLT ymin, PLFLT ymax, PLFLT shade_min, PLFLT shade_max,
-                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-                 PLINT min_color, PLFLT min_width,
-                 PLINT max_color, PLFLT max_width,
-                 PLINT rectangular,
-                 Coord_Xformer *pcxf )
-{
-    set_stream();
-
-    int nx, ny;
-    d.elements( nx, ny );
-
-    ::plfshade( Contourable_Data_evaluator, &d,
-        NULL, NULL,
-        nx, ny,
-        xmin, xmax, ymin, ymax, shade_min, shade_max,
-        sh_cmap, sh_color, sh_width,
-        min_color, min_width, max_color, max_width,
-        plcallback::fill, rectangular != 0,
-        Coord_Xform_evaluator, pcxf );
 }
 
 #ifdef PL_DEPRECATED
@@ -1987,32 +1860,6 @@ plstream::fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
                   PLINT min_color, PLFLT min_width,
                   PLINT max_color, PLFLT max_width,
                   PLFILL_callback fill, bool rectangular,
-                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
-{
-    set_stream();
-
-    plfshade( f2eval, f2eval_data,
-        c2eval, c2eval_data,
-        nx, ny, left, right, bottom, top,
-        shade_min, shade_max,
-        sh_cmap, sh_color, sh_width,
-        min_color, min_width, max_color, max_width,
-        fill, (PLBOOL) rectangular, pltr, pltr_data );
-}
-
-// Deprecated version using PLINT not bool
-void
-plstream::fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
-                  PLPointer f2eval_data,
-                  PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
-                  PLPointer c2eval_data,
-                  PLINT nx, PLINT ny,
-                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
-                  PLFLT shade_min, PLFLT shade_max,
-                  PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
-                  PLINT min_color, PLFLT min_width,
-                  PLINT max_color, PLFLT max_width,
-                  PLFILL_callback fill, PLINT rectangular,
                   PLTRANSFORM_callback pltr, PLPointer pltr_data )
 {
     set_stream();
@@ -2117,14 +1964,6 @@ void plstream::spause( bool pause )
     plspause( (PLBOOL) pause );
 }
 
-// Deprecated version using PLINT not bool
-void plstream::spause( PLINT pause )
-{
-    set_stream();
-
-    plspause( (PLBOOL) pause );
-}
-
 // Set stream number.
 
 void plstream::sstrm( PLINT strm )
@@ -2221,22 +2060,6 @@ void plstream::stripc( PLINT *id, const char *xspec, const char *yspec,
         legline, labx, laby, labtop );
 }
 
-
-// Deprecated version using PLINT not bool
-void plstream::stripc( PLINT *id, const char *xspec, const char *yspec,
-                       PLFLT xmin, PLFLT xmax, PLFLT xjump,
-                       PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos,
-                       PLINT y_ascl, PLINT acc, PLINT colbox, PLINT collab,
-                       const PLINT colline[], const PLINT styline[],
-                       const char *legline[], const char *labx,
-                       const char *laby, const char *labtop )
-{
-    set_stream();
-
-    plstripc( id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos,
-        (PLBOOL) y_ascl, (PLBOOL) acc, colbox, collab, colline, styline,
-        legline, labx, laby, labtop );
-}
 
 // Add a point to a stripchart.
 
@@ -2445,18 +2268,6 @@ void plstream::xormod( bool mode, bool *status )
     plxormod( (PLBOOL) mode, &loc_status );
 
     *status = ( loc_status != 0 );
-}
-
-// Deprecated version using PLINT not bool
-void plstream::xormod( PLINT mode, PLINT *status )
-{
-    PLBOOL loc_status;
-
-    set_stream();
-
-    plxormod( (PLBOOL) mode, &loc_status );
-
-    *status = (PLINT) loc_status;
 }
 
 // Set the seed for the random number generator included.
@@ -2788,6 +2599,199 @@ PLINT plstream::GetCursor( PLGraphicsIn *gin )
     return plGetCursor( gin );
 }
 
+#ifdef PL_DEPRECATED
+// Deprecated version using PLINT instead of bool
+void
+plstream::svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, PLINT fill )
+{
+    set_stream();
+
+    plsvect( arrow_x, arrow_y, npts, (PLBOOL) fill );
+}
+
+// Deprecated version using PLINT not bool
+void plstream::cpstrm( plstream & pls, PLINT flags )
+{
+    set_stream();
+
+    plcpstrm( pls.stream, (PLBOOL) flags );
+}
+
+// Deprecated version using PLINT not bool
+void plstream::plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
+                       PLINT nx, PLINT ny, PLINT opt, PLINT side )
+{
+    set_stream();
+
+    ::plot3d( x, y, z, nx, ny, opt, (PLBOOL) side );
+}
+
+// Deprecated version using PLINT not bool
+void plstream::poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z,
+                      const PLINT *draw, PLINT ifcc )
+{
+    PLBOOL *loc_draw = new PLBOOL[n - 1];
+    for ( int i = 0; i < n - 1; i++ )
+    {
+        loc_draw[i] = (PLBOOL) draw[i];
+    }
+
+    set_stream();
+
+    plpoly3( n, x, y, z, loc_draw, (PLBOOL) ifcc );
+
+    delete [] loc_draw;
+}
+
+// Deprecated version using PLINT instead of bool
+void plstream::scmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
+                        const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3,
+                        const PLINT *alt_hue_path )
+{
+    PLBOOL *loc_alt_hue_path = NULL;
+    if ( alt_hue_path != NULL )
+    {
+        loc_alt_hue_path = new PLBOOL[npts - 1];
+        for ( int i = 0; i < npts - 1; i++ )
+        {
+            loc_alt_hue_path[i] = (PLBOOL) alt_hue_path[i];
+        }
+    }
+
+    set_stream();
+
+    plscmap1l( (PLBOOL) itype, npts, intensity, coord1, coord2, coord3, loc_alt_hue_path );
+
+    if ( loc_alt_hue_path != NULL )
+        delete [] loc_alt_hue_path;
+}
+
+// Deprecated version using PLINT instead of bool
+void
+plstream::shade( const PLFLT * const *a, PLINT nx, PLINT ny,
+                 PLDEFINED_callback defined,
+                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                 PLFLT shade_min, PLFLT shade_max,
+                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                 PLINT min_color, PLFLT min_width,
+                 PLINT max_color, PLFLT max_width,
+                 PLFILL_callback fill, PLINT rectangular,
+                 PLTRANSFORM_callback pltr, PLPointer pltr_data )
+{
+    set_stream();
+
+    plshade( a, nx, ny, defined, left, right, bottom, top,
+        shade_min, shade_max,
+        sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width,
+        fill, (PLBOOL) rectangular, pltr, pltr_data );
+}
+
+// Deprecated version using PLINT instead of bool
+void
+plstream::shades( const PLFLT * const *a, PLINT nx, PLINT ny,
+                  PLDEFINED_callback defined,
+                  PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                  const PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+                  PLINT cont_color, PLFLT cont_width,
+                  PLFILL_callback fill, PLINT rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
+{
+    set_stream();
+
+    plshades( a, nx, ny, defined, xmin, xmax, ymin, ymax,
+        clevel, nlevel, fill_width, cont_color, cont_width,
+        fill, (PLBOOL) rectangular, pltr, pltr_data );
+}
+
+// Deprecated version using PLINT not bool
+void
+plstream::shade( Contourable_Data & d, PLFLT xmin, PLFLT xmax,
+                 PLFLT ymin, PLFLT ymax, PLFLT shade_min, PLFLT shade_max,
+                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                 PLINT min_color, PLFLT min_width,
+                 PLINT max_color, PLFLT max_width,
+                 PLINT rectangular,
+                 Coord_Xformer *pcxf )
+{
+    set_stream();
+
+    int nx, ny;
+    d.elements( nx, ny );
+
+    ::plfshade( Contourable_Data_evaluator, &d,
+        NULL, NULL,
+        nx, ny,
+        xmin, xmax, ymin, ymax, shade_min, shade_max,
+        sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width,
+        plcallback::fill, rectangular != 0,
+        Coord_Xform_evaluator, pcxf );
+}
+
+// Deprecated version using PLINT not bool
+void
+plstream::fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
+                  PLPointer f2eval_data,
+                  PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
+                  PLPointer c2eval_data,
+                  PLINT nx, PLINT ny,
+                  PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                  PLFLT shade_min, PLFLT shade_max,
+                  PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                  PLINT min_color, PLFLT min_width,
+                  PLINT max_color, PLFLT max_width,
+                  PLFILL_callback fill, PLINT rectangular,
+                  PLTRANSFORM_callback pltr, PLPointer pltr_data )
+{
+    set_stream();
+
+    plfshade( f2eval, f2eval_data,
+        c2eval, c2eval_data,
+        nx, ny, left, right, bottom, top,
+        shade_min, shade_max,
+        sh_cmap, sh_color, sh_width,
+        min_color, min_width, max_color, max_width,
+        fill, (PLBOOL) rectangular, pltr, pltr_data );
+}
+
+// Deprecated version using PLINT not bool
+void plstream::spause( PLINT pause )
+{
+    set_stream();
+
+    plspause( (PLBOOL) pause );
+}
+
+// Deprecated version using PLINT not bool
+void plstream::stripc( PLINT *id, const char *xspec, const char *yspec,
+                       PLFLT xmin, PLFLT xmax, PLFLT xjump,
+                       PLFLT ymin, PLFLT ymax, PLFLT xlpos, PLFLT ylpos,
+                       PLINT y_ascl, PLINT acc, PLINT colbox, PLINT collab,
+                       const PLINT colline[], const PLINT styline[],
+                       const char *legline[], const char *labx,
+                       const char *laby, const char *labtop )
+{
+    set_stream();
+
+    plstripc( id, xspec, yspec, xmin, xmax, xjump, ymin, ymax, xlpos, ylpos,
+        (PLBOOL) y_ascl, (PLBOOL) acc, colbox, collab, colline, styline,
+        legline, labx, laby, labtop );
+}
+
+// Deprecated version using PLINT not bool
+void plstream::xormod( PLINT mode, PLINT *status )
+{
+    PLBOOL loc_status;
+
+    set_stream();
+
+    plxormod( (PLBOOL) mode, &loc_status );
+
+    *status = (PLINT) loc_status;
+}
+
+#endif //PL_DEPRECATED
 //--------------------------------------------------------------------------
 //                              end of plstream.cc
 //--------------------------------------------------------------------------

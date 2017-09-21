@@ -44,6 +44,7 @@ CONTENTS
 1.5 Remove Perl/PDL examples
 1.6 Remove all previously deprecated functions
 1.7 Official deprecation of plshade1
+1.8 Official deprecation of C++ cruft
 
 2. Improvements relative to the previous release
 
@@ -182,6 +183,78 @@ the C routine plshade1 and its C++ wrapper pls->shade1 redundant.
 Therefore, plshade1 and its C++ wrapper have now been officially
 deprecated, i.e., only available if the CMake option -DPL_DEPRECATED=ON
 is used.
+
+1.8 Official deprecation of C++ cruft
+
+The following C++ methods have been unoffically deprecated (via comments in the
+code and lack of use in our C++ examples) for a long time:
+
+// Previous function was inadvertently named plcol in old versions of
+// plplot - this is maintained for backwards compatibility, but is best
+// avoided in new code.  Use col1 method instead.
+    void col( PLFLT c );
+// Deprecated versions of methods which use PLINT instead of bool for logical arguments.
+    void svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, PLINT fill );
+    void cpstrm( plstream &pls, PLINT flags );
+    void plot3d( const PLFLT *x, const PLFLT *y, const PLFLT * const *z,
+                 PLINT nx, PLINT ny, PLINT opt, PLINT side );
+    void poly3( PLINT n, const PLFLT *x, const PLFLT *y, const PLFLT *z, const PLINT *draw, PLINT ifcc );
+    void scmap1l( PLINT itype, PLINT npts, const PLFLT *intensity,
+                  const PLFLT *coord1, const PLFLT *coord2, const PLFLT *coord3, const PLINT *alt_hue_path );
+
+    void shade( const PLFLT * const *a, PLINT nx, PLINT ny,
+                PLDEFINED_callback defined,
+                PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                PLFLT shade_min, PLFLT shade_max,
+                PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                PLINT min_color, PLFLT min_width,
+                PLINT max_color, PLFLT max_width,
+                PLFILL_callback fill, PLINT rectangular,
+                PLTRANSFORM_callback pltr, PLPointer pltr_data );
+
+    void shades( const PLFLT * const *a, PLINT nx, PLINT ny, PLDEFINED_callback defined,
+                 PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
+                 const PLFLT * clevel, PLINT nlevel, PLFLT fill_width,
+                 PLINT cont_color, PLFLT cont_width,
+                 PLFILL_callback fill, PLINT rectangular,
+                 PLTRANSFORM_callback pltr, PLPointer pltr_data );
+
+    void shade( Contourable_Data& d, PLFLT xmin, PLFLT xmax,
+                PLFLT ymin, PLFLT ymax, PLFLT shade_min, PLFLT shade_max,
+                PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                PLINT min_color, PLFLT min_width,
+                PLINT max_color, PLFLT max_width,
+                PLINT rectangular,
+                Coord_Xformer *pcxf );
+
+    void fshade( PLFLT ( *f2eval )( PLINT, PLINT, PLPointer ),
+                 PLPointer f2eval_data,
+                 PLFLT ( *c2eval )( PLINT, PLINT, PLPointer ),
+                 PLPointer c2eval_data,
+                 PLINT nx, PLINT ny,
+                 PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
+                 PLFLT shade_min, PLFLT shade_max,
+                 PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
+                 PLINT min_color, PLFLT min_width,
+                 PLINT max_color, PLFLT max_width,
+                 PLFILL_callback fill, PLINT rectangular,
+                 PLTRANSFORM_callback pltr, PLPointer pltr_data );
+
+    void spause( PLINT pause );
+
+    void stripc( PLINT *id, const char *xspec, const char *yspec,
+                 PLFLT xmin, PLFLT xmax, PLFLT xjump, PLFLT ymin, PLFLT ymax,
+                 PLFLT xlpos, PLFLT ylpos,
+                 PLINT y_ascl, PLINT acc,
+                 PLINT colbox, PLINT collab,
+                 const PLINT colline[], const PLINT styline[], const char *legline[],
+                 const char *labx, const char *laby, const char *labtop );
+
+    void xormod( PLINT mode, PLINT *status );
+
+The above methods have now been officially deprecated, i.e., they will only
+be accessible if a user sets -DPL_DEPRECATED=ON.
+
 ________________________________________________________________
 
 2. Improvements relative to the previous release

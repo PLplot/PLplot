@@ -214,10 +214,12 @@ public:
 
     void col1( PLFLT c );
 
+#ifdef PL_DEPRECATED
 // Previous function was inadvertently named plcol in old versions of
 // plplot - this is maintained for backwards compatibility, but is best
 // avoided in new code.
     void col( PLFLT c );
+#endif //PL_DEPRECATED
 
 // Configure transformation between continuous and broken-down time (and
 // vice versa) for current stream.
@@ -1213,6 +1215,7 @@ public:
 
     PLINT GetCursor( PLGraphicsIn *plg );
 
+#ifdef PL_DEPRECATED
 // Deprecated versions of methods which use PLINT instead of bool
     void svect( const PLFLT *arrow_x, const PLFLT *arrow_y, PLINT npts, PLINT fill );
     void cpstrm( plstream &pls, PLINT flags );
@@ -1271,6 +1274,7 @@ public:
                  const char *labx, const char *laby, const char *labtop );
 
     void xormod( PLINT mode, PLINT *status );
+#endif //PL_DEPRECATED
 };
 
 
