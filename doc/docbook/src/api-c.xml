@@ -970,7 +970,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Determine the <ulink
       url="https://en.wikipedia.org/wiki/Iliffe_vector">Iliffe column
       vector</ulink> of pointers to PLFLT row
-      vectors corresponding to a 2D matrix of PLFLT's that is statically allocated. 
+      vectors corresponding to a 2D matrix of PLFLT's that is statically allocated.
       As a result the Iliffe column vector
       can be accessed using C/C++ syntax like <literal>*zIliffe[i][j]</literal>.  However,
       the primary purpose of this routine is to convert 2D plot data stored in statically allocated
