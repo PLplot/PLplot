@@ -1,5 +1,3 @@
-
-
 Installation instructions for Unix
 1) Install the wxwidgets library either by compiling it yourself or using apt/rpm (2.6.0 is needed)
    + compile it yourself:
@@ -168,7 +166,7 @@ Installation instructions for Win32
 
 - install wxWidgets 2.6.1 (see instructions below)
 - NOT WORKING NOW: install gd library and/or freetype library (see instructions below)
-- download the PLplot library from plplot.sf.net (version 5.5.3)
+- download the PLplot library from plplot.org
 - Remark (Mac OS X): You need automake 1.8.2 and libtool 1.4 in order to compile PLplot.
                      Download and install fink (fink.sf.net) and install these programs.
 - untar or unzip it in a suitable directory
@@ -238,4 +236,3 @@ Install wxWidgets 2.6.1
      The wxWidgets (release, static) library will be build.
  - Copy both dlls from %%WXWIN%/lib/gcc_dll to a directory, where they can be found (e.g. sys/win32/wxplplot/examples directory).
  - The same WXWIN variable must than be set for the wxplplot makefile.
-

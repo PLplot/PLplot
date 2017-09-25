@@ -45,6 +45,7 @@ CONTENTS
 1.6 Remove all previously deprecated functions
 1.7 Official deprecation of plshade1
 1.8 Official deprecation of C++ cruft
+1.9 plplot.org and www.plplot.org are now our official domains
 
 2. Improvements relative to the previous release
 
@@ -255,6 +256,19 @@ code and lack of use in our C++ examples) for a long time:
 The above methods have now been officially deprecated, i.e., they will only
 be accessible if a user sets -DPL_DEPRECATED=ON.
 
+1.9 plplot.org and www.plplot.org are now our official domains
+
+We have gone through the 3 steps in https://sourceforge.net/p/forge/documentation/Custom%20VHOSTs/
+(see also ??? www/README.domain) so that plplot.org and www.plplot.org are our official
+domains.
+
+We have also gone through our source tree and replaced all instances
+of plplot.sf.net and plplot.sourceforge.net with plplot.org.  As a
+result the website that is generated and uploaded by this release will
+use the official plplot.org domain for all internal references.  And
+we have changed our official domain at sf.net/projects/plplot to
+plplot.org as well.  We encourage all PLplot users to use that
+official PLplot domain as well.
 ________________________________________________________________
 
 2. Improvements relative to the previous release

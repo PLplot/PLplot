@@ -80,7 +80,7 @@ ways for the user to customize the interface (add buttons, menu entries,
 callbacks to user code, etc).
 
 For more information about PLplot (including complete documentation)
-consult our website at http://plplot.sourceforge.net.
+consult our website at http://plplot.org.
 
 } normal
     $w.t configure -state disabled

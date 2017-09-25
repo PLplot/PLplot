@@ -313,6 +313,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <sect1 id="credits">
     <title>Credits</title>
     <para>Many developers have contributed to PLplot over its long history.  For further details see
-    <ulink url="http://plplot.sourceforge.net/credits.php">our credits page</ulink></para>
+    <ulink url="&PLplot-website;/credits.php">our credits page</ulink></para>
   </sect1>
 </chapter>

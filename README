@@ -1,6 +1,6 @@
 INTRODUCTION
 
-PLplot <http://plplot.sourceforge.net/> is a cross-platform (see
+PLplot <http://plplot.org/> is a cross-platform (see
 PLATFORMS below) software package for creating scientific plots whose
 (UTF-8 <http://www.utf-8.com/>) plot symbols and text are limited in
 practice only by what Unicode<"http://www.unicode.org/>-aware system
@@ -137,13 +137,13 @@ from source (see SOURCE CODE above).
 OTHER WEB RESOURCES
 
 The most up-to-date information about PLplot can be found at our
-principal website <http://plplot.sourceforge.net/>.  There you will
+principal website <http://plplot.org/>.  There you will
 find the following important PLplot links:
 news <http://sourceforge.net/p/plplot/news/>,
 example code and resulting PLplot screenshots
-<http://plplot.sourceforge.net/examples.php>,
-documentation <http://plplot.sourceforge.net/documentation.php>,
-credits <http://plplot.sourceforge.net/credits.php>,
+<http://plplot.org/examples.php>,
+documentation <http://plplot.org/documentation.php>,
+credits <http://plplot.org/credits.php>,
 wiki <https://sourceforge.net/p/plplot/wiki>,
 SourceForge project page <http://sourceforge.net/projects/plplot>,
 project support page <http://sourceforge.net/projects/plplot/support>,

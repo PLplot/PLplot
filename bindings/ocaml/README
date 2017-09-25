@@ -1,4 +1,4 @@
-This is an interface to PLplot (http://plplot.sourceforge.net/) for the
+This is an interface to PLplot (http://plplot.org/) for the
 Objective Caml language.
 
 * REQUIREMENTS

@@ -463,7 +463,7 @@ quality.  Thus, as a result of avoiding truly ugly fonts in our
 generated pdf documentation there are missing CJK glyphs in the
 results.
 
-Installing the generated documentation (and the rest of the generated website) at plplot.sf.net
+Installing the generated documentation (and the rest of the generated website) at plplot.org.
 ===============================================================================================
 
 Follow the directions in README.Release_Manager_Cookbook.  That file is

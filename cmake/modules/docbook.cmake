@@ -1,7 +1,7 @@
 # cmake/modules/docbook.cmake
 #
 # Copyright (C) 2006  Andrew Ross
-# Copyright (C) 2006-2016  Alan W. Irwin
+# Copyright (C) 2006-2018  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -47,7 +47,7 @@ CACHE STRING "Dir name at WWW host"
 set(RSH "ssh" CACHE STRING "Remote shell command")
 set(RCP "scp" CACHE STRING "Remote copy command")
 # Website of the PLplot project
-set(PLPLOT_WEBSITE "http://plplot.sourceforge.net" CACHE STRING "PLplot web site")
+set(PLPLOT_WEBSITE "http://plplot.org" CACHE STRING "PLplot web site")
 
 # Required for validation regardless of whether BUILD_DOC is set
 set(XML_DECL "/usr/share/xml/declaration/xml.dcl" CACHE STRING "Full path to xml.dcl file.")

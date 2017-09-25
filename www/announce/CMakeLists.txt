@@ -21,7 +21,7 @@
 
 # Create rules to generate announcments that are in DocBook-XML form.
 
-set(URL http://plplot.sf.net)
+set(URL http://plplot.org)
 set(XML_DCL /usr/share/sgml/declaration/xml.dcl)
 set(PWD "${CMAKE_BINARY_DIR}/www")
 
