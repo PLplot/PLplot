@@ -6,9 +6,9 @@
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 2004  Joao Cardoso
-//  Copyright (C) 2004  Alan W. Irwin
-//  Copyright (C) 2004  Andrew Ross
+//  Copyright (C) 2004 Joao Cardoso
+//  Copyright (C) 2004-2018 Alan W. Irwin
+//  Copyright (C) 2004 Andrew Ross
 //
 //  This file is part of PLplot.
 //
@@ -51,7 +51,7 @@
 //!   plshade((PLFLT_NC_MATRIX)zIliffe,....);
 //!
 //! @param zIliffe Pre-existing location of the storage for the Iliffe column vectors.
-//! @param zMatrix Pre-existing location of the storage for the 2D z array that is statically allocated.
+//! @param zStatic Pre-existing location of the storage for the 2D z array that is statically allocated.
 //! @param nx Size of the grid in x = length of the (Iliffe) column vectors.
 //! @param ny Size of the grid in y = length of the row vectors.
 //!
