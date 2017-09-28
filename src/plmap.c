@@ -141,28 +141,165 @@ checkwrap( PLMAPFORM_callback mapform, PLFLT lon, PLFLT lat )
 //Actually draw the map lines points and text.
 //--------------------------------------------------------------------------
 void
-drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, PLFLT *x, PLFLT *y, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text )
+drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, double *x, double *y, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text )
 {
     PLINT i;
+	PLFLT *renderX;
+	PLFLT *renderY;
+
+	//we need to do something a bit different with filled polygons. The issue is the poles
+	//on lat/lon plots. If we draw Antarctica then we expect it to be filled, but this
+	//requires us to add in the extra points extending to the pole.
+	//We identify a fill that loops round the globe because its start point will not be its
+	//end point due to the processing done in drawmap. It should be 360 degrees different to
+	//within the rounding error.
+	//For a basic plot without any transformation we could just add three points to go down
+	//to the pole accross to the starting longitude then up to join the start point, but if
+	//we consider a polar plot looking down on the North Pole, then Antarctica gets turned
+	//inside out so we actually want to add many points at the pole with different longitudes.
+
+	if ((shapetype == SHPT_POLYGON || shapetype == SHPT_POLYGONZ || shapetype == SHPT_POLYGONM) && x[0] != x[n - 1])
+	{
+		//we have a polygon that rings the pole - render it differently to everything else
+
+		if (x[0] != x[n - 1])
+		{
+			//this is a looped round the pole polygon
+			PLINT i;
+			double poleLat;
+			double lonInterval;
+			PLINT  nExtraPoints = MAX(501, n+1);
+			double *newX;
+			double *newY;
+
+			//The shapefile standard says that as we traverse the vertices, the inside should be
+			//on the right
+			if (x[n - 1] > x[0])
+				poleLat = -90.0;
+			else
+				poleLat = 90.0;
+
+			newX = malloc((n+nExtraPoints)*sizeof(double));
+			newY = malloc((n+nExtraPoints)*sizeof(double));
+			if (!newX || !newY)
+			{
+				free(newX);
+				free(newY);
+				plabort("Could not allocate memory for adding pole points to a map polygon.");
+				return;
+			}
+			memcpy(newX, x, n * sizeof(double));
+			memcpy(newY, y, n * sizeof(double));
+
+			lonInterval = (x[0]-x[n-1]) / (double)(nExtraPoints - 2);
+			
+			for (i = 0; i < nExtraPoints - 1; ++i)
+			{
+				newX[n + i] = x[n - 1] + i*lonInterval;
+				newY[n + i] = poleLat;
+			}
+			newX[n + nExtraPoints - 1] = x[0];
+			newY[n + nExtraPoints - 1] = y[0];
+#ifdef PL_DOUBLE
+			renderX = newX;
+			renderY = newY;
+#else
+			fltX = malloc((n+nExtraPoints)*sizeof(PLFLT));
+			fltX = malloc((n+nExtraPoints)*sizeof(PLFLT));
+			if (!fltX || !fltY)
+			{
+				free(fltX);
+				free(fltY);
+				free(newX);
+				free(newY);
+				plabort("Could not allocate memory converting map date to floats.");
+				return;
+			}
+			for (i = 0; i < n + nExtraPoints; ++i)
+			{
+				fltX[i] = (PLFLT)newX[i];
+				fltY[i] = (PLFLT)newY[i];
+			}
+			renderX = fltX;
+			renderY = fltY;
+#endif
+			if (mapform != NULL)
+				(*mapform)(n + nExtraPoints, renderX, renderY);
+			plfill(n + nExtraPoints, renderX, renderY);
+			free(newX);
+			free(newY);
+#ifndef PL_DOUBLE
+			free(fltX);
+			free(fltY);
+#endif
+
+			//rendering is complete, return;
+			return;
+		}
+		else
+		{
+			//this is just a regular polygon - render it as we would expect
+			if (mapform != NULL)
+				(*mapform)(n, x, y);
+			plfill(n, x, y);
+		}
+
+		//return here as we are done
+		return;
+	}
+
+	//if we get to here we don't have a polygon wrapping all the way round the globe
+	//Just do normal rendering
+
+	//convert to floats if needed
+#ifdef PL_DOUBLE
+	renderX = x;
+	renderY = y;
+#else
+	fltX = malloc(n * sizeof(PLFLT));
+	fltX = malloc(n * sizeof(PLFLT));
+	if (!fltX || !fltY)
+	{
+		free(fltX);
+		free(fltY);
+		plabort("Could not allocate memory converting map date to floats.");
+		return;
+	}
+	for (i = 0; i < n; ++i)
+	{
+		fltX[i] = (PLFLT)x[i];
+		fltY[i] = (PLFLT)y[i];
+	}
+	renderX = fltX;
+	renderY = fltY;
+#endif
 
     //do the transform if needed
     if ( mapform != NULL )
-        ( *mapform )( n, x, y );
+        ( *mapform )( n, renderX, renderY);
 
+	//deo the rendering
     if ( shapetype == SHPT_ARC )
-        plline( n, x, y );
+        plline( n, renderX, renderY);
     else if ( shapetype == SHPT_POINT )
         for ( i = 0; i < n; ++i )
-            plptex( x[i], y[i], dx, dy, just, text );
-    else if ( shapetype == SHPT_POLYGON )
-        plfill( n, x, y );
+            plptex(renderX[i], renderY[i], dx, dy, just, text );
     else if ( shapetype == SHPT_ARCZ || shapetype == SHPT_ARCM )
-        plline( n, x, y );
-    else if ( shapetype == SHPT_POLYGON || shapetype == SHPT_POLYGONZ || shapetype == SHPT_POLYGONM )
-        plfill( n, x, y );
-    else if ( shapetype == SHPT_POINT || shapetype == SHPT_POINTM || shapetype == SHPT_POINTZ )
+        plline( n, renderX, renderY);
+    else if (  shapetype == SHPT_POINTM || shapetype == SHPT_POINTZ )
         for ( i = 0; i < n; ++i )
-            plptex( x[i], y[i], dx, dy, just, text );
+            plptex(renderX[i], renderY[i], dx, dy, just, text );
+	else if (shapetype == SHPT_POLYGON || shapetype == SHPT_POLYGONZ || shapetype == SHPT_POLYGONM)
+		plfill(n, renderX, renderY);
+	else if ( shapetype == SHPT_NULL )
+		; //do nothing for a NULL shape
+	else
+		plabort("Unknown render type passed in to drawmapdata(). PLplot can render shapefile arcs, points and polygons (including z and m variants).");
+
+#ifndef PL_DOUBLE
+	free(fltX);
+	free(fltY);
+#endif
 }
 
 
@@ -206,14 +343,6 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
     //PLFLT  *bufx   = NULL, *bufy = NULL; //the data that will be plot after dealing with wrapping round the globe
     int    bufsize = 0; //number of elements in bufx and bufy
     size_t filenamelen; //length of the filename
-    //PLFLT  **splitx             = NULL;//an array of pointers each of which point to where a section wraps round the globe
-    //PLFLT  **splity             = NULL;//an array of pointers each of which point to where a section wraps round the globe
-    //int    *splitsectionlengths = NULL;//an array saying how many elements are in each split section
-    //int    nsplitsections; //number of elements in splitx, splity and splitsectionlengths
-    //PLFLT  lastsplitpointx;
-    //PLFLT  lastsplitpointy;
-    //PLFLT  penultimatesplitpointx;
-    //PLFLT  penultimatesplitpointy;
     char   islatlon     = 1; //specify if the data is lat-lon or some other projection
     int    appendresult = 0;
 
@@ -229,6 +358,8 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
     char      *prjfilename = NULL; //filename of the projection file
     PDFstrm   *prjfile; //projection file
     char      prjtype[] = { 0, 0, 0, 0, 0, 0, 0 }; //string holding the projection type description
+	double    fileMins[4]; //min x, y, z, m for the file
+	double    fileMaxs[4]; //max x, y, z, m for the file
 
     //
     // read map outline
@@ -258,7 +389,7 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
         free( filename );
         return;
     }
-    SHPGetInfo( in, &nentries, &shapetype, NULL, NULL );
+    SHPGetInfo( in, &nentries, &shapetype, fileMins, fileMaxs );
     //also check for a prj file which will tell us if the data is lat/lon or projected
     //if it is projected then set ncopies to 1 - i.e. don't wrap round longitudes
     prjfilename = (char *) malloc( filenamelen + 5 );
@@ -281,9 +412,6 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
     }
     free( prjfilename );
     prjfilename = NULL;
-
-    //bufx = NULL;
-    //bufy = NULL;
 
     for (;; )
     {
@@ -324,23 +452,6 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
             nVertices = object->nVertices - object->panPartStart[partnumber];                    //panPartStart holds the offset for each part
         else
             nVertices = object->panPartStart[partnumber + 1] - object->panPartStart[partnumber]; //panPartStart holds the offset for each part
-        //allocate memory for the data
-        /*if ( nVertices > bufsize )
-        {
-            bufsize = nVertices;
-            free( bufx );
-            free( bufy );
-            bufx = (PLFLT *) malloc( (size_t) bufsize * sizeof ( PLFLT ) );
-            bufy = (PLFLT *) malloc( (size_t) bufsize * sizeof ( PLFLT ) );
-            if ( !bufx || !bufy )
-            {
-                plabort( "Could not allocate memory for map data" );
-                free( filename );
-                free( bufx );
-                free( bufy );
-                return;
-            }
-        }*/
 
         //point the plot buffer to the correct starting vertex
         //and copy it to the PLFLT arrays. If we had object->nParts == 0
@@ -356,13 +467,7 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
             bufyraw = object->padfY;
         }
 
-        /*for ( i = 0; i < nVertices; i++ )
-        {
-            bufx[i] = (PLFLT) bufxraw[i];
-            bufy[i] = (PLFLT) bufyraw[i];
-        }*/
-
-        //set the min x/y of the object
+        //set the min/max x/y of the object
         minsectlon = object->dfXMin;
         maxsectlon = object->dfXMax;
         minsectlat = object->dfYMin;
@@ -380,40 +485,25 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
 				//1) wraparound causing lines which go the wrong way round
 				//   the globe
 				//2) some people plot lon from 0-360 deg, others from -180 - +180
-				//   or even more bizzare options
+				//   or even more bizzare options - like google earth when zoomed
+				//   right out loops round and round.
 				//
 				//we can cure these problems by conditionally adding/subtracting
 				//360 degrees to each longitude point in order to ensure that the
 				//distance between adgacent points is always less than 180
-				//degrees, then plotting up to 2 out of 5 copies of the data
-				//each separated by 360 degrees.
+				//degrees, then repeatedly shifting the shape by integer multiples
+				//of 360 in each longitude direction until the shape has moved out
+				//of the plot area.
 
-				//arrays of pointers to the starts of each section of data that
-				//has been split due to longitude wrapping, and an array of ints
-				//to hold their lengths. Start with splitx and splity having one
-				//element pointing to the beginning of bufx and bufy
-				/*splitx = (PLFLT **) malloc( sizeof ( PLFLT* ) );
-				splity = (PLFLT **) malloc( sizeof ( PLFLT* ) );
-				//lengths of the split sections
-				splitsectionlengths = (int *) malloc( sizeof ( size_t ) );
-				if ( !splitx || !splity || !splitsectionlengths )
-				{
-					plabort( "Could not allocate memory for longitudinally split map data" );
-					free( filename );
-					free( bufx );
-					free( bufy );
-					free( splitx );
-					free( splity );
-					free( splitsectionlengths );
-					return;
-				}
-				splitsectionlengths[0] = nVertices;
-				nsplitsections         = 1;
-				splitx[0] = bufx;
-				splity[0] = bufy;*/
+				//reset our plot longitude limits to avoid crazy loops in case the user has
+				//set them to be infinities or similar
+				if (minx == -PLFLT_MAX || minx <= -PLFLT_HUGE_VAL)
+					minx = fileMins[0];
+				if (maxx == -PLFLT_MAX || maxx >= PLFLT_HUGE_VAL)
+					maxx = fileMaxs[0];
 
-				//ensure our lat and lon are on 0-360 grid and split the
-				//data where it wraps.
+				//move the first point by multiples of 360 putting it as close
+				//as possible to our plot limits centre point.
 				unrebasedFirstValue = bufxraw[0];
 				rebaselon( &bufxraw[0], ( minx + maxx ) / 2.0 );
 				rebaseAmount = bufxraw[0] - unrebasedFirstValue;
