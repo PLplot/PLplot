@@ -56,8 +56,8 @@ CustomErrors( PLCHAR_VECTOR message );
 #define OpenMap     OpenShapeFile
 #define CloseMap    SHPClose
 
-//redistributes the lon value onto either 0-360 or -180-180 for wrapping
-//purposes.
+//redistributes the lon value so that it is within +/-180 deg of midlon
+//for wrapping purposes.
 void
 rebaselon( PLFLT *lon, PLFLT midlon )
 {
@@ -219,20 +219,16 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
 
 
     SHPHandle in;
-    int       nentries;
-    int       entryindex = 0;
-    // Unnecessarily set nparts to quiet -O3 -Wuninitialized warnings.
-    //int              nparts      = 0;
-    int       entrynumber = 0;
-    int       partnumber  = 0;
-    double    mins[4];
-    double    maxs[4];
-    SHPObject *object = NULL;
-    double    *bufxraw;
-    double    *bufyraw;
-    char      *prjfilename = NULL;
-    PDFstrm   *prjfile;
-    char      prjtype[] = { 0, 0, 0, 0, 0, 0, 0 };
+    int       nentries; //number of objects in the shapefile
+    int       entryindex = 0; //index of plotentries that we are currently rendering
+    int       entrynumber = 0;//id of the object we are currently rendering
+    int       partnumber  = 0;//part of the object we are currently rendering (some objects are split into parts)
+    SHPObject *object = NULL;//pointer to the object we are currently rendering
+    double    *bufxraw;//pointer to the raw x data read from the file
+    double    *bufyraw;//pointer to the raw y data read from the file
+    char      *prjfilename = NULL; //filename of the projection file
+    PDFstrm   *prjfile; //projection file
+    char      prjtype[] = { 0, 0, 0, 0, 0, 0, 0 }; //string holding the projection type description
 
     //
     // read map outline
@@ -262,7 +258,7 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
         free( filename );
         return;
     }
-    SHPGetInfo( in, &nentries, &shapetype, mins, maxs );
+    SHPGetInfo( in, &nentries, &shapetype, NULL, NULL );
     //also check for a prj file which will tell us if the data is lat/lon or projected
     //if it is projected then set ncopies to 1 - i.e. don't wrap round longitudes
     prjfilename = (char *) malloc( filenamelen + 5 );
