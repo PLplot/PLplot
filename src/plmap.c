@@ -290,6 +290,7 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
     char      prjtype[] = { 0, 0, 0, 0, 0, 0, 0 }; //string holding the projection type description
     double    fileMins[4];                         //min x, y, z, m for the file
     double    fileMaxs[4];                         //max x, y, z, m for the file
+	int       fileShapeType;                       //the shapetype read from the file
 
     //
     // read map outline
@@ -319,7 +320,11 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
         free( filename );
         return;
     }
-    SHPGetInfo( in, &nentries, &shapetype, fileMins, fileMaxs );
+    SHPGetInfo( in, &nentries, &fileShapeType, fileMins, fileMaxs );
+    if ( shapetype == SHPT_NULL )
+    {
+        shapetype = fileShapeType;
+    }
     //also check for a prj file which will tell us if the data is lat/lon or projected
     //if it is projected then set ncopies to 1 - i.e. don't wrap round longitudes
     prjfilename = (char *) malloc( filenamelen + 5 );
@@ -561,7 +566,7 @@ plmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
        PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy )
 {
 #ifdef HAVE_SHAPELIB
-    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, NULL, minx, maxx,
+    drawmap( mapform, name, 0.0, 0.0, SHPT_NULL, 0.0, NULL, minx, maxx,
         miny, maxy, NULL, 0 );
 #else
     plwarn( "plmap is a no-op because shapelib is not available." );
@@ -591,7 +596,7 @@ plmapline( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
            PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 #ifdef HAVE_SHAPELIB
-    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, "", minx, maxx,
+    drawmap( mapform, name, 0.0, 0.0, SHPT_NULL, 0.0, "", minx, maxx,
         miny, maxy, plotentries, nplotentries );
 #else
     plwarn( "plmapline is a no-op because shapelib is not available." );

@@ -8349,6 +8349,13 @@ device support!)
       The .shp and .shx files are required for plotting Shapefile data with
       PLplot.
     </para>
+    <para>
+      PLplot currently supports the point, multipoint, polyline and polygon
+      objects within shapefiles. However holes in polygons are not supported.
+      When plmap is used the type of object is derived from the shapefile, if
+      you wish to override the type then use one of the other plmap
+      variants. The built in maps have line data only.
+    </para>
 
     <variablelist>
       <varlistentry>
