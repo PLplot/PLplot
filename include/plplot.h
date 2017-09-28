@@ -153,10 +153,12 @@
 typedef double   PLFLT;
 #define PLFLT_MAX    DBL_MAX
 #define PLFLT_MIN    DBL_MIN
+#define PLFLT_HUGE_VAL    HUGE_VAL
 #else
 typedef float    PLFLT;
 #define PLFLT_MAX    FLT_MAX
 #define PLFLT_MIN    FLT_MIN
+#define PLFLT_HUGE_VAL    HUGE_VALF
 #endif
 
 #if ( defined ( PL_HAVE_STDINT_H ) && !defined ( __cplusplus ) ) || \

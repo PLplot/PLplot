@@ -198,23 +198,23 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
          PLFLT dx, PLFLT dy, int shapetype, PLFLT just, PLCHAR_VECTOR text,
          PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy, PLINT_VECTOR plotentries, PLINT nplotentries )
 {
-    int    i, j;
-    char   *filename = NULL;
-    char   warning[1024];
-    int    nVertices = 200;
-    PLFLT  minsectlon, maxsectlon, minsectlat, maxsectlat;
-    PLFLT  *bufx   = NULL, *bufy = NULL;
-    int    bufsize = 0;
-    size_t filenamelen;
-    PLFLT  **splitx             = NULL;
-    PLFLT  **splity             = NULL;
-    int    *splitsectionlengths = NULL;
-    int    nsplitsections;
-    PLFLT  lastsplitpointx;
-    PLFLT  lastsplitpointy;
-    PLFLT  penultimatesplitpointx;
-    PLFLT  penultimatesplitpointy;
-    char   islatlon     = 1;
+    int    i;
+    char   *filename = NULL; //filename of the map data
+    char   warning[1024]; //string used for constructing a sensible warning message
+    int    nVertices = 200; //number of vertices in a particular part
+    double  minsectlon, maxsectlon, minsectlat, maxsectlat; //the min/max for each chunk of the data, note double not PLFLT as they are read from the shapefile
+    //PLFLT  *bufx   = NULL, *bufy = NULL; //the data that will be plot after dealing with wrapping round the globe
+    int    bufsize = 0; //number of elements in bufx and bufy
+    size_t filenamelen; //length of the filename
+    //PLFLT  **splitx             = NULL;//an array of pointers each of which point to where a section wraps round the globe
+    //PLFLT  **splity             = NULL;//an array of pointers each of which point to where a section wraps round the globe
+    //int    *splitsectionlengths = NULL;//an array saying how many elements are in each split section
+    //int    nsplitsections; //number of elements in splitx, splity and splitsectionlengths
+    //PLFLT  lastsplitpointx;
+    //PLFLT  lastsplitpointy;
+    //PLFLT  penultimatesplitpointx;
+    //PLFLT  penultimatesplitpointy;
+    char   islatlon     = 1; //specify if the data is lat-lon or some other projection
     int    appendresult = 0;
 
 
@@ -282,8 +282,8 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
     free( prjfilename );
     prjfilename = NULL;
 
-    bufx = NULL;
-    bufy = NULL;
+    //bufx = NULL;
+    //bufy = NULL;
 
     for (;; )
     {
@@ -325,7 +325,7 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
         else
             nVertices = object->panPartStart[partnumber + 1] - object->panPartStart[partnumber]; //panPartStart holds the offset for each part
         //allocate memory for the data
-        if ( nVertices > bufsize )
+        /*if ( nVertices > bufsize )
         {
             bufsize = nVertices;
             free( bufx );
@@ -340,7 +340,7 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
                 free( bufy );
                 return;
             }
-        }
+        }*/
 
         //point the plot buffer to the correct starting vertex
         //and copy it to the PLFLT arrays. If we had object->nParts == 0
@@ -356,11 +356,11 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
             bufyraw = object->padfY;
         }
 
-        for ( i = 0; i < nVertices; i++ )
+        /*for ( i = 0; i < nVertices; i++ )
         {
             bufx[i] = (PLFLT) bufxraw[i];
             bufy[i] = (PLFLT) bufyraw[i];
-        }
+        }*/
 
         //set the min x/y of the object
         minsectlon = object->dfXMin;
@@ -368,184 +368,129 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
         minsectlat = object->dfYMin;
         maxsectlat = object->dfYMax;
 
-        //increment the partnumber or if we've reached the end of
-        //an entry increment the entrynumber and set partnumber to 0
-        if ( partnumber == object->nParts - 1 || object->nParts == 0 )
-        {
-            entrynumber++;
-            entryindex++;
-            partnumber = 0;
-            SHPDestroyObject( object );
-            object = NULL;
-        }
-        else
-            partnumber++;
+        if ( nVertices > 0 )
+		{
+			if ( islatlon )
+			{
+				PLINT nExtraPositiveRedraws = 0;
+				double unrebasedFirstValue = bufxraw[0];
+				double rebaseAmount;
+				//two obvious issues exist here with plotting longitudes:
+				//
+				//1) wraparound causing lines which go the wrong way round
+				//   the globe
+				//2) some people plot lon from 0-360 deg, others from -180 - +180
+				//   or even more bizzare options
+				//
+				//we can cure these problems by conditionally adding/subtracting
+				//360 degrees to each longitude point in order to ensure that the
+				//distance between adgacent points is always less than 180
+				//degrees, then plotting up to 2 out of 5 copies of the data
+				//each separated by 360 degrees.
 
-        if ( nVertices == 0 )
-            continue;
+				//arrays of pointers to the starts of each section of data that
+				//has been split due to longitude wrapping, and an array of ints
+				//to hold their lengths. Start with splitx and splity having one
+				//element pointing to the beginning of bufx and bufy
+				/*splitx = (PLFLT **) malloc( sizeof ( PLFLT* ) );
+				splity = (PLFLT **) malloc( sizeof ( PLFLT* ) );
+				//lengths of the split sections
+				splitsectionlengths = (int *) malloc( sizeof ( size_t ) );
+				if ( !splitx || !splity || !splitsectionlengths )
+				{
+					plabort( "Could not allocate memory for longitudinally split map data" );
+					free( filename );
+					free( bufx );
+					free( bufy );
+					free( splitx );
+					free( splity );
+					free( splitsectionlengths );
+					return;
+				}
+				splitsectionlengths[0] = nVertices;
+				nsplitsections         = 1;
+				splitx[0] = bufx;
+				splity[0] = bufy;*/
 
-        if ( islatlon )
-        {
-            //two obvious issues exist here with plotting longitudes:
-            //
-            //1) wraparound causing lines which go the wrong way round
-            //   the globe
-            //2) some people plot lon from 0-360 deg, others from -180 - +180
-            //
-            //we can cure these problems by conditionally adding/subtracting
-            //360 degrees to each data point in order to ensure that the
-            //distance between adgacent points is always less than 180
-            //degrees, then plotting up to 2 out of 5 copies of the data
-            //each separated by 360 degrees.
+				//ensure our lat and lon are on 0-360 grid and split the
+				//data where it wraps.
+				unrebasedFirstValue = bufxraw[0];
+				rebaselon( &bufxraw[0], ( minx + maxx ) / 2.0 );
+				rebaseAmount = bufxraw[0] - unrebasedFirstValue;
+				minsectlon += rebaseAmount;
+				maxsectlon += rebaseAmount;
+				for ( i = 1; i < nVertices; i++ )
+				{
+					double difference;
+					//first adjust the point by the same amount as our first point
+					bufxraw[i] += rebaseAmount;
 
-            //arrays of pointers to the starts of each section of data that
-            //has been split due to longitude wrapping, and an array of ints
-            //to hold their lengths. Start with splitx and splity having one
-            //element pointing to the beginning of bufx and bufy
-            splitx = (PLFLT **) malloc( sizeof ( PLFLT* ) );
-            splity = (PLFLT **) malloc( sizeof ( PLFLT* ) );
-            //lengths of the split sections
-            splitsectionlengths = (int *) malloc( sizeof ( size_t ) );
-            if ( !splitx || !splity || !splitsectionlengths )
-            {
-                plabort( "Could not allocate memory for longitudinally split map data" );
-                free( filename );
-                free( bufx );
-                free( bufy );
-                free( splitx );
-                free( splity );
-                free( splitsectionlengths );
-                return;
-            }
-            splitsectionlengths[0] = nVertices;
-            nsplitsections         = 1;
-            splitx[0] = bufx;
-            splity[0] = bufy;
+					//now check it doesn't do any strange wrapping
+					difference = bufxraw[i] - bufxraw[i - 1];
+					if (difference < -180.0)
+					{
+						bufxraw[i] += 360.0;
+						maxsectlon = MAX(maxsectlon, bufxraw[i]);
+					}
+					else if (difference > 180.0)
+					{
+						bufxraw[i] -= 360.0;
+						minsectlon = MIN(minsectlon, bufxraw[i]);
+					}
+				}
 
-            //set the min/max lats/lons
-            minsectlon = MIN( minsectlon, bufx[0] );
-            maxsectlon = MAX( minsectlon, bufx[0] );
-            minsectlat = MIN( minsectlat, bufy[0] );
-            maxsectlat = MAX( maxsectlat, bufy[0] );
-            //ensure our lat and lon are on 0-360 grid and split the
-            //data where it wraps.
-            rebaselon( &bufx[0], ( minx + maxx ) / 2.0 );
-            for ( i = 1; i < nVertices; i++ )
-            {
-                //put lon into 0-360 degree range
-                rebaselon( &bufx[i], ( minx + maxx ) / 2.0 );
+				//check if the latitude and longitude range means we need to plot this section
+				if ((maxsectlat > miny) && (minsectlat < maxy)
+					&& (maxsectlon > minx) && (minsectlon < maxx))
+				{
+					drawmapdata(mapform, shapetype, nVertices, bufxraw, bufyraw, dx, dy, just, text);
+				}
+				//now check if adding multiples of 360 to the data still allow it to be plotted
+				while (minsectlon + 360.0 < maxx)
+				{
+					for (i = 0; i < nVertices; ++i)
+						bufxraw[i] += 360.0;
+					drawmapdata(mapform, shapetype, nVertices, bufxraw, bufyraw, dx, dy, just, text);
+					minsectlon += 360.0;
+					++nExtraPositiveRedraws;
+				}
+				if (maxsectlon - 360.0 > minx)
+				{
+					for (i = 0; i < nVertices; ++i)
+						bufxraw[i] -= nExtraPositiveRedraws*360.0;
+					while (maxsectlon - 360.0 > minx)
+					{
+						for (i = 0; i < nVertices; ++i)
+							bufxraw[i] -= 360.0;
+						drawmapdata(mapform, shapetype, nVertices, bufxraw, bufyraw, dx, dy, just, text);
+						maxsectlon -= 360.0;
+					}
+				}
+			}
+			else
+			{
+				drawmapdata( mapform, shapetype, nVertices, bufxraw, bufyraw, dx, dy, just, text );
+			}
+		}
 
-                //check if the previous point is more than 180 degrees away
-                if ( bufx[i - 1] - bufx[i] > 180. || bufx[i - 1] - bufx[i] < -180. )
-                {
-                    //check if the map transform deals with wrapping itself, e.g. in a polar projection
-                    //in this case give one point overlap to the sections so that lines are contiguous
-                    if ( checkwrap( mapform, bufx[i], bufy[i] ) )
-                    {
-                        appendresult += appendfltptr( &splitx, nsplitsections, bufx + i );
-                        appendresult += appendfltptr( &splity, nsplitsections, bufy + i );
-                        appendresult += appendint( &splitsectionlengths, nsplitsections, nVertices - i );
-                        splitsectionlengths[nsplitsections - 1] -= splitsectionlengths[nsplitsections] - 1;
-                        nsplitsections++;
-                    }
-                    //if the transform doesn't deal with wrapping then allow 2 points overlap to fill in the
-                    //edges
-                    else
-                    {
-                        appendresult += appendfltptr( &splitx, nsplitsections, bufx + i - 1 );
-                        appendresult += appendfltptr( &splity, nsplitsections, bufy + i - 1 );
-                        appendresult += appendint( &splitsectionlengths, nsplitsections, nVertices - i + 1 );
-                        splitsectionlengths[nsplitsections - 1] -= splitsectionlengths[nsplitsections] - 2;
-                        nsplitsections++;
-                    }
-                    if ( appendresult > 0 )
-                    {
-                        plabort( "Could not allocate memory for appending to longitudinally split map data" );
-                        free( filename );
-                        free( bufx );
-                        free( bufy );
-                        free( splitx );
-                        free( splity );
-                        free( splitsectionlengths );
-                        return;
-                    }
-                }
 
-                //update the mins and maxs
-                minsectlon = MIN( minsectlon, bufx[i] );
-                maxsectlon = MAX( minsectlon, bufx[i] );
-                minsectlat = MIN( minsectlat, bufy[i] );
-                maxsectlat = MAX( maxsectlat, bufy[i] );
-            }
-
-            //check if the latitude and longitude range means we need to plot this section
-            if ( ( maxsectlat > miny ) && ( minsectlat < maxy )
-                 && ( maxsectlon > minx ) && ( minsectlon < maxx ) )
-            {
-                //plot each split in turn, now is where we deal with the end points to
-                //ensure we draw to the edge of the map
-                for ( i = 0; i < nsplitsections; ++i )
-                {
-                    //check if the first 2 or last 1 points of the split section need
-                    //wrapping and add or subtract 360 from them. Note that when the next
-                    //section is drawn the code below will undo this if needed
-                    if ( splitsectionlengths[i] > 2 )
-                    {
-                        if ( splitx[i][1] - splitx[i][2] > 180. )
-                            splitx[i][1] -= 360.0;
-                        else if ( splitx[i][1] - splitx[i][2] < -180. )
-                            splitx[i][1] += 360.0;
-                    }
-
-                    if ( splitx[i][0] - splitx[i][1] > 180. )
-                        splitx[i][0] -= 360.0;
-                    else if ( splitx[i][0] - splitx[i][1] < -180. )
-                        splitx[i][0] += 360.0;
-
-                    if ( splitx[i][splitsectionlengths[i] - 2] - splitx[i][splitsectionlengths[i] - 1] > 180. )
-                        splitx[i][splitsectionlengths[i] - 1] += 360.0;
-                    else if ( splitx[i][splitsectionlengths[i] - 2] - splitx[i][splitsectionlengths[i] - 1] < -180. )
-                        splitx[i][splitsectionlengths[i] - 1] -= 360.0;
-
-                    //save the last 2 points - they will be needed by the next
-                    //split section and will be overwritten by the mapform
-                    lastsplitpointx        = splitx[i][splitsectionlengths[i] - 1];
-                    lastsplitpointy        = splity[i][splitsectionlengths[i] - 1];
-                    penultimatesplitpointx = splitx[i][splitsectionlengths[i] - 2];
-                    penultimatesplitpointy = splity[i][splitsectionlengths[i] - 2];
-
-                    //draw the split section
-                    drawmapdata( mapform, shapetype, splitsectionlengths[i], splitx[i], splity[i], dx, dy, just, text );
-
-                    for ( j = 1; j < splitsectionlengths[i]; ++j )
-                    {
-                        if ( ( splitx[i][j] < 200.0 && splitx[i][j - 1] > 260.0 ) || ( splitx[i][j - 1] < 200.0 && splitx[i][j] > 260.0 ) )
-                            plwarn( "wrapping error" );
-                    }
-
-                    //restore the last 2 points
-                    splitx[i][splitsectionlengths[i] - 1] = lastsplitpointx;
-                    splity[i][splitsectionlengths[i] - 1] = lastsplitpointy;
-                    splitx[i][splitsectionlengths[i] - 2] = penultimatesplitpointx;
-                    splity[i][splitsectionlengths[i] - 2] = penultimatesplitpointy;
-                }
-            }
-        }
-        else
-        {
-            drawmapdata( mapform, shapetype, nVertices, bufx, bufy, dx, dy, just, text );
-        }
-
-        free( splitx );
-        free( splity );
-        free( splitsectionlengths );
+		//increment the partnumber or if we've reached the end of
+		//an entry increment the entrynumber and set partnumber to 0
+		if (partnumber == object->nParts - 1 || object->nParts == 0)
+		{
+			entrynumber++;
+			entryindex++;
+			partnumber = 0;
+			SHPDestroyObject(object);
+			object = NULL;
+		}
+		else
+			partnumber++;
     }
     // Close map file
     SHPClose( in );
 
     //free memory
-    free( bufx );
-    free( bufy );
     free( filename );
 }
 #endif //HAVE_SHAPELIB
