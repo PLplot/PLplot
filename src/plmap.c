@@ -596,7 +596,7 @@ plmapline( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
            PLINT_VECTOR plotentries, PLINT nplotentries )
 {
 #ifdef HAVE_SHAPELIB
-    drawmap( mapform, name, 0.0, 0.0, SHPT_NULL, 0.0, "", minx, maxx,
+    drawmap( mapform, name, 0.0, 0.0, SHPT_ARC, 0.0, "", minx, maxx,
         miny, maxy, plotentries, nplotentries );
 #else
     plwarn( "plmapline is a no-op because shapelib is not available." );
