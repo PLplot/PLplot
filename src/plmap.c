@@ -290,7 +290,7 @@ drawmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
     char      prjtype[] = { 0, 0, 0, 0, 0, 0, 0 }; //string holding the projection type description
     double    fileMins[4];                         //min x, y, z, m for the file
     double    fileMaxs[4];                         //max x, y, z, m for the file
-	int       fileShapeType;                       //the shapetype read from the file
+    int       fileShapeType;                       //the shapetype read from the file
 
     //
     // read map outline

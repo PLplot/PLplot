@@ -8429,7 +8429,7 @@ device support!)
             which do not encroach on the box defined by minx, maxx, miny, maxy will
             not be rendered. But note this is simply an optimisation, not a clipping
             so for objects with some points inside the box and some points outside
-            the box all the points will be rendered. These parameters also define 
+            the box all the points will be rendered. These parameters also define
             latitude and longitude wrapping for shapefiles using these units. Longitude points
             will be wrapped by integer multiples of 360 degrees to place them in the box.
             This allows the same data to be used on plots from -180-180 or 0-360 longitude
