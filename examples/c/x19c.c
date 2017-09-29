@@ -282,7 +282,7 @@ main( int argc, char **argv )
     plcol0( 6 );
     plmapfill( NULL, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, NULL, 0 );
     plwidth( 2.0 );
-    plmapfill( NULL, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, NULL, 0 );
+    plmapline( NULL, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, NULL, 0 );
 
     //draw the roads, first with black and then thinner with colour to give an
     //an outlined appearance

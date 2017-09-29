@@ -217,7 +217,7 @@ x19::x19( int argc, char ** argv )
     maxx = 360;
 
     pls->env( -75., 75., -75., 75., 1, -1 );
-    pls->map( mapform19, "globe", minx, maxx, miny, maxy );
+    pls->map( mapform19, "globe.shp", minx, maxx, miny, maxy );
 
     pls->lsty( 2 );
     pls->meridians( mapform19, 10.0, 10.0, 0.0, 360.0, -10.0, 80.0 );
@@ -328,7 +328,7 @@ x19::x19( int argc, char ** argv )
     pls->col0( 6 );
     pls->mapfill( NULL, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, NULL, 0 );
     pls->width( 2.0 );
-    pls->mapfill( NULL, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, NULL, 0 );
+    pls->mapline( NULL, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, NULL, 0 );
 
     //draw the roads, first with black and then thinner with colour to give an
     //an outlined appearance
