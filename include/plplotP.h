@@ -367,6 +367,7 @@ int plsnscanf( PLCHAR_VECTOR buffer, int n, PLCHAR_VECTOR format, ... );
 #define PLSTATE_CMAP1     6            // change to cmap 1
 #define PLSTATE_CHR       7            // change character height
 #define PLSTATE_SYM       8            // change symbol size
+#define PLSTATE_EOFILL    9            // change to even odd fill rule
 
 
 // Bit switches used in the driver interface

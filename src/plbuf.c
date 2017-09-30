@@ -173,6 +173,7 @@ plbuf_bop( PLStream *pls )
     plbuf_state( pls, PLSTATE_FILL );
     plbuf_state( pls, PLSTATE_CHR );
     plbuf_state( pls, PLSTATE_SYM );
+    plbuf_state( pls, PLSTATE_EOFILL );
 
     //pls->difilt may also be set pre plinit() and is used
     //in plbop for text scaling.
@@ -350,6 +351,12 @@ plbuf_state( PLStream *pls, PLINT op )
         //save the symdef and symht parameters
         wr_data( pls, &( pls->symdef ), sizeof ( pls->symdef ) );
         wr_data( pls, &( pls->symht ), sizeof ( pls->symht ) );
+        break;
+    case PLSTATE_EOFILL:
+        //As far as I can see this is only possible as a one way change
+        //setting PLStream::dev_eofill to 1. However, in case this
+        //behaviour changes in the future we may as well store the value
+        wr_data( pls, &( pls->dev_eofill ), sizeof ( pls->dev_eofill ) );
         break;
     }
 }
@@ -761,6 +768,15 @@ rdbuf_bop( PLStream *pls )
     }
     plbuf_control( pls, cmd );
 
+    // Read the command (should be CHANGE_STATE PLSTATE_EOFILL)
+    nRead = rd_command( pls, &cmd );
+    if ( nRead == 0 || cmd != CHANGE_STATE )
+    {
+        plabort( "rdbuf_bop: Error reading seventh change state" );
+        return;
+    }
+    plbuf_control( pls, cmd );
+
     // and now we can set the color
     if ( pls->curcmap == 0 )
     {
@@ -1030,6 +1046,11 @@ rdbuf_state( PLStream *pls )
         rd_data( pls, &( pls->symdef ), sizeof ( pls->symdef ) );
         rd_data( pls, &( pls->symht ), sizeof ( pls->symht ) );
         break;
+    }
+
+    case PLSTATE_EOFILL: {
+        rd_data( pls, &( pls->dev_eofill ), sizeof ( pls->dev_eofill ) );
+        plP_state( PLSTATE_EOFILL );
     }
     }
 }
