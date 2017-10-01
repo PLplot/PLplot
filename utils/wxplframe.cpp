@@ -329,7 +329,7 @@ bool wxPlFrame::ReadTransmission()
             m_locateMode = true;
         }
     }
-    while ( !( m_header.transmissionType == transmissionLocate || m_header.completeFlag != 0 || m_header.transmissionType == transmissionRequestTextSize ) );
+    while ( !( m_header.transmissionType == transmissionLocate || m_header.completeFlag != 0 || m_header.transmissionType == transmissionRequestTextSize || m_header.transmissionType == transmissionFlush ) );
 
     if ( m_header.completeFlag != 0 )
     {
