@@ -977,10 +977,10 @@ void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, P
     y1 = y1 < 0 ? 0 : y1;
     y2 = y2 < 0 ? m_plplotEdgeLength : y2;
 
-    PLINT x      = MIN( x1, x2 );
-    PLINT y      = MIN( y1, y2 );
-    PLINT width  = abs( x1 - x2 );
-    PLINT height = abs( y1 - y2 );
+    PLINT x      = MIN( x1, x2 ) * m_xAspect;
+    PLINT y      = ( m_plplotEdgeLength - MAX( y1, y2 ) ) * m_yAspect;
+    PLINT width  = abs( x1 - x2 ) * m_xAspect;
+    PLINT height = abs( y1 - y2 ) * m_yAspect;
 
     if ( width > 0 && height > 0 )
     {
@@ -989,6 +989,7 @@ void wxPLDevice::ClearBackground( PLStream* pls, PLINT x1, PLINT y1, PLINT x2, P
         plgcolbga( &r, &g, &b, &a );
         wxColour bgColour( r, g, b, a * 255 );
         DrawingObjectsChanger changer( m_dc, wxPen( bgColour, 0 ), wxBrush( bgColour ) );
+        Scaler   scaler( m_dc, 1.0 / m_scale, 1.0 / m_scale );
         m_dc->DrawRectangle( x, y, width, height );
     }
 }
