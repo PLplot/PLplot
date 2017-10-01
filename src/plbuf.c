@@ -1396,6 +1396,9 @@ rdbuf_text_unicode( PLINT op, PLStream *pls )
 void
 plRemakePlot( PLStream *pls )
 {
+    //set the current status to end of page, so that the begin page code
+    //gets called
+    plsc->page_status = AT_EOP;
     plFlushBuffer( pls, TRUE, (size_t) ( -1 ) );
 }
 

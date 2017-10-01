@@ -122,8 +122,6 @@ text2fci( PLCHAR_VECTOR text, unsigned char *hexdigit, unsigned char *hexpower )
 //
 //--------------------------------------------------------------------------
 
-enum { AT_BOP, DRAWING, AT_EOP };
-
 // Initialize device.
 // The plot buffer must be called last.
 

@@ -369,6 +369,9 @@ int plsnscanf( PLCHAR_VECTOR buffer, int n, PLCHAR_VECTOR format, ... );
 #define PLSTATE_SYM       8            // change symbol size
 #define PLSTATE_EOFILL    9            // change to even odd fill rule
 
+// Enum for flagging the render status of PLplot
+enum { AT_BOP, DRAWING, AT_EOP };
+
 
 // Bit switches used in the driver interface
 
