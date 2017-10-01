@@ -2841,7 +2841,7 @@ static int
 opt_eofill( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void * PL_UNUSED( client_data ) )
 {
     plsc->dev_eofill = 1;
-    if ( plsc->initialized )
+    if ( plsc->level > 0 )
         plP_state( PLSTATE_EOFILL );
     return 0;
 }
