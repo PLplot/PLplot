@@ -367,10 +367,8 @@ c_plvpor( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
     plsc->vppymi = plP_dcpcy( plsc->vpdymi );
     plsc->vppyma = plP_dcpcy( plsc->vpdyma );
 
-    plsc->clpxmi = MAX( plsc->vppxmi, plsc->phyxmi );
-    plsc->clpxma = MIN( plsc->vppxma, plsc->phyxma );
-    plsc->clpymi = MAX( plsc->vppymi, plsc->phyymi );
-    plsc->clpyma = MIN( plsc->vppyma, plsc->phyyma );
+    plP_sclp( MAX( plsc->vppxmi, plsc->phyxmi ), MIN( plsc->vppxma, plsc->phyxma ),
+        MAX( plsc->vppymi, plsc->phyymi ), MIN( plsc->vppyma, plsc->phyyma ) );
 
     plsc->level = 2;
 }
@@ -538,10 +536,8 @@ c_plsvpa( PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax )
     plsc->vppymi = plP_dcpcy( plsc->vpdymi );
     plsc->vppyma = plP_dcpcy( plsc->vpdyma );
 
-    plsc->clpxmi = plP_dcpcx( plsc->vpdxmi );
-    plsc->clpxma = plP_dcpcx( plsc->vpdxma );
-    plsc->clpymi = plP_dcpcy( plsc->vpdymi );
-    plsc->clpyma = plP_dcpcy( plsc->vpdyma );
+    plP_sclp( plP_dcpcx( plsc->vpdxmi ), plP_dcpcx( plsc->vpdxma ),
+        plP_dcpcy( plsc->vpdymi ), plP_dcpcy( plsc->vpdyma ) );
 
     plsc->level = 2;
 }

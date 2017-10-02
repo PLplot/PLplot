@@ -1965,10 +1965,10 @@ calc_didev( void )
 
 // Set clip limits to conform to new page size
 
-    plsc->diclpxmi = (PLINT) ( plsc->didxax * plsc->phyxmi + plsc->didxb );
-    plsc->diclpxma = (PLINT) ( plsc->didxax * plsc->phyxma + plsc->didxb );
-    plsc->diclpymi = (PLINT) ( plsc->didyay * plsc->phyymi + plsc->didyb );
-    plsc->diclpyma = (PLINT) ( plsc->didyay * plsc->phyyma + plsc->didyb );
+    plP_sclp( (PLINT) ( plsc->didxax * plsc->phyxmi + plsc->didxb ),
+        (PLINT) ( plsc->didxax * plsc->phyxma + plsc->didxb ),
+        (PLINT) ( plsc->didyay * plsc->phyymi + plsc->didyb ),
+        (PLINT) ( plsc->didyay * plsc->phyyma + plsc->didyb ) );
 }
 
 //--------------------------------------------------------------------------
@@ -2426,10 +2426,7 @@ c_plinit( void )
 
 // Set clip limits.
 
-    plsc->clpxmi = plsc->phyxmi;
-    plsc->clpxma = plsc->phyxma;
-    plsc->clpymi = plsc->phyymi;
-    plsc->clpyma = plsc->phyyma;
+    plP_sclp( plsc->phyxmi, plsc->phyxma, plsc->phyymi, plsc->phyyma );
 
 // Page aspect ratio.
 
