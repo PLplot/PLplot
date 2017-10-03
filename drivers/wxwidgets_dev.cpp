@@ -1061,6 +1061,16 @@ void wxPLDevice::SetColor( PLStream *pls )
             pls->curcolor.a * 255 ) );
 }
 
+//--------------------------------------------------------------------------
+//  void wxPLDevice::SetXorMode( bool on )
+//
+//  Set whether we want XOR mode on or off.
+//--------------------------------------------------------------------------
+void wxPLDevice::SetXorMode( bool on )
+{
+    if ( m_dc )
+        m_dc->SetLogicalFunction( on ? wxXOR : wxCOPY );
+}
 
 //--------------------------------------------------------------------------
 //  void wxPLDevice::SetDC( PLStream *pls, void* dc )

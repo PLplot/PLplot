@@ -82,7 +82,7 @@ wxPlFrame::wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wx
         throw ( "Error initializing the shared memory and/or mutex needed for the application. The application will close" );
     }
 
-    m_locateMode          = false;
+    m_locateModePage      = -1;
     m_transferComplete    = false;
     m_plottedBufferAmount = 0;
     //signal that we have opened the shared memory
@@ -326,7 +326,7 @@ bool wxPlFrame::ReadTransmission()
         if ( m_header.transmissionType == transmissionLocate )
         {
             SetPageAndUpdate();
-            m_locateMode = true;
+            m_locateModePage = m_writingPage;
         }
     }
     while ( !( m_header.transmissionType == transmissionLocate || m_header.completeFlag != 0 || m_header.transmissionType == transmissionRequestTextSize || m_header.transmissionType == transmissionFlush ) );
@@ -420,7 +420,7 @@ bool wxPlFrame::ReadTransmission()
     else if ( transmissionType == transmissionLocate )
     {
         SetPageAndUpdate();
-        m_locateMode = true;
+        m_locateModePage = m_writingPage;
     }
     else if ( transmissionType == transmissionRequestTextSize )
     {
@@ -514,7 +514,7 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
     m_cursorPosition = event.GetPosition();
 
     //If the mouse button was clicked then
-    if ( m_locateMode && event.ButtonDown() )
+    if ( m_locateModePage == m_viewingPage && event.ButtonDown() )
     {
         wxSize clientSize = GetClientSize();
 #ifdef PL_WXWIDGETS_IPC3
@@ -554,25 +554,40 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
 
         if ( event.LeftDown() )
         {
-            header->graphicsIn.button = 1;      // X11/X.h: #define Button1	1
-            header->graphicsIn.state  = 1 << 8; // X11/X.h: #define Button1Mask	(1<<8)
+            header->graphicsIn.button = 1; // X11/X.h: #define Button1	1
+            header->graphicsIn.state  = 0; // X11/X.h: #define Button1Mask	(1<<8)
         }
         else if ( event.MiddleDown() )
         {
-            header->graphicsIn.button = 2;      // X11/X.h: #define Button2	2
-            header->graphicsIn.state  = 1 << 9; // X11/X.h: #define Button2Mask	(1<<9)
+            header->graphicsIn.button = 2; // X11/X.h: #define Button2	2
+            header->graphicsIn.state  = 0; // X11/X.h: #define Button2Mask	(1<<9)
         }
         else if ( event.RightDown() )
         {
-            header->graphicsIn.button = 3;       // X11/X.h: #define Button3	3
-            header->graphicsIn.state  = 1 << 10; // X11/X.h: #define Button3Mask	(1<<10)
+            header->graphicsIn.button = 3; // X11/X.h: #define Button3	3
+            header->graphicsIn.state  = 0; // X11/X.h: #define Button3Mask	(1<<10)
+        }
+        else if ( event.LeftUp() )
+        {
+            header->graphicsIn.button = 1;                 // X11/X.h: #define Button1	1
+            header->graphicsIn.state  = 1 << 8;            // X11/X.h: #define Button1Mask	(1<<8)
+        }
+        else if ( event.MiddleUp() )
+        {
+            header->graphicsIn.button = 2;                 // X11/X.h: #define Button2	2
+            header->graphicsIn.state  = 1 << 9;            // X11/X.h: #define Button2Mask	(1<<9)
+        }
+        else if ( event.RightUp() )
+        {
+            header->graphicsIn.button = 3;                  // X11/X.h: #define Button3	3
+            header->graphicsIn.state  = 1 << 10;            // X11/X.h: #define Button3Mask	(1<<10)
         }
 
         header->graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
         header->locateModeFlag = 0;
 #endif  // #ifdef PL_WXWIDGETS_IPC3
-        m_locateMode = false;
+        m_locateModePage = -1;
     }
 }
 
@@ -580,7 +595,7 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
 {
 #ifndef PL_WXWIDGETS_IPC3
     //This only works on Windows, unfortunately on wxGTK, wxFrames cannot catch key presses
-    if ( m_locateMode )
+    if ( m_locateModePage = m_viewingPage )
     {
         PLNamedMutexLocker locker( &m_mutex );
         MemoryMapHeader    *header = (MemoryMapHeader *) m_memoryMap.getBuffer();
@@ -601,7 +616,7 @@ void wxPlFrame::OnKey( wxKeyEvent &event )
         header->graphicsIn.keysym = keycode;
 
         header->locateModeFlag = 0;
-        m_locateMode           = false;
+        m_locateModePage       = -1;
     }
 #endif //#ifndef PL_WXWIDGETS_IPC3
 }

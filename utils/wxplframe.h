@@ -88,7 +88,7 @@ private:
     bool             m_inCheckTimerFunction;
 
     wxPoint          m_cursorPosition;
-    bool             m_locateMode;
+    int              m_locateModePage;
     size_t           m_plottedBufferAmount;
     unsigned char    m_previousTransmissionType;
 

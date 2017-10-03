@@ -92,6 +92,7 @@ public:
     virtual void Locate( PLStream* pls, PLGraphicsIn *graphicsIn ){}
     virtual void Flush( PLStream* pls ){}
     virtual void PreDestructorTidy( PLStream *pls ){}
+    virtual void SetXorMode( bool on ){}
 
     void drawText( PLStream* pls, EscText* args );
 private:
@@ -120,6 +121,7 @@ public:
     void FillPolygon( PLStream *pls );
     void SetWidth( PLStream *pls );
     void SetColor( PLStream *pls );
+    void SetXorMode( bool on );
     void SetDC( PLStream *pls, wxDC* dc );
     void EndPage( PLStream* pls );
     void BeginPage( PLStream* pls );

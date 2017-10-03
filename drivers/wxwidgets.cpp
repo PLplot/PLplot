@@ -197,7 +197,12 @@ void plD_init_wxwidgets( PLStream* pls )
             plsdiori( (PLFLT) ( 4 - ORIENTATION ) );
             pls->freeaspect = 1;
         }
+
+        //indicate that we support getting string length
         pls->has_string_length = 1;
+
+        //indicate that we support xor rendering
+        pls->dev_xor = 1;
     }
     catch ( const char *message )
     {
@@ -515,13 +520,7 @@ void plD_esc_wxwidgets( PLStream *pls, PLINT op, void *ptr )
             break;
 
         case PLESC_XORMOD:
-            // switch between wxXOR and wxCOPY
-            // if( dev->ready ) {
-            //                  if( dev->m_dc->GetLogicalFunction() == wxCOPY )
-            //                          dev->m_dc->SetLogicalFunction( wxXOR );
-            //                  else if( dev->m_dc->GetLogicalFunction() == wxXOR )
-            //                          dev->m_dc->SetLogicalFunction( wxCOPY );
-            //          }
+            device->SetXorMode( *( (PLINT *) ptr ) == 0 ? false : true );
             break;
 
         case PLESC_DEVINIT:
