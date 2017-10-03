@@ -43,6 +43,7 @@ EVT_MENU( ID_PAGE_NEXT, wxPlFrame::OnNextPage )
 EVT_MENU( ID_PAGE_PREV, wxPlFrame::OnPrevPage )
 EVT_TIMER( ID_CHECK_TIMER, wxPlFrame::OnCheckTimer )
 EVT_KEY_DOWN( wxPlFrame::OnKey )
+EVT_LEFT_UP( wxPlFrame::OnMouse )
 EVT_MOUSE_EVENTS( wxPlFrame::OnMouse )
 END_EVENT_TABLE()
 
@@ -514,8 +515,12 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
     m_cursorPosition = event.GetPosition();
 
     //If the mouse button was clicked then
-    if ( m_locateModePage == m_viewingPage && event.ButtonDown() )
+    if ( m_locateModePage == m_viewingPage && event.ButtonDown() || event.ButtonUp() )
     {
+		if (event.ButtonUp())
+		{
+			int i = 5;
+		}
         wxSize clientSize = GetClientSize();
 #ifdef PL_WXWIDGETS_IPC3
         m_header.graphicsIn.pX = m_cursorPosition.x;
@@ -523,21 +528,31 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         m_header.graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
         m_header.graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
 
-        if ( event.LeftDown() )
-        {
-            m_header.graphicsIn.button = 1;      // X11/X.h: #define Button1	1
-            m_header.graphicsIn.state  = 1 << 8; // X11/X.h: #define Button1Mask	(1<<8)
-        }
-        else if ( event.MiddleDown() )
-        {
-            m_header.graphicsIn.button = 2;      // X11/X.h: #define Button2	2
-            m_header.graphicsIn.state  = 1 << 9; // X11/X.h: #define Button2Mask	(1<<9)
-        }
-        else if ( event.RightDown() )
-        {
-            m_header.graphicsIn.button = 3;       // X11/X.h: #define Button3	3
-            m_header.graphicsIn.state  = 1 << 10; // X11/X.h: #define Button3Mask	(1<<10)
-        }
+		int button = event.GetButton();
+
+        if ( button == wxMOUSE_BTN_LEFT )
+            m_header.graphicsIn.button = 1;
+        else if (button == wxMOUSE_BTN_MIDDLE)
+            m_header.graphicsIn.button = 2;
+		else if (button == wxMOUSE_BTN_RIGHT)
+			m_header.graphicsIn.button = 3;
+		else if (button == wxMOUSE_BTN_AUX1)
+			m_header.graphicsIn.button = 4;
+		else if (button == wxMOUSE_BTN_AUX2)
+			m_header.graphicsIn.button = 5;
+
+		//flags the buttons that were down before this event
+		m_header.graphicsIn.state = 0;
+		if ((event.LeftIsDown() && !event.LeftDown()) || event.LeftUp())
+			m_header.graphicsIn.state |= (1 << 8);
+		if ((event.MiddleIsDown() && !event.MiddleDown()) || event.MiddleUp())
+			m_header.graphicsIn.state |= (1 << 9);
+		if ((event.RightIsDown() && !event.RightDown()) || event.RightUp())
+			m_header.graphicsIn.state |= (1 << 10);
+		if ((event.Aux1IsDown() && !event.Aux1Down()) || event.Aux1Up())
+			m_header.graphicsIn.state |= (1 << 11);
+		if ((event.Aux2IsDown() && !event.Aux2Down()) || event.Aux2Up())
+			m_header.graphicsIn.state |= (1 << 12);
 
         m_header.graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
@@ -552,36 +567,31 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         header->graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
         header->graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
 
-        if ( event.LeftDown() )
-        {
-            header->graphicsIn.button = 1; // X11/X.h: #define Button1	1
-            header->graphicsIn.state  = 0; // X11/X.h: #define Button1Mask	(1<<8)
-        }
-        else if ( event.MiddleDown() )
-        {
-            header->graphicsIn.button = 2; // X11/X.h: #define Button2	2
-            header->graphicsIn.state  = 0; // X11/X.h: #define Button2Mask	(1<<9)
-        }
-        else if ( event.RightDown() )
-        {
-            header->graphicsIn.button = 3; // X11/X.h: #define Button3	3
-            header->graphicsIn.state  = 0; // X11/X.h: #define Button3Mask	(1<<10)
-        }
-        else if ( event.LeftUp() )
-        {
-            header->graphicsIn.button = 1;                 // X11/X.h: #define Button1	1
-            header->graphicsIn.state  = 1 << 8;            // X11/X.h: #define Button1Mask	(1<<8)
-        }
-        else if ( event.MiddleUp() )
-        {
-            header->graphicsIn.button = 2;                 // X11/X.h: #define Button2	2
-            header->graphicsIn.state  = 1 << 9;            // X11/X.h: #define Button2Mask	(1<<9)
-        }
-        else if ( event.RightUp() )
-        {
-            header->graphicsIn.button = 3;                  // X11/X.h: #define Button3	3
-            header->graphicsIn.state  = 1 << 10;            // X11/X.h: #define Button3Mask	(1<<10)
-        }
+		int button = event.GetButton();
+
+		if (button == wxMOUSE_BTN_LEFT)
+			header->graphicsIn.button = 1;
+		else if (button == wxMOUSE_BTN_MIDDLE)
+			header->graphicsIn.button = 2;
+		else if (button == wxMOUSE_BTN_RIGHT)
+			header->graphicsIn.button = 3;
+		else if (button == wxMOUSE_BTN_AUX1)
+			header->graphicsIn.button = 4;
+		else if (button == wxMOUSE_BTN_AUX2)
+			header->graphicsIn.button = 5;
+
+		//flags the buttons that were down before this event
+		header->graphicsIn.state = 0;
+		if ((event.LeftIsDown() && !event.LeftDown()) || event.LeftUp())
+			header->graphicsIn.state |= (1 << 8);
+		if ((event.MiddleIsDown() && !event.MiddleDown()) || event.MiddleUp())
+			header->graphicsIn.state |= (1 << 9);
+		if ((event.RightIsDown() && !event.RightDown()) || event.RightUp())
+			header->graphicsIn.state |= (1 << 10);
+		if ((event.Aux1IsDown() && !event.Aux1Down()) || event.Aux1Up())
+			header->graphicsIn.state |= (1 << 11);
+		if ((event.Aux2IsDown() && !event.Aux2Down()) || event.Aux2Up())
+			header->graphicsIn.state |= (1 << 12);
 
         header->graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
