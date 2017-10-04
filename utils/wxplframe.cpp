@@ -338,6 +338,17 @@ bool wxPlFrame::ReadTransmission()
         m_transferComplete = true;
         m_checkTimer.Stop();
     }
+    if (m_header.locateModeFlag != 0)
+    {
+        //Stop checking for new data if we are in locate mode.
+        //This is a workaround for a hang situation which occurs
+        //with the IPC3 comms when bot the viewer and the core
+        //code end up stuck waiting for new data.
+        //This should be removed when that hang situation is
+        //removed by including a timeout option for the 
+        //receiveData function.
+        m_checkTimer.Stop();
+    }
     else if ( m_currentTimerInterval != m_busyTimerInterval )
     {
         //If we have something to read then make sure
@@ -558,6 +569,16 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
 
         m_header.locateModeFlag = 0;
         m_memoryMap.transmitBytes( true, &m_header, sizeof ( MemoryMapHeader ) );
+        m_locateModePage = -1;
+
+        //Restart checking for new data now locate mode is complete.
+        //This is a workaround for a hang situation which occurs
+        //with the IPC3 comms when bot the viewer and the core
+        //code end up stuck waiting for new data.
+        //This should be removed when that hang situation is
+        //removed by including a timeout option for the 
+        //receiveData function.
+        m_checkTimer.Start();
 #else   // #ifdef PL_WXWIDGETS_IPC3
         PLNamedMutexLocker locker( &m_mutex );
         MemoryMapHeader    *header = (MemoryMapHeader *) m_memoryMap.getBuffer();
@@ -596,8 +617,8 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         header->graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
         header->locateModeFlag = 0;
-#endif  // #ifdef PL_WXWIDGETS_IPC3
         m_locateModePage = -1;
+#endif  // #ifdef PL_WXWIDGETS_IPC3
     }
 }
 
