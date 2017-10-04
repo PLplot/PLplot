@@ -37,12 +37,13 @@ template <class WXWINDOW>
 class wxPLplotwindow : public WXWINDOW
 {
 public:
-    wxPLplotwindow( bool useGraphicsContext = true, wxSize clientSize = wxDefaultSize ); //!< Constructor.
-    virtual ~wxPLplotwindow( void );                                                     //!< Destructor.
+    wxPLplotwindow( bool useGraphicsContext = true, wxSize clientSize = wxDefaultSize,
+                    int resizeRenderDelay_ms = 0 );                       //!< Constructor.
+    virtual ~wxPLplotwindow( void );                                      //!< Destructor.
 
-    void RenewPlot( void );                                                              //!< Redo plot.
-    bool SavePlot( const wxString& driver, const wxString& filename );                   //!< Save plot using a different driver.
-    wxPLplotstream* GetStream()  { return m_created ? &m_stream : NULL; }                //!< Get pointer to wxPLplotstream of this widget.
+    void RenewPlot( void );                                               //!< Redo plot.
+    bool SavePlot( const wxString& driver, const wxString& filename );    //!< Save plot using a different driver.
+    wxPLplotstream* GetStream()  { return m_created ? &m_stream : NULL; } //!< Get pointer to wxPLplotstream of this widget.
     void setUseGraphicsContext( bool useGraphicsContext );
     void setCanvasColour( const wxColour &colour );
     bool IsReady() { return GetStream() != NULL; }
@@ -52,6 +53,7 @@ protected:
     virtual void OnSize( wxSizeEvent & event );          //!< Size event
     virtual void OnErase( wxEraseEvent &event );         //!< Background erase event
     virtual void OnCreate( wxWindowCreateEvent &event ); //!< Window created event
+    void OnRenderTimer( wxTimerEvent &event );           //!< Timer used in delayed rendering after resize
     void OnMouse( wxMouseEvent &event );                 //!< Mouse events
     wxPLplotstream m_stream;                             //!< The wxPLplotstream which belongs to this plot widget
     bool           m_created;                            //!< Flag to indicate the window has been Created
@@ -70,8 +72,18 @@ private:
 #endif
     wxColour   m_canvasColour;
     virtual void OnLocate( const PLGraphicsIn &graphicsIn ){}
+
+    //these are to allow delayed repainting on resize. This causes
+    //jerky resizing for large plots
+    bool             m_resizing;
+    bool             m_completedFirstRender;
+    size_t           m_resizeRenderDelay;
+    wxTimer          m_renderTimer;
+    static const int ID_RENDERTIMER;
 };
 
+template<class WXWINDOW>
+const int wxPLplotwindow<WXWINDOW>::ID_RENDERTIMER = ::wxNewId();
 
 //! Constructor initialises variables, creates the wxStream and
 //! connects methods with events. The WXWINDOW default constructor is
@@ -79,8 +91,8 @@ private:
 //!
 
 template<class WXWINDOW>
-wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize clientSize )
-    : m_created( false ), m_initialSize( clientSize )
+wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize clientSize, int resizeRenderDelay_ms )
+    : m_created( false ), m_initialSize( clientSize ), m_resizing( false ), m_completedFirstRender( false ), m_renderTimer( this, ID_RENDERTIMER ), m_resizeRenderDelay( resizeRenderDelay_ms )
 
 {
     PLPLOT_wxLogDebug( "wxPLplotwindow::wxPLplotwindow" );
@@ -104,6 +116,7 @@ wxPLplotwindow<WXWINDOW>::wxPLplotwindow( bool useGraphicsContext, wxSize client
     WXWINDOW::Connect( wxEVT_LEFT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
     WXWINDOW::Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( wxPLplotwindow<WXWINDOW>::OnMouse ) );
+    WXWINDOW::Connect( ID_RENDERTIMER, wxEVT_TIMER, wxTimerEventHandler( wxPLplotwindow<WXWINDOW>::OnRenderTimer ) );
 }
 
 
@@ -135,12 +148,28 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
     //should be safe to call here.
     //WXWINDOW::SetBackgroundStyle( wxBG_STYLE_CUSTOM );
 
-
     //wxAutoBufferedPaintDC dc( (WXWINDOW*)this );
     int       width  = WXWINDOW::GetClientSize().GetWidth();
     int       height = WXWINDOW::GetClientSize().GetHeight();
 
     wxPaintDC paintDc( this );
+
+    //if we are still resizing (i.e. the useris still messing
+    //with the size) then just fill the invalidated area with
+    //the background colour for now. A full rerender will
+    //happen once the size has stopped changing.
+    if ( m_resizing )
+    {
+        //fill the area with the background colour
+        paintDc.SetBackground( wxBrush( m_canvasColour ) );
+        paintDc.Clear();
+        //also blit on the previous image - it may have
+        //been invalidated, e.g. by shrinking then expanding
+        //the window.
+        paintDc.Blit( 0, 0, width, height, m_memoryDc, 0, 0 );
+
+        return;
+    }
 
     //resize the plot if needed
     bool needResize = width != m_bitmap.GetWidth() || height != m_bitmap.GetHeight();
@@ -170,17 +199,51 @@ void wxPLplotwindow<WXWINDOW>::OnPaint( wxPaintEvent &WXUNUSED( event ) )
     }
 
     paintDc.Blit( 0, 0, width, height, m_memoryDc, 0, 0 );
+
+    if ( width > 0 && height > 0 )
+        m_completedFirstRender = true;
 }
 
 //! This is called when the plot is resized
 //!
 
 template<class WXWINDOW>
-void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& WXUNUSED( event ) )
+void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& event )
 {
-    //Invalidate the whole window so it is all redrawn, otherwise only
-    //newly exposed parts of the window get redrawn
-    RenewPlot();
+    //Once the window has been displayed properly for the first time we
+    //want to delay rendering on resize, this ensures that complex plots
+    //don't cause unresponsive or even nearly impossible resizing.
+
+    //Don't delay the first render or if the size hasn't actually
+    //changed (this can be caused by a resize call from PlPlot but
+    //with the size the same).
+    int width     = WXWINDOW::GetClientSize().GetWidth();
+    int height    = WXWINDOW::GetClientSize().GetHeight();
+    int oldWidth  = m_bitmap.GetWidth();
+    int oldHeight = m_bitmap.GetHeight();
+    if ( !m_completedFirstRender || ( m_resizeRenderDelay == 0 ) ||
+         ( width == oldWidth && height == oldHeight ) )
+    {
+        //++m_nResizes;
+        //Invalidate the whole window so it is all redrawn, otherwise only
+        //newly exposed parts of the window get redrawn
+        RenewPlot();
+        return;
+    }
+
+    //If we wish to delay rerendering while the size settles down then
+    //invalidate the newly exposed area and flag that we are still resizing
+    //(this tells OnPaint to just fill the new area with the background
+    //colour), then set up a timer to trigger a proper rerender once the
+    //size has stopped changing.
+    m_resizing = true;
+    if ( width > oldWidth )
+        RefreshRect( wxRect( width, 0, width - oldWidth, height ) );
+    if ( height > oldHeight )
+        RefreshRect( wxRect( 0, oldHeight, oldWidth, height - oldHeight ) );
+
+    //Start the timer, note that this resets the timer to 0 if it is still running
+    m_renderTimer.Start( m_resizeRenderDelay, true );
 }
 
 //! This is called before each paint event
@@ -233,6 +296,16 @@ void wxPLplotwindow<WXWINDOW>::OnCreate( wxWindowCreateEvent &event )
         drawDc->Clear();
 
         m_created = true;
+        RenewPlot();
+    }
+}
+
+template<class WXWINDOW>
+void wxPLplotwindow<WXWINDOW>::OnRenderTimer( wxTimerEvent &event )
+{
+    if ( m_resizing )
+    {
+        m_resizing = false;
         RenewPlot();
     }
 }
