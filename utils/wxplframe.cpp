@@ -338,17 +338,6 @@ bool wxPlFrame::ReadTransmission()
         m_transferComplete = true;
         m_checkTimer.Stop();
     }
-    if (m_header.locateModeFlag != 0)
-    {
-        //Stop checking for new data if we are in locate mode.
-        //This is a workaround for a hang situation which occurs
-        //with the IPC3 comms when bot the viewer and the core
-        //code end up stuck waiting for new data.
-        //This should be removed when that hang situation is
-        //removed by including a timeout option for the 
-        //receiveData function.
-        m_checkTimer.Stop();
-    }
     else if ( m_currentTimerInterval != m_busyTimerInterval )
     {
         //If we have something to read then make sure
@@ -357,6 +346,18 @@ bool wxPlFrame::ReadTransmission()
         m_checkTimer.Start( m_busyTimerInterval );
         m_currentTimerInterval = m_busyTimerInterval;
         m_nothingToDoCounter   = 0;
+    }
+
+    if ( m_header.locateModeFlag != 0 )
+    {
+        //Stop checking for new data if we are in locate mode.
+        //This is a workaround for a hang situation which occurs
+        //with the IPC3 comms when bot the viewer and the core
+        //code end up stuck waiting for new data.
+        //This should be removed when that hang situation is
+        //removed by including a timeout option for the
+        //receiveData function.
+        m_checkTimer.Stop();
     }
 
     // Allow the timer to call this function again
