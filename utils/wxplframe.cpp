@@ -529,10 +529,6 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
     //If the mouse button was clicked then
     if ( m_locateModePage == m_viewingPage && event.ButtonDown() || event.ButtonUp() )
     {
-        if ( event.ButtonUp() )
-        {
-            int i = 5;
-        }
         wxSize clientSize = GetClientSize();
 #ifdef PL_WXWIDGETS_IPC3
         m_header.graphicsIn.pX = m_cursorPosition.x;
