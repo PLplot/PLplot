@@ -529,10 +529,10 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
     //If the mouse button was clicked then
     if ( m_locateModePage == m_viewingPage && event.ButtonDown() || event.ButtonUp() )
     {
-		if (event.ButtonUp())
-		{
-			int i = 5;
-		}
+        if ( event.ButtonUp() )
+        {
+            int i = 5;
+        }
         wxSize clientSize = GetClientSize();
 #ifdef PL_WXWIDGETS_IPC3
         m_header.graphicsIn.pX = m_cursorPosition.x;
@@ -540,31 +540,31 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         m_header.graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
         m_header.graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
 
-		int button = event.GetButton();
+        int button = event.GetButton();
 
         if ( button == wxMOUSE_BTN_LEFT )
             m_header.graphicsIn.button = 1;
-        else if (button == wxMOUSE_BTN_MIDDLE)
+        else if ( button == wxMOUSE_BTN_MIDDLE )
             m_header.graphicsIn.button = 2;
-		else if (button == wxMOUSE_BTN_RIGHT)
-			m_header.graphicsIn.button = 3;
-		else if (button == wxMOUSE_BTN_AUX1)
-			m_header.graphicsIn.button = 4;
-		else if (button == wxMOUSE_BTN_AUX2)
-			m_header.graphicsIn.button = 5;
+        else if ( button == wxMOUSE_BTN_RIGHT )
+            m_header.graphicsIn.button = 3;
+        else if ( button == wxMOUSE_BTN_AUX1 )
+            m_header.graphicsIn.button = 4;
+        else if ( button == wxMOUSE_BTN_AUX2 )
+            m_header.graphicsIn.button = 5;
 
-		//flags the buttons that were down before this event
-		m_header.graphicsIn.state = 0;
-		if ((event.LeftIsDown() && !event.LeftDown()) || event.LeftUp())
-			m_header.graphicsIn.state |= (1 << 8);
-		if ((event.MiddleIsDown() && !event.MiddleDown()) || event.MiddleUp())
-			m_header.graphicsIn.state |= (1 << 9);
-		if ((event.RightIsDown() && !event.RightDown()) || event.RightUp())
-			m_header.graphicsIn.state |= (1 << 10);
-		if ((event.Aux1IsDown() && !event.Aux1Down()) || event.Aux1Up())
-			m_header.graphicsIn.state |= (1 << 11);
-		if ((event.Aux2IsDown() && !event.Aux2Down()) || event.Aux2Up())
-			m_header.graphicsIn.state |= (1 << 12);
+        //flags the buttons that were down before this event
+        m_header.graphicsIn.state = 0;
+        if ( ( event.LeftIsDown() && !event.LeftDown() ) || event.LeftUp() )
+            m_header.graphicsIn.state |= ( 1 << 8 );
+        if ( ( event.MiddleIsDown() && !event.MiddleDown() ) || event.MiddleUp() )
+            m_header.graphicsIn.state |= ( 1 << 9 );
+        if ( ( event.RightIsDown() && !event.RightDown() ) || event.RightUp() )
+            m_header.graphicsIn.state |= ( 1 << 10 );
+        if ( ( event.Aux1IsDown() && !event.Aux1Down() ) || event.Aux1Up() )
+            m_header.graphicsIn.state |= ( 1 << 11 );
+        if ( ( event.Aux2IsDown() && !event.Aux2Down() ) || event.Aux2Up() )
+            m_header.graphicsIn.state |= ( 1 << 12 );
 
         m_header.graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
@@ -577,7 +577,7 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         //with the IPC3 comms when bot the viewer and the core
         //code end up stuck waiting for new data.
         //This should be removed when that hang situation is
-        //removed by including a timeout option for the 
+        //removed by including a timeout option for the
         //receiveData function.
         m_checkTimer.Start();
 #else   // #ifdef PL_WXWIDGETS_IPC3
@@ -589,36 +589,36 @@ void wxPlFrame::OnMouse( wxMouseEvent &event )
         header->graphicsIn.dX = PLFLT( m_cursorPosition.x + 0.5 ) / PLFLT( clientSize.GetWidth() );
         header->graphicsIn.dY = 1.0 - PLFLT( m_cursorPosition.y + 0.5 ) / PLFLT( clientSize.GetHeight() );
 
-		int button = event.GetButton();
+        int button = event.GetButton();
 
-		if (button == wxMOUSE_BTN_LEFT)
-			header->graphicsIn.button = 1;
-		else if (button == wxMOUSE_BTN_MIDDLE)
-			header->graphicsIn.button = 2;
-		else if (button == wxMOUSE_BTN_RIGHT)
-			header->graphicsIn.button = 3;
-		else if (button == wxMOUSE_BTN_AUX1)
-			header->graphicsIn.button = 4;
-		else if (button == wxMOUSE_BTN_AUX2)
-			header->graphicsIn.button = 5;
+        if ( button == wxMOUSE_BTN_LEFT )
+            header->graphicsIn.button = 1;
+        else if ( button == wxMOUSE_BTN_MIDDLE )
+            header->graphicsIn.button = 2;
+        else if ( button == wxMOUSE_BTN_RIGHT )
+            header->graphicsIn.button = 3;
+        else if ( button == wxMOUSE_BTN_AUX1 )
+            header->graphicsIn.button = 4;
+        else if ( button == wxMOUSE_BTN_AUX2 )
+            header->graphicsIn.button = 5;
 
-		//flags the buttons that were down before this event
-		header->graphicsIn.state = 0;
-		if ((event.LeftIsDown() && !event.LeftDown()) || event.LeftUp())
-			header->graphicsIn.state |= (1 << 8);
-		if ((event.MiddleIsDown() && !event.MiddleDown()) || event.MiddleUp())
-			header->graphicsIn.state |= (1 << 9);
-		if ((event.RightIsDown() && !event.RightDown()) || event.RightUp())
-			header->graphicsIn.state |= (1 << 10);
-		if ((event.Aux1IsDown() && !event.Aux1Down()) || event.Aux1Up())
-			header->graphicsIn.state |= (1 << 11);
-		if ((event.Aux2IsDown() && !event.Aux2Down()) || event.Aux2Up())
-			header->graphicsIn.state |= (1 << 12);
+        //flags the buttons that were down before this event
+        header->graphicsIn.state = 0;
+        if ( ( event.LeftIsDown() && !event.LeftDown() ) || event.LeftUp() )
+            header->graphicsIn.state |= ( 1 << 8 );
+        if ( ( event.MiddleIsDown() && !event.MiddleDown() ) || event.MiddleUp() )
+            header->graphicsIn.state |= ( 1 << 9 );
+        if ( ( event.RightIsDown() && !event.RightDown() ) || event.RightUp() )
+            header->graphicsIn.state |= ( 1 << 10 );
+        if ( ( event.Aux1IsDown() && !event.Aux1Down() ) || event.Aux1Up() )
+            header->graphicsIn.state |= ( 1 << 11 );
+        if ( ( event.Aux2IsDown() && !event.Aux2Down() ) || event.Aux2Up() )
+            header->graphicsIn.state |= ( 1 << 12 );
 
         header->graphicsIn.keysym = 0x20;                // keysym for button event from xwin.c
 
         header->locateModeFlag = 0;
-        m_locateModePage = -1;
+        m_locateModePage       = -1;
 #endif  // #ifdef PL_WXWIDGETS_IPC3
     }
 }
