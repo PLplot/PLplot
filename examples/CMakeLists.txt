@@ -449,10 +449,17 @@ else(CORE_BUILD)
   # examples are disabled.
   enable_language(C)
 
-  message(STATUS "CMake version = ${CMAKE_VERSION}")
   message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
-
+  message(STATUS "CMAKE_COMMAND = ${CMAKE_COMMAND}")
+  message(STATUS "CMAKE_VERSION = ${CMAKE_VERSION}")
+  message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
+  message(STATUS "CMAKE_INCLUDE_PATH = ${CMAKE_INCLUDE_PATH}")
+  message(STATUS "Environment variable CMAKE_INCLUDE_PATH = $ENV{CMAKE_INCLUDE_PATH}")
+  message(STATUS "CMAKE_LIBRARY_PATH = ${CMAKE_LIBRARY_PATH}")
+  message(STATUS "Environment variable CMAKE_LIBRARY_PATH = $ENV{CMAKE_LIBRARY_PATH}")
+  # Location of configured language support files.
   message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
+
   # Locations where the PLplot build system first looks for cmake modules.
   set(CMAKE_MODULE_PATH
     "${PROJECT_SOURCE_DIR}/cmake/modules"
