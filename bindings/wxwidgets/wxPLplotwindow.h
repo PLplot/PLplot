@@ -238,9 +238,9 @@ void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& event )
     //size has stopped changing.
     m_resizing = true;
     if ( width > oldWidth )
-        RefreshRect( wxRect( width, 0, width - oldWidth, height ) );
+        WXWINDOW::RefreshRect( wxRect( width, 0, width - oldWidth, height ) );
     if ( height > oldHeight )
-        RefreshRect( wxRect( 0, oldHeight, oldWidth, height - oldHeight ) );
+        WXWINDOW::RefreshRect( wxRect( 0, oldHeight, oldWidth, height - oldHeight ) );
 
     //Start the timer, note that this resets the timer to 0 if it is still running
     m_renderTimer.Start( m_resizeRenderDelay, true );
