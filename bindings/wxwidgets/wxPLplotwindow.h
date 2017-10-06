@@ -219,8 +219,8 @@ void wxPLplotwindow<WXWINDOW>::OnSize( wxSizeEvent& event )
     //with the size the same).
     int width     = WXWINDOW::GetClientSize().GetWidth();
     int height    = WXWINDOW::GetClientSize().GetHeight();
-    int oldWidth  = m_bitmap.GetWidth();
-    int oldHeight = m_bitmap.GetHeight();
+    int oldWidth  = m_bitmap.IsOk() ? m_bitmap.GetWidth() : 0;
+    int oldHeight = m_bitmap.IsOk() ? m_bitmap.GetHeight() : 0;
     if ( !m_completedFirstRender || ( m_resizeRenderDelay == 0 ) ||
          ( width == oldWidth && height == oldHeight ) )
     {
