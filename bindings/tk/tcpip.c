@@ -103,12 +103,12 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <ctype.h>
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
 #include <sys/uio.h>
 #endif
 #include <errno.h>
 
-#if defined ( __WIN32__ )
+#if defined ( _WIN32 )
 // This is the source of the WSAEWOULDBLOCK macro on Windows platforms.
   #include <winerror.h>
 #endif
@@ -122,7 +122,7 @@
 #endif
 
 // Supply dummy macros for the low-level I/O functions - Windows
-#if defined ( __WIN32__ )
+#if defined ( _WIN32 )
 #define read( a, b, c )     0
 #define close( a )
 #define write( a, b, c )    0
@@ -594,7 +594,7 @@ readError:
     if ( iodev->type == 0 )
     {
 // Exclude UNIX-only feature
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
         Tk_DeleteFileHandler( iodev->fd );
 #endif
         close( iodev->fd );

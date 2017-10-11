@@ -55,17 +55,17 @@ void PLThreeSemaphores::initializeToValid( const char * baseName )
     strncpy( m_tsemName + 5, baseName, PL_SEMAPHORE_NAME_LENGTH - 5 );
     m_tsemName[PL_SEMAPHORE_NAME_LENGTH] = '\0';
 
-#ifdef WIN32
+#ifdef _WIN32
     // Windows named semaphores.
     m_wsem = CreateSemaphoreA( NULL, 0, 1, m_wsemName );
     m_rsem = CreateSemaphoreA( NULL, 0, 1, m_rsemName );
     m_tsem = CreateSemaphoreA( NULL, 1, 1, m_tsemName );
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
       // POSIX named semaphores.
     m_wsem = sem_open( m_wsemName, O_CREAT, S_IRWXU, 0 );
     m_rsem = sem_open( m_rsemName, O_CREAT, S_IRWXU, 0 );
     m_tsem = sem_open( m_tsemName, O_CREAT, S_IRWXU, 1 );
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 }
 
 // Only destructor
@@ -82,13 +82,13 @@ void PLThreeSemaphores::initializeToInvalid()
 {
     if ( areSemaphoresValid() )
     {
-#ifdef WIN32
+#ifdef _WIN32
         // Windows named semaphores.
         CloseHandle( m_wsem );
         CloseHandle( m_rsem );
         CloseHandle( m_tsem );
 
-#else   // #ifdef WIN32
+#else   // #ifdef _WIN32
         // POSIX named semaphores.
 
         // sem_unlink calls needed to release shared memory resources
@@ -102,7 +102,7 @@ void PLThreeSemaphores::initializeToInvalid()
         sem_close( m_tsem );
         sem_unlink( m_tsemName );
 
-#endif  // #ifdef WIN32
+#endif  // #ifdef _WIN32
     }
     m_wsem = NULL;
     m_rsem = NULL;
@@ -167,12 +167,12 @@ bool PLThreeSemaphores::areWriteReadSemaphoresBlocked()
 {
     if ( areSemaphoresValid() )
     {
-#ifdef WIN32
+#ifdef _WIN32
         // There is no non-destructive way to get the value of Windows named semaphores
         // so return true when the semaphores are all valid on the assumption that
         // the write and read semaphore values are zero, i.e., correctly blocked.
         return true;
-#else   // #ifdef WIN32
+#else   // #ifdef _WIN32
         int wvalue, rvalue;
         // We want to test that these are semaphore locations that
         // have already been properly initialized in blocked state as above.
@@ -188,7 +188,7 @@ bool PLThreeSemaphores::areWriteReadSemaphoresBlocked()
             return true;
         else
             return false;
-#endif  // #ifdef WIN32
+#endif  // #ifdef _WIN32
     }
     else
     {
@@ -196,7 +196,7 @@ bool PLThreeSemaphores::areWriteReadSemaphoresBlocked()
     }
 }
 
-#ifndef WIN32
+#ifndef _WIN32
 // Get value of Write semaphore.
 int PLThreeSemaphores::getValueWriteSemaphore()
 {
@@ -232,20 +232,20 @@ int PLThreeSemaphores::getValueReadSemaphore()
     }
     return ret_value;
 }
-#endif // #ifndef WIN32
+#endif // #ifndef _WIN32
 
 void PLThreeSemaphores::postWriteSemaphore()
 {
     if ( !isWriteSemaphoreValid() )
         throw( "PLThreeSemaphores::postWriteSemaphore: invalid write semaphore" );
 
-#ifdef WIN32
+#ifdef _WIN32
     if ( !ReleaseSemaphore( m_wsem, 1, NULL ) )
         throw( "PLThreeSemaphores::postWriteSemaphore: ReleaseSemaphore failed for write semaphore" );
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
     if ( sem_post( m_wsem ) )
         throw( "PLThreeSemaphores::postWriteSemaphore: sem_post failed for write semaphore" );
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 }
 
 void PLThreeSemaphores::postReadSemaphore()
@@ -253,13 +253,13 @@ void PLThreeSemaphores::postReadSemaphore()
     if ( !isReadSemaphoreValid() )
         throw( "PLThreeSemaphores::postReadSemaphore: invalid read semaphore" );
 
-#ifdef WIN32
+#ifdef _WIN32
     if ( !ReleaseSemaphore( m_rsem, 1, NULL ) )
         throw( "PLThreeSemaphores::postReadSemaphore: ReleaseSemaphore failed for read semaphore" );
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
     if ( sem_post( m_rsem ) )
         throw( "PLThreeSemaphores::postReadSemaphore: sem_post failed for read semaphore" );
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 }
 
 void PLThreeSemaphores::postTransmitSemaphore()
@@ -267,13 +267,13 @@ void PLThreeSemaphores::postTransmitSemaphore()
     if ( !isTransmitSemaphoreValid() )
         throw( "PLThreeSemaphores::postTransmitSemaphore: invalid transmit semaphore" );
 
-#ifdef WIN32
+#ifdef _WIN32
     if ( !ReleaseSemaphore( m_tsem, 1, NULL ) )
         throw( "PLThreeSemaphores::postTransmitSemaphore: ReleaseSemaphore failed for transmit semaphore" );
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
     if ( sem_post( m_tsem ) )
         throw( "PLThreeSemaphores::postTransmitSemaphore: sem_post failed for transmit semaphore" );
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 }
 
 void PLThreeSemaphores::waitWriteSemaphore()
@@ -281,14 +281,14 @@ void PLThreeSemaphores::waitWriteSemaphore()
     if ( !isWriteSemaphoreValid() )
         throw( "PLThreeSemaphores::waitWriteSemaphore: invalid write semaphore" );
 
-#ifdef WIN32
+#ifdef _WIN32
     DWORD result = WaitForSingleObject( m_wsem, INFINITE );
     if ( result == WAIT_FAILED )
         throw( "PLThreeSemaphores::waitWriteSemaphore: WaitForSingleObject failed for write semaphore" );
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
     if ( sem_wait( m_wsem ) )
         throw( "PLThreeSemaphores::waitWriteSemaphore: sem_wait failed for write semaphore" );
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 }
 
 void PLThreeSemaphores::waitReadSemaphore()
@@ -296,14 +296,14 @@ void PLThreeSemaphores::waitReadSemaphore()
     if ( !isReadSemaphoreValid() )
         throw( "PLThreeSemaphores::waitReadSemaphore: invalid read semaphore" );
 
-#ifdef WIN32
+#ifdef _WIN32
     DWORD result = WaitForSingleObject( m_rsem, INFINITE );
     if ( result == WAIT_FAILED )
         throw( "PLThreeSemaphores::waitReadSemaphore: WaitForSingleObject failed for read semaphore" );
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
     if ( sem_wait( m_rsem ) )
         throw( "PLThreeSemaphores::waitReadSemaphore: sem_wait failed for read semaphore" );
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 }
 
 void PLThreeSemaphores::waitTransmitSemaphore()
@@ -311,14 +311,14 @@ void PLThreeSemaphores::waitTransmitSemaphore()
     if ( !isTransmitSemaphoreValid() )
         throw( "PLThreeSemaphores::waitTransmitSemaphore: invalid transmit semaphore" );
 
-#ifdef WIN32
+#ifdef _WIN32
     DWORD result = WaitForSingleObject( m_tsem, INFINITE );
     if ( result == WAIT_FAILED )
         throw( "PLThreeSemaphores::waitTransmitSemaphore: WaitForSingleObject failed for transmit semaphore" );
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
     if ( sem_wait( m_tsem ) )
         throw( "PLThreeSemaphores::waitTransmitSemaphore: sem_wait failed for transmit semaphore" );
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 }
 #endif //#ifdef PL_WXWIDGETS_IPC3
 
@@ -328,7 +328,7 @@ void PLThreeSemaphores::waitTransmitSemaphore()
 //--------------------------------------------------------------------------
 PLMemoryMap::PLMemoryMap()
 {
-#ifdef WIN32
+#ifdef _WIN32
     m_mapFile = NULL;
 #else
     m_mapFile = -1;
@@ -345,7 +345,7 @@ PLMemoryMap::PLMemoryMap()
 //--------------------------------------------------------------------------
 PLMemoryMap::PLMemoryMap( const char *name, PLINT size, bool mustExist, bool mustNotExist )
 {
-#ifdef WIN32
+#ifdef _WIN32
     m_mapFile = NULL;
 #else
     m_mapFile = -1;
@@ -370,7 +370,7 @@ void PLMemoryMap::create( const char *name, PLINT size, bool mustExist, bool mus
     assert( !( mustExist && mustNotExist ) );
     if ( mustExist && mustNotExist )
         return;
-#ifdef WIN32
+#ifdef _WIN32
     if ( mustExist )
         m_mapFile = OpenFileMappingA( FILE_MAP_ALL_ACCESS, FALSE, name );
     else if ( mustNotExist )
@@ -617,7 +617,7 @@ void PLMemoryMap::receiveBytes( bool ifHeader, void *dest, size_t n )
 //--------------------------------------------------------------------------
 void PLMemoryMap::close()
 {
-#ifdef WIN32
+#ifdef _WIN32
     if ( m_buffer )
         UnmapViewOfFile( m_buffer );
     if ( m_mapFile )
@@ -669,7 +669,7 @@ PLNamedMutex::PLNamedMutex( const char *name, bool aquireOnCreate )
 
 void PLNamedMutex::create( const char *name, bool aquireOnCreate )
 {
-#ifdef WIN32
+#ifdef _WIN32
     m_mutex = CreateMutexA( NULL, aquireOnCreate ? TRUE : FALSE, name );
 #else
     m_mutex        = NULL;
@@ -682,7 +682,7 @@ void PLNamedMutex::create( const char *name, bool aquireOnCreate )
 
 void PLNamedMutex::aquire()
 {
-#ifdef WIN32
+#ifdef _WIN32
     DWORD result = WaitForSingleObject( m_mutex, INFINITE );
     m_haveLock = ( result == WAIT_OBJECT_0 || result == WAIT_ABANDONED );
 #else
@@ -695,7 +695,7 @@ void PLNamedMutex::aquire()
 
 bool PLNamedMutex::aquire( unsigned long millisecs )
 {
-#ifdef WIN32
+#ifdef _WIN32
     DWORD result = WaitForSingleObject( m_mutex, millisecs );
     m_haveLock = ( result == WAIT_OBJECT_0 || result == WAIT_ABANDONED );
 #else
@@ -705,7 +705,7 @@ bool PLNamedMutex::aquire( unsigned long millisecs )
 
 bool PLNamedMutex::aquireNoWait()
 {
-#ifdef WIN32
+#ifdef _WIN32
     m_haveLock = ( WAIT_OBJECT_0 == WaitForSingleObject( m_mutex, 0 ) );
 #else
     m_haveLock = sem_trywait( m_mutex ) == 0;
@@ -717,7 +717,7 @@ void PLNamedMutex::release()
 {
     if ( !m_haveLock )
         return;
-#ifdef WIN32
+#ifdef _WIN32
     if ( m_mutex )
         ReleaseMutex( m_mutex );
 #else
@@ -729,7 +729,7 @@ void PLNamedMutex::release()
 void PLNamedMutex::clear()
 {
     release();
-#ifdef WIN32
+#ifdef _WIN32
     CloseHandle( m_mutex );
 #else
     sem_close( m_mutex );

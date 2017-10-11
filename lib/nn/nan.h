@@ -28,7 +28,7 @@ static const double NaN = 0.0 / 0.0;
   #define copysign    _copysign
 #endif
 
-#elif defined ( WIN32 )
+#elif defined ( _WIN32 )
 
 #if !defined ( _MSC_VER )
 

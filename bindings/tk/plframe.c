@@ -1193,7 +1193,7 @@ PlFrameKeyEH( ClientData clientData, register XEvent *eventPtr )
 
     dbug_enter( "PlFrameKeyEH" );
 
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
     nchars = XLookupString( event, string, 10, &keysym, &cs );
 #else
     nchars = 0;
@@ -2546,7 +2546,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
                 (char *) NULL );
             return TCL_ERROR;
         }
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
         if ( ( iodev->fd = open( argv[1], O_RDONLY ) ) == -1 )
 #else
         if ( 1 )
@@ -2558,7 +2558,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
         }
         iodev->type     = 0;
         iodev->typeName = "fifo";
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
         iodev->file = fdopen( iodev->fd, "rb" );
 #else
         iodev->file = NULL;
@@ -2587,7 +2587,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 #endif
 
 // Exclude UNIX-only feature
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
         if ( Tcl_GetOpenFile( interp, iodev->fileHandle,
                  0, 1, FILECAST & iodev->file ) != TCL_OK )
         {
@@ -2613,12 +2613,12 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 #if TK_MAJOR_VERSION < 4 ||                               \
     ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 ) || \
     TK_MAJOR_VERSION > 7
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
     Tk_CreateFileHandler( iodev->fd, TK_READABLE, (Tk_FileProc *) ReadData,
         (ClientData) plFramePtr );
 #endif
 #else
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
     Tcl_CreateFileHandler( Tcl_GetFile( (ClientData) iodev->fd, TCL_UNIX_FD ),
         TK_READABLE, (Tk_FileProc *) ReadData,
         (ClientData) plFramePtr );
@@ -2653,12 +2653,12 @@ Closelink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 #if TK_MAJOR_VERSION < 4 ||                               \
     ( TK_MAJOR_VERSION == 4 && TK_MINOR_VERSION == 0 ) || \
     TK_MAJOR_VERSION > 7
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
     Tk_DeleteFileHandler( iodev->fd );
 #endif
 #else
 //    Tk_DeleteFileHandler( iodev->file );
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ ) && !defined ( __CYGWIN__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
     Tcl_DeleteFileHandler( Tcl_GetFile( (ClientData) iodev->fd,
             TCL_UNIX_FD ) );
 #endif
@@ -2873,7 +2873,7 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
     if ( plFramePtr->plpr_cmd == NULL )
         plFramePtr->plpr_cmd = plFindCommand( "plpr" );
 
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
     if ( ( plFramePtr->plpr_cmd == NULL ) || ( pid = fork() ) < 0 )
 #else
     if ( 1 )
@@ -2886,7 +2886,7 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
     else if ( pid == 0 )
     {
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
         if ( execl( plFramePtr->plpr_cmd, plFramePtr->plpr_cmd, sfnam,
                  (char *) 0 ) )
 #else

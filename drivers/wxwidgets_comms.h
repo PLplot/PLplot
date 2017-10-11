@@ -23,7 +23,7 @@
 #define __PL_WXWIDGETS_COMMS__
 
 #include "plplotP.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include <Windows.h>
 #else
 #include <sys/mman.h>
@@ -137,12 +137,12 @@ public:
     bool areSemaphoresValid();
     // Check whether write and read semaphores are valid and blocked.
     bool areWriteReadSemaphoresBlocked();
-#ifndef WIN32
+#ifndef _WIN32
     // Get value of Write semaphore.
     int getValueWriteSemaphore();
     // Get value of Read semaphore.
     int getValueReadSemaphore();
-#endif // #ifndef WIN32
+#endif // #ifndef _WIN32
     void postWriteSemaphore();
     void postReadSemaphore();
     void postTransmitSemaphore();
@@ -162,17 +162,17 @@ private:
     char m_wsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
     char m_rsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
     char m_tsemName[PL_SEMAPHORE_NAME_LENGTH + 1];
-#ifdef WIN32
+#ifdef _WIN32
     // Windows named semaphores.
     HANDLE m_wsem;
     HANDLE m_rsem;
     HANDLE m_tsem;
-#else // #ifdef WIN32
+#else // #ifdef _WIN32
       // POSIX named semaphores.
     sem_t *m_wsem;
     sem_t *m_rsem;
     sem_t *m_tsem;
-#endif // #ifdef WIN32
+#endif // #ifdef _WIN32
 };
 
 #endif //#ifdef PL_WXWIDGETS_IPC3
@@ -201,7 +201,7 @@ public:
     size_t getSize() { return m_size; }
 #endif // #ifdef PL_WXWIDGETS_IPC3
 private:
-#ifdef WIN32
+#ifdef _WIN32
     HANDLE m_mapFile;
 #else
     int m_mapFile;
@@ -234,7 +234,7 @@ public:
     bool isValid();
 private:
     bool   m_haveLock;
-#ifdef WIN32
+#ifdef _WIN32
     HANDLE m_mutex;
 #else
     sem_t  * m_mutex;

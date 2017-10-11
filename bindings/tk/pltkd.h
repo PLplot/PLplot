@@ -21,7 +21,7 @@
 
 // typedef the type pid_t - a dummy for the moment - for MS Windows
 // platforms other than those (e.g., MinGW) that typedef it already.
-#if defined ( __WIN32__ ) && !defined ( __MINGW32__ )
+#if defined ( _WIN32 ) && !defined ( __MINGW32__ )
 typedef unsigned int   pid_t;
 #endif
 

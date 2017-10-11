@@ -106,7 +106,7 @@ EXTERN Tcl_Namespace * Tcl_GetGlobalNamespace _ANSI_ARGS_( (
 // extern int		isatty _ANSI_ARGS_((int fd));
 // extern int		read _ANSI_ARGS_((int fd, char *buf, size_t size));
 //
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
 extern char *           strrchr _ANSI_ARGS_( ( CONST char *string, int c ) );
 #else
 // On Windows we do not have a convenient console to work with
@@ -430,7 +430,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
             Tcl_DStringFree( &buffer );
         }
 // Exclude UNIX-only feature
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
         Tk_CreateFileHandler( 0, TK_READABLE, StdinProc, (ClientData) 0 );
 #endif
         if ( tty )
@@ -500,7 +500,7 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
     int        code, count;
     const char *res;
 
-#if !defined ( __WIN32__ )
+#if !defined ( _WIN32 )
     count = (int) read( fileno( stdin ), input, BUFFER_SIZE );
 #else
     count = fread( input, BUFFER_SIZE, sizeof ( char ), stdin );
@@ -516,7 +516,7 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
             }
             else
             {
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
                 Tk_DeleteFileHandler( 0 );
 #endif
             }
@@ -550,11 +550,11 @@ StdinProc( ClientData PL_UNUSED( clientData ), int PL_UNUSED( mask ) )
     // finished.  Among other things, this will trash the text of the
     // command being evaluated.
     //
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     Tk_CreateFileHandler( 0, 0, StdinProc, (ClientData) 0 );
 #endif
     code = Tcl_RecordAndEval( interp, cmd, 0 );
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     Tk_CreateFileHandler( 0, TK_READABLE, StdinProc, (ClientData) 0 );
 #endif
     Tcl_DStringFree( &command );

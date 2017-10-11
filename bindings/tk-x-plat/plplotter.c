@@ -67,7 +67,7 @@
 #include "pltkwd.h"
 #include "tcpip.h"
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #define XSynchronize( display, bool )    { display->request++; }
 #define XSync( display, bool )           { display->request++; }
 #define XFlush( display )
@@ -80,7 +80,7 @@
         Tcl_Write( Tcl_GetStdChannel( TCL_STDERR ), a, -1 ); }
 #endif
 
-#ifndef __WIN32__
+#ifndef _WIN32
 #ifdef PL_HAVE_UNISTD_H
 #include <unistd.h>
 #include <fcntl.h>
@@ -2355,7 +2355,7 @@ static int
 Openlink( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
           int argc, CONST char **argv )
 {
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     register PLRDev  *plr   = plPlotterPtr->plr;
     register PLiodev *iodev = plr->iodev;
 
@@ -2440,7 +2440,7 @@ static int
 Closelink( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
            int PL_UNUSED( argc ), CONST char ** PL_UNUSED( argv ) )
 {
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     register PLRDev  *plr   = plPlotterPtr->plr;
     register PLiodev *iodev = plr->iodev;
 
@@ -2632,7 +2632,7 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     int   result = TCL_OK;
     char  *sfnam;
     FILE  *sfile;
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     pid_t pid;
 #endif
 
@@ -2688,7 +2688,7 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     if ( plPlotterPtr->plpr_cmd == NULL )
         plPlotterPtr->plpr_cmd = plFindCommand( "plpr" );
 
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     if ( ( plPlotterPtr->plpr_cmd == NULL ) || ( pid = fork() ) < 0 )
     {
         Tcl_AppendResult( interp,

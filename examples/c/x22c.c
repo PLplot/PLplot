@@ -291,7 +291,7 @@ f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fnmin, PLFLT *fnmax )
 void
 potential( void )
 {
-#if !defined ( WIN32 )
+#if !defined ( _WIN32 )
     const int nper   = 100;
     const int nlevel = 10;
     const int nr     = 20;

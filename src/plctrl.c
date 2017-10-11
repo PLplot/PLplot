@@ -2467,7 +2467,7 @@ plGetName( PLCHAR_VECTOR dir, PLCHAR_VECTOR subdir, PLCHAR_VECTOR filename, char
         strcat_delim( *filespec );
         strcat( *filespec, filename );
     }
-#ifdef WIN32
+#ifdef _WIN32
     // According to http://msdn.microsoft.com/en-us/library/vstudio/tcxf1dw6.aspx
     // and also Wine tests, Microsoft does not support the c99 standard %zu
     // format.  Instead, %lu is recommended for size_t.
@@ -2491,7 +2491,7 @@ void
 strcat_delim( char *dirspec )
 {
     size_t ldirspec = strlen( dirspec );
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
     if ( dirspec[ldirspec - 1] != '\\' )
         strcat( dirspec, "\\" );
 #elif defined ( macintosh )

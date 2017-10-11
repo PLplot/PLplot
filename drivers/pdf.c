@@ -48,7 +48,7 @@
 #include "plfci-type1.h"
 
 // Workaround for caseless string comparison
-#ifndef WIN32
+#ifndef _WIN32
         #define stricmp     strcasecmp
         #define strnicmp    strncasecmp
 #endif

@@ -30,7 +30,7 @@
 //#define WXPLVIEWER_DEBUG
 
 // Headers needed for Rand
-#ifdef WIN32
+#ifdef _WIN32
 // This include must occur before any other include of stdlib.h due to
 // the #define _CRT_RAND_S
 #define _CRT_RAND_S
@@ -643,7 +643,7 @@ class Rand
 public:
     Rand()
     {
-#ifdef WIN32
+#ifdef _WIN32
         rand_s( &m_seed );
 #else
         std::fstream fin( "/dev/urandom", std::ios::in );
@@ -1659,7 +1659,7 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
                 ++counter;
             }
         }
-#ifdef WIN32
+#ifdef _WIN32
         catch ( DWORD )
         {
             plwarn( "Locking mutex failed when trying to communicate with wxPLViewer." );
@@ -1783,15 +1783,15 @@ void wxPLDevice::SetupMemoryMap()
         command << wxT( "\"" ) << exeName << wxT( "\" " ) << wxString( mapName, wxConvUTF8 ) << wxT( " " ) <<
             mapSize << wxT( " " ) << m_width << wxT( " " ) << m_height;
 #ifndef WXPLVIEWER_DEBUG
-#ifdef WIN32
+#ifdef _WIN32
 
         if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
             plwarn( "Failed to run wxPLViewer - no plots will be shown" );
-#else           //WIN32
+#else           //_WIN32
                 //Linux doesn't like using wxExecute without a wxApp, so use system instead
         command << wxT( " &" );
         system( command.mb_str() );
-#endif          //WIN32
+#endif          //_WIN32
 #else // ifndef WXPLVIEWER_DEBUG
         wxString runMessage;
         runMessage << "Begin Running wxPLViewer in the debugger now to continue. Use the parameters: plplotMemoryMap " <<

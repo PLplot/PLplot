@@ -34,7 +34,7 @@
 #include "plplotP.h"
 #include "pltcl.h"
 #include "plplot_parameters.h"
-#ifndef __WIN32__
+#ifndef _WIN32
 #ifdef PL_HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -165,7 +165,7 @@ static char  errmsg[160];
 
 extern PLDLLIMPEXP char * plplotLibDir;
 
-#if ( !defined ( MAC_TCL ) && !defined ( __WIN32__ ) )
+#if ( !defined ( MAC_TCL ) && !defined ( _WIN32 ) )
 //
 // Use an extended search for installations on Unix where we
 // have very likely installed plplot so that plplot.tcl is

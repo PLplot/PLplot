@@ -647,7 +647,7 @@ void plD_FreeType_init( PLStream *pls )
     };
     short         i;
 
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
     static char *default_font_names[] = { "arial.ttf", "times.ttf", "timesi.ttf", "arial.ttf",
                                           "symbol.ttf" };
     char        WINDIR_PATH[PLPLOT_MAX_PATH];
@@ -680,7 +680,7 @@ void plD_FreeType_init( PLStream *pls )
     // set to an impossible value for an FCI
     FT->fci = PL_FCI_IMPOSSIBLE;
 
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
 
 // First check for a user customised location and if
 // the fonts aren't found there try the default Windows

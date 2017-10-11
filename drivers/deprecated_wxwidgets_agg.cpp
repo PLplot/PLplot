@@ -37,7 +37,7 @@
 #include <wchar.h>
 
 // helper functions
-#if !defined ( WIN32 ) || defined ( __GNUC__ )
+#if !defined ( _WIN32 ) || defined ( __GNUC__ )
   #include <unistd.h>
 #else
   #define F_OK    1
@@ -99,7 +99,7 @@ wxPLDevAGG::wxPLDevAGG() :
     mConvStroke.line_cap( agg::round_cap );
 
     // determine font directory
-#if defined ( WIN32 )
+#if defined ( _WIN32 )
     //static char *default_font_names[]={"arial.ttf","times.ttf","timesi.ttf","arial.ttf",
     //                                 "symbol.ttf"};
     // char WINDIR_PATH[255];

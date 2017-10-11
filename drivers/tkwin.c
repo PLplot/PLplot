@@ -48,7 +48,7 @@
     #undef free
     #undef realloc
     #undef calloc
-#if defined ( __WIN32__ ) || defined ( MAC_TCL )
+#if defined ( _WIN32 ) || defined ( MAC_TCL )
 #include <tkInt.h>
 #else
 #include <tk.h>
@@ -58,7 +58,7 @@
     #define realloc    ckrealloc
     #define calloc     ckcalloc
 #else
-#if defined ( __WIN32__ ) || defined ( MAC_TCL )
+#if defined ( _WIN32 ) || defined ( MAC_TCL )
 #include <tkInt.h>
 #else
 #include <tk.h>
@@ -91,7 +91,7 @@ void *  ckcalloc( size_t nmemb, size_t size );
 //
 #define USE_TK
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #define XSynchronize( display, bool )    { display->request++; }
 #define XSync( display, bool )           { display->request++; }
 #define XFlush( display )
@@ -165,7 +165,7 @@ static XColor sxwm_colors[MAX_COLORS];
 
 static TkwDisplay *tkwDisplay[PLTKDISPLAYS];
 
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
 static unsigned char CreatePixmapStatus;
 static int CreatePixmapErrorHandler( Display *display, XErrorEvent *error );
 #endif
@@ -383,7 +383,7 @@ plD_open_tkwin( PLStream *pls )
         //
 
         // Open display
-#if defined ( MAC_TCL ) || defined ( __WIN32__ )
+#if defined ( MAC_TCL ) || defined ( _WIN32 )
         if ( !pls->FileName )
         {
             //
@@ -661,7 +661,7 @@ plD_tidy_tkwin( PLStream *pls )
     {
         int ixwd = tkwd->ixwd;
         XFreeGC( tkwd->display, dev->gc );
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
         XCloseDisplay( tkwd->display );
 #endif
         free_mem( tkwDisplay[ixwd] );
@@ -1146,7 +1146,7 @@ ResizeCmd( PLStream *pls, PLDisplay *pldis )
     if ( dev->write_to_pixmap )
     {
         dev->write_to_window = 0;
-#if defined ( __WIN32__ ) || defined ( MAC_TCL )
+#if defined ( _WIN32 ) || defined ( MAC_TCL )
         Tk_FreePixmap( tkwd->display, dev->pixmap );
 #else
         // Vince's original driver code used
@@ -1247,7 +1247,7 @@ CreatePixmap( PLStream *pls )
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     Tk_Window  tkwin = pls->plPlotterPtr->tkwin;
 
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     int ( *oldErrorHandler )( Display *, XErrorEvent * );
     oldErrorHandler    = XSetErrorHandler( CreatePixmapErrorHandler );
     CreatePixmapStatus = Success;
@@ -1286,7 +1286,7 @@ CreatePixmap( PLStream *pls )
         Tk_Width( tkwin ), Tk_Height( tkwin ),
         DefaultDepthOfScreen( Tk_Screen( tkwin ) ) );
     XSync( tkwd->display, 0 );
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
     if ( CreatePixmapStatus != Success )
     {
         dev->write_to_pixmap = 0;
@@ -1922,7 +1922,7 @@ pltk_AreWeGrayscale( PlPlotter *plf )
     return ( 1 );
 }
 
-#if !defined ( MAC_TCL ) && !defined ( __WIN32__ )
+#if !defined ( MAC_TCL ) && !defined ( _WIN32 )
 //--------------------------------------------------------------------------
 // CreatePixmapErrorHandler()
 //

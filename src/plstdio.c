@@ -179,7 +179,7 @@ static PLINT
 get_tmpdir_list( PLINT max_ntmpdir_list, char ** tmpdir_list, PLINT maxcurrdir, char * currdir )
 {
     PLINT ntmpdir_list = 0;
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
     tmpdir_list[ntmpdir_list] = getenv( "TMP" );
     if ( tmpdir_list[ntmpdir_list] != NULL && ntmpdir_list < max_ntmpdir_list )
         ntmpdir_list++;
@@ -198,7 +198,7 @@ get_tmpdir_list( PLINT max_ntmpdir_list, char ** tmpdir_list, PLINT maxcurrdir, 
     if ( tmpdir_list[ntmpdir_list] != NULL && ntmpdir_list < max_ntmpdir_list )
         ntmpdir_list++;
 #endif
-#endif //#if defined ( MSDOS ) || defined ( WIN32 )
+#endif //#if defined ( MSDOS ) || defined ( _WIN32 )
 
 // Add current working directory to list where the currdir char array
 // space should be provided by the calling routine with size of maxcurrdir.
@@ -208,7 +208,7 @@ get_tmpdir_list( PLINT max_ntmpdir_list, char ** tmpdir_list, PLINT maxcurrdir, 
     if ( ntmpdir_list < max_ntmpdir_list )
         ntmpdir_list++;
 
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
     tmpdir_list[ntmpdir_list] = "c:\\windows\\Temp";
 #else
     tmpdir_list[ntmpdir_list] = "/tmp";
@@ -263,7 +263,7 @@ pl_create_tempfile( char **fname )
         // are safe here.
         template = (char *) realloc( template, sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ) );
         strcpy( template, tmpdir );
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
         strcat( template, "\\" );
 #else
         strcat( template, "/" );
@@ -283,7 +283,7 @@ pl_create_tempfile( char **fname )
 #endif
         fd    = NULL;
         flags = O_RDWR | O_CREAT | O_EXCL;
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
         // These are flags that are only relevant to Windows open.
         flags = flags | O_BINARY | _O_SHORT_LIVED;
         // If we are not returning the file name then add (Windows) flag to automatically
@@ -371,7 +371,7 @@ pl_create_tempfifo( const char **p_fifoname, const char **p_dirname )
         // are safe here.
         dirname = (char *) realloc( dirname, sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + 2 ) );
         strcpy( dirname, tmpdir );
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
         strcat( dirname, "\\" );
 #else
         strcat( dirname, "/" );
@@ -391,7 +391,7 @@ pl_create_tempfifo( const char **p_fifoname, const char **p_dirname )
         // Now create the fifo in the directory
         template = (char *) realloc( template, sizeof ( char ) * ( strlen( tmpdir ) + strlen( tmpname ) + strlen( fifoname ) + 4 ) );
         strcpy( template, dirname );
-#if defined ( MSDOS ) || defined ( WIN32 )
+#if defined ( MSDOS ) || defined ( _WIN32 )
         strcat( template, "\\" );
 #else
         strcat( template, "/" );

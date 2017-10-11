@@ -53,6 +53,7 @@ CONTENTS
 2.2 Update control of Python version
 2.3 Rewrite the build-system logic for determining PYQT_SIP_DIR and PYQT_SIP_FLAGS
 2.4 Implementation of plStatic2dGrid
+2.5 Replace use of the deprecated WIN32 and __WIN32__ macros by the _WIN32 macro
 
 3. PLplot testing
 ________________________________________________________________
@@ -341,6 +342,12 @@ call plshades, etc., with 2D data that have been statically allocated.
 And since this new approach completely supersedes plshade1, we have
 officially deprecated that function and its C++ wrapper, see 1.7.
 
+2.5 Replace use of the deprecated WIN32 and __WIN32__ macros by the _WIN32 macro
+
+In our C and C++ source code we now detect non-Cygwin Windows platforms
+using the recommended _WIN32 macro (supported by all modern versions
+of compilers that work on Windows platforms) rather than the deprecated
+WIN32 and __WIN32__ macros.
 ________________________________________________________________
 
 3. PLplot testing

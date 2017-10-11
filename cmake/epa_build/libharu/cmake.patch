@@ -416,7 +416,7 @@ diff -Naur libharu-2.2.1_pristine/demo/CMakeLists.txt libharu-2.2.1/demo/CMakeLi
 +
 +  # we need to add some definitions for win 32
 +  if(WIN32 AND NOT CYGWIN)
-+    add_definitions(-D__WIN32__)
++    add_definitions(-D_WIN32)
 +  endif(WIN32 AND NOT CYGWIN)
 +
 +  # link the examples to the shared library otherwise to the static
