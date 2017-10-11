@@ -303,7 +303,7 @@ class x19 {
         pls.col0( 6 );
         pls.mapfill( nullCallback, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, null );
         pls.width( 2.0 );
-        pls.mapfill( nullCallback, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, null );
+        pls.mapline( nullCallback, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, null );
 
         //draw the roads, first with black and then thinner with colour to give an
         //an outlined appearance

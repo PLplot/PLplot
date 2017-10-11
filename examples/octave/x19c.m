@@ -161,7 +161,7 @@ function ix19c
   plcol0( 6 );
   plmapfill( [], "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, [] );
   plwidth( 2.0 );
-  plmapfill( [], "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, [] );
+  plmapline( [], "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, [] );
 
   ##draw the roads, first with black and then thinner with colour to give an
   ##an outlined appearance

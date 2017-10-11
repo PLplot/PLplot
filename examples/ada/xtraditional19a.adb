@@ -342,8 +342,7 @@ begin
     -- Ada note: Use overload permitting null address to be passed in plotentries slot.
     plmapfill(null, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, System.Null_Address);
     plwidth(2.0);
-    -- Ada note: Use another overload; this one doesn't have the plotentries slot.
-    Plot_Shapefile_All(null, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy);
+    plmapline(null, "ss/ss64ne_Water_Line", minx, maxx, miny, Maxy, System.Null_Address);
 
     -- Draw the roads, first with black and then thinner with colour to give an
     -- an outlined appearance.

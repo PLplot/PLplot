@@ -260,7 +260,7 @@ pl.width( 0.0 )
 pl.col0( 6 )
 pl.mapfill( nil, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, nil )
 pl.width( 2.0 )
-pl.mapfill( nil, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, nil )
+pl.mapline( nil, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, nil )
 
 --draw the roads, first with black and then thinner with colour to give an
 --an outlined appearance

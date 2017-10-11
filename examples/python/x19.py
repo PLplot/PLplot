@@ -238,7 +238,7 @@ def main(w):
     w.plcol0( 6 )
     w.plmapfill( None, "ss/ss64ne_Water_Area", minx, maxx, miny, maxy, None )
     w.plwidth( 2.0 )
-    w.plmapfill( None, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, None )
+    w.plmapline( None, "ss/ss64ne_Water_Line", minx, maxx, miny, maxy, None )
 
     #draw the roads, first with black and then thinner with colour to give an
     #an outlined appearance

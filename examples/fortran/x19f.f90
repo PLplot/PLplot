@@ -230,7 +230,7 @@ program x19f
     call plcol0( 6 )
     call plmapfill( "ss/ss64ne_Water_Area", minx, maxx, miny, maxy )
     call plwidth( 2.0_pl_test_flt )
-    call plmapfill( "ss/ss64ne_Water_Line", minx, maxx, miny, maxy )
+    call plmapline( "ss/ss64ne_Water_Line", minx, maxx, miny, maxy )
 
     ! draw the roads, first with black and then thinner with colour to give an
     ! an outlined appearance

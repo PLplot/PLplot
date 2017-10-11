@@ -256,7 +256,7 @@ proc x19 {{w loopback}} {
     $w cmd plcol0 6
     $w cmd plmapfill {} "ss/ss64ne_Water_Area" $minx $maxx $miny $maxy
     $w cmd plwidth 2.0
-    $w cmd plmapfill {} "ss/ss64ne_Water_Line" $minx $maxx $miny $maxy
+    $w cmd plmapline {} "ss/ss64ne_Water_Line" $minx $maxx $miny $maxy
 
     #draw the roads, first with black and then thinner with colour to give an
     #an outlined appearance
