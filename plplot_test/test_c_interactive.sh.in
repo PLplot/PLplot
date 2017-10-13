@@ -37,9 +37,10 @@ if [ "$device" != "wxwidgets" ] ; then
     INDEX="${INDEX} 14"
 fi
 
-# Temporarily drop example 17 for xcairo and qtwidget because those drivers are
-# so horribly slow for such interactive plots.
-if [ "$device" != "xcairo" -a "$device" != "qtwidget" ] ; then
+# Temporarily drop example 17 for xcairo, qtwidget, and wxwidgets
+# because those devices are so horribly slow for such interactive
+# plots.
+if [ "$device" != "xcairo" -a "$device" != "qtwidget" -a "$device" != "wxwidgets" ] ; then
     INDEX="${INDEX} 17"
 fi
 
