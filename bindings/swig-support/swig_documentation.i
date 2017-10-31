@@ -3272,16 +3272,19 @@ DESCRIPTION:
     Plots continental outlines or shapefile data in world coordinates. A
     demonstration of how to use this function to create different
     projections can be found in examples/c/x19c. PLplot is provided with
-    basic coastal outlines and USA state borders. These can be used
-    irrespective of whether Shapefile support is built into PLplot. With
-    Shapefile support this function can also be used with user Shapefiles,
-    in which case it will plot the entire contents of a Shapefile joining
-    each point of each Shapefile element with a line. Shapefiles have
-    become a popular standard for geographical data and data in this
-    format can be easily found from a number of online sources. Shapefile
-    data is actually provided as three or more files with the same
-    filename, but different extensions. The .shp and .shx files are
-    required for plotting Shapefile data with PLplot.
+    basic coastal outlines and USA state borders. To use the map
+    functionality PLplot must be compiled with the shapelib library.
+    Shapefiles have become a popular standard for geographical data and
+    data in this format can be easily found from a number of online
+    sources. Shapefile data is actually provided as three or more files
+    with the same filename, but different extensions. The .shp and .shx
+    files are required for plotting Shapefile data with PLplot.
+
+    PLplot currently supports the point, multipoint, polyline and polygon
+    objects within shapefiles. However holes in polygons are not
+    supported. When plmap is used the type of object is derived from the
+    shapefile, if you wish to override the type then use one of the other
+    plmap variants. The built in maps have line data only.
 
     Redacted form: plmap(mapform, name, minx, maxx, miny, maxy)
 
@@ -3320,22 +3323,29 @@ ARGUMENTS:
 
 
     minx (PLFLT, input) :    The minimum x value of map elements to be
-        drawn. For the built in maps this is a measure of longitude. For
-        Shapefiles the units must match the projection. The value of minx
-        must be less than the value of maxx. Specifying a useful limit for
-        these limits provides a useful optimization for complex or
-        detailed maps.
+        drawn. The units must match the shapefile (built in maps are
+        degrees lat/lon). Objects in the file which do not encroach on the
+        box defined by minx, maxx, miny, maxy will not be rendered. But
+        note this is simply an optimisation, not a clipping so for objects
+        with some points inside the box and some points outside the box
+        all the points will be rendered. These parameters also define
+        latitude and longitude wrapping for shapefiles using these units.
+        Longitude points will be wrapped by integer multiples of 360
+        degrees to place them in the box. This allows the same data to be
+        used on plots from -180-180 or 0-360 longitude ranges. In fact if
+        you plot from -180-540 you will get two cycles of data drawn. The
+        value of minx must be less than the value of maxx. Passing in a
+        nan, max/-max floating point number or +/-infinity will case the
+        bounding box from the shapefile to be used.
 
     maxx (PLFLT, input) :    The maximum x value of map elements to be
-        drawn
+        drawn - see minx.
 
     miny (PLFLT, input) :    The minimum y value of map elements to be
-        drawn. For the built in maps this is a measure of latitude. For
-        Shapefiles the units must match the projection. The value of miny
-        must be less than the value of maxy.
+        drawn - see minx.
 
     maxy (PLFLT, input) :    The maximum y value of map elements to be
-        drawn.
+        drawn - see minx.
 ")
 plmap;
 
