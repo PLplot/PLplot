@@ -709,6 +709,7 @@ typedef struct
 #define    plfont                   c_plfont
 #define    plfontld                 c_plfontld
 #define    plgchr                   c_plgchr
+#define    plgcmap1_range           c_plgcmap1_range
 #define    plgcol0                  c_plgcol0
 #define    plgcol0a                 c_plgcol0a
 #define    plgcolbg                 c_plgcolbg
@@ -785,7 +786,6 @@ typedef struct
 #define    plscmap1la               c_plscmap1la
 #define    plscmap1n                c_plscmap1n
 #define    plscmap1_range           c_plscmap1_range
-#define    plgcmap1_range           c_plgcmap1_range
 #define    plscol0                  c_plscol0
 #define    plscol0a                 c_plscol0a
 #define    plscolbg                 c_plscolbg
@@ -798,6 +798,7 @@ typedef struct
 #define    plsdiori                 c_plsdiori
 #define    plsdiplt                 c_plsdiplt
 #define    plsdiplz                 c_plsdiplz
+#define    plsdrawmode              c_plsdrawmode
 #define    plseed                   c_plseed
 #define    plsesc                   c_plsesc
 #define    plsetopt                 c_plsetopt
@@ -815,7 +816,6 @@ typedef struct
 #define    plsmem                   c_plsmem
 #define    plsmema                  c_plsmema
 #define    plsmin                   c_plsmin
-#define    plsdrawmode              c_plsdrawmode
 #define    plsori                   c_plsori
 #define    plspage                  c_plspage
 #define    plspal0                  c_plspal0
@@ -1069,6 +1069,11 @@ c_plfontld( PLINT fnt );
 
 PLDLLIMPEXP void
 c_plgchr( PLFLT_NC_SCALAR p_def, PLFLT_NC_SCALAR p_ht );
+
+// Get the color map 1 range used in continuous plots
+
+PLDLLIMPEXP void
+c_plgcmap1_range( PLFLT_NC_SCALAR min_color, PLFLT_NC_SCALAR max_color );
 
 // Returns 8 bit RGB values for given color from color map 0
 
@@ -1620,11 +1625,6 @@ c_plscmap1n( PLINT ncol1 );
 PLDLLIMPEXP void
 c_plscmap1_range( PLFLT min_color, PLFLT max_color );
 
-// Get the color map 1 range used in continuous plots
-
-PLDLLIMPEXP void
-c_plgcmap1_range( PLFLT_NC_SCALAR min_color, PLFLT_NC_SCALAR max_color );
-
 // Set a given color from color map 0 by 8 bit RGB value
 
 PLDLLIMPEXP void
@@ -1686,6 +1686,10 @@ c_plsdiplt( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax );
 
 PLDLLIMPEXP void
 c_plsdiplz( PLFLT xmin, PLFLT ymin, PLFLT xmax, PLFLT ymax );
+
+// Set the drawing mode
+PLDLLIMPEXP void
+c_plsdrawmode( PLINT mode );
 
 // Set seed for internal random number generator
 
@@ -1805,10 +1809,6 @@ c_plsmema( PLINT maxx, PLINT maxy, PLPointer plotmem );
 
 PLDLLIMPEXP void
 c_plsmin( PLFLT def, PLFLT scale );
-
-// Set the drawing mode
-PLDLLIMPEXP void
-c_plsdrawmode( PLINT mode );
 
 // Set orientation.  Must be done before calling plinit.
 
