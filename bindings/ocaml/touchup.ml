@@ -313,18 +313,18 @@ let parameter_attributes function_name types names =
       (* Color maps *)
       true,
       pmatch "\\*" p_type,
-      p_name = "r" || p_name = "g" || p_name = "b" || p_name = "a",
+      p_name = "r" || p_name = "g" || p_name = "b" || p_name = "alpha",
       List.mem "ncol0" names,
       ["size_is(ncol0)"; "in"];
       true,
       pmatch "\\*" p_type,
-      p_name = "r" || p_name = "g" || p_name = "b" || p_name = "a",
+      p_name = "r" || p_name = "g" || p_name = "b" || p_name = "alpha",
       List.mem "ncol1" names,
       ["size_is(ncol1)"; "in"];
       (* Linear relationship color maps *)
       pmatch "c_plscmap1l" function_name,
       pmatch "\\*" p_type,
-      List.mem p_name ["intensity"; "coord1"; "coord2"; "coord3"; "a"],
+      List.mem p_name ["intensity"; "coord1"; "coord2"; "coord3"; "alpha"],
       true,
       ["size_is(npts)"];
       (* Relative to world coordinates *)
