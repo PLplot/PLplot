@@ -5,7 +5,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Hezekiah M. Carty
-# Copyright (C) 2009-2017 Alan W. Irwin
+# Copyright (C) 2009-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #

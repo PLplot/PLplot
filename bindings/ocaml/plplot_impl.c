@@ -1,5 +1,6 @@
 //
-// Copyright 2007, 2008, 2009, 2010, 2011  Hezekiah M. Carty
+// Copyright 2007, 2008, 2009, 2010, 2011 Hezekiah M. Carty
+// Copyright (C) 2016-2018 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -492,16 +493,97 @@ void ml_plsvect_reset()
     c_plsvect( NULL, NULL, 0, 0 );
 }
 
-//
-// void
-// c_plmap( void (*mapform)(PLINT, PLFLT *, PLFLT *), const char *type,
-//       PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat );
-//
-void ml_plmap( const char *type,
-               PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat )
+// Plot continental outline in world coordinates
+
+// c_plmap( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
+//         PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy );
+
+void ml_plmap( PLCHAR_VECTOR name,
+               PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy )
 {
     c_plmap( get_ml_mapform_func(),
-        type, minlong, maxlong, minlat, maxlat );
+        name, minx, maxx, miny, maxy );
+}
+
+// Plot map outlines
+
+// void
+// c_plmapline( PLMAPFORM_callback mapform, PLCHAR_VECTOR name,
+//              PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+//              PLINT_VECTOR plotentries, PLINT nplotentries );
+
+void ml_plmapline( PLCHAR_VECTOR name,
+                   PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+                   PLINT_VECTOR plotentries, PLINT nplotentries )
+{
+    if ( nplotentries > 0 )
+        c_plmapline( get_ml_mapform_func(), name,
+            minx, maxx, miny, maxy,
+            plotentries, nplotentries );
+    else
+        c_plmapline( get_ml_mapform_func(), name,
+            minx, maxx, miny, maxy,
+            NULL, nplotentries );
+}
+
+// Plot map points
+
+// void
+// c_plmapstring( PLMAPFORM_callback mapform,
+//                PLCHAR_VECTOR name, PLCHAR_VECTOR string,
+//                PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+//                PLINT_VECTOR plotentries, PLINT nplotentries );
+
+void ml_plmapstring( PLCHAR_VECTOR name, PLCHAR_VECTOR string,
+                     PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+                     PLINT_VECTOR plotentries, PLINT nplotentries )
+{
+    if ( nplotentries > 0 )
+        c_plmapstring( get_ml_mapform_func(), name, string,
+            minx, maxx, miny, maxy,
+            plotentries, nplotentries );
+    else
+        c_plmapstring( get_ml_mapform_func(), name, string,
+            minx, maxx, miny, maxy,
+            NULL, nplotentries );
+}
+
+// Plot map text
+
+// void
+// c_plmaptex( PLMAPFORM_callback mapform,
+//             PLCHAR_VECTOR name, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text,
+//             PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+//             PLINT plotentry );
+
+void ml_plmaptex( PLCHAR_VECTOR name, PLFLT dx, PLFLT dy, PLFLT just, PLCHAR_VECTOR text,
+                  PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+                  PLINT plotentry )
+{
+    c_plmaptex( get_ml_mapform_func(), name, dx, dy, just, text,
+        minx, maxx, miny, maxy,
+        plotentry );
+}
+
+// Plot map fills
+
+// void
+// c_plmapfill( PLMAPFORM_callback mapform,
+//              PLCHAR_VECTOR name, PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+//              PLINT_VECTOR plotentries, PLINT nplotentries );
+
+void ml_plmapfill( PLCHAR_VECTOR name,
+                   PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+                   PLINT_VECTOR plotentries, PLINT nplotentries )
+{
+    if ( nplotentries > 0 )
+        c_plmapfill( get_ml_mapform_func(), name,
+            minx, maxx, miny, maxy,
+            plotentries, nplotentries );
+    else
+        c_plmapfill( get_ml_mapform_func(), name,
+            minx, maxx, miny, maxy,
+            NULL, nplotentries );
 }
 
 //

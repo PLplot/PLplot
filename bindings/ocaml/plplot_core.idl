@@ -1,21 +1,21 @@
-/*
-Copyright 2007, 2008, 2009, 2010, 2011  Hezekiah M. Carty
+// Copyright 2007, 2008, 2009, 2010, 2011 Hezekiah M. Carty
+// Copyright 2018 Alan W. Irwin
 
-This file is part of ocaml-plplot.
+// This file is part of ocaml-plplot.
 
-ocaml-plplot is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 2 of the License, or
-(at your option) any later version.
+// ocaml-plplot is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
 
-Foobar is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
+// ocaml-plplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public License
-along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// You should have received a copy of the GNU Lesser General Public License
+// along with ocaml-plplot.  If not, see <http://www.gnu.org/licenses/>.
+
 
 // Taken from the plplot.h 3D plot style definitions
 enum plplot3d_style_enum {
@@ -144,19 +144,35 @@ quote(h, "void plplot_check_nonzero_result(int result);");
 // This is a simplified and modified version of the plplot.h file.
 #include "plplot_h.inc"
 
+// MAINTENANCE 2017-10: These argument #defines are copied from plplot_h.
+// Not all of them are used below.
+#define PLFLT double
+#define PLUNICODE long long
+#define PLINT int
+#define PLBOOL boolean
+#define PLCHAR_VECTOR const char *
+#define PLCHAR_NC_VECTOR char *
+#define PLFLT_NC_SCALAR double *
+#define PLFLT_VECTOR double *
+#define PLFLT_MATRIX double **
+#define PLUNICODE_NC_SCALAR long long *
+#define PLINT_NC_SCALAR int *
+#define PLINT_VECTOR int *
+#define PLDLLIMPEXP
+#define PLBOOL_NC_SCALAR boolean *
+#define PLBOOL_VECTOR boolean *
+
+
 // These functions require(d) some manual assistance to get them to work
 // properly
-#define PLINT int
-#define PLFLT double
-#define PLBOOL boolean
 
 [mlname(plcont)] void ml_plcont(
-    [size_is(nx,ny)] PLFLT **f, PLINT nx, PLINT ny,
+    [size_is(nx,ny)] PLFLT_MATRIX f, PLINT nx, PLINT ny,
     PLINT kx, PLINT lx, PLINT ky, PLINT ly,
-    [size_is(nlevel)] PLFLT *clevel, PLINT nlevel);
+    [size_is(nlevel)] PLFLT_VECTOR clevel, PLINT nlevel);
 
 [mlname(plshade)] void ml_plshade(
-    [size_is(nx,ny)] PLFLT **a, PLINT nx, PLINT ny,
+    [size_is(nx,ny)] PLFLT_MATRIX a, PLINT nx, PLINT ny,
     PLFLT left, PLFLT right, PLFLT bottom, PLFLT top,
     PLFLT shade_min, PLFLT shade_max,
     PLINT sh_cmap, PLFLT sh_color, PLFLT sh_width,
@@ -165,37 +181,57 @@ quote(h, "void plplot_check_nonzero_result(int result);");
     PLBOOL rectangular);
 
 [mlname(plshades)] void ml_plshades(
-    [size_is(nx,ny)] PLFLT **a, PLINT nx, PLINT ny,
+    [size_is(nx,ny)] PLFLT_MATRIX a, PLINT nx, PLINT ny,
     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
-    [size_is(nlevel)] PLFLT *clevel, PLINT nlevel, PLFLT fill_width,
+    [size_is(nlevel)] PLFLT_VECTOR clevel, PLINT nlevel, PLFLT fill_width,
     PLINT cont_color, PLFLT cont_width,
     PLBOOL rectangular);
 
 [mlname(plimagefr)] void ml_plimagefr(
-    [size_is(nx, ny)] PLFLT **idata, PLINT nx, PLINT ny,
+    [size_is(nx, ny)] PLFLT_MATRIX idata, PLINT nx, PLINT ny,
     PLFLT xmin, PLFLT xmax, PLFLT ymin, PLFLT ymax,
     PLFLT zmin, PLFLT zmax,
     PLFLT valuemin, PLFLT valuemax);
 
 [mlname(plvect)] void ml_plvect(
-    [size_is(nx,ny)] PLFLT **u, [size_is(nx,ny)] PLFLT **v,
+    [size_is(nx,ny)] PLFLT_MATRIX u, [size_is(nx,ny)] PLFLT_MATRIX v,
     PLINT nx, PLINT ny, PLFLT scale);
 
 [mlname(plmap)] void ml_plmap(
-    [string] const char *type,
-    PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
+    [string] PLCHAR_VECTOR name,
+    PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy);
+
+[mlname(plmapline)] void ml_plmapline(
+    [string] PLCHAR_VECTOR name,
+    PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+    [size_is(nplotentries)] PLINT_VECTOR plotentries, PLINT nplotentries);
+
+[mlname(plmapstring)] void ml_plmapstring(
+    [string] PLCHAR_VECTOR name,  [string] PLCHAR_VECTOR string,
+    PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+    [size_is(nplotentries)] PLINT_VECTOR plotentries, PLINT nplotentries);
+
+[mlname(plmaptex)] void ml_plmaptex(
+    [string] PLCHAR_VECTOR name, PLFLT dx, PLFLT dy, PLFLT just, [string] PLCHAR_VECTOR text,
+    PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+    PLINT plotentry);
+
+[mlname(plmapfill)] void ml_plmapfill(
+    [string] PLCHAR_VECTOR name,
+    PLFLT minx, PLFLT maxx, PLFLT miny, PLFLT maxy,
+    [size_is(nplotentries)] PLINT_VECTOR plotentries, PLINT nplotentries);
 
 [mlname(plmeridians)] void ml_plmeridians(
     PLFLT dlong, PLFLT dlat,
     PLFLT minlong, PLFLT maxlong, PLFLT minlat, PLFLT maxlat);
 
 [mlname(plpoly3)] void ml_plpoly3(
-    PLINT n, [size_is(n)] PLFLT *x, [size_is(n)] PLFLT *y, [size_is(n)] PLFLT *z,
-    PLINT ndraw, [size_is(ndraw)] PLBOOL *draw, PLBOOL ifcc);
+    PLINT n, [size_is(n)] PLFLT_VECTOR x, [size_is(n)] PLFLT_VECTOR y, [size_is(n)] PLFLT_VECTOR z,
+    PLINT ndraw, [size_is(ndraw)] PLBOOL_VECTOR draw, PLBOOL ifcc);
 
 // The following are for the pltr functions
 [mlname(pltr0)] void ml_pltr0(
-    PLFLT x, PLFLT y, [out] PLFLT *tx, [out] PLFLT *ty);
+    PLFLT x, PLFLT y, [out] PLFLT_VECTOR tx, [out] PLFLT_VECTOR ty);
 
 // XXX The following are non-standard functions
 [mlname(plsvect_reset)] void ml_plsvect_reset(void);

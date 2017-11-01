@@ -1,5 +1,6 @@
 (*
-Copyright 2009, 2010, 2011  Hezekiah M. Carty
+Copyright 2009, 2010, 2011 Hezekiah M. Carty
+Copyright 2017-2018 Alan W. Irwin
 
 This file is part of PLplot.
 
@@ -998,6 +999,14 @@ external plvect : float array array -> float array array -> float -> unit
   = "camlidl_plplot_core_ml_plvect"
 external plmap : string -> float -> float -> float -> float -> unit
   = "camlidl_plplot_core_ml_plmap"
+external plmapline : string -> float -> float -> float -> float -> int array -> unit
+  = "camlidl_plplot_core_ml_plmapline_bytecode" "camlidl_plplot_core_ml_plmapline"
+external plmapstring : string -> string -> float -> float -> float -> float -> int array -> unit
+  = "camlidl_plplot_core_ml_plmapstring_bytecode" "camlidl_plplot_core_ml_plmapstring"
+external plmaptex : string -> float -> float -> float -> string -> float -> float -> float -> float -> int -> unit
+  = "camlidl_plplot_core_ml_plmaptex_bytecode" "camlidl_plplot_core_ml_plmaptex"
+external plmapfill : string -> float -> float -> float -> float -> int array -> unit
+  = "camlidl_plplot_core_ml_plmapfill_bytecode" "camlidl_plplot_core_ml_plmapfill"
 external plmeridians :
   float -> float -> float -> float -> float -> float -> unit
   = "camlidl_plplot_core_ml_plmeridians_bytecode"

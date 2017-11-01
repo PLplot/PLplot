@@ -4,7 +4,8 @@
 
    Updated for OCaml by Hezekiah Carty
 
-Copyright 2007, 2008  Hezekiah M. Carty
+Copyright 2007, 2008 Hezekiah M. Carty
+Copyright 2018 Alan W. Irwin
 
 This file is part of PLplot.
 
@@ -171,6 +172,119 @@ let () =
 
   (* For OCaml, this is how the global transform is cleared *)
   plunset_transform ();
+
+  (* An example using shapefiles. The shapefiles used are from Ordnance Survey, UK.
+     These were chosen because they provide shapefiles for small grid boxes which
+     are easilly manageable for this demo.*)
+
+  pllsty 1;
+
+  let minx = 240570.0 in
+  let maxx = 621109.0 in
+  let miny = 87822.0 in
+  let maxy = 722770.0 in
+
+  plscol0 0 255 255 255;
+  plscol0 1 0 0 0;
+  plscol0 2 150 150 150;
+  plscol0 3 0 50 200;
+  plscol0 4 50 50 50;
+  plscol0 5 150 0 0;
+  plscol0 6 100 100 255;
+
+  let minx = 265000.0 in
+  let maxx = 270000.0 in
+  let miny = 145000.0 in
+  let maxy = 150000.0 in
+
+  plscol0 0 255 255 255; (*white*)
+  plscol0 1 0 0 0;       (*black*)
+  plscol0 2 255 200 0;   (*yelow for sand*)
+  plscol0 3 60 230 60;   (* green for woodland*)
+  plscol0 4 210 120 60;  (*brown for contours*)
+  plscol0 5 150 0 0;     (*red for major roads*)
+  plscol0 6 180 180 255; (*pale blue for water*)
+  plscol0 7 100 100 100; (*pale grey for shingle or boulders*)
+  plscol0 8 100 100 100; (*dark grey for custom polygons - generally crags*)
+
+  plcol0 1;
+  plenv minx maxx miny maxy 1 (-1) ;
+  pllab "" "" "Martinhoe CP, Exmoor National Park, UK (shapelib only)";
+
+  (*Beach*)
+  plcol0 2 ;
+  let beachareas = [|23; 24|] in
+  plmapfill "ss/ss64ne_Landform_Area" minx maxx miny maxy beachareas;
+
+  (*woodland*)
+  plcol0 3;
+  let nwoodlandareas = 94 in
+  let woodlandareas = Array.make nwoodlandareas 0 in
+  for iwoodlandareas = 0 to nwoodlandareas - 1 do
+    woodlandareas.(iwoodlandareas) <- iwoodlandareas + 218;
+  done;
+  plmapfill "ss/ss64ne_Landform_Area" minx maxx miny maxy woodlandareas;
+
+  (*shingle or boulders*)
+  plcol0 7;
+  let shingleareas = [|0; 1; 24; 25; 26; 27; 28; 29; 30; 31; 32; 33; 34; 35; 217; 2424; 2425; 2426; 2427; 2428; 2491; 2577 |] in
+  plmapfill "ss/ss64ne_Landform_Area" minx maxx miny maxy shingleareas;
+
+  (*crags*)
+  plcol0 8;
+  let ncragareas = 2024 in
+  let cragareas = Array.make ncragareas 0 in
+  for icragareas = 0 to ncragareas - 1 do
+    cragareas.(icragareas) <- icragareas + 325;
+  done;
+  plmapfill "ss/ss64ne_Landform_Area" minx maxx miny maxy cragareas;
+
+  (*draw contours, we need to separate contours from high/low coastline*)
+  (*draw_contours(pls, "ss/SS64_line", 433, 20, 4, 3, minx, maxx, miny, maxy );*)
+  plcol0 4;
+  plmapline "ss/ss64ne_Height_Contours" minx maxx miny maxy [||];
+
+  (*draw the sea and surface water*)
+  plwidth 0.0;
+  plcol0 6;
+  plmapfill "ss/ss64ne_Water_Area" minx maxx miny maxy [||];
+  plwidth 2.0;
+  plmapline "ss/ss64ne_Water_Line" minx maxx miny maxy [||];
+
+  (*draw the roads, first with black and then thinner with colour to give*)
+  (*an outlined appearance*)
+  plwidth 5.0;
+  plcol0 1;
+  plmapline "ss/ss64ne_Road_Centreline" minx maxx miny maxy [||];
+  plwidth 3.0;
+  plcol0 0;
+  plmapline "ss/ss64ne_Road_Centreline" minx maxx miny maxy [||];
+  plcol0 5;
+  let majorroads = [| 33; 48; 71; 83; 89; 90; 101; 102; 111 |] in
+  plmapline "ss/ss64ne_Road_Centreline" minx maxx miny maxy majorroads;
+
+  (*draw buildings*)
+  plwidth 1.0;
+  plcol0 1;
+  plmapfill "ss/ss64ne_Building_Area" minx maxx miny maxy [||];
+
+  (*labels*)
+  plsfci 0x80000100L;
+  plschr 0. 0.8;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "MARTINHOE CP" minx maxx miny maxy 202;
+  plschr 0. 0.7;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "Heale\nDown" minx maxx miny maxy 13;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "South\nDown" minx maxx miny maxy 34;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "Martinhoe\nCommon" minx maxx miny maxy 42;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "Woody Bay" minx maxx miny maxy 211;
+  plschr 0. 0.6;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "Mill Wood" minx maxx miny maxy 16;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "Heale Wood" minx maxx miny maxy 17;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 1.0 "Bodley" minx maxx miny maxy 31;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.0 "Martinhoe" minx maxx miny maxy 37;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "Woolhanger\nCommon" minx maxx miny maxy 60;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "West Ilkerton\nCommon" minx maxx miny maxy 61;
+  plmaptex "ss/ss64ne_General_Text" 1.0 0.0 0.5 "Caffyns\nHeanton\nDown" minx maxx miny maxy 62;
 
   plend ();
   ()
