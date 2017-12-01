@@ -1,8 +1,6 @@
-# www/css/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2008 Alan W. Irwin
+# www/css/CMakeLists.txt to help generate the PLplot project website.
+
+# Copyright (C) 2008-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -19,13 +17,16 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-
 # Variables to control configuration of CSS files.
 
 # Colour scheme for menu section is mostly done by fixed gradient
 # background images.  Thus configuring the non-menu colours is tricky since
 # the result must be reasonably consistent with menu.  Because of this
-# limitation I (AWI) ultimately decided not to configure colours at all.
+# limitation I (AWI) ultimately decided to configure just one colour
+# (the dark text colour).
+
+# Make dark text absolutely black for best visibility.
+set(dark_text_color "#000000")
 
 # Widths and heights:
 
