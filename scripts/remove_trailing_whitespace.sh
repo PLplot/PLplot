@@ -38,9 +38,14 @@ cd "${ORIGINAL_PATH}"
 SOURCE_TREE=$(dirname "${SCRIPT_PATH}")
 cd "$SOURCE_TREE"
 
-# Remove trailing blanks and tabs on all files in source tree with the following exceptions.
+# Remove trailing blanks and tabs for all files in the PLplot source
+# tree with the following exceptions:
+
+# * Exclude this script (since changes on the fly can potentially
+#   screw up the results from bash scripts).
 # * Exclude all files in the .git tree (don't want to mess with our repository).
-# * Exclude all binary files recognized in .gitattributes.
+# * Exclude all binary files (*.pgm, *.gif, *.jpg, *.cgm, *.dbf,
+#   *.prj, *.shp, *.shx, and *.fnt) recognized in .gitattributes.
 # * Exclude *.pyc binary files recognized in .gitignore.
 # * Exclude all files in the rpm, and lib trees (may review lib later).
 # * Exclude all *.patch files.
@@ -49,7 +54,7 @@ cd "$SOURCE_TREE"
 # * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
 #   that does generate lines with some trailing blanks).
 
-filelist=$(find . -type f |grep -E -v '\.git|\.pgm|\.gif|\.jpg|\.cgm|\.dbf|\.prj|\.shp|\.shx|\.fnt|\.pyc|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
+filelist=$(find . -type f |grep -E -v 'remove_trailing_whitespace.sh|\.git|\.pgm|\.gif|\.jpg|\.cgm|\.dbf|\.prj|\.shp|\.shx|\.fnt|\.pyc|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
 if [ -z "$filelist" ] ; then
     echo "No files found with trailing whitespace"
     exit
