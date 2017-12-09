@@ -1,6 +1,6 @@
 // Demonstrate most pllegend capability including unicode symbols.
 //
-// Copyright (C) 2010 Alan Irwin
+// Copyright (C) 2010-2018 Alan Irwin
 //
 // This file is part of PLplot.
 //
@@ -121,17 +121,17 @@ static PLCHAR_VECTOR colorbar_cap_option_labels[COLORBAR_CAPS] = {
     "Low and high caps"
 };
 
-static int           colorbar = 1; // By default do not plot plcolorbar pages
-                                   // for now while we are working out the API.
+static int           no_colorbar = 0; // By default plot plcolorbar pages
+
 static PLOptionTable options[] = {
     {
-        "colorbar",              // Turns on pages showing colorbars
+        "no_colorbar",              // Turns off pages showing colorbars
         NULL,
         NULL,
-        &colorbar,
+        &no_colorbar,
         PL_OPT_BOOL,
-        "-colorbar",
-        "Plot the \"color bar\" pages."
+        "-no_colorbar",
+        "Do not Plot the \"color bar\" pages."
     },
     {
         NULL,                   // option
@@ -852,7 +852,7 @@ main( int argc, char *argv[] )
     for ( k = 0; k < MAX_NLEGEND; k++ )
         free( (void *) text[k] );
 
-    if ( colorbar )
+    if ( ! no_colorbar )
     {
         // Color bar examples
         PLFLT values_small[2]  = { -1.0e-20, 1.0e-20 };
