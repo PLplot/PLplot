@@ -8,6 +8,10 @@
 
 open Plplot
 
+
+(* Comment this out since Plot.colorbar which it wraps sets a color and removes it afterwards
+which causes problems when comparing results with other languages.
+
 let colorbar ?color ?contour values =
   (* Smaller text *)
   plschr 0.0 0.75;
@@ -29,6 +33,49 @@ let colorbar ?color ?contour values =
   Plot.plot [
     Plot.colorbar ?color ?contour ~orient:(`top (0.0375, 0.875)) ~label:[`bottom "Magnitude"] ~pos shade;
   ];
+
+  (* Reset text and tick sizes *)
+  plschr 0.0 1.0;
+  plsmaj 0.0 1.0;
+  plsmin 0.0 1.0
+
+end of commented out colorbar.  *)
+
+(* Define my_colorbar as a convenience for this example with all fixed arguments used
+for all plcolorbar calls defined here in one place.  In addition this function
+sets and restores text and tick sizes before and after the plcolorball call. *)
+
+let my_colorbar cont_color cont_width shedge =
+  (* Smaller text *)
+  plschr 0.0 0.75;
+  (* Small ticks on the vertical axis *)
+  plsmaj 0.0 0.5;
+  plsmin 0.0 0.5;
+
+  (* Fixed arguments for this entire example. *)
+  let x = 0.005 in
+  let y = 0.0 in
+  let x_length = 0.0375 in
+  let y_length = 0.875 in
+  let bg_color = 0 in
+  let bb_color = 1 in
+  let bb_style = 1 in
+  let low_cap_color = 0.0 in
+  let high_cap_color = 0.0 in
+  let label_opts = [| [PL_COLORBAR_LABEL_BOTTOM] |] in
+  let labels = [|"Magnitude"|] in
+  let axis_strings = [|"bcvtm"|] in
+  let tick_spacing = [|0.0|] in
+  let sub_ticks = [|0|] in
+  let values = Array.make 1 shedge in
+
+  ignore (
+  plcolorbar [PL_COLORBAR_SHADE ; PL_COLORBAR_SHADE_LABEL] []
+    x y x_length y_length bg_color bb_color bb_style low_cap_color high_cap_color
+    cont_color cont_width
+    label_opts labels
+    axis_strings tick_spacing sub_ticks values
+  );
 
   (* Reset text and tick sizes *)
   plschr 0.0 1.0;
@@ -159,7 +206,7 @@ let () =
 
   plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width true;
 
-  colorbar shedge;
+  my_colorbar 0 0.0 shedge;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -181,7 +228,7 @@ let () =
   plset_pltr (pltr1 xg1 yg1);
   plshades z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width true;
 
-  colorbar shedge;
+  my_colorbar 0 0.0 shedge;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -204,7 +251,7 @@ let () =
   plshades
     z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
 
-  colorbar shedge;
+  my_colorbar 0 0.0 shedge;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -227,7 +274,7 @@ let () =
 
   plshades z (-1.0) 1.0 (-1.) 1.0 shedge fill_width 2 3.0 false;
 
-  colorbar ~color:(`index 2) ~contour:(`index 2, 3.0) shedge;
+  my_colorbar 2 3.0 shedge;
 
   plcol0 1;
   plbox "bcnst" 0.0 0 "bcnstv" 0.0 0;
@@ -249,7 +296,7 @@ let () =
     plshades
       z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
 
-    colorbar shedge;
+    my_colorbar 0 0.0 shedge;
     plunset_defined ();
 
     plcol0 1;
@@ -293,7 +340,7 @@ let () =
   plshades
     z (-1.0) 1.0 (-1.0) 1.0 shedge fill_width cont_color cont_width false;
 
-  colorbar shedge;
+  my_colorbar 0 0.0 shedge;
 
   (* Now we can draw the perimeter.  (If do before, shade stuff may overlap.) *)
   let px = Array.make perimeterpts 0.0 in

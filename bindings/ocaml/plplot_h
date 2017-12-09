@@ -10,7 +10,11 @@
 #define PLFLT double
 
 //typedef unsigned int PLUNICODE;
-// Why long long rather than unsigned int?
+// Use long long rather than unsigned int here because according to
+// <http://ocaml.org/learn/tutorials/basics.html>, OCaml has no basic
+// unsigned integer type, and, in any case, the most significant bit
+// of its integer types are used for something else internally (managing
+// garbage collection).
 #define PLUNICODE long long
 //typedef int PLINT;
 #define PLINT int
