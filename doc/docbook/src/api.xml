@@ -2224,7 +2224,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal> PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -2262,7 +2262,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <varlistentry>
 	<term>
 	  <parameter>x_length</parameter>
-	  (<literal> PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7645,7 +7645,7 @@ device support!)
       <varlistentry>
 	<term>
 	  <parameter>x</parameter>
-	  (<literal> PLFLT</literal>, input)
+	  (<literal>&PLFLT;</literal>, input)
 	</term>
 	<listitem>
 	  <para>
@@ -7736,8 +7736,10 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    The cmap0 index of the background color for the legend
-	    (<literal>PL_LEGEND_BACKGROUND</literal>).
+	    The number of rows in the matrix used to render the
+	    <parameter>nlegend</parameter> legend entries. For internal
+	    transformations of <parameter>nrow</parameter>, see further remarks
+	    under <parameter>nlegend</parameter>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7748,8 +7750,10 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    The cmap0 index of the background color for the legend
-	    (<literal>PL_LEGEND_BACKGROUND</literal>).
+	    The number of columns in the matrix used to render the
+	    <parameter>nlegend</parameter> legend entries. For internal
+	    transformations of <parameter>ncolumn</parameter>, see further remarks
+	    under <parameter>nlegend</parameter>.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7760,11 +7764,21 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Number of legend entries.  N.B.  The total vertical height
-	    of the legend in adopted coordinates is calculated
-	    internally from <literal><parameter>nlegend</parameter></literal>,
-	    <literal><parameter>text_scale</parameter></literal> (see below), and
-	    <literal><parameter>text_spacing</parameter></literal> (see below).
+            Number of legend entries. The above
+	    <parameter>nrow</parameter> and <parameter>ncolumn</parameter> values
+	    are transformed internally to be consistent with
+	    <parameter>nlegend</parameter>. If either <parameter>nrow</parameter>
+	    or <parameter>ncolumn</parameter> is non-positive it is replaced by
+	    1. If the resulting product of <parameter>nrow</parameter> and
+	    <parameter>ncolumn</parameter> is less than
+	    <parameter>nlegend</parameter>, the smaller of the two (or
+	    <parameter>nrow</parameter>, if <parameter>nrow</parameter> ==
+	    <parameter>ncolumn</parameter>) is increased so the product is >=
+	    <parameter>nlegend</parameter>. Thus, for example, the common
+	    <parameter>nrow</parameter> = 0, <parameter>ncolumn</parameter> = 0
+	    case is transformed internally to <parameter>nrow</parameter> =
+	    <parameter>nlegend</parameter>, <parameter>ncolumn</parameter> = 1;
+	    i.e., the usual case of a legend rendered as a single column.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7795,11 +7809,7 @@ device support!)
 	<listitem>
 	  <para>
 	    Offset of the text area from the plot area in units of
-	    character width.  N.B.  The total horizontal width of the legend in
-	    adopted coordinates is calculated internally from
-	    <parameter>plot_width</parameter> (see above),
-	    <parameter>text_offset</parameter>, and length (calculated internally)
-	    of the longest text string.
+	    character width.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7810,11 +7820,7 @@ device support!)
 	</term>
 	<listitem>
 	  <para>
-	    Character height scale for text annotations.  N.B.  The
-	    total vertical height of the legend in adopted coordinates
-	    is calculated internally from <parameter>nlegend</parameter> (see
-	    above), <parameter>text_scale</parameter>, and
-	    <parameter>text_spacing</parameter> (see below).
+	    Character height scale for text annotations.
 	  </para>
 	</listitem>
       </varlistentry>
@@ -7826,11 +7832,7 @@ device support!)
 	<listitem>
 	  <para>
 	    Vertical spacing in units of the character height from one
-	    legend entry to the next.  N.B.  The total vertical height of the
-	    legend in adopted coordinates is calculated internally from
-	    <parameter>nlegend</parameter> (see above),
-	    <parameter>text_scale</parameter> (see above), and
-	    <parameter>text_spacing</parameter>.
+	    legend entry to the next.
 	  </para>
 	</listitem>
       </varlistentry>
