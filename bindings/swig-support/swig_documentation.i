@@ -3044,16 +3044,38 @@ ARGUMENTS:
     bb_style (PLINT, input) :    The pllsty style number for the
         bounding-box line for the legend (PL_LEGEND_BACKGROUND).
 
-    nrow (PLINT, input) :    The cmap0 index of the background color for
-        the legend (PL_LEGEND_BACKGROUND).
+    nrow (PLINT, input) :    The number of rows in the matrix used to
+        render the
+    nlegend legend entries. For internal transformations of
+    nrow, see further remarks under
+    nlegend.
 
-    ncolumn (PLINT, input) :    The cmap0 index of the background color
-        for the legend (PL_LEGEND_BACKGROUND).
+    ncolumn (PLINT, input) :    The number of columns in the matrix used
+        to render the
+    nlegend legend entries. For internal transformations of
+    ncolumn, see further remarks under
+    nlegend.
 
-    nlegend (PLINT, input) :    Number of legend entries.  N.B.  The total
-        vertical height of the legend in adopted coordinates is calculated
-        internally from nlegend, text_scale (see below), and text_spacing
-        (see below).
+    nlegend (PLINT, input) :    Number of legend entries. The above
+    nrow and
+    ncolumn values are transformed internally to be consistent with
+    nlegend. If either
+    nrow or
+    ncolumn is non-positive it is replaced by 1. If the resulting product
+        of
+    nrow and
+    ncolumn is less than
+    nlegend, the smaller of the two (or
+    nrow, if
+    nrow ==
+    ncolumn) is increased so the product is >=
+    nlegend. Thus, for example, the common
+    nrow = 0,
+    ncolumn = 0 case is transformed internally to
+    nrow =
+    nlegend,
+    ncolumn = 1; i.e., the usual case of a legend rendered as a single
+        column.
 
     opt_array (PLINT_VECTOR, input) :    A vector of
     nlegend values of options to control each individual plotted area
@@ -3067,27 +3089,13 @@ ARGUMENTS:
         symbols.
 
     text_offset (PLFLT, input) :    Offset of the text area from the plot
-        area in units of character width.  N.B.  The total horizontal
-        width of the legend in adopted coordinates is calculated
-        internally from
-    plot_width (see above),
-    text_offset, and length (calculated internally) of the longest text
-        string.
+        area in units of character width.
 
     text_scale (PLFLT, input) :    Character height scale for text
-        annotations.  N.B.  The total vertical height of the legend in
-        adopted coordinates is calculated internally from
-    nlegend (see above),
-    text_scale, and
-    text_spacing (see below).
+        annotations.
 
     text_spacing (PLFLT, input) :    Vertical spacing in units of the
-        character height from one legend entry to the next.  N.B.  The
-        total vertical height of the legend in adopted coordinates is
-        calculated internally from
-    nlegend (see above),
-    text_scale (see above), and
-    text_spacing.
+        character height from one legend entry to the next.
 
     text_justification (PLFLT, input) :    Justification parameter used
         for text justification.  The most common values of
