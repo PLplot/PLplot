@@ -852,7 +852,7 @@ main( int argc, char *argv[] )
     for ( k = 0; k < MAX_NLEGEND; k++ )
         free( (void *) text[k] );
 
-    if ( ! no_colorbar )
+    if ( !no_colorbar )
     {
         // Color bar examples
         PLFLT values_small[2]  = { -1.0e-20, 1.0e-20 };
