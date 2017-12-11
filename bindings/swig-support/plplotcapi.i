@@ -5,7 +5,7 @@
 //
 //
 //Copyright (C) 2002  Gary Bishop
-//Copyright (C) 2002-2015  Alan W. Irwin
+//Copyright (C) 2002-2018  Alan W. Irwin
 //Copyright (C) 2004  Rafael Laboissiere
 //Copyright (C) 2004  Andrew Ross
 //
@@ -172,6 +172,7 @@ typedef void*  PLPointer;
 #define PL_HIST_IGNORE_OUTLIERS          0x02
 #define PL_HIST_NOEXPAND                 0x08
 #define PL_HIST_NOEMPTY                  0x10
+#define PL_POSITION_NULL                 0x0
 #define PL_POSITION_LEFT                 0x1
 #define PL_POSITION_RIGHT                0x2
 #define PL_POSITION_TOP                  0x4
@@ -180,6 +181,7 @@ typedef void*  PLPointer;
 #define PL_POSITION_OUTSIDE              0x20
 #define PL_POSITION_VIEWPORT             0x40
 #define PL_POSITION_SUBPAGE              0x80
+#define PL_LEGEND_NULL                   0x0
 #define PL_LEGEND_NONE                   0x1
 #define PL_LEGEND_COLOR_BOX              0x2
 #define PL_LEGEND_LINE                   0x4
@@ -188,6 +190,7 @@ typedef void*  PLPointer;
 #define PL_LEGEND_BACKGROUND             0x20
 #define PL_LEGEND_BOUNDING_BOX           0x40
 #define PL_LEGEND_ROW_MAJOR              0x80
+#define PL_COLORBAR_NULL                 0x0
 #define PL_COLORBAR_LABEL_LEFT           0x1
 #define PL_COLORBAR_LABEL_RIGHT          0x2
 #define PL_COLORBAR_LABEL_TOP            0x4

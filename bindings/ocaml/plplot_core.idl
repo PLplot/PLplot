@@ -59,6 +59,7 @@ enum plplot_run_level_enum {
 typedef enum plplot_run_level_enum plplot_run_level;
 
 enum plplot_position_enum {
+    PL_POSITION_NULL = 0x0,
     PL_POSITION_LEFT = 0x1,
     PL_POSITION_RIGHT = 0x2,
     PL_POSITION_TOP = 0x4,
@@ -71,6 +72,7 @@ enum plplot_position_enum {
 typedef [set] enum plplot_position_enum plplot_position_opt;
 
 enum plplot_legend_enum {
+    PL_LEGEND_NULL = 0x0,
     PL_LEGEND_NONE = 0x1,
     PL_LEGEND_COLOR_BOX = 0x2,
     PL_LEGEND_LINE = 0x4,
@@ -83,6 +85,7 @@ enum plplot_legend_enum {
 typedef [set] enum plplot_legend_enum plplot_legend_opt;
 
 enum plplot_colorbar_enum {
+    PL_COLORBAR_NULL = 0x0,
     PL_COLORBAR_LABEL_LEFT = 0x1,
     PL_COLORBAR_LABEL_RIGHT = 0x2,
     PL_COLORBAR_LABEL_TOP = 0x4,

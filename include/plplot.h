@@ -1262,6 +1262,7 @@ PLDLLIMPEXP void
 c_pllab( PLCHAR_VECTOR xlabel, PLCHAR_VECTOR ylabel, PLCHAR_VECTOR tlabel );
 
 //flags used for position argument of both pllegend and plcolorbar
+#define PL_POSITION_NULL             0x0
 #define PL_POSITION_LEFT             0x1
 #define PL_POSITION_RIGHT            0x2
 #define PL_POSITION_TOP              0x4
@@ -1272,6 +1273,7 @@ c_pllab( PLCHAR_VECTOR xlabel, PLCHAR_VECTOR ylabel, PLCHAR_VECTOR tlabel );
 #define PL_POSITION_SUBPAGE          0x80
 
 // Flags for pllegend.
+#define PL_LEGEND_NULL               0x0
 #define PL_LEGEND_NONE               0x1
 #define PL_LEGEND_COLOR_BOX          0x2
 #define PL_LEGEND_LINE               0x4
@@ -1282,6 +1284,7 @@ c_pllab( PLCHAR_VECTOR xlabel, PLCHAR_VECTOR ylabel, PLCHAR_VECTOR tlabel );
 #define PL_LEGEND_ROW_MAJOR          0x80
 
 // Flags for plcolorbar
+#define PL_COLORBAR_NULL             0x0
 #define PL_COLORBAR_LABEL_LEFT       0x1
 #define PL_COLORBAR_LABEL_RIGHT      0x2
 #define PL_COLORBAR_LABEL_TOP        0x4

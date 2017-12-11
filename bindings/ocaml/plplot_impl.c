@@ -834,14 +834,15 @@ int translate_legend_option( int legend_option )
     int translated_option;
     switch ( legend_option )
     {
-    case 0: translated_option  = PL_LEGEND_NONE; break;
-    case 1: translated_option  = PL_LEGEND_COLOR_BOX; break;
-    case 2: translated_option  = PL_LEGEND_LINE; break;
-    case 3: translated_option  = PL_LEGEND_SYMBOL; break;
-    case 4: translated_option  = PL_LEGEND_TEXT_LEFT; break;
-    case 5: translated_option  = PL_LEGEND_BACKGROUND; break;
-    case 6: translated_option  = PL_LEGEND_BOUNDING_BOX; break;
-    case 7: translated_option  = PL_LEGEND_ROW_MAJOR; break;
+    case 0: translated_option  = PL_LEGEND_NULL; break;
+    case 1: translated_option  = PL_LEGEND_NONE; break;
+    case 2: translated_option  = PL_LEGEND_COLOR_BOX; break;
+    case 3: translated_option  = PL_LEGEND_LINE; break;
+    case 4: translated_option  = PL_LEGEND_SYMBOL; break;
+    case 5: translated_option  = PL_LEGEND_TEXT_LEFT; break;
+    case 6: translated_option  = PL_LEGEND_BACKGROUND; break;
+    case 7: translated_option  = PL_LEGEND_BOUNDING_BOX; break;
+    case 8: translated_option  = PL_LEGEND_ROW_MAJOR; break;
     default: translated_option = -1;
     }
     return translated_option;
@@ -852,23 +853,24 @@ int translate_colorbar_option( int colorbar_option )
     int translated_option;
     switch ( colorbar_option )
     {
-    case 0: translated_option  = PL_COLORBAR_LABEL_LEFT; break;
-    case 1: translated_option  = PL_COLORBAR_LABEL_RIGHT; break;
-    case 2: translated_option  = PL_COLORBAR_LABEL_TOP; break;
-    case 3: translated_option  = PL_COLORBAR_LABEL_BOTTOM; break;
-    case 4: translated_option  = PL_COLORBAR_IMAGE; break;
-    case 5: translated_option  = PL_COLORBAR_SHADE; break;
-    case 6: translated_option  = PL_COLORBAR_GRADIENT; break;
-    case 7: translated_option  = PL_COLORBAR_CAP_NONE; break;
-    case 8: translated_option  = PL_COLORBAR_CAP_LOW; break;
-    case 9: translated_option  = PL_COLORBAR_CAP_HIGH; break;
-    case 10: translated_option = PL_COLORBAR_SHADE_LABEL; break;
-    case 11: translated_option = PL_COLORBAR_ORIENT_RIGHT; break;
-    case 12: translated_option = PL_COLORBAR_ORIENT_TOP; break;
-    case 13: translated_option = PL_COLORBAR_ORIENT_LEFT; break;
-    case 14: translated_option = PL_COLORBAR_ORIENT_BOTTOM; break;
-    case 15: translated_option = PL_COLORBAR_BACKGROUND; break;
-    case 16: translated_option = PL_COLORBAR_BOUNDING_BOX; break;
+    case 0: translated_option  = PL_COLORBAR_NULL; break;
+    case 1: translated_option  = PL_COLORBAR_LABEL_LEFT; break;
+    case 2: translated_option  = PL_COLORBAR_LABEL_RIGHT; break;
+    case 3: translated_option  = PL_COLORBAR_LABEL_TOP; break;
+    case 4: translated_option  = PL_COLORBAR_LABEL_BOTTOM; break;
+    case 5: translated_option  = PL_COLORBAR_IMAGE; break;
+    case 6: translated_option  = PL_COLORBAR_SHADE; break;
+    case 7: translated_option  = PL_COLORBAR_GRADIENT; break;
+    case 8: translated_option  = PL_COLORBAR_CAP_NONE; break;
+    case 9: translated_option  = PL_COLORBAR_CAP_LOW; break;
+    case 10: translated_option = PL_COLORBAR_CAP_HIGH; break;
+    case 11: translated_option = PL_COLORBAR_SHADE_LABEL; break;
+    case 12: translated_option = PL_COLORBAR_ORIENT_RIGHT; break;
+    case 13: translated_option = PL_COLORBAR_ORIENT_TOP; break;
+    case 14: translated_option = PL_COLORBAR_ORIENT_LEFT; break;
+    case 15: translated_option = PL_COLORBAR_ORIENT_BOTTOM; break;
+    case 16: translated_option = PL_COLORBAR_BACKGROUND; break;
+    case 17: translated_option = PL_COLORBAR_BOUNDING_BOX; break;
     default: translated_option = -1;
     }
     return translated_option;
@@ -879,14 +881,15 @@ int translate_position_option( int position_option )
     int translated_option;
     switch ( position_option )
     {
-    case 0: translated_option  = PL_POSITION_LEFT; break;
-    case 1: translated_option  = PL_POSITION_RIGHT; break;
-    case 2: translated_option  = PL_POSITION_TOP; break;
-    case 3: translated_option  = PL_POSITION_BOTTOM; break;
-    case 4: translated_option  = PL_POSITION_INSIDE; break;
-    case 5: translated_option  = PL_POSITION_OUTSIDE; break;
-    case 6: translated_option  = PL_POSITION_VIEWPORT; break;
-    case 7: translated_option  = PL_POSITION_SUBPAGE; break;
+    case 0: translated_option  = PL_POSITION_NULL; break;
+    case 1: translated_option  = PL_POSITION_LEFT; break;
+    case 2: translated_option  = PL_POSITION_RIGHT; break;
+    case 3: translated_option  = PL_POSITION_TOP; break;
+    case 4: translated_option  = PL_POSITION_BOTTOM; break;
+    case 5: translated_option  = PL_POSITION_INSIDE; break;
+    case 6: translated_option  = PL_POSITION_OUTSIDE; break;
+    case 7: translated_option  = PL_POSITION_VIEWPORT; break;
+    case 8: translated_option  = PL_POSITION_SUBPAGE; break;
     default: translated_option = -1;
     }
     return translated_option;

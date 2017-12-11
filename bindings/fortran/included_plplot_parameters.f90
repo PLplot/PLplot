@@ -136,6 +136,7 @@
     integer, parameter :: PL_HIST_IGNORE_OUTLIERS = 2
     integer, parameter :: PL_HIST_NOEXPAND = 8
     integer, parameter :: PL_HIST_NOEMPTY = 1*16
+    integer, parameter :: PL_POSITION_NULL = 0
     integer, parameter :: PL_POSITION_LEFT = 1
     integer, parameter :: PL_POSITION_RIGHT = 2
     integer, parameter :: PL_POSITION_TOP = 4
@@ -144,6 +145,7 @@
     integer, parameter :: PL_POSITION_OUTSIDE = 2*16
     integer, parameter :: PL_POSITION_VIEWPORT = 4*16
     integer, parameter :: PL_POSITION_SUBPAGE = 8*16
+    integer, parameter :: PL_LEGEND_NULL = 0
     integer, parameter :: PL_LEGEND_NONE = 1
     integer, parameter :: PL_LEGEND_COLOR_BOX = 2
     integer, parameter :: PL_LEGEND_LINE = 4
@@ -152,6 +154,7 @@
     integer, parameter :: PL_LEGEND_BACKGROUND = 2*16
     integer, parameter :: PL_LEGEND_BOUNDING_BOX = 4*16
     integer, parameter :: PL_LEGEND_ROW_MAJOR = 8*16
+    integer, parameter :: PL_COLORBAR_NULL = 0
     integer, parameter :: PL_COLORBAR_LABEL_LEFT = 1
     integer, parameter :: PL_COLORBAR_LABEL_RIGHT = 2
     integer, parameter :: PL_COLORBAR_LABEL_TOP = 4

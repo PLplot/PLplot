@@ -604,7 +604,8 @@ and plplot_run_level_enum =
   | PL_WORLD_COORDINATES_DEFINED
 and plplot_run_level = plplot_run_level_enum
 and plplot_position_enum =
-    PL_POSITION_LEFT
+    PL_POSITION_NULL
+  | PL_POSITION_LEFT
   | PL_POSITION_RIGHT
   | PL_POSITION_TOP
   | PL_POSITION_BOTTOM
@@ -614,7 +615,8 @@ and plplot_position_enum =
   | PL_POSITION_SUBPAGE
 and plplot_position_opt = plplot_position_enum list
 and plplot_legend_enum =
-    PL_LEGEND_NONE
+    PL_LEGEND_NULL
+  | PL_LEGEND_NONE
   | PL_LEGEND_COLOR_BOX
   | PL_LEGEND_LINE
   | PL_LEGEND_SYMBOL
@@ -624,6 +626,7 @@ and plplot_legend_enum =
   | PL_LEGEND_ROW_MAJOR
 and plplot_legend_opt = plplot_legend_enum list
 and plplot_colorbar_enum =
+    PL_COLORBAR_NULL
   | PL_COLORBAR_LABEL_LEFT
   | PL_COLORBAR_LABEL_RIGHT
   | PL_COLORBAR_LABEL_TOP

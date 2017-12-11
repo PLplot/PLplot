@@ -1079,7 +1079,7 @@ class PlXframe(Frame):
 ## Plframe widget.
 
 # Define constants that are accessible from the API
-# MAINTENANCE 2016-12
+# MAINTENANCE 2017-12
 # These are taken from the "#define" section of bindings/swig-support/plplotcapi.i
 # and transformed as follows:
 # grep '^#define' bindings/swig-support/plplotcapi.i |sed -e '/#define / s?#define ?    ?' -e 's?//?#?g' -e 's? \([(0-9]\)? = \1?' | grep '=' >|/tmp/software
@@ -1211,6 +1211,7 @@ class PlXframe(Frame):
     PL_HIST_IGNORE_OUTLIERS          = 0x02
     PL_HIST_NOEXPAND                 = 0x08
     PL_HIST_NOEMPTY                  = 0x10
+    PL_POSITION_NULL                 = 0x0
     PL_POSITION_LEFT                 = 0x1
     PL_POSITION_RIGHT                = 0x2
     PL_POSITION_TOP                  = 0x4
@@ -1219,6 +1220,7 @@ class PlXframe(Frame):
     PL_POSITION_OUTSIDE              = 0x20
     PL_POSITION_VIEWPORT             = 0x40
     PL_POSITION_SUBPAGE              = 0x80
+    PL_LEGEND_NULL                   = 0x0
     PL_LEGEND_NONE                   = 0x1
     PL_LEGEND_COLOR_BOX              = 0x2
     PL_LEGEND_LINE                   = 0x4
@@ -1227,6 +1229,7 @@ class PlXframe(Frame):
     PL_LEGEND_BACKGROUND             = 0x20
     PL_LEGEND_BOUNDING_BOX           = 0x40
     PL_LEGEND_ROW_MAJOR              = 0x80
+    PL_COLORBAR_NULL                 = 0x0
     PL_COLORBAR_LABEL_LEFT           = 0x1
     PL_COLORBAR_LABEL_RIGHT          = 0x2
     PL_COLORBAR_LABEL_TOP            = 0x4

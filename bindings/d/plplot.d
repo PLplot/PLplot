@@ -1038,109 +1038,192 @@ alias void* PLPointer;
 // Complex data types and other good stuff
 //--------------------------------------------------------------------------
 
-// Switches for escape function call.
-// Some of these are obsolete but are retained in order to process
-// old metafiles.
 
-const PLESC_SET_RGB         = 1;
-const PLESC_ALLOC_NCOL      = 2;
-const PLESC_SET_LPB         = 3;
-const PLESC_EXPOSE          = 4;
-const PLESC_RESIZE          = 5;
-const PLESC_REDRAW          = 6;
-const PLESC_TEXT            = 7;
-const PLESC_GRAPH           = 8;
-const PLESC_FILL            = 9;
-const PLESC_DI              = 10;
-const PLESC_FLUSH           = 11;
-const PLESC_EH              = 12;
-const PLESC_GETC            = 13;
-const PLESC_SWIN            = 14;
-const PLESC_DOUBLEBUFFERING = 15;
-const PLESC_XORMOD          = 16;
-const PLESC_SET_COMPRESSION = 17;
-const PLESC_CLEAR           = 18;
-const PLESC_DASH            = 19;
-const PLESC_HAS_TEXT        = 20;
-const PLESC_IMAGE           = 21;
-const PLESC_IMAGEOPS        = 22;
-const PLESC_PL2DEVCOL       = 23;
-const PLESC_DEV2PLCOL       = 24;
-const PLESC_SETBGFG         = 25;
-const PLESC_DEVINIT         = 26;
+// Define constants that are accessible from the API
+// MAINTENANCE 2017-12
+// These are taken from the "#define" section of bindings/swig-support/plplotcapi.i
+// and transformed as follows:
+// grep '^#define' bindings/swig-support/plplotcapi.i |sed -e '/#define / s?#define ?const ?' -e 's? \([(0-9]\)? = \1?' -e 's? * //.*$??' -e 's? *$?;?' | grep '=' >|/tmp/software
+// and then that generated file was inserted here.
 
-// image operations
-const ZEROW2B = 1;
-const ZEROW2D = 2;
-const ONEW2B  = 3;
-const ONEW2D  = 4;
-
-// Window parameter tags
-const PLSWIN_DEVICE = 1;
-const PLSWIN_WORLD  = 2;
-
-// Axis label tags
-const PL_X_AXIS = 1;       // The x-axis
-const PL_Y_AXIS = 2;       // The y-axis
-const PL_Z_AXIS = 3;       // The z-axis
-
-// PLplot Option table & support constants
-
-// Option-specific settings
-const PL_OPT_ENABLED   = 0x0001;
-const PL_OPT_ARG       = 0x0002;
-const PL_OPT_NODELETE  = 0x0004;
-const PL_OPT_INVISIBLE = 0x0008;
-const PL_OPT_DISABLED  = 0x0010;
-
-// Option-processing settings -- mutually exclusive
-const PL_OPT_FUNC   = 0x0100;
-const PL_OPT_BOOL   = 0x0200;
-const PL_OPT_INT    = 0x0400;
-const PL_OPT_FLOAT  = 0x0800;
-const PL_OPT_STRING = 0x1000;
-
-// Global mode settings
-// These override per-option settings
-const PL_PARSE_PARTIAL = 0x0000;
-const PL_PARSE_FULL    = 0x0001;
-const PL_PARSE_QUIET   = 0x0002;
-
-// processing
-const PL_PARSE_NODELETE  = 0x0004;
-const PL_PARSE_SHOWALL   = 0x0008;
-const PL_PARSE_OVERRIDE  = 0x0010;
-const PL_PARSE_NOPROGRAM = 0x0020;
-const PL_PARSE_NODASH    = 0x0040;
-const PL_PARSE_SKIP      = 0x0080;
-
-// FCI (font characterization integer) related constants.
-const PL_FCI_MARK          = 0x80000000;
-const PL_FCI_IMPOSSIBLE    = 0x00000000;
-const PL_FCI_HEXDIGIT_MASK = 0xf;
-const PL_FCI_HEXPOWER_MASK = 0x7;
-
-// These define hexpower values corresponding to each font attribute.
-const PL_FCI_HEXPOWER_IMPOSSIBLE = 0xf;
-const PL_FCI_FAMILY = 0x0;
-const PL_FCI_STYLE  = 0x1;
-
-// These are legal values for font family attribute
-const PL_FCI_WEIGHT = 0x2;
-const PL_FCI_SANS   = 0x0;
-const PL_FCI_SERIF  = 0x1;
-const PL_FCI_MONO   = 0x2;
-const PL_FCI_SCRIPT = 0x3;
-
-// These are legal values for font style attribute
-const PL_FCI_SYMBOL  = 0x4;
-const PL_FCI_UPRIGHT = 0x0;
-const PL_FCI_ITALIC  = 0x1;
-
-// These are legal values for font weight attribute
-const PL_FCI_MEDIUM  = 0x0;
-const PL_FCI_BOLD    = 0x1;
-const PL_FCI_OBLIQUE = 0x2;
+const PLESC_SET_RGB                    = 1;
+const PLESC_ALLOC_NCOL                 = 2;
+const PLESC_SET_LPB                    = 3;
+const PLESC_EXPOSE                     = 4;
+const PLESC_RESIZE                     = 5;
+const PLESC_REDRAW                     = 6;
+const PLESC_TEXT                       = 7;
+const PLESC_GRAPH                      = 8;
+const PLESC_FILL                       = 9;
+const PLESC_DI                         = 10;
+const PLESC_FLUSH                      = 11;
+const PLESC_EH                         = 12;
+const PLESC_GETC                       = 13;
+const PLESC_SWIN                       = 14;
+const PLESC_DOUBLEBUFFERING            = 15;
+const PLESC_XORMOD                     = 16;
+const PLESC_SET_COMPRESSION            = 17;
+const PLESC_CLEAR                      = 18;
+const PLESC_DASH                       = 19;
+const PLESC_HAS_TEXT                   = 20;
+const PLESC_IMAGE                      = 21;
+const PLESC_IMAGEOPS                   = 22;
+const PLESC_PL2DEVCOL                  = 23;
+const PLESC_DEV2PLCOL                  = 24;
+const PLESC_SETBGFG                    = 25;
+const PLESC_DEVINIT                    = 26;
+const PLESC_GETBACKEND                 = 27;
+const PLESC_BEGIN_TEXT                 = 28;
+const PLESC_TEXT_CHAR                  = 29;
+const PLESC_CONTROL_CHAR               = 30;
+const PLESC_END_TEXT                   = 31;
+const PLESC_START_RASTERIZE            = 32;
+const PLESC_END_RASTERIZE              = 33;
+const PLESC_ARC                        = 34;
+const PLESC_GRADIENT                   = 35;
+const PLESC_MODESET                    = 36;
+const PLESC_MODEGET                    = 37;
+const PLESC_FIXASPECT                  = 38;
+const PLESC_IMPORT_BUFFER              = 39;
+const PLESC_APPEND_BUFFER              = 40;
+const PLESC_FLUSH_REMAINING_BUFFER     = 41;
+const PLTEXT_FONTCHANGE                = 0;
+const PLTEXT_SUPERSCRIPT               = 1;
+const PLTEXT_SUBSCRIPT                 = 2;
+const PLTEXT_BACKCHAR                  = 3;
+const PLTEXT_OVERLINE                  = 4;
+const PLTEXT_UNDERLINE                 = 5;
+const ZEROW2B                          = 1;
+const ZEROW2D                          = 2;
+const ONEW2B                           = 3;
+const ONEW2D                           = 4;
+const PLSWIN_DEVICE                    = 1;
+const PLSWIN_WORLD                     = 2;
+const PL_X_AXIS                        = 1;
+const PL_Y_AXIS                        = 2;
+const PL_Z_AXIS                        = 3;
+const PL_OPT_ENABLED                   = 0x0001;
+const PL_OPT_ARG                       = 0x0002;
+const PL_OPT_NODELETE                  = 0x0004;
+const PL_OPT_INVISIBLE                 = 0x0008;
+const PL_OPT_DISABLED                  = 0x0010;
+const PL_OPT_FUNC                      = 0x0100;
+const PL_OPT_BOOL                      = 0x0200;
+const PL_OPT_INT                       = 0x0400;
+const PL_OPT_FLOAT                     = 0x0800;
+const PL_OPT_STRING                    = 0x1000;
+const PL_PARSE_PARTIAL                 = 0x0000;
+const PL_PARSE_FULL                    = 0x0001;
+const PL_PARSE_QUIET                   = 0x0002;
+const PL_PARSE_NODELETE                = 0x0004;
+const PL_PARSE_SHOWALL                 = 0x0008;
+const PL_PARSE_OVERRIDE                = 0x0010;
+const PL_PARSE_NOPROGRAM               = 0x0020;
+const PL_PARSE_NODASH                  = 0x0040;
+const PL_PARSE_SKIP                    = 0x0080;
+const PL_FCI_MARK                      = 0x80000000;
+const PL_FCI_IMPOSSIBLE                = 0x00000000;
+const PL_FCI_HEXDIGIT_MASK             = 0xf;
+const PL_FCI_HEXPOWER_MASK             = 0x7;
+const PL_FCI_HEXPOWER_IMPOSSIBLE       = 0xf;
+const PL_FCI_FAMILY                    = 0x0;
+const PL_FCI_STYLE                     = 0x1;
+const PL_FCI_WEIGHT                    = 0x2;
+const PL_FCI_SANS                      = 0x0;
+const PL_FCI_SERIF                     = 0x1;
+const PL_FCI_MONO                      = 0x2;
+const PL_FCI_SCRIPT                    = 0x3;
+const PL_FCI_SYMBOL                    = 0x4;
+const PL_FCI_UPRIGHT                   = 0x0;
+const PL_FCI_ITALIC                    = 0x1;
+const PL_FCI_OBLIQUE                   = 0x2;
+const PL_FCI_MEDIUM                    = 0x0;
+const PL_FCI_BOLD                      = 0x1;
+const PL_MAXKEY                        = 16;
+const PL_MASK_SHIFT                    = 0x1;
+const PL_MASK_CAPS                     = 0x2;
+const PL_MASK_CONTROL                  = 0x4;
+const PL_MASK_ALT                      = 0x8;
+const PL_MASK_NUM                      = 0x10;
+const PL_MASK_ALTGR                    = 0x20;
+const PL_MASK_WIN                      = 0x40;
+const PL_MASK_SCROLL                   = 0x80;
+const PL_MASK_BUTTON1                  = 0x100;
+const PL_MASK_BUTTON2                  = 0x200;
+const PL_MASK_BUTTON3                  = 0x400;
+const PL_MASK_BUTTON4                  = 0x800;
+const PL_MASK_BUTTON5                  = 0x1000;
+const PL_MAXWINDOWS                    = 64;
+const PL_NOTSET                        = ( -42 );
+const PLESC_DOUBLEBUFFERING_ENABLE     = 1;
+const PLESC_DOUBLEBUFFERING_DISABLE    = 2;
+const PLESC_DOUBLEBUFFERING_QUERY      = 3;
+const PL_BIN_DEFAULT                   = 0x0;
+const PL_BIN_CENTRED                   = 0x1;
+const PL_BIN_NOEXPAND                  = 0x2;
+const PL_BIN_NOEMPTY                   = 0x4;
+const GRID_CSA                         = 1;
+const GRID_DTLI                        = 2;
+const GRID_NNI                         = 3;
+const GRID_NNIDW                       = 4;
+const GRID_NNLI                        = 5;
+const GRID_NNAIDW                      = 6;
+const PL_HIST_DEFAULT                  = 0x00;
+const PL_HIST_NOSCALING                = 0x01;
+const PL_HIST_IGNORE_OUTLIERS          = 0x02;
+const PL_HIST_NOEXPAND                 = 0x08;
+const PL_HIST_NOEMPTY                  = 0x10;
+const PL_POSITION_NULL                 = 0x0;
+const PL_POSITION_LEFT                 = 0x1;
+const PL_POSITION_RIGHT                = 0x2;
+const PL_POSITION_TOP                  = 0x4;
+const PL_POSITION_BOTTOM               = 0x8;
+const PL_POSITION_INSIDE               = 0x10;
+const PL_POSITION_OUTSIDE              = 0x20;
+const PL_POSITION_VIEWPORT             = 0x40;
+const PL_POSITION_SUBPAGE              = 0x80;
+const PL_LEGEND_NULL                   = 0x0;
+const PL_LEGEND_NONE                   = 0x1;
+const PL_LEGEND_COLOR_BOX              = 0x2;
+const PL_LEGEND_LINE                   = 0x4;
+const PL_LEGEND_SYMBOL                 = 0x8;
+const PL_LEGEND_TEXT_LEFT              = 0x10;
+const PL_LEGEND_BACKGROUND             = 0x20;
+const PL_LEGEND_BOUNDING_BOX           = 0x40;
+const PL_LEGEND_ROW_MAJOR              = 0x80;
+const PL_COLORBAR_NULL                 = 0x0;
+const PL_COLORBAR_LABEL_LEFT           = 0x1;
+const PL_COLORBAR_LABEL_RIGHT          = 0x2;
+const PL_COLORBAR_LABEL_TOP            = 0x4;
+const PL_COLORBAR_LABEL_BOTTOM         = 0x8;
+const PL_COLORBAR_IMAGE                = 0x10;
+const PL_COLORBAR_SHADE                = 0x20;
+const PL_COLORBAR_GRADIENT             = 0x40;
+const PL_COLORBAR_CAP_NONE             = 0x80;
+const PL_COLORBAR_CAP_LOW              = 0x100;
+const PL_COLORBAR_CAP_HIGH             = 0x200;
+const PL_COLORBAR_SHADE_LABEL          = 0x400;
+const PL_COLORBAR_ORIENT_RIGHT         = 0x800;
+const PL_COLORBAR_ORIENT_TOP           = 0x1000;
+const PL_COLORBAR_ORIENT_LEFT          = 0x2000;
+const PL_COLORBAR_ORIENT_BOTTOM        = 0x4000;
+const PL_COLORBAR_BACKGROUND           = 0x8000;
+const PL_COLORBAR_BOUNDING_BOX         = 0x10000;
+const PL_DRAWMODE_UNKNOWN              = 0x0;
+const PL_DRAWMODE_DEFAULT              = 0x1;
+const PL_DRAWMODE_REPLACE              = 0x2;
+const PL_DRAWMODE_XOR                  = 0x4;
+const DRAW_LINEX                       = 0x001;
+const DRAW_LINEY                       = 0x002;
+const DRAW_LINEXY                      = 0x003;
+const MAG_COLOR                        = 0x004;
+const BASE_CONT                        = 0x008;
+const TOP_CONT                         = 0x010;
+const SURF_CONT                        = 0x020;
+const DRAW_SIDES                       = 0x040;
+const FACETED                          = 0x080;
+const MESH                             = 0x100;
+// End of constants.
 
 // Obsolete names
 
@@ -1161,7 +1244,6 @@ alias _N1 PLOptionTable;
 // PLplot Graphics Input structure
 
 
-const PL_MAXKEY = 16;
 struct _N2
 {
     int   type;
@@ -1182,7 +1264,6 @@ alias _N2 PLGraphicsIn;
 // Structure for describing the plot window
 
 
-const PL_MAXWINDOWS = 64;
 struct _N3
 {
     PLFLT dxmi;
@@ -1207,11 +1288,6 @@ struct _N4
     uint height;
 }
 alias _N4 PLDisplay;
-
-// Macro used (in some cases) to ignore value of argument
-// I don't plan on changing the value so you can hard-code it
-
-const int PL_NOTSET = -42;
 
 // See plcont.c for examples of the following
 
@@ -1320,11 +1396,6 @@ struct _N11
     PLINT result;
 }
 alias _N11 PLBufferingCB;
-
-const      PLESC_DOUBLEBUFFERING_ENABLE  = 1;
-const      PLESC_DOUBLEBUFFERING_DISABLE = 2;
-
-const      PLESC_DOUBLEBUFFERING_QUERY = 3;
 
 //--------------------------------------------------------------------------* *		BRAINDEAD-ness
 //
@@ -1571,12 +1642,6 @@ void c_plsvect( PLFLT *arrowx, PLFLT *arrowy, PLINT npts, PLBOOL fill );
 void c_plaxes( PLFLT x0, PLFLT y0, const char *xopt, PLFLT xtick, PLINT nxsub,
                const char *yopt, PLFLT ytick, PLINT nysub );
 
-// Flags for plbin() - opt argument
-const PL_BIN_DEFAULT  = 0;
-const PL_BIN_CENTRED  = 1;
-const PL_BIN_NOEXPAND = 2;
-const PL_BIN_NOEMPTY  = 4;
-
 // Plot a histogram using x to store data values and y to store frequencies
 void c_plbin( PLINT nbin, PLFLT *x, PLFLT *y, PLINT opt );
 
@@ -1750,14 +1815,6 @@ void c_plgradient( PLINT n, PLFLT *x, PLFLT *y, PLFLT angle );
 void c_plgriddata( PLFLT *x, PLFLT *y, PLFLT *z, PLINT npts, PLFLT *xg, PLINT nptsx,
                    PLFLT *yg, PLINT nptsy, PLFLT **zg, PLINT type, PLFLT data );
 
-// type of gridding algorithm for plgriddata()
-const GRID_CSA    = 1;
-const GRID_DTLI   = 2;
-const GRID_NNI    = 3;
-const GRID_NNIDW  = 4;
-const GRID_NNLI   = 5;
-const GRID_NNAIDW = 6;
-
 // Get subpage boundaries in absolute coordinates
 void c_plgspa( PLFLT *xmin, PLFLT *xmax, PLFLT *ymin, PLFLT *ymax );
 
@@ -1782,14 +1839,6 @@ void c_plgyax( PLINT *p_digmax, PLINT *p_digits );
 // Get z axis labeling parameters
 void c_plgzax( PLINT *p_digmax, PLINT *p_digits );
 
-// Flags for plhist() - opt argument; note: some flags are passed to
-// plbin() for the actual plotting
-const PL_HIST_DEFAULT         = 0;
-const PL_HIST_NOSCALING       = 1;
-const PL_HIST_IGNORE_OUTLIERS = 2;
-const PL_HIST_NOEXPAND        = 8;
-const PL_HIST_NOEMPTY         = 16;
-
 // Draws a histogram of n values of a variable in array data[0..n-1]
 void c_plhist( PLINT n, PLFLT *data, PLFLT datmin, PLFLT datmax, PLINT nbin, PLINT opt );
 
@@ -1804,46 +1853,6 @@ void c_pljoin( PLFLT x1, PLFLT y1, PLFLT x2, PLFLT y2 );
 
 // Simple routine for labelling graphs.
 void c_pllab( const char *xlabel, const char *ylabel, const char *tlabel );
-
-// Flags used for position argument of both pllegend and plcolorbar
-const PL_POSITION_LEFT     = 1;
-const PL_POSITION_RIGHT    = 2;
-const PL_POSITION_TOP      = 4;
-const PL_POSITION_BOTTOM   = 8;
-const PL_POSITION_INSIDE   = 16;
-const PL_POSITION_OUTSIDE  = 32;
-const PL_POSITION_VIEWPORT = 64;
-const PL_POSITION_SUBPAGE  = 128;
-
-// Flags for pllegend
-const PL_LEGEND_NONE         = 1;
-const PL_LEGEND_COLOR_BOX    = 2;
-const PL_LEGEND_LINE         = 4;
-const PL_LEGEND_SYMBOL       = 8;
-const PL_LEGEND_TEXT_LEFT    = 16;
-const PL_LEGEND_BACKGROUND   = 32;
-const PL_LEGEND_BOUNDING_BOX = 64;
-const PL_LEGEND_ROW_MAJOR    = 128;
-
-// Flags for plcolorbar
-const PL_COLORBAR_LABEL_LEFT    = 1;
-const PL_COLORBAR_LABEL_RIGHT   = 2;
-const PL_COLORBAR_LABEL_TOP     = 4;
-const PL_COLORBAR_LABEL_BOTTOM  = 8;
-const PL_COLORBAR_IMAGE         = 16;
-const PL_COLORBAR_SHADE         = 32;
-const PL_COLORBAR_GRADIENT      = 64;
-const PL_COLORBAR_CAP_NONE      = 128;
-const PL_COLORBAR_CAP_LOW       = 256;
-const PL_COLORBAR_CAP_HIGH      = 512;
-const PL_COLORBAR_SHADE_LABEL   = 1024;
-const PL_COLORBAR_ORIENT_RIGHT  = 2048;
-const PL_COLORBAR_ORIENT_TOP    = 4096;
-const PL_COLORBAR_ORIENT_LEFT   = 8192;
-const PL_COLORBAR_ORIENT_BOTTOM = 16384;
-const PL_COLORBAR_BACKGROUND    = 32768;
-const PL_COLORBAR_BOUNDING_BOX  = 65536;
-
 
 // Routine for drawing discrete line, symbol, or cmap0 legends
 void c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
@@ -1943,22 +1952,6 @@ void c_plot3dc( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
 void c_plot3dcl( PLFLT *x, PLFLT *y, PLFLT **z, PLINT nx, PLINT ny, PLINT opt,
                  PLFLT *clevel, PLINT nlevel, PLINT ixstart, PLINT ixn,
                  PLINT *indexymin, PLINT *indexymax );
-
-//
-// definitions for the opt argument in plot3dc() and plsurf3d()
-//
-// DRAW_LINEX *must* be 1 and DRAW_LINEY *must* be 2, because of legacy code!
-//
-const DRAW_LINEX  = 1 << 0;                  // draw lines parallel to the X axis
-const DRAW_LINEY  = 1 << 1;                  // draw lines parallel to the Y axis
-const DRAW_LINEXY = DRAW_LINEX | DRAW_LINEY; // draw lines parallel to both the X and Y axis
-const MAG_COLOR   = 1 << 2;                  // draw the mesh with a color dependent of the magnitude
-const BASE_CONT   = 1 << 3;                  // draw contour plot at bottom xy plane
-const TOP_CONT    = 1 << 4;                  // draw contour plot at top xy plane
-const SURF_CONT   = 1 << 5;                  // draw contour plot at surface
-const DRAW_SIDES  = 1 << 6;                  // draw sides
-const FACETED     = 1 << 7;                  // draw outline for each square that makes up the surface
-const MESH        = 1 << 8;                  // draw mesh
 
 //
 //  valid options for plot3dc():
