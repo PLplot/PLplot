@@ -54,6 +54,7 @@ CONTENTS
 2.3 Rewrite the build-system logic for determining PYQT_SIP_DIR and PYQT_SIP_FLAGS
 2.4 Implementation of plStatic2dGrid
 2.5 Replace use of the deprecated WIN32 and __WIN32__ macros by the _WIN32 macro
+2.6 Resolution of remaining PostScript differences
 
 3. PLplot testing
 ________________________________________________________________
@@ -348,6 +349,46 @@ In our C and C++ source code we now detect non-Cygwin Windows platforms
 using the recommended _WIN32 macro (supported by all modern versions
 of compilers that work on Windows platforms) rather than the deprecated
 WIN32 and __WIN32__ macros.
+
+2.6 Resolution of remaining PostScript differences
+
+For PLplot-5.13.0 the PostScript difference report was perfect
+except for the following long-standing OCaml
+issues:
+
+ocaml
+  Missing examples            :
+  Differing graphical output  :  16 19 33
+  Missing stdout              :
+  Differing stdout
+
+Those OCaml inconsistencies with the other languages have now been
+fixed by the following steps:
+
+* Implement the plmap* API for our OCaml binding and implement the
+  "Exmoor" page for examples/ocaml/x19.ml using that new API to
+  achieve consistency for this example.
+
+* In examples/ocaml/x16.xml replace use of the high-level colorbar
+  function (which set and restored color which interfered with
+  consistency with the other languges) with plcolorbar to achieve
+  consistency for this example.
+
+* In examples/ocaml/x33.ml implement all pages concerning
+  demonstrating the plcolorbar capability (page 5 onward) to achieve
+  consistency for this example.
+
+In sum, with these improvements we now have a perfect PostScript difference
+report for the first time in 7 years, i.e.,
+
+ocaml
+  Missing examples            :
+  Differing graphical output  :
+  Missing stdout              :
+  Differing stdout
+
+and similarly for all the other computer languages we support.  Long
+may this perfection continue....
 ________________________________________________________________
 
 3. PLplot testing

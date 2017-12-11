@@ -1,7 +1,7 @@
 (*
 Demonstrate most pllegend capability including unicode symbols.
 
-Copyright (C) 2010 Alan Irwin
+Copyright (C) 2010-2018 Alan W. Irwin
 Copyright (C) 2011 Hezekiah M. Carty
 
 This file is part of PLplot.
@@ -57,6 +57,187 @@ let special_symbols = [|
   "✽";
   "✦";
 |]
+
+(* plcolorbar options *)
+
+(* Colorbar type options *)
+let colorbar_kinds = 4
+let colorbar_option_kinds = [|
+  [PL_COLORBAR_SHADE];
+  [PL_COLORBAR_SHADE; PL_COLORBAR_SHADE_LABEL];
+  [PL_COLORBAR_IMAGE];
+  [PL_COLORBAR_GRADIENT]
+|]
+
+let colorbar_option_kind_labels = [|
+  "Shade colorbars";
+  "Shade colorbars with custom labels";
+  "Image colorbars";
+  "Gradient colorbars"
+|]
+
+(* Which side of the page are we positioned relative to? *)
+let colorbar_positions = 4
+let colorbar_position_options = [|
+  [PL_POSITION_LEFT];
+  [PL_POSITION_RIGHT];
+  [PL_POSITION_TOP];
+  [PL_POSITION_BOTTOM]
+|]
+
+let colorbar_position_option_labels = [|
+  "Left";
+  "Right";
+  "Top";
+  "Bottom"
+|]
+
+(* Colorbar label positioning options *)
+let colorbar_labels = 4
+let colorbar_label_options = [|
+  [PL_COLORBAR_LABEL_LEFT];
+  [PL_COLORBAR_LABEL_RIGHT];
+  [PL_COLORBAR_LABEL_TOP];
+  [PL_COLORBAR_LABEL_BOTTOM]
+|]
+
+let colorbar_label_option_labels = [|
+  "Label left";
+  "Label right";
+  "Label top";
+  "Label bottom"
+|]
+
+(* Colorbar cap options *)
+let colorbar_caps = 4
+let colorbar_cap_options = [|
+  [PL_COLORBAR_CAP_NONE];
+  [PL_COLORBAR_CAP_LOW];
+  [PL_COLORBAR_CAP_HIGH];
+  [PL_COLORBAR_CAP_LOW;PL_COLORBAR_CAP_HIGH]
+|]
+
+let colorbar_cap_option_labels = [|
+  "No caps";
+  "Low cap";
+  "High cap";
+  "Low and high caps"
+|]
+
+let plcolorbar_example_page kind_i label_i cap_i cont_color cont_width values_vector =
+
+  pladv 0;
+  (* Draw one colorbar relative to each side of the page *)
+  for position_i = 0 to colorbar_positions - 1 do
+
+    (* Smaller text *)
+    plschr 0.0 0.75;
+    (* Small ticks on the vertical axis *)
+    plsmaj 0.0 0.5;
+    plsmin 0.0 0.5;
+
+    plvpor 0.20 0.80 0.20 0.80;
+    plwind 0.0 1.0 0.0 1.0;
+    (* Set interesting background colour. *)
+    plscol0a 15 0 0 0 0.20;
+
+    (* Colorbar parameters *)
+    let opt = colorbar_option_kinds.(kind_i) @ colorbar_label_options.(label_i) @ colorbar_cap_options.(cap_i) @ [PL_COLORBAR_BOUNDING_BOX ; PL_COLORBAR_BACKGROUND] in
+
+    let position = colorbar_position_options.(position_i) in
+
+    let vertical = List.mem PL_POSITION_LEFT position || List.mem PL_POSITION_RIGHT position in
+    let ifn = List.mem PL_POSITION_LEFT position || List.mem PL_POSITION_BOTTOM position in
+
+    (* Set the offset position on the page *)
+    let x = 0. in
+    let y = 0. in
+    let x_length = if vertical then 0.05 else 0.5 in
+    let y_length = if vertical then 0.5 else 0.05 in
+
+    let bg_color = 15 in
+    let bb_color = 1 in
+    let bb_style = 1 in
+    let low_cap_color = 0.0 in
+    let high_cap_color = 1.0 in
+    let label_opts = [| [PL_COLORBAR_NULL] |] in
+    let labels = [| colorbar_position_option_labels.(position_i) ^ ", " ^ colorbar_label_option_labels.(label_i) |] in
+
+    (* equivalent C code
+       if ( ifn )
+       {
+       if ( cont_color == 0 || cont_width == 0. )
+       {
+       axis_opts[0] = "uwtivn";
+       //axis_opts[0] = "uwtin";
+       }
+       else
+       {
+       axis_opts[0] = "uwxvn";
+       //axis_opts[0] = "uwxn";
+       }
+       }
+       else
+       {
+       if ( cont_color == 0 || cont_width == 0. )
+       {
+       axis_opts[0] = "uwtivm";
+       //axis_opts[0] = "uwtim";
+       }
+       else
+       {
+       axis_opts[0] = "uwxvm";
+       //axis_opts[0] = "uwxm";
+       }
+       }
+     *)
+
+    let axis_opts = [|
+      if
+	(ifn && ( cont_color = 0 || cont_width = 0.)) then "uwtivn"
+      else if
+	(ifn && not ( cont_color = 0 || cont_width = 0.)) then "uwxvn"
+      else if
+	(not ifn && ( cont_color = 0 || cont_width = 0.)) then "uwtivm"
+      else if
+	(not ifn && not ( cont_color = 0 || cont_width = 0.)) then "uwxvm"
+      else("")
+    |] in
+
+    let tick_spacing = [|0.0|] in
+    let sub_ticks = [|0|] in
+    let values_matrix = Array.make 1 values_vector in
+
+    ignore (
+    plcolorbar opt position
+      x y x_length y_length bg_color bb_color bb_style low_cap_color high_cap_color
+      cont_color cont_width
+      label_opts labels
+      axis_opts tick_spacing sub_ticks values_matrix
+   );
+
+    (* Reset text and tick sizes *)
+    plschr 0.0 1.0;
+    plsmaj 0.0 1.0;
+    plsmin 0.0 1.0
+  done;
+
+  (* Draw a page title *)
+  let title = colorbar_option_kind_labels.(kind_i) ^ " - " ^ colorbar_cap_option_labels.(cap_i) in
+  plvpor 0.0 1.0 0.0 1.0;
+  plwind 0.0 1.0 0.0 1.0;
+  plptex 0.5 0.5 0.0 0.0 0.5 title
+
+let plcolorbar_example palette kind_i cont_color cont_width values =
+
+    (* Load the color palette *)
+    plspal1 palette true;
+
+  for label_i = 0 to colorbar_labels - 1 do
+    for cap_i = 0 to colorbar_caps - 1 do
+      plcolorbar_example_page kind_i label_i cap_i cont_color cont_width values;
+    done;
+  done
 
 (* main
    Demonstrate most pllegend capability including unicode symbols. *)
@@ -636,9 +817,36 @@ let () =
         [||] [||] [||] [||]
   in
   let max_height = max max_height legend_height in
-  (* Silence a warning, so the reset is here one the plcolorbar pages are
+  (* Silence a warning, so the reset is here once the plcolorbar pages are
      added. *)
   ignore (max_height);
+
+  (* Color bar examples *)
+
+  let values_small = [| -1.0e-20; 1.0e-20 |] in
+  let values_uneven = [| -1.0e-20; 2.0e-20; 2.6e-20; 3.4e-20; 6.0e-20; 7.0e-20; 8.0e-20; 9.0e-20; 10.0e-20 |] in
+  let values_even = [|-2.0e-20; -1.0e-20; 0.0e-20; 1.0e-20; 2.0e-20; 3.0e-20; 4.0e-20; 5.0e-20; 6.0e-20 |] in
+
+  (* Use unsaturated green background colour to contrast with black caps. *)
+  plscolbg 70 185 70;
+
+  (* Cut out the greatest and smallest bits of the color spectrum to
+     leave colors for the end caps. *)
+  plscmap1_range 0.01 0.99;
+
+  (* We can only test image and gradient colorbars with two element arrays *)
+  for i = 2 to colorbar_kinds - 1 do
+    plcolorbar_example "cmap1_blue_yellow.pal" i 0 0. values_small;
+  done;
+
+  (* Test shade colorbars with larger arrays *)
+  for i = 0 to 1 do
+    plcolorbar_example "cmap1_blue_yellow.pal" i 4 2. values_even;
+  done;
+
+  for i = 0 to 1 do
+    plcolorbar_example "cmap1_blue_yellow.pal" i 0 0. values_uneven;
+  done;
 
   plend();
   ()
