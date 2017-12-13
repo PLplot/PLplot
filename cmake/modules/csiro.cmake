@@ -1,6 +1,6 @@
 # cmake/modules/csiro.cmake
 #
-# Copyright (C) 2006-2017  Alan W. Irwin
+# Copyright (C) 2006-2018  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -27,17 +27,15 @@ option(WITH_CSA "Enable use of the csa library" ON)
 # expanded to a lot more cases as we gain platform experience.
 set(NAN_CFLAGS ${CMAKE_C_FLAGS})
 if(PL_HAVE_QHULL OR WITH_CSA)
-  if(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86")
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86" AND NOT CMAKE_C_COMPILER MATCHES "gcc")
     set(NAN_CFLAGS "${NAN_CFLAGS} -mieee-fp")
-  else(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86")
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "alpha.*")
-      if(CMAKE_C_COMPILER MATCHES "gcc")
-        set(NAN_CFLAGS "${NAN_CFLAGS} -mieee")
-      else(CMAKE_C_COMPILER MATCHES "gcc")
-        set(NAN_CFLAGS "${NAN_CFLAGS} -ieee")
-      endif(CMAKE_C_COMPILER MATCHES "gcc")
-    endif(CMAKE_SYSTEM_PROCESSOR MATCHES "alpha.*")
-  endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86")
+  elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "alpha.*")
+    if(CMAKE_C_COMPILER MATCHES "gcc")
+      set(NAN_CFLAGS "${NAN_CFLAGS} -mieee")
+    else(CMAKE_C_COMPILER MATCHES "gcc")
+      set(NAN_CFLAGS "${NAN_CFLAGS} -ieee")
+    endif(CMAKE_C_COMPILER MATCHES "gcc")
+  endif(CMAKE_SYSTEM_PROCESSOR MATCHES "i[0-9]86" AND NOT CMAKE_C_COMPILER MATCHES "gcc")
   if(NOT DEFINED NaNAwareCCompiler)
     message(STATUS "Check for NaN awareness in C compiler")
     try_run(RUN_RESULT COMPILE_RESULT
