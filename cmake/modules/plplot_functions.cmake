@@ -247,12 +247,12 @@ function(set_library_properties library)
   # (Note that ${library}_SOVERSION and ${library}_VERSION should be
   # assigned values in cmake/modules/plplot_version.cmake and LIB_DIR
   # should be assigned a value in cmake/modules/instdirs.cmake.)
-  if(NOT(${library}_SOVERSION OR ${library}_VERSION OR LIB_DIR))
+  if(NOT(DEFINED ${library}_SOVERSION AND DEFINED ${library}_VERSION AND DEFINED LIB_DIR))
     message(STATUS "${library}_SOVERSION = ${${library}_SOVERSION}")
     message(STATUS "${library}_VERSION = ${${library}_VERSION}")
     message(STATUS "LIB_DIR = ${LIB_DIR}")
-    message(FATAL_ERROR "${library}_SOVERSION, ${library}_VERSION, and/or LIB_DIR are not properly defined")
-  endif(NOT(${library}_SOVERSION OR ${library}_VERSION OR LIB_DIR))
+    message(FATAL_ERROR "${library}_SOVERSION, ${library}_VERSION, and/or LIB_DIR are not DEFINED")
+  endif(NOT(DEFINED ${library}_SOVERSION AND DEFINED ${library}_VERSION AND DEFINED LIB_DIR))
 
   # The INSTALL_RPATH property is only set if BOTH USE_RPATH is true
   # and LIB_INSTALL_RPATH is defined.
