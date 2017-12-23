@@ -1,6 +1,7 @@
 //      Simple line plot and multiple windows demo.
 //
-// Copyright (C) 2004  Rafael Laboissiere
+// Copyright (C) 2004 Rafael Laboissiere
+// Copyright (C) 2000-2018 Alan W. Irwin
 //
 // This file is part of PLplot.
 //
@@ -38,11 +39,21 @@ static PLGraphicsIn gin;
 static int          locate_mode;
 static int          test_xor;
 static int          fontset = 1;
+static int          pl_parse_skip_mode;
 static char         *f_name = NULL;
 
 // Options data structure definition.
 
 static PLOptionTable options[] = {
+    {
+        "pl_parse_skip",
+        NULL,
+        NULL,
+        &pl_parse_skip_mode,
+        PL_OPT_BOOL,
+        "-pl_parse_skip",
+        "Test using PL_PARSE_SKIP mode for plparseopts (must be first option)"
+    },
     {
         "locate",               // Turns on test of API locate function
         NULL,
@@ -115,13 +126,37 @@ main( int argc, char *argv[] )
 {
     PLINT digmax, cur_strm, new_strm;
     char  ver[80];
+    PLINT i;
 
 // plplot initialization
 
 // Parse and process command line arguments
 
     plMergeOpts( options, "x01c options", notes );
-    plparseopts( &argc, argv, PL_PARSE_FULL );
+    // See if -pl_parse_skip has been specified without
+    // changing argc or argv
+    plparseopts( &argc, argv, PL_PARSE_NODELETE );
+    if ( pl_parse_skip_mode )
+    {
+        printf( "argv prior to call of plparseopts(..., PL_PARSE_SKIP)\n" );
+        for ( i = 0; i < argc; i++ )
+        {
+            printf( "i = %3d, argument = %s\n", i, argv[i] );
+        }
+        plparseopts( &argc, argv, PL_PARSE_SKIP );
+        printf( "argv after call to plparseopts(..., PL_PARSE_SKIP)\n" );
+        for ( i = 0; i < argc; i++ )
+        {
+            printf( "i = %3d, argument = %s\n", i, argv[i] );
+        }
+    }
+    else
+    {
+        // parse the command line again, but this time
+        // argc and argv are typically reduced to 1 and the name
+        // of the programme that is being executed.
+        plparseopts( &argc, argv, PL_PARSE_FULL );
+    }
 
 // Get version number, just for kicks
 
