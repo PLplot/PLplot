@@ -3,7 +3,7 @@
 //
 //  Copyright (C) 1993-2004 Maurice LeBrun
 //  Copyright (C) 2004 Andrew Ross
-//  Copyright (C) 2015-2018 Alan W. Irwin
+//  Copyright (C) 2000-2018 Alan W. Irwin
 //
 //  This file is part of PLplot.
 //
@@ -876,6 +876,11 @@ c_plparseopts( int *p_argc, char **argv, PLINT mode )
 
     if ( !mode_noprogram )
     {
+        // Just in case plparseopts has been called previously (e.g., with PL_PARSE_NODELETE).
+        if ( plsc->program )
+            free_mem( plsc->program );
+
+        // If plparseopts is not called again, this is freed in plend1.
         plsc->program = plstrdup( argv[0] );
         program       = (PLCHAR_VECTOR) plsc->program;
         --myargc; ++argv;
