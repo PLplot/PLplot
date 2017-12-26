@@ -2,7 +2,7 @@
 !  plplot_binding.f90
 !
 !  Copyright (C) 2005-2016  Arjen Markus
-!  Copyright (C) 2006-2016 Alan W. Irwin
+!  Copyright (C) 2006-2018 Alan W. Irwin
 !
 !  This file is part of PLplot.
 !
@@ -30,7 +30,7 @@ module plplot
     use plplot_graphics
     use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     use iso_fortran_env, only: error_unit
-    use plplot_private_utilities, only: character_array_to_c, copystring2f
+    use plplot_private_utilities, only: character_array_to_c, c_to_character_array, copystring2f
     implicit none
     ! We will continue to define plflt for those of our users who are
     ! content to simply follow in their own Fortran code the
@@ -53,6 +53,37 @@ module plplot
     private :: copystring2f, maxlen
     private :: error_unit
     private :: character_array_to_c
+    private :: c_to_character_array
+
+    ! Normally interface blocks describing the C routines that are
+    ! called by this Fortran binding are embedded as part of module
+    ! procedures, but when more than one module procedure uses such
+    ! interface blocks there is a requirement (enforced at least by
+    ! the nagfor compiler) that those interface blocks be consistent.
+    ! We could comply with that requirement by embedding such multiply
+    ! used interface blocks as part of module procedures using
+    ! duplicated code, but that is inefficient (in terms of the number
+    ! of lines of code to be compiled) and implies a maintenance issue
+    ! (to keep that code duplicated whenever there are changes on the
+    ! C side).  To deal with those two potential issues we collect
+    ! here in alphabetical order all interface blocks describing C
+    ! routines that are called directly by more than one module
+    ! procedure below.
+
+    interface
+       function interface_plparseopts( argc, argv, mode ) bind(c,name='c_plparseopts')
+         import :: c_ptr
+         import :: private_plint
+         implicit none
+         integer(kind=private_plint) :: interface_plparseopts !function type
+         integer(kind=private_plint), value, intent(in) :: mode
+         ! The C routine changes both argc and argv
+         integer(kind=private_plint), intent(inout) :: argc
+         type(c_ptr), dimension(*), intent(inout) :: argv
+       end function  interface_plparseopts
+    end interface
+    private :: interface_plparseopts
+
     !
     ! Interfaces that do not depend on the real kind.
     !
@@ -146,6 +177,11 @@ module plplot
     end interface plgdrawmode
     private :: plgdrawmode_impl
 
+    interface plget_arguments
+        module procedure plget_arguments_impl
+    end interface plget_arguments
+    private :: plget_arguments_impl
+
     interface plgfam
         module procedure plgfam_impl
     end interface plgfam
@@ -222,9 +258,11 @@ module plplot
     private :: plmkstrm_impl
 
     interface plparseopts
-        module procedure plparseopts_impl
+        module procedure plparseopts_brief
+        module procedure plparseopts_full
     end interface plparseopts
-    private :: plparseopts_impl
+    private :: plparseopts_brief
+    private :: plparseopts_full
 
     interface plpat
         module procedure plpat_impl
@@ -662,6 +700,46 @@ contains
         plgdrawmode_impl = int(interface_plgdrawmode())
     end function plgdrawmode_impl
 
+    function plget_arguments_impl( nargv, argv )
+        integer :: plget_arguments_impl !function type
+        integer, intent(out) :: nargv
+        character(len=*), dimension(0:), intent(out) :: argv
+
+        character(len=1) :: test_argv_local
+        integer :: length_argv_local, length_local, iargs_local
+
+        nargv = command_argument_count()
+        if (nargv < 0) then
+!           This actually happened historically on a buggy Cygwin platform.
+            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plget_arguments: negative number of arguments'
+            plget_arguments_impl = 1
+            return
+        endif
+
+        if(nargv + 1 > size(argv)) then
+            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plget_arguments: too many arguments to process'
+            plget_arguments_impl = 1
+            return
+        endif
+
+!       Determine maximum length of arguments
+        length_argv_local = 0
+        do iargs_local = 0, nargv
+            call get_command_argument(iargs_local, test_argv_local, length_local)
+            length_argv_local = max(length_argv_local, length_local)
+        enddo
+        if(length_argv_local > len(argv) ) then
+            write(error_unit,*) 'Plplot Fortran Severe Warning: at least one argument too long to process'
+            plget_arguments_impl = 1
+            return
+        endif
+
+        do iargs_local = 0, nargv
+            call get_command_argument(iargs_local, argv(iargs_local))
+        enddo
+        plget_arguments_impl = 0
+    end function plget_arguments_impl
+
     subroutine plgfam_impl( fam, num, bmax )
         integer, intent(out) :: fam, num, bmax
 
@@ -893,59 +971,52 @@ contains
         call interface_plmkstrm( int(strm,kind=private_plint) )
     end subroutine plmkstrm_impl
 
-    function plparseopts_impl(mode)
-        integer :: plparseopts_impl !function type
+    function plparseopts_brief(mode)
+        integer :: plparseopts_brief !function type
         integer, intent(in) :: mode
 
-        integer :: iargs_local, numargs_local
-        integer(kind=private_plint) :: numargsp1_inout
+        integer :: numargs_local, plget_arguments_rc
+        integer(kind=private_plint) :: size_local
 
-        integer, parameter :: maxargs_local = 100
+        integer, parameter :: maxargs_local = 1000
         character (len=maxlen), dimension(0:maxargs_local) :: arg_local
         character(len=1), dimension(:,:), allocatable :: cstring_arg_local
         type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
 
-        interface
-            function interface_plparseopts( argc, argv, mode ) bind(c,name='c_plparseopts')
-                import :: c_ptr
-                import :: private_plint
-                implicit none
-                integer(kind=private_plint) :: interface_plparseopts !function type
-                integer(kind=private_plint), value, intent(in) :: mode
-                ! The C routine changes both argc and argv
-                integer(kind=private_plint), intent(inout) :: argc
-                type(c_ptr), dimension(*), intent(inout) :: argv
-            end function  interface_plparseopts
-        end interface
-
-        numargs_local = command_argument_count()
-        if (numargs_local < 0) then
-            !       This actually happened historically on a badly linked Cygwin platform.
-            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plparseopts: negative number of arguments'
-            plparseopts_impl = 1
-            return
+        plget_arguments_rc = plget_arguments(numargs_local, arg_local)
+        if(plget_arguments_rc /= 0) then
+           plparseopts_brief = 1
+           return
         endif
-        if(numargs_local > maxargs_local) then
-            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plparseopts: too many arguments'
-            plparseopts_impl = 1
-            return
-        endif
-        do iargs_local = 0, numargs_local
-            call get_command_argument(iargs_local, arg_local(iargs_local))
-        enddo
-
         call character_array_to_c( cstring_arg_local, cstring_address_arg_inout, arg_local(0:numargs_local) )
 
-        ! The inout suffix is to remind us that the c_plparseopt routine changes the
-        ! value of numargsp1_inout and the values of the vector elements of cstring_address_arg_inout.
-        ! (and maybe even the elements of cstring_arg_local).  However, these changes in
-        ! contents of vector and possibly array should not affect the deallocation of
-        ! this vector and the array, and I have checked with valgrind that there are
-        ! no memory management issues with this approach.
-        numargsp1_inout = int(numargs_local+1, kind=private_plint)
-        plparseopts_impl = int(interface_plparseopts( numargsp1_inout, &
+        ! Note that the C routine interface_plparseopts changes this value.
+        size_local = int(numargs_local + 1, kind=private_plint)
+        plparseopts_brief = int(interface_plparseopts( size_local, &
                cstring_address_arg_inout, int(mode, kind=private_plint)))
-    end function plparseopts_impl
+    end function plparseopts_brief
+
+    function plparseopts_full(nargv, argv, mode)
+        integer :: plparseopts_full !function type
+        integer, intent(out) :: nargv
+        character(len=*), intent(inout), dimension(0:) :: argv
+        integer, intent(in) :: mode
+
+        integer(kind=private_plint) :: size_local
+
+        character(len=1), dimension(:,:), allocatable :: cstring_arg_local
+        type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
+
+        call character_array_to_c( cstring_arg_local, cstring_address_arg_inout, argv )
+
+        ! Note that the C routine interface_plparseopts changes this value.
+        size_local = size(argv, kind=private_plint)
+        plparseopts_full = int(interface_plparseopts( size_local, &
+             cstring_address_arg_inout, int(mode, kind=private_plint)))
+        if(plparseopts_full /= 0) return
+        nargv = int(size_local - 1)
+        plparseopts_full = c_to_character_array(argv, cstring_address_arg_inout(1:nargv+1))
+    end function plparseopts_full
 
     subroutine plpat_impl( inc, del )
         integer, dimension(:), intent(in) :: inc, del

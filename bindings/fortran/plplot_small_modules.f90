@@ -2,7 +2,7 @@
 !  plplot_small_modules.f90
 !
 !  Copyright (C) 2005-2016  Arjen Markus
-!  Copyright (C) 2006-2016 Alan W. Irwin
+!  Copyright (C) 2006-2018 Alan W. Irwin
 !
 !  This file is part of PLplot.
 !
@@ -83,15 +83,18 @@ module plplot_types
 end module plplot_types
 
 module plplot_private_utilities
-    use iso_c_binding, only: c_ptr, c_null_char, c_loc
+    use iso_c_binding, only: c_ptr, c_char, c_null_char, c_loc, c_size_t, c_f_pointer
+    use iso_fortran_env, only: error_unit
     implicit none
-    private :: c_ptr, c_null_char, c_loc
+    private :: c_ptr, c_char, c_null_char, c_loc, c_size_t, c_f_pointer, error_unit
 
 contains
 
     subroutine character_array_to_c( cstring_array, cstring_address, character_array )
         ! Translate from Fortran character_array to an array of C strings (cstring_array), where the
         ! address of the start of each C string is stored in the cstring_address vector.
+        ! N.B. cstring_array is only an argument to keep those allocatable data in scope for the calling
+        ! routine.
         character(len=*), dimension(:), intent(in) :: character_array
         character(len=1), dimension(:,:), allocatable, target, intent(out) :: cstring_array
         type(c_ptr), dimension(:), allocatable, intent(out) :: cstring_address
@@ -117,6 +120,54 @@ contains
         enddo
 
     end subroutine character_array_to_c
+
+    function c_to_character_array( character_array, cstring_address_array )
+        ! Translate from an array of pointers to NULL-terminated C strings (cstring_address_array)
+        ! to a Fortran character array (character_array).
+        integer :: c_to_character_array
+        character(len=*), dimension(:), intent(out) :: character_array
+        type(c_ptr), dimension(:), intent(in) :: cstring_address_array
+
+        integer :: i_local, j_local, length_local, number_local, length_column_local
+        ! Array for accessing string pointed to by an element of cstring_address_array
+        character(kind=c_char), pointer :: string_ptr(:)
+
+        interface
+            ! Use standard C library function strlen to determine C string length excluding terminating NULL.
+            function interface_strlen(s) bind(c, name='strlen')
+                import c_ptr, c_size_t
+                implicit none
+                integer(c_size_t) :: interface_strlen
+                type(c_ptr), intent(in), value :: s
+            end function interface_strlen
+        end interface
+
+        length_local = len(character_array)
+        number_local = size(cstring_address_array)
+        if(number_local > size(character_array)) then
+            write(error_unit, *) "Error in c_to_character_array: size of character_array too small to hold converted result."
+        endif
+
+        do j_local = 1, number_local
+            length_column_local = interface_strlen(cstring_address_array(j_local))
+            if(length_column_local > length_local) then
+                write(error_unit, *) &
+                    "Error in c_to_character_array: length of character_array too small to hold converted result."
+                c_to_character_array = 1
+                return
+            endif
+            ! Copy contents of string addressed by cstring_address_array(j_local) and of
+            ! length length_column_local to string_ptr pointer array which
+            ! is dynamically allocated as needed.
+            call c_f_pointer(cstring_address_array(j_local), string_ptr, [length_column_local])
+            do i_local = 1, length_column_local
+                character_array(j_local)(i_local:i_local) = string_ptr(i_local)
+            enddo
+            ! append blanks to character_array element
+            character_array(j_local)(length_column_local:) = " "
+        enddo
+        c_to_character_array = 0
+    end function c_to_character_array
 
     subroutine copystring2f( fstring, cstring )
         character(len=*), intent(out) :: fstring

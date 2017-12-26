@@ -41,14 +41,36 @@ program x01f
     character(len=80) :: version
     integer :: digmax
     logical, parameter :: locate_mode = .false.
+    logical, parameter :: pl_parse_skip_mode = .false.
+!   Declarations for general parsing of the command line
+    integer arg_count, nargv
+    character(len=200), dimension(0:20) :: argv
+
     type(PLGraphicsIn) :: gin
     integer :: PLK_Escape
-    integer :: plparseopts_rc
+    integer :: plget_arguments_rc, plparseopts_rc
     data PLK_Escape /Z'1B'/
 
-    !  Process command-line arguments
-    plparseopts_rc = plparseopts(PL_PARSE_FULL)
-    if(plparseopts_rc .ne. 0) stop "plparseopts error"
+!   Process command-line arguments
+    if( pl_parse_skip_mode ) then
+
+       plget_arguments_rc = plget_arguments(nargv, argv)
+       if(plget_arguments_rc /= 0) stop "plget_arguments error"
+       write(*, '(a)') "argv before call to plparseopts(..., PL_PARSE_SKIP)"
+       do arg_count = 0, nargv
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv(arg_count))
+       enddo
+       plparseopts_rc = plparseopts(nargv, argv(0:nargv), PL_PARSE_SKIP)
+       if(plparseopts_rc /= 0) stop "plparseopts error"
+
+       write(*, '(a)') "argv after call to plparseopts(..., PL_PARSE_SKIP)"
+       do arg_count = 0, nargv
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv(arg_count))
+       enddo
+    else
+       plparseopts_rc = plparseopts(PL_PARSE_FULL)
+       if(plparseopts_rc .ne. 0) stop "plparseopts error"
+    endif
 
     !  Print plplot version
     call plgver(version)

@@ -52,9 +52,10 @@ CONTENTS
 2.1 Bug fixes
 2.2 Update control of Python version
 2.3 Rewrite the build-system logic for determining PYQT_SIP_DIR and PYQT_SIP_FLAGS
-2.4 Implementation of plStatic2dGrid
+2.4 Implement plStatic2dGrid
 2.5 Replace use of the deprecated WIN32 and __WIN32__ macros by the _WIN32 macro
-2.6 Resolution of remaining PostScript differences
+2.6 Resolve the remaining PostScript differences
+2.7 Improve command-line parsing
 
 3. PLplot testing
 ________________________________________________________________
@@ -314,7 +315,7 @@ but for other platforms users can specify the correct PYQT_SIP_DIR
 directly and are invited to communicate that information to us so we
 can update our HINTS appropriately.
 
-2.4 Implementation of plStatic2dGrid
+2.4 Implement plStatic2dGrid
 
 The 2D matrix arguments of plshade, plshades, plcont, plimage, plvect,
 etc., for our C API and corresponding C++ API must currently be
@@ -350,7 +351,7 @@ using the recommended _WIN32 macro (supported by all modern versions
 of compilers that work on Windows platforms) rather than the deprecated
 WIN32 and __WIN32__ macros.
 
-2.6 Resolution of remaining PostScript differences
+2.6 Resolve the remaining PostScript differences
 
 For PLplot-5.13.0 the PostScript difference report was perfect
 except for the following long-standing OCaml
@@ -389,6 +390,140 @@ ocaml
 
 and similarly for all the other computer languages we support.  Long
 may this perfection continue....
+
+2.7 Improve command-line parsing
+
+2.7.1 Implement C demonstration of PL_PARSE_SKIP mode
+
+The PL_PARSE_SKIP mode of plparsopts has been implemented for a long
+time now in our core C library.  What this mode does is parse the
+PLplot-relevant command-line options, skip those which it does not
+recognize and return a revised argument list containing the skipped
+command-line options that is suitable for further specialized
+(non-PLplot) parsing.
+
+To demonstrate this capability we have implemented a -pl_parse_skip
+example option for examples/c/x01c.c such that we get the following
+result illustrating the PL_PARSE_SKIP capability:
+
+software@raven> examples/c/x01c -pl_parse_skip xxx -dev psc yyy -o testc.psc zzz
+argv prior to call of plparseopts(..., PL_PARSE_SKIP)
+i =   0, argument = examples/c/x01c
+i =   1, argument = -pl_parse_skip
+i =   2, argument = xxx
+i =   3, argument = -dev
+i =   4, argument = psc
+i =   5, argument = yyy
+i =   6, argument = -o
+i =   7, argument = testc.psc
+i =   8, argument = zzz
+argv after call to plparseopts(..., PL_PARSE_SKIP)
+i =   0, argument = examples/c/x01c
+i =   1, argument = xxx
+i =   2, argument = yyy
+i =   3, argument = zzz
+PLplot library version: 5.13.0
+
+Note that the valgrind results for the above command and also a more typical
+execution of this example,
+
+software@raven> examples/c/x01c -dev psc -o test1c.psc
+PLplot library version: 5.13.0
+
+are perfect (i.e., 0 errors, no leaks are possible) with no
+PostScript differences between the above two commands other
+than the date stamp.
+
+2.7.2 Fortran improvement in parsing the command line
+
+Previously the Fortran parsing API consisted of just
+
+    function plparseopts(mode)
+        integer :: plparseopts_brief !function type
+        integer, intent(in) :: mode
+	....
+    end function plparseopts
+
+We have now added the following parsing API to the above:
+
+    function plget_arguments( nargv, argv )
+        integer :: plget_arguments_impl !function type
+        integer, intent(out) :: nargv
+        character(len=*), dimension(0:), intent(out) :: argv
+	....
+    end function plget_arguments
+
+and
+
+    function plparseopts(nargv, argv, mode)
+        integer :: plparseopts_full !function type
+        integer, intent(out) :: nargv
+        character(len=*), intent(inout), dimension(0:) :: argv
+        integer, intent(in) :: mode
+	....
+    end function plparseopts
+
+plget_arguments is a convenience function that exercises the rather
+complex Fortran API for determining command-line arguments and returns all the
+the command-line components in argv(0:nargv).  The new second form
+of plparseopts operates in a similar way to the C version of plparseopts
+except that the input size and length of argv are carried with it, and
+nargv is only a returned value such that the returned argv(0:narg)
+contains the only part of that (modified) array that is relevant.
+
+With these two additions to the Fortran API, then if examples/x01f.f90
+is locally modified to change the pl_parse_skip_mode parameter from
+.false. to .true., (Fortran currently has no plMergeOpts capability
+which would allow the example -pl_parse_skip command-line option
+to be honored) then the following results are obtained:
+
+software@raven> examples/fortran/x01f xxx -dev psc yyy -o test.psc zzz
+argv before call to plparseopts(..., PL_PARSE_SKIP)
+i =   0, argument = examples/fortran/x01f
+i =   1, argument = xxx
+i =   2, argument = -dev
+i =   3, argument = psc
+i =   4, argument = yyy
+i =   5, argument = -o
+i =   6, argument = test.psc
+i =   7, argument = zzz
+argv after call to plparseopts(..., PL_PARSE_SKIP)
+i =   0, argument = examples/fortran/x01
+i =   1, argument = xx
+i =   2, argument = yy
+i =   3, argument = zz
+PLplot library version: 5.13.0
+
+These results illustrate the Fortran binding of PLplot now has the
+capability of parsing a mixture of PLplot and other command-line
+arguments just like the core C library has had all along.
+
+N.B. An important caveat on the new plget_arguments API and new variant of
+plparseopts API is the plan is to change them in the near future!  One
+issue with the current approach is the use of an assumed shape
+array for argv which requires nargv be returned in each case so the
+calling routine can determine which part of the returned argv is
+relevant.  An additional issue is that both these new functions now
+have to check that the argv array supplied by the calling routine has
+sufficient length and size attributes to store the given command-line
+options.
+
+To solve both these issues the plan is to drop nargv from both
+argument lists and change argv to allocatable form with it being
+allocated (with exactly the minimum length and size required) in
+plget_arguments, and after input use in the new variant of
+plparseopts, deallocate it and allocate it again with exactly the
+minimum length and size required to contain the modified argv that is
+output.
+
+However, this planned API change is currently on hold because my
+current platform is Debian Jessie, and gfortran-4.9.2 supplied by that
+platform has severe run-time issues with allocatable character arrays.
+However, I (AWI) plan to soon upgrade to Debian Stretch which gives
+access to gfortran-6.3.0.  And assuming that much later version of
+gfortran reliably supports allocatable character arrays, the above
+plan should go ahead then.
+
 ________________________________________________________________
 
 3. PLplot testing

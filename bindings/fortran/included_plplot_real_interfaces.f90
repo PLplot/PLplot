@@ -2,7 +2,7 @@
     !  included_plplot_real_interfaces.f90
     !
     !  Copyright (C) 2005-2016  Arjen Markus
-    !  Copyright (C) 2006-2016 Alan W. Irwin
+    !  Copyright (C) 2006-2018 Alan W. Irwin
     !
     !  This file is part of PLplot.
     !
@@ -103,7 +103,7 @@
     ! C side).  To deal with those two potential issues we collect
     ! here in alphabetical order all interface blocks describing C
     ! routines that are called directly by more than one module
-    ! procedure.
+    ! procedure below.
 
     interface
         subroutine interface_plcont( z, nx, ny, kx, lx, ky, ly, clevel, nlevel, transform, data ) &
