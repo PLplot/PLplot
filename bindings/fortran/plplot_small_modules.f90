@@ -164,7 +164,7 @@ contains
                 character_array(j_local)(i_local:i_local) = string_ptr(i_local)
             enddo
             ! append blanks to character_array element
-            character_array(j_local)(length_column_local:) = " "
+            character_array(j_local)(length_column_local+1:) = " "
         enddo
         c_to_character_array = 0
     end function c_to_character_array
