@@ -80,6 +80,7 @@ module plplot_types
         type(c_ptr) :: xg, yg, zg
         integer(kind=private_plint) :: nx, ny, nz
     end type PLcGrid
+
 end module plplot_types
 
 module plplot_private_utilities
@@ -87,6 +88,31 @@ module plplot_private_utilities
     use iso_fortran_env, only: error_unit
     implicit none
     private :: c_ptr, c_char, c_null_char, c_loc, c_size_t, c_f_pointer, error_unit
+
+    ! Normally interface blocks describing the C routines that are
+    ! called by this Fortran binding are embedded as part of module
+    ! procedures, but when more than one module procedure uses such
+    ! interface blocks there is a requirement (enforced at least by
+    ! the nagfor compiler) that those interface blocks be consistent.
+    ! We could comply with that requirement by embedding such multiply
+    ! used interface blocks as part of module procedures using
+    ! duplicated code, but that is inefficient (in terms of the number
+    ! of lines of code to be compiled) and implies a maintenance issue
+    ! (to keep that code duplicated whenever there are changes on the
+    ! C side).  To deal with those two potential issues we collect
+    ! here in alphabetical order all interface blocks describing C
+    ! routines that are called directly by more than one module
+    ! procedure below.
+    interface
+        ! Use standard C library function strlen to determine C string length excluding terminating NULL.
+        function interface_strlen(s) bind(c, name='strlen')
+            import c_ptr, c_size_t
+            implicit none
+            integer(c_size_t) :: interface_strlen
+            type(c_ptr), intent(in), value :: s
+        end function interface_strlen
+    end interface
+    private :: interface_strlen
 
 contains
 
@@ -132,16 +158,6 @@ contains
         ! Array for accessing string pointed to by an element of cstring_address_array
         character(kind=c_char), pointer :: string_ptr(:)
 
-        interface
-            ! Use standard C library function strlen to determine C string length excluding terminating NULL.
-            function interface_strlen(s) bind(c, name='strlen')
-                import c_ptr, c_size_t
-                implicit none
-                integer(c_size_t) :: interface_strlen
-                type(c_ptr), intent(in), value :: s
-            end function interface_strlen
-        end interface
-
         length_local = len(character_array)
         number_local = size(cstring_address_array)
         if(number_local > size(character_array)) then
@@ -183,8 +199,23 @@ contains
                 exit
             endif
         enddo
-
     end subroutine copystring2f
+
+    function max_cstring_length(cstring_address_array)
+        ! Find maximum length (excluding the NULL-terminating character)
+        ! of the C strings pointed to by cstring_address_array
+        integer :: max_cstring_length
+        type(c_ptr), dimension(:), intent(in) :: cstring_address_array
+
+        integer :: i_local, j_local, length_local, number_local, length_column_local
+        number_local = size(cstring_address_array)
+
+        max_cstring_length = 0
+        do j_local = 1, number_local
+            max_cstring_length = max(max_cstring_length, interface_strlen(cstring_address_array(j_local)))
+        enddo
+    end function max_cstring_length
+
 end module plplot_private_utilities
 
 module plplot_graphics

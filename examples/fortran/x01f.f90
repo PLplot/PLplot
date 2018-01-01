@@ -41,10 +41,14 @@ program x01f
     character(len=80) :: version
     integer :: digmax
     logical, parameter :: locate_mode = .false.
-    logical, parameter :: pl_parse_skip_mode = .false.
+    logical, parameter :: pl_parse_dynamic = .true.
+    logical, parameter :: pl_parse_static_length = .false.
+    logical, parameter :: pl_parse_static = .false.
 !   Declarations for general parsing of the command line
     integer arg_count, nargv
-    character(len=200), dimension(0:20) :: argv
+    character(len=200), dimension(0:20) :: argv_static
+    character(len=200), dimension(:), allocatable :: argv_static_length
+    character(len=:), dimension(:), allocatable :: argv_dynamic
 
     type(PLGraphicsIn) :: gin
     integer :: PLK_Escape
@@ -52,23 +56,59 @@ program x01f
     data PLK_Escape /Z'1B'/
 
 !   Process command-line arguments
-    if( pl_parse_skip_mode ) then
+    if(pl_parse_dynamic) then
+       write(0,*) "pl_parse_dynamic = ", pl_parse_dynamic
+       plget_arguments_rc = plget_arguments(argv_dynamic)
+       if(plget_arguments_rc /= 0) stop "plget_arguments error"
+       nargv = size(argv_dynamic) - 1
+       write(*, '(a)') "argv before call to plparseopts(..., PL_PARSE_SKIP)"
+       do arg_count = 0, nargv
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv_dynamic(arg_count))
+       enddo
+       plparseopts_rc = plparseopts(argv_dynamic, PL_PARSE_SKIP)
+       if(plparseopts_rc /= 0) stop "plparseopts error"
+       nargv = size(argv_dynamic) - 1
 
-       plget_arguments_rc = plget_arguments(nargv, argv)
+       write(*, '(a)') "argv after call to plparseopts(..., PL_PARSE_SKIP)"
+       do arg_count = 0, nargv
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv_dynamic(arg_count))
+       enddo
+       deallocate(argv_dynamic)
+    elseif(pl_parse_static_length) then
+       write(0,*) "pl_parse_static_length = ", pl_parse_static_length
+       plget_arguments_rc = plget_arguments(argv_static_length, 1)
+       if(plget_arguments_rc /= 0) stop "plget_arguments error"
+       nargv = size(argv_static_length) - 1
+       write(*, '(a)') "argv before call to plparseopts(..., PL_PARSE_SKIP)"
+       do arg_count = 0, nargv
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv_static_length(arg_count))
+       enddo
+       plparseopts_rc = plparseopts(argv_static_length, PL_PARSE_SKIP, 1)
+       if(plparseopts_rc /= 0) stop "plparseopts error"
+       nargv = size(argv_static_length) - 1
+
+       write(*, '(a)') "argv after call to plparseopts(..., PL_PARSE_SKIP)"
+       do arg_count = 0, nargv
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv_static_length(arg_count))
+       enddo
+       deallocate(argv_static_length)
+    elseif(pl_parse_static) then
+       write(0,*) "pl_parse_static = ", pl_parse_static
+       plget_arguments_rc = plget_arguments(nargv, argv_static)
        if(plget_arguments_rc /= 0) stop "plget_arguments error"
        write(*, '(a)') "argv before call to plparseopts(..., PL_PARSE_SKIP)"
        do arg_count = 0, nargv
-          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv(arg_count))
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv_static(arg_count))
        enddo
-       plparseopts_rc = plparseopts(nargv, argv(0:nargv), PL_PARSE_SKIP)
+       plparseopts_rc = plparseopts(nargv, argv_static(0:nargv), PL_PARSE_SKIP)
        if(plparseopts_rc /= 0) stop "plparseopts error"
 
        write(*, '(a)') "argv after call to plparseopts(..., PL_PARSE_SKIP)"
        do arg_count = 0, nargv
-          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv(arg_count))
+          write(*,'(a,i4,a,a)') "i =", arg_count, ", argument = ", trim(argv_static(arg_count))
        enddo
     else
-       plparseopts_rc = plparseopts(PL_PARSE_FULL)
+       plparseopts_rc = plparseopts(PL_PARSE_SKIP)
        if(plparseopts_rc .ne. 0) stop "plparseopts error"
     endif
 

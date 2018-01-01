@@ -438,46 +438,96 @@ than the date stamp.
 
 Previously the Fortran parsing API consisted of just
 
-    function plparseopts(mode)
-        integer :: plparseopts_brief !function type
-        integer, intent(in) :: mode
-	....
-    end function plparseopts
+function plparseopts(mode)
+    integer :: plparseopts_brief !function type
+    integer, intent(in) :: mode
+    ....
+end function plparseopts
 
-We have now added the following parsing API to the above:
+which allowed parsing of just PLplot-related command-line options with
+no direct access to the command-line options.
 
-    function plget_arguments( nargv, argv )
-        integer :: plget_arguments_impl !function type
-        integer, intent(out) :: nargv
-        character(len=*), dimension(0:), intent(out) :: argv
-	....
-    end function plget_arguments
+We have now added the following experimental parsing API to the above:
 
-and
+* dynamic length and size
+function plget_arguments( argv )
+    integer :: plget_arguments
+    character(len=:), dimension(:), allocatable, intent(out) :: argv
+    ....
+end function plget_arguments
+function plparseopts(argv, mode)
+    integer :: plparseopts
+    character(len=:), intent(inout), dimension(:), allocatable :: argv
+    integer, intent(in) :: mode
+    ....
+end function plparseopts
 
-    function plparseopts(nargv, argv, mode)
-        integer :: plparseopts_full !function type
-        integer, intent(out) :: nargv
-        character(len=*), intent(inout), dimension(0:) :: argv
-        integer, intent(in) :: mode
-	....
-    end function plparseopts
+* static length and dynamic size
+function plget_arguments( argv, disambiguate )
+    integer :: plget_arguments
+    character(len=*), dimension(:), allocatable, intent(out) :: argv
+    integer :: disambiguate
+    ....
+end function plget_arguments
+function plparseopts(argv, mode, disambiguate)
+    integer :: plparseopts_full !function type
+    character(len=*), dimension(:), allocatable, intent(inout) :: argv
+    integer, intent(in) :: mode
+    integer :: disambiguate
+    ....
+end function plparseopts
+
+* static length and size
+function plget_arguments( nargv, argv )
+    integer :: plget_arguments_impl !function type
+    integer, intent(out) :: nargv
+    character(len=*), dimension(0:), intent(out) :: argv
+    ....
+end function plget_arguments
+function plparseopts(nargv, argv, mode)
+    integer :: plparseopts_full !function type
+    integer, intent(out) :: nargv
+    character(len=*), dimension(0:), intent(inout) :: argv
+    integer, intent(in) :: mode
+    ....
+end function plparseopts
+
+The disambiguate variable of the static length and dynamic size
+variants is required to distinguish between those variants and the
+corresponding dynamic length and size variants.  The static length and
+dynamic size and static length and size variants are deprecated, but
+we include them for now because certain Fortran compilers (see below)
+have trouble with the dynamic length and size variant of the API.
 
 plget_arguments is a convenience function that exercises the rather
-complex Fortran API for determining command-line arguments and returns all the
-the command-line components in argv(0:nargv).  The new second form
-of plparseopts operates in a similar way to the C version of plparseopts
-except that the input size and length of argv are carried with it, and
-nargv is only a returned value such that the returned argv(0:narg)
-contains the only part of that (modified) array that is relevant.
+complex Fortran API for determining command-line arguments and returns
+all the the command-line components in argv.  The three new variants
+of plparseopts operate in a similar way to the C version of
+plparseopts returning a modified form of argv that depends on which
+mode is specified.
 
-With these two additions to the Fortran API, then if examples/x01f.f90
-is locally modified to change the pl_parse_skip_mode parameter from
-.false. to .true., (Fortran currently has no plMergeOpts capability
-which would allow the example -pl_parse_skip command-line option
-to be honored) then the following results are obtained:
+We tested these additions to the Fortran parsing API with
+examples/x01f.f90.
 
-software@raven> examples/fortran/x01f xxx -dev psc yyy -o test.psc zzz
+* If that source code is locally modified to change the
+pl_parse_dynamic parameter from .false. to .true., and the x01f target
+rebuilt then the following runtime error is obtained with
+gfortran-4.9.2:
+
+software@raven> examples/fortran/x01f xxx -dev psc yyy -o testf.psc zzz
+ pl_parse_dynamic =  T
+Fortran runtime error: Integer overflow when calculating the amount of memory to allocate
+
+We ascribe this error to a bug in gfortran-4.9.2 for the case
+of character arrays that have both the length and size allocated.
+
+* If that source code is locally modified to change the
+pl_parse_static_length parameter from .false. to .true., and the x01f target
+rebuilt then the following good results are obtained with
+gfortran-4.9.2:
+
+software@raven> examples/fortran/x01f xxx -dev psc yyy -o testf.psc zzz
+ pl_parse_static_length =  T
 argv before call to plparseopts(..., PL_PARSE_SKIP)
 i =   0, argument = examples/fortran/x01f
 i =   1, argument = xxx
@@ -485,44 +535,32 @@ i =   2, argument = -dev
 i =   3, argument = psc
 i =   4, argument = yyy
 i =   5, argument = -o
-i =   6, argument = test.psc
+i =   6, argument = testf.psc
 i =   7, argument = zzz
 argv after call to plparseopts(..., PL_PARSE_SKIP)
-i =   0, argument = examples/fortran/x01
-i =   1, argument = xx
-i =   2, argument = yy
-i =   3, argument = zz
+i =   0, argument = examples/fortran/x01f
+i =   1, argument = xxx
+i =   2, argument = yyy
+i =   3, argument = zzz
 PLplot library version: 5.13.0
 
-These results illustrate the Fortran binding of PLplot now has the
-capability of parsing a mixture of PLplot and other command-line
-arguments just like the core C library has had all along.
+* If that source code is locally modified to change the
+pl_parse_static parameter from .false. to .true., and the x01f target
+rebuilt then the good results above (except for the difference
 
-N.B. An important caveat on the new plget_arguments API and new variant of
-plparseopts API is the plan is to change them in the near future!  One
-issue with the current approach is the use of an assumed shape
-array for argv which requires nargv be returned in each case so the
-calling routine can determine which part of the returned argv is
-relevant.  An additional issue is that both these new functions now
-have to check that the argv array supplied by the calling routine has
-sufficient length and size attributes to store the given command-line
-options.
+ pl_parse_static_length =  T
 
-To solve both these issues the plan is to drop nargv from both
-argument lists and change argv to allocatable form with it being
-allocated (with exactly the minimum length and size required) in
-plget_arguments, and after input use in the new variant of
-plparseopts, deallocate it and allocate it again with exactly the
-minimum length and size required to contain the modified argv that is
-output.
+==>
 
-However, this planned API change is currently on hold because my
-current platform is Debian Jessie, and gfortran-4.9.2 supplied by that
-platform has severe run-time issues with allocatable character arrays.
-However, I (AWI) plan to soon upgrade to Debian Stretch which gives
-access to gfortran-6.3.0.  And assuming that much later version of
-gfortran reliably supports allocatable character arrays, the above
-plan should go ahead then.
+ pl_parse_static =  T
+
+) continue to be obtained.
+
+In all three test cases above, valgrind showed perfect results (0 errors with no leaks possible).
+
+Tests with other gfortran versions > 4.9.2 and other Fortran compilers
+(e.g., ifort and nagfor) will be required to determine how long we
+keep the deprecated forms of plget_arguments and plparseopts.
 
 ________________________________________________________________
 

@@ -30,7 +30,7 @@ module plplot
     use plplot_graphics
     use iso_c_binding, only: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     use iso_fortran_env, only: error_unit
-    use plplot_private_utilities, only: character_array_to_c, c_to_character_array, copystring2f
+    use plplot_private_utilities, only: character_array_to_c, c_to_character_array, copystring2f, max_cstring_length
     implicit none
     ! We will continue to define plflt for those of our users who are
     ! content to simply follow in their own Fortran code the
@@ -51,6 +51,7 @@ module plplot
     private :: private_plflt, private_plint, private_plbool, private_plunicode, private_single, private_double
     private :: c_ptr, c_char, c_loc, c_funloc, c_funptr, c_null_char, c_null_ptr, c_null_funptr
     private :: copystring2f, maxlen
+    private :: max_cstring_length
     private :: error_unit
     private :: character_array_to_c
     private :: c_to_character_array
@@ -178,9 +179,11 @@ module plplot
     private :: plgdrawmode_impl
 
     interface plget_arguments
-        module procedure plget_arguments_impl
+        module procedure plget_arguments_dynamic
+        module procedure plget_arguments_static_length
+        module procedure plget_arguments_static
     end interface plget_arguments
-    private :: plget_arguments_impl
+    private :: plget_arguments_dynamic, plget_arguments_static_length, plget_arguments_static
 
     interface plgfam
         module procedure plgfam_impl
@@ -258,11 +261,12 @@ module plplot
     private :: plmkstrm_impl
 
     interface plparseopts
+        module procedure plparseopts_dynamic
+        module procedure plparseopts_static_length
+        module procedure plparseopts_static
         module procedure plparseopts_brief
-        module procedure plparseopts_full
     end interface plparseopts
-    private :: plparseopts_brief
-    private :: plparseopts_full
+    private :: plparseopts_dynamic, plparseopts_static_length, plparseopts_static, plparseopts_brief
 
     interface plpat
         module procedure plpat_impl
@@ -700,8 +704,77 @@ contains
         plgdrawmode_impl = int(interface_plgdrawmode())
     end function plgdrawmode_impl
 
-    function plget_arguments_impl( nargv, argv )
-        integer :: plget_arguments_impl !function type
+    function plget_arguments_dynamic( argv )
+        integer :: plget_arguments_dynamic !function type
+        character(len=:), dimension(:), allocatable, intent(out) :: argv
+
+        integer :: nargv_local
+        character(len=1) :: test_argv_local
+        integer :: length_argv_local, length_local, iargs_local
+
+        nargv_local = command_argument_count()
+        if (nargv_local < 0) then
+!           This actually happened historically on a buggy Cygwin platform.
+            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plget_arguments: negative number of arguments'
+            plget_arguments_dynamic = 1
+            return
+        endif
+
+!       Determine maximum length of arguments
+        length_argv_local = 0
+        do iargs_local = 0, nargv_local
+            call get_command_argument(iargs_local, test_argv_local, length_local)
+            length_argv_local = max(length_argv_local, length_local)
+        enddo
+
+        ! Allocate argv of correct size (but static length) to hold the command-line arguments.
+        allocate(character(len=length_argv_local) :: argv(0:nargv_local))
+        do iargs_local = 0, nargv_local
+            call get_command_argument(iargs_local, argv(iargs_local))
+        enddo
+        plget_arguments_dynamic = 0
+    end function plget_arguments_dynamic
+
+    function plget_arguments_static_length( argv, disambiguate )
+        integer :: plget_arguments_static_length !function type
+        character(len=*), dimension(:), allocatable, intent(out) :: argv
+        integer, intent(in) :: disambiguate
+
+        integer :: nargv_local
+        character(len=1) :: test_argv_local
+        integer :: length_argv_local, length_local, iargs_local
+
+        nargv_local = command_argument_count()
+        if (nargv_local < 0) then
+!           This actually happened historically on a buggy Cygwin platform.
+            write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plget_arguments: negative number of arguments'
+            plget_arguments_static_length = 1
+            return
+        endif
+
+!       Determine maximum length of arguments
+        length_argv_local = 0
+        do iargs_local = 0, nargv_local
+            call get_command_argument(iargs_local, test_argv_local, length_local)
+            length_argv_local = max(length_argv_local, length_local)
+        enddo
+
+        if(length_argv_local > len(argv) ) then
+            write(error_unit,*) 'Plplot Fortran Severe Warning: at least one argument too long to process'
+            plget_arguments_static_length = 1
+            return
+        endif
+
+        ! Allocate argv of correct size (but static length) to hold the command-line arguments.
+        allocate(argv(0:nargv_local))
+        do iargs_local = 0, nargv_local
+            call get_command_argument(iargs_local, argv(iargs_local))
+        enddo
+        plget_arguments_static_length = 0
+    end function plget_arguments_static_length
+
+    function plget_arguments_static( nargv, argv )
+        integer :: plget_arguments_static !function type
         integer, intent(out) :: nargv
         character(len=*), dimension(0:), intent(out) :: argv
 
@@ -712,13 +785,13 @@ contains
         if (nargv < 0) then
 !           This actually happened historically on a buggy Cygwin platform.
             write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plget_arguments: negative number of arguments'
-            plget_arguments_impl = 1
+            plget_arguments_static = 1
             return
         endif
 
         if(nargv + 1 > size(argv)) then
             write(error_unit,'(a)') 'Plplot Fortran Severe Warning: plget_arguments: too many arguments to process'
-            plget_arguments_impl = 1
+            plget_arguments_static = 1
             return
         endif
 
@@ -729,16 +802,16 @@ contains
             length_argv_local = max(length_argv_local, length_local)
         enddo
         if(length_argv_local > len(argv) ) then
-            write(error_unit,*) 'Plplot Fortran Severe Warning: at least one argument too long to process'
-            plget_arguments_impl = 1
+            write(error_unit,*) 'Plplot Fortran Severe Warning: plget_arguments: at least one argument too long to process'
+            plget_arguments_static = 1
             return
         endif
 
         do iargs_local = 0, nargv
             call get_command_argument(iargs_local, argv(iargs_local))
         enddo
-        plget_arguments_impl = 0
-    end function plget_arguments_impl
+        plget_arguments_static = 0
+    end function plget_arguments_static
 
     subroutine plgfam_impl( fam, num, bmax )
         integer, intent(out) :: fam, num, bmax
@@ -971,6 +1044,85 @@ contains
         call interface_plmkstrm( int(strm,kind=private_plint) )
     end subroutine plmkstrm_impl
 
+    function plparseopts_dynamic(argv, mode)
+        integer :: plparseopts_dynamic !function type
+        character(len=:), intent(inout), dimension(:), allocatable :: argv
+        integer, intent(in) :: mode
+
+        integer(kind=private_plint) :: size_local
+        integer :: max_length_local
+
+        character(len=1), dimension(:,:), allocatable :: cstring_arg_local
+        type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
+
+        call character_array_to_c( cstring_arg_local, cstring_address_arg_inout, argv )
+
+        ! Note that the C routine interface_plparseopts changes this value.
+        size_local = size(argv, kind=private_plint)
+        plparseopts_dynamic = int(interface_plparseopts( size_local, &
+             cstring_address_arg_inout, int(mode, kind=private_plint)))
+        if(plparseopts_dynamic /= 0) return
+        deallocate(argv)
+        max_length_local = max_cstring_length(cstring_address_arg_inout)
+        allocate(character(len=max_length_local) :: argv(0:size_local - 1))
+        plparseopts_dynamic = c_to_character_array(argv, cstring_address_arg_inout(1:size_local))
+    end function plparseopts_dynamic
+
+    function plparseopts_static_length(argv, mode, disambiguate)
+        integer :: plparseopts_static_length !function type
+        character(len=*), intent(inout), dimension(:), allocatable :: argv
+        integer, intent(in) :: mode, disambiguate
+
+        integer(kind=private_plint) :: size_local
+
+        character(len=1), dimension(:,:), allocatable :: cstring_arg_local
+        type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
+
+        call character_array_to_c( cstring_arg_local, cstring_address_arg_inout, argv )
+
+        ! Note that the C routine interface_plparseopts changes this value.
+        size_local = size(argv, kind=private_plint)
+        plparseopts_static_length = int(interface_plparseopts( size_local, &
+             cstring_address_arg_inout, int(mode, kind=private_plint)))
+        if(plparseopts_static_length /= 0) return
+
+        if(len(argv) < max_cstring_length(cstring_address_arg_inout(1:size_local))) then
+            write(error_unit,*) 'Plplot Fortran Severe Warning: plparseopts: at least one argument too long to process'
+            plparseopts_static_length = 1
+            return
+        endif
+        deallocate(argv)
+        allocate(argv(0:size_local - 1))
+        plparseopts_static_length = c_to_character_array(argv, cstring_address_arg_inout(1:size_local))
+    end function plparseopts_static_length
+
+    function plparseopts_static(nargv, argv, mode)
+        integer :: plparseopts_static !function type
+        integer, intent(out) :: nargv
+        character(len=*), intent(inout), dimension(0:) :: argv
+        integer, intent(in) :: mode
+
+        integer(kind=private_plint) :: size_local
+
+        character(len=1), dimension(:,:), allocatable :: cstring_arg_local
+        type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
+
+        call character_array_to_c( cstring_arg_local, cstring_address_arg_inout, argv )
+
+        ! Note that the C routine interface_plparseopts changes this value.
+        size_local = size(argv, kind=private_plint)
+        plparseopts_static = int(interface_plparseopts( size_local, &
+             cstring_address_arg_inout, int(mode, kind=private_plint)))
+        if(plparseopts_static /= 0) return
+        if(len(argv) < max_cstring_length(cstring_address_arg_inout(1:size_local))) then
+            write(error_unit,*) 'Plplot Fortran Severe Warning: plparseopts: at least one argument too long to process'
+            plparseopts_static = 1
+            return
+        endif
+        plparseopts_static = c_to_character_array(argv, cstring_address_arg_inout(1:size_local))
+        nargv = int(size_local - 1)
+    end function plparseopts_static
+
     function plparseopts_brief(mode)
         integer :: plparseopts_brief !function type
         integer, intent(in) :: mode
@@ -995,28 +1147,6 @@ contains
         plparseopts_brief = int(interface_plparseopts( size_local, &
                cstring_address_arg_inout, int(mode, kind=private_plint)))
     end function plparseopts_brief
-
-    function plparseopts_full(nargv, argv, mode)
-        integer :: plparseopts_full !function type
-        integer, intent(out) :: nargv
-        character(len=*), intent(inout), dimension(0:) :: argv
-        integer, intent(in) :: mode
-
-        integer(kind=private_plint) :: size_local
-
-        character(len=1), dimension(:,:), allocatable :: cstring_arg_local
-        type(c_ptr), dimension(:), allocatable :: cstring_address_arg_inout
-
-        call character_array_to_c( cstring_arg_local, cstring_address_arg_inout, argv )
-
-        ! Note that the C routine interface_plparseopts changes this value.
-        size_local = size(argv, kind=private_plint)
-        plparseopts_full = int(interface_plparseopts( size_local, &
-             cstring_address_arg_inout, int(mode, kind=private_plint)))
-        if(plparseopts_full /= 0) return
-        nargv = int(size_local - 1)
-        plparseopts_full = c_to_character_array(argv, cstring_address_arg_inout(1:nargv+1))
-    end function plparseopts_full
 
     subroutine plpat_impl( inc, del )
         integer, dimension(:), intent(in) :: inc, del
