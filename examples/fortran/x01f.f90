@@ -41,7 +41,7 @@ program x01f
     character(len=80) :: version
     integer :: digmax
     logical, parameter :: locate_mode = .false.
-    logical, parameter :: pl_parse_dynamic = .true.
+    logical, parameter :: pl_parse_dynamic = .false.
     logical, parameter :: pl_parse_static_length = .false.
     logical, parameter :: pl_parse_static = .false.
 !   Declarations for general parsing of the command line
