@@ -760,7 +760,7 @@ contains
         enddo
 
         if(length_argv_local > len(argv) ) then
-            write(error_unit,*) 'Plplot Fortran Severe Warning: at least one argument too long to process'
+            write(error_unit,*) 'Plplot Fortran Severe Warning: plget_arguments: at least one argument is too long to process'
             plget_arguments_static_length = 1
             return
         endif
@@ -802,7 +802,7 @@ contains
             length_argv_local = max(length_argv_local, length_local)
         enddo
         if(length_argv_local > len(argv) ) then
-            write(error_unit,*) 'Plplot Fortran Severe Warning: plget_arguments: at least one argument too long to process'
+            write(error_unit,*) 'Plplot Fortran Severe Warning: plget_arguments: at least one argument is too long to process'
             plget_arguments_static = 1
             return
         endif
@@ -1087,7 +1087,7 @@ contains
         if(plparseopts_static_length /= 0) return
 
         if(len(argv) < max_cstring_length(cstring_address_arg_inout(1:size_local))) then
-            write(error_unit,*) 'Plplot Fortran Severe Warning: plparseopts: at least one argument too long to process'
+            write(error_unit,*) 'Plplot Fortran Severe Warning: plparseopts: at least one argument is too long to process'
             plparseopts_static_length = 1
             return
         endif
@@ -1115,7 +1115,7 @@ contains
              cstring_address_arg_inout, int(mode, kind=private_plint)))
         if(plparseopts_static /= 0) return
         if(len(argv) < max_cstring_length(cstring_address_arg_inout(1:size_local))) then
-            write(error_unit,*) 'Plplot Fortran Severe Warning: plparseopts: at least one argument too long to process'
+            write(error_unit,*) 'Plplot Fortran Severe Warning: plparseopts: at least one argument is too long to process'
             plparseopts_static = 1
             return
         endif
