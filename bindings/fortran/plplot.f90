@@ -1063,7 +1063,7 @@ contains
              cstring_address_arg_inout, int(mode, kind=private_plint)))
         if(plparseopts_dynamic /= 0) return
         deallocate(argv)
-        max_length_local = max_cstring_length(cstring_address_arg_inout)
+        max_length_local = max_cstring_length(cstring_address_arg_inout(1:size_local))
         allocate(character(len=max_length_local) :: argv(0:size_local - 1))
         plparseopts_dynamic = c_to_character_array(argv, cstring_address_arg_inout(1:size_local))
     end function plparseopts_dynamic
