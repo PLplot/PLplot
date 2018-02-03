@@ -437,11 +437,8 @@ void wxPLplotwindow<WXWINDOW>::setUseGraphicsContext( bool useGraphicsContext )
 {
     wxDC *drawDc;
 #ifdef wxUSE_GRAPHICS_CONTEXT
-    if ( useGraphicsContext != m_useGraphicsContext )
-    {
-        m_useGraphicsContext = useGraphicsContext;
-        drawDc = m_useGraphicsContext ? (wxDC *) m_gcDc : (wxDC *) m_memoryDc;
-    }
+    m_useGraphicsContext = useGraphicsContext;
+    drawDc = m_useGraphicsContext ? (wxDC *) m_gcDc : (wxDC *) m_memoryDc;
 #else
     drawDc = &m_memoryDc;
     m_useGraphicsContext = false;
