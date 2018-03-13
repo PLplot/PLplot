@@ -52,7 +52,7 @@ static PLOptionTable options[] = {
         &pl_parse_skip_mode,
         PL_OPT_BOOL,
         "-pl_parse_skip",
-        "Test using PL_PARSE_SKIP mode for plparseopts (must be first option)"
+        "Test using PL_PARSE_SKIP mode for plparseopts (this option must precede non-PLplot options)"
     },
     {
         "locate",               // Turns on test of API locate function
@@ -152,7 +152,7 @@ main( int argc, char *argv[] )
     }
     else
     {
-        // parse the command line again, but this time
+        // parse the command line again, and after such parsing
         // argc and argv are typically reduced to 1 and the name
         // of the programme that is being executed.
         plparseopts( &argc, argv, PL_PARSE_FULL );

@@ -844,7 +844,7 @@ plResetOpts( void )
 //! An error in parsing the argument list causes a program exit if
 //! mode_full is set, otherwise the function returns with an error.
 //!
-//! @param p_argc ?
+//! @param p_argc pointer to a value that ONLY keeps track of number of arguments after processing.
 //! @param argv ?
 //! @param mode ?
 //!
@@ -1024,7 +1024,7 @@ c_plparseopts( int *p_argc, char **argv, PLINT mode )
 //!
 //! @param p_myargc ?
 //! @param p_argv ?
-//! @param p_argc ?
+//! @param p_argc pointer to a value that ONLY keeps track of number of arguments after processing.
 //! @param p_argsave ?
 //! @param option_table ?
 //!
@@ -1087,7 +1087,7 @@ ParseOpt( int *p_myargc, char ***p_argv, int *p_argc, char ***p_argsave,
 //! @param tab ?
 //! @param p_myargc ?
 //! @param p_argv ?
-//! @param p_argc ?
+//! @param p_argc pointer to a value that ONLY keeps track of number of arguments after processing.
 //!
 //! @returns 0 if successful.
 //--------------------------------------------------------------------------
@@ -1215,7 +1215,7 @@ ProcessOpt( char * opt, PLOptionTable *tab, int *p_myargc, char ***p_argv,
 //! @param popt_arg ?
 //! @param p_myargc ?
 //! @param p_argv ?
-//! @param p_argc ?
+//! @param p_argc pointer to a value that ONLY keeps track of number of arguments after processing.
 //!
 //! @returns 0 if successful.
 //!
@@ -1243,7 +1243,8 @@ GetOptarg( char **popt_arg, int *p_myargc, char ***p_argv, int *p_argc )
 
     if ( !result )                      // yeah, the user got it right
     {
-        ( *p_argc )--;
+        if ( !mode_nodelete )
+            ( *p_argc )--;
         *popt_arg = ( *p_argv )[0];
     }
     else
