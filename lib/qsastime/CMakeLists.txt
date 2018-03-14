@@ -1,8 +1,5 @@
 # lib/qsastime/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2009-2016 Alan W. Irwin
+# Copyright (C) 2009-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -89,18 +86,8 @@ set(qsastime_LIB_SRCS
   qsastime.c dsplint.c
   )
 
-add_library(qsastime ${qsastime_LIB_SRCS})
+build_library(qsastime "${qsastime_LIB_SRCS}" "${MATH_LIB}" PLPLOT::)
 add_dependencies(qsastime tai-utc.h_built deltaT.h_built)
-
-if(MATH_LIB)
-  if(NON_TRANSITIVE)
-    target_link_libraries(qsastime PRIVATE ${MATH_LIB})
-  else(NON_TRANSITIVE)
-    target_link_libraries(qsastime PUBLIC ${MATH_LIB})
-  endif(NON_TRANSITIVE)
-endif(MATH_LIB)
-
-set_library_properties(qsastime)
 
 set(qsastime_INSTALLED_HEADERS
   qsastime.h

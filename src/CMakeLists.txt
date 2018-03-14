@@ -177,9 +177,6 @@ include_directories(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/include
   )
-add_library(plplot ${plplot_LIB_SRCS})
-add_dependencies(plplot plhershey-unicode.h_built)
-
 # Deal with external libraries.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 set(libplplot_LINK_LIBRARIES)
@@ -300,20 +297,11 @@ endif(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
 #message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
 
 if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplot PRIVATE ${libplplot_LINK_LIBRARIES} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplot PUBLIC ${libplplot_LINK_LIBRARIES} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-  endif(NON_TRANSITIVE)
-else(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplot PRIVATE ${libplplot_LINK_LIBRARIES})
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplot PUBLIC ${libplplot_LINK_LIBRARIES})
-  endif(NON_TRANSITIVE)
+  list(APPEND libplplot_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
-set_library_properties(plplot)
+build_library(plplot "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}" PLPLOT::)
+add_dependencies(plplot plhershey-unicode.h_built)
 
 if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
   set_target_properties(plplot PROPERTIES

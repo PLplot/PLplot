@@ -1,7 +1,7 @@
 # bindings/qt_gui/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -35,58 +35,13 @@ if(ENABLE_qt)
     # Qt4 or Qt5.
     list(APPEND qt_SOURCE ${CMAKE_SOURCE_DIR}/include/qt.h)
 
-    add_library(plplotqt ${qt_SOURCE})
-    set_target_properties(plplotqt PROPERTIES
-      AUTOMOC ON
-      AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
-      )
-
-    # This is not required for g++ and many other C++ compilers, but
-    # still this is best practice for AUTOMOC just in case there is a
-    # compiler out there (which is allowed by the lax C/C++ standards)
-    # that does not look in the source directory for the quoted form
-    # of #included headers in the automoc-generated source code
-    # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
-    # specifically added by automoc to the list of source files for
-    # the target.
-    target_include_directories(plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-
     if(PLPLOT_USE_QT5)
       # According to advice from Steve Kelly on the Cmake list, the Qt5
       # Gui component is a dependency of the Qt5 Svg component so is not
       # needed here, but I will leave it in since it is informative.
-
-      if(NON_TRANSITIVE)
-	target_link_libraries(plplotqt PRIVATE plplot ${MATH_LIB} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-      else(NON_TRANSITIVE)
-	target_link_libraries(plplotqt PUBLIC plplot ${MATH_LIB} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-      endif(NON_TRANSITIVE)
+      set(libplplotqt_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     else(PLPLOT_USE_QT5)
-      if(NON_TRANSITIVE)
-	target_link_libraries(plplotqt PRIVATE plplot ${MATH_LIB})
-      else(NON_TRANSITIVE)
-	target_link_libraries(plplotqt PUBLIC plplot ${MATH_LIB})
-      endif(NON_TRANSITIVE)
-
-      if(NOT QT_LIBRARIES)
-	message(FATAL_ERROR "PLplot build-system inconsistency in bindings/qt_gui subdirectory.")
-      endif(NOT QT_LIBRARIES)
-
-      # According to the latter part of a discussion on plplot-devel in
-      # 2013 with the subject line "Can't build on OS X Lion", Andrew
-      # and Jerry found together (using the old LINK_INTERFACE_LIBRARIES
-      # approach) that is was necessary that ${QT_LIBRARIES} was always
-      # transitively linked.  I think this is covered in the recent
-      # documentation of the PUBLIC keyword where it is stated that "If
-      # a dependency is additionally used in the header files of a
-      # library (e.g. for class inheritance), then it should be
-      # specified as a ``PUBLIC`` dependency."
-      # Therefore, my conclusion is that the PUBLIC keyword should
-      # be used here in all cases, but further checking of this assumption
-      # (by looking for overlinking issues) is desireable.
-      target_link_libraries(plplotqt PUBLIC ${QT_LIBRARIES})
-      # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-      set_qt4_target_properties(plplotqt)
+      set(libplplotqt_LINK_LIBRARIES PLPLOT::plplot ${MATH_LIB})
     endif(PLPLOT_USE_QT5)
 
     # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the
@@ -102,7 +57,43 @@ if(ENABLE_qt)
 	)
       #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
     endif(USE_RPATH)
-    set_library_properties(plplotqt)
+    build_library(plplotqt "${qt_SOURCE}" "${libplplotqt_LINK_LIBRARIES}" PLPLOT::)
+
+    if(NOT PLPLOT_USE_QT5)
+      if(NOT QT_LIBRARIES)
+	message(FATAL_ERROR "PLplot build-system inconsistency in bindings/qt_gui subdirectory.")
+      endif(NOT QT_LIBRARIES)
+      # According to the latter part of a discussion on plplot-devel in
+      # 2013 with the subject line "Can't build on OS X Lion", Andrew
+      # and Jerry found together (using the old LINK_INTERFACE_LIBRARIES
+      # approach) that is was necessary that ${QT_LIBRARIES} was always
+      # transitively linked.  I think this is covered in the recent
+      # documentation of the PUBLIC keyword where it is stated that "If
+      # a dependency is additionally used in the header files of a
+      # library (e.g. for class inheritance), then it should be
+      # specified as a ``PUBLIC`` dependency."
+      # Therefore, my conclusion is that the PUBLIC keyword should
+      # be used here in all cases, but further checking of this assumption
+      # (by looking for overlinking issues) is desireable.
+      target_link_libraries(plplotqt PUBLIC ${QT_LIBRARIES})
+      # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
+      set_qt4_target_properties(plplotqt)
+    endif(NOT PLPLOT_USE_QT5)
+
+    set_target_properties(plplotqt PROPERTIES
+      AUTOMOC ON
+      AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
+      )
+
+    # This is not required for g++ and many other C++ compilers, but
+    # still this is best practice for AUTOMOC just in case there is a
+    # compiler out there (which is allowed by the lax C/C++ standards)
+    # that does not look in the source directory for the quoted form
+    # of #included headers in the automoc-generated source code
+    # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+    # specifically added by automoc to the list of source files for
+    # the target.
+    target_include_directories(plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
     install(TARGETS plplotqt
       EXPORT export_plplot

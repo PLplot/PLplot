@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -111,10 +111,10 @@ EXPORTS
 
   # Create a configurable file that contains the bash command to create plplotfortran_ifort.def_compare
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def.sh.in
-    "nm --defined-only \$<TARGET_FILE:plplotfortran> |tr '[:lower:]' '[:upper:]' |sed -f ${CMAKE_CURRENT_SOURCE_DIR}/generate_ifort_deffile.sed |sort --key=3 | cat ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def_header - >| ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def_compare
+    "nm --defined-only \$<TARGET_FILE:PLPLOT::plplotfortran> |tr '[:lower:]' '[:upper:]' |sed -f ${CMAKE_CURRENT_SOURCE_DIR}/generate_ifort_deffile.sed |sort --key=3 | cat ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def_header - >| ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def_compare
 ")
 
-  # Configure that file (which contains the generator expression, $<TARGET_FILE:plplotfortran>) :
+  # Configure that file (which contains the generator expression, $<TARGET_FILE:PLPLOT::plplotfortran>) :
   configure_file_generate(
   ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def.sh.in
   ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def.sh
@@ -166,18 +166,12 @@ EXPORTS
     SET(plplotfortran_LIB_SRCS ${plplotfortran_LIB_SRCS} plplotfortran${DEFFILE}.def)
   endif(WIN32_AND_NOT_CYGWIN AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT MSYS)
 
-  add_library(plplotfortran ${plplotfortran_LIB_SRCS})
-
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplotfortran PRIVATE plplot)
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplotfortran PUBLIC plplot)
-  endif(NON_TRANSITIVE)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
   endif(USE_RPATH)
-  set_library_properties(plplotfortran)
+
+  build_library(plplotfortran "${plplotfortran_LIB_SRCS}" PLPLOT::plplot PLPLOT::)
 
   install(TARGETS plplotfortran
     EXPORT export_plplot

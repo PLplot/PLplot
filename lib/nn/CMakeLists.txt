@@ -1,8 +1,5 @@
 # lib/nn/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -37,34 +34,18 @@ if(PL_HAVE_QHULL)
       )
   endif(HAS_LIBQHULL_INCLUDE)
 
-  add_library(csironn ${csironn_LIB_SRCS})
-
-  set_target_properties(
-    csironn
+  set_source_files_properties(
+    ${csironn_LIB_SRCS}
     PROPERTIES
     COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
     )
-  set_library_properties(csironn)
 
-  set(
-    csironn_LINK_LIBRARIES
-    ${csironn_LINK_LIBRARIES}
-    ${QHULL_LIBRARIES}
-  )
-
+  set(csironn_LINK_LIBRARIES ${QHULL_LIBRARIES})
   if(MATH_LIB)
-    set(
-      csironn_LINK_LIBRARIES
-      ${csironn_LINK_LIBRARIES}
-      ${MATH_LIB}
-      )
+    list(APPEND csironn_LINK_LIBRARIES ${MATH_LIB})
   endif(MATH_LIB)
 
-  if(NON_TRANSITIVE)
-    target_link_libraries(csironn PRIVATE ${csironn_LINK_LIBRARIES})
-  else(NON_TRANSITIVE)
-    target_link_libraries(csironn PUBLIC ${csironn_LINK_LIBRARIES})
-  endif(NON_TRANSITIVE)
+  build_library(csironn "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}" PLPLOT::)
 
   install(TARGETS csironn
     EXPORT export_plplot

@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2015-2016 Alan W. Irwin
+# Copyright (C) 2015-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -36,19 +36,11 @@ if(ENABLE_cxx)
     ${CMAKE_BINARY_DIR}/include
     )
 
-  # Create plplotcxx[d] library
-  add_library(plplotcxx ${plplotcxx_LIB_SRCS})
-
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplotcxx PRIVATE plplot)
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplotcxx PUBLIC plplot)
-  endif(NON_TRANSITIVE)
-
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
   endif(USE_RPATH)
-  set_library_properties(plplotcxx)
+
+  build_library(plplotcxx "${plplotcxx_LIB_SRCS}" PLPLOT::plplot PLPLOT::)
 
   # Install library in lib/
   install(TARGETS plplotcxx

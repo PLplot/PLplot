@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2008 Werner Smekal
-# Copyright (C) 2015-2016 Alan W. Irwin
+# Copyright (C) 2015-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -32,21 +32,20 @@ if(ENABLE_d)
   )
 
   if(plplotdmd_SHARED)
-    add_library(plplotdmd ${plplotdmd_LIB_SRCS})
 
     if(USE_RPATH)
       get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     endif(USE_RPATH)
-    set_library_properties(plplotdmd)
+    build_library(plplotdmd "${plplotdmd_LIB_SRCS}" PLPLOT::plplot PLPLOT:: )
   else(plplotdmd_SHARED)
     add_library(plplotdmd STATIC ${plplotdmd_LIB_SRCS})
+    if(NON_TRANSITIVE)
+      target_link_libraries(plplotdmd PRIVATE PLPLOT::plplot)
+    else(NON_TRANSITIVE)
+      target_link_libraries(plplotdmd PUBLIC PLPLOT::plplot)
+    endif(NON_TRANSITIVE)
+    add_library(PLPLOT::plplotdmd ALIAS plplotdmd)
   endif(plplotdmd_SHARED)
-
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplotdmd PRIVATE plplot)
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplotdmd PUBLIC plplot)
-  endif(NON_TRANSITIVE)
 
   install(TARGETS plplotdmd
     EXPORT export_plplot

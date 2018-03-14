@@ -1,8 +1,5 @@
 # lib/csa/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -25,17 +22,7 @@ if(WITH_CSA)
     csa.c
     )
 
-  add_library(csirocsa ${csirocsa_LIB_SRCS})
-
-  set_library_properties(csirocsa)
-
-  if(MATH_LIB)
-    if(NON_TRANSITIVE)
-      target_link_libraries(csirocsa PRIVATE ${MATH_LIB})
-    else(NON_TRANSITIVE)
-      target_link_libraries(csirocsa PUBLIC ${MATH_LIB})
-    endif(NON_TRANSITIVE)
-  endif(MATH_LIB)
+  build_library(csirocsa "${csirocsa_LIB_SRCS}" "${MATH_LIB}" PLPLOT::)
 
   install(TARGETS csirocsa
     EXPORT export_plplot

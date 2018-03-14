@@ -1,7 +1,7 @@
 # bindings/tcl/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -83,30 +83,20 @@ if(ENABLE_tcl)
       "-I\"${TCL_INCLUDE_PATH}\""
       )
 
-    add_library(tclmatrix ${tclmatrix_LIB_SRCS})
-
     if(USE_TCL_TK_STUBS)
-      if(NON_TRANSITIVE)
-	target_link_libraries(tclmatrix PRIVATE ${TCL_STUB_LIBRARY})
-      else(NON_TRANSITIVE)
-	target_link_libraries(tclmatrix PUBLIC ${TCL_STUB_LIBRARY})
-      endif(NON_TRANSITIVE)
-      set_target_properties(
-	tclmatrix
+      set(libtclmatrix_LINK_LIBRARIES ${TCL_STUB_LIBRARY})
+      set_source_files_properties(
+	${tclmatrix_LIB_SRCS}
 	PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
 	)
     else(USE_TCL_TK_STUBS)
-      if(NON_TRANSITIVE)
-	target_link_libraries(tclmatrix PRIVATE ${TCL_LIBRARY})
-      else(NON_TRANSITIVE)
-	target_link_libraries(tclmatrix PUBLIC ${TCL_LIBRARY})
-      endif(NON_TRANSITIVE)
+      set(libtclmatrix_LINK_LIBRARIES ${TCL_LIBRARY})
     endif(USE_TCL_TK_STUBS)
 
     if(USE_RPATH)
       set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
     endif(USE_RPATH)
-    set_library_properties(tclmatrix)
+    build_library(tclmatrix "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}" PLPLOT::)
 
     install(TARGETS tclmatrix
       EXPORT export_plplot
@@ -148,8 +138,8 @@ if(ENABLE_tcl)
     if(USE_TCL_TK_STUBS)
       set(
 	plplottcltk_link_libraries
-	tclmatrix
-	plplot
+	PLPLOT::tclmatrix
+	PLPLOT::plplot
 	${TCL_STUB_LIBRARY}
 	)
       set(
@@ -160,8 +150,8 @@ if(ENABLE_tcl)
     else(USE_TCL_TK_STUBS)
       set(
 	plplottcltk_link_libraries
-	tclmatrix
-	plplot
+	PLPLOT::tclmatrix
+	PLPLOT::plplot
 	${TCL_LIBRARY}
 	)
       set(
@@ -213,39 +203,27 @@ if(ENABLE_tcl)
       endif(USE_TCL_TK_STUBS)
     endif(ENABLE_tkX)
 
-    add_library(plplottcltk ${plplottcltk_LIB_SRCS})
-
     if(USE_TCL_TK_STUBS)
       if(ENABLE_tkX)
-	set_target_properties(
-	  plplottcltk
+	set_source_files_properties(
+	  ${plplottcltk_LIB_SRCS}
 	  PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
 	  )
       else(ENABLE_tkX)
-	set_target_properties(
-	  plplottcltk
+	set_source_files_properties(
+	  ${plplottcltk_LIB_SRCS}
 	  PROPERTIES COMPILE_DEFINITIONS USE_TCL_STUBS
 	  )
       endif(ENABLE_tkX)
     endif(USE_TCL_TK_STUBS)
 
     #message(STATUS "plplottcltk_link_libraries = ${plplottcltk_link_libraries}"
-    if(NON_TRANSITIVE)
-      target_link_libraries(plplottcltk PRIVATE ${plplottcltk_link_libraries})
-    else(NON_TRANSITIVE)
-      target_link_libraries(plplottcltk PUBLIC ${plplottcltk_link_libraries})
-    endif(NON_TRANSITIVE)
 
     if(USE_RPATH)
       get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
       list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
     endif(USE_RPATH)
-    set_library_properties(plplottcltk)
-
-    if(USE_RPATH)
-      # This version of LIB_INSTALL_RPATH also used below for pltcl.
-      list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
-    endif(USE_RPATH)
+    build_library(plplottcltk "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}" PLPLOT::)
 
     install(TARGETS plplottcltk
       EXPORT export_plplot
@@ -349,24 +327,13 @@ if(ENABLE_tcl)
     endif(ENABLE_itkX)
   endif(ENABLE_tkX)
 
-  add_library(plplottcltk_Main ${plplottcltk_Main_LIB_SRCS})
-
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplottcltk_Main PRIVATE ${plplottcltk_Main_link_libraries})
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplottcltk_Main PUBLIC ${plplottcltk_Main_link_libraries})
-  endif(NON_TRANSITIVE)
-
   if(USE_RPATH)
+    # This LIB_INSTALL_RPATH used for pltcl as well.
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
-    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
-  endif(USE_RPATH)
-
-  if(USE_RPATH)
-    # This version of LIB_INSTALL_RPATH also used below for pltcl.
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
   endif(USE_RPATH)
-  set_library_properties(plplottcltk_Main)
+
+  build_library(plplottcltk_Main "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}" PLPLOT::)
 
   install(TARGETS plplottcltk_Main
     EXPORT export_plplot
@@ -466,15 +433,15 @@ if(ENABLE_tcl)
 
   if(tcltk_in_plplot_library)
     if(ENABLE_itcl)
-      target_link_libraries(pltcl plplot plplottcltk_Main ${ITCL_LIBRARY} ${TCL_LIBRARY})
+      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main ${ITCL_LIBRARY} ${TCL_LIBRARY})
     else(ENABLE_itcl)
-      target_link_libraries(pltcl plplot plplottcltk_Main ${TCL_LIBRARY})
+      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main ${TCL_LIBRARY})
     endif(ENABLE_itcl)
   else(tcltk_in_plplot_library)
     if(ENABLE_itcl)
-      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
+      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
     else(ENABLE_itcl)
-      target_link_libraries(pltcl plplot plplottcltk_Main plplottcltk ${TCL_LIBRARY})
+      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${TCL_LIBRARY})
     endif(ENABLE_itcl)
   endif(tcltk_in_plplot_library)
 

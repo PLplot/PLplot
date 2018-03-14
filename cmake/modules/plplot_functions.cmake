@@ -239,44 +239,114 @@ function(configure_file_generate)
     )
 endfunction(configure_file_generate)
 
-function(set_library_properties library)
-  # Set properties that are normally required by PLplot
-  # for a library.
+function(build_library library lib_src tll_arguments namespace)
+  # This function should be duplicated for the PLplot, ephcom, and
+  # te_gen software projects.  Configure complete build of one of the
+  # PLplot, ephcom or te_gen libraries and corresponding namespaced
+  # ALIAS library using a combination of the
+  # add_library and target_link_libraries commands followed by setting
+  # relevant library properties.
 
-  # Sanity check that needed variables have been assigned values.
-  # (Note that ${library}_SOVERSION and ${library}_VERSION should be
-  # assigned values in cmake/modules/plplot_version.cmake and LIB_DIR
-  # should be assigned a value in cmake/modules/instdirs.cmake.)
-  if(NOT(DEFINED ${library}_SOVERSION AND DEFINED ${library}_VERSION AND DEFINED LIB_DIR))
-    message(STATUS "${library}_SOVERSION = ${${library}_SOVERSION}")
-    message(STATUS "${library}_VERSION = ${${library}_VERSION}")
-    message(STATUS "LIB_DIR = ${LIB_DIR}")
-    message(FATAL_ERROR "${library}_SOVERSION, ${library}_VERSION, and/or LIB_DIR are not DEFINED")
-  endif(NOT(DEFINED ${library}_SOVERSION AND DEFINED ${library}_VERSION AND DEFINED LIB_DIR))
+  # library contains a string corresponding to the target name of a library.
 
-  # The INSTALL_RPATH property is only set if BOTH USE_RPATH is true
-  # and LIB_INSTALL_RPATH is defined.
-  if(USE_RPATH AND LIB_INSTALL_RPATH)
+  # lib_src contains a list of source files for the library.
+
+  # tll_arguments contains a list of arguments for target_link_libraries
+  # for the library.  If tll_arguments evaluates to a false value (e.g.,
+  # an empty string), then target_link_libraries will not be called.
+
+  # namespace contains the namespace string for the ALIAS target corresponding
+  # to the library target.
+
+  # N.B. Actual arguments used for calls to build_library are values
+  # or lists of values and NOT variables.  Therefore, only one level
+  # of dereferencing required to access the argument values.
+
+  #message(STATUS "DEBUG: library = ${library}")
+  #message(STATUS "DEBUG: lib_src = ${lib_src}")
+  #message(STATUS "DEBUG: tll_arguments = ${tll_arguments}")
+  #message(STATUS "DEBUG: namespace = ${namespace}")
+
+  # Global variables which must be defined
+  #message(STATUS "DEBUG: BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}")
+  #message(STATUS "DEBUG: NON_TRANSITIVE = ${NON_TRANSITIVE}")
+  #message(STATUS "DEBUG: ${library}_SOVERSION = ${${library}_SOVERSION}")
+  #message(STATUS "DEBUG: ${library}_VERSION = ${${library}_VERSION}")
+  #message(STATUS "DEBUG: CMAKE_INSTALL_LIBDIR = ${CMAKE_INSTALL_LIBDIR}")
+  #message(STATUS "DEBUG: USE_RPATH = ${USE_RPATH}")
+
+  # Sanity checks on values of argument variables:
+  if("${library}" STREQUAL "")
+    message(FATAL_ERROR "library is empty when it should be a library target name")
+  endif("${library}" STREQUAL "")
+
+  if("${lib_src}" STREQUAL "")
+    message(FATAL_ERROR "lib_src is empty when it should be a list of library source files for the ${library} library")
+  endif("${lib_src}" STREQUAL "")
+
+  if("${namespace}" STREQUAL "")
+    message(FATAL_ERROR "namespace is empty when it should be the namespace string for the ALIAS library corresponding to the  ${library} library")
+  endif("${namespace}" STREQUAL "")
+
+  # Sanity check that all relevant variables have been DEFINED (which is different from the
+  # sanity check for non-empty values above.)
+  set(variables_list
+    library
+    lib_src
+    tll_arguments
+    namespace
+    BUILD_SHARED_LIBS
+    NON_TRANSITIVE
+    ${library}_SOVERSION
+    ${library}_VERSION
+    CMAKE_INSTALL_LIBDIR
+    USE_RPATH
+    )
+
+  foreach(variable ${variables_list})
+    if(NOT DEFINED ${variable})
+      message(FATAL_ERROR "${variable} = NOT DEFINED")
+    endif(NOT DEFINED ${variable})
+  endforeach(variable ${variables_list})
+
+  add_library(${library} ${lib_src})
+  add_library(${namespace}${library} ALIAS ${library})
+
+  if(NOT "${tll_arguments}" STREQUAL "")
+    if(NON_TRANSITIVE)
+      target_link_libraries(${library} PRIVATE ${tll_arguments})
+    else(NON_TRANSITIVE)
+      target_link_libraries(${library} PUBLIC ${tll_arguments})
+    endif(NON_TRANSITIVE)
+  endif(NOT "${tll_arguments}" STREQUAL "")
+
+  if(USE_RPATH)
     filter_rpath(LIB_INSTALL_RPATH)
+    if(LIB_INSTALL_RPATH)
+      set_target_properties(
+	${library}
+	PROPERTIES
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	)
+    endif(LIB_INSTALL_RPATH)
+  else(USE_RPATH)
+    # INSTALL_NAME_DIR only relevant to Mac OS X
+    # systems.  Also, this property is only set when rpath is
+    # not used (because otherwise it would supersede
+    # rpath).
     set_target_properties(
       ${library}
       PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      INSTALL_NAME_DIR "${CMAKE_INSTALL_LIBDIR}"
       )
-  else(USE_RPATH AND LIB_INSTALL_RPATH)
-    set_target_properties(
-      ${library}
-      PROPERTIES
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  endif(USE_RPATH AND LIB_INSTALL_RPATH)
+  endif(USE_RPATH)
 
   set_target_properties(
     ${library}
     PROPERTIES
     SOVERSION ${${library}_SOVERSION}
     VERSION ${${library}_VERSION}
-    # This allows PLplot static library builds to
+    # This allows static library builds to
     # be linked by shared libraries.
     POSITION_INDEPENDENT_CODE ON
     )
@@ -287,11 +357,10 @@ function(set_library_properties library)
     # My tests indicate that although repeat calls to this function
     # will keep appending duplicate "USINGDLL" to the list of
     # COMPILE_DEFINITIONS, apparently those dups are removed before
-    # compilation so we don't have to worry about appending those dups here.
+    # compilation so we don't have to be concerned about appending those dups here.
     set_property(TARGET ${library}
       APPEND PROPERTY
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-
-endfunction(set_library_properties library)
+endfunction(build_library library lib_src tll_arguments namespace)

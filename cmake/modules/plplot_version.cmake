@@ -35,7 +35,7 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 #     library version numbers the same for the release.
 
 # N.B. all these variables must include the exact library name
-# so that set_library_properties function works correctly.
+# so that the build_library function works correctly.
 
 # Libraries with source code in the lib subdirectory tree.
 set(nistcd_SOVERSION 0)

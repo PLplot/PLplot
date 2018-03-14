@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2007 Werner Smekal
-# Copyright (C) 2015-2016 Alan W. Irwin
+# Copyright (C) 2015-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -63,35 +63,27 @@ if(ENABLE_wxwidgets)
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-  # Create plplotwxwidgets library
-  add_library(plplotwxwidgets ${plplotwxwidgets_LIB_SRCS})
-
   set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
     PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
     )
 
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
+  endif(USE_RPATH)
+
+  build_library(plplotwxwidgets "${plplotwxwidgets_LIB_SRCS}" "PLPLOT::plplot;PLPLOT::plplotcxx;${wxwidgets_LINK_FLAGS}" PLPLOT::)
+
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   IF(wxWidgets_DEFINITIONS)
-    SET_PROPERTY(DIRECTORY APPEND
+    set_property(TARGET plplotwxwidgets APPEND
       PROPERTY COMPILE_DEFINITIONS ${wxWidgets_DEFINITIONS})
   ENDIF(wxWidgets_DEFINITIONS)
 
   IF(wxWidgets_DEFINITIONS_DEBUG)
-    SET_PROPERTY(DIRECTORY APPEND
+    set_property(TARGET plplotwxwidgets APPEND
       PROPERTY COMPILE_DEFINITIONS_DEBUG ${wxWidgets_DEFINITIONS_DEBUG})
   ENDIF(wxWidgets_DEFINITIONS_DEBUG)
-
-  if(NON_TRANSITIVE)
-    target_link_libraries(plplotwxwidgets PRIVATE plplot plplotcxx ${wxwidgets_LINK_FLAGS})
-  else(NON_TRANSITIVE)
-    target_link_libraries(plplotwxwidgets PUBLIC plplot plplotcxx ${wxwidgets_LINK_FLAGS})
-  endif(NON_TRANSITIVE)
-
-  if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
-    list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
-  endif(USE_RPATH)
-  set_library_properties(plplotwxwidgets)
 
   # Install library in lib/
   install(TARGETS plplotwxwidgets
