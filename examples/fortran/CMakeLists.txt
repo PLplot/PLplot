@@ -1,7 +1,7 @@
 # examples/fortran/CMakeLists.txt
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #

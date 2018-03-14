@@ -2,7 +2,7 @@
 ### Process this file with cmake to produce Makefile
 ###
 # Copyright (C) 2014 Hazen Babcock
-# Copyright (C) 2016 Alan W. Irwin
+# Copyright (C) 2016-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
