@@ -375,12 +375,10 @@ This search found some hits, but all seem to be innocuous except possibly
 for the following doxygen error
 
 /tmp/plplot-dist-prep/build_dir/make_prebuild_dist.out:error: NamespaceDef::insertMembers(): member `_swig_property' with class scope `' inserted in namespace scope `plplotc'!
-/tmp/plplot-dist-prep/build_dir/make_prebuild_dist.out:error: NamespaceDef::insertMembers(): member `_swig_property' with class scope `' inserted in namespace scope `plplotc_fixed'!
 
-(I count this as one error because those two python files are duplicates of each other.)
-However, I can find no issues with the doxygen-produced documentation of plplotc.py (and
-plplotc_fixed.py).  So I attribute this error to some issue with doxygen parsing
-of python.
+However, I can find no issues with the doxygen-produced documentation
+of plplotc.py. So I attribute this error to some issue with doxygen
+parsing of python.
 
 Look at the ctest results:
 

@@ -947,7 +947,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt4_example
 	plplot_pyqt4
 	python_examples
-	_plplotc_fixed
+	_plplotc
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -975,7 +975,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt5_example
 	plplot_pyqt5
 	python_examples
-	_plplotc_fixed
+	_plplotc
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -1112,7 +1112,7 @@ if(BUILD_TEST)
 	  VERBATIM
 	  )
 	add_dependencies(test_pytkdemo
-	  _plplotc_fixed
+	  _plplotc
 	  _Pltk_init
 	  python_examples
 	  ${TARGET_tclIndex_tcl}

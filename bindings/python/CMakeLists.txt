@@ -171,33 +171,14 @@ if(ENABLE_python)
       )
   endif(WIN32_AND_NOT_CYGWIN)
 
-  # Fix up the swig-generated plplotc.py code to allow UTF-8 help strings.
+  # Fix up the swig-generated plplotc.py code to allow UTF-8 help strings for the python2 case.
 
-  # Note the DEPENDS only brings in a file dependency on the shared
-  # object and not ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py that is also
-  # built by swig.  Therefore, when the _plplotc_fixed target is run
-  # the following command is only executed if
-  # ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py is outdated relative
-  # to the shared object and it ignores the dating of
-  # ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py.  Thus, that file can be
-  # overwritten by the command below without affecting whether the
-  # custom command is run or not.
-  add_custom_command(
-    OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
-    COMMAND ${SED_EXECUTABLE} -e "1s?^\\(.*\\)\$?\\1  It uses coding: utf-8?" < ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py > ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
-    DEPENDS _plplotc
-    VERBATIM
+  if(${PYTHON_VERSION} VERSION_LESS "3.0.0")
+    add_custom_command(TARGET _plplotc POST_BUILD
+      COMMAND ${SED_EXECUTABLE} -i -e "1s?^\\(.*\\)\$?\\1  It uses coding: utf-8?" ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+      VERBATIM
     )
-
-  # Note the ALL means the install below must be for the fixed version of plplotc.py
-  add_custom_target(
-    _plplotc_fixed ALL
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplotc_fixed.py
-    )
-  add_dependencies(_plplotc_fixed _plplotc)
+  endif(${PYTHON_VERSION} VERSION_LESS "3.0.0")
 
   install(
     TARGETS _plplotc
