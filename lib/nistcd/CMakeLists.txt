@@ -1,7 +1,4 @@
 # lib/nistcd/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -41,7 +38,7 @@ if(PLD_cgm)
     PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
     )
 
-  build_library( nistcd "${cd_LIB_SRCS}" "" PLPLOT:: )
+  configure_library_build(nistcd "" "${cd_LIB_SRCS}" "")
 
   option(TEST_NISTCD "Test libnistcd" ON)
   if(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)

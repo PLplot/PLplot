@@ -1,6 +1,4 @@
 # bindings/fortran/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006 Andrew Ross
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
@@ -171,7 +169,7 @@ EXPORTS
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
   endif(USE_RPATH)
 
-  build_library(plplotfortran "${plplotfortran_LIB_SRCS}" PLPLOT::plplot PLPLOT::)
+  configure_library_build(plplotfortran "" "${plplotfortran_LIB_SRCS}" PLPLOT::plplot)
 
   install(TARGETS plplotfortran
     EXPORT export_plplot

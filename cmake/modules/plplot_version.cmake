@@ -35,7 +35,7 @@ set(CPACK_PACKAGE_VERSION_PATCH ${PLPLOT_VERSION_PATCH})
 #     library version numbers the same for the release.
 
 # N.B. all these variables must include the exact library name
-# so that the build_library function works correctly.
+# so that the configure_library_build function works correctly.
 
 # Libraries with source code in the lib subdirectory tree.
 set(nistcd_SOVERSION 0)
@@ -81,3 +81,6 @@ set(plplotwxwidgets_VERSION ${plplotwxwidgets_SOVERSION}.2.1)
 
 set(plplotada_SOVERSION 2)
 set(plplotada_VERSION ${plplotada_SOVERSION}.1.1)
+
+set(smokeplplotqt_SOVERSION 0)
+set(smokeplplotqt_VERSION ${smokeplplotqt_SOVERSION}.0.0)

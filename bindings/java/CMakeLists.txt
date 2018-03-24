@@ -1,6 +1,4 @@
 # bindings/java/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006 Andrew Ross
 # Copyright (C) 2017-2018 Alan W. Irwin
 
@@ -157,12 +155,10 @@ if(ENABLE_java)
   # Create swig-generated java files and swig-generated C wrapper source
   # code.  Also, build that source code into a shared object (a.k.a. plug-in)
   # that can be dynamically loaded by java.
-  swig_add_library(plplotjavac_wrap LANGUAGE java TYPE MODULE SOURCES plplotjavac.i)
-  # The shared object must be linked against the core PLplot library.
-  swig_link_libraries(plplotjavac_wrap plplot)
+  configure_library_build(plplotjavac_wrap java plplotjavac.i PLPLOT::plplot)
 
   # Create config.java.  Other generated java files created by swig above.
-  set(PLPLOTJAVAC_WRAP_DLL $<TARGET_FILE_NAME:plplotjavac_wrap>)
+  set(PLPLOTJAVAC_WRAP_DLL $<TARGET_FILE_NAME:PLPLOT::${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}>)
   configure_file_generate(
     ${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
     ${CMAKE_CURRENT_BINARY_DIR}/config.java
@@ -172,28 +168,19 @@ if(ENABLE_java)
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     set_target_properties(
-      plplotjavac_wrap
+      ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   else(USE_RPATH)
     set_target_properties(
-      plplotjavac_wrap
+      ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}
       PROPERTIES
       INSTALL_NAME_DIR "${JAVAWRAPPER_DIR}"
       )
   endif(USE_RPATH)
 
-  # Ensure we get the correct suffix for OS-X
-  if(APPLE)
-    set_target_properties(
-      plplotjavac_wrap
-      PROPERTIES
-      SUFFIX ".dylib"
-      )
-  endif(APPLE)
-
-  install(TARGETS plplotjavac_wrap LIBRARY DESTINATION ${JAVAWRAPPER_DIR})
+  install(TARGETS ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME} LIBRARY DESTINATION ${JAVAWRAPPER_DIR})
 
   set(JAVA_CLASSES)
   foreach( srcfile ${JAVA_FILES_FULL} )
@@ -216,7 +203,7 @@ if(ENABLE_java)
   # Ensure that swig is executed before we try to compile the java
   # classes which file-depend (see above custom_command DEPENDS) on
   # the java files created by swig (amongst others).
-  add_dependencies(plplot_core plplotjavac_wrap)
+  add_dependencies(plplot_core PLPLOT::${SWIG_MODULE_plplotjavac_wrap_REAL_NAME})
 
   # Installed as part of the example/java directory
   #install(FILES ${CMAKE_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})

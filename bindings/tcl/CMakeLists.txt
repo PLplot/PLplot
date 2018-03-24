@@ -1,6 +1,4 @@
 # bindings/tcl/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -96,7 +94,7 @@ if(ENABLE_tcl)
     if(USE_RPATH)
       set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
     endif(USE_RPATH)
-    build_library(tclmatrix "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}" PLPLOT::)
+    configure_library_build(tclmatrix "" "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}")
 
     install(TARGETS tclmatrix
       EXPORT export_plplot
@@ -223,7 +221,7 @@ if(ENABLE_tcl)
       get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
       list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
     endif(USE_RPATH)
-    build_library(plplottcltk "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}" PLPLOT::)
+    configure_library_build(plplottcltk "" "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}")
 
     install(TARGETS plplottcltk
       EXPORT export_plplot
@@ -333,7 +331,7 @@ if(ENABLE_tcl)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
   endif(USE_RPATH)
 
-  build_library(plplottcltk_Main "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}" PLPLOT::)
+  configure_library_build(plplottcltk_Main "" "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}")
 
   install(TARGETS plplottcltk_Main
     EXPORT export_plplot

@@ -1,6 +1,4 @@
 # bindings/qt_gui/pyqt4/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2009 Hazen Babcock
 # Copyright (C) 2009-2018 Alan W. Irwin
 #
@@ -62,12 +60,23 @@ if(ENABLE_pyqt4)
     ${PYTHON_INCLUDE_PATH}
     )
 
-  add_library(plplot_pyqt4 MODULE ${plplot_pyqt4_SRC})
-  if(BUILD_SHARED_LIBS)
-    set_target_properties(plplot_pyqt4 PROPERTIES
-      COMPILE_DEFINITIONS "USINGDLL"
+  if(ENABLE_DYNDRIVERS)
+    set(pyqt4_tll_list
+      PLPLOT::plplotqt
+      PLPLOT::plplot
+      ${PYTHON_LIBRARIES}
+      ${QT_LIBRARIES}
       )
-  endif(BUILD_SHARED_LIBS)
+  else(ENABLE_DYNDRIVERS)
+    # With static device drivers, all the plplotqt code is
+    # in the plplot library so plplotqt becomes redundant.
+    set(pyqt4_tll_list
+      PLPLOT::plplot
+      ${PYTHON_LIBRARIES}
+      ${QT_LIBRARIES}
+      )
+  endif(ENABLE_DYNDRIVERS)
+  configure_library_build(plplot_pyqt4 MODULE "${plplot_pyqt4_SRC}" "${pyqt4_tll_list}")
 
   if(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     # The combination of python3 (at least for version 3.4) and sip
@@ -93,24 +102,6 @@ if(ENABLE_pyqt4)
     set_target_properties(plplot_pyqt4 PROPERTIES PREFIX "")
   endif(WIN32_OR_CYGWIN)
 
-  if(ENABLE_DYNDRIVERS)
-    target_link_libraries(
-      plplot_pyqt4
-      plplotqt
-      plplot
-      ${PYTHON_LIBRARIES}
-      ${QT_LIBRARIES}
-      )
-  else(ENABLE_DYNDRIVERS)
-    # With static device drivers, all the plplotqt code is
-    # in the plplot library so plplotqt becomes redundant.
-    target_link_libraries(
-      plplot_pyqt4
-      plplot
-      ${PYTHON_LIBRARIES}
-      ${QT_LIBRARIES}
-      )
-  endif(ENABLE_DYNDRIVERS)
   add_dependencies(plplot_pyqt4 generate_pyqt4_source)
 
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES

@@ -1,6 +1,4 @@
 # bindings/lua/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2008 Werner Smekal
 # Copyright (C) 2017-2018 Alan W. Irwin
 
@@ -44,35 +42,25 @@ if(ENABLE_lua)
   set(SWIG_MODULE_plplotluac_EXTRA_DEPS
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
 
-  # Set up swig + c wrapper.
-  swig_add_library(plplotluac LANGUAGE lua TYPE MODULE SOURCES plplotluac.i)
-  swig_link_libraries(plplotluac plplot ${LUA_LIBRARIES})
+  # Configure build of swig-generated C wrapper.
+  configure_library_build(plplotluac lua plplotluac.i "PLPLOT::plplot;${LUA_LIBRARIES}")
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     set_target_properties(
-      plplotluac
+      ${SWIG_MODULE_plplotluac_REAL_NAME}
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   else(USE_RPATH)
     set_target_properties(
-      plplotluac
+      ${SWIG_MODULE_plplotluac_REAL_NAME}
       PROPERTIES
       INSTALL_NAME_DIR "${LUA_DIR}"
       )
   endif(USE_RPATH)
 
-  # Ensure we get the correct suffix for OS-X
-  if(APPLE)
-    set_target_properties(
-      plplotluac
-      PROPERTIES
-      SUFFIX ".dylib"
-      )
-  endif(APPLE)
-
-  install(TARGETS plplotluac
+  install(TARGETS ${SWIG_MODULE_plplotluac_REAL_NAME}
     EXPORT export_plplot
     LIBRARY
     DESTINATION ${LUA_DIR}

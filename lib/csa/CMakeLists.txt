@@ -22,7 +22,7 @@ if(WITH_CSA)
     csa.c
     )
 
-  build_library(csirocsa "${csirocsa_LIB_SRCS}" "${MATH_LIB}" PLPLOT::)
+  configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}")
 
   install(TARGETS csirocsa
     EXPORT export_plplot

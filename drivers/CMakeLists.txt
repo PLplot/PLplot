@@ -1,7 +1,4 @@
 # drivers/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -103,14 +100,12 @@ if(ENABLE_DYNDRIVERS)
 
     if(SOURCE_ROOT_NAME STREQUAL "qt")
       if(ANY_QT_DEVICE)
-	add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
 	if(PLPLOT_USE_QT5)
 	  # According to advice from Steve Kelly on the Cmake list, the Qt5
 	  # Gui component is a dependency of the Qt5 Svg component so is not
 	  # needed here, but I will leave it in since it is informative.
-	  target_link_libraries(
-	    ${SOURCE_ROOT_NAME}
-	    plplot
+	  set(qt_tll_list
+	    PLPLOT::plplot
 	    ${MATH_LIB}
 	    ${${SOURCE_ROOT_NAME}_TARGETS}
 	    Qt5::Svg Qt5::Gui Qt5::PrintSupport
@@ -120,29 +115,31 @@ if(ENABLE_DYNDRIVERS)
 	    message(FATAL_ERROR "Internal build system inconsistency. QT_LIBRARIESis empty but it should be populated")
 	  endif(NOT QT_LIBRARIES)
 
-	  target_link_libraries(
-	    ${SOURCE_ROOT_NAME}
-	    plplot
+	  set(qt_tll_list
+	    PLPLOT::plplot
 	    ${MATH_LIB}
 	    ${QT_LIBRARIES}
 	    ${${SOURCE_ROOT_NAME}_TARGETS}
 	    )
+	endif(PLPLOT_USE_QT5)
+
+	configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${qt_tll_list}")
+	if(NOT PLPLOT_USE_QT5)
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
 	  set_qt4_target_properties(${SOURCE_ROOT_NAME})
-	endif(PLPLOT_USE_QT5)
+	endif(NOT PLPLOT_USE_QT5)
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
       endif(ANY_QT_DEVICE)
     elseif(SOURCE_ROOT_NAME STREQUAL "wxwidgets")
-      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-      target_link_libraries(
-	${SOURCE_ROOT_NAME}
-	plplot
+      set(wx_tll_list
+	PLPLOT::plplot
 	${MATH_LIB}
 	${RT_LIB}
 	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	${${SOURCE_ROOT_NAME}_TARGETS}
 	)
+      configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${wx_tll_list}")
       if(PLD_wxwidgets OR PLD_wxpng)
 	set_property(TARGET ${SOURCE_ROOT_NAME}
 	  APPEND PROPERTY
@@ -151,27 +148,36 @@ if(ENABLE_DYNDRIVERS)
       endif(PLD_wxwidgets OR PLD_wxpng)
 
     else(SOURCE_ROOT_NAME STREQUAL "qt")
-      add_library(${SOURCE_ROOT_NAME} MODULE ${${SOURCE_ROOT_NAME}_SOURCE})
-      target_link_libraries(
-	${SOURCE_ROOT_NAME}
-	plplot
+      set(generic_tll_list
+	PLPLOT::plplot
 	${MATH_LIB}
 	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	${${SOURCE_ROOT_NAME}_TARGETS}
 	)
+      configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${generic_tll_list}")
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
 
-    # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
-    # each driver in ${DRIVERS_LIST}.  This is only used for the
-    # install-tree rpath since cmake handles the build-tree rpath
-    # automatically (so long as full pathnames to libraries are used).
-    # Order is important here because of /usr/lib concerns.
-    set(
-      ${SOURCE_ROOT_NAME}_RPATH
-      ${LIB_DIR}
-      ${${SOURCE_ROOT_NAME}_RPATH}
-      ${libplplot_RPATH}
-      )
+    if(USE_RPATH)
+      # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
+      # each driver in ${DRIVERS_LIST}.  This is only used for the
+      # install-tree rpath since cmake handles the build-tree rpath
+      # automatically (so long as full pathnames to libraries are used).
+      # Order is important here because of /usr/lib concerns.
+      set(
+	${SOURCE_ROOT_NAME}_RPATH
+	${LIB_DIR}
+	${${SOURCE_ROOT_NAME}_RPATH}
+	${libplplot_RPATH}
+	)
+      #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
+      set_target_properties(
+	${SOURCE_ROOT_NAME}
+	PROPERTIES
+	INSTALL_RPATH
+	"${${SOURCE_ROOT_NAME}_RPATH}"
+	)
+    endif(USE_RPATH)
+
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix
     # should be set in a platform-dependent manner in order for libltdl
@@ -184,30 +190,12 @@ if(ENABLE_DYNDRIVERS)
       # Mac OS X have been tested so far.
       set(DYNAMIC_SUFFIX ".so")
     endif(WIN32_OR_CYGWIN)
-
-    #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
-    if(USE_RPATH)
-      set_target_properties(
-	${SOURCE_ROOT_NAME}
-	PROPERTIES
-	PREFIX ""
-	SUFFIX ${DYNAMIC_SUFFIX}
-	INSTALL_RPATH
-	"${${SOURCE_ROOT_NAME}_RPATH}"
-	)
-    else(USE_RPATH)
-      set_target_properties(
-	${SOURCE_ROOT_NAME}
-	PROPERTIES
-	PREFIX ""
-	SUFFIX ${DYNAMIC_SUFFIX}
-	)
-    endif(USE_RPATH)
-    if(BUILD_SHARED_LIBS)
-      set_target_properties(${SOURCE_ROOT_NAME} PROPERTIES
-	COMPILE_DEFINITIONS "USINGDLL"
-	)
-    endif(BUILD_SHARED_LIBS)
+    set_target_properties(
+      ${SOURCE_ROOT_NAME}
+      PROPERTIES
+      PREFIX ""
+      SUFFIX ${DYNAMIC_SUFFIX}
+      )
 
     if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
       add_custom_command(

@@ -78,41 +78,19 @@ if(ENABLE_smoke)
   # libplplotqt symbols may normally not be exported so linking might
   # not work at all for that case.  So until I understand more of what
   # is going on, I will ignore automoc here.
-  add_library(smokeplplotqt ${plplot_smoke_SRC})
-  if(BUILD_SHARED_LIBS)
-    set_target_properties(smokeplplotqt PROPERTIES
-      COMPILE_DEFINITIONS "USINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-
-  target_link_libraries(
-    smokeplplotqt
-    plplotqt
-    plplot
+  set(smokeplplotqt_tll_list
+    PLPLOT::plplotqt
+    PLPLOT::plplot
     ${SMOKE_QTCORE_LIBRARY}
     ${SMOKE_QTGUI_LIBRARY}
     ${QT_LIBRARIES}
     )
+
+  configure_library_build(smokeplplotqt "" "${plplot_smoke_SRC}" "${smokeplplotqt_tll_list}")
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
   set_qt4_target_properties(smokeplplotqt)
 
   add_dependencies(smokeplplotqt generate_smoke_source)
-
-  if(USE_RPATH)
-
-    set_target_properties(
-      smokeplplotqt
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-
-  else(USE_RPATH)
-    set_target_properties(
-      smokeplplotqt
-      PROPERTIES
-      INSTALL_NAME_DIR "${LIB_DIR}"
-      )
-  endif(USE_RPATH)
 
   install(TARGETS smokeplplotqt
     EXPORT export_plplot

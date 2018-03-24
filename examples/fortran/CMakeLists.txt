@@ -1,6 +1,4 @@
 # examples/fortran/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -79,10 +77,7 @@ else(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(CORE_BUILD)
-  set(plfortrandemolib_LIB_SRCS plfortrandemolib.f90)
-
-  add_library(plfortrandemolib STATIC ${plfortrandemolib_LIB_SRCS})
-  target_link_libraries(plfortrandemolib plplotfortran)
+  configure_library_build(plfortrandemolib STATIC plfortrandemolib.f90 PLPLOT::plplotfortran)
 
   install(TARGETS plfortrandemolib
     EXPORT export_plplot

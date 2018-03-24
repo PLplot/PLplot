@@ -1,6 +1,5 @@
 # -*- mode: cmake -*-
 # bindings/ocaml/plcairo/CMakeLists.txt
-### Process this file with cmake to produce Makefile
 #
 #
 # Copyright (C) 2008 Andrew Ross
@@ -250,9 +249,8 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     DESTINATION ${OCAML_INSTALL_DIR}/plcairo
     )
 
-  # Shared library stubs go in stublibs.  Use SO_PERMISSIONS to
-  # be consistent with permissions used for shared objects created
-  # by the add_library command.
+  # Shared library stubs go in stublibs.  Use SO_PERMISSIONS to be
+  # consistent with permissions used for other shared objects.
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/dllplcairo_stubs.so
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs

@@ -45,7 +45,7 @@ if(PL_HAVE_QHULL)
     list(APPEND csironn_LINK_LIBRARIES ${MATH_LIB})
   endif(MATH_LIB)
 
-  build_library(csironn "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}" PLPLOT::)
+  configure_library_build(csironn "" "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}")
 
   install(TARGETS csironn
     EXPORT export_plplot

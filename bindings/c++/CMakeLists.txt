@@ -1,6 +1,4 @@
 # bindings/c++/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006 Andrew Ross
 # Copyright (C) 2015-2018 Alan W. Irwin
 #
@@ -40,7 +38,7 @@ if(ENABLE_cxx)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
   endif(USE_RPATH)
 
-  build_library(plplotcxx "${plplotcxx_LIB_SRCS}" PLPLOT::plplot PLPLOT::)
+  configure_library_build(plplotcxx "" "${plplotcxx_LIB_SRCS}" PLPLOT::plplot)
 
   # Install library in lib/
   install(TARGETS plplotcxx

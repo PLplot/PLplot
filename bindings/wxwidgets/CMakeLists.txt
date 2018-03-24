@@ -1,6 +1,4 @@
 # bindings/wxwidgets/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2007 Werner Smekal
 # Copyright (C) 2015-2018 Alan W. Irwin
 #
@@ -72,7 +70,7 @@ if(ENABLE_wxwidgets)
     list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
   endif(USE_RPATH)
 
-  build_library(plplotwxwidgets "${plplotwxwidgets_LIB_SRCS}" "PLPLOT::plplot;PLPLOT::plplotcxx;${wxwidgets_LINK_FLAGS}" PLPLOT::)
+  configure_library_build(plplotwxwidgets "" "${plplotwxwidgets_LIB_SRCS}" "PLPLOT::plplot;PLPLOT::plplotcxx;${wxwidgets_LINK_FLAGS}")
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   IF(wxWidgets_DEFINITIONS)

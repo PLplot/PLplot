@@ -1,6 +1,4 @@
 # bindings/ada/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2007-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -88,7 +86,7 @@ if(ENABLE_ada)
     get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
   endif(USE_RPATH)
 
-  build_library(plplotada "${plplotada_BODY_SRCS}" "" PLPLOT::)
+  configure_library_build(plplotada "" "${plplotada_BODY_SRCS}" "")
 
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed

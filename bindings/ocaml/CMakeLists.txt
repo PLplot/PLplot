@@ -1,6 +1,5 @@
 # -*- mode: cmake -*-
 # bindings/ocaml/CMakeLists.txt
-### Process this file with cmake to produce Makefile
 #
 #
 # Copyright (C) 2008 Andrew Ross
@@ -522,9 +521,8 @@ if(ENABLE_ocaml)
       )
   endif(OCAMLOPT)
 
-  # Shared library stubs go in stublibs.  Use SO_PERMISSIONS to
-  # be consistent with permissions used for shared objects created
-  # by the add_library command.
+  # Shared library stubs go in stublibs.  Use SO_PERMISSIONS to be
+  # consistent with permissions used for other shared objects.
   install(
     FILES ${CMAKE_CURRENT_BINARY_DIR}/dllinstalled_plplot_stubs.so
     DESTINATION ${OCAML_INSTALL_DIR}/stublibs

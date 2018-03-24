@@ -95,23 +95,23 @@ function(list_example_files path device suffix output_list)
       )
     set(familying OFF)
   endif(
-      ${device} STREQUAL "png" OR
-      ${device} STREQUAL "pngcairo" OR
-      ${device} STREQUAL "epscairo" OR
-      ${device} STREQUAL "jpeg" OR
-      ${device} STREQUAL "xfig" OR
-      ${device} STREQUAL "svg" OR
-      ${device} STREQUAL "svgcairo" OR
-      ${device} STREQUAL "bmpqt" OR
-      ${device} STREQUAL "jpgqt" OR
-      ${device} STREQUAL "pngqt" OR
-      ${device} STREQUAL "ppmqt" OR
-      ${device} STREQUAL "tiffqt" OR
-      ${device} STREQUAL "svgqt" OR
-      ${device} STREQUAL "epsqt" OR
-      ${device} STREQUAL "pdfqt" OR
-      ${device} STREQUAL "gif"
-      )
+    ${device} STREQUAL "png" OR
+    ${device} STREQUAL "pngcairo" OR
+    ${device} STREQUAL "epscairo" OR
+    ${device} STREQUAL "jpeg" OR
+    ${device} STREQUAL "xfig" OR
+    ${device} STREQUAL "svg" OR
+    ${device} STREQUAL "svgcairo" OR
+    ${device} STREQUAL "bmpqt" OR
+    ${device} STREQUAL "jpgqt" OR
+    ${device} STREQUAL "pngqt" OR
+    ${device} STREQUAL "ppmqt" OR
+    ${device} STREQUAL "tiffqt" OR
+    ${device} STREQUAL "svgqt" OR
+    ${device} STREQUAL "epsqt" OR
+    ${device} STREQUAL "pdfqt" OR
+    ${device} STREQUAL "gif"
+    )
   set(file_list)
 
   foreach(example_pages ${examples_pages_LIST})
@@ -125,24 +125,24 @@ function(list_example_files path device suffix output_list)
     endif(${suffix} STREQUAL "a")
     if(familying)
       foreach(famnum RANGE 1 ${pages})
-	if(famnum LESS 10)
-	  set(famnum 0${famnum})
-	endif(famnum LESS 10)
-	list(APPEND file_list ${path}/${example}${suffix}${famnum}.${device})
-	if(traditional_example)
-	  list(APPEND file_list ${path}/${traditional_example}${suffix}${famnum}.${device})
-	endif(traditional_example)
+        if(famnum LESS 10)
+          set(famnum 0${famnum})
+        endif(famnum LESS 10)
+        list(APPEND file_list ${path}/${example}${suffix}${famnum}.${device})
+        if(traditional_example)
+          list(APPEND file_list ${path}/${traditional_example}${suffix}${famnum}.${device})
+        endif(traditional_example)
       endforeach(famnum RANGE 1 ${pages})
     else(familying)
       list(APPEND file_list ${path}/${example}${suffix}.${device})
       if(traditional_example)
-	list(APPEND file_list ${path}/${traditional_example}${suffix}.${device})
+        list(APPEND file_list ${path}/${traditional_example}${suffix}.${device})
       endif(traditional_example)
     endif(familying)
     if(NOT ${example} MATCHES "x.*14a")
       list(APPEND file_list ${path}/${example}${suffix}_${device}.txt)
       if(traditional_example)
-	list(APPEND file_list ${path}/${traditional_example}${suffix}_${device}.txt)
+        list(APPEND file_list ${path}/${traditional_example}${suffix}_${device}.txt)
       endif(traditional_example)
     endif(NOT ${example} MATCHES "x.*14a")
   endforeach(example_pages ${examples_pages_LIST})
@@ -239,26 +239,34 @@ function(configure_file_generate)
     )
 endfunction(configure_file_generate)
 
-function(build_library library lib_src tll_arguments namespace)
+function(configure_library_build library library_type lib_src tll_arguments)
   # This function should be duplicated for the PLplot, ephcom, and
-  # te_gen software projects.  Configure complete build of one of the
-  # PLplot, ephcom or te_gen libraries and corresponding namespaced
-  # ALIAS library using a combination of the
-  # add_library and target_link_libraries commands followed by setting
-  # relevant library properties.
+  # te_gen software projects.  Configure build of one of the PLplot,
+  # ephcom or te_gen libraries, modules (dll's), or swig modules and
+  # corresponding namespaced ALIAS library in a uniform way.  This
+  # function is implemented using a combination of the add_library and
+  # target_link_libraries (or swig_add_library and
+  # swig_link_libraries) commands followed by setting relevant library
+  # properties.
 
   # library contains a string corresponding to the target name of a library.
 
+  # library_type should be one of
+  # * empty string (in which case the library is one of SHARED or STATIC
+  #   depending on the value of BUILD_SHARED_LIBS)
+  # * SHARED (the library is built as a shared library)
+  # * STATIC (the library is built as a static library)
+  # * MODULE (the library is built as a dll)
+  # * <language> (where [case-insensitive] language is one of the languages supported by
+  # * swig, and library is built as a swig module.
+
   # lib_src contains a list of source files for the library.
 
-  # tll_arguments contains a list of arguments for target_link_libraries
+  # tll_arguments contains a list of arguments for (swig|target)_link_libraries
   # for the library.  If tll_arguments evaluates to a false value (e.g.,
-  # an empty string), then target_link_libraries will not be called.
+  # an empty string), then (swig|target)_link_libraries will not be called.
 
-  # namespace contains the namespace string for the ALIAS target corresponding
-  # to the library target.
-
-  # N.B. Actual arguments used for calls to build_library are values
+  # N.B. Actual arguments used for calls to configure_library_build are values
   # or lists of values and NOT variables.  Therefore, only one level
   # of dereferencing required to access the argument values.
 
@@ -277,90 +285,150 @@ function(build_library library lib_src tll_arguments namespace)
 
   # Sanity checks on values of argument variables:
   if("${library}" STREQUAL "")
-    message(FATAL_ERROR "library is empty when it should be a library target name")
+    message(FATAL_ERROR "configure_library_build: library is empty when it should be a library target name")
   endif("${library}" STREQUAL "")
 
+  if("${library_type}" STREQUAL "")
+    # If "${library_type}" is an empty string, then the library is built as static
+    # or shared depending on BUILD_SHARED_LIBS, and a swig module build is NOT
+    # being configured.
+    if(BUILD_SHARED_LIBS)
+      set(library_type SHARED)
+    else(BUILD_SHARED_LIBS)
+      set(library_type STATIC)
+    endif(BUILD_SHARED_LIBS)
+    set(if_swig_module OFF)
+  elseif("${library_type}" STREQUAL "STATIC" OR "${library_type}" STREQUAL "SHARED" OR "${library_type}" STREQUAL "MODULE")
+    # For these cases a a swig module build is NOT being configured.
+    set(if_swig_module OFF)
+  else("${library_type}" STREQUAL "")
+    # Assume the caller is trying to configure a build of a swig module by
+    # specifying the swig language as "${library_type}" (with any case).
+    set(if_swig_module ON)
+    # Lower case language used from now on.
+    string(TOLOWER "${library_type}" language)
+  endif("${library_type}" STREQUAL "")
+
   if("${lib_src}" STREQUAL "")
-    message(FATAL_ERROR "lib_src is empty when it should be a list of library source files for the ${library} library")
+    message(FATAL_ERROR "configure_library_build: lib_src is empty when it should be a list of library source files for the ${library} library")
   endif("${lib_src}" STREQUAL "")
 
-  if("${namespace}" STREQUAL "")
-    message(FATAL_ERROR "namespace is empty when it should be the namespace string for the ALIAS library corresponding to the  ${library} library")
-  endif("${namespace}" STREQUAL "")
+  # Sanity check that the external variable LIBRARY_NAMESPACE has been set correctly.
+  if(NOT "${LIBRARY_NAMESPACE}" MATCHES ".*::$")
+    message(FATAL_ERROR "configure_library_build:LIBRARY_NAMESPACE = ${LIBRARY_NAMESPACE} does not have the correct trailing \"::\"")
+  endif(NOT "${LIBRARY_NAMESPACE}" MATCHES ".*::$")
 
-  # Sanity check that all relevant variables have been DEFINED (which is different from the
-  # sanity check for non-empty values above.)
-  set(variables_list
-    library
-    lib_src
-    tll_arguments
-    namespace
-    BUILD_SHARED_LIBS
+  # Sanity check that all relevant external variables not checked
+  # above have been DEFINED.
+  set(variables_list)
+  list(APPEND variables_list
     NON_TRANSITIVE
-    ${library}_SOVERSION
-    ${library}_VERSION
-    CMAKE_INSTALL_LIBDIR
-    USE_RPATH
     )
 
-  foreach(variable ${variables_list})
-    if(NOT DEFINED ${variable})
-      message(FATAL_ERROR "${variable} = NOT DEFINED")
-    endif(NOT DEFINED ${variable})
-  endforeach(variable ${variables_list})
+  if(if_swig_module)
+    swig_add_library(${library} LANGUAGE "${language}" TYPE MODULE SOURCES ${lib_src})
+    # Propagate value of this variable (set in swig_add_library macro) to calling environment.
+    set(SWIG_MODULE_${library}_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME} PARENT_SCOPE)
+    # Create equivalent namespaced ALIAS library to be used whenever
+    # the library target is read only.
+    add_library(${LIBRARY_NAMESPACE}${SWIG_MODULE_${library}_REAL_NAME} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
 
-  add_library(${library} ${lib_src})
-  add_library(${namespace}${library} ALIAS ${library})
+    if(NOT "${tll_arguments}" STREQUAL "")
+      if(NON_TRANSITIVE)
+	target_link_libraries(${SWIG_MODULE_${library}_REAL_NAME} PRIVATE ${tll_arguments})
+      else(NON_TRANSITIVE)
+	target_link_libraries(${SWIG_MODULE_${library}_REAL_NAME} PUBLIC ${tll_arguments})
+      endif(NON_TRANSITIVE)
+    endif(NOT "${tll_arguments}" STREQUAL "")
 
-  if(NOT "${tll_arguments}" STREQUAL "")
-    if(NON_TRANSITIVE)
-      target_link_libraries(${library} PRIVATE ${tll_arguments})
-    else(NON_TRANSITIVE)
-      target_link_libraries(${library} PUBLIC ${tll_arguments})
-    endif(NON_TRANSITIVE)
-  endif(NOT "${tll_arguments}" STREQUAL "")
+    # It is assumed RPATH for swig-generated modules is handled
+    # externally, but set the following property to allow symbols to
+    # be visible in the module.
+    set_target_properties(
+      ${SWIG_MODULE_${library}_REAL_NAME}
+      PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  else(if_swig_module)
+    if("${library_type}" STREQUAL "SHARED")
+      list(APPEND variables_list
+	${library}_SOVERSION
+	${library}_VERSION
+	CMAKE_INSTALL_LIBDIR
+	USE_RPATH
+	)
+    endif("${library_type}" STREQUAL "SHARED")
 
-  if(USE_RPATH)
-    filter_rpath(LIB_INSTALL_RPATH)
-    if(LIB_INSTALL_RPATH)
+    foreach(variable ${variables_list})
+      if(NOT DEFINED ${variable})
+	message(FATAL_ERROR "configure_library_build: (external) ${variable} = NOT DEFINED")
+      endif(NOT DEFINED ${variable})
+    endforeach(variable ${variables_list})
+
+    add_library(${library} ${library_type} ${lib_src})
+    # Create equivalent namespaced ALIAS library to be used whenever
+    # the library target is read only.
+    add_library(${LIBRARY_NAMESPACE}${library} ALIAS ${library})
+
+    if(NOT "${tll_arguments}" STREQUAL "")
+      if(NON_TRANSITIVE)
+	target_link_libraries(${library} PRIVATE ${tll_arguments})
+      else(NON_TRANSITIVE)
+	target_link_libraries(${library} PUBLIC ${tll_arguments})
+      endif(NON_TRANSITIVE)
+    endif(NOT "${tll_arguments}" STREQUAL "")
+
+    # Set library target properties for just the SHARED, MODULE, and STATIC library cases.
+    if("${library_type}" STREQUAL "SHARED")
+      if(USE_RPATH)
+	# Use default setting for LIB_INSTALL_RPATH
+	if(NOT DEFINED LIB_INSTALL_RPATH)
+	  set(LIB_INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}")
+	endif(NOT DEFINED LIB_INSTALL_RPATH)
+
+	filter_rpath(LIB_INSTALL_RPATH)
+	if(LIB_INSTALL_RPATH)
+          set_target_properties(
+            ${library}
+            PROPERTIES
+            INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+            )
+	endif(LIB_INSTALL_RPATH)
+      else(USE_RPATH)
+	# INSTALL_NAME_DIR only relevant to Mac OS X
+	# systems.  Also, this property is only set when rpath is
+	# not used (because otherwise it would supersede
+	# rpath).
+	set_target_properties(
+          ${library}
+          PROPERTIES
+          INSTALL_NAME_DIR "${CMAKE_INSTALL_LIBDIR}"
+          )
+      endif(USE_RPATH)
+
       set_target_properties(
 	${library}
 	PROPERTIES
-	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	COMPILE_DEFINITIONS "USINGDLL"
+	SOVERSION ${${library}_SOVERSION}
+	VERSION ${${library}_VERSION}
 	)
-    endif(LIB_INSTALL_RPATH)
-  else(USE_RPATH)
-    # INSTALL_NAME_DIR only relevant to Mac OS X
-    # systems.  Also, this property is only set when rpath is
-    # not used (because otherwise it would supersede
-    # rpath).
-    set_target_properties(
-      ${library}
-      PROPERTIES
-      INSTALL_NAME_DIR "${CMAKE_INSTALL_LIBDIR}"
-      )
-  endif(USE_RPATH)
-
-  set_target_properties(
-    ${library}
-    PROPERTIES
-    SOVERSION ${${library}_SOVERSION}
-    VERSION ${${library}_VERSION}
-    # This allows static library builds to
-    # be linked by shared libraries.
-    POSITION_INDEPENDENT_CODE ON
-    )
-  if(BUILD_SHARED_LIBS)
-    # Use set_property here so can append "USINGDLL" to the
-    # COMPILE_DEFINITIONS list property if that property has been set
-    # before (or initiate that list property if it does not exist).
-    # My tests indicate that although repeat calls to this function
-    # will keep appending duplicate "USINGDLL" to the list of
-    # COMPILE_DEFINITIONS, apparently those dups are removed before
-    # compilation so we don't have to be concerned about appending those dups here.
-    set_property(TARGET ${library}
-      APPEND PROPERTY
-      COMPILE_DEFINITIONS "USINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-endfunction(build_library library lib_src tll_arguments namespace)
+    elseif("${library_type}" STREQUAL "MODULE")
+      # It is assumed RPATH for modules is handled externally, but set
+      # the following property to allow symbols to be visible in the
+      # module.
+      set_target_properties(
+	${library}
+	PROPERTIES
+	COMPILE_DEFINITIONS "USINGDLL"
+	)
+    elseif("${library_type}" STREQUAL "STATIC")
+      set_target_properties(
+	${library}
+	PROPERTIES
+	# This allows static library builds to be linked by shared libraries.
+	POSITION_INDEPENDENT_CODE ON
+	)
+    endif("${library_type}" STREQUAL "SHARED")
+  endif(if_swig_module)
+endfunction(configure_library_build library library_type lib_src tll_arguments)

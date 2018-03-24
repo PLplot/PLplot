@@ -1,7 +1,4 @@
 # src/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -300,7 +297,7 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   list(APPEND libplplot_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
-build_library(plplot "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}" PLPLOT::)
+configure_library_build(plplot "" "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}")
 add_dependencies(plplot plhershey-unicode.h_built)
 
 if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)

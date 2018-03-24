@@ -1,8 +1,5 @@
 # Top-level CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -65,11 +62,16 @@ set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.6.2)
 cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
 cmake_policy(VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
 project(plplot NONE)
+
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
   # Keep policy consistent for all platforms.
   cmake_policy(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION})
 endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+
+# This value used in configure_library_build function to provide the namespace
+# for build-tree ALIAS libraries.
+set(LIBRARY_NAMESPACE PLPLOT::)
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers

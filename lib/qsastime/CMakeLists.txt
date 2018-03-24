@@ -86,7 +86,7 @@ set(qsastime_LIB_SRCS
   qsastime.c dsplint.c
   )
 
-build_library(qsastime "${qsastime_LIB_SRCS}" "${MATH_LIB}" PLPLOT::)
+configure_library_build(qsastime "" "${qsastime_LIB_SRCS}" "${MATH_LIB}")
 add_dependencies(qsastime tai-utc.h_built deltaT.h_built)
 
 set(qsastime_INSTALLED_HEADERS

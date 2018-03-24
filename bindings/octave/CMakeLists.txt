@@ -1,7 +1,4 @@
 # bindings/octave/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -19,7 +16,7 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Build and install octave interface to PLplot and octave PLplot examples.
+# Build and install octave interface to PLplot.
 if(ENABLE_octave)
 
   add_subdirectory(PLplot)
@@ -90,18 +87,39 @@ if(ENABLE_octave)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
     )
 
-  # Set up swig + c wrapper.
-  swig_add_library(plplot_octave LANGUAGE octave TYPE MODULE SOURCES plplot_octave.i)
-  swig_link_libraries(
-    plplot_octave
-    plplot
+  # Configure build of swig-generated C++ wrapper.
+  set(octave_tll_list
+    PLPLOT::plplot
     "${OCTAVE_LIBRARIES}"
     "${OCTINTERP_LIBRARIES}"
     )
 
-  # Make sure plplot_stub.m is copied to build tree before plplot_octave
-  # is created so can use plplot_octave in normal way.
-  add_dependencies(plplot_octave plplot_stub.m_built)
+  configure_library_build(plplot_octave octave plplot_octave.i "${octave_tll_list}")
+
+  if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    # (Reasonable) assumption here is that OCTAVE_LIBRARIES and
+    # OCTINTERP_LIBRARIES have the same path.
+    get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
+    set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${OCTAVE_INSTALL_RPATH})
+    set_target_properties(
+      ${SWIG_MODULE_plplot_octave_REAL_NAME}
+      PROPERTIES
+      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+      )
+  else(USE_RPATH)
+    set_target_properties(
+      ${SWIG_MODULE_plplot_octave_REAL_NAME}
+      PROPERTIES
+      INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
+      )
+  endif(USE_RPATH)
+
+  # Make sure plplot_stub.m is copied to build tree before the
+  # ${SWIG_MODULE_plplot_octave_REAL_NAME} module is created so can
+  # use that module in the normal way.
+
+  add_dependencies(${SWIG_MODULE_plplot_octave_REAL_NAME} plplot_stub.m_built)
 
   # Need access elsewhere (examples/octave) to the file depends of
   # this custom target.
@@ -115,34 +133,11 @@ if(ENABLE_octave)
     DESTINATION ${PLPLOT_OCTAVE_DIR}
     )
 
-  if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
-    # (Reasonable) assumption here is that OCTAVE_LIBRARIES and
-    # OCTINTERP_LIBRARIES have the same path.
-    get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
-    set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${OCTAVE_INSTALL_RPATH})
-    set_target_properties(
-      plplot_octave
-      PROPERTIES
-      PREFIX ""
-      SUFFIX ".oct"
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-  else(USE_RPATH)
-    set_target_properties(
-      plplot_octave
-      PROPERTIES
-      PREFIX ""
-      SUFFIX ".oct"
-      INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
-      )
-  endif(USE_RPATH)
-
   # Have to be specific about permissions for some reason (probably
   # oct suffix).  Use SO_PERMISSIONS to be consistent with permissions
-  # used for other shared objects created by the add_library command.
+  # used for other shared objects.
 
-  install(TARGETS plplot_octave
+  install(TARGETS ${SWIG_MODULE_plplot_octave_REAL_NAME}
     EXPORT export_plplot
     LIBRARY
     DESTINATION ${OCTAVE_OCT_DIR}

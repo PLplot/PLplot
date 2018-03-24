@@ -48,7 +48,7 @@ if(BUILD_HERSHEY_FONTS)
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
     )
-  add_library(hershey STATIC ${libhershey_SRC})
+  configure_library_build(hershey STATIC "${libhershey_SRC}" "")
 
   add_executable(generate_stndfonts stndfont.c)
   if(BUILD_SHARED_LIBS)
@@ -56,7 +56,7 @@ if(BUILD_HERSHEY_FONTS)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(generate_stndfonts hershey plplot)
+  target_link_libraries(generate_stndfonts PLPLOT::hershey PLPLOT::plplot)
 
   add_executable(generate_xtndfonts xtndfont.c)
   if(BUILD_SHARED_LIBS)
@@ -64,6 +64,6 @@ if(BUILD_HERSHEY_FONTS)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(generate_xtndfonts hershey plplot)
+  target_link_libraries(generate_xtndfonts PLPLOT::hershey PLPLOT::plplot)
 
 endif(BUILD_HERSHEY_FONTS)

@@ -1,6 +1,4 @@
 # bindings/qt_gui/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -57,7 +55,7 @@ if(ENABLE_qt)
 	)
       #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
     endif(USE_RPATH)
-    build_library(plplotqt "${qt_SOURCE}" "${libplplotqt_LINK_LIBRARIES}" PLPLOT::)
+    configure_library_build(plplotqt "" "${qt_SOURCE}" "${libplplotqt_LINK_LIBRARIES}")
 
     if(NOT PLPLOT_USE_QT5)
       if(NOT QT_LIBRARIES)

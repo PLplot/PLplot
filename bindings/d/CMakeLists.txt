@@ -1,6 +1,4 @@
 # bindings/d/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2008 Werner Smekal
 # Copyright (C) 2015-2018 Alan W. Irwin
 #
@@ -32,19 +30,12 @@ if(ENABLE_d)
   )
 
   if(plplotdmd_SHARED)
-
     if(USE_RPATH)
       get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
     endif(USE_RPATH)
-    build_library(plplotdmd "${plplotdmd_LIB_SRCS}" PLPLOT::plplot PLPLOT:: )
+    configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
   else(plplotdmd_SHARED)
-    add_library(plplotdmd STATIC ${plplotdmd_LIB_SRCS})
-    if(NON_TRANSITIVE)
-      target_link_libraries(plplotdmd PRIVATE PLPLOT::plplot)
-    else(NON_TRANSITIVE)
-      target_link_libraries(plplotdmd PUBLIC PLPLOT::plplot)
-    endif(NON_TRANSITIVE)
-    add_library(PLPLOT::plplotdmd ALIAS plplotdmd)
+    configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
   endif(plplotdmd_SHARED)
 
   install(TARGETS plplotdmd

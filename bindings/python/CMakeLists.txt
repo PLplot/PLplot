@@ -1,6 +1,4 @@
 # bindings/python/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -50,7 +48,6 @@ if(ENABLE_python)
       )
   endif(ENABLE_tkX)
   include_directories(${python_interface_INCLUDE_PATHS})
-  get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
 
   # Implement _Pltk_init swig-generated Python extension module
   # that allows calling our Tcl/Tk code from python.  This result
@@ -62,56 +59,43 @@ if(ENABLE_python)
   # insure correct code to support _Pltk_init extension module is in
   # libplplot if ENABLE_DYNDRIVERS is OFF.
   if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
-    # Build _Pltk_init extension module with swig.
-    swig_add_library(Pltk_init LANGUAGE python TYPE MODULE SOURCES Pltk_init.i)
+
+    # Configure build of swig-generated C wrapper for pltk_init module.
     if(ENABLE_DYNDRIVERS)
-      swig_link_libraries( Pltk_init
-	plplot
-	plplottcltk
+      set(pltk_init_tll_list
+	PLPLOT::plplot
+	PLPLOT::plplottcltk
 	${PYTHON_LIBRARIES}
 	)
     else(ENABLE_DYNDRIVERS)
-      # Don't link to plplottcltk if ENABLE_tkX is false since all of
+      # Don't link to plplottcltk if ENABLE_DYNDRIVERS is false since all of
       # the plplottcltk code is already in plplot.  Therefore this
       # rule avoids redundant linking.
-      swig_link_libraries( Pltk_init
-	plplot
+      set(pltk_init_tll_list
+	PLPLOT::plplot
 	${PYTHON_LIBRARIES}
 	)
     endif(ENABLE_DYNDRIVERS)
 
+    configure_library_build(Pltk_init python Pltk_init.i "${pltk_init_tll_list}")
+
     if(USE_RPATH)
+      get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
       set_target_properties(
-	_Pltk_init
+	${SWIG_MODULE_Pltk_init_REAL_NAME}
 	PROPERTIES
 	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
 	)
     else(USE_RPATH)
       set_target_properties(
-	_Pltk_init
+	${SWIG_MODULE_Pltk_init_REAL_NAME}
 	PROPERTIES
 	INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
 	)
     endif(USE_RPATH)
 
-    if(WIN32_AND_NOT_CYGWIN)
-      set_target_properties(
-	_Pltk_init
-	PROPERTIES
-	SUFFIX ".pyd"
-	OUTPUT_NAME "_Pltk_init"
-	)
-    elseif(CYGWIN)
-      set_target_properties(
-	_Pltk_init
-	PROPERTIES
-	SUFFIX ".dll"
-	OUTPUT_NAME "_Pltk_init"
-	)
-    endif(WIN32_AND_NOT_CYGWIN)
-
     install(
-      TARGETS _Pltk_init
+      TARGETS ${SWIG_MODULE_Pltk_init_REAL_NAME}
       EXPORT export_plplot
       LIBRARY
       DESTINATION ${PYTHON_INSTDIR}
@@ -122,8 +106,7 @@ if(ENABLE_python)
     )
   endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
 
-  # Implement _plplotc swig-generated extension module
-
+  # Configure build of swig-generated C wrapper for plplotc module
   if(PL_DOUBLE)
     set(CMAKE_SWIG_FLAGS -DPL_DOUBLE_INTERFACE -DSWIG_PYTHON)
   else(PL_DOUBLE)
@@ -141,47 +124,31 @@ if(ENABLE_python)
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i
     )
 
-  # Set up swig + c wrapper.
-  # N.B. the python target has an underscore prepended automatically.
-  swig_add_library(plplotc LANGUAGE python TYPE MODULE SOURCES plplotc.i)
-
-  swig_link_libraries(plplotc plplot ${PYTHON_LIBRARIES})
+  set(plotc_tll_list
+    PLPLOT::plplot
+    ${PYTHON_LIBRARIES}
+    )
+  configure_library_build(plplotc python plplotc.i "${plotc_tll_list}")
 
   if(USE_RPATH)
     set_target_properties(
-      _plplotc
+      ${SWIG_MODULE_plplotc_REAL_NAME}
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   endif(USE_RPATH)
 
-  if(WIN32_AND_NOT_CYGWIN)
-    set_target_properties(
-      _plplotc
-      PROPERTIES
-      SUFFIX ".pyd"
-      OUTPUT_NAME "_plplotc"
-      )
-  elseif(CYGWIN)
-    set_target_properties(
-      _plplotc
-      PROPERTIES
-      SUFFIX ".dll"
-      OUTPUT_NAME "_plplotc"
-      )
-  endif(WIN32_AND_NOT_CYGWIN)
-
   # Fix up the swig-generated plplotc.py code to allow UTF-8 help strings for the python2 case.
 
   if(${PYTHON_VERSION} VERSION_LESS "3.0.0")
-    add_custom_command(TARGET _plplotc POST_BUILD
+    add_custom_command(TARGET ${SWIG_MODULE_plplotc_REAL_NAME} POST_BUILD
       COMMAND ${SED_EXECUTABLE} -i -e "1s?^\\(.*\\)\$?\\1  It uses coding: utf-8?" ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
       VERBATIM
     )
   endif(${PYTHON_VERSION} VERSION_LESS "3.0.0")
 
   install(
-    TARGETS _plplotc
+    TARGETS ${SWIG_MODULE_plplotc_REAL_NAME}
     EXPORT export_plplot
     LIBRARY
     DESTINATION ${PYTHON_INSTDIR}
