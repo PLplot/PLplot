@@ -1,8 +1,6 @@
 # examples/c++/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -92,6 +90,7 @@ if(BUILD_TEST)
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_BINARY_DIR}/include
       ${CMAKE_SOURCE_DIR}/lib/qsastime
+      ${CMAKE_BINARY_DIR}/lib/qsastime
       )
   else(CORE_BUILD)
     include_directories(${INCLUDE_DIR})
@@ -105,7 +104,7 @@ if(BUILD_TEST)
 	COMPILE_DEFINITIONS "USINGDLL"
 	)
     endif(BUILD_SHARED_LIBS)
-    target_link_libraries(x${STRING_INDEX} plplotcxx ${MATH_LIB})
+    target_link_libraries(x${STRING_INDEX} PLPLOT::plplotcxx ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_cxx x${STRING_INDEX})
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 endif(BUILD_TEST)
@@ -128,7 +127,7 @@ if(ENABLE_wxwidgets)
 	COMPILE_DEFINITIONS "USINGDLL"
 	)
     endif(BUILD_SHARED_LIBS)
-    target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
+    target_link_libraries(wxPLplotDemo PLPLOT::plplotwxwidgets PLPLOT::plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
   endif(BUILD_TEST)
   # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
   # for use in configuring Makefile.examples.
@@ -207,21 +206,21 @@ if(BUILD_TEST AND BUILD_qt_example)
 
   if(PLPLOT_USE_QT5)
     if(ENABLE_DYNDRIVERS)
-      target_link_libraries(qt_example plplotqt plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
+      target_link_libraries(qt_example PLPLOT::plplotqt PLPLOT::plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     else(ENABLE_DYNDRIVERS)
       # In this case plplot contains all the code in plplotqt so there is no
       # need to link to plplotqt at all, and in fact for some reason it
       # causes memory management issues to link to both plplot and plplotqt in this case.
-      target_link_libraries(qt_example plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
+      target_link_libraries(qt_example PLPLOT::plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     endif(ENABLE_DYNDRIVERS)
   else(PLPLOT_USE_QT5)
       if(ENABLE_DYNDRIVERS)
-      target_link_libraries(qt_example ${QT_LIBRARIES} plplotqt plplot)
+      target_link_libraries(qt_example ${QT_LIBRARIES} PLPLOT::plplotqt PLPLOT::plplot)
     else(ENABLE_DYNDRIVERS)
       # In this case plplot contains all the code in plplotqt so there is no
       # need to link to plplotqt at all, and in fact for some reason it
       # causes memory management issues to link to both plplot and plplotqt in this case.
-      target_link_libraries(qt_example ${QT_LIBRARIES} plplot)
+      target_link_libraries(qt_example ${QT_LIBRARIES} PLPLOT::plplot)
     endif(ENABLE_DYNDRIVERS)
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
     set_qt4_target_properties(qt_example)

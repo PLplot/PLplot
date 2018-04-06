@@ -1,7 +1,4 @@
 # doc/docbook/src/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006 Andrew Ross
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
@@ -164,7 +161,7 @@ else(
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt
     COMMAND ${PERL_EXECUTABLE}
-    ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt $<TARGET_LINKER_FILE:plplot> ${CMAKE_SOURCE_DIR}/include/plplot.h 3
+    ${BINDIR}/get-library-symbols.pl > ${CMAKE_CURRENT_BINARY_DIR}/plplot-symbols.txt $<TARGET_LINKER_FILE:PLPLOT::plplot> ${CMAKE_SOURCE_DIR}/include/plplot.h 3
     DEPENDS
     ${CMAKE_SOURCE_DIR}/include/plplot.h
     plplot

@@ -1,6 +1,4 @@
 # examples/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
@@ -230,13 +228,13 @@ if(CORE_BUILD)
     # installed library locations are system locations that are
     # automatically searched for libraries by the run-time loader in
     # any case.
-    get_target_property(_LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(_LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     if(_LIB_INSTALL_RPATH)
       string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
       set(RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}\"")
       if(PLD_extqt)
 	if(ENABLE_DYNDRIVERS)
-	  get_target_property(_qt_INSTALL_RPATH qt INSTALL_RPATH)
+	  get_target_property(_qt_INSTALL_RPATH PLPLOT::qt INSTALL_RPATH)
 	  if(_qt_INSTALL_RPATH)
 	    string(REGEX REPLACE ";" ":" qt_INSTALL_RPATH "${_qt_INSTALL_RPATH}")
 	    set(qt_RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}:${qt_INSTALL_RPATH}:${DRV_DIR}\"")
@@ -248,7 +246,7 @@ if(CORE_BUILD)
 	endif(ENABLE_DYNDRIVERS)
       endif(PLD_extqt)
       if(ENABLE_tcl)
-	get_target_property(_plplottcltk_Main_INSTALL_RPATH plplottcltk_Main INSTALL_RPATH)
+	get_target_property(_plplottcltk_Main_INSTALL_RPATH PLPLOT::plplottcltk_Main INSTALL_RPATH)
 	if(_plplottcltk_Main_INSTALL_RPATH)
 	  string(REGEX REPLACE ";" ":" plplottcltk_Main_INSTALL_RPATH "${_plplottcltk_Main_INSTALL_RPATH}")
 	  set(plplottcltk_Main_RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}:${plplottcltk_Main_INSTALL_RPATH}\"")
@@ -572,7 +570,7 @@ if(BUILD_TEST)
       # It is empty if not a core build.
       # The file dependency on ps takes care of all
       # target and file dependencies associated with ps.
-      list(APPEND compare_file_depends ${ps_file_depends} ps)
+      list(APPEND compare_file_depends ${ps_file_depends} PLPLOT::ps)
     endif(ENABLE_DYNDRIVERS)
 
     set(diff_targets_LIST)
@@ -701,7 +699,7 @@ if(BUILD_TEST)
 	  GLOBAL PROPERTY FILE_DEPENDS_${driver}_dyndriver
 	  )
 	list(APPEND ${device}_file_device_depends
-	  ${${driver}_file_depends} ${driver}
+	  ${${driver}_file_depends} PLPLOT::${driver}
 	  )
       endif(ENABLE_DYNDRIVERS)
       #message("DEBUG:${device}_file_device_depends = ${${device}_file_device_depends}")
@@ -766,18 +764,18 @@ if(BUILD_TEST)
       # devices in the list can map to a single driver.
       if(NOT ${driver}_targets)
 	if(ENABLE_DYNDRIVERS)
-	  set(${driver}_targets ${driver})
+	  set(${driver}_targets PLPLOT::${driver})
 	  if(TARGET test_${driver}_dyndriver)
 	    list(APPEND ${driver}_targets test_${driver}_dyndriver)
 	  endif(TARGET test_${driver}_dyndriver)
 	  if(driver STREQUAL "tk" AND TARGET xwin)
-	    list(APPEND ${driver}_targets xwin)
+	    list(APPEND ${driver}_targets PLPLOT::xwin)
 	    if(TARGET test_xwin_dyndriver)
 	      list(APPEND ${driver}_targets test_xwin_dyndriver)
 	    endif(TARGET test_xwin_dyndriver)
 	  endif(driver STREQUAL "tk" AND TARGET xwin)
 	else(ENABLE_DYNDRIVERS)
-	  set(${driver}_targets plplot)
+	  set(${driver}_targets PLPLOT::plplot)
 	endif(ENABLE_DYNDRIVERS)
 
 	if(driver STREQUAL "tk")
@@ -845,7 +843,7 @@ if(BUILD_TEST)
 	# tkwin is an external device rather than an interactive one
 	# so tkwin_targets (needed for a special case below) is not
 	# defined in the above loop and must be defined here instead.
-	set(tkwin_targets tkwin)
+	set(tkwin_targets PLPLOT::tkwin)
 	if(TARGET test_tkwin_dyndriver)
 	  list(APPEND tkwin_targets test_tkwin_dyndriver)
 	endif(TARGET test_tkwin_dyndriver)
@@ -863,16 +861,16 @@ if(BUILD_TEST)
 
       # This special target needed for some cases below.
       if(TARGET plplottcltk)
-	set(plplottcltk_targets plplottcltk)
+	set(plplottcltk_targets PLPLOT::plplottcltk)
       endif(TARGET plplottcltk)
 
     else(ENABLE_DYNDRIVERS)
 
       # MAINTENANCE: the variables set here must be the same as
       # in the above if block
-      set(tkwin_targets plplot)
+      set(tkwin_targets PLPLOT::plplot)
       set(cairo_file_depends)
-      set(plplottcltk_targets plplot)
+      set(plplottcltk_targets PLPLOT::plplot)
     endif(ENABLE_DYNDRIVERS)
 
     if(PLD_extcairo)
@@ -945,9 +943,9 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	)
       add_dependencies(test_pyqt4_example
-	plplot_pyqt4
+	PLPLOT::plplot_pyqt4
 	python_examples
-	_plplotc
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -956,8 +954,8 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	)
       add_dependencies(test_pyqt4_example
-	plplot_pyqt4
-	_plplotc
+	PLPLOT::plplot_pyqt4
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     endif(CORE_BUILD)
@@ -973,9 +971,9 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	)
       add_dependencies(test_pyqt5_example
-	plplot_pyqt5
+	PLPLOT::plplot_pyqt5
 	python_examples
-	_plplotc
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -984,8 +982,8 @@ if(BUILD_TEST)
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	)
       add_dependencies(test_pyqt5_example
-	plplot_pyqt5
-	_plplotc
+	PLPLOT::plplot_pyqt5
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     endif(CORE_BUILD)
@@ -1027,7 +1025,7 @@ if(BUILD_TEST)
 
     if(tcltk_in_plplot_library)
       add_dependencies(test_tclsh_standard_examples
-	plplot
+	PLPLOT::plplot
 	tcl_examples
 	${TARGET_tclIndex_tcl}
 	${tk_targets}
@@ -1112,8 +1110,8 @@ if(BUILD_TEST)
 	  VERBATIM
 	  )
 	add_dependencies(test_pytkdemo
-	  _plplotc
-	  _Pltk_init
+	  PLPLOT::plplotc
+	  PLPLOT::Pltk_init
 	  python_examples
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
@@ -1125,8 +1123,8 @@ if(BUILD_TEST)
 	  VERBATIM
 	  )
 	add_dependencies(test_pytkdemo
-	  _plplotc
-	  _Pltk_init
+	  PLPLOT::plplotc
+	  PLPLOT::Pltk_init
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
 	  )

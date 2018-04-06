@@ -1,7 +1,5 @@
 # examples/c/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -103,6 +101,7 @@ if(BUILD_TEST)
       ${CMAKE_SOURCE_DIR}/include
       ${CMAKE_BINARY_DIR}/include
       ${CMAKE_SOURCE_DIR}/lib/qsastime
+      ${CMAKE_BINARY_DIR}/lib/qsastime
       )
   else(CORE_BUILD)
     include_directories(${INCLUDE_DIR})
@@ -116,7 +115,7 @@ if(BUILD_TEST)
 	COMPILE_DEFINITIONS "USINGDLL"
 	)
     endif(BUILD_SHARED_LIBS)
-    target_link_libraries(x${STRING_INDEX}c plplot ${MATH_LIB})
+    target_link_libraries(x${STRING_INDEX}c PLPLOT::plplot ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_c x${STRING_INDEX}c)
   endforeach(STRING_INDEX ${c_STRING_INDICES})
 
@@ -127,7 +126,7 @@ if(BUILD_TEST)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(test_plend plplot ${MATH_LIB})
+  target_link_libraries(test_plend PLPLOT::plplot ${MATH_LIB})
 
   # Build test routines that test the plot buffer functionality
   add_executable(test_plbuf test_plbuf.c)
@@ -136,7 +135,7 @@ if(BUILD_TEST)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(test_plbuf plplot ${MATH_LIB})
+  target_link_libraries(test_plbuf PLPLOT::plplot ${MATH_LIB})
 endif(BUILD_TEST)
 
 if(PKG_CONFIG_EXECUTABLE)
@@ -159,7 +158,7 @@ if(PKG_CONFIG_EXECUTABLE)
 	    COMPILE_DEFINITIONS "USINGDLL"
 	    )
 	endif(BUILD_SHARED_LIBS)
-	target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} plplot)
+	target_link_libraries(extXdrawable_demo ${GTK_X11_LINK_FLAGS} PLPLOT::plplot)
       endif(BUILD_TEST)
     else(linkflags3)
       message(STATUS "WARNING: gtk+-x11-2.0 not found.  extXdrawable_demo not built.")
@@ -187,7 +186,7 @@ if(PKG_CONFIG_EXECUTABLE)
 	    COMPILE_DEFINITIONS "USINGDLL"
 	    )
 	endif(BUILD_SHARED_LIBS)
-	target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} plplot)
+	target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} PLPLOT::plplot)
       endif(BUILD_TEST)
     else(linkflags4)
       message(STATUS "WARNING: cairo not found.  ext-cairo-test not built.")

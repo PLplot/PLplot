@@ -1,7 +1,5 @@
 # bindings/tk-x-plat/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -27,11 +25,11 @@ if(PLD_tkwin)
   endif(USE_DLL_SUBDIRECTORY)
 
   if(tcltk_in_plplot_library)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplot>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplot>)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:PLPLOT::plplot>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:PLPLOT::plplot>)
   else(tcltk_in_plplot_library)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:tkwin>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:tkwin>)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:PLPLOT::tkwin>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:PLPLOT::tkwin>)
   endif(tcltk_in_plplot_library)
 
   # N.B. Results only available at generate time.

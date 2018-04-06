@@ -325,13 +325,27 @@ function(configure_library_build library library_type lib_src tll_arguments)
     NON_TRANSITIVE
     )
 
+  set(original_library ${library})
+  set(library ${LIBRARY_TARGET_PREFIX}${library})
   if(if_swig_module)
+    foreach(variable ${variables_list})
+      if(NOT DEFINED ${variable})
+	message(FATAL_ERROR "configure_library_build: (external) ${variable} = NOT DEFINED")
+      endif(NOT DEFINED ${variable})
+    endforeach(variable ${variables_list})
     swig_add_library(${library} LANGUAGE "${language}" TYPE MODULE SOURCES ${lib_src})
     # Propagate value of this variable (set in swig_add_library macro) to calling environment.
-    set(SWIG_MODULE_${library}_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME} PARENT_SCOPE)
+    # Example:
+    # original_library = plplotc
+    # library = ${LIBRARY_TARGET_PREFIX}plplotc
+    # ${SWIG_MODULE_${library}_REAL_NAME} = _${LIBRARY_TARGET_PREFIX}plplotc
+    # SWIG_MODULE_plplotc_REAL_NAME (in parent scope) = _${LIBRARY_TARGET_PREFIX}plplotc
+    # Alias library name = PLPLOT::plplotc
+
+    set(SWIG_MODULE_${original_library}_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME} PARENT_SCOPE)
     # Create equivalent namespaced ALIAS library to be used whenever
     # the library target is read only.
-    add_library(${LIBRARY_NAMESPACE}${SWIG_MODULE_${library}_REAL_NAME} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
+    add_library(${LIBRARY_NAMESPACE}${original_library} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
 
     if(NOT "${tll_arguments}" STREQUAL "")
       if(NON_TRANSITIVE)
@@ -352,8 +366,8 @@ function(configure_library_build library library_type lib_src tll_arguments)
   else(if_swig_module)
     if("${library_type}" STREQUAL "SHARED")
       list(APPEND variables_list
-	${library}_SOVERSION
-	${library}_VERSION
+	${original_library}_SOVERSION
+	${original_library}_VERSION
 	CMAKE_INSTALL_LIBDIR
 	USE_RPATH
 	)
@@ -368,7 +382,7 @@ function(configure_library_build library library_type lib_src tll_arguments)
     add_library(${library} ${library_type} ${lib_src})
     # Create equivalent namespaced ALIAS library to be used whenever
     # the library target is read only.
-    add_library(${LIBRARY_NAMESPACE}${library} ALIAS ${library})
+    add_library(${LIBRARY_NAMESPACE}${original_library} ALIAS ${library})
 
     if(NOT "${tll_arguments}" STREQUAL "")
       if(NON_TRANSITIVE)
@@ -410,8 +424,8 @@ function(configure_library_build library library_type lib_src tll_arguments)
 	${library}
 	PROPERTIES
 	COMPILE_DEFINITIONS "USINGDLL"
-	SOVERSION ${${library}_SOVERSION}
-	VERSION ${${library}_VERSION}
+	SOVERSION ${${original_library}_SOVERSION}
+	VERSION ${${original_library}_VERSION}
 	)
     elseif("${library_type}" STREQUAL "MODULE")
       # It is assumed RPATH for modules is handled externally, but set

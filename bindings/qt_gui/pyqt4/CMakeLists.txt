@@ -57,6 +57,7 @@ if(ENABLE_pyqt4)
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     ${PYTHON_INCLUDE_PATH}
     )
 
@@ -78,6 +79,16 @@ if(ENABLE_pyqt4)
   endif(ENABLE_DYNDRIVERS)
   configure_library_build(plplot_pyqt4 MODULE "${plplot_pyqt4_SRC}" "${pyqt4_tll_list}")
 
+  if(LIBRARY_TARGET_PREFIX)
+    # For this experimental configuration copy the generated
+    # ${LIBRARY_TARGET_PREFIX}plplot_pyqt4.so file to the plplot_pyqt4.so
+    # name required by examples/python/pyqt4_example.py
+    add_custom_command(TARGET ${LIBRARY_TARGET_PREFIX}plplot_pyqt4 POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_TARGET_PREFIX}plplot_pyqt4.so ${CMAKE_CURRENT_BINARY_DIR}/plplot_pyqt4.so
+      VERBATIM
+      )
+  endif(LIBRARY_TARGET_PREFIX)
+
   if(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     # The combination of python3 (at least for version 3.4) and sip
     # creates a useless shared object with no externally accessible
@@ -88,41 +99,41 @@ if(ENABLE_pyqt4)
     # all python 3 cases (although it is not clear if this bug has
     # been fixed for python 3 versions higher than 3.4). This
     # visibility bug does not occur for Python 2.
-    target_compile_options(plplot_pyqt4 PRIVATE "-fvisibility=default")
+    target_compile_options(${LIBRARY_TARGET_PREFIX}plplot_pyqt4 PRIVATE "-fvisibility=default")
   endif(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 
   if(WIN32_OR_CYGWIN)
     set_target_properties(
-      plplot_pyqt4
+      ${LIBRARY_TARGET_PREFIX}plplot_pyqt4
       PROPERTIES
       PREFIX ""
       SUFFIX ".pyd"
       )
   else(WIN32_OR_CYGWIN)
-    set_target_properties(plplot_pyqt4 PROPERTIES PREFIX "")
+    set_target_properties(${LIBRARY_TARGET_PREFIX}plplot_pyqt4 PROPERTIES PREFIX "")
   endif(WIN32_OR_CYGWIN)
 
-  add_dependencies(plplot_pyqt4 generate_pyqt4_source)
+  add_dependencies(${LIBRARY_TARGET_PREFIX}plplot_pyqt4 generate_pyqt4_source)
 
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-  set_qt4_target_properties(plplot_pyqt4)
+  set_qt4_target_properties(${LIBRARY_TARGET_PREFIX}plplot_pyqt4)
 
   if(USE_RPATH)
     set_target_properties(
-      plplot_pyqt4
+      ${LIBRARY_TARGET_PREFIX}plplot_pyqt4
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   else(USE_RPATH)
     set_target_properties(
-      plplot_pyqt4
+      ${LIBRARY_TARGET_PREFIX}plplot_pyqt4
       PROPERTIES
       INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
       )
   endif(USE_RPATH)
 
   install(
-    TARGETS plplot_pyqt4
+    TARGETS ${LIBRARY_TARGET_PREFIX}plplot_pyqt4
     EXPORT export_plplot
     LIBRARY DESTINATION ${PYTHON_INSTDIR}
     )

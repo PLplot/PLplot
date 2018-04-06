@@ -1,7 +1,5 @@
 # examples/tcl/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -148,9 +146,9 @@ endif(CORE_BUILD)
 
 if(BUILD_TEST)
   if(ENABLE_DYNDRIVERS)
-    set(plplottcltk_target plplottcltk)
+    set(plplottcltk_target PLPLOT::plplottcltk)
   else(ENABLE_DYNDRIVERS)
-    set(plplottcltk_target plplot)
+    set(plplottcltk_target PLPLOT::plplot)
   endif(ENABLE_DYNDRIVERS)
 
   if(CORE_BUILD)

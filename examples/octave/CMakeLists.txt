@@ -1,8 +1,5 @@
 # examples/octave/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -90,25 +87,12 @@ if(BUILD_TEST)
     list(APPEND full_examples_octave ${CMAKE_CURRENT_SOURCE_DIR}/${example})
   endforeach(example ${examples_octave})
 
-  if(CORE_BUILD)
-    get_property(files_plplot_stub.m_built GLOBAL PROPERTY FILES_plplot_stub.m_built)
-    set_property(GLOBAL PROPERTY TARGETS_examples_octave
-      plplot_octave plplot_stub.m_built
-      )
-    set_property(GLOBAL PROPERTY FILES_examples_octave
-      ${full_examples_octave} ${files_plplot_stub.m_built}
-      )
-  else(CORE_BUILD)
-    # For this case, the (custom) target plplot_stub.m_built and its
-    # associated file dependencies, files_plplot_stub.m_built are not
-    # defined.
-    set_property(GLOBAL PROPERTY TARGETS_examples_octave
-      plplot_octave
-      )
-    set_property(GLOBAL PROPERTY FILES_examples_octave
-      ${full_examples_octave}
-      )
-  endif(CORE_BUILD)
+  set_property(GLOBAL PROPERTY TARGETS_examples_octave
+    PLPLOT::plplot_octave
+    )
+  set_property(GLOBAL PROPERTY FILES_examples_octave
+    ${full_examples_octave}
+    )
 endif(BUILD_TEST)
 
 if(CORE_BUILD)

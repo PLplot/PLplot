@@ -18,6 +18,15 @@
 
 if(PL_HAVE_QHULL)
 
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/nndll.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/nndll.h
+    )
+
+  include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
   set(csironn_LIB_SRCS
     delaunay.c
     hash.c
@@ -47,7 +56,7 @@ if(PL_HAVE_QHULL)
 
   configure_library_build(csironn "" "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}")
 
-  install(TARGETS csironn
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}csironn
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

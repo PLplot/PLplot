@@ -2,7 +2,7 @@
 #
 # Finalize driver initializations
 #
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2018  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -162,7 +162,8 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   if(${DRIVER}_INFO)
     file(WRITE ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.driver_info "")
     foreach(DEVICE_INFO ${${DRIVER}_INFO})
-      file(APPEND ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.driver_info "${DEVICE_INFO}\n")
+      string(REGEX REPLACE "^(.*:.*:.*:)(.*:)(.*:.*)$" "\\1${LIBRARY_TARGET_PREFIX}\\2\\3" MODIFIED_DEVICE_INFO "${DEVICE_INFO}")
+      file(APPEND ${CMAKE_BINARY_DIR}/drivers/${DRIVER}.driver_info "${MODIFIED_DEVICE_INFO}\n")
     endforeach(DEVICE_INFO ${${DRIVER}_INFO})
   endif(${DRIVER}_INFO)
 endforeach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})

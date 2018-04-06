@@ -28,6 +28,8 @@ if(ENABLE_DYNDRIVERS)
     ${CMAKE_SOURCE_DIR}/lib/nistcd
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
+    ${CMAKE_BINARY_DIR}/lib/nistcd
     )
 
   option(TEST_DYNDRIVERS "Test dynamic drivers" ON)
@@ -45,7 +47,7 @@ if(ENABLE_DYNDRIVERS)
 	)
     endif(BUILD_SHARED_LIBS)
     target_link_libraries(test-drv-info
-      plplot
+      PLPLOT::plplot
       ${LTDL_LIBRARIES}
       )
 
@@ -126,7 +128,7 @@ if(ENABLE_DYNDRIVERS)
 	configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${qt_tll_list}")
 	if(NOT PLPLOT_USE_QT5)
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-	  set_qt4_target_properties(${SOURCE_ROOT_NAME})
+	  set_qt4_target_properties(${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME})
 	endif(NOT PLPLOT_USE_QT5)
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
@@ -141,7 +143,7 @@ if(ENABLE_DYNDRIVERS)
 	)
       configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${wx_tll_list}")
       if(PLD_wxwidgets OR PLD_wxpng)
-	set_property(TARGET ${SOURCE_ROOT_NAME}
+	set_property(TARGET ${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
 	  APPEND PROPERTY
 	  INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
 	  )
@@ -171,7 +173,7 @@ if(ENABLE_DYNDRIVERS)
 	)
       #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
       set_target_properties(
-	${SOURCE_ROOT_NAME}
+	${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
 	PROPERTIES
 	INSTALL_RPATH
 	"${${SOURCE_ROOT_NAME}_RPATH}"
@@ -191,7 +193,7 @@ if(ENABLE_DYNDRIVERS)
       set(DYNAMIC_SUFFIX ".so")
     endif(WIN32_OR_CYGWIN)
     set_target_properties(
-      ${SOURCE_ROOT_NAME}
+      ${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
       PROPERTIES
       PREFIX ""
       SUFFIX ${DYNAMIC_SUFFIX}
@@ -202,13 +204,13 @@ if(ENABLE_DYNDRIVERS)
 	OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	COMMAND test-drv-info
-	${SOURCE_ROOT_NAME}
+	${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
 	> ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	COMMAND ${CMAKE_COMMAND} -E compare_files
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info
 	DEPENDS
-	${SOURCE_ROOT_NAME}
+	PLPLOT::${SOURCE_ROOT_NAME}
 	test-drv-info
 	)
       add_custom_target(test_${SOURCE_ROOT_NAME}_dyndriver
@@ -217,16 +219,12 @@ if(ENABLE_DYNDRIVERS)
 	)
       set_property(GLOBAL
 	PROPERTY FILE_DEPENDS_${SOURCE_ROOT_NAME}_dyndriver
-	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
-	)
-      add_dependencies(test_${SOURCE_ROOT_NAME}_dyndriver
-	test-drv-info
-	${SOURCE_ROOT_NAME}
+	"${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info"
 	)
       list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME}_dyndriver)
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
 
-    install(TARGETS ${SOURCE_ROOT_NAME}
+    install(TARGETS ${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
       EXPORT export_plplot
       DESTINATION ${DRV_DIR}
       )
@@ -239,17 +237,17 @@ if(ENABLE_DYNDRIVERS)
   # The tk device driver depends internally on the xwin device driver.
   # Therefore make target tk depend on target xwin so
   # xwin will always be built first.
-  if(TARGET tk)
-    if(TARGET xwin)
-      add_dependencies(tk xwin)
-    else(TARGET xwin)
+  if(TARGET ${LIBRARY_TARGET_PREFIX}tk)
+    if(TARGET PLPLOT::xwin)
+      add_dependencies(${LIBRARY_TARGET_PREFIX}tk PLPLOT::xwin)
+    else(TARGET PLPLOT::xwin)
       message(FATAL_ERROR "Internal build system inconsistency where the tk target but not the xwin target are configured.")
-    endif(TARGET xwin)
-  endif(TARGET tk)
+    endif(TARGET PLPLOT::xwin)
+  endif(TARGET ${LIBRARY_TARGET_PREFIX}tk)
 
   if(PLD_tkwin AND USE_TCL_TK_STUBS)
     set_target_properties(
-      tkwin
+      ${LIBRARY_TARGET_PREFIX}tkwin
       PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
       )
   endif(PLD_tkwin AND USE_TCL_TK_STUBS)

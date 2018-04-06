@@ -47,6 +47,7 @@ if(ENABLE_fortran)
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -131,7 +132,7 @@ EXPORTS
     ${CMAKE_CURRENT_BINARY_DIR}/plplotfortran_ifort.def_compare
     )
 
-  add_dependencies(check_ifort_definitions_file plplotfortran)
+  add_dependencies(check_ifort_definitions_file PLPLOT::plplotfortran)
   add_dependencies(check_all check_ifort_definitions_file)
 
   # Configure the Fortran source file that specifies the
@@ -166,12 +167,12 @@ EXPORTS
 
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
   endif(USE_RPATH)
 
   configure_library_build(plplotfortran "" "${plplotfortran_LIB_SRCS}" PLPLOT::plplot)
 
-  install(TARGETS plplotfortran
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotfortran
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

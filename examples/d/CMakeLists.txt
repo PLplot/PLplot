@@ -1,8 +1,6 @@
 # examples/d/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2008 Werner Smekal
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -100,7 +98,7 @@ if(BUILD_TEST)
   set_property(GLOBAL PROPERTY TARGETS_examples_d)
   foreach(STRING_INDEX ${d_STRING_INDICES})
     add_executable(x${STRING_INDEX}d x${STRING_INDEX}d.d)
-    target_link_libraries(x${STRING_INDEX}d plplotdmd plplot ${MATH_LIB})
+    target_link_libraries(x${STRING_INDEX}d PLPLOT::plplotdmd PLPLOT::plplot ${MATH_LIB})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_d x${STRING_INDEX}d)
   endforeach(STRING_INDEX ${d_STRING_INDICES})
 endif(BUILD_TEST)

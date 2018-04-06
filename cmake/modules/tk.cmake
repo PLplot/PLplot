@@ -71,7 +71,7 @@ if(PLD_tk)
   set(tk_COMPILE_FLAGS
   "-I\"${TCL_INCLUDE_PATH}\" ${TKLIB_COMPILE_FLAGS} -I\"${CMAKE_SOURCE_DIR}\"/bindings/tcl -I\"${CMAKE_BINARY_DIR}\"/bindings/tcl -I\"${CMAKE_SOURCE_DIR}\"/bindings/tk"
   )
-  set(tk_LINK_FLAGS plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY})
+  set(tk_LINK_FLAGS PLPLOT::plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY})
   set(tk_RPATH ${TCL_TK_RPATH})
   set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${TCL_LIBRARY} ${TK_LIBRARY})
   if(NOT ENABLE_DYNDRIVERS)
@@ -127,11 +127,11 @@ if(PLD_tkwin)
     )
 
   if(USE_TCL_TK_STUBS)
-    set(tkwin_LINK_FLAGS plplottcltk ${TCL_STUB_LIBRARY} ${TK_STUB_LIBRARY} ${X11_LIBRARIES})
+    set(tkwin_LINK_FLAGS PLPLOT::plplottcltk ${TCL_STUB_LIBRARY} ${TK_STUB_LIBRARY} ${X11_LIBRARIES})
     # tkwin_RPATH should be undefined for this case since stubs versions
     # of the libraries are static (in my experience so far).
   else(USE_TCL_TK_STUBS)
-    set(tkwin_LINK_FLAGS plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY} ${X11_LIBRARIES})
+    set(tkwin_LINK_FLAGS PLPLOT::plplottcltk ${TCL_LIBRARY} ${TK_LIBRARY} ${X11_LIBRARIES})
     set(tkwin_RPATH ${TCL_TK_RPATH})
   endif(USE_TCL_TK_STUBS)
 

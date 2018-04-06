@@ -46,21 +46,10 @@ if(ENABLE_octave)
     @ONLY
     )
 
-  # Build octave interface.
-  add_custom_command(
-    OUTPUT
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub.m.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-    DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_stub_hand_crafted.m
-    )
-
-  add_custom_target(
-    plplot_stub.m_built ALL
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
+    @ONLY
     )
 
   set(octave_interface_INCLUDE_PATHS
@@ -68,17 +57,22 @@ if(ENABLE_octave)
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     ${CMAKE_CURRENT_BINARY_DIR}
     ${OCTAVE_INCLUDE_PATH}
     ${CMAKE_SOURCE_DIR}/bindings/swig-support
     )
   include_directories(${octave_interface_INCLUDE_PATHS})
-  set(CMAKE_SWIG_FLAGS -DSWIG_OCTAVE)
+  # The -module option only used to workaround some bug in CMake swig
+  # support for Octave which does not allow module name prefixes such
+  # as ${LIBRARY_TARGET_PREFIX} without specifying -module explicitly this
+  # way.
+  set(CMAKE_SWIG_FLAGS -module ${LIBRARY_TARGET_PREFIX}plplot_octave -DSWIG_OCTAVE)
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
   set_source_files_properties(plplot_octave.i
     PROPERTIES
-    SWIG_MODULE_NAME plplot_octave
+    SWIG_MODULE_NAME ${LIBRARY_TARGET_PREFIX}plplot_octave
     CPLUSPLUS ON
     )
 
@@ -97,7 +91,7 @@ if(ENABLE_octave)
   configure_library_build(plplot_octave octave plplot_octave.i "${octave_tll_list}")
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     # (Reasonable) assumption here is that OCTAVE_LIBRARIES and
     # OCTINTERP_LIBRARIES have the same path.
     get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
@@ -114,19 +108,6 @@ if(ENABLE_octave)
       INSTALL_NAME_DIR "${OCTAVE_OCT_DIR}"
       )
   endif(USE_RPATH)
-
-  # Make sure plplot_stub.m is copied to build tree before the
-  # ${SWIG_MODULE_plplot_octave_REAL_NAME} module is created so can
-  # use that module in the normal way.
-
-  add_dependencies(${SWIG_MODULE_plplot_octave_REAL_NAME} plplot_stub.m_built)
-
-  # Need access elsewhere (examples/octave) to the file depends of
-  # this custom target.
-  set_property(GLOBAL PROPERTY
-    FILES_plplot_stub.m_built
-    ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m
-    )
 
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_stub.m

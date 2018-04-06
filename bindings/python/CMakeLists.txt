@@ -28,6 +28,7 @@ if(ENABLE_python)
       ${CMAKE_SOURCE_DIR}/bindings/tk
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_BINARY_DIR}/lib/qsastime
       ${CMAKE_CURRENT_BINARY_DIR}
       ${TCL_INCLUDE_PATH}
       ${TK_INCLUDE_PATH}
@@ -41,6 +42,7 @@ if(ENABLE_python)
       ${CMAKE_SOURCE_DIR}/lib/qsastime
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_BINARY_DIR}/lib/qsastime
       ${CMAKE_CURRENT_BINARY_DIR}
       ${PYTHON_INCLUDE_PATH}
       ${NUMPY_INCLUDE_PATH}
@@ -77,6 +79,12 @@ if(ENABLE_python)
 	)
     endif(ENABLE_DYNDRIVERS)
 
+    if(LIBRARY_TARGET_PREFIX)
+      # For this experimental configuration need to specify the -module option
+      # directly to swig.
+      set(CMAKE_SWIG_FLAGS -module ${LIBRARY_TARGET_PREFIX}Pltk_init)
+    endif(LIBRARY_TARGET_PREFIX)
+
     configure_library_build(Pltk_init python Pltk_init.i "${pltk_init_tll_list}")
 
     if(USE_RPATH)
@@ -93,6 +101,16 @@ if(ENABLE_python)
 	INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
 	)
     endif(USE_RPATH)
+
+    if(LIBRARY_TARGET_PREFIX)
+      # For this experimental configuration copy the generated
+      # ${LIBRARY_TARGET_PREFIX}Pltk_init.py file to the Pltk_init.py
+      # name required by examples/python/pytkdemo.
+      add_custom_command(TARGET ${SWIG_MODULE_Pltk_init_REAL_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_TARGET_PREFIX}Pltk_init.py ${CMAKE_CURRENT_BINARY_DIR}/Pltk_init.py
+	VERBATIM
+	)
+    endif(LIBRARY_TARGET_PREFIX)
 
     install(
       TARGETS ${SWIG_MODULE_Pltk_init_REAL_NAME}
@@ -112,6 +130,12 @@ if(ENABLE_python)
   else(PL_DOUBLE)
     set(CMAKE_SWIG_FLAGS -DSWIG_PYTHON)
   endif(PL_DOUBLE)
+
+  if(LIBRARY_TARGET_PREFIX)
+    # For this experimental configuration need to specify the -module option
+    # directly to swig.
+    set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -module ${LIBRARY_TARGET_PREFIX}plplotc)
+  endif(LIBRARY_TARGET_PREFIX)
 
   if(PYTHON_HAVE_PYBUFFER)
     set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DPYTHON_HAVE_PYBUFFER)
@@ -138,9 +162,18 @@ if(ENABLE_python)
       )
   endif(USE_RPATH)
 
-  # Fix up the swig-generated plplotc.py code to allow UTF-8 help strings for the python2 case.
+  if(LIBRARY_TARGET_PREFIX)
+    # For this experimental configuration copy the generated
+    # ${SWIG_MODULE_plplotc_REAL_NAME}.py file to the plplotc.py name
+    # required by plplot.py.
+    add_custom_command(TARGET ${SWIG_MODULE_plplotc_REAL_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_TARGET_PREFIX}plplotc.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+      VERBATIM
+    )
+  endif(LIBRARY_TARGET_PREFIX)
 
   if(${PYTHON_VERSION} VERSION_LESS "3.0.0")
+    # Fix up the swig-generated plplotc.py code to allow UTF-8 help strings for the python2 case.
     add_custom_command(TARGET ${SWIG_MODULE_plplotc_REAL_NAME} POST_BUILD
       COMMAND ${SED_EXECUTABLE} -i -e "1s?^\\(.*\\)\$?\\1  It uses coding: utf-8?" ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
       VERBATIM

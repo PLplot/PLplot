@@ -58,6 +58,7 @@ if(ENABLE_wxwidgets)
     ${CMAKE_SOURCE_DIR}/bindings/c++
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     ${CMAKE_CURRENT_BINARY_DIR}
     )
 
@@ -74,7 +75,7 @@ if(ENABLE_wxwidgets)
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   IF(wxWidgets_DEFINITIONS)
-    set_property(TARGET plplotwxwidgets APPEND
+    set_property(TARGET ${LIBRARY_TARGET_PREFIX}plplotwxwidgets APPEND
       PROPERTY COMPILE_DEFINITIONS ${wxWidgets_DEFINITIONS})
   ENDIF(wxWidgets_DEFINITIONS)
 
@@ -84,7 +85,7 @@ if(ENABLE_wxwidgets)
   ENDIF(wxWidgets_DEFINITIONS_DEBUG)
 
   # Install library in lib/
-  install(TARGETS plplotwxwidgets
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotwxwidgets
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

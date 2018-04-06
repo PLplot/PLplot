@@ -27,6 +27,8 @@ if(ENABLE_qt)
       ${CMAKE_SOURCE_DIR}/drivers
       ${CMAKE_BINARY_DIR}
       ${CMAKE_BINARY_DIR}/include
+      ${CMAKE_BINARY_DIR}/lib/qsastime
+      ${CMAKE_BINARY_DIR}/lib/nistcd
       )
 
     # Must add qt.h to explicit sources for AUTOMOC method to work for either
@@ -39,7 +41,7 @@ if(ENABLE_qt)
       # needed here, but I will leave it in since it is informative.
       set(libplplotqt_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     else(PLPLOT_USE_QT5)
-      set(libplplotqt_LINK_LIBRARIES PLPLOT::plplot ${MATH_LIB})
+      set(libplplotqt_LINK_LIBRARIES PLPLOT::plplot ${MATH_LIB} )
     endif(PLPLOT_USE_QT5)
 
     # qt_RPATH set in cmake/modules/qt.cmake. This is only used for the
@@ -73,12 +75,12 @@ if(ENABLE_qt)
       # Therefore, my conclusion is that the PUBLIC keyword should
       # be used here in all cases, but further checking of this assumption
       # (by looking for overlinking issues) is desireable.
-      target_link_libraries(plplotqt PUBLIC ${QT_LIBRARIES})
+      target_link_libraries(${LIBRARY_TARGET_PREFIX}plplotqt PUBLIC ${QT_LIBRARIES})
       # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-      set_qt4_target_properties(plplotqt)
+      set_qt4_target_properties(${LIBRARY_TARGET_PREFIX}plplotqt)
     endif(NOT PLPLOT_USE_QT5)
 
-    set_target_properties(plplotqt PROPERTIES
+    set_target_properties(${LIBRARY_TARGET_PREFIX}plplotqt PROPERTIES
       AUTOMOC ON
       AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
       )
@@ -91,9 +93,9 @@ if(ENABLE_qt)
     # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
     # specifically added by automoc to the list of source files for
     # the target.
-    target_include_directories(plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    target_include_directories(${LIBRARY_TARGET_PREFIX}plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-    install(TARGETS plplotqt
+    install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotqt
       EXPORT export_plplot
       ARCHIVE DESTINATION ${LIB_DIR}
       LIBRARY DESTINATION ${LIB_DIR}

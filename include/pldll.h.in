@@ -42,7 +42,7 @@
 // cmake didn't set the corresponding macro xxxx_EXPORTS when the
 // corresponding library is built (DLLIMPEXP is set to DLLEXPORT
 // then)
-#if defined ( plplot_EXPORTS )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplot_EXPORTS )
   #define PLDLLIMPEXP    PLDLLEXPORT
   #define PLDLLIMPEXP_DATA( type )    PLDLLEXPORT type
 #else
@@ -54,15 +54,27 @@
 // but dyanmic drivers disabled, the driver dll macros are the same as the
 // plplot dll macros
 #ifdef ENABLE_DYNDRIVERS
-  #if defined ( aqt_EXPORTS ) || defined ( cairo_EXPORTS ) || defined ( cgm_EXPORTS ) ||       \
-    defined ( gd_EXPORTS ) ||                                                                  \
-    defined ( mem_EXPORTS ) ||                                                                 \
-    defined ( ntk_EXPORTS ) || defined ( null_EXPORTS ) ||                                     \
-    defined ( pdf_EXPORTS ) || defined ( plmeta_EXPORTS ) || defined ( ps_EXPORTS ) ||         \
-    defined ( pstex_EXPORTS ) || defined ( psttf_EXPORTS ) || defined ( svg_EXPORTS ) ||       \
-    defined ( tk_EXPORTS ) || defined ( tkwin_EXPORTS ) ||                                     \
-    defined ( wingcc_EXPORTS ) || defined ( wxwidgets_EXPORTS ) || defined ( xfig_EXPORTS ) || \
-    defined ( xwin_EXPORTS ) || defined ( qt_EXPORTS ) || defined ( wingdi_EXPORTS )
+  #if defined ( @LIBRARY_TARGET_PREFIX@aqt_EXPORTS ) ||     \
+    defined ( @LIBRARY_TARGET_PREFIX@cairo_EXPORTS ) ||     \
+    defined ( @LIBRARY_TARGET_PREFIX@cgm_EXPORTS ) ||       \
+    defined ( @LIBRARY_TARGET_PREFIX@gd_EXPORTS ) ||        \
+    defined ( @LIBRARY_TARGET_PREFIX@mem_EXPORTS ) ||       \
+    defined ( @LIBRARY_TARGET_PREFIX@ntk_EXPORTS ) ||       \
+    defined ( @LIBRARY_TARGET_PREFIX@null_EXPORTS ) ||      \
+    defined ( @LIBRARY_TARGET_PREFIX@pdf_EXPORTS ) ||       \
+    defined ( @LIBRARY_TARGET_PREFIX@plmeta_EXPORTS ) ||    \
+    defined ( @LIBRARY_TARGET_PREFIX@ps_EXPORTS ) ||        \
+    defined ( @LIBRARY_TARGET_PREFIX@pstex_EXPORTS ) ||     \
+    defined ( @LIBRARY_TARGET_PREFIX@psttf_EXPORTS ) ||     \
+    defined ( @LIBRARY_TARGET_PREFIX@svg_EXPORTS ) ||       \
+    defined ( @LIBRARY_TARGET_PREFIX@tk_EXPORTS ) ||        \
+    defined ( @LIBRARY_TARGET_PREFIX@tkwin_EXPORTS ) ||     \
+    defined ( @LIBRARY_TARGET_PREFIX@wingcc_EXPORTS ) ||    \
+    defined ( @LIBRARY_TARGET_PREFIX@wxwidgets_EXPORTS ) || \
+    defined ( @LIBRARY_TARGET_PREFIX@xfig_EXPORTS ) ||      \
+    defined ( @LIBRARY_TARGET_PREFIX@xwin_EXPORTS ) ||      \
+    defined ( @LIBRARY_TARGET_PREFIX@qt_EXPORTS ) ||        \
+    defined ( @LIBRARY_TARGET_PREFIX@wingdi_EXPORTS )
     #define PLDLLIMPEXP_DRIVER    PLDLLEXPORT
     #define PLDLLIMPEXP_DRIVER_DATA( type )    PLDLLEXPORT type
   #else
@@ -74,7 +86,7 @@
   #define PLDLLIMPEXP_DRIVER_DATA( type )    PLDLLIMPEXP_DATA( type )
 #endif
 
-#if defined ( plplotcxx_EXPORTS )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplotcxx_EXPORTS )
   #define PLDLLIMPEXP_CXX    PLDLLEXPORT
   #define PLDLLIMPEXP_CXX_DATA( type )    PLDLLEXPORT type
 #else
@@ -82,7 +94,7 @@
   #define PLDLLIMPEXP_CXX_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotfortranc_EXPORTS )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplotfortranc_EXPORTS )
   #define PLDLLIMPEXP_FORTRANC    PLDLLEXPORT
   #define PLDLLIMPEXP_FORTRANC_DATA( type )    PLDLLEXPORT type
 #else
@@ -90,7 +102,7 @@
   #define PLDLLIMPEXP_FORTRANC_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplotwxwidgets_EXPORTS )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplotwxwidgets_EXPORTS )
   #define PLDLLIMPEXP_WX    PLDLLEXPORT
   #define PLDLLIMPEXP_WX_DATA( type )    PLDLLEXPORT type
 #else
@@ -101,7 +113,8 @@
 // Note for the case when ENABLE_DYNDRIVERS is not defined, the
 // libplplot build specifically includes the tclmatrix code (see
 // cmake/modules/tk.cmake).
-#if defined ( tclmatrix_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
+#if defined ( @LIBRARY_TARGET_PREFIX@tclmatrix_EXPORTS ) || \
+    ( !defined ( ENABLE_DYNDRIVERS ) && defined ( @LIBRARY_TARGET_PREFIX@plplot_EXPORTS ) )
   #define PLDLLIMPEXP_TCLMAT    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLMAT_DATA( type )    PLDLLEXPORT type
 #else
@@ -112,7 +125,9 @@
 // Note for the case when ENABLE_DYNDRIVERS is not defined, the
 // libplplot build specifically includes the plplottcltk code (see
 // cmake/modules/tk.cmake).
-#if defined ( plplottcltk_Main_EXPORTS ) || defined ( plplottcltk_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplottcltk_Main_EXPORTS ) || \
+    defined ( @LIBRARY_TARGET_PREFIX@plplottcltk_EXPORTS ) ||      \
+    ( !defined ( ENABLE_DYNDRIVERS ) && defined ( @LIBRARY_TARGET_PREFIX@plplot_EXPORTS ) )
   #define PLDLLIMPEXP_TCLTK    PLDLLEXPORT
   #define PLDLLIMPEXP_TCLTK_DATA( type )    PLDLLEXPORT type
 #else
@@ -123,7 +138,8 @@
 // Note for the case when ENABLE_DYNDRIVERS is not defined, the
 // libplplot build specifically includes bindings/qt-gui/plqt.cpp (see
 // cmake/modules/qt.cmake).
-#if defined ( plplotqt_EXPORTS ) || ( !defined ( ENABLE_DYNDRIVERS ) && defined ( plplot_EXPORTS ) )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplotqt_EXPORTS ) || \
+    ( !defined ( ENABLE_DYNDRIVERS ) && defined ( @LIBRARY_TARGET_PREFIX@plplot_EXPORTS ) )
   #define PLDLLIMPEXP_QT    PLDLLEXPORT
   #define PLDLLIMPEXP_QT_DATA( type )    PLDLLEXPORT type
 #else
@@ -131,7 +147,7 @@
   #define PLDLLIMPEXP_QT_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplot_pyqt4_EXPORTS )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplot_pyqt4_EXPORTS )
   #define PLDLLIMPEXP_PYQT4    PLDLLEXPORT
   #define PLDLLIMPEXP_PYQT4_DATA( type )    PLDLLEXPORT type
 #else
@@ -139,7 +155,7 @@
   #define PLDLLIMPEXP_PYQT4_DATA( type )    PLDLLIMPORT type
 #endif
 
-#if defined ( plplot_pyqt5_EXPORTS )
+#if defined ( @LIBRARY_TARGET_PREFIX@plplot_pyqt5_EXPORTS )
   #define PLDLLIMPEXP_PYQT5    PLDLLEXPORT
   #define PLDLLIMPEXP_PYQT5_DATA( type )    PLDLLEXPORT type
 #else

@@ -1,7 +1,5 @@
 # bindings/tk/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -28,6 +26,7 @@ if(ENABLE_tkX)
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     )
 
   add_executable(plserver plserver.c)
@@ -38,13 +37,13 @@ if(ENABLE_tkX)
   endif(BUILD_SHARED_LIBS)
 
   if(tcltk_in_plplot_library)
-    target_link_libraries(plserver plplot plplottcltk_Main ${TK_LIBRARY} ${TCL_LIBRARY})
+    target_link_libraries(plserver PLPLOT::plplot PLPLOT::plplottcltk_Main ${TK_LIBRARY} ${TCL_LIBRARY})
   else(tcltk_in_plplot_library)
-    target_link_libraries(plserver plplot plplottcltk_Main plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
+    target_link_libraries(plserver PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
   endif(tcltk_in_plplot_library)
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
     filter_rpath(LIB_INSTALL_RPATH)
     set_target_properties(plserver
@@ -160,11 +159,11 @@ if(PLD_tk)
   endif(USE_DLL_SUBDIRECTORY)
 
   if(tcltk_in_plplot_library)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplot>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplot>)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:PLPLOT::plplot>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:PLPLOT::plplot>)
   else(tcltk_in_plplot_library)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:tk>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:tk>)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:PLPLOT::tk>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:PLPLOT::tk>)
   endif(tcltk_in_plplot_library)
 
   # N.B. Results only available at generate time.

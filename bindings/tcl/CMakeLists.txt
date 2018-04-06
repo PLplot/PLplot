@@ -46,6 +46,7 @@ if(ENABLE_tcl)
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     )
 
   # These installed header files required regardless of whether the
@@ -96,7 +97,7 @@ if(ENABLE_tcl)
     endif(USE_RPATH)
     configure_library_build(tclmatrix "" "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}")
 
-    install(TARGETS tclmatrix
+    install(TARGETS ${LIBRARY_TARGET_PREFIX}tclmatrix
       EXPORT export_plplot
       ARCHIVE DESTINATION ${LIB_DIR}
       LIBRARY DESTINATION ${LIB_DIR}
@@ -218,12 +219,12 @@ if(ENABLE_tcl)
     #message(STATUS "plplottcltk_link_libraries = ${plplottcltk_link_libraries}"
 
     if(USE_RPATH)
-      get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+      get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
       list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
     endif(USE_RPATH)
     configure_library_build(plplottcltk "" "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}")
 
-    install(TARGETS plplottcltk
+    install(TARGETS ${LIBRARY_TARGET_PREFIX}plplottcltk
       EXPORT export_plplot
       ARCHIVE DESTINATION ${LIB_DIR}
       LIBRARY DESTINATION ${LIB_DIR}
@@ -242,7 +243,7 @@ if(ENABLE_tcl)
 
   set(
     plplottcltk_Main_link_libraries
-    plplot
+    PLPLOT::plplot
     ${TCL_LIBRARY}
     )
   set(
@@ -327,13 +328,13 @@ if(ENABLE_tcl)
 
   if(USE_RPATH)
     # This LIB_INSTALL_RPATH used for pltcl as well.
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
   endif(USE_RPATH)
 
   configure_library_build(plplottcltk_Main "" "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}")
 
-  install(TARGETS plplottcltk_Main
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplottcltk_Main
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
@@ -406,11 +407,11 @@ if(ENABLE_tcl)
   endif(USE_DLL_SUBDIRECTORY)
 
   if(tcltk_in_plplot_library)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplot>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplot>)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:PLPLOT::plplot>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:PLPLOT::plplot>)
   else(tcltk_in_plplot_library)
-    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:plplottcltk>)
-    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:plplottcltk>)
+    set(DLNAME_LIBRARY_DIR $<TARGET_FILE_DIR:PLPLOT::plplottcltk>)
+    set(DLNAME_LIBRARY $<TARGET_FILE_NAME:PLPLOT::plplottcltk>)
   endif(tcltk_in_plplot_library)
 
   # N.B. Results only available at generate time.

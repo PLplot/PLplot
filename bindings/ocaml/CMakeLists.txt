@@ -84,7 +84,7 @@ if(ENABLE_ocaml)
   foreach(SUFFIX IN LISTS SUFFIX_LIST)
     list(APPEND camlidl_GENERATED_SOURCE ${CMAKE_CURRENT_BINARY_DIR}/plplot_core${SUFFIX})
   endforeach(SUFFIX IN LISTS SUFFIX_LIST)
-  # message(STATUS "DEBUG:camlidl_GENERATED_SOURCE = ${camlidl_GENERATED_SOURCE}")
+  #message(STATUS "DEBUG:camlidl_GENERATED_SOURCE = ${camlidl_GENERATED_SOURCE}")
 
   add_custom_command(
     OUTPUT
@@ -108,11 +108,11 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
     COMMAND ${OCAMLC} -ccopt -I${CAMLIDL_LIB_DIR} -c plplot_core_stubs.c
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.c
-    COMMAND ${OCAMLC} -ccopt "-I${CMAKE_SOURCE_DIR_ESCAPED}/include" -ccopt "-I${CMAKE_BINARY_DIR_ESCAPED}/include" -ccopt "-I${CMAKE_SOURCE_DIR_ESCAPED}/lib/qsastime" -ccopt -I../../include -ccopt -I../.. -ccopt -I${CAMLIDL_LIB_DIR} -ccopt -DPLPLOT_HAVE_CONFIG_H -c plplot_impl.c
+    COMMAND ${OCAMLC} -ccopt "-I${CMAKE_SOURCE_DIR_ESCAPED}/include" -ccopt "-I${CMAKE_BINARY_DIR_ESCAPED}/include" -ccopt "-I${CMAKE_SOURCE_DIR_ESCAPED}/lib/qsastime" -ccopt "-I${CMAKE_BINARY_DIR_ESCAPED}/lib/qsastime" -ccopt -I../../include -ccopt -I../.. -ccopt -I${CAMLIDL_LIB_DIR} -ccopt -DPLPLOT_HAVE_CONFIG_H -c plplot_impl.c
     DEPENDS
     ${camlidl_GENERATED_SOURCE}
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
-    plplot
+    PLPLOT::plplot
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     VERBATIM
     )
@@ -123,18 +123,22 @@ if(ENABLE_ocaml)
   if(NOT BUILD_SHARED_LIBS)
     # Order of these libraries matters for second use
     # of this list below.
-    set(library_LIST plplot csirocsa csironn qsastime)
+    set(library_LIST PLPLOT::plplot PLPLOT::csirocsa PLPLOT::csironn PLPLOT::qsastime)
     if(PLD_cgm)
-      list(APPEND library_LIST nistcd)
+      list(APPEND library_LIST PLPLOT::nistcd)
     endif(PLD_cgm)
 
     foreach(library IN LISTS library_LIST)
+      # N.B. the INTERFACE_LINK_LIBRARIES property refers to all libraries
+      # that ${library} depends on, but not the library itself!
       get_target_property(LIBRARY_LIST ${library} INTERFACE_LINK_LIBRARIES)
+      #message(STATUS "DEBUG: library = ${library} has INTERFACE_LINK_LIBRARIES property = ${LIBRARY_LIST}")
       list(APPEND ocaml_LIBRARIES_FLAGS ${LIBRARY_LIST})
     endforeach(library in LISTS library_LIST)
 
-    # Get rid of internal targets and symbolic Qt5 targets from the list
-    list(FILTER ocaml_LIBRARIES_FLAGS EXCLUDE REGEX "^csirocsa$|^csironn$|^nistcd$|^qsastime$|^Qt5::")
+    # Get rid of internal symbolic targets and symbolic Qt5 targets from the list
+    #message(STATUS "DEBUG: (original) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
+    list(FILTER ocaml_LIBRARIES_FLAGS EXCLUDE REGEX "^PLPLOT::csirocsa$|^PLPLOT::csironn$|^PLPLOT::nistcd$|^PLPLOT::qsastime$|^Qt5::")
     #message(STATUS "DEBUG: (filtered) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
 
     # Add C++ libraries in case there is at least one C++ device
@@ -176,25 +180,25 @@ if(ENABLE_ocaml)
     # Order matters so prepend (N.B. in reverse order) plplot and the internal libraries that were removed in target-name form above to the list of FLAGS.
 
     if(PLD_cgm)
-      set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nistcd" -cclib -lnistcd ${ocaml_LIBRARIES_FLAGS})
-      set(installed_ocaml_LIBRARIES_FLAGS -cclib -lnistcd ${installed_ocaml_LIBRARIES_FLAGS})
+      set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nistcd" -cclib -l${LIBRARY_TARGET_PREFIX}nistcd ${ocaml_LIBRARIES_FLAGS})
+      set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}nistcd ${installed_ocaml_LIBRARIES_FLAGS})
     endif(PLD_cgm)
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/qsastime" -cclib -lqsastime ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -cclib -lqsastime ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/qsastime" -cclib -l${LIBRARY_TARGET_PREFIX}qsastime ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}qsastime ${installed_ocaml_LIBRARIES_FLAGS})
 
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nn" -cclib -lcsironn ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -cclib -lcsironn ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nn" -cclib -l${LIBRARY_TARGET_PREFIX}csironn ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}csironn ${installed_ocaml_LIBRARIES_FLAGS})
 
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/csa" -cclib -lcsirocsa ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -cclib -lcsirocsa ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/csa" -cclib -l${LIBRARY_TARGET_PREFIX}csirocsa ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}csirocsa ${installed_ocaml_LIBRARIES_FLAGS})
 
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -lplplot ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -lplplot ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -l${LIBRARY_TARGET_PREFIX}plplot ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -l${LIBRARY_TARGET_PREFIX}plplot ${installed_ocaml_LIBRARIES_FLAGS})
     #message(STATUS "DEBUG: (internal libraries processed) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
   else(NOT BUILD_SHARED_LIBS)
     # Add plplot library.
-    list(APPEND ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -lplplot)
-    list(APPEND installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -lplplot)
+    list(APPEND ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -l${LIBRARY_TARGET_PREFIX}plplot)
+    list(APPEND installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -l${LIBRARY_TARGET_PREFIX}plplot)
   endif(NOT BUILD_SHARED_LIBS)
   # ocamlmklib links *.o into *.so and *.a
   add_custom_command(

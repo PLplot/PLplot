@@ -1,7 +1,5 @@
 # examples/ada/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2007, 2008, 2009 Alan W. Irwin
+# Copyright (C) 2007-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -130,7 +128,7 @@ if(BUILD_TEST)
       add_executable(${TARGET_NAME} ${adasrcfile})
 
       set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS ${adalinkflags})
-      target_link_libraries(${TARGET_NAME} plplotada plplot)
+      target_link_libraries(${TARGET_NAME} PLPLOT::plplotada PLPLOT::plplot)
       set_property(GLOBAL APPEND PROPERTY TARGETS_examples_ada ${TARGET_NAME})
 
       # CMake assumes compilation results only in object files being generated.

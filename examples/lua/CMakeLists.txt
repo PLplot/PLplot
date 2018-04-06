@@ -1,7 +1,5 @@
 # examples/lua/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2009 Alan W. Irwin
+# Copyright (C) 2009-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -98,7 +96,7 @@ if(CORE_BUILD)
 	)
     endforeach(file ${lua_SCRIPTS} ${lua_DATA})
     add_custom_target(lua_examples ALL DEPENDS ${command_DEPENDS})
-    set_property(GLOBAL PROPERTY TARGETS_examples_lua lua_examples plplotluac)
+    set_property(GLOBAL PROPERTY TARGETS_examples_lua lua_examples PLPLOT::plplotluac)
     set_property(GLOBAL PROPERTY FILES_examples_lua ${command_DEPENDS})
   endif(BUILD_TEST)
 
@@ -130,7 +128,7 @@ if(CORE_BUILD)
     DESTINATION ${DATA_DIR}/examples/lua
     )
 else(CORE_BUILD)
-  set_property(GLOBAL PROPERTY TARGETS_examples_lua plplotluac)
+  set_property(GLOBAL PROPERTY TARGETS_examples_lua PLPLOT::plplotluac)
   set_property(GLOBAL PROPERTY FILES_examples_lua)
   foreach(file ${lua_SCRIPTS})
     set_property(GLOBAL APPEND PROPERTY

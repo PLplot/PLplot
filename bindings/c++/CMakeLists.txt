@@ -35,13 +35,13 @@ if(ENABLE_cxx)
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
   endif(USE_RPATH)
 
   configure_library_build(plplotcxx "" "${plplotcxx_LIB_SRCS}" PLPLOT::plplot)
 
   # Install library in lib/
-  install(TARGETS plplotcxx
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotcxx
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

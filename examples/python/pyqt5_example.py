@@ -21,11 +21,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-
 import sys
 import numpy
 
-from plplot_python_start import *
+import plplot_python_start
 import plplot
 
 # An indirect side effect of this import statement is a consistent set

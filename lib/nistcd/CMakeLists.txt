@@ -19,8 +19,14 @@
 # build nistcd library (a.k.a., "cd" library put into the public domain by
 # NIST) required by the PLplot cgm device.
 if(PLD_cgm)
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cddll.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cddll.h
+    )
+
   include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_BINARY_DIR}
   )
 
   set( cd_LIB_SRCS cd.c )
@@ -64,7 +70,7 @@ if(PLD_cgm)
 	  COMPILE_DEFINITIONS "USINGDLL"
 	  )
       endif(BUILD_SHARED_LIBS)
-      target_link_libraries( ${cd_EXECUTABLE} nistcd )
+      target_link_libraries( ${cd_EXECUTABLE} PLPLOT::nistcd )
 
       # Create tests for libnistcd.
       if(cd_EXECUTABLE STREQUAL "cdexpert")

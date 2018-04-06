@@ -25,5 +25,5 @@
 # 		       depends on.
 
 if(PLD_cgm)
-  set(cgm_TARGETS nistcd)
+  set(cgm_TARGETS PLPLOT::nistcd)
 endif(PLD_cgm)

@@ -116,6 +116,7 @@ if(ENABLE_java)
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     ${JAVA_INCLUDE_PATH}
     ${CMAKE_SOURCE_DIR}/bindings/swig-support
     )
@@ -158,7 +159,7 @@ if(ENABLE_java)
   configure_library_build(plplotjavac_wrap java plplotjavac.i PLPLOT::plplot)
 
   # Create config.java.  Other generated java files created by swig above.
-  set(PLPLOTJAVAC_WRAP_DLL $<TARGET_FILE_NAME:PLPLOT::${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}>)
+  set(PLPLOTJAVAC_WRAP_DLL $<TARGET_FILE_NAME:PLPLOT::plplotjavac_wrap>)
   configure_file_generate(
     ${CMAKE_CURRENT_SOURCE_DIR}/config.java.in
     ${CMAKE_CURRENT_BINARY_DIR}/config.java
@@ -166,7 +167,7 @@ if(ENABLE_java)
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     set_target_properties(
       ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}
       PROPERTIES
@@ -203,7 +204,7 @@ if(ENABLE_java)
   # Ensure that swig is executed before we try to compile the java
   # classes which file-depend (see above custom_command DEPENDS) on
   # the java files created by swig (amongst others).
-  add_dependencies(plplot_core PLPLOT::${SWIG_MODULE_plplotjavac_wrap_REAL_NAME})
+  add_dependencies(plplot_core PLPLOT::plplotjavac_wrap)
 
   # Installed as part of the example/java directory
   #install(FILES ${CMAKE_BINARY_DIR}/plplot.jar DESTINATION ${JAR_DIR})

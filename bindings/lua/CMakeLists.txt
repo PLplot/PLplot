@@ -26,13 +26,14 @@ if(ENABLE_lua)
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     ${CMAKE_CURRENT_BINARY_DIR}
     ${LUA_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/bindings/swig-support
     )
   include_directories(${lua_interface_INCLUDE_PATHS})
 
-  set(CMAKE_SWIG_FLAGS -DSWIG_LUA)
+  set(CMAKE_SWIG_FLAGS -DSWIG_LUA -module ${LIBRARY_TARGET_PREFIX}plplotluac)
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
   set_source_files_properties(plplotluac.i
@@ -41,6 +42,12 @@ if(ENABLE_lua)
 
   set(SWIG_MODULE_plplotluac_EXTRA_DEPS
     ${CMAKE_SOURCE_DIR}/bindings/swig-support/plplotcapi.i)
+
+  configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/lua_namespace.i.in
+  ${CMAKE_CURRENT_BINARY_DIR}/lua_namespace.i
+  @ONLY
+  )
 
   # Configure build of swig-generated C wrapper.
   configure_library_build(plplotluac lua plplotluac.i "PLPLOT::plplot;${LUA_LIBRARIES}")

@@ -92,10 +92,7 @@ typedef int            PLINT;
 typedef unsigned int   PLUNICODE;
 typedef PLINT          PLBOOL;
 
-// Assign the module a shorter name
-%luacode {
-    pl = plplotluac
-}
+%include lua_namespace.i
 
 // I hate global variables but this is the best way I can think of to manage consistency
 //   checking among function arguments.

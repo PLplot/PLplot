@@ -18,13 +18,22 @@
 
 if(WITH_CSA)
 
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/csadll.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/csadll.h
+    )
+
+  include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
+
   set(csirocsa_LIB_SRCS
     csa.c
     )
 
   configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}")
 
-  install(TARGETS csirocsa
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}csirocsa
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

@@ -29,6 +29,11 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/qsastimeP.h
   )
 
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/qsastimedll.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/qsastimedll.h
+  )
+
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -87,7 +92,7 @@ set(qsastime_LIB_SRCS
   )
 
 configure_library_build(qsastime "" "${qsastime_LIB_SRCS}" "${MATH_LIB}")
-add_dependencies(qsastime tai-utc.h_built deltaT.h_built)
+add_dependencies(${LIBRARY_TARGET_PREFIX}qsastime tai-utc.h_built deltaT.h_built)
 
 set(qsastime_INSTALLED_HEADERS
   qsastime.h
@@ -96,7 +101,7 @@ set(qsastime_INSTALLED_HEADERS
 
 install(FILES ${qsastime_INSTALLED_HEADERS} DESTINATION ${INCLUDE_DIR})
 
-install(TARGETS qsastime
+install(TARGETS ${LIBRARY_TARGET_PREFIX}qsastime
   EXPORT export_plplot
   ARCHIVE DESTINATION ${LIB_DIR}
   LIBRARY DESTINATION ${LIB_DIR}

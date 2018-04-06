@@ -1,6 +1,4 @@
 # bindings/qt_gui/smoke/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
 # Copyright (C) 2014 Hazen Babcock
 # Copyright (C) 2016-2018 Alan W. Irwin
 #
@@ -45,6 +43,8 @@ if(ENABLE_smoke)
     ${CMAKE_SOURCE_DIR}/drivers
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
+    ${CMAKE_BINARY_DIR}/lib/nistcd
     )
 
   include_directories(${include_directories_LIST})

@@ -1,7 +1,5 @@
 # examples/tk/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -201,9 +199,9 @@ if(BUILD_TEST)
 	)
     endif(BUILD_SHARED_LIBS)
     if(tcltk_in_plplot_library)
-      target_link_libraries(${TK_EXE} plplottcltk_Main plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
+      target_link_libraries(${TK_EXE} PLPLOT::plplottcltk_Main PLPLOT::plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
     else(tcltk_in_plplot_library)
-      target_link_libraries(${TK_EXE} plplottcltk_Main plplottcltk tclmatrix plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
+      target_link_libraries(${TK_EXE} PLPLOT::plplottcltk_Main PLPLOT::plplottcltk PLPLOT::tclmatrix PLPLOT::plplot ${TK_LIBRARY} ${TCL_LIBRARY} ${MATH_LIB})
     endif(tcltk_in_plplot_library)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_tk ${TK_EXE})
   endforeach(TK_SRC_FILE ${tk_SRC})

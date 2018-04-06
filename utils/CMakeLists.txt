@@ -1,8 +1,5 @@
 # utils/CMakeLists.txt for PLplot
-###
-### Process this file with cmake to produce Makefile
-###
-# Copyright (C) 2006-2016 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -24,10 +21,11 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/lib/qsastime
   ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/include
+  ${CMAKE_BINARY_DIR}/lib/qsastime
   )
 
 if(USE_RPATH)
-  get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+  get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
 endif(USE_RPATH)
 
 if(PLD_plmeta)
@@ -38,7 +36,7 @@ if(PLD_plmeta)
       )
   endif(BUILD_SHARED_LIBS)
 
-  target_link_libraries(plrender plplot)
+  target_link_libraries(plrender PLPLOT::plplot)
 
   if(USE_RPATH)
     set_target_properties(plrender
@@ -57,7 +55,7 @@ if(BUILD_SHARED_LIBS)
     )
 endif(BUILD_SHARED_LIBS)
 
-target_link_libraries(pltek plplot)
+target_link_libraries(pltek PLPLOT::plplot)
 
 if(USE_RPATH)
   set_target_properties(pltek
@@ -90,7 +88,7 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(wxPLViewer plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
+  target_link_libraries(wxPLViewer PLPLOT::plplotwxwidgets PLPLOT::plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
 
   if(USE_RPATH)
     # Assume that plplotwxwidgets and plplotcxx have the same install location as plplot

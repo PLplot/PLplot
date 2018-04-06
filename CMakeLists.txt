@@ -69,9 +69,38 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   cmake_policy(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION})
 endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
+# N.B. As a result of the following two set commands and logic in the
+# configure_library_build function, all internal writeable library
+# targets should be referred to as
+# ${LIBRARY_TARGET_PREFIX<original_target_name> and all corresponding
+# internal read-only library targets should be referred to in our
+# build system as PLPLOT::<original_target_name>.  The exception to
+# these rules are the swig-generated modules case where the writeable
+# target name (which is only available in the scope that calls the
+# configure_library_build function) is
+# ${SWIG_MODULE_<original_target_name>_REAL_NAME} instead of
+# ${LIBRARY_TARGET_PREFIX<original_target_name>.  For example, these target
+# names are ${LIBRARY_TARGET_PREFIX}plplot and PLPLOT::plplot for the
+# libplplot.so library and ${SWIG_MODULE_plplotc_REAL_NAME} and
+# PLPLOT::plplotc (note neither target name includes the extra "_"
+# prefix associated with the actual swig-generated shared-object name)
+# for the _plplotc.so swig-generated Python extension module.
+
 # This value used in configure_library_build function to provide the namespace
 # for build-tree ALIAS libraries.
 set(LIBRARY_NAMESPACE PLPLOT::)
+
+option(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS "Experimental option to test writeable library targets in the build tree by prepending a prefix to their library and especially target names to find most instances in our build system where a reference occurs to an unprefixed library target" OFF)
+if(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS)
+  # This value is normally left undefined, but it is useful to temporarily define
+  # it to confirm that all writeable target names are referred to as
+  # ${LIBRARY_TARGET_PREFIX<library_name> in the executed
+  # code path of our CMake logic (note this limitation which makes this
+  # test necessary but not sufficient).
+  set(LIBRARY_TARGET_PREFIX temporary_target_)
+else(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS)
+  set(LIBRARY_TARGET_PREFIX)
+endif(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS)
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers

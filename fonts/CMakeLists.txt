@@ -47,6 +47,7 @@ if(BUILD_HERSHEY_FONTS)
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
+    ${CMAKE_BINARY_DIR}/lib/qsastime
     )
   configure_library_build(hershey STATIC "${libhershey_SRC}" "")
 

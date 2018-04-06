@@ -31,14 +31,14 @@ if(ENABLE_d)
 
   if(plplotdmd_SHARED)
     if(USE_RPATH)
-      get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+      get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     endif(USE_RPATH)
     configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
   else(plplotdmd_SHARED)
     configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
   endif(plplotdmd_SHARED)
 
-  install(TARGETS plplotdmd
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotdmd
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

@@ -83,7 +83,7 @@ if(ENABLE_ada)
   endforeach(BODY_FILE ${BODY_SOURCE_LIST})
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH plplot INSTALL_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
   endif(USE_RPATH)
 
   configure_library_build(plplotada "" "${plplotada_BODY_SRCS}" "")
@@ -116,13 +116,13 @@ if(ENABLE_ada)
   # link errors on at least the Cygwin platform), but use
   # the PRIVATE keyword (on all platforms) to avoid overlinking Ada applications
   # that link to plplotada.
-  target_link_libraries(plplotada PRIVATE ${GNAT_LIB})
+  target_link_libraries(${LIBRARY_TARGET_PREFIX}plplotada PRIVATE ${GNAT_LIB})
 
   # N.B. nm evidence shows that examples that use
   # callbacks (e.g., plfill in x15a.adb) have unresolved references
   # to c_plfill, etc. that require a public link to plplot
   # regardless of how NON_TRANSITIVE is set.
-  target_link_libraries(plplotada PUBLIC PLPLOT::plplot)
+  target_link_libraries(${LIBRARY_TARGET_PREFIX}plplotada PUBLIC PLPLOT::plplot)
 
   install(FILES ${plplotada_SPEC_SRCS} ${plplotada_BODY_SRCS}
     DESTINATION ${ADA_INCLUDE_DIR}
@@ -135,7 +135,7 @@ if(ENABLE_ada)
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     )
 
-  install(TARGETS plplotada
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotada
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

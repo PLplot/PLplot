@@ -79,7 +79,7 @@ endif(CORE_BUILD)
 if(CORE_BUILD)
   configure_library_build(plfortrandemolib STATIC plfortrandemolib.f90 PLPLOT::plplotfortran)
 
-  install(TARGETS plfortrandemolib
+  install(TARGETS ${LIBRARY_TARGET_PREFIX}plfortrandemolib
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
@@ -139,17 +139,17 @@ if(BUILD_TEST)
 
   set_property(GLOBAL PROPERTY TARGETS_examples_fortran)
   # nm analysis shows only this library is required to link examples to the new Fortran binding
-  set(fortran_library_target plplotfortran)
+  set(fortran_library_target PLPLOT::plplotfortran)
   foreach(STRING_INDEX ${fortran_STRING_INDICES})
     # Need unique target name
     add_executable(x${STRING_INDEX}f x${STRING_INDEX}f.f90)
-    target_link_libraries(x${STRING_INDEX}f plfortrandemolib ${fortran_library_target})
+    target_link_libraries(x${STRING_INDEX}f PLPLOT::plfortrandemolib ${fortran_library_target})
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_fortran x${STRING_INDEX}f)
   endforeach(STRING_INDEX ${fortran_STRING_INDICES})
 
   if(CORE_BUILD)
     # Build code that tests auxiliary functions in plfortrandemolib
     add_executable(test_plfortrandemolib test_plfortrandemolib.f90)
-    target_link_libraries(test_plfortrandemolib plfortrandemolib ${fortran_library_target})
+    target_link_libraries(test_plfortrandemolib PLPLOT::plfortrandemolib ${fortran_library_target})
   endif(CORE_BUILD)
 endif(BUILD_TEST)
