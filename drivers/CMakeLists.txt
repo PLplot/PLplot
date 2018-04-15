@@ -200,23 +200,33 @@ if(ENABLE_DYNDRIVERS)
       )
 
     if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
+      if(LIBRARY_TARGET_PREFIX)
+	# For this experimental configuration update the generated file.
+	set(update_command  ${SED_EXECUTABLE} -i -e "s?^\\([^:]*:[^:]*:[^:]*:\\)?\\1${LIBRARY_TARGET_PREFIX}?" ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info)
+      else(LIBRARY_TARGET_PREFIX)
+	set(update_command)
+      endif(LIBRARY_TARGET_PREFIX)
+
       add_custom_command(
 	OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	COMMAND test-drv-info
-	${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
+	"${LIBRARY_TARGET_PREFIX}" ${SOURCE_ROOT_NAME}
 	> ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
+	COMMAND ${update_command}
 	COMMAND ${CMAKE_COMMAND} -E compare_files
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info
 	DEPENDS
 	PLPLOT::${SOURCE_ROOT_NAME}
 	test-drv-info
+	VERBATIM
 	)
       add_custom_target(test_${SOURCE_ROOT_NAME}_dyndriver
 	DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	)
+
       set_property(GLOBAL
 	PROPERTY FILE_DEPENDS_${SOURCE_ROOT_NAME}_dyndriver
 	"${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info"

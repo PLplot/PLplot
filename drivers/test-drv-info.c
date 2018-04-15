@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define SYM_LEN        300
 #define DRVSPEC_LEN    400
@@ -46,22 +47,35 @@ catch_segv( int PL_UNUSED( sig ) )
 }
 
 int
-main( int PL_UNUSED( argc ), char* argv[] )
+main( int argc, char* argv[] )
 {
     lt_dlhandle dlhand;
     char        sym[SYM_LEN];
-    char        * drvnam = argv[1];
+    char        * library_target_prefix;
+    char        * drvnam;
     char        drvspec[ DRVSPEC_LEN ];
     char        ** info;
+    char        *string, *token, *saveptr;
+
+    if ( argc == 3 )
+    {
+        library_target_prefix = argv[1];
+        drvnam = argv[2];
+    }
+    else
+    {
+        fprintf( stderr, "%s needs to be invoked with two additional string arguments (library target prefix and driver name) beyond the application name\n", argv[0] );
+        exit( 1 );
+    }
 
     // Establish a handler for SIGSEGV signals.
     signal( SIGSEGV, catch_segv );
 
     lt_dlinit();
 #if defined ( LTDL_WIN32 ) || defined ( __CYGWIN__ )
-    snprintf( drvspec, DRVSPEC_LEN, "%s", drvnam );
+    snprintf( drvspec, DRVSPEC_LEN, "%s%s", library_target_prefix, drvnam );
 #else
-    snprintf( drvspec, DRVSPEC_LEN, "%s/%s", plGetDrvDir(), drvnam );
+    snprintf( drvspec, DRVSPEC_LEN, "%s/%s%s", plGetDrvDir(), library_target_prefix, drvnam );
 #endif // LTDL_WIN32
     dlhand = lt_dlopenext( drvspec );
     if ( dlhand == NULL )
