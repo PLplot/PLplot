@@ -1,6 +1,6 @@
 # cmake/modules/octave.cmake
 #
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -224,7 +224,7 @@ if(ENABLE_octave)
   # of invoking octave scripts from the octave command line other than
   # with a file.
   file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-  "printf(octave_config_info(\"prefix\"));"
+  "eval('printf(__octave_config_info__(\"prefix\"));', 'printf(octave_config_info(\"prefix\"));')"
   )
   execute_process(
   COMMAND ${OCTAVE} -q -f octave_command
@@ -238,7 +238,7 @@ if(ENABLE_octave)
   # Determine _octave_m_dir, the uncached version of OCTAVE_M_DIR
   # octave-2.1 (or higher) logic.
   file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-  "printf(octave_config_info(\"localfcnfiledir\"));"
+  "eval('printf(__octave_config_info__(\"localfcnfiledir\"));', 'printf(octave_config_info(\"localfcnfiledir\"));')"
   )
   execute_process(
   COMMAND ${OCTAVE} -q -f octave_command
@@ -261,7 +261,7 @@ if(ENABLE_octave)
 
   # Determine _octave_oct_dir, the uncached version of OCTAVE_OCT_DIR
     file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-      "printf(octave_config_info(\"localoctfiledir\"));"
+      "eval('printf(__octave_config_info__(\"localoctfiledir\"));', 'printf(octave_config_info(\"localoctfiledir\"));')"
       )
     execute_process(
       COMMAND ${OCTAVE} -q -f octave_command

@@ -31,6 +31,15 @@ if(WITH_CSA)
     csa.c
     )
 
+  if(CMAKE_C_COMPILER MATCHES ".*gcc.*")
+    # Certain versions of the gcc compiler (e.g., gcc 7.3.0-21 from
+    # Debian Buster) produce libcsirocsa code that segfaults at run
+    # time if the -finline-functions compiler option is used directly
+    # or as the result of the -O3 option.  So for gcc append
+    # the -fno-inline-functions option.
+    set_source_files_properties(csa.c PROPERTIES COMPILE_OPTIONS "-fno-inline-functions")
+  endif(CMAKE_C_COMPILER MATCHES ".*gcc.*")
+
   configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}")
 
   install(TARGETS ${LIBRARY_TARGET_PREFIX}csirocsa

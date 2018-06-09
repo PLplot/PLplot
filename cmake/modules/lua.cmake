@@ -56,24 +56,29 @@ endif(ENABLE_lua AND NOT PL_DOUBLE)
 
 if(ENABLE_lua)
   # Check for Lua libraries which defines
-  #  LUA_LIBRARIES    = path to the Lua library
   #  LUA_INCLUDE_DIR  = path to where lua.h is found
+  #  LUA_LIBRARIES    = path to the Lua library
   #  and LUA_FOUND consistently.
   find_package(Lua)
   if(NOT LUA_FOUND)
+    message(STATUS "LUA_INCLUDE_DIR = ${LUA_INCLUDE_DIR}")
+    message(STATUS "LUA_LIBRARIES = ${LUA_LIBRARIES}")
     message(STATUS "WARNING: "
-      "Lua library and/or header not found. Disabling Lua binding")
+      "Lua header and/or library not found. Disabling Lua binding")
     set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
   endif(NOT LUA_FOUND)
 endif(ENABLE_lua)
 
 if(ENABLE_lua)
-  find_program(LUA_EXECUTABLE lua)
-  if(NOT LUA_EXECUTABLE)
+  string(SUBSTRING ${LUA_VERSION_STRING} 0 3 SHORT_LUA_VERSION_STRING)
+  find_program(LUA_EXECUTABLE NAMES lua lua${SHORT_LUA_VERSION_STRING})
+  if(LUA_EXECUTABLE)
+    message(STATUS "Found LUA_EXECUTABLE = ${LUA_EXECUTABLE}")
+  else(LUA_EXECUTABLE)
     message(STATUS "WARNING: "
-      "Lua executable not found. Disabling Lua binding")
+      "Lua executable not found under either lua or lua${SHORT_LUA_VERSION_STRING} name. Disabling Lua binding")
     set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
-  endif(NOT LUA_EXECUTABLE)
+  endif(LUA_EXECUTABLE)
 endif(ENABLE_lua)
 
 if(ENABLE_lua)
