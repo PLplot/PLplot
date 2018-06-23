@@ -95,7 +95,7 @@ function geolocation_labeler(axis, value)
 		-- A special case for the equator
 		label = direction_label
 	else
-		label = math.abs(label_val) .. direction_label
+		label = string.format("%.0f%s", math.abs(label_val), direction_label)
 	end
 
 	return label

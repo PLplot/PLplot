@@ -175,9 +175,9 @@ function plot4()
     -- Write labels for angle
     -- Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
     if dx>=-0.00001 then
-      pl.ptex(dx, dy, dx, dy, -0.15, tostring(theta))
+      pl.ptex(dx, dy, dx, dy, -0.15, string.format("%d", theta))
     else
-      pl.ptex(dx, dy, -dx, -dy, 1.15, tostring(theta))
+      pl.ptex(dx, dy, -dx, -dy, 1.15, string.format("%d", theta))
     end
   end
 

@@ -84,7 +84,7 @@ pl.init()
 -- compression parameter.
 compression2 = pl.gcompression()
 print("Output various PLplot parameters")
-print("compression parameter = " .. compression2)
+print(string.format("compression parameter = %d", compression2))
 if compression2~=compression1 then
   io.stderr:write("plgcompression test failed\n")
   status = 1
@@ -99,7 +99,7 @@ pl.scmap1(r1, g1, b1)
 pl.scmap1a(r1, g1, b1, a1)
 
 level2 = pl.glevel()
-print("level parameter = " .. level2)
+print(string.format("level parameter = %d", level2))
 if level2~=1 then
   io.stderr:write("plglevel test failed.\n")
   status = 1
