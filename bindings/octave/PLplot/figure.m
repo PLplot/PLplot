@@ -182,7 +182,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       endif
 
       ## the tk stuff
-      if (0 && strcmp("tk", sprintf("%s",plgdev')))
+      if (0 && strcmp("tk", sprintf("%s",plgdev)))
 	if (! exist("tk_start") && nargin == 6)
 	  error("Can't use this Tk feature of PLplot until tk_octave \
                  is installed!\n")
@@ -233,7 +233,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
       #pladv(0);
       #plflush;pleop;
 
-      if ( 0 && exist("__tk_name") && (strcmp("tk", sprintf("%s",plgdev'))))
+      if ( 0 && exist("__tk_name") && (strcmp("tk", sprintf("%s",plgdev))))
 	eval(tk_receive(1));
 	__pl.intp = __pl_matstr(__pl.intp, intp, strm);	# tk interpreter name
 	unlink(init_file);
@@ -250,7 +250,7 @@ function [n, driver, intp]= figure (n, device, file, win_id, tk_file, plot_frame
     endif
   endif
 
-  driver = sprintf("%s",plgdev');
+  driver = sprintf("%s",plgdev);
 
   if (!exist("intp"))
     intp = deblank(__pl.intp(n+1,:));

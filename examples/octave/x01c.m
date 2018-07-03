@@ -33,7 +33,7 @@ function ix01c(strm)
 
   ## Get version number, just for kicks */
 
-  ver=plgver';
+  ver=plgver;
   fprintf(strm,"PLplot library version: %s\n", ver);
 
   ## Initialize plplot */

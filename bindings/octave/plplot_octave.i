@@ -1,5 +1,5 @@
 //
-//Copyright (C) 2010-2014  Alan W. Irwin
+//Copyright (C) 2010-2018  Alan W. Irwin
 //This file is part of PLplot.
 //
 //PLplot is free software; you can redistribute it and/or modify
@@ -762,23 +762,26 @@ typedef PLINT          PLBOOL;
 //				 String returning functions
 //--------------------------------------------------------------------------
 
-// This currently used for character string output of less than 80
-// bytes (e.g., plgdev, plgfnam, and plgver).  N.B. This works, but it
-// was inspired by what was done by Rafael for matwrap with no deep
-// knowledge of octave, i.e., no knowledge of exactly what is meant by
-// charMatrix, etc.
-%typemap( in, numinputs = 0 ) char *OUTPUT( octave_value_list retval )
+// An Octave 4 change is that null's are ignored in character strings.  So this typemap
+// changed so that ordinary C character string is used to store the output string from
+// PLplot, and then the null-terminated part of that character string is inserted into
+// an Octave charMatrix of just the right size to contain that string.
+%typemap( in, numinputs = 0 ) char *OUTPUT(char local_string[80])
 {
+    $1 = local_string;
+}
+%typemap( argout ) char *OUTPUT( size_t local_string_length, charMatrix local_charMatrix, octave_value_list retval)
+{
+  local_string_length = strlen(local_string$argnum);
+  local_charMatrix = charMatrix( 1, local_string_length );
+  local_charMatrix.insert(local_string$argnum, 0, 0);
 // Check if version >= 3.4.0
 %# if OCTAVE_API_VERSION_NUMBER < 45
-    retval( 0 ) = octave_value( charMatrix( 80, 1 ), true );
+    retval( 0 ) = octave_value( local_charMatrix, true );
 %# else
-        retval( 0 ) = octave_value( charMatrix( 80, 1 ) );
+    retval( 0 ) = octave_value( local_charMatrix );
 %# endif
-    $1 = (char *) retval( 0 ).char_matrix_value().data();
-}
-%typemap( argout ) char *OUTPUT {
-    $result = SWIG_Octave_AppendOutput( $result, retval$argnum( 0 ) );
+    $result = SWIG_Octave_AppendOutput( $result, retval( 0 ) );
 }
 
 typedef PLINT ( *defined_func )( PLFLT, PLFLT );

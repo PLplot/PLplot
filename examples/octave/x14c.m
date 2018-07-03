@@ -44,7 +44,7 @@ function ix14c(fname2,strm)
   plssub(2,2);
   plinit();
 
-  device = sprintf("%s",plgdev');
+  device = sprintf("%s",plgdev);
   if(isempty(device))
     device = "xwin";
   endif
