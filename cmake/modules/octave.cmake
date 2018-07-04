@@ -183,7 +183,7 @@ if(ENABLE_octave)
       # Octave has a huge number of dependencies and therefore an
       # impossible-to-untangle set of header #includes that depend on
       # other packages headers.  And there is no information from
-      # mkoctfile or the octave octave_config_info command about where
+      # mkoctfile or the octave_config command about where
       # those header directories are located.  But from experiments
       # with both the Linux and Windows binary versions of octave, it
       # appears that hdf5.h is one external header that is necessary,
@@ -219,32 +219,45 @@ endif(ENABLE_octave)
 if(ENABLE_octave)
 
   # Determine OCTAVE_PREFIX which is the prefix where octave was installed.
-  # N.B. this file method is really clunky, but we are forced to use
-  # this method because as far as I know there is no method
-  # of invoking octave scripts from the octave command line other than
-  # with a file.
-  file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-  "eval('printf(__octave_config_info__(\"prefix\"));', 'printf(octave_config_info(\"prefix\"));')"
-  )
-  execute_process(
-  COMMAND ${OCTAVE} -q -f octave_command
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  OUTPUT_VARIABLE OCTAVE_PREFIX
-  )
+
+  if(NOT OCTAVE_PREFIX)
+    execute_process(
+      COMMAND ${OCTAVE_CONFIG} -p PREFIX
+      OUTPUT_VARIABLE OCTAVE_PREFIX
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+  endif(NOT OCTAVE_PREFIX)
+
+  if(NOT OCTAVE_PREFIX)
+    # PREFIX no longer available for octave-4.4 so try alternative of OCTAVE_HOME which is
+    # available for that version of Octave.
+    execute_process(
+      COMMAND ${OCTAVE_CONFIG} -p OCTAVE_HOME
+      OUTPUT_VARIABLE OCTAVE_PREFIX
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+  endif(NOT OCTAVE_PREFIX)
+
   #message(STATUS "OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
   file(TO_CMAKE_PATH "${OCTAVE_PREFIX}" OCTAVE_PREFIX)
   #message(STATUS "(CMake) OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
 
+  if(NOT OCTAVE_PREFIX)
+    message(STATUS "OCTAVE_PREFIX = ${OCTAVE_PREFIX}")
+    message(STATUS "WARNING: Valid value of OCTAVE_PREFIX could not be determined.  Disabling Octave binding")
+    set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
+  endif(NOT OCTAVE_PREFIX)
+endif(ENABLE_octave)
+
+if(ENABLE_octave)
+
   # Determine _octave_m_dir, the uncached version of OCTAVE_M_DIR
-  # octave-2.1 (or higher) logic.
-  file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-  "eval('printf(__octave_config_info__(\"localfcnfiledir\"));', 'printf(octave_config_info(\"localfcnfiledir\"));')"
-  )
   execute_process(
-  COMMAND ${OCTAVE} -q -f octave_command
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  OUTPUT_VARIABLE _octave_m_dir
-  )
+    COMMAND ${OCTAVE_CONFIG} -p LOCALFCNFILEDIR
+    OUTPUT_VARIABLE _octave_m_dir
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
   #message(STATUS "_octave_m_dir = ${_octave_m_dir}")
   file(TO_CMAKE_PATH "${_octave_m_dir}" _octave_m_dir)
   #message(STATUS "(CMake) _octave_m_dir = ${_octave_m_dir}")
@@ -252,22 +265,20 @@ if(ENABLE_octave)
   # Replace the OCTAVE_PREFIX with the PLplot prefix in _octave_m_dir
   # and append "/PLplot"
   string(REPLACE
-  "${OCTAVE_PREFIX}"
-  "${CMAKE_INSTALL_PREFIX}"
-  _octave_m_dir
-  "${_octave_m_dir}/PLplot"
-  )
+    "${OCTAVE_PREFIX}"
+    "${CMAKE_INSTALL_PREFIX}"
+    _octave_m_dir
+    "${_octave_m_dir}/PLplot"
+    )
   #message(STATUS "Transformed _octave_m_dir = ${_octave_m_dir}")
 
   # Determine _octave_oct_dir, the uncached version of OCTAVE_OCT_DIR
-    file(WRITE ${CMAKE_BINARY_DIR}/octave_command
-      "eval('printf(__octave_config_info__(\"localoctfiledir\"));', 'printf(octave_config_info(\"localoctfiledir\"));')"
-      )
-    execute_process(
-      COMMAND ${OCTAVE} -q -f octave_command
-      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-      OUTPUT_VARIABLE _octave_oct_dir
-      )
+  execute_process(
+    COMMAND ${OCTAVE_CONFIG} -p LOCALOCTFILEDIR
+    OUTPUT_VARIABLE _octave_oct_dir
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
     #message(STATUS "_octave_oct_dir = ${_octave_oct_dir}")
     file(TO_CMAKE_PATH "${_octave_oct_dir}" _octave_oct_dir)
     #message(STATUS "(CMake) _octave_oct_dir = ${_octave_oct_dir}")
