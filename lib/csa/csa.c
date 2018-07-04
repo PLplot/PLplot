@@ -1160,7 +1160,7 @@ static void lsq( double** A, int ni, int nj, double* z, double* w, double* sol )
         {
             double* a = A[j];
             double* b = &B[i][j];
-	    // B values are calloc'd by alloc2d so no need to initialize
+            // B values are calloc'd by alloc2d so no need to initialize
             for ( ii = 0; ii < ni; ++ii )
                 *b += v[ii] * a[ii];
         }

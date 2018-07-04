@@ -766,20 +766,20 @@ typedef PLINT          PLBOOL;
 // changed so that ordinary C character string is used to store the output string from
 // PLplot, and then the null-terminated part of that character string is inserted into
 // an Octave charMatrix of just the right size to contain that string.
-%typemap( in, numinputs = 0 ) char *OUTPUT(char local_string[80])
+%typemap( in, numinputs = 0 ) char *OUTPUT( char local_string[80] )
 {
     $1 = local_string;
 }
-%typemap( argout ) char *OUTPUT( size_t local_string_length, charMatrix local_charMatrix, octave_value_list retval)
+%typemap( argout ) char *OUTPUT( size_t local_string_length, charMatrix local_charMatrix, octave_value_list retval )
 {
-  local_string_length = strlen(local_string$argnum);
-  local_charMatrix = charMatrix( 1, local_string_length );
-  local_charMatrix.insert(local_string$argnum, 0, 0);
+    local_string_length = strlen( local_string$argnum );
+    local_charMatrix    = charMatrix( 1, local_string_length );
+    local_charMatrix.insert( local_string$argnum, 0, 0 );
 // Check if version >= 3.4.0
 %# if OCTAVE_API_VERSION_NUMBER < 45
     retval( 0 ) = octave_value( local_charMatrix, true );
 %# else
-    retval( 0 ) = octave_value( local_charMatrix );
+        retval( 0 ) = octave_value( local_charMatrix );
 %# endif
     $result = SWIG_Octave_AppendOutput( $result, retval( 0 ) );
 }
