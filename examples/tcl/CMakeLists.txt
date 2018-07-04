@@ -107,9 +107,11 @@ set(tclIndex_DEPENDS)
 foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
     )
   list(APPEND tclIndex_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${file})
 endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})

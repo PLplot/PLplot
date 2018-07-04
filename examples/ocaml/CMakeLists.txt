@@ -4,7 +4,7 @@
 #
 #
 # Copyright (C) 2008 Andrew Ross
-# Copyright (C) 2009-2017 Alan W. Irwin
+# Copyright (C) 2009-2018 Alan W. Irwin
 # Copyright (C) 2009 Hezekiah M. Carty
 #
 # This file is part of PLplot.
@@ -165,7 +165,9 @@ if(BUILD_TEST)
       ${ocaml_EXTRA_GENERATED_FILES}
       ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE_NAME}
       # Need source file in build tree in order for OCaml build tools to work.
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
+      ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
       COMMAND ${ocaml_compiler}
       -g
       -I ${I_OPTION}
@@ -255,8 +257,9 @@ if(OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
       add_custom_command(
 	OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
-	COMMAND ${CMAKE_COMMAND}
-	-E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE} ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
+	COMMAND ${CMAKE_COMMAND} -E copy
+	${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
+	${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_FILE}
 	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${SOURCE_FILE}
 	)
 

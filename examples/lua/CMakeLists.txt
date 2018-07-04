@@ -83,18 +83,19 @@ if(CORE_BUILD)
     # tree.
     set(command_depends)
     foreach(file ${lua_SCRIPTS})
-      set(
-	command_DEPENDS
-	${command_DEPENDS}
+      add_custom_command(
+	OUTPUT
+	${CMAKE_CURRENT_BINARY_DIR}/${file}
+	COMMAND ${CMAKE_COMMAND} -E copy
+	${CMAKE_CURRENT_SOURCE_DIR}/${file}
+	${CMAKE_CURRENT_BINARY_DIR}
+	DEPENDS
+	${CMAKE_CURRENT_SOURCE_DIR}/${file}
+	)
+      list(APPEND command_DEPENDS
 	${CMAKE_CURRENT_BINARY_DIR}/${file}
 	)
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
-	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-	)
-    endforeach(file ${lua_SCRIPTS} ${lua_DATA})
+    endforeach(file ${lua_SCRIPTS})
     add_custom_target(lua_examples ALL DEPENDS ${command_DEPENDS})
     set_property(GLOBAL PROPERTY TARGETS_examples_lua lua_examples PLPLOT::plplotluac)
     set_property(GLOBAL PROPERTY FILES_examples_lua ${command_DEPENDS})
@@ -134,5 +135,5 @@ else(CORE_BUILD)
     set_property(GLOBAL APPEND PROPERTY
       FILES_examples_lua ${CMAKE_CURRENT_SOURCE_DIR}/${file}
       )
-  endforeach(file ${lua_SCRIPTS} ${lua_DATA})
+  endforeach(file ${lua_SCRIPTS})
 endif(CORE_BUILD)

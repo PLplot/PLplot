@@ -2,7 +2,7 @@
 ###
 ### Process this file with cmake to produce Makefile
 ###
-# Copyright (C) 2008 Alan W. Irwin
+# Copyright (C) 2008-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -44,7 +44,9 @@ foreach(generated_RELEASE ${generated_RELEASE_LIST})
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.xhtml
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.html ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.xhtml
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.html
+    ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.xhtml
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/announce-plplot-${generated_RELEASE}.html
     )

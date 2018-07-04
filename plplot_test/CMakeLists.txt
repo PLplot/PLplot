@@ -437,7 +437,7 @@ if(SH_EXECUTABLE)
     # tree so that example 20 will run from there.
     add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/Chloe.pgm
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      COMMAND ${CMAKE_COMMAND} -E copy
       ${CMAKE_SOURCE_DIR}/examples/Chloe.pgm
       ${CMAKE_CURRENT_BINARY_DIR}/Chloe.pgm
       DEPENDS ${CMAKE_SOURCE_DIR}/examples/Chloe.pgm

@@ -43,7 +43,9 @@ if(ENABLE_ocaml)
       # Furthermore, for this same case must remove absolute directory
       # location from generated_plplot_h.inc.  But plplot_h is fine in
       # its present quoted and escaped form, go figure.
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml ${CMAKE_CURRENT_BINARY_DIR}/touchup.ml
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/touchup.ml
+      ${CMAKE_CURRENT_BINARY_DIR}/touchup.ml
       # N.B. This only works on Debian if the libpcre-ocaml-dev package is installed.
       COMMAND ${OCAML} touchup.ml "${CMAKE_CURRENT_SOURCE_DIR_ESCAPED}/plplot_h" generated_plplot_h.inc
       COMMAND cmp ${CMAKE_CURRENT_SOURCE_DIR}/plplot_h.inc ${CMAKE_CURRENT_BINARY_DIR}/generated_plplot_h.inc
@@ -90,7 +92,9 @@ if(ENABLE_ocaml)
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
     ${camlidl_GENERATED_SOURCE}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot_core.idl ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_core.idl
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.idl
     # -I "${CMAKE_CURRENT_SOURCE_DIR_ESCAPED}" required to get access to plplot_h.inc.
     COMMAND ${CAMLIDL} -I "${CMAKE_CURRENT_SOURCE_DIR_ESCAPED}" -header plplot_core.idl
     DEPENDS
@@ -107,7 +111,9 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.c
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.o
     COMMAND ${OCAMLC} -ccopt -I${CAMLIDL_LIB_DIR} -c plplot_core_stubs.c
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.c
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot_impl.c
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot_impl.c
     COMMAND ${OCAMLC} -ccopt "-I${CMAKE_SOURCE_DIR_ESCAPED}/include" -ccopt "-I${CMAKE_BINARY_DIR_ESCAPED}/include" -ccopt "-I${CMAKE_SOURCE_DIR_ESCAPED}/lib/qsastime" -ccopt "-I${CMAKE_BINARY_DIR_ESCAPED}/lib/qsastime" -ccopt -I../../include -ccopt -I../.. -ccopt -I${CAMLIDL_LIB_DIR} -ccopt -DPLPLOT_HAVE_CONFIG_H -c plplot_impl.c
     DEPENDS
     ${camlidl_GENERATED_SOURCE}
@@ -267,7 +273,9 @@ if(ENABLE_ocaml)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmi
     COMMAND ${OCAMLC} -c plplot_core.mli
     # ocamlc *.mli source file must be in ${CMAKE_CURRENT_BINARY_DIR}.
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot.mli ${CMAKE_CURRENT_BINARY_DIR}/plplot.mli
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot.mli
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot.mli
     COMMAND ${OCAMLC} -c plplot.mli
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_core.mli
@@ -287,7 +295,9 @@ if(ENABLE_ocaml)
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml
+    ${CMAKE_CURRENT_BINARY_DIR}/plplot.ml
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plplot.ml
     VERBATIM

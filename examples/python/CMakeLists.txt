@@ -139,7 +139,7 @@ if(CORE_BUILD)
     foreach(file ${python_SCRIPTS} ${python_DATA})
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	COMMAND ${CMAKE_COMMAND} -E copy
 	${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}
 	DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${file}
 	)

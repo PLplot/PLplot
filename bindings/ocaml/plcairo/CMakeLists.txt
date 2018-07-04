@@ -54,14 +54,18 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
     # ocamlc *.mli source file must be in ${CMAKE_CURRENT_BINARY_DIR}.
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
+    ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
     COMMAND ${OCAMLFIND} ocamlc -package cairo2 -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.mli
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
   add_custom_target(target_plcairo_cmi
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plcairo.mli
+    ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmi
     )
 
   # ocamlfind ocamlc -c compiles *.ml into *.cmo and simultaneously
@@ -72,7 +76,9 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
     # ocamlc and ocamlopt *.ml source file must be in
     # ${CMAKE_CURRENT_BINARY_DIR}.
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
+    ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
     COMMAND ${OCAMLFIND} ocamlc -package cairo2 -I ${PATH_TO_PLPLOT_CMA} plplot.cma -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
@@ -80,7 +86,9 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
   add_custom_target(target_plcairo_cmo
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmo
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmo
+    ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
     )
 
   # ocamlc -a -custom builds a *.cma library from *.cmo
@@ -116,7 +124,9 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
       # ocamlc and ocamlopt *.ml source file must be in
       # ${CMAKE_CURRENT_BINARY_DIR}.
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
+      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
       COMMAND ${OCAMLFIND} ocamlopt -package cairo2 -I ${PATH_TO_PLPLOT_CMXA} -c ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
       DEPENDS
       ${CMAKE_CURRENT_SOURCE_DIR}/plcairo.ml
@@ -124,7 +134,10 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       )
     add_custom_target(target_plcairo_cmx
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx
+      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.o
+      ${CMAKE_CURRENT_BINARY_DIR}/plcairo.ml
       )
 
     # ocamlopt -a builds the libraries *.cmxa and *.a respectively from

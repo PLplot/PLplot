@@ -71,8 +71,7 @@ set(tk_FILES)
 foreach(_file ${tk_SRC_FILES})
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
-    COMMAND ${CMAKE_COMMAND}
-    -E copy_if_different
+    COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_file}
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${_file}
@@ -90,8 +89,7 @@ foreach(STRING_INDEX ${tk_STRING_INDICES})
   set(_file x${STRING_INDEX}.tcl)
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
-    COMMAND ${CMAKE_COMMAND}
-    -E copy_if_different
+    COMMAND ${CMAKE_COMMAND} -E copy
     ${tcl_EXAMPLES_DIR}/${_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_file}
     DEPENDS ${tcl_EXAMPLES_DIR}/${_file}
@@ -101,8 +99,7 @@ endforeach(STRING_INDEX ${tk_STRING_INDICES})
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
-  COMMAND ${CMAKE_COMMAND}
-  -E copy_if_different
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${tcl_EXAMPLES_DIR}/plgrid.tcl
   ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
   DEPENDS ${tcl_EXAMPLES_DIR}/plgrid.tcl

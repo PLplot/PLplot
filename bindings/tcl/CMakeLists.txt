@@ -348,7 +348,7 @@ if(ENABLE_tcl)
 
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    COMMAND ${CMAKE_COMMAND} -E copy
     ${CMAKE_SOURCE_DIR}/bindings/tk/plplot.tcl
     ${CMAKE_CURRENT_BINARY_DIR}/plplot.tcl
     DEPENDS
