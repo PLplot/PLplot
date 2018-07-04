@@ -23,8 +23,7 @@ function(list_example_files path device suffix output_list)
     x05:01
     x06:05
     x07:20
-    # x08:10 when Ada and OCaml are propagated.
-    x08:08
+    x08:10
     x09:05
     x10:01
     x11:08
@@ -36,22 +35,21 @@ function(list_example_files path device suffix output_list)
     x16:05
     x17:01
     x18:08
-    # x19:05 when Ada and OCaml are propagated.
-    x19:04
+    x19:05
     x20:06
     x21:03
     x22:04
-    x23:16
+#temporary    x23:16
     x24:01
     x25:08
-    x26:02
+#temporary    x26:02
     x27:20
     x28:05
     x29:10
     x30:02
     x31:01
     # 32 missing deliberately since that only implemented for C
-    x33:04
+#temporary    x33:04
     )
 
   # This list taken directly from plplot-test.sh.cmake.  Update as needed.
