@@ -829,10 +829,17 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         functionArguments( 1 ) = yin;
 
         if ( fcnMapForm != NULL )
+#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+            retval = octave::feval( fcnMapForm, functionArguments, 1 );
+#else
             retval = feval( fcnMapForm, functionArguments, 1 );
+#endif
         else
+#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+            retval = octave::feval( nameMapForm, functionArguments, 1 );
+#else
             retval = feval( nameMapForm, functionArguments, 1 );
-
+#endif
 
         if ( retval.length() >= 2 )
         {
@@ -889,9 +896,17 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         functionArguments( 1 ) = inValue;
 
         if ( fcnLabelFunc != NULL )
+#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+            retval = octave::feval( fcnLabelFunc, functionArguments, 1 );
+#else
             retval = feval( fcnLabelFunc, functionArguments, 1 );
+#endif
         else
+#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+            retval = octave::feval( nameLabelFunc, functionArguments, 1 );
+#else
             retval = feval( nameLabelFunc, functionArguments, 1 );
+#endif
 
         strncpy( label, retval( 0 ).string_value().c_str(), length );
     }
@@ -941,10 +956,17 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         functionArguments( 1 ) = yin;
 
         if ( fcnCoordTrans != NULL )
+#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+            retval = octave::feval( fcnCoordTrans, functionArguments, 1 );
+#else
             retval = feval( fcnCoordTrans, functionArguments, 1 );
+#endif
         else
+#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+            retval = octave::feval( nameCoordTrans, functionArguments, 1 );
+#else
             retval = feval( nameCoordTrans, functionArguments, 1 );
-
+#endif
 
         if ( retval.length() >= 2 )
         {
