@@ -70,8 +70,8 @@ plExitCmd( ClientData clientData, Tcl_Interp *interp, int argc, char **argv )
     (void) argv;
     (void) clientData;
 
-// Print error message if one given
-    if ( tmp != NULL && tmp != '\0' )
+// Print error message if one given that is not of zero length.
+    if ( tmp != NULL && *tmp != '\0' )
         fprintf( stderr, "%s\n", Tcl_GetStringResult( interp ) );
 
     plspause( 0 );
