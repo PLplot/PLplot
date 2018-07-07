@@ -85,20 +85,45 @@ transform_source()
     # directives or any other string (or nothing) to indicate that
     # this swig correction should not be applied.
     if [ "$4" = "swig" ] ; then
+        # With p_command, temporarily replace all %# swig
+	# preprocessing directives with # C preprocessing directives
+	# before uncrustify processing so that uncrustify can handle
+	# indentation properly, but mark each occurrence in file so
+	# can restore %# swig preprocessing directives later with
+	# s_command after uncrustify processing.
+	p_command='sed -e "/%#/ s?%#\(.*$\)?#\1//MARK_C_PREPROCESSOR_DIRECTIVE?"'
+
 	# Splitting s_command into multiple invocations of sed is
         # required (for reasons I have not figured out) in order for
         # the changes to be done as designed.
+
 	# The first two stanzas are to deal with uncrustify
         # splitting both %} and %{ by newline characters and
         # also getting rid of any surrounding blanks.
+
         # The next two stanzas are to take care of blanks inserted by
         # uncrustify after % and to get rid of any
         # uncrustify-generated indentation for all % swig directives.
+
 	# The next two stanzas are to place %} and %{ on individually
 	# separate lines.
+
 	# The next two stanzas are to deal with $ variables.
-        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "s?\$ \* ?\$\*?g" -e "s?\$ & ?\$\&?g"'
+
+	# The next stanza restores the C preprocessor directive and drops
+	# the associated trailing //MARK_C_PREPROCESSOR_DIRECTIVE comment.
+
+	# The final stanza removes trailing blanks that are left over
+	# from executing $u_command and the removal of the
+	# //MARK_C_PREPROCESSOR_DIRECTIVE comment.  That stanza is
+	# brute force, but I seemed to be up against sed bugs if I
+	# tried anything fancy to include preceding blanks in the
+	# //MARK_C_PREPROCESSOR_DIRECTIVE comment removal stanza.
+        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "s?\$ \* ?\$\*?g" -e "s?\$ & ?\$\&?g" | sed -e "/\/\/MARK_C_PREPROCESSOR_DIRECTIVE/ s?#\(.*\)//MARK_C_PREPROCESSOR_DIRECTIVE?%#\1?" | sed -e "s?  *\$??"'
     else
+	# p_command is always executed as the first in a chain of commands so there
+	# is a specific stdin file rather than "-".
+	p_command="cat"
         s_command="cat -"
     fi
 
@@ -119,19 +144,19 @@ transform_source()
 
     for language_source in $1 ; do
 	if [ "$apply" = "ON" ] ; then
-	    $u_command < $language_source | $c_command | eval $s_command | \
+	    eval $p_command < $language_source | $u_command | $c_command | eval $s_command | \
 		cmp --quiet $language_source -
 	    if [ "$?" -ne 0 ] ; then
-		$u_command < $language_source | $c_command | eval $s_command >| /tmp/temporary.file
+		eval $p_command < $language_source | $u_command | $c_command | eval $s_command >| /tmp/temporary.file
 		mv -f /tmp/temporary.file $language_source
 	    fi
 	fi
-	$u_command < $language_source | $c_command | eval $s_command | \
+	eval $p_command < $language_source | $u_command | $c_command | eval $s_command | \
 	    cmp --quiet $language_source -
 	if [ "$?" -ne 0 ] ; then
 	    ls $language_source
 	    if [ "$diff" = "ON" ] ; then
-		$u_command < $language_source | $c_command | eval $s_command | \
+		eval $p_command < $language_source | $u_command | $c_command | eval $s_command | \
 		diff $diff_options $language_source -
 	    fi
 	fi
