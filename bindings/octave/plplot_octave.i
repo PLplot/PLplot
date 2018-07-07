@@ -265,7 +265,11 @@ typedef PLINT          PLBOOL;
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !$input.isempty() )
+%#else
     if ( !$input.is_empty() )
+%#endif
     {
         if ( _dim( $input, 0 ) != Alen )
         {
@@ -370,7 +374,11 @@ typedef PLINT          PLBOOL;
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !$input.isempty() )
+%#else
     if ( !$input.is_empty() )
+%#endif
     {
         $2   = (PLINT) ( _dim( $input, 0 ) );
         temp = $input.matrix_value();
@@ -433,7 +441,11 @@ typedef PLINT          PLBOOL;
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !$input.isempty() )
+%#else
     if ( !$input.is_empty() )
+%#endif
     {
         if ( _dim( $input, 0 ) != Alen )
         {
@@ -493,7 +505,11 @@ typedef PLINT          PLBOOL;
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !$input.isempty() )
+%#else
     if ( !$input.is_empty() )
+%#endif
     {
         if ( _dim( $input, 0 ) != Alen )
         {
@@ -531,7 +547,11 @@ typedef PLINT          PLBOOL;
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !$input.isempty() )
+%#else
     if ( !$input.is_empty() )
+%#endif
     {
         Alen = (PLINT) ( _dim( $input, 0 ) );
         temp = $input.matrix_value();
@@ -776,11 +796,11 @@ typedef PLINT          PLBOOL;
     local_charMatrix    = charMatrix( 1, local_string_length );
     local_charMatrix.insert( local_string$argnum, 0, 0 );
 // Check if version >= 3.4.0
-%# if OCTAVE_API_VERSION_NUMBER < 45
+%#if OCTAVE_API_VERSION_NUMBER < 45
     retval( 0 ) = octave_value( local_charMatrix, true );
-%# else
-        retval( 0 ) = octave_value( local_charMatrix );
-%# endif
+%#else
+    retval( 0 ) = octave_value( local_charMatrix );
+%#endif
     $result = SWIG_Octave_AppendOutput( $result, retval( 0 ) );
 }
 
@@ -858,7 +878,11 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 // Handle function pointers to mapform function
 %typemap( in ) mapform_func mapform {
     octave_value obj = $input;
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !obj.isempty() )
+%#else
     if ( !obj.is_empty() )
+%#endif
     {
         if ( obj.is_function_handle() || obj.is_inline_function() )
         {
@@ -915,7 +939,11 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 // Handle function pointers to mapform function
 %typemap( in ) label_func lf {
     octave_value obj = $input;
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !obj.isempty() )
+%#else
     if ( !obj.is_empty() )
+%#endif
     {
         if ( obj.is_function_handle() || obj.is_inline_function() )
         {
@@ -982,7 +1010,11 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 // Handle function pointers to mapform function
 %typemap( in ) ct_func ctf {
     octave_value obj = $input;
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !obj.isempty() )
+%#else
     if ( !obj.is_empty() )
+%#endif
     {
         if ( obj.is_function_handle() || obj.is_inline_function() )
         {
@@ -1029,14 +1061,22 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     {
         error( "argument must be a scalar or vector or matrix" ); SWIG_fail;
     }
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !$input.isempty() )
+%#else
     if ( !$input.is_empty() )
+%#endif
     {
         if ( _dim( $input, 0 ) != Alen )
         {
             error( "first dimension must be same length as previous vector" ); SWIG_fail;
         }
-        $1     = new char*[Alen];
+        $1 = new char*[Alen];
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+        ifcell = $input.iscell();
+%#else
         ifcell = $input.is_cell();
+%#endif
         if ( ifcell )
         {
             temp_cell = $input.cell_value();
@@ -1137,12 +1177,20 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     {
         error( "argument must be a scalar or vector or matrix" ); SWIG_fail;
     }
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+    if ( !$input.isempty() )
+%#else
     if ( !$input.is_empty() )
+%#endif
     {
-        Alen   = _dim( $input, 0 );
-        $1     = Alen;
-        $2     = new char*[Alen];
+        Alen = _dim( $input, 0 );
+        $1   = Alen;
+        $2   = new char*[Alen];
+%#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
+        ifcell = $input.iscell();
+%#else
         ifcell = $input.is_cell();
+%#endif
         if ( ifcell )
         {
             temp_cell = $input.cell_value();
