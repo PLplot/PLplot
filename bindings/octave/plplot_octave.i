@@ -795,13 +795,8 @@ typedef PLINT          PLBOOL;
     local_string_length = strlen( local_string$argnum );
     local_charMatrix    = charMatrix( 1, local_string_length );
     local_charMatrix.insert( local_string$argnum, 0, 0 );
-// Check if version >= 3.4.0
-%#if OCTAVE_API_VERSION_NUMBER < 45
-    retval( 0 ) = octave_value( local_charMatrix, true );
-%#else
     retval( 0 ) = octave_value( local_charMatrix );
-%#endif
-    $result = SWIG_Octave_AppendOutput( $result, retval( 0 ) );
+    $result     = SWIG_Octave_AppendOutput( $result, retval( 0 ) );
 }
 
 typedef PLINT ( *defined_func )( PLFLT, PLFLT );
