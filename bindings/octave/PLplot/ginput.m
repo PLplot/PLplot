@@ -52,7 +52,8 @@ function [x, y, but] = ginput(n)
       i++;
       x(i) = wX;
       y(i) = wY;
-      str = toascii(string(1));
+      # double is the recommended replacement for toascii
+      str = double(string(1));
       if (button == 0)
 	but(i) = str;
       else
@@ -64,7 +65,7 @@ function [x, y, but] = ginput(n)
   endwhile
 
   ## if this is issued out of the function, in the *command line*,
-  ## the cross-hair disapears!
+  ## the cross-hair disappears!
   plflush;pleop;
 
 endfunction

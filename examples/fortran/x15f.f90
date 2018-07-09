@@ -85,10 +85,9 @@ program x15f
     plparseopts_rc = plparseopts(PL_PARSE_FULL)
     if(plparseopts_rc .ne. 0) stop "plparseopts error"
 
-    !      Set up color map 1 (but comment out because this makes
-    !      no difference for the current cmap0 plshade calls in plot1 and plot2.)
+    !      Set up color map 1
 
-    !      call cmap1_init2()
+          call cmap1_init2()
 
     !      Initialize plplot
 
@@ -148,40 +147,40 @@ contains
     !      Initializes color map 1 in HLS space.
     ! -------------------------------------------------------------------------
 
-    subroutine cmap1_init1()
-        use plplot
-        implicit none
-        real(kind=pl_test_flt)   i(4), h(4), l(4), s(4)
-
-        i(1) = 0.0_pl_test_flt    ! left boundary
-        i(2) = 0.45_pl_test_flt   ! just before center
-        i(3) = 0.55_pl_test_flt   ! just after center
-        i(4) = 1.0_pl_test_flt    ! right boundary
-
-        h(1) = 260.0_pl_test_flt  ! hue -- low: blue-violet
-        h(2) = 260.0_pl_test_flt  ! only change as we go over vertex
-        h(3) = 20.0_pl_test_flt   ! hue -- high: red
-        h(4) = 20.0_pl_test_flt   ! keep fixed
-
-
-        l(1) = 0.5_pl_test_flt    ! lightness -- low
-        l(2) = 0.0_pl_test_flt    ! lightness -- center
-        l(3) = 0.0_pl_test_flt    ! lightness -- center
-        l(4) = 0.5_pl_test_flt    ! lightness -- high
-
-        !     call plscolbg(255,255,255)
-        !     l(1) = 0.5_pl_test_flt    ! lightness -- low
-        !     l(2) = 1.0_pl_test_flt    ! lightness -- center
-        !     l(3) = 1.0_pl_test_flt    ! lightness -- center
-        !     l(4) = 0.5_pl_test_flt    ! lightness -- high
-
-        s(1) = 1.0_pl_test_flt    ! maximum saturation
-        s(2) = 1.0_pl_test_flt    ! maximum saturation
-        s(3) = 1.0_pl_test_flt    ! maximum saturation
-        s(4) = 1.0_pl_test_flt    ! maximum saturation
-
-        call plscmap1l(.false., i, h, l, s)
-    end subroutine cmap1_init1
+!    subroutine cmap1_init1()
+!        use plplot
+!        implicit none
+!        real(kind=pl_test_flt)   i(4), h(4), l(4), s(4)
+!
+!        i(1) = 0.0_pl_test_flt    ! left boundary
+!        i(2) = 0.45_pl_test_flt   ! just before center
+!        i(3) = 0.55_pl_test_flt   ! just after center
+!        i(4) = 1.0_pl_test_flt    ! right boundary
+!
+!        h(1) = 260.0_pl_test_flt  ! hue -- low: blue-violet
+!        h(2) = 260.0_pl_test_flt  ! only change as we go over vertex
+!        h(3) = 20.0_pl_test_flt   ! hue -- high: red
+!        h(4) = 20.0_pl_test_flt   ! keep fixed
+!
+!
+!        l(1) = 0.5_pl_test_flt    ! lightness -- low
+!        l(2) = 0.0_pl_test_flt    ! lightness -- center
+!        l(3) = 0.0_pl_test_flt    ! lightness -- center
+!        l(4) = 0.5_pl_test_flt    ! lightness -- high
+!
+!        !     call plscolbg(255,255,255)
+!        !     l(1) = 0.5_pl_test_flt    ! lightness -- low
+!        !     l(2) = 1.0_pl_test_flt    ! lightness -- center
+!        !     l(3) = 1.0_pl_test_flt    ! lightness -- center
+!        !     l(4) = 0.5_pl_test_flt    ! lightness -- high
+!
+!        s(1) = 1.0_pl_test_flt    ! maximum saturation
+!        s(2) = 1.0_pl_test_flt    ! maximum saturation
+!        s(3) = 1.0_pl_test_flt    ! maximum saturation
+!        s(4) = 1.0_pl_test_flt    ! maximum saturation
+!
+!        call plscmap1l(.false., i, h, l, s)
+!    end subroutine cmap1_init1
 
     ! -------------------------------------------------------------------------
     !      cmap1_init2

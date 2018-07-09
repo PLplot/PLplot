@@ -179,6 +179,7 @@ let () =
 
   pllsty 1;
 
+  (* Drop unneeded calculations....
   let minx = 240570.0 in
   let maxx = 621109.0 in
   let miny = 87822.0 in
@@ -191,6 +192,7 @@ let () =
   plscol0 4 50 50 50;
   plscol0 5 150 0 0;
   plscol0 6 100 100 255;
+  end drop of unneeded calculations *)
 
   let minx = 265000.0 in
   let maxx = 270000.0 in

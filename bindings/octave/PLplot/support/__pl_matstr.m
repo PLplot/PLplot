@@ -36,7 +36,8 @@ function out = __pl_matstr(mat, str, n)
     endif
     old_dofi = warning("query","Octave:fortran-indexing");
     warning("off","Octave:fortran-indexing");
-    out(toascii (out) == 0) = " ";
+    # double is the recommended replacement for toascii
+    out(double (out) == 0) = " ";
     warning(old_dofi.state,"Octave:fortran-indexing");
 
   else

@@ -207,7 +207,7 @@ contains
         integer :: max_cstring_length
         type(c_ptr), dimension(:), intent(in) :: cstring_address_array
 
-        integer :: i_local, j_local, length_local, number_local, length_column_local
+        integer :: j_local, number_local
         number_local = size(cstring_address_array)
 
         max_cstring_length = 0
