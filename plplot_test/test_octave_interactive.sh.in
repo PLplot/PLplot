@@ -29,7 +29,7 @@ lang="o"
 export lang
 
 # Launch an Octave script that exercises all the demos
-$octave -f -q  <<EOF 2> test.error
+$octave -f -q  <<EOF 2> octave_interactive_${device}_test.error
 
 # Disable warnings about shadowed functions - PLplot is _supposed_ to shadow the core functions
 warning("off","Octave:shadowed-function");
@@ -110,7 +110,7 @@ for i=[1:3 8:9 12:19 21];
 endfor
 EOF
 status_code=$?
-cat test.error
+cat octave_interactive_${device}_test.error
 if [ "$status_code" -ne 0 ] ; then
     exit $status_code
 fi

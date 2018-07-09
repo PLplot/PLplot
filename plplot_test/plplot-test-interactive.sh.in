@@ -225,16 +225,16 @@ fi
 for index in $INDEX_LIST ; do
     pushd ${DIRECTORY[$index]}
     echo "${COMMAND[$index]}"
-    ${COMMAND[$index]} 2> test.error
+    ${COMMAND[$index]} 2> interactive_${index}_test.error
     # Look for any status codes (segfaults, plexit) from the examples themselves
     status_code=$?
     if [ "$status_code" -ne 0 ] ; then
         echo "ERROR indicated by status code = $status_code for ${COMMAND[$index]}"
 	OVERALL_STATUS_CODE=$status_code
     fi
-    cat test.error
+    cat interactive_${index}_test.error
     # Look for any PLPLOT ERROR messages from plwarn that do not result in an exit code.
-    is_error=`grep -l 'PLPLOT ERROR' test.error`
+    is_error=`grep -l 'PLPLOT ERROR' interactive_${index}_test.error`
     if [ -n "$is_error" ] ; then
         echo "ERROR indicated by 'PLPLOT ERROR' in stderr for ${COMMAND[$index]}"
 	OVERALL_STATUS_CODE=1

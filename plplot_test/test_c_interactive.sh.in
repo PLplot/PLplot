@@ -66,17 +66,17 @@ for index in $INDEX; do
     fi
 
     $DEBUG_CMD "$cdir"/x${index}${lang} -dev $device $NP_OPTION \
-	2> test.error >| "${OUTPUT_DIR}"/x${index}${lang}_${device}.txt
+	2> c_interactive_${device}_test.error >| "${OUTPUT_DIR}"/x${index}${lang}_${device}.txt
     # Look for any status codes (segfaults, plexit) from the examples
     # themselves.
     status_code=$?
-    cat test.error
+    cat c_interactive_${device}_test.error
     if [ "$status_code" -ne 0 ] ; then
 	exit $status_code
     fi
     # Look for any PLPLOT ERROR messages from plwarn that do not result in an
     # exit code.
-    is_error=`grep -l 'PLPLOT ERROR' test.error`
+    is_error=`grep -l 'PLPLOT ERROR' c_interactive_${device}_test.error`
     if [ -n "$is_error" ] ; then
 	exit 1
     fi
