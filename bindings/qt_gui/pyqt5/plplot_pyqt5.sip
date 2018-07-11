@@ -22,7 +22,7 @@
 
 */
 
-%Module(name = plplot_pyqt5, version = 0)
+%Module(name = plplot_pyqt5)
 
 %Import QtCore/QtCoremod.sip
 %Import QtGui/QtGuimod.sip
