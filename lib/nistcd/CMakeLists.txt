@@ -24,13 +24,18 @@ if(PLD_cgm)
     ${CMAKE_CURRENT_BINARY_DIR}/cddll.h
     )
 
+  set(cd_LIB_HDRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/cd.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/defines.h
+    ${CMAKE_CURRENT_BINARY_DIR}/cddll.h
+    )
+
   include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
   )
 
   set( cd_LIB_SRCS cd.c )
-  set( cd_LIB_HDRS cd.h defines.h )
 
   # Bypass "#include <malloc.h>" in all code where it appears since
   # being too specific like this fails on some platforms (e.g., OS X), and
@@ -115,8 +120,5 @@ if(PLD_cgm)
     )
 
   # install library header files.
-  install(
-    FILES ${cd_LIB_HDRS}
-    DESTINATION ${INCLUDE_DIR}
-    )
+  install(FILES ${cd_LIB_HDRS} DESTINATION ${INCLUDE_DIR})
 endif(PLD_cgm)

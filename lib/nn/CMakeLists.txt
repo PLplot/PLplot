@@ -23,6 +23,11 @@ if(PL_HAVE_QHULL)
     ${CMAKE_CURRENT_BINARY_DIR}/nndll.h
     )
 
+  set(nn_LIB_HDRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/nn.h
+    ${CMAKE_CURRENT_BINARY_DIR}/nndll.h
+    )
+
   include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -67,5 +72,7 @@ if(PL_HAVE_QHULL)
     README
     )
   install(FILES README DESTINATION ${DOC_DIR} RENAME README.nn)
+
+  install(FILES ${nn_LIB_HDRS} DESTINATION ${INCLUDE_DIR})
 
 endif(PL_HAVE_QHULL)

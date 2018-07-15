@@ -23,6 +23,11 @@ if(WITH_CSA)
     ${CMAKE_CURRENT_BINARY_DIR}/csadll.h
     )
 
+  set(csa_LIB_HDRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/csa.h
+    ${CMAKE_CURRENT_BINARY_DIR}/csadll.h
+    )
+
   include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -53,5 +58,6 @@ if(WITH_CSA)
     README
     )
   install(FILES README DESTINATION ${DOC_DIR} RENAME README.csa)
+  install(FILES ${csa_LIB_HDRS} DESTINATION ${INCLUDE_DIR})
 
 endif(WITH_CSA)
