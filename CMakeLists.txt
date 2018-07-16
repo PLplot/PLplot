@@ -79,12 +79,11 @@ endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 # target name (which is only available in the scope that calls the
 # configure_library_build function) is
 # ${SWIG_MODULE_<original_target_name>_REAL_NAME} instead of
-# ${LIBRARY_TARGET_PREFIX<original_target_name>.  For example, these target
-# names are ${LIBRARY_TARGET_PREFIX}plplot and PLPLOT::plplot for the
-# libplplot.so library and ${SWIG_MODULE_plplotc_REAL_NAME} and
-# PLPLOT::plplotc (note neither target name includes the extra "_"
-# prefix associated with the actual swig-generated shared-object name)
-# for the _plplotc.so swig-generated Python extension module.
+# ${LIBRARY_TARGET_PREFIX<original_target_name>.  For example, these
+# target names are ${LIBRARY_TARGET_PREFIX}plplot and PLPLOT::plplot
+# for the libplplot.so library and ${SWIG_MODULE_plplotc_REAL_NAME}
+# and PLPLOT::_plplotc for the _plplotc.so swig-generated Python
+# extension module.
 
 # This value used in configure_library_build function to provide the namespace
 # for build-tree ALIAS libraries.

@@ -237,7 +237,7 @@ function(configure_file_generate)
     )
 endfunction(configure_file_generate)
 
-function(configure_library_build library library_type lib_src tll_arguments)
+function(configure_library_build library library_type library_src tll_arguments)
   # This function should be duplicated for the PLplot, ephcom, and
   # te_gen software projects.  Configure build of one of the PLplot,
   # ephcom or te_gen libraries, modules (dll's), or swig modules and
@@ -258,7 +258,7 @@ function(configure_library_build library library_type lib_src tll_arguments)
   # * <language> (where [case-insensitive] language is one of the languages supported by
   # * swig, and library is built as a swig module.
 
-  # lib_src contains a list of source files for the library.
+  # library_src contains a list of source files for the library.
 
   # tll_arguments contains a list of arguments for (swig|target)_link_libraries
   # for the library.  If tll_arguments evaluates to a false value (e.g.,
@@ -269,7 +269,7 @@ function(configure_library_build library library_type lib_src tll_arguments)
   # of dereferencing required to access the argument values.
 
   #message(STATUS "DEBUG: library = ${library}")
-  #message(STATUS "DEBUG: lib_src = ${lib_src}")
+  #message(STATUS "DEBUG: library_src = ${library_src}")
   #message(STATUS "DEBUG: tll_arguments = ${tll_arguments}")
   #message(STATUS "DEBUG: namespace = ${namespace}")
 
@@ -307,9 +307,9 @@ function(configure_library_build library library_type lib_src tll_arguments)
     string(TOLOWER "${library_type}" language)
   endif("${library_type}" STREQUAL "")
 
-  if("${lib_src}" STREQUAL "")
-    message(FATAL_ERROR "configure_library_build: lib_src is empty when it should be a list of library source files for the ${library} library")
-  endif("${lib_src}" STREQUAL "")
+  if("${library_src}" STREQUAL "")
+    message(FATAL_ERROR "configure_library_build: library_src is empty when it should be a list of library source files for the ${library} library")
+  endif("${library_src}" STREQUAL "")
 
   # Sanity check that the external variable LIBRARY_NAMESPACE has been set correctly.
   if(NOT "${LIBRARY_NAMESPACE}" MATCHES ".*::$")
@@ -331,19 +331,26 @@ function(configure_library_build library library_type lib_src tll_arguments)
 	message(FATAL_ERROR "configure_library_build: (external) ${variable} = NOT DEFINED")
       endif(NOT DEFINED ${variable})
     endforeach(variable ${variables_list})
-    swig_add_library(${library} LANGUAGE "${language}" TYPE MODULE SOURCES ${lib_src})
+    swig_add_library(${library} LANGUAGE "${language}" TYPE MODULE SOURCES ${library_src})
     # Propagate value of this variable (set in swig_add_library macro) to calling environment.
     # Example:
     # original_library = plplotc
     # library = ${LIBRARY_TARGET_PREFIX}plplotc
     # ${SWIG_MODULE_${library}_REAL_NAME} = _${LIBRARY_TARGET_PREFIX}plplotc
+    # ${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME} = _plplotc
+    if(LIBRARY_TARGET_PREFIX)
+      string(REGEX REPLACE "${LIBRARY_TARGET_PREFIX}" "" SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME})
+    else(LIBRARY_TARGET_PREFIX)
+      set(SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME})
+    endif(LIBRARY_TARGET_PREFIX)
+
     # SWIG_MODULE_plplotc_REAL_NAME (in parent scope) = _${LIBRARY_TARGET_PREFIX}plplotc
-    # Alias library name = PLPLOT::plplotc
 
     set(SWIG_MODULE_${original_library}_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME} PARENT_SCOPE)
     # Create equivalent namespaced ALIAS library to be used whenever
     # the library target is read only.
-    add_library(${LIBRARY_NAMESPACE}${original_library} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
+    #message(STATUS "DEBUG: swig_alias_name = ${LIBRARY_NAMESPACE}${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME}")
+    add_library(${LIBRARY_NAMESPACE}${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
 
     if(NOT "${tll_arguments}" STREQUAL "")
       if(NON_TRANSITIVE)
@@ -377,7 +384,7 @@ function(configure_library_build library library_type lib_src tll_arguments)
       endif(NOT DEFINED ${variable})
     endforeach(variable ${variables_list})
 
-    add_library(${library} ${library_type} ${lib_src})
+    add_library(${library} ${library_type} ${library_src})
     # Create equivalent namespaced ALIAS library to be used whenever
     # the library target is read only.
     add_library(${LIBRARY_NAMESPACE}${original_library} ALIAS ${library})
@@ -443,4 +450,4 @@ function(configure_library_build library library_type lib_src tll_arguments)
 	)
     endif("${library_type}" STREQUAL "SHARED")
   endif(if_swig_module)
-endfunction(configure_library_build library library_type lib_src tll_arguments)
+endfunction(configure_library_build library library_type library_src tll_arguments)
