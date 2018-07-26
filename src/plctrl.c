@@ -641,69 +641,54 @@ void
 c_plscmap1l( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
              PLFLT_VECTOR coord1, PLFLT_VECTOR coord2, PLFLT_VECTOR coord3, PLINT_VECTOR alt_hue_path )
 {
-    int   n;
-    PLFLT h, l, s, r, g, b;
+    int n;
 
     if ( npts < 2 )
     {
-        plabort( "plscmap1l: Must specify at least two control points" );
+        plabort( "plscmap1la: Must specify at least two control points" );
         return;
     }
 
     if ( ( intensity[0] != 0 ) || ( intensity[npts - 1] != 1 ) )
     {
-        plabort( "plscmap1l: First, last control points must lie on boundary" );
+        plabort( "plscmap1la: First, last control points must lie on boundary" );
         return;
     }
 
     if ( npts > PL_MAX_CMAP1CP )
     {
-        plabort( "plscmap1l: exceeded maximum number of control points" );
+        plabort( "plscmap1la: exceeded maximum number of control points" );
         return;
     }
 
-// Allocate if not done yet
+    // Allocate if not done yet
 
     if ( plsc->cmap1 == NULL )
         plscmap1n( 0 );
 
-// Save control points
+    // Save control points
 
-    plsc->ncp1 = npts;
+    plsc->cmap1cp_is_rgb = itype == 0 ? 0 : 1;
+    plsc->ncp1           = npts;
 
     for ( n = 0; n < npts; n++ )
     {
-        if ( itype == 0 )
-        {
-            h = coord1[n];
-            l = coord2[n];
-            s = coord3[n];
-        }
-        else
-        {
-            r = coord1[n];
-            g = coord2[n];
-            b = coord3[n];
-            c_plrgbhls( r, g, b, &h, &l, &s );
-        }
-
-        plsc->cmap1cp[n].h = h;
-        plsc->cmap1cp[n].l = l;
-        plsc->cmap1cp[n].s = s;
-        plsc->cmap1cp[n].p = intensity[n];
-        plsc->cmap1cp[n].a = 1.0;
+        plsc->cmap1cp[n].c1 = coord1[n];
+        plsc->cmap1cp[n].c2 = coord2[n];
+        plsc->cmap1cp[n].c3 = coord3[n];
+        plsc->cmap1cp[n].p  = intensity[n];
+        plsc->cmap1cp[n].a  = 1.0;
 
         if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
-        else
-        if ( n != npts - 1 )
+        else if ( n != npts - 1 )
             plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
         else
             // Note final element is unused, so we set to zero for completeness.
             plsc->cmap1cp[n].alt_hue_path = 0;
     }
 
-// Calculate and set color map
+    // Calculate and set color map
 
     plcmap1_calc();
 }
@@ -727,8 +712,7 @@ void
 c_plscmap1la( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
               PLFLT_VECTOR coord1, PLFLT_VECTOR coord2, PLFLT_VECTOR coord3, PLFLT_VECTOR alpha, PLINT_VECTOR alt_hue_path )
 {
-    int   n;
-    PLFLT h, l, s, r, g, b;
+    int n;
 
     if ( npts < 2 )
     {
@@ -755,34 +739,20 @@ c_plscmap1la( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
 
 // Save control points
 
-    plsc->ncp1 = npts;
+    plsc->cmap1cp_is_rgb = itype == 0 ? 0 : 1;
+    plsc->ncp1           = npts;
 
     for ( n = 0; n < npts; n++ )
     {
-        if ( itype == 0 )
-        {
-            h = coord1[n];
-            l = coord2[n];
-            s = coord3[n];
-        }
-        else
-        {
-            r = coord1[n];
-            g = coord2[n];
-            b = coord3[n];
-            c_plrgbhls( r, g, b, &h, &l, &s );
-        }
-
-        plsc->cmap1cp[n].h = h;
-        plsc->cmap1cp[n].l = l;
-        plsc->cmap1cp[n].s = s;
-        plsc->cmap1cp[n].p = intensity[n];
-        plsc->cmap1cp[n].a = alpha[n];
+        plsc->cmap1cp[n].c1 = coord1[n];
+        plsc->cmap1cp[n].c2 = coord2[n];
+        plsc->cmap1cp[n].c3 = coord3[n];
+        plsc->cmap1cp[n].p  = intensity[n];
+        plsc->cmap1cp[n].a  = alpha[n];
 
         if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
-        else
-        if ( n != npts - 1 )
+        else if ( n != npts - 1 )
             plsc->cmap1cp[n].alt_hue_path = alt_hue_path[n];
         else
             // Note final element is unused, so we set to zero for completeness.
@@ -798,68 +768,112 @@ c_plscmap1la( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
 // plcmap1_calc()
 //
 //! Bin up cmap 1 space and assign colors to make inverse mapping easy.
-//! Always do interpolation in HLS space.
 
 void
 plcmap1_calc( void )
 {
     int   i, n;
-    PLFLT delta, dp, dh, dl, ds, da;
+    PLFLT delta, dp, dh, dl, ds, da, dr, dg, db;
     PLFLT h, l, s, p, r, g, b, a;
 
 // Loop over all control point pairs
-
-    for ( n = 0; n < plsc->ncp1 - 1; n++ )
+    if ( !plsc->cmap1cp_is_rgb )
     {
-        if ( plsc->cmap1cp[n].p == plsc->cmap1cp[n + 1].p )
-            continue;
-
-        // Differences in p, h, l, s between ctrl pts
-
-        dp = plsc->cmap1cp[n + 1].p - plsc->cmap1cp[n].p;
-        dh = plsc->cmap1cp[n + 1].h - plsc->cmap1cp[n].h;
-        dl = plsc->cmap1cp[n + 1].l - plsc->cmap1cp[n].l;
-        ds = plsc->cmap1cp[n + 1].s - plsc->cmap1cp[n].s;
-        da = plsc->cmap1cp[n + 1].a - plsc->cmap1cp[n].a;
-
-        // Adjust dh if we are to go around "the back side"
-
-        if ( plsc->cmap1cp[n].alt_hue_path )
-            dh = ( dh > 0 ) ? dh - 360 : dh + 360;
-
-        // Loop over all color cells.  Only interested in cells located (in
-        // cmap1 space)  between n_th and n+1_th control points
-
-        for ( i = 0; i < plsc->ncol1; i++ )
+        for ( n = 0; n < plsc->ncp1 - 1; n++ )
         {
-            p = (double) i / ( plsc->ncol1 - 1.0 );
-            if ( ( p < plsc->cmap1cp[n].p ) ||
-                 ( p > plsc->cmap1cp[n + 1].p ) )
+            if ( plsc->cmap1cp[n].p == plsc->cmap1cp[n + 1].p )
                 continue;
 
-            // Interpolate based on position of color cell in cmap1 space
+            // Differences in p, h, l, s between ctrl pts
 
-            delta = ( p - plsc->cmap1cp[n].p ) / dp;
+            dp = plsc->cmap1cp[n + 1].p - plsc->cmap1cp[n].p;
+            dh = plsc->cmap1cp[n + 1].c1 - plsc->cmap1cp[n].c1;
+            dl = plsc->cmap1cp[n + 1].c2 - plsc->cmap1cp[n].c2;
+            ds = plsc->cmap1cp[n + 1].c3 - plsc->cmap1cp[n].c3;
+            da = plsc->cmap1cp[n + 1].a - plsc->cmap1cp[n].a;
 
-            // Linearly interpolate to get color cell h, l, s values
+            // Adjust dh if we are to go around "the back side"
 
-            h = plsc->cmap1cp[n].h + dh * delta;
-            l = plsc->cmap1cp[n].l + dl * delta;
-            s = plsc->cmap1cp[n].s + ds * delta;
-            a = plsc->cmap1cp[n].a + da * delta;
+            if ( plsc->cmap1cp[n].alt_hue_path )
+                dh = ( dh > 0 ) ? dh - 360 : dh + 360;
 
-            while ( h >= 360. )
-                h -= 360.;
+            // Loop over all color cells.  Only interested in cells located (in
+            // cmap1 space)  between n_th and n+1_th control points
 
-            while ( h < 0. )
-                h += 360.;
+            for ( i = 0; i < plsc->ncol1; i++ )
+            {
+                p = (double) i / ( plsc->ncol1 - 1.0 );
+                if ( ( p < plsc->cmap1cp[n].p ) ||
+                     ( p > plsc->cmap1cp[n + 1].p ) )
+                    continue;
 
-            c_plhlsrgb( h, l, s, &r, &g, &b );
+                // Interpolate based on position of color cell in cmap1 space
 
-            plsc->cmap1[i].r = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
-            plsc->cmap1[i].g = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
-            plsc->cmap1[i].b = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
-            plsc->cmap1[i].a = a;
+                delta = ( p - plsc->cmap1cp[n].p ) / dp;
+
+                // Linearly interpolate to get color cell h, l, s values
+
+                h = plsc->cmap1cp[n].c1 + dh * delta;
+                l = plsc->cmap1cp[n].c2 + dl * delta;
+                s = plsc->cmap1cp[n].c3 + ds * delta;
+                a = plsc->cmap1cp[n].a + da * delta;
+
+                while ( h >= 360. )
+                    h -= 360.;
+
+                while ( h < 0. )
+                    h += 360.;
+
+                c_plhlsrgb( h, l, s, &r, &g, &b );
+
+                plsc->cmap1[i].r = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
+                plsc->cmap1[i].g = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
+                plsc->cmap1[i].b = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
+                plsc->cmap1[i].a = a;
+            }
+        }
+    }
+    else
+    {
+        for ( n = 0; n < plsc->ncp1 - 1; n++ )
+        {
+            if ( plsc->cmap1cp[n].p == plsc->cmap1cp[n + 1].p )
+                continue;
+
+            // Differences in p, h, l, s between ctrl pts
+
+            dp = plsc->cmap1cp[n + 1].p - plsc->cmap1cp[n].p;
+            dr = plsc->cmap1cp[n + 1].c1 - plsc->cmap1cp[n].c1;
+            dg = plsc->cmap1cp[n + 1].c2 - plsc->cmap1cp[n].c2;
+            db = plsc->cmap1cp[n + 1].c3 - plsc->cmap1cp[n].c3;
+            da = plsc->cmap1cp[n + 1].a - plsc->cmap1cp[n].a;
+
+            // Loop over all color cells.  Only interested in cells located (in
+            // cmap1 space)  between n_th and n+1_th control points
+
+            for ( i = 0; i < plsc->ncol1; i++ )
+            {
+                p = (double) i / ( plsc->ncol1 - 1.0 );
+                if ( ( p < plsc->cmap1cp[n].p ) ||
+                     ( p > plsc->cmap1cp[n + 1].p ) )
+                    continue;
+
+                // Interpolate based on position of color cell in cmap1 space
+
+                delta = ( p - plsc->cmap1cp[n].p ) / dp;
+
+                // Linearly interpolate to get color cell h, l, s values
+
+                r = plsc->cmap1cp[n].c1 + dr * delta;
+                g = plsc->cmap1cp[n].c2 + dg * delta;
+                b = plsc->cmap1cp[n].c3 + db * delta;
+                a = plsc->cmap1cp[n].a + da * delta;
+
+                plsc->cmap1[i].r = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
+                plsc->cmap1[i].g = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
+                plsc->cmap1[i].b = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
+                plsc->cmap1[i].a = a;
+            }
         }
     }
 

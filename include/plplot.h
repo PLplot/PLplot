@@ -545,9 +545,9 @@ typedef struct
 
 typedef struct
 {
-    PLFLT h;                    // hue
-    PLFLT l;                    // lightness
-    PLFLT s;                    // saturation
+    PLFLT c1;                   // hue or red
+    PLFLT c2;                   // lightness or green
+    PLFLT c3;                   // saturation or blue
     PLFLT p;                    // position
     PLFLT a;                    // alpha (or transparency)
     int   alt_hue_path;         // if set, interpolate through h=0

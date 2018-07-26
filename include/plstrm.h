@@ -545,6 +545,7 @@ typedef struct
     PLColor     *cmap1;
 
     PLControlPt cmap1cp[PL_MAX_CMAP1CP];
+    PLBOOL      cmap1cp_is_rgb;
 
 // Variables governing pen width
 
