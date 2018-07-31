@@ -1110,7 +1110,15 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
             }
             else
             {
+                tmp_cstring = NULL;
                 tmp_cstring = (char *) temp_matrix.row_as_string( i ).c_str();
+                if ( !tmp_cstring )
+                {
+                    // For this failure adjust Alen to only delete previously defined $2[i].
+                    Alen = i;
+                    error( "charMatrix row_as_string( i ).c_str() method failed" );
+                    SWIG_fail;
+                }
             }
             $1[i] = new char[max_length];
             strncpy( $1[i], tmp_cstring, max_length - 1 );
@@ -1159,7 +1167,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
     }
 }
 
-// No count but check consistency with previous
+// With count which is stored in Alen to allow possible dimension
+// consistency checking for other arguments.
 %typemap ( in ) ( PLINT n, const char **Array )
 {
     charMatrix  temp_matrix;
@@ -1224,7 +1233,15 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
             }
             else
             {
+                tmp_cstring = NULL;
                 tmp_cstring = (char *) temp_matrix.row_as_string( i ).c_str();
+                if ( !tmp_cstring )
+                {
+                    // For this failure adjust Alen to only delete previously defined $2[i].
+                    Alen = i;
+                    error( "charMatrix row_as_string( i ).c_str() method failed" );
+                    SWIG_fail;
+                }
             }
             $2[i] = new char[max_length];
             strncpy( $2[i], tmp_cstring, max_length - 1 );

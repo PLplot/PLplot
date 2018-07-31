@@ -71,11 +71,7 @@ endfor
 # Example 32 not implemented because there has been no call for propagation
 # and it exercises no new API.
 failed = [] ;
-# Examples 26 and 33 dropped because of octave-4 8-bit clean issues
-# with UTF-8.  The other UTF-8 examples (18 and 24) do not expose this
-# issue so we don't drop those.
-#for i=[0:31 33] ;
-for i=[0:25 27:31] ;
+for i=[0:31 33] ;
     ofile = sprintf("${OUTPUT_DIR}/x%.2d${lang}_${dsuffix}.txt",i);
     strm = fopen(ofile,"w");
     cmd = sprintf("x%.2dc",i);

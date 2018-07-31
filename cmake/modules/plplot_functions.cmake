@@ -38,18 +38,18 @@ function(list_example_files path device suffix output_list)
     x19:05
     x20:06
     x21:03
-    x22:04
+    x22:05
 #temporary    x23:16
     x24:01
     x25:08
-#temporary    x26:02
+    x26:02
     x27:20
     x28:05
     x29:10
     x30:02
     x31:01
     # 32 missing deliberately since that only implemented for C
-#temporary    x33:04
+    x33:100
     )
 
   # This list taken directly from plplot-test.sh.cmake.  Update as needed.
