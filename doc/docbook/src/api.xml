@@ -13253,7 +13253,7 @@ device support!)
 
     <para>
       If RGB colors are provided then the interpolation takes place in RGB space
-      and is trivial. However if HLS colors are provided then, because of the 
+      and is trivial. However if HLS colors are provided then, because of the
       circular nature of the color wheel for the hue coordinate, the interpolation
       could be performed in either direction around the color wheel. The default
       behaviour is for the hue to be linearly interpolated ignoring this circular
@@ -13261,7 +13261,7 @@ device support!)
       interpolated via yellow, green and cyan. If instead you wish to interpolate
       the other way around the color wheel you have two option. You may provide hues
       outside the range [0, 360), so by using a hue of -120 for blue or 360 for red
-      the interpolation will proceed via magenta. Alternatively you can utilise the 
+      the interpolation will proceed via magenta. Alternatively you can utilise the
       alt_hue_path variable to reverse the direction of interpolation if you need
       to provide hues within the [0-360) range.
     </para>
@@ -13436,7 +13436,7 @@ device support!)
           <para>
             A vector (with <parameter>npts - 1</parameter> elements), each containing
             either true to use the reversed HLS interpolation or false to use the regular
-            HLS interpolation.  (<literal>alt_hue_path[i]</literal> refers to the 
+            HLS interpolation.  (<literal>alt_hue_path[i]</literal> refers to the
             interpolation interval between the <literal>i</literal> and
             <literal>i + 1</literal> control points). This parameter is not used for RGB
             colors (<parameter>itype = true</parameter>).

@@ -645,19 +645,19 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
 
     if ( npts < 2 )
     {
-        plabort( "plscmap1la: Must specify at least two control points" );
+        plabort( "plscmap1l: Must specify at least two control points" );
         return;
     }
 
     if ( ( intensity[0] != 0 ) || ( intensity[npts - 1] != 1 ) )
     {
-        plabort( "plscmap1la: First, last control points must lie on boundary" );
+        plabort( "plscmap1l: First, last control points must lie on boundary" );
         return;
     }
 
     if ( npts > PL_MAX_CMAP1CP )
     {
-        plabort( "plscmap1la: exceeded maximum number of control points" );
+        plabort( "plscmap1l: exceeded maximum number of control points" );
         return;
     }
 

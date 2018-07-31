@@ -503,9 +503,9 @@ plr_state( PLRDev *plr )
             plr_rd( pdf_rd_ieeef( plr->pdfs, &s ) );
             plr_rd( pdf_rd_1byte( plr->pdfs, &rev ) );
 
-            plsc->cmap1cp[i].h            = h;
-            plsc->cmap1cp[i].l            = l;
-            plsc->cmap1cp[i].s            = s;
+            plsc->cmap1cp[i].c1           = h;
+            plsc->cmap1cp[i].c2           = l;
+            plsc->cmap1cp[i].c3           = s;
             plsc->cmap1cp[i].alt_hue_path = rev;
         }
         plP_state( PLSTATE_CMAP1 );

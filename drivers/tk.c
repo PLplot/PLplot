@@ -516,9 +516,9 @@ plD_state_tk( PLStream *pls, PLINT op )
         tk_wr( pdf_wr_2bytes( pls->pdfs, (U_SHORT) pls->ncp1 ) );
         for ( i = 0; i < pls->ncp1; i++ )
         {
-            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].h ) );
-            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].l ) );
-            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].s ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].c1 ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].c2 ) );
+            tk_wr( pdf_wr_ieeef( pls->pdfs, (float) pls->cmap1cp[i].c3 ) );
             tk_wr( pdf_wr_1byte( pls->pdfs, (U_CHAR) pls->cmap1cp[i].alt_hue_path ) );
         }
         break;
