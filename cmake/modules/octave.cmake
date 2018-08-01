@@ -108,23 +108,11 @@ endif(ENABLE_octave)
 
 if(ENABLE_octave)
   message(STATUS "OCTAVE_VERSION = ${OCTAVE_VERSION}")
-  if(${OCTAVE_VERSION} VERSION_LESS "3.2.0")
+  if(${OCTAVE_VERSION} VERSION_LESS "3.8.0")
     message(STATUS "WARNING: "
-    "PLplot requires Octave version 3.2 or greater. Disabling Octave binding")
+    "PLplot requires Octave version 3.8.0 or greater. Disabling Octave binding")
     set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
-  elseif(NOT ${OCTAVE_VERSION} VERSION_LESS "4")
-    message(STATUS "WARNING: Octave-4 has been found which is likely to lead to build errors for PLplot.")
-    option(TRY_OCTAVE4 "Experimentally try Octave-4 if it is found" OFF)
-    if(TRY_OCTAVE4)
-      message(STATUS "WARNING: TRY_OCTAVE4 = ${TRY_OCTAVE4} so experimentally trying Octave-4")
-    else(TRY_OCTAVE4)
-      message(STATUS
-  "WARNING: Disabling Octave binding. If you want to use that component of PLplot you
-   should try installing Octave-3 (which works well with PLplot) or else try the
-   experimental cmake option -DTRY_OCTAVE4=ON")
-      set(ENABLE_octave OFF CACHE BOOL "Enable Octave binding" FORCE)
-    endif(TRY_OCTAVE4)
-  endif(${OCTAVE_VERSION} VERSION_LESS "3.2.0")
+  endif(${OCTAVE_VERSION} VERSION_LESS "3.8.0")
 endif(ENABLE_octave)
 
 if(ENABLE_octave)
