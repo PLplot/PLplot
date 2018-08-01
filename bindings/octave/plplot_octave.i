@@ -1110,15 +1110,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
             }
             else
             {
-                tmp_cstring = NULL;
-                tmp_cstring = (char *) temp_matrix.row_as_string( i ).c_str();
-                if ( !tmp_cstring )
-                {
-                    // For this failure adjust Alen to only delete previously defined $2[i].
-                    Alen = i;
-                    error( "charMatrix row_as_string( i ).c_str() method failed" );
-                    SWIG_fail;
-                }
+                str         = temp_matrix.row_as_string( i );
+                tmp_cstring = (char *) str.c_str();
             }
             $1[i] = new char[max_length];
             strncpy( $1[i], tmp_cstring, max_length - 1 );
@@ -1233,15 +1226,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
             }
             else
             {
-                tmp_cstring = NULL;
-                tmp_cstring = (char *) temp_matrix.row_as_string( i ).c_str();
-                if ( !tmp_cstring )
-                {
-                    // For this failure adjust Alen to only delete previously defined $2[i].
-                    Alen = i;
-                    error( "charMatrix row_as_string( i ).c_str() method failed" );
-                    SWIG_fail;
-                }
+                str         = temp_matrix.row_as_string( i );
+                tmp_cstring = (char *) str.c_str();
             }
             $2[i] = new char[max_length];
             strncpy( $2[i], tmp_cstring, max_length - 1 );

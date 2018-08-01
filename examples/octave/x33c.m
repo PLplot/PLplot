@@ -197,8 +197,8 @@ function plcolorbar_example_page( kind_i, label_i, cap_i, cont_color, cont_width
             bitor(opt, bitor(PL_COLORBAR_BOUNDING_BOX, PL_COLORBAR_BACKGROUND)),
             position, x, y, x_length, y_length,
             15, 1, 1, low_cap_color, high_cap_color,
-            cont_color, cont_width, label_opts, cellstr(label),
-            cellstr(axis_opts), ticks, sub_ticks,
+            cont_color, cont_width, label_opts, label,
+            axis_opts, ticks, sub_ticks,
             n_values_array, values_array );
 
         # Reset text and tick sizes
@@ -228,6 +228,8 @@ function plcolorbar_example( palette, kind_i, cont_color, cont_width, values )
         endfor
     endfor
 endfunction
+
+
 
 function ix33c()
   ## Parse and process command line arguments
@@ -842,7 +844,7 @@ function ix33c()
   [legend_width, legend_height] = ...
       pllegend( opt, position, x, y,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, text_scale, 2.0,
-               0., text_colors, cellstr(text),
+               0., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
 	       [], [], [],
 	       [], [], [], [] );

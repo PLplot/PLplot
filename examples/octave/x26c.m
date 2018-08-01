@@ -243,7 +243,7 @@ function plot1(plottype, x_label, y_label, alty_label, title_label, line_label, 
   [legend_width, legend_height] = ...
       pllegend( bitor(PL_LEGEND_BACKGROUND, PL_LEGEND_BOUNDING_BOX), 0, 0.0, 0.0,
                0.1, 15, 1, 1, 0, 0, opt_array, 1.0, 1.0, 2.0,
-               1., text_colors, cellstr(text),
+               1., text_colors, text,
                box_colors, box_patterns, box_scales, box_line_widths,
                line_colors, line_styles, line_widths,
                symbol_colors, symbol_scales, symbol_numbers, symbols );
