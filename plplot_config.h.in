@@ -307,7 +307,7 @@
 #cmakedefine PL_WXWIDGETS_IPC3
 
 // Actual wxPLViewer application name
-#define NAME_wxPLViewer "@WRITEABLE_TARGET@wxPLViewer"
+#define NAME_wxPLViewer    "@WRITEABLE_TARGET@wxPLViewer"
 
 // Actual plserver application name
-#define NAME_plserver "@WRITEABLE_TARGET@plserver"
+#define NAME_plserver      "@WRITEABLE_TARGET@plserver"
