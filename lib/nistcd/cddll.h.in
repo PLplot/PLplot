@@ -33,7 +33,7 @@
 // the static library, but DLLIMPORT is empty in this case). If
 // cmake sets the corresponding macro xxxx_EXPORTS if the
 // corresponding library is built DLLIMPEXP is set to DLLEXPORT
-#if defined ( @LIBRARY_TARGET_PREFIX@nistcd_EXPORTS )
+#if defined ( @WRITEABLE_TARGET@nistcd_EXPORTS )
   #define CDDLLIMPEXP    CDDLLEXPORT
   #define CDDLLIMPEXP_DATA( type )    CDDLLEXPORT type
 #else

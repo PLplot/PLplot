@@ -38,7 +38,7 @@ if(ENABLE_d)
     configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
   endif(plplotdmd_SHARED)
 
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotdmd
+  install(TARGETS ${WRITEABLE_TARGET}plplotdmd
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

@@ -29,30 +29,30 @@ if(ENABLE_tkX)
     ${CMAKE_BINARY_DIR}/lib/qsastime
     )
 
-  add_executable(plserver plserver.c)
+  if(tcltk_in_plplot_library)
+    set(plserver_link_libraries PLPLOT::plplot PLPLOT::plplottcltk_Main ${TK_LIBRARY} ${TCL_LIBRARY})
+  else(tcltk_in_plplot_library)
+    set(plserver_link_libraries PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
+  endif(tcltk_in_plplot_library)
+
+  configure_executable_build(plserver "plserver.c" "${plserver_link_libraries}")
   if(BUILD_SHARED_LIBS)
-    set_target_properties(plserver PROPERTIES
+    set_target_properties(${WRITEABLE_TARGET}plserver PROPERTIES
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-
-  if(tcltk_in_plplot_library)
-    target_link_libraries(plserver PLPLOT::plplot PLPLOT::plplottcltk_Main ${TK_LIBRARY} ${TCL_LIBRARY})
-  else(tcltk_in_plplot_library)
-    target_link_libraries(plserver PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
-  endif(tcltk_in_plplot_library)
 
   if(USE_RPATH)
     get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
     filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(plserver
+    set_target_properties(${WRITEABLE_TARGET}plserver
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   endif(USE_RPATH)
 
-  install(TARGETS plserver
+  install(TARGETS ${WRITEABLE_TARGET}plserver
     EXPORT export_plplot
     DESTINATION ${BIN_DIR}
     )

@@ -1,7 +1,7 @@
 #!@SH_EXECUTABLE@
 # Test suite for Tcl examples.
 #
-# Copyright (C) 2004-2017 Alan W. Irwin
+# Copyright (C) 2004-2018 Alan W. Irwin
 # Copyright (C) 2004 Rafael Laboissiere
 # Copyright (C) 2004 Andrew Ross
 #
@@ -58,9 +58,9 @@ fi
 export results
 
 if [ "$verbose_test" ] ; then
-    echo "$PLTCL_DIR/pltcl demo of plot"
+    echo "@pltcl_LOCATION@ demo of plot"
 fi
-pltcl -dev $device -o "$results/plot%n.$dsuffix" $options <<EOF 2> "tcl_${device}_test.error"
+"@pltcl_LOCATION@" -dev $device -o "$results/plot%n.$dsuffix" $options <<EOF 2> "tcl_${device}_test.error"
 plinit
 source plot.tcl
 plot stats.log {1 4}
@@ -81,9 +81,9 @@ if [ -n "$is_error" ] ; then
     exit 1
 fi
 if [ "$verbose_test" ] ; then
-    echo "$PLTCL_DIR/pltcl demo of plgrid"
+    echo "@pltcl_LOCATION@ demo of plgrid"
 fi
-pltcl -dev $device -o "$results/plgrid%n.$dsuffix" $options <<EOF 2> "tcl_${device}_test.error"
+"@pltcl_LOCATION@" -dev $device -o "$results/plgrid%n.$dsuffix" $options <<EOF 2> "tcl_${device}_test.error"
 plinit
 source plgrid.tcl
 plgrid

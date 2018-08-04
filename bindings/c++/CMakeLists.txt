@@ -41,7 +41,7 @@ if(ENABLE_cxx)
   configure_library_build(plplotcxx "" "${plplotcxx_LIB_SRCS}" PLPLOT::plplot)
 
   # Install library in lib/
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotcxx
+  install(TARGETS ${WRITEABLE_TARGET}plplotcxx
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

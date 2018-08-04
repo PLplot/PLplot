@@ -223,11 +223,15 @@ if(BUILD_TEST)
     set(pkgIndex_LOCATIONS "\"${DATA_DIR}\"")
   endif(CORE_BUILD)
 
-  foreach(tk_related_target xtk01 plserver xtk02 xtk04)
-    if(TARGET ${tk_related_target})
-      set(${tk_related_target}_LOCATION $<TARGET_FILE:${tk_related_target}>)
-    endif(TARGET ${tk_related_target})
-  endforeach(tk_related_target xtk01 plserver xtk02 xtk04)
+  # N.B. the prefixed versus unprefixed logic is to avoid the invalid
+  #  character ":" in the ${tk_related_target}_LOCATION variable name!
+  foreach(prefixed_tk_related_target xtk01 PLPLOT::plserver xtk02 xtk04)
+    string(REGEX REPLACE "PLPLOT::" "" tk_related_target ${prefixed_tk_related_target})
+    if(TARGET ${prefixed_tk_related_target})
+      set(${tk_related_target}_LOCATION $<TARGET_FILE:${prefixed_tk_related_target}>)
+      message(STATUS "DEBUG: ${tk_related_target}_LOCATION = ${${tk_related_target}_LOCATION}")
+    endif(TARGET ${prefixed_tk_related_target})
+  endforeach(prefixed_tk_related_target xtk01 PLPLOT::plserver xtk02 xtk04)
 
   # Configure the tk_SCRIPTS
   foreach(tk_SCRIPT ${non_gen_tk_SCRIPTS})

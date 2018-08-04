@@ -47,7 +47,7 @@ if(WITH_CSA)
 
   configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}")
 
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}csirocsa
+  install(TARGETS ${WRITEABLE_TARGET}csirocsa
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

@@ -210,7 +210,7 @@ fi
 if [ "@ENABLE_tkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
-    COMMAND[$COUNT]="plserver -f tk03"
+    COMMAND[$COUNT]="@plserver_LOCATION@ -f tk03"
     COUNT=$(( $COUNT + 1 ))
 fi
 
@@ -245,7 +245,7 @@ done
 if [ "@ENABLE_tkX@" = "ON" ] ; then
 
     cd "${SRC_EXAMPLES_DIR}"/tcl
-    plserver <<EOF
+    "@plserver_LOCATION@" <<EOF
 plstdwin .
 plxframe .plw
 pack append . .plw {left expand fill}
@@ -271,7 +271,7 @@ EOF
         # Drop 31 since it produces empty plot (by design).
         # Drop 32 since it has not been propagated (for the present by
         # design) from C.
-	pltcl <<EOF
+	"@pltcl_LOCATION@" <<EOF
 source tcldemos.tcl
 plsdev "xwin"
 plinit
@@ -393,7 +393,7 @@ EOF
         # Drop 31 since it produces empty plot (by design).
         # Drop 32 since it has not been propagated (for the present by
         # design) from C.
-	plserver <<EOF
+	"@plserver_LOCATION@" <<EOF
 source tkdemos.tcl
 plw::set_pause .plw 0
 0
@@ -507,7 +507,7 @@ EOF
         cd ..
         # Just in case EXAMPLES_DIR is a relative path such as the default ".".
 	cd "${EXAMPLES_DIR}"/tk
-	plserver <<EOF
+	@plserver_LOCATION <<EOF
 source runAllDemos.tcl
 EOF
         # Look for any status codes (segfaults or whatever)

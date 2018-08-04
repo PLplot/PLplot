@@ -1,5 +1,5 @@
 // Copyright (C) 2015-2017 Phil Rosenberg
-// Copyright (C) 2017 Alan W. Irwin
+// Copyright (C) 2017-2018 Alan W. Irwin
 // Copyright (C) 2005 Werner Smekal, Sjaak Verdoold
 // Copyright (C) 2005 Germain Carrera Corraleche
 // Copyright (C) 1999 Frank Huebner
@@ -1662,19 +1662,19 @@ void wxPLDevice::TransmitBuffer( PLStream* pls, unsigned char transmissionType )
 #ifdef _WIN32
         catch ( DWORD )
         {
-            plwarn( "Locking mutex failed when trying to communicate with wxPLViewer." );
+            plwarn( "Locking mutex failed when trying to communicate with " NAME_wxPLViewer "." );
             break;
         }
 #endif
         catch ( ... )
         {
-            plwarn( "Unknown error when trying to communicate with wxPLViewer." );
+            plwarn( "Unknown error when trying to communicate with " NAME_wxPLViewer "." );
             break;
         }
     }
     if ( counter == counterLimit )
     {
-        plwarn( "Communication timeout with wxPLViewer - disconnecting" );
+        plwarn( "Communication timeout with " NAME_wxPLViewer " - disconnecting" );
         m_outputMemoryMap.close();
     }
 #endif  // #ifdef PL_WXWIDGETS_IPC3
@@ -1755,8 +1755,8 @@ void wxPLDevice::SetupMemoryMap()
 
         //try to find the wxPLViewer executable, in the first instance just assume it
         //is in the path.
-        //wxString exeName = wxT( "/nfs/see-fs-02_users/earpros/usr/src/plplot-plplot/build/utils/wxPLViewer" );
-        wxString exeName = wxT( "wxPLViewer" );
+        //wxString exeName = wxT( "/nfs/see-fs-02_users/earpros/usr/src/plplot-plplot/build/utils/" NAME_wxPLViewer );
+        wxString exeName = wxT( NAME_wxPLViewer );
         if ( plInBuildTree() )
         {
             //if we are in the build tree check for the needed exe in there
@@ -1786,7 +1786,7 @@ void wxPLDevice::SetupMemoryMap()
 #ifdef _WIN32
 
         if ( wxExecute( command, wxEXEC_ASYNC ) == 0 )
-            plwarn( "Failed to run wxPLViewer - no plots will be shown" );
+            plwarn( "Failed to run " NAME_wxPLViewer " - no plots will be shown" );
 #else           //_WIN32
                 //Linux doesn't like using wxExecute without a wxApp, so use system instead
         command << wxT( " &" );
@@ -1794,7 +1794,7 @@ void wxPLDevice::SetupMemoryMap()
 #endif          //_WIN32
 #else // ifndef WXPLVIEWER_DEBUG
         wxString runMessage;
-        runMessage << "Begin Running wxPLViewer in the debugger now to continue. Use the parameters: plplotMemoryMap " <<
+        runMessage << "Begin Running " NAME_wxPLViewer " in the debugger now to continue. Use the parameters: plplotMemoryMap " <<
             mapSize << " " << m_width << " " << m_height;
         // fprintf( stdout, runMessage );
         // FIXME: The above fprintf does not output runMessage (because of buffered output?)
@@ -1856,7 +1856,7 @@ void wxPLDevice::SetupMemoryMap()
         }
 #endif  // #ifdef PL_WXWIDGETS_IPC3
         if ( viewerSignal == 0 )
-            plwarn( "wxPLViewer failed to signal it has found the shared memory." );
+            plwarn( NAME_wxPLViewer " failed to signal it has found the shared memory." );
     }
     PLPLOT_wxLogDebug( "SetupMemoryMap(): leave" );
 }
@@ -1886,7 +1886,7 @@ void wxPLDevice::Locate( PLStream * pls, PLGraphicsIn * graphicsIn )
     }
     else
     {
-        plwarn( "plGetCursor cannot be used when the user supplies a wxDC or until wxPLViewer is initialised" );
+        plwarn( "plGetCursor cannot be used when the user supplies a wxDC or until " NAME_wxPLViewer " is initialised" );
         graphicsIn->dX = -1;
         graphicsIn->dY = -1;
         graphicsIn->pX = -1;

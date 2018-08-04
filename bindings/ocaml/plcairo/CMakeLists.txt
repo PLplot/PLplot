@@ -36,7 +36,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
     ${CMAKE_CURRENT_BINARY_DIR}/dllplcairo_stubs.so
     ${CMAKE_CURRENT_BINARY_DIR}/libplcairo_stubs.a
     COMMAND ${OCAMLC} -ccopt "${CAIRO_COMPILE_FLAGS}" -cclib "${CAIRO_LINK_FLAGS}" -ccopt -I${CMAKE_SOURCE_DIR}/include -ccopt -I${CMAKE_BINARY_DIR}/include -ccopt -I${CMAKE_SOURCE_DIR}/lib/qsastime -ccopt -I${CMAKE_BINARY_DIR} -ccopt -I${CMAKE_BINARY_DIR}/lib/qsastime -ccopt -DPLPLOT_HAVE_CONFIG_H -c ${CMAKE_CURRENT_SOURCE_DIR}/plcairo_impl.c
-    COMMAND ${OCAMLMKLIB} -o plcairo_stubs ${CAIRO_LINK_FLAGS_LIST} -L${CMAKE_BINARY_DIR}/src -l${LIBRARY_TARGET_PREFIX}plplot ${CMAKE_CURRENT_BINARY_DIR}/plcairo_impl.o
+    COMMAND ${OCAMLMKLIB} -o plcairo_stubs ${CAIRO_LINK_FLAGS_LIST} -L${CMAKE_BINARY_DIR}/src -l${WRITEABLE_TARGET}plplot ${CMAKE_CURRENT_BINARY_DIR}/plcairo_impl.o
     DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/plcairo_impl.c
     plplot
@@ -95,7 +95,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
   add_custom_command(
     OUTPUT
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cma
-    COMMAND ${OCAMLC} -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cma -I ${PATH_TO_PLPLOT_CMA} plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmo -dllib -lplcairo_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplcairo_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -l${LIBRARY_TARGET_PREFIX}plplot -dllpath ${CMAKE_BINARY_DIR}/src
+    COMMAND ${OCAMLC} -a -custom -o ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cma -I ${PATH_TO_PLPLOT_CMA} plplot.cma ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmo -dllib -lplcairo_stubs -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplcairo_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -l${WRITEABLE_TARGET}plplot -dllpath ${CMAKE_BINARY_DIR}/src
     DEPENDS
     ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmo
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -147,7 +147,7 @@ if(ENABLE_ocaml AND OCAML_HAS_CAIRO)
       OUTPUT
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.a
-      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa -I ${PATH_TO_PLPLOT_CMXA} ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplcairo_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -l${LIBRARY_TARGET_PREFIX}plplot
+      COMMAND ${OCAMLOPT} -a -o ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmxa -I ${PATH_TO_PLPLOT_CMXA} ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx -ccopt -L${CMAKE_CURRENT_BINARY_DIR} -cclib -lplcairo_stubs -ccopt -L${CMAKE_BINARY_DIR}/src -cclib -l${WRITEABLE_TARGET}plplot
       DEPENDS
       ${CMAKE_CURRENT_BINARY_DIR}/plcairo.cmx
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

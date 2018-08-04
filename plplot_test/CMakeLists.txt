@@ -116,7 +116,9 @@ if(SH_EXECUTABLE)
     set(SHELL_TEST_QT_EXAMPLE 1)
   endif(PLPLOT_USE_QT5)
 
-  configure_file(
+  set(pltcl_LOCATION $<TARGET_FILE:PLPLOT::pltcl>)
+  set(plserver_LOCATION $<TARGET_FILE:PLPLOT::plserver>)
+  configure_file_generate(
     plplot-test-interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
     @ONLY
@@ -133,6 +135,8 @@ if(SH_EXECUTABLE)
     NEWLINE_STYLE UNIX
     )
 
+  set(pltcl_LOCATION ${BIN_DIR}/pltcl)
+  set(plserver_LOCATION ${BIN_DIR}/plserver)
   configure_file(
     plplot-test-interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh_install
@@ -266,7 +270,8 @@ if(SH_EXECUTABLE)
 
   if(ENABLE_tcl)
 
-    set(PLTCL_DIR $<TARGET_FILE_DIR:pltcl>)
+    set(PLTCL_DIR $<TARGET_FILE_DIR:PLPLOT::pltcl>)
+    set(pltcl_LOCATION $<TARGET_FILE:PLPLOT::pltcl>)
     # N.B. Results only available at generate time.
     configure_file_generate(
       ${CMAKE_CURRENT_SOURCE_DIR}/test_tcl.sh.in
@@ -284,6 +289,7 @@ if(SH_EXECUTABLE)
     endif(PLD_TEST_DEVICE)
 
     set(PLTCL_DIR ${BIN_DIR})
+    set(pltcl_LOCATION ${BIN_DIR}/pltcl)
     configure_file(
       ${CMAKE_CURRENT_SOURCE_DIR}/test_tcl.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_tcl.sh_install
@@ -361,15 +367,15 @@ if(SH_EXECUTABLE)
   endif(ENABLE_d)
 
   if(PLD_plmeta)
-    set(PLRENDER_DIR ${CMAKE_BINARY_DIR}/utils)
-    configure_file(
+    set(plrender_LOCATION $<TARGET_FILE:PLPLOT::plrender>)
+    configure_file_generate(
       test_plrender.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_plrender.sh
       @ONLY
       NEWLINE_STYLE UNIX
       )
     list(APPEND SCRIPTS test_plrender.sh)
-    set(PLRENDER_DIR ${BIN_DIR})
+    set(plrender_LOCATION ${BIN_DIR}/plrender)
     configure_file(
       test_plrender.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_plrender.sh_install

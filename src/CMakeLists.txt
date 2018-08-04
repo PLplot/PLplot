@@ -248,7 +248,7 @@ endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 if(WITH_CSA)
   list(APPEND libplplot_LINK_LIBRARIES PLPLOT::csirocsa)
-  list(APPEND pc_libplplot_LINK_FLAGS -l${LIBRARY_TARGET_PREFIX}csirocsa)
+  list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csirocsa)
   include_directories(
     ${CMAKE_BINARY_DIR}/lib/csa
     )
@@ -257,9 +257,9 @@ endif(WITH_CSA)
 if(PL_HAVE_QHULL)
   list(APPEND libplplot_LINK_LIBRARIES PLPLOT::csironn)
   if(QHULL_RPATH)
-    list(APPEND pc_libplplot_LINK_FLAGS -l${LIBRARY_TARGET_PREFIX}csironn -L${QHULL_RPATH} -lqhull)
+    list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -L${QHULL_RPATH} -lqhull)
   else(QHULL_RPATH)
-    list(APPEND pc_libplplot_LINK_FLAGS -l${LIBRARY_TARGET_PREFIX}csironn -lqhull)
+    list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -lqhull)
   endif(QHULL_RPATH)
 
   # Needed by plgridd.c.
@@ -275,7 +275,7 @@ endif(PL_HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
   list(APPEND libplplot_LINK_LIBRARIES PLPLOT::nistcd)
-  list(APPEND pc_libplplot_LINK_FLAGS -l${LIBRARY_TARGET_PREFIX}nistcd)
+  list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}nistcd)
   include_directories(
     ${CMAKE_SOURCE_DIR}/lib/nistcd
     ${CMAKE_BINARY_DIR}/lib/nistcd
@@ -283,7 +283,7 @@ if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 
 list(APPEND libplplot_LINK_LIBRARIES PLPLOT::qsastime)
-list(APPEND pc_libplplot_LINK_FLAGS -l${LIBRARY_TARGET_PREFIX}qsastime)
+list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}qsastime)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
   list(APPEND libplplot_LINK_LIBRARIES ${RT_LIB})
@@ -297,10 +297,10 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 configure_library_build(plplot "" "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}")
-add_dependencies(${LIBRARY_TARGET_PREFIX}plplot plhershey-unicode.h_built)
+add_dependencies(${WRITEABLE_TARGET}plplot plhershey-unicode.h_built)
 
 if(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
-  set_property(TARGET ${LIBRARY_TARGET_PREFIX}plplot
+  set_property(TARGET ${WRITEABLE_TARGET}plplot
     APPEND PROPERTY
     INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
     )
@@ -309,10 +309,10 @@ endif(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
 if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
   if(NOT PLPLOT_USE_QT5)
     # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-    set_qt4_target_properties(${LIBRARY_TARGET_PREFIX}plplot)
+    set_qt4_target_properties(${WRITEABLE_TARGET}plplot)
   endif(NOT PLPLOT_USE_QT5)
 
-  set_target_properties(${LIBRARY_TARGET_PREFIX}plplot PROPERTIES
+  set_target_properties(${WRITEABLE_TARGET}plplot PROPERTIES
     AUTOMOC ON
     AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
     )
@@ -324,10 +324,10 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
     # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
     # specifically added by automoc to the list of source files for
     # the target.
-    target_include_directories(${LIBRARY_TARGET_PREFIX}plplot PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    target_include_directories(${WRITEABLE_TARGET}plplot PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
 
-install(TARGETS ${LIBRARY_TARGET_PREFIX}plplot
+install(TARGETS ${WRITEABLE_TARGET}plplot
   EXPORT export_plplot
   ARCHIVE DESTINATION ${LIB_DIR}
   LIBRARY DESTINATION ${LIB_DIR}

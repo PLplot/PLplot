@@ -172,7 +172,7 @@ EXPORTS
 
   configure_library_build(plplotfortran "" "${plplotfortran_LIB_SRCS}" PLPLOT::plplot)
 
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotfortran
+  install(TARGETS ${WRITEABLE_TARGET}plplotfortran
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

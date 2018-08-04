@@ -1142,7 +1142,7 @@ launch_server( PLStream *pls )
     dbug_enter( "launch_server" );
 
     if ( pls->plserver == NULL )
-        pls->plserver = plstrdup( "plserver" );
+        pls->plserver = plstrdup( NAME_plserver );
 
 // Build argument list
 

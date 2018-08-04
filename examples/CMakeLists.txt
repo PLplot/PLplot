@@ -779,14 +779,14 @@ if(BUILD_TEST)
 	endif(ENABLE_DYNDRIVERS)
 
 	if(driver STREQUAL "tk")
-	  list(APPEND ${driver}_targets ${TARGET_tclIndex_tk} ${TARGET_tclIndex_tcl} plserver)
+	  list(APPEND ${driver}_targets ${TARGET_tclIndex_tk} ${TARGET_tclIndex_tcl} PLPLOT::plserver)
 	endif(driver STREQUAL "tk")
 
-	if(driver STREQUAL "wxwidgets" AND TARGET wxPLViewer)
-	  # Append wxPLViewer to the list of wxwidgets targets so that application
+	if(driver STREQUAL "wxwidgets" AND TARGET PLPLOT::wxPLViewer)
+	  # Append PLPLOT::wxPLViewer to the list of wxwidgets targets so that application
 	  # will be built when needed.
-	  list(APPEND ${driver}_targets wxPLViewer)
-	endif(driver STREQUAL "wxwidgets" AND TARGET wxPLViewer)
+	  list(APPEND ${driver}_targets PLPLOT::wxPLViewer)
+	endif(driver STREQUAL "wxwidgets" AND TARGET PLPLOT::wxPLViewer)
 
       endif(NOT ${driver}_targets)
     endforeach(interactive_devices_info IN LISTS EXTERNAL_DEVICES_LIST EXTERNAL_DEVICES_LIST)
@@ -1004,7 +1004,7 @@ if(BUILD_TEST)
       VERBATIM
       )
     add_dependencies(test_pltcl_standard_examples
-      pltcl
+      PLPLOT::pltcl
       tcl_examples
       ${TARGET_tclIndex_tcl}
       ${${generic_interactive_device}_targets}
@@ -1062,7 +1062,7 @@ if(BUILD_TEST)
       VERBATIM
       )
     add_dependencies(test_tk_03
-      plserver
+      PLPLOT::plserver
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
       ${xwin_targets}
@@ -1076,7 +1076,7 @@ if(BUILD_TEST)
       )
 
     add_dependencies(test_tk_plgrid
-      plserver
+      PLPLOT::plserver
       tcl_examples
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
@@ -1090,7 +1090,7 @@ if(BUILD_TEST)
       VERBATIM
       )
     add_dependencies(test_plserver_standard_examples
-      plserver
+      PLPLOT::plserver
       tcl_examples
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}
@@ -1211,7 +1211,7 @@ if(BUILD_TEST)
       VERBATIM
       )
     add_dependencies(test_plserver_runAllDemos
-      plserver
+      PLPLOT::plserver
       tcl_examples
       ${TARGET_tclIndex_tcl}
       ${TARGET_tclIndex_tk}

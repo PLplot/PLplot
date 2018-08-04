@@ -75,12 +75,12 @@ if(ENABLE_qt)
       # Therefore, my conclusion is that the PUBLIC keyword should
       # be used here in all cases, but further checking of this assumption
       # (by looking for overlinking issues) is desireable.
-      target_link_libraries(${LIBRARY_TARGET_PREFIX}plplotqt PUBLIC ${QT_LIBRARIES})
+      target_link_libraries(${WRITEABLE_TARGET}plplotqt PUBLIC ${QT_LIBRARIES})
       # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-      set_qt4_target_properties(${LIBRARY_TARGET_PREFIX}plplotqt)
+      set_qt4_target_properties(${WRITEABLE_TARGET}plplotqt)
     endif(NOT PLPLOT_USE_QT5)
 
-    set_target_properties(${LIBRARY_TARGET_PREFIX}plplotqt PROPERTIES
+    set_target_properties(${WRITEABLE_TARGET}plplotqt PROPERTIES
       AUTOMOC ON
       AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
       )
@@ -93,9 +93,9 @@ if(ENABLE_qt)
     # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
     # specifically added by automoc to the list of source files for
     # the target.
-    target_include_directories(${LIBRARY_TARGET_PREFIX}plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+    target_include_directories(${WRITEABLE_TARGET}plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-    install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotqt
+    install(TARGETS ${WRITEABLE_TARGET}plplotqt
       EXPORT export_plplot
       ARCHIVE DESTINATION ${LIB_DIR}
       LIBRARY DESTINATION ${LIB_DIR}

@@ -49,7 +49,7 @@ if(BUILD_HERSHEY_FONTS)
     ${CMAKE_BINARY_DIR}/include
     ${CMAKE_BINARY_DIR}/lib/qsastime
     )
-  configure_library_build(hershey STATIC "${libhershey_SRC}" "")
+  add_library(hershey STATIC ${libhershey_SRC})
 
   add_executable(generate_stndfonts stndfont.c)
   if(BUILD_SHARED_LIBS)
@@ -57,7 +57,7 @@ if(BUILD_HERSHEY_FONTS)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(generate_stndfonts PLPLOT::hershey PLPLOT::plplot)
+  target_link_libraries(generate_stndfonts hershey PLPLOT::plplot)
 
   add_executable(generate_xtndfonts xtndfont.c)
   if(BUILD_SHARED_LIBS)
@@ -65,6 +65,6 @@ if(BUILD_HERSHEY_FONTS)
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
-  target_link_libraries(generate_xtndfonts PLPLOT::hershey PLPLOT::plplot)
+  target_link_libraries(generate_xtndfonts hershey PLPLOT::plplot)
 
 endif(BUILD_HERSHEY_FONTS)

@@ -128,7 +128,7 @@ if(ENABLE_DYNDRIVERS)
 	configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${qt_tll_list}")
 	if(NOT PLPLOT_USE_QT5)
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
-	  set_qt4_target_properties(${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME})
+	  set_qt4_target_properties(${WRITEABLE_TARGET}${SOURCE_ROOT_NAME})
 	endif(NOT PLPLOT_USE_QT5)
       else(ANY_QT_DEVICE)
 	message(FATAL_ERROR "Internal build system inconsistency.  Attempt to build dynamic qt device when ANY_QT_DEVICE is false.")
@@ -143,7 +143,7 @@ if(ENABLE_DYNDRIVERS)
 	)
       configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${wx_tll_list}")
       if(PLD_wxwidgets OR PLD_wxpng)
-	set_property(TARGET ${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
+	set_property(TARGET ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
 	  APPEND PROPERTY
 	  INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
 	  )
@@ -173,7 +173,7 @@ if(ENABLE_DYNDRIVERS)
 	)
       #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
       set_target_properties(
-	${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
+	${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
 	PROPERTIES
 	INSTALL_RPATH
 	"${${SOURCE_ROOT_NAME}_RPATH}"
@@ -193,25 +193,25 @@ if(ENABLE_DYNDRIVERS)
       set(DYNAMIC_SUFFIX ".so")
     endif(WIN32_OR_CYGWIN)
     set_target_properties(
-      ${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
+      ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
       PROPERTIES
       PREFIX ""
       SUFFIX ${DYNAMIC_SUFFIX}
       )
 
     if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
-      if(LIBRARY_TARGET_PREFIX)
+      if(WRITEABLE_TARGET)
 	# For this experimental configuration update the generated file.
-	set(update_command  ${SED_EXECUTABLE} -i -e "s?^\\([^:]*:[^:]*:[^:]*:\\)?\\1${LIBRARY_TARGET_PREFIX}?" ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info)
-      else(LIBRARY_TARGET_PREFIX)
+	set(update_command  ${SED_EXECUTABLE} -i -e "s?^\\([^:]*:[^:]*:[^:]*:\\)?\\1${WRITEABLE_TARGET}?" ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info)
+      else(WRITEABLE_TARGET)
 	set(update_command)
-      endif(LIBRARY_TARGET_PREFIX)
+      endif(WRITEABLE_TARGET)
 
       add_custom_command(
 	OUTPUT
 	${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	COMMAND test-drv-info
-	"${LIBRARY_TARGET_PREFIX}" ${SOURCE_ROOT_NAME}
+	"${WRITEABLE_TARGET}" ${SOURCE_ROOT_NAME}
 	> ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir/${SOURCE_ROOT_NAME}.driver_info
 	COMMAND ${update_command}
 	COMMAND ${CMAKE_COMMAND} -E compare_files
@@ -234,7 +234,7 @@ if(ENABLE_DYNDRIVERS)
       list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME}_dyndriver)
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
 
-    install(TARGETS ${LIBRARY_TARGET_PREFIX}${SOURCE_ROOT_NAME}
+    install(TARGETS ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
       EXPORT export_plplot
       DESTINATION ${DRV_DIR}
       )
@@ -247,17 +247,17 @@ if(ENABLE_DYNDRIVERS)
   # The tk device driver depends internally on the xwin device driver.
   # Therefore make target tk depend on target xwin so
   # xwin will always be built first.
-  if(TARGET ${LIBRARY_TARGET_PREFIX}tk)
+  if(TARGET ${WRITEABLE_TARGET}tk)
     if(TARGET PLPLOT::xwin)
-      add_dependencies(${LIBRARY_TARGET_PREFIX}tk PLPLOT::xwin)
+      add_dependencies(${WRITEABLE_TARGET}tk PLPLOT::xwin)
     else(TARGET PLPLOT::xwin)
       message(FATAL_ERROR "Internal build system inconsistency where the tk target but not the xwin target are configured.")
     endif(TARGET PLPLOT::xwin)
-  endif(TARGET ${LIBRARY_TARGET_PREFIX}tk)
+  endif(TARGET ${WRITEABLE_TARGET}tk)
 
   if(PLD_tkwin AND USE_TCL_TK_STUBS)
     set_target_properties(
-      ${LIBRARY_TARGET_PREFIX}tkwin
+      ${WRITEABLE_TARGET}tkwin
       PROPERTIES COMPILE_DEFINITIONS "USE_TCL_STUBS;USE_TK_STUBS"
       )
   endif(PLD_tkwin AND USE_TCL_TK_STUBS)

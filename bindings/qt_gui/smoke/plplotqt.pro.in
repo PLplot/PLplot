@@ -5,6 +5,6 @@ HEADERS += plplotqt_smoke.h
 SOURCES += smokedata.cpp
 SOURCES += x_1.cpp
 INCLUDEPATH = @INCLUDE_DIR@
-LIBS += -lsmokeqtcore -lsmokeqtgui -l@LIBRARY_TARGET_PREFIX@plplotqt
+LIBS += -lsmokeqtcore -lsmokeqtgui -l@WRITEABLE_TARGET@plplotqt
 VERSION = 0.0.1
 TARGET = smokeplplotqt

@@ -79,11 +79,11 @@ if(ENABLE_python)
 	)
     endif(ENABLE_DYNDRIVERS)
 
-    if(LIBRARY_TARGET_PREFIX)
+    if(WRITEABLE_TARGET)
       # For this experimental configuration need to specify the -module option
       # directly to swig.
-      set(CMAKE_SWIG_FLAGS -module ${LIBRARY_TARGET_PREFIX}Pltk_init)
-    endif(LIBRARY_TARGET_PREFIX)
+      set(CMAKE_SWIG_FLAGS -module ${WRITEABLE_TARGET}Pltk_init)
+    endif(WRITEABLE_TARGET)
 
     configure_library_build(Pltk_init python Pltk_init.i "${pltk_init_tll_list}")
 
@@ -102,15 +102,15 @@ if(ENABLE_python)
 	)
     endif(USE_RPATH)
 
-    if(LIBRARY_TARGET_PREFIX)
+    if(WRITEABLE_TARGET)
       # For this experimental configuration copy the generated
-      # ${LIBRARY_TARGET_PREFIX}Pltk_init.py file to the Pltk_init.py
+      # ${WRITEABLE_TARGET}Pltk_init.py file to the Pltk_init.py
       # name required by examples/python/pytkdemo.
       add_custom_command(TARGET ${SWIG_MODULE_Pltk_init_REAL_NAME} POST_BUILD
-	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_TARGET_PREFIX}Pltk_init.py ${CMAKE_CURRENT_BINARY_DIR}/Pltk_init.py
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${WRITEABLE_TARGET}Pltk_init.py ${CMAKE_CURRENT_BINARY_DIR}/Pltk_init.py
 	VERBATIM
 	)
-    endif(LIBRARY_TARGET_PREFIX)
+    endif(WRITEABLE_TARGET)
 
     install(
       TARGETS ${SWIG_MODULE_Pltk_init_REAL_NAME}
@@ -131,11 +131,11 @@ if(ENABLE_python)
     set(CMAKE_SWIG_FLAGS -DSWIG_PYTHON)
   endif(PL_DOUBLE)
 
-  if(LIBRARY_TARGET_PREFIX)
+  if(WRITEABLE_TARGET)
     # For this experimental configuration need to specify the -module option
     # directly to swig.
-    set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -module ${LIBRARY_TARGET_PREFIX}plplotc)
-  endif(LIBRARY_TARGET_PREFIX)
+    set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -module ${WRITEABLE_TARGET}plplotc)
+  endif(WRITEABLE_TARGET)
 
   if(PYTHON_HAVE_PYBUFFER)
     set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DPYTHON_HAVE_PYBUFFER)
@@ -162,15 +162,15 @@ if(ENABLE_python)
       )
   endif(USE_RPATH)
 
-  if(LIBRARY_TARGET_PREFIX)
+  if(WRITEABLE_TARGET)
     # For this experimental configuration copy the generated
     # ${SWIG_MODULE_plplotc_REAL_NAME}.py file to the plplotc.py name
     # required by plplot.py.
     add_custom_command(TARGET ${SWIG_MODULE_plplotc_REAL_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_TARGET_PREFIX}plplotc.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_BINARY_DIR}/${WRITEABLE_TARGET}plplotc.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
       VERBATIM
     )
-  endif(LIBRARY_TARGET_PREFIX)
+  endif(WRITEABLE_TARGET)
 
   if(${PYTHON_VERSION} VERSION_LESS "3.0.0")
     # Fix up the swig-generated plplotc.py code to allow UTF-8 help strings for the python2 case.

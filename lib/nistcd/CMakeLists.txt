@@ -112,7 +112,7 @@ if(PLD_cgm)
   endif(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)
 
   # install library and binaries
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}nistcd
+  install(TARGETS ${WRITEABLE_TARGET}nistcd
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

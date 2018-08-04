@@ -237,15 +237,74 @@ function(configure_file_generate)
     )
 endfunction(configure_file_generate)
 
-function(configure_library_build library library_type library_src tll_arguments)
+function(configure_executable_build executable executable_src tll_arguments)
+  # Configure the build of executables and corresponding namespaced
+  # ALIAS executables in a uniform way that supports the appropriate
+  # writeable or read-only prefixes for all target names that are generated.
+  #
   # This function should be duplicated for the PLplot, ephcom, and
-  # te_gen software projects.  Configure build of one of the PLplot,
-  # ephcom or te_gen libraries, modules (dll's), or swig modules and
-  # corresponding namespaced ALIAS library in a uniform way.  This
-  # function is implemented using a combination of the add_library and
-  # target_link_libraries (or swig_add_library and
-  # swig_link_libraries) commands followed by setting relevant library
-  # properties.
+  # te_gen software projects and should only be used for those
+  # executables that are both built in the build tree AND namespaced
+  # installed (not built) in the install tree.
+
+  # executable contains a string corresponding to the target name of an executable.
+
+  # executable_src contains a list of source files for the executable.
+
+  # tll_arguments contains a list of arguments for target_link_libraries
+  # for the executable.  If tll_arguments evaluates to a false value (e.g.,
+  # an empty string), then target_link_libraries will not be called.
+
+  # N.B. Actual arguments used for calls to configure_executable_build
+  # are values (e.g., lists are expressed as "a;b;c") and NOT
+  # variables.  Therefore, only one level of dereferencing required to
+  # access the argument values.
+
+  message(STATUS "DEBUG: executable = ${executable}")
+  message(STATUS "DEBUG: executable_src = ${executable_src}")
+  message(STATUS "DEBUG: tll_arguments = ${tll_arguments}")
+
+  # Sanity checks on values of argument variables:
+  if("${executable}" STREQUAL "")
+    message(FATAL_ERROR "configure_executable_build: executable is empty when it should be a executable target name")
+  endif("${executable}" STREQUAL "")
+
+  if("${executable_src}" STREQUAL "")
+    message(FATAL_ERROR "configure_executable_build: executable_src is empty when it should be a list of executable source files for the ${executable} executable")
+  endif("${executable_src}" STREQUAL "")
+
+  # Sanity check that the external variable PROJECT_NAMESPACE has been set correctly.
+  if(NOT "${PROJECT_NAMESPACE}" MATCHES ".*::$")
+    message(FATAL_ERROR "configure_library_build:PROJECT_NAMESPACE = ${PROJECT_NAMESPACE} does not have the correct trailing \"::\"")
+  endif(NOT "${PROJECT_NAMESPACE}" MATCHES ".*::$")
+
+  set(original_executable ${executable})
+  set(executable ${WRITEABLE_TARGET}${executable})
+  add_executable(${executable} ${executable_src})
+  # Create equivalent namespaced ALIAS executable to be used whenever
+  # the executable target is read only.
+  add_executable(${PROJECT_NAMESPACE}${original_executable} ALIAS ${executable})
+
+  if(NOT "${tll_arguments}" STREQUAL "")
+    if(NON_TRANSITIVE)
+      target_link_libraries(${executable} PRIVATE ${tll_arguments})
+    else(NON_TRANSITIVE)
+      target_link_libraries(${executable} PUBLIC ${tll_arguments})
+    endif(NON_TRANSITIVE)
+  endif(NOT "${tll_arguments}" STREQUAL "")
+
+endfunction(configure_executable_build executable executable_src tll_arguments)
+
+function(configure_library_build library library_type library_src tll_arguments)
+  # Configure the build of libraries (including modules and swig
+  # modules) and corresponding namespaced ALIAS libraries in a uniform
+  # way that supports the appropriate writeable or read-only prefixes
+  # for all target names that are generated.
+  #
+  # This function should be duplicated for the PLplot, ephcom, and
+  # te_gen software projects and should only be used for those
+  # libraries that are both built in the build tree AND namespaced
+  # installed (not built) in the install tree.
 
   # library contains a string corresponding to the target name of a library.
 
@@ -264,14 +323,14 @@ function(configure_library_build library library_type library_src tll_arguments)
   # for the library.  If tll_arguments evaluates to a false value (e.g.,
   # an empty string), then (swig|target)_link_libraries will not be called.
 
-  # N.B. Actual arguments used for calls to configure_library_build are values
-  # or lists of values and NOT variables.  Therefore, only one level
-  # of dereferencing required to access the argument values.
+  # N.B. Actual arguments used for calls to
+  # configure_library_build are values (e.g., lists are
+  # expressed as "a;b;c") and NOT variables.  Therefore, only one
+  # level of dereferencing required to access the argument values.
 
   #message(STATUS "DEBUG: library = ${library}")
   #message(STATUS "DEBUG: library_src = ${library_src}")
   #message(STATUS "DEBUG: tll_arguments = ${tll_arguments}")
-  #message(STATUS "DEBUG: namespace = ${namespace}")
 
   # Global variables which must be defined
   #message(STATUS "DEBUG: BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}")
@@ -311,10 +370,10 @@ function(configure_library_build library library_type library_src tll_arguments)
     message(FATAL_ERROR "configure_library_build: library_src is empty when it should be a list of library source files for the ${library} library")
   endif("${library_src}" STREQUAL "")
 
-  # Sanity check that the external variable LIBRARY_NAMESPACE has been set correctly.
-  if(NOT "${LIBRARY_NAMESPACE}" MATCHES ".*::$")
-    message(FATAL_ERROR "configure_library_build:LIBRARY_NAMESPACE = ${LIBRARY_NAMESPACE} does not have the correct trailing \"::\"")
-  endif(NOT "${LIBRARY_NAMESPACE}" MATCHES ".*::$")
+  # Sanity check that the external variable PROJECT_NAMESPACE has been set correctly.
+  if(NOT "${PROJECT_NAMESPACE}" MATCHES ".*::$")
+    message(FATAL_ERROR "configure_library_build:PROJECT_NAMESPACE = ${PROJECT_NAMESPACE} does not have the correct trailing \"::\"")
+  endif(NOT "${PROJECT_NAMESPACE}" MATCHES ".*::$")
 
   # Sanity check that all relevant external variables not checked
   # above have been DEFINED.
@@ -324,7 +383,7 @@ function(configure_library_build library library_type library_src tll_arguments)
     )
 
   set(original_library ${library})
-  set(library ${LIBRARY_TARGET_PREFIX}${library})
+  set(library ${WRITEABLE_TARGET}${library})
   if(if_swig_module)
     foreach(variable ${variables_list})
       if(NOT DEFINED ${variable})
@@ -335,22 +394,22 @@ function(configure_library_build library library_type library_src tll_arguments)
     # Propagate value of this variable (set in swig_add_library macro) to calling environment.
     # Example:
     # original_library = plplotc
-    # library = ${LIBRARY_TARGET_PREFIX}plplotc
-    # ${SWIG_MODULE_${library}_REAL_NAME} = _${LIBRARY_TARGET_PREFIX}plplotc
+    # library = ${WRITEABLE_TARGET}plplotc
+    # ${SWIG_MODULE_${library}_REAL_NAME} = _${WRITEABLE_TARGET}plplotc
     # ${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME} = _plplotc
-    if(LIBRARY_TARGET_PREFIX)
-      string(REGEX REPLACE "${LIBRARY_TARGET_PREFIX}" "" SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME})
-    else(LIBRARY_TARGET_PREFIX)
+    if(WRITEABLE_TARGET)
+      string(REGEX REPLACE "${WRITEABLE_TARGET}" "" SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME})
+    else(WRITEABLE_TARGET)
       set(SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME})
-    endif(LIBRARY_TARGET_PREFIX)
+    endif(WRITEABLE_TARGET)
 
-    # SWIG_MODULE_plplotc_REAL_NAME (in parent scope) = _${LIBRARY_TARGET_PREFIX}plplotc
+    # SWIG_MODULE_plplotc_REAL_NAME (in parent scope) = _${WRITEABLE_TARGET}plplotc
 
     set(SWIG_MODULE_${original_library}_REAL_NAME ${SWIG_MODULE_${library}_REAL_NAME} PARENT_SCOPE)
     # Create equivalent namespaced ALIAS library to be used whenever
     # the library target is read only.
-    #message(STATUS "DEBUG: swig_alias_name = ${LIBRARY_NAMESPACE}${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME}")
-    add_library(${LIBRARY_NAMESPACE}${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
+    #message(STATUS "DEBUG: swig_alias_name = ${PROJECT_NAMESPACE}${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME}")
+    add_library(${PROJECT_NAMESPACE}${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
 
     if(NOT "${tll_arguments}" STREQUAL "")
       if(NON_TRANSITIVE)
@@ -387,7 +446,7 @@ function(configure_library_build library library_type library_src tll_arguments)
     add_library(${library} ${library_type} ${library_src})
     # Create equivalent namespaced ALIAS library to be used whenever
     # the library target is read only.
-    add_library(${LIBRARY_NAMESPACE}${original_library} ALIAS ${library})
+    add_library(${PROJECT_NAMESPACE}${original_library} ALIAS ${library})
 
     if(NOT "${tll_arguments}" STREQUAL "")
       if(NON_TRANSITIVE)

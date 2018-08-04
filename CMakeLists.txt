@@ -72,34 +72,31 @@ endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 # N.B. As a result of the following two set commands and logic in the
 # configure_library_build function, all internal writeable library
 # targets should be referred to as
-# ${LIBRARY_TARGET_PREFIX<original_target_name> and all corresponding
+# ${WRITEABLE_TARGET}<original_target_name> and all corresponding
 # internal read-only library targets should be referred to in our
 # build system as PLPLOT::<original_target_name>.  The exception to
 # these rules are the swig-generated modules case where the writeable
 # target name (which is only available in the scope that calls the
 # configure_library_build function) is
 # ${SWIG_MODULE_<original_target_name>_REAL_NAME} instead of
-# ${LIBRARY_TARGET_PREFIX<original_target_name>.  For example, these
-# target names are ${LIBRARY_TARGET_PREFIX}plplot and PLPLOT::plplot
+# ${WRITEABLE_TARGET<original_target_name>.  For example, these
+# target names are ${WRITEABLE_TARGET}plplot and PLPLOT::plplot
 # for the libplplot.so library and ${SWIG_MODULE_plplotc_REAL_NAME}
 # and PLPLOT::_plplotc for the _plplotc.so swig-generated Python
 # extension module.
 
 # This value used in configure_library_build function to provide the namespace
-# for build-tree ALIAS libraries.
-set(LIBRARY_NAMESPACE PLPLOT::)
+# for build-tree ALIAS libraries.  Otherwise, "PLPLOT::" is explicitly used as the
+# prefix of read-only library and executable targets that occur in both the build and
+# install trees.
+set(PROJECT_NAMESPACE PLPLOT::)
 
-option(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS "Experimental option to test writeable library targets in the build tree by prepending a prefix to their library and especially target names to find most instances in our build system where a reference occurs to an unprefixed library target" OFF)
-if(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS)
-  # This value is normally left undefined, but it is useful to temporarily define
-  # it to confirm that all writeable target names are referred to as
-  # ${LIBRARY_TARGET_PREFIX<library_name> in the executed
-  # code path of our CMake logic (note this limitation which makes this
-  # test necessary but not sufficient).
-  set(LIBRARY_TARGET_PREFIX temporary_target_)
-else(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS)
-  set(LIBRARY_TARGET_PREFIX)
-endif(TEST_BUILD_TREE_WRITEABLE_LIBRARY_TARGETS)
+option(USE_WRITEABLE_TARGET_TEST_PREFIX "Option to test library and executable targets which have both writeable and (ALIASed namespaced) read-only versions of their targets in the build tree and namespaced read-only targets in the install tree.  This test prepends a prefix to the writeable version of the target name so as a result any such target referred to in the build tree without a writeable (\"writeable_target_test_prefix_)\") or read-only (\"PLPLOT::\") prefix should be discovered by this test (N.B. unless the unprefixed target reference occurs in CMake logic branches that are unexecuted by the particular configuration options that are chosen which makes this test necessary but not sufficient)." OFF)
+if(USE_WRITEABLE_TARGET_TEST_PREFIX)
+  set(WRITEABLE_TARGET writeable_target_test_prefix_)
+else(USE_WRITEABLE_TARGET_TEST_PREFIX)
+  set(WRITEABLE_TARGET)
+endif(USE_WRITEABLE_TARGET_TEST_PREFIX)
 
 # It is a fatal error if no working C compiler is available to build
 # the PLplot core C library and core C examples.  All other compilers

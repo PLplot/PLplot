@@ -75,7 +75,7 @@ if(ENABLE_wxwidgets)
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   IF(wxWidgets_DEFINITIONS)
-    set_property(TARGET ${LIBRARY_TARGET_PREFIX}plplotwxwidgets APPEND
+    set_property(TARGET ${WRITEABLE_TARGET}plplotwxwidgets APPEND
       PROPERTY COMPILE_DEFINITIONS ${wxWidgets_DEFINITIONS})
   ENDIF(wxWidgets_DEFINITIONS)
 
@@ -85,7 +85,7 @@ if(ENABLE_wxwidgets)
   ENDIF(wxWidgets_DEFINITIONS_DEBUG)
 
   # Install library in lib/
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplotwxwidgets
+  install(TARGETS ${WRITEABLE_TARGET}plplotwxwidgets
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

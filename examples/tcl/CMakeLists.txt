@@ -68,24 +68,14 @@ set(tcl_STRING_INDICES
 "33"
 )
 
-set(tcl_SCRIPTS)
+set(configured_tcl_SCRIPTS pltcl_standard_examples tclsh_standard_examples)
 foreach(STRING_INDEX ${tcl_STRING_INDICES})
-  set(tcl_FILES ${tcl_FILES} x${STRING_INDEX}.tcl)
-  set(tcl_SCRIPTS ${tcl_SCRIPTS} x${STRING_INDEX})
+  list(APPEND tcl_FILES x${STRING_INDEX}.tcl)
+  list(APPEND configured_tcl_SCRIPTS x${STRING_INDEX})
 endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
-# pltcl_standard_examples is a configured shell script that runs all
-# the standard examples under pltcl.
-set(pltcl_LOCATION $<TARGET_FILE:pltcl>)
-# N.B. Results only available at generate time.
-configure_file_generate(
-  ${CMAKE_CURRENT_SOURCE_DIR}/pltcl_standard_examples.in
-  ${CMAKE_CURRENT_BINARY_DIR}/pltcl_standard_examples
-  @ONLY
-)
-
-# tclsh_standard_examples is a configured shell script that runs all
-# the standard examples under tclsh use a TEA-based approach.
+# pltcl_LOCATION is the generate-time location of the pltcl executable.
+set(pltcl_LOCATION $<TARGET_FILE:PLPLOT::pltcl>)
 # pkgIndex_LOCATION is the directory where the relevant pkgIndex.tcl
 # file is located.
 if(CORE_BUILD)
@@ -94,27 +84,37 @@ else(CORE_BUILD)
     set(pkgIndex_LOCATION ${DATA_DIR})
 endif(CORE_BUILD)
 
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/tclsh_standard_examples.in
-  ${CMAKE_CURRENT_BINARY_DIR}/tclsh_standard_examples
-  @ONLY
-  )
+set(configured_tcl_template_SCRIPTS)
+foreach(configured_tcl_SCRIPT ${configured_tcl_SCRIPTS})
+  set(configured_tcl_template_SCRIPT ${configured_tcl_SCRIPT}.in)
+  list(APPEND configured_tcl_template_SCRIPTS ${configured_tcl_template_SCRIPT})
+  configure_file_generate(
+    ${CMAKE_CURRENT_SOURCE_DIR}/${configured_tcl_template_SCRIPT}
+    ${CMAKE_CURRENT_BINARY_DIR}/${configured_tcl_SCRIPT}
+    @ONLY
+    )
+endforeach(configured_tcl_SCRIPT ${configured_tcl_SCRIPTS})
 
-# Copy file and scripts to the binary directory if different to the
+# Copy ${tcl_FILES} to the binary directory if different to the
 # source directory. Needed for ctest, but also so the tclIndex file
 # is generated in the binary tree not the source tree.
+if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+  foreach(file ${tcl_FILES})
+    add_custom_command(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
+      COMMAND ${CMAKE_COMMAND} -E copy
+      ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/${file}
+      )
+  endforeach(file ${tcl_FILES})
+endif(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
+
 set(tclIndex_DEPENDS)
-foreach(file ${tcl_SCRIPTS} ${tcl_FILES})
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${file}
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-    )
+foreach(file ${configured_tcl_SCRIPTS} ${tcl_FILES})
   list(APPEND tclIndex_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${file})
-endforeach(file ${tcl_SCRIPTS} ${tcl_FILES})
+endforeach(file ${configured_tcl_SCRIPTS} ${tcl_FILES})
 add_custom_target(tcl_examples ALL DEPENDS ${tclIndex_DEPENDS})
 
 add_custom_command(
@@ -137,7 +137,7 @@ if(CORE_BUILD)
     )
 
   install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-  install(PROGRAMS ${tcl_SCRIPTS} pltcl_standard_examples.in tclsh_standard_examples.in
+  install(PROGRAMS ${configured_tcl_template_SCRIPTS}
     DESTINATION ${DATA_DIR}/examples/tcl
     )
 
@@ -158,7 +158,7 @@ if(BUILD_TEST)
       tcl_examples
       tclIndex_examples_tcl
       ${plplottcltk_target}
-      pltcl
+      PLPLOT::pltcl
       plplot.tcl_target
       tclIndex_tcl
       )
@@ -168,7 +168,7 @@ if(BUILD_TEST)
       ${tclIndex_DEPENDS}
       ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
       ${plplottcltk_target}
-      pltcl
+      PLPLOT::pltcl
       ${files_plplot.tcl_target}
       ${files_tclIndex_tcl}
       )

@@ -65,14 +65,14 @@ if(ENABLE_octave)
   include_directories(${octave_interface_INCLUDE_PATHS})
   # The -module option only used to workaround some bug in CMake swig
   # support for Octave which does not allow module name prefixes such
-  # as ${LIBRARY_TARGET_PREFIX} without specifying -module explicitly this
+  # as ${WRITEABLE_TARGET} without specifying -module explicitly this
   # way.
-  set(CMAKE_SWIG_FLAGS -module ${LIBRARY_TARGET_PREFIX}plplot_octave -DSWIG_OCTAVE)
+  set(CMAKE_SWIG_FLAGS -module ${WRITEABLE_TARGET}plplot_octave -DSWIG_OCTAVE)
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
   set_source_files_properties(plplot_octave.i
     PROPERTIES
-    SWIG_MODULE_NAME ${LIBRARY_TARGET_PREFIX}plplot_octave
+    SWIG_MODULE_NAME ${WRITEABLE_TARGET}plplot_octave
     CPLUSPLUS ON
     )
 

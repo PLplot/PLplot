@@ -92,7 +92,7 @@ set(qsastime_LIB_SRCS
   )
 
 configure_library_build(qsastime "" "${qsastime_LIB_SRCS}" "${MATH_LIB}")
-add_dependencies(${LIBRARY_TARGET_PREFIX}qsastime tai-utc.h_built deltaT.h_built)
+add_dependencies(${WRITEABLE_TARGET}qsastime tai-utc.h_built deltaT.h_built)
 
 set(qsastime_LIB_HDRS
   ${CMAKE_CURRENT_SOURCE_DIR}/qsastime.h
@@ -101,7 +101,7 @@ set(qsastime_LIB_HDRS
 
 install(FILES ${qsastime_LIB_HDRS} DESTINATION ${INCLUDE_DIR})
 
-install(TARGETS ${LIBRARY_TARGET_PREFIX}qsastime
+install(TARGETS ${WRITEABLE_TARGET}qsastime
   EXPORT export_plplot
   ARCHIVE DESTINATION ${LIB_DIR}
   LIBRARY DESTINATION ${LIB_DIR}

@@ -186,25 +186,25 @@ if(ENABLE_ocaml)
     # Order matters so prepend (N.B. in reverse order) plplot and the internal libraries that were removed in target-name form above to the list of FLAGS.
 
     if(PLD_cgm)
-      set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nistcd" -cclib -l${LIBRARY_TARGET_PREFIX}nistcd ${ocaml_LIBRARIES_FLAGS})
-      set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}nistcd ${installed_ocaml_LIBRARIES_FLAGS})
+      set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nistcd" -cclib -l${WRITEABLE_TARGET}nistcd ${ocaml_LIBRARIES_FLAGS})
+      set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${WRITEABLE_TARGET}nistcd ${installed_ocaml_LIBRARIES_FLAGS})
     endif(PLD_cgm)
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/qsastime" -cclib -l${LIBRARY_TARGET_PREFIX}qsastime ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}qsastime ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/qsastime" -cclib -l${WRITEABLE_TARGET}qsastime ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${WRITEABLE_TARGET}qsastime ${installed_ocaml_LIBRARIES_FLAGS})
 
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nn" -cclib -l${LIBRARY_TARGET_PREFIX}csironn ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}csironn ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/nn" -cclib -l${WRITEABLE_TARGET}csironn ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${WRITEABLE_TARGET}csironn ${installed_ocaml_LIBRARIES_FLAGS})
 
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/csa" -cclib -l${LIBRARY_TARGET_PREFIX}csirocsa ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${LIBRARY_TARGET_PREFIX}csirocsa ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/lib/csa" -cclib -l${WRITEABLE_TARGET}csirocsa ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -cclib -l${WRITEABLE_TARGET}csirocsa ${installed_ocaml_LIBRARIES_FLAGS})
 
-    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -l${LIBRARY_TARGET_PREFIX}plplot ${ocaml_LIBRARIES_FLAGS})
-    set(installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -l${LIBRARY_TARGET_PREFIX}plplot ${installed_ocaml_LIBRARIES_FLAGS})
+    set(ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -l${WRITEABLE_TARGET}plplot ${ocaml_LIBRARIES_FLAGS})
+    set(installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -l${WRITEABLE_TARGET}plplot ${installed_ocaml_LIBRARIES_FLAGS})
     #message(STATUS "DEBUG: (internal libraries processed) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
   else(NOT BUILD_SHARED_LIBS)
     # Add plplot library.
-    list(APPEND ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -l${LIBRARY_TARGET_PREFIX}plplot)
-    list(APPEND installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -l${LIBRARY_TARGET_PREFIX}plplot)
+    list(APPEND ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_BINARY_DIR_ESCAPED}/src" -cclib -l${WRITEABLE_TARGET}plplot)
+    list(APPEND installed_ocaml_LIBRARIES_FLAGS -ccopt "-L${CMAKE_INSTALL_LIBDIR_ESCAPED}" -cclib -l${WRITEABLE_TARGET}plplot)
   endif(NOT BUILD_SHARED_LIBS)
   # ocamlmklib links *.o into *.so and *.a
   add_custom_command(

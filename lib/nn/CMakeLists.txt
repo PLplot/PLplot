@@ -61,7 +61,7 @@ if(PL_HAVE_QHULL)
 
   configure_library_build(csironn "" "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}")
 
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}csironn
+  install(TARGETS ${WRITEABLE_TARGET}csironn
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

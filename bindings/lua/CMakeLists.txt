@@ -33,7 +33,7 @@ if(ENABLE_lua)
     )
   include_directories(${lua_interface_INCLUDE_PATHS})
 
-  set(CMAKE_SWIG_FLAGS -DSWIG_LUA -module ${LIBRARY_TARGET_PREFIX}plplotluac)
+  set(CMAKE_SWIG_FLAGS -DSWIG_LUA -module ${WRITEABLE_TARGET}plplotluac)
   set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 
   set_source_files_properties(plplotluac.i

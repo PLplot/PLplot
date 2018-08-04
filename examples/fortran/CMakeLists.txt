@@ -79,7 +79,7 @@ endif(CORE_BUILD)
 if(CORE_BUILD)
   configure_library_build(plfortrandemolib STATIC plfortrandemolib.f90 PLPLOT::plplotfortran)
 
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}plfortrandemolib
+  install(TARGETS ${WRITEABLE_TARGET}plfortrandemolib
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}

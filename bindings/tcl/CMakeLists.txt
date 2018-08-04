@@ -97,7 +97,7 @@ if(ENABLE_tcl)
     endif(USE_RPATH)
     configure_library_build(tclmatrix "" "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}")
 
-    install(TARGETS ${LIBRARY_TARGET_PREFIX}tclmatrix
+    install(TARGETS ${WRITEABLE_TARGET}tclmatrix
       EXPORT export_plplot
       ARCHIVE DESTINATION ${LIB_DIR}
       LIBRARY DESTINATION ${LIB_DIR}
@@ -224,7 +224,7 @@ if(ENABLE_tcl)
     endif(USE_RPATH)
     configure_library_build(plplottcltk "" "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}")
 
-    install(TARGETS ${LIBRARY_TARGET_PREFIX}plplottcltk
+    install(TARGETS ${WRITEABLE_TARGET}plplottcltk
       EXPORT export_plplot
       ARCHIVE DESTINATION ${LIB_DIR}
       LIBRARY DESTINATION ${LIB_DIR}
@@ -334,7 +334,7 @@ if(ENABLE_tcl)
 
   configure_library_build(plplottcltk_Main "" "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}")
 
-  install(TARGETS ${LIBRARY_TARGET_PREFIX}plplottcltk_Main
+  install(TARGETS ${WRITEABLE_TARGET}plplottcltk_Main
     EXPORT export_plplot
     ARCHIVE DESTINATION ${LIB_DIR}
     LIBRARY DESTINATION ${LIB_DIR}
@@ -423,36 +423,34 @@ if(ENABLE_tcl)
 
   pkg_config_file("tcl_Main" "Tcl_Main/Tk_Main" " Tcl_Main/Tk_Main bindings" "plplottcltk_Main" "${libplplottcltk_Main_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_Main_LINK_FLAGS}")
 
-  add_executable(pltcl pltcl.c)
+  set(pltcl_link_libraries)
+  if(tcltk_in_plplot_library)
+    list(APPEND pltcl_link_libraries PLPLOT::plplottcltk_Main PLPLOT::plplot)
+  else(tcltk_in_plplot_library)
+    list(APPEND pltcl_link_libraries PLPLOT::plplottcltk_Main PLPLOT::plplottcltk PLPLOT::plplot)
+  endif(tcltk_in_plplot_library)
+  if(ENABLE_itcl)
+    list(APPEND pltcl_link_libraries ${ITCL_LIBRARY} ${TCL_LIBRARY})
+  else(ENABLE_itcl)
+    list(APPEND pltcl_link_libraries ${TCL_LIBRARY})
+  endif(ENABLE_itcl)
+
+  configure_executable_build(pltcl "pltcl.c" "${pltcl_link_libraries}")
   if(BUILD_SHARED_LIBS)
-    set_target_properties(pltcl PROPERTIES
+    set_target_properties(${WRITEABLE_TARGET}pltcl PROPERTIES
       COMPILE_DEFINITIONS "USINGDLL"
       )
   endif(BUILD_SHARED_LIBS)
 
-  if(tcltk_in_plplot_library)
-    if(ENABLE_itcl)
-      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main ${ITCL_LIBRARY} ${TCL_LIBRARY})
-    else(ENABLE_itcl)
-      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main ${TCL_LIBRARY})
-    endif(ENABLE_itcl)
-  else(tcltk_in_plplot_library)
-    if(ENABLE_itcl)
-      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${ITCL_LIBRARY} ${TCL_LIBRARY})
-    else(ENABLE_itcl)
-      target_link_libraries(pltcl PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${TCL_LIBRARY})
-    endif(ENABLE_itcl)
-  endif(tcltk_in_plplot_library)
-
   if(USE_RPATH)
     filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(pltcl
+    set_target_properties(${WRITEABLE_TARGET}pltcl
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   endif(USE_RPATH)
 
-  install(TARGETS pltcl
+  install(TARGETS ${WRITEABLE_TARGET}pltcl
     EXPORT export_plplot
     DESTINATION ${BIN_DIR}
     )
@@ -460,7 +458,7 @@ if(ENABLE_tcl)
   # test_tclmatrix.sh is a configured shell script that tests
   # the matrix capabilities of the tclmatrix library using
   # the tcl code in test_tclmatrix.tcl.
-  set(pltcl_LOCATION $<TARGET_FILE:pltcl>)
+  set(pltcl_LOCATION $<TARGET_FILE:PLPLOT::pltcl>)
   # N.B. Results only available at generate time.
   configure_file_generate(
     ${CMAKE_CURRENT_SOURCE_DIR}/test_tclmatrix.sh.in
@@ -481,7 +479,7 @@ if(ENABLE_tcl)
     ${CMAKE_CURRENT_BINARY_DIR}/test_tclmatrix.out_compare
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-  add_dependencies(check_libtclmatrix_capabilities pltcl tclIndex_tcl)
+  add_dependencies(check_libtclmatrix_capabilities PLPLOT::pltcl tclIndex_tcl)
   add_dependencies(check_all check_libtclmatrix_capabilities)
 
 endif(ENABLE_tcl)

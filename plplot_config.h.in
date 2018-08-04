@@ -306,3 +306,8 @@
 // Define if the POSIX three-semaphores approach is to be used for wxwidgets IPC
 #cmakedefine PL_WXWIDGETS_IPC3
 
+// Actual wxPLViewer application name
+#define NAME_wxPLViewer "@WRITEABLE_TARGET@wxPLViewer"
+
+// Actual plserver application name
+#define NAME_plserver "@WRITEABLE_TARGET@plserver"
