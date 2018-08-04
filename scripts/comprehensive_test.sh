@@ -382,7 +382,7 @@ Each of the steps in this comprehensive test may take a while...."
 # not available on all platforms).  Followed advice at
 # http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
 ORIGINAL_PATH="$(pwd)"
-cd "$(dirname $0)"
+cd "$(dirname "$0")"
 # Absolute Path of the script
 SCRIPT_PATH="$(pwd)"
 cd "${ORIGINAL_PATH}"
