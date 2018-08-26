@@ -34,8 +34,8 @@
 
 version=@PLPLOT_VERSION@
 
-EXAMPLES_DIR=${EXAMPLES_DIR:-.}
-SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}
+EXAMPLES_PREFIX=${EXAMPLES_PREFIX:-.}
+SRC_EXAMPLES_PREFIX=${SRC_EXAMPLES_PREFIX:-.}
 OUTPUT_DIR=${OUTPUT_DIR:-.}
 device=${DEVICE:-psc}
 # Check if we are in the build tree
@@ -44,7 +44,7 @@ if [ "`pwd`/.." -ef "@BUILD_DIR@" ] ; then
 else
   BUILD_TREE="NO"
 fi
-export EXAMPLES_DIR SRC_EXAMPLES_DIR OUTPUT_DIR device DEBUG_CMD BUILD_TREE
+export EXAMPLES_PREFIX SRC_EXAMPLES_PREFIX OUTPUT_DIR device DEBUG_CMD BUILD_TREE
 
 usage()
 {
@@ -57,9 +57,9 @@ Options:
                      If this option is not specified, then all front-ends will
                      be tested.  More than one front-end may be given, like
                      this --front-end="c cxx"
-   [--examples-dir=/path/to/examples/dir]
+   [--examples-prefix=/path/to/examples/dir]
                      Specify path to the examples directory.  Defaults to "."
-   [--src-examples-dir=/path/to/src/examples/dir]
+   [--src-examples-prefix=/path/to/src/examples/dir]
                      Specify path to the src examples directory.  Defaults to "."
    [--output-dir=/path/to/output/dir]
                      Specify location where the resulting files are stored.
@@ -74,12 +74,12 @@ Options:
    [--help]
 
 Environment variables:
-   DEVICE, FRONT_END, EXAMPLES_DIR, SRC_EXAMPLES_DIR, and OUTPUT_DIR can be
+   DEVICE, FRONT_END, EXAMPLES_PREFIX, SRC_EXAMPLES_PREFIX, and OUTPUT_DIR can be
    used to specify the devices, front-ends, the examples directory, the
    source examples directory (used for the special case of build-tree checks
    when that tree is separated from the source tree), and output directory.
    These environment variables are overridden by the options --device,
-   --front-end, --examples-dir, --src-examples-dir, and --output-dir.
+   --front-end, --examples-prefix, --src-examples-prefix, and --output-dir.
 '
    exit $1
 }
@@ -135,11 +135,11 @@ while test $# -gt 0; do
            || usage 0 1>&2
          done
 	 ;;
-      --examples-dir=*)
-         EXAMPLES_DIR=$optarg
+      --examples-prefix=*)
+         EXAMPLES_PREFIX=$optarg
          ;;
-      --src-examples-dir=*)
-         SRC_EXAMPLES_DIR=$optarg
+      --src-examples-prefix=*)
+         SRC_EXAMPLES_PREFIX=$optarg
          ;;
       --output-dir=*)
          OUTPUT_DIR=$optarg
@@ -160,13 +160,13 @@ while test $# -gt 0; do
    shift
 done
 
-# This script is only designed to work when EXAMPLES_DIR is a directory
+# This script is only designed to work when EXAMPLES_PREFIX is a directory
 # with a subdirectory called "c".  Check whether this conditions is true.
 
-if [ ! -d "$EXAMPLES_DIR"/c ] ; then
+if [ ! -d "$EXAMPLES_PREFIX"/c ] ; then
 echo '
-This script is only designed to work when the EXAMPLES_DIR environment
-variable (overridden by option --examples-dir) is a directory with a
+This script is only designed to work when the EXAMPLES_PREFIX environment
+variable (overridden by option --examples-prefix) is a directory with a
 subdirectory called "c".  This condition has been violated.
 '
 exit 1
@@ -216,7 +216,7 @@ script with DEVICE='"$device"'.
 
     status=0
     if [ "$interactive" = "on" ] ; then
-	export cdir="$EXAMPLES_DIR"/c
+	export cdir="$EXAMPLES_PREFIX"/c
 	echo "Testing subset of C examples for device $device"
 	script="$scripts_dir"/test_c_interactive.sh
     else
@@ -225,14 +225,14 @@ script with DEVICE='"$device"'.
 	export octave=@OCTAVE@
         if [ "$BUILD_TREE" = "YES" ] ; then
 	    export octavedir=\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot:\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot/support:\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/misc:\
-"$SRC_EXAMPLES_DIR"/octave:\
-"$EXAMPLES_DIR"/../bindings/octave:\
-"$EXAMPLES_DIR"/../bindings/octave/PLplot
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/PLplot:\
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/PLplot/support:\
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/misc:\
+"$SRC_EXAMPLES_PREFIX"/octave:\
+"$EXAMPLES_PREFIX"/../bindings/octave:\
+"$EXAMPLES_PREFIX"/../bindings/octave/PLplot
             if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then
-		octavedir=$octavedir:"$EXAMPLES_DIR"/../dll
+		octavedir=$octavedir:"$EXAMPLES_PREFIX"/../dll
 	    fi
         else
             export octavedir=\
@@ -240,7 +240,7 @@ script with DEVICE='"$device"'.
 "@PLPLOT_OCTAVE_DIR@"/support:\
 "@OCTAVE_M_DIR@":\
 "@OCTAVE_OCT_DIR@":\
-"$SRC_EXAMPLES_DIR"/octave
+"$SRC_EXAMPLES_PREFIX"/octave
             if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then
 		octavedir=$octavedir:"@BIN_DIR@"
 	    fi
@@ -253,30 +253,35 @@ script with DEVICE='"$device"'.
     exit $status
 fi
 
+if [ "$BUILD_TREE" = "YES" ] ; then
+    TREE_EXAMPLES_PREFIX="$EXAMPLES_PREFIX"
+else
+    TREE_EXAMPLES_PREFIX="$SRC_EXAMPLES_PREFIX"
+fi
+
 # These variables set by default assuming you are going to run this
 # script from the installed demos directory $prefix/lib/plplot$version/examples.
-cdir="$EXAMPLES_DIR"/c$VC_CTEST_DIRECTORY
-cxxdir="$EXAMPLES_DIR"/c++$VC_CTEST_DIRECTORY
-fortrandir="$EXAMPLES_DIR"/fortran
-pythondir="$@CONFIGURED_EXAMPLES_DIR@"/python
-tclexamplesdir="$EXAMPLES_DIR"/tcl
-tcldir="$@CONFIGURED_EXAMPLES_DIR@"/tcl
-javadir="$EXAMPLES_DIR"/java
-adadir="$EXAMPLES_DIR"/ada
-ocamldir="$EXAMPLES_DIR"/ocaml
-luadir="$@CONFIGURED_EXAMPLES_DIR@"/lua
-ddir="$EXAMPLES_DIR"/d
+cdir="$EXAMPLES_PREFIX"/c$VC_CTEST_DIRECTORY
+cxxdir="$EXAMPLES_PREFIX"/c++$VC_CTEST_DIRECTORY
+fortrandir="$EXAMPLES_PREFIX"/fortran
+pythondir="$TREE_EXAMPLES_PREFIX"/python
+tcldir="$EXAMPLES_PREFIX"/tcl
+javadir="$EXAMPLES_PREFIX"/java
+adadir="$EXAMPLES_PREFIX"/ada
+ocamldir="$EXAMPLES_PREFIX"/ocaml
+luadir="$TREE_EXAMPLES_PREFIX"/lua
+ddir="$EXAMPLES_PREFIX"/d
 octave=@OCTAVE@
 if [ "$BUILD_TREE" = "YES" ] ; then
     octavedir=\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot:\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot/support:\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/misc:\
-"$SRC_EXAMPLES_DIR"/octave:\
-"$EXAMPLES_DIR"/../bindings/octave:\
-"$EXAMPLES_DIR"/../bindings/octave/PLplot
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/PLplot:\
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/PLplot/support:\
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/misc:\
+"$SRC_EXAMPLES_PREFIX"/octave:\
+"$EXAMPLES_PREFIX"/../bindings/octave:\
+"$EXAMPLES_PREFIX"/../bindings/octave/PLplot
     if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then
-	octavedir=$octavedir:"$EXAMPLES_DIR"/../dll
+	octavedir=$octavedir:"$EXAMPLES_PREFIX"/../dll
     fi
 else
     export octavedir=\
@@ -284,7 +289,7 @@ else
 "@PLPLOT_OCTAVE_DIR@"/support:\
 "@OCTAVE_M_DIR@":\
 "@OCTAVE_OCT_DIR@":\
-"$SRC_EXAMPLES_DIR"/octave
+"$SRC_EXAMPLES_PREFIX"/octave
     if [ "@USE_DLL_SUBDIRECTORY@" = "ON" ] ; then
 	octavedir=$octavedir:"@BIN_DIR@"
     fi

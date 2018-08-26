@@ -337,7 +337,7 @@ install(TARGETS ${WRITEABLE_TARGET}plplot
 # This exports information for every target in the whole build that
 # has the EXPORT export_plplot signature (as above) for the
 # install(TARGETS ... # command.
-install(EXPORT export_plplot DESTINATION ${LIB_DIR}/cmake/plplot)
+install(EXPORT export_plplot DESTINATION ${LIB_DIR}/cmake/plplot NAMESPACE ${PROJECT_NAMESPACE})
 
 # Install associated CMake package config file.
 

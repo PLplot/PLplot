@@ -347,19 +347,19 @@ UTF-8 symbols ≤ and ≥.
 
 * Determine the octavedir environment variable
 
-SRC_EXAMPLES_DIR should point to the examples subdirectory of the source tree,
-and EXAMPLES_DIR should point to the examples subdirectory of the build tree.
+SRC_EXAMPLES_PREFIX should point to the examples subdirectory of the source tree,
+and EXAMPLES_PREFIX should point to the examples subdirectory of the build tree.
 e.g.,
 
-export SRC_EXAMPLES_DIR=/home/software/plplot/HEAD/plplot.git/examples
-export EXAMPLES_DIR=/home/software/plplot/HEAD/build_dir/examples
+export SRC_EXAMPLES_PREFIX=/home/software/plplot/HEAD/plplot.git/examples
+export EXAMPLES_PREFIX=/home/software/plplot/HEAD/build_dir/examples
 export octavedir=\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot:\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/PLplot/support:\
-"$SRC_EXAMPLES_DIR"/../bindings/octave/misc:\
-"$SRC_EXAMPLES_DIR"/octave:\
-"$EXAMPLES_DIR"/../bindings/octave:\
-"$EXAMPLES_DIR"/../bindings/octave/PLplot
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/PLplot:\
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/PLplot/support:\
+"$SRC_EXAMPLES_PREFIX"/../bindings/octave/misc:\
+"$SRC_EXAMPLES_PREFIX"/octave:\
+"$EXAMPLES_PREFIX"/../bindings/octave:\
+"$EXAMPLES_PREFIX"/../bindings/octave/PLplot
 
 * Invoke the octave interpreter, load PLplot, and printout help strings for various
   PLplot commands.

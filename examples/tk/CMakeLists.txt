@@ -80,9 +80,9 @@ foreach(_file ${tk_SRC_FILES})
 endforeach(_file ${tk_SRC_FILES})
 
 if(CORE_BUILD)
-  set(tcl_EXAMPLES_DIR ${CMAKE_SOURCE_DIR}/examples/tcl)
+  set(tcl_EXAMPLES_PREFIX ${CMAKE_SOURCE_DIR}/examples/tcl)
 else(CORE_BUILD)
-  set(tcl_EXAMPLES_DIR ${CMAKE_SOURCE_DIR}/tcl)
+  set(tcl_EXAMPLES_PREFIX ${CMAKE_SOURCE_DIR}/tcl)
 endif(CORE_BUILD)
 
 foreach(STRING_INDEX ${tk_STRING_INDICES})
@@ -90,9 +90,9 @@ foreach(STRING_INDEX ${tk_STRING_INDICES})
   add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_file}
     COMMAND ${CMAKE_COMMAND} -E copy
-    ${tcl_EXAMPLES_DIR}/${_file}
+    ${tcl_EXAMPLES_PREFIX}/${_file}
     ${CMAKE_CURRENT_BINARY_DIR}/${_file}
-    DEPENDS ${tcl_EXAMPLES_DIR}/${_file}
+    DEPENDS ${tcl_EXAMPLES_PREFIX}/${_file}
     )
   set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/${_file})
 endforeach(STRING_INDEX ${tk_STRING_INDICES})
@@ -100,9 +100,9 @@ endforeach(STRING_INDEX ${tk_STRING_INDICES})
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
   COMMAND ${CMAKE_COMMAND} -E copy
-  ${tcl_EXAMPLES_DIR}/plgrid.tcl
+  ${tcl_EXAMPLES_PREFIX}/plgrid.tcl
   ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl
-  DEPENDS ${tcl_EXAMPLES_DIR}/plgrid.tcl
+  DEPENDS ${tcl_EXAMPLES_PREFIX}/plgrid.tcl
   )
 set(tk_FILES ${tk_FILES} ${CMAKE_CURRENT_BINARY_DIR}/plgrid.tcl)
 
@@ -229,7 +229,7 @@ if(BUILD_TEST)
     string(REGEX REPLACE "PLPLOT::" "" tk_related_target ${prefixed_tk_related_target})
     if(TARGET ${prefixed_tk_related_target})
       set(${tk_related_target}_LOCATION $<TARGET_FILE:${prefixed_tk_related_target}>)
-      message(STATUS "DEBUG: ${tk_related_target}_LOCATION = ${${tk_related_target}_LOCATION}")
+      #message(STATUS "DEBUG: ${tk_related_target}_LOCATION = ${${tk_related_target}_LOCATION}")
     endif(TARGET ${prefixed_tk_related_target})
   endforeach(prefixed_tk_related_target xtk01 PLPLOT::plserver xtk02 xtk04)
 

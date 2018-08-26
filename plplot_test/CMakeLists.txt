@@ -35,7 +35,7 @@ if(SH_EXECUTABLE)
     set (VC_CTEST_DIRECTORY /$<CONFIGURATION>)
   endif(MSVC)
   set(TEST_ENVIRONMENT
-    "EXAMPLES_DIR=${CMAKE_BINARY_DIR_ESCAPED}/examples SRC_EXAMPLES_DIR=${CMAKE_SOURCE_DIR_ESCAPED}/examples OUTPUT_DIR=${CTEST_EXAMPLES_OUTPUT_DIR_ESCAPED} VC_CTEST_DIRECTORY=${VC_CTEST_DIRECTORY}"
+    "EXAMPLES_PREFIX=${CMAKE_BINARY_DIR_ESCAPED}/examples SRC_EXAMPLES_PREFIX=${CMAKE_SOURCE_DIR_ESCAPED}/examples OUTPUT_DIR=${CTEST_EXAMPLES_OUTPUT_DIR_ESCAPED} VC_CTEST_DIRECTORY=${VC_CTEST_DIRECTORY}"
     )
   message(STATUS "TEST_ENVIRONMENT = ${TEST_ENVIRONMENT}")
   set(PLPLOT_TEST_DEVICE psc CACHE STRING "device used for ctest")
@@ -69,7 +69,6 @@ if(SH_EXECUTABLE)
   endif(CYGWIN)
 
   #Build-tree configuration
-  set(CONFIGURED_EXAMPLES_DIR EXAMPLES_DIR)
   configure_file(
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh
@@ -127,7 +126,6 @@ if(SH_EXECUTABLE)
 
   # Install-tree configuration of plplot-test.sh and plplot-test-interactive.sh
 
-  set(CONFIGURED_EXAMPLES_DIR SRC_EXAMPLES_DIR)
   configure_file(
     plplot-test.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test.sh_install

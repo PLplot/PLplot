@@ -21,8 +21,7 @@
 # Test suite of PLplot interactive stuff that cannot be tested with
 # file output device drivers.
 
-EXAMPLES_DIR=${EXAMPLES_DIR:-.}
-SRC_EXAMPLES_DIR=${SRC_EXAMPLES_DIR:-.}
+EXAMPLES_PREFIX=${EXAMPLES_PREFIX:-.}
 
 # OPTIONAL tests.
 TEST_PLTCL_STANDARD_EXAMPLES=@SHELL_TEST_PLTCL_STANDARD_EXAMPLES@
@@ -90,12 +89,12 @@ while test $# -gt 0; do
    shift
 done
 
-# This script is only designed to work when EXAMPLES_DIR is a directory
+# This script is only designed to work when EXAMPLES_PREFIX is a directory
 # with a subdirectory called "c".  Check whether this conditions is true.
-if [ ! -d "$EXAMPLES_DIR"/c ] ; then
+if [ ! -d "$EXAMPLES_PREFIX"/c ] ; then
     echo '
-This script is only designed to work when the EXAMPLES_DIR environment
-variable (overridden by option --examples-dir) is a directory with a
+This script is only designed to work when the EXAMPLES_PREFIX environment
+variable (overridden by option --examples-prefix) is a directory with a
 subdirectory called "c".  This condition has been violated.
 '
     exit 1
@@ -164,79 +163,87 @@ done
 
 INDEX_LIST=
 COUNT=0
-if [ "@PLD_xcairo@" = "ON" ] ; then
+if [ "@PLD_xcairo@" = "ON" -a "@DROP_GTK_PLUS_2_BUILDS@" = "OFF"] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/c"
     COMMAND[$COUNT]="./extXdrawable_demo"
+    ARGUMENTS[$COUNT]=""
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@PLD_extcairo@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/c"
     COMMAND[$COUNT]="./ext-cairo-test"
+    ARGUMENTS[$COUNT]=""
     COUNT=$(( $COUNT + 1 ))
 fi
 
 # ENABLE_wxwidgets is ON only if ENABLE_cxx is ON.
 if [ "@ENABLE_wxwidgets@" = "ON" -a "@SHELL_TEST_WXWIDGETS@" -ne 0 ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/c++"
     COMMAND[$COUNT]="./@wxdemo_name@"
+    ARGUMENTS[$COUNT]=""
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@PLD_extqt@" = "ON" -a "@ENABLE_cxx@" = "ON" -a "@qt_gui_true@" != "#" -a "$TEST_QT_EXAMPLE" -ne 0 ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/c++"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/c++"
     COMMAND[$COUNT]="./qt_example"
+    ARGUMENTS[$COUNT]=""
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_tkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
-    COMMAND[$COUNT]="./xtk01 -f tk01"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/tk"
+    COMMAND[$COUNT]="./xtk01"
+    ARGUMENTS[$COUNT]="-f tk01"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_itkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
-    COMMAND[$COUNT]="./xtk02 -f tk02"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/tk"
+    COMMAND[$COUNT]="./xtk02"
+    ARGUMENTS[$COUNT]="-f tk02"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_tkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
-    COMMAND[$COUNT]="@plserver_LOCATION@ -f tk03"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/tk"
+    COMMAND[$COUNT]="@plserver_LOCATION@"
+    ARGUMENTS[$COUNT]="-f tk03"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 if [ "@ENABLE_itkX@" = "ON" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
-    DIRECTORY[$COUNT]="${EXAMPLES_DIR}/tk"
-    COMMAND[$COUNT]="./xtk04 -f tk04"
+    DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/tk"
+    COMMAND[$COUNT]="./xtk04"
+    ARGUMENTS[$COUNT]="-f tk04"
     COUNT=$(( $COUNT + 1 ))
 fi
 
 # execute all interactive commands set up by previous stanzas.
 for index in $INDEX_LIST ; do
     pushd ${DIRECTORY[$index]}
-    echo "${COMMAND[$index]}"
-    ${COMMAND[$index]} 2> interactive_${index}_test.error
+    echo "${COMMAND[$index]} ${ARGUMENTS[$index]}"
+    "${COMMAND[$index]}" ${ARGUMENTS[$index]} 2> interactive_${index}_test.error
     # Look for any status codes (segfaults, plexit) from the examples themselves
     status_code=$?
     if [ "$status_code" -ne 0 ] ; then
-        echo "ERROR indicated by status code = $status_code for ${COMMAND[$index]}"
+        echo "ERROR indicated by status code = $status_code for ${COMMAND[$index]} ${ARGUMENTS[$index]}"
 	OVERALL_STATUS_CODE=$status_code
     fi
     cat interactive_${index}_test.error
     # Look for any PLPLOT ERROR messages from plwarn that do not result in an exit code.
     is_error=`grep -l 'PLPLOT ERROR' interactive_${index}_test.error`
     if [ -n "$is_error" ] ; then
-        echo "ERROR indicated by 'PLPLOT ERROR' in stderr for ${COMMAND[$index]}"
+        echo "ERROR indicated by 'PLPLOT ERROR' in stderr for ${COMMAND[$index]} ${ARGUMENTS[$index]}"
 	OVERALL_STATUS_CODE=1
     fi
     popd
@@ -244,7 +251,7 @@ done
 
 if [ "@ENABLE_tkX@" = "ON" ] ; then
 
-    cd "${SRC_EXAMPLES_DIR}"/tcl
+    cd "${EXAMPLES_PREFIX}"/tcl
     "@plserver_LOCATION@" <<EOF
 plstdwin .
 plxframe .plw
@@ -265,8 +272,8 @@ EOF
     if [ "$TEST_PLTCL_STANDARD_EXAMPLES" -ne 0 ] ; then
 	# Copied almost entirely from pltcl_standard_examples script.
         cd ..
-        # Just in case EXAMPLES_DIR is a relative path such as the default ".".
-	cd "${EXAMPLES_DIR}"/tcl
+        # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
+	cd "${EXAMPLES_PREFIX}"/tcl
         # Drop 14 because multiple devices do not seem to work in this context.
         # Drop 31 since it produces empty plot (by design).
         # Drop 32 since it has not been propagated (for the present by
@@ -325,8 +332,8 @@ EOF
     if [ "$TEST_TCLSH_STANDARD_EXAMPLES" -ne 0 ] ; then
 	# Copied almost entirely from TCLSH_standard_examples script.
         cd ..
-        # Just in case EXAMPLES_DIR is a relative path such as the default ".".
-	cd "${EXAMPLES_DIR}"/tcl
+        # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
+	cd "${EXAMPLES_PREFIX}"/tcl
         # Drop 14 because multiple devices do not seem to work in this context.
         # Drop 31 since it produces empty plot (by design).
         # Drop 32 since it has not been propagated (for the present by
@@ -387,8 +394,8 @@ EOF
     if [ "$TEST_PLSERVER_STANDARD_EXAMPLES" -ne 0 ] ; then
 	# Copied almost entirely from plserver_standard_examples script.
         cd ..
-        # Just in case EXAMPLES_DIR is a relative path such as the default ".".
-	cd "${EXAMPLES_DIR}"/tk
+        # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
+	cd "${EXAMPLES_PREFIX}"/tk
         # Drop 14 because multiple devices do not seem to work in this context.
         # Drop 31 since it produces empty plot (by design).
         # Drop 32 since it has not been propagated (for the present by
@@ -442,8 +449,8 @@ EOF
     if [ "$TEST_WISH_STANDARD_EXAMPLES" -ne 0 ] ; then
 	# Copied almost entirely from wish_standard_examples script.
         cd ..
-        # Just in case EXAMPLES_DIR is a relative path such as the default ".".
-	cd "${EXAMPLES_DIR}"/tk
+        # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
+	cd "${EXAMPLES_PREFIX}"/tk
         # Drop 14 because multiple devices do not seem to work in this context.
         # Drop 31 since it produces empty plot (by design).
         # Drop 32 since it has not been propagated (for the present by
@@ -505,8 +512,8 @@ EOF
     if [ "$TEST_PLSERVER_RUNALLDEMOS" -ne 0 ] ; then
 	# Copied almost entirely from plserver_runAllDemos script.
         cd ..
-        # Just in case EXAMPLES_DIR is a relative path such as the default ".".
-	cd "${EXAMPLES_DIR}"/tk
+        # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
+	cd "${EXAMPLES_PREFIX}"/tk
 	@plserver_LOCATION <<EOF
 source runAllDemos.tcl
 EOF
@@ -521,8 +528,8 @@ EOF
     if [ "$TEST_WISH_RUNALLDEMOS" -ne 0 ] ; then
 	# Copied almost entirely from wish_runAllDemos script.
         cd ..
-        # Just in case EXAMPLES_DIR is a relative path such as the default ".".
-	cd "${EXAMPLES_DIR}"/tk
+        # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
+	cd "${EXAMPLES_PREFIX}"/tk
 	wish <<EOF
 lappend auto_path "@pkgIndex_LOCATION@"
 package require Plplotter

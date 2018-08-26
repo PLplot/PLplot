@@ -260,9 +260,9 @@ function(configure_executable_build executable executable_src tll_arguments)
   # variables.  Therefore, only one level of dereferencing required to
   # access the argument values.
 
-  message(STATUS "DEBUG: executable = ${executable}")
-  message(STATUS "DEBUG: executable_src = ${executable_src}")
-  message(STATUS "DEBUG: tll_arguments = ${tll_arguments}")
+  #message(STATUS "DEBUG: executable = ${executable}")
+  #message(STATUS "DEBUG: executable_src = ${executable_src}")
+  #message(STATUS "DEBUG: tll_arguments = ${tll_arguments}")
 
   # Sanity checks on values of argument variables:
   if("${executable}" STREQUAL "")

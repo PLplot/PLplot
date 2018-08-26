@@ -22,6 +22,7 @@
 # and CORE_BUILD always ON.  The installed examples build always has
 # BUILD_TEST ON and CORE_BUILD OFF.
 
+# List of unconfigured Tcl files
 set(tcl_FILES
 README.tcldemos
 plgrid.tcl
@@ -68,9 +69,12 @@ set(tcl_STRING_INDICES
 "33"
 )
 
+# List of configured Tcl files without the .in suffix.
 set(configured_tcl_SCRIPTS pltcl_standard_examples tclsh_standard_examples)
 foreach(STRING_INDEX ${tcl_STRING_INDICES})
+  # List of unconfigured Tcl files
   list(APPEND tcl_FILES x${STRING_INDEX}.tcl)
+  # List of configured Tcl files without the .in suffix.
   list(APPEND configured_tcl_SCRIPTS x${STRING_INDEX})
 endforeach(STRING_INDEX ${tcl_STRING_INDICES})
 
@@ -84,6 +88,7 @@ else(CORE_BUILD)
     set(pkgIndex_LOCATION ${DATA_DIR})
 endif(CORE_BUILD)
 
+# List of configured Tcl template files (i.e., with the .in suffix).
 set(configured_tcl_template_SCRIPTS)
 foreach(configured_tcl_SCRIPT ${configured_tcl_SCRIPTS})
   set(configured_tcl_template_SCRIPT ${configured_tcl_SCRIPT}.in)
@@ -96,8 +101,8 @@ foreach(configured_tcl_SCRIPT ${configured_tcl_SCRIPTS})
 endforeach(configured_tcl_SCRIPT ${configured_tcl_SCRIPTS})
 
 # Copy ${tcl_FILES} to the binary directory if different to the
-# source directory. Needed for ctest, but also so the tclIndex file
-# is generated in the binary tree not the source tree.
+# source directory. Needed for all CMake-based testing and also
+# so that the tclIndex file is generated in the binary tree and not the source tree.
 if(NOT CMAKE_BINARY_DIR STREQUAL "${CMAKE_SOURCE_DIR}")
   foreach(file ${tcl_FILES})
     add_custom_command(
@@ -131,19 +136,23 @@ add_custom_target(tclIndex_examples_tcl ALL
 add_dependencies(tclIndex_examples_tcl tcl_examples)
 
 if(CORE_BUILD)
-  install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex
-    DESTINATION ${DATA_DIR}/examples/tcl
-    )
-
+  install(FILES CMakeLists.txt DESTINATION ${DATA_DIR}/examples/tcl)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/tclIndex DESTINATION ${DATA_DIR}/examples/tcl)
   install(FILES ${tcl_FILES} DESTINATION ${DATA_DIR}/examples/tcl)
-  install(PROGRAMS ${configured_tcl_template_SCRIPTS}
-    DESTINATION ${DATA_DIR}/examples/tcl
-    )
-
-  install(FILES CMakeLists.txt
-    DESTINATION ${DATA_DIR}/examples/tcl
-    )
+  install(PROGRAMS ${configured_tcl_template_SCRIPTS} DESTINATION ${DATA_DIR}/examples/tcl)
+  # Install pre-configured version of configured files for use of the traditional
+  # build of the installed examples.
+  set(pltcl_LOCATION ${BIN_DIR}/pltcl)
+  foreach(configured_tcl_SCRIPT ${configured_tcl_SCRIPTS})
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/${configured_tcl_SCRIPT}.in
+      ${CMAKE_CURRENT_BINARY_DIR}/${configured_tcl_SCRIPT}_install
+      @ONLY
+      )
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/${configured_tcl_SCRIPT}_install
+      DESTINATION ${DATA_DIR}/examples/tcl
+      RENAME ${configured_tcl_SCRIPT})
+  endforeach(configured_tcl_SCRIPT ${configured_tcl_SCRIPTS})
 endif(CORE_BUILD)
 
 if(BUILD_TEST)

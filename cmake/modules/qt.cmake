@@ -177,8 +177,30 @@ if(ENABLE_qt)
         Svg
         )
 
-      set(pc_qt_COMPILE_FLAGS)
+      # Determine blank-separated pc_qt_COMPILE_FLAGS
+      # If Qt5::Core INTERFACE_COMPILE_OPTIONS property is defined, need to update
+      # pc_qt_COMPILE_FLAGS accordingly.
+      get_target_property(qt5_core_interface_compile_options Qt5::Core INTERFACE_COMPILE_OPTIONS)
+      if(qt5_core_interface_compile_options)
+	set(pc_qt_COMPILE_FLAGS ${qt5_core_interface_compile_options})
+	string(REGEX REPLACE ";" " " pc_qt_COMPILE_FLAGS ${pc_qt_COMPILE_FLAGS})
+      else(qt5_core_interface_compile_options)
+	set(pc_qt_COMPILE_FLAGS)
+      endif(qt5_core_interface_compile_options)
+
       foreach(Qt5_library_name ${Qt5_library_name_list})
+	#message(STATUS "DEBUG: Qt5${Qt5_library_name}_VERSION = ${Qt5${Qt5_library_name}_VERSION}")
+	#message(STATUS "DEBUG: Qt5${Qt5_library_name}_LIBRARIES = ${Qt5${Qt5_library_name}_LIBRARIES}")
+	#message(STATUS "DEBUG: Qt5${Qt5_library_name}_INCLUDE_DIRS = ${Qt5${Qt5_library_name}_INCLUDE_DIRS}")
+	#message(STATUS "DEBUG: Qt5${Qt5_library_name}_DEFINITIONS = ${Qt5${Qt5_library_name}_DEFINITIONS}")
+	#message(STATUS "DEBUG: Qt5${Qt5_library_name}_COMPILE_DEFINITIONS = ${Qt5${Qt5_library_name}_COMPILE_DEFINITIONS}")
+	#message(STATUS "DEBUG: Qt5${Qt5_library_name}_FOUND = ${Qt5${Qt5_library_name}_FOUND}")
+	#message(STATUS "DEBUG: Qt5${Qt5_library_name}_EXECUTABLE_COMPILE_FLAGS = ${Qt5${Qt5_library_name}_EXECUTABLE_COMPILE_FLAGS}")
+	# My experience is Qt5${Qt5_library_name}_EXECUTABLE_COMPILE_FLAGS is always empty, but just
+	# in case it is non-empty append it to pc_qt_COMPILE_FLAGS.
+	if(Qt5${Qt5_library_name}_EXECUTABLE_COMPILE_FLAGS)
+	  set(pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS} ${Qt5${Qt5_library_name}_EXECUTABLE_COMPILE_FLAGS}")
+	endif(Qt5${Qt5_library_name}_EXECUTABLE_COMPILE_FLAGS)
         string(TOUPPER ${Qt5_library_name} macro_core_name)
         # Set required macros so headers will be found.
         set(pc_qt_COMPILE_FLAGS "${pc_qt_COMPILE_FLAGS} -DQT_${macro_core_name}_LIB")
