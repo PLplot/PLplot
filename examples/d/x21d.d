@@ -130,7 +130,7 @@ int main( char[][] args )
                 {
                     for ( int j = 0; j < yp; j++ )
                     {
-                        if ( isnan( zg[i][j] ) )                       // average (IDW) over the 8 neighbors
+                        if ( isNaN( zg[i][j] ) )                       // average (IDW) over the 8 neighbors
                         {
                             zg[i][j] = 0.0;
                             dist     = 0.0;
@@ -139,7 +139,7 @@ int main( char[][] args )
                             {
                                 for ( int jj = j - 1; jj <= j + 1 && jj < yp; jj++ )
                                 {
-                                    if ( ii >= 0 && jj >= 0 && !isnan( zg[ii][jj] ) )
+                                    if ( ii >= 0 && jj >= 0 && !isNaN( zg[ii][jj] ) )
                                     {
                                         d         = ( abs( ii - i ) + abs( jj - j ) ) == 1 ? 1.0 : 1.4142;
                                         zg[i][j] += zg[ii][jj] / ( d * d );

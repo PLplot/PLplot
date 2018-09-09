@@ -24,7 +24,6 @@
 import std.string;
 import std.stdio;
 import std.math;
-import std.cstream;
 
 import plplot;
 
@@ -49,7 +48,7 @@ int main( char[][] args )
     writefln( "family parameters: fam, num, bmax = %d %d %d", fam2, num2, bmax2 );
     if ( fam2 != fam1 || num2 != num1 || bmax2 != bmax1 )
     {
-        derr.writefln( "plgfam test failed" );
+        stderr.writefln( "plgfam test failed" );
         status = 1;
     }
     // Restore values set initially by plparseopts.
@@ -76,7 +75,7 @@ int main( char[][] args )
     if ( xp2 != xp1 || yp2 != yp1 || xleng2 != xleng1 || yleng2 != yleng1 ||
          xoff2 != xoff1 || yoff2 != yoff1 )
     {
-        derr.writefln( "plgpage test failed" );
+        stderr.writefln( "plgpage test failed" );
         status = 1;
     }
     // Restore values set initially by plparseopts.
@@ -97,7 +96,7 @@ int main( char[][] args )
     writefln( "compression parameter = %d", compression2 );
     if ( compression2 != compression1 )
     {
-        derr.writefln( "plgcompression test failed" );
+        stderr.writefln( "plgcompression test failed" );
         status = 1;
     }
 
@@ -118,7 +117,7 @@ int main( char[][] args )
     writefln( "level parameter = %d", level2 );
     if ( level2 != 1 )
     {
-        derr.writefln( "plglevel test failed." );
+        stderr.writefln( "plglevel test failed." );
         status = 1;
     }
 
@@ -134,7 +133,7 @@ int main( char[][] args )
     writefln( "plvpor: xmin, xmax, ymin, ymax = %f %f %f %f", xmin, xmax, ymin, ymax );
     if ( xmin != xmin0 || xmax != xmax0 || ymin != ymin0 || ymax != ymax0 )
     {
-        derr.writefln( "plgvpd test failed" );
+        stderr.writefln( "plgvpd test failed" );
         status = 1;
     }
     PLFLT xmid = 0.5 * ( xmin + xmax );
@@ -149,7 +148,7 @@ int main( char[][] args )
     writefln( "plwind: xmin, xmax, ymin, ymax = %f %f %f %f", xmin, xmax, ymin, ymax );
     if ( xmin != xmin0 || xmax != xmax0 || ymin != ymin0 || ymax != ymax0 )
     {
-        derr.writefln( "plgvpw test failed" );
+        stderr.writefln( "plgvpw test failed" );
         status = 1;
     }
 
@@ -160,7 +159,7 @@ int main( char[][] args )
     writefln( "world parameters: wx, wy, win = %f %f %d", wx, wy, win );
     if ( fabs( wx - 0.5 * ( xmin + xmax ) ) > 1.0E-5 || fabs( wy - 0.5 * ( ymin + ymax ) ) > 1.0E-5 )
     {
-        derr.writefln( "plcalc_world test failed" );
+        stderr.writefln( "plcalc_world test failed" );
         status = 1;
     }
 
@@ -173,7 +172,7 @@ int main( char[][] args )
         writefln( "No output file name is set" );
     else
         writefln( "Output file name read" );
-    derr.writefln( "Output file name is %s", fnam );
+    stderr.writefln( "Output file name is %s", fnam );
 
     // Set and get the number of digits used to display axis labels
     // Note digits is currently ignored in pls[xyz]ax and
@@ -185,7 +184,7 @@ int main( char[][] args )
     writefln( "x axis parameters: digmax, digits = %d %d", digmax, digits );
     if ( digmax != 3 )
     {
-        derr.writefln( "plgxax test failed" );
+        stderr.writefln( "plgxax test failed" );
         status = 1;
     }
 
@@ -194,7 +193,7 @@ int main( char[][] args )
     writefln( "y axis parameters: digmax, digits = %d %d", digmax, digits );
     if ( digmax != 4 )
     {
-        derr.writefln( "plgyax test failed" );
+        stderr.writefln( "plgyax test failed" );
         status = 1;
     }
 
@@ -203,7 +202,7 @@ int main( char[][] args )
     writefln( "z axis parameters: digmax, digits = %d %d", digmax, digits );
     if ( digmax != 5 )
     {
-        derr.writefln( "plgzax test failed" );
+        stderr.writefln( "plgzax test failed" );
         status = 1;
     }
 
@@ -217,7 +216,7 @@ int main( char[][] args )
     writefln( "device-space window parameters: mar, aspect, jx, jy = %f %f %f %f", mar, aspect, jx, jy );
     if ( mar != mar0 || jx != jx0 || jy != jy0 )
     {
-        derr.writefln( "plgdidev test failed" );
+        stderr.writefln( "plgdidev test failed" );
         status = 1;
     }
 
@@ -228,7 +227,7 @@ int main( char[][] args )
     writefln( "ori parameter = %f", ori );
     if ( ori != ori0 )
     {
-        derr.writefln( "plgdiori test failed" );
+        stderr.writefln( "plgdiori test failed" );
         status = 1;
     }
 
@@ -241,7 +240,7 @@ int main( char[][] args )
     writefln( "plot-space window parameters: xmin, ymin, xmax, ymax = %f %f %f %f", xmin, ymin, xmax, ymax );
     if ( xmin != xmin0 || ymin != ymin0 || xmax != xmax0 || ymax != ymax0 )
     {
-        derr.writefln( "plgdiplt test failed" );
+        stderr.writefln( "plgdiplt test failed" );
         status = 1;
     }
 
@@ -258,7 +257,7 @@ int main( char[][] args )
          fabs( zxmax - ( xmin + ( xmax - xmin ) * zxmax0 ) ) > 1.0E-5 ||
          fabs( zymax - ( ymin + ( ymax - ymin ) * zymax0 ) ) > 1.0E-5 )
     {
-        derr.writefln( "plsdiplz test failed" );
+        stderr.writefln( "plsdiplz test failed" );
         status = 1;
     }
 
@@ -271,7 +270,7 @@ int main( char[][] args )
     writefln( "background colour parameters: r, g, b = %d %d %d", r, g, b );
     if ( r != r0 || g != g0 || b != b0 )
     {
-        derr.writefln( "plgcolbg test failed" );
+        stderr.writefln( "plgcolbg test failed" );
         status = 1;
     }
 
@@ -286,7 +285,7 @@ int main( char[][] args )
     writefln( "background/transparency colour parameters: r, g, b, a = %d %d %d %f", r, g, b, a );
     if ( r != r0 || g != g0 || b != b0 || a != a0 )
     {
-        derr.writefln( "plgcolbga test failed" );
+        stderr.writefln( "plgcolbga test failed" );
         status = 1;
     }
 
