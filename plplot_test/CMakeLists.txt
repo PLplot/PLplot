@@ -115,8 +115,13 @@ if(SH_EXECUTABLE)
     set(SHELL_TEST_QT_EXAMPLE 1)
   endif(PLPLOT_USE_QT5)
 
-  set(pltcl_LOCATION $<TARGET_FILE:PLPLOT::pltcl>)
-  set(plserver_LOCATION $<TARGET_FILE:PLPLOT::plserver>)
+  if(ENABLE_tkX)
+    # N.B. these locations only used in the configured file
+    # for the case where ENABLE_tkX is ON.  Will have to
+    # change this logic if the script changes in this regard.
+    set(pltcl_LOCATION $<TARGET_FILE:PLPLOT::pltcl>)
+    set(plserver_LOCATION $<TARGET_FILE:PLPLOT::plserver>)
+  endif(ENABLE_tkX)
   configure_file_generate(
     plplot-test-interactive.sh.in
     ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
