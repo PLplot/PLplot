@@ -42,7 +42,8 @@ if(WITH_CSA)
     # time if the -finline-functions compiler option is used directly
     # or as the result of the -O3 option.  So for gcc append
     # the -fno-inline-functions option.
-    set_source_files_properties(csa.c PROPERTIES COMPILE_OPTIONS "-fno-inline-functions")
+    message(STATUS "For csa.c use gcc -fno-inline-functions option to avoid segfaults")
+    set_source_files_properties(csa.c PROPERTIES COMPILE_FLAGS "-fno-inline-functions")
   endif(CMAKE_C_COMPILER MATCHES ".*gcc.*")
 
   configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}")
