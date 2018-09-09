@@ -3,7 +3,7 @@
 # Lua binding configuration
 #
 # Copyright (C) 2008 Werner Smekal
-# Copyright (C) 2017 Alan W. Irwin
+# Copyright (C) 2017-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -59,7 +59,14 @@ if(ENABLE_lua)
   #  LUA_INCLUDE_DIR  = path to where lua.h is found
   #  LUA_LIBRARIES    = path to the Lua library
   #  and LUA_FOUND consistently.
-  find_package(Lua)
+  # We don't support 5.3 because that version is buggy (at least on
+  # Debian), see see
+  # <https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=902238>.
+  find_package(Lua 5.2 EXACT)
+  if(NOT LUA_FOUND)
+    # The minimum Lua version we support is 5.1, but 5.2 is preferred if available.
+    find_package(Lua 5.1 EXACT)
+  endif(NOT LUA_FOUND)
   if(NOT LUA_FOUND)
     message(STATUS "LUA_INCLUDE_DIR = ${LUA_INCLUDE_DIR}")
     message(STATUS "LUA_LIBRARIES = ${LUA_LIBRARIES}")
