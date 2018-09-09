@@ -423,14 +423,14 @@ if(CORE_BUILD)
 
 else(CORE_BUILD)
 
-  # MAINTENANCE 2017-04
+  # MAINTENANCE 2018-09-08
   # This logic copied exactly (including version numbers which change
   # from time to time) from the top-level CMakeLists.txt file except
   # for the name of the project.
-  set(MINIMUM_LINUX_CMAKE_VERSION 3.6.2)
+  set(MINIMUM_LINUX_CMAKE_VERSION 3.7.2)
   # Latest CMake version for all platforms other than Linux.
   # Must be greater than or equal to MINIMUM_LINUX_CMAKE_VERSION
-  set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.6.2)
+  set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.11.0)
   cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
   cmake_policy(VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
   project(installed_plplot_examples NONE)

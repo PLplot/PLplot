@@ -67,7 +67,10 @@ end;
   # file must be named target.adb.
   FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
   "
-cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
+# MAINTENANCE
+# Use same minimum version for all platforms as the Linux platform minimum adopted for
+# the PLplot project.
+cmake_minimum_required(VERSION 3.7.2 FATAL_ERROR)
 set(CMAKE_MODULE_PATH \"${CMAKE_Ada_MODULES}\")
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL \"\" FORCE)
 project(test Ada)

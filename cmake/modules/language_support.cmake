@@ -12,9 +12,11 @@ if(ENABLE_workaround_9220)
   option(ENABLE_compiler_diagnostics "Enable printing out full CMake messages when CMake discovers a compiler does not work" OFF)
   function(workaround_9220 language language_works)
     #message("DEBUG: language = ${language}")
-    # MAINTENANCE of minimum version
+    # MAINTENANCE
+    # Use same minimum version for all platforms as the Linux platform minimum adopted for
+    # the PLplot project.
     set(text
-      "cmake_minimum_required(VERSION 3.6.2 FATAL_ERROR)
+      "cmake_minimum_required(VERSION 3.7.2 FATAL_ERROR)
 project(test NONE)
 # Locations where PLplot cmake build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH
