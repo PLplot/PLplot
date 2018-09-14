@@ -39,7 +39,7 @@ if(ENABLE_qt)
       # According to advice from Steve Kelly on the Cmake list, the Qt5
       # Gui component is a dependency of the Qt5 Svg component so is not
       # needed here, but I will leave it in since it is informative.
-      set(libplplotqt_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
+      set(libplplotqt_LINK_LIBRARIES PLPLOT::plplot ${MATH_LIB} Qt5::Svg Qt5::Gui Qt5::PrintSupport)
     else(PLPLOT_USE_QT5)
       set(libplplotqt_LINK_LIBRARIES PLPLOT::plplot ${MATH_LIB} )
     endif(PLPLOT_USE_QT5)
