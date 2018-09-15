@@ -509,6 +509,13 @@ if(ENABLE_ocaml)
     DESTINATION ${OCAML_INSTALL_DIR}/plplot
     )
 
+  if(OCAMLOPT)
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot.cmx
+      DESTINATION ${OCAML_INSTALL_DIR}/plplot
+      )
+  endif(OCAMLOPT)
+
   # Install files that have to be renamed.
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/libinstalled_plplot_stubs.a
