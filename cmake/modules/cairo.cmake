@@ -104,7 +104,7 @@ if(
     linkflags
     cflags
     version
-    _CAIRO
+    _PANGOCAIRO
     )
   if(linkflags)
     # Check that the pangocairo library version is recent

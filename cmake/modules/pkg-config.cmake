@@ -1,6 +1,6 @@
 # cmake/modules/pkg-config.cmake
 #
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -96,6 +96,9 @@ if(PKG_CONFIG_EXECUTABLE)
       endif(cmake_cxx_implicit_link_library)
     endforeach(cmake_cxx_implicit_link_library ${CMAKE_CXX_IMPLICIT_LINK_LIBRARIES})
   endif(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES)
+  # Some cmake versions (e.g., CMake-3.12.2) produce duplicate libraries in this
+  # list, but don't remove them in case these are needed for static linking.
+  # list(REMOVE_DUPLICATES cxx_compiler_library_pathname_list)
   message(STATUS "cxx_compiler_library_pathname_list = ${cxx_compiler_library_pathname_list}")
 
 else(PKG_CONFIG_EXECUTABLE)
@@ -125,7 +128,7 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
     set(_xprefix ${_prefix})
   endif(FORCE_EXTERNAL_STATIC)
 
-  _pkg_check_modules_internal(0 0 0 0 0 ${_prefix} "${_package}")
+  pkg_check_modules(${_prefix} "${_package}")
 
   if(${_prefix}_FOUND)
     cmake_link_flags(${_link_FLAGS} "${${_xprefix}_LDFLAGS}")
@@ -152,12 +155,12 @@ macro(pkg_check_pkgconfig _package _include_DIR _link_DIR _link_FLAGS _cflags _v
     set(${_version})
     set(_return_VALUE 1)
   endif(${_prefix}_FOUND)
-  #message("${_prefix}_FOUND = ${${_prefix}_FOUND}")
-  #message("${_include_DIR} = ${${_include_DIR}}")
-  #message("${_link_DIR} = ${${_link_DIR}}")
-  #message("${_link_FLAGS} = ${${_link_FLAGS}}")
-  #message("${_cflags} = ${${_cflags}}")
-  #message("${_version} = ${${_version}}")
+  #message("DEBUG: ${_prefix}_FOUND = ${${_prefix}_FOUND}")
+  #message("DEBUG: ${_include_DIR} = ${${_include_DIR}}")
+  #message("DEBUG: ${_link_DIR} = ${${_link_DIR}}")
+  #message("DEBUG: ${_link_FLAGS} = ${${_link_FLAGS}}")
+  #message("DEBUG: ${_cflags} = ${${_cflags}}")
+  #message("DEBUG: ${_version} = ${${_version}}")
 endmacro(pkg_check_pkgconfig)
 
 function(pkg_config_link_flags link_flags_out link_flags_in)
