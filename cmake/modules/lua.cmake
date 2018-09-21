@@ -55,18 +55,16 @@ if(ENABLE_lua AND NOT PL_DOUBLE)
 endif(ENABLE_lua AND NOT PL_DOUBLE)
 
 if(ENABLE_lua)
-  # Check for Lua libraries which defines
-  #  LUA_INCLUDE_DIR  = path to where lua.h is found
-  #  LUA_LIBRARIES    = path to the Lua library
-  #  and LUA_FOUND consistently.
-  # We don't support 5.3 because that version is buggy (at least on
-  # Debian), see see
-  # <https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=902238>.
-  find_package(Lua 5.2 EXACT)
-  if(NOT LUA_FOUND)
-    # The minimum Lua version we support is 5.1, but 5.2 is preferred if available.
-    find_package(Lua 5.1 EXACT)
-  endif(NOT LUA_FOUND)
+  # Find Lua.  If the user specifies REQUIRED_LUA_VERSION, only that version
+  # of Lua will be accepted.  Otherwise, the Lua version found will be the
+  # highest version installed on your system.
+  if(REQUIRED_LUA_VERSION)
+    message(STATUS "Attempting to find specific Lua version = ${REQUIRED_LUA_VERSION}")
+    find_package(Lua ${REQUIRED_LUA_VERSION} EXACT)
+  else(REQUIRED_LUA_VERSION)
+    message(STATUS "Attempting to find any Lua version")
+    find_package(Lua)
+  endif(REQUIRED_LUA_VERSION)
   if(NOT LUA_FOUND)
     message(STATUS "LUA_INCLUDE_DIR = ${LUA_INCLUDE_DIR}")
     message(STATUS "LUA_LIBRARIES = ${LUA_LIBRARIES}")
@@ -78,12 +76,15 @@ endif(ENABLE_lua)
 
 if(ENABLE_lua)
   string(SUBSTRING ${LUA_VERSION_STRING} 0 3 SHORT_LUA_VERSION_STRING)
-  find_program(LUA_EXECUTABLE NAMES lua lua${SHORT_LUA_VERSION_STRING})
+  # Look for consistently versioned LUA_EXECUTABLE and only use
+  # the "lua" name for that executable as a last resort.
+
+  find_program(LUA_EXECUTABLE NAMES lua${SHORT_LUA_VERSION_STRING} lua)
   if(LUA_EXECUTABLE)
     message(STATUS "Found LUA_EXECUTABLE = ${LUA_EXECUTABLE}")
   else(LUA_EXECUTABLE)
     message(STATUS "WARNING: "
-      "Lua executable not found under either lua or lua${SHORT_LUA_VERSION_STRING} name. Disabling Lua binding")
+      "Lua executable not found under either lua${SHORT_LUA_VERSION_STRING} or lua name. Disabling Lua binding")
     set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
   endif(LUA_EXECUTABLE)
 endif(ENABLE_lua)
