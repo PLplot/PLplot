@@ -23,14 +23,19 @@
 #include <vector>
 #include <memory>
 
-// plplot headers
-#include "plplotP.h"
-#include "wxwidgets_comms.h"
-
 // some special wxWidgets headers
+//We need to include these before wxwidgets_comms.h
+// - it seems like the includion of windows.h in
+//   wxwidgets_comms.h before wx/wx.h causes some
+//   wierd interation with winsock functions for
+//   vs2017.
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
 #include <wx/dcgraph.h>
+
+// plplot headers
+#include "plplotP.h"
+#include "wxwidgets_comms.h"
 
 class wxPLplotFrame;
 
