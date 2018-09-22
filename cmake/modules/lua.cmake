@@ -60,14 +60,14 @@ if(ENABLE_lua)
   # highest version installed on your system.
   if(REQUIRED_LUA_VERSION)
     message(STATUS "Attempting to find specific Lua version = ${REQUIRED_LUA_VERSION}")
-    find_package(Lua ${REQUIRED_LUA_VERSION} EXACT)
+    find_package(Lua ${REQUIRED_LUA_VERSION} EXACT QUIET)
   else(REQUIRED_LUA_VERSION)
     message(STATUS "Attempting to find any Lua version")
-    find_package(Lua)
+    find_package(Lua QUIET)
   endif(REQUIRED_LUA_VERSION)
+  message(STATUS "LUA_INCLUDE_DIR = ${LUA_INCLUDE_DIR}")
+  message(STATUS "LUA_LIBRARIES = ${LUA_LIBRARIES}")
   if(NOT LUA_FOUND)
-    message(STATUS "LUA_INCLUDE_DIR = ${LUA_INCLUDE_DIR}")
-    message(STATUS "LUA_LIBRARIES = ${LUA_LIBRARIES}")
     message(STATUS "WARNING: "
       "Lua header and/or library not found. Disabling Lua binding")
     set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
@@ -76,17 +76,20 @@ endif(ENABLE_lua)
 
 if(ENABLE_lua)
   string(SUBSTRING ${LUA_VERSION_STRING} 0 3 SHORT_LUA_VERSION_STRING)
-  # Look for consistently versioned LUA_EXECUTABLE and only use
-  # the "lua" name for that executable as a last resort.
+  # Look for consistently versioned LUA_EXECUTABLE and only use the
+  # "lua" name for that executable as a last resort because the
+  # generic system version may not correspond to the library that is
+  # found. But in order to find a locally built version (if higher
+  # than the system version on the search PATHs) must also use
+  # NAMES_PER_DIR.
 
-  find_program(LUA_EXECUTABLE NAMES lua${SHORT_LUA_VERSION_STRING} lua)
-  if(LUA_EXECUTABLE)
-    message(STATUS "Found LUA_EXECUTABLE = ${LUA_EXECUTABLE}")
-  else(LUA_EXECUTABLE)
+  find_program(LUA_EXECUTABLE NAMES lua${SHORT_LUA_VERSION_STRING} lua NAMES_PER_DIR)
+  message(STATUS "Found LUA_EXECUTABLE = ${LUA_EXECUTABLE}")
+  if(NOT LUA_EXECUTABLE)
     message(STATUS "WARNING: "
       "Lua executable not found under either lua${SHORT_LUA_VERSION_STRING} or lua name. Disabling Lua binding")
     set(ENABLE_lua OFF CACHE BOOL "Enable Lua binding" FORCE)
-  endif(LUA_EXECUTABLE)
+  endif(NOT LUA_EXECUTABLE)
 endif(ENABLE_lua)
 
 if(ENABLE_lua)
