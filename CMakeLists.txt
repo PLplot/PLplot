@@ -16,17 +16,6 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-# Recommended way to do user overrides of C-related variables, is given at
-# http://public.kitware.com/pipermail/cmake/2006-July/010334.html.
-# See also, CMakeCInformation.cmake.  There are also C++, and Fortran-specific
-# overrides that can be done.  However, I prefer putting overrides in just
-# one file so I use the overall variable CMAKE_USER_MAKE_RULES_OVERRIDE
-# instead.
-set(
-  CMAKE_USER_MAKE_RULES_OVERRIDE
-  ${CMAKE_SOURCE_DIR}/cmake/UserOverride.cmake
-  )
-
 # Note, that if you are using a platform that does not supply our
 # designated minimum version of CMake for that platform, then your
 # best bet is to build a recent version of CMake for yourself or even
