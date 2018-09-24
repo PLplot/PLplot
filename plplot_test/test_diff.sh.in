@@ -84,12 +84,24 @@ else
 fi
 
 # Compare C results with the following list of languages
-for lang in c++ fortran java octave python tcl adastandard adatraditional ocaml lua d plrender; do
+for lang in adastandard adatraditional c++ d fortran java lua ocaml octave plrender python tcl ; do
   # Check which suffix is used for this binding
   case $lang in
+	adastandard)
+	    xsuffix=standard
+	    suffix=a
+	    ;;
+	adatraditional)
+	    xsuffix=traditional
+	    suffix=a
+	    ;;
 	c++)
 	    xsuffix=
 	    suffix=cxx
+	    ;;
+	d)
+	    xsuffix=
+	    suffix=d
 	    ;;
 	fortran)
 	    xsuffix=
@@ -99,9 +111,21 @@ for lang in c++ fortran java octave python tcl adastandard adatraditional ocaml 
 	    xsuffix=
 	    suffix=j
 	    ;;
+	lua)
+	    xsuffix=
+	    suffix=lua
+	    ;;
+	ocaml)
+	    xsuffix=
+	    suffix=ocaml
+	    ;;
 	octave)
 	    xsuffix=
 	    suffix=o
+	    ;;
+	plrender)
+	    xsuffix=
+	    suffix=plm
 	    ;;
 	python)
 	    xsuffix=
@@ -110,30 +134,6 @@ for lang in c++ fortran java octave python tcl adastandard adatraditional ocaml 
 	tcl)
 	    xsuffix=
 	    suffix=t
-	    ;;
-	adastandard)
-	    xsuffix=standard
-	    suffix=a
-	    ;;
-	adatraditional)
-	    xsuffix=traditional
-	    suffix=a
-	    ;;
-	ocaml)
-	    xsuffix=
-	    suffix=ocaml
-	    ;;
-	lua)
-	    xsuffix=
-	    suffix=lua
-	    ;;
-	d)
-	    xsuffix=
-	    suffix=d
-	    ;;
-	plrender)
-	    xsuffix=
-	    suffix=plm
 	    ;;
     esac
 
