@@ -33,7 +33,7 @@
       <li>The cairo device driver depends on <a href="http://www.pango.org/">Pango</a>; a library for laying out and rendering of text, with an emphasis on internationalization.</li>
       <li>The cairo device driver depends on <a href="http://www.cairographics.org/">cairo</a>; a 2D graphics library with support for multiple output devices. Currently supported output targets include the X Window System, Quartz, Win32, image buffers, PostScript, PDF, and SVG file output.</li>
       <li>The gd and wingcc device drivers depend on <a href="http://www.freetype.org/">FreeType</a>; a free, high-quality, and portable font engine.</li>
-      <li>The gd device driver depends on <a href="http://libgd.bitbucket.org/">libgd</a>; an open-source code library for the dynamic creation of images by programmers.</li>
+      <li>The gd device driver depends on <a href=" https://libgd.github.io/">libgd</a>; an open-source code library for the dynamic creation of images by programmers.</li>
       <li>The pdf device driver depends on <a href="http://www.libharu.org/">libHaru</a>; a free, cross-platform, open-source library for generating PDF files.</li>
       <li>The psttf device driver depends on <a href="http://www.unifont.org/lasi/">LASi</a>; a library that provides a C++ stream output interface (with operator &lt;&lt;) for creating Postscript documents that can contain characters from any of the scripts and symbol blocks supported in Unicode and by Owen Taylor's Pango layout engine.</li>
       <li>The Qt device driver depends on <a href="https://www.qt.io/download-open-source/">Qt</a>; a multi-platform toolkit library for creating graphical user interfaces.</li>
