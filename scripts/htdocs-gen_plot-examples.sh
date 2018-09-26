@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PARALLEL_BUILD_OPTION="=j10"
+
 # This script generates a tarball of source code and screenshots,
 # 'htdocs_plot_examples.tgz', that will be part of the 'examples' web page,
 #
@@ -66,15 +68,15 @@ if [ "$build" = "true" ] ; then
 	-DDEFAULT_NO_BINDINGS=ON \
     -DDEFAULT_NO_DEVICES=ON -DPLD_pngcairo=ON \
 	../../
-    make -j3
-    make -j3 install
+    make $PARALLEL_BUILD_OPTION
+    make $PARALLEL_BUILD_OPTION install
     cd ../..
 fi
 
 EXDIR=htdocs/examples-data
 pushd htdocsgen/install/share/plplot*/examples/c
 export cexamples_dir=`pwd`
-make
+make $PARALLEL_BUILD_OPTION
 popd
 
 # hack, x20c needs Chloe in the current directory

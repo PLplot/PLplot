@@ -1,7 +1,7 @@
 Configuration of these instructions.
 
-export plplot_version=5.13.0
-export old_plplot_version=5.12.0
+export plplot_version=5.14.0
+export old_plplot_version=5.13.0
 
 This configuration is obviously real for the command-line commands
 below that use these environment variables, but only symbolic for the
@@ -165,7 +165,7 @@ that check_api_xml_consistency target.  For more details
 concerning how to build and install "plplot-doc-check see the commentary
 in doc/docbook/src/CMakeLists.txt.
 
-Currently (for Debian Jessie), plplot-doc-check (and therefore the
+Currently (for Debian Buster), plplot-doc-check (and therefore the
 check_api_xml_consistency target) finds an inconsistency which is:
 
 para 0 of func plGetCursor type mismatch [ PLGraphicsIn * ] vs. [
@@ -174,7 +174,7 @@ struct PLGraphicsIn * ]
 This inconsistency has no immediately obvious cause and Hǎiliàng Wang
 does not confirm this issue for his latest version of golang.
 Therefore, it is likely due to the old version of golang that I have
-installed on Debian Jessie.
+installed on Debian Buster.
 
 Note the above check_plplot_h.inc target only exists
 because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
@@ -199,7 +199,7 @@ source-tree version.  When this process is completed, all the above
 targets (except for check_api_xml_consistency should run with no cmp
 or other errors/warnings at all, e.g.,
 
-software@raven> make check_all
+software@merlin> make check_all
 
 should "just work" without errors.
 
@@ -276,17 +276,17 @@ building the examples, running the examples, uploading the example
 source code and example results) automatically.  I (AWI) ran this
 script as follows:
 
-echo irwin$'\n'irwin$'\n'raven$'\n'/home/irwin/public_html/plplot$'\n'yes |scripts/generate_website.sh
+echo irwin$'\n'irwin$'\n'merlin$'\n'/home/irwin/public_html/plplot$'\n'yes |scripts/generate_website.sh
 
 ==>
 
 Summary:
 USERNAME = irwin
 GROUPNAME = irwin
-HOSTNAME = raven
+HOSTNAME = merlin
 WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
-(raven is my local computer name, and /home/irwin/public_html is a location
+(merlin is my local computer name, and /home/irwin/public_html is a location
 where I can store various websites).  The above command took ~3 minutes to run
 on my computer.
 
@@ -307,7 +307,7 @@ include some case variants of "error" in the string because the
 referred to function name contains that substring.)
 
 The above location translates to the following URL
-<http://raven/~irwin/plplot/htdocs>, and I test that URL by clicking on most links,
+<http://merlin/~irwin/plplot/htdocs>, and I test that URL by clicking on most links,
 checking the documentation looks good, checking the examples are
 complete and look good and the source code for each language for
 examples is accessible, etc.  Some iterations with the
@@ -368,7 +368,7 @@ poor code parsing ability, etc.
 
 find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error |grep -Ev 'unable to read file loc'
 
-(The last stanza is to remove some spurious doxygen warnings for the Debian Jessie version of
+(The last stanza is to remove some spurious doxygen warnings for the Debian Buster version of
 doxygen).
 
 This search found some hits, but all seem to be innocuous except possibly
@@ -479,7 +479,7 @@ Follow the exact instructions given in that step except this time correct
 RELEASE_DATE (configured in doc/docbook/src/CMakeLists.text) if
 necessary.  Here is the command I used for this step
 
-echo irwin$'\n'irwin$'\n'raven$'\n'/home/irwin/public_html/plplot$'\n'yes | scripts/generate_website.sh
+echo irwin$'\n'irwin$'\n'merlin$'\n'/home/irwin/public_html/plplot$'\n'yes | scripts/generate_website.sh
 _________________________________________________________________________
 
 Upload the local website to SourceForge
@@ -488,7 +488,7 @@ Once you are satisfied with the local website, you should upload it to
 SourceForge with rsync.
 
 For the above WEBSITE_PREFIX, here is what worked for me from my computer
-with the hostname of raven where that WEBSITE_PREFIX directory was
+with the hostname of merlin where that WEBSITE_PREFIX directory was
 created.
 
 rsync -av --delete --no-p --no-g --chmod=ugo=rwX \
@@ -603,7 +603,7 @@ git checkout master
 
 A list of your GPG keys can be obtained using, e.g.,
 
-software@raven> gpg --list-keys Alan
+software@merlin> gpg --list-keys Alan
 pub   2048R/BB159E92 2011-08-19 [expires: 2021-12-12]
 uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
 uid                  Alan W. Irwin (libLASi key) <airwin@users.sourceforge.net>
@@ -791,7 +791,7 @@ second number after the slash for the first pub line given by
 "gpg --list-keys".  For example, the above key gives the following
 result:
 
-software@raven> gpg --list-keys irwin
+software@merlin> gpg --list-keys irwin
 pub   2048R/BB159E92 2011-08-19 [expires: 2016-08-17]
 uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
 sub   2048R/C5ECCF77 2011-08-19 [expires: 2016-08-17]
@@ -937,7 +937,7 @@ can install the debian ntp package.  The default configuration appears
 to give good results.  You can check those results by the ntpq -pe command,
 e.g.,
 
-software@raven> ntpq -dp
+software@merlin> ntpq -dp
 1 packets reassembled into response
      remote           refid      st t when poll reach   delay   offset  jitter
 ==============================================================================
@@ -964,13 +964,13 @@ _________________________________________________________________________
 
 ** System prerequisites for viewing local website
 
-You should install both apache and PHP on your computer.  For Debian Jessie
-that is done (as root) by installing libapache2-mod-php5
+You should install both apache and PHP on your computer.  For Debian Buster
+that is done (as root) by installing libapache2-mod-php
 and enabling user directories using the command
 
 a2enmod userdir
 
-and editing /etc/apache2/mods-available/php5.conf as indicated in that
+and editing /etc/apache2/mods-available/php7.2.conf as indicated in that
 file to allow user directories for php.  I am not sure, but I believe
 from some google results I found that editing of that file is also
 necessary on modern versions of Ubuntu in order to allow php-based websites
@@ -979,7 +979,7 @@ like that of PLplot to work when installed in local user directories.
 After the above changes, you must restart the apache server.  On
 Debian this is done with
 
-service apache2 restart
+systemctl restart apache2
 
 (When user directories are enabled this way, for the above case
 where
@@ -987,11 +987,11 @@ where
 Summary:
 USERNAME = irwin
 GROUPNAME = irwin
-HOSTNAME = raven
+HOSTNAME = merlin
 WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
 that directory location browses as
-http://raven/~irwin/plplot/htdocs/.)
+<http://merlin/~irwin/plplot/htdocs/>.)
 _________________________________________________________________________
 
 Fix website permissions

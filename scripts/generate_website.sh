@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PARALLEL_BUILD_OPTION="-j10"
+
 # Find absolute PATH of script without using readlink (since readlink is
 # not available on all platforms).  Followed advice at
 # http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
@@ -80,20 +82,20 @@ cmake \
     -DBUILD_DOX_DOC=ON \
     ../plplot_source \
     >& cmake.out
-make VERBOSE=1 -j4 prebuild_dist >& make_prebuild.out
+make VERBOSE=1 $PARALLEL_BUILD_OPTION prebuild_dist >& make_prebuild.out
 
 echo ""
 echo "Install the configured base part of the website to $WEBSITE_PREFIX on $HOSTNAME."
 cd /tmp/plplotdoc/build
-make VERBOSE=1 www-install-base >& make_www-install-base.out
+make VERBOSE=1 $PARALLEL_BUILD_OPTION www-install-base >& make_www-install-base.out
 
 echo ""
 echo "Install the just-generated documentation to $WEBSITE_PREFIX/htdocs/docbook-manual on $HOSTNAME."
 # This command completely removes WWW_DIR/htdocs/docbook-manual on $HOSTNAME
 # so be careful how you specify the above -DWWW_DIR option.
 cd /tmp/plplotdoc/build
-make VERBOSE=1 www-install >& make_www-install.out
-make VERBOSE=1 www-install-doxygen >& make_www-install-doxygen.out
+make VERBOSE=1 $PARALLEL_BUILD_OPTION www-install >& make_www-install.out
+make VERBOSE=1 $PARALLEL_BUILD_OPTION www-install-doxygen >& make_www-install-doxygen.out
 
 echo ""
 echo "Build PLplot, PLplot examples, and screenshots of those examples.  This may take a while depending on your cpu speed...."
@@ -111,10 +113,10 @@ WWW_USER=$USERNAME \
 # If all the above works like it should, and $HOSTNAME has apache and PHP
 # installed properly, you should be able to browse the
 # resulting complete website.  AWI verified this by specifying
-# irwin, irwin, raven (his local machine), and /home/irwin/public_html/plplot
+# irwin, irwin, merlin (his local machine), and /home/irwin/public_html/plplot
 # for USERNAME, GROUPNAME, HOSTNAME, and WEBSITE_PREFIX for this script
-# and browsing http://raven/~irwin/plplot/htdocs/ afterward.
+# and browsing http://merlin/~irwin/plplot/htdocs/ afterward.
 
-# Once you are satisfied with the local version of the website, then upload
-# it to the official PLplot SourceForge site using the new (as of
-# 2008-09-19) rsync procedure documented in README.Release_Manager_Cookbook.
+# Once you are satisfied with the local version of the website, then
+# upload it to the official PLplot SourceForge site using the rsync
+# procedure documented in README.Release_Manager_Cookbook.
