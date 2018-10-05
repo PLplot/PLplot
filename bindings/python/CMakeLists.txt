@@ -155,6 +155,7 @@ if(ENABLE_python)
   configure_library_build(plplotc python plplotc.i "${plotc_tll_list}")
 
   if(USE_RPATH)
+    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
     set_target_properties(
       ${SWIG_MODULE_plplotc_REAL_NAME}
       PROPERTIES
