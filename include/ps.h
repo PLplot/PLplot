@@ -68,7 +68,7 @@ void plD_tidy_pstex( PLStream * );
 void plD_state_pstex( PLStream *, PLINT );
 void plD_esc_pstex( PLStream *, PLINT, void * );
 
-void plD_init_psm( PLStream * );
+void plD_init_ps( PLStream * );
 void plD_init_psc( PLStream * );
 void plD_line_ps( PLStream *, short, short, short, short );
 void plD_polyline_ps( PLStream *, short *, short *, PLINT );
@@ -78,7 +78,7 @@ void plD_tidy_ps( PLStream * );
 void plD_state_ps( PLStream *, PLINT );
 void plD_esc_ps( PLStream *, PLINT, void * );
 
-void plD_init_psttfm( PLStream * );
+void plD_init_psttf( PLStream * );
 void plD_init_psttfc( PLStream * );
 void plD_line_psttf( PLStream *, short, short, short, short );
 void plD_polyline_psttf( PLStream *, short *, short *, PLINT );

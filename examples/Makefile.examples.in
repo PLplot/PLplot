@@ -180,6 +180,21 @@ test_interactive: c/x01c@EXEEXT@
 @PNG_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=png
 @PNG_COMMENT@test_noninteractive: x01c01.png
 
+@PS_COMMENT@x01c.ps: c/x01c@EXEEXT@
+@PS_COMMENT@	@echo Generate C results for ps device
+@PS_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=ps
+@PS_COMMENT@test_noninteractive: x01c.ps
+
+@PSC_COMMENT@x01c.psc: c/x01c@EXEEXT@
+@PSC_COMMENT@	@echo Generate C results for psc device
+@PSC_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psc
+@PSC_COMMENT@test_noninteractive: x01c.psc
+
+@PSTTF_COMMENT@x01c.psttf: c/x01c@EXEEXT@
+@PSTTF_COMMENT@	@echo Generate C results for psttf device
+@PSTTF_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psttf
+@PSTTF_COMMENT@test_noninteractive: x01c.psttf
+
 @PSTTFC_COMMENT@x01c.psttfc: c/x01c@EXEEXT@
 @PSTTFC_COMMENT@	@echo Generate C results for psttfc device
 @PSTTFC_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psttfc

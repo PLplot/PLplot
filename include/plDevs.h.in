@@ -42,6 +42,8 @@
 // xwin is special case where the macro name is PLD_xwin but the
 // function name in drivers.h is plD_dispatch_init_xw
 
+// Maintenance 2018-10
+// Should include every device potentially enabled by device drivers.
 #cmakedefine PLD_aqt
 #cmakedefine PLD_epscairo
 #cmakedefine PLD_extcairo
@@ -62,8 +64,10 @@
 #cmakedefine PLD_pdf
 #cmakedefine PLD_plm
 #cmakedefine PLD_ps
+#cmakedefine PLD_psc
 #cmakedefine PLD_pstex
 #cmakedefine PLD_psttf
+#cmakedefine PLD_psttfc
 #cmakedefine PLD_bmpqt
 #cmakedefine PLD_epsqt
 #cmakedefine PLD_extqt

@@ -39,17 +39,7 @@ if(SH_EXECUTABLE)
     )
   message(STATUS "TEST_ENVIRONMENT = ${TEST_ENVIRONMENT}")
   set(PLPLOT_TEST_DEVICE psc CACHE STRING "device used for ctest")
-  # There is no PLD_psc or PLD_psttfc and the PLD_ps and PLD_psttf
-  # variables must be used instead.  All other PLD_* names correspond
-  # to exact device names.  So adjust for this complicated naming
-  # scheme in a general way.
-  if(PLPLOT_TEST_DEVICE STREQUAL "psc")
-    set(PLD_TEST_DEVICE ${PLD_ps})
-  elseif(PLPLOT_TEST_DEVICE STREQUAL "psttfc")
-    set(PLD_TEST_DEVICE ${PLD_psttf})
-  else(PLPLOT_TEST_DEVICE STREQUAL "psc")
-    set(PLD_TEST_DEVICE ${PLD_${PLPLOT_TEST_DEVICE}})
-  endif(PLPLOT_TEST_DEVICE STREQUAL "psc")
+  set(PLD_TEST_DEVICE ${PLD_${PLPLOT_TEST_DEVICE}})
 
   set(TEST_SCRIPT "./plplot-test.sh --verbose")
   set(TEST_SCRIPT_DEVICE "${TEST_SCRIPT} --device=${PLPLOT_TEST_DEVICE}")
@@ -393,14 +383,6 @@ if(SH_EXECUTABLE)
       list(APPEND examples_compare_DEPENDS examples_plrender)
     endif(PLD_TEST_DEVICE)
   endif(PLD_plmeta)
-
-  # Add tests for all enabled file devices (except for PLPLOT_TEST_DEVICE) for C language.
-  if(PLD_ps)
-    list(APPEND FILE_DEVICES_LIST psc:ps:OFF)
-  endif(PLD_ps)
-  if(PLD_psttf)
-    list(APPEND FILE_DEVICES_LIST psttfc:psttf:OFF)
-  endif(PLD_psttf)
 
   # FILE_DEVICES_LIST is set in cmake/modules/drivers-finish.cmake
   # for all enabled _file_ devices and adjusted above for the

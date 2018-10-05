@@ -176,15 +176,19 @@ static PLDispatchInit  static_device_initializers[] = {
     plD_dispatch_init_plm,
 #endif
 #if defined ( PLD_ps ) && !defined ( ENABLE_DYNDRIVERS )
+    plD_dispatch_init_ps,
+#endif
+#if defined ( PLD_psc ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_psc,
-    plD_dispatch_init_psm,
 #endif
 #if defined ( PLD_pstex ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_pstex,
 #endif
 #if defined ( PLD_psttf ) && !defined ( ENABLE_DYNDRIVERS )
+    plD_dispatch_init_psttf,
+#endif
+#if defined ( PLD_psttfc ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_psttfc,
-    plD_dispatch_init_psttfm,
 #endif
 #if defined ( PLD_bmpqt ) && !defined ( ENABLE_DYNDRIVERS )
     plD_dispatch_init_bmpqt,

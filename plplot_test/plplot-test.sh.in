@@ -326,14 +326,12 @@ PLD_plmeta=@PLD_plmeta@
 PLD_png=@PLD_png@
 PLD_pngcairo=@PLD_pngcairo@
 PLD_ps=@PLD_ps@
-# special case
-PLD_psc=@PLD_ps@
+PLD_psc=@PLD_psc@
 PLD_pscairo=@PLD_pscairo@
 PLD_epscairo=@PLD_epscairo@
 PLD_pstex=@PLD_pstex@
 PLD_psttf=@PLD_psttf@
-# special case
-PLD_psttfc=@PLD_psttf@
+PLD_psttfc=@PLD_psttfc@
 PLD_svg=@PLD_svg@
 PLD_svgcairo=@PLD_svgcairo@
 #interactive PLD_tk=@PLD_tk@

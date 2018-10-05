@@ -27,7 +27,10 @@ if(CORE_BUILD)
   # traditional Makefile + pkg-config installed examples build.
 
   # cxx and tk subdirectories are special cases.
-  if(PLD_ps)
+  if(PLD_psc)
+    # PSC_C_COMMENT not disabled so must disable PSC_COMMENT instead which
+    # otherwise would configure the same target.
+    set(PSC_COMMENT "#")
     if(NOT ENABLE_ada)
       set(PSC_ADA_COMMENT "#")
     endif(NOT ENABLE_ada)
@@ -68,7 +71,7 @@ if(CORE_BUILD)
       set(PSC_LUA_COMMENT "#")
     endif(NOT ENABLE_lua)
 
-  else(PLD_ps)
+  else(PLD_psc)
     set(PSC_ADA_COMMENT "#")
     set(PSC_C_COMMENT "#")
     set(PSC_CXX_COMMENT "#")
@@ -80,11 +83,11 @@ if(CORE_BUILD)
     set(PSC_PYTHON_COMMENT "#")
     set(PSC_TCL_COMMENT "#")
     set(PSC_LUA_COMMENT "#")
-  endif(PLD_ps)
+  endif(PLD_psc)
 
-  if(NOT(ENABLE_cxx AND (PLD_ps OR ENABLE_qt OR ENABLE_wxwidgets)))
+  if(NOT(ENABLE_cxx AND (PLD_psc OR ENABLE_qt OR ENABLE_wxwidgets)))
     set(CXX_COMMENT "#")
-  endif(NOT(ENABLE_cxx AND (PLD_ps OR ENABLE_qt OR ENABLE_wxwidgets)))
+  endif(NOT(ENABLE_cxx AND (PLD_psc OR ENABLE_qt OR ENABLE_wxwidgets)))
 
   if(NOT ENABLE_tkX)
     set(TK_COMMENT "#")
@@ -122,9 +125,21 @@ if(CORE_BUILD)
     set(PNG_COMMENT "#")
   endif(NOT PLD_png)
 
+  if(NOT PLD_ps)
+    set(PS_COMMENT "#")
+  endif(NOT PLD_ps)
+
+  if(NOT PLD_psc)
+    set(PSC_COMMENT "#")
+  endif(NOT PLD_psc)
+
   if(NOT PLD_psttf)
-    set(PSTTFC_COMMENT "#")
+    set(PSTTF_COMMENT "#")
   endif(NOT PLD_psttf)
+
+  if(NOT PLD_psttfc)
+    set(PSTTFC_COMMENT "#")
+  endif(NOT PLD_psttfc)
 
   if(NOT PLD_svg)
     set(SVG_COMMENT "#")
@@ -296,13 +311,6 @@ if(CORE_BUILD)
   # file is plplot_configure.cmake_installed_examples.in and which
   # ends up installed in examples/cmake/module.
   set(ENABLE_c ON)
-  set(PLD_psc ${PLD_ps})
-  set(PLD_psttfc ${PLD_psttf})
-  # The psc device handled separately below so don't add it to
-  # FILE_DEVICES_LIST.
-  if(PLD_psttfc)
-    list(APPEND FILE_DEVICES_LIST psttfc:psttf:OFF)
-  endif(PLD_psttfc)
 
   # Start configuration/installation of CMake-based build system for
   # installed examples.
@@ -679,51 +687,51 @@ if(BUILD_TEST)
     endif(files_examples_c)
 
     # FILE_DEVICES_LIST is set in cmake/modules/drivers-finish.cmake
-    # for all enabled _file_ devices and adjusted above for the
-    # special case of the psttfc device.  It is thus available for the
+    # for all enabled _file_ devices.  It is thus available for the
     # core build.  It is also configured in plplot_configure.cmake and
     # is thus available for the installed examples tests.  Each list
     # member consists of a colon-separated device name, driver name,
     # and a Boolean variable that indicates if device has familied
     # output in plplot-test.sh.
-    # N.B. device psc is deliberately excluded from list because it is
-    # handled in a different way above.
     foreach(file_devices_info ${FILE_DEVICES_LIST})
       string(REGEX REPLACE "^(.*):.*:.*$" "\\1" device ${file_devices_info})
       string(REGEX REPLACE "^.*:(.*):.*$" "\\1" driver ${file_devices_info})
       string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" familied ${file_devices_info})
 
-      set(${device}_file_device_depends ${device_depends})
-      if(ENABLE_DYNDRIVERS)
-	get_property(${driver}_file_depends
-	  GLOBAL PROPERTY FILE_DEPENDS_${driver}_dyndriver
+      # Exclude psc device which is already dealt with above.
+      if(NOT device STREQUAL psc)
+	set(${device}_file_device_depends ${device_depends})
+	if(ENABLE_DYNDRIVERS)
+	  get_property(${driver}_file_depends
+	    GLOBAL PROPERTY FILE_DEPENDS_${driver}_dyndriver
+	    )
+	  list(APPEND ${device}_file_device_depends
+	    ${${driver}_file_depends} PLPLOT::${driver}
+	    )
+	endif(ENABLE_DYNDRIVERS)
+	#message("DEBUG:${device}_file_device_depends = ${${device}_file_device_depends}")
+	list_example_files(${TEST_EXAMPLES_OUTPUT_DIR} ${device} c output_list)
+	add_custom_command(
+	  OUTPUT ${output_list}
+	  COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
+	  COMMAND env ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device} ${plplot_test_debug}
+	  DEPENDS
+	  ${${device}_file_device_depends}
+	  VERBATIM
 	  )
-	list(APPEND ${device}_file_device_depends
-	  ${${driver}_file_depends} PLPLOT::${driver}
+	add_custom_target(test_c_${device}
+	  DEPENDS ${output_list}
 	  )
-      endif(ENABLE_DYNDRIVERS)
-      #message("DEBUG:${device}_file_device_depends = ${${device}_file_device_depends}")
-      list_example_files(${TEST_EXAMPLES_OUTPUT_DIR} ${device} c output_list)
-      add_custom_command(
-	OUTPUT ${output_list}
-	COMMAND ${CMAKE_COMMAND} -E echo "Generate C results for ${device} file device"
-	COMMAND env ${custom_env} ${custom_test_command} --verbose --front-end=c --device=${device} ${plplot_test_debug}
-	DEPENDS
-	${${device}_file_device_depends}
-	VERBATIM
-	)
-      add_custom_target(test_c_${device}
-	DEPENDS ${output_list}
-	)
-      if(TARGET test_${driver}_dyndriver)
-	add_dependencies(test_c_${device} test_${driver}_dyndriver)
-      endif(TARGET test_${driver}_dyndriver)
+	if(TARGET test_${driver}_dyndriver)
+	  add_dependencies(test_c_${device} test_${driver}_dyndriver)
+	endif(TARGET test_${driver}_dyndriver)
 
-      list(APPEND noninteractive_targets_LIST test_c_${device})
-      # Follow what was done above.
-      if(files_examples_c AND targets_examples_c)
-	add_dependencies(test_c_${device} ${targets_examples_c})
-      endif(files_examples_c AND targets_examples_c)
+	list(APPEND noninteractive_targets_LIST test_c_${device})
+	# Follow what was done above.
+	if(files_examples_c AND targets_examples_c)
+	  add_dependencies(test_c_${device} ${targets_examples_c})
+	endif(files_examples_c AND targets_examples_c)
+      endif(NOT device STREQUAL psc)
       endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
     set(interactive_targets_LIST)

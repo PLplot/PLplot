@@ -58,7 +58,7 @@ plD_init_pstex( PLStream *pls )
     if ( color )
         plD_init_psc( pls ); // init color postscript driver
     else
-        plD_init_psm( pls ); // init monochrome postscript driver
+        plD_init_ps( pls );  // init monochrome postscript driver
 
     dev = (PSDev *) pls->dev;
 

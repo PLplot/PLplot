@@ -1,13 +1,13 @@
 //        PLplot PostScript device driver using LASi to provide fonts
 //        based on original ps.c PostScript driver
 //
-//  Copyright (C) 1992, 2001  Geoffrey Furnish
-//  Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
-//  Copyright (C) 2000-2014 Alan W. Irwin
-//  Copyright (C) 2001, 2002  Joao Cardoso
-//  Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
-//  Copyright (C) 2004, 2005  Thomas J. Duck
-//  Copyright (C) 2005, 2006  Andrew Ross
+//  Copyright (C) 1992-2001 Geoffrey Furnish
+//  Copyright (C) 1992-2001 Maurice LeBrun
+//  Copyright (C) 2000-2018 Alan W. Irwin
+//  Copyright (C) 2001-2002 Joao Cardoso
+//  Copyright (C) 2001-2004 Rafael Laboissiere
+//  Copyright (C) 2004-2005 Thomas J. Duck
+//  Copyright (C) 2005-2006 Andrew Ross
 //
 //  This file is part of PLplot.
 //
@@ -28,8 +28,6 @@
 //
 
 #include "plDevs.h"
-
-#if defined ( PLD_psttf )
 
 //#define NEED_PLDEBUG
 #include "plplotP.h"
@@ -53,20 +51,32 @@ using namespace std;
 // Device info
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_psttf =
-    "psttf:PostScript File (monochrome):0:psttf:55:psttfm\n"
-    "psttfc:PostScript File (color):0:psttf:56:psttfc\n";
+#ifdef PLD_psttf
+    "psttf:PostScript File (monochrome):0:psttf:55:psttf\n"
+#endif
+#ifdef PLD_psttfc
+    "psttfc:PostScript File (color):0:psttf:56:psttfc\n"
+#endif
+;
 
 
 // Prototypes for functions in this file.
 
-void plD_dispatch_init_psttfm( PLDispatchTable *pdt );
+#ifdef PLD_psttf
+void plD_dispatch_init_psttf( PLDispatchTable *pdt );
+#endif
+#ifdef PLD_psttfc
 void plD_dispatch_init_psttfc( PLDispatchTable *pdt );
+#endif
 
 static char  *ps_getdate( void );
 static void  ps_init( PLStream * );
 static void  fill_polygon( PLStream *pls );
 static void  proc_str( PLStream *, EscText * );
 //static void  esc_purge( char *, char * );
+static void psttf_dispatch_init_helper( PLDispatchTable *pdt,
+                                        const char *menustr, const char *devnam,
+                                        int type, int seq, plD_init_fp init );
 
 #define OUTBUF_LEN    128
 static char outbuf[OUTBUF_LEN];
@@ -141,20 +151,13 @@ static void psttf_dispatch_init_helper( PLDispatchTable *pdt,
     pdt->pl_esc      = (plD_esc_fp) plD_esc_psttf;
 }
 
-void plD_dispatch_init_psttfm( PLDispatchTable *pdt )
+#ifdef PLD_psttf
+void plD_dispatch_init_psttf( PLDispatchTable *pdt )
 {
     psttf_dispatch_init_helper( pdt,
         "PostScript File (monochrome)", "psttf",
         plDevType_FileOriented, 55,
-        (plD_init_fp) plD_init_psttfm );
-}
-
-void plD_dispatch_init_psttfc( PLDispatchTable *pdt )
-{
-    psttf_dispatch_init_helper( pdt,
-        "PostScript File (color)", "psttfc",
-        plDevType_FileOriented, 56,
-        (plD_init_fp) plD_init_psttfc );
+        (plD_init_fp) plD_init_psttf );
 }
 
 //--------------------------------------------------------------------------
@@ -164,7 +167,7 @@ void plD_dispatch_init_psttfc( PLDispatchTable *pdt )
 //--------------------------------------------------------------------------
 
 void
-plD_init_psttfm( PLStream *pls )
+plD_init_psttf( PLStream *pls )
 {
     color      = 0;
     pls->color = 0;             // Not a color device
@@ -173,6 +176,16 @@ plD_init_psttfm( PLStream *pls )
     if ( color )
         pls->color = 1;         // But user wants color
     ps_init( pls );
+}
+#endif //#ifdef PLD_psttf
+
+#ifdef PLD_psttfc
+void plD_dispatch_init_psttfc( PLDispatchTable *pdt )
+{
+    psttf_dispatch_init_helper( pdt,
+        "PostScript File (color)", "psttfc",
+        plDevType_FileOriented, 56,
+        (plD_init_fp) plD_init_psttfc );
 }
 
 void
@@ -186,6 +199,7 @@ plD_init_psttfc( PLStream *pls )
         pls->color = 0;         // But user does not want color
     ps_init( pls );
 }
+#endif //#ifdef PLD_psttfc
 
 #define MAX_NUM_TRIES    10
 static void
@@ -1306,12 +1320,3 @@ proc_str( PLStream *pls, EscText *args )
 //    }
 //    *dstr = '\0';
 //}
-
-#else
-int
-pldummy_psttf()
-{
-    return 0;
-}
-
-#endif                          // defined(PLD_psttf) || ....

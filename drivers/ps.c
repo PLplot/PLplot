@@ -1,12 +1,12 @@
 //      PLplot PostScript device driver.
 //
-// Copyright (C) 1992, 2001  Geoffrey Furnish
-// Copyright (C) 1992, 1993, 1994, 1995, 2001  Maurice LeBrun
-// Copyright (C) 2000-2014  Alan W. Irwin
-// Copyright (C) 2001, 2002  Joao Cardoso
-// Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
-// Copyright (C) 2004, 2005  Thomas J. Duck
-// Copyright (C) 2005  Andrew Ross
+// Copyright (C) 1992-2001 Geoffrey Furnish
+// Copyright (C) 1992-2001 Maurice LeBrun
+// Copyright (C) 2000-2018 Alan W. Irwin
+// Copyright (C) 2001-2002 Joao Cardoso
+// Copyright (C) 2001-2004 Rafael Laboissiere
+// Copyright (C) 2004-2005 Thomas J. Duck
+// Copyright (C) 2005 Andrew Ross
 //
 // This file is part of PLplot.
 //
@@ -30,7 +30,6 @@
 
 #define DEBUG
 
-#ifdef PLD_ps
 #define NEED_PLDEBUG
 #include "plplotP.h"
 #include "drivers.h"
@@ -48,21 +47,31 @@
 // Device info
 
 PLDLLIMPEXP_DRIVER const char* plD_DEVICE_INFO_ps =
-    "ps:PostScript File (monochrome):0:ps:29:psm\n"
-    "psc:PostScript File (color):0:ps:30:psc\n";
-
+#ifdef PLD_ps
+    "ps:PostScript File (monochrome):0:ps:29:ps\n"
+#endif
+#ifdef PLD_psc
+    "psc:PostScript File (color):0:ps:30:psc\n"
+#endif
+;
 
 // Prototypes for functions in this file.
 
-void plD_dispatch_init_psm( PLDispatchTable *pdt );
+#ifdef PLD_ps
+void plD_dispatch_init_ps( PLDispatchTable *pdt );
+#endif
+#ifdef PLD_psc
 void plD_dispatch_init_psc( PLDispatchTable *pdt );
+#endif
 
-static char  *ps_getdate( void );
-static void  ps_init( PLStream * );
-static void  fill_polygon( PLStream *pls );
-static void  proc_str( PLStream *, EscText * );
-static void  esc_purge( unsigned char *, unsigned char * );
-
+static char *ps_getdate( void );
+static void ps_init( PLStream * );
+static void fill_polygon( PLStream *pls );
+static void proc_str( PLStream *, EscText * );
+static void esc_purge( unsigned char *, unsigned char * );
+static void ps_dispatch_init_helper( PLDispatchTable *pdt,
+                                     const char *menustr, const char *devnam,
+                                     int type, int seq, plD_init_fp init );
 #define OUTBUF_LEN    128
 static char   outbuf[OUTBUF_LEN];
 static int    text = 1;
@@ -110,20 +119,13 @@ static void ps_dispatch_init_helper( PLDispatchTable *pdt,
     pdt->pl_esc      = (plD_esc_fp) plD_esc_ps;
 }
 
-void plD_dispatch_init_psm( PLDispatchTable *pdt )
+#ifdef PLD_ps
+void plD_dispatch_init_ps( PLDispatchTable *pdt )
 {
     ps_dispatch_init_helper( pdt,
         "PostScript File (monochrome)", "ps",
         plDevType_FileOriented, 29,
-        (plD_init_fp) plD_init_psm );
-}
-
-void plD_dispatch_init_psc( PLDispatchTable *pdt )
-{
-    ps_dispatch_init_helper( pdt,
-        "PostScript File (color)", "psc",
-        plDevType_FileOriented, 30,
-        (plD_init_fp) plD_init_psc );
+        (plD_init_fp) plD_init_ps );
 }
 
 //--------------------------------------------------------------------------
@@ -133,7 +135,7 @@ void plD_dispatch_init_psc( PLDispatchTable *pdt )
 //--------------------------------------------------------------------------
 
 void
-plD_init_psm( PLStream *pls )
+plD_init_ps( PLStream *pls )
 {
     color      = 0;
     pls->color = 0;             // Not a color device
@@ -142,6 +144,16 @@ plD_init_psm( PLStream *pls )
     if ( color )
         pls->color = 1;         // But user wants color
     ps_init( pls );
+}
+#endif //#ifdef PLD_ps
+
+#ifdef PLD_psc
+void plD_dispatch_init_psc( PLDispatchTable *pdt )
+{
+    ps_dispatch_init_helper( pdt,
+        "PostScript File (color)", "psc",
+        plDevType_FileOriented, 30,
+        (plD_init_fp) plD_init_psc );
 }
 
 void
@@ -155,6 +167,7 @@ plD_init_psc( PLStream *pls )
         pls->color = 0;         // But user does not want color
     ps_init( pls );
 }
+#endif //#ifdef PLD_psc
 
 static void
 ps_init( PLStream *pls )
@@ -1216,12 +1229,3 @@ get_font( PSDev* dev, PLUNICODE fci )
     pldebug( "set_font", "fci = 0x%x, font name = %s\n", fci, font );
     return ( font );
 }
-
-#else
-int
-pldummy_ps()
-{
-    return 0;
-}
-
-#endif                          // PLD_ps

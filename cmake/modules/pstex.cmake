@@ -25,13 +25,12 @@
 
 # N.B. this device driver is parasitic on the ps device driver so you cannot
 # enable pstex without ps being enabled.
-if(PLD_pstex AND NOT PLD_ps)
+if(PLD_pstex AND NOT (PLD_ps AND PLD_psc))
   message(STATUS
-  "WARNING: PLD_ps is OFF so must set PLD_pstex (which depends on PLD_ps) "
-  "to OFF."
-  )
+    "WARNING: PLD_ps and PLD_psc are not both ON so must set PLD_pstex (which depends on both of them) to OFF."
+    )
   set(PLD_pstex OFF CACHE BOOL "Enable pstex device" FORCE)
-endif(PLD_pstex AND NOT PLD_ps)
+endif(PLD_pstex AND NOT (PLD_ps AND PLD_psc))
 
 if(PLD_pstex AND ENABLE_DYNDRIVERS)
   # N.B. the pstex.c code is parasitic on the ps.c code so must be combined

@@ -1,6 +1,6 @@
 # cmake/modules/psttf.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -22,7 +22,8 @@
 #
 # The following variables are set / modified
 #
-# PLD_psttf               - ON means the psttf and psttfc devices are enabled.
+# PLD_psttf               - ON means the psttf device is enabled.
+# PLD_psttfc              - ON means the psttfc device is enabled.
 # psttf_COMPILE_FLAGS  	  - blank-separated COMPILE_FLAGS required to
 #			    compile psttf device driver.
 # psttf_LINK_FLAGS     	  - list of LINK_FLAGS for dynamic psttf device driver.
@@ -36,26 +37,28 @@
 # set the environment variable CMAKE_LIBRARY_PATH.
 # See cmake documentation for further details.
 
-if(PLD_psttf)
+if(PLD_psttf OR PLD_psttfc)
   if(NOT CMAKE_CXX_COMPILER_WORKS)
     message(STATUS "WARNING: no working C++ compiler so "
-      "setting psttf device to OFF."
+      "setting PLD_psttf and PLD_psttfc to OFF."
       )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+    set(PLD_psttfc OFF CACHE BOOL "Enable psttfc device" FORCE)
   endif(NOT CMAKE_CXX_COMPILER_WORKS)
-endif(PLD_psttf)
+endif(PLD_psttf OR PLD_psttfc)
 
 # Look for psttf headers and libraries with pkg-config
-if(PLD_psttf)
+if(PLD_psttf OR PLD_psttfc)
   if(NOT PKG_CONFIG_EXECUTABLE)
     message(STATUS
-    "WARNING: pkg-config not found. Setting PLD_psttf to OFF."
+    "WARNING: pkg-config not found so setting PLD_psttf and PLD_psttfc to OFF."
     )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+    set(PLD_psttfc OFF CACHE BOOL "Enable psttfc device" FORCE)
   endif(NOT PKG_CONFIG_EXECUTABLE)
-endif(PLD_psttf)
+endif(PLD_psttf OR PLD_psttfc)
 
-if(PLD_psttf)
+if(PLD_psttf OR PLD_psttfc)
   pkg_check_pkgconfig("lasi;pango;pangoft2" includedir libdir linkflags cflags version _PSTTF)
   if(linkflags)
     #blank-separated required.
@@ -71,11 +74,12 @@ if(PLD_psttf)
     message("cflags = ${cflags}")
     message(STATUS
        "WARNING: pango, pangoft2, or lasi not found with pkg-config.\n"
-    "   Setting PLD_psttf to OFF.  Please install all of these packages\n"
+    "   Setting PLD_psttf and PLD_psttfc to OFF.  Please install all of these packages\n"
     "   and/or set the environment variable PKG_CONFIG_PATH appropriately."
     )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+    set(PLD_psttfc OFF CACHE BOOL "Enable psttfc device" FORCE)
   endif(linkflags)
-endif(PLD_psttf)
+endif(PLD_psttf OR PLD_psttfc)
 # Test for correct version of liblasi by looking
 # for API that was added for 1.0.5 which is required by PLplot.???

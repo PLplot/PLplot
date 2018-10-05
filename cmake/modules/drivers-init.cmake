@@ -2,7 +2,7 @@
 #
 # Start driver initializations
 #
-# Copyright (C) 2006-2015  Alan W. Irwin
+# Copyright (C) 2006-2018  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -171,10 +171,12 @@ set(DRIVERS_DEVICE_LIST
   # yet.... :-)
   "plmeta:plmeta:OFF:F:OFF"
   "ps:ps:ON:F:OFF"
+  "psc:ps:ON:F:OFF"
   # No longer segfaults, but still default OFF because cleaner/better ways
   # (psttf and pscairo) to get modern fonts for postscript results.
   "pstex:pstex:OFF:F:OFF"
   "psttf:psttf:ON:F:OFF"
+  "psttfc:psttf:ON:F:OFF"
   "svg:svg:ON:F:ON"
   "tk:tk:ON:I:OFF"
   "tkwin:tkwin:ON:E:OFF"
