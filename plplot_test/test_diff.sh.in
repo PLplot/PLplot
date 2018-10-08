@@ -21,26 +21,25 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
-# Default device is psc. Will also work with svg.
-device=${DEVICE:-psc}
-
 usage()
 {
 echo '
 Usage: test_diff.sh [OPTIONS]
 
 Options:
-   [--device=DEVICE] (DEVICE = any cmake-enabled device.  psc is the default)
+   [--device=DEVICE] (DEVICE = any CMake-enabled noninteractive PLplot device.  svg is the default)
+   [--familied_device=STRING] (STRING should be "yes" if a familied device or anything else if not
+                              a familied device.  The default is "yes" to be consistent with
+                              the svg familied device default.)
    [--help]
-
-Environment variables:
-   DEVICE can be used to specify the device. This environment variable is
-   overwritten by the --device option.
 '
    exit $1
 }
 
 # Figure out what script options were specified by the user.
+
+device="svg"
+familied_device="yes"
 
 while test $# -gt 0; do
    if [ "@HAVE_BASH@" = "ON" ] ; then
@@ -56,37 +55,52 @@ while test $# -gt 0; do
    fi
    case $1 in
       --device=*)
-         device=$optarg
-         ;;
+          device=$optarg
+          ;;
+      --familied_device=*)
+          familied_device=$optarg
+          ;;
       --help)
-         usage 0 1>&2
-         ;;
+          usage 0 1>&2
+          ;;
       *)
-         usage 1 1>&2
-         ;;
+          usage 1 1>&2
+          ;;
    esac
    shift
 done
-
 
 ret=0
 # Comparison C results have no xsuffix.
 xsuffix_c=
 
-echo -e "\nComparison test using ${device} device\n"
-
-if [ "${device}" = "svg" ] ; then
-    usefam="yes"
+if [ "${familied_device}" = "yes" ] ; then
+    echo -e "\nComparison test using ${device} device which has been asserted to be familied.\n"
     firstpage="01"
 else
-    usefam="no"
+    echo -e "\nComparison test using ${device} device which has been asserted to be non-familied.\n"
     firstpage=""
+fi
+
+if [ "${device}" = "psc" ] || [ "${device}" = "ps" ] ; then
+    date_stamped="yes"
+    # Number of initial bytes to ignore to avoid datestamp
+    ignore_bytes=190
+    # Number of initial lines to ignore plus 1 (to indicate
+    # which line to use to start the comparison) to avoid datestamp.
+    ignore_lines_p1=9
+elif [ "${device}" = "psttfc" ] || [ "${device}" = "psttf" ] ; then
+    date_stamped="yes"
+    ignore_bytes=520
+    ignore_lines=17
+else
+    date_stamped=""
 fi
 
 # Compare C results with the following list of languages
 for lang in adastandard adatraditional c++ d fortran java lua ocaml octave plrender python tcl ; do
-  # Check which suffix is used for this binding
-  case $lang in
+    # Check which suffix is used for this binding
+    case $lang in
 	adastandard)
 	    xsuffix=standard
 	    suffix=a
@@ -147,75 +161,76 @@ for lang in adastandard adatraditional c++ d fortran java lua ocaml octave plren
     # Check if any examples exist for this language.
     EXAMPLES_EXIST="no"
     for index in ${INDEX_LIST} ; do
-	  if [ -f x${xsuffix}${index}${suffix}${firstpage}.${device} ] ; then
+	if [ -f x${xsuffix}${index}${suffix}${firstpage}.${device} ] ; then
 	    EXAMPLES_EXIST="yes"
 	    break
-	  fi
+	fi
     done
     if [ "$EXAMPLES_EXIST" = "yes" ] ; then
-	  for index in ${INDEX_LIST} ; do
+	for index in ${INDEX_LIST} ; do
 	    if [ ! -f x${xsuffix_c}${index}c${firstpage}.${device} ] ; then
-                 echo "C example ${index} is missing"
-	      else
-		  if [ ! -f x${xsuffix}${index}${suffix}${firstpage}.${device} ] ; then
+                echo "C example ${index} is missing"
+	    else
+		if [ ! -f x${xsuffix}${index}${suffix}${firstpage}.${device} ] ; then
 		    missing="${missing} ${index}"
-		  else
-                      if [ "${usefam}" = "yes" ] ; then
-                          let i=1
-                          p="01"
-                          pages=""
-                          while [ -f "x${xsuffix_c}${index}c${p}.${device}" ] ; do
-                              pages="${pages} ${p}"
-                              let i=i+1
-                              printf -v p "%02d" $i
-                          done
-                      else
-                          pages="xxx"
-                      fi
-                      isdiff="no"
-                      for p in $pages ; do
-                      if [ ${p} = "xxx" ] ; then
-                          p=""
-                      fi
-		      if [ "@HAVE_CMP_I@" = "ON" ] ; then
-                          if [ "${device}" = "psc" ] || [ "${device}" = "ps" ] ; then
-		              # Skip first 190 bytes of comparison to ignore date stamp.
-			      @CMP_EXECUTABLE@ -s -i 190 x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device}
-                          else
-			      @CMP_EXECUTABLE@ -s x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device}
-                          fi
-			  if [ $? != 0 ] && [ ! "${isdiff}" = "yes" ] ; then
-			    different="${different} ${index}"
-                            isdiff="yes"
-			  fi
-		    else
-                          if [ "${device}" = "psc" ] || [ "${device}" = "ps" ] ; then
-		              # Drop first 8 lines from comparison to ignore date stamp.
-			      @TAIL_EXECUTABLE@ -n +9 x${xsuffix_c}${index}c${p}.${device} > test1.${device}
-			      @TAIL_EXECUTABLE@ -n +9 x${xsuffix}${index}${suffix}${p}.${device} > test2.${device}
-			      @DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
-                          else
-			      @DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device} 2>&1 > /dev/null
-                          fi
-			  if [ $? != 0 ] && [ ! "${isdiff}" = "yes" ] ; then
-			    different="${different} ${index}"
-                            isdiff="yes"
-			  fi
-		    fi
+		else
+                    if [ "${familied_device}" = "yes" ] ; then
+                        let i=1
+                        p="01"
+                        pages=""
+                        while [ -f "x${xsuffix_c}${index}c${p}.${device}" ] ; do
+                            pages="${pages} ${p}"
+                            let i=i+1
+                            printf -v p "%02d" $i
+                        done
+                    else
+                        pages="xxx"
+                    fi
+                    isdiff="no"
+                    for p in $pages ; do
+			if [ ${p} = "xxx" ] ; then
+                            p=""
+			fi
+			if [ "@HAVE_CMP_I@" = "ON" ] ; then
+			    if [ "${date_stamped}" = "yes" ] ; then
+				# Skip first ${ignore_bytes} bytes of comparison to ignore date stamp.
+				@CMP_EXECUTABLE@ -s -i ${ignore_bytes} x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device}
+                            else
+				@CMP_EXECUTABLE@ -s x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device}
+                            fi
+			    if [ $? != 0 ] && [ ! "${isdiff}" = "yes" ] ; then
+				different="${different} ${index}"
+				isdiff="yes"
+			    fi
+			else
+			    if [ "${date_stamped}" = "yes" ] ; then
+				# Drop first ${ignore_lines_p1} -1 lines from comparison (i.e., start
+				# comparing at line ${ignore_lines_p1}) to ignore date stamp.
+				@TAIL_EXECUTABLE@ -n +${ignore_lines_p1} x${xsuffix_c}${index}c${p}.${device} > test1.${device}
+				@TAIL_EXECUTABLE@ -n +${ignore_lines_p1} x${xsuffix}${index}${suffix}${p}.${device} > test2.${device}
+				@DIFF_EXECUTABLE@ -q test1.psc test2.psc 2>&1 > /dev/null
+                            else
+				@DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c${p}.${device} x${xsuffix}${index}${suffix}${p}.${device} 2>&1 > /dev/null
+                            fi
+			    if [ $? != 0 ] && [ ! "${isdiff}" = "yes" ] ; then
+				different="${different} ${index}"
+				isdiff="yes"
+			    fi
+			fi
                     done
 		    if [ "$index" != "14a" ] ; then
-			  if [ -f x${xsuffix}${index}${suffix}_${device}.txt ] ; then
+			if [ -f x${xsuffix}${index}${suffix}_${device}.txt ] ; then
 			    @DIFF_EXECUTABLE@ -q x${xsuffix_c}${index}c_${device}.txt x${xsuffix}${index}${suffix}_${device}.txt 2>&1 > /dev/null
 			    if [ $? != 0 ] ; then
-				  diffstdout="${diffstdout} ${index}"
+				diffstdout="${diffstdout} ${index}"
 			    fi
-			  else
+			else
 			    missingstdout="${missingstdout} ${index}"
-			  fi
+			fi
 		    fi
-		  fi
+		fi
 	    fi
-	  done
+	done
 	echo "${lang}"
 	echo "  Missing examples            : ${missing}"
 	echo "  Differing graphical output  : ${different}"
@@ -224,7 +239,7 @@ for lang in adastandard adatraditional c++ d fortran java lua ocaml octave plren
 	if [ "${different}" != "" -o "${diffstdout}" != "" ] ; then
 	    ret=1
 	fi
-  fi
+    fi
 done
 
 if [ "${ret}" != "0" ] ; then

@@ -227,11 +227,13 @@ set(PLD_extqt @PLD_extqt@)
 # Needed to optionally drop creation and testing of extXdrawable_demo target.
 set(DROP_GTK_PLUS_2_BUILDS @DROP_GTK_PLUS_2_BUILDS@)
 
-# Needed to check if diff and tail on system for test_diff_psc target.
-
+# Needed for test_diff_device target and corresponding ctest examples_compare test.
+set(PLPLOT_TEST_DEVICE @PLPLOT_TEST_DEVICE@)
+set(FAMILIED_PLPLOT_TEST_DEVICE @FAMILIED_PLPLOT_TEST_DEVICE@)
 set(DIFF_EXECUTABLE @DIFF_EXECUTABLE@)
 set(TAIL_EXECUTABLE @TAIL_EXECUTABLE@)
 set(CMP_EXECUTABLE @CMP_EXECUTABLE@)
+set(TEST_DIFF @TEST_DIFF@)
 
 # ocaml examples build needs this.
 set(USE_RPATH @USE_RPATH@)

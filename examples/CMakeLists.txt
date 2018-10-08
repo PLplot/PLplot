@@ -27,67 +27,68 @@ if(CORE_BUILD)
   # traditional Makefile + pkg-config installed examples build.
 
   # cxx and tk subdirectories are special cases.
-  if(PLD_psc)
-    # PSC_C_COMMENT not disabled so must disable PSC_COMMENT instead which
-    # otherwise would configure the same target.
-    set(PSC_COMMENT "#")
+  if(PLD_${PLPLOT_TEST_DEVICE})
+    # DEVICE_C_COMMENT not disabled so must disable UPPERCASED(${PLPLOT_TEST_DEVICE})_COMMENT
+    # instead which otherwise would configure the same target.
+    string(TOUPPER ${PLPLOT_TEST_DEVICE} UPPERCASED_PLPLOT_TEST_DEVICE)
+    set(${UPPERCASED_PLPLOT_TEST_DEVICE}_COMMENT "#")
     if(NOT ENABLE_ada)
-      set(PSC_ADA_COMMENT "#")
+      set(DEVICE_ADA_COMMENT "#")
     endif(NOT ENABLE_ada)
 
     if(NOT ENABLE_cxx)
-      set(PSC_CXX_COMMENT "#")
+      set(DEVICE_CXX_COMMENT "#")
     endif(NOT ENABLE_cxx)
 
     if(NOT ENABLE_d)
-      set(PSC_D_COMMENT "#")
+      set(DEVICE_D_COMMENT "#")
     endif(NOT ENABLE_d)
 
     if(NOT ENABLE_fortran)
-      set(PSC_FORTRAN_COMMENT "#")
+      set(DEVICE_FORTRAN_COMMENT "#")
     endif(NOT ENABLE_fortran)
 
     if(NOT ENABLE_java)
-      set(PSC_JAVA_COMMENT "#")
+      set(DEVICE_JAVA_COMMENT "#")
     endif(NOT ENABLE_java)
 
     if(NOT ENABLE_ocaml)
-      set(PSC_OCAML_COMMENT "#")
+      set(DEVICE_OCAML_COMMENT "#")
     endif(NOT ENABLE_ocaml)
 
     if(NOT ENABLE_octave)
-      set(PSC_OCTAVE_COMMENT "#")
+      set(DEVICE_OCTAVE_COMMENT "#")
     endif(NOT ENABLE_octave)
 
     if(NOT ENABLE_python)
-      set(PSC_PYTHON_COMMENT "#")
+      set(DEVICE_PYTHON_COMMENT "#")
     endif(NOT ENABLE_python)
 
     if(NOT ENABLE_tcl)
-      set(PSC_TCL_COMMENT "#")
+      set(DEVICE_TCL_COMMENT "#")
     endif(NOT ENABLE_tcl)
 
     if(NOT ENABLE_lua)
-      set(PSC_LUA_COMMENT "#")
+      set(DEVICE_LUA_COMMENT "#")
     endif(NOT ENABLE_lua)
 
-  else(PLD_psc)
-    set(PSC_ADA_COMMENT "#")
-    set(PSC_C_COMMENT "#")
-    set(PSC_CXX_COMMENT "#")
-    set(PSC_D_COMMENT "#")
-    set(PSC_FORTRAN_COMMENT "#")
-    set(PSC_JAVA_COMMENT "#")
-    set(PSC_OCAML_COMMENT "#")
-    set(PSC_OCTAVE_COMMENT "#")
-    set(PSC_PYTHON_COMMENT "#")
-    set(PSC_TCL_COMMENT "#")
-    set(PSC_LUA_COMMENT "#")
-  endif(PLD_psc)
+  else(PLD_${PLPLOT_TEST_DEVICE})
+    set(DEVICE_ADA_COMMENT "#")
+    set(DEVICE_C_COMMENT "#")
+    set(DEVICE_CXX_COMMENT "#")
+    set(DEVICE_D_COMMENT "#")
+    set(DEVICE_FORTRAN_COMMENT "#")
+    set(DEVICE_JAVA_COMMENT "#")
+    set(DEVICE_OCAML_COMMENT "#")
+    set(DEVICE_OCTAVE_COMMENT "#")
+    set(DEVICE_PYTHON_COMMENT "#")
+    set(DEVICE_TCL_COMMENT "#")
+    set(DEVICE_LUA_COMMENT "#")
+  endif(PLD_${PLPLOT_TEST_DEVICE})
 
-  if(NOT(ENABLE_cxx AND (PLD_psc OR ENABLE_qt OR ENABLE_wxwidgets)))
+  if(NOT(ENABLE_cxx AND (PLD_${PLPLOT_TEST_DEVICE} OR ENABLE_qt OR ENABLE_wxwidgets)))
     set(CXX_COMMENT "#")
-  endif(NOT(ENABLE_cxx AND (PLD_psc OR ENABLE_qt OR ENABLE_wxwidgets)))
+  endif(NOT(ENABLE_cxx AND (PLD_${PLPLOT_TEST_DEVICE} OR ENABLE_qt OR ENABLE_wxwidgets)))
 
   if(NOT ENABLE_tkX)
     set(TK_COMMENT "#")
@@ -153,11 +154,11 @@ if(CORE_BUILD)
     set(PSTEX_COMMENT "#")
   endif(NOT PLD_pstex)
 
-  if(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  if(TEST_DIFF)
     set(COMPARE_COMMENT)
-  else(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  else(TEST_DIFF)
     set(COMPARE_COMMENT "#")
-  endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  endif(TEST_DIFF)
 
   if(NOT PLD_cgm)
     set(CGM_COMMENT "#")
@@ -569,16 +570,15 @@ if(BUILD_TEST)
   set(compare_command ${SH_EXECUTABLE} ${compare_script})
 
   set(tcl_targets_LIST)
-  if(PLD_psc)
+  if(PLD_${PLPLOT_TEST_DEVICE})
     set(compare_file_depends ${custom_test_script})
     if(ENABLE_DYNDRIVERS)
-      # The ps shared object implements both the psc (and ps) devices.
-      get_property(ps_file_depends GLOBAL PROPERTY FILE_DEPENDS_ps_dyndriver)
-      # ps_file_depends contains the filename associated with testing ps.
+      get_property(${PLPLOT_TEST_DEVICE}_file_depends GLOBAL PROPERTY FILE_DEPENDS_${PLPLOT_TEST_DEVICE}_dyndriver)
+      # ${PLPLOT_TEST_DEVICE}_file_depends contains the filename associated with testing ${PLPLOT_TEST_DEVICE}.
       # It is empty if not a core build.
-      # The file dependency on ps takes care of all
-      # target and file dependencies associated with ps.
-      list(APPEND compare_file_depends ${ps_file_depends} PLPLOT::ps)
+      # The file dependency on ${PLPLOT_TEST_TARGET} takes care of all
+      # target and file dependencies associated with the driver or plplot library target corresponding to ${PLPLOT_TEST_DEVICE}.
+      list(APPEND compare_file_depends ${${PLPLOT_TEST_DEVICE}_file_depends} ${PLPLOT_TEST_TARGET})
     endif(ENABLE_DYNDRIVERS)
 
     set(diff_targets_LIST)
@@ -623,22 +623,22 @@ if(BUILD_TEST)
 	  set(environment ${custom_env})
 	endif(language STREQUAL "java")
 
-	list_example_files(${TEST_EXAMPLES_OUTPUT_DIR} psc ${suffix} output_list)
+	list_example_files(${TEST_EXAMPLES_OUTPUT_DIR} ${PLPLOT_TEST_DEVICE} ${suffix} output_list)
 	add_custom_command(
 	  OUTPUT ${output_list}
-	  COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for psc device"
-	  COMMAND env ${environment} ${custom_test_command} --verbose --front-end=${language} --device=psc ${plplot_test_debug}
+	  COMMAND ${CMAKE_COMMAND} -E echo "Generate ${language} results for ${PLPLOT_TEST_DEVICE} device"
+	  COMMAND env ${environment} ${custom_test_command} --verbose --front-end=${language} --device=${PLPLOT_TEST_DEVICE} ${plplot_test_debug}
 	  DEPENDS ${compare_file_depends_${language}}
 	  VERBATIM
 	  )
-	add_custom_target(test_${language}_psc
+	add_custom_target(test_${language}_${PLPLOT_TEST_DEVICE}
 	  DEPENDS ${output_list}
 	  )
-	list(APPEND diff_targets_LIST test_${language}_psc)
+	list(APPEND diff_targets_LIST test_${language}_${PLPLOT_TEST_DEVICE})
 	list(APPEND diff_files_LIST ${output_list})
 
 	if(language STREQUAL "tcl")
-	  list(APPEND tcl_targets_LIST test_${language}_psc)
+	  list(APPEND tcl_targets_LIST test_${language}_${PLPLOT_TEST_DEVICE})
 	endif(language STREQUAL "tcl")
 
 	# If the subdirectory used an add_custom_target (as indicated
@@ -647,30 +647,30 @@ if(BUILD_TEST)
 	# dependency as demanded by the CMake implementation.
 	if(files_examples_${language} AND targets_examples_${language})
 	  #message(STATUS "DEBUG: targets_examples_${language} = ${targets_examples_${language}}")
-	  add_dependencies(test_${language}_psc ${targets_examples_${language}})
+	  add_dependencies(test_${language}_${PLPLOT_TEST_DEVICE} ${targets_examples_${language}})
 	endif(files_examples_${language} AND targets_examples_${language})
-	# ps_file_depends is empty if test_ps_dyndriver target is not defined.
-	if(TARGET test_ps_dyndriver)
-	  add_dependencies(test_${language}_psc test_ps_dyndriver)
-	endif(TARGET test_ps_dyndriver)
+	# ${PLPLOT_TEST_DEVICE}_file_depends is empty if test_${PLPLOT_TEST_DEVICE}_dyndriver target is not defined.
+	if(TARGET test_${PLPLOT_TEST_DEVICE}_dyndriver)
+	  add_dependencies(test_${language}_${PLPLOT_TEST_DEVICE} test_${PLPLOT_TEST_DEVICE}_dyndriver)
+	endif(TARGET test_${PLPLOT_TEST_DEVICE}_dyndriver)
       endif(ENABLE_${language})
     endforeach(language_info ${language_info_LIST})
 
-    if(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+    if(TEST_DIFF)
       # Note this target has complete file and target dependencies for
-      # a comparison of stdout and PostScript results.
-      add_custom_target(test_diff_psc COMMAND ${compare_command}
+      # a comparison of stdout and -dev ${PLPLOT_TEST_DEVICE} results for various languages.
+      add_custom_target(test_diff_device COMMAND ${compare_command} --device=${PLPLOT_TEST_DEVICE} --familied_device=${FAMILIED_PLPLOT_TEST_DEVICE}
 	DEPENDS ${diff_files_LIST}
 	WORKING_DIRECTORY ${TEST_EXAMPLES_OUTPUT_DIR}
 	)
-      add_dependencies(test_diff_psc ${diff_targets_LIST})
-      set(noninteractive_targets_LIST test_diff_psc)
-    else(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+      add_dependencies(test_diff_device ${diff_targets_LIST})
+      set(noninteractive_targets_LIST test_diff_device)
+    else(TEST_DIFF)
       set(noninteractive_targets_LIST)
-    endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
-  else(PLD_psc)
+    endif(TEST_DIFF)
+  else(PLD_${PLPLOT_TEST_DEVICE})
     set(noninteractive_targets_LIST)
-  endif(PLD_psc)
+  endif(PLD_${PLPLOT_TEST_DEVICE})
 
   # ENABLE_c is always ON by construction, but test it anyway for
   # consistency sake.
@@ -698,8 +698,9 @@ if(BUILD_TEST)
       string(REGEX REPLACE "^.*:(.*):.*$" "\\1" driver ${file_devices_info})
       string(REGEX REPLACE "^.*:.*:(.*)$" "\\1" familied ${file_devices_info})
 
-      # Exclude psc device which is already dealt with above.
-      if(NOT device STREQUAL psc)
+      # Must exclude device ${PLPLOT_TEST_DEVICE} from this loop because configuration
+      # of the test_c_${PLPLOT_TEST_DEVICE} target has already been done above.
+      if(NOT device STREQUAL ${PLPLOT_TEST_DEVICE})
 	set(${device}_file_device_depends ${device_depends})
 	if(ENABLE_DYNDRIVERS)
 	  get_property(${driver}_file_depends
@@ -731,8 +732,8 @@ if(BUILD_TEST)
 	if(files_examples_c AND targets_examples_c)
 	  add_dependencies(test_c_${device} ${targets_examples_c})
 	endif(files_examples_c AND targets_examples_c)
-      endif(NOT device STREQUAL psc)
-      endforeach(file_devices_info ${FILE_DEVICES_LIST})
+      endif(NOT device STREQUAL ${PLPLOT_TEST_DEVICE})
+    endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
     set(interactive_targets_LIST)
     set(tk_targets_LIST)

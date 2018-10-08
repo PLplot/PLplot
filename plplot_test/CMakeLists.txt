@@ -38,7 +38,6 @@ if(SH_EXECUTABLE)
     "EXAMPLES_PREFIX=${CMAKE_BINARY_DIR_ESCAPED}/examples SRC_EXAMPLES_PREFIX=${CMAKE_SOURCE_DIR_ESCAPED}/examples OUTPUT_DIR=${CTEST_EXAMPLES_OUTPUT_DIR_ESCAPED} VC_CTEST_DIRECTORY=${VC_CTEST_DIRECTORY}"
     )
   message(STATUS "TEST_ENVIRONMENT = ${TEST_ENVIRONMENT}")
-  set(PLPLOT_TEST_DEVICE psc CACHE STRING "device used for ctest")
   set(PLD_TEST_DEVICE ${PLD_${PLPLOT_TEST_DEVICE}})
 
   set(TEST_SCRIPT "./plplot-test.sh --verbose")
@@ -402,7 +401,7 @@ if(SH_EXECUTABLE)
     endif(NOT PLPLOT_TEST_DEVICE STREQUAL device)
   endforeach(file_devices_info ${FILE_DEVICES_LIST})
 
-  if(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  if(TEST_DIFF)
     configure_file(
       test_diff.sh.in
       ${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh
@@ -413,7 +412,7 @@ if(SH_EXECUTABLE)
     string(REPLACE " " "\\ " TEST_DIFF_SH "${CMAKE_CURRENT_BINARY_DIR}/test_diff.sh")
     add_test(NAME examples_compare
       WORKING_DIRECTORY ${CTEST_EXAMPLES_OUTPUT_DIR}
-      COMMAND ${SH_EXECUTABLE} -c "${TEST_DIFF_SH} --device=${PLPLOT_TEST_DEVICE}"
+      COMMAND ${SH_EXECUTABLE} -c "${TEST_DIFF_SH} --device=${PLPLOT_TEST_DEVICE} --familied_device=${FAMILIED_PLPLOT_TEST_DEVICE}"
       )
     # Always force examples_compare to be run after the other tests it depends on.
     #message(STATUS "DEBUG: examples_compare_DEPENDS = ${examples_compare_DEPENDS}")
@@ -421,7 +420,7 @@ if(SH_EXECUTABLE)
       PROPERTIES
       DEPENDS "${examples_compare_DEPENDS}"
       )
-  endif(CMP_EXECUTABLE OR DIFF_EXECUTABLE AND TAIL_EXECUTABLE)
+  endif(TEST_DIFF)
 
   if(BUILD_TEST)
     # Make a copy of Chloe.pgm to the test subdirectory of the build

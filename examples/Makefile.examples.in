@@ -33,26 +33,26 @@ c_clean:
 	cd c; $(MAKE) clean
 .PHONY: c_clean
 clean: c_clean
-@PSC_C_COMMENT@x01c.psc: c/x01c@EXEEXT@
-@PSC_C_COMMENT@	@echo Generate C results for psc device
-@PSC_C_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=psc
-@PSC_C_COMMENT@test_noninteractive: x01c.psc
-@PSC_C_COMMENT@@COMPARE_COMMENT@compare: x01c.psc
+@DEVICE_C_COMMENT@x01c@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: c/x01c@EXEEXT@
+@DEVICE_C_COMMENT@	@echo Generate C results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_C_COMMENT@	./plplot-test.sh --verbose --front-end=c --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_C_COMMENT@test_noninteractive: x01c@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_C_COMMENT@@COMPARE_COMMENT@compare: x01c@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 # Just for c, c++, and tk directories
 test_interactive: c/x01c@EXEEXT@
 
-@PSC_ADA_COMMENT@all: ada/x01a@EXEEXT@
-@PSC_ADA_COMMENT@ada/x01a@EXEEXT@:
-@PSC_ADA_COMMENT@	cd ada; $(MAKE)
-@PSC_ADA_COMMENT@ada_clean:
-@PSC_ADA_COMMENT@	cd ada; $(MAKE) clean
-@PSC_ADA_COMMENT@.PHONY: ada_clean
-@PSC_ADA_COMMENT@clean: ada_clean
-@PSC_ADA_COMMENT@x01a.psc: ada/x01a@EXEEXT@
-@PSC_ADA_COMMENT@	@echo Generate Ada results for psc device
-@PSC_ADA_COMMENT@	./plplot-test.sh --verbose --front-end=ada --device=psc
-@PSC_ADA_COMMENT@test_noninteractive: x01a.psc
-@PSC_ADA_COMMENT@@COMPARE_COMMENT@compare: x01a.psc
+@DEVICE_ADA_COMMENT@all: ada/x01a@EXEEXT@
+@DEVICE_ADA_COMMENT@ada/x01a@EXEEXT@:
+@DEVICE_ADA_COMMENT@	cd ada; $(MAKE)
+@DEVICE_ADA_COMMENT@ada_clean:
+@DEVICE_ADA_COMMENT@	cd ada; $(MAKE) clean
+@DEVICE_ADA_COMMENT@.PHONY: ada_clean
+@DEVICE_ADA_COMMENT@clean: ada_clean
+@DEVICE_ADA_COMMENT@x01a@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: ada/x01a@EXEEXT@
+@DEVICE_ADA_COMMENT@	@echo Generate Ada results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_ADA_COMMENT@	./plplot-test.sh --verbose --front-end=ada --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_ADA_COMMENT@test_noninteractive: x01a@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_ADA_COMMENT@@COMPARE_COMMENT@compare: x01a@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
 @CXX_COMMENT@all: c++/x01@EXEEXT@
 @CXX_COMMENT@c++/x01@EXEEXT@:
@@ -61,89 +61,89 @@ test_interactive: c/x01c@EXEEXT@
 @CXX_COMMENT@	cd c++; $(MAKE) clean
 @CXX_COMMENT@.PHONY: cxx_clean
 @CXX_COMMENT@clean: cxx_clean
-@PSC_CXX_COMMENT@x01cxx.psc: c++/x01@EXEEXT@
-@PSC_CXX_COMMENT@	@echo Generate C++ results for psc device
-@PSC_CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=psc
-@PSC_CXX_COMMENT@test_noninteractive: x01cxx.psc
-@PSC_CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx.psc
+@DEVICE_CXX_COMMENT@x01cxx@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: c++/x01@EXEEXT@
+@DEVICE_CXX_COMMENT@	@echo Generate C++ results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_CXX_COMMENT@	./plplot-test.sh --verbose --front-end=cxx --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_CXX_COMMENT@test_noninteractive: x01cxx@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_CXX_COMMENT@@COMPARE_COMMENT@compare: x01cxx@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 # Just for c, c++, and tk directories
 @CXX_COMMENT@test_interactive: c++/x01@EXEEXT@
 
-@PSC_D_COMMENT@all: d/x01d@EXEEXT@
-@PSC_D_COMMENT@d/x01d@EXEEXT@:
-@PSC_D_COMMENT@	cd d; $(MAKE)
-@PSC_D_COMMENT@d_clean:
-@PSC_D_COMMENT@	cd d; $(MAKE) clean
-@PSC_D_COMMENT@.PHONY: d_clean
-@PSC_D_COMMENT@clean: d_clean
-@PSC_D_COMMENT@x01d.psc: d/x01d@EXEEXT@
-@PSC_D_COMMENT@	@echo Generate d results for psc device
-@PSC_D_COMMENT@	./plplot-test.sh --verbose --front-end=d --device=psc
-@PSC_D_COMMENT@test_noninteractive: x01d.psc
-@PSC_D_COMMENT@@COMPARE_COMMENT@compare: x01d.psc
+@DEVICE_D_COMMENT@all: d/x01d@EXEEXT@
+@DEVICE_D_COMMENT@d/x01d@EXEEXT@:
+@DEVICE_D_COMMENT@	cd d; $(MAKE)
+@DEVICE_D_COMMENT@d_clean:
+@DEVICE_D_COMMENT@	cd d; $(MAKE) clean
+@DEVICE_D_COMMENT@.PHONY: d_clean
+@DEVICE_D_COMMENT@clean: d_clean
+@DEVICE_D_COMMENT@x01d@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: d/x01d@EXEEXT@
+@DEVICE_D_COMMENT@	@echo Generate d results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_D_COMMENT@	./plplot-test.sh --verbose --front-end=d --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_D_COMMENT@test_noninteractive: x01d@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_D_COMMENT@@COMPARE_COMMENT@compare: x01d@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
-@PSC_FORTRAN_COMMENT@all: fortran/x01f@EXEEXT@
-@PSC_FORTRAN_COMMENT@fortran/x01f@EXEEXT@:
-@PSC_FORTRAN_COMMENT@	cd fortran; $(MAKE)
-@PSC_FORTRAN_COMMENT@fortran_clean:
-@PSC_FORTRAN_COMMENT@	cd fortran; $(MAKE) clean
-@PSC_FORTRAN_COMMENT@.PHONY: fortran_clean
-@PSC_FORTRAN_COMMENT@clean: fortran_clean
-@PSC_FORTRAN_COMMENT@x01f.psc: fortran/x01f@EXEEXT@
-@PSC_FORTRAN_COMMENT@	@echo Generate Fortran results for psc device
-@PSC_FORTRAN_COMMENT@	./plplot-test.sh --verbose --front-end=fortran --device=psc
-@PSC_FORTRAN_COMMENT@test_noninteractive: x01f.psc
-@PSC_FORTRAN_COMMENT@@COMPARE_COMMENT@compare: x01f.psc
+@DEVICE_FORTRAN_COMMENT@all: fortran/x01f@EXEEXT@
+@DEVICE_FORTRAN_COMMENT@fortran/x01f@EXEEXT@:
+@DEVICE_FORTRAN_COMMENT@	cd fortran; $(MAKE)
+@DEVICE_FORTRAN_COMMENT@fortran_clean:
+@DEVICE_FORTRAN_COMMENT@	cd fortran; $(MAKE) clean
+@DEVICE_FORTRAN_COMMENT@.PHONY: fortran_clean
+@DEVICE_FORTRAN_COMMENT@clean: fortran_clean
+@DEVICE_FORTRAN_COMMENT@x01f@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: fortran/x01f@EXEEXT@
+@DEVICE_FORTRAN_COMMENT@	@echo Generate Fortran results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_FORTRAN_COMMENT@	./plplot-test.sh --verbose --front-end=fortran --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_FORTRAN_COMMENT@test_noninteractive: x01f@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_FORTRAN_COMMENT@@COMPARE_COMMENT@compare: x01f@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
-@PSC_JAVA_COMMENT@all: java/x01.class
-@PSC_JAVA_COMMENT@java/x01.class:
-@PSC_JAVA_COMMENT@	cd java; $(MAKE)
-@PSC_JAVA_COMMENT@java_clean:
-@PSC_JAVA_COMMENT@	cd java; $(MAKE) clean
-@PSC_JAVA_COMMENT@.PHONY: java_clean
-@PSC_JAVA_COMMENT@clean: java_clean
-@PSC_JAVA_COMMENT@x01j.psc: java/x01.class
-@PSC_JAVA_COMMENT@	@echo Generate Java results for psc device
-@PSC_JAVA_COMMENT@	env PLPLOT_JAVA_WRAP_DIR="@LIB_DIR@/" ./plplot-test.sh --verbose --front-end=java --device=psc
-@PSC_JAVA_COMMENT@test_noninteractive: x01j.psc
-@PSC_JAVA_COMMENT@@COMPARE_COMMENT@compare: x01j.psc
+@DEVICE_JAVA_COMMENT@all: java/x01.class
+@DEVICE_JAVA_COMMENT@java/x01.class:
+@DEVICE_JAVA_COMMENT@	cd java; $(MAKE)
+@DEVICE_JAVA_COMMENT@java_clean:
+@DEVICE_JAVA_COMMENT@	cd java; $(MAKE) clean
+@DEVICE_JAVA_COMMENT@.PHONY: java_clean
+@DEVICE_JAVA_COMMENT@clean: java_clean
+@DEVICE_JAVA_COMMENT@x01j@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: java/x01.class
+@DEVICE_JAVA_COMMENT@	@echo Generate Java results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_JAVA_COMMENT@	env PLPLOT_JAVA_WRAP_DIR="@LIB_DIR@/" ./plplot-test.sh --verbose --front-end=java --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_JAVA_COMMENT@test_noninteractive: x01j@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_JAVA_COMMENT@@COMPARE_COMMENT@compare: x01j@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
-@PSC_OCAML_COMMENT@all: ocaml/x01ocaml@EXEEXT@
-@PSC_OCAML_COMMENT@ocaml/x01ocaml@EXEEXT@:
-@PSC_OCAML_COMMENT@	cd ocaml; $(MAKE)
-@PSC_OCAML_COMMENT@ocaml_clean:
-@PSC_OCAML_COMMENT@	cd ocaml; $(MAKE) clean
-@PSC_OCAML_COMMENT@.PHONY: ocaml_clean
-@PSC_OCAML_COMMENT@clean: ocaml_clean
-@PSC_OCAML_COMMENT@x01ocaml.psc: ocaml/x01ocaml@EXEEXT@
-@PSC_OCAML_COMMENT@	@echo Generate OCaml results for psc device
-@PSC_OCAML_COMMENT@	./plplot-test.sh --verbose --front-end=ocaml --device=psc
-@PSC_OCAML_COMMENT@test_noninteractive: x01ocaml.psc
-@PSC_OCAML_COMMENT@@COMPARE_COMMENT@compare: x01ocaml.psc
+@DEVICE_OCAML_COMMENT@all: ocaml/x01ocaml@EXEEXT@
+@DEVICE_OCAML_COMMENT@ocaml/x01ocaml@EXEEXT@:
+@DEVICE_OCAML_COMMENT@	cd ocaml; $(MAKE)
+@DEVICE_OCAML_COMMENT@ocaml_clean:
+@DEVICE_OCAML_COMMENT@	cd ocaml; $(MAKE) clean
+@DEVICE_OCAML_COMMENT@.PHONY: ocaml_clean
+@DEVICE_OCAML_COMMENT@clean: ocaml_clean
+@DEVICE_OCAML_COMMENT@x01ocaml@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: ocaml/x01ocaml@EXEEXT@
+@DEVICE_OCAML_COMMENT@	@echo Generate OCaml results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_OCAML_COMMENT@	./plplot-test.sh --verbose --front-end=ocaml --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_OCAML_COMMENT@test_noninteractive: x01ocaml@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_OCAML_COMMENT@@COMPARE_COMMENT@compare: x01ocaml@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
-@PSC_OCTAVE_COMMENT@x01o.psc: octave/x01c.m
-@PSC_OCTAVE_COMMENT@	@echo Generate Octave results for psc device
-@PSC_OCTAVE_COMMENT@	./plplot-test.sh --verbose --front-end=octave --device=psc
-@PSC_OCTAVE_COMMENT@test_noninteractive: x01o.psc
-@PSC_OCTAVE_COMMENT@@COMPARE_COMMENT@compare: x01o.psc
+@DEVICE_OCTAVE_COMMENT@x01o@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: octave/x01c.m
+@DEVICE_OCTAVE_COMMENT@	@echo Generate Octave results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_OCTAVE_COMMENT@	./plplot-test.sh --verbose --front-end=octave --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_OCTAVE_COMMENT@test_noninteractive: x01o@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_OCTAVE_COMMENT@@COMPARE_COMMENT@compare: x01o@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
-@PSC_PYTHON_COMMENT@x01p.psc: python/x01
-@PSC_PYTHON_COMMENT@	@echo Generate Python results for psc device
-@PSC_PYTHON_COMMENT@	./plplot-test.sh --verbose --front-end=python --device=psc
-@PSC_PYTHON_COMMENT@test_noninteractive: x01p.psc
-@PSC_PYTHON_COMMENT@@COMPARE_COMMENT@compare: x01p.psc
+@DEVICE_PYTHON_COMMENT@x01p@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: python/x01
+@DEVICE_PYTHON_COMMENT@	@echo Generate Python results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_PYTHON_COMMENT@	./plplot-test.sh --verbose --front-end=python --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_PYTHON_COMMENT@test_noninteractive: x01p@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_PYTHON_COMMENT@@COMPARE_COMMENT@compare: x01p@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
-@PSC_TCL_COMMENT@x01t.psc: tcl/x01
-@PSC_TCL_COMMENT@	@echo Generate Tcl results for psc device
-@PSC_TCL_COMMENT@	./plplot-test.sh --verbose --front-end=tcl --device=psc
-@PSC_TCL_COMMENT@test_noninteractive: x01t.psc
-@PSC_TCL_COMMENT@@COMPARE_COMMENT@compare: x01t.psc
+@DEVICE_TCL_COMMENT@x01t@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: tcl/x01
+@DEVICE_TCL_COMMENT@	@echo Generate Tcl results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_TCL_COMMENT@	./plplot-test.sh --verbose --front-end=tcl --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_TCL_COMMENT@test_noninteractive: x01t@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_TCL_COMMENT@@COMPARE_COMMENT@compare: x01t@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
-@PSC_LUA_COMMENT@x01lua.psc: lua/x01.lua
-@PSC_LUA_COMMENT@	@echo Generate Lua results for psc device
-@PSC_LUA_COMMENT@	./plplot-test.sh --verbose --front-end=lua --device=psc
-@PSC_LUA_COMMENT@test_noninteractive: x01lua.psc
-@PSC_LUA_COMMENT@@COMPARE_COMMENT@compare: x01lua.psc
+@DEVICE_LUA_COMMENT@x01lua@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@: lua/x01.lua
+@DEVICE_LUA_COMMENT@	@echo Generate Lua results for @PLPLOT_TEST_DEVICE@ device
+@DEVICE_LUA_COMMENT@	./plplot-test.sh --verbose --front-end=lua --device=@PLPLOT_TEST_DEVICE@
+@DEVICE_LUA_COMMENT@test_noninteractive: x01lua@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
+@DEVICE_LUA_COMMENT@@COMPARE_COMMENT@compare: x01lua@FAMILIED_FIRST_PAGE@.@PLPLOT_TEST_DEVICE@
 
 @PDFCAIRO_COMMENT@x01c.pdfcairo: c/x01c@EXEEXT@
 @PDFCAIRO_COMMENT@	@echo Generate C results for pdfcairo device
@@ -261,8 +261,8 @@ test_interactive: c/x01c@EXEEXT@
 @PDFQT_COMMENT@test_noninteractive: x01c01.pdfqt
 
 @COMPARE_COMMENT@compare:
-@COMPARE_COMMENT@	@echo Compare non-C language psc and stdout results with corresponding C results
-@COMPARE_COMMENT@	-./test_diff.sh
+@COMPARE_COMMENT@	@echo "Compare non-C language and corresponding C plot (for the @PLPLOT_TEST_DEVICE@ device) and stdout results"
+@COMPARE_COMMENT@	-./test_diff.sh --device=@PLPLOT_TEST_DEVICE@ --familied_device=@FAMILIED_PLPLOT_TEST_DEVICE@
 @COMPARE_COMMENT@	touch compare
 @COMPARE_COMMENT@test_noninteractive: compare
 
