@@ -70,12 +70,12 @@ function ix14c(fname2,strm)
 
   plsstrm(1);
 
-  ## Turn off pause to make this a slave (must follow master) */
-
   plSetOpt("geometry", geometry_slave);
+
+  ## Turn off pause to make this a slave (must follow master) */
   plspause(0);
 
-  ## This is an addition to C version to allow second file name to be
+  ## This is an addition to the C version to allow second file name to be
   ## set as a function argument. This is required for the test scripts.
   if (nargin >= 1)
     plsfnam(fname2);
@@ -83,6 +83,9 @@ function ix14c(fname2,strm)
 
   plsdev(device);
   plsfam(fam,num,bmax);
+  ## Currently number of digits in format number can only be
+  ## set via the command line option
+  plSetOpt( "fflen", "2" );
   plinit();
 
   ## Set up the data & plot */

@@ -83,24 +83,9 @@ function status = ix31c(strm)
   ## Restore values set initially by plparseopts.
   plspage(xp0, yp0, xleng0, yleng0, xoff0, yoff0);
 
-  ## Test setting / getting compression parameter across plint
+  ## Test setting / getting compression parameter across plinit.
   compression1 = 95;
   plscompression(compression1);
-
-  ## Test setting / getting familying parameters across plinit
-  fam1 = 0;
-  num1 = 10;
-  bmax1 = 1000;
-  plsfam(fam1, num1, bmax1);
-
-  ## Test setting / getting page parameters across plinit
-  xp1 = 200.;
-  yp1 = 200.;
-  xleng1 = 400;
-  yleng1 = 200;
-  xoff1 = 10;
-  yoff1 = 20;
-  plspage(xp1, yp1, xleng1, yleng1, xoff1, yoff1);
 
   ## Initialize plplot
 

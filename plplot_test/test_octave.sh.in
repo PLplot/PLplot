@@ -95,7 +95,7 @@ for i=[0:31 33] ;
     file = sprintf("${OUTPUT_DIR}/x%.2d${lang}%%n.${dsuffix}",i);
     plSetOpt("o", file);
     if i == 14
-	file2 = sprintf("${OUTPUT_DIR}/x%.2da${lang}.${dsuffix}",i);
+	file2 = sprintf("${OUTPUT_DIR}/x%.2da${lang}%%n.${dsuffix}",i);
     endif
     eval(cmd, "failed = [failed, i] ;");
     fclose(strm);
