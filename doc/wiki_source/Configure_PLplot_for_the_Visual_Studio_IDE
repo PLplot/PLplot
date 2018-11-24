@@ -1,0 +1,234 @@
+<!---
+N.B.  The definitive Markdown source of this file is located in the
+doc/wiki_source subdirectory of the PLplot source tree.  So only use
+the ctrl-v and delete capabilities of the GUI file editor at
+SourceForge to make changes to the SourceForge version of this file,
+where ctrl-v is used to complete a cut and paste from the definitive
+version of this file in the PLplot source tree that is being edited
+with your favorite file editor, and delete used to remove extraneous
+unmodified text whose changed form has been copied with the cut and
+paste.
+-->
+
+This page details how to build PLplot using the Visual Studio integrated development environment via project and solution files. If you wish to use NMake from the command line see [Configure PLplot for Visual CXX CLI](Configure_PLplot_for_Visual_CXX_CLI "wikilink")
+
+Walkthrough building PLPLot with Visual Studio
+----------------------------------------------
+
+**Why can’t I just include all the code files in a project and press the build button?**
+
+PLplot makes every effort to be compatible with multiple different compilers on multiple OSs. It also uses third party libraries for backends/drivers. If every compiler exactly conformed to the (same) C++ and C standards and included nothing else and if every other library did the same and if every PC with every OS had the same libraries then this would be easy. But they don’t and it isn’t. Some libraries only work on Linux or Windows and different compilers add extra features and although often the same additional features exist in different compilers they sometimes have different names or are in different header files. This all can make writing a cross platform library quite tricky.
+
+PLplot addresses this by using a build system called CMake. This is an extra layer of code between the C/C++ code and the compiler. The CMake code is run before you try to compile the library and it attempts to detect the various platform specific differences and create (in the case of Visual Studio) .sln and .proj files and a config.h file that fits your configuration.
+
+**Selecting the right Visual Studio version**
+
+Visual Studio comes in many different versions, with regular updates every few years. These generally use their own specific format for the solution and project files. Then it may be necessary to select the desired architecture - 32-bits or 64-bits for instance. You need to instruct CMake to create the files for the proper version. This is done by the *generator*.
+
+Three examples of such generators (consult CMake's online help for more information):
+
+`   -G "Visual Studio 9 2008"`
+`   -G "Visual Studio 10"`
+`   -G "Visual Studio 10 IA64"`
+
+The first selects Visual Studio 2008, the second Visual Studio 2010. Note the year in the first one. Generators for later versions include the architecture, as "IA64" for the Itanium processor architechture.
+
+**A Walkthrough**
+
+I have spent some time trying to get CMake to work with my setup and the PLplot developers have helped with bug fixes to get this right so PLplot should now be straightforward to compile on windows. Fundamentally I want to end up with a visual studio sln file which I can use to build PLplot. It should ensure I have access to the libraries and backends/drivers that I want to use which include shapelib, wxWidgets, AGG and FreeType. Ideally it should include the examples and allow me to specify all the project properties I need so that if I update my code to the latest trunk version (which I do quite often) I don’t have to manually change lots of settings. Unfortunately there is a bit of a Linux bias to Cmake so here are some things that may catch you out, here are a few of those:
+
+-   When specifying paths to CMAKE, capitalisation matters.
+-   When CMAKE looks for additional libraries it sometimes only looks in the default Linux path so you might have to specify library locations
+-   All the defaults are to build dynamically linked dynamic libraries with dynamic runtime linkage – if you want anything else then you must specify so.
+-   If you need to recreate your sln files then it’s best to delete everything in your build directory and start again from scratch.
+
+Anyhow here is a walkthrough of how I got everything working.
+
+**Backends/Drivers**
+
+PLplot could include code to write your plots to screen, memory, and the myriad of different file formats that you may want to use. However, if this was the case the developers would spend all their time looking at details of jpeg file formats or the different operating system device contexts. Instead PLplot has built in support for a few output devices and then uses other libraries referred to as drivers to output to most file types. In the walkthrough I’ll show you how to compile with just the built in outputs first, then I’ll add in shapefile support for maps using shapelib, and the wxWidgets driver with options for rendering with, AGG and Freetype.
+
+**Compiling a Basic PLplot Library**
+
+To build PLplot you will need some extra tools first. Download and install CMAKE from <http://www.cmake.org/>. 
+You can either download the latest release version of the source from <http://plplot.sourceforge.net/> and unzip it to an appropriate location or get the current development version by typing 
+`   git clone git://git.code.sf.net/p/plplot/plplot`
+At either the GitBash prompt (<git-scm.com/download/win>) or from a Cygwin or MinGW shell.
+
+Now we can start the build process. Open a development command prompt. This is available on your start menu under your Visual Studio submenu. Note on VC++2012 I have a developer command prompt then an x86 and an x64 command prompt. I just use the one without any specific processor type. 
+
+Within your plplot source directory create a folder called build, then within that folder create folders called Release, Debug, Release_Install, Debug_Install.
+
+In your command prompt navigate to the Debug folder
+
+You can add extra compiler flags by setting the CXXFLAGS and CFLAGS environment variables. For example to build using Unicode type the following at your command prompt
+
+`  set CXXFLAGS=/DUNICODE /D_UNICODE`
+`  set CFLAGS=/DUNICODE /D_UNICODE`
+
+Note that you almost always want CXXFLAGS and CFLAGS to be identical.
+
+If you already have wxWidgets installed then you may wish to stop PLplot finding it for this basic build. To do so type
+
+`  %WXWIN%`
+
+and make a note of the path for later. Then enter
+
+`  set WXWIN=`
+
+Now call CMAKE as follows:
+
+`  cmake "../.." -G "Visual Studio 11 Win64" -DPL_DOUBLE=ON -DBUILD_TEST=ON -DCMAKE_INSTALL_PREFIX="../Debug_Install" -DCMAKE_CONFIGURATION_TYPES="Debug" -DBUILD_SHARED_LIBS=OFF -DSTATIC_RUNTIME=ON`
+
+A full description of the parameters can be found in the reference below. You can obviously change them to suit your needs. If you want shared libraries (dlls) then omit the SHARED_LIBS parameter and if you want to use the dynamic runtime then omit the STATIC_RUNTIME parameter. Hopefully after a minute or two the screen output should end with
+
+`  --Configuring done`
+`  --Generating done`
+`  --Build files have been written to build/Debug`
+
+You can now cd to your Release directory and repeat using the appropriate INSTAL_PREFIX and CONFIGURATION_TYPES parameters.
+
+If you now go to your Debug and Release directories you should see a solution which you can open in Visual Studio. Just open it up, right click the INSTALL project and select build, this will build your library and put it in the install directory. You should now be able to find the examples in the build directory and try them out, or right click one in Visual Studio and select Debug. You get a choice of which built in driver you want to use. There should be a memory one, a Windows one that outputs to screen and ones that output to ps, svg and xfig files. 
+
+Well done you now have PLplot up and running.
+
+**Other Libraries and Backends**
+
+PLplot relies on a number of drivers and backends to extend its output capabilities and allow reading of certain data files. I use a few of these and will guide you through adding them. Don’t be tempted to download precompiled .lib and .dll files. If you do then they may not have been compiled with the same setting that you use and may generate hard to fix linker errors. Problem setting can include character set (Unicode, vs multibyte vs not set) and static/dynamic linking to the runtime libraries (multithreaded, multithreaded dll, multithreaded debug, multithreaded debug dll). If you don’t know what static and dynamic linking are then find out because it will be the bane of your programming life if you don’t. I tend to add u to the end of a library name to indicate Unicode and s to indicate static (not dynamic) linkage to the runtime library and d to indicate debug.
+
+**Shapelib**
+
+Shapelib allows you to read in .shp shapefileswhich contain vector map information into PLplot . PLPlot already has a coarse resolution global map included, but if you would like higher resolution then you need to add Shapelib. Global files with 10, 50 or 110 mile resolution are available from <http://www.naturalearthdata.com> and you can find other files online as you need. Shapelib itself is easy to compile, download it from <http://shapelib.maptools.org/> create a new windows library project, add all the files and build debug and release versions as needed. There is no need to specify Unicode. To use it in PLplot add the following commands to your CMake call
+
+`  -DHAVE_SHAPELIB=ON -DSHAPELIB_INCLUDE_DIR="D:/SourceCode/Libraries/shapelib-1.3.0/include/shapelib" -DSHAPELIB_LIBRARY="D:/SourceCode/Libraries/shapelib-1.3.0/lib/shapelibsd.lib"`
+
+Of course replace the paths with ones appropriate for your system and make sure you use the debug or release library appropriately. Now in calls to plmap you can replace the map name with the path to a shapefile and the lines from this file will be used to draw the map.
+
+**wxWidgets**
+
+I use wxWidgets for GUI output, it also allows output to various other graphics types like png, bmp, jpg, ps. If you wish to do the same then the best way is to install wxPack which is a fully working version of wxWidgets for Windows. It comes with a Visual Studio .sln file so saves you a lot of hassle. There are loads of instructions for compiling wxWidgets online, so I won’t repeat it all here. However you may wish to enable wxGraphicsContext (which gives anti-aliased output) and wxPostscriptDC to output to ps files. To do this, go through all the various setup.h and setup0.h and set
+
+`  #define wxUSE_GRAPHICS_CONTEXT 1`
+`  #define wxUSE_POSTSCRIPT 1`
+
+Open the wxWidgets .sln file and if you wish to change between static and dynamic Runtime then change this in the project properties. Finally go to build, batch build and build all the versions of the library. This can take some time.
+
+For Visual Studio 2012 Users – I have found a few problems with building wxWidgets in VS2012 so I thought I’d add them here.
+
+-   First the Batch Build option is hidden. You can display it by going to Tools, customize, Commands and select the build menu.
+-   If you get a lot of build errors talking about CL.exe then this is caused by clashes between intermediate files of different projects. To fix it select all the projects in the solution explorer then right click them and select properties. Change the configuration to All Configurations then go to Configuration properties, General and change Intermediate Directory to \$(ProjectName)\\\$(Platform)\\\$(Configuration)\\.
+-   If you get a compilation error saying that the file pbt.h cannot be found in windows.cpp then go to the relevant line and comment it out. This header is no longer needed in wxWidgets and no longer included with Visual Studio but the \#include got forgotten and left in the source.
+-   Finally if you want to build a 64 bit version do not try changing the Build Target in the project properties, this causes various linker errors. Instead go to Build, Configuration Manager... and in the active solution platform select <new> then select x64. This will create 64 bit configurations for all projects. Unfortunately you cannot build 64 bit and 32 bit libraries at the same time and if you have built a 32 bit library and want to build the 64 bit version (or vice versa) then you must clean the project first. See the install-msw-2.8.12.txt file shipped with wxWidgets for more info.
+
+Once you have wxWidgets built PLplot will automatically look for the WXWIN environmental variable which is created by wxPack, or should have been created by you if you set up wxWidgets manually. If you disabled wxWidgets above, then enter the following at the command prompt
+
+`  set WXWIN=path/you/wrote/down/earlier`
+
+If PLplot finds this environmental variable then it will include wxWidgets in the build. However, it seems that CMAKE doesn’t automatically determine if you are building with Unicode, so if you are then you must specify which wxWidgets build to use by adding the following parameter to your CMake command
+
+`  -DwxWidgets_CONFIGURATION=mswud`
+
+Or for the release version use mswu, just like the suffix at the end of the wxWidgets library files.
+
+**AGG and FreeType**
+
+The wxWidgets driver can use three backends. The wxDC and wxGraphicsContect are part of wxWidgets and use Windows drawing routines. This means if you port your software to Linux the code will then use Linux drawing routines which may be slightly different. This might not be a big deal, but in case it is you can also make use of the cross platform AGG library to render anti-aliased graphics and AGG can either use PLplot’s basic text or the FreeType library for Unicode fonts. If you wish to use them then download the code for these projects. Both are quite straightforward. AGG seem to pride themselves on only using ‘pure’ C so for AGG you can just download the source from <http://www.antigrain.com/> and add all the files to a visual studio project and build it. If you are using FreeType then you can download the source form <http://www.freetype.org/>. The download includes a .sln file to build with Visual Studio.
+
+If using both FreeType and AGG then you should copy the files from your_agg_directory\\font_freetype to your_agg_directory\\include\\agg2. You may wish to do the same with those in font_win32_tt, but it’s not needed for PLplot at present.
+
+Also don’t forget to ensure your character set and run time library linkage are set as you want them. To include AGG when you compile PLplot add the following parameters
+
+`  -DHAVE_AGG=ON -DAGG_INCLUDE_DIR="D:/SourceCode/Libraries/agg-2.4/include" -DAGG_LIBRARIES="D:/SourceCode/Libraries/agg-2.4/VC++/AGG/lib/AGGsud.lib"`
+
+For FreeType use
+
+`  -DWITH_FREETYPE=ON -DFREETYPE_INCLUDE_DIR="D:/SourceCode/Libraries/freetype-2.4.8/include" -DFREETYPE_LIBRARY="D:/SourceCode/Libraries/freetype-2.4.8/objs/win32/vc2008/freetypesud.lib"`
+
+But of course change the paths to match your system.
+
+**Summary and reference**
+
+So just so you see the whole thing, my final CMake command for a debug build is
+
+`cmake "D:/SourceCode/Libraries/plplot_trunk" -G "Visual Studio 10" -DPL_DOUBLE=ON -DLIB_TAG="su" -DBUILD_TEST=ON -DCMAKE_INSTALL_PREFIX="D:\SourceCode\Libraries\plplotinstall" -DBUILD_SHARED_LIBS=OFF -DCMAKE_CONFIGURATION_TYPES="Debug" -DSTATIC_RUNTIME=ON -DwxWidgets_CONFIGURATION=mswud -DHAVE_SHAPELIB=ON -DSHAPELIB_INCLUDE_DIR="D:/SourceCode/Libraries/shapelib-1.3.0/include/shapelib" -DSHAPELIB_LIBRARY="D:/SourceCode/Libraries/shapelib-1.3.0/lib/shapelibsd.lib"  -DHAVE_AGG=ON -DAGG_INCLUDE_DIR="D:/SourceCode/Libraries/agg-2.4/include" -DAGG_LIBRARIES="D:/SourceCode/Libraries/agg-2.4/VC++/AGG/lib/AGGsud.lib" -DWITH_FREETYPE=ON -DFREETYPE_INCLUDE_DIR="D:/SourceCode/Libraries/freetype-2.4.8/include" -DFREETYPE_LIBRARY="D:/SourceCode/Libraries/freetype-2.4.8/objs/win32/vc2008/freetypesud.lib"`
+
+For reference here is a quick rundown of each of the parameters
+
+**“D:/SourceCode/Libraries/plplot trunk”:** the path to my source directory – case sensitive.
+
+**-G “Visual Studio 10”:** the compiler I want to generate a project/solution for.
+
+**-DPL_DOUBLE=ON:** use doubles, rather than floats in PLplot. Also adds d to the library names.
+
+**-DLIB_TAG=”su”:** this will append “su” to the end of the library name and is an indicator to me that I’m using static linkage with the Unicode character set. I use sud for static Unicode debug etc.
+
+**-DBUILD_TEST=ON:** Indicates I want to create projects for the examples. Set to OFF to not build them.
+
+**-DCMAKE_INSTALL_PREFIX=”D:\\SourceCode\\Libraries\\plplotinstall”** The directory you want your final libraries to end up in, it will be created if it doesn’t exist. If you leave this blank it defaults to C:\\Program Files\\PLplot, however in Windows Vista or later UAC will stop the file being written here unless you run Visual Studio as administrator.
+
+**-DCMAKE_CONFIGURATION_TYPES=”Release”:** The configuration to use in the project. You can run create multiple configurations in one solution by listing them separated by semicolons, but if using Shapelib, FreeType or AGG this causes linking problems with the examples as you can’t specify linkage against the release and debug versions separated by semicolons. It also causes issues with installing to one directory so it’s best to create on sln for each configuration. You can include Release, Debug, MinSizeRel and RelWithDebInfo.
+
+**-DSTATIC_RUNTIME=ON:** This causes us to link against the static runtime (equivalent to /MT or /MTd flags). Set it to OFF if you want to link against the dynamic runtime (equivalent to /MD or /MDd).
+
+**-DBUILD_SHARED_LIBS=OFF** Build a .lib rather than a .dll. If you don’t set this the default will be to build dlls.All the options above except the source directory and compiler are optional and will be set to default values if excluded.
+
+**Anything with AGG in:** These point out that I want to use AGG and specifies the location of header files and the library itself. The library is only needed if –DBUILD_TEST is ON. None are needed if you are not using AGG.
+
+**Anything with FREETYPE in:** As with the AGG stuff it indicates I want to use FreeType and gives the location of the headers and library. Note that the variables have slightly different names to the AGG ones. Again the library is only needed when building the examples.
+
+**Anything with SHAPELIB in:** As for the FREETYPE and AGG parameters, but for shapelib.
+
+There are also other customisable options and after you’ve run CMAKE you can examine the CMakeCache.txt file that is created in your build directory to see others (prepend -D to define them on the command line) or look at the wiki page or CMAKE documentation.
+
+Bugs and Issues
+---------------
+
+Using version 2.8.2 of CMake there are some snags you may find.
+
+**Common Errors**
+
+*I see linker errors regarding strings or wxStrings or chars and wchars*
+
+Unicode and non Unicode libraries often use strings made of either wchars or chars silently behind the scenes. If you have mixed libraries built with unicode with ones built with the charecter set not set then these clash during linking. Did you specify the wxWidget configuration to ensure you get the Unicode version of wxWidgets? Or perhaps one of the other libraries you are using has this set differently to PLplot.
+
+*I see linker errors which mention function which have dbg in*
+
+Microsoft supply four different versions of the C++ runtime with either static/dynamic linkage and for either debug/release. It sounds like you have mixed libraries which use debug with ones that use release. I'm afraid you have to go through and check them all.
+
+*I see linker errors which mention functions which have imp_ in*
+
+See the dbg linker errors, except this is likely due to mixing libraries with static and dynamic linkage.
+
+**Problems with old PLplot versions (5.9.9 and before)**
+
+Here are some snags which may affect older versions of PLplot, if you see these symptoms please upgrade to version 2.9.10 or the latest trunk version via Git
+
+-   When embedding a PLplot in a wxWidgets application the application may hang during initialisation. Caused by both PLplot and your application trying to initialise message loops.
+
+<!-- -->
+
+-   Linker errors occur in release builds of software which includes the PLplot library and the wxWidget driver. They reference functions which have dbg in their name. This was caused by a CMAKE bug which defined the _DEBUG and __WXDEUG__ preprocessor variables in release mode when using wxWidgets. A workaround has been added to PLplot.
+
+**Intel Fortran**
+
+If you use Intel Fortran, the solution/project files may cause errors when building. These affect only the Fortran libraries and examples. It is due to a small bug in CMake that should be fixed with the next release.
+
+**Workaround for examples built with Visual Studio**
+
+There have been some reported problems with running the examples when building ith Visual Studio. This seems fine when building static libraries, but may still persist with dynamic ones. If you have problems then try the folowing
+
+-   Build the PLplot libraries and examples via the ALL_BUILD project
+-   Open a DOS box in the Debug directory for any one of these examples
+-   Set the following environment variables:
+
+`  set path=<build>\dll\Debug;%PATH% `
+`  set PLPLOT_DRV_DIR=<build>\drivers    `
+`  set PLPLOT_LIB=<source>`
+
+`  where: <build> is the directory where PLplot was built`
+`  and the directory "<source>\data" holds the .pal and .fnt files`
+
+-   In this environment you can run the sample program
+
+
+The content of this page is available under the [GNU Free Documentation License 1.2](http://www.gnu.org/copyleft/fdl.html).
