@@ -17,14 +17,6 @@ description paragraph).
 Installation of git is straightforward as described at
 <http://git-scm.com/book/en/Getting-Started-Installing-Git>
 
-To summarize that page, on Linux platforms git is available from a
-system install; on Mac OS X platforms git is available as part of
-Xcode, the git-osx-installer project, and additional free software
-repositories (i.e., MacPorts, Homebrew, and Fink); and on Windows
-platforms git is available from the [Git for
-Windows](https://git-for-windows.github.io/) project as well as Cygwin
-and MinGW-w64/MSYS2.
-
 In all cases, it is highly recommended that git is run from the
 command line rather than from a GUI because the git command line is
 powerful, extremely well documented, and is the standard way most git users
@@ -110,7 +102,7 @@ git merge --ff-only origin/master
    merging master into your branch is bad and attempts to push
    your work back to official repo will be rejected.
 
-3. Updating your working branch so that it is a linear
+3. Updating your working branch so that it is a sequential
    continuation of the work on the master branch:
 
 git checkout new_branch
@@ -139,6 +131,11 @@ git stash pop # (restore your uncommitted changes)
 4. Incorporate changes back into master:
 
 git checkout master
+git fetch
+# Note, you are now in a race to get your changes pushed before someone
+# else does so work quickly from now on until that push.
+# Only if above fetch showed something downloaded
+git merge --ff-only origin/master
 git merge --ff-only new_branch
 
    At this point you should see a message like "Fast-forward". If
@@ -147,7 +144,7 @@ git merge --ff-only new_branch
    try to push them to the official repo. You can inspect the
    history with gitk and possibly collapse the offending commits
    into a single commit (using git rebase --interactive) that makes
-   the history linear again.
+   the history sequential again.
 
 5. Push changes to the official repo:
 
@@ -156,7 +153,7 @@ git push --dry-run origin master
 # Actual Push:
 git push origin master
 
-This is a rebase work flow. The linearity of the master branch is
+This is a rebase work flow. The sequential nature of the master branch is
 enforced by server side hooks and by only allowing fast-forward
 merges with the merge flag --ff-only. You can make this the
 default option for your repository using the command:
@@ -223,6 +220,40 @@ Those receiving such a tarball should unpack it, and then use git am
 _on a private topic branch_ to commit those changes for further
 collaboration until the collaborative yet private topic is matured
 enough to be merged with the master branch and pushed.
+
+Updating our wiki pages
+-----------------------
+
+The definitive markdown source for our wiki pages is located in
+doc/wiki_source.  While working on a topic branch (see advice above)
+do the following steps:
+
+* edit an existing file at doc/wiki_source (or if you are creating a
+  new wiki page edit a new file there);
+
+* use the
+
+git diff --word-diff
+
+  command to evaluate the changes (the --word-diff option is essential
+  to allow humans to isolate the changes in the generally long
+  markdown format lines);
+
+* transmit those changes to SF by cutting and pasting them to the SF
+  GUI editor for the wiki page in question (i.e., by using ctrl-v to
+  paste on the SF GUI editor side of the cut and paste and selecting
+  old text that has been replaced by the cut and paste and deleting
+  it);
+
+* test the resulting changed wiki page (e.g., check the diff available
+  in the history GUI to make sure there were no cut and paste or
+  deletion failures, check the new links, check the rendering of the
+  updated markdown format looks good);
+
+* commit the markdown source file for the wiki changes on the git
+  topic branch; and
+
+* push your commit following the above directions.
 
 Configuring the build system
 ----------------------------
