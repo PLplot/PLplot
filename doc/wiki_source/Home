@@ -26,6 +26,11 @@ This is the official Wiki for [PLplot](http://plplot.sourceforge.net). It should
 -   [Building PLplot with a cross-compiler](Building_PLplot_with_a_cross-compiler "wikilink")
 -   [Third-party libraries](Third-party_libraries "wikilink")
 
+<h5>Test PLplot</h5>
+
+-   [How to test PLplot](Testing_PLplot "wikilink")
+-   [Table of test reports for all platforms](Testing_Reports "wikilink")
+
 <h5>Using PLplot</h5>
 
 -   Tutorials for C, C++, Python, [OCaml](OCaml_tutorial "wikilink")
