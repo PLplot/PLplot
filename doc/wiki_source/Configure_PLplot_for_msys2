@@ -15,7 +15,7 @@ The first step is to have [MSYS2](http://www.msys2.org/) installed.  Open a MSYS
 
 * make
 * gcc
- 
+
 *N.B. If you discover that a required package is missing from that list, please let us know on the [mailing list](mailto:plplot-general@lists.sourceforge.net).*
 
 **NOTE:  As of 18 April 2017 the version of cmake available within MSYS2 does not work with PLplot.  You will need to [install the Windows version](https://cmake.org/download/) of cmake distributed by developer. **

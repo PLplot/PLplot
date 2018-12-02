@@ -50,12 +50,12 @@ PLplot could include code to write your plots to screen, memory, and the myriad 
 
 **Compiling a Basic PLplot Library**
 
-To build PLplot you will need some extra tools first. Download and install CMAKE from <http://www.cmake.org/>. 
-You can either download the latest release version of the source from <http://plplot.sourceforge.net/> and unzip it to an appropriate location or get the current development version by typing 
+To build PLplot you will need some extra tools first. Download and install CMAKE from <http://www.cmake.org/>.
+You can either download the latest release version of the source from <http://plplot.sourceforge.net/> and unzip it to an appropriate location or get the current development version by typing
 `   git clone git://git.code.sf.net/p/plplot/plplot`
 At either the GitBash prompt (<git-scm.com/download/win>) or from a Cygwin or MinGW shell.
 
-Now we can start the build process. Open a development command prompt. This is available on your start menu under your Visual Studio submenu. Note on VC++2012 I have a developer command prompt then an x86 and an x64 command prompt. I just use the one without any specific processor type. 
+Now we can start the build process. Open a development command prompt. This is available on your start menu under your Visual Studio submenu. Note on VC++2012 I have a developer command prompt then an x86 and an x64 command prompt. I just use the one without any specific processor type.
 
 Within your plplot source directory create a folder called build, then within that folder create folders called Release, Debug, Release_Install, Debug_Install.
 
@@ -88,7 +88,7 @@ A full description of the parameters can be found in the reference below. You ca
 
 You can now cd to your Release directory and repeat using the appropriate INSTAL_PREFIX and CONFIGURATION_TYPES parameters.
 
-If you now go to your Debug and Release directories you should see a solution which you can open in Visual Studio. Just open it up, right click the INSTALL project and select build, this will build your library and put it in the install directory. You should now be able to find the examples in the build directory and try them out, or right click one in Visual Studio and select Debug. You get a choice of which built in driver you want to use. There should be a memory one, a Windows one that outputs to screen and ones that output to ps, svg and xfig files. 
+If you now go to your Debug and Release directories you should see a solution which you can open in Visual Studio. Just open it up, right click the INSTALL project and select build, this will build your library and put it in the install directory. You should now be able to find the examples in the build directory and try them out, or right click one in Visual Studio and select Debug. You get a choice of which built in driver you want to use. There should be a memory one, a Windows one that outputs to screen and ones that output to ps, svg and xfig files.
 
 Well done you now have PLplot up and running.
 

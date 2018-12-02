@@ -18,19 +18,9 @@ I have copied the Markdown source of all our SF wiki pages here (using ctrl-c
 in a SF GUI editor selection for a selection of the entire page there, and paste within
 a file edit session to copy that text to a file in this directory.
 
-So from now on to update a wiki page do the following:
-
-* File edit the Markdown source for the wiki page of interest in this directory
-  using your favorite file editor.
-
-* Propagate those changes to a GUI editor session (accessible with a browser)
-  for the relevant wiki page at SF.
-  This is done, e.g., by selecting text within the file editor, and using ctrl-v
-  within the GUI editor to propagate that text to that GUI editor. 
-
-* Once you are happy with the updated SF wiki result, then commit the
-  markdown file change using git.
-
-The advantages of this method are it gives us version control of wiki
-pages, it gives us an automatic backup of our wiki pages, and it
-allows our developers to use their favorite editor to update the wiki.
+So from now on to update a wiki page follow the steps in the "Updating
+our wiki pages" section of README.developers in the top directory of
+the PLplot source tree.  The advantages of this method are it gives us
+version control of wiki pages, it gives us an automatic backup of our
+wiki pages, and it allows our developers to use their favorite editor
+to update the wiki.

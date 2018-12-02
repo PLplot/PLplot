@@ -21,13 +21,13 @@ Shared libraries (dylib) | Yes
 
 Languages: | Known to Work
 ---|---
-C (powerpc-apple-darwin8-gcc-4.0.1) | Yes 
+C (powerpc-apple-darwin8-gcc-4.0.1) | Yes
 C++ (powerpc-apple-darwin8-g++-4.0.1) | Yes
 F77 (GNU Fortran (GCC) 3.4.4) | Yes (3)
 F95 (GNU Fortran 95 (GCC) 4.3) | Yes (5)
 Java (java version "1.5.0_06") | Yes
 Octave (Octave, version 2.1.73) | No (1)
-Perl (perl, v5.8.6) | Yes 
+Perl (perl, v5.8.6) | Yes
 Python (Python 2.5, OS-X Framework) | Yes
 Tcl (8.4.10, TclTkAqua) | Yes
 Tk (8.4.10, TclTkAqua) | Yes
@@ -53,6 +53,4 @@ wxWidgets | Yes (4)
 
 (5) One user had difficulties with version 4.2.1 (error messages from libtool) and succeeded with version 4.3 (from MacResearch). As version 4.2.1 is rather old, we recommend this newer version.
 
-
 The content of this page is available under the [GNU Free Documentation License 1.2](http://www.gnu.org/copyleft/fdl.html).
-

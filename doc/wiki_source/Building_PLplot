@@ -74,7 +74,7 @@ Check make.out and make_install.out for any errors. Follow up by [testing PLplot
 #### Useful problem reports
 If you encounter a problem with the above, then it is important to report the problem with sufficient details (typically to either the plplot-general or plplot-devel mailing lists) so that those familiar with PLplot builds can help you.  This section lists the details that are typically required in a useful problem report.
 
-* Include all environment variables that were set in your report. (The easiest way to do this on Unix is to invoke the command 
+* Include all environment variables that were set in your report. (The easiest way to do this on Unix is to invoke the command
 `printenv > printenv.out`
 and  include printenv.out in your report.)
 
@@ -91,4 +91,3 @@ and  include printenv.out in your report.)
 * Include the verbose results of your install (captured as make_install.out above) in your report.
 
 The content of this page is available under the [GNU Free Documentation License 1.2](http://www.gnu.org/copyleft/fdl.html).
-

@@ -29,3 +29,6 @@
 
 # Hershey binary font files in data subdirectory
 *.fnt -text
+
+# PNG format files in doc/wiki_source/*/*/*.png
+*.png -text

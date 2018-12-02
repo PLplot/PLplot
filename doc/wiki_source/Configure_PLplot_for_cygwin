@@ -33,7 +33,7 @@ The Cygwin platform allows both shared libraries and dynamic drivers, making it 
 
 Note on Tk:
 
-Since the version of Tk that is available from the Cywin distribution uses the X11 Window System, you need to prepare the system before running CMake: 
+Since the version of Tk that is available from the Cywin distribution uses the X11 Window System, you need to prepare the system before running CMake:
 
 -   Start the X server:
 
@@ -45,6 +45,6 @@ Since the version of Tk that is available from the Cywin distribution uses the X
 
 -   Run CMake with Tcl and Tk enabled
 
-Note that the wingcc device driver is also available under Cygwin just as under plain Windows. This means that you can use both device drivers, though the xwin driver requires the X Window server to be running and the wingcc driver does not require anything specific. 
+Note that the wingcc device driver is also available under Cygwin just as under plain Windows. This means that you can use both device drivers, though the xwin driver requires the X Window server to be running and the wingcc driver does not require anything specific.
 
 The content of this page is available under the [GNU Free Documentation License 1.2](http://www.gnu.org/copyleft/fdl.html).
