@@ -274,7 +274,6 @@ set(top_level_DOCFILES
   README
   README.release
   README.cumulated_release
-  README.testing
   )
 install(FILES ${top_level_DOCFILES} DESTINATION ${DOC_DIR})
 
