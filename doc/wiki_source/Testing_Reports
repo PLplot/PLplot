@@ -14,6 +14,52 @@ paste.
 
 |||
 ---|---|---|---
+Tester|Alan W. Irwin
+Notes|(a), (b2), (c), (d), (e1), (A), (J2)
+Date|2018-12-02
+PLplot commit|plplot-5.13.0-155-g920d3983b
+CMake version|3.13.1
+Generator|"Unix Makefiles"
+Platform|Debian Buster = Testing (updated on 2018-12-01, 64-bit)
+Pango/Cairo version|1.42.3/1.16.0
+Qt version|5.11.2
+WxWidgets version|3.0.4
+Shared libraries?|Dynamic drivers?
+Yes|Yes
+Yes|No
+No|No
+CMake-based build tree?|test_noninteractive?|test_interactive?|ctest?
+Yes|Yes|Yes|Yes
+CMake-based installed examples?|test_noninteractive?|test_interactive
+Yes|Yes|Yes
+Legacy Installed examples?|test_noninteractive?|test_interactive
+Yes|Yes|Yes
+
+|||
+---|---|---|---
+Tester|Alan W. Irwin
+Notes|(a), (b1), (c), (d), (e1), (A), (H5)
+Date|2018-10-27
+PLplot commit|plplot-5.13.0-146-g48a56ee63
+CMake version|3.7.2
+Generator|"Unix Makefiles"
+Platform|Debian Buster = Testing (updated on 2018-10-25, 64-bit)
+Pango/Cairo version|1.42.3/1.16.0
+Qt version|5.11.2
+WxWidgets version|3.0.4
+Shared libraries?|Dynamic drivers?
+Yes|Yes
+Yes|No
+No|No
+CMake-based build tree?|test_noninteractive?|test_interactive?|ctest?
+Yes|Yes|Yes|Yes
+CMake-based installed examples?|test_noninteractive?|test_interactive
+Yes|Yes|Yes
+Legacy Installed examples?|test_noninteractive?|test_interactive
+Yes|Yes|Yes
+
+|||
+---|---|---|---
 Tester|Arjen Markus
 Notes|(a), (e1), (A), (B1), (D2), (E4), (F2), (G3), (H2)
 Date|2018-10-26
@@ -519,6 +565,8 @@ Yes|Yes|Yes
 Testing notes where lower case notes concern configuration and build options while upper case notes concern limitations on testing due to platform constraints ("not available"), arbitrary constraints imposed by the tester to simplify testing ("not installed" or "ignored"), or working around PLplot issues for the platform ("disabled").
 * (a) Testing done on 64-bit (x86-64, also known as x64, x86_64, and AMD64, ) hardware.
 * (b) Used parallel make option (-j4) for all builds, installs, and test targets.
+* (b1) Used parallel make option (-j10) for all builds, installs, and test targets.
+* (b2) Used parallel make option (-j16) for all builds, installs, and test targets.
 * (c) Suitable dependent libraries have been installed on the system so there are no device drivers from the default list for this platform that are missing from this test.
 * (d) Suitable compilers and bindings-related development packages have been installed on the system so there are no default bindings that are missing from this test.
 * (e) Java, Python, Octave, Lua, and OCaml bindings/examples require shared PLplot libraries in order to work so were not available for testing for the static PLplot libraries case.
@@ -577,11 +625,13 @@ Testing notes where lower case notes concern configuration and build options whi
 * (H2) libharu not installed, liblasi not available, and wxwidgets not installed.  Therefore, the pdf, psttf, and wxwidgets device drivers were not tested.
 * (H3) libLASi not available.  Therefore, the psttf device driver was automatically disabled.
 * (H4) libharu not available and wxwidgets had find issues so pdf and wxwidgets device drivers were automatically disabled.
+* (H5) libharu not installed so pdf device driver not tested.
 * (I) libpango/libcairo not available therefore cairo devices not tested.
 * (I1) pkg-config not installed which means libpango/libcairo not found.  Therefore, cairo devices not tested.
 * (J) libQt not available therefore qt devices not tested.
 * (J') The Qt component of PLplot is disabled because of run-time errors (segfaults) for qt devices so those devices  (and pyqt4) not tested.
 * (J1) libqt5 not installed so qt devices not tested.
+* (J2) -DPLD_extqt=OFF or otherwise the installed versions of qt_example and pyqt5_example.py both segfaulted.
 * (K) Encountered intermittent (once only, repeat test did not have it) make.exe error: "INTERNAL: Exiting with 1 jobserver tokens available; should be 4!"  I attribute this error to the problematic make.exe parallel-build option on MSYS. (See \u003Chttps://sourceforge.net/p/mingw/bugs/1950/> for other unsolved classical MSYS parallel build flakiness.)  To work around this bug for the MinGW/MSYS platform should use the epa_build cmake option, -DNUMBER_PARALLEL_JOBS:STRING=1.  However, this workaround should not be necessary for the Cygwin or MinGW-w64/MSYS2 platforms.
 * (L) For this Lubuntu system with Qt4.8.6 system libraries, severe memory management issues (including segfaults) occurred for all attempts to use qt devices.  Therefore, to complete this comprehensive test had to disable everything Qt related by using the script option
 `--cmake_added_options "DEFAULT_NO_QT_DEVICES=ON -DENABLE_qt=OFF"`
