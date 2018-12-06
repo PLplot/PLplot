@@ -1,25 +1,22 @@
-This paragraph to to be removed for the final version.
-
-This is a preliminary version of the notes for our next release.  In
-this text ??? stands for numbers that will likely change for the final
-version of these release notes.
-
-PLplot Release 5.14.0 ???
+PLplot Release 5.14.0
 
 This is a release of the PLplot plotting package. It represents the
-ongoing best efforts (roughly 100 ??? commits since the last release) of
+ongoing best efforts (roughly 150 commits since the last release) of
 the PLplot development community to improve this package, and it is
 the only version of PLplot that we attempt to support.  Releases in
 the 5.x.y series should be available roughly two times per year.
 
 Note that PLplot has been continuously developed since 1986 so it has
-accumulated a lot of cruft since that time that we are now slowing
-dealing with to improve the lot of both new users and new members of
-the development team.  As a result virtually every PLplot release has
-some backwards incompatibilities introduced to help clean it up so
-please pay careful attention to the OFFICIAL NOTICES FOR USERS below
-where we document such incompatibilities to make life easier
-for those who have prior experience with older PLplot releases.
+accumulated a lot of cruft since that time.  Therefore, we are now
+slowing removing that cruft to improve the lot of both new users and
+new members of the development team.  As a result virtually every
+PLplot release has some backwards incompatibilities introduced to help
+clean it up so please pay careful attention to the OFFICIAL NOTICES
+FOR USERS below (and also in the various sections of
+README.cumulated_release if you need backward incompatibility
+information for several recent releases) where we document such
+incompatibilities to make life easier for those who have prior
+experience with older PLplot releases.
 
 If you encounter a problem with this release that is not already
 documented on our bug tracker, then please send bug reports to PLplot
@@ -37,25 +34,31 @@ CONTENTS
 
 1. OFFICIAL NOTICES FOR USERS
 
-1.1 CMake version compatibility
-1.2 Remove Fortran cruft
-1.3 Remove Tcl/Tk cruft
-1.4 Remove plmap cruft
-1.5 Remove Perl/PDL examples
-1.6 Remove all previously deprecated functions
-1.7 Official deprecation of plshade1
-1.8 Official deprecation of C++ cruft
-1.9 plplot.org and www.plplot.org are now our official domains
+1.1  CMake version compatibility
+1.2  Remove Fortran cruft
+1.3  Remove Tcl/Tk cruft
+1.4  Remove plmap cruft
+1.5  Remove Perl/PDL examples
+1.6  Remove all previously deprecated functions
+1.7  Official deprecation of plshade1
+1.8  Official deprecation of C++ cruft
+1.9  plplot.org and www.plplot.org are now our official domains
+1.10 We have removed the "sys" subdirectory from our source tree
+1.11 Imported PLplot targets now must use the "PLPLOT::" prefix for the target name
 
 2. Improvements relative to the previous release
 
-2.1 Bug fixes
-2.2 Update control of Python version
-2.3 Rewrite the build-system logic for determining PYQT_SIP_DIR and PYQT_SIP_FLAGS
-2.4 Implement plStatic2dGrid
-2.5 Replace use of the deprecated WIN32 and __WIN32__ macros by the _WIN32 macro
-2.6 Resolve the remaining PostScript differences
-2.7 Improve command-line parsing
+2.1  Bug fixes
+2.2  Update control of Python version
+2.3  Rewrite the build-system logic for determining PYQT_SIP_DIR and PYQT_SIP_FLAGS
+2.4  Implement plStatic2dGrid
+2.5  Replace use of the deprecated WIN32 and __WIN32__ macros by the _WIN32 macro
+2.6  Difference report default device changed from psc to svg
+2.7  Resolve the remaining difference report issues
+2.8  Improve command-line parsing
+2.9  plmap cleanup
+2.10 wxwidgets development status
+2.11 First step toward using best CMake-3 practices for our build system
 
 3. PLplot testing
 ________________________________________________________________
@@ -65,20 +68,22 @@ ________________________________________________________________
 1.1 CMake version compatibility
 
 Our build system is implemented using CMake.  The minimum version of
-CMake we allow is 3.6.2 ??? on all platforms.
+CMake we allow is 3.7.2 on all platforms.
 
 This particular PLplot release has been comprehensively tested for
-CMake versions 3.6.2 ??? through 3.9.1 ??? on a variety of platforms (see
-<http://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>).
-So if your CMake version is <= 3.9.1 ??? and satisfies the above minimum
+CMake versions 3.7.2 through 3.13.1 on a variety of platforms (see
+<http://sourceforge.net/p/plplot/wiki/Testing_Reports> for details
+of recent tests on all platforms).
+
+Therefore, if your CMake version is <= 3.13.1 and satisfies the above minimum
 CMake version requirement there is an excellent chance that our build
 system will work well.  Furthermore, if you try later CMake versions
 as they are released during the life of this PLplot release, our build
 system will likely continue to work well because CMake has an excellent
 reputation for preserving backwards compatibility.  But if you get
-build-system trouble for versions of CMake greater than 3.9.1 ???, the
-first thing you should try is CMake-3.9.1 ??? which has been well-tested
-by PLplot builds.
+build-system trouble for versions of CMake greater than 3.13.1, the
+first thing you should try is CMake-3.13.1 which has been well-tested
+by us.
 
 1.2 Remove Fortran cruft
 
@@ -88,7 +93,7 @@ was the replacement for the old binding that was implemented using a
 combination of Fortran and C code.  The new binding is much simpler,
 more consistent, and more standards-compliant than the old binding and
 has some powerful new features (e.g., both single and double
-precisions Fortran floating-point arguments are accepted).  Therefore,
+precision Fortran floating-point arguments are accepted).  Therefore,
 the new binding is necessarily backwards incompatible with the old
 binding.  For PLplot-5.12.0 we implemented the CMake option
 -DPL_DEPRECATED_fortran=ON to provide temporary deprecated access to
@@ -139,7 +144,7 @@ As of PLplot-5.9.10, a new version of plmap was implemented that used
 shapefile format (accessed via shapelib) for maps.  In addition other
 powerful map API (see the last page of standard example 19) that
 depended on shapelib map data was implemented as well.  However, we
-still made the old plmap implemention that depended on the
+still made the old plmap implementation that depended on the
 (undocumented) binary format of our *.map files available when the
 user specified -DPL_DEPRECATED=ON, and this arrangement continued
 through PLplot-5.13.0.  However, it appears our users are generally
@@ -161,12 +166,12 @@ than PLplot.
 
 1.6 Remove all previously deprecated functions
 
-I removed plParseInternalOpts, plSetInternalOpt, plclr, plpage, plcol,
+We removed plParseInternalOpts, plSetInternalOpt, plclr, plpage, plcol,
 plcontf, plP_gvpd, plP_gvpw, plotsh3d, plSetOpt, plrgb, plrgb1, plhls,
 and plwid.  These functions were officially deprecated (i.e., only
-accessible if the user specifed the -DPL_DEPRECATED=ON cmake option)
+accessible if the user specified the -DPL_DEPRECATED=ON cmake option)
 as of the PLplot-5.9.10 release (and in some cases even before that
-release) so it is long past the time to remove them.  I also edited
+release) so it is long past the time to remove them.  We edited
 the source tree files to remove all mentions of these functions (as well
 as plParseOpts, plHLS_RGB, plRGB_HLS, and plarrows that had
 been previously removed).  As a result
@@ -190,7 +195,7 @@ is used.
 
 1.8 Official deprecation of C++ cruft
 
-The following C++ methods have been unoffically deprecated (via comments in the
+The following C++ methods have been unofficially deprecated (via comments in the
 code and lack of use in our C++ examples) for a long time:
 
 // Previous function was inadvertently named plcol in old versions of
@@ -261,9 +266,9 @@ be accessible if a user sets -DPL_DEPRECATED=ON.
 
 1.9 plplot.org and www.plplot.org are now our official domains
 
-We have gone through the 3 steps in https://sourceforge.net/p/forge/documentation/Custom%20VHOSTs/
-(see also ??? www/README.domain) so that plplot.org and www.plplot.org are our official
-domains.
+We have gone through the 3 steps in
+<https://sourceforge.net/p/forge/documentation/Custom%20VHOSTs/> so that
+plplot.org and www.plplot.org are now our official domains.
 
 We have also gone through our source tree and replaced all instances
 of plplot.sf.net and plplot.sourceforge.net with plplot.org.  As a
@@ -272,13 +277,32 @@ use the official plplot.org domain for all internal references.  And
 we have changed our official domain at sf.net/projects/plplot to
 plplot.org as well.  We encourage all PLplot users to use that
 official PLplot domain as well.
+
+1.10 We have removed the "sys" subdirectory from our source tree
+
+This used to contain special build systems for special ports of PLplot
+to various platforms, but over the years our CMake-based build system
+turned out to be a better build system than these specials or else for
+the given platform the special build system had been unmaintained for
+many years and was therefore essentially worthless.  The result has
+been subdirectory after subdirectory has been removed from sys over
+the years, and for this release the last such subdirectory (for the
+so-called win-tk platform whose build system had not been maintained
+for more than a decade) was removed from sys which allowed us to
+remove sys as well.
+
+1.11 Imported PLplot targets now must use the "PLPLOT::" prefix for the target name
+
+This change is to conform to best CMake-3 practice.  See further details
+in 2.11 below.
+
 ________________________________________________________________
 
 2. Improvements relative to the previous release
 
 2.1 Bug fixes
 
-The bug fixes in this release are noted in the roughly 100 ??? commit messages
+The bug fixes in this release are noted in the roughly 150 commit messages
 collected in ChangeLog.release.
 
 2.2 Update control of Python version
@@ -351,11 +375,57 @@ using the recommended _WIN32 macro (supported by all modern versions
 of compilers that work on Windows platforms) rather than the deprecated
 WIN32 and __WIN32__ macros.
 
-2.6 Resolve the remaining PostScript differences
+2.6 Difference report default device changed from psc to svg
 
-For PLplot-5.13.0 the PostScript difference report was perfect
-except for the following long-standing OCaml
-issues:
+We have made extensive changes to our three (CMake-based, CTest-based,
+and legacy) test systems (see
+<https://sourceforge.net/p/plplot/wiki/Testing_PLplot> for extensive
+documentation of those test systems) to provide the user the freedom
+(if they specify -DPLPLOT_TEST_DEVICE=<some test device name> to
+choose any suitable PLplot device they like for the difference report
+that is used to compare standard example results written for each
+computer language that is supported by our bindings with the
+corresponding C results.  Of course, many such devices are not
+suitable for such difference tests because of a number of factors, but
+in the past we used -dev psc for this purpose, but recently we also
+found -dev svg was suitable.
+
+Of course, both the svg and psc devices share the advantage of having
+no external library dependencies and thus they are available
+on all platforms.  However, the svg device has two notable advantages
+over the psc device for the purposes of difference reports.
+
+* The SVG XML format of the plot file output by the svg device file is
+  fundamentally easier for humans to learn than PostScript (at least
+  in this author's opinion) which makes it easier to debug rendering
+  errors.
+
+* The svg device is a modern PLplot device that implements
+  alpha-channel transparency and gradients and which gives access to
+  virtually all (unicode-accessible) glyphs installed on a platform
+  while the psc device is an ancient PLplot device that because of the
+  limitations of PostScript is missing the alpha-channel and gradient
+  capabilities and which only gives access to an extremely limited
+  number of glyphs.  Thus, when the svg device is used for
+  comparisons, test_diff.sh compares one *good* plot file (with the
+  exception of example 3 which is consistently missing some of its
+  graphical elements for some reason which we will investigate later)
+  result with another for all examples.  However, when the psc device
+  is used for comparisons the difference test compares one garbage
+  plot file with missing or incorrect elements with another for many
+  of our standard examples.  This means the svg choice supplies a much
+  stronger constraint on our language PLplot API consistency than the
+  psc choice.
+
+For these reasons we have adopted -DPLPLOT_TEST_DEVICE=svg as the default value, and it
+turns out for that much more powerful test of PLplot we are currently getting perfect
+difference report results (see 2.7).
+
+2.7 Resolve the remaining difference report issues
+
+For PLplot-5.13.0 the difference report (for the psc comparison device
+used for that report) was perfect except for the following
+long-standing OCaml issues:
 
 ocaml
   Missing examples            :
@@ -372,15 +442,21 @@ fixed by the following steps:
 
 * In examples/ocaml/x16.xml replace use of the high-level colorbar
   function (which set and restored color which interfered with
-  consistency with the other languges) with plcolorbar to achieve
+  consistency with the other languages) with plcolorbar to achieve
   consistency for this example.
 
 * In examples/ocaml/x33.ml implement all pages concerning
   demonstrating the plcolorbar capability (page 5 onward) to achieve
   consistency for this example.
 
-In sum, with these improvements we now have a perfect PostScript difference
-report for the first time in 7 years, i.e.,
+This change removed all differences for the -dev psc test device but
+since this change we have also moved from that device to -dev svg and
+we find we get a clean difference report in that more powerful test
+case as well.
+
+In sum, because of the OCaml binding and examples improvements we
+obtained a perfect PostScript difference report for the first time in
+7 years, i.e.,
 
 ocaml
   Missing examples            :
@@ -388,12 +464,14 @@ ocaml
   Missing stdout              :
   Differing stdout
 
-and similarly for all the other computer languages we support.  Long
-may this perfection continue....
+and similarly for all the other computer languages we support.  And
+these perfect results have now been also demonstrated for the much
+stronger test when using the svg device for the comparison.  Long may
+this perfection continue!
 
-2.7 Improve command-line parsing
+2.8 Improve command-line parsing
 
-2.7.1 Implement C demonstration of PL_PARSE_SKIP mode
+2.8.1 Implement C demonstration of PL_PARSE_SKIP mode
 
 The PL_PARSE_SKIP mode of plparsopts has been implemented for a long
 time now in our core C library.  What this mode does is parse the
@@ -434,7 +512,7 @@ are perfect (i.e., 0 errors, no leaks are possible) with no
 PostScript differences between the above two commands other
 than the date stamp.
 
-2.7.2 Fortran improvement in parsing the command line
+2.8.2 Fortran improvement in parsing the command line
 
 Previously the Fortran parsing API consisted of just
 
@@ -497,7 +575,8 @@ variants is required to distinguish between those variants and the
 corresponding dynamic length and size variants.  The static length and
 dynamic size and static length and size variants are deprecated, but
 we include them for now because certain Fortran compilers (see below)
-have trouble with the dynamic length and size variant of the API.
+might have trouble with the dynamic length and size variant of the API
+even though that is part of the Fortran 2003 (!) standard.
 
 plget_arguments is a convenience function that exercises the rather
 complex Fortran API for determining command-line arguments and returns
@@ -507,26 +586,35 @@ plparseopts returning a modified form of argv that depends on which
 mode is specified.
 
 We tested these additions to the Fortran parsing API with
-examples/x01f.f90.
+examples/x01f.f90, and Debian Buster gfortran version "Debian 8.2.0-9"
 
 * If that source code is locally modified to change the
 pl_parse_dynamic parameter from .false. to .true., and the x01f target
-rebuilt then the following runtime error is obtained with
-gfortran-4.9.2:
+rebuilt then the following good results are  obtained:
 
-software@raven> examples/fortran/x01f xxx -dev psc yyy -o testf.psc zzz
+software@merlin> examples/fortran/x01f xxx -dev svg yyy -o testf.svg zzz
  pl_parse_dynamic =  T
-Fortran runtime error: Integer overflow when calculating the amount of memory to allocate
+argv before call to plparseopts(..., PL_PARSE_SKIP)
+i =   0, argument = examples/fortran/x01f
+i =   1, argument = xxx
+i =   2, argument = -dev
+i =   3, argument = svg
+i =   4, argument = yyy
+i =   5, argument = -o
+i =   6, argument = testf.svg
+i =   7, argument = zzz
+argv after call to plparseopts(..., PL_PARSE_SKIP)
+i =   0, argument = examples/fortran/x01f
+i =   1, argument = xxx
+i =   2, argument = yyy
+i =   3, argument = zzz
+PLplot library version: 5.13.0
 
-We ascribe this error to a bug in gfortran-4.9.2 for the case
-of character arrays that have both the length and size allocated.
-
-* If that source code is locally modified to change the
+* If that source code is locally modified to drop the above change and set the
 pl_parse_static_length parameter from .false. to .true., and the x01f target
-rebuilt then the following good results are obtained with
-gfortran-4.9.2:
+rebuilt then the following good results are obtained:
 
-software@raven> examples/fortran/x01f xxx -dev psc yyy -o testf.psc zzz
+software@raven> examples/fortran/x01f xxx -dev svg yyy -o testf.svg zzz
  pl_parse_static_length =  T
 argv before call to plparseopts(..., PL_PARSE_SKIP)
 i =   0, argument = examples/fortran/x01f
@@ -544,30 +632,277 @@ i =   2, argument = yyy
 i =   3, argument = zzz
 PLplot library version: 5.13.0
 
-* If that source code is locally modified to change the
-pl_parse_static parameter from .false. to .true., and the x01f target
-rebuilt then the good results above (except for the difference
+* If that source code is locally modified to drop the previous local
+change and change the pl_parse_static parameter from .false. to
+.true., and the x01f target rebuilt then the good results above
+(except for the difference
 
- pl_parse_static_length =  T
-
-==>
-
- pl_parse_static =  T
+ pl_parse_static_length =  T ==> pl_parse_static =  T
 
 ) continue to be obtained.
 
 In all three test cases above, valgrind showed perfect results (0 errors with no leaks possible).
 
-Tests with other gfortran versions > 4.9.2 and other Fortran compilers
-(e.g., ifort and nagfor) will be required to determine how long we
-keep the deprecated forms of plget_arguments and plparseopts.
+Note that when I tried these tests before with Debian Jessie (with gfortran-4.9.2) the first
+test errored out with
 
+"Fortran runtime error: Integer overflow when calculating the amount of memory to allocate"
+
+We ascribe this error to a bug in gfortran-4.9.2 for the case of
+character arrays that have both the length and size allocated.  So we
+recommend that old version of gfortran should be avoided, and it
+appears more modern gfortran, e.g., gfortran 8.2.0 tested above, will
+not have issues if we drop the deprecated forms of plget_arguments and
+plparseopts in favour of the first method where an array of character
+strings of both dynamic length and size is allocated.  And that would
+clear the way for following up by moving to uniform fortran arrays of
+character strings that are dynamic in both length and size for our
+entire Fortran API.  That follow up would be terrific since it moves
+our Fortran API and corresponding examples out of the Fortran
+character array dark ages.  However, there are other fortran compilers
+(e.g., ifort, nagfor, absoft) we urgently need to test in the same way
+with example 1 before we can go ahead and drop the above deprecated
+functionality and do the suggested follow up.
+
+2.9 plmap cleanup
+
+We have removed old plmap functionality (see description of this
+change in "1.4 Remove plmap cruft" above).  In addition as part of
+fixing a wrap bug we substantially simplified the code.  And some
+unused functions were also removed.
+
+2.10 wxwidgets development status
+
+This is a status report as of the release of PLplot-5.14.0 for the
+"new" wxwidgets components (e.g., -dev wxwidgets, wxPLViewer
+application, the wxwidgets binding, and wxPLplotDemo example
+application that links to that binding) of PLplot.
+
+Many bugs in the "new" wxwidgets components for this release (see the
+ChangeLog for details) have been fixed.  However, despite this
+excellent development progress at least two serious issues for -dev
+wxwidgets still remain.
+
+* wxPLViewer only displays the end result of each page plotted.
+
+  Instead, it should immediately render that plot buffer as it is
+  actively filled with PLplot commands.  That important change will
+  supply the required interactivity for example 17 (rather than just
+  plotting the end results for that one-page example) and make the -np
+  (no pause) option work correctly (where you can see all plot pages
+  as they are being plotted rather than just having a blank screen
+  99.99% of the time followed by a "flash" of the final page result at
+  the end of each page that is so short it is rarely visible).  Note,
+  example 17 (without the -np option) and all examples including 17
+  with the -np option do render correctly for the interactive xwin,
+  tk, xcairo, and qtwidget devices so there should be no fundamental
+  reason for this functionality to work incorrectly for -dev
+  wxwidgets.
+
+* AWI (Alan W. Irwin) and PR (Phil Rosenberg) have not yet decided on which of the
+  -DPL_WXWIDGETS_IPC3=OFF or ON methods should be used to handle
+  IPC (interprocess communication) between -dev wxwidgets and the
+  wxPLViewer application.
+
+  The -DPL_WXWIDGETS_IPC3=OFF case (developed by PR right when he
+  started developing the "new" wxwidgets code) uses a relatively large
+  circular buffer located in shared memory to efficiently transfer
+  data from one process to the other with transfer progress checked
+  periodically by a timed wait.  The majority of this code is a subset
+  of code in an event-handling routine on the wxPLViewer side of
+  transactions so it is not (yet) organized as a dedicated set of two
+  routines (one to send one to receive) you call to transfer data as
+  in the -DPL_WXWIDGETS_IPC3=ON case discussed below.  This method
+  works well for all noninteractive examples for both Linux and
+  Windows.  And in older tests (before the above fixes) for -locate
+  mode of example 1 (that mode turns that normally noninteractive
+  example into an interactive example) PR found this method succeeded
+  on Windows while AWI found this method failed on Linux.
+
+  AWI has recently found for the latest version of the "new" wxwidgets
+  code (i.e., after all the above fixes were done) that interactive
+  example still has problems, i.e., the display did not come on
+  immediately so he had to mouse click on a particular part of the
+  blank screen (over one of the hidden viewports) for a while to get
+  the example to display properly on Linux for the
+  -DPL_WXWIDGETS_IPC3=OFF case.
+
+  The -DPL_WXWIDGETS_IPC3=ON case (developed by AWI long after PR had
+  initiated the work on his "new" wxwidgets code) uses a 3-semaphore
+  approach to transfer an arbitrarily large block bytes in an
+  efficient way from one process to the other using a relatively small
+  shared memory buffer with no timed waits.  This complete transfer is
+  handled by just two function calls (transmitBytes on the
+  transmitting side and receiveBytes on the receiving side).  Those
+  two routines use two semaphores to control the transfer in the way
+  described by the "Unnamed Semaphores Example" on page 73 and
+  following of
+  <http://man7.org/conf/lca2013/IPC_Overview-LCA-2013-printable.pdf>.
+  In addition, transmitBytes acquires a third semaphore before this
+  flow process starts and releases it after all bytes have been
+  transmitted to make sure that if other threads call transmitBytes,
+  they will just wait to acquire that third semaphore before
+  proceeding with its data transfer.  So ordinarily there is absolutely no
+  interference between data transfers that occur in different threads.
+  However, there is at least one case (one thread transmitting bytes,
+  a second thread waiting to transmit bytes, but with
+  the first thread unable to regain process control for some reason (e.g.,
+  some screw up in handling wxwidgets events) where the first thread
+  will be unable to complete
+  its transfer ==> deadlock.
+
+  For -DPL_WXWIDGETS_IPC3=ON no such deadlocks have been observed on
+  any platform for noninteractive examples, but PR discovered such
+  deadlocks occurred on Windows when attempting to run the -locate
+  mode of example 1, and AWI also had trouble for this case on Linux.
+  But both these tests were done before all the recent wxwidgets fixes
+  (which apparently had nothing to do with IPC), and AWI has recently
+  discovered that interactive example now works well for the first
+  time ever!  So an additional -DPL_WXWIDGETS_IPC3=ON test on Windows
+  platforms for this interactive case should be done to see if
+  whatever fixed -DPL_WXWIDGETS_IPC3=ON for the Linux case also fixes
+  the Windows case.
+
+  In sum, for noninteractive examples we should be fine on all
+  platforms with either -DPL_WXWIDGETS_IPC3=ON or OFF.  And for the
+  latest version of "new" wxwidgets we are also fine on Linux with
+  -DPL_WXWIDGETS_IPC3=ON and the -locate mode of example 1.  But that
+  interactive examples fails to work properly on Linux for
+  -DPL_WXWIDGETS_IPC3=OFF.  And as far as I (AWI) am aware
+  -DPL_WXWIDGETS_IPC3=OFF and ON have not been tested for the latest
+  version of "new" wxwidgets on Windows.  Given this uncertain testing
+  situation for the latest "new" wxwidgets code on Windows platform, I (AWI)
+  have adopted -DPL_WXWIDGETS_IPC3=ON as the default on the assumption
+  that the good noninteractive and interactive
+  results in the Linux case for -DPL_WXWIDGETS_IPC3=ON will carry over
+  to the Windows case when the latest version of the code is tested
+  on that platform.  However, if a user runs into any trouble with this
+  default choice on any platform, please also try -DPL_WXWIDGETS_IPC3=OFF
+  and report back those two results to the plplot-general mailing list
+  so we have a chance to replicate the issue and fix it.
+
+Furthermore if either of these serious issues with "new" wxwidgets
+affect you in a way you cannot work around, you should also try
+-DOLD_WXWIDGETS=ON to see if that gives a better result (although that
+old wxwidgets code is in deep maintenance mode so we are unlikely to
+change any part of it going forward in case issues with it are
+discovered).
+
+By the way, we have tried -DOLD_WXWIDGETS=ON, on Linux (Debian
+Buster), and the following good results were obtained: (i) The -np
+option does work properly (all example plots seen as they are plotted
+out rather than just the final page result) if you test it by building
+the test_c_wxwidgets target, (ii) example 17 does plot "interactively"
+(rather than plotting final results at the end of the page) if you try
+"examples/c/x17c -dev wxwidgets", and (iii) "examples/c/x01c -locate
+-dev wxwidgets" works properly, i.e., the display and cursor position
+show *before* you make a choice of where to click the mouse button.
+However, for these ultra-modern (version 3.0.4) Debian Buster =
+Testing wxWidgets libraries (this -DOLD_WXWIDGETS=ON problem did not
+show up for the old wxWidgets libraries I tested for Debian Jessie =
+Oldstable) you have to randomly move the mouse to get long plots such
+as "examples/c/x08c -dev wxwidgets" and "examples/c/x17c -dev
+wxwidgets" results completely plotted.  So it appears that our "old"
+code has exposed a bug in the Debian Buster wxwidgets libraries, but
+that bug may not appear for other distributions so -DOLD_WXWIDGETS=ON
+is certainly worth trying as a stop gap if there is some aspect of the
+"new" wxwidgets PLplot code that is failing.
+
+2.11 First step toward using best CMake-3 practices for our build system
+
+Our CMake-based build system was originally designed more than a
+decade ago for CMake-2 by a number of different PLplot developers, and
+since then while maintaining this system I have taken full advantage
+of CMake-3 backwards compatibility with CMake-2.  The result works
+well for cmake-3.7.2 (our minimum allowed cmake version) through
+cmake-3.13.1 (the latest version of CMake that has been released).
+However, our build system does not follow best CMake-3 practices as
+outlined in [this inspiring
+article](https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/).
+
+Motivated by that article as well as by comments on the CMake mailing
+list, I have now taken the first step toward such best practices which
+is to always use prefixed target names (with a prefix of "PLPLOT::")
+for read-only use of targets that are installed by the core build
+and which are correspondingly imported by the build of the installed examples.
+Of course, those imported targets are not available to the core build (since it
+builds these special targets before installing/exporting
+them) so the only way to implement the same "PLPLOT::" prefix
+for these special targets in the core build is to implement ALIASed
+versions of all these targets in the core build whose names all
+have the "PLPLOT::" prefix.  Both imported targets and ALIASed targets
+can only be used by CMake commands which only read information about the target.
+So for the sake of consistency, I changed
+all read-only references to these special targets in the core build
+by always using the "PLPLOT::" prefix for that case.  In addition
+for CMake commands which write information to targets
+I used the prefix ${WRITEABLE_TARGET} for the target name.
+As a result of these changes all special targets for both build systems
+had a prefixed target name where the prefix was "PLPLOT::" in the
+read-only case and ${WRITEABLE_TARGET} otherwise.
+
+For normal use ${WRITEABLE_TARGET} must be empty since otherwise it
+changes the actual installed library and executable names which
+completely messes up any non-trivial use of the installed PLplot such
+as the installed examples build system.
+
+However, the configure_library_build and configure_executable_build
+functions (the functions that are used in the core build to uniformly
+configure builds of all special targets) have also been updated so
+that a non-empty ${WRITEABLE_TARGET} changes the special library and
+executable names while the original PLPLOT::<original target name>
+remains the same and is aliased to refer to those changed writeable
+targets and corresponding changed names for executables and libraries.
+Thus, the net result is the core build and corresponding tests of that
+build work when ${WRITEABLE_TARGET} is non-empty.
+
+Normally nobody would be particularly interested in prefixing the name
+of all special PLplot libraries and executables in a way that only
+works in the build tree.  However, there is one special case where
+this capability is quite useful for developers, and that is when they
+do a comprehensive test constrained just to the core-build
+configurations with -DUSE_WRITEABLE_TARGET_TEST_PREFIX=ON (which is
+the only case where a non-empty ${WRITEABLE_TARGET} is created).  If
+that comprehensive test is a success (which proved to be the case in
+this release cycle after a fair number of iterations), then the
+developer knows that there are no unprefixed special targets left in
+our build system (since they would refer to library or executable
+names that don't exist) with the caveat that only CMake code that is
+actually exercised by the above comprehensive test is checked this way
+by this test.
+
+N.B. The second and third big steps toward best CMake-3 practices are
+in the initial planning stages.  Those steps which with luck will be
+ready for the next release are the following:
+
+* Replace all use of the completely unfocused include_directories
+  command (that effects builds of all targets in that directory and
+  below) with the the target_include_directories command which allows
+  us to define *and export* header file locations for one focused
+  target.
+
+* Replace a grab-bag of ways to specify compile flags (some compiler options
+  some specific -D definitions) and another grab bag of ways to specify
+  compile definitions by calls
+  to target_compile_options and target_compile_definitions that not only
+  make these data available for the core target build but also the subset
+  of these data that are typically needed for building against the corresponding
+  imported targets.
+
+In sum, we have made a good start toward updating our build system to
+best CMake-3 practice for this release, and we plan to update it much
+further in that regard for the next release.  The net result of all
+these intrusive changes should be that our build system will be
+subject to fewer subtle bugs.  And it should also be much easier to
+maintain (e.g., during the coming expected advent of CMake-4 where several
+deprecated CMake-2 commands such as the include_directories command
+that we use now are likely to be dropped).
 ________________________________________________________________
 
 3. PLplot testing
 
 Comprehensive tests of this release are documented in
-<https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>.
+<https://sourceforge.net/p/plplot/wiki/Testing_Reports>.
 In addition, developers and users who have used the git master tip
 version for all their plotting needs during this release cycle have
 provided additional important testing of this release of PLplot.
