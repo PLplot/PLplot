@@ -45,6 +45,8 @@ CONTENTS
 1.9  plplot.org and www.plplot.org are now our official domains
 1.10 We have removed the "sys" subdirectory from our source tree
 1.11 Imported PLplot targets now must use the "PLPLOT::" prefix for the target name
+1.12 Drop -single_module linking option that was previously forced for Mac OS X
+1.13 Changed color interpolation for plscmap1l and plscmap1la
 
 2. Improvements relative to the previous release
 
@@ -56,9 +58,12 @@ CONTENTS
 2.6  Difference report default device changed from psc to svg
 2.7  Resolve the remaining difference report issues
 2.8  Improve command-line parsing
-2.9  plmap cleanup
+2.9  Cleanup of plmap
 2.10 wxwidgets development status
 2.11 First step toward using best CMake-3 practices for our build system
+2.12 Update PLplot to be consistent with modern free software
+2.13 Rewrite documentation of PLplot testing
+2.14 Configure the ps and psttf device drivers just like all other device drivers
 
 3. PLplot testing
 ________________________________________________________________
@@ -296,6 +301,26 @@ remove sys as well.
 This change is to conform to best CMake-3 practice.  See further details
 in 2.11 below.
 
+1.12 Drop -single_module linking option that was previously forced for Mac OS X
+
+We imposed this Mac OS X linking option to address a linking issue
+that occurred for CMake on that platform 12 (!) years ago.  We are
+virtually positive from our google searches this linking issue no
+longer exists so we have removed this option so that from now on
+PLplot libraries and executables will be linked in a more standard way
+on this platform.
+
+1.13 Changed color interpolation for plscmap1l and plscmap1la
+
+Previously these routines took control points for interpolating a new
+colour map, but even if RGB coordinates were passed in, they were
+converted to HLS coordinates and interpolated in HLS space. The new
+behaviour of these routines is to interpolate in whichever space the
+coordinates are passed in with.  In addition to this change in
+semantics, there was a backwards-incompatible change in the
+names of the members of the PLControlPt C struct in plplot.h.
+So those users whose code refers to this C struct will need
+to modify their code appropriately.
 ________________________________________________________________
 
 2. Improvements relative to the previous release
@@ -586,7 +611,7 @@ plparseopts returning a modified form of argv that depends on which
 mode is specified.
 
 We tested these additions to the Fortran parsing API with
-examples/x01f.f90, and Debian Buster gfortran version "Debian 8.2.0-9"
+examples/x01f.f90, and Debian Testing gfortran version "Debian 8.2.0-9"
 
 * If that source code is locally modified to change the
 pl_parse_dynamic parameter from .false. to .true., and the x01f target
@@ -664,7 +689,7 @@ character array dark ages.  However, there are other fortran compilers
 with example 1 before we can go ahead and drop the above deprecated
 functionality and do the suggested follow up.
 
-2.9 plmap cleanup
+2.9 Cleanup of plmap
 
 We have removed old plmap functionality (see description of this
 change in "1.4 Remove plmap cruft" above).  In addition as part of
@@ -710,7 +735,7 @@ wxwidgets still remain.
   data from one process to the other with transfer progress checked
   periodically by a timed wait.  The majority of this code is a subset
   of code in an event-handling routine on the wxPLViewer side of
-  transactions so it is not (yet) organized as a dedicated set of two
+  transfers so it is not (yet) organized as a dedicated set of two
   routines (one to send one to receive) you call to transfer data as
   in the -DPL_WXWIDGETS_IPC3=ON case discussed below.  This method
   works well for all noninteractive examples for both Linux and
@@ -789,7 +814,7 @@ change any part of it going forward in case issues with it are
 discovered).
 
 By the way, we have tried -DOLD_WXWIDGETS=ON, on Linux (Debian
-Buster), and the following good results were obtained: (i) The -np
+Testing), and the following good results were obtained: (i) The -np
 option does work properly (all example plots seen as they are plotted
 out rather than just the final page result) if you test it by building
 the test_c_wxwidgets target, (ii) example 17 does plot "interactively"
@@ -797,13 +822,13 @@ the test_c_wxwidgets target, (ii) example 17 does plot "interactively"
 "examples/c/x17c -dev wxwidgets", and (iii) "examples/c/x01c -locate
 -dev wxwidgets" works properly, i.e., the display and cursor position
 show *before* you make a choice of where to click the mouse button.
-However, for these ultra-modern (version 3.0.4) Debian Buster =
-Testing wxWidgets libraries (this -DOLD_WXWIDGETS=ON problem did not
+However, for these ultra-modern (version 3.0.4) Debian Testing
+wxWidgets libraries (this -DOLD_WXWIDGETS=ON problem did not
 show up for the old wxWidgets libraries I tested for Debian Jessie =
 Oldstable) you have to randomly move the mouse to get long plots such
 as "examples/c/x08c -dev wxwidgets" and "examples/c/x17c -dev
 wxwidgets" results completely plotted.  So it appears that our "old"
-code has exposed a bug in the Debian Buster wxwidgets libraries, but
+code has exposed a bug in the Debian Testing wxwidgets libraries, but
 that bug may not appear for other distributions so -DOLD_WXWIDGETS=ON
 is certainly worth trying as a stop gap if there is some aspect of the
 "new" wxwidgets PLplot code that is failing.
@@ -897,6 +922,66 @@ subject to fewer subtle bugs.  And it should also be much easier to
 maintain (e.g., during the coming expected advent of CMake-4 where several
 deprecated CMake-2 commands such as the include_directories command
 that we use now are likely to be dropped).
+
+2.12 Update PLplot to be consistent with modern free software
+
+This important series of changes occurred because the primary testing
+platform for PLplot was changed from Debian Jessie (Debian 8) which
+was more than 3 years out of date), to Debian Testing (currently
+Debian Buster = Debian 10) which is a rolling release that keeps up to date
+with modern free software development.
+
+As a result of these changes, the PLplot core libraries, bindings, and device drivers
+have now proven [via comprehensive tests](<https://sourceforge.net/p/plplot/wiki/Testing_Reports)
+to be compatible with the following modern versions of free software packages:
+
+* CMake-3.13.1	      		 (core, bindings, and device drivers)
+* gcc 8.2.0			 (core)
+* qhull 2015.2			 (optional core interpolation functionality)
+* shapelib 1.4.1		 (optional core map functionality)
+* swig 3.0.12			 (java, lua, octave, and python bindings)
+* gnatmake/gdc/gfortran 8.2.0	 (ada, d, and fortran bindings)
+* g++ 8.2.0			 (c++ binding and psttf and wxwidgets device drivers)
+* pango 1.42.3, cairo 1.16.0	 (cairo device driver)
+* openjdk 11.0.1		 (java binding)
+* lua 5.3.5			 (lua binding)
+* camlidl 1.05, ocaml 4.05	 (ocaml binding)
+* octave 4.4.1	      		 (octave binding)
+* python 3.6.7			 (python binding)
+* Qt 5.11.2			 (qt binding and qt device driver)
+* Tcl/Tk 8.6.8			 (tcl/tk binding and tk device driver)
+* libx11 2:1.6.7		 (tk and xwin device drivers)
+* wxWidgets 3.0.4		 (wxwidgets binding and device driver)
+
+Notes for this table:
+
+* The Debian Testing package for swig 3.0.12 contains a swig fix that should be
+  generally released for swig-4 that allows PLplot to build an Octave-4.4 binding.
+  If your swig-3 version does not have this fix, you should use Octave-4.2
+  until swig-4 is released.
+
+* The Debian Testing package for lua 5.3.3 currently perpetuates
+  [a serious bug](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=902238)
+  for that particular upstream version.  The above good results for lua
+  5.3.5 were generated with a locally built version of upstream 5.3.5.
+
+2.13 Rewrite documentation of PLplot testing
+
+We have completely rewritten <https://sourceforge.net/p/plplot/wiki/Testing_Reports> which
+documents how PLplot is tested.
+
+2.14 Configure the ps and psttf device drivers just like all other device drivers
+
+Previous to this change our build system configured the devices (i.e.,
+the ps and psc devices) of the ps device driver together (i.e., the
+CMake option DPLD_ps controlled both devices) but now it does that
+individually (where DPLD_ps and DPLD_psc control the ps and psc
+devices separately).  And similarly for the psttf and psttfc devices
+of the psttf device driver.  Previous to this change, all other device
+drivers configured their devices individually and now that the ps and
+psttf device drivers are no longer anomalous in that regard, it has
+allowed us to simplify our build system logic substantially for
+anything having to do with the ps or psttf device drivers.
 ________________________________________________________________
 
 3. PLplot testing
