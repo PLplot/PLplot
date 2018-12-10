@@ -193,9 +193,9 @@ let function_attributes return_type name =
       (
         fun a -> ["mlname(" ^ (
           match Array.length a with
-              1 -> String.lowercase a.(0)
+              1 -> String.lowercase_ascii a.(0)
             | 2 ->
-                String.lowercase a.(0) ^ "_" ^ a.(1)
+                String.lowercase_ascii a.(0) ^ "_" ^ a.(1)
             | _ -> raise (Failure "Bad result in function caps check")
         ) ^ ")"]
       );
