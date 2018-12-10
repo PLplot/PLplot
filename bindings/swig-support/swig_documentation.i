@@ -5039,39 +5039,43 @@ DESCRIPTION:
     (see the PLplot documentation).  May be called at any time.
 
     The idea here is to specify a number of control points that define the
-    mapping between input cmap1 intensity indices and HLS (or RGB).
-    Between these points, linear interpolation is used which gives a
-    smooth variation of color with intensity index.  Any number of control
-    points may be specified, located at arbitrary positions, although
-    typically 2 - 4 are enough. Another way of stating this is that we are
-    traversing a given number of lines through HLS (or RGB) space as we
-    move through cmap1 intensity indices.  The control points at the
-    minimum and maximum position (0 and 1) must always be specified.  By
-    adding more control points you can get more variation.  One good
-    technique for plotting functions that vary about some expected average
-    is to use an additional 2 control points in the center (position ~=
-    0.5) that are the same lightness as the background (typically white
-    for paper output, black for crt), and same hue as the boundary control
-    points.  This allows the highs and lows to be very easily
-    distinguished.
+    mapping between input cmap1 intensity indices and HLS or RGB.  Between
+    these points, linear interpolation is used which gives a smooth
+    variation of color with intensity index.  Any number of control points
+    may be specified, located at arbitrary positions, although typically 2
+    - 4 are enough. Another way of stating this is that we are traversing
+    a given number of lines through HLS or RGB space as we move through
+    cmap1 intensity indices.  The control points at the minimum and
+    maximum position (0 and 1) must always be specified.  By adding more
+    control points you can get more variation.  One good technique for
+    plotting functions that vary about some expected average is to use an
+    additional 2 control points in the center (position ~= 0.5) that are
+    the same lightness as the background (typically white for paper
+    output, black for crt), and same hue as the boundary control points.
+    This allows the highs and lows to be very easily distinguished.
 
     Each control point must specify the cmap1 intensity index and the
     associated three coordinates in HLS or RGB space.  The first point
     must correspond to position = 0, and the last to position = 1.
 
-    The default behaviour is for the hue to be linearly interpolated
-    between the control points. Since the hue lies in the range [0, 360]
-    this corresponds to interpolation around the \"front\" of the color
-    wheel (red<->green<->blue<->red). If alt_hue_path[i] is true, then an
-    alternative interpolation is used between control points i and i+1. If
-    hue[i+1]-hue[i] > 0 then interpolation is between hue[i] and hue[i+1]
-    - 360, otherwise between hue[i] and hue[i+1] + 360. You can consider
-    this as interpolation around the \"back\" or \"reverse\" of the color
-    wheel. Specifying alt_hue_path=NULL is equivalent to setting
-    alt_hue_path[] = false for every control point.
+    If RGB colors are provided then the interpolation takes place in RGB
+    space and is trivial. However if HLS colors are provided then, because
+    of the circular nature of the color wheel for the hue coordinate, the
+    interpolation could be performed in either direction around the color
+    wheel. The default behaviour is for the hue to be linearly
+    interpolated ignoring this circular property of hue. So for example,
+    the hues 0 (red) and 240 (blue) will get interpolated via yellow,
+    green and cyan. If instead you wish to interpolate the other way
+    around the color wheel you have two options. You may provide hues
+    outside the range [0, 360), so by using a hue of -120 for blue or 360
+    for red the interpolation will proceed via magenta. Alternatively you
+    can utilise the alt_hue_path variable to reverse the direction of
+    interpolation if you need to provide hues within the [0-360) range.
 
     Examples of interpolation Huealt_hue_pathcolor scheme[120
     240]falsegreen-cyan-blue[240 120]falseblue-cyan-green[120
+    -120]falsegreen-yellow-red-magenta-blue[240
+    480]falseblue-magenta-red-yellow-green[120
     240]truegreen-yellow-red-magenta-blue[240
     120]trueblue-magenta-red-yellow-green
 
@@ -5110,10 +5114,12 @@ ARGUMENTS:
         coordinate (S or B) for each control point.
 
     alt_hue_path (PLBOOL_VECTOR, input) :    A vector (with
-    npts - 1 elements) containing the alternative interpolation method
-        Boolean value for each control point interval.  (alt_hue_path[i]
-        refers to the interpolation interval between the i and i + 1
-        control points).
+    npts - 1 elements), each containing either true to use the reversed
+        HLS interpolation or false to use the regular HLS interpolation.
+        (alt_hue_path[i] refers to the interpolation interval between the
+        i and i + 1 control points). This parameter is not used for RGB
+        colors (
+    itype = true).
 ")
 plscmap1l;
 
