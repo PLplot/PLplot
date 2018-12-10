@@ -13259,7 +13259,7 @@ device support!)
       behaviour is for the hue to be linearly interpolated ignoring this circular
       property of hue. So for example, the hues 0 (red) and 240 (blue) will get
       interpolated via yellow, green and cyan. If instead you wish to interpolate
-      the other way around the color wheel you have two option. You may provide hues
+      the other way around the color wheel you have two options. You may provide hues
       outside the range [0, 360), so by using a hue of -120 for blue or 360 for red
       the interpolation will proceed via magenta. Alternatively you can utilise the
       alt_hue_path variable to reverse the direction of interpolation if you need
