@@ -30,17 +30,24 @@ XML::Parser and XML::DOM (man); xmlto (html); and dblatex and xelatex
 
 After the cmake step using -DBUILD_DOC=ON you must run either
 
-make -j4 all >& all.out
+# Set JOBS to suitable value. 16 is correct for hardware such as the
+# Ryzen 7 1700 system with 8 cpu cores and twice that number of
+# hardware threads.  But parallel builds are unreliable on Cygwin and
+# MinGW-w64/MSYS2 as well if/when someone tries to build our DocBook
+# documentation on that platform so for those two platforms you should
+# always set JOBS=1.
+JOBS=16
+
+make -j$JOBS all >& all.out
 
 or
 
-make -j4 build_docbook_documentation >& build_docbook_documentation.out
+make -j$JOBS build_docbook_documentation >& build_docbook_documentation.out
 
-to build the DocBook documentation - note however, that the j4 (parallel
-build option does not work on Cygwin.  (The former builds all aspects
-of PLplot including the documentation, while the latter is quicker
-because it just builds the documentation and its PLplot
-prerequisites.)  Furthermore, at build-time xmlto and dblatex
+to build the DocBook documentation.  (The former command builds all
+aspects of PLplot including the documentation, while the latter
+command is quicker because it just builds the documentation and its
+PLplot prerequisites.)  Furthermore, at build-time xmlto and dblatex
 automatically check for required tools, and dblatex checks for missing
 fonts when generating the pdf results.  (Those required fonts are
 chosen by doc/docbook/source/dblatex_stylesheet.xsl and are currently
@@ -52,9 +59,11 @@ to figure out what DocBook/XML related tools and fonts you need to
 install in order to build the documentation.
 
 N.B. As far as we know, the complete set of required tools is only
-available on Linux and Cygwin so you will need access to one of those
-platforms to do a documentation build.  For more information on
-those platforms see "Linux Specific" and "Cygwin Specific" below.
+available on Linux and Cygwin platforms so you will need access to one of those
+platforms to do a documentation build.  It is possible as well that the required
+tools are available for MinGW-w64/MSYS2, but so far nobody has reported on that
+platform.  For more information for the Linux and Cygwin cases,
+see "Linux Specific" and "Cygwin Specific" below.
 
 Linux Specific
 ==============
@@ -237,25 +246,41 @@ paragraph just after Table-3.5.
 
 First, make sure all forms of the DocBook-generated documentation are built using
 
-make -j4 build_docbook_documentation.
+make -j$JOBS build_docbook_documentation.
 
 Then here are the specific tests for each kind of that generated documentation.
 
 1. man pages.
 
-I cannot figure out how to get nroff to work properly with UTF-8 man pages
-so use the man command to test the generated man pages as follows:
+N.B. nroff is a wrapper for groff which is OK for ascii input but which does not
+work correctly (since it doesn't have a -K option which it can pass on to groff)
+with input utf8 manpage files so instead of
 
-mkdir -p man/man3
-ln -s $(find $(pwd) -name "*.3plplot") man/man3
-for MANPAGE in $(find man/man3 -type l|sort|grep -E '(plot3dcl|plsurf3dl)'); do MANPAGE1=${MANPAGE##*/}; man -M./man ${MANPAGE1%%.3plplot} ; done
+nroff -man <manpage file> |less
 
-Two of our man pages (plot3dcl.3plplot and plsurf3dl.3plplot)
-currently contain UTF-8 symbols (for the math symbols ≤ and ≥) so I
-have selected those in the above example, and those UTF-8 symbols
-render without issues (see discussion below), but if you prefer to look at all
-man pages that "|grep -E '(plot3dcl|plsurf3dl)'" stanza should be
-dropped.
+must instead use the following command
+
+groff -K utf8 -T utf8 -mandoc <manpage file> |less
+
+In particular to check out our two man pages which contain any UTF-8
+symbols at all (in this case ≤ and ≥) execute the following command if
+in this directory (doc/docbook in the build tree):
+
+
+for MANPAGE in src/plot3dcl.3plplot src/plsurf3dl.3plplot ; do (groff -K utf8 -T utf8 -mandoc $MANPAGE|less) ; done
+
+Those UTF-8 symbols  ≤ and ≥ should render without issues (see discussion below), but if you
+want to look at all our man pages as well, use
+
+for MANPAGE in src/*.3plplot ; do (groff -K utf8 -T utf8 -mandoc $MANPAGE|less) ; done
+
+So currently our man pages are a case of "so far so good" with regard
+to UTF-8 system glyphs since at the present time our UTF-8 text in our
+man pages is quite limited.  For example, we don't know how well our
+man backend and groff will do for exotic system glyphs such as the
+many thousands of mathematical symbols normally available, and we also
+don't know how that combination of software will render CTL scripts
+(if we ever use those in the documentation of our API).
 
 2. info pages.
 
@@ -267,23 +292,23 @@ If in the top directory of the build tree
 
 info doc/docbook/src/plplotdoc.info
 
-I suggest searching explicitly for "plot3dcl", "plsurf3dl", and
-"peace" to evaluate how the UTF-8 symbols are rendered. I got perfect
-results for the UTF-8 symbols "≤" and "≥" in plot3dcl and plsurf3dl
-for both konsole (the KDE terminal that uses client-side TrueType
-glyphs selected by font-config) and xterm (X terminal that uses server
-side X fonts with no font-config glyph selection.  Furthermore, for
-konsole I got perfect "peace" results including the glyph order for
-the CTL scripts Hebrew, Arabic, and Devanagari (the script for Hindi)
-except for an extra character occurred after the Hindi and Turkish
-"Peace" words which were otherwise rendered correctly.  I got so-so
-"peace" results for xterm with the Korean, Hindi, and Mandarin glyphs
-completely missing.  This may be a matter of installing more xfonts-*
-Debian packages, but I tried pretty hard with that (including
-restarting X after the xfonts-* package installation) without any
-improvement.  So the conclusion is to stick to a terminal (such as
-konsole but NOT xterm) that uses X client-side system unicode fonts
-and you should get near-perfect UTF-8 results with info.
+I suggest searching explicitly for "≤", "≥", and "peace" to evaluate
+how those first two glyphs, the glyphs mentioned in the "peace"
+paragraph, and the additional mathematical glyphs mentioned in the
+following paragraph are rendered.  For Debian Testing I have found
+that "konsole" (the KDE terminal emulation app that uses client-side
+TrueType glyphs selected by font-config) renders all those unicode
+glyphs well including rendering the CTL scripts for Hebrew, Arabic,
+and Devanagari (the script for Hindi) "peace" words in the correct order,
+while xterm (the legacy X terminal emulation app that
+uses server side X fonts with no font-config glyph selection) is
+missing a number of glyphs, renders the CTL language glyphs in
+an incorrect order, and the results for the unicode glphys it
+does recognize do not look as good as the results from konsole.  So
+the conclusion is for the purposes of this evaluation stick to a
+terminal emulation app (such as konsole but NOT xterm) that uses X client-side
+system unicode fonts and you should get perfect UTF-8
+results with info.
 
 3. web pages.
 
@@ -297,17 +322,19 @@ CTL scripts Hebrew, Arabic, and Devanagari (the script for Hindi).
 4. pdf file
 
 Browse with your favorite browser the
-<doc/docbook/src/plplot-$plplot_version.pdf> file that is generated in your
-build tree.  To look especially for UTF-8 issues search for
-plot3dcl, plsurf3dl, and peace.  In this case, Korean and Mandarin
-glyphs are missing, and the last-few Hindi glyphs are rendered out of order.
+<doc/docbook/src/plplot-$plplot_version.pdf> file that is generated in
+your build tree.  To look especially for UTF-8 issues search for
+plot3dcl, plsurf3dl, and peace.  In this case, a long-standing problem
+is the Korean and Mandarin glyphs are missing, and the last-few Hindi
+glyphs are rendered out of order.
 
 The following tests of our swig documentation are done with python and octave
 in separate directories:
 
 1. Preliminaries
 
-Use the cmake option -DADD_SPECIAL_CONSISTENCY_CHECKING=ON and build
+Use the cmake option -DADD_SPECIAL_CONSISTENCY_CHECKING=ON, check the cmake.out
+file for any warnings about additional components of PLplot missing for this option, and build
 the check_swig_documentation target.  That target uses the api2swigdoc.pl perl
 script to generate from api.xml a check file bindings/swig-support/swig_documentation.i_compare
 in the build tree as the basis of a consistency check with bindings/swig-support/swig_documentation.i
@@ -317,7 +344,7 @@ for the python and octave documentation checked below.
 
 2. Check the python documentation
 
-Build the test_python_psc target in order to build
+Build the test_python_svg target in order to build
 all the required /prerequisites.
 
 cd to examples/python in the build tree and invoke
@@ -342,7 +369,7 @@ UTF-8 symbols ≤ and ≥.
 
 3. Check the octave documentation
 
-* Build the test_octave_psc target in order to build
+* Build the test_octave_svg target in order to build
   all the required prerequisites.
 
 * Determine the octavedir environment variable
