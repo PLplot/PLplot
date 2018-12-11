@@ -1,6 +1,11 @@
 #!/bin/bash
 
-PARALLEL_BUILD_OPTION="=j10"
+# Set JOBS to suitable value. 16 is correct for hardware such as the
+# Ryzen 7 1700 system with 8 cpu cores and twice that number of
+# hardware threads.  But parallel builds are unreliable on Cygwin and
+# MinGW-w64/MSYS2 so for those two platforms you should
+# always set JOBS=1.
+JOBS=16
 
 # This script generates a tarball of source code and screenshots,
 # 'htdocs_plot_examples.tgz', that will be part of the 'examples' web page,
@@ -68,15 +73,15 @@ if [ "$build" = "true" ] ; then
 	-DDEFAULT_NO_BINDINGS=ON \
     -DDEFAULT_NO_DEVICES=ON -DPLD_pngcairo=ON \
 	../../
-    make $PARALLEL_BUILD_OPTION
-    make $PARALLEL_BUILD_OPTION install
+    make -j$JOBS
+    make -j$JOBS install
     cd ../..
 fi
 
 EXDIR=htdocs/examples-data
 pushd htdocsgen/install/share/plplot*/examples/c
 export cexamples_dir=`pwd`
-make $PARALLEL_BUILD_OPTION
+make -j$JOBS
 popd
 
 # hack, x20c needs Chloe in the current directory

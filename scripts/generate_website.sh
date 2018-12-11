@@ -1,6 +1,11 @@
 #!/bin/bash
 
-PARALLEL_BUILD_OPTION="-j10"
+# Set JOBS to suitable value. 16 is correct for hardware such as the
+# Ryzen 7 1700 system with 8 cpu cores and twice that number of
+# hardware threads.  But parallel builds are unreliable on Cygwin and
+# MinGW-w64/MSYS2 so for those two platforms you should
+# always set JOBS=1.
+JOBS=16
 
 # Find absolute PATH of script without using readlink (since readlink is
 # not available on all platforms).  Followed advice at
@@ -82,20 +87,20 @@ cmake \
     -DBUILD_DOX_DOC=ON \
     ../plplot_source \
     >& cmake.out
-make VERBOSE=1 $PARALLEL_BUILD_OPTION prebuild_dist >& make_prebuild.out
+make VERBOSE=1 -j$JOBS prebuild_dist >& make_prebuild.out
 
 echo ""
 echo "Install the configured base part of the website to $WEBSITE_PREFIX on $HOSTNAME."
 cd /tmp/plplotdoc/build
-make VERBOSE=1 $PARALLEL_BUILD_OPTION www-install-base >& make_www-install-base.out
+make VERBOSE=1 -j$JOBS www-install-base >& make_www-install-base.out
 
 echo ""
 echo "Install the just-generated documentation to $WEBSITE_PREFIX/htdocs/docbook-manual on $HOSTNAME."
 # This command completely removes WWW_DIR/htdocs/docbook-manual on $HOSTNAME
 # so be careful how you specify the above -DWWW_DIR option.
 cd /tmp/plplotdoc/build
-make VERBOSE=1 $PARALLEL_BUILD_OPTION www-install >& make_www-install.out
-make VERBOSE=1 $PARALLEL_BUILD_OPTION www-install-doxygen >& make_www-install-doxygen.out
+make VERBOSE=1 -j$JOBS www-install >& make_www-install.out
+make VERBOSE=1 -j$JOBS www-install-doxygen >& make_www-install-doxygen.out
 
 echo ""
 echo "Build PLplot, PLplot examples, and screenshots of those examples.  This may take a while depending on your cpu speed...."
