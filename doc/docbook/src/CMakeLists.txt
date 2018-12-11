@@ -19,20 +19,20 @@
 if(ADD_SPECIAL_CONSISTENCY_CHECKING)
   # For this special case, must have access to a build of Hǎiliàng Wang's
   # "plplot-doc-check" application.  To build that tool (written in the Go language)
-  # follow these simple directions (which worked fine on 2017-07-13):
-  # Install golang package from your distro (I used the Debian Jessie
-  # version, golang version 1.3.3).
+  # follow these simple directions (which worked fine on 2018-12-10):
+  # Install golang package from your distro (I used the Debian Testing
+  # version, golang version 2:1.10~5).
   # cd /home/software/golang_apps #(or wherever you like)
   # export GOPATH=$(pwd)
-  # go get -u -v h12.me/go-plplot/c/plplot-doc-check
-  # go build h12.me/go-plplot/c/plplot-doc-check
-  ## The above creates the "plplot-doc-check" executable in $GOPATH/bin
-  ## Now put $GOPATH/bin on your PATH and CMake should do the rest.
+  # go get -d h12.io/go-plplot/c/plplot-doc-check
+  # go build h12.io/go-plplot/c/plplot-doc-check
+  ## The above creates the "plplot-doc-check" executable in $GOPATH
+  ## Now put $GOPATH on your PATH and CMake should do the rest.
   find_program(API_XML_CONSISTENCY_CHECKER plplot-doc-check)
   if(API_XML_CONSISTENCY_CHECKER)
     add_custom_target(check_api_xml_consistency
       COMMAND ${CMAKE_COMMAND} -E echo "Check that doc/docbook/src/api.xml is consistent with include/plplot.h"
-      COMMAND ${API_XML_CONSISTENCY_CHECKER} -header=${CMAKE_SOURCE_DIR}/include/plplot.h -incdir=${CMAKE_BINARY_DIR}/include -apixml=${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
+      COMMAND ${API_XML_CONSISTENCY_CHECKER} -castxml -header=${CMAKE_SOURCE_DIR}/include/plplot.h -incdir=${CMAKE_BINARY_DIR}/include -apixml=${CMAKE_SOURCE_DIR}/doc/docbook/src/api.xml
       )
 
     # This command no longer works because of all the huge api.xml and plplot.h changes
@@ -54,7 +54,7 @@ set(MANVOL "3plplot")
 # For now, must set this (UTC) date by hand before each release.  This value affects
 # only the documentation build so we set it here rather than in some more
 # central place.
-set(RELEASE_DATE "2017-08-26")
+set(RELEASE_DATE "2018-12-12")
 
 foreach(suffix info html print)
   if(suffix STREQUAL "print")
