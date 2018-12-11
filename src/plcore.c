@@ -1965,10 +1965,10 @@ calc_didev( void )
 
 // Set clip limits to conform to new page size
 
-    plP_sclp( (PLINT) ( plsc->didxax * plsc->phyxmi + plsc->didxb ),
-        (PLINT) ( plsc->didxax * plsc->phyxma + plsc->didxb ),
-        (PLINT) ( plsc->didyay * plsc->phyymi + plsc->didyb ),
-        (PLINT) ( plsc->didyay * plsc->phyyma + plsc->didyb ) );
+    plsc->diclpxmi = (PLINT) ( plsc->didxax * plsc->phyxmi + plsc->didxb );
+    plsc->diclpxma = (PLINT) ( plsc->didxax * plsc->phyxma + plsc->didxb );
+    plsc->diclpymi = (PLINT) ( plsc->didyay * plsc->phyymi + plsc->didyb );
+    plsc->diclpyma = (PLINT) ( plsc->didyay * plsc->phyyma + plsc->didyb );
 }
 
 //--------------------------------------------------------------------------
