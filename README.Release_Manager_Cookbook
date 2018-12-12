@@ -3,9 +3,11 @@ Configuration of these instructions.
 export plplot_version=5.14.0
 export old_plplot_version=5.13.0
 
-This configuration is obviously real for the command-line commands
-below that use these environment variables, but only symbolic for the
-few cases below where a GUI is used.
+These environment variables are used extensively for the command-line
+commands below, but for the few cases below where a GUI is used,
+these environment variables are used symbolically to remind
+the release manager what versions must be explicitly stated
+in the GUI case.
 
 INDEX
 ** Prepare a (preliminary) version of the ChangeLog file for this release
@@ -16,12 +18,12 @@ INDEX
 ** Check and potentially fix internal consistency
 ** Update website-related files
 ** Install and test a (preliminary) local copy of the PLplot website
-** Update this file (README.Release_Manager_CookBook)
 ** Create (a preliminary version of) the release tarball and check the
    result for errors
 ** Do comprehensive test of PLplot
 ** Install and test a local copy of the PLplot website
 ** Upload the local website to SourceForge
+** Commit the changes in this file (README.Release_Manager_CookBook)
 ** Create new version of ChangeLog.release for this release
 ** Create the PLplot Release
    ++ Preliminaries
@@ -59,11 +61,11 @@ ChangeLog from that.
 git checkout master
 git log --name-status --reverse plplot-${old_plplot_version}..master >| /tmp/ChangeLog.release_preliminary
 
-Also, create a summary of all the commits topics for quick reference.
+Also, create a summary of all the commit topics for quick reference.
 
 git log --oneline --reverse plplot-${old_plplot_version}..master >| /tmp/ChangeLog.release_preliminary_summary
 
-This file is useful for counting commits for this release cycle.
+This file is useful, for example, for counting commits for this release cycle.
 
 Note because of the --reverse option above the order of these logs will
 be in chronological order.  But it is traditional for the final
@@ -100,7 +102,10 @@ This step depends on the step above entitled
 
 Update PLplot version in www/examples.php.  Also follow the
 instructions in cmake/modules/plplot_version.cmake to update all
-version information.
+version information.  And because theoretically you could badly screw
+up the version syntax (although it has never happened) test that
+result with "git diff" and a comprehensive test (just noninteractive
+to save time).
 _________________________________________________________________________
 
 ** Prepare and test the documentation
@@ -155,8 +160,6 @@ in the build tree.  The current result of that command should be
 ... check_swig_documentation
 ... check_tcl_parameters
 
-The check_api_xml_consistency target currently (5.13.0) fails
-so that target has been excluded from the dependencies of check_all.
 Note the check_api_xml_consistency target only exists if
 -DADD_SPECIAL_CONSISTENCY_CHECKING=ON and our build system finds the
 golang application "plplot-doc-check" which has been developed
@@ -165,16 +168,11 @@ that check_api_xml_consistency target.  For more details
 concerning how to build and install "plplot-doc-check see the commentary
 in doc/docbook/src/CMakeLists.txt.
 
-Currently (for Debian Buster), plplot-doc-check (and therefore the
-check_api_xml_consistency target) finds an inconsistency which is:
-
-para 0 of func plGetCursor type mismatch [ PLGraphicsIn * ] vs. [
-struct PLGraphicsIn * ]
-
-This inconsistency has no immediately obvious cause and Hǎiliàng Wang
-does not confirm this issue for his latest version of golang.
-Therefore, it is likely due to the old version of golang that I have
-installed on Debian Buster.
+Also note that the check_api_xml_consistency target currently ($plplot_version)
+succeeds with the latest castxml-ready version of plplot-doc-check.
+But that is the first time ever that plplot-doc-check has succeeded
+completely for me so for now I am still excluding
+check_api_xml_consistency as a dependency of the check_all target.
 
 Note the above check_plplot_h.inc target only exists
 because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
@@ -196,17 +194,19 @@ follow up by doing a diff between the two files to confirm that the
 changes are reasonable followed by copying the build-tree version of
 the file on top of the source-tree version and committing the
 source-tree version.  When this process is completed, all the above
-targets (except for check_api_xml_consistency should run with no cmp
+targets should run with no cmp
 or other errors/warnings at all, e.g.,
 
 software@merlin> make check_all
 
-should "just work" without errors.
+should normally "just work" without errors.  However, as of $plplot_version
+the target check_ifort_definitions_file fails, but we plan
+to investigate and solve that inconsistency just after $plplot_version is
+released.
 
-Then (as of plplot-5.14.0) finish up such checking by building the
-check_api_xml_consistency target which (depending on what golang
-version you have) should give a clean result or reveal the above
-plGetCursor "issue".
+Then finish up such checking by building the check_api_xml_consistency
+target which should give a clean result (as of $plplot_version with the castxml
+version).
 _________________________________________________________________________
 
 ** Update website-related files
@@ -276,7 +276,7 @@ building the examples, running the examples, uploading the example
 source code and example results) automatically.  I (AWI) ran this
 script as follows:
 
-echo irwin$'\n'irwin$'\n'merlin$'\n'/home/irwin/public_html/plplot$'\n'yes |scripts/generate_website.sh
+time (echo irwin$'\n'irwin$'\n'merlin$'\n'/home/irwin/public_html/plplot$'\n'yes |scripts/generate_website.sh)
 
 ==>
 
@@ -286,32 +286,44 @@ GROUPNAME = irwin
 HOSTNAME = merlin
 WEBSITE_PREFIX = /home/irwin/public_html/plplot
 
-(merlin is my local computer name, and /home/irwin/public_html is a location
-where I can store various websites).  The above command took ~3 minutes to run
-on my computer.
+(merlin is my local computer name, and /home/irwin/public_html is a
+location where I can store various websites).  For the above command,
+a typical time result on my Ryzen 7 1700 computer is
 
-You can check for warnings by
+real    1m16.944s
+user    1m30.211s
+sys     0m9.983s
 
-find /tmp/plplotdoc -name '*.out' |xargs grep -i warning |less
 
-This turned up quite a few warnings including 3 from doxygen,
-but all of these warnings seemed ignorable.
+Check for warnings other than "too deep" explanations, doxygen warnings about FreeSans no
+longer being used, and spurious automoc code warnings from doxygen
 
-You can check for errors (e.g., due
+find /tmp/plplotdoc -name '*.out' |xargs grep -i warning |grep -vE 'automoc.dir|too deep|FreeSans' |less
+
+This turned up quite a few warnings from cmake, but they all seemed to
+be ignorable (and will disappear when we change "message(STATUS
+"WARNING...") cmake status messages to something else that does not
+use the "warning" attribute.
+
+Check for errors (e.g., due
 to missing commands that need to be installed) by running
 
-find /tmp/plplotdoc -name '*.out' |xargs grep -i error |grep -vE 'unable to read file loc from'
+find /tmp/plplotdoc -name '*.out' |xargs grep -i error
 
-(That grep -vE stanza is to remove output lines from doxygen that tend to
-include some case variants of "error" in the string because the
-referred to function name contains that substring.)
+I also check for changes in a lot of the web content other than
+examples data such as screenshots and doxygen- and DocBook-generated
+documentation using
 
-The above location translates to the following URL
-<http://merlin/~irwin/plplot/htdocs>, and I test that URL by clicking on most links,
-checking the documentation looks good, checking the examples are
-complete and look good and the source code for each language for
-examples is accessible, etc.  Some iterations with the
-steps above entitled
+git diff plplot-${old_plplot_version}..master www
+
+Test the local version of the website (currently at
+<http://merlin/~irwin/plplot/htdocs> as a result of the above local
+website generation command) for the changes revealed by the above "git
+diff" command and also check the documentation looks good, checking
+the examples are complete and look good and the source code for each
+language for examples is accessible, etc.  Also, test that local
+website by clicking on all links.  As a result of those tests, some
+iterations with the steps above entitled
 
 "Prepare and test the documentation" and
 "Update website-related files"
@@ -332,14 +344,6 @@ below) except for correcting (if necessary) the RELEASE_DATE as mentioned
 above.
 _________________________________________________________________________
 
-** Update this file (README.Release_Manager_CookBook)
-
-Edit this file to reflect latest practices by the release manager and
-also to update the many version numbers in it to the latest version
-value.
-
-_________________________________________________________________________
-
 ** Create (a preliminary version of) the release tarball and check the
    result for errors
 
@@ -354,31 +358,32 @@ directory tree.  N.B. be careful what you specify for the
 -i option since that directory will be completely removed
 initially.
 
-scripts/make_tarball.sh -c -i /tmp/plplot_install
+N.B. the env settings below are to bypass the bad lua 5.3.3 version
+available for Debian Testing and to use the latest CMake version
+that has been built on my Debian Testing platform.
 
-This script takes ~10 minutes to complete on my computer.
+time (env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5 PATH="/home/software/cmake/install-3.13.1/bin:$PATH" scripts/make_tarball.sh -c -i /tmp/plplot_install)
 
-Check for warnings.
+A typical recent (with Ryzen 7 1700 system) time output was
 
-find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i warning |less
+real    2m20.935s
+user    13m4.418s
+sys     1m23.955s
 
-Those appear to be fairly numerous, but in all cases expected
-such as known cmake warnings, known doxygen warnings due to its
-poor code parsing ability, etc.
+Check for warnings where we ignore spurious warnings from doxygen concerning automoc-generated code
+and spurious warnings from gfortran concerning private C modules and an uninitialized argv_dynamic
+variable which isn't.
 
-find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error |grep -Ev 'unable to read file loc'
+find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i warning |grep -vE 'autogen|is marked PRIVATE|argv_dynamic' |less
 
-(The last stanza is to remove some spurious doxygen warnings for the Debian Buster version of
-doxygen).
+The remaining warnings appear to be fairly numerous, but in all cases innocuous such as
+known cmake warnings.
 
-This search found some hits, but all seem to be innocuous except possibly
-for the following doxygen error
+Check for errors.
 
-/tmp/plplot-dist-prep/build_dir/make_prebuild_dist.out:error: NamespaceDef::insertMembers(): member `_swig_property' with class scope `' inserted in namespace scope `plplotc'!
+find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error
 
-However, I can find no issues with the doxygen-produced documentation
-of plplotc.py. So I attribute this error to some issue with doxygen
-parsing of python.
+This search found two hits, but all seem to be innocuous.
 
 Look at the ctest results:
 
@@ -402,7 +407,7 @@ Also compare the table of contents of that tarball for the previous release with
 
 tar ztf ../export/plplot-$old_plplot_version.tar.gz |sort >| /tmp/${old_plplot_version}.out
 tar ztf /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz |sed -e "s?${plplot_version}?${old_plplot_version}?g" |sort >| /tmp/${plplot_version}.out
-diff -au /tmp/${old_plplot_version}.out /tmp/${plplot_version}.out
+diff -au /tmp/${old_plplot_version}.out /tmp/${plplot_version}.out | less
 
 Look at a few man pages that were generated from the tarball, e.g.,
 
@@ -426,47 +431,25 @@ Do the following comprehensive test (and check of that test) twice, once
 for the minimum CMake version and once for the latest CMake version
 to check our build system works fine for this range of CMake versions
 consistent with the remarks in README.release.
-(Note is is assumed here that the cmake version was determined by
-manipulating the PATH, but you can also specify the cmake version
-explicitly by using the "--cmake_command" option for the comprehensive
-test script.)
 
-Run (from a source tree with a space in the prefix)
+N.B. -DUSE_INCRTCL_VERSION_4=ON is needed on this Debian Testing
+platform to find Tcl/Tk, and -DPLD_extqt=OFF is needed to skip
+comprehensive tests of qt_example and pyqt5 which sometimes segfault
+in ways that will be investigated after the release of $plplot_version.
 
-scripts/comprehensive_test.sh --prefix "../comprehensive_test_disposeable blank" --do_submit_dashboard yes)
+COMPREHENSIVE_TEST_PREFIX="/home/software/plplot/HEAD/comprehensive_test_disposeable blank"
+
+time (nice -19 env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5 PATH="/home/software/cmake/install-3.7.2/bin:$PATH" "../plplot blank .git"/scripts/comprehensive_test.sh --prefix "$COMPREHENSIVE_TEST_PREFIX" --cmake_added_options "-DUSE_INCRTCL_VERSION_4=ON -DPLD_extqt=OFF" --build_command "make -j16" --ctest_command "ctest -j16"  --do_submit_dashboard yes)
+
+time (nice -19 env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5 PATH="/home/software/cmake/install-3.13.1/bin:$PATH" "../plplot blank .git"/scripts/comprehensive_test.sh --prefix "$COMPREHENSIVE_TEST_PREFIX" --cmake_added_options "-DUSE_INCRTCL_VERSION_4=ON -DPLD_extqt=OFF" --build_command "make -j16" --ctest_command "ctest -j16"  --do_submit_dashboard yes)
 
 (Note because of the choice of a "spaced" source tree and --prefix, this test has a space in the prefixes of the source, build, and install trees.)
 
-Check the results:
-
-# Check for any regressions in the warnings in the cmake output.
-less ../comprehensive_test_disposeable\ blank/shared/noninteractive/output_tree/cmake.out
-
-# Check for some non-standard warnings:
-grep -i warning ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |grep -vE 'cmake.out|ctest.out' |grep -vE 'PLPLOT WARNING|PRIVATE|deprecated|Resource leak|2 problems|Some graphical or stdout'
-
-# Check for all errors:
-grep -i error ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out
-
-# Check for any ldd issues for the shared and nondynamic cases.
-grep -iE 'found|symbol|undefined' ../comprehensive_test_disposeable\ blank/*/*/output_tree/*ldd.out
-
-# Check for any PostScript or Text differences between all non-C languages and the corresponding
-# C results.
-grep -B1 -A3 "Missing examples" ../comprehensive_test_disposeable\ blank/*/*/output_tree/*.out |less
-
-These checks showed no issues other than long-standing PostScript
-differences for ocaml (and therefore no PostScript difference
-regressions) in the ctest results.  In addition, 3 dashboards (for the
-shared, nondynamic, and static cases) were correctly posted to
-<http://my.cdash.org/index.php?project=PLplot_git> although with
-long-standing spurious warning counts for the cmake step which I have
-been unable to figure out, yet.
-
-
-Enter results of these and all other tests at
-<https://sourceforge.net/p/plplot/wiki/Testing_PLplot/#Testing%20Reports>
-(which is referred to by README.release).
+After each of those results complete, follow the evaluation procedure
+for comprehensive test results documented in
+doc/wiki_source/Testing_PLplot and publicize these test results at
+<https://sourceforge.net/p/plplot/wiki/Testing_Reports> (which is
+referred to by README.release).
 _________________________________________________________________________
 
 Install and test a local copy of the PLplot website
@@ -520,6 +503,23 @@ it as before.  Also, click the xhtml and css validate buttons on each of
 index.php, download.php, examples.php, documentation.php, and credits.php
 to validate those pages.
 
+_________________________________________________________________________
+
+** Commit the changes in this file (README.Release_Manager_CookBook)
+
+This step depends on all prior steps since at least some of them have
+likely been edited to reflect changed release manager practices
+as the release process has unfolded.
+
+Make sure this file reflects the latest practices by the release
+manager.  That is, if some prior step has been taken in a way that is
+not properly documented in this file, you should update that section
+of this file (and hopefully you have done that for each of the above
+parts of the document as the step was taken).  Note, that at this
+stage we should be ready for the actual release and all the subsequent
+steps should need little or no additional editing for any release, but
+if some release practice changes for any of the subsequent steps, then
+this file should be changed accordingly after this release.
 _________________________________________________________________________
 
 ** Create new version of ChangeLog.release for this release
@@ -964,7 +964,7 @@ _________________________________________________________________________
 
 ** System prerequisites for viewing local website
 
-You should install both apache and PHP on your computer.  For Debian Buster
+You should install both apache and PHP on your computer.  For Debian Testing
 that is done (as root) by installing libapache2-mod-php
 and enabling user directories using the command
 
