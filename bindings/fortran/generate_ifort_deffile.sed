@@ -14,10 +14,10 @@
 # Drop additional specific lines
 /^.*PLPLOT_PRIVATE_UTILITIES/ d
 /^.*MATRIX_TO_C/ d
+/^.*MOD___/ d
 
 # Parse module symbols into form required by ifort .def file
 s?.*__PLPLOT_DOUBLE_MOD_?PLPLOT_DOUBLE_mp_?
 s?.*__PLPLOT_GRAPHICS_MOD_?PLPLOT_GRAPHICS_mp_?
 s?.*__PLPLOT_SINGLE_MOD_?PLPLOT_SINGLE_mp_?
 s?.*__PLPLOT_MOD_?PLPLOT_mp_?
-
