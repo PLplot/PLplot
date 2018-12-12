@@ -604,15 +604,30 @@ git checkout master
 A list of your GPG keys can be obtained using, e.g.,
 
 software@merlin> gpg --list-keys Alan
-pub   2048R/BB159E92 2011-08-19 [expires: 2021-12-12]
-uid                  Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
-uid                  Alan W. Irwin (libLASi key) <airwin@users.sourceforge.net>
-uid                  Alan W. Irwin (FreeEOS key) <airwin@users.sourceforge.net>
-uid                  Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
+pub   rsa2048 2011-08-19 [SC] [expires: 2021-12-12]
+      A7CED6D2D4903103FCDDFC1E418B8FC4BB159E92
+uid           [ultimate] Alan W. Irwin (Time Ephemerides key) <airwin@users.sourceforge.net>
+uid           [ultimate] Alan W. Irwin (libLASi key) <airwin@users.sourceforge.net>
+uid           [ultimate] Alan W. Irwin (FreeEOS key) <airwin@users.sourceforge.net>
+uid           [ultimate] Alan W. Irwin (PLplot key) <airwin@users.sourceforge.net>
 
-The BB159E92 field above is the key one.
+The A7CED6D2D4903103FCDDFC1E418B8FC4BB159E92 field above is the "key" (heh) one.
 
-git tag --local-user=BB159E92 --message="PLplot ${plplot_version} release" plplot-${plplot_version}
+Also, a new curveball thrown by the Debian Testing version of gpg is you must identify
+the tty you are using with, e.g.,
+
+export GPG_TTY=$(tty)
+
+(see remarks at <https://www.elliotblackburn.com/importing-pgp-keys-from-keybase-into-gpg/>)
+
+Otherwise, in my experience, gpg will refuse to sign the tag and you will get the error:
+
+error: gpg failed to sign the data
+error: unable to sign the tag
+
+But with the above trick, the following command just worked.
+
+git tag -u A7CED6D2D4903103FCDDFC1E418B8FC4BB159E92 --message="PLplot ${plplot_version} release" plplot-${plplot_version}
 # Note, a tag simply tags a particular commit so if I checkout some
 # other branch (such as maint) that has the same tagged commit as
 # as master, then the "git tag --list" command will find the tag
@@ -632,9 +647,9 @@ which would have been v5_11_0 to a more informative scheme for names.)
    ++ Sign the release with your plplot Release Manager gpg key
 
 
-gpg --default-key BB159E92 --detach-sign --armor /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
+gpg --default-key A7CED6D2D4903103FCDDFC1E418B8FC4BB159E92 --detach-sign --armor /tmp/plplot-dist-prep/plplot-$plplot_version.tar.gz
 
-where BB159E92 refers to the public key for Alan W. Irwin as taken from the above key list.
+where A7CED6D2D4903103FCDDFC1E418B8FC4BB159E92 refers to the public key for Alan W. Irwin as taken from the above key list.
 
    ++ Verify the release tarball signing
 
