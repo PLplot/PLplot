@@ -11,7 +11,7 @@
 # /tmp/plplot-dist-prep
 
 # Copyright (C) 2003, 2004  Rafael Laboissiere
-# Copyright (C) 2006-2015 Alan W. Irwin
+# Copyright (C) 2006-2018 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -28,6 +28,13 @@
 # You should have received a copy of the GNU Library General Public License
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+# Set JOBS to suitable value. 16 is correct for hardware such as the
+# Ryzen 7 1700 system with 8 cpu cores and twice that number of
+# hardware threads.  But parallel builds are unreliable on Cygwin and
+# MinGW-w64/MSYS2 so for those two platforms you should
+# always set JOBS=1.
+JOBS=16
 
 usage () {
     local prog=$(basename $0)
@@ -58,12 +65,11 @@ DOC_ARG=${DOC_ARG:--DBUILD_DOC=ON}
 GITTMPDIR=/tmp/plplot-dist-prep
 
 # Put here extra cmake options that should always be used when
-# generating a tarball
-config_opt=""
+# generating a tarball.  The value below is required by Debian Testing
+config_opt="-DUSE_INCRTCL_VERSION_4=ON"
 
-# Put here extra make options
-# Parallel builds and ctests for extra speed on multiprocessing boxes
-parallel_opt="-j4"
+# Put here extra make options (currently none since parallel builds
+# are handled a different way).
 
 print_defaults () {
     local v
@@ -120,14 +126,14 @@ cd $GITTMPDIR
 git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index --all --prefix=$GITTMPDIR/plplot_source/ \
     && mkdir build_dir \
     && cd build_dir \
-    && cmake -DCMAKE_VERBOSE_MAKEFILE=ON \
+    && cmake \
     ${PREBUILD_ARG} ${DOC_ARG} -DBUILD_DOX_DOC=ON \
     ../plplot_source >& cmake.out \
     && echo "Making distribution tarball.  This may take a while...." \
     && (if [ "$do_prebuild_dist" = "yes" ] ; then
-    make ${parallel_opt} prebuild_dist >& make_prebuild_dist.out
+    make VERBOSE=1 -j${JOBS} prebuild_dist >& make_prebuild_dist.out
     fi) \
-	&& make ${parallel_opt} package_source >& make_package_source.out \
+	&& make VERBOSE=1 -j${JOBS} package_source >& make_package_source.out \
 	&& TARBALL=$(ls plplot-*.tar.gz) \
 	&& UNPACKED_TARBALL_DIR=${TARBALL%%.tar.gz} \
 	&& mv $TARBALL .. \
@@ -139,11 +145,11 @@ git --work-tree=$SOURCE_TREE --git-dir=$SOURCE_TREE/.git checkout-index --all --
 	&& mkdir ctest_build_dir \
 	&& ( cd ctest_build_dir \
 	&& cmake ${config_opt} -DCMAKE_INSTALL_PREFIX:PATH=${prefix} \
-        -DCMAKE_VERBOSE_MAKEFILE=ON ${PREBUILT_DOC_ARG} ${PREBUILT_DOX_DOC_ARG}  \
+        ${PREBUILT_DOC_ARG} ${PREBUILT_DOX_DOC_ARG}  \
 	-DBUILD_TEST=ON \
 	../${UNPACKED_TARBALL_DIR} >& cmake.out \
-	&& make ${parallel_opt} >& make.out \
-	&& ctest ${parallel_opt} >& ctest.out \
+	&& make VERBOSE=1 -j${JOBS} >& make.out \
+	&& ctest -j${JOBS} >& ctest.out \
 	&& test -n "$prefix" \
 	&& rm -rf ${prefix} \
-	&& make ${parallel_opt} install >& make_install.out )
+	&& make VERBOSE=1 -j${JOBS} install >& make_install.out )
