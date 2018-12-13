@@ -27,8 +27,6 @@
 
 int main( int argc, char** argv )
 {
-    int res;
-
     // Command-line options are only to be interpreted by PLplot.  Thus,
     // make a deep copy of the arguments for PLplot use before QApplication
     // has a chance to alter them.
@@ -54,13 +52,11 @@ int main( int argc, char** argv )
     a.setActiveWindow( win );
     win->setVisible( true );
 
-    res = a.exec();
-
     for ( int i = 0; i < Argc; ++i )
     {
         delete[] Argv[i];
     }
     delete[] Argv;
 
-    return res;
+    return a.exec();
 }
