@@ -24,7 +24,8 @@ INDEX
 ** Install and test a local copy of the PLplot website
 ** Upload the local website to SourceForge
 ** Commit the changes in this file (README.Release_Manager_CookBook)
-** Create new version of ChangeLog.release for this release
+** Push new version of ChangeLog.release for this release
+** Contract test of the last push of this release
 ** Create the PLplot Release
    ++ Preliminaries
    ++ Create a final release tarball and check the result for errors
@@ -104,7 +105,11 @@ Update PLplot version in www/examples.php.  Also follow the
 instructions in cmake/modules/plplot_version.cmake to update all
 version information.  And because theoretically you could badly screw
 up the version syntax (although it has never happened) test that
-result with "git diff" and a comprehensive test (just noninteractive
+result with
+
+git diff cmake/modules/plplot_version.cmake |grep '^[+-]' |sort --key=1.2 |less
+
+Also do a noninteractive comprehensive test (limited to noninteractive
 to save time).
 _________________________________________________________________________
 
@@ -455,8 +460,8 @@ _________________________________________________________________________
 Install and test a local copy of the PLplot website
 
 This step depends on the step above entitled
-"Install and test a
-(preliminary) local copy of the PLplot website"
+
+"Install and test a (preliminary) local copy of the PLplot website"
 
 Follow the exact instructions given in that step except this time correct
 RELEASE_DATE (configured in doc/docbook/src/CMakeLists.text) if
@@ -522,7 +527,7 @@ if some release practice changes for any of the subsequent steps, then
 this file should be changed accordingly after this release.
 _________________________________________________________________________
 
-** Create new version of ChangeLog.release for this release
+** Push new version of ChangeLog.release for this release
 
 N.B. commit all local changes to the repository so they will be
 reflected in the ChangeLog, tagged version of the release, and the
@@ -572,6 +577,26 @@ git merge --ff-only maint
 git push origin master
 
 This should be the last push for this release.
+_________________________________________________________________________
+
+** Contract test of the last push of this release
+
+This step depends on the step above entitled
+
+"Push new version of ChangeLog.release for this release"
+
+Adjust your configuration of the contract test (in my case it is
+located at ~/cmake/Dashboards/Scripts/CMakeScripts/my_dashboard.cmake)
+so that the pushed commit above is used for the test, and then launch
+that contract test.  In my case that is done with
+
+time (nice -19 /usr/bin/ctest -S ~/cmake/Dashboards/Scripts/CMakeScripts/my_dashboard.cmake -VV >| ctest.out 2>&1)
+
+This normally completes in ~20 minutes or so for my Ryzen 7 1700 computer, and you should check the site
+https://open.cdash.org/index.php?project=CMake for your particular dashboard (mine
+is labelled "merlin") and confirm that the particular test there for
+your platform called "Contracts.PLplot" (i) passed, and (ii) indeed used the correct commit id for
+PLplot!
 _________________________________________________________________________
 
 ** Create the PLplot Release
@@ -746,6 +771,10 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
 
   b. Update README.release file to reflect the start of a new release
      cycle.
+
+  c. Configure the contract test as above (but this time using the
+     commit id "plplot-${plplot_version}", and then run it and
+     evaluate the test as above.
 
 --- Appendix ---
 _________________________________________________________________________
