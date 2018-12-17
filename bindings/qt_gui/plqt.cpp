@@ -179,7 +179,13 @@ QFont QtPLDriver::getFont( PLUNICODE unicode )
         f.setStyleHint( QFont::SansSerif );
         break;
     }
-    f.setFamily( "" ); // no family name, forcing Qt to find an appropriate font by itself
+
+    // Use a bogus family name here to force Qt to find fonts using setStyleHint instead.
+    // N.B. specifying an empty string which you would think would do this same job,
+    // does not work as well as a non-empty string pointing to a bogus family name
+    // for both the opensuse Qt5 version as well as the Debian Testing version of
+    // that library.
+    f.setFamily( "bogusxxxxxxxxxxxxxxxxxxxxbogus" );
 
     if ( fontStyle )
         f.setItalic( true );
