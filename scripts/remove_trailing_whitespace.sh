@@ -6,7 +6,7 @@
 # "git diff" to make sure you agree with the source file changes generated
 # by this script before committing these generated changes.
 
-# Copyright (C) 2016-2018 Alan W. Irwin
+# Copyright (C) 2016-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -43,6 +43,9 @@ cd "$SOURCE_TREE"
 
 # * Exclude this script (since changes on the fly can potentially
 #   screw up the results from bash scripts).
+# * Exclude ChangeLog.release since the "git log" command that
+#   produces that generates consistent whitespace indentation for
+#   otherwise empty lines in the commit message.
 # * Exclude all files in the .git tree (don't want to mess with our repository).
 # * Exclude all binary files (*.pgm, *.gif, *.jpg, *.cgm, *.dbf,
 #   *.prj, *.shp, *.shx, and *.fnt) recognized in .gitattributes.
@@ -54,7 +57,7 @@ cd "$SOURCE_TREE"
 # * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
 #   that does generate lines with some trailing blanks).
 
-filelist=$(find . -type f |grep -E -v 'remove_trailing_whitespace.sh|\.git|\.pgm|\.gif|\.jpg|\.cgm|\.dbf|\.prj|\.shp|\.shx|\.fnt|\.pyc|\.png|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
+filelist=$(find . -type f |grep -E -v 'remove_trailing_whitespace\.sh|ChangeLog\.release|\.git|\.pgm|\.gif|\.jpg|\.cgm|\.dbf|\.prj|\.shp|\.shx|\.fnt|\.pyc|\.png|rpm/|lib/|\.patch|libqhull/src/mem.h|COPYING.LIB|test_tclmatrix.out' | xargs grep -l $'[\t ][\t ]*$')
 if [ -z "$filelist" ] ; then
     echo "No files found with trailing whitespace"
     exit
