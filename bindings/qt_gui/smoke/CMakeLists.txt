@@ -1,6 +1,6 @@
 # bindings/qt_gui/smoke/CMakeLists.txt
 # Copyright (C) 2014 Hazen Babcock
-# Copyright (C) 2016-2018 Alan W. Irwin
+# Copyright (C) 2016-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -92,11 +92,6 @@ if(ENABLE_smoke)
 
   add_dependencies(smokeplplotqt generate_smoke_source)
 
-  install(TARGETS smokeplplotqt
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(smokeplplotqt)
 
 endif(ENABLE_smoke)

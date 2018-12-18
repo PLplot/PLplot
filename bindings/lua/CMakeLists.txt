@@ -1,6 +1,6 @@
 # bindings/lua/CMakeLists.txt
 # Copyright (C) 2008 Werner Smekal
-# Copyright (C) 2017-2018 Alan W. Irwin
+# Copyright (C) 2017-2019 Alan W. Irwin
 
 #
 # This file is part of PLplot.
@@ -67,10 +67,6 @@ if(ENABLE_lua)
       )
   endif(USE_RPATH)
 
-  install(TARGETS ${SWIG_MODULE_plplotluac_REAL_NAME}
-    EXPORT export_plplot
-    LIBRARY
-    DESTINATION ${LUA_DIR}
-    )
+  configure_target_install(${SWIG_MODULE_plplotluac_REAL_NAME} ${LUA_DIR})
 
 endif(ENABLE_lua)

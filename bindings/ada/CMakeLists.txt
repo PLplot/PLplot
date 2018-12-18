@@ -1,5 +1,5 @@
 # bindings/ada/CMakeLists.txt
-# Copyright (C) 2007-2018 Alan W. Irwin
+# Copyright (C) 2007-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -136,12 +136,7 @@ if(ENABLE_ada)
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     )
 
-  install(TARGETS ${WRITEABLE_TARGET}plplotada
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plplotada)
 
   # Add generated .ali files to the list of additional files to be
   # removed by make clean

@@ -1,6 +1,6 @@
 # bindings/qt_gui/pyqt5/CMakeLists.txt
 # Copyright (C) 2016 Hazen Babcock
-# Copyright (C) 2009-2018 Alan W. Irwin
+# Copyright (C) 2009-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -129,10 +129,6 @@ if(ENABLE_pyqt5)
       )
   endif(USE_RPATH)
 
-  install(
-    TARGETS ${WRITEABLE_TARGET}plplot_pyqt5
-    EXPORT export_plplot
-    LIBRARY DESTINATION ${PYTHON_INSTDIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plplot_pyqt5 ${PYTHON_INSTDIR})
 
 endif(ENABLE_pyqt5)

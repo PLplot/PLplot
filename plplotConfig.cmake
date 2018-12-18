@@ -17,4 +17,4 @@ if(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 endif(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 # Find export files in same directory location as present file.
-include(${CMAKE_CURRENT_LIST_DIR}/export_plplot.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/plplot_exports.cmake)

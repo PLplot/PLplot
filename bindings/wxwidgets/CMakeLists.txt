@@ -1,6 +1,6 @@
 # bindings/wxwidgets/CMakeLists.txt
 # Copyright (C) 2007 Werner Smekal
-# Copyright (C) 2015-2018 Alan W. Irwin
+# Copyright (C) 2015-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -84,13 +84,7 @@ if(ENABLE_wxwidgets)
       PROPERTY COMPILE_DEFINITIONS_DEBUG ${wxWidgets_DEFINITIONS_DEBUG})
   ENDIF(wxWidgets_DEFINITIONS_DEBUG)
 
-  # Install library in lib/
-  install(TARGETS ${WRITEABLE_TARGET}plplotwxwidgets
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plplotwxwidgets)
 
   install(FILES
     ${plplotwxwidgets_INSTALLED_HEADERS}

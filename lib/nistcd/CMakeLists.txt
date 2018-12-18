@@ -1,5 +1,5 @@
 # lib/nistcd/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -112,12 +112,7 @@ if(PLD_cgm)
   endif(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)
 
   # install library and binaries
-  install(TARGETS ${WRITEABLE_TARGET}nistcd
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}nistcd)
 
   # install library header files.
   install(FILES ${cd_LIB_HDRS} DESTINATION ${INCLUDE_DIR})

@@ -1,6 +1,6 @@
 # bindings/c++/CMakeLists.txt
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2015-2018 Alan W. Irwin
+# Copyright (C) 2015-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -40,13 +40,8 @@ if(ENABLE_cxx)
 
   configure_library_build(plplotcxx "" "${plplotcxx_LIB_SRCS}" PLPLOT::plplot)
 
-  # Install library in lib/
-  install(TARGETS ${WRITEABLE_TARGET}plplotcxx
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plplotcxx)
+
   install(FILES
     ${plplotcxx_INSTALLED_HEADERS}
     DESTINATION ${INCLUDE_DIR}

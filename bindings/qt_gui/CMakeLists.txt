@@ -1,5 +1,5 @@
 # bindings/qt_gui/CMakeLists.txt
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -95,12 +95,7 @@ if(ENABLE_qt)
     # the target.
     target_include_directories(${WRITEABLE_TARGET}plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
-    install(TARGETS ${WRITEABLE_TARGET}plplotqt
-      EXPORT export_plplot
-      ARCHIVE DESTINATION ${LIB_DIR}
-      LIBRARY DESTINATION ${LIB_DIR}
-      RUNTIME DESTINATION ${BIN_DIR}
-      )
+    configure_target_install(${WRITEABLE_TARGET}plplotqt)
 
     # Configure pkg-config *.pc file corresponding to libplplotqt
     pkg_config_file("qt" "Qt" " Qt binding" "plplotqt" "${pc_qt_COMPILE_FLAGS}" "-lplplot;${pc_qt_LIBRARIES_LIST};${MATH_LIB}")

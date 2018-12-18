@@ -1,5 +1,5 @@
 # bindings/octave/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -114,15 +114,11 @@ if(ENABLE_octave)
     DESTINATION ${PLPLOT_OCTAVE_DIR}
     )
 
-  # Have to be specific about permissions for some reason (probably
-  # oct suffix).  Use SO_PERMISSIONS to be consistent with permissions
+  # Have to be specific about permissions (likely because of the
+  # ".oct" suffix set by UseSWIG.cmake and also demanded by octave
+  # itself).  Use SO_PERMISSIONS to be consistent with permissions
   # used for other shared objects.
 
-  install(TARGETS ${SWIG_MODULE_plplot_octave_REAL_NAME}
-    EXPORT export_plplot
-    LIBRARY
-    DESTINATION ${OCTAVE_OCT_DIR}
-    PERMISSIONS ${SO_PERMISSIONS}
-    )
+  configure_target_install(${SWIG_MODULE_plplot_octave_REAL_NAME} ${OCTAVE_OCT_DIR} "${SO_PERMISSIONS}")
 
 endif(ENABLE_octave)

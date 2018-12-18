@@ -1,6 +1,6 @@
 # bindings/fortran/CMakeLists.txt
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -172,12 +172,7 @@ EXPORTS
 
   configure_library_build(plplotfortran "" "${plplotfortran_LIB_SRCS}" PLPLOT::plplot)
 
-  install(TARGETS ${WRITEABLE_TARGET}plplotfortran
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plplotfortran)
 
   # While user programmes should only use the plplot module,
   # some compilers (e.g. Intel Fortran, but not gfortran) require access

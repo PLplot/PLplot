@@ -1,5 +1,5 @@
 # lib/qsastime/CMakeLists.txt for PLplot
-# Copyright (C) 2009-2018 Alan W. Irwin
+# Copyright (C) 2009-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -101,12 +101,7 @@ set(qsastime_LIB_HDRS
 
 install(FILES ${qsastime_LIB_HDRS} DESTINATION ${INCLUDE_DIR})
 
-install(TARGETS ${WRITEABLE_TARGET}qsastime
-  EXPORT export_plplot
-  ARCHIVE DESTINATION ${LIB_DIR}
-  LIBRARY DESTINATION ${LIB_DIR}
-  RUNTIME DESTINATION ${BIN_DIR}
-  )
+configure_target_install(${WRITEABLE_TARGET}qsastime)
 
 # Build test routines if so desired.
 if(TEST_QSASTIME)

@@ -1,5 +1,5 @@
 # lib/nn/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -61,12 +61,7 @@ if(PL_HAVE_QHULL)
 
   configure_library_build(csironn "" "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}")
 
-  install(TARGETS ${WRITEABLE_TARGET}csironn
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}csironn)
 
   set(nn_DOCFILES
     README

@@ -1,5 +1,5 @@
 # examples/fortran/CMakeLists.txt
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -79,12 +79,8 @@ endif(CORE_BUILD)
 if(CORE_BUILD)
   configure_library_build(plfortrandemolib STATIC plfortrandemolib.f90 PLPLOT::plplotfortran)
 
-  install(TARGETS ${WRITEABLE_TARGET}plfortrandemolib
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plfortrandemolib)
+
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plfortrandemolib.mod
     DESTINATION ${FORTRAN_MOD_DIR}

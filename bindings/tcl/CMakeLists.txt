@@ -1,5 +1,5 @@
 # bindings/tcl/CMakeLists.txt
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -97,12 +97,7 @@ if(ENABLE_tcl)
     endif(USE_RPATH)
     configure_library_build(tclmatrix "" "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}")
 
-    install(TARGETS ${WRITEABLE_TARGET}tclmatrix
-      EXPORT export_plplot
-      ARCHIVE DESTINATION ${LIB_DIR}
-      LIBRARY DESTINATION ${LIB_DIR}
-      RUNTIME DESTINATION ${BIN_DIR}
-      )
+    configure_target_install(${WRITEABLE_TARGET}tclmatrix)
 
     # end tclmatrix
 
@@ -224,12 +219,7 @@ if(ENABLE_tcl)
     endif(USE_RPATH)
     configure_library_build(plplottcltk "" "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}")
 
-    install(TARGETS ${WRITEABLE_TARGET}plplottcltk
-      EXPORT export_plplot
-      ARCHIVE DESTINATION ${LIB_DIR}
-      LIBRARY DESTINATION ${LIB_DIR}
-      RUNTIME DESTINATION ${BIN_DIR}
-      )
+    configure_target_install(${WRITEABLE_TARGET}plplottcltk)
 
     pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_LINK_FLAGS}")
     # end plplottcltk
@@ -334,12 +324,7 @@ if(ENABLE_tcl)
 
   configure_library_build(plplottcltk_Main "" "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}")
 
-  install(TARGETS ${WRITEABLE_TARGET}plplottcltk_Main
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plplottcltk_Main)
 
   # end plplottcltk_Main
 
@@ -450,10 +435,7 @@ if(ENABLE_tcl)
       )
   endif(USE_RPATH)
 
-  install(TARGETS ${WRITEABLE_TARGET}pltcl
-    EXPORT export_plplot
-    DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}pltcl ${BIN_DIR})
 
   # test_tclmatrix.sh is a configured shell script that tests
   # the matrix capabilities of the tclmatrix library using

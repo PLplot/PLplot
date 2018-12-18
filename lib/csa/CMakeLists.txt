@@ -1,5 +1,5 @@
 # lib/csa/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -48,12 +48,7 @@ if(WITH_CSA)
 
   configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}")
 
-  install(TARGETS ${WRITEABLE_TARGET}csirocsa
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}csirocsa)
 
   set(csa_DOCFILES
     README

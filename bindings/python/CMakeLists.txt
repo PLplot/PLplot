@@ -1,5 +1,5 @@
 # bindings/python/CMakeLists.txt
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -112,12 +112,8 @@ if(ENABLE_python)
 	)
     endif(WRITEABLE_TARGET)
 
-    install(
-      TARGETS ${SWIG_MODULE_Pltk_init_REAL_NAME}
-      EXPORT export_plplot
-      LIBRARY
-      DESTINATION ${PYTHON_INSTDIR}
-      )
+    configure_target_install(${SWIG_MODULE_Pltk_init_REAL_NAME} ${PYTHON_INSTDIR})
+
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/Pltk_init.py
       DESTINATION ${PYTHON_INSTDIR}
@@ -181,12 +177,7 @@ if(ENABLE_python)
     )
   endif(${PYTHON_VERSION} VERSION_LESS "3.0.0")
 
-  install(
-    TARGETS ${SWIG_MODULE_plplotc_REAL_NAME}
-    EXPORT export_plplot
-    LIBRARY
-    DESTINATION ${PYTHON_INSTDIR}
-    )
+  configure_target_install(${SWIG_MODULE_plplotc_REAL_NAME} ${PYTHON_INSTDIR})
 
   set(PERM_SCRIPTS
     OWNER_READ

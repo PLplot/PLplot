@@ -1,5 +1,5 @@
 # utils/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -42,7 +42,7 @@ if(PLD_plmeta)
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   endif(USE_RPATH)
-  install(TARGETS ${WRITEABLE_TARGET}plrender EXPORT export_plplot DESTINATION ${BIN_DIR})
+  configure_target_install(${WRITEABLE_TARGET}plrender ${BIN_DIR})
 endif(PLD_plmeta)
 
 configure_executable_build(pltek "pltek.c" "PLPLOT::plplot")
@@ -58,7 +58,7 @@ if(USE_RPATH)
     INSTALL_RPATH "${LIB_INSTALL_RPATH}"
     )
 endif(USE_RPATH)
-install(TARGETS ${WRITEABLE_TARGET}pltek EXPORT export_plplot DESTINATION ${BIN_DIR})
+configure_target_install(${WRITEABLE_TARGET}pltek ${BIN_DIR})
 
 # Build simple executable to check parity bits of all characters read
 # by stdin.
@@ -100,5 +100,5 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
       )
   endif(USE_RPATH)
 
-  install(TARGETS ${WRITEABLE_TARGET}wxPLViewer EXPORT export_plplot DESTINATION ${BIN_DIR})
+  configure_target_install(${WRITEABLE_TARGET}wxPLViewer ${BIN_DIR})
 endif(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)

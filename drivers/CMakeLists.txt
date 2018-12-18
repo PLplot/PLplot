@@ -1,5 +1,5 @@
 # drivers/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -234,10 +234,8 @@ if(ENABLE_DYNDRIVERS)
       list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME}_dyndriver)
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
 
-    install(TARGETS ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
-      EXPORT export_plplot
-      DESTINATION ${DRV_DIR}
-      )
+    configure_target_install(${WRITEABLE_TARGET}${SOURCE_ROOT_NAME} ${DRV_DIR})
+
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info
       DESTINATION ${DRV_DIR}

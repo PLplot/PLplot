@@ -1,6 +1,6 @@
 # bindings/d/CMakeLists.txt
 # Copyright (C) 2008 Werner Smekal
-# Copyright (C) 2015-2018 Alan W. Irwin
+# Copyright (C) 2015-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -38,12 +38,7 @@ if(ENABLE_d)
     configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
   endif(plplotdmd_SHARED)
 
-  install(TARGETS ${WRITEABLE_TARGET}plplotdmd
-    EXPORT export_plplot
-    ARCHIVE DESTINATION ${LIB_DIR}
-    LIBRARY DESTINATION ${LIB_DIR}
-    RUNTIME DESTINATION ${BIN_DIR}
-  )
+  configure_target_install(${WRITEABLE_TARGET}plplotdmd)
 
   # Configure pkg-config *.pc file corresponding to libplplotdmd
   pkg_config_file("d" "D" " D binding" "plplotdmd" "" "-lplplot")

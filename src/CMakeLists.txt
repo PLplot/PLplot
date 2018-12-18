@@ -1,5 +1,5 @@
 # src/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -327,21 +327,7 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
     target_include_directories(${WRITEABLE_TARGET}plplot PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
 
-install(TARGETS ${WRITEABLE_TARGET}plplot
-  EXPORT export_plplot
-  ARCHIVE DESTINATION ${LIB_DIR}
-  LIBRARY DESTINATION ${LIB_DIR}
-  RUNTIME DESTINATION ${BIN_DIR}
-  )
-
-# This exports information for every target in the whole build that
-# has the EXPORT export_plplot signature (as above) for the
-# install(TARGETS ... # command.
-install(EXPORT export_plplot DESTINATION ${LIB_DIR}/cmake/plplot NAMESPACE ${PROJECT_NAMESPACE})
-
-# Install associated CMake package config file.
-
-install(FILES plplotConfig.cmake DESTINATION ${LIB_DIR}/cmake/plplot)
+configure_target_install(${WRITEABLE_TARGET}plplot)
 
 message("pc_libplplot_LINK_FLAGS = ${pc_libplplot_LINK_FLAGS}")
 

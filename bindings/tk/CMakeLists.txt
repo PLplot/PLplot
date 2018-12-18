@@ -1,5 +1,5 @@
 # bindings/tk/CMakeLists.txt
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -51,11 +51,7 @@ if(ENABLE_tkX)
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"
       )
   endif(USE_RPATH)
-
-  install(TARGETS ${WRITEABLE_TARGET}plserver
-    EXPORT export_plplot
-    DESTINATION ${BIN_DIR}
-    )
+  configure_target_install(${WRITEABLE_TARGET}plserver ${BIN_DIR})
 endif(ENABLE_tkX)
 
 if(ENABLE_tk)
