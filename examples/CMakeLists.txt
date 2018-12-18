@@ -1,5 +1,5 @@
 # examples/CMakeLists.txt
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -930,13 +930,13 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_qt_example qt_example ${qt_targets})
       if(PLPLOT_USE_QT5)
-	#message(STATUS "WARNING: The test_qt_example target can be run independently
-   #but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
-   #PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
-   #temporarily exclude this target from being a dependency of other more general interactive
-   #test targets")
-	list(APPEND qt_targets_LIST test_qt_example)
-	list(APPEND interactive_targets_LIST test_qt_example)
+	message(STATUS "WARNING: The test_qt_example target can be run independently
+   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
+   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
+   temporarily exclude this target from being a dependency of other more general interactive
+   test targets")
+	#list(APPEND qt_targets_LIST test_qt_example)
+	#list(APPEND interactive_targets_LIST test_qt_example)
       else(PLPLOT_USE_QT5)
 	list(APPEND qt_targets_LIST test_qt_example)
 	list(APPEND interactive_targets_LIST test_qt_example)
@@ -996,11 +996,11 @@ if(BUILD_TEST)
 	${qt_targets}
 	)
     endif(CORE_BUILD)
-    #message(STATUS "WARNING: The test_pyqt5_example target can be run
-   #independently but it intermittently segfaults (at least for
-   #Qt-5.3.2) so it is temporarily excluded from being a dependency of
-   #other more general interactive test targets")
-    list(APPEND interactive_targets_LIST test_pyqt5_example)
+    message(STATUS "WARNING: The test_pyqt5_example target can be run
+   independently but it intermittently hangs (at least for
+   Qt-5.11.2) so is temporarily excluded from being a dependency of
+   other more general interactive test targets")
+    #list(APPEND interactive_targets_LIST test_pyqt5_example)
   endif(ENABLE_pyqt5)
 
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
