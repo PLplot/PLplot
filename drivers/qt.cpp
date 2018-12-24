@@ -88,6 +88,11 @@ bool initQtApp( bool isGUI )
     QMutexLocker locker( &QtPLDriver::mutex );
     bool         res = false;
     ++appCounter;
+
+    // Allow qt devices to be used from within a qt application.
+    if ( qApp != NULL && appCounter == 1 )
+        ++appCounter;
+
     if ( qApp == NULL && appCounter == 1 )
     {
         argc    = 1;
