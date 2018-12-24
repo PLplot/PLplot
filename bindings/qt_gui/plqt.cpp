@@ -519,11 +519,13 @@ void QtPLDriver::setSolid()
 #if defined ( PLD_bmpqt ) || defined ( PLD_jpgqt ) || defined ( PLD_pngqt ) || defined ( PLD_ppmqt ) || defined ( PLD_tiffqt ) || defined ( PLD_memqt )
 QtRasterDevice::QtRasterDevice( int i_iWidth, int i_iHeight ) :
     QtPLDriver( i_iWidth, i_iHeight ),
-    QImage( i_iWidth, i_iHeight, QImage::Format_RGB32 )
+    QImage( i_iWidth, i_iHeight, QImage::Format_ARGB32 )
 {
     // Painter initialised in the constructor contrary
     // to buffered drivers, which paint only in doPlot().
     m_painterP = new QPainter( this );
+    fill( Qt::transparent );
+
     QBrush b = m_painterP->brush();
     b.setStyle( Qt::SolidPattern );
     m_painterP->setBrush( b );
@@ -560,6 +562,7 @@ void QtRasterDevice::setBackgroundColor( int r, int g, int b, double alpha )
 {
     if ( !m_painterP->isActive() )
         return;
+
 
     QBrush brush( QColor( r, g, b, (int) ( alpha * 255 ) ) );
     m_painterP->fillRect( 0, 0, width(), height(), brush );
