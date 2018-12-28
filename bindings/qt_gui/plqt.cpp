@@ -5,7 +5,7 @@
 // Imperial College, London
 //
 // Copyright (C) 2009  Imperial College, London
-// Copyright (C) 2009-2016  Alan W. Irwin
+// Copyright (C) 2009-2019  Alan W. Irwin
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Lesser Public License as published
@@ -549,13 +549,18 @@ void QtRasterDevice::definePlotName( const char* fileName, const char* format )
 void QtRasterDevice::savePlot()
 {
     m_painterP->end();
-    save( fileName, format, 85 );
-
-    m_painterP->begin( this );
-    m_painterP->setRenderHint( QPainter::Antialiasing, (bool) lines_aa );
-    QBrush b = m_painterP->brush();
-    b.setStyle( Qt::SolidPattern );
-    m_painterP->setBrush( b );
+    if ( save( fileName, format, 85 ) )
+    {
+        m_painterP->begin( this );
+        m_painterP->setRenderHint( QPainter::Antialiasing, (bool) lines_aa );
+        QBrush b = m_painterP->brush();
+        b.setStyle( Qt::SolidPattern );
+        m_painterP->setBrush( b );
+    }
+    else
+    {
+        printf( "WARNING: %s raster format currently not supported by your Qt installation\n", format );
+    }
 }
 
 void QtRasterDevice::setBackgroundColor( int r, int g, int b, double alpha )
