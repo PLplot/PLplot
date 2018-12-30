@@ -5,8 +5,14 @@
 // QSAS team,
 // Imperial College, London
 //
-// Copyright (C) 2009  Imperial College, London
-// Copyright (C) 2009  Alan W. Irwin
+// Copyright (C) 2009 Imperial College, London
+// Copyright (C) 2009-2019 Alan W. Irwin
+// Copyright (C) 2009 Werner Smekal
+// Copyright (C) 2009-2012 Andrew Ross
+// Copyright (C) 2009-2011 Hazen Babcock
+// Copyright (C) 2010 Hezekiah M. Carty
+// Copyright (C) 2015 Jim Dishaw
+// Copyright (C) 2019 António R. Tomé
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Lesser Public License as published
@@ -34,11 +40,15 @@
 #include "qt.h"
 #include <QMutexLocker>
 
-// global variables initialised in init(), used in tidy()
-// QApplication* app=NULL;
-static int  argc;           // argc and argv have to exist when tidy() is used, thus they are made global
+// Global variables used in initQtApp (which is called by all
+// plD_init_* routines other than plD_init_extqt) and used in
+// closeQtApp (which is called by all plD_tidy_* routines other than
+// plD_tidy_extqt).  The use of these global variables is kept thread-safe by
+// a QMutexLocker used by both initQtApp and closeQtApp.
+static int  argc;
 static char **argv;
-static int  appCounter = 0; // to be rigorous, all uses should be placed between mutexes
+static int  internal_qAppCounter = 0;
+static bool internal_qApp        = false;
 
 // Drivers declaration
 extern "C" {
@@ -83,22 +93,21 @@ static DrvOpt qt_options[] = { { "text_vectorize",     DRV_INT, &vectorize, "Vec
                                { "lines_antialiasing", DRV_INT, &lines_aa,  "Toggles antialiasing on lines (0|1)" },
                                { NULL,                 DRV_INT, NULL,       NULL                                  } };
 
+// The purpose of this routine is to create an internal qApp and the argc and argv data
+// that qApp needs if an external or internal qApp does not exist already.
+
 bool initQtApp( bool isGUI )
 {
     QMutexLocker locker( &QtPLDriver::mutex );
     bool         res = false;
-    ++appCounter;
 
-    // Allow qt devices to be used from within a qt application.
-    if ( qApp != NULL && appCounter == 1 )
-        ++appCounter;
-
-    if ( qApp == NULL && appCounter == 1 )
+    if ( qApp == NULL && internal_qAppCounter == 0 )
     {
-        argc    = 1;
-        argv    = new char*[2];
-        argv[0] = new char[10];
-        argv[1] = new char[1];
+        internal_qApp = true;
+        argc          = 1;
+        argv          = new char*[2];
+        argv[0]       = new char[10];
+        argv[1]       = new char[1];
         snprintf( argv[0], 10, "qt_driver" );
         argv[1][0] = '\0';
 #ifdef Q_WS_X11
@@ -109,20 +118,31 @@ bool initQtApp( bool isGUI )
         new QApplication( argc, argv, isGUI );
         res = true;
     }
+
+    // Keep track of the number of uses of the internal qApp.
+    if ( internal_qApp )
+        ++internal_qAppCounter;
+
     return res;
 }
 
+// The purpose of this routine is to delete qApp and associated argv
+// if those were created internally by initQtApp and if it is the last
+// use (kept track of by internal_qAppCounter) of that qApp.
 void closeQtApp()
 {
     QMutexLocker locker( &QtPLDriver::mutex );
-    --appCounter;
-    if ( qApp != NULL && appCounter == 0 )
+    if ( internal_qApp )
     {
-        delete qApp;
-        delete[] argv[0];
-        delete[] argv[1];
-        delete[] argv;
-        argv = NULL;
+        --internal_qAppCounter;
+        if ( qApp != NULL && internal_qAppCounter == 0 )
+        {
+            delete qApp;
+            delete[] argv[0];
+            delete[] argv[1];
+            delete[] argv;
+            argv = NULL;
+        }
     }
 }
 
@@ -1513,6 +1533,8 @@ void plD_dispatch_init_extqt( PLDispatchTable *pdt )
 
 void plD_init_extqt( PLStream * pls )
 {
+    // N.B. initQtApp() not called here because internal_qApp is always false
+    // for this device.
     vectorize = 0;
     lines_aa  = 1;
 
@@ -1691,7 +1713,8 @@ void plD_tidy_extqt( PLStream * pls )
         pls->dev = NULL;
     }
 
-    closeQtApp();
+    // closeQtApp() not called here because internal_qApp is always false
+    // for this device.
 }
 
 void plD_eop_extqt( PLStream * /* pls */ )
