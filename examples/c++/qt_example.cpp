@@ -27,6 +27,8 @@
 
 int main( int argc, char** argv )
 {
+    int res;
+
     // Command-line options are only to be interpreted by PLplot.  Thus,
     // make a deep copy of the arguments for PLplot use before QApplication
     // has a chance to alter them.
@@ -48,9 +50,33 @@ int main( int argc, char** argv )
     // are completely ignored.
     argc = 1;
     QApplication a( argc, argv );
+    // Must construct an instance of PlotWindow after QApplication.
     PlotWindow   * win = new PlotWindow( Argc, Argv );
+
+//#define PLPLOT_QT_EXAMPLE_EXPERIMENTAL
+#undef PLPLOT_QT_EXAMPLE_EXPERIMENTAL
+#ifdef PLPLOT_QT_EXAMPLE_EXPERIMENTAL
+    // Temporary change so that can test PlotWindow constructor and
+    // destructor with valgrind for simpler case where qApp
+    // has not used PlotWindow.
+    res = 0;
+#else
     a.setActiveWindow( win );
     win->setVisible( true );
+
+    res = a.exec();
+#endif
+    // Clean up.
+
+    // According to QApplication documentation at
+    // <http://doc.qt.io/qt-5/qapplication.html#exec> there is no
+    // guarantee on some platforms (they use Windows as an example)
+    // that code executed after the exec method is executed will ever
+    // be executed.  As a result they recommend connecting "clean-up
+    // code to the aboutToQuit() signal, instead of putting it in your
+    // application's main() function." But for now we will stick with
+    // this cleanup method which does work properly on Linux according
+    // to the printf statement below.
 
     for ( int i = 0; i < Argc; ++i )
     {
@@ -58,5 +84,9 @@ int main( int argc, char** argv )
     }
     delete[] Argv;
 
-    return a.exec();
+    delete win;
+
+    printf( "%s\n", "Completed cleanup of qt_example" );
+
+    return res;
 }

@@ -5,7 +5,11 @@
 // QSAS team,
 // Imperial College, London
 //
-// Copyright (C) 2009  Imperial College, London
+// Copyright (C) 2009 Imperial College, London
+// Copyright (C) 2009-2019 Alan W. Irwin
+// Copyright (C) 2009 Andrew Ross
+// Copyright (C) 2010 Hezekiah M. Carty
+
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Lesser Public License as published
@@ -28,7 +32,14 @@
 PlotWindow::PlotWindow( int argc, char** argv, QWidget* parent ) :
     QMainWindow( parent )
 {
-    setAttribute( Qt::WA_DeleteOnClose );
+    // According to
+    // <https://stackoverflow.com/questions/3153155/when-setting-the-wa-deleteonclose-attribute-on-a-qt-mainwindow-the-program-cras>
+    // "Remember that your main window destructor should run only
+    // once. That is to say that it should run either because of a stack
+    // unwind, or because of WA_DeleteOnClose, not both."
+    // Since qt_example uses the stack unwind method we comment out
+    // setting the WA_DeleteOnClose attribute below to avoid double frees.
+    // setAttribute( Qt::WA_DeleteOnClose );
 
     QMenu * plotMenu = menuBar()->addMenu( "Plot" );
     plotMenu->addAction( "Curves", this, SLOT( plotCurves() ) );
@@ -38,8 +49,6 @@ PlotWindow::PlotWindow( int argc, char** argv, QWidget* parent ) :
     plot = new QtExtWidget( QT_DEFAULT_X, QT_DEFAULT_Y, this );
     setCentralWidget( plot );
 
-    // One window = One plot widget = one stream
-    plmkstrm( &strm );
     plsdev( "extqt" );
 
     // Get all the application arguments as argc, argv
@@ -61,11 +70,8 @@ PlotWindow::PlotWindow( int argc, char** argv, QWidget* parent ) :
 
 PlotWindow::~PlotWindow()
 {
-    PLINT cur_strm;
-    plgstrm( &cur_strm );
-    plsstrm( strm );
-    plfreeqtdev(); // also deletes the device ("plot" variable) !
-    plsstrm( cur_strm );
+    plend();
+    plfreeqtdev();
 }
 
 
