@@ -6,11 +6,21 @@
 //  things to the externally callable C function names.  This shouldn't
 //  affect any user programs in C as long as this file is included.
 //
-//  Copyright (C) 1992 Maurice J. LeBrun, Geoff Furnish, Tony Richardson.
-//  Copyright (C) 2004-2018 Alan W. Irwin
-//  Copyright (C) 2004 Rafael Laboissiere
-//  Copyright (C) 2004 Andrew Ross
-//
+// Copyright (C) 1992 Tony Richardson.
+// Copyright (C) 1992-2001 Geoffrey Furnish
+// Copyright (C) 1992-2002 Maurice LeBrun
+// Copyright (C) 1996 Rady Shouman
+// Copyright (C) 2000-2017 Alan W. Irwin
+// Copyright (C) 2001-2003 Joao Cardoso
+// Copyright (C) 2001-2005 Rafael Laboissiere
+// Copyright (C) 2004-2013 Andrew Ross
+// Copyright (C) 2005-2008 Arjen Markus
+// Copyright (C) 2006-2011 Hazen Babcock
+// Copyright (C) 2008-2009 Werner Smekal
+// Copyright (C) 2009-2013 Hezekiah M. Carty
+// Copyright (C) 2013 Jerry Bauck
+// Copyright (C) 2014-2018 Phil Rosenberg
+
 //  This file is part of PLplot.
 //
 //  PLplot is free software; you can redistribute it and/or modify
@@ -134,11 +144,6 @@
 // Only those that are necessary for function prototypes are defined here.
 // Notes:
 //
-// PLINT is typedef'd to a long by default.  This is a change from some
-// previous versions, where a int was used.  However, so long as you have
-// used type PLINT for integer array arguments as specified by the API,
-// this change will be transparent for you.
-//
 // short is currently used for device page coordinates, so they are
 // bounded by (-32767, 32767).  This gives a max resolution of about 3000
 // dpi, and improves performance in some areas over using a PLINT.
@@ -203,15 +208,6 @@ typedef PLINT    PLBOOL;
 // generic pointer to mutable object:
 typedef void *   PLPointer;
 
-// Deprecated and only provided for backwards compatibility with
-// the release of 5.12.0 when these were (mistakenly) introduced.
-// The plan then was to apply the const attribute to PL_GENERIC_POINTER
-// for the next release after 5.12.0, but that plan has been aborted
-// so the lack of the "NC" (for indicating the const attribute has
-// not been used) in the name is now a misnomer.
-typedef PLPointer   PL_NC_GENERIC_POINTER;
-typedef PLPointer   PL_GENERIC_POINTER;
-
 // PLFLT first element pointers which are used to point to the first
 // element of a contigous block of memory containing a PLFLT array with
 // an arbitrary number of dimensions.
@@ -237,7 +233,7 @@ typedef char *                PLCHAR_NC_SCALAR;
 typedef PLFLT *               PLFLT_NC_SCALAR;
 
 // Pointers to mutable vectors:
-typedef int *                 PLINT_NC_VECTOR;
+typedef PLINT *               PLINT_NC_VECTOR;
 typedef char *                PLCHAR_NC_VECTOR;
 typedef PLFLT *               PLFLT_NC_VECTOR;
 
