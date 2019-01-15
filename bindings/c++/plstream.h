@@ -56,7 +56,7 @@ public:
     virtual ~Contourable_Data() {};
 };
 
-PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p );
+PLDLLIMPEXP_CXX PLFLT Contourable_Data_evaluator( PLINT i, PLINT j, PLPointer p );
 
 class PLDLLIMPEXP_CXX Coord_Xformer {
 public:
@@ -64,7 +64,7 @@ public:
     virtual ~Coord_Xformer() {};
 };
 
-void Coord_Xform_evaluator( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
+PLDLLIMPEXP_CXX void Coord_Xform_evaluator( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
 
 class Coord_2d {
 public:
