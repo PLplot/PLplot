@@ -22,48 +22,48 @@
 # download a binary version of it from Kitware that is suitable for
 # your platform.
 
-# MAINTENANCE 2018-09-08
+# MAINTENANCE 2019-02-03:
 # We prefer to support only recent CMake versions and latest CMake
 # policies to keep our build system as simple and as bug free as
 # possible.  However, as a special concession for our modern (not
 # enterprise or LTS) Linux distro users we allow them to use the
-# system version of CMake which at this time is typically 3.7.2 (on
-# Debian STABLE = Stretch which is more than a year old now) or later.
-# So we adopt 3.7.2 for the minimum CMake version on Linux and also
-# that version for CMake policies on all platforms for CMake policy
-# uniformity.  The current status of official CMake packages on
-# important non-Linux platforms is as follows:
+# system version of CMake which at this time is typically 3.13.2 or so
+# (e.g., on Debian Buster which is currently in freeze before it is
+# released as Debian Stable later this year).  The current status of
+# official CMake packages on important non-Linux platforms is as
+# follows:
 
-# Cygwin: 3.6.2 from <https://cygwin.com/cgi-bin2/package-grep.cgi>
-# MinGW-w64/MSYS2: 3.12.1 from <http://repo.msys2.org/mingw/x86_64/>
+# Cygwin: 3.13.1 from <https://cygwin.com/cgi-bin2/package-grep.cgi>
+# MinGW-w64/MSYS2: 3.12.4 from <http://repo.msys2.org/mingw/x86_64/>
 # Fink: 3.11.0 from <http://pdb.finkproject.org/pdb/index.php?phpLang=en>
-# MacPorts: 3.12.2 from <https://www.macports.org/ports.php>
-# HomeBrew:3.12.1 from <http://brewformulas.org/>
+# MacPorts: 3.13.3 from <https://www.macports.org/ports.php>
+# HomeBrew:3.13.3 from <http://brewformulas.org/>
 
-# From these results I adopt a CMake minimum version for non-Linux
-# platforms of 3.11.0.  This accomodates all the above non-Linux platforms
-# other than Cygwin which I believe to be a special case of an
-# unmaintained Cygwin package for what is supposed to be a rolling
-# release that keeps up with the latest/greatest software versions.
-# Because of this change, Cygwin PLplot users will need to build their own
-# version of cmake or agitate on the Cygwin list to upgrade the Cygwin CMake
-# package to at least 3.11.0.
+# These are all rolling releases that attempt to stay close to the
+# latest version of cmake (and much other) software.  Therefore, I
+# anticipate that it won't be too long before Cygwin, MinGW-w64/MSYS2,
+# and Fink supply 3.13.2 or greater and similarly for those Linux
+# distributions that currently don't provide at least that version.
+# Therefore, I have adopted this CMake minimum version for both Linux and
+# non-Linux platforms.
 
 # Adapted method suggested by Brad King for using
 # potentially different minimum versions for different platforms.
 
-set(MINIMUM_LINUX_CMAKE_VERSION 3.7.2)
+set(MINIMUM_LINUX_CMAKE_VERSION 3.13.2)
 # Latest CMake version for all platforms other than Linux.
 # Must be greater than or equal to MINIMUM_LINUX_CMAKE_VERSION
-set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.11.0)
+set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.13.2)
+# Keep policy consistent for all platforms, i.e., use the Linux
+# version which must be the minimum of the two versions above.
+set(CMAKE_UNIFORM_POLICY_VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
 cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
-cmake_policy(VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
+cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
 project(plplot NONE)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
-  # Keep policy consistent for all platforms.
-  cmake_policy(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION})
+  cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
 endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
 # N.B. As a result of the following two set commands and logic in the

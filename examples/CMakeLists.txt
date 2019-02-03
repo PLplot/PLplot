@@ -432,21 +432,24 @@ if(CORE_BUILD)
 
 else(CORE_BUILD)
 
-  # MAINTENANCE 2018-09-08
+  # MAINTENANCE 2019-02-03
   # This logic copied exactly (including version numbers which change
   # from time to time) from the top-level CMakeLists.txt file except
   # for the name of the project.
-  set(MINIMUM_LINUX_CMAKE_VERSION 3.7.2)
+  set(MINIMUM_LINUX_CMAKE_VERSION 3.13.2)
   # Latest CMake version for all platforms other than Linux.
   # Must be greater than or equal to MINIMUM_LINUX_CMAKE_VERSION
-  set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.11.0)
+  set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.13.2)
+  # Keep policy consistent for all platforms, i.e., use the Linux
+  # version which must be the minimum of the two versions above.
+  set(CMAKE_UNIFORM_POLICY_VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
   cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
-  cmake_policy(VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
-  project(installed_plplot_examples NONE)
+  cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
+  project(plplot NONE)
+
   if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
-    # Keep policy consistent for all platforms.
-    cmake_policy(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION})
+    cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
   endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
   # It is a fatal error if no working C compiler is available to build
