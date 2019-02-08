@@ -228,10 +228,12 @@ The definitive markdown source for our wiki pages is located in
 doc/wiki_source.  While working on a topic branch (see advice above)
 do the following steps:
 
-* edit an existing file at doc/wiki_source (or if you are creating a
-  new wiki page edit a new file there);
+Case I (when you prefer to use your own file editor):
 
-* use the
+* Edit an existing file at doc/wiki_source (or if you are creating a
+  new wiki page edit a new file there).
+
+* Use the
 
 git diff --word-diff
 
@@ -239,21 +241,53 @@ git diff --word-diff
   to allow humans to isolate the changes in the generally long
   markdown format lines);
 
-* transmit those changes to SF by cutting and pasting them to the SF
-  GUI editor for the wiki page in question (i.e., by using ctrl-v to
-  paste on the SF GUI editor side of the cut and paste and selecting
-  old text that has been replaced by the cut and paste and deleting
-  it);
+* Transmit those changes to SF by cutting and pasting them with ctrl-c
+  and ctrl-v from the git working directory file edit to the SF GUI
+  editor for the wiki page in question.  On the SF GUI editor side, the
+  old text that is being replaced can be selected and deleted.
 
-* test the resulting changed wiki page (e.g., check the diff available
+* Test the resulting changed wiki page (e.g., check the diff available
+  in the history GUI to make sure there were no cut and paste or
+  deletion failures, check the new links, check the rendering of the
+  updated markdown format looks good).
+
+* Commit the markdown source file for the wiki changes on the git
+  topic branch.
+
+* Push your commit following the above directions.
+
+(END OF CASE I)
+
+Case II (when you prefer to use the SF wiki editor):
+
+* Click on the SF GUI for the wiki page to edit the markdown source for that
+  page.
+
+* Test the resulting changed wiki page (e.g., check the diff available
   in the history GUI to make sure there were no cut and paste or
   deletion failures, check the new links, check the rendering of the
   updated markdown format looks good);
 
-* commit the markdown source file for the wiki changes on the git
-  topic branch; and
+* Transmit those changes to the git working directory doc/wiki_source
+  by cutting and pasting them from the SF GUI editor session to a file
+  edit of the appropriate file in that directory using ctrl-c to
+  select and ctrl-v to paste and ordinary file editing capability to
+  delete the text that is being replaced.
 
-* push your commit following the above directions.
+* Use the
+
+git diff --word-diff
+
+  command to evaluate the changes (the --word-diff option is essential
+  to allow humans to isolate the changes in the generally long
+  markdown format lines);
+
+* Commit the markdown source file for the wiki changes on the git
+  topic branch.
+
+* Push your commit following the above directions.
+
+(END OF CASE II)
 
 Configuring the build system
 ----------------------------
