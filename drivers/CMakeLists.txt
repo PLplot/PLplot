@@ -58,22 +58,6 @@ if(ENABLE_DYNDRIVERS)
 	test-drv-info
 	PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/dll
 	)
-    else(USE_DLL_SUBDIRECTORY)
-      set(test-drv-info_RPATH
-        ${CMAKE_CURRENT_BINARY_DIR}
-        ${CMAKE_BINARY_DIR}/src
-        ${CMAKE_BINARY_DIR}/lib/csa
-        ${CMAKE_BINARY_DIR}/lib/nn
-        ${CMAKE_BINARY_DIR}/lib/qsastime
-        ${LTDL_LIBRARY_RPATH}
-        )
-
-      set_target_properties(
-        test-drv-info
-        PROPERTIES
-        INSTALL_RPATH "${test-drv-info_RPATH}"
-        BUILD_WITH_INSTALL_RPATH ON
-        )
     endif(USE_DLL_SUBDIRECTORY)
     set(test_dyndrivers_TDEPENDS test-drv-info)
 
