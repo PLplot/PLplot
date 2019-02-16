@@ -53,7 +53,7 @@ if(ENABLE_qt)
       set(LIB_INSTALL_RPATH
 	${LIB_DIR}
 	${qt_RPATH}
-	${libplplot_RPATH}
+	${LTDL_LIBRARY_RPATH}
 	)
       #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
     endif(USE_RPATH)

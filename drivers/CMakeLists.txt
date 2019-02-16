@@ -65,7 +65,7 @@ if(ENABLE_DYNDRIVERS)
         ${CMAKE_BINARY_DIR}/lib/csa
         ${CMAKE_BINARY_DIR}/lib/nn
         ${CMAKE_BINARY_DIR}/lib/qsastime
-        ${libplplot_RPATH}
+        ${LTDL_LIBRARY_RPATH}
         )
 
       set_target_properties(
@@ -169,7 +169,7 @@ if(ENABLE_DYNDRIVERS)
 	${SOURCE_ROOT_NAME}_RPATH
 	${LIB_DIR}
 	${${SOURCE_ROOT_NAME}_RPATH}
-	${libplplot_RPATH}
+	${LTDL_LIBRARY_RPATH}
 	)
       #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
       set_target_properties(
