@@ -43,13 +43,17 @@ if(ENABLE_tkX)
   endif(BUILD_SHARED_LIBS)
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    # plserver depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    # plserver depends on the Tcl/Tk/Itcl/Itk libraries
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
     filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(${WRITEABLE_TARGET}plserver
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
+    if(LIB_INSTALL_RPATH)
+      set_target_properties(${WRITEABLE_TARGET}plserver
+	PROPERTIES
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	)
+    endif(LIB_INSTALL_RPATH)
   endif(USE_RPATH)
   configure_target_install(${WRITEABLE_TARGET}plserver ${BIN_DIR})
 endif(ENABLE_tkX)

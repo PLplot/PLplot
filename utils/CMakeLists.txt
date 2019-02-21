@@ -25,7 +25,8 @@ include_directories(
   )
 
 if(USE_RPATH)
-  get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+  # plrender depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
 endif(USE_RPATH)
 
 if(PLD_plmeta)
@@ -53,6 +54,7 @@ if(BUILD_SHARED_LIBS)
     )
 endif(BUILD_SHARED_LIBS)
 if(USE_RPATH)
+  # pltek depends on the plplot library.
   set_target_properties(${WRITEABLE_TARGET}pltek
     PROPERTIES
     INSTALL_RPATH "${LIB_INSTALL_RPATH}"
@@ -93,7 +95,7 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
       )
   endif(BUILD_SHARED_LIBS)
   if(USE_RPATH)
-    # Assume that plplotwxwidgets and plplotcxx have the same install location as plplot
+    # wxPLViewer depends on the plplotwxwidgets and plplotcxx libraries.
     set_target_properties(${WRITEABLE_TARGET}wxPLViewer
       PROPERTIES
       INSTALL_RPATH "${LIB_INSTALL_RPATH}"

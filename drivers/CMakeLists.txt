@@ -52,7 +52,6 @@ if(ENABLE_DYNDRIVERS)
       )
 
     # in windows we move test-drv-info to the dll directory
-    # otherwise we use the RPATH functionality
     if(USE_DLL_SUBDIRECTORY)
       set_target_properties(
 	test-drv-info
@@ -148,20 +147,22 @@ if(ENABLE_DYNDRIVERS)
       # each driver in ${DRIVERS_LIST}.  This is only used for the
       # install-tree rpath since cmake handles the build-tree rpath
       # automatically (so long as full pathnames to libraries are used).
-      # Order is important here because of /usr/lib concerns.
       set(
 	${SOURCE_ROOT_NAME}_RPATH
+	# Driver depends on libplplot.
 	${LIB_DIR}
 	${${SOURCE_ROOT_NAME}_RPATH}
-	${LTDL_LIBRARY_RPATH}
 	)
+      filter_rpath(${SOURCE_ROOT_NAME}_RPATH)
       #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
-      set_target_properties(
-	${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
-	PROPERTIES
-	INSTALL_RPATH
-	"${${SOURCE_ROOT_NAME}_RPATH}"
-	)
+      if(${SOURCE_ROOT_NAME}_RPATH)
+	set_target_properties(
+	  ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
+	  PROPERTIES
+	  INSTALL_RPATH
+	  "${${SOURCE_ROOT_NAME}_RPATH}"
+	  )
+      endif(${SOURCE_ROOT_NAME}_RPATH)
     endif(USE_RPATH)
 
     # Our implementation of dynamic loading using libltdl assumes

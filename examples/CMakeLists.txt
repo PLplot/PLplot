@@ -244,7 +244,8 @@ if(CORE_BUILD)
     # installed library locations are system locations that are
     # automatically searched for libraries by the run-time loader in
     # any case.
-    get_target_property(_LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    # All language examples depend on either PLplot or one of the binding libraries
+    set(_LIB_INSTALL_RPATH ${LIB_DIR})
     if(_LIB_INSTALL_RPATH)
       string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
       set(RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}\"")

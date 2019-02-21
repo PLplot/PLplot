@@ -35,7 +35,8 @@ if(ENABLE_cxx)
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    # plplotcxx depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
   endif(USE_RPATH)
 
   configure_library_build(plplotcxx "" "${plplotcxx_LIB_SRCS}" PLPLOT::plplot)

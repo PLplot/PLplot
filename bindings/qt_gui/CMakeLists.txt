@@ -49,11 +49,11 @@ if(ENABLE_qt)
     # automatically (so long as full pathnames to libraries are used).
     #message("qt_RPATH = ${qt_RPATH}")
     if(USE_RPATH)
-      # Order is important here because of /usr/lib concerns.
       set(LIB_INSTALL_RPATH
+	# plplotqt depends on the plplot library.
 	${LIB_DIR}
+	# plplotqt depends on the Qt libraries.
 	${qt_RPATH}
-	${LTDL_LIBRARY_RPATH}
 	)
       #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
     endif(USE_RPATH)

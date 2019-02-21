@@ -27,12 +27,14 @@ if(ENABLE_d)
   # Build d bindings
   set(plplotdmd_LIB_SRCS
     plplot.d
-  )
+    )
+
+  if(USE_RPATH)
+    # plplotdmd depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+  endif(USE_RPATH)
 
   if(plplotdmd_SHARED)
-    if(USE_RPATH)
-      get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
-    endif(USE_RPATH)
     configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
   else(plplotdmd_SHARED)
     configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)

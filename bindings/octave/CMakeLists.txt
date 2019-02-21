@@ -91,16 +91,21 @@ if(ENABLE_octave)
   configure_library_build(plplot_octave octave plplot_octave.i "${octave_tll_list}")
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    # plplot_octave depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
     # (Reasonable) assumption here is that OCTAVE_LIBRARIES and
     # OCTINTERP_LIBRARIES have the same path.
+    # plplot_octave depends on the octave libraries.
     get_filename_component(OCTAVE_INSTALL_RPATH "${OCTAVE_LIBRARIES}" PATH)
-    set(LIB_INSTALL_RPATH ${LIB_INSTALL_RPATH} ${OCTAVE_INSTALL_RPATH})
-    set_target_properties(
-      ${SWIG_MODULE_plplot_octave_REAL_NAME}
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
+    list(APPEND LIB_INSTALL_RPATH ${OCTAVE_INSTALL_RPATH})
+    filter_rpath(LIB_INSTALL_RPATH)
+    if(LIB_INSTALL_RPATH)
+      set_target_properties(
+	${SWIG_MODULE_plplot_octave_REAL_NAME}
+	PROPERTIES
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	)
+    endif(LIB_INSTALL_RPATH)
   else(USE_RPATH)
     set_target_properties(
       ${SWIG_MODULE_plplot_octave_REAL_NAME}

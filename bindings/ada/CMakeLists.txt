@@ -83,7 +83,8 @@ if(ENABLE_ada)
   endforeach(BODY_FILE ${BODY_SOURCE_LIST})
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    # plplotada depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
   endif(USE_RPATH)
 
   configure_library_build(plplotada "" "${plplotada_BODY_SRCS}" "")

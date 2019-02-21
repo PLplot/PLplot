@@ -1,6 +1,6 @@
 # bindings/java/CMakeLists.txt
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2017-2018 Alan W. Irwin
+# Copyright (C) 2017-2019 Alan W. Irwin
 
 #
 # This file is part of PLplot.
@@ -167,12 +167,16 @@ if(ENABLE_java)
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
-    set_target_properties(
-      ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
+    # plplotjavac_wrap depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    filter_rpath(LIB_INSTALL_RPATH)
+    if(LIB_INSTALL_RPATH)
+      set_target_properties(
+	${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}
+	PROPERTIES
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	)
+    endif(LIB_INSTALL_RPATH)
   else(USE_RPATH)
     set_target_properties(
       ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}

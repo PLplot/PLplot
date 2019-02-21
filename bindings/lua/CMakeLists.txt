@@ -53,12 +53,16 @@ if(ENABLE_lua)
   configure_library_build(plplotluac lua plplotluac.i "PLPLOT::plplot;${LUA_LIBRARIES}")
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
-    set_target_properties(
-      ${SWIG_MODULE_plplotluac_REAL_NAME}
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
+    # plplotluac depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    filter_rpath(LIB_INSTALL_RPATH)
+    if(LIB_INSTALL_RPATH)
+      set_target_properties(
+	${SWIG_MODULE_plplotluac_REAL_NAME}
+	PROPERTIES
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	)
+    endif(LIB_INSTALL_RPATH)
   else(USE_RPATH)
     set_target_properties(
       ${SWIG_MODULE_plplotluac_REAL_NAME}

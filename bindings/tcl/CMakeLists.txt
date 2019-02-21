@@ -93,7 +93,8 @@ if(ENABLE_tcl)
     endif(USE_TCL_TK_STUBS)
 
     if(USE_RPATH)
-      set(LIB_INSTALL_RPATH ${LIB_DIR} ${TCL_RPATH})
+      # tclmatrix depends on the Tcl library.
+      set(LIB_INSTALL_RPATH ${TCL_RPATH})
     endif(USE_RPATH)
     configure_library_build(tclmatrix "" "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}")
 
@@ -214,11 +215,12 @@ if(ENABLE_tcl)
     #message(STATUS "plplottcltk_link_libraries = ${plplottcltk_link_libraries}"
 
     if(USE_RPATH)
-      get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+      # plplottcltk depends on the plplot library.
+      set(LIB_INSTALL_RPATH ${LIB_DIR})
+      # plplottcltk depends on the Tcl and Tk libraries.
       list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
     endif(USE_RPATH)
     configure_library_build(plplottcltk "" "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}")
-
     configure_target_install(${WRITEABLE_TARGET}plplottcltk)
 
     pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_LINK_FLAGS}")
@@ -317,8 +319,10 @@ if(ENABLE_tcl)
   endif(ENABLE_tkX)
 
   if(USE_RPATH)
-    # This LIB_INSTALL_RPATH used for pltcl as well.
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    # This LIB_INSTALL_RPATH used as well below for pltcl.
+    # plplottcltk_Main depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    # plplottcltk_Main depends on the Tcl/Tk/Itcl/Itk libraries.
     list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
   endif(USE_RPATH)
 
@@ -429,10 +433,12 @@ if(ENABLE_tcl)
 
   if(USE_RPATH)
     filter_rpath(LIB_INSTALL_RPATH)
-    set_target_properties(${WRITEABLE_TARGET}pltcl
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
+    if(LIB_INSTALL_RPATH)
+      set_target_properties(${WRITEABLE_TARGET}pltcl
+	PROPERTIES
+	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	)
+    endif(LIB_INSTALL_RPATH)
   endif(USE_RPATH)
 
   configure_target_install(${WRITEABLE_TARGET}pltcl ${BIN_DIR})

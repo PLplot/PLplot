@@ -125,7 +125,7 @@ if(NOT ENABLE_DYNDRIVERS)
       )
   endif(ENABLE_tcl)
 
-  # Static device drivers must be included in the core PLplot library.
+  # Nondynamic device drivers must be included in the core PLplot library.
   set(DRIVERS_RPATH)
   foreach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
     #message("${SOURCE_ROOT_NAME}_SOURCE = ${${SOURCE_ROOT_NAME}_SOURCE}")
@@ -163,6 +163,7 @@ if(NOT ENABLE_DYNDRIVERS)
       endif(SOURCE_ROOT_NAME STREQUAL "tkwin")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
     if(${SOURCE_ROOT_NAME}_RPATH)
+      # Accumulate driver rpath information into DRIVERS_RPATH.
       list(APPEND DRIVERS_RPATH ${${SOURCE_ROOT_NAME}_RPATH})
     endif(${SOURCE_ROOT_NAME}_RPATH)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
@@ -176,16 +177,20 @@ include_directories(
   ${CMAKE_BINARY_DIR}/lib/qsastime
   )
 
-# Deal with external libraries.
+# The plplot library depends on the "lib subdirectory" libraries such
+# as csironn, csirocsa, qsastime, and (possibly) nistcd.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 set(libplplot_LINK_LIBRARIES)
 if(ENABLE_DYNDRIVERS)
   list(APPEND libplplot_LINK_LIBRARIES ${LTDL_LIBRARIES})
   #message("libplplot_LINK_LIBRARIES =  ${libplplot_LINK_LIBRARIES}")
   #message("LTDL_LIBRARY_RPATH = ${libplplot_RPATH}")
+  # For this case the plplot library depends on the ltdl library.
   list(APPEND LIB_INSTALL_RPATH ${LTDL_LIBRARY_RPATH})
 else(ENABLE_DYNDRIVERS)
   list(APPEND libplplot_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
+  # For this case the plplot library depends on external libraries required
+  # by the device driver code that is in the plplot library.
   list(APPEND LIB_INSTALL_RPATH ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
 #message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
@@ -212,6 +217,7 @@ if(HAVE_SHAPELIB)
   endif(HAVE_SAHOOKS)
 
   list(APPEND libplplot_LINK_LIBRARIES ${SHAPELIB_LIBRARIES})
+  # The plplot library depends on shapelib.
   list(APPEND LIB_INSTALL_RPATH ${SHAPELIB_RPATH})
 
 endif(HAVE_SHAPELIB)
@@ -267,10 +273,6 @@ if(PL_HAVE_QHULL)
     ${QHULL_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR}/lib/nn
     )
-
-  # Needed by the traditional pkg-config approach for installed examples
-  # as well as the new CMake-based build system for the installed examples.
-  list(APPEND LIB_INSTALL_RPATH ${QHULL_RPATH})
 endif(PL_HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)

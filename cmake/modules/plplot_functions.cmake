@@ -476,11 +476,6 @@ function(configure_library_build library library_type library_src tll_arguments)
     # Set library target properties for just the SHARED, MODULE, and STATIC library cases.
     if("${library_type}" STREQUAL "SHARED")
       if(USE_RPATH)
-	# Use default setting for LIB_INSTALL_RPATH
-	if(NOT DEFINED LIB_INSTALL_RPATH)
-	  set(LIB_INSTALL_RPATH "${CMAKE_INSTALL_LIBDIR}")
-	endif(NOT DEFINED LIB_INSTALL_RPATH)
-
 	filter_rpath(LIB_INSTALL_RPATH)
 	if(LIB_INSTALL_RPATH)
           set_target_properties(
@@ -490,8 +485,8 @@ function(configure_library_build library library_type library_src tll_arguments)
             )
 	endif(LIB_INSTALL_RPATH)
       else(USE_RPATH)
-	# INSTALL_NAME_DIR only relevant to Mac OS X
-	# systems.  Also, this property is only set when rpath is
+	# INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
+	# Also, this Mac OS X property is only set when rpath is
 	# not used (because otherwise it would supersede
 	# rpath).
 	set_target_properties(

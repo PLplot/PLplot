@@ -59,8 +59,8 @@ if(PL_HAVE_QHULL)
     list(APPEND csironn_LINK_LIBRARIES ${MATH_LIB})
   endif(MATH_LIB)
 
+  set(LIB_INSTALL_RPATH ${QHULL_RPATH})
   configure_library_build(csironn "" "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}")
-
   configure_target_install(${WRITEABLE_TARGET}csironn)
 
   set(nn_DOCFILES

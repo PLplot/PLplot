@@ -67,7 +67,9 @@ if(ENABLE_wxwidgets)
     )
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
+    # plplotwxwidgets depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    # plplotwxwidgets depends on the wxwidgets libraries.
     list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
   endif(USE_RPATH)
 

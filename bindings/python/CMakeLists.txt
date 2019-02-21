@@ -88,12 +88,16 @@ if(ENABLE_python)
     configure_library_build(Pltk_init python Pltk_init.i "${pltk_init_tll_list}")
 
     if(USE_RPATH)
-      get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
-      set_target_properties(
-	${SWIG_MODULE_Pltk_init_REAL_NAME}
-	PROPERTIES
-	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-	)
+      # Pltk_init depends on the plplot library.
+      set(LIB_INSTALL_RPATH ${LIB_DIR})
+      filter_rpath(LIB_INSTALL_RPATH)
+      if(LIB_INSTALL_RPATH)
+	set_target_properties(
+	  ${SWIG_MODULE_Pltk_init_REAL_NAME}
+	  PROPERTIES
+	  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	  )
+      endif(LIB_INSTALL_RPATH)
     else(USE_RPATH)
       set_target_properties(
 	${SWIG_MODULE_Pltk_init_REAL_NAME}
@@ -151,12 +155,16 @@ if(ENABLE_python)
   configure_library_build(plplotc python plplotc.i "${plotc_tll_list}")
 
   if(USE_RPATH)
-    get_target_property(LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
-    set_target_properties(
-      ${SWIG_MODULE_plplotc_REAL_NAME}
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
+      # plplotc depends on the plplot library.
+      set(LIB_INSTALL_RPATH ${LIB_DIR})
+      filter_rpath(LIB_INSTALL_RPATH)
+      if(LIB_INSTALL_RPATH)
+	set_target_properties(
+	  ${SWIG_MODULE_plplotc_REAL_NAME}
+	  PROPERTIES
+	  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
+	  )
+      endif(LIB_INSTALL_RPATH)
   endif(USE_RPATH)
 
   if(WRITEABLE_TARGET)
