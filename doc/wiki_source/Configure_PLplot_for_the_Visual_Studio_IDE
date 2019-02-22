@@ -72,7 +72,7 @@ check the generators available on your system by doing
 Now run cmake with
 `cmake .. -G "<the generator i want remembering Win64 if needed> <other -D options from above if needed>`
 
-This will take a few minutes to run and will end with 
+This will take a few minutes to run and will end with
 `-- Configuring done`
 `-- Generating done`
 `-- Build files have been written to: <your current directory>`
