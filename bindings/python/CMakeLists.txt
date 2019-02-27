@@ -85,26 +85,9 @@ if(ENABLE_python)
       set(CMAKE_SWIG_FLAGS -module ${WRITEABLE_TARGET}Pltk_init)
     endif(WRITEABLE_TARGET)
 
-    configure_library_build(Pltk_init python Pltk_init.i "${pltk_init_tll_list}")
-
-    if(USE_RPATH)
-      # Pltk_init depends on the plplot library.
-      set(LIB_INSTALL_RPATH ${LIB_DIR})
-      filter_rpath(LIB_INSTALL_RPATH)
-      if(LIB_INSTALL_RPATH)
-	set_target_properties(
-	  ${SWIG_MODULE_Pltk_init_REAL_NAME}
-	  PROPERTIES
-	  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-	  )
-      endif(LIB_INSTALL_RPATH)
-    else(USE_RPATH)
-      set_target_properties(
-	${SWIG_MODULE_Pltk_init_REAL_NAME}
-	PROPERTIES
-	INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-	)
-    endif(USE_RPATH)
+    # Pltk_init depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    configure_library_build(Pltk_init python Pltk_init.i "${pltk_init_tll_list}" "${LIB_INSTALL_RPATH}" ${PYTHON_INSTDIR})
 
     if(WRITEABLE_TARGET)
       # For this experimental configuration copy the generated
@@ -115,8 +98,6 @@ if(ENABLE_python)
 	VERBATIM
 	)
     endif(WRITEABLE_TARGET)
-
-    configure_target_install(${SWIG_MODULE_Pltk_init_REAL_NAME} ${PYTHON_INSTDIR})
 
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/Pltk_init.py
@@ -152,20 +133,9 @@ if(ENABLE_python)
     PLPLOT::plplot
     ${PYTHON_LIBRARIES}
     )
-  configure_library_build(plplotc python plplotc.i "${plotc_tll_list}")
-
-  if(USE_RPATH)
-      # plplotc depends on the plplot library.
-      set(LIB_INSTALL_RPATH ${LIB_DIR})
-      filter_rpath(LIB_INSTALL_RPATH)
-      if(LIB_INSTALL_RPATH)
-	set_target_properties(
-	  ${SWIG_MODULE_plplotc_REAL_NAME}
-	  PROPERTIES
-	  INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-	  )
-      endif(LIB_INSTALL_RPATH)
-  endif(USE_RPATH)
+  # plplotc depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
+  configure_library_build(plplotc python plplotc.i "${plotc_tll_list}" "${LIB_INSTALL_RPATH}" ${PYTHON_INSTDIR})
 
   if(WRITEABLE_TARGET)
     # For this experimental configuration copy the generated
@@ -185,17 +155,6 @@ if(ENABLE_python)
     )
   endif(${PYTHON_VERSION} VERSION_LESS "3.0.0")
 
-  configure_target_install(${SWIG_MODULE_plplotc_REAL_NAME} ${PYTHON_INSTDIR})
-
-  set(PERM_SCRIPTS
-    OWNER_READ
-    OWNER_WRITE
-    OWNER_EXECUTE
-    GROUP_READ
-    GROUP_EXECUTE
-    WORLD_READ
-    WORLD_EXECUTE
-    )
   install(
     FILES plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
     DESTINATION ${PYTHON_INSTDIR}

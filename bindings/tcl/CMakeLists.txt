@@ -92,13 +92,9 @@ if(ENABLE_tcl)
       set(libtclmatrix_LINK_LIBRARIES ${TCL_LIBRARY})
     endif(USE_TCL_TK_STUBS)
 
-    if(USE_RPATH)
-      # tclmatrix depends on the Tcl library.
-      set(LIB_INSTALL_RPATH ${TCL_RPATH})
-    endif(USE_RPATH)
-    configure_library_build(tclmatrix "" "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}")
-
-    configure_target_install(${WRITEABLE_TARGET}tclmatrix)
+    # tclmatrix depends on the Tcl library.
+    set(LIB_INSTALL_RPATH ${TCL_RPATH})
+    configure_library_build(tclmatrix "" "${tclmatrix_LIB_SRCS}" "${libtclmatrix_LINK_LIBRARIES}" "${LIB_INSTALL_RPATH}")
 
     # end tclmatrix
 
@@ -214,14 +210,11 @@ if(ENABLE_tcl)
 
     #message(STATUS "plplottcltk_link_libraries = ${plplottcltk_link_libraries}"
 
-    if(USE_RPATH)
-      # plplottcltk depends on the plplot library.
-      set(LIB_INSTALL_RPATH ${LIB_DIR})
-      # plplottcltk depends on the Tcl and Tk libraries.
-      list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
-    endif(USE_RPATH)
-    configure_library_build(plplottcltk "" "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}")
-    configure_target_install(${WRITEABLE_TARGET}plplottcltk)
+    # plplottcltk depends on the plplot library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    # plplottcltk depends on the Tcl and Tk libraries.
+    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_RPATH})
+    configure_library_build(plplottcltk "" "${plplottcltk_LIB_SRCS}" "${plplottcltk_link_libraries}" "${LIB_INSTALL_RPATH}")
 
     pkg_config_file("tcl" "Tcl/Tk" " Tcl/Tk bindings" "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "-lplplot;${libplplottcltk_LINK_FLAGS}")
     # end plplottcltk
@@ -318,17 +311,13 @@ if(ENABLE_tcl)
     endif(ENABLE_itkX)
   endif(ENABLE_tkX)
 
-  if(USE_RPATH)
-    # This LIB_INSTALL_RPATH used as well below for pltcl.
-    # plplottcltk_Main depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-    # plplottcltk_Main depends on the Tcl/Tk/Itcl/Itk libraries.
-    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
-  endif(USE_RPATH)
+  # This LIB_INSTALL_RPATH used as well below for pltcl.
+  # plplottcltk_Main depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
+  # plplottcltk_Main depends on the Tcl/Tk/Itcl/Itk libraries.
+  list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
 
-  configure_library_build(plplottcltk_Main "" "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}")
-
-  configure_target_install(${WRITEABLE_TARGET}plplottcltk_Main)
+  configure_library_build(plplottcltk_Main "" "${plplottcltk_Main_LIB_SRCS}" "${plplottcltk_Main_link_libraries}" "${LIB_INSTALL_RPATH}")
 
   # end plplottcltk_Main
 
@@ -424,24 +413,7 @@ if(ENABLE_tcl)
     list(APPEND pltcl_link_libraries ${TCL_LIBRARY})
   endif(ENABLE_itcl)
 
-  configure_executable_build(pltcl "pltcl.c" "${pltcl_link_libraries}")
-  if(BUILD_SHARED_LIBS)
-    set_target_properties(${WRITEABLE_TARGET}pltcl PROPERTIES
-      COMPILE_DEFINITIONS "USINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-
-  if(USE_RPATH)
-    filter_rpath(LIB_INSTALL_RPATH)
-    if(LIB_INSTALL_RPATH)
-      set_target_properties(${WRITEABLE_TARGET}pltcl
-	PROPERTIES
-	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-	)
-    endif(LIB_INSTALL_RPATH)
-  endif(USE_RPATH)
-
-  configure_target_install(${WRITEABLE_TARGET}pltcl ${BIN_DIR})
+  configure_executable_build(pltcl "pltcl.c" "${pltcl_link_libraries}" "${LIB_INSTALL_RPATH}" ${BIN_DIR})
 
   # test_tclmatrix.sh is a configured shell script that tests
   # the matrix capabilities of the tclmatrix library using

@@ -29,18 +29,14 @@ if(ENABLE_d)
     plplot.d
     )
 
-  if(USE_RPATH)
-    # plplotdmd depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-  endif(USE_RPATH)
+  # plplotdmd depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
 
   if(plplotdmd_SHARED)
-    configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
+    configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
   else(plplotdmd_SHARED)
-    configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot)
+    configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
   endif(plplotdmd_SHARED)
-
-  configure_target_install(${WRITEABLE_TARGET}plplotdmd)
 
   # Configure pkg-config *.pc file corresponding to libplplotdmd
   pkg_config_file("d" "D" " D binding" "plplotdmd" "" "-lplplot")

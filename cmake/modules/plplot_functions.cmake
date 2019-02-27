@@ -254,7 +254,7 @@ function(configure_file_generate)
     )
 endfunction(configure_file_generate)
 
-function(configure_executable_build executable executable_src tll_arguments)
+function(configure_executable_build executable executable_src tll_arguments lib_install_rpath install_dir)
   # Configure the build of executables and corresponding namespaced
   # ALIAS executables in a uniform way that supports the appropriate
   # writeable or read-only prefixes for all target names that are generated.
@@ -268,9 +268,15 @@ function(configure_executable_build executable executable_src tll_arguments)
 
   # executable_src contains a list of source files for the executable.
 
-  # tll_arguments contains a list of arguments for target_link_libraries
+  # tll_arguments contains a quoted list of arguments for target_link_libraries
   # for the executable.  If tll_arguments evaluates to a false value (e.g.,
   # an empty string), then target_link_libraries will not be called.
+
+  # lib_install_rpath contains a quoted list of rpath directories.  If
+  # lib_install_rpath evaluates to a false value, (e.g., an empty string)
+  # then the INSTALL_RPATH property of the target will not be set.
+
+  # install_dir contains the install location of the executable.
 
   # N.B. Actual arguments used for calls to configure_executable_build
   # are values (e.g., lists are expressed as "a;b;c") and NOT
@@ -292,7 +298,7 @@ function(configure_executable_build executable executable_src tll_arguments)
 
   # Sanity check that the external variable PROJECT_NAMESPACE has been set correctly.
   if(NOT "${PROJECT_NAMESPACE}" MATCHES ".*::$")
-    message(FATAL_ERROR "configure_library_build:PROJECT_NAMESPACE = ${PROJECT_NAMESPACE} does not have the correct trailing \"::\"")
+    message(FATAL_ERROR "configure_executable_build:PROJECT_NAMESPACE = ${PROJECT_NAMESPACE} does not have the correct trailing \"::\"")
   endif(NOT "${PROJECT_NAMESPACE}" MATCHES ".*::$")
 
   set(original_executable ${executable})
@@ -310,9 +316,41 @@ function(configure_executable_build executable executable_src tll_arguments)
     endif(NON_TRANSITIVE)
   endif(NOT "${tll_arguments}" STREQUAL "")
 
-endfunction(configure_executable_build executable executable_src tll_arguments)
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(${executable}
+      PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
 
-function(configure_library_build library library_type library_src tll_arguments)
+  if(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+    filter_rpath(lib_install_rpath)
+    if(lib_install_rpath)
+      set_target_properties(
+        ${executable}
+        PROPERTIES
+        INSTALL_RPATH "${lib_install_rpath}"
+        )
+    endif(lib_install_rpath)
+  endif(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+
+  if(NOT USE_RPATH)
+    # INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
+    # Also, this Mac OS X property is only set when rpath is
+    # not used (because otherwise it would supersede
+    # rpath).
+    set_target_properties(
+      ${executable}
+      PROPERTIES
+      INSTALL_NAME_DIR "${install_dir}"
+      )
+  endif(NOT USE_RPATH)
+
+  configure_target_install(${executable} ${install_dir})
+
+endfunction(configure_executable_build executable executable_src tll_arguments lib_install_rpath install_dir)
+
+function(configure_library_build library library_type library_src tll_arguments lib_install_rpath)
   # Configure the build of libraries (including modules and swig
   # modules) and corresponding namespaced ALIAS libraries in a uniform
   # way that supports the appropriate writeable or read-only prefixes
@@ -336,9 +374,26 @@ function(configure_library_build library library_type library_src tll_arguments)
 
   # library_src contains a list of source files for the library.
 
-  # tll_arguments contains a list of arguments for (swig|target)_link_libraries
+  # tll_arguments contains a quoted list of arguments for (swig|target)_link_libraries
   # for the library.  If tll_arguments evaluates to a false value (e.g.,
   # an empty string), then (swig|target)_link_libraries will not be called.
+
+  # lib_install_rpath contains a quoted list of rpath directories.  If
+  # lib_install_rpath evaluates to a false value, (e.g., an empty string)
+  # then the INSTALL_RPATH property of the target will not be set.
+
+  # N.B. there are two additional optional arguments which are the following:
+
+  # The first optional argument contains a string corresponding to the
+  # full pathname of the installation directory which defaults to
+  # ${LIB_DIR}.  This is used to help set the target property
+  # INSTALL_NAME_DIR.  It is also optionally passed on for the call to
+  # configure_target_install.
+
+  # The second optional argument contains a list of
+  # semicolon-separated install permissions in a string for the module
+  # or executable that is optionally passed on for the call to
+  # configure_target_install.
 
   # N.B. Actual arguments used for calls to
   # configure_library_build are values (e.g., lists are
@@ -436,14 +491,48 @@ function(configure_library_build library library_type library_src tll_arguments)
       endif(NON_TRANSITIVE)
     endif(NOT "${tll_arguments}" STREQUAL "")
 
-    # It is assumed RPATH for swig-generated modules is handled
-    # externally, but set the following property to allow symbols to
-    # be visible in the module.
     set_target_properties(
       ${SWIG_MODULE_${library}_REAL_NAME}
       PROPERTIES
       COMPILE_DEFINITIONS "USINGDLL"
       )
+
+    if(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+      filter_rpath(lib_install_rpath)
+      if(lib_install_rpath)
+        set_target_properties(
+          ${SWIG_MODULE_${library}_REAL_NAME}
+          PROPERTIES
+          INSTALL_RPATH "${lib_install_rpath}"
+          )
+      endif(lib_install_rpath)
+    endif(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+
+    if(NOT USE_RPATH)
+      # INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
+      # Also, this Mac OS X property is only set when rpath is
+      # not used (because otherwise it would supersede
+      # rpath).
+      if(ARGC GREATER 5)
+	set(install_name_dir ${ARGV5})
+      else(ARGC GREATER 5)
+	set(install_name_dir ${LIB_DIR})
+      endif(ARGC GREATER 5)
+      set_target_properties(
+        ${SWIG_MODULE_${library}_REAL_NAME}
+        PROPERTIES
+        INSTALL_NAME_DIR "${install_name_dir}"
+        )
+    endif(NOT USE_RPATH)
+
+    if(ARGC EQUAL 6)
+      configure_target_install(${SWIG_MODULE_${library}_REAL_NAME} ${ARGV5})
+    elseif(ARGC EQUAL 7)
+      configure_target_install(${SWIG_MODULE_${library}_REAL_NAME} ${ARGV5} "${ARGV6}")
+    else(ARGC EQUAL 6)
+      message(FATAL_ERROR "configure_library_build called with number of arguments not equal to 6 or 7 for library_type = ${library_type}")
+    endif(ARGC EQUAL 6)
+
   else(if_swig_module)
     if("${library_type}" STREQUAL "SHARED")
       list(APPEND variables_list
@@ -473,29 +562,36 @@ function(configure_library_build library library_type library_src tll_arguments)
       endif(NON_TRANSITIVE)
     endif(NOT "${tll_arguments}" STREQUAL "")
 
-    # Set library target properties for just the SHARED, MODULE, and STATIC library cases.
-    if("${library_type}" STREQUAL "SHARED")
-      if(USE_RPATH)
-	filter_rpath(LIB_INSTALL_RPATH)
-	if(LIB_INSTALL_RPATH)
-          set_target_properties(
-            ${library}
-            PROPERTIES
-            INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-            )
-	endif(LIB_INSTALL_RPATH)
-      else(USE_RPATH)
-	# INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
-	# Also, this Mac OS X property is only set when rpath is
-	# not used (because otherwise it would supersede
-	# rpath).
-	set_target_properties(
+    # Set library target properties
+    if(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+      filter_rpath(lib_install_rpath)
+      if(lib_install_rpath)
+        set_target_properties(
           ${library}
           PROPERTIES
-          INSTALL_NAME_DIR "${CMAKE_INSTALL_LIBDIR}"
+          INSTALL_RPATH "${lib_install_rpath}"
           )
-      endif(USE_RPATH)
+      endif(lib_install_rpath)
+    endif(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
 
+    if(NOT USE_RPATH)
+      # INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
+      # Also, this Mac OS X property is only set when rpath is
+      # not used (because otherwise it would supersede
+      # rpath).
+      if(ARGC GREATER 5)
+	set(install_name_dir ${ARGV5})
+      else(ARGC GREATER 5)
+	set(install_name_dir ${LIB_DIR})
+      endif(ARGC GREATER 5)
+      set_target_properties(
+        ${library}
+        PROPERTIES
+        INSTALL_NAME_DIR "${install_name_dir}"
+        )
+    endif(NOT USE_RPATH)
+
+    if("${library_type}" STREQUAL "SHARED")
       set_target_properties(
 	${library}
 	PROPERTIES
@@ -504,9 +600,6 @@ function(configure_library_build library library_type library_src tll_arguments)
 	VERSION ${${original_library}_VERSION}
 	)
     elseif("${library_type}" STREQUAL "MODULE")
-      # It is assumed RPATH for modules is handled externally, but set
-      # the following property to allow symbols to be visible in the
-      # module.
       set_target_properties(
 	${library}
 	PROPERTIES
@@ -520,8 +613,18 @@ function(configure_library_build library library_type library_src tll_arguments)
 	POSITION_INDEPENDENT_CODE ON
 	)
     endif("${library_type}" STREQUAL "SHARED")
+
+    if(ARGC EQUAL 5 AND ("${library_type}" STREQUAL "SHARED" OR "${library_type}" STREQUAL "STATIC"))
+      configure_target_install(${library})
+    elseif(ARGC EQUAL 6 AND "${library_type}" STREQUAL "MODULE")
+      configure_target_install(${library} ${ARGV5})
+    elseif(ARGC EQUAL 7 AND "${library_type}" STREQUAL "MODULE")
+      configure_target_install(${library} ${ARGV5} "${ARGV6}")
+    else(ARGC EQUAL 5)
+      message(FATAL_ERROR "configure_library_build called with too many arguments for library_type = ${library_type}")
+    endif(ARGC EQUAL 5 AND ("${library_type}" STREQUAL "SHARED" OR "${library_type}" STREQUAL "STATIC"))
   endif(if_swig_module)
-endfunction(configure_library_build library library_type library_src tll_arguments)
+endfunction(configure_library_build library library_type library_src tll_arguments lib_install_rpath)
 
 function(configure_target_install target)
   # configure the install of targets and their export data.
@@ -546,7 +649,6 @@ function(configure_target_install target)
   # message(STATUS "DEBUG: ARGV0 = ${ARGV0}")
   # message(STATUS "DEBUG: ARGV1 = ${ARGV1}")
   # message(STATUS "DEBUG: ARGV2 = ${ARGV2}")
-
 
   if(ARGC GREATER 1)
     # Target is a module or executable with ${ARGV1} the install location.

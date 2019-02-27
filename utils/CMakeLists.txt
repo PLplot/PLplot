@@ -24,43 +24,15 @@ include_directories(
   ${CMAKE_BINARY_DIR}/lib/qsastime
   )
 
-if(USE_RPATH)
-  # plrender depends on the plplot library.
-  set(LIB_INSTALL_RPATH ${LIB_DIR})
-endif(USE_RPATH)
+# plrender, pltek, both depend on the plplot library while wxPLViewer depends on
+# the plplotwxwidgets and plplotcxx libraries.
+set(LIB_INSTALL_RPATH ${LIB_DIR})
 
 if(PLD_plmeta)
-  configure_executable_build(plrender "plrender.c" "PLPLOT::plplot")
-  if(BUILD_SHARED_LIBS)
-    set_target_properties(${WRITEABLE_TARGET}plrender
-      PROPERTIES
-      COMPILE_DEFINITIONS "USINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-  if(USE_RPATH)
-    set_target_properties(${WRITEABLE_TARGET}plrender
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-  endif(USE_RPATH)
-  configure_target_install(${WRITEABLE_TARGET}plrender ${BIN_DIR})
+  configure_executable_build(plrender "plrender.c" "PLPLOT::plplot" "${LIB_INSTALL_RPATH}" ${BIN_DIR})
 endif(PLD_plmeta)
 
-configure_executable_build(pltek "pltek.c" "PLPLOT::plplot")
-if(BUILD_SHARED_LIBS)
-  set_target_properties(${WRITEABLE_TARGET}pltek
-    PROPERTIES
-    COMPILE_DEFINITIONS "USINGDLL"
-    )
-endif(BUILD_SHARED_LIBS)
-if(USE_RPATH)
-  # pltek depends on the plplot library.
-  set_target_properties(${WRITEABLE_TARGET}pltek
-    PROPERTIES
-    INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-    )
-endif(USE_RPATH)
-configure_target_install(${WRITEABLE_TARGET}pltek ${BIN_DIR})
+configure_executable_build(pltek "pltek.c" "PLPLOT::plplot" "${LIB_INSTALL_RPATH}" ${BIN_DIR})
 
 # Build simple executable to check parity bits of all characters read
 # by stdin.
@@ -80,7 +52,7 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
     )
 
   set(wxPLViewer_link_libraries PLPLOT::plplotwxwidgets PLPLOT::plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
-  configure_executable_build(wxPLViewer "${wxPLViewer_SRCS}" "${wxPLViewer_link_libraries}")
+  configure_executable_build(wxPLViewer "${wxPLViewer_SRCS}" "${wxPLViewer_link_libraries}" "${LIB_INSTALL_RPATH}" ${BIN_DIR})
 
   # Set this property rather than using the WIN32 signature of add_executable
   # inside the configure_executable_build function.
@@ -88,19 +60,4 @@ if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
     PROPERTIES
     WIN32_EXECUTABLE "ON"
     )
-  if(BUILD_SHARED_LIBS)
-    set_target_properties(${WRITEABLE_TARGET}wxPLViewer
-      PROPERTIES
-      COMPILE_DEFINITIONS "USINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-  if(USE_RPATH)
-    # wxPLViewer depends on the plplotwxwidgets and plplotcxx libraries.
-    set_target_properties(${WRITEABLE_TARGET}wxPLViewer
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-  endif(USE_RPATH)
-
-  configure_target_install(${WRITEABLE_TARGET}wxPLViewer ${BIN_DIR})
 endif(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)

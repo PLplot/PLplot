@@ -34,14 +34,10 @@ if(ENABLE_cxx)
     ${CMAKE_BINARY_DIR}/include
     )
 
-  if(USE_RPATH)
-    # plplotcxx depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-  endif(USE_RPATH)
+  # plplotcxx depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
 
-  configure_library_build(plplotcxx "" "${plplotcxx_LIB_SRCS}" PLPLOT::plplot)
-
-  configure_target_install(${WRITEABLE_TARGET}plplotcxx)
+  configure_library_build(plplotcxx "" "${plplotcxx_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
 
   install(FILES
     ${plplotcxx_INSTALLED_HEADERS}

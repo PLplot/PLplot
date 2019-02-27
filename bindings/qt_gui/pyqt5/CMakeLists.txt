@@ -77,7 +77,8 @@ if(ENABLE_pyqt5)
       Qt5::Svg Qt5::Gui Qt5::PrintSupport
       )
   endif(ENABLE_DYNDRIVERS)
-  configure_library_build(plplot_pyqt5 MODULE "${plplot_pyqt5_SRC}" "${pyqt5_tll_list}")
+  # LIB_INSTALL_RPATH propagated from parent directory.
+  configure_library_build(plplot_pyqt5 MODULE "${plplot_pyqt5_SRC}" "${pyqt5_tll_list}" "${LIB_INSTALL_RPATH}" ${PYTHON_INSTDIR})
 
   if(WRITEABLE_TARGET)
     # For this experimental configuration copy the generated
@@ -114,21 +115,5 @@ if(ENABLE_pyqt5)
   endif(WIN32_OR_CYGWIN)
 
   add_dependencies(${WRITEABLE_TARGET}plplot_pyqt5 generate_pyqt5_source)
-
-  if(USE_RPATH)
-    set_target_properties(
-      ${WRITEABLE_TARGET}plplot_pyqt5
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-  else(USE_RPATH)
-    set_target_properties(
-      ${WRITEABLE_TARGET}plplot_pyqt5
-      PROPERTIES
-      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-      )
-  endif(USE_RPATH)
-
-  configure_target_install(${WRITEABLE_TARGET}plplot_pyqt5 ${PYTHON_INSTDIR})
 
 endif(ENABLE_pyqt5)

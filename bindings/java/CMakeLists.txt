@@ -153,10 +153,12 @@ if(ENABLE_java)
     PROPERTIES SWIG_MODULE_NAME plplotjavac
     )
 
+  # plplotjavac_wrap depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
   # Create swig-generated java files and swig-generated C wrapper source
-  # code.  Also, build that source code into a shared object (a.k.a. plug-in)
+  # code.  Also, build that source code into a shared object (a.k.a. "dll")
   # that can be dynamically loaded by java.
-  configure_library_build(plplotjavac_wrap java plplotjavac.i PLPLOT::plplot)
+  configure_library_build(plplotjavac_wrap java plplotjavac.i PLPLOT::plplot "${LIB_INSTALL_RPATH}" ${JAVAWRAPPER_DIR})
 
   # Create config.java.  Other generated java files created by swig above.
   set(PLPLOTJAVAC_WRAP_DLL $<TARGET_FILE_NAME:PLPLOT::plplotjavac_wrap>)
@@ -165,27 +167,6 @@ if(ENABLE_java)
     ${CMAKE_CURRENT_BINARY_DIR}/config.java
     @ONLY
     )
-
-  if(USE_RPATH)
-    # plplotjavac_wrap depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-    filter_rpath(LIB_INSTALL_RPATH)
-    if(LIB_INSTALL_RPATH)
-      set_target_properties(
-	${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}
-	PROPERTIES
-	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-	)
-    endif(LIB_INSTALL_RPATH)
-  else(USE_RPATH)
-    set_target_properties(
-      ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME}
-      PROPERTIES
-      INSTALL_NAME_DIR "${JAVAWRAPPER_DIR}"
-      )
-  endif(USE_RPATH)
-
-  install(TARGETS ${SWIG_MODULE_plplotjavac_wrap_REAL_NAME} LIBRARY DESTINATION ${JAVAWRAPPER_DIR})
 
   set(JAVA_CLASSES)
   foreach( srcfile ${JAVA_FILES_FULL} )

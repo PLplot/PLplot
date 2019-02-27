@@ -77,7 +77,8 @@ if(ENABLE_pyqt4)
       ${QT_LIBRARIES}
       )
   endif(ENABLE_DYNDRIVERS)
-  configure_library_build(plplot_pyqt4 MODULE "${plplot_pyqt4_SRC}" "${pyqt4_tll_list}")
+  # LIB_INSTALL_RPATH propagated from parent directory.
+  configure_library_build(plplot_pyqt4 MODULE "${plplot_pyqt4_SRC}" "${pyqt4_tll_list}" "${LIB_INSTALL_RPATH}" ${PYTHON_INSTDIR})
 
   if(WRITEABLE_TARGET)
     # For this experimental configuration copy the generated
@@ -117,21 +118,5 @@ if(ENABLE_pyqt4)
 
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
   set_qt4_target_properties(${WRITEABLE_TARGET}plplot_pyqt4)
-
-  if(USE_RPATH)
-    set_target_properties(
-      ${WRITEABLE_TARGET}plplot_pyqt4
-      PROPERTIES
-      INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-      )
-  else(USE_RPATH)
-    set_target_properties(
-      ${WRITEABLE_TARGET}plplot_pyqt4
-      PROPERTIES
-      INSTALL_NAME_DIR "${PYTHON_INSTDIR}"
-      )
-  endif(USE_RPATH)
-
-  configure_target_install(${WRITEABLE_TARGET}plplot_pyqt4 ${PYTHON_INSTDIR})
 
 endif(ENABLE_pyqt4)

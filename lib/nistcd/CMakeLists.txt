@@ -49,7 +49,7 @@ if(PLD_cgm)
     PROPERTIES COMPILE_FLAGS "${cd_ADD_DEFINES}"
     )
 
-  configure_library_build(nistcd "" "${cd_LIB_SRCS}" "")
+  configure_library_build(nistcd "" "${cd_LIB_SRCS}" "" "")
 
   option(TEST_NISTCD "Test libnistcd" ON)
   if(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)
@@ -110,9 +110,6 @@ if(PLD_cgm)
       )
 
   endif(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)
-
-  # install library and binaries
-  configure_target_install(${WRITEABLE_TARGET}nistcd)
 
   # install library header files.
   install(FILES ${cd_LIB_HDRS} DESTINATION ${INCLUDE_DIR})

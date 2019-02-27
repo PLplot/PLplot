@@ -66,14 +66,12 @@ if(ENABLE_wxwidgets)
     PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
     )
 
-  if(USE_RPATH)
-    # plplotwxwidgets depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-    # plplotwxwidgets depends on the wxwidgets libraries.
-    list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
-  endif(USE_RPATH)
+  # plplotwxwidgets depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
+  # plplotwxwidgets depends on the wxwidgets libraries.
+  list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
 
-  configure_library_build(plplotwxwidgets "" "${plplotwxwidgets_LIB_SRCS}" "PLPLOT::plplot;PLPLOT::plplotcxx;${wxwidgets_LINK_FLAGS}")
+  configure_library_build(plplotwxwidgets "" "${plplotwxwidgets_LIB_SRCS}" "PLPLOT::plplot;PLPLOT::plplotcxx;${wxwidgets_LINK_FLAGS}" "${LIB_INSTALL_RPATH}")
 
   INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
   IF(wxWidgets_DEFINITIONS)
@@ -85,8 +83,6 @@ if(ENABLE_wxwidgets)
     set_property(TARGET plplotwxwidgets APPEND
       PROPERTY COMPILE_DEFINITIONS_DEBUG ${wxWidgets_DEFINITIONS_DEBUG})
   ENDIF(wxWidgets_DEFINITIONS_DEBUG)
-
-  configure_target_install(${WRITEABLE_TARGET}plplotwxwidgets)
 
   install(FILES
     ${plplotwxwidgets_INSTALLED_HEADERS}

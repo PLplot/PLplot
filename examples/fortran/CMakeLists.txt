@@ -77,10 +77,9 @@ else(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(CORE_BUILD)
-  configure_library_build(plfortrandemolib STATIC plfortrandemolib.f90 PLPLOT::plplotfortran)
-
-  configure_target_install(${WRITEABLE_TARGET}plfortrandemolib)
-
+  # plfortrandemolib depends on plplotfortran library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
+  configure_library_build(plfortrandemolib STATIC plfortrandemolib.f90 PLPLOT::plplotfortran "${LIB_INSTALL_RPATH}")
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plfortrandemolib.mod
     DESTINATION ${FORTRAN_MOD_DIR}

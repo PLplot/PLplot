@@ -48,16 +48,14 @@ if(ENABLE_qt)
     # install-tree rpath since cmake handles the build-tree rpath
     # automatically (so long as full pathnames to libraries are used).
     #message("qt_RPATH = ${qt_RPATH}")
-    if(USE_RPATH)
-      set(LIB_INSTALL_RPATH
-	# plplotqt depends on the plplot library.
-	${LIB_DIR}
-	# plplotqt depends on the Qt libraries.
-	${qt_RPATH}
-	)
+    set(LIB_INSTALL_RPATH
+      # plplotqt depends on the plplot library.
+      ${LIB_DIR}
+      # plplotqt depends on the Qt libraries.
+      ${qt_RPATH}
+      )
       #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
-    endif(USE_RPATH)
-    configure_library_build(plplotqt "" "${qt_SOURCE}" "${libplplotqt_LINK_LIBRARIES}")
+    configure_library_build(plplotqt "" "${qt_SOURCE}" "${libplplotqt_LINK_LIBRARIES}" "${LIB_INSTALL_RPATH}")
 
     if(NOT PLPLOT_USE_QT5)
       if(NOT QT_LIBRARIES)
@@ -94,8 +92,6 @@ if(ENABLE_qt)
     # specifically added by automoc to the list of source files for
     # the target.
     target_include_directories(${WRITEABLE_TARGET}plplotqt PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-
-    configure_target_install(${WRITEABLE_TARGET}plplotqt)
 
     # Configure pkg-config *.pc file corresponding to libplplotqt
     pkg_config_file("qt" "Qt" " Qt binding" "plplotqt" "${pc_qt_COMPILE_FLAGS}" "-lplplot;${pc_qt_LIBRARIES_LIST};${MATH_LIB}")

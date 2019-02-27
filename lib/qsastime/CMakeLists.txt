@@ -91,7 +91,7 @@ set(qsastime_LIB_SRCS
   qsastime.c dsplint.c
   )
 
-configure_library_build(qsastime "" "${qsastime_LIB_SRCS}" "${MATH_LIB}")
+configure_library_build(qsastime "" "${qsastime_LIB_SRCS}" "${MATH_LIB}" "")
 add_dependencies(${WRITEABLE_TARGET}qsastime tai-utc.h_built deltaT.h_built)
 
 set(qsastime_LIB_HDRS
@@ -100,8 +100,6 @@ set(qsastime_LIB_HDRS
   )
 
 install(FILES ${qsastime_LIB_HDRS} DESTINATION ${INCLUDE_DIR})
-
-configure_target_install(${WRITEABLE_TARGET}qsastime)
 
 # Build test routines if so desired.
 if(TEST_QSASTIME)

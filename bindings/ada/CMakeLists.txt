@@ -82,12 +82,11 @@ if(ENABLE_ada)
       )
   endforeach(BODY_FILE ${BODY_SOURCE_LIST})
 
-  if(USE_RPATH)
-    # plplotada depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-  endif(USE_RPATH)
+  # plplotada depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
 
-  configure_library_build(plplotada "" "${plplotada_BODY_SRCS}" "")
+  # target_link_libraries used in special way below so avoid using it inside configure_library_build.
+  configure_library_build(plplotada "" "${plplotada_BODY_SRCS}" "" "${LIB_INSTALL_RPATH}")
 
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed
@@ -136,8 +135,6 @@ if(ENABLE_ada)
     DESTINATION ${ADA_LIB_DIR}
     PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
     )
-
-  configure_target_install(${WRITEABLE_TARGET}plplotada)
 
   # Add generated .ali files to the list of additional files to be
   # removed by make clean

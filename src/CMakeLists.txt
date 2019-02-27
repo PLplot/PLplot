@@ -298,7 +298,7 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   list(APPEND libplplot_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
-configure_library_build(plplot "" "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}")
+configure_library_build(plplot "" "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}" "${LIB_INSTALL_RPATH}")
 add_dependencies(${WRITEABLE_TARGET}plplot plhershey-unicode.h_built)
 
 if(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
@@ -328,8 +328,6 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
     # the target.
     target_include_directories(${WRITEABLE_TARGET}plplot PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
-
-configure_target_install(${WRITEABLE_TARGET}plplot)
 
 message("pc_libplplot_LINK_FLAGS = ${pc_libplplot_LINK_FLAGS}")
 

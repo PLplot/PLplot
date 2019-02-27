@@ -86,12 +86,11 @@ if(ENABLE_smoke)
     ${QT_LIBRARIES}
     )
 
-  configure_library_build(smokeplplotqt "" "${plplot_smoke_SRC}" "${smokeplplotqt_tll_list}")
+  # LIB_INSTALL_RPATH propagated from parent directory.
+  configure_library_build(smokeplplotqt "" "${plplot_smoke_SRC}" "${smokeplplotqt_tll_list}" "${LIB_INSTALL_RPATH}")
   # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
   set_qt4_target_properties(smokeplplotqt)
 
   add_dependencies(smokeplplotqt generate_smoke_source)
-
-  configure_target_install(smokeplplotqt)
 
 endif(ENABLE_smoke)

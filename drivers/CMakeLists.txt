@@ -72,6 +72,16 @@ if(ENABLE_DYNDRIVERS)
       #message("${SOURCE_ROOT_NAME}_COMPILE_FLAGS = ${${SOURCE_ROOT_NAME}_COMPILE_FLAGS}")
     endif(${SOURCE_ROOT_NAME}_COMPILE_FLAGS)
 
+    # ${SOURCE_ROOT_NAME}_RPATH used in configure_library_build calls
+    # below.  This variable originally set in cmake/modules files for
+    # each driver in ${DRIVERS_LIST}.  Prepend ${LIB_DIR} to this list
+    # since each driver depends on libplplot.
+    set(
+      ${SOURCE_ROOT_NAME}_RPATH
+      ${LIB_DIR}
+      ${${SOURCE_ROOT_NAME}_RPATH}
+      )
+
     # ${SOURCE_ROOT_NAME}_LINK_FLAGS is ideally a list of the full path names
     # to libraries determined with find_library.  However, the list can also
     # include link flags such as the -L and -l form of specifying libraries,
@@ -108,7 +118,7 @@ if(ENABLE_DYNDRIVERS)
 	    )
 	endif(PLPLOT_USE_QT5)
 
-	configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${qt_tll_list}")
+	configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${qt_tll_list}" "${${SOURCE_ROOT_NAME}_RPATH}" ${DRV_DIR})
 	if(NOT PLPLOT_USE_QT5)
 	  # Update the target COMPILE_DEFINITIONS and INCLUDE_DIRECTORIES
 	  set_qt4_target_properties(${WRITEABLE_TARGET}${SOURCE_ROOT_NAME})
@@ -124,7 +134,7 @@ if(ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	${${SOURCE_ROOT_NAME}_TARGETS}
 	)
-      configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${wx_tll_list}")
+      configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${wx_tll_list}" "${${SOURCE_ROOT_NAME}_RPATH}" ${DRV_DIR})
       if(PLD_wxwidgets OR PLD_wxpng)
 	set_property(TARGET ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
 	  APPEND PROPERTY
@@ -139,31 +149,8 @@ if(ENABLE_DYNDRIVERS)
 	${${SOURCE_ROOT_NAME}_LINK_FLAGS}
 	${${SOURCE_ROOT_NAME}_TARGETS}
 	)
-      configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${generic_tll_list}")
+      configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${generic_tll_list}" "${${SOURCE_ROOT_NAME}_RPATH}" ${DRV_DIR})
     endif(SOURCE_ROOT_NAME STREQUAL "qt")
-
-    if(USE_RPATH)
-      # ${SOURCE_ROOT_NAME}_RPATH originally set in cmake/modules files for
-      # each driver in ${DRIVERS_LIST}.  This is only used for the
-      # install-tree rpath since cmake handles the build-tree rpath
-      # automatically (so long as full pathnames to libraries are used).
-      set(
-	${SOURCE_ROOT_NAME}_RPATH
-	# Driver depends on libplplot.
-	${LIB_DIR}
-	${${SOURCE_ROOT_NAME}_RPATH}
-	)
-      filter_rpath(${SOURCE_ROOT_NAME}_RPATH)
-      #message("${SOURCE_ROOT_NAME}_RPATH = ${${SOURCE_ROOT_NAME}_RPATH}")
-      if(${SOURCE_ROOT_NAME}_RPATH)
-	set_target_properties(
-	  ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
-	  PROPERTIES
-	  INSTALL_RPATH
-	  "${${SOURCE_ROOT_NAME}_RPATH}"
-	  )
-      endif(${SOURCE_ROOT_NAME}_RPATH)
-    endif(USE_RPATH)
 
     # Our implementation of dynamic loading using libltdl assumes
     # the prefix should always be nothing (rather than lib) and the suffix
@@ -218,8 +205,6 @@ if(ENABLE_DYNDRIVERS)
 	)
       list(APPEND test_dyndrivers_TDEPENDS test_${SOURCE_ROOT_NAME}_dyndriver)
     endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
-
-    configure_target_install(${WRITEABLE_TARGET}${SOURCE_ROOT_NAME} ${DRV_DIR})
 
     install(
       FILES ${CMAKE_CURRENT_BINARY_DIR}/${SOURCE_ROOT_NAME}.driver_info

@@ -35,27 +35,11 @@ if(ENABLE_tkX)
     set(plserver_link_libraries PLPLOT::plplot PLPLOT::plplottcltk_Main PLPLOT::plplottcltk ${TK_LIBRARY} ${TCL_LIBRARY})
   endif(tcltk_in_plplot_library)
 
-  configure_executable_build(plserver "plserver.c" "${plserver_link_libraries}")
-  if(BUILD_SHARED_LIBS)
-    set_target_properties(${WRITEABLE_TARGET}plserver PROPERTIES
-      COMPILE_DEFINITIONS "USINGDLL"
-      )
-  endif(BUILD_SHARED_LIBS)
-
-  if(USE_RPATH)
-    # plserver depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-    # plserver depends on the Tcl/Tk/Itcl/Itk libraries
-    list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
-    filter_rpath(LIB_INSTALL_RPATH)
-    if(LIB_INSTALL_RPATH)
-      set_target_properties(${WRITEABLE_TARGET}plserver
-	PROPERTIES
-	INSTALL_RPATH "${LIB_INSTALL_RPATH}"
-	)
-    endif(LIB_INSTALL_RPATH)
-  endif(USE_RPATH)
-  configure_target_install(${WRITEABLE_TARGET}plserver ${BIN_DIR})
+  # plserver depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
+  # plserver depends on the Tcl/Tk/Itcl/Itk libraries
+  list(APPEND LIB_INSTALL_RPATH ${TCL_TK_ITCL_ITK_RPATH})
+  configure_executable_build(plserver "plserver.c" "${plserver_link_libraries}" "${LIB_INSTALL_RPATH}" ${BIN_DIR})
 endif(ENABLE_tkX)
 
 if(ENABLE_tk)

@@ -166,14 +166,10 @@ EXPORTS
   endif(WIN32_AND_NOT_CYGWIN AND BUILD_SHARED_LIBS AND NOT MINGW AND NOT MSYS)
 
 
-  if(USE_RPATH)
-    # plplotfortran depends on the plplot library.
-    set(LIB_INSTALL_RPATH ${LIB_DIR})
-  endif(USE_RPATH)
+  # plplotfortran depends on the plplot library.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
 
-  configure_library_build(plplotfortran "" "${plplotfortran_LIB_SRCS}" PLPLOT::plplot)
-
-  configure_target_install(${WRITEABLE_TARGET}plplotfortran)
+  configure_library_build(plplotfortran "" "${plplotfortran_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
 
   # While user programmes should only use the plplot module,
   # some compilers (e.g. Intel Fortran, but not gfortran) require access

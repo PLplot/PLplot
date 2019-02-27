@@ -46,9 +46,7 @@ if(WITH_CSA)
     set_source_files_properties(csa.c PROPERTIES COMPILE_FLAGS "-fno-inline-functions")
   endif(CMAKE_C_COMPILER MATCHES ".*gcc.*")
 
-  configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}")
-
-  configure_target_install(${WRITEABLE_TARGET}csirocsa)
+  configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}" "")
 
   set(csa_DOCFILES
     README
