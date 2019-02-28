@@ -172,15 +172,17 @@ if(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
 endif(CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES)
 
 # Filter all CMAKE_<LANG>_IMPLICIT_LINK_DIRECTORIES list elements from
-# rpath_in list.  Note, this uses variables that are only defined after
+# a list, where ${rpath} is the name of the list, and ${${rpath}} is
+# the actual list.
+# Note, this function uses variables that are only defined after
 # languages have been enabled but according to the documentation the
 # logic is only invoked when the function is invoked so this should be
 # OK _if care is used that this function is invoked only after the
 # languages have been enabled_.  C is enabled immediately so that will
-# serve most purposes, but CXX and Fortran are enabled later so if
-# you want those special system locations removed (unlikely but
-# possible) then you are going to have to be somewhat more careful
-# when this function is invoked.
+# serve most purposes, but CXX and Fortran are enabled later so if you
+# want those special system locations removed (unlikely but possible)
+# then you are going to have to be somewhat more careful when this
+# function is invoked.
 
 function(filter_rpath rpath)
   #message("DEBUG: ${rpath} = ${${rpath}}")
@@ -323,8 +325,19 @@ function(configure_executable_build executable executable_src tll_arguments lib_
       )
   endif(BUILD_SHARED_LIBS)
 
-  if(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+  if(USE_RPATH)
+    if(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
+      foreach(tll_argument ${tll_arguments})
+	if(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+	  get_target_property(transitive_lib_install_rpath ${tll_argument} INSTALL_RPATH)
+	  if(transitive_lib_install_rpath)
+	    list(APPEND lib_install_rpath ${transitive_lib_install_rpath})
+	  endif(transitive_lib_install_rpath)
+	endif(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+      endforeach(tll_argument ${tll_arguments})
+    endif(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
     filter_rpath(lib_install_rpath)
+    #message(STATUS "DEBUG: transitive lib_install_rpath = ${lib_install_rpath} for original_executable = ${original_executable}")
     if(lib_install_rpath)
       set_target_properties(
         ${executable}
@@ -332,9 +345,7 @@ function(configure_executable_build executable executable_src tll_arguments lib_
         INSTALL_RPATH "${lib_install_rpath}"
         )
     endif(lib_install_rpath)
-  endif(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
-
-  if(NOT USE_RPATH)
+  else(USE_RPATH)
     # INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
     # Also, this Mac OS X property is only set when rpath is
     # not used (because otherwise it would supersede
@@ -344,7 +355,7 @@ function(configure_executable_build executable executable_src tll_arguments lib_
       PROPERTIES
       INSTALL_NAME_DIR "${install_dir}"
       )
-  endif(NOT USE_RPATH)
+  endif(USE_RPATH)
 
   configure_target_install(${executable} ${install_dir})
 
@@ -497,8 +508,19 @@ function(configure_library_build library library_type library_src tll_arguments 
       COMPILE_DEFINITIONS "USINGDLL"
       )
 
-    if(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+    if(USE_RPATH)
+      if(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
+	foreach(tll_argument ${tll_arguments})
+	  if(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+	    get_target_property(transitive_lib_install_rpath ${tll_argument} INSTALL_RPATH)
+	    if(transitive_lib_install_rpath)
+	      list(APPEND lib_install_rpath ${transitive_lib_install_rpath})
+	    endif(transitive_lib_install_rpath)
+	  endif(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+	endforeach(tll_argument ${tll_arguments})
+      endif(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
       filter_rpath(lib_install_rpath)
+      #message(STATUS "DEBUG: transitive lib_install_rpath = ${lib_install_rpath} for original_library = ${original_library}")
       if(lib_install_rpath)
         set_target_properties(
           ${SWIG_MODULE_${library}_REAL_NAME}
@@ -506,9 +528,7 @@ function(configure_library_build library library_type library_src tll_arguments 
           INSTALL_RPATH "${lib_install_rpath}"
           )
       endif(lib_install_rpath)
-    endif(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
-
-    if(NOT USE_RPATH)
+    else(USE_RPATH)
       # INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
       # Also, this Mac OS X property is only set when rpath is
       # not used (because otherwise it would supersede
@@ -523,7 +543,7 @@ function(configure_library_build library library_type library_src tll_arguments 
         PROPERTIES
         INSTALL_NAME_DIR "${install_name_dir}"
         )
-    endif(NOT USE_RPATH)
+    endif(USE_RPATH)
 
     if(ARGC EQUAL 6)
       configure_target_install(${SWIG_MODULE_${library}_REAL_NAME} ${ARGV5})
@@ -563,8 +583,19 @@ function(configure_library_build library library_type library_src tll_arguments 
     endif(NOT "${tll_arguments}" STREQUAL "")
 
     # Set library target properties
-    if(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
+    if(USE_RPATH)
+      if(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
+	foreach(tll_argument ${tll_arguments})
+	  if(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+	    get_target_property(transitive_lib_install_rpath ${tll_argument} INSTALL_RPATH)
+	    if(transitive_lib_install_rpath)
+	      list(APPEND lib_install_rpath ${transitive_lib_install_rpath})
+	    endif(transitive_lib_install_rpath)
+	  endif(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+	endforeach(tll_argument ${tll_arguments})
+      endif(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
       filter_rpath(lib_install_rpath)
+      #message(STATUS "DEBUG: transitive lib_install_rpath = ${lib_install_rpath} for original_library = ${original_library}")
       if(lib_install_rpath)
         set_target_properties(
           ${library}
@@ -572,9 +603,7 @@ function(configure_library_build library library_type library_src tll_arguments 
           INSTALL_RPATH "${lib_install_rpath}"
           )
       endif(lib_install_rpath)
-    endif(USE_RPATH AND NOT "${lib_install_rpath}" STREQUAL "")
-
-    if(NOT USE_RPATH)
+    else(USE_RPATH)
       # INSTALL_NAME_DIR property ignored on all platforms other than Mac OS X.
       # Also, this Mac OS X property is only set when rpath is
       # not used (because otherwise it would supersede
@@ -589,7 +618,7 @@ function(configure_library_build library library_type library_src tll_arguments 
         PROPERTIES
         INSTALL_NAME_DIR "${install_name_dir}"
         )
-    endif(NOT USE_RPATH)
+    endif(USE_RPATH)
 
     if("${library_type}" STREQUAL "SHARED")
       set_target_properties(

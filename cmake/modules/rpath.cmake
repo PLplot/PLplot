@@ -2,7 +2,7 @@
 #
 # Start driver initializations
 #
-# Copyright (C) 2006-2016  Alan W. Irwin
+# Copyright (C) 2006-2019  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -22,3 +22,4 @@
 # Module for determining treatment of rpath for PLplot.
 
 option(USE_RPATH "Use -rpath when linking libraries, executables" ON)
+option(NON_TRANSITIVE_RPATH "Use non-transitive rpath" ON)
