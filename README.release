@@ -184,7 +184,7 @@ of installed examples on DT_RPATH platforms such as Debian Jessie and
 was extensively tested in that era with epa_built external libraries
 that were installed in non-standard locations.  However, that
 configuration did not work correctly for DT_RUNPATH platforms such as
-Debian Testing since it was not always consistent the following
+Debian Testing since it was not always consistent with the following
 additional constraint on the use of DT_RUNPATH that has been taken
 from
 <https://refspecs.linuxfoundation.org/elf/gabi4+/ch5.dynamic.html>:
@@ -213,15 +213,15 @@ in the configure_executable_build and configure_library_build
 functions) and the install of the new libLASi release is found and
 used for traditional builds without issues.
 
-Note that this new logic always uses transitive INSTALL_RPATH logic
+Note that this new logic always uses the transitive INSTALL_RPATH method
 for the static build case and by default uses non-transitive
-INSTALL_RPATH logic for the shared library case (regardless of whether
+INSTALL_RPATH method for the shared library case (regardless of whether
 the device drivers are dynamic or nondynamic).  And that default for
 the shared library case works well for Debian Testing.  But if there
-are still some Unix platforms out there that only work for transitive
-INSTALL_RPATH logic for the shared library case, the user can choose
-that configuration method by setting the -DNON_TRANSITIVE_RPATH=OFF cmake option.
-And as always if the user (typicall a binary package maintainer)
+are still some Unix platforms out there that only work for the transitive
+INSTALL_RPATH method for the shared library case, the user can choose
+that method by setting the -DNON_TRANSITIVE_RPATH=OFF cmake option.
+And as always if the user (typically a binary package maintainer)
 specifies -DUSE_RPATH=OFF, the INSTALL_RPATH target property
 (transitive or otherwise) will not be set at all for installed targets
 with the result that DT_RPATH (old Unix systems) and DT_RUNPATH
