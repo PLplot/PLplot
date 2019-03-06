@@ -1,6 +1,6 @@
 # cmake/modules/csiro.cmake
 #
-# Copyright (C) 2006-2018  Alan W. Irwin
+# Copyright (C) 2006-2019  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -89,6 +89,42 @@ if(PL_HAVE_QHULL)
       message(STATUS "WARNING: function qh_new_qhull not found.  Setting PL_HAVE_QHULL to OFF.")
       set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
     endif(NOT QH_NEW_EXIST)
+    if(HAS_LIBQHULL_INCLUDE)
+      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Check_realT_size.c "#include <libqhull/qhull_a.h>")
+    else(HAS_LIBQHULL_INCLUDE)
+      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/Check_realT_size.c "#include <qhull/qhull_a.h>")
+    endif(HAS_LIBQHULL_INCLUDE)
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/Check_realT_size.c
+      "
+int main(void)
+{
+  if ( sizeof ( realT ) != sizeof ( double ) )
+    return 1;
+  else
+    return 0;
+}
+"
+      )
+    try_run(RUN_RESULT COMPILE_RESULT
+      ${CMAKE_CURRENT_BINARY_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}/Check_realT_size.c
+      CMAKE_FLAGS "-DCOMPILE_DEFINITIONS:STRING=-I\"${QHULL_INCLUDE_DIRS}\""
+      OUTPUT_VARIABLE OUTPUT
+      )
+    #message(STATUS "Check_realT_size COMPILE_RESULT = ${COMPILE_RESULT}")
+    #message(STATUS "Check_realT_size RUN_RESULT = ${RUN_RESULT}")
+    if(NOT COMPILE_RESULT OR RUN_RESULT MATCHES "FAILED_TO_RUN")
+      message(STATUS "Either could not compile or could not run code to check wrong size for realT in qhull library.  Dropping qhull librarydependency of PLplot.")
+      set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
+    endif(NOT COMPILE_RESULT OR RUN_RESULT MATCHES "FAILED_TO_RUN")
+
+    if(RUN_RESULT)
+      message(STATUS "qhull library compiled with incorrect (non-double) size for realT.  Dropping qhull dependency of PLplot.")
+      set(PL_HAVE_QHULL OFF CACHE BOOL "Enable use of the Qhull library" FORCE)
+    else(RUN_RESULT)
+      message(STATUS "qhull library compiled with correct (double) size for realT.")
+    endif(RUN_RESULT)
+
   else(QHULL_FOUND)
     message(STATUS "QHULL_INCLUDE_DIRS = ${QHULL_INCLUDE_DIRS}")
     message(STATUS "QHULL_LIBRARIES = ${QHULL_LIBRARIES}")

@@ -61,12 +61,6 @@ if(LTDL_WIN32)
   list(APPEND plplot_LIB_SRCS ltdl_win32.c)
 endif(LTDL_WIN32)
 
-if(HAS_LIBQHULL_INCLUDE)
-  set_source_files_properties(plgridd.c
-    PROPERTIES COMPILE_DEFINITIONS HAS_LIBQHULL_INCLUDE
-    )
-endif(HAS_LIBQHULL_INCLUDE)
-
 option(HERSHEY_FALLBACK "Hershey fallback for Unicode fonts" ON)
 
 if(NOT HERSHEY_FALLBACK)
@@ -262,6 +256,8 @@ endif(WITH_CSA)
 
 if(PL_HAVE_QHULL)
   list(APPEND libplplot_LINK_LIBRARIES PLPLOT::csironn)
+  # No *.pc files for lib subdirectory libraries so must add relevant bits
+  # to the plplot.pc file instead.
   if(QHULL_RPATH)
     list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -L${QHULL_RPATH} -lqhull)
   else(QHULL_RPATH)
@@ -270,7 +266,6 @@ if(PL_HAVE_QHULL)
 
   # Needed by plgridd.c.
   include_directories(
-    ${QHULL_INCLUDE_DIRS}
     ${CMAKE_BINARY_DIR}/lib/nn
     )
 endif(PL_HAVE_QHULL)

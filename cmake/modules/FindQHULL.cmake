@@ -12,7 +12,11 @@
 
 include(FindPackageHandleStandardArgs)
 
-find_file(QHULL_HEADER_FILE NAMES qhull/qhull_a.h libqhull/qhull_a.h)
+# Look preferentially for the libqhull form of header directory since
+# that is what is supplied by upstream qhull, and if the user is
+# finding a local install of the upstream library below, he wants to
+# access that same upstream version of the headers to be consistent.
+find_file(QHULL_HEADER_FILE NAMES libqhull/qhull_a.h qhull/qhull_a.h)
 if(QHULL_HEADER_FILE)
   # message(STATUS "QHULL_HEADER_FILE = ${QHULL_HEADER_FILE}")
   if(QHULL_HEADER_FILE MATCHES "libqhull")

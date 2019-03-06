@@ -30,12 +30,15 @@
 
 #ifdef PL_HAVE_QHULL
 #include "../lib/nn/nn.h"
+// PLPLOT_NONN not #defined or tested for more than a decade.
+#ifdef PLPLOT_NONN // another DTLI, based only on QHULL, not nn
 #ifdef HAS_LIBQHULL_INCLUDE
 #include <libqhull/qhull_a.h>
-#else
+#else //#ifdef HAS_LIBQHULL_INCLUDE
 #include <qhull/qhull_a.h>
-#endif
-#endif
+#endif //#ifdef HAS_LIBQHULL_INCLUDE
+#endif //#ifdef PLPLOT_NONN
+#endif //#ifdef PL_HAVE_QHUL
 
 // forward declarations
 static void
@@ -579,11 +582,7 @@ grid_dtli( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
     PLFLT_VECTOR xt, yt, zt;
     int          i, j, nptsg;
 
-    if ( sizeof ( realT ) != sizeof ( double ) )
-    {
-        plabort( "plgridata: QHull was compiled for floats instead of doubles" );
-        return;
-    }
+    // Build system has already checked that sizeof ( realT ) == sizeof ( double )
 
     if ( ( pin = (point *) malloc( (size_t) npts * sizeof ( point ) ) ) == NULL )
     {
@@ -654,11 +653,7 @@ grid_nni( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
     int          i, j, nptsg;
     nn_rule = NON_SIBSONIAN;
 
-    if ( sizeof ( realT ) != sizeof ( double ) )
-    {
-        plabort( "plgridata: QHull was compiled for floats instead of doubles" );
-        return;
-    }
+    // Build system has already checked that sizeof ( realT ) == sizeof ( double )
 
     if ( wtmin == 0. ) // only accept weights greater than wtmin
     {
@@ -813,7 +808,7 @@ dist2( PLFLT gx, PLFLT gy, PLFLT_VECTOR x, PLFLT_VECTOR y, int npts )
     // now calculate the distance
 }
 
-#ifdef NONN // another DTLI, based only on QHULL, not nn
+#ifdef PLPLOT_NONN // another DTLI, based only on QHULL, not nn
 static void
 grid_adtli( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
             PLFLT_VECTOR xg, int nptsx, PLFLT_VECTOR yg, int nptsy, PLF2OPS zops, PLPointer zgp )
@@ -985,4 +980,4 @@ grid_adtli( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
             "qhull: did not free %d bytes of long memory (%d pieces)\n",
             totlong, curlong );
 }
-#endif // NONN
+#endif // PLPLOT_NONN
