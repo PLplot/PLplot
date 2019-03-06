@@ -1,10 +1,10 @@
 # examples/ocaml/Makefile.examples.in for PLplot
-###
-### Process this file with configure to produce Makefile.examples
-###
-# Copyright (C) 2002-2017 Alan W. Irwin
-# Copyright (C) 2004 Rafael Laboissiere
-# Copyright (C) 2004 Andrew Ross
+
+# Copyright (C) 2002 Maurice LeBrun
+# Copyright (C) 2002-2019 Alan W. Irwin
+# Copyright (C) 2003-2005 Rafael Laboissiere
+# Copyright (C) 2008-2012 Andrew Ross
+# Copyright (C) 2009 Hezekiah M. Carty
 #
 # This file is part of PLplot.
 #
@@ -26,10 +26,10 @@ OCAMLC = @OCAML_EXAMPLE_COMPILER@
 EXEEXT = @EXEEXT@
 
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-ocaml_RPATHCMD = @ocaml_RPATHCMD@
+install_tree_ocaml_RPATHCMD = @install_tree_ocaml_RPATHCMD@
 
 OCAML_CFLAGS = -g -I "@OCAML_INSTALL_DIR@/plplot"
-OCAML_LIBS = $(ocaml_RPATHCMD) -ccopt "-L@CMAKE_INSTALL_LIBDIR_ESCAPED@" plplot.@OCAML_EXAMPLE_LIBEXT@ unix.@OCAML_EXAMPLE_LIBEXT@
+OCAML_LIBS = $(install_tree_ocaml_RPATHCMD) -ccopt "-L@CMAKE_INSTALL_LIBDIR_ESCAPED@" plplot.@OCAML_EXAMPLE_LIBEXT@ unix.@OCAML_EXAMPLE_LIBEXT@
 
 EXECUTABLES_list = \
 		 x00ocaml$(EXEEXT) \

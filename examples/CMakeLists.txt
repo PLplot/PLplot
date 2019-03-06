@@ -1,5 +1,8 @@
 # examples/CMakeLists.txt
+
+# Copyright (C) 2006-2015 Andrew Ross
 # Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2008-2009 Werner Smekal
 #
 # This file is part of PLplot.
 #
@@ -244,55 +247,142 @@ if(CORE_BUILD)
     # installed library locations are system locations that are
     # automatically searched for libraries by the run-time loader in
     # any case.
-    # All language examples depend on either the plplot library or one of the binding libraries
-    # which in turn depends on the plplot library.
-    get_target_property(_LIB_INSTALL_RPATH PLPLOT::plplot INSTALL_RPATH)
-    if(_LIB_INSTALL_RPATH)
-      string(REGEX REPLACE ";" ":" LIB_INSTALL_RPATH "${_LIB_INSTALL_RPATH}")
-      set(RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}\"")
-      if(PLD_extqt)
-	if(ENABLE_DYNDRIVERS)
-	  get_target_property(_qt_INSTALL_RPATH PLPLOT::qt INSTALL_RPATH)
-	  if(_qt_INSTALL_RPATH)
-	    string(REGEX REPLACE ";" ":" qt_INSTALL_RPATH "${_qt_INSTALL_RPATH}")
-	    set(qt_RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}:${qt_INSTALL_RPATH}:${DRV_DIR}\"")
-	  else(_qt_INSTALL_RPATH)
-	    set(qt_RPATHCMD)
-	  endif(_qt_INSTALL_RPATH)
-	else(ENABLE_DYNDRIVERS)
-	  set(qt_RPATHCMD ${RPATHCMD})
-	endif(ENABLE_DYNDRIVERS)
-      endif(PLD_extqt)
-      if(ENABLE_tcl)
-	get_target_property(_plplottcltk_Main_INSTALL_RPATH PLPLOT::plplottcltk_Main INSTALL_RPATH)
-	if(_plplottcltk_Main_INSTALL_RPATH)
-	  string(REGEX REPLACE ";" ":" plplottcltk_Main_INSTALL_RPATH "${_plplottcltk_Main_INSTALL_RPATH}")
-	  set(plplottcltk_Main_RPATHCMD "-Wl,-rpath -Wl,\"${LIB_INSTALL_RPATH}:${plplottcltk_Main_INSTALL_RPATH}\"")
-	else(_plplottcltk_Main_INSTALL_RPATH)
-	  set(plplottcltk_Main_RPATHCMD)
-	endif(_plplottcltk_Main_INSTALL_RPATH)
-      endif(ENABLE_tcl)
-      if(ENABLE_fortran)
-	if(CMAKE_Fortran_COMPILER MATCHES "nagfor")
-	  # Extra layer of -Wl indirection required for the nagfor compiler
-	  string(REPLACE "-Wl," "-Wl,-Wl,," FORTRAN_RPATHCMD "${RPATHCMD}")
-	else(CMAKE_Fortran_COMPILER MATCHES "nagfor")
-	  set(FORTRAN_RPATHCMD "${RPATHCMD}")
-	endif(CMAKE_Fortran_COMPILER MATCHES "nagfor")
-      endif(ENABLE_fortran)
-      if(ENABLE_ocaml)
-	# Ocaml compiler requires blank escaped form of directories:
-	string(REPLACE " " "\\ " LIB_INSTALL_RPATH_ESCAPED "${LIB_INSTALL_RPATH}")
-	# Ocaml compiler requires -ccopt in front of every -Wl option:
-	set(ocaml_RPATHCMD "-ccopt -Wl,-rpath -ccopt -Wl,\"${LIB_INSTALL_RPATH_ESCAPED}\"")
-      endif(ENABLE_ocaml)
-    else(_LIB_INSTALL_RPATH)
-      set(RPATHCMD)
-      set(qt_RPATHCMD)
-      set(plplottcltk_Main_RPATHCMD)
-      set(FORTRAN_RPATHCMD)
-      set(ocaml_RPATHCMD)
-    endif(_LIB_INSTALL_RPATH)
+
+    # All examples compiled from installed source code depend on libraries installed in ${LIB_DIR}.
+    # All additional information about internal library dependencies below taken
+    # from the examples/<language>/CMakeLists.txt target_link_libraries
+    # commands.
+
+    # Create list of comma-separated dictionary with the index being
+    # the language associated with the created
+    # install_tree_<language>_RPATH variable, and the dictionary value
+    # being the second and subsequent comma-separated list of internal
+    # library dependencies.
+    set(rpath_process_dictionary_list
+      c,PLPLOT::plplot
+      )
+    if(ENABLE_ada)
+      list(APPEND rpath_process_dictionary_list ada,PLPLOT::plplotada,PLPLOT::plplot)
+    endif(ENABLE_ada)
+
+    if(ENABLE_cxx)
+      list(APPEND rpath_process_dictionary_list cxx,PLPLOT::plplotcxx)
+    endif(ENABLE_cxx)
+
+    # wxwidgets example:
+    if(ENABLE_wxwidgets)
+      list(APPEND rpath_process_dictionary_list wxwidgets,PLPLOT::plplotwxwidgets)
+    endif(ENABLE_wxwidgets)
+
+    # qt example:
+    if(PLD_extqt)
+      if(ENABLE_DYNDRIVERS)
+	list(APPEND rpath_process_dictionary_list qt,PLPLOT::plplotqt,PLPLOT::plplot)
+      else(ENABLE_DYNDRIVERS)
+	list(APPEND rpath_process_dictionary_list qt,PLPLOT::plplot)
+      endif(ENABLE_DYNDRIVERS)
+    endif(PLD_extqt)
+
+    # d examples:
+    if(ENABLE_d)
+      list(APPEND rpath_process_dictionary_list d,PLPLOT::plplotdmd,PLPLOT::plplot)
+    endif(ENABLE_d)
+
+    # fortran examples:
+    if(ENABLE_fortran)
+      # According to the principle of "least surprise", the PLPLOT::plfortrandemolib target
+      # should be created in the fortran subdirectory.  However, we must process that subdirectory
+      # *after* the the foreach loop below where the PLPLOT::plfortrandemolib target is required.
+      # So to break this "chicken/egg" issue build the PLPLOT::plfortrandemolib target here.
+
+      # The module files for the fortran binding are created by
+      # default during the library build in the bindings/fortran directory.
+      include_directories(${CMAKE_BINARY_DIR}/bindings/fortran)
+      # plfortrandemolib depends on the plplotfortran library.
+      set(LIB_INSTALL_RPATH ${LIB_DIR})
+      configure_library_build(plfortrandemolib STATIC fortran/plfortrandemolib.f90 PLPLOT::plplotfortran "${LIB_INSTALL_RPATH}")
+      install(FILES
+	${CMAKE_CURRENT_BINARY_DIR}/plfortrandemolib.mod
+	DESTINATION ${FORTRAN_MOD_DIR}
+	)
+
+      list(APPEND rpath_process_dictionary_list fortran,PLPLOT::plfortrandemolib)
+    endif(ENABLE_fortran)
+
+    # tk examples:
+    if(ENABLE_tk)
+      if(tcltk_in_plplot_library)
+	list(APPEND rpath_process_dictionary_list tk,PLPLOT::plplottcltk_Main,PLPLOT::plplot)
+      else(tcltk_in_plplot_library)
+	list(APPEND rpath_process_dictionary_list tk,PLPLOT::plplottcltk_Main,PLPLOT::plplottcltk,PLPLOT::tclmatrix,PLPLOT::plplot)
+      endif(tcltk_in_plplot_library)
+    endif(ENABLE_tk)
+
+    foreach(rpath_process_dictionary ${rpath_process_dictionary_list})
+      # Parse comma-separated dictionary index and second and subsequent comma-separated list
+      string(REGEX REPLACE "^([^,]*),.*$" "\\1" language ${rpath_process_dictionary})
+      string(REGEX REPLACE "^[^,]*,(.*)$" "\\1" tll_arguments ${rpath_process_dictionary})
+      #message(STATUS "DEBUG: language = ${language}")
+      #message(STATUS "DEBUG: tll_arguments = ${tll_arguments}")
+      # Each of the installed examples that are built depend on a library installed in ${LIB_DIR}.
+      set(install_tree_${language}_RPATH ${LIB_DIR})
+      # Transform tll_arguments from a comma- to a semi-colon-separated list (i.e., an official CMake list).
+      string(REGEX REPLACE "," ";" tll_arguments ${tll_arguments})
+      process_rpath(install_tree_${language}_RPATH "${tll_arguments}")
+      # Transform from semicolon- to colon-separated list.  (Quotes
+      # for last argument required to process whole argument as string containing
+      # semicolons rather than as the concatanated elements of the list (without semicolons).
+      string(REGEX REPLACE ";" ":"  install_tree_${language}_RPATH "${install_tree_${language}_RPATH}")
+      set(install_tree_${language}_RPATHCMD "-Wl,-rpath -Wl,\"${install_tree_${language}_RPATH}\"")
+      #message(STATUS "DEBUG: install_tree_${language}_RPATHCMD = ${install_tree_${language}_RPATHCMD}")
+    endforeach(rpath_process_dictionary ${rpath_process_dictionary_list})
+
+    # nagfor compiler is a special case:
+    if(install_tree_fortran_RPATHCMD AND CMAKE_Fortran_COMPILER MATCHES "nagfor")
+      # Extra layer of -Wl indirection required for the nagfor compiler
+      string(REPLACE "-Wl," "-Wl,-Wl,," install_tree_fortran_RPATHCMD ${install_tree_fortran_RPATHCMD})
+    endif(install_tree_fortran_RPATHCMD AND CMAKE_Fortran_COMPILER MATCHES "nagfor")
+
+    # ocaml is a special case because the (unofficial) CMake language support is
+    # implemented with low-level add_custom commands/targets so that rpath
+    # must be specified for 3 cases (the traditional build of the installed
+    # examples, and the CMake-based build of the build-tree and install-tree examples).
+    # Furthermore, the rpath syntax is different for ocaml.
+    if(ENABLE_ocaml)
+      set(language ocaml)
+      # Each of the installed examples that are built depend on a library installed in ${LIB_DIR}.
+      set(install_tree_${language}_RPATH ${LIB_DIR})
+      # The ocaml examples depend on the plplot library
+      set(tll_arguments PLPLOT::plplot)
+      process_rpath(install_tree_${language}_RPATH "${tll_arguments}")
+
+      # Special case of the ocaml build-tree examples.
+      # Must be done before ${install_tree_${language}_RPATH gets transformed
+      # from official CMake list to colon-separated form.
+      set(build_tree_${language}_RPATH ${install_tree_${language}_RPATH})
+      list(REMOVE_ITEM build_tree_${language}_RPATH ${LIB_DIR})
+      list(APPEND build_tree_${language}_RPATH ${CMAKE_BINARY_DIR}/src)
+
+      # Transform from semicolon- to colon-separated list.  (Quotes
+      # for last argument required to process whole argument as string
+      # containing semicolons rather than as the concatanated elements
+      # of the list (without semicolons).
+      # N.B. Mixture of unescaped and escaped forms needed for both
+      # install- and build-tree versions of CMake-based build of ocaml
+      # examples
+      string(REGEX REPLACE ";" ":"  install_tree_${language}_RPATH "${install_tree_${language}_RPATH}")
+      string(REGEX REPLACE ";" ":"  build_tree_${language}_RPATH "${build_tree_${language}_RPATH}")
+      string(REPLACE " " "\\ " install_tree_${language}_RPATH_ESCAPED "${install_tree_${language}_RPATH}")
+      string(REPLACE " " "\\ " build_tree_${language}_RPATH_ESCAPED "${build_tree_${language}_RPATH}")
+
+      # install_tree_ocaml_RPATHCMD needed in configured traditional
+      # Makefile for the ocaml subdirectory.
+      # Ocaml compiler requires -ccopt in front of every -Wl option:
+      set(install_tree_${language}_RPATHCMD "-ccopt -Wl,-rpath -ccopt -Wl,\"${install_tree_${language}_RPATH_ESCAPED}\"")
+
+    endif(ENABLE_ocaml)
+
+
   endif(USE_RPATH AND NOT WIN32_OR_CYGWIN)
 
   # Install Chloe.pgm in installed examples directory so that all implementations

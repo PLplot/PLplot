@@ -1,11 +1,9 @@
 # -*- mode: cmake -*-
 # examples/ocaml/CMakeLists.txt
-### Process this file with cmake to produce Makefile
-#
-#
-# Copyright (C) 2008 Andrew Ross
-# Copyright (C) 2009-2018 Alan W. Irwin
-# Copyright (C) 2009 Hezekiah M. Carty
+
+# Copyright (C) 2008-2012 Andrew Ross
+# Copyright (C) 2008-2019 Alan W. Irwin
+# Copyright (C) 2009-2014 Hezekiah M. Carty
 #
 # This file is part of PLplot.
 #
@@ -28,7 +26,7 @@
 # and CORE_BUILD always ON.  The installed examples build always has
 # BUILD_TEST ON and CORE_BUILD OFF.
 
-# Need these escaped versions when there is a space in the full pathname of these variables.
+# Need these escaped versions when there are spaces in the full pathnames contained in these variables.
 string(REPLACE " " "\\ " CMAKE_SOURCE_DIR_ESCAPED ${CMAKE_SOURCE_DIR})
 string(REPLACE " " "\\ " CMAKE_CURRENT_SOURCE_DIR_ESCAPED ${CMAKE_CURRENT_SOURCE_DIR})
 string(REPLACE " " "\\ " CMAKE_BINARY_DIR_ESCAPED ${CMAKE_BINARY_DIR})
@@ -125,22 +123,21 @@ if(BUILD_TEST)
     set(ocaml_extra_extensions cmo cmi)
   endif (OCAMLOPT)
 
+  # set ccopt (important: using trailing blank) and I_OPTION.
+  # build_tree_OCAML_RPATH_ESCAPED and install_tree_OCAML_RPATH_ESCAPED inherited from
+  # parent directory.
   if(CORE_BUILD)
     # The unescaped I option works for both ocamlopt and ocamlc, but the escaped version
     # does not work for ocamlopt (and ocamlc?).  WTF?
     set(I_OPTION ${CMAKE_BINARY_DIR}/bindings/ocaml)
-    if(BUILD_SHARED_LIBS)
-      set(ccopt_OPTION -ccopt "-L ${CMAKE_BINARY_DIR_ESCAPED}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR_ESCAPED}/src")
-    endif()
+    set(ccopt_OPTION -ccopt "-L ${CMAKE_BINARY_DIR_ESCAPED}/src -Wl,-rpath -Wl,${build_tree_ocaml_RPATH_ESCAPED} ")
   else(CORE_BUILD)
     set(I_OPTION ${OCAML_INSTALL_DIR}/plplot)
-    if(BUILD_SHARED_LIBS)
-      if(USE_RPATH)
-	set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR_ESCAPED} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR_ESCAPED}")
-      else(USE_RPATH)
-	set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR_ESCAPED} ")
-      endif(USE_RPATH)
-    endif()
+    if(USE_RPATH AND install_tree_ocaml_RPATH_ESCAPED)
+      set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR_ESCAPED} -Wl,-rpath -Wl,${install_tree_ocaml_RPATH_ESCAPED} ")
+    else(USE_RPATH AND install_tree_ocaml_RPATH_ESCAPED)
+      set(ccopt_OPTION -ccopt "-L ${CMAKE_INSTALL_LIBDIR_ESCAPED} ")
+    endif(USE_RPATH AND install_tree_ocaml_RPATH_ESCAPED)
   endif(CORE_BUILD)
 
   get_property(files_plplot_ocaml GLOBAL PROPERTY FILES_plplot_ocaml)
@@ -227,18 +224,21 @@ if(OCAML_HAS_CAIRO AND OCAML_HAS_GTK)
     endif (OCAMLOPT)
 
     set(ocaml_EXTRA_CLEAN_FILES)
+  # set ccopt (important: using trailing blank) and I_OPTION.
+  # build_tree_ocaml_RPATH and install_tree_ocaml_rpath inherited from
+  # parent directory.
     if(CORE_BUILD)
       set(I_OPTION_PLPLOT ${CMAKE_BINARY_DIR}/bindings/ocaml)
       set(I_OPTION_PLCAIRO ${CMAKE_BINARY_DIR}/bindings/ocaml/plcairo)
-      set(ccopt_OPTION "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${CMAKE_BINARY_DIR}/src ")
+      set(ccopt_OPTION "-L ${CMAKE_BINARY_DIR}/src -Wl,-rpath -Wl,${build_tree_ocaml_RPATH} ")
     else(CORE_BUILD)
       set(I_OPTION_PLPLOT ${OCAML_INSTALL_DIR}/plplot)
       set(I_OPTION_PLCAIRO ${OCAML_INSTALL_DIR}/plcairo)
-      if(USE_RPATH)
-	set(ccopt_OPTION "-L ${CMAKE_INSTALL_LIBDIR} -Wl,-rpath -Wl,${CMAKE_INSTALL_LIBDIR} ")
-      else(USE_RPATH)
+      if(USE_RPATH AND install_tree_ocaml_RPATH)
+	set(ccopt_OPTION "-L ${CMAKE_INSTALL_LIBDIR} -Wl,-rpath -Wl,${install_tree_ocaml_RPATH} ")
+      else(USE_RPATH AND INSTALL_TREE_OCAML_RPATH)
 	set(ccopt_OPTION "-L ${CMAKE_INSTALL_LIBDIR} ")
-      endif(USE_RPATH)
+      endif(USE_RPATH AND install_tree_ocaml_RPATH)
     endif(CORE_BUILD)
 
     get_property(files_plcairo_ocaml GLOBAL PROPERTY FILES_plcairo_ocaml)

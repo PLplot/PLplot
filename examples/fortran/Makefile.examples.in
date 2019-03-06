@@ -1,10 +1,9 @@
 # examples/fortran/Makefile.examples.in for PLplot
-###
-### Configure this file with CMake to produce Makefile.examples
-###
-# Copyright (C) 2002-2016  Alan W. Irwin
-# Copyright (C) 2004  Rafael Laboissiere
-# Copyright (C) 2004  Andrew Ross
+
+# Copyright (C) 2002-2019 Alan W. Irwin
+# Copyright (C) 2003-2005 Rafael Laboissiere
+# Copyright (C) 2004-2012 Andrew Ross
+# Copyright (C) 2008-2016 Arjen Markus
 #
 # This file is part of PLplot.
 #
@@ -26,7 +25,7 @@ Fortran = @FC@
 EXEEXT = @EXEEXT@
 
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-FORTRAN_RPATHCMD = @FORTRAN_RPATHCMD@
+install_tree_fortran_RPATHCMD = @install_tree_fortran_RPATHCMD@
 
 EXECUTABLES_list = \
 		 x00f$(EXEEXT) \
@@ -78,6 +77,6 @@ clean:
 # file when the build is occurring in a different directory so must
 # specify an extra -I option for that.
 .f90$(EXEEXT):
-	$(Fortran) @MODULESINCCMD@ $< -o $@ $(FORTRAN_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-fortran) -lplfortrandemolib -I"@DATA_DIR@"/examples/fortran
+	$(Fortran) @MODULESINCCMD@ $< -o $@ $(install_tree_fortran_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-fortran) -lplfortrandemolib -I"@DATA_DIR@"/examples/fortran
 
 .SUFFIXES: .f90 $(EXEEXT)

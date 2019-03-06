@@ -1,10 +1,8 @@
 # examples/c/Makefile.examples.in for PLplot
-###
-### Configure this file with CMake to produce Makefile.examples
-###
-# Copyright (C) 2002-2015  Alan W. Irwin
-# Copyright (C) 2004  Rafael Laboissiere
-# Copyright (C) 2004  Andrew Ross
+# Copyright (C) 2002 Maurice LeBrun
+# Copyright (C) 2002-2019 Alan W. Irwin
+# Copyright (C) 2003-2005 Rafael Laboissiere
+# Copyright (C) 2004-2012 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -26,7 +24,7 @@ CC = @CC@
 EXEEXT = @EXEEXT@
 
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATHCMD = @RPATHCMD@
+install_tree_c_RPATHCMD = @install_tree_c_RPATHCMD@
 
 @extXdrawable_true@extXdrawable_EXECUTABLES_list = \
 @extXdrawable_true@	extXdrawable_demo$(EXEEXT)
@@ -82,7 +80,7 @@ clean:
 # results determined by CMake.  Instead of transforming those back
 # to pkg-config form, we instead use the the pkg-config gtk+-x11-2.0 package directly.
 @extXdrawable_true@extXdrawable_demo$(EXEEXT): extXdrawable_demo.c
-@extXdrawable_true@	$(CC) $< -o $@ $(RPATHCMD) \
+@extXdrawable_true@	$(CC) $< -o $@ $(install_tree_c_RPATHCMD) \
 @extXdrawable_true@	$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot gtk+-x11-2.0)
 
 # target_link_libraries(ext-cairo-test ${CAIRO_LINK_FLAGS} plplot)
@@ -91,11 +89,11 @@ clean:
 # to pkg-config form, we instead use the
 # the cairo pkg-config package directly.
 @extcairo_true@ext-cairo-test$(EXEEXT): ext-cairo-test.c
-@extcairo_true@	$(CC) $< -o $@ $(RPATHCMD) \
+@extcairo_true@	$(CC) $< -o $@ $(install_tree_c_RPATHCMD) \
 @extcairo_true@	$(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot cairo)
 
 # target_link_libraries(x${STRING_INDEX}c plplot ${MATH_LIB})
 .c$(EXEEXT):
-	$(CC) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @MATH_LIB@
+	$(CC) $< -o $@ $(install_tree_c_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @MATH_LIB@
 
 .SUFFIXES: .c $(EXEEXT)

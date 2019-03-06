@@ -1,5 +1,8 @@
 # examples/fortran/CMakeLists.txt
+
+# Copyright (C) 2006-2011 Andrew Ross
 # Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2008-2016 Arjen Markus
 #
 # This file is part of PLplot.
 #
@@ -69,21 +72,37 @@ set(fortran_STRING_INDICES
 # ${CMAKE_CURRENT_BINARY_DIR} or ${CMAKE_CURRENT_SOURCE_DIR}
 # as appropriate.
 if(CORE_BUILD)
-  # For CMake-2.6.0 and above, the module files are created by
+  # The examples use either "use plfortrandemolib" or "use plplot".
+
+  # Location of the module file for plfortrandemolib has changed now to the parent directory of this one.
+  # See chicken/egg comment below.
+  include_directories(${CMAKE_BINARY_DIR}/examples)
+
+  # The module files for the fortran binding are created by
   # default during the library build in the bindings/fortran directory.
-  include_directories(${CMAKE_BINARY_DIR}/bindings/fortran ${CMAKE_CURRENT_BINARY_DIR})
+  include_directories(${CMAKE_BINARY_DIR}/bindings/fortran)
+
+  # Location of plfortrandemos.inc.
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
 else(CORE_BUILD)
+  # locations of installed fortran interface library, installed
+  # fortran modules, and installed plfortrandemos.inc.
   include_directories(${INCLUDE_DIR} ${FORTRAN_MOD_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 endif(CORE_BUILD)
 
 if(CORE_BUILD)
-  # plfortrandemolib depends on plplotfortran library.
+  # plfortrandemolib depends on the plplotfortran library.
+  # The steps below which normally would be done in this directory are
+  # skipped because they must be done instead in the parent directory
+  # to solve a chicken/egg issue.
+  if(0)
   set(LIB_INSTALL_RPATH ${LIB_DIR})
   configure_library_build(plfortrandemolib STATIC plfortrandemolib.f90 PLPLOT::plplotfortran "${LIB_INSTALL_RPATH}")
   install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/plfortrandemolib.mod
     DESTINATION ${FORTRAN_MOD_DIR}
     )
+  endif(0)
 
   set(fortran_SRCS)
   foreach(STRING_INDEX ${fortran_STRING_INDICES})
@@ -102,9 +121,6 @@ if(CORE_BUILD)
     )
   set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/plfortrandemos.inc
     PROPERTIES GENERATED ON)
-  include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-    )
 
   install(FILES ${fortran_SRCS} README_precision
     DESTINATION ${DATA_DIR}/examples/fortran

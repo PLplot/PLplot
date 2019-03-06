@@ -129,6 +129,9 @@ if(ENABLE_ocaml)
   set(OCAML_HAS_GTK @OCAML_HAS_GTK@)
   set(CMAKE_INSTALL_LIBDIR "@CMAKE_INSTALL_LIBDIR@")
   set(OCAML_INSTALL_DIR "@OCAML_INSTALL_DIR@")
+  set(install_tree_ocaml_RPATH "@install_tree_ocaml_RPATH@")
+  # Need to implement this way because using set command gets rid of escapes.
+  string(REPLACE " " "\\ " install_tree_ocaml_RPATH_ESCAPED "${install_tree_ocaml_RPATH}")
 endif(ENABLE_ocaml)
 
 if(ENABLE_tcl OR ENABLE_tk)

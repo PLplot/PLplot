@@ -1,10 +1,8 @@
 # examples/c++/Makefile.examples.in for PLplot
-###
-### Process this file with configure to produce Makefile.examples
-###
-# Copyright (C) 2002-2015  Alan W. Irwin
-# Copyright (C) 2004  Rafael Laboissiere
-# Copyright (C) 2004  Andrew Ross
+# Copyright (C) 2002 Maurice LeBrun
+# Copyright (C) 2002-2019 Alan W. Irwin
+# Copyright (C) 2003-2005 Rafael Laboissiere
+# Copyright (C) 2004-2012 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -26,13 +24,14 @@ CXX = @CXX@
 EXEEXT = @EXEEXT@
 
 PKG_CONFIG_ENV = @PKG_CONFIG_ENV@
-RPATHCMD = @RPATHCMD@
-@qt_gui_true@QT_MOC_EXECUTABLE = @QT_MOC_EXECUTABLE@
-@qt_gui_true@qt_RPATHCMD = @qt_RPATHCMD@
+install_tree_cxx_RPATHCMD = @install_tree_cxx_RPATHCMD@
 
+@wxwidgets_true@install_tree_wxwidgets_RPATHCMD = @install_tree_wxwidgets_RPATHCMD@
 @wxwidgets_true@PLPLOTWXWIDGETS_EXECUTABLES_list = \
 @wxwidgets_true@	@wxdemo_name@$(EXEEXT)
 
+@qt_gui_true@QT_MOC_EXECUTABLE = @QT_MOC_EXECUTABLE@
+@qt_gui_true@install_tree_qt_RPATHCMD = @install_tree_qt_RPATHCMD@
 @qt_gui_true@qt_gui_EXECUTABLES_list = \
 @qt_gui_true@	qt_example$(EXEEXT)
 
@@ -82,7 +81,7 @@ clean:
 
 # target_link_libraries(wxPLplotDemo plplotwxwidgets plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
 @wxwidgets_true@@wxdemo_name@$(EXEEXT): @wxdemo_name@.cpp
-@wxwidgets_true@	$(CXX) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-wxwidgets plplot-c++) @pkg_config_wxwidgets_LINK_FLAGS@ @MATH_LIB@
+@wxwidgets_true@	$(CXX) $< -o $@ $(install_tree_wxwidgets_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-wxwidgets plplot-c++) @pkg_config_wxwidgets_LINK_FLAGS@ @MATH_LIB@
 
 # Note, must filter out -p options which confuse $(QT_MOC_EXECUTABLE).  Such
 # options (e.g., -pthread) tend to appear in the static driver case.
@@ -95,11 +94,11 @@ clean:
 # management issues when linking to identical code in two different libraries).
 # target_link_libraries(qt_example ${QT_LIBRARIES} plplot)
 @qt_gui_true@qt_example$(EXEEXT): qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp
-@qt_gui_true@@enable_dyndrivers_true@	$(CXX) @Qt_EXECUTABLE_COMPILE_FLAGS@ qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-qt) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pc_qt_link_flags@
-@qt_gui_true@@enable_dyndrivers_false@	$(CXX) @Qt_EXECUTABLE_COMPILE_FLAGS@ qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pc_qt_link_flags@
+@qt_gui_true@@enable_dyndrivers_true@	$(CXX) @Qt_EXECUTABLE_COMPILE_FLAGS@ qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(install_tree_qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-qt) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pc_qt_link_flags@
+@qt_gui_true@@enable_dyndrivers_false@	$(CXX) @Qt_EXECUTABLE_COMPILE_FLAGS@ qt_example.cpp qt_PlotWindow.cpp moc_qt_PlotWindow.cpp -o $@ $(install_tree_qt_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot) @pc_qt_link_flags@
 
 # target_link_libraries(x${STRING_INDEX} plplotcxx ${MATH_LIB})
 .cc$(EXEEXT):
-	$(CXX) $< -o $@ $(RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-c++) @MATH_LIB@
+	$(CXX) $< -o $@ $(install_tree_cxx_RPATHCMD) $(shell $(PKG_CONFIG_ENV) pkg-config @PC_STATIC_OPTION@ --cflags --libs plplot-c++) @MATH_LIB@
 
 .SUFFIXES: .cc $(EXEEXT)

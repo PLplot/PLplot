@@ -209,6 +209,31 @@ function(filter_rpath rpath)
   set(${rpath} ${internal_rpath} PARENT_SCOPE)
 endfunction(filter_rpath)
 
+# First argument is a variable corresponding to a list of rpath locations which gets updated
+# in the parent scope.
+# Second argument is a string containing a semicolon-delimited list of dependent libraries
+# whose INSTALL_RPATH properties are to be added to the rpath list for the transitive rpath case.
+function(process_rpath rpath tll_arguments)
+  #message("DEBUG: ${rpath} = ${${rpath}}")
+  set(internal_rpath ${${rpath}})
+  if(internal_rpath)
+    if(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
+      foreach(tll_argument ${tll_arguments})
+	if(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+	  get_target_property(transitive_lib_install_rpath ${tll_argument} INSTALL_RPATH)
+	  if(transitive_lib_install_rpath)
+	    list(APPEND internal_rpath ${transitive_lib_install_rpath})
+	  endif(transitive_lib_install_rpath)
+	endif(tll_argument MATCHES "${PROJECT_NAMESPACE}")
+      endforeach(tll_argument ${tll_arguments})
+    endif(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
+  endif(internal_rpath)
+  #message("DEBUG: (transitive?) ${rpath} = ${internal_rpath}")
+  filter_rpath(internal_rpath)
+  #message("DEBUG: (filtered and transitive?) ${rpath} = ${internal_rpath}")
+  set(${rpath} ${internal_rpath} PARENT_SCOPE)
+endfunction(process_rpath rpath tll_arguments)
+
 if(MINGW)
   # Useful function to convert Windows list of semicolon-delimited
   # PATHs to the equivalent list of MSYS PATHs (exactly like the
@@ -326,17 +351,7 @@ function(configure_executable_build executable executable_src tll_arguments lib_
   endif(BUILD_SHARED_LIBS)
 
   if(USE_RPATH)
-    if(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
-      foreach(tll_argument ${tll_arguments})
-	if(tll_argument MATCHES "${PROJECT_NAMESPACE}")
-	  get_target_property(transitive_lib_install_rpath ${tll_argument} INSTALL_RPATH)
-	  if(transitive_lib_install_rpath)
-	    list(APPEND lib_install_rpath ${transitive_lib_install_rpath})
-	  endif(transitive_lib_install_rpath)
-	endif(tll_argument MATCHES "${PROJECT_NAMESPACE}")
-      endforeach(tll_argument ${tll_arguments})
-    endif(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
-    filter_rpath(lib_install_rpath)
+    process_rpath(lib_install_rpath "${tll_arguments}")
     #message(STATUS "DEBUG: transitive lib_install_rpath = ${lib_install_rpath} for original_executable = ${original_executable}")
     if(lib_install_rpath)
       set_target_properties(
@@ -509,17 +524,7 @@ function(configure_library_build library library_type library_src tll_arguments 
       )
 
     if(USE_RPATH)
-      if(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
-	foreach(tll_argument ${tll_arguments})
-	  if(tll_argument MATCHES "${PROJECT_NAMESPACE}")
-	    get_target_property(transitive_lib_install_rpath ${tll_argument} INSTALL_RPATH)
-	    if(transitive_lib_install_rpath)
-	      list(APPEND lib_install_rpath ${transitive_lib_install_rpath})
-	    endif(transitive_lib_install_rpath)
-	  endif(tll_argument MATCHES "${PROJECT_NAMESPACE}")
-	endforeach(tll_argument ${tll_arguments})
-      endif(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
-      filter_rpath(lib_install_rpath)
+      process_rpath(lib_install_rpath "${tll_arguments}")
       #message(STATUS "DEBUG: transitive lib_install_rpath = ${lib_install_rpath} for original_library = ${original_library}")
       if(lib_install_rpath)
         set_target_properties(
@@ -584,17 +589,7 @@ function(configure_library_build library library_type library_src tll_arguments 
 
     # Set library target properties
     if(USE_RPATH)
-      if(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
-	foreach(tll_argument ${tll_arguments})
-	  if(tll_argument MATCHES "${PROJECT_NAMESPACE}")
-	    get_target_property(transitive_lib_install_rpath ${tll_argument} INSTALL_RPATH)
-	    if(transitive_lib_install_rpath)
-	      list(APPEND lib_install_rpath ${transitive_lib_install_rpath})
-	    endif(transitive_lib_install_rpath)
-	  endif(tll_argument MATCHES "${PROJECT_NAMESPACE}")
-	endforeach(tll_argument ${tll_arguments})
-      endif(NOT "${tll_arguments}" STREQUAL "" AND NOT (NON_TRANSITIVE_RPATH AND BUILD_SHARED_LIBS))
-      filter_rpath(lib_install_rpath)
+      process_rpath(lib_install_rpath "${tll_arguments}")
       #message(STATUS "DEBUG: transitive lib_install_rpath = ${lib_install_rpath} for original_library = ${original_library}")
       if(lib_install_rpath)
         set_target_properties(
