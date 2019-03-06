@@ -5,12 +5,22 @@
 //      This stuff used to be in "dispatch.h", "dispatch.c", and "base.c".
 //
 //
-// Copyright (C) 2004  Joao Cardoso
-// Copyright (C) 2004, 2005  Rafael Laboissiere
-// Copyright (C) 2004, 2006  Andrew Ross
-// Copyright (C) 2004  Andrew Roach
-// Copyright (C) 2005-2016 Alan W. Irwin
-// Copyright (C) 2005  Thomas J. Duck
+// Copyright (C) 1993-2001 Geoffrey Furnish
+// Copyright (C) 1993-2006 Maurice LeBrun
+// Copyright (C) 1996 Rady Shouman
+// Copyright (C) 2000-2019 Alan W. Irwin
+// Copyright (C) 2001-2003 Joao Cardoso
+// Copyright (C) 2001-2005 Rafael Laboissiere
+// Copyright (C) 2004-2007 Andrew Roach
+// Copyright (C) 2004-2015 Andrew Ross
+// Copyright (C) 2005 Thomas Duck
+// Copyright (C) 2005-2015 Arjen Markus
+// Copyright (C) 2006-2011 Hazen Babcock
+// Copyright (C) 2008-2009 Werner Smekal
+// Copyright (C) 2009-2011 Hezekiah M. Carty
+// Copyright (C) 2015 Jim Dishaw
+// Copyright (C) 2015 jdishaw
+// Copyright (C) 2015-2017 Phil Rosenberg
 //
 // This file is part of PLplot.
 //
@@ -675,10 +685,14 @@ void alternate_unicode_processing( PLCHAR_VECTOR string, EscText * args )
             switch ( string[i + 1] )
             {
             case '(': // hershey code
-                i           += 2 + text2num( &string[i + 2], ')', &code );
-                idx          = plhershey2unicode( (int) code );
-                args->n_char =
-                    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                i  += 2 + text2num( &string[i + 2], ')', &code );
+                idx = plhershey2unicode( (int) code );
+                if ( 0 <= idx && idx <= number_of_entries_in_hershey_to_unicode_table )
+                    args->n_char = hershey_to_unicode_lookup_table[idx].Unicode;
+                else
+                    args->n_char = (PLUNICODE) 0x00;
+
+                pldebug( "alternate_unicode_processing", "code, idx, args->n_char = %d, %d, %#x\n", (int) code, idx, args->n_char );
                 plP_esc( PLESC_TEXT_CHAR, args );
 
                 skip = 1;
@@ -810,8 +824,12 @@ void alternate_unicode_processing( PLCHAR_VECTOR string, EscText * args )
                     skip = 1; // skip is set if we have copied something
                               // into the unicode table
 
-                    args->n_char =
-                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                    if ( 0 <= idx && idx <= number_of_entries_in_hershey_to_unicode_table )
+                        args->n_char = hershey_to_unicode_lookup_table[idx].Unicode;
+                    else
+                        args->n_char = (PLUNICODE) 0x00;
+
+                    pldebug( "alternate_unicode_processing", "ig, idx, args->n_char = %d, %d, %#x\n", ig, idx, args->n_char );
                     plP_esc( PLESC_TEXT_CHAR, args );
                 }
                 else
@@ -822,8 +840,7 @@ void alternate_unicode_processing( PLCHAR_VECTOR string, EscText * args )
                     skip = 1;    // skip is set if we have copied something
                                  // into the unicode table
 
-                    args->n_char =
-                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                    args->n_char = (PLUNICODE) 0x00;
                     plP_esc( PLESC_TEXT_CHAR, args );
                 }
                 break;
@@ -957,8 +974,12 @@ void encode_unicode( PLCHAR_VECTOR string, EscText *args )
             case '(': // hershey code
                 i  += ( 2 + text2num( &string[i + 2], ')', &code ) );
                 idx = plhershey2unicode( (int) code );
-                args->unicode_array[j++] =
-                    (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                if ( 0 <= idx && idx <= number_of_entries_in_hershey_to_unicode_table )
+                    args->unicode_array[j++] = hershey_to_unicode_lookup_table[idx].Unicode;
+                else
+                    args->unicode_array[j++] = (PLUNICODE) 0x00;
+
+                pldebug( "encode_unicode", "code, idx, args->unicode_array[j] = %d, %d, %#x\n", (int) code, idx, args->unicode_array[j] );
 
                 // if unicode_buffer[j-1] corresponds to the escape
                 // character must unescape it by appending one more.
@@ -1094,8 +1115,13 @@ void encode_unicode( PLCHAR_VECTOR string, EscText *args )
                     else if ( ig == 647 )
                         ig = 686;
                     idx = (int) plhershey2unicode( ig );
-                    args->unicode_array[j++] =
-                        (PLUNICODE) hershey_to_unicode_lookup_table[idx].Unicode;
+                    if ( 0 <= idx && idx <= number_of_entries_in_hershey_to_unicode_table )
+                        args->unicode_array[j++] = hershey_to_unicode_lookup_table[idx].Unicode;
+                    else
+                        args->unicode_array[j++] = (PLUNICODE) 0x00;
+
+                    pldebug( "encode_unicode", "ig, idx, args->unicode_array[j] = %d, %d, %#x\n", (int) ig, idx, args->unicode_array[j] );
+
                     i   += 2;
                     skip = 1; // skip is set if we have copied something
                               // into the unicode table

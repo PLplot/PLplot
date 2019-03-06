@@ -2,13 +2,21 @@
 //      Also font management code.  See the description of plLibOpen() for
 //      the search path used in finding the font files.
 //
-// Copyright (C) 1992  Geoffrey Furnish
-// Copyright (C) 1993, 1994, 1995, 2000, 2001, 2002  Maurice LeBrun
-// Copyright (C) 2000-2014 Alan W. Irwin
-// Copyright (C) 2001, 2003, 2004  Rafael Laboissiere
-// Copyright (C) 2002  Vincent Darley
-// Copyright (C) 2004  Andrew Ross
-// Copyright (C) 2007  Hazen Babcock
+// Copyright (C) 1992 Geoffrey Furnish
+// Copyright (C) 1993-2002 Maurice LeBrun
+// Copyright (C) 1996 Rady Shouman
+// Copyright (C) 2000-2019 Alan W. Irwin
+// Copyright (C) 2001 Joao Cardoso
+// Copyright (C) 2002 Vince Darley
+// Copyright (C) 2003-2005 Rafael Laboissiere
+// Copyright (C) 2004-2005 Andrew Roach
+// Copyright (C) 2004-2011 Andrew Ross
+// Copyright (C) 2005 Thomas Duck
+// Copyright (C) 2006-2010 Hazen Babcock
+// Copyright (C) 2009 Werner Smekal
+// Copyright (C) 2010 Hezekiah M. Carty
+// Copyright (C) 2015 Phil Rosenberg
+// Copyright (C) 2015 jdishaw
 //
 // This file is part of PLplot.
 //
@@ -34,6 +42,8 @@
 
 #ifndef __PLSYM_H__
 #define __PLSYM_H__
+#define DEBUG
+#define NEED_PLDEBUG
 
 #include "plplotP.h"
 #include <float.h>
@@ -358,9 +368,13 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
     if ( ( plsc->dev_text ) && ( plsc->dev_unicode ) && ( !plsc->dev_hrshsym ) )
     {
         // Get the index in the lookup table and the unicode character
-        idx          = plhershey2unicode( ch );
-        unicode_char = hershey_to_unicode_lookup_table[idx].Unicode;
+        idx = plhershey2unicode( ch );
+        if ( 0 <= idx && idx <= number_of_entries_in_hershey_to_unicode_table )
+            unicode_char = hershey_to_unicode_lookup_table[idx].Unicode;
+        else
+            unicode_char = (PLUNICODE) 0x00;
 
+        pldebug( "plhrsh", "ch, idx, unicode_char = %d, %d, %#x\n", ch, idx, unicode_char );
         //
         //  Test to see if there is a defined unicode glyph for this hershey
         //  code; if there isn't, then we pass the glyph to plhersh, and have
@@ -386,7 +400,11 @@ plhrsh( PLINT ch, PLINT x, PLINT y )
             // Setup to render a unicode character
             args.text_type    = PL_STRING_SYMBOL;
             args.unicode_char = unicode_char;
-            args.font_face    = hershey_to_unicode_lookup_table[idx].Font;
+            if ( 0 <= idx && idx <= number_of_entries_in_hershey_to_unicode_table )
+                args.font_face = hershey_to_unicode_lookup_table[idx].Font;
+            else
+                // Unknown font face indicated by 0 value.
+                args.font_face = 0;
             // Comment out to fix problem with ps, psttf drivers
             //args.base = 1;
             args.base   = 0;
@@ -1494,7 +1512,7 @@ int plhershey2unicode( int in )
         //
         jmid = ( jlo + jhi ) / 2;
         // convert hershey_to_unicode_lookup_table[jmid].Hershey to signed
-        // integer since we don't loose information - the number range
+        // integer since we don't lose information - the number range
         // is from 1 and 2932 at the moment
         if ( in > (int) ( hershey_to_unicode_lookup_table[jmid].Hershey ) )
             jlo = jmid;
