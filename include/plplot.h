@@ -10,7 +10,7 @@
 // Copyright (C) 1992-2001 Geoffrey Furnish
 // Copyright (C) 1992-2002 Maurice LeBrun
 // Copyright (C) 1996 Rady Shouman
-// Copyright (C) 2000-2017 Alan W. Irwin
+// Copyright (C) 2000-2019 Alan W. Irwin
 // Copyright (C) 2001-2003 Joao Cardoso
 // Copyright (C) 2001-2005 Rafael Laboissiere
 // Copyright (C) 2004-2013 Andrew Ross
@@ -525,6 +525,21 @@ typedef struct
 // NOTE: a PLcGrid3 is a good idea here but there is no way to exploit it yet
 // so I'll leave it out for now.
 //
+
+// Color limits:
+
+// Default number of colors for cmap0 and cmap1.
+#define PL_DEFAULT_NCOL0    16
+#define PL_DEFAULT_NCOL1    128
+// minimum and maximum PLINT RGB values.
+#define MIN_PLINT_RGB       0
+#define MAX_PLINT_RGB       255
+// minimum and maximum PLFLT cmap1 color index values.
+#define MIN_PLFLT_CMAP1     0.
+#define MAX_PLFLT_CMAP1     1.
+// minimum and maximum PLFLT alpha values.
+#define MIN_PLFLT_ALPHA     0.
+#define MAX_PLFLT_ALPHA     1.
 
 // PLColor is the usual way to pass an rgb color value.
 

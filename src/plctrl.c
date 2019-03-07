@@ -2,11 +2,21 @@
 //      mode, change color.  Includes some spillage from plcore.c.  If you
 //      don't know where it should go, put it here.
 //
-// Copyright (C) 2004  Joao Cardoso
-// Copyright (C) 2004  Rafael Laboissiere
-// Copyright (C) 2008  Hazen Babcock
-// Copyright (C) 2009-2014 Alan W. Irwin
-// Copyright (C) 2011  Hezekiah M. Carty
+// Copyright (C) 1993-2005 Maurice LeBrun
+// Copyright (C) 1995-2002 Geoffrey Furnish
+// Copyright (C) 1996 Rady Shouman
+// Copyright (C) 2000-2019 Alan W. Irwin
+// Copyright (C) 2001-2003 Joao Cardoso
+// Copyright (C) 2001-2005 Rafael Laboissiere
+// Copyright (C) 2002 Vince Darley
+// Copyright (C) 2002-2007 Andrew Roach
+// Copyright (C) 2004-2013 Andrew Ross
+// Copyright (C) 2005 Thomas Duck
+// Copyright (C) 2006-2011 Arjen Markus
+// Copyright (C) 2006-2011 Hazen Babcock
+// Copyright (C) 2008-2009 Werner Smekal
+// Copyright (C) 2009-2011 Hezekiah M. Carty
+// Copyright (C) 2015-2018 Phil Rosenberg
 //
 // This file is part of PLplot.
 //
@@ -68,10 +78,13 @@
 // work even in the single precision floating point case.
 #define FUZZ_EPSILON    1.e-4
 
-// Static functions
-
 // Used by any external init code to suggest a path
 char PLDLLIMPEXP * plplotLibDir = 0;
+
+// Static functions
+
+static void
+limit_rgba_range( PLCHAR_VECTOR message, PLINT_NC_SCALAR r, PLINT_NC_SCALAR g, PLINT_NC_SCALAR b, PLFLT_NC_SCALAR alpha );
 
 static void
 color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, PLCHAR_VECTOR name );
@@ -166,10 +179,10 @@ c_plcol0( PLINT icol0 )
 //--------------------------------------------------------------------------
 // plcol1()
 //
-//! Set color, map 1.  Argument is a float between 0. and 1.
+//! Set color for cmap1.  Argument is a float between MIN_PLFLT_CMAP1 and MAX_PLFLT_CMAP1
 //!
 //! @param col1 The index of the color map 1 color to use as the current
-//! color. (0.0 - 1.0)
+//! color. (MIN_PLFLT_CMAP1 - MAX_PLFLT_CMAP1)
 
 void
 c_plcol1( PLFLT col1 )
@@ -181,12 +194,13 @@ c_plcol1( PLFLT col1 )
         plabort( "plcol1: Please call plinit first" );
         return;
     }
-    if ( col1 < 0 || col1 > 1 || isnan( col1 ) )
+    if ( col1 < MIN_PLFLT_CMAP1 || col1 > MAX_PLFLT_CMAP1 || isnan( col1 ) )
     {
-        char buffer[BUFFER_SIZE];
-        snprintf( buffer, BUFFER_SIZE, "plcol1: Invalid color map position: %f", (PLFLT) col1 );
-        plabort( buffer );
-        return;
+        plwarn( "plcol1: Invalid cmap1 index" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        fprintf( stderr, "%s%e\n", "Invalid index = ", col1 );
+        col1 = MIN_PLFLT_CMAP1;
+        fprintf( stderr, "%s%e\n", "Corrected index = ", col1 );
     }
 
     icol1 = (PLINT) ( col1 * plsc->ncol1 );
@@ -207,9 +221,9 @@ c_plcol1( PLFLT col1 )
 //
 //! Set the background color (cmap0[0]) by 8 bit RGB value
 //!
-//! @param r Red value of the background color (0 - 255).
-//! @param g Green value of the background color (0 - 255).
-//! @param b Blue value of the background color (0 - 255).
+//! @param r Red value of the background color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param g Green value of the background color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param b Blue value of the background color (MIN_PLINT_RGB - MAX_PLINT_RGB).
 
 void
 c_plscolbg( PLINT r, PLINT g, PLINT b )
@@ -222,11 +236,11 @@ c_plscolbg( PLINT r, PLINT g, PLINT b )
 //
 //! Set the background color (cmap0[0]) by 8 bit RGB value and alpha value
 //!
-//! @param r Red value of the background color (0 - 255).
-//! @param g Green value of the background color (0 - 255).
-//! @param b Blue value of the background color (0 - 255).
+//! @param r Red value of the background color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param g Green value of the background color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param b Blue value of the background color (MIN_PLINT_RGB - MAX_PLINT_RGB).
 //! @param alpha Alpha (transparency) value of the background color
-//! (0.0 - 1.0).
+//! (MIN_PLFLT_ALPHA - MAX_PLFLT_ALPHA).
 
 //--------------------------------------------------------------------------
 
@@ -274,9 +288,9 @@ c_plgcolbga( PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha )
 //! Does not result in any additional cells to be allocated.
 //!
 //! @param icol0 index of the color to set (0 - plsc->ncol0)
-//! @param r Red value of the color (0 - 255).
-//! @param g Green value of the color (0 - 255).
-//! @param b Blue value of the color (0 - 255).
+//! @param r Red value of the color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param g Green value of the color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param b Blue value of the color (MIN_PLINT_RGB - MAX_PLINT_RGB).
 
 void
 c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
@@ -290,16 +304,10 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
         plabort( buffer );
         return;
     }
-    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) )
-    {
-        char buffer[BUFFER_SIZE];
-        snprintf( buffer, BUFFER_SIZE, "plscol0: Invalid RGB color: %d, %d, %d",
-            (int) r, (int) g, (int) b );
-        plabort( buffer );
-        return;
-    }
 
-    plscol0a( icol0, r, g, b, 1.0 );
+    limit_rgba_range( "plscol0: invalid cmap0 RGB color has been corrected", &r, &g, &b, NULL );
+
+    plscol0a( icol0, r, g, b, MAX_PLFLT_ALPHA );
 }
 
 //--------------------------------------------------------------------------
@@ -309,10 +317,10 @@ c_plscol0( PLINT icol0, PLINT r, PLINT g, PLINT b )
 //! Does not result in any additional cells to be allocated.
 //!
 //! @param icol0 index of the color to set (0 - plsc->ncol0)
-//! @param r Red value of the color (0 - 255).
-//! @param g Green value of the color (0 - 255).
-//! @param b Blue value of the color (0 - 255).
-//! @param alpha Alpha value of the color (0.0 - 1.0).
+//! @param r Red value of the color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param g Green value of the color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param b Blue value of the color (MIN_PLINT_RGB - MAX_PLINT_RGB).
+//! @param alpha Alpha value of the color (MIN_PLFLT_ALPHA - MAX_PLFLT_ALPHA).
 
 void
 c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT alpha )
@@ -326,15 +334,7 @@ c_plscol0a( PLINT icol0, PLINT r, PLINT g, PLINT b, PLFLT alpha )
         plabort( buffer );
         return;
     }
-    if ( ( r < 0 || r > 255 ) || ( g < 0 || g > 255 ) || ( b < 0 || b > 255 ) || ( alpha < 0. || alpha > 1.0 ) )
-    {
-        char buffer[BUFFER_SIZE];
-        snprintf( buffer, BUFFER_SIZE, "plscol0a: Invalid RGB color: %d, %d, %d, %f",
-            (int) r, (int) g, (int) b, (double) alpha );
-        plabort( buffer );
-        return;
-    }
-
+    limit_rgba_range( "plscol0a: invalid cmap0 RGBA color has been corrected", &r, &g, &b, &alpha );
     plsc->cmap0[icol0].r = (unsigned char) r;
     plsc->cmap0[icol0].g = (unsigned char) g;
     plsc->cmap0[icol0].b = (unsigned char) b;
@@ -398,15 +398,15 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha )
     if ( plsc->cmap0 == NULL )
         plscmap0n( 0 );
 
-    *r     = -1;
-    *g     = -1;
-    *b     = -1;
-    *alpha = -1.0;
-
     if ( icol0 < 0 || icol0 > plsc->ncol0 )
     {
         char buffer[BUFFER_SIZE];
-        snprintf( buffer, BUFFER_SIZE, "plgcol0: Invalid color index: %d", (int) icol0 );
+        snprintf( buffer, BUFFER_SIZE, "plgcol0: Invalid color index: %d.  Return opaque red as a warning of this condition.", (int) icol0 );
+        *r     = MAX_PLINT_RGB;
+        *g     = MIN_PLINT_RGB;
+        *b     = MIN_PLINT_RGB;
+        *alpha = MAX_PLFLT_ALPHA;
+
         plabort( buffer );
         return;
     }
@@ -433,27 +433,23 @@ c_plgcol0a( PLINT icol0, PLINT *r, PLINT *g, PLINT *b, PLFLT *alpha )
 void
 c_plscmap0( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLINT ncol0 )
 {
-    int i;
+    int   i;
+    PLINT nc_r, nc_g, nc_b;
 
     plscmap0n( ncol0 );
 
     for ( i = 0; i < plsc->ncol0; i++ )
     {
-        if ( ( r[i] < 0 || r[i] > 255 ) ||
-             ( g[i] < 0 || g[i] > 255 ) ||
-             ( b[i] < 0 || b[i] > 255 ) )
-        {
-            char buffer[BUFFER_SIZE];
-            snprintf( buffer, BUFFER_SIZE, "plscmap0: Invalid RGB color: %d, %d, %d",
-                (int) r[i], (int) g[i], (int) b[i] );
-            plabort( buffer );
-            return;
-        }
-
-        plsc->cmap0[i].r = (unsigned char) r[i];
-        plsc->cmap0[i].g = (unsigned char) g[i];
-        plsc->cmap0[i].b = (unsigned char) b[i];
-        plsc->cmap0[i].a = 1.0;
+        // Need these assignments so that r[i], g[i], and b[i] remain
+        // unchanged as per their PLINT_VECTOR types.
+        nc_r = r[i];
+        nc_g = g[i];
+        nc_b = b[i];
+        limit_rgba_range( "plscmap0: invalid cmap0 RGB color has been corrected", &nc_r, &nc_g, &nc_b, NULL );
+        plsc->cmap0[i].r = (unsigned char) nc_r;
+        plsc->cmap0[i].g = (unsigned char) nc_g;
+        plsc->cmap0[i].b = (unsigned char) nc_b;
+        plsc->cmap0[i].a = MAX_PLFLT_ALPHA;
     }
 
     if ( plsc->level > 0 )
@@ -475,28 +471,27 @@ c_plscmap0( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLINT ncol0 )
 void
 c_plscmap0a( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLFLT_VECTOR alpha, PLINT ncol0 )
 {
-    int i;
+    int   i;
+    PLINT nc_r, nc_g, nc_b;
+    PLFLT nc_alpha;
+
 
     plscmap0n( ncol0 );
 
     for ( i = 0; i < plsc->ncol0; i++ )
     {
-        if ( ( r[i] < 0 || r[i] > 255 ) ||
-             ( g[i] < 0 || g[i] > 255 ) ||
-             ( b[i] < 0 || b[i] > 255 ) ||
-             ( alpha[i] < 0.0 || alpha[i] > 1.0 ) )
-        {
-            char buffer[BUFFER_SIZE];
-            snprintf( buffer, BUFFER_SIZE, "plscmap0a: Invalid RGB color: %d, %d, %d, %f",
-                (int) r[i], (int) g[i], (int) b[i], (double) alpha[i] );
-            plabort( buffer );
-            return;
-        }
-
-        plsc->cmap0[i].r = (unsigned char) r[i];
-        plsc->cmap0[i].g = (unsigned char) g[i];
-        plsc->cmap0[i].b = (unsigned char) b[i];
-        plsc->cmap0[i].a = alpha[i];
+        // Need these assignments so that r[i], g[i], b[i], and
+        // alpha[i] remain unchanged as per their PLINT_VECTOR and
+        // PLFLT_VECTOR types.
+        nc_r     = r[i];
+        nc_g     = g[i];
+        nc_b     = b[i];
+        nc_alpha = alpha[i];
+        limit_rgba_range( "plscmap0a: invalid cmap0 RGBA color has been corrected", &nc_r, &nc_g, &nc_b, &nc_alpha );
+        plsc->cmap0[i].r = (unsigned char) nc_r;
+        plsc->cmap0[i].g = (unsigned char) nc_g;
+        plsc->cmap0[i].b = (unsigned char) nc_b;
+        plsc->cmap0[i].a = nc_alpha;
     }
 
     if ( plsc->level > 0 )
@@ -517,26 +512,23 @@ c_plscmap0a( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLFLT_VECTOR alpha,
 void
 c_plscmap1( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLINT ncol1 )
 {
-    int i;
+    int   i;
+    PLINT nc_r, nc_g, nc_b;
 
     plscmap1n( ncol1 );
 
     for ( i = 0; i < plsc->ncol1; i++ )
     {
-        if ( ( r[i] < 0 || r[i] > 255 ) ||
-             ( g[i] < 0 || g[i] > 255 ) ||
-             ( b[i] < 0 || b[i] > 255 ) )
-        {
-            char buffer[BUFFER_SIZE];
-            snprintf( buffer, BUFFER_SIZE, "plscmap1: Invalid RGB color: %d, %d, %d",
-                (int) r[i], (int) g[i], (int) b[i] );
-            plabort( buffer );
-            return;
-        }
-        plsc->cmap1[i].r = (unsigned char) r[i];
-        plsc->cmap1[i].g = (unsigned char) g[i];
-        plsc->cmap1[i].b = (unsigned char) b[i];
-        plsc->cmap1[i].a = 1.0;
+        // Need these assignments so that r[i], g[i], and b[i] remain
+        // unchanged as per their PLINT_VECTOR PLINT_VECTOR types.
+        nc_r = r[i];
+        nc_g = g[i];
+        nc_b = b[i];
+        limit_rgba_range( "plscmap1: invalid cmap1 RGB color has been corrected", &nc_r, &nc_g, &nc_b, NULL );
+        plsc->cmap1[i].r = (unsigned char) nc_r;
+        plsc->cmap1[i].g = (unsigned char) nc_g;
+        plsc->cmap1[i].b = (unsigned char) nc_b;
+        plsc->cmap1[i].a = MAX_PLFLT_ALPHA;
     }
 
     if ( plsc->level > 0 )
@@ -558,27 +550,26 @@ c_plscmap1( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLINT ncol1 )
 void
 c_plscmap1a( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLFLT_VECTOR alpha, PLINT ncol1 )
 {
-    int i;
+    int   i;
+    PLINT nc_r, nc_g, nc_b;
+    PLFLT nc_alpha;
 
     plscmap1n( ncol1 );
 
     for ( i = 0; i < plsc->ncol1; i++ )
     {
-        if ( ( r[i] < 0 || r[i] > 255 ) ||
-             ( g[i] < 0 || g[i] > 255 ) ||
-             ( b[i] < 0 || b[i] > 255 ) ||
-             ( alpha[i] < 0.0 || alpha[i] > 1.0 ) )
-        {
-            char buffer[BUFFER_SIZE];
-            snprintf( buffer, BUFFER_SIZE, "plscmap1a: Invalid RGB color: %d, %d, %d, %f",
-                (int) r[i], (int) g[i], (int) b[i], (double) alpha[i] );
-            plabort( buffer );
-            return;
-        }
-        plsc->cmap1[i].r = (unsigned char) r[i];
-        plsc->cmap1[i].g = (unsigned char) g[i];
-        plsc->cmap1[i].b = (unsigned char) b[i];
-        plsc->cmap1[i].a = alpha[i];
+        // Need these assignments so that r[i], g[i], b[i], and
+        // alpha[i] remain unchanged as per their PLINT_VECTOR and
+        // PLFLT_VECTOR types.
+        nc_r     = r[i];
+        nc_g     = g[i];
+        nc_b     = b[i];
+        nc_alpha = alpha[i];
+        limit_rgba_range( "plscmap1a: invalid cmap1 RGBA color has been corrected", &nc_r, &nc_g, &nc_b, &nc_alpha );
+        plsc->cmap1[i].r = (unsigned char) nc_r;
+        plsc->cmap1[i].g = (unsigned char) nc_g;
+        plsc->cmap1[i].b = (unsigned char) nc_b;
+        plsc->cmap1[i].a = nc_alpha;
     }
 
     if ( plsc->level > 0 )
@@ -610,8 +601,8 @@ c_plscmap1a( PLINT_VECTOR r, PLINT_VECTOR g, PLINT_VECTOR b, PLFLT_VECTOR alpha,
 //! easily distinguished.
 //!
 //! Each control point must specify the position in cmap 1 as well as three
-//! coordinates in HLS or RGB space.  The first point MUST correspond to
-//! position = 0, and the last to position = 1.
+//! coordinates in HLS or RGB space.  The first and last points MUST correspond to
+//! cmap1 coordinates MIN_PLFLT_CMAP1 and MAX_PLFLT_CMAP1.
 //!
 //! Every change in hue from one control point to the next can be linearly
 //! interpolated in two ways.  The usual (alt_hue_path[i] false) method for the ith interval
@@ -649,9 +640,9 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
         return;
     }
 
-    if ( ( intensity[0] != 0 ) || ( intensity[npts - 1] != 1 ) )
+    if ( ( intensity[0] != MIN_PLFLT_CMAP1 ) || ( intensity[npts - 1] != MAX_PLFLT_CMAP1 ) )
     {
-        plabort( "plscmap1l: First, last control points must lie on boundary" );
+        plabort( "plscmap1l: First and last control points must correspond to minimum and maximum cmap1 color index" );
         return;
     }
 
@@ -677,7 +668,7 @@ c_plscmap1l( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
         plsc->cmap1cp[n].c2 = coord2[n];
         plsc->cmap1cp[n].c3 = coord3[n];
         plsc->cmap1cp[n].p  = intensity[n];
-        plsc->cmap1cp[n].a  = 1.0;
+        plsc->cmap1cp[n].a  = MAX_PLFLT_ALPHA;
 
         if ( alt_hue_path == NULL )
             plsc->cmap1cp[n].alt_hue_path = 0;
@@ -720,7 +711,7 @@ c_plscmap1la( PLINT itype, PLINT npts, PLFLT_VECTOR intensity,
         return;
     }
 
-    if ( ( intensity[0] != 0 ) || ( intensity[npts - 1] != 1 ) )
+    if ( ( intensity[0] != MIN_PLFLT_CMAP1 ) || ( intensity[npts - 1] != MAX_PLFLT_CMAP1 ) )
     {
         plabort( "plscmap1la: First, last control points must lie on boundary" );
         return;
@@ -826,10 +817,10 @@ plcmap1_calc( void )
 
                 c_plhlsrgb( h, l, s, &r, &g, &b );
 
-                plsc->cmap1[i].r = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
-                plsc->cmap1[i].g = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
-                plsc->cmap1[i].b = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
-                plsc->cmap1[i].a = a;
+                plsc->cmap1[i].r = (unsigned char) MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, (int) ( ( MAX_PLINT_RGB + 1 ) * r ) ) );
+                plsc->cmap1[i].g = (unsigned char) MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, (int) ( ( MAX_PLINT_RGB + 1 ) * g ) ) );
+                plsc->cmap1[i].b = (unsigned char) MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, (int) ( ( MAX_PLINT_RGB + 1 ) * b ) ) );
+                plsc->cmap1[i].a = MAX( MIN_PLFLT_ALPHA, MIN( MAX_PLFLT_ALPHA, a ) );
             }
         }
     }
@@ -869,10 +860,10 @@ plcmap1_calc( void )
                 b = plsc->cmap1cp[n].c3 + db * delta;
                 a = plsc->cmap1cp[n].a + da * delta;
 
-                plsc->cmap1[i].r = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * r ) ) );
-                plsc->cmap1[i].g = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * g ) ) );
-                plsc->cmap1[i].b = (unsigned char) MAX( 0, MIN( 255, (int) ( 256. * b ) ) );
-                plsc->cmap1[i].a = a;
+                plsc->cmap1[i].r = (unsigned char) MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, (int) ( ( MAX_PLINT_RGB + 1 ) * r ) ) );
+                plsc->cmap1[i].g = (unsigned char) MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, (int) ( ( MAX_PLINT_RGB + 1 ) * g ) ) );
+                plsc->cmap1[i].b = (unsigned char) MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, (int) ( ( MAX_PLINT_RGB + 1 ) * b ) ) );
+                plsc->cmap1[i].a = MAX( MIN_PLFLT_ALPHA, MIN( MAX_PLFLT_ALPHA, a ) );
             }
         }
     }
@@ -884,34 +875,39 @@ plcmap1_calc( void )
 //--------------------------------------------------------------------------
 //! Set the color map 1 value range to use in continuous color plots.
 //!
-//! @param min_color Specifies the minimum color to use.  A value of 0.0 or
-//! less indicates that the range should start at the lowest color map 1
-//! value available.
-//! @param max_color Specifies the maximum color to use.  A value of 1.0 or
-//! greater indicates that the range should exten to the highest color map 1
-//! value available.
+//! @param min_color Specifies the minimum cmap1 index to use.  A
+//! value of MIN_PLFLT_CMAP1 or less indicates that the range should
+//! start at MIN_PLFLT_CMAP1, the lowest valid cmap1 index available.
+//! @param max_color Specifies the maximum cmap1 index to use.  A
+//! value of MAX_PLFLT_CMAP1 or greater indicates that the range
+//! should finish at MAX_PLFLT_CMAP1, the highest valid cmap1 index
+//! available.
 //!
-//! If min_color > max_color or min_color is greater than 1.0 or max_color is
-//! less than 0.0 then no change is made.
+//! If the specified range is completely invalid (i.e., min_color >= max_color or max_color
+//! < MIN_PLFLT_CMAP1, or min_color > MAX_PLFLT_CMAP1), then min_color = MIN_PLFLT_CMAP1
+//! and max_color = MAX_PLFLT_CMAP1 is used.
 //--------------------------------------------------------------------------
 
 void
 c_plscmap1_range( PLFLT min_color, PLFLT max_color )
 {
-    if ( min_color > max_color || max_color < 0.0 || min_color > 1.0 )
+    if ( min_color >= max_color || max_color <= MIN_PLFLT_CMAP1 || min_color >= MAX_PLFLT_CMAP1 )
     {
-        plwarn( "plscmap1_range called with invalid color range" );
-        return;
+        plwarn( "plscmap1_range called with completely invalid color range so min_color = MIN_PLFLT_CMAP1 and max_color = MAX_PLFLT_CMAP1 used instead." );
+        min_color = MIN_PLFLT_CMAP1;
+        max_color = MAX_PLFLT_CMAP1;
     }
-    if ( min_color < 0.0 )
+    // At this stage, the following conditions have been met:
+    // min_color < max_color, max_color > MIN_PLFLT_CMAP1, and min_color < MAX_PLFLT_CMAP1.
+    if ( min_color < MIN_PLFLT_CMAP1 )
     {
-        plwarn( "plscmap1_range called with a negative minimum color value" );
-        min_color = 0.0;
+        plwarn( "plscmap1_range called with min_color < MIN_PLFLT_CMAP1.  min_color = MIN_PLFLT_CMAP1 < max_color is used instead." );
+        min_color = MIN_PLFLT_CMAP1;
     }
-    if ( max_color > 1.0 )
+    if ( max_color > MAX_PLFLT_CMAP1 )
     {
-        plwarn( "plscmap1_range called with an out of range maximum color value" );
-        max_color = 1.0;
+        plwarn( "plscmap1_range called with max_color > MAX_PLFLT_CMAP1. max_color = MAX_PLFLT_CMAP1 > min_color is used instead" );
+        max_color = MAX_PLFLT_CMAP1;
     }
     plsc->cmap1_min = min_color;
     plsc->cmap1_max = max_color;
@@ -955,7 +951,7 @@ c_plscmap0n( PLINT ncol0 )
 // Handle all possible startup conditions
 
     if ( plsc->ncol0 <= 0 && ncol0 <= 0 )
-        ncol = 16;
+        ncol = PL_DEFAULT_NCOL0;
     else if ( ncol0 <= 0 )
         ncol = plsc->ncol0;
     else
@@ -1004,7 +1000,7 @@ c_plscmap0n( PLINT ncol0 )
 //! @param a Alpha value of the color.
 //! @param name The name of the color.
 
-void
+static void
 color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, PLCHAR_VECTOR name )
 {
     plsc->cmap0[i].r    = r;
@@ -1026,7 +1022,7 @@ color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, PLCHAR_VECTOR name )
 //! @param imin Index of the first color to set to its default.
 //! @param imax Index of the last color to set to its default.
 
-void
+static void
 plcmap0_def( int imin, int imax )
 {
     int          i;
@@ -1052,7 +1048,7 @@ plcmap0_def( int imin, int imax )
     // Initialize all colours undefined by the default colour palette file
     // to opaque red as a warning.
     for ( i = MAX( number_colors, imin ); i <= imax; i++ )
-        color_def( i, 255, 0, 0, 1.0,
+        color_def( i, MAX_PLINT_RGB, MIN_PLINT_RGB, MIN_PLINT_RGB, MAX_PLFLT_ALPHA,
             "opaque red colour to mark not defined by palette file" );
 }
 
@@ -1081,7 +1077,7 @@ c_plscmap1n( PLINT ncol1 )
 // Handle all possible startup conditions
 
     if ( plsc->ncol1 <= 0 && ncol1 <= 0 )
-        ncol = 128;
+        ncol = PL_DEFAULT_NCOL1;
     else if ( ncol1 <= 0 )
         ncol = plsc->ncol1;
     else
@@ -1128,7 +1124,7 @@ c_plscmap1n( PLINT ncol1 )
 //! palette editor.  If you don't like these settings.. change them!
 //!
 
-void
+static void
 plcmap1_def( void )
 {
     PLFLT i[6], h[6], l[6], s[6], midpt = 0., vertex = 0.;
@@ -1148,7 +1144,7 @@ plcmap1_def( void )
     if ( plsc->cmap0 != NULL )
         vertex = ( (PLFLT) plsc->cmap0[0].r +
                    (PLFLT) plsc->cmap0[0].g +
-                   (PLFLT) plsc->cmap0[0].b ) / 3. / 255.;
+                   (PLFLT) plsc->cmap0[0].b ) / 3. / (PLFLT) MAX_PLINT_RGB;
 
     if ( vertex < 0.5 )
     {
@@ -1219,7 +1215,7 @@ c_plscolor( PLINT color )
 //! @param hue hue (0.0 - 360.0).
 //--------------------------------------------------------------------------
 
-PLFLT
+static PLFLT
 value( double n1, double n2, double hue )
 {
     PLFLT val;
@@ -1409,7 +1405,7 @@ read_line( char *buffer, int length, FILE *fp )
 //! @param b blue value of each color in the palette file.
 //! @param a alpha value of each color in the palette file.
 
-void
+static void
 cmap0_palette_read( PLCHAR_VECTOR filename,
                     int *number_colors, unsigned int **r, unsigned int **g, unsigned int **b, double **a )
 {
@@ -1534,16 +1530,16 @@ cmap0_palette_read( PLCHAR_VECTOR filename,
         {
             plexit( "cmap0_palette_read: insufficient memory" );
         }
-        **r = 255;
-        **g = 255;
-        **b = 255;
-        **a = 1.;
+        **r = MAX_PLINT_RGB;
+        **g = MAX_PLINT_RGB;
+        **b = MAX_PLINT_RGB;
+        **a = MAX_PLFLT_ALPHA;
         for ( i = 1; i < *number_colors; i++ )
         {
-            *( *r + i ) = 255;
-            *( *g + i ) = 0;
-            *( *b + i ) = 0;
-            *( *a + i ) = 1.0;
+            *( *r + i ) = MAX_PLINT_RGB;
+            *( *g + i ) = MIN_PLINT_RGB;
+            *( *b + i ) = MIN_PLINT_RGB;
+            *( *a + i ) = MAX_PLFLT_ALPHA;
         }
     }
 
@@ -1808,9 +1804,9 @@ c_plspal1( PLCHAR_VECTOR filename, PLBOOL interpolate )
         {
             for ( i = 0; i < number_colors; i++ )
             {
-                ri[i] = (PLINT) ( r[i] * 255.0 );
-                gi[i] = (PLINT) ( g[i] * 255.0 );
-                bi[i] = (PLINT) ( b[i] * 255.0 );
+                ri[i] = (PLINT) ( r[i] * MAX_PLINT_RGB );
+                gi[i] = (PLINT) ( g[i] * MAX_PLINT_RGB );
+                bi[i] = (PLINT) ( b[i] * MAX_PLINT_RGB );
             }
             c_plscmap1a( ri, gi, bi, a, number_colors );
         }
@@ -2501,7 +2497,7 @@ plGetName( PLCHAR_VECTOR dir, PLCHAR_VECTOR subdir, PLCHAR_VECTOR filename, char
 //! @param dirspec String to add the appropriate delimiter too.
 //--------------------------------------------------------------------------
 
-void
+static void
 strcat_delim( char *dirspec )
 {
     size_t ldirspec = strlen( dirspec );
@@ -3165,3 +3161,35 @@ plrestore_locale( char *saved_lc_numeric_locale )
     free( saved_lc_numeric_locale );
 }
 
+static void
+limit_rgba_range( PLCHAR_VECTOR message, PLINT_NC_SCALAR r, PLINT_NC_SCALAR g, PLINT_NC_SCALAR b, PLFLT_NC_SCALAR alpha )
+{
+    if ( ( *r < MIN_PLINT_RGB || *r > MAX_PLINT_RGB ) ||
+         ( *g < MIN_PLINT_RGB || *g > MAX_PLINT_RGB ) ||
+         ( *b < MIN_PLINT_RGB || *b > MAX_PLINT_RGB ) ||
+         ( alpha != NULL && ( isnan( *alpha ) || ( *alpha < MIN_PLFLT_ALPHA || *alpha > MAX_PLFLT_ALPHA ) ) ) )
+    {
+        plwarn( message );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        if ( alpha != NULL )
+        {
+            fprintf( stderr, "Invalid RGBA color: %d, %d, %d, %e\n", (int) *r, (int) *g, (int) *b, (double) *alpha );
+            *r = MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, *r ) );
+            *g = MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, *g ) );
+            *b = MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, *b ) );
+            if ( isnan( *alpha ) )
+                *alpha = MAX_PLFLT_ALPHA;
+            *alpha = MAX( MIN_PLFLT_ALPHA, MIN( MAX_PLFLT_ALPHA, *alpha ) );
+            fprintf( stderr, "Corrected RGBA color: %d, %d, %d, %e\n", (int) *r, (int) *g, (int) *b, (double) *alpha );
+        }
+        else
+
+        {
+            fprintf( stderr, "Invalid RGB color: %d, %d, %d\n", (int) *r, (int) *g, (int) *b );
+            *r = MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, *r ) );
+            *g = MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, *g ) );
+            *b = MAX( MIN_PLINT_RGB, MIN( MAX_PLINT_RGB, *b ) );
+            fprintf( stderr, "Corrected RGB color: %d, %d, %d\n", (int) *r, (int) *g, (int) *b );
+        }
+    }
+}
