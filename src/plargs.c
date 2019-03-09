@@ -1,9 +1,19 @@
 //  Maurice LeBrun			mjl@dino.ph.utexas.edu
 //  Institute for Fusion Studies	University of Texas at Austin
 //
-//  Copyright (C) 1993-2004 Maurice LeBrun
-//  Copyright (C) 2004 Andrew Ross
-//  Copyright (C) 2000-2018 Alan W. Irwin
+//  Copyright (C) 1993-2005 Maurice LeBrun
+//  Copyright (C) 1995 Rady Shouman
+//  Copyright (C) 1998-2000 Geoffrey Furnish
+//  Copyright (C) 2000-2019 Alan W. Irwin
+//  Copyright (C) 2001 Joao Cardoso
+//  Copyright (C) 2004-2011 Andrew Ross
+//  Copyright (C) 2004-2005 Rafael Laboissiere
+//  Copyright (C) 2007 Andrew Roach
+//  Copyright (C) 2008-2009 Werner Smekal
+//  Copyright (C) 2009-2011 Hazen Babcock
+//  Copyright (C) 2009-2010 Hezekiah M. Carty
+//  Copyright (C) 2015 Jim Dishaw
+//  Copyright (C) 2017 Phil Rosenberg
 //
 //  This file is part of PLplot.
 //
@@ -97,6 +107,7 @@
 
 #include "plplotP.h"
 #include <ctype.h>
+#include <errno.h>
 
 #ifdef HAVE_CRT_EXTERNS_H
 //
@@ -115,54 +126,52 @@ static void Syntax( void );
 
 // Option handlers
 
-static int opt_h( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_v( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_verbose( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_debug( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_hack( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_dev( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_o( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_geo( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 static int opt_a( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_jx( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_jy( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_mar( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_ori( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_freeaspect( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_portrait( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_width( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_bg( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_ncol0( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_ncol1( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_fam( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_fsiz( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_fbeg( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_finc( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_fflen( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_bufmax( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_nopixmap( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_db( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_np( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_px( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_py( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_wplt( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_drvopt( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-
-static int opt_plserver( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_plwindow( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 static int opt_auto_path( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_bg( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 static int opt_bufmax( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_server_name( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_tk_file( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_dpi( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_dev_compression( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_bufmax( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 static int opt_cmap0( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 static int opt_cmap1( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-static int opt_locale( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_db( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_debug( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_dev( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_dev_compression( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_dpi( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_drvopt( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 static int opt_eofill( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
-
-static int opt_mfo( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fam( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fbeg( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fflen( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_finc( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_freeaspect( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_fsiz( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_geo( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_h( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_hack( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_jx( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_jy( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_locale( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_mar( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 static int opt_mfi( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_mfo( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_ncol0( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_ncol1( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_nopixmap( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_np( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_o( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_ori( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_plserver( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_plwindow( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_portrait( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_px( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_py( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_server_name( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_tk_file( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_v( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_verbose( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_width( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
+static int opt_wplt( PLCHAR_VECTOR, PLCHAR_VECTOR, void * );
 
 // Global variables
 
@@ -440,7 +449,7 @@ static PLOptionTable ploption_table[] = {
         NULL,
         PL_OPT_FUNC | PL_OPT_ARG,
         "-bg color",
-        "Background color (FF0000=opaque red, 0000FF_0.1=blue with alpha of 0.1)"
+        "Background color (e.g., FF0000=opaque red, 0000FF_0.1=blue with alpha of 0.1)"
     },
     {
         "ncol0",                // Allocated colors in cmap 0
@@ -1234,7 +1243,13 @@ GetOptarg( char **popt_arg, int *p_myargc, char ***p_argv, int *p_argc )
     if ( !result )
     {
         ( *p_argv )++;
-        if ( ( *p_argv )[0][0] == '-' && isalpha( ( *p_argv )[0][1] ) )
+        // Skip -bg argument checking since, for example, "-ffffff" is
+        // valid but would be considered invalid by the crude test at
+        // the end of the if.  Instead, -bg always consumes the next
+        // argument (which exists according to the test above) in any
+        // form, and that argument is checked for validity by the
+        //  opt_bg routine.
+        if ( strstr( ( ( *p_argv ) - 1 )[0], "-bg" ) != ( ( *p_argv ) - 1 )[0] && ( *p_argv )[0][0] == '-' && isalpha( ( *p_argv )[0][1] ) )
         {
             ( *p_argv )--;                // oops, next arg is a flag
             result = 1;
@@ -1696,7 +1711,7 @@ opt_hack( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), vo
 //--------------------------------------------------------------------------
 
 static int
-opt_dev( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_dev( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdev( opt_arg );
     return 0;
@@ -1717,7 +1732,7 @@ opt_dev( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSE
 //--------------------------------------------------------------------------
 
 static int
-opt_o( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_o( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsfnam( opt_arg );
     return 0;
@@ -1738,7 +1753,7 @@ opt_o( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_mar( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_mar( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( atof( opt_arg ), PL_NOTSET, PL_NOTSET, PL_NOTSET );
     return 0;
@@ -1759,7 +1774,7 @@ opt_mar( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSE
 //--------------------------------------------------------------------------
 
 static int
-opt_a( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_a( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, atof( opt_arg ), PL_NOTSET, PL_NOTSET );
     return 0;
@@ -1780,7 +1795,7 @@ opt_a( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED(
 //--------------------------------------------------------------------------
 
 static int
-opt_jx( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_jx( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, PL_NOTSET, atof( opt_arg ), PL_NOTSET );
     return 0;
@@ -1801,7 +1816,7 @@ opt_jx( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_jy( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_jy( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdidev( PL_NOTSET, PL_NOTSET, PL_NOTSET, atof( opt_arg ) );
     return 0;
@@ -1822,7 +1837,7 @@ opt_jy( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_ori( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_ori( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsdiori( atof( opt_arg ) );
     return 0;
@@ -1899,7 +1914,7 @@ opt_portrait( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg )
 //--------------------------------------------------------------------------
 
 static int
-opt_width( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_width( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     double width;
 
@@ -1924,11 +1939,12 @@ opt_width( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNU
 //! Sets background color (rgb represented in hex on command line) and alpha
 //! (represented as floating point on the command line with underscore
 //! delimiter), e.g.,
-//! -bg ff0000 (set background to red with an alpha value of 1.0)
-//! -bg ff0000_0.1 (set background to red with an alpha value of 0.1
+//! -bg ff0000 (set background to red with an alpha value of MAX_PLFLT_ALPHA ==> opaque)
+//! -bg ff0000_0.1 (set background to red with an alpha value of 0.1)
 //!
 //! @param PL_UNUSED( opt ) Not used.
-//! @param opt_arg Background RGB color in hex.
+//! @param opt_arg Background RGB color in hex (in 3-digit of 6-digit format)
+//! followed by optional combination of "_" + floating-point alpha value.
 //! @param PL_UNUSED( client_data ) Not used.
 //!
 //! returns 0.
@@ -1936,15 +1952,17 @@ opt_width( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNU
 //--------------------------------------------------------------------------
 
 static int
-opt_bg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_bg( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     PLCHAR_VECTOR rgb;
-    char          *color_field, *alpha_field;
+    char          *color_field, *color_field_wp, *color_field_wp_alt, *alpha_field;
+    char          *endptr;
     long          bgcolor;
     PLINT         r, g, b;
     PLFLT         a;
+    int           save_errno;
 
-// Strip off leading "#" (TK-ism) if present.
+    // Strip off leading "#" (TK-ism) if present.
 
     if ( *opt_arg == '#' )
         rgb = opt_arg + 1;
@@ -1954,24 +1972,80 @@ opt_bg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED
     strncpy( opttmp, rgb, OPTMAX - 1 );
     opttmp[OPTMAX - 1] = '\0';
 
-    if ( strchr( opttmp, '_' ) )
+    //fprintf( stderr, "-bg option = %s\n", opttmp );
+    color_field = opttmp;
+    alpha_field = strchr( opttmp, '_' );
+    if ( alpha_field != NULL )
     {
-        // e.g., -bg ff0000_0.1
-        color_field = strtok( opttmp, "_" );
-        alpha_field = strtok( NULL, "_" );
+        // null-terminate color_field at the position of the delimiter.
+        *alpha_field = '\0';
+        // point alpha_field at the position one beyond the delimiter.
+        alpha_field++;
     }
     else
     {
-        color_field = opttmp;
-        alpha_field = NULL;
+        // If no delimiter, then assume opaque.
+        alpha_field = "MAX_PLFLT_ALPHA";
     }
 
-    bgcolor = strtol( color_field, NULL, 16 );
+    //fprintf( stderr, "color_field = %s\n", color_field );
+    //fprintf( stderr, "alpha_field = %s\n", alpha_field );
 
-// Must be either a 3 or 6 digit hex number
-// If 3 digits, each is "doubled" (i.e. ABC becomes AABBCC).
+    // Parse color_field
+    errno      = 0; // To distinguish success/failure after call
+    bgcolor    = strtol( color_field, &endptr, 16 );
+    save_errno = errno;
 
-    switch ( strlen( color_field ) )
+    // Check for various possible errors
+
+    if ( ( errno == ERANGE && ( bgcolor == LONG_MIN || bgcolor == LONG_MAX ) ) || ( errno != 0 && bgcolor == 0 ) )
+    {
+        plwarn( "opt_bg: parsing of color_field as hex to a long caused integer overflow so use (warning) red" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        errno = save_errno;
+        perror( "opt_bg strtol issue" );
+        fprintf( stderr, "color_field = %s\n", color_field );
+        color_field = "ff0000";
+        fprintf( stderr, "derived color_field = %s\n", color_field );
+        bgcolor = strtol( color_field, &endptr, 16 );
+        fprintf( stderr, "derived bgcolor = %#lx\n", bgcolor );
+    }
+    else if ( endptr == color_field )
+    {
+        plwarn( "opt_bg: color_field could not be parsed as hex to a long so use (warning) red" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        fprintf( stderr, "color_field = %s\n", color_field );
+        color_field = "ff0000";
+        fprintf( stderr, "derived color_field = %s\n", color_field );
+        bgcolor = strtol( color_field, &endptr, 16 );
+        fprintf( stderr, "derived bgcolor = %#lx\n", bgcolor );
+    }
+    else if ( *endptr != '\0' )
+    {
+        plwarn( "opt_bg: color_field could be parsed as hex to a long but there was trailing garbage which was ignored" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        fprintf( stderr, "color_field = %s\n", color_field );
+        // Trim trailing garbage off of color_field.
+        *endptr = '\0';
+        fprintf( stderr, "derived color_field = %s\n", color_field );
+        fprintf( stderr, "derived bgcolor = %#lx\n", bgcolor );
+    }
+
+    // If bgcolor has 3 digits, each is "doubled" (i.e. ABC becomes AABBCC).
+
+    // Find color_field without prefix where that prefix consists of optional whitespace followed
+    // by optional sign followed by optional 0x or 0X.
+    color_field_wp = color_field;
+    while ( isspace( (unsigned char) *color_field_wp ) )
+        color_field_wp++;
+    if ( ( color_field_wp_alt = strstr( color_field_wp, "+" ) ) == color_field_wp ||
+         ( color_field_wp_alt = strstr( color_field_wp, "-" ) ) == color_field_wp )
+        color_field_wp += 1;
+    if ( ( color_field_wp_alt = strstr( color_field_wp, "0x" ) ) == color_field_wp ||
+         ( color_field_wp_alt = strstr( color_field_wp, "0X" ) ) == color_field_wp )
+        color_field_wp += 2;
+
+    switch ( strlen( color_field_wp ) )
     {
     case 3:
         r = (PLINT) ( ( bgcolor & 0xF00 ) >> 8 );
@@ -1990,15 +2064,51 @@ opt_bg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED
         break;
 
     default:
-        fprintf( stderr, "Unrecognized background color value %s\n", color_field );
-        return 1;
+        plwarn( "opt_bg: color_field without prefix is not of the correct form.  Therefore use (warning) red" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        fprintf( stderr, "color_field = %s\n", color_field );
+        fprintf( stderr, "%s\n", "The correct form of color_field without prefix is exactly 3 or 6 hex digits" );
+        fprintf( stderr, "color_field without prefix = %s\n", color_field_wp );
+        r = MAX_PLINT_RGB;
+        g = 0;
+        b = 0;
+        fprintf( stderr, "derived r, g, b = %d, %d, %d\n", r, g, b );
     }
 
-    if ( alpha_field )
-        a = atof( alpha_field );
-    else
-        a = 1.;
+    // Parse alpha_field using strtod and checking for all potential issues.
+    errno      = 0; // To distinguish success/failure after call
+    a          = (PLFLT) strtod( alpha_field, &endptr );
+    save_errno = errno;
 
+    // Check for various possible errors
+
+    if ( errno == ERANGE && ( a == HUGE_VAL || a == -HUGE_VAL ) )
+    {
+        plwarn( "opt_bg: parsing of alpha_field to a double caused floating overflow so use opaque" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        errno = save_errno;
+        perror( "opt_bg strtod issue" );
+        fprintf( stderr, "alpha_field = %s\n", alpha_field );
+        a = MAX_PLFLT_ALPHA;
+        fprintf( stderr, "derived alpha value = %e\n", a );
+    }
+    else if ( endptr == alpha_field )
+    {
+        plwarn( "opt_bg: alpha_field could not be parsed to a double so use opaque" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        fprintf( stderr, "alpha_field = %s\n", alpha_field );
+        a = MAX_PLFLT_ALPHA;
+        fprintf( stderr, "derived alpha value = %e\n", a );
+    }
+    else if ( *endptr != '\0' )
+    {
+        plwarn( "opt_bg: alpha_field could be parsed to a double but there was trailing garbage which was ignored" );
+        fprintf( stderr, "%s\n", "Further information relevant to this warning:" );
+        fprintf( stderr, "alpha_field = %s\n", alpha_field );
+        fprintf( stderr, "derived alpha value = %e\n", a );
+    }
+
+    //fprintf( stderr, "r, g, b, alpha = %d, %d, %d, %e\n", r, g, b, a );
     plscolbga( r, g, b, a );
 
     return 0;
@@ -2019,7 +2129,7 @@ opt_bg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol0( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_ncol0( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->ncol0 = atoi( opt_arg );
     return 0;
@@ -2040,7 +2150,7 @@ opt_ncol0( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNU
 //--------------------------------------------------------------------------
 
 static int
-opt_ncol1( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_ncol1( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->ncol1 = atoi( opt_arg );
     return 0;
@@ -2061,7 +2171,7 @@ opt_ncol1( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNU
 //--------------------------------------------------------------------------
 
 static int
-opt_wplt( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_wplt( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     char  *field;
     PLFLT xl, yl, xr, yr;
@@ -2108,7 +2218,7 @@ opt_wplt( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 
 static int
-opt_drvopt( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_drvopt( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     char      t, *tt, *option, *value;
     int       fl = 0;
@@ -2139,9 +2249,9 @@ opt_drvopt( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UN
             }
 
             *tt          = '\0'; tt = option;
-            drvp->option = plstrdup( option );                           // it should not be release, because of familying
-            drvp->value  = plstrdup( value );                            // don't release
-            drvp->next   = (DrvOptCmd *) malloc( sizeof ( DrvOptCmd ) ); // don't release
+            drvp->option = plstrdup( option );                                               // it should not be release, because of familying
+            drvp->value  = plstrdup( value );                                                // don't release
+            drvp->next   = (DrvOptCmd *) malloc( sizeof ( DrvOptCmd ) );                     // don't release
             if ( drvp->next == NULL )
                 plexit( "opt_drvopt: Out of memory!?\n" );
 
@@ -2165,8 +2275,8 @@ opt_drvopt( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UN
         value[1] = '\0';
     }
 
-    drvp->option = plstrdup( option ); // don't release
-    drvp->value  = plstrdup( value );  // don't release
+    drvp->option = plstrdup( option );                       // don't release
+    drvp->value  = plstrdup( value );                        // don't release
     drvp->next   = NULL;
 
 #ifdef DEBUG
@@ -2228,7 +2338,7 @@ opt_fam( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), voi
 //--------------------------------------------------------------------------
 
 static int
-opt_fsiz( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_fsiz( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     PLINT  bytemax;
     size_t len        = strlen( opt_arg );
@@ -2286,7 +2396,7 @@ opt_fsiz( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 
 static int
-opt_fbeg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_fbeg( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->member = atoi( opt_arg );
 
@@ -2308,7 +2418,7 @@ opt_fbeg( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 
 static int
-opt_finc( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_finc( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->finc = atoi( opt_arg );
 
@@ -2330,7 +2440,7 @@ opt_finc( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUS
 //--------------------------------------------------------------------------
 
 static int
-opt_fflen( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_fflen( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->fflen = atoi( opt_arg );
 
@@ -2415,7 +2525,7 @@ opt_db( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR PL_UNUSED( opt_arg ), void
 //--------------------------------------------------------------------------
 
 static int
-opt_bufmax( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_bufmax( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->bufmax = atoi( opt_arg );
     return 0;
@@ -2436,7 +2546,7 @@ opt_bufmax( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UN
 //--------------------------------------------------------------------------
 
 static int
-opt_server_name( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_server_name( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->server_name = plstrdup( opt_arg );
     return 0;
@@ -2457,7 +2567,7 @@ opt_server_name( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * 
 //--------------------------------------------------------------------------
 
 static int
-opt_plserver( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_plserver( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->plserver = plstrdup( opt_arg );
     return 0;
@@ -2478,7 +2588,7 @@ opt_plserver( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_
 //--------------------------------------------------------------------------
 
 static int
-opt_plwindow( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_plwindow( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->plwindow = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
@@ -2503,7 +2613,7 @@ opt_plwindow( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_
 //--------------------------------------------------------------------------
 
 static int
-opt_auto_path( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_auto_path( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plsc->auto_path = plstrdup( opt_arg );
     return 0;
@@ -2524,7 +2634,7 @@ opt_auto_path( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL
 //--------------------------------------------------------------------------
 
 static int
-opt_px( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_px( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plssub( atoi( opt_arg ), -1 );
     return 0;
@@ -2545,7 +2655,7 @@ opt_px( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_py( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_py( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plssub( -1, atoi( opt_arg ) );
     return 0;
@@ -2570,7 +2680,7 @@ opt_py( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED
 //--------------------------------------------------------------------------
 
 static int
-opt_geo( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_geo( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     int   numargs;
     PLFLT xdpi = 0., ydpi = 0.;
@@ -2663,7 +2773,7 @@ opt_geo( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSE
 //--------------------------------------------------------------------------
 
 static int
-opt_tk_file( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_tk_file( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     if ( ( plsc->tk_file = (char *) malloc( (size_t) ( 1 + strlen( opt_arg ) ) * sizeof ( char ) ) ) == NULL )
     {
@@ -2693,7 +2803,7 @@ opt_tk_file( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_U
 //--------------------------------------------------------------------------
 
 static int
-opt_dpi( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_dpi( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     char  *field;
     PLFLT xdpi = 0., ydpi = 0.;
@@ -2741,7 +2851,7 @@ opt_dpi( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSE
 //--------------------------------------------------------------------------
 
 static int
-opt_dev_compression( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_dev_compression( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     PLINT comp = 0;
 
@@ -2770,7 +2880,7 @@ opt_dev_compression( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, voi
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap0( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_cmap0( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plspal0( opt_arg );
     return 0;
@@ -2790,7 +2900,7 @@ opt_cmap0( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNU
 //--------------------------------------------------------------------------
 
 static int
-opt_cmap1( PLCHAR_VECTOR  PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
+opt_cmap1( PLCHAR_VECTOR PL_UNUSED( opt ), PLCHAR_VECTOR opt_arg, void * PL_UNUSED( client_data ) )
 {
     plspal1( opt_arg, TRUE );
     return 0;
