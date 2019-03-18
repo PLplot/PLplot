@@ -2,7 +2,7 @@
 
 //
 //Copyright (C) 2002 Gary Bishop
-//Copyright (C) 2004-2018 Alan W. Irwin
+//Copyright (C) 2004-2019 Alan W. Irwin
 //Copyright (C) 2004 Andrew Ross
 //
 //This file is part of PLplot.
@@ -1262,19 +1262,19 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             {
                 str = PyString_AsString( rep );
             }
-            if ( strcmp( str, "<built-in function pltr0>" ) == 0 )
+            if ( strstr( str, "function pltr0" ) != 0 )
             {
                 result      = pltr0;
                 pltr_type   = CB_0;
                 python_pltr = NULL;
             }
-            else if ( strcmp( str, "<built-in function pltr1>" ) == 0 )
+            else if ( strstr( str, "function pltr1" ) != 0 )
             {
                 result      = pltr1;
                 pltr_type   = CB_1;
                 python_pltr = NULL;
             }
-            else if ( strcmp( str, "<built-in function pltr2>" ) == 0 )
+            else if ( strstr( str, "function pltr2" ) != 0 )
             {
                 result      = pltr2;
                 pltr_type   = CB_2;
