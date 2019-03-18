@@ -1,6 +1,6 @@
 # examples/python/CMakeLists.txt
 
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -147,10 +147,10 @@ if(CORE_BUILD)
     endforeach(file ${python_SCRIPTS} ${python_DATA})
     add_custom_target(python_examples ALL DEPENDS ${command_DEPENDS})
     set_property(GLOBAL PROPERTY TARGETS_examples_python python_examples
-      PLPLOT::_plplotc)
+      PLPLOT::plplotc)
     if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
       set_property(GLOBAL APPEND PROPERTY TARGETS_examples_python python_examples
-      PLPLOT::_Pltk_init)
+      PLPLOT::Pltk_init)
     endif(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
     set_property(GLOBAL PROPERTY FILES_examples_python ${command_DEPENDS})
   endif(BUILD_TEST)
@@ -278,9 +278,9 @@ if(BUILD_TEST)
     ${CMAKE_CURRENT_BINARY_DIR}/plplot_logo.jpg
     )
   if(CORE_BUILD)
-    add_dependencies(plplot_logo python_examples PLPLOT::_plplotc)
+    add_dependencies(plplot_logo python_examples PLPLOT::plplotc)
   else(CORE_BUILD)
-    add_dependencies(plplot_logo PLPLOT::_plplotc)
+    add_dependencies(plplot_logo PLPLOT::plplotc)
   endif(CORE_BUILD)
 
 endif(BUILD_TEST)

@@ -1049,7 +1049,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt4_example
 	PLPLOT::plplot_pyqt4
 	python_examples
-	PLPLOT::_plplotc
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -1059,7 +1059,7 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_pyqt4_example
 	PLPLOT::plplot_pyqt4
-	PLPLOT::_plplotc
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     endif(CORE_BUILD)
@@ -1077,7 +1077,7 @@ if(BUILD_TEST)
       add_dependencies(test_pyqt5_example
 	PLPLOT::plplot_pyqt5
 	python_examples
-	PLPLOT::_plplotc
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     else(CORE_BUILD)
@@ -1087,7 +1087,7 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_pyqt5_example
 	PLPLOT::plplot_pyqt5
-	PLPLOT::_plplotc
+	PLPLOT::plplotc
 	${qt_targets}
 	)
     endif(CORE_BUILD)
@@ -1214,8 +1214,8 @@ if(BUILD_TEST)
 	  VERBATIM
 	  )
 	add_dependencies(test_pytkdemo
-	  PLPLOT::_plplotc
-	  PLPLOT::_Pltk_init
+	  PLPLOT::plplotc
+	  PLPLOT::Pltk_init
 	  python_examples
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
@@ -1227,8 +1227,8 @@ if(BUILD_TEST)
 	  VERBATIM
 	  )
 	add_dependencies(test_pytkdemo
-	  PLPLOT::_plplotc
-	  PLPLOT::_Pltk_init
+	  PLPLOT::plplotc
+	  PLPLOT::Pltk_init
 	  ${TARGET_tclIndex_tcl}
 	  ${xwin_targets}
 	  )
