@@ -41,21 +41,23 @@ function [x, y, but] = ginput(n)
     n = 1e6;
   endif
 
-  keysym = str = 0;
+  keysym = 0;
   i = 0;
 
   while (i != n && keysym != 13)
     [status, state, keysym, button, string, pX, pY, dX, dY, wX, wY] = plGetCursor;
-    if (button == 0 && string(1) == 0)
+    if (button == 0 && length(string) == 0)
       continue;
     else
       i++;
       x(i) = wX;
       y(i) = wY;
-      # double is the recommended replacement for toascii
-      str = double(string(1));
       if (button == 0)
-	but(i) = str;
+        ## Recommended replacement for the horrible misnomer (and deprecated in 4.4) toascii
+	## which contrary to its name converts ascii characters to the corresponding integers.
+	## But integers are stored as doubles in octave which is why double is a reasonable
+	## replacement for what toascii actually does.
+	but(i) = double(string(1));
       else
 	but(i) = button;
       endif
