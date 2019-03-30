@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Complete tests of PLplot for the three generic build types which
-# consist of shared+dynamic, shared+nondynamic, and
-# static+nondynamic.  These complete tests that are run for each build
-# type are (I) test_noninteractive, test_interactive, and ctest in the
-# build tree; (II) traditional [Makefile+pkg-config]
-# test_noninteractive and test_interactive of installed examples; and
-# (III) CMake-based test_noninteractive and test_interactive of
-# installed examples.
+# consist of shared+dynamic, shared+nondynamic, and static+nondynamic.
+# These complete tests that are run for each build type are (I)
+# test_noninteractive, test_interactive, and ctest in the core build
+# tree; (II) CMake-based test_noninteractive, test_interactive and
+# ctest in the build tree for the installed examples; and (III)
+# traditional [Makefile+pkg-config] test_noninteractive and
+# test_interactive of the installed examples.
 
 usage () {
     local prog=`basename $0`
@@ -55,8 +55,10 @@ OPTIONS:
   [--do_nondynamic (yes/no, defaults to yes)]
   [--do_static (yes/no, defaults to yes)]
 
-  The next six control which of seven kinds of tests are done for
-  each kind of build.
+  The next six control which of eight kinds of tests
+  (test_interactive, test_noninteractive, and ctest for both the build
+  and install tree and test_interactive and test_noninteractive for
+  the traditional install tree) are done for each kind of build.
   [--do_test_interactive (yes/no, defaults to yes)]
   [--do_test_noninteractive (yes/no, defaults to yes)]
   [--do_ctest (yes/no, defaults to yes)]
@@ -164,7 +166,7 @@ Each of the steps in this comprehensive test may take a while...."
 	mkdir -p "$INSTALL_BUILD_TREE"
     fi
     cd "$BUILD_TREE"
-    if [ "$do_ctest" = "yes" -o "$do_test_build_tree" = "yes" ] ; then
+    if [ "$do_test_build_tree" = "yes" ] ; then
 	BUILD_TEST_OPTION="-DBUILD_TEST=ON"
     else
 	BUILD_TEST_OPTION=""
@@ -190,55 +192,57 @@ Each of the steps in this comprehensive test may take a while...."
 	collect_exit 1
     fi
 
-    # Prepare TEST_TYPE variables.
+    # Prepare do_test_type variables.
     if [ "$TEST_TYPE" = "noninteractive" ] ; then
 	do_test_type=$do_test_noninteractive
     else
 	do_test_type=$do_test_interactive
     fi
-    if [ "$do_test_build_tree" = "yes" -a "$do_test_type" = "yes" ] ; then
-	output="${OUTPUT_TREE}/make_${TEST_TYPE}.out"
-	rm -f "$output"
-	echo_tee "$build_command VERBOSE=1 test_${TEST_TYPE} in the build tree"
-	$build_command VERBOSE=1 test_${TEST_TYPE} >& "$output"
-	make_test_type_rc=$?
-	if [ "$make_test_type_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the build tree"
-	    collect_exit 1
-	fi
-    fi
-
-    if [ "$do_ctest" = "yes" -a "$TEST_TYPE" = "noninteractive" ] ; then
-	output="$OUTPUT_TREE"/make.out
-	rm -f "$output"
-	echo_tee "$build_command VERBOSE=1 in the build tree"
-	$build_command VERBOSE=1 >& "$output"
-	make_rc=$?
-	if [ "$make_rc" -eq 0 ] ; then
-	    output="$OUTPUT_TREE"/ctest.out
+    if [ "$do_test_build_tree" = "yes" ] ; then
+	if [ "$do_test_type" = "yes" ] ; then
+	    output="${OUTPUT_TREE}/make_${TEST_TYPE}.out"
 	    rm -f "$output"
-	    echo_tee "$ctest_command --extra-verbose ${dashboard_option}in the build tree"
-	    $ctest_command --extra-verbose ${dashboard_option}>& "$output"
-	    ctest_rc=$?
-	    if [ "$ctest_rc" -eq 0 ] ; then
-		if [ "$do_clean_as_you_go" = "yes" ] ; then
-		    output="$OUTPUT_TREE"/clean_ctest_plot_files.out
-		    rm -f "$output"
-		    echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the build tree (since we are done with ctest)"
-		    $build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
-		    make_rc=$?
-		    if [ "$make_rc" -ne 0 ] ; then
-			echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the build tree"
-			collect_exit 1
-		    fi
-		fi
-	    else
-		echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the build tree"
+	    echo_tee "$build_command VERBOSE=1 test_${TEST_TYPE} in the build tree"
+	    $build_command VERBOSE=1 test_${TEST_TYPE} >& "$output"
+	    make_test_type_rc=$?
+	    if [ "$make_test_type_rc" -ne 0 ] ; then
+		echo_tee "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the build tree"
 		collect_exit 1
 	    fi
-	else
-	    echo_tee "ERROR: $build_command VERBOSE=1 failed in the build tree"
-	    collect_exit 1
+	fi
+
+	if [ "$do_ctest" = "yes" -a "$TEST_TYPE" = "noninteractive" ] ; then
+	    output="$OUTPUT_TREE"/make.out
+	    rm -f "$output"
+	    echo_tee "$build_command VERBOSE=1 in the build tree"
+	    $build_command VERBOSE=1 >& "$output"
+	    make_rc=$?
+	    if [ "$make_rc" -eq 0 ] ; then
+		output="$OUTPUT_TREE"/ctest.out
+		rm -f "$output"
+		echo_tee "$ctest_command --extra-verbose ${dashboard_option}in the build tree"
+		$ctest_command --extra-verbose ${dashboard_option}>& "$output"
+		ctest_rc=$?
+		if [ "$ctest_rc" -eq 0 ] ; then
+		    if [ "$do_clean_as_you_go" = "yes" ] ; then
+			output="$OUTPUT_TREE"/clean_ctest_plot_files.out
+			rm -f "$output"
+			echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the build tree (since we are done with ctest)"
+			$build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
+			make_rc=$?
+			if [ "$make_rc" -ne 0 ] ; then
+			    echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the build tree"
+			    collect_exit 1
+			fi
+		    fi
+		else
+		    echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the build tree"
+		    collect_exit 1
+		fi
+	    else
+		echo_tee "ERROR: $build_command VERBOSE=1 failed in the build tree"
+		collect_exit 1
+	    fi
 	fi
     fi
 
@@ -318,7 +322,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    output="$OUTPUT_TREE"/installed_cmake.out
 	    rm -f "$output"
 	    echo_tee "${cmake_command} in the installed examples build tree"
-	    ${cmake_command} -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+	    ${cmake_command} -G "$generator_string" "$INSTALLED_DASHBOARD_LABEL_OPTION" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
 	    cmake_rc=$?
 	    if [ "$cmake_rc" -ne 0 ] ; then
 		echo_tee "ERROR: ${cmake_command} in the installed examples build tree failed"
@@ -334,6 +338,7 @@ Each of the steps in this comprehensive test may take a while...."
 		    echo_tee "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the installed examples build tree"
 		    collect_exit 1
 		fi
+
 		if [ "$do_clean_as_you_go" = "yes" ] ; then
 		    output="$OUTPUT_TREE"/installed_clean.out
 		    rm -f "$output"
@@ -344,6 +349,39 @@ Each of the steps in this comprehensive test may take a while...."
 			echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
 			collect_exit 1
 		    fi
+		fi
+	    fi
+	    if [ "$do_ctest" = "yes" -a "$TEST_TYPE" = "noninteractive" ] ; then
+		output="$OUTPUT_TREE"/installed_make.out
+		rm -f "$output"
+		echo_tee "$build_command VERBOSE=1 in the installed examples build tree"
+		$build_command VERBOSE=1 >& "$output"
+		make_rc=$?
+		if [ "$make_rc" -eq 0 ] ; then
+		    output="$OUTPUT_TREE"/installed_ctest.out
+		    rm -f "$output"
+		    echo_tee "$ctest_command --extra-verbose ${dashboard_option}in the installed examples build tree"
+		    $ctest_command --extra-verbose ${dashboard_option}>& "$output"
+		    ctest_rc=$?
+		    if [ "$ctest_rc" -eq 0 ] ; then
+			if [ "$do_clean_as_you_go" = "yes" ] ; then
+			    output="$OUTPUT_TREE"/installed_clean_ctest_plot_files.out
+			    rm -f "$output"
+			    echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the installed examples build tree"
+			    $build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
+			    make_rc=$?
+			    if [ "$make_rc" -ne 0 ] ; then
+				echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the installed examples build tree"
+				collect_exit 1
+			    fi
+			fi
+		    else
+			echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the installed examples build tree"
+			collect_exit 1
+		    fi
+		else
+		    echo_tee "ERROR: $build_command VERBOSE=1 failed in the installed examples build tree"
+		    collect_exit 1
 		fi
 	    fi
 	fi
@@ -799,8 +837,10 @@ for test_type in ${test_types} ; do
 	INSTALL_BUILD_TREE="$prefix/shared/$test_type/install_build_tree"
 	if [ "$do_submit_dashboard" = "yes" ] ; then
 	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(shared library + dynamic devices)"
+	    INSTALLED_DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(installed shared library + dynamic devices)"
 	else
 	    DASHBOARD_LABEL_OPTION=
+	    INSTALLED_DASHBOARD_LABEL_OPTION=
 	fi
 	comprehensive_test "-DBUILD_SHARED_LIBS=ON" $test_type
     fi
@@ -813,8 +853,10 @@ for test_type in ${test_types} ; do
 	INSTALL_BUILD_TREE="$prefix/nondynamic/$test_type/install_build_tree"
 	if [ "$do_submit_dashboard" = "yes" ] ; then
 	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(shared library + nondynamic devices)"
+	    INSTALLED_DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(installed shared library + nondynamic devices)"
 	else
 	    DASHBOARD_LABEL_OPTION=
+	    INSTALLED_DASHBOARD_LABEL_OPTION=
 	fi
 	comprehensive_test "-DBUILD_SHARED_LIBS=ON -DENABLE_DYNDRIVERS=OFF" $test_type
     fi
@@ -827,8 +869,10 @@ for test_type in ${test_types} ; do
 	INSTALL_BUILD_TREE="$prefix/static/$test_type/install_build_tree"
 	if [ "$do_submit_dashboard" = "yes" ] ; then
 	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(static library + nondynamic devices)"
+	    INSTALLED_DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(installed static library + nondynamic devices)"
 	else
 	    DASHBOARD_LABEL_OPTION=
+	    INSTALLED_DASHBOARD_LABEL_OPTION=
 	fi
 	comprehensive_test "-DBUILD_SHARED_LIBS=OFF" $test_type
     fi

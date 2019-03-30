@@ -172,9 +172,18 @@ configure_file(
   )
 # Allow access to the generated plplot_config.h for this build.
 add_definitions("-DPLPLOT_HAVE_CONFIG_H")
-# Install top-level files
 
-# Enable testing framework for examples
+# Disable warnings about deprecated functions (Visual C++ 2005)
+if(MSVC_VERSION GREATER 1399)
+  add_definitions("/D_CRT_SECURE_NO_DEPRECATE")
+endif(MSVC_VERSION GREATER 1399)
+
+# Borland Compiler must compile in ANSII mode
+if(BORLAND)
+  add_definitions(-A)
+endif(BORLAND)
+
+# Enable CTest-based testing framework for examples
 if(BUILD_TEST)
 
   # Use same BUILDNAME logic as the CTest module except
@@ -183,7 +192,8 @@ if(BUILD_TEST)
   # for this logic to work it must precede including the
   # CTest module which configures DartConfiguration.tcl
   # with BUILDNAME as determined here.
-
+  # Maintenance: 2019-03-28 copy this BUILDNAME logic from
+  # cmake git v3.13.4 Modules/CTest.cmake.
   if(NOT BUILDNAME)
     set(DART_COMPILER "${CMAKE_CXX_COMPILER}")
     if(NOT DART_COMPILER)
@@ -216,7 +226,7 @@ if(BUILD_TEST)
     set(BUILDNAME "${BUILD_NAME_SYSTEM_NAME}-${DART_COMPILER_NAME}")
   endif()
 
-  # This is only BUILDNAME logic that is different.
+  # This is only BUILDNAME logic that is different from the CTest.cmake version.
   set(BUILDNAME "${BUILDNAME}${PLPLOT_BUILDNAME_SUFFIX}")
 
   # Change the default ctest timeout from 1500 to 15000 to accommodate
@@ -241,27 +251,27 @@ if(BUILD_TEST)
   include(CTest)
 
   # Customize default values set by include(CTest).  Result must be in
-  # build tree so copy it there.
+  # top of build tree so copy it there.  Also note comment
+  # from David Cole <https://blog.kitware.com/ctest-performance-tip-use-ctestcustom-cmake-not-ctest/>
+  # that for greatest speed (to avoid a huge glob over the build tree) it should be named
+  # CTestCustom.cmake rather than the traditional name CTestCustom.ctest
   configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.ctest.in
-    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.ctest
+    ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
     COPYONLY
     )
   # N.B. we execute add_test(...) in the plplot_test
   # subdirectory to implement the various tests that are
   # run by ctest.
+
+  # N.B. The above commands have been copied to examples/CMakeLists.txt so that
+  # ctest can be configured for the installed examples tree.  We also have to
+  # install the following files to implement that as well.
+  install(FILES CTestCustom.cmake.in CTestConfig.cmake DESTINATION ${DATA_DIR}/examples)
+
 endif(BUILD_TEST)
 
-# Disable warnings about deprecated functions (Visual C++ 2005)
-if(MSVC_VERSION GREATER 1399)
-  add_definitions("/D_CRT_SECURE_NO_DEPRECATE")
-endif(MSVC_VERSION GREATER 1399)
-
-# Borland Compiler must compile in ANSII mode
-if(BORLAND)
-  add_definitions(-A)
-endif(BORLAND)
-
+# Install top-level files
 set(top_level_DOCFILES
   ABOUT
   AUTHORS

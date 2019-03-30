@@ -20,7 +20,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
 # N.B. This file is used for both the core build (which installs the examples
-# and optionally [depending on BUILD_TEST} builds them) and the installed
+# and optionally [depending on BUILD_TEST] builds them) and the installed
 # examples build.  The core build has BUILD_TEST OFF or ON at user option
 # and CORE_BUILD always ON.  The installed examples build always has
 # BUILD_TEST ON and CORE_BUILD OFF.
@@ -537,7 +537,7 @@ else(CORE_BUILD)
   set(CMAKE_UNIFORM_POLICY_VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
   cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
   cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
-  project(plplot NONE)
+  project(installed_plplot_examples NONE)
 
   if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
@@ -571,7 +571,92 @@ else(CORE_BUILD)
   #Configure variables and enable languages as needed.
   include(plplot_configure)
 
+  # Maintenance: 2019-03-29.  Copy all the ctest stuff from the top-level directory
+  # Enable CTest-based testing framework for examples.
+  if(BUILD_TEST)
+
+    # Use same BUILDNAME logic as the CTest module except
+    # we allow a BUILDNAME suffix whose value is specified
+    # by the user as PLPLOT_BUILDNAME_SUFFIX.  In order
+    # for this logic to work it must precede including the
+    # CTest module which configures DartConfiguration.tcl
+    # with BUILDNAME as determined here.
+    # Maintenance: 2019-03-28 copy this BUILDNAME logic from
+    # cmake git v3.13.4 Modules/CTest.cmake.
+    if(NOT BUILDNAME)
+      set(DART_COMPILER "${CMAKE_CXX_COMPILER}")
+      if(NOT DART_COMPILER)
+	set(DART_COMPILER "${CMAKE_C_COMPILER}")
+      endif()
+      if(NOT DART_COMPILER)
+	set(DART_COMPILER "unknown")
+      endif()
+      if(WIN32)
+	set(DART_NAME_COMPONENT "NAME_WE")
+      else()
+	set(DART_NAME_COMPONENT "NAME")
+      endif()
+      if(NOT BUILD_NAME_SYSTEM_NAME)
+	set(BUILD_NAME_SYSTEM_NAME "${CMAKE_SYSTEM_NAME}")
+      endif()
+      if(WIN32)
+	set(BUILD_NAME_SYSTEM_NAME "Win32")
+      endif()
+      if(UNIX OR BORLAND)
+	get_filename_component(DART_COMPILER_NAME
+          "${DART_COMPILER}" ${DART_NAME_COMPONENT})
+      else()
+	get_filename_component(DART_COMPILER_NAME
+          "${CMAKE_MAKE_PROGRAM}" ${DART_NAME_COMPONENT})
+      endif()
+      if(DART_COMPILER_NAME MATCHES "devenv")
+	GET_VS_VERSION_STRING("${CMAKE_GENERATOR}" DART_COMPILER_NAME)
+      endif()
+      set(BUILDNAME "${BUILD_NAME_SYSTEM_NAME}-${DART_COMPILER_NAME}")
+    endif()
+
+    # This is only BUILDNAME logic that is different from the CTest.cmake version.
+    set(BUILDNAME "${BUILDNAME}${PLPLOT_BUILDNAME_SUFFIX}")
+
+    # Change the default ctest timeout from 1500 to 15000 to accommodate
+    # our users who happen to have extraordinarily slow computers (such
+    # as the Raspberry Pi) or our users with anomalous platform issues
+    # where some tests are extraordinarily slow (such as test_c_epsqt
+    # and test_c_pdfqt for the static library build on MinGW-w64/MSYS2
+    # [as of 2017-08]).
+
+    # (This change must also be done before the following include)
+    set(DART_TESTING_TIMEOUT 15000 CACHE STRING
+      "Maximum time allowed before CTest will kill the test.")
+
+    # According to
+    # <https://cmake.org/Wiki/CMake_Testing_With_CTest>
+    # the following command executes the required "enable_testing()"
+    # command and also enable the creation and submission of a dashboard
+    # (which is defined as the result of a test run, reformatted for easy review)
+    # to our dashboard server (the PLplot_git "project" at my.cdash.org whose
+    # details are given by CTestConfig.cmake and whose dashboard viewer
+    # URL is <http://my.cdash.org/index.php?project=PLplot_git>).
+    include(CTest)
+
+    # Customize default values set by include(CTest).  Result must be in
+    # top of build tree so copy it there.  Also note comment
+    # from David Cole <https://blog.kitware.com/ctest-performance-tip-use-ctestcustom-cmake-not-ctest/>
+    # that for greatest speed (to avoid a huge glob over the build tree) it should be named
+    # CTestCustom.cmake rather than the traditional name CTestCustom.ctest
+    configure_file(
+      ${CMAKE_CURRENT_SOURCE_DIR}/CTestCustom.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/CTestCustom.cmake
+      COPYONLY
+      )
+    # N.B. we execute add_test(...) in the plplot_test
+    # subdirectory to implement the various tests that are
+    # run by ctest.
+  endif(BUILD_TEST)
+
   find_package(plplot)
+
+  add_subdirectory(plplot_test)
 
 endif(CORE_BUILD)
 
