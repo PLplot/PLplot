@@ -229,6 +229,24 @@ if(CORE_BUILD)
     RENAME Makefile
     )
 
+  if(ENABLE_fortran)
+    # According to the principle of "least surprise", the PLPLOT::plfortrandemolib target
+    # should be created in the fortran subdirectory.  However, we must process that subdirectory
+    # *after* the the foreach loop below where the PLPLOT::plfortrandemolib target is required.
+    # So to break this "chicken/egg" issue build the PLPLOT::plfortrandemolib target here.
+
+    # The module files for the fortran binding are created by
+    # default during the library build in the bindings/fortran directory.
+    include_directories(${CMAKE_BINARY_DIR}/bindings/fortran)
+    # plfortrandemolib depends on the plplotfortran library.
+    set(LIB_INSTALL_RPATH ${LIB_DIR})
+    configure_library_build(plfortrandemolib STATIC fortran/plfortrandemolib.f90 PLPLOT::plplotfortran "${LIB_INSTALL_RPATH}")
+    install(FILES
+      ${CMAKE_CURRENT_BINARY_DIR}/plfortrandemolib.mod
+      DESTINATION ${FORTRAN_MOD_DIR}
+      )
+  endif(ENABLE_fortran)
+
   if(USE_RPATH AND NOT WIN32_OR_CYGWIN)
     # Sort out RPATH issues for the traditional build of the installed
     # examples using */Makefiles configured in each * subdirectory
@@ -289,21 +307,6 @@ if(CORE_BUILD)
 
     # fortran examples:
     if(ENABLE_fortran)
-      # According to the principle of "least surprise", the PLPLOT::plfortrandemolib target
-      # should be created in the fortran subdirectory.  However, we must process that subdirectory
-      # *after* the the foreach loop below where the PLPLOT::plfortrandemolib target is required.
-      # So to break this "chicken/egg" issue build the PLPLOT::plfortrandemolib target here.
-
-      # The module files for the fortran binding are created by
-      # default during the library build in the bindings/fortran directory.
-      include_directories(${CMAKE_BINARY_DIR}/bindings/fortran)
-      # plfortrandemolib depends on the plplotfortran library.
-      set(LIB_INSTALL_RPATH ${LIB_DIR})
-      configure_library_build(plfortrandemolib STATIC fortran/plfortrandemolib.f90 PLPLOT::plplotfortran "${LIB_INSTALL_RPATH}")
-      install(FILES
-	${CMAKE_CURRENT_BINARY_DIR}/plfortrandemolib.mod
-	DESTINATION ${FORTRAN_MOD_DIR}
-	)
       list(APPEND rpath_process_dictionary_list fortran,PLPLOT::plfortrandemolib)
     endif(ENABLE_fortran)
 
