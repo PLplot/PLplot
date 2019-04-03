@@ -66,6 +66,13 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
 endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
+# CMP0086 implemented for cmake-3.14.0 so to avoid warning
+# messages when our minimum version is less than that must
+# set this policy when it is available.
+if(POLICY CMP0086)
+  cmake_policy(SET CMP0086 NEW)
+endif(POLICY CMP0086)
+
 # N.B. As a result of the following two set commands and logic in the
 # configure_library_build function, all internal writeable library
 # targets should be referred to as
@@ -120,11 +127,6 @@ if(WIN32 OR CYGWIN)
 else(WIN32 OR CYGWIN)
   set(WIN32_OR_CYGWIN OFF)
 endif(WIN32 OR CYGWIN)
-
-#foreach(policy RANGE 0 9)
-#  cmake_policy(GET CMP000${policy} policy_result)
-#  message(STATUS "Policy CMP000${policy} is ${policy_result}")
-#endforeach(policy RANGE 0 9)
 
 set(PACKAGE plplot)
 

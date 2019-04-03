@@ -229,7 +229,6 @@ if(CORE_BUILD)
     RENAME Makefile
     )
 
-
   if(USE_RPATH AND NOT WIN32_OR_CYGWIN)
     # Sort out RPATH issues for the traditional build of the installed
     # examples using */Makefiles configured in each * subdirectory
@@ -305,7 +304,6 @@ if(CORE_BUILD)
 	${CMAKE_CURRENT_BINARY_DIR}/plfortrandemolib.mod
 	DESTINATION ${FORTRAN_MOD_DIR}
 	)
-
       list(APPEND rpath_process_dictionary_list fortran,PLPLOT::plfortrandemolib)
     endif(ENABLE_fortran)
 
@@ -543,6 +541,13 @@ else(CORE_BUILD)
     cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
     cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
   endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+
+  # CMP0086 implemented for cmake-3.14.0 so to avoid warning
+  # messages when our minimum version is less than that must
+  # set this policy when it is available.
+  if(POLICY CMP0086)
+    cmake_policy(SET CMP0086 NEW)
+  endif(POLICY CMP0086)
 
   # It is a fatal error if no working C compiler is available to build
   # the PLplot core C library and core C examples.  All other compilers
