@@ -14,6 +14,29 @@ paste.
 
 |||
 ---|---|---|---
+Tester|Arjen Markus
+Notes|(a), (e1), (A), (B1), (E5), (F3), (G5), (H6)
+Date|2019-05-22
+PLplot commit|plplot-5.14.0-42-gb766e84b4
+CMake version|3.14.2
+Generator|"Unix Makefiles"
+Platform|MinGW-w64/MSYS2 (updated on 2019-05-13, 64-bit, Windows 7)
+Pango/Cairo version|1.42.1/1.15.12
+Qt version|5.10.1
+WxWidgets version|Not applicable
+Shared libraries?|Dynamic drivers?
+Yes|Yes
+Yes|No
+No|No
+CMake-based build tree?|test_noninteractive?|test_interactive?|ctest?
+Yes|Yes|No|Yes
+CMake-based installed examples?|test_noninteractive?|test_interactive|ctest?
+Yes|Yes|No|Yes
+Legacy Installed examples?|test_noninteractive?|test_interactive
+Yes|Yes|No
+
+|||
+---|---|---|---
 Tester|Alan W. Irwin
 Notes|(a), (b2), (c), (d), (e1), (A), (J2)
 Date|2018-12-02
@@ -603,6 +626,7 @@ Testing notes where lower case notes concern configuration and build options whi
 * (E2) Java not available, Python libraries not installed, octave not available, and lua not installed.  Therefore, java, python, octave, and lua bindings not tested.
 * (E3) Java not available and Octave dropped because Cygwin swig does not support Octave-4.4.  Therefore, java, and octave bindings not tested.
 * (E4) Java and Octave not available, and lua had a find issue so was dropped.  Therefore, java, octave, and lua bindings were not tested.
+* (E5) Java and Octave not available, and the latest upstream version of lua is broken on Windows so was dropped.  Therefore, java, octave, and lua bindings were not tested.
 * (F) Tk/Itcl/Itk not installed therefore not tested.
 * (F') X11 not available.  Therefore -dev tk and -dev tkwin not tested and Itcl/Itk not installed therefore not tested.
 * (F'') X11 server was running, but was not picked up - DISPLAY variable?  Therefore, dev tk and -dev tkwin not tested and Itcl/Itk not installed therefore not tested.
@@ -610,6 +634,7 @@ Testing notes where lower case notes concern configuration and build options whi
 * (F'''') Itcl and Itk not available so those parts of the Tcl/Tk bindings were not tested.
 * (F1) X11 not available.  Therefore, no Tk-related examples could be built, and the only Tk-related device that could be built was -dev ntk.  That device build was a success, but that device was not run-tested because of issue (B1).
 * (F2) Itcl and Itk were automatically disabled because of find issues.
+* (F3) Itcl and Itk were automatically disabled because they have not been packaged for this platform.
 * (G) Ada, D, and OCaml compilers not available so ada, d, and ocaml bindings not tested.
 * (G') Ada disabled, D not available, and camlidl not available so ada, d, and ocaml bindings not tested.
 * (G'') D compiler(gdc) not available and OCaml (build errors) was disabled so d, and ocaml bindings not tested.
@@ -617,6 +642,7 @@ Testing notes where lower case notes concern configuration and build options whi
 * (G2) Ada disabled for unknown reasons, D compiler (gdc) not available, and ocaml disabled for unknown reasons.  Therefore, ada, d, and ocaml bindings not tested.
 * (G3) gnatmake cannot compile simple Ada test programme, gdc compiler is not available, and camlidl application not available.  Therefore, ada, d, and ocaml bindings are automatically disabled.
 * (G4) Installed Ada bindings segfault so drop Ada until this situation is resolved.  Also, the gdc compiler is not available and camlidl application not available.  Therefore, d, and ocaml bindings are automatically disabled.
+* (G5) Because Installed Ada bindings segfault on some other platforms decided to drop Ada for this platform until that issue is resolved.  Also, the gdc compiler is not available and camlidl application not available.  Therefore, d, and ocaml bindings are automatically disabled.
 * (H) libharu, libLASi, wxwidgets not available so pdf, psttf, and wxwidgets device drivers not tested.
 * (H') libharu not available so pdf device driver not tested.
 * (H'') libharu and libLASi not available and wxwidgets ignored so pdf, psttf, and wxwidgets device drivers not tested.
@@ -626,6 +652,7 @@ Testing notes where lower case notes concern configuration and build options whi
 * (H3) libLASi not available.  Therefore, the psttf device driver was automatically disabled.
 * (H4) libharu not available and wxwidgets had find issues so pdf and wxwidgets device drivers were automatically disabled.
 * (H5) libharu not installed so pdf device driver not tested.
+* (H6) liblasi not available, and wxwidgets had inconsistent ABI issues because (for unknown reasons) the platform compilers were not consistently updated.  Therefore, the psttf device driver was automatically disabled, and the wxwidgets ABI issue was bypassed by deliberately disabling the wxwidgets device (by not installing the wxwidgets package).
 * (I) libpango/libcairo not available therefore cairo devices not tested.
 * (I1) pkg-config not installed which means libpango/libcairo not found.  Therefore, cairo devices not tested.
 * (J) libQt not available therefore qt devices not tested.
