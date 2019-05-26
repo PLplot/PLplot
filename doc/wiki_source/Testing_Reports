@@ -16,6 +16,29 @@ paste.
 ---|---|---|---
 Tester|Alan W. Irwin
 Notes|(a), (b2), (c), (d), (e1), (A)
+Date|2019-05-26
+PLplot commit|plplot-5.14.0-44-g9c113444c
+CMake version|3.14.4
+Generator|"Unix Makefiles"
+Platform|Debian Buster = Testing (updated on 2019-05-06, 64-bit)
+Pango/Cairo version|1.42.3/1.16.0
+Qt version|5.11.3
+WxWidgets version|3.0.4
+Shared libraries?|Dynamic drivers?
+Yes|Yes
+Yes|No
+No|No
+CMake-based build tree?|test_noninteractive?|test_interactive?|ctest?
+Yes|Yes|Yes|Yes
+CMake-based installed examples?|test_noninteractive?|test_interactive?|ctest?
+Yes|Yes|Yes|Yes
+Legacy Installed examples?|test_noninteractive?|test_interactive?
+Yes|Yes|Yes
+
+|||
+---|---|---|---
+Tester|Alan W. Irwin
+Notes|(a), (b2), (c), (d), (e1), (A)
 Date|2019-05-22
 PLplot commit|plplot-5.14.0-42-gb766e84b4
 CMake version|3.13.2
