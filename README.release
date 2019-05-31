@@ -1,7 +1,7 @@
 PLplot Release 5.15.0
 
 This is a release of the PLplot plotting package. It represents the
-ongoing best efforts (roughly ??? commits since the last release) of
+ongoing best efforts (roughly ~50 commits since the last release) of
 the PLplot development community to improve this package, and it is
 the only version of PLplot that we attempt to support.  Releases in
 the 5.x.y series should be available roughly two times per year.
@@ -40,10 +40,15 @@ CONTENTS
 
 2. Improvements relative to the previous release
 
-2.1  Bug fixes
-2.2  Update PLplot to be consistent with modern free software
-2.3  Rewrite the configuration of the INSTALL_RPATH target property
-2.4  Rewrite the rpath configuration of traditionally built examples
+2.1 Bug fixes
+2.2 Update PLplot to be consistent with modern free software
+2.3 Rewrite the configuration of the INSTALL_RPATH target property
+2.4 Rewrite the rpath configuration of traditionally built examples
+2.5 Factor the PLplot export files
+2.6 Introduce symbolic constants in our color-map routines
+2.7 New implementation of the range checks for the validity of cmap0 and cmap1 user input
+2.8 New implementation of the -bg command-line option
+2.9 Implement ctest for the build system of the installed examples
 
 3. PLplot testing
 ________________________________________________________________
@@ -53,22 +58,39 @@ ________________________________________________________________
 1.1 CMake version compatibility
 
 Our build system is implemented using CMake.  The minimum version of
-CMake we allow is 3.7.2 on all platforms.
+CMake we currently allow is 3.13.2 on all platforms, and currently the
+latest version of CMake that has been officially released is 3.14.4.
+
+Note, that as of the time of this release we have the following
+free distribution packaging support for modern CMake versions:
+
+* Cygwin: 3.13.1 from <https://cygwin.com/cgi-bin2/package-grep.cgi>
+* MinGW-w64/MSYS2: 3.14.4 from <http://repo.msys2.org/mingw/x86_64/>
+* Fink: 3.11.0 from <http://pdb.finkproject.org/pdb/browse.php?name=cmake>
+* MacPorts: 3.14.4 from <https://www.macports.org/ports.php?by=name&substr=cmake>
+* Homebrew: 3.14.4 from <https://formulae.brew.sh/formula/cmake>
+* Debian Testing: 3.13.4 (from <https://packages.debian.org/buster/cmake> where Testing = Buster is likely to become the official Debian Stable release of Debian in mid-2019, i.e., soon, see <https://en.wikipedia.org/wiki/Debian_version_history>).
+* Other modern Linux distributions: likely 3.13.4 or greater since they typically package later versions of CMake than are available for Debian Stable.
+
+It appears from the above table that binary packages for CMake for our
+minimum allowed version (3.13.2) or later should be available soon or
+immediately on most modern free software distributions.  However,
+PLplot users of distributions that do not package 3.13.2 or later
+(e.g., Cygwin and Fink) will need to build CMake 3.13.2 or later for
+themselves before they build PLplot-5.15.0
 
 This particular PLplot release has been comprehensively tested for
-CMake versions 3.7.2 through 3.13.1 on a variety of platforms (see
+CMake-3.13.2 through 3.14.4 on a variety of platforms (see
 <http://sourceforge.net/p/plplot/wiki/Testing_Reports> for details
 of recent tests on all platforms).
 
-Therefore, if your CMake version is <= 3.13.1 and satisfies the above minimum
-CMake version requirement there is an excellent chance that our build
-system will work well.  Furthermore, if you try later CMake versions
-as they are released during the life of this PLplot release, our build
-system will likely continue to work well because CMake has an excellent
-reputation for preserving backwards compatibility.  But if you get
-build-system trouble for versions of CMake greater than 3.13.1, the
-first thing you should try is CMake-3.13.1 which has been well-tested
-by us.
+Therefore, if the CMake version is within this range there is an
+excellent chance that our build system will "just work" on all
+platforms.  Furthermore, if later on you try CMake versions greater
+than the latest version of CMake that is available at the time of this
+PLplot release (3.14.4), our build system will likely continue to work
+well because CMake has an excellent reputation for preserving
+backwards compatibility.
 
 1.2 Remove typedefs for PL_NC_GENERIC_POINTER and PL_GENERIC_POINTER
 
@@ -108,17 +130,21 @@ backwards-incompatible (requiring recompilation of user code but no
 changes to that code to fix the problem) for users with systems that
 (a) provide the stdint.h header, and (b) define int differently than
 int32_t for those systems.
-
 ________________________________________________________________
 
 2. Improvements relative to the previous release
 
-2.1  Bug fixes
+2.1 Bug fixes
 
-The bug fixes in this release are noted in the roughly 150 commit messages
+The bug fixes in this release are noted in the ~50 commit messages
 collected in ChangeLog.release.
 
-2.2  Update PLplot to be consistent with modern free software
+Commit plplot-5.14.0-8-gdb9d90d0b should be of particular note since
+it finally makes results achieved with our qt device driver linked to
+Qt5 similar to the high quality of results achieved with that same
+device driver when it is linked to Qt4.
+
+2.2 Update PLplot to be consistent with modern free software
 
 This ongoing project is implemented by making sure PLplot passes all
 [comprehensive
@@ -128,37 +154,44 @@ keeps up to date with modern free software development.  As a result
 PLplot should be compatible with the following modern versions of free
 software packages:
 
-* CMake-3.13.1	      		 (core, bindings, and device drivers)
-* gcc 8.2.0			 (core)
-* qhull 2015.2			 (optional core interpolation functionality)
-* shapelib 1.4.1		 (optional core map functionality)
-* swig 3.0.12			 (java, lua, octave, and python bindings)
-* gnatmake/gdc/gfortran 8.2.0	 (ada, d, and fortran bindings)
-* g++ 8.2.0			 (c++ binding and psttf and wxwidgets device drivers)
-* pango 1.42.3, cairo 1.16.0	 (cairo device driver)
-* openjdk 11.0.1		 (java binding)
-* lua 5.3.5			 (lua binding)
-* camlidl 1.05, ocaml 4.05	 (ocaml binding)
-* octave 4.4.1	      		 (octave binding)
-* python 3.6.7			 (python binding)
-* Qt 5.11.2			 (qt binding and qt device driver)
-* Tcl/Tk 8.6.8			 (tcl/tk binding and tk device driver)
-* libx11 2:1.6.7		 (tk and xwin device drivers)
-* wxWidgets 3.0.4		 (wxwidgets binding and device driver)
+* CMake-3.13.2 through 3.14.4       (core, bindings, and device drivers)
+* gcc 8.3.0			    (core)
+* qhull 2015.2			    (optional core interpolation functionality)
+* shapelib 1.4.1		    (optional core map functionality)
+* swig 3.0.12 through 4.0.0	    (java, lua, octave, and python bindings)
+* gnatmake/gdc/gfortran 8.3.0	    (ada, d, and fortran bindings)
+* g++ 8.3.0			    (c++ binding and psttf and wxwidgets device drivers)
+* pango 1.42.3, cairo 1.16.0	    (cairo device driver)
+* openjdk 11.0.3		    (java binding)
+* lua 5.3.5			    (lua binding)
+* camlidl 1.05, ocaml 4.05	    (ocaml binding)
+* octave 4.4.1	      		    (octave binding)
+* python 3.7.3			    (python binding)
+* Qt 5.11.3			    (qt binding and qt device driver)
+* Tcl/Tk 8.6.9			    (tcl/tk binding and tk device driver)
+* libx11 2:1.6.7		    (tk and xwin device drivers)
+* wxWidgets 3.0.4		    (wxwidgets binding and device driver)
 
 Notes for this table:
 
-* The Debian Testing package for swig 3.0.12 contains a swig fix that should be
-  generally released for swig-4 that allows PLplot to build an Octave-4.4 binding.
-  If your swig-3 version does not have this fix, you should use Octave-4.2
-  until swig-4 is released.
+* The CMake versions used for testing were locally built rather than
+  installed from Debian testing, see Section 1.1 for details.
+
+* The Debian Testing package for swig 3.0.12 contains a swig fix from
+  swig-4.0.0. That fix allows an Octave-4.4 binding to be built for
+  PLplot.  If your swig-3 version does not have this fix, you should
+  use Octave-4.2 until swig-4 is released.
+
+* The swig-4.0.0 version used for testing was locally built since this
+  version is not packaged for Debian Testing (yet).
 
 * The Debian Testing package for lua 5.3.3 currently perpetuates
   [a serious bug](https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=902238)
   for that particular upstream version.  The above good results for lua
-  5.3.5 were generated with a locally built version of upstream 5.3.5.
+  5.3.5 were generated with a locally built version of upstream 5.3.5
+  that contains the essential fix for 5.3.3.
 
-2.3  Rewrite the configuration of the INSTALL_RPATH target property
+2.3 Rewrite the configuration of the INSTALL_RPATH target property
 
 This change is important for those Unix users who install
 PLplot dependencies (such as libLASi) in non-standard locations and
@@ -210,9 +243,8 @@ way for all our installed targets (executables, dll's (modules)
 generated by swig, ordinary dll's, shared libraries and static
 libraries).  The result of this work is a substantial reduction in the
 number of lines of CMake logic in our build system (since virtually
-all of the INSTALL_RPATH logic is now taken care of in the
-process_rpath, configure_executable_build and configure_library_build
-functions).
+all of the INSTALL_RPATH logic is now taken care of in the new
+process_rpath function).
 
 Note that this new logic always uses the transitive INSTALL_RPATH
 method for the static build case and by default uses non-transitive
@@ -244,7 +276,7 @@ are shared or not would so complicate our build system code and
 therefore make it more fragile that I have decided to stick with using
 this simplifying assumption.
 
-2.4  Rewrite the rpath configuration of traditionally built examples
+2.4 Rewrite the rpath configuration of traditionally built examples
 
 In this case, "traditionally built" refers to the traditional (GNU
 make + pkg-config) build of the installed examples (including the
@@ -256,7 +288,7 @@ low-level CMake add_custom_command/target pairs must be used that are
 very similar to the traditional build of the installed ocaml examples.
 
 This change updated the somewhat sloppy transitive rpath method that
-was used before for traditionally built examples to the rigourous
+was used before for traditionally built examples to the rigorous
 method I have implemented (see Section 2.3) recently for the case of
 the INSTALL_RPATH property for installed targets.  That is, for the
 non-transitive rpath case the traditionally built examples only refer
@@ -270,7 +302,7 @@ Note we use the same simplifying assumption mentioned in Section 2.3
 to decide which library locations should be inserted in DT_RPATH or
 DT_RUNPATH for traditionally built examples.
 
-Note this more rigourous approach solved an ocaml rpath bug that was
+Note this more rigorous approach solved an ocaml rpath bug that was
 exposed by the DT_RUNPATH Debian Testing platform.  So as far as I
 know the combination of this change and the INSTALL_RPATH changes
 described in section 2.3 eliminates the last known regression against
@@ -295,13 +327,101 @@ using that default already) and the second thing they should try if
 this trouble occurs for the shared build case is
 -DNON_TRANSITIVE_RPATH=OFF.
 
+2.5 Factor the PLplot export files
+
+Packagers of binary versions of PLplot used in free software
+distributions such as Debian and Fedora typically split the PLplot
+installation into many different package components, and users of
+those distributions have the option of only installing the subset of
+those packages (and their dependencies) that they need.  However, the
+CMake-based build system that is part of the examples package (which
+contains source code for all our test examples) can currently only
+build the examples if the user installs all binary components of
+PLplot.
+
+The current change is a large step toward removing that constraint.
+This change factors the the two previous integrated PLplot export
+files into two exported files per exported target (which can be an
+installed library, module, or executable).  So if packagers distribute
+these factored export files in the same binary packages which contain
+the actual libraries, modules, or executables which are described by
+the exported targets, then *any* CMake-based build systems for
+software that depends on the PLplot installation can simply
+interrogate that installation (using the if(TARGET ...)  command) to
+see what subset of the PLplot targets have been installed and act
+accordingly.
+
+N.B. the CMake-based build system for the example source code that is
+installed is a (large) example of such software.  But that software
+has not yet been changed as described above so packagers will have to
+wait until the next release before the source code for the appropriate
+subset of the examples in that package can be built properly against
+the subset of binary PLplot packages that have been installed by
+users.
+
+2.6 Introduce symbolic constants in our color-map routines
+
+These new symbolic constants (in their C/C++ form) are
+
+// Default number of colors for cmap0 and cmap1.
+#define PL_DEFAULT_NCOL0    16
+#define PL_DEFAULT_NCOL1    128
+// minimum and maximum PLINT RGB values.
+#define MIN_PLINT_RGB       0
+#define MAX_PLINT_RGB       255
+// minimum and maximum PLFLT cmap1 color index values.
+#define MIN_PLFLT_CMAP1     0.
+#define MAX_PLFLT_CMAP1     1.
+// minimum and maximum PLFLT alpha values.
+#define MIN_PLFLT_ALPHA     0.
+#define MAX_PLFLT_ALPHA     1.
+
+These constants should be defined for our core C "plplot" library and
+all our different supported language bindings.  These symbolic
+constants are used, for example, in our range checks for the validity
+of cmap0 and cmap1 user input.
+
+2.7 New implementation of the range checks for the validity of cmap0 and cmap1 user input
+
+Instead of exiting when cmap0 or cmap1 user input is invalid, the
+philosophy for the new implementation of cmap0 and cmap1 range
+checking is to issue a warning message, substitute something
+reasonable, and continue.  In addition, for the new implementation we
+attempt to catch all invalid cmap0 or cmap1 user input rather than
+just a subset of such cases.
+
+2.8 New implementation of the -bg command-line option
+
+The -bg command-line option is used to specify the RGB and (optional)
+alpha values of the background.  The new implementation is much more
+careful about checking for user input errors in both the RGB and alpha
+values and follows the philosophy of warning and continuing with
+reasonable default values when the user specifies an non-parsable or
+invalid value for the RGB or alpha values of the background.
+
+2.9 Implement ctest for the build system of the installed examples
+
+Previously the ctest command was only configured for the CMake-based
+build system of the core build of PLplot libraries and the source code
+of the PLplot examples that appears in the PLplot source tree.  What
+is changed now is the ctest command has also been configured for the
+CMake-based build system of the installed source code for the PLplot
+examples using in most cases common CMake logic as for the core build
+case.  As a result, the ctest results in the two very different cases
+cover the same tests.  In addition the same (good) ctest results have
+been achieved for these two different builds confirming that all is
+well with the core build of PLplot libraries and examples as well as
+the installed binary version of PLplot libraries and corresponding
+CMake-based build system for the installed source code for the PLplot
+examples that is built against those installed libraries.
 ________________________________________________________________
 
 3. PLplot testing
 
 Comprehensive tests of this release are documented in
-<https://sourceforge.net/p/plplot/wiki/Testing_Reports>.
-In addition, developers and users who have used the git master tip
-version for all their plotting needs during this release cycle have
-provided additional important testing of this release of PLplot.
+<https://sourceforge.net/p/plplot/wiki/Testing_Reports>.  In addition,
+developers and users who have used the evolving git master tip
+development version of PLplot for their plotting needs during this
+release cycle have provided additional important testing of this
+release of PLplot.
 ________________________________________________________________
