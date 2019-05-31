@@ -1,7 +1,7 @@
 # Version data that need review and possible modification for each release.
 
 set(PLPLOT_VERSION_MAJOR 5)
-set(PLPLOT_VERSION_MINOR 14)
+set(PLPLOT_VERSION_MINOR 15)
 set(PLPLOT_VERSION_PATCH 0)
 
 # Overall PLplot version number.
@@ -51,9 +51,9 @@ set(csironn_VERSION ${csironn_SOVERSION}.0.2)
 set(qsastime_SOVERSION 0)
 set(qsastime_VERSION ${qsastime_SOVERSION}.0.1)
 
-# Library with source code in the src subdirectory.
+# Library with source code in the src subdirectory and headers in the include subdirectory.
 
-set(plplot_SOVERSION 16)
+set(plplot_SOVERSION 17)
 set(plplot_VERSION ${plplot_SOVERSION}.0.0)
 
 # Libraries with source code in the bindings subdirectory tree.
@@ -61,23 +61,23 @@ set(plplot_VERSION ${plplot_SOVERSION}.0.0)
 set(plplotada_SOVERSION 4)
 set(plplotada_VERSION ${plplotada_SOVERSION}.0.0)
 
-set(plplotcxx_SOVERSION 14)
+set(plplotcxx_SOVERSION 15)
 set(plplotcxx_VERSION ${plplotcxx_SOVERSION}.0.0)
 
 set(plplotdmd_SOVERSION 4)
 set(plplotdmd_VERSION ${plplotdmd_SOVERSION}.0.0)
 
 set(plplotfortran_SOVERSION 0)
-set(plplotfortran_VERSION ${plplotfortran_SOVERSION}.1.0)
+set(plplotfortran_VERSION ${plplotfortran_SOVERSION}.2.0)
 
 set(plplotqt_SOVERSION 2)
-set(plplotqt_VERSION ${plplotqt_SOVERSION}.0.2)
+set(plplotqt_VERSION ${plplotqt_SOVERSION}.0.3)
 
 set(tclmatrix_SOVERSION 10)
 set(tclmatrix_VERSION ${tclmatrix_SOVERSION}.3.0)
 
 set(plplottcltk_SOVERSION 14)
-set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.0.0)
+set(plplottcltk_VERSION ${plplottcltk_SOVERSION}.1.0)
 
 set(plplottcltk_Main_SOVERSION 1)
 set(plplottcltk_Main_VERSION ${plplottcltk_Main_SOVERSION}.0.1)
