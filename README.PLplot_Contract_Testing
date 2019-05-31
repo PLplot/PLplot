@@ -53,7 +53,7 @@ set(CTEST_BUILD_CONFIGURATION Release)
 # when building the preliminary version of CMake but pays attention
 # to it when configuring the build of the final version of CMake.
 # Thus, to make the compile flags when building the preliminary
-# version the same as the final version we set the following: 
+# version the same as the final version we set the following:
 
 set(ENV{CXXFLAGS} "-O3 -DNDEBUG")
 set(ENV{CFLAGS} "-O3 -DNDEBUG")
@@ -99,10 +99,10 @@ set(CTEST_TEST_ARGS PARALLEL_LEVEL 16)
 set(dashboard_cache "
 //Use system-installed curl
 CMAKE_USE_SYSTEM_CURL:BOOL=ON
-//Do not build Qt dialog for CMake (for now because of 
+//Do not build Qt dialog for CMake (for now because of
 //Debian Jessie Qt5 issue where COPYONLY was misspelled as COPY_ONLY)
 //BUILD_QtDialog:BOOL=0
-// Do configure, build and install of PLplot as a ctest of CMake. 
+// Do configure, build and install of PLplot as a ctest of CMake.
 CMake_TEST_CONTRACT_PLplot:BOOL=ON
 // CMake configuration options for that build to add more to the all target
 // that is being built.
