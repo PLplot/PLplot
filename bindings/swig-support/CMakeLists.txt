@@ -55,6 +55,10 @@ add_custom_target(
   COMMAND ${CMAKE_COMMAND} -E remove -f
   ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
   COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_SOURCE_DIR}/include/plplot.h > ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
+  # Ignore white space differences (the -w option for the diff
+  # command) between the two files because styling of each separate
+  # file (include/plplot.h and bindings/swig-support/plplotcapi.i)
+  # introduces white space differences.
   COMMAND grep -E "^ *#define +[^ ]+ +[()-+0-9x]+" ${CMAKE_CURRENT_SOURCE_DIR}/plplotcapi.i | diff -qw - ${CMAKE_CURRENT_BINARY_DIR}/generated_plplotcapi_defines
   VERBATIM
 )
