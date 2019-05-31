@@ -118,6 +118,14 @@
     real(kind=private_double), parameter :: PL_NOTSET = -42.0_private_double
     real(kind=private_double), parameter :: PL_PI = 3.1415926535897932384_private_double
     real(kind=private_double), parameter :: PL_TWOPI = 2.0_private_double*PL_PI
+    integer, parameter :: PL_DEFAULT_NCOL0 = 16
+    integer, parameter :: PL_DEFAULT_NCOL1 = 128
+    integer, parameter :: MIN_PLINT_RGB = 0
+    integer, parameter :: MAX_PLINT_RGB = 255
+    integer, parameter :: MIN_PLFLT_CMAP1 = 0.
+    integer, parameter :: MAX_PLFLT_CMAP1 = 1.
+    integer, parameter :: MIN_PLFLT_ALPHA = 0.
+    integer, parameter :: MAX_PLFLT_ALPHA = 1.
     integer, parameter :: PLESC_DOUBLEBUFFERING_ENABLE = 1
     integer, parameter :: PLESC_DOUBLEBUFFERING_DISABLE = 2
     integer, parameter :: PLESC_DOUBLEBUFFERING_QUERY = 3
