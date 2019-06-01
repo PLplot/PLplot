@@ -1,21 +1,25 @@
 Configuration of these instructions.
 
-export plplot_version=5.14.0
-export old_plplot_version=5.13.0
+export plplot_version=5.15.0
+export old_plplot_version=5.14.0
 
 These environment variables are used extensively for the command-line
-commands below, but for the few cases below where a GUI is used,
+commands below, and for the few cases below where a GUI is used,
 these environment variables are used symbolically to remind
-the release manager what versions must be explicitly stated
+the release manager exactly what versions must be explicitly stated
 in the GUI case.
 
 INDEX
+** Perform a (preliminary) search and fix for all internal inconsistencies
+** Arrange preliminary comprehensive tests
+** Declare a push freeze on the plplot-devel mailing list
+** Perform a (preliminary) PLplot contract test
 ** Prepare a (preliminary) version of the ChangeLog file for this release
 ** Prepare the README.release file and/or encourage those who have made
    changes in this release cycle to update that file
 ** Update versions
 ** Prepare and test the documentation
-** Check and potentially fix internal consistency
+** Perform a (final) search and fix for all internal inconsistencies
 ** Update website-related files
 ** Install and test a (preliminary) local copy of the PLplot website
 ** Create (a preliminary version of) the release tarball and check the
@@ -24,6 +28,7 @@ INDEX
 ** Install and test a local copy of the PLplot website
 ** Upload the local website to SourceForge
 ** Commit the changes in this file (README.Release_Manager_CookBook)
+** Update and commit README.cumulated_release
 ** Push new version of ChangeLog.release for this release
 ** Contract test of the last push of this release
 ** Create the PLplot Release
@@ -46,6 +51,139 @@ N.B. the order of steps below is important because of the dependencies
 between the steps which are noted (except for the generation of the
 final release tarball and ChangeLog which depend on virtually all
 prior steps).
+_________________________________________________________________________
+
+** Perform a (preliminary) search and fix for all internal inconsistencies
+
+This step depends on no previous steps.
+
+Some of the files in the source tree are generated from other files
+in the source tree using build-system targets.  All targets that
+have "check" in the name prefix are these kind of targets.  Also,
+some of the checks require special setup or take too long for the
+general case, and these will be configured only for the
+-DADD_SPECIAL_CONSISTENCY_CHECKING=ON case.
+
+So use the above cmake option, and then for a complete list of
+checks run
+
+make help |grep '... check' |sort
+
+in the build tree.  The current result of that command should be
+
+... check_all
+... check_api_xml_consistency
+... check_fortran_parameters
+... check_ifort_definitions_file
+... check_libtclmatrix_capabilities
+... check_plplot_h.inc
+... check_plplotcapi_defines
+... check_swig_documentation
+... check_tcl_parameters
+
+Note the check_api_xml_consistency target only exists if
+-DADD_SPECIAL_CONSISTENCY_CHECKING=ON and our build system finds the
+golang application "plplot-doc-check" which has been developed
+by Hǎiliàng Wang and which is executed by
+that check_api_xml_consistency target.  For more details
+concerning how to build and install "plplot-doc-check" and
+put that result on the PATH see the commentary
+in doc/docbook/src/CMakeLists.txt.
+
+Also note that the check_api_xml_consistency target currently
+($plplot_version) succeeds with the latest castxml-ready version of
+plplot-doc-check.  However, golang is a bit esoteric so for now I am
+excluding check_api_xml_consistency as a dependency of the check_all
+target so the check_api_xml_consistency target has to be built
+specifically.
+
+Note the above check_plplot_h.inc target only exists
+because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
+-DGENERATE_PLPLOT_H_INC=ON by default which in turn requires
+that at least the OCaml version of the Perl regular expression library
+be installed.  (On Debian the associated package name is
+libpcre-ocaml-dev.)  Normally, GENERATE_PLPLOT_H_INC is OFF by default
+to reduce build dependencies.
+
+To actually do the internal consistency checks, configure PLplot with
+the -DADD_SPECIAL_CONSISTENCY_CHECKING=ON option and build each of the
+above targets (except for check_api_xml_consistency) by building the
+check_all target.  Each individual check target typically generates a
+file in the build tree which is then compared (using the Unix cmp
+command) with the file that is being checked in the source tree.  If
+the two files are inconsistent (which can be caused by documentation
+updates, for example), the cmp command complains, and you should
+follow up by doing a diff between the two files to confirm that the
+changes are reasonable followed by copying the build-tree version of
+the file on top of the source-tree version and committing the
+source-tree version.  When this process is completed, all the above
+targets should run with no cmp
+or other errors/warnings at all, i.e.,
+
+software@merlin> make check_all
+
+should normally "just work" without errors.
+
+Then finish up such checking by building the check_api_xml_consistency
+target which should also give a clean result (as of $plplot_version
+with the castxml version).
+_________________________________________________________________________
+
+** Arrange preliminary comprehensive tests
+
+This step depends on the previous step "Perform a (preliminary) search
+and fix for all internal inconsistencies" because resolving those
+inconsistencies that tend to grow during each release cycle can be
+fairly intrusive so it is important to comprehensively test after
+those intrusive changes are made.
+
+The minimum version of CMake we currently allow is 3.13.2 on all
+platforms, and currently the latest version of CMake that has been
+officially released is 3.14.4.
+
+The point of these comprehensive tests is to insure that PLplot is in
+releasable state (i.e., without any release critical issues) on all
+platforms for the above range of CMake versions.  Thus, these tests
+should at least be done on the release manager's platform for both
+versions of CMake mentioned above.  (Note the easiest way to get
+access to these specific versions is by building CMake via the bootstrap
+method from the appropriate gpg-verified git tags for the two
+releases.)  In addition the release manager should encourage other
+developers to perform comprehensive tests on their platforms to help
+confirm there are no release critical bugs for those additional
+platforms.
+_________________________________________________________________________
+
+** Declare a push freeze on the plplot-devel mailing list
+
+This step should be done as soon as the first successful preliminary
+comprehensive test has been completed (typically by the release
+manager).  The point of this freeze is to reduce the chances of some
+further change compromising the comprehensive test results (which are
+typically quite time consuming to finish).  However, this freeze (on
+source code and build system changes) does allow further changes
+before the release such as documentation improvements, the known
+build-system changes below (e.g., version changes) that are required
+for an actual release, and also possibly (this is a judgement call by
+the release manager in consultation with the PLplot developer that is
+recommending the fix) minimal code and build system fixes for any
+issues found and judged to be release critical after the first
+successful preliminary comprehensive test.
+_________________________________________________________________________
+
+** Perform a (preliminary) PLplot contract test
+
+See README.PLplot_Contract_Testing for how the release manager should
+set up a PLplot contract test for their platform.  The release manager
+should then perform an Experimental version of that test using the
+commit ID corresponding to the SourcForge git server tip of the PLplot
+master branch, i.e., the version of PLplot that is close to or the
+same as the version used for the above comprehensive testing and
+therefore close to the version of PLplot that will be released.  The
+point here is future-proof PLplot with regard to CMake changes by
+confirming that the latest development (git) version of PLplot
+correctly configures, builds, and installs for the latest development
+(git) version of CMake.
 _________________________________________________________________________
 
 ** Prepare a (preliminary) version of the ChangeLog file for this release
@@ -85,14 +223,6 @@ This step depends on the step above entitled
 Skim /tmp/ChangeLog.release_preliminary to make sure README.release is
 complete with regards to all major developments during this release
 cycle including and especially all API changes.
-
-Once you are completely satisfied with README.release, then preserve
-the historical record of the significant changes between versions of
-PLplot in one file by prepending README.release for $plplot_version to
-README.cumulated_release.
-
-cat README.release README.cumulated_release > README.cumulated_release_new
-mv README.cumulated_release_new README.cumulated_release
 _________________________________________________________________________
 
 ** Update versions
@@ -103,14 +233,25 @@ This step depends on the step above entitled
 
 Update PLplot version in www/examples.php.  Also follow the
 instructions in cmake/modules/plplot_version.cmake to update all
-version information.  And because theoretically you could badly screw
-up the version syntax (although it has never happened) test that
-result with
+version information.
+
+And because theoretically you could screw
+up the version syntax (although it has never happened) test for
+typographical errors in this commit with
+
+git diff www
+
+and
 
 git diff cmake/modules/plplot_version.cmake |grep '^[+-]' |sort --key=1.2 |less
 
-Also do a noninteractive comprehensive test (limited to noninteractive
-to save time).
+where in the latter case, the format of the result makes typographical errors
+quite noticeable.
+
+I can get away with the above simple tests at this stage because the final comprehensive
+test below should find any issues with this change that the above simple tests
+missed.
+
 _________________________________________________________________________
 
 ** Prepare and test the documentation
@@ -135,83 +276,24 @@ Update, generate and test our Docbook documentation following the
 instructions in doc/docbook/README.developers.
 _________________________________________________________________________
 
-** Check and potentially fix internal consistency
+** Perform a (final) search and fix for all internal inconsistencies
 
-This step depends on the step above entitled
+This step (unlike its preliminary variant above) depends on the above
+"Prepare and test the documentation" step since documentation changes
+can affect internal consistency.
 
-"Prepare and test the documentation".
+See the discussion in the "Perform a (preliminary) search and fix for
+all internal inconsistencies" step above for details.  Following what
+is done there, build "plplot-doc-check" and put that application on
+the PATH, e.g.,
 
-Some of the files in the source tree are generated from other files
-in the source tree using build-system targets.  All targets that
-have "check" in the name prefix are these kind of targets.  Also,
-some of the checks require special setup or take too long for the
-general case, and these will be configured only for the
--DADD_SPECIAL_CONSISTENCY_CHECKING=ON case.
+PATH=/home/software/golang_apps:$PATH
 
-So use the above cmake option, and then for a complete list of
-checks run
-
-make help |grep '... check' |sort
-
-in the build tree.  The current result of that command should be
-
-... check_all
-... check_api_xml_consistency
-... check_fortran_parameters
-... check_ifort_definitions_file
-... check_libtclmatrix_capabilities
-... check_plplot_h.inc
-... check_plplotcapi_defines
-... check_swig_documentation
-... check_tcl_parameters
-
-Note the check_api_xml_consistency target only exists if
--DADD_SPECIAL_CONSISTENCY_CHECKING=ON and our build system finds the
-golang application "plplot-doc-check" which has been developed
-by Hǎiliàng Wang and which is executed by
-that check_api_xml_consistency target.  For more details
-concerning how to build and install "plplot-doc-check see the commentary
-in doc/docbook/src/CMakeLists.txt.
-
-Also note that the check_api_xml_consistency target currently ($plplot_version)
-succeeds with the latest castxml-ready version of plplot-doc-check.
-But that is the first time ever that plplot-doc-check has succeeded
-completely for me so for now I am still excluding
-check_api_xml_consistency as a dependency of the check_all target.
-
-Note the above check_plplot_h.inc target only exists
-because -DADD_SPECIAL_CONSISTENCY_CHECKING=ON implies
--DGENERATE_PLPLOT_H_INC=ON by default which in turn requires
-that at least the OCaml version of the Perl regular expression library
-be installed.  (On Debian the associated package name is
-libpcre-ocaml-dev.)  Normally, GENERATE_PLPLOT_H_INC is OFF by default
-to reduce build dependencies.
-
-To actually do the internal consistency checks, configure PLplot with
-the -DADD_SPECIAL_CONSISTENCY_CHECKING=ON option and build each of the
-above targets (except for check_api_xml_consistency) by building the
-check_all target.  Each individual check target typically generates a
-file in the build tree which is then compared (using the Unix cmp
-command) with the file that is being checked in the source tree.  If
-the two files are inconsistent (which can be caused by documentation
-updates, for example), the cmp command complains, and you should
-follow up by doing a diff between the two files to confirm that the
-changes are reasonable followed by copying the build-tree version of
-the file on top of the source-tree version and committing the
-source-tree version.  When this process is completed, all the above
-targets should run with no cmp
-or other errors/warnings at all, e.g.,
-
-software@merlin> make check_all
-
-should normally "just work" without errors.  However, as of $plplot_version
-the target check_ifort_definitions_file fails, but we plan
-to investigate and solve that inconsistency just after $plplot_version is
-released.
-
-Then finish up such checking by building the check_api_xml_consistency
-target which should give a clean result (as of $plplot_version with the castxml
-version).
+configure PLplot with the
+-DADD_SPECIAL_CONSISTENCY_CHECKING=ON option, and build the check_all
+and check_api_xml_consistency targets.  If no build errors occur with
+these targets, then our internal consistency checks pass for the final
+form of this release.
 _________________________________________________________________________
 
 ** Update website-related files
@@ -301,9 +383,9 @@ sys     0m9.983s
 
 
 Check for warnings other than "too deep" explanations, doxygen warnings about FreeSans no
-longer being used, and spurious automoc code warnings from doxygen
+longer being used, and spurious autogen code warnings from doxygen
 
-find /tmp/plplotdoc -name '*.out' |xargs grep -i warning |grep -vE 'automoc.dir|too deep|FreeSans' |less
+find /tmp/plplotdoc -name '*.out' |xargs grep -i warning |grep -vE '_autogen|too deep|FreeSans' |less
 
 This turned up quite a few warnings from cmake, but they all seemed to
 be ignorable (and will disappear when we change "message(STATUS
@@ -314,6 +396,14 @@ Check for errors (e.g., due
 to missing commands that need to be installed) by running
 
 find /tmp/plplotdoc -name '*.out' |xargs grep -i error
+
+doxygen did generate one error message, 
+
+/tmp/plplotdoc/build/make_prebuild.out:Preprocessing /tmp/plplotdoc/error: NamespaceDef::insertMembers(): member `_swig_property' with class scope `' inserted in namespace scope `plplotc'!
+
+but I attribute that to a false alarm due to incorrect doxygen parsing
+of source code since the g++ compiler does not have any issues with
+that swig-generated code.
 
 I also check for changes in a lot of the web content other than
 examples data such as screenshots and doxygen- and DocBook-generated
@@ -364,10 +454,12 @@ directory tree.  N.B. be careful what you specify for the
 initially.
 
 N.B. the env settings below are to bypass the bad lua 5.3.3 version
-available for Debian Testing and to use the latest CMake version
-that has been built on my Debian Testing platform.
+available for Debian Testing, bypass the outdated/buggy version of
+libLASi for Debian Testing, to test a local build of qhull, and to use
+a CMake version (for our currently allowed minimum version) that has
+been built on my Debian Testing platform.
 
-time (env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5 PATH="/home/software/cmake/install-3.13.1/bin:$PATH" scripts/make_tarball.sh -c -i /tmp/plplot_install)
+time (env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5:/home/software/lasi_svn/install:/home/software/qhull/install PATH="/home/software/cmake/install-3.13.2/bin:$PATH" scripts/make_tarball.sh -c -i /tmp/plplot_install)
 
 A typical recent (with Ryzen 7 1700 system) time output was
 
@@ -375,11 +467,11 @@ real    2m20.935s
 user    13m4.418s
 sys     1m23.955s
 
-Check for warnings where we ignore spurious warnings from doxygen concerning automoc-generated code
+Check for warnings where we ignore spurious warnings from doxygen concerning autogen code
 and spurious warnings from gfortran concerning private C modules and an uninitialized argv_dynamic
 variable which isn't.
 
-find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i warning |grep -vE 'autogen|is marked PRIVATE|argv_dynamic' |less
+find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i warning |grep -vE '_autogen|is marked PRIVATE|argv_dynamic' |less
 
 The remaining warnings appear to be fairly numerous, but in all cases innocuous such as
 known cmake warnings.
@@ -388,20 +480,26 @@ Check for errors.
 
 find /tmp/plplot-dist-prep -name "*.out" |xargs grep -i error
 
-This search found two hits, but all seem to be innocuous.
+This search found two innocuous hits.
 
 Look at the ctest results:
 
 less /tmp/plplot-dist-prep/ctest_build_dir/ctest.out
 less /tmp/plplot-dist-prep/ctest_build_dir/Testing/Temporary/LastTest.log
 
-Browse the following install locations that were generated from the
-tarball:
+Compare the following install locations that were generated from the
+tarball with the corresponding local website that was generated above.
 
-/tmp/plplot_install/share/doc/plplot/html/index.html
-/tmp/plplot_install/share/doc/plplot/doxygen/html/index.html
+diff -Naur --exclude=HTML-MANIFEST /tmp/plplot_install/share/doc/plplot/html /home/irwin/public_html/plplot/htdocs/docbook-manual/plplot-html-5.15.0 |less
 
-/tmp/plplot_install/share/doc/plplot/plplot-$plplot_version.pdf
+diff -Naur /tmp/plplot_install/share/doc/plplot/doxygen/html/index.html /home/irwin/public_html/plplot/htdocs/doxygen/html/ |less
+
+cmp /tmp/plplot_install/share/doc/plplot/plplot-$plplot_version.pdf /home/irwin/public_html/plplot/htdocs/docbook-manual/plplot-$plplot_version.pdf
+
+The first comparison showed no differences, the second comparison showed one generated datestamp change,
+and the last comparison showed the binary blobs were different (likely due to a datestamp) so follow
+up by browsing /tmp/plplot_install/share/doc/plplot/plplot-$plplot_version.pdf to make sure all
+is well for that PDF.
 
 Look at tarball contents to make sure included filenames are
 what is intended.
@@ -422,7 +520,6 @@ man -M/tmp/plplot_install/share/man plsurf3dl
 Look at the info pages that were generated from the tarball using
 
 info /tmp/plplot_install/share/info/plplotdoc.info
-
 _________________________________________________________________________
 
 ** Do comprehensive test of PLplot
@@ -432,29 +529,47 @@ This step depends on the steps above entitled
 "Check and potentially fix internal consistency"
 "Update date/versions"
 
-Do the following comprehensive test (and check of that test) twice, once
-for the minimum CMake version and once for the latest CMake version
-to check our build system works fine for this range of CMake versions
-consistent with the remarks in README.release.
+To make sure there have been no issues introduced since the previous
+preliminary comprehensive tests (which were performed both for the
+minimum CMake version and the latest CMake release) do the following
+comprehensive test using the minimum CMake version.  (Repeating this
+test for the latest CMake version could also be done, but assuming all
+is well for the minimum version such an additional test is considered
+to be overkill.)
 
-N.B. -DUSE_INCRTCL_VERSION_4=ON is needed on this Debian Testing
-platform to find Tcl/Tk, and -DPLD_extqt=OFF is needed to skip
-comprehensive tests of qt_example and pyqt5 which sometimes segfault
-in ways that will be investigated after the release of $plplot_version.
+# Specify COMPREHENSIVE_TEST_PREFIX and SOURCE_PREFIX such that this
+# is done with blank-prefixed source, build, and install trees to
+# test such blanks in those directory names do not cause build-system
+# problems.
+
+# Set CMAKE_PREFIX_PATH to access local versions of lua and libLASi to
+# avoid important bugs in the Debian Testing versions of those
+# packages.  Also access a local version of libqhull to test
+# that additional rpath possibility.
+    
+# Put a local build of CMake-3.13.2 first on the PATH to thoroughly test our
+# build system for our new minimum version of CMake.
+    
+# Use the -DUSE_INCRTCL_VERSION_4=ON option to help CMake find Tcl/Tk
+# components. (This step will not be necessary as soon as the PLplot
+# build system is modified to make Tcl/Tk/Itcl/Itk/Iwidgets finding
+# more robust.)
+    
+# Use -DSWIG_EXECUTABLE=/home/software/swig/install/bin/swig to test a pre-release version
+# of swig-4.0.0.
+    
+# Apply no constraints to limit the tests.
 
 COMPREHENSIVE_TEST_PREFIX="/home/software/plplot/HEAD/comprehensive_test_disposeable blank"
+SOURCE_PREFIX="/home/software/plplot/HEAD/plplot blank .git"
+time (nice -19 env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5:/home/software/lasi_svn/install:/home/software/qhull/install PATH="/home/software/cmake/install-3.13.2/bin:$PATH" "$SOURCE_PREFIX"/scripts/comprehensive_test.sh --prefix "$COMPREHENSIVE_TEST_PREFIX" --cmake_added_options "-DUSE_INCRTCL_VERSION_4=ON -DSWIG_EXECUTABLE=/home/software/swig/install/bin/swig" --build_command "make -j16" --ctest_command "ctest -j16" --do_submit_dashboard yes)
 
-time (nice -19 env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5 PATH="/home/software/cmake/install-3.7.2/bin:$PATH" "../plplot blank .git"/scripts/comprehensive_test.sh --prefix "$COMPREHENSIVE_TEST_PREFIX" --cmake_added_options "-DUSE_INCRTCL_VERSION_4=ON -DPLD_extqt=OFF" --build_command "make -j16" --ctest_command "ctest -j16"  --do_submit_dashboard yes)
-
-time (nice -19 env CMAKE_PREFIX_PATH=/home/software/lua/install-5.3.5 PATH="/home/software/cmake/install-3.13.1/bin:$PATH" "../plplot blank .git"/scripts/comprehensive_test.sh --prefix "$COMPREHENSIVE_TEST_PREFIX" --cmake_added_options "-DUSE_INCRTCL_VERSION_4=ON -DPLD_extqt=OFF" --build_command "make -j16" --ctest_command "ctest -j16"  --do_submit_dashboard yes)
-
-(Note because of the choice of a "spaced" source tree and --prefix, this test has a space in the prefixes of the source, build, and install trees.)
-
-After each of those results complete, follow the evaluation procedure
-for comprehensive test results documented in
-doc/wiki_source/Testing_PLplot and publicize these test results at
-<https://sourceforge.net/p/plplot/wiki/Testing_Reports> (which is
-referred to by README.release).
+After this script completes, follow the evaluation procedure for
+comprehensive test results documented in
+doc/wiki_source/Testing_PLplot.  Assuming all goes well with that, you
+have proved that the changes since the preliminary comprehensive test
+have not introduced any issues in this comprehensive test (at least
+for the minimum CMake version).
 _________________________________________________________________________
 
 Install and test a local copy of the PLplot website
@@ -507,7 +622,6 @@ Once you have a proper upload of the local website to SourceForge, test
 it as before.  Also, click the xhtml and css validate buttons on each of
 index.php, download.php, examples.php, documentation.php, and credits.php
 to validate those pages.
-
 _________________________________________________________________________
 
 ** Commit the changes in this file (README.Release_Manager_CookBook)
@@ -525,6 +639,19 @@ stage we should be ready for the actual release and all the subsequent
 steps should need little or no additional editing for any release, but
 if some release practice changes for any of the subsequent steps, then
 this file should be changed accordingly after this release.
+_________________________________________________________________________
+
+** Update and commit README.cumulated_release
+
+This step depends on all previous changes (and subsequent tweaks)
+of README.release.
+Once you are completely satisfied with README.release, then preserve
+the historical record of the significant changes between versions of
+PLplot in one file by prepending README.release for $plplot_version to
+README.cumulated_release.
+
+cat README.release README.cumulated_release > README.cumulated_release_new
+mv README.cumulated_release_new README.cumulated_release
 _________________________________________________________________________
 
 ** Push new version of ChangeLog.release for this release
@@ -759,9 +886,10 @@ previous release) in README.release and changing all the numbers to
 
    ++ Publicize the release announcement
 
-Jerry: macresearch.org
-
-Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
+   Normally all we do these days is publicize the new release on the
+   plplot-general mailing list, but in the past Jerry has publicized
+   our releases on macresearch.org, and Barbara Irwin has publicized
+   our releases on linuxtoday.com, lwn.net, and lxer.com.
 
    ++ Prepare immediately for the next release cycle
 
@@ -770,7 +898,13 @@ Barbara Irwin: linuxtoday.com, lwn.net, lxer.com
      official tag of the release.
 
   b. Update README.release file to reflect the start of a new release
-     cycle.
+     cycle.  Keep the opening paragraphs and sections 1.1, 2.1, 2.2,
+     and 3 since those parts will only be changed a small amount for
+     the next release.  But you can drop Sections 1.[2-?] and 2.[2-?]
+     since those are only relevant to the present release and not the
+     next release.  Also any details mentioned in Section 2.1
+     concerning specific bug fixes should be dropped since those are
+     obviously not relevant to the next release.
 
   c. Configure the contract test as above (but this time using the
      commit id "plplot-${plplot_version}", and then run it and
