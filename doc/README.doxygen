@@ -38,7 +38,7 @@ doxygen -u Doxyfile.in
   CMake-based build of PLplot using the cmake command-line option
   -DBUILD_DOX_DOC=ON and running
 
-make -j15 build_doxygen >& build_doxygen.out
+make -j16 build_doxygen >& build_doxygen.out
 
 * Testing the doxygen results.
 

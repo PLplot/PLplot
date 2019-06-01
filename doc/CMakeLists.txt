@@ -94,28 +94,28 @@ if(BUILD_DOX_DOC)
   # run-time files is regenerated, but source-file regeneration (which
   # would be caused by editing one of the prerequisites of these
   # generated source files) should be a rare case in practice.
-  add_dependencies(build_doxygen plplot)
+  add_dependencies(build_doxygen PLPLOT::plplot)
   # Generated C code for the Tcl bindings.
   if(ENABLE_tcl)
-    add_dependencies(build_doxygen plplottcltk)
+    add_dependencies(build_doxygen PLPLOT::plplottcltk)
   endif(ENABLE_tcl)
   # Generated C (and C++ in the Octave case) code for the
   # swig-generated bindings.
   if(ENABLE_python)
-    add_dependencies(build_doxygen _plplotc)
+    add_dependencies(build_doxygen PLPLOT::plplotc)
   endif(ENABLE_python)
   if(ENABLE_java)
-    add_dependencies(build_doxygen plplotjavac_wrap)
+    add_dependencies(build_doxygen PLPLOT::plplotjavac_wrap)
   endif(ENABLE_java)
   if(ENABLE_lua)
-    add_dependencies(build_doxygen plplotluac)
+    add_dependencies(build_doxygen PLPLOT::plplotluac)
   endif(ENABLE_lua)
   if(ENABLE_octave)
-    add_dependencies(build_doxygen plplot_octave)
+    add_dependencies(build_doxygen PLPLOT::plplot_octave)
   endif(ENABLE_octave)
   # Generated automoc code for the plplotqt library.
   if(ENABLE_qt)
-    add_dependencies(build_doxygen plplotqt)
+    add_dependencies(build_doxygen PLPLOT::plplotqt)
   endif(ENABLE_qt)
 elseif(PREBUILT_DOX_DOC)
   # For prebuilt doxygen documentation copy from source tree
