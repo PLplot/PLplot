@@ -37,7 +37,7 @@ Binary packages are provided by at least the following Linux distributions:</p>
 <p>Binary packages are provided by at least the following Mac OS X distributions:</p>
 		  <ul class="arrowlist">
 <li><a href="http://www.finkproject.org/pdb/browse.php?summary=plplot">Fink</a></li>
-<li><a href="http://brewformulas.org/Plplot">Homebrew</a></li>
+<li><a href="https://formulae.brew.sh/formula/plplot">Homebrew</a></li>
 <li><a href="https://www.macports.org/ports.php?by=name&amp;substr=plplot">MacPorts</a></li>
 		  </ul>
 <p>To our knowledge no binary packages for PLplot are currently available for

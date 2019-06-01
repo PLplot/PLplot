@@ -54,7 +54,7 @@ set(MANVOL "3plplot")
 # For now, must set this (UTC) date by hand before each release.  This value affects
 # only the documentation build so we set it here rather than in some more
 # central place.
-set(RELEASE_DATE "2018-12-12")
+set(RELEASE_DATE "2019-06-01")
 
 foreach(suffix info html print)
   if(suffix STREQUAL "print")
