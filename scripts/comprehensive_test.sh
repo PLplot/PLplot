@@ -338,18 +338,6 @@ Each of the steps in this comprehensive test may take a while...."
 		    echo_tee "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the installed examples build tree"
 		    collect_exit 1
 		fi
-
-		if [ "$do_clean_as_you_go" = "yes" ] ; then
-		    output="$OUTPUT_TREE"/installed_clean.out
-		    rm -f "$output"
-		    echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
-		    $build_command VERBOSE=1 clean >& "$output"
-		    make_rc=$?
-		    if [ "$make_rc" -ne 0 ] ; then
-			echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
-			collect_exit 1
-		    fi
-		fi
 	    fi
 	    if [ "$do_ctest" = "yes" -a "$TEST_TYPE" = "noninteractive" ] ; then
 		output="$OUTPUT_TREE"/installed_make.out
@@ -381,6 +369,17 @@ Each of the steps in this comprehensive test may take a while...."
 		    fi
 		else
 		    echo_tee "ERROR: $build_command VERBOSE=1 failed in the installed examples build tree"
+		    collect_exit 1
+		fi
+	    fi
+	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+		output="$OUTPUT_TREE"/installed_clean.out
+		rm -f "$output"
+		echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
+		$build_command VERBOSE=1 clean >& "$output"
+		make_rc=$?
+		if [ "$make_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
 		    collect_exit 1
 		fi
 	    fi
