@@ -397,7 +397,7 @@ to missing commands that need to be installed) by running
 
 find /tmp/plplotdoc -name '*.out' |xargs grep -i error
 
-doxygen did generate one error message, 
+doxygen did generate one error message,
 
 /tmp/plplotdoc/build/make_prebuild.out:Preprocessing /tmp/plplotdoc/error: NamespaceDef::insertMembers(): member `_swig_property' with class scope `' inserted in namespace scope `plplotc'!
 
@@ -546,18 +546,18 @@ to be overkill.)
 # avoid important bugs in the Debian Testing versions of those
 # packages.  Also access a local version of libqhull to test
 # that additional rpath possibility.
-    
+
 # Put a local build of CMake-3.13.2 first on the PATH to thoroughly test our
 # build system for our new minimum version of CMake.
-    
+
 # Use the -DUSE_INCRTCL_VERSION_4=ON option to help CMake find Tcl/Tk
 # components. (This step will not be necessary as soon as the PLplot
 # build system is modified to make Tcl/Tk/Itcl/Itk/Iwidgets finding
 # more robust.)
-    
+
 # Use -DSWIG_EXECUTABLE=/home/software/swig/install/bin/swig to test a pre-release version
 # of swig-4.0.0.
-    
+
 # Apply no constraints to limit the tests.
 
 COMPREHENSIVE_TEST_PREFIX="/home/software/plplot/HEAD/comprehensive_test_disposeable blank"
