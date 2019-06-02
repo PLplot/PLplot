@@ -1560,18 +1560,6 @@ Interactive device drivers:
 PLD_xcairo:		${PLD_xcairo}
 PLD_extcairo:		${PLD_extcairo}
 
-N.B. The above devices are all that are currently configurable by the
-installed examples build system.  Additional interactive device
-drivers are likely supplied by the PLplot core and configured as part
-of plplot-test-interactive.sh that is run by
-
-make test_interactive
-
-
-but the build system for the installed examples cannot configure anything
-with those device drivers so we don't bother to retrieve them from the
-core build system or output them here.
-
 Noninteractive bindings:
 
 ENABLE_ada:		${ENABLE_ada}

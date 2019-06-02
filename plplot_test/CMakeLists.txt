@@ -57,12 +57,6 @@ if(SH_EXECUTABLE)
       set(pltcl_LOCATION $<TARGET_FILE:PLPLOT::pltcl>)
       set(plserver_LOCATION $<TARGET_FILE:PLPLOT::plserver>)
     endif(ENABLE_tkX)
-    configure_file_generate(
-      plplot-test-interactive.sh.in
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh
-      @ONLY
-      NEWLINE_STYLE UNIX
-      )
 
     if(ENABLE_tcl)
       set(PLTCL_DIR $<TARGET_FILE_DIR:PLPLOT::pltcl>)
@@ -106,18 +100,7 @@ if(SH_EXECUTABLE)
 
     set(pltcl_LOCATION ${BIN_DIR}/pltcl)
     set(plserver_LOCATION ${BIN_DIR}/plserver)
-    configure_file(
-      plplot-test-interactive.sh.in
-      ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh_install
-      @ONLY
-      NEWLINE_STYLE UNIX
-      )
-    install(
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh_install
-      DESTINATION ${DATA_DIR}/examples
-      PERMISSIONS ${PERM_SCRIPTS}
-      RENAME plplot-test-interactive.sh
-      )
+
     # Set up optional tests in the configured plplot-test-interactive.sh file
     # which is used by the traditional build system for the installed
     # examples to do some interactive testing.
@@ -156,6 +139,19 @@ if(SH_EXECUTABLE)
     else(PLPLOT_USE_QT5)
       set(SHELL_TEST_QT_EXAMPLE 1)
     endif(PLPLOT_USE_QT5)
+
+    configure_file(
+      plplot-test-interactive.sh.in
+      ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh_install
+      @ONLY
+      NEWLINE_STYLE UNIX
+      )
+    install(
+      FILES ${CMAKE_CURRENT_BINARY_DIR}/plplot-test-interactive.sh_install
+      DESTINATION ${DATA_DIR}/examples
+      PERMISSIONS ${PERM_SCRIPTS}
+      RENAME plplot-test-interactive.sh
+      )
 
     set(SCRIPTS)
 

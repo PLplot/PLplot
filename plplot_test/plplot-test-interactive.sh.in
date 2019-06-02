@@ -1,6 +1,6 @@
 #!@SH_EXECUTABLE@
 # -*- mode: shell-script -*-
-# Copyright (C) 2009-2018 Alan W. Irwin
+# Copyright (C) 2009-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -31,6 +31,7 @@ TEST_WISH_STANDARD_EXAMPLES=@SHELL_TEST_WISH_STANDARD_EXAMPLES@
 TEST_PLSERVER_RUNALLDEMOS=@SHELL_TEST_PLSERVER_RUNALLDEMOS@
 TEST_WISH_RUNALLDEMOS=@SHELL_TEST_WISH_RUNALLDEMOS@
 TEST_QT_EXAMPLE=@SHELL_TEST_QT_EXAMPLE@
+TEST_WXWIDGETS=@SHELL_TEST_WXWIDGETS@
 
 usage()
 {
@@ -115,7 +116,7 @@ PLD_extqt=@PLD_extqt@
 # MAINTENANCE: These blank-delimited strings must be consistent with
 # previous configured list of devices.
 POSSIBLE_INTERACTIVE_DEVICES_LIST="xwin tk ntk xcairo qtwidget"
-if [ "@SHELL_TEST_WXWIDGETS@" -ne 0 ] ; then
+if [ "$TEST_WXWIDGETS" -ne 0 ] ; then
     POSSIBLE_INTERACTIVE_DEVICES_LIST="$POSSIBLE_INTERACTIVE_DEVICES_LIST wxwidgets"
 fi
 POSSIBLE_DEVICES_LIST="$POSSIBLE_INTERACTIVE_DEVICES_LIST extcairo extqt"
@@ -163,7 +164,7 @@ done
 
 INDEX_LIST=
 COUNT=0
-if [ "@PLD_xcairo@" = "ON" -a "@DROP_GTK_PLUS_2_BUILDS@" = "OFF"] ; then
+if [ "@PLD_xcairo@" = "ON" -a "@DROP_GTK_PLUS_2_BUILDS@" = "OFF" ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/c"
     COMMAND[$COUNT]="./extXdrawable_demo"
@@ -180,7 +181,7 @@ if [ "@PLD_extcairo@" = "ON" ] ; then
 fi
 
 # ENABLE_wxwidgets is ON only if ENABLE_cxx is ON.
-if [ "@ENABLE_wxwidgets@" = "ON" -a "@SHELL_TEST_WXWIDGETS@" -ne 0 ] ; then
+if [ "@ENABLE_wxwidgets@" = "ON" -a "$TEST_WXWIDGETS" -ne 0 ] ; then
     INDEX_LIST="$INDEX_LIST $COUNT"
     DIRECTORY[$COUNT]="${EXAMPLES_PREFIX}/c++"
     COMMAND[$COUNT]="./@wxdemo_name@"
@@ -251,6 +252,7 @@ done
 
 if [ "@ENABLE_tkX@" = "ON" ] ; then
 
+    echo "Running plgrid example"
     cd "${EXAMPLES_PREFIX}"/tcl
     "@plserver_LOCATION@" <<EOF
 plstdwin .
@@ -270,6 +272,7 @@ EOF
     fi
 
     if [ "$TEST_PLTCL_STANDARD_EXAMPLES" -ne 0 ] ; then
+	echo "Running pltcl_standard_examples"
 	# Copied almost entirely from pltcl_standard_examples script.
         cd ..
         # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
@@ -330,6 +333,7 @@ EOF
     fi
 
     if [ "$TEST_TCLSH_STANDARD_EXAMPLES" -ne 0 ] ; then
+	echo "Running tclsh_standard_examples"
 	# Copied almost entirely from TCLSH_standard_examples script.
         cd ..
         # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
@@ -392,6 +396,7 @@ EOF
     fi
 
     if [ "$TEST_PLSERVER_STANDARD_EXAMPLES" -ne 0 ] ; then
+	echo "Running plserver_standard_examples"
 	# Copied almost entirely from plserver_standard_examples script.
         cd ..
         # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
@@ -447,6 +452,7 @@ EOF
 	fi
     fi
     if [ "$TEST_WISH_STANDARD_EXAMPLES" -ne 0 ] ; then
+	echo "Running wish_standard_examples"
 	# Copied almost entirely from wish_standard_examples script.
         cd ..
         # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
@@ -510,6 +516,7 @@ EOF
     fi
 
     if [ "$TEST_PLSERVER_RUNALLDEMOS" -ne 0 ] ; then
+	echo "Running plserver_runAllDemos"
 	# Copied almost entirely from plserver_runAllDemos script.
         cd ..
         # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
@@ -526,6 +533,7 @@ EOF
     fi
 
     if [ "$TEST_WISH_RUNALLDEMOS" -ne 0 ] ; then
+	echo "Running wish_runAllDemos"
 	# Copied almost entirely from wish_runAllDemos script.
         cd ..
         # Just in case EXAMPLES_PREFIX is a relative path such as the default ".".
