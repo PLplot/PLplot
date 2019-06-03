@@ -1376,13 +1376,13 @@ if(BUILD_TEST)
 	${xwin_targets}
 	)
 
-      if(USE_INCRTCL_VERSION_4)
-	message(STATUS "WARNING: The test_tk_02 target can be run independently but it currently
-   does not work for version 4 of Itcl and friends so it is temporarily excluded
-   from being a dependency of other more general interactive test targets")
-      else(USE_INCRTCL_VERSION_4)
+#      if(USE_INCRTCL_VERSION_4)
+#	message(STATUS "WARNING: The test_tk_02 target can be run independently but it currently
+#   does not work for version 4 of Itcl and friends so it is temporarily excluded
+#   from being a dependency of other more general interactive test targets")
+#      else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_02)
-      endif(USE_INCRTCL_VERSION_4)
+#      endif(USE_INCRTCL_VERSION_4)
 
       add_custom_target(test_tk_04
 	COMMAND xtk04 -f ${CMAKE_CURRENT_BINARY_DIR}/tk/tk04
@@ -1393,13 +1393,13 @@ if(BUILD_TEST)
 	${TARGET_tclIndex_tk}
 	${xwin_targets}
 	)
-      if(USE_INCRTCL_VERSION_4)
-	message(STATUS "WARNING: The test_tk_04 target can be run independently but it currently
-   does not work for version 4 of Itcl and friends so it is temporarily excluded
-   from being a dependency of other more general interactive test targets")
-      else(USE_INCRTCL_VERSION_4)
+#      if(USE_INCRTCL_VERSION_4)
+#	message(STATUS "WARNING: The test_tk_04 target can be run independently but it currently
+#   does not work for version 4 of Itcl and friends so it is temporarily excluded
+#   from being a dependency of other more general interactive test targets")
+#      else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_04)
-      endif(USE_INCRTCL_VERSION_4)
+#      endif(USE_INCRTCL_VERSION_4)
     endif(ENABLE_itkX)
 
     add_custom_target(test_plserver_runAllDemos
