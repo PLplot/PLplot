@@ -300,8 +300,8 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
                         istart++;
 
                     stripc->npts[j] = stripc->npts[j] - istart;
-                    memcpy( &stripc->x[j][0], &stripc->x[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
-                    memcpy( &stripc->y[j][0], &stripc->y[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
+                    memmove( &stripc->x[j][0], &stripc->x[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
+                    memmove( &stripc->y[j][0], &stripc->y[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
                 }
             }
         }
