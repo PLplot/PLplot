@@ -215,12 +215,15 @@ static void plstrip_gen( PLStrip *striploc )
 // plstripa
 //
 // Add a point to a stripchart.
+// Points assumed to have increasing X value per pen, and X value of all pens
+// to increase relatively close together so that no pen's new point is ever
+// earlier than the current chart X range.
 // Allocates memory and rescales as necessary.
 //--------------------------------------------------------------------------
 
 void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 {
-    int j, yasc = 0, istart;
+    int jpen, yasc = 0, istart;
 
     if ( p >= PEN )
     {
@@ -237,7 +240,8 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 
 // Add new point, allocating memory if necessary
 
-    if ( ++stripc->npts[p] > stripc->nptsmax[p] )
+    stripc->npts[p]++;
+    if ( stripc->npts[p] > stripc->nptsmax[p] )
     {
         stripc->nptsmax[p] += 32;
         stripc->x[p]        = (PLFLT *) realloc( (void *) stripc->x[p], sizeof ( PLFLT ) * (size_t) ( stripc->nptsmax[p] ) );
@@ -249,15 +253,19 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
             return;
         }
     }
-
     stripc->x[p][stripc->npts[p] - 1] = x;
     stripc->y[p][stripc->npts[p] - 1] = y;
 
     stripc->xmax = x;
+// Check for Y rescale
 
+    // option to rescale immediately
     if ( stripc->y_ascl == 1 && ( y > stripc->ymax || y < stripc->ymin ) )
         yasc = 1;
 
+    // record Y range - if chart is not redrawn immediately, will be used next
+    // time chart is jumped and/or redrawn.
+    //
     if ( y > stripc->ymax )
         stripc->ymax = stripc->ymin + 1.1 * ( y - stripc->ymin );
     if ( y < stripc->ymin )
@@ -267,8 +275,11 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
 
     if ( stripc->xmax - stripc->xmin < stripc->xlen )
     {
+        // all data fits within chart X range
         if ( yasc == 0 )
         {
+            // all data fits within chart Y range, or not rescaling immediately
+            // this is the normal update case simply plotting the new point
             // If user has changed subwindow, make shure we have the correct one
             plvsta();
             plwind( stripc->wxmin, stripc->wxmax, stripc->wymin, stripc->wymax );   // FIXME - can exist some redundancy here
@@ -282,38 +293,43 @@ void c_plstripa( PLINT id, PLINT p, PLFLT x, PLFLT y )
         }
         else
         {
+            // data exceeds Y range, rescale the drawing immediately
             stripc->xmax = stripc->xmin + stripc->xlen;
             plstrip_gen( stripc );
         }
     }
     else
     {
-// Regenerating plot
+        // data exceeds X range
+        // Regenerating plot
         if ( stripc->acc == 0 )
         {
-            for ( j = 0; j < PEN; j++ )
+            for ( jpen = 0; jpen < PEN; jpen++ )
             {
-                if ( stripc->npts[j] > 0 )
+                if ( stripc->npts[jpen] > 0 )
                 {
+                    // find the first point in the data where X lies beyond a jumped new chart X minimum
                     istart = 0;
-                    while ( stripc->x[j][istart] < stripc->xmin + stripc->xlen * stripc->xjump )
+                    while ( stripc->x[jpen][istart] < stripc->xmin + stripc->xlen * stripc->xjump )
                         istart++;
 
-                    stripc->npts[j] = stripc->npts[j] - istart;
-                    memmove( &stripc->x[j][0], &stripc->x[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
-                    memmove( &stripc->y[j][0], &stripc->y[j][istart], (size_t) ( stripc->npts[j] ) * sizeof ( PLFLT ) );
+                    // remove all data where X lies before the new starting point
+                    stripc->npts[jpen] = stripc->npts[jpen] - istart;
+                    memmove( &stripc->x[jpen][0], &stripc->x[jpen][istart], (size_t) ( stripc->npts[jpen] ) * sizeof ( PLFLT ) );
+                    memmove( &stripc->y[jpen][0], &stripc->y[jpen][istart], (size_t) ( stripc->npts[jpen] ) * sizeof ( PLFLT ) );
                 }
             }
         }
         else
+            // extend the chart if charting in accumulative mode
             stripc->xlen = stripc->xlen * ( 1 + stripc->xjump );
 
+        // establish new X chart range by jump and redraw
         if ( stripc->acc == 0 )
             stripc->xmin = stripc->xmin + stripc->xlen * stripc->xjump;
         else
             stripc->xmin = stripc->x[p][0];
         stripc->xmax = stripc->xmax + stripc->xlen * stripc->xjump;
-
         plstrip_gen( stripc );
     }
 }
