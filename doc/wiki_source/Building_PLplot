@@ -18,6 +18,14 @@ To get the most out of our build system, it is important to consult the CMake do
 
 After consulting that documentation, [install](http://www.cmake.org/HTML/Install.html) the appropriate package of [CMake](http://www.cmake.org) for your system platform. Note, you must use at least version 2.8.9 of CMake for your PLplot configuration, but our build system works with the latest version (3.0.2) of CMake as well.
 
+###Build Location
+We recommend that, whatever platform you use, you build your libraries in a Linux style directory structure. CMake will install your libraries in this type of structure. Typically this will be in a folder called usr/ or usr/local/, but in can be any other name. You can set your install directory by using the CMake option CMAKE_INSTALL_PREFIX. Typically you would put source code for PLplot (and other libraries) in a src subdirectory of your install directory, e.g. usr/src/plplot-x.y.z.  When you build and install PLplot it will create subdirectories, lib, bin, share within the installation directory if needed, then place apropriate content in these locations. You should add the bin directory to your path environment variable.
+
+Things work best if all libraries, including dependencies of PLplot share the same install directory. Things can work even if this is not the case, but it generally makes life easier if all libraries are installed together. One notable exception is wxWidgets on windows (PLplot can be built with wxWidgets support). wxWidgets on Windows does not easily allow installation in the typical Linux directory structure. Instead you should install it wherever you feel and set the WXWIN environment variable to point the the source directory.
+
+####Suitable Install Paths
+Every effort is made to ensure spaces in the install path cause no problems for PLplot. However, problems do occur with paths that include a space followed by a hyphen " -". These paths can get interpretted as flags instead of paths.  We therefore suggest that your installation folder does not include this pattern. One case where this is quite likely to occur is when using OneDrive for Business. The default OneDrive for Business folder is "OneDrive - Your Business Name". So if you build in this directory then you will hit problems. One workaround my be to create a symlink to your installation folder to avoid the path with the unsupported pattern. Note that this problem will occur if you install PLplot in a path with the space-hyphen pattern or if any of the dependencies are installed in a path with the space-hyphen pattern.
+
 ### <a name="Generic_Unix_instructions_for_our_build_system"></a>Generic Unix instructions for our build system
 
 #### (Optional) set environment variables to help cmake find system components that are installed in non-standard locations
@@ -25,7 +33,7 @@ After consulting that documentation, [install](http://www.cmake.org/HTML/Install
 Here is one particular example (which must be executed before the cmake invocation discussed below).
 
 `export CMAKE_INCLUDE_PATH=/home/software/shapelib/install/include`
-`export CMAKE_LIBRARY_PATH=`/home/software/shapelib/install/lib`
+`export CMAKE_LIBRARY_PATH=/home/software/shapelib/install/lib`
 `export PKG_CONFIG_PATH=/home/software/libLASi/install/lib/pkgconfig`
 
 For this particular example, <tt>CMAKE_INCLUDE_PATH</tt> and <tt>CMAKE_LIBRARY_PATH</tt> helps cmake to find the headers and library for <tt>shapelib</tt> in a non-standard install location, and <tt>PKG_CONFIG_PATH</tt> helps cmake to use the <tt>pkg-config</tt> command internally to find a libLASi pkg-config module file that is installed in a non-standard location.  Use colon separation if more than one non-standard install location needs to be specified with <tt>CMAKE_INCLUDE_PATH</tt> , <tt>CMAKE_LIBRARY_PATH</tt>, and/or <tt>PKG_CONFIG_PATH</tt>.  Also, although not used in the specific example above, the colon-separated environment variable <tt>PATH</tt> helps cmake find executables that are installed in non-standard locations.
