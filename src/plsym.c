@@ -179,9 +179,14 @@ c_plpoin( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLINT code )
         plabort( "plpoin: Please set up window first" );
         return;
     }
-    if ( code < -1 || code > 127 )
+    if ( code < -1 || code >= numberchars )
     {
         plabort( "plpoin: Invalid code" );
+        return;
+    }
+    if ( !fontloaded )
+    {
+        plabort( "plpoin: Please load a PLplot font first." );
         return;
     }
 
@@ -243,10 +248,14 @@ c_plpoin3( PLINT n, PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, PLINT code )
         plabort( "plpoin3: Please set up window first" );
         return;
     }
-    if ( code < -1 || code > 127 )
+    if ( code < -1 || code >= numberchars )
     {
         plabort( "plpoin3: Invalid code" );
         return;
+    }
+    if ( !fontloaded )
+    {
+        plabort( "plpoin3: Please load a PLplot font first." ); return;
     }
 
     plP_gdom( &xmin, &xmax, &ymin, &ymax );
@@ -1002,7 +1011,9 @@ plstrl( PLCHAR_VECTOR string )
         return (PLFLT) plsc->string_length;
     }
 
-
+    //If the driver does not compute string lengths then use the hershey
+    //font to calculate it. Note that this may be inaccurate if the driver
+    //renders its own text but does not compute string lengths
     plgchr( &def, &ht );
     dscale = 0.05 * ht;
     scale  = dscale;
@@ -1116,6 +1127,13 @@ pldeco( short int **symbol, PLINT *length, PLCHAR_VECTOR text )
     plgesc( &esc );
     if ( ifont > numberfonts )
         ifont = 1;
+
+// If we didn't load the font file, then just return now.
+    if ( !fntlkup )
+    {
+        plwarn( "Attempt to decode hershy font symbol was made, but the hershey font data does not exist." );
+        return;
+    }
 
 // Get next character; treat non-printing characters as spaces.
 
@@ -1396,6 +1414,7 @@ plfntld( PLINT fnt )
     static PLINT charset;
     short        bffrleng;
     PDFstrm      *pdfs;
+    PLBOOL       failed;
 
     if ( fontloaded && ( charset == fnt ) )
         return;
@@ -1403,6 +1422,7 @@ plfntld( PLINT fnt )
     plfontrel();
     fontloaded = 1;
     charset    = fnt;
+    failed     = 0;
 
     if ( fnt )
         pdfs = plLibOpenPdfstrm( PL_XFONT );
@@ -1410,47 +1430,62 @@ plfntld( PLINT fnt )
         pdfs = plLibOpenPdfstrm( PL_SFONT );
 
     if ( pdfs == NULL )
-        plexit( "Unable to either (1) open/find or (2) allocate memory for the font file" );
+        failed = 1;
 
 // Read fntlkup[]
-
-    pdf_rd_2bytes( pdfs, (U_SHORT *) &bffrleng );
-    numberfonts = bffrleng / 256;
-    numberchars = bffrleng & 0xff;
-    bffrleng    = (short) ( numberfonts * numberchars );
-    fntlkup     = (short int *) malloc( (size_t) bffrleng * sizeof ( short int ) );
-    if ( !fntlkup )
-        plexit( "plfntld: Out of memory while allocating font buffer." );
-
-    pdf_rd_2nbytes( pdfs, (U_SHORT *) fntlkup, bffrleng );
+    if ( !failed )
+    {
+        pdf_rd_2bytes( pdfs, (U_SHORT *) &bffrleng );
+        numberfonts = bffrleng / 256;
+        numberchars = bffrleng & 0xff;
+        bffrleng    = (short) ( numberfonts * numberchars );
+        fntlkup     = (short int *) malloc( (size_t) bffrleng * sizeof ( short int ) );
+        if ( !fntlkup )
+            failed = 1;
+        else
+            pdf_rd_2nbytes( pdfs, (U_SHORT *) fntlkup, bffrleng );
+    }
 
 // Read fntindx[]
 
-    pdf_rd_2bytes( pdfs, (U_SHORT *) &indxleng );
-    fntindx = (short int *) malloc( (size_t) indxleng * sizeof ( short int ) );
-    if ( !fntindx )
-        plexit( "plfntld: Out of memory while allocating font buffer." );
-
-    pdf_rd_2nbytes( pdfs, (U_SHORT *) fntindx, indxleng );
-
+    if ( !failed )
+    {
+        pdf_rd_2bytes( pdfs, (U_SHORT *) &indxleng );
+        fntindx = (short int *) malloc( (size_t) indxleng * sizeof ( short int ) );
+        if ( !fntindx )
+            failed = 1;
+        else
+            pdf_rd_2nbytes( pdfs, (U_SHORT *) fntindx, indxleng );
+    }
 // Read fntbffr[]
 // Since this is an array of char, there are no endian problems
 
-    pdf_rd_2bytes( pdfs, (U_SHORT *) &bffrleng );
-    fntbffr = (signed char *) malloc( 2 * (size_t) bffrleng * sizeof ( signed char ) );
-    if ( !fntbffr )
-        plexit( "plfntld: Out of memory while allocating font buffer." );
-
+    if ( !failed )
+    {
+        pdf_rd_2bytes( pdfs, (U_SHORT *) &bffrleng );
+        fntbffr = (signed char *) malloc( 2 * (size_t) bffrleng * sizeof ( signed char ) );
+        if ( !fntbffr )
+            failed = 1;
+        else
 #if PLPLOT_USE_TCL_CHANNELS
-    pdf_rdx( fntbffr, sizeof ( signed char ) * (size_t) ( 2 * bffrleng ), pdfs );
+            pdf_rdx( fntbffr, sizeof ( signed char ) * (size_t) ( 2 * bffrleng ), pdfs );
 #else
-    plio_fread( (void *) fntbffr, (size_t) sizeof ( signed char ),
-        (size_t) ( 2 * bffrleng ), pdfs->file );
+            plio_fread( (void *) fntbffr, (size_t) sizeof ( signed char ),
+            (size_t) ( 2 * bffrleng ), pdfs->file );
 #endif
+    }
 
 // Done
 
     pdf_close( pdfs );
+
+    if ( failed )
+    {
+        plwarn( "Unable to either (1) open/find or (2) allocate memory for the font file" );
+        numberfonts = 0;
+        numberchars = 0;
+        plfontrel();
+    }
 }
 
 //--------------------------------------------------------------------------
