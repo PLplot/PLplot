@@ -154,7 +154,7 @@ drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, double *x, doub
             renderY = fltY;
 #endif
             if ( mapform != NULL )
-                (*mapform)( n + nExtraPoints, renderX, renderY );
+                ( *mapform )( n + nExtraPoints, renderX, renderY );
             plfill( n + nExtraPoints, renderX, renderY );
             free( newX );
             free( newY );
@@ -170,7 +170,7 @@ drawmapdata( PLMAPFORM_callback mapform, int shapetype, PLINT n, double *x, doub
         {
             //this is just a regular polygon - render it as we would expect
             if ( mapform != NULL )
-                (*mapform)( n, x, y );
+                ( *mapform )( n, x, y );
             plfill( n, x, y );
         }
 

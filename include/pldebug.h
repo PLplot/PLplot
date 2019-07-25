@@ -22,7 +22,7 @@
 #ifdef DEBUG_ENTER
 #define dbug_enter( a ) \
     if ( plsc->debug )  \
-        fprintf( stderr, "    entered %s (%s, line %d)\n", a, __FILE__, __LINE__ );
+    fprintf ( stderr, "    entered %s (%s, line %d)\n", a, __FILE__, __LINE__ );
 
 #else
 #define dbug_enter( a )

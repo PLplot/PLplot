@@ -32,8 +32,8 @@ class x31 {
 
     x31( String[] args )
     {
-        double       xmin[]  = new double[1], xmax[] = new double[1];
-        double       ymin[]  = new double[1], ymax[] = new double[1];
+        double       xmin[] = new double[1], xmax[] = new double[1];
+        double       ymin[] = new double[1], ymax[] = new double[1];
         double       zxmin[] = new double[1], zxmax[] = new double[1];
         double       zymin[] = new double[1], zymax[] = new double[1];
         double       xmin0, xmax0;
@@ -41,30 +41,30 @@ class x31 {
         double       zxmin0, zxmax0;
         double       zymin0, zymax0;
         double       xmid, ymid;
-        double       wx[]  = new double[1], wy[] = new double[1];
+        double       wx[] = new double[1], wy[] = new double[1];
         double       mar[] = new double[1], aspect[] = new double[1];
-        double       jx[]  = new double[1], jy[] = new double[1];
+        double       jx[] = new double[1], jy[] = new double[1];
         double       mar0, aspect0;
         double       jx0, jy0;
         double       ori[] = new double[1];
         double       ori0;
-        int          win[]          = new int[1], level2[] = new int[1];
-        int          digmax[]       = new int[1], digits[] = new int[1];
+        int          win[] = new int[1], level2[] = new int[1];
+        int          digmax[] = new int[1], digits[] = new int[1];
         int          compression1[] = new int[1], compression2[] = new int[1];
-        double       xp0[]          = new double[1], yp0[] = new double[1];
+        double       xp0[] = new double[1], yp0[] = new double[1];
         double       xp1, yp1;
-        double       xp2[]    = new double[1], yp2[] = new double[1];
+        double       xp2[] = new double[1], yp2[] = new double[1];
         int          xleng0[] = new int[1], yleng0[] = new int[1];
-        int          xoff0[]  = new int[1], yoff0[] = new int[1];
+        int          xoff0[] = new int[1], yoff0[] = new int[1];
         int          xleng1, yleng1;
         int          xoff1, yoff1;
         int          xleng2[] = new int[1], yleng2[] = new int[1];
-        int          xoff2[]  = new int[1], yoff2[] = new int[1];
-        int          fam0[]   = new int[1], num0[] = new int[1], bmax0[] = new int[1];
+        int          xoff2[] = new int[1], yoff2[] = new int[1];
+        int          fam0[] = new int[1], num0[] = new int[1], bmax0[] = new int[1];
         int          fam1, num1, bmax1;
         int          fam2[] = new int[1], num2[] = new int[1], bmax2[] = new int[1];
-        int          r[]    = new int[1], g[] = new int[1], b[] = new int[1];
-        double       a[]    = new double[1];
+        int          r[] = new int[1], g[] = new int[1], b[] = new int[1];
+        double       a[] = new double[1];
         int          r0, g0, b0;
         double       a0;
         int          r1[] = { 0, 255 };

@@ -130,7 +130,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     size_t             argv0_length;
     int offset = 0;
     size_t             concatenated_argv_len;
-    char               *concatenated_argv;
+    char *concatenated_argv;
     const char         *const_concatenated_argv;
 
     dbug_enter( "Tcl_MatrixCmd" );
@@ -364,7 +364,7 @@ Tcl_MatrixCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     if ( !persist )
     {
         if ( Tcl_SetVar( interp, matPtr->name,
-                 "old_bogus_syntax_please_upgrade", 0 ) == NULL )
+            "old_bogus_syntax_please_upgrade", 0 ) == NULL )
         {
             Tcl_AppendResult( interp, "unable to schedule Matrix operator \"",
                 matPtr->name, "\" for automatic deletion", (char *) NULL );
@@ -592,7 +592,7 @@ MatrixCmd( ClientData clientData, Tcl_Interp *interp,
            int argc, const char **argv )
 {
     register tclMatrix *matPtr = (tclMatrix *) clientData;
-    int        put             = 0;
+    int        put = 0;
     char       c, tmp[200];
     const char *name = argv[0];
     // In one case (negative step and desired last actual index of 0)
@@ -1466,7 +1466,7 @@ DeleteMatrixCmd( ClientData clientData )
     if ( matPtr->tracing )
     {
         if ( Tcl_VarTraceInfo( matPtr->interp, matPtr->name, TCL_TRACE_UNSETS,
-                 (Tcl_VarTraceProc *) DeleteMatrixVar, NULL ) != NULL )
+            (Tcl_VarTraceProc *) DeleteMatrixVar, NULL ) != NULL )
         {
             matPtr->tracing = 0;
             Tcl_UntraceVar( matPtr->interp, matPtr->name, TCL_TRACE_UNSETS,

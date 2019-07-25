@@ -925,7 +925,7 @@ plcontCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix  *matPtr, *matf, *matclev;
     PLINT      nx, ny, kx = 0, lx = 0, ky = 0, ly = 0, nclev;
     const char *pltrname = "pltr0";
-    tclMatrix  *mattrx   = NULL, *mattry = NULL;
+    tclMatrix  *mattrx = NULL, *mattry = NULL;
     PLFLT      **z, **zused, **zwrapped;
 
     int        arg3_is_kx = 1, i, j;
@@ -1312,7 +1312,7 @@ plvectCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     tclMatrix  *matPtr, *matu, *matv;
     PLINT      nx, ny;
     const char *pltrname = "pltr0";
-    tclMatrix  *mattrx   = NULL, *mattry = NULL;
+    tclMatrix  *mattrx = NULL, *mattry = NULL;
     PLFLT      **u, **v, **uused, **vused, **uwrapped, **vwrapped;
     PLFLT      scaling;
 
@@ -3076,11 +3076,11 @@ plshadeCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLFLT      **z, **zused, **zwrapped;
     PLFLT      xmin, xmax, ymin, ymax, sh_min, sh_max, sh_col;
 
-    PLINT      sh_cmap   = 1;
-    PLFLT      sh_wid    = 2.;
-    PLINT      min_col   = 1, max_col = 0;
-    PLFLT      min_wid   = 0., max_wid = 0.;
-    PLINT      rect      = 1;
+    PLINT      sh_cmap = 1;
+    PLFLT      sh_wid = 2.;
+    PLINT      min_col = 1, max_col = 0;
+    PLFLT      min_wid = 0., max_wid = 0.;
+    PLINT      rect = 1;
     const char *pltrname = "pltr0";
     void       ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
     PLPointer  pltr_data = NULL;
@@ -3395,8 +3395,8 @@ plshadesCmd( ClientData PL_UNUSED( clientData ), Tcl_Interp *interp,
     PLFLT      xmin, xmax, ymin, ymax;
     PLINT      cont_color = 0;
     PLFLT      fill_width = 0., cont_width = 0.;
-    PLINT      rect       = 1;
-    const char *pltrname  = "pltr0";
+    PLINT      rect = 1;
+    const char *pltrname = "pltr0";
     void       ( *pltr )( PLFLT, PLFLT, PLFLT *, PLFLT *, PLPointer );
     PLPointer  pltr_data = NULL;
     PLcGrid    cgrid1;

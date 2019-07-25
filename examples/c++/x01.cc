@@ -109,7 +109,7 @@ public:
 
 private:
     // Class data
-    PLFLT    xscale, yscale, xoff, yoff;
+    PLFLT xscale, yscale, xoff, yoff;
     plstream *pls;
 };
 

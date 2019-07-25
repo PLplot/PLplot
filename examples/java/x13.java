@@ -31,8 +31,8 @@ import static plplot.core.plplotjavacConstants.*;
 import java.lang.Math;
 
 class x13 {
-    static     String[] text = { "Maurice", "Geoffrey", "Alan", "Rafael", "Vince" };
-    static int per[] = { 10, 32, 12, 30, 16 };
+    static String[] text = { "Maurice", "Geoffrey", "Alan", "Rafael", "Vince" };
+    static int per[]     = { 10, 32, 12, 30, 16 };
 
     public static void main( String[] args )
     {

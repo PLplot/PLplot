@@ -61,21 +61,21 @@ class x04 {
 
     void plot1( int type )
     {
-        int i;
+        int      i;
         double[] freql = new double[101];
-        double[] ampl  = new double[101];
+        double[] ampl = new double[101];
         double[] phase = new double[101];
-        double f0, freq;
-        int    nlegend;
+        double   f0, freq;
+        int      nlegend;
         String[] text;
         String[] symbols;
-        int[] opt_array;
-        int[] text_colors;
-        int[] line_colors;
-        int[] line_styles;
+        int[]    opt_array;
+        int[]    text_colors;
+        int[]    line_colors;
+        int[]    line_styles;
         double[] line_widths;
-        int[] symbol_numbers;
-        int[] symbol_colors;
+        int[]    symbol_numbers;
+        int[]    symbol_colors;
         double[] symbol_scales;
         double[] legend_width  = new double[1];
         double[] legend_height = new double[1];

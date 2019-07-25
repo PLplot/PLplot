@@ -31,11 +31,11 @@ import static plplot.core.plplotjavacConstants.*;
 
 
 class x30 {
-    PLStream        pls = new PLStream();
+    PLStream pls = new PLStream();
 
-    static int[]    red   = { 0, 255, 0, 0 };
-    static int[]    green = { 0, 0, 255, 0 };
-    static int[]    blue  = { 0, 0, 0, 255 };
+    static int[] red      = { 0, 255, 0, 0 };
+    static int[] green    = { 0, 0, 255, 0 };
+    static int[] blue     = { 0, 0, 0, 255 };
     static double[] alpha = { 1.0, 1.0, 1.0, 1.0 };
 
     static double[] px = { 0.1, 0.5, 0.5, 0.1 };
@@ -49,11 +49,11 @@ class x30 {
 
     x30( String[] args )
     {
-        int i, j;
-        int icol;
-        int[] r    = new int[1];
-        int[] g    = new int[1];
-        int[] b    = new int[1];
+        int      i, j;
+        int      icol;
+        int[]    r = new int[1];
+        int[]    g = new int[1];
+        int[]    b = new int[1];
         double[] a = new double[1];
 
         pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );

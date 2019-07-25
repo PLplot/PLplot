@@ -18,7 +18,7 @@
 #define _HASH_H
 
 struct hashtable;
-typedef struct hashtable   hashtable;
+typedef struct hashtable hashtable;
 
 //* Copies a key. The key must be able to be deallocated by free().
 //

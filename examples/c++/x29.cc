@@ -34,8 +34,8 @@ public:
 private:
     plstream *pls;
 
-    PLFLT    x[365], y[365];
-    PLFLT    xerr1[365], xerr2[365], yerr1[365], yerr2[365];
+    PLFLT x[365], y[365];
+    PLFLT xerr1[365], xerr2[365], yerr1[365], yerr2[365];
 
     // Function prototypes
     void plot1();

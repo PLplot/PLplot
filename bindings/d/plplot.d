@@ -57,7 +57,7 @@ PLINT plparseopts( char[][] args, PLINT mode )
 {
     char*[] c_args = new char*[args.length];
     foreach ( size_t i, char[] arg; args )
-        c_args[i] = cast(char *) toStringz( arg );
+        c_args[i] = cast( char * ) toStringz( arg );
     int argc = cast(int) c_args.length;
     return c_plparseopts( &argc, cast(char**) c_args, mode );
 }

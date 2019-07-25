@@ -370,7 +370,7 @@ shade( void )
     PLcGrid2 cgrid2;
 
     PLFLT    shade_min, shade_max, sh_color;
-    PLINT    sh_cmap   = 1, sh_width;
+    PLINT    sh_cmap = 1, sh_width;
     PLINT    min_color = 1, min_width = 0, max_color = 0, max_width = 0;
 
 // Set up function arrays

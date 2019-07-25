@@ -33,18 +33,18 @@ class x21 {
     // Class data
     PLStream pls = new PLStream();
 
-    double   xm, xM, ym, yM;
+    double xm, xM, ym, yM;
 
     // Options data structure definition.
-    static int    pts       = 500;
-    static int    xp        = 25;
-    static int    yp        = 20;
-    static int    nl        = 16;
-    static int    knn_order = 20;
+    static int pts          = 500;
+    static int xp           = 25;
+    static int yp           = 20;
+    static int nl           = 16;
+    static int knn_order    = 20;
     static double threshold = 1.001;
     static double wmin      = -1e3;
-    static int    randn     = 0;
-    static int    rosen     = 0;
+    static int randn        = 0;
+    static int rosen        = 0;
 
     //  static PLOptionTable options[];
 

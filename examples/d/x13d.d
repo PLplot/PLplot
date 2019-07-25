@@ -37,7 +37,7 @@ int main( char[][] args )
     // n.b. all theta quantities scaled by 2*M_PI/500 to be integers to avoid
     // floating point logic problems.
     int     theta0 = 0;
-    int     dthet  = 1;
+    int     dthet = 1;
     int     theta1, theta;
     PLFLT   just, dx, dy;
     PLFLT[] per = [ 10.0, 32.0, 12.0, 30.0, 16.0 ];

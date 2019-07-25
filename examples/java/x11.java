@@ -31,17 +31,17 @@ import static plplot.core.plplotjavacConstants.*;
 import java.lang.Math;
 
 class x11 {
-    PLStream         pls = new PLStream();
+    PLStream pls = new PLStream();
 
     static final int XPTS   = 35;
     static final int YPTS   = 46;
     static final int LEVELS = 10;
 
-    static int       opt[] = { 3, 3 };
-    static double    alt[] = { 33.0, 17.0 };
-    static double    az[]  = { 24.0, 115.0 };
+    static int opt[]    = { 3, 3 };
+    static double alt[] = { 33.0, 17.0 };
+    static double az[]  = { 24.0, 115.0 };
 
-    static           String[] title =
+    static String[] title =
     {
         "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
         "#frPLplot Example 11 - Alt=17, Az=115, Opt=3"
@@ -49,10 +49,10 @@ class x11 {
 
     void cmap1_init()
     {
-        double [] i    = new double[2];
-        double [] h    = new double[2];
-        double [] l    = new double[2];
-        double [] s    = new double[2];
+        double []  i   = new double[2];
+        double []  h   = new double[2];
+        double []  l   = new double[2];
+        double []  s   = new double[2];
         boolean [] rev = new boolean[2];
 
         i[0] = 0.0;         // left boundary
@@ -84,17 +84,17 @@ class x11 {
 
     public x11( String[] args )
     {
-        int i, j, k;
+        int        i, j, k;
 
-        double[] x   = new double[ XPTS ];
-        double[] y   = new double[ YPTS ];
+        double[]   x = new double[ XPTS ];
+        double[]   y = new double[ YPTS ];
         double[][] z = new double[XPTS][YPTS];
-        double zmin = Double.MAX_VALUE, zmax = Double.MIN_VALUE;
+        double     zmin = Double.MAX_VALUE, zmax = Double.MIN_VALUE;
 
-        double xx, yy;
-        int    nlevel = LEVELS;
-        double[] clevel = new double[LEVELS];
-        double step;
+        double     xx, yy;
+        int        nlevel = LEVELS;
+        double[]   clevel = new double[LEVELS];
+        double     step;
 
 
         // Parse and process command line arguments.

@@ -43,14 +43,14 @@ import static plplot.core.plplotjavacConstants.*;
 class x24 {
     PLStream pls = new PLStream();
 
-    int      red[]   = { 240, 204, 204, 204, 0, 39, 125 };
-    int      green[] = { 240, 0, 125, 204, 204, 80, 0 };
-    int      blue[]  = { 240, 0, 0, 0, 0, 204, 125 };
+    int red[]   = { 240, 204, 204, 204, 0, 39, 125 };
+    int green[] = { 240, 0, 125, 204, 204, 80, 0 };
+    int blue[]  = { 240, 0, 0, 0, 0, 204, 125 };
 
-    double   px[] = { 0.0, 0.0, 1.0, 1.0 };
-    double   py[] = { 0.0, 0.25, 0.25, 0.0 };
+    double px[] = { 0.0, 0.0, 1.0, 1.0 };
+    double py[] = { 0.0, 0.25, 0.25, 0.0 };
 
-    double   sx[] = {
+    double sx[] = {
         0.16374,
         0.15844,
         0.15255,
@@ -65,7 +65,7 @@ class x24 {
         0.82647
     };
 
-    double   sy[] = {
+    double sy[] = {
         0.125,
         0.375,
         0.625,

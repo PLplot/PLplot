@@ -85,7 +85,7 @@ int access( char *filename, int flag )
   #include <unistd.h>
 #endif
 
-#define makeunixslash( b )    do { char *I; for ( I = b; *I != 0; *I++ ) if ( *I == '\\' ) *I = '/';} while ( 0 )
+#define makeunixslash( b )    do { char *I; for ( I = b; *I != 0; *I++ ) if ( *I == '\\' ) * I = '/'; } while ( 0 )
 
 #include "plDevs.h"
 #include "plplotP.h"
@@ -163,7 +163,7 @@ void
 FT_StrX_YW( PLStream *pls, const PLUNICODE *text, short len, int *xx, int *yy, int *overyy, int *underyy )
 {
     FT_Data   *FT = (FT_Data *) pls->FT;
-    short     i   = 0;
+    short     i = 0;
     FT_Vector akerning, adjust;
     int       x = 0, y = 0, startingy;
     char      esc;
@@ -288,7 +288,7 @@ void
 FT_WriteStrW( PLStream *pls, const PLUNICODE *text, short len, int x, int y )
 {
     FT_Data   *FT = (FT_Data *) pls->FT;
-    short     i   = 0, last_char = -1;
+    short     i = 0, last_char = -1;
     FT_Vector akerning, adjust;
     char      esc;
 
@@ -872,7 +872,7 @@ void plD_render_freetype_text( PLStream *pls, EscText *args )
 {
     FT_Data   *FT = (FT_Data *) pls->FT;
     int       x, y;
-    int       w  = 0, h = 0, overh = 0, underh = 0;
+    int       w = 0, h = 0, overh = 0, underh = 0;
     PLFLT     *t = args->xform;
     FT_Matrix matrix;
     PLFLT     angle = PI * pls->diorot / 2;

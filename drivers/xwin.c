@@ -1284,7 +1284,7 @@ MapMain( PLStream *pls )
         if ( event.type == Expose )
         {
             while ( XCheckWindowEvent( xwd->display, dev->window,
-                        ExposureMask, &event ) )
+                ExposureMask, &event ) )
                 ;
             break;
         }
@@ -1465,7 +1465,7 @@ HandleEvents( PLStream *pls )
     XEvent    event;
 
     while ( XCheckTypedWindowEvent( xwd->display, dev->window,
-                ClientMessage, &event ) ||
+        ClientMessage, &event ) ||
             XCheckWindowEvent( xwd->display, dev->window,
                 dev->event_mask, &event ) )
         MasterEH( pls, &event );
@@ -2054,7 +2054,7 @@ CreateXhairs( PLStream *pls )
 // inside our window
 
     if ( XQueryPointer( xwd->display, dev->window, &root, &child,
-             &root_x, &root_y, &win_x, &win_y, &mask ) )
+        &root_x, &root_y, &win_x, &win_y, &mask ) )
     {
         if ( win_x >= 0 && win_x < (int) dev->width &&
              win_y >= 0 && win_y < (int) dev->height )
@@ -2068,7 +2068,7 @@ CreateXhairs( PLStream *pls )
 
     XSync( xwd->display, 0 );
     while ( XCheckWindowEvent( xwd->display, dev->window,
-                PointerMotionMask, &event ) )
+        PointerMotionMask, &event ) )
         ;
 
 // Catch PointerMotion and crossing events so we can update them properly
@@ -2202,7 +2202,7 @@ ExposeEH( PLStream *pls, XEvent *event )
 
     if ( redrawn )
         while ( XCheckWindowEvent( xwd->display, dev->window,
-                    ExposureMask | StructureNotifyMask, event ) )
+            ExposureMask | StructureNotifyMask, event ) )
             ;
 }
 
@@ -2248,7 +2248,7 @@ ResizeEH( PLStream *pls, XEvent *event )
 
     XFlush( xwd->display );
     while ( XCheckWindowEvent( xwd->display, dev->window,
-                ExposureMask | StructureNotifyMask, event ) )
+        ExposureMask | StructureNotifyMask, event ) )
         ;
 }
 
@@ -2759,7 +2759,7 @@ AllocBGFG( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( xwd->display, xwd->map, False,
-                 plane_masks, 0, pixels, (unsigned int) npixels ) )
+            plane_masks, 0, pixels, (unsigned int) npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -2947,7 +2947,7 @@ AllocCustomMap( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( xwd->display, xwd->map, False,
-                 plane_masks, 0, pixels, (unsigned int) npixels ) )
+            plane_masks, 0, pixels, (unsigned int) npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -3049,7 +3049,7 @@ AllocCmap0( PLStream *pls )
         for (;; )
         {
             if ( XAllocColorCells( xwd->display, xwd->map, False,
-                     plane_masks, 0, &pixels[1], (unsigned int) npixels ) )
+                plane_masks, 0, &pixels[1], (unsigned int) npixels ) )
                 break;
             npixels--;
             if ( npixels == 0 )
@@ -3157,7 +3157,7 @@ AllocCmap1( PLStream *pls )
         for (;; )
         {
             if ( XAllocColorCells( xwd->display, xwd->map, False,
-                     plane_masks, 0, pixels, (unsigned int) npixels ) )
+                plane_masks, 0, pixels, (unsigned int) npixels ) )
                 break;
             npixels--;
             if ( npixels == 0 )

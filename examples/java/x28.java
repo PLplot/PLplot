@@ -32,7 +32,7 @@ import static plplot.core.plplotjavacConstants.*;
 import java.lang.Math;
 
 class x28 {
-    PLStream   pls = new PLStream();
+    PLStream pls = new PLStream();
 
     static int XPTS        = 2;
     static int YPTS        = 2;
@@ -42,18 +42,18 @@ class x28 {
 
     x28( String[] args )
     {
-        double xmin     = 0., xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
-               ymin     = 0., ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
-               zmin     = 0., zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
-               ysmin    = ymin + 0.1 * yrange,
-               ysmax    = ymax - 0.1 * yrange,
-               ysrange  = ysmax - ysmin,
-               dysrot   = ysrange / ( NROTATION - 1 ),
+        double xmin = 0., xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
+               ymin = 0., ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
+               zmin = 0., zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
+               ysmin = ymin + 0.1 * yrange,
+               ysmax = ymax - 0.1 * yrange,
+               ysrange = ysmax - ysmin,
+               dysrot = ysrange / ( NROTATION - 1 ),
                dysshear = ysrange / ( NSHEAR - 1 ),
-               zsmin    = zmin + 0.1 * zrange,
-               zsmax    = zmax - 0.1 * zrange,
-               zsrange  = zsmax - zsmin,
-               dzsrot   = zsrange / ( NROTATION - 1 ),
+               zsmin = zmin + 0.1 * zrange,
+               zsmax = zmax - 0.1 * zrange,
+               zsrange = zsmax - zsmin,
+               dzsrot = zsrange / ( NROTATION - 1 ),
                dzsshear = zsrange / ( NSHEAR - 1 ),
                ys, zs,
                x_inclination, y_inclination, z_inclination,
@@ -66,8 +66,8 @@ class x28 {
         String pstring = "The future of our civilization depends on software freedom.";
 
         // Allocate and define the minimal x, y, and z to insure 3D box
-        double[] x   = new double[XPTS];
-        double[] y   = new double[YPTS];
+        double[]   x = new double[XPTS];
+        double[]   y = new double[YPTS];
         double[][] z = new double[XPTS][YPTS];
 
         for ( i = 0; i < XPTS; i++ )

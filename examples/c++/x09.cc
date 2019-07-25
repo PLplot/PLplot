@@ -35,7 +35,7 @@ public:
     void potential();
 
 private:
-    plstream         *pls;
+    plstream *pls;
 
     static const int XPTS;
     static const int YPTS;
@@ -51,7 +51,7 @@ private:
     static const int PTHETAPTS;
     static const int PNLEVEL;
 
-    static PLFLT     clevel[];
+    static PLFLT clevel[];
     // Transformation function
     //  static const PLFLT tr[];
 

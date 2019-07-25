@@ -20,7 +20,7 @@
 
 #include "nndll.h"
 
-typedef enum { SIBSON, NON_SIBSONIAN }   NN_RULE;
+typedef enum { SIBSON, NON_SIBSONIAN } NN_RULE;
 
 #if !defined ( _POINT_STRUCT )
 #define _POINT_STRUCT
@@ -108,7 +108,7 @@ void points_scale( int n, point* points, double k );
 // Contains point to triangle map.
 //
 struct delaunay;
-typedef struct delaunay   delaunay;
+typedef struct delaunay delaunay;
 
 //* Builds Delaunay triangulation of the given array of points.
 //
@@ -135,7 +135,7 @@ void delaunay_destroy( delaunay* d );
 // Natural Neighbours interpolators below.
 //
 struct lpi;
-typedef struct lpi   lpi;
+typedef struct lpi lpi;
 
 //* Builds linear interpolator.
 //
@@ -176,7 +176,7 @@ void lpi_interpolate_points( int nin, point pin[], int nout, point pout[] );
 // `nnhpi' or `nnai' in these cases.
 //
 struct nnpi;
-typedef struct nnpi   nnpi;
+typedef struct nnpi nnpi;
 
 //* Creates Natural Neighbours point interpolator.
 //
@@ -223,7 +223,7 @@ void nnpi_setwmin( nnpi* nn, double wmin );
 // coordinate of data between interpolations.
 //
 struct nnhpi;
-typedef struct nnhpi   nnhpi;
+typedef struct nnhpi nnhpi;
 
 //* Creates Natural Neighbours hashing point interpolator.
 //
@@ -269,7 +269,7 @@ void nnhpi_setwmin( nnhpi* nn, double wmin );
 // interpolators here.
 //
 struct nnai;
-typedef struct nnai   nnai;
+typedef struct nnai nnai;
 
 //* Builds Natural Neighbours array interpolator. This includes calculation of
 // weights used in nnai_interpolate().

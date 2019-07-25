@@ -31,7 +31,7 @@ import java.io.*;
 
 public class PLStream implements plplotjavacConstants {
 // Class data.
-    int        stream_id = -1;
+    int stream_id = -1;
 
     static int active_streams = 0;
 

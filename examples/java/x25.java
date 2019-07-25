@@ -31,11 +31,11 @@ class x25 {
 
     public x25( String[] args )
     {
-        int i, j, k;
+        int        i, j, k;
         double[][] xextreme = new double[10][2];
         double[][] yextreme = new double[10][2];
-        double[] x0         = new double[1];
-        double[] y0         = new double[1];
+        double[]   x0       = new double[1];
+        double[]   y0       = new double[1];
 
         // Parse and process command line arguments
 

@@ -35,33 +35,33 @@ public:
     x30( int, char ** );
 
 private:
-    plstream      *pls;
+    plstream *pls;
 
-    static PLINT  red[];
-    static PLINT  green[];
-    static PLINT  blue[];
-    static PLFLT  alpha[];
+    static PLINT red[];
+    static PLINT green[];
+    static PLINT blue[];
+    static PLFLT alpha[];
 
-    static PLFLT  px[];
-    static PLFLT  py[];
+    static PLFLT px[];
+    static PLFLT py[];
 
-    static PLFLT  pos[];
-    static PLFLT  rcoord[];
-    static PLFLT  gcoord[];
-    static PLFLT  bcoord[];
-    static PLFLT  acoord[];
+    static PLFLT pos[];
+    static PLFLT rcoord[];
+    static PLFLT gcoord[];
+    static PLFLT bcoord[];
+    static PLFLT acoord[];
     static PLBOOL rev[];
 };
 
-PLINT x30::red[] = { 0, 255, 0, 0 };
+PLINT x30::red[]   = { 0, 255, 0, 0 };
 PLINT x30::green[] = { 0, 0, 255, 0 };
-PLINT x30::blue[] = { 0, 0, 0, 255 };
+PLINT x30::blue[]  = { 0, 0, 0, 255 };
 PLFLT x30::alpha[] = { 1.0, 1.0, 1.0, 1.0 };
 
 PLFLT x30::px[] = { 0.1, 0.5, 0.5, 0.1 };
 PLFLT x30::py[] = { 0.1, 0.1, 0.5, 0.5 };
 
-PLFLT x30::pos[] = { 0.0, 1.0 };
+PLFLT x30::pos[]    = { 0.0, 1.0 };
 PLFLT x30::rcoord[] = { 1.0, 1.0 };
 PLFLT x30::gcoord[] = { 0.0, 0.0 };
 PLFLT x30::bcoord[] = { 0.0, 0.0 };

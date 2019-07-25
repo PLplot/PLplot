@@ -77,12 +77,12 @@ int main( int argc, char *argv[] )
     FILE   *fr, *fw;
     char   readbuffer[256];
     int    *MJDstart = NULL;
-    double *offset1  = NULL;
-    int    *offset2  = NULL;
-    double *slope    = NULL;
+    double *offset1 = NULL;
+    int    *offset2 = NULL;
+    double *slope = NULL;
     double sec, *leap_sec = NULL;
     int    jd;
-    int    i = 0;
+    int    i               = 0;
     int    number_of_lines = 0;
 
     if ( ( argc < 2 ) || ( fr = fopen( argv[1], "r" ) ) == NULL )

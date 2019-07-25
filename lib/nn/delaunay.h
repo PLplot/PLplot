@@ -39,19 +39,19 @@ typedef struct
 
 #if !defined ( _ISTACK_H )
 struct istack;
-typedef struct istack   istack;
+typedef struct istack istack;
 #endif
 
 struct delaunay
 {
-    int    npoints;
+    int                npoints;
     point              * points;
-    double xmin;
-    double xmax;
-    double ymin;
-    double ymax;
+    double             xmin;
+    double             xmax;
+    double             ymin;
+    double             ymax;
 
-    int    ntriangles;
+    int                ntriangles;
     triangle           * triangles;
     circle             * circles;
     triangle_neighbours* neighbours;        // for delaunay_xytoi()

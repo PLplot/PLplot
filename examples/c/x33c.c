@@ -152,7 +152,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     // Parameters for the colorbars on this page
     PLINT         position_i, position, opt;
     PLFLT         x, y, x_length, y_length;
-    PLFLT         ticks[1]     = { 0.0 };
+    PLFLT         ticks[1] = { 0.0 };
     PLINT         sub_ticks[1] = { 0 };
     PLFLT         low_cap_color, high_cap_color;
     PLINT         vertical, ifn;

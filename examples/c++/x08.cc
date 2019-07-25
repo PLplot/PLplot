@@ -34,15 +34,15 @@ public:
     void cmap1_init( int );
 
 private:
-    plstream             *pls;
+    plstream *pls;
 
-    static const int     XPTS;
-    static const int     YPTS;
-    static PLFLT         alt[];
-    static PLFLT         az[];
-    static const char    *title[];
+    static const int XPTS;
+    static const int YPTS;
+    static PLFLT alt[];
+    static PLFLT az[];
+    static const char *title[];
 
-    static PLBOOL        rosen;
+    static PLBOOL rosen;
 
     static PLOptionTable options[];
 
@@ -58,7 +58,7 @@ private:
 const int     x08::    XPTS      = 35;
 const int     x08::    YPTS      = 45;
 PLFLT         x08::        alt[] = { 60.0, 40.0 };
-PLFLT         x08::        az[] = { 30.0, -30.0 };
+PLFLT         x08::        az[]  = { 30.0, -30.0 };
 
 const char    *x08::  title[] = {
     "#frPLplot Example 8 - Alt=60, Az=30",

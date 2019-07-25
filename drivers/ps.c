@@ -421,7 +421,7 @@ void
 plD_line_ps( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
     PSDev *dev = (PSDev *) pls->dev;
-    PLINT x1   = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    PLINT x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
 
 // Rotate by 90 degrees
 
@@ -781,7 +781,7 @@ proc_str( PLStream *pls, EscText *args )
     // 3 characters per change.
   #define PROC_STR_STRING_LENGTH    1000
     unsigned char *strp, str[PROC_STR_STRING_LENGTH], *cur_strp,
-                   cur_str[PROC_STR_STRING_LENGTH];
+                  cur_str[PROC_STR_STRING_LENGTH];
     float         font_factor = 1.4f;
     PLINT         clxmin, clxmax, clymin, clymax; // Clip limits
     PLINT         clipx[4], clipy[4];             // Current clip limits
@@ -793,12 +793,12 @@ proc_str( PLStream *pls, EscText *args )
     // unicode only! so test for it.
     if ( args->unicode_array_len > 0 )
     {
-        int        j, s, f;
-        const char *fonts[PROC_STR_STRING_LENGTH];
-        const PLUNICODE              *cur_text;
-        PLUNICODE  fci, fci_save;
-        PLFLT      old_sscale, sscale, old_soffset, soffset, ddup;
-        PLINT      level = 0;
+        int             j, s, f;
+        const char      *fonts[PROC_STR_STRING_LENGTH];
+        const PLUNICODE *cur_text;
+        PLUNICODE       fci, fci_save;
+        PLFLT           old_sscale, sscale, old_soffset, soffset, ddup;
+        PLINT           level = 0;
         // translate from unicode into type 1 font index.
         //
         // Choose the font family, style, variant, and weight using

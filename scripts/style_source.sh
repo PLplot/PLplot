@@ -91,11 +91,19 @@ transform_source()
 	# indentation properly, but mark each occurrence in file so
 	# can restore %# swig preprocessing directives later with
 	# s_command after uncrustify processing.
-	p_command='sed -e "/%#/ s?%#\(.*$\)?#\1//MARK_C_PREPROCESSOR_DIRECTIVE?"'
+	# Also replace all occurrences of "$" with
+	# "MARK_DOLLARS_DIRECTIVE" to be replaced again by "$" after
+	# swig processing.  Otherwise, those dollar signs (which are
+	# not part of C or C++ syntax) mess up uncrustify results in
+	# ways that depend on internal details which vary from one
+	# uncrustify version to the next.
+	p_command='sed -e "/%#/ s?%#\(.*$\)?#\1//MARK_C_PREPROCESSOR_DIRECTIVE?" -e "/\$/ s?\\\$?MARK_DOLLARS_DIRECTIVE?g"'
 
 	# Splitting s_command into multiple invocations of sed is
         # required (for reasons I have not figured out) in order for
         # the changes to be done as designed.
+
+        # Documentation of each -e script stanza.
 
 	# The first two stanzas are to deal with uncrustify
         # splitting both %} and %{ by newline characters and
@@ -108,7 +116,8 @@ transform_source()
 	# The next two stanzas are to place %} and %{ on individually
 	# separate lines.
 
-	# The next two stanzas are to deal with $ variables.
+	# The next stanza restores "$" from the MARK_DOLLARS_DIRECTIVE that is inserted by
+        # the above p_command.
 
 	# The next stanza restores the C preprocessor directive and drops
 	# the associated trailing //MARK_C_PREPROCESSOR_DIRECTIVE comment.
@@ -119,7 +128,7 @@ transform_source()
 	# brute force, but I seemed to be up against sed bugs if I
 	# tried anything fancy to include preceding blanks in the
 	# //MARK_C_PREPROCESSOR_DIRECTIVE comment removal stanza.
-        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "s?\$ \* ?\$\*?g" -e "s?\$ & ?\$\&?g" | sed -e "/\/\/MARK_C_PREPROCESSOR_DIRECTIVE/ s?#\(.*\)//MARK_C_PREPROCESSOR_DIRECTIVE?%#\1?" | sed -e "s?  *\$??"'
+        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "/MARK_DOLLARS_DIRECTIVE/ s?MARK_DOLLARS_DIRECTIVE?\$?g" | sed -e "/\/\/MARK_C_PREPROCESSOR_DIRECTIVE/ s?#\(.*\)//MARK_C_PREPROCESSOR_DIRECTIVE?%#\1?" | sed -e "s?  *\$??"'
     else
 	# p_command is always executed as the first in a chain of commands so there
 	# is a specific stdin file rather than "-".
@@ -200,12 +209,11 @@ while test $# -gt 0; do
     shift
 done
 
-allowed_version=0.60
 version=$(uncrustify --version)
-if [ "$version" != "uncrustify $allowed_version" ] ; then
+if [ "$version" != "Uncrustify-0.69.0" -a "$version" != "Uncrustify-0.69.0_f" ] ; then
     echo "
-Detected uncrustify version = '$version'.
-This script only works with uncrustify $allowed_version."
+Detected uncrustify version = \"$version\".
+This script only works with uncrustify version \"Uncrustify-0.69.0\" or \"Uncrustify-0.69.0_f\""
     exit 1
 fi
 
@@ -309,8 +317,8 @@ if [ "$apply" = "ON" ] ; then
     transform_source "$cppsource_LIST" CPP "comments"
     transform_source "$javasource_LIST" JAVA "comments"
     transform_source "$dsource_LIST" D "comments"
-    transform_source "$swig_csource_LIST" C "comments" "swig"
-    transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
+    #transform_source "$swig_csource_LIST" C "comments" "swig"
+    #transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
     apply=ON
     echo '
 The --apply option is POWERFUL and will replace _all_ files mentioned above
@@ -331,5 +339,5 @@ transform_source "$csource_LIST" C "comments"
 transform_source "$cppsource_LIST" CPP "comments"
 transform_source "$javasource_LIST" JAVA "comments"
 transform_source "$dsource_LIST" D "comments"
-transform_source "$swig_csource_LIST" C "comments" "swig"
-transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
+#transform_source "$swig_csource_LIST" C "comments" "swig"
+#transform_source "$swig_cppsource_LIST" CPP "comments" "swig"

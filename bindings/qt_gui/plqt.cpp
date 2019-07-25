@@ -474,7 +474,7 @@ void QtPLDriver::setGradient( int x1, int x2, int y1, int y2,
     {
         stop_arg = (qreal) i / (qreal) ( ncol1 - 1 );
         stops << QGradientStop( stop_arg, QColor( r[i], g[i],
-                b[i], (int) ( alpha[i] * 255 ) ) );
+            b[i], (int) ( alpha[i] * 255 ) ) );
     }
     linear_gradient.setStops( stops );
     m_painterP->setBrush( linear_gradient );
@@ -939,7 +939,7 @@ void QtPLWidget::setGradient( int x1, int x2, int y1, int y2,
     {
         stop_arg = (qreal) i / (qreal) ( ncol1 - 1 );
         stops << QGradientStop( stop_arg, QColor( r[i], g[i],
-                b[i], (int) ( alpha[i] * 255 ) ) );
+            b[i], (int) ( alpha[i] * 255 ) ) );
     }
     ( *el.Data.LinearGradient ).setStops( stops );
     m_listBuffer.append( el );

@@ -1208,7 +1208,7 @@ PlFrameKeyEH( ClientData clientData, register XEvent *eventPtr )
     else if ( IsCursorKey( keysym ) )
     {
         int x1, y1, dx = 0, dy = 0;
-        int x0   = event->x, y0 = event->y;
+        int x0 = event->x, y0 = event->y;
         int xmin = 0, xmax = Tk_Width( tkwin ) - 1;
         int ymin = 0, ymax = Tk_Height( tkwin ) - 1;
 
@@ -1306,8 +1306,8 @@ CreateXhairs( PlFrame *plFramePtr )
 // inside our window.
 
     if ( XQueryPointer( plFramePtr->display, Tk_WindowId( tkwin ),
-             &root, &child, &root_x, &root_y, &win_x, &win_y,
-             &mask ) )
+        &root, &child, &root_x, &root_y, &win_x, &win_y,
+        &mask ) )
     {
         if ( win_x >= 0 && win_x < Tk_Width( tkwin ) &&
              win_y >= 0 && win_y < Tk_Height( tkwin ) )
@@ -1437,8 +1437,8 @@ CreateRband( PlFrame *plFramePtr )
 // Find current pointer location, and initiate rubber banding.
 
     if ( XQueryPointer( plFramePtr->display, Tk_WindowId( tkwin ),
-             &root, &child, &root_x, &root_y, &win_x, &win_y,
-             &mask ) )
+        &root, &child, &root_x, &root_y, &win_x, &win_y,
+        &mask ) )
     {
         if ( win_x >= 0 && win_x < Tk_Width( tkwin ) &&
              win_y >= 0 && win_y < Tk_Height( tkwin ) )
@@ -1656,7 +1656,7 @@ Install_cmap( PlFrame *plFramePtr )
     colormap_windows[count++] = top;
 
     if ( !XSetWMColormapWindows( plFramePtr->display,
-             top, colormap_windows, count ) )
+        top, colormap_windows, count ) )
         fprintf( stderr, "Unable to set color map property!\n" );
 #endif
 }
@@ -1828,7 +1828,7 @@ scol0( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
     if ( !XParseColor( plFramePtr->display,
-             Tk_Colormap( plFramePtr->tkwin ), col, &xcol ) )
+        Tk_Colormap( plFramePtr->tkwin ), col, &xcol ) )
     {
         Tcl_AppendResult( interp, "Couldn't parse color ", col,
             (char *) NULL );
@@ -1889,7 +1889,7 @@ scol1( Tcl_Interp *interp, register PlFrame *plFramePtr,
     }
 
     if ( !XParseColor( plFramePtr->display,
-             Tk_Colormap( plFramePtr->tkwin ), col, &xcol ) )
+        Tk_Colormap( plFramePtr->tkwin ), col, &xcol ) )
     {
         Tcl_AppendResult( interp, "Couldn't parse color ", col,
             (char *) NULL );
@@ -2103,7 +2103,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
                 break;
 
             if ( scol1( interp, plFramePtr,
-                     i, col, pos, rev, &changed ) != TCL_OK )
+                i, col, pos, rev, &changed ) != TCL_OK )
                 return TCL_ERROR;
 
             col = strtok( NULL, " " );
@@ -2155,7 +2155,7 @@ ColorManip( Tcl_Interp *interp, register PlFrame *plFramePtr,
         }
 
         if ( scol1( interp, plFramePtr,
-                 i, argv[2], argv[3], argv[4], &changed ) != TCL_OK )
+            i, argv[2], argv[3], argv[4], &changed ) != TCL_OK )
             return TCL_ERROR;
 
         if ( changed )
@@ -2268,7 +2268,7 @@ ConfigurePlFrame( Tcl_Interp *interp, register PlFrame *plFramePtr,
     dbug_enter( "ConfigurePlFrame" );
 
     if ( Tk_ConfigureWidget( interp, tkwin, configSpecs,
-             argc, (CONST char **) argv, (char *) plFramePtr, flags ) != TCL_OK )
+        argc, (CONST char **) argv, (char *) plFramePtr, flags ) != TCL_OK )
     {
         return TCL_ERROR;
     }
@@ -2589,7 +2589,7 @@ Openlink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 // Exclude UNIX-only feature
 #if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
         if ( Tcl_GetOpenFile( interp, iodev->fileHandle,
-                 0, 1, FILECAST & iodev->file ) != TCL_OK )
+            0, 1, FILECAST & iodev->file ) != TCL_OK )
         {
             return TCL_ERROR;
         }
@@ -2660,7 +2660,7 @@ Closelink( Tcl_Interp *interp, register PlFrame *plFramePtr,
 //    Tk_DeleteFileHandler( iodev->file );
 #if !defined ( MAC_TCL ) && !defined ( _WIN32 ) && !defined ( __CYGWIN__ )
     Tcl_DeleteFileHandler( Tcl_GetFile( (ClientData) iodev->fd,
-            TCL_UNIX_FD ) );
+        TCL_UNIX_FD ) );
 #endif
 #endif
     pdf_close( plr->pdfs );
@@ -2888,7 +2888,7 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
     {
 #if !defined ( _WIN32 )
         if ( execl( plFramePtr->plpr_cmd, plFramePtr->plpr_cmd, sfnam,
-                 (char *) 0 ) )
+            (char *) 0 ) )
 #else
         if ( 1 )
 #endif

@@ -70,17 +70,17 @@ import java.lang.Math;
 class x26 {
     PLStream pls = new PLStream();
 
-    static   String[] x_label = {
+    static String[] x_label = {
         "Frequency",
         "Частота"
     };
 
-    static   String[] y_label = {
+    static String[] y_label = {
         "Amplitude (dB)",
         "Амплитуда (dB)"
     };
 
-    static   String[] alty_label = {
+    static String[] alty_label = {
         "Phase shift (degrees)",
         "Фазовый сдвиг (градусы)"
     };
@@ -144,22 +144,22 @@ class x26 {
     void plot1( int type, String x_label, String y_label, String alty_label,
                 String[] legend_text, String title_label, String line_label )
     {
-        int i;
+        int      i;
         double[] freql = new double[101];
-        double[] ampl  = new double[101];
+        double[] ampl = new double[101];
         double[] phase = new double[101];
-        double f0, freq;
-        int[] opt_array        = new int[2];
-        int[] text_colors      = new int[2];
-        int[] line_colors      = new int[2];
-        int[] line_styles      = new int[2];
-        double[] line_widths   = new double[2];
-        int[] symbol_numbers   = new int[2];
-        int[] symbol_colors    = new int[2];
-        double[] symbol_scales = new double[2];
-        String[] symbols       = new String[2];
-        double[] legend_width  = new double[1];
-        double[] legend_height = new double[1];
+        double   f0, freq;
+        int[]    opt_array      = new int[2];
+        int[]    text_colors    = new int[2];
+        int[]    line_colors    = new int[2];
+        int[]    line_styles    = new int[2];
+        double[] line_widths    = new double[2];
+        int[]    symbol_numbers = new int[2];
+        int[]    symbol_colors  = new int[2];
+        double[] symbol_scales  = new double[2];
+        String[] symbols        = new String[2];
+        double[] legend_width   = new double[1];
+        double[] legend_height  = new double[1];
 
         pls.adv( 0 );
 

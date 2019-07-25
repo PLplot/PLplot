@@ -37,7 +37,7 @@ using namespace std;
 // the header for it.  Here we conjure up a dopey stand in.
 
 class Matrix {
-    int   nx, ny;
+    int nx, ny;
     PLFLT *v;
 public:
     Matrix( int _nx, int _ny ) : nx( _nx ), ny( _ny ) { v = new PLFLT[nx * ny]; }
@@ -69,9 +69,9 @@ public:
 // the indexing operator.
 
 class ContourableMatrix : public Contourable_Data {
-    int    nx, ny;
+    int nx, ny;
     Matrix m;
-    int    wrapy;               // periodic in 2nd coord ?
+    int wrapy;                  // periodic in 2nd coord ?
 public:
     ContourableMatrix( int _nx, int _ny, int wy = 0 )
         : Contourable_Data( _nx, _ny ),
@@ -103,9 +103,9 @@ public:
 // the blanks.
 
 class CoordinateMatrix : public Coord_2d {
-    int    nx, ny;
+    int nx, ny;
     Matrix m;
-    int    wrapy;
+    int wrapy;
 public:
     CoordinateMatrix( int _nx, int _ny, int wy = 0 )
         : nx( _nx ), ny( _ny ), m( nx, ny ), wrapy( wy )
@@ -231,10 +231,10 @@ void x01cc::plot2()
 
 // Now draw a normal shaded plot.
 
-    PLFLT zmin   = -1., zmax = 1.;
+    PLFLT zmin = -1., zmax = 1.;
     int   NCONTR = 20;
     PLFLT shade_min, shade_max, sh_color;
-    int   sh_cmap   = 1, sh_width;
+    int   sh_cmap = 1, sh_width;
     int   min_color = 1, min_width = 0, max_color = 0, max_width = 0;
 
     pls->vpor( .1, .9, .1, .9 );

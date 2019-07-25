@@ -288,14 +288,14 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     //  to do the same.
     //
     if ( Tcl_Import( interp, Tcl_GetGlobalNamespace( interp ),
-             "::itk::*", /* allowOverwrite */ 1 ) != TCL_OK )
+        "::itk::*", /* allowOverwrite */ 1 ) != TCL_OK )
     {
         fprintf( stderr, "Itk initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;
     }
 
     if ( Tcl_Import( interp, Tcl_GetGlobalNamespace( interp ),
-             "::itcl::*", /* allowOverwrite */ 1 ) != TCL_OK )
+        "::itcl::*", /* allowOverwrite */ 1 ) != TCL_OK )
     {
         fprintf( stderr, "Itk initialisation failed: %s\n", Tcl_GetStringResult( interp ) );
         return TCL_ERROR;

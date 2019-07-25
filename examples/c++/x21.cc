@@ -50,18 +50,18 @@ private:
     // Class data
     plstream *pls;
 
-    PLFLT    xm, xM, ym, yM;
+    PLFLT xm, xM, ym, yM;
 
     // Options data structure definition.
-    static PLINT         pts;
-    static PLINT         xp;
-    static PLINT         yp;
-    static PLINT         nl;
-    static PLINT         knn_order;
-    static PLFLT         threshold;
-    static PLFLT         wmin;
-    static PLINT         randn;
-    static PLINT         rosen;
+    static PLINT pts;
+    static PLINT xp;
+    static PLINT yp;
+    static PLINT nl;
+    static PLINT knn_order;
+    static PLFLT threshold;
+    static PLFLT wmin;
+    static PLINT randn;
+    static PLINT rosen;
     static PLOptionTable options[];
 };
 

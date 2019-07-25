@@ -342,7 +342,7 @@ plfill_soft( short *x, short *y, PLINT n )
         ci  /= temp;
 
         dinc = (PLINT) ( plsc->delta[k] * SSQR( plsc->ypmm * ABS( ci ),
-                             plsc->xpmm * ABS( si ) ) / 1000. );
+            plsc->xpmm * ABS( si ) ) / 1000. );
 
         if ( dinc < 0 )
             dinc = -dinc;
@@ -541,7 +541,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 {
 #ifdef USE_FILL_INTERSECTION_POLYGON
     PLINT *x10, *y10, *x1, *y1, *if1, i1start = 0, i, im1, n1, n1m1,
-           ifnotpointinpolygon;
+          ifnotpointinpolygon;
     PLINT x2[4]  = { xmin, xmax, xmax, xmin };
     PLINT y2[4]  = { ymin, ymin, ymax, ymax };
     PLINT if2[4] = { 0, 0, 0, 0 };
@@ -651,8 +651,8 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     int   crossed_ymin1 = 0, crossed_ymax1 = 0;
     int   crossed_xmin2 = 0, crossed_xmax2 = 0;
     int   crossed_ymin2 = 0, crossed_ymax2 = 0;
-    int   crossed_up    = 0, crossed_down = 0;
-    int   crossed_left  = 0, crossed_right = 0;
+    int   crossed_up = 0, crossed_down = 0;
+    int   crossed_left = 0, crossed_right = 0;
     int   inside_lb;
     int   inside_lu;
     int   inside_rb;
@@ -1188,14 +1188,14 @@ circulation( PLINT *x, PLINT *y, PLINT npts )
     int i;
 
     xproduct = 0.0;
-    x1       = x[0];
-    y1       = y[0];
+    x1 = x[0];
+    y1 = y[0];
     for ( i = 1; i < npts - 2; i++ )
     {
-        x2       = x[i + 1];
-        y2       = y[i + 1];
-        x3       = x[i + 2];
-        y3       = y[i + 2];
+        x2 = x[i + 1];
+        y2 = y[i + 1];
+        x3 = x[i + 2];
+        y3 = y[i + 2];
         xproduct = xproduct + ( x2 - x1 ) * ( y3 - y2 ) - ( y2 - y1 ) * ( x3 - x2 );
     }
 
@@ -1368,10 +1368,10 @@ notpointinpolygon( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y, PLINT xp, PLINT yp )
 
         // Line through the two fixed points:
         // Are x1 and x2 on either side?
-        xv1     = x1 - xout;
-        yv1     = y1 - yout;
-        xv2     = x2 - xout;
-        yv2     = y2 - yout;
+        xv1 = x1 - xout;
+        yv1 = y1 - yout;
+        xv2 = x2 - xout;
+        yv2 = y2 - yout;
         inprod1 = xv1 * yvp - yv1 * xvp; // Well, with the normal vector
         inprod2 = xv2 * yvp - yv2 * xvp;
         if ( inprod1 * inprod2 >= 0.0 )
@@ -1382,12 +1382,12 @@ notpointinpolygon( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y, PLINT xp, PLINT yp )
 
         // Line through the two vertices:
         // Are xout and xpp on either side?
-        xvv     = x2 - x1;
-        yvv     = y2 - y1;
-        xv1     = xpp - x1;
-        yv1     = ypp - y1;
-        xv2     = xout - x1;
-        yv2     = yout - y1;
+        xvv = x2 - x1;
+        yvv = y2 - y1;
+        xv1 = xpp - x1;
+        yv1 = ypp - y1;
+        xv2 = xout - x1;
+        yv2 = yout - y1;
         inprod1 = xv1 * yvv - yv1 * xvv;
         inprod2 = xv2 * yvv - yv2 * xvv;
         if ( inprod1 * inprod2 >= 0.0 )
@@ -1474,7 +1474,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     PLINT xintersect[2], yintersect[2], i1intersect[2],
           i2intersect[2];
     PLINT *xsplit1, *ysplit1, *ifsplit1,
-    *xsplit2, *ysplit2, *ifsplit2;
+          *xsplit2, *ysplit2, *ifsplit2;
     PLINT ifill, nfill = 0,
           ifnotpolygon1inpolygon2, ifnotpolygon2inpolygon1;
     PLINT_VECTOR xfiller, *yfiller;
@@ -1593,7 +1593,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
     // split, and in that case we move on to the end phase below.
     //
     ncrossed = 0;
-    i1m1     = i1start - 1;
+    i1m1 = i1start - 1;
     if ( i1m1 < 0 )
         i1m1 += n1;
     for ( i1 = i1start; i1 < n1; i1++ )
@@ -1658,12 +1658,12 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                     // are in ascending/descending order in i2, then split 1
                     // (the split with the positive fill_status) must include
                     // all/none of the points in polygon 2.
-                    i2   = i2intersect[1];
+                    i2 = i2intersect[1];
                     i2m1 = i2 - 1;
                     if ( i2m1 < 0 )
                         i2m1 += n2;
 
-                    ifxsort  = abs( x2[i2] - x2[i2m1] ) > abs( y2[i2] - y2[i2m1] );
+                    ifxsort = abs( x2[i2] - x2[i2m1] ) > abs( y2[i2] - y2[i2m1] );
                     ifascend = ( ifxsort && x2[i2] > x2[i2m1] ) ||
                                ( !ifxsort && y2[i2] > y2[i2m1] );
                     if ( ( ifxsort && ifascend && xintersect[0] < xintersect[1] ) ||
@@ -1676,7 +1676,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 }
 
                 kkstart21 = i2intersect[1];
-                nsplit1   = 2 + range1 + range21;
+                nsplit1 = 2 + range1 + range21;
 
                 // Split 2 of polygon 2 consists of the
                 // boundary + range22 (= n2 - range21) points
@@ -1722,43 +1722,43 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 // store results in reverse order to preserve
                 // the positive orientation that by assumption
                 // both polygon 1 and 2 have.
-                k                       = 0;
-                xsplit1[k]              = xintersect[0];
-                ysplit1[k]              = yintersect[0];
-                ifsplit1[k]             = 1;
-                nsplit2m1               = nsplit2 - 1;
-                xsplit2[nsplit2m1 - k]  = xintersect[0];
-                ysplit2[nsplit2m1 - k]  = yintersect[0];
+                k = 0;
+                xsplit1[k] = xintersect[0];
+                ysplit1[k] = yintersect[0];
+                ifsplit1[k] = 1;
+                nsplit2m1 = nsplit2 - 1;
+                xsplit2[nsplit2m1 - k] = xintersect[0];
+                ysplit2[nsplit2m1 - k] = yintersect[0];
                 ifsplit2[nsplit2m1 - k] = 1;
-                kstart                  = k + 1;
-                kk                      = kkstart1;
+                kstart = k + 1;
+                kk = kkstart1;
                 // No wrap checks on kk index below because
                 // it must always be in valid range (since
                 // polygon 1 traversed only once).
                 for ( k = kstart; k < range1 + 1; k++ )
                 {
-                    xsplit1[k]              = x1[kk];
-                    ysplit1[k]              = y1[kk];
-                    ifsplit1[k]             = 2;
-                    xsplit2[nsplit2m1 - k]  = x1[kk];
-                    ysplit2[nsplit2m1 - k]  = y1[kk++];
+                    xsplit1[k] = x1[kk];
+                    ysplit1[k] = y1[kk];
+                    ifsplit1[k] = 2;
+                    xsplit2[nsplit2m1 - k] = x1[kk];
+                    ysplit2[nsplit2m1 - k] = y1[kk++];
                     ifsplit2[nsplit2m1 - k] = 2;
                 }
-                xsplit1[k]              = xintersect[1];
-                ysplit1[k]              = yintersect[1];
-                ifsplit1[k]             = 1;
-                xsplit2[nsplit2m1 - k]  = xintersect[1];
-                ysplit2[nsplit2m1 - k]  = yintersect[1];
+                xsplit1[k] = xintersect[1];
+                ysplit1[k] = yintersect[1];
+                ifsplit1[k] = 1;
+                xsplit2[nsplit2m1 - k] = xintersect[1];
+                ysplit2[nsplit2m1 - k] = yintersect[1];
                 ifsplit2[nsplit2m1 - k] = 1;
 
                 // Finish off collecting split1 using ascending kk
                 // values.
                 kstart = k + 1;
-                kk     = kkstart21;
+                kk = kkstart21;
                 for ( k = kstart; k < nsplit1; k++ )
                 {
-                    xsplit1[k]  = x2[kk];
-                    ysplit1[k]  = y2[kk];
+                    xsplit1[k] = x2[kk];
+                    ysplit1[k] = y2[kk];
                     ifsplit1[k] = if2[kk++];
                     if ( kk >= n2 )
                         kk -= n2;
@@ -1782,8 +1782,8 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
                 kk = kkstart22;
                 for ( k = kstart; k < nsplit2; k++ )
                 {
-                    xsplit2[nsplit2m1 - k]  = x2[kk];
-                    ysplit2[nsplit2m1 - k]  = y2[kk];
+                    xsplit2[nsplit2m1 - k] = x2[kk];
+                    ysplit2[nsplit2m1 - k] = y2[kk];
                     ifsplit2[nsplit2m1 - k] = if2[kk--];
                     if ( kk < 0 )
                         kk += n2;
@@ -1822,7 +1822,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         return;
     else if ( fill_status == 1 )
     {
-        nfill   = n2;
+        nfill = n2;
         xfiller = x2;
         yfiller = y2;
     }
@@ -1872,14 +1872,14 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         else if ( ifnotpolygon2inpolygon1 == 0 )
         {
             // Polygon 2 definitely inside polygon 1.
-            nfill   = n2;
+            nfill = n2;
             xfiller = x2;
             yfiller = y2;
         }
         else if ( ifnotpolygon1inpolygon2 == 0 )
         {
             // Polygon 1 definitely inside polygon 2.
-            nfill   = n1;
+            nfill = n1;
             xfiller = x1;
             yfiller = y1;
         }
@@ -1887,7 +1887,7 @@ fill_intersection_polygon( PLINT recursion_depth, PLINT ifextrapolygon,
         {
             // Polygon 2 vertices near polygon 1 border and vice versa which
             // implies the polygons are identical.
-            nfill   = n2;
+            nfill = n2;
             xfiller = x2;
             yfiller = y2;
         }
@@ -1969,7 +1969,7 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
     xB2B1 = xB2 - xB1;
     yB2B1 = yB2 - yB1;
 
-    factor      = xA2A1 * yB2B1 - yA2A1 * xB2B1;
+    factor = xA2A1 * yB2B1 - yA2A1 * xB2B1;
     factor_NBCC = PL_NBCC * ( fabs( xA2A1 ) + fabs( yB2B1 ) + fabs( yA2A1 ) + fabs( xB2B1 ) );
     if ( fabs( factor ) <= factor_NBCC )
     {
@@ -1985,7 +1985,7 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
         xB2A1 = xB2 - xA1;
         yB2A1 = yB2 - yA1;
 
-        factor      = ( xB1A1 * yB2A1 - yB1A1 * xB2A1 ) / factor;
+        factor = ( xB1A1 * yB2A1 - yB1A1 * xB2A1 ) / factor;
         fxintersect = factor * xA2A1 + xA1;
         fyintersect = factor * yA2A1 + yA1;
         // The "redundant" x and y segment range checks (which include near the
@@ -2048,7 +2048,7 @@ positive_orientation( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y )
     for ( i = 0; i < n; i++ )
     {
         twice_area += (PLFLT) x[im1] * (PLFLT) y[i] - (PLFLT) x[i] * (PLFLT) y[im1];
-        im1         = i;
+        im1 = i;
     }
     if ( twice_area == 0. )
     {
@@ -2090,7 +2090,7 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
         return -1;
     }
 
-    ifxsort  = abs( x1[i1] - x1[i1m1] ) > abs( y1[i1] - y1[i1m1] );
+    ifxsort = abs( x1[i1] - x1[i1m1] ) > abs( y1[i1] - y1[i1m1] );
     ifascend = ( ifxsort && x1[i1] > x1[i1m1] ) ||
                ( !ifxsort && y1[i1] > y1[i1m1] );
 
@@ -2117,10 +2117,10 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
                 count_crossings++;
                 if ( count_crossings == 1 )
                 {
-                    xcross[0]  = xintersect;
-                    ycross[0]  = yintersect;
+                    xcross[0] = xintersect;
+                    ycross[0] = yintersect;
                     i2cross[0] = i2;
-                    status     = 1;
+                    status = 1;
                 }
                 else
                 {
@@ -2131,13 +2131,13 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
                     {
                         if ( ncross == 2 )
                         {
-                            xcross[1]  = xcross[0];
-                            ycross[1]  = ycross[0];
+                            xcross[1] = xcross[0];
+                            ycross[1] = ycross[0];
                             i2cross[1] = i2cross[0];
-                            status     = 2;
+                            status = 2;
                         }
-                        xcross[0]  = xintersect;
-                        ycross[0]  = yintersect;
+                        xcross[0] = xintersect;
+                        ycross[0] = yintersect;
                         i2cross[0] = i2;
                     }
                     else if ( ncross == 2 && ( count_crossings == 2 || (
@@ -2146,10 +2146,10 @@ number_crossings( PLINT *xcross, PLINT *ycross, PLINT *i2cross, PLINT ncross,
                                                    ( ifxsort && !ifascend && xintersect >= xcross[1] ) ||
                                                    ( !ifxsort && !ifascend && yintersect >= ycross[1] ) ) ) )
                     {
-                        xcross[1]  = xintersect;
-                        ycross[1]  = yintersect;
+                        xcross[1] = xintersect;
+                        ycross[1] = yintersect;
                         i2cross[1] = i2;
-                        status     = 2;
+                        status = 2;
                     }
                 }
             }

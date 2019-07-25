@@ -55,11 +55,11 @@ public:
     bool getUnderlined() const { return m_underlined; }
 private:
     void createFont();
-    wxFont    m_font;
+    wxFont m_font;
     PLUNICODE m_fci;
-    PLFLT     m_size;
-    bool      m_underlined;
-    bool      m_hasFont;
+    PLFLT m_size;
+    bool m_underlined;
+    bool m_hasFont;
 };
 //check equivalence of two fonts. Note that a font created
 //with the default constructor always compares false to any
@@ -105,12 +105,12 @@ private:
     virtual void DrawTextSection( wxString section, wxCoord xOrigin, wxCoord yOrigin, wxCoord x, wxCoord y, PLFLT *transform, PLFLT scaledFontSize, bool drawText, bool underlined, PLUNICODE fci, unsigned char red, unsigned char green, unsigned char blue, PLFLT alpha, PLFLT &yScale, wxCoord &sectionWidth, wxCoord &sectionHeight, wxCoord &sectionDepth ) {}
 
     PLUNICODE m_prevSymbol;
-    PLFLT     m_prevBaseFontSize;
-    PLINT     m_prevLevel;
+    PLFLT m_prevBaseFontSize;
+    PLINT m_prevLevel;
     PLUNICODE m_prevFci;
-    wxCoord   m_prevSymbolWidth;
-    wxCoord   m_prevSymbolHeight;
-    wxCoord   m_prevSymbolDepth;
+    wxCoord m_prevSymbolWidth;
+    wxCoord m_prevSymbolHeight;
+    wxCoord m_prevSymbolDepth;
 };
 
 // base device class
@@ -148,31 +148,31 @@ private:
     //for the gcdc case we may need to store the graphics context for use
     // with text transformations
     wxGraphicsContext *m_gc;
-    wxPen             m_pen;
-    wxBrush           m_brush;
+    wxPen m_pen;
+    wxBrush m_brush;
 
     //A device context specifically for checking the size of text for use with
     //the interactive viewer.
     wxImage m_interactiveTextImage;
-    wxGCDC  *m_interactiveTextGcdc;
+    wxGCDC *m_interactiveTextGcdc;
 
     //Size and Scale
     //As far as plplot is concerned the size of the window is SHRT_MAX by
     //SHRT_MAX which gives us the best resolution.
     const PLFLT m_plplotEdgeLength;
-    PLFLT       m_width;   //native width
-    PLFLT       m_height;  //native height
-    PLFLT       m_xScale;  //conversion from native width to plplotEdgeLength
-    PLFLT       m_yScale;  //conversion from native height to plplotEdgeLength
-    PLFLT       m_xAspect; //values which when multiplied by m_plplotEdgeLength give an aspect
-    PLFLT       m_yAspect; //ratio equal to the native aspect ratio, the biggest of which is 1.0
-    PLFLT       m_scale;   //MAX(m_scalex, m_scaley)
-    bool        m_fixedAspect;
+    PLFLT m_width;         //native width
+    PLFLT m_height;        //native height
+    PLFLT m_xScale;        //conversion from native width to plplotEdgeLength
+    PLFLT m_yScale;        //conversion from native height to plplotEdgeLength
+    PLFLT m_xAspect;       //values which when multiplied by m_plplotEdgeLength give an aspect
+    PLFLT m_yAspect;       //ratio equal to the native aspect ratio, the biggest of which is 1.0
+    PLFLT m_scale;         //MAX(m_scalex, m_scaley)
+    bool m_fixedAspect;
 
     // font variables
     static const int m_max_string_length = 500;
     //bool m_underlined;
-    FontGrabber      m_fontGrabber;
+    FontGrabber m_fontGrabber;
     //wxCoord          m_textWidth, m_textHeight, m_textDescent, m_textLeading;
     //PLUNICODE        m_fci;
 
@@ -192,10 +192,10 @@ private:
     // Private variable to hold all components of a MemoryMapHeader struct for a wxPLDevice instance.
     MemoryMapHeader m_header;
 #else
-    PLNamedMutex    m_mutex;
+    PLNamedMutex m_mutex;
 #endif
-    size_t          m_localBufferPosition;
-    PLMemoryMap     m_outputMemoryMap;
+    size_t m_localBufferPosition;
+    PLMemoryMap m_outputMemoryMap;
 };
 
 

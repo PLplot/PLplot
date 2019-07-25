@@ -40,18 +40,18 @@ public:
     x24( int, char ** );
 
 private:
-    plstream          *pls;
+    plstream *pls;
 
-    static PLINT      red[], green[], blue[];
+    static PLINT red[], green[], blue[];
 
-    static PLFLT      px[], py[], sx[], sy[];
+    static PLFLT px[], py[], sx[], sy[];
 
     static const char *peace[];
 };
 
-PLINT x24::red[] = { 240, 204, 204, 204, 0, 39, 125 };
+PLINT x24::red[]   = { 240, 204, 204, 204, 0, 39, 125 };
 PLINT x24::green[] = { 240, 0, 125, 204, 204, 80, 0 };
-PLINT x24::blue[] = { 240, 0, 0, 0, 0, 204, 125 };
+PLINT x24::blue[]  = { 240, 0, 0, 0, 0, 204, 125 };
 
 PLFLT x24::px[] = { 0.0, 0.0, 1.0, 1.0 };
 PLFLT x24::py[] = { 0.0, 0.25, 0.25, 0.0 };

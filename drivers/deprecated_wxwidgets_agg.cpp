@@ -56,7 +56,7 @@ int access( char *filename, int flag )
 }
 #endif
 
-#define makeunixslash( b )    do { char *I; for ( I = b; *I != 0; *I++ ) if ( *I == '\\' ) *I = '/';} while ( 0 )
+#define makeunixslash( b )    do { char *I; for ( I = b; *I != 0; *I++ ) if ( *I == '\\' ) * I = '/'; } while ( 0 )
 
 //--------------------------------------------------------------------------
 //  wxPLDevAGG::wxPLDevAGG()

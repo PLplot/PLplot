@@ -671,14 +671,14 @@ static void usage()
 
 int main( int argc, char* argv[] )
 {
-    int nin  = NPOINTSIN;
-    int nx   = NX;
-    int nout = 0;
-    point           * pin  = NULL;
-    delaunay        * d    = NULL;
+    int             nin = NPOINTSIN;
+    int             nx = NX;
+    int             nout = 0;
+    point           * pin = NULL;
+    delaunay        * d = NULL;
     point           * pout = NULL;
-    nnhpi           * nn   = NULL;
-    int             cpi    = -1; // control point index
+    nnhpi           * nn = NULL;
+    int             cpi = -1;    // control point index
     struct timeval  tv0, tv1;
     struct timezone tz;
     int             i;

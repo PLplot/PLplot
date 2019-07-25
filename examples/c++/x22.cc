@@ -65,9 +65,9 @@ private:
 
     plstream *pls;
 
-    PLFLT    **u, **v;
+    PLFLT **u, **v;
     PLcGrid2 cgrid2;
-    int      nx, ny, nc, nseg;
+    int nx, ny, nc, nseg;
 };
 
 // Vector plot of the circulation about the origin

@@ -3294,7 +3294,7 @@ plSelectDev()
         {
             if ( ( *plsc->DevName == *dispatch_table[i]->pl_DevName ) &&
                  ( strncmp( plsc->DevName,
-                       dispatch_table[i]->pl_DevName, length ) == 0 ) )
+                     dispatch_table[i]->pl_DevName, length ) == 0 ) )
                 break;
         }
         if ( i < npldrivers )
@@ -3344,7 +3344,7 @@ plSelectDev()
         for ( i = 0; i < npldrivers; i++ )
         {
             if ( !strncmp( response, dispatch_table[i]->pl_DevName,
-                     (unsigned int) length ) )
+                (unsigned int) length ) )
                 break;
         }
         if ( i < npldrivers )
@@ -3378,11 +3378,11 @@ static void
 plLoadDriver( void )
 {
 #ifdef ENABLE_DYNDRIVERS
-    int  i, drvidx;
-    char sym[BUFFER_SIZE];
-    char *tag;
+    int              i, drvidx;
+    char             sym[BUFFER_SIZE];
+    char             *tag;
 
-    int  n = plsc->device - 1;
+    int              n       = plsc->device - 1;
     PLDispatchTable  *dev    = dispatch_table[n];
     PLLoadableDriver *driver = 0;
 

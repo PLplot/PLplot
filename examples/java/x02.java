@@ -91,7 +91,7 @@ class x02 {
 
         for ( i = 0; i <= 99; i++ )
         {
-            double h, l, s;
+            double   h, l, s;
             double[] r1 = new double[1];
             double[] g1 = new double[1];
             double[] b1 = new double[1];

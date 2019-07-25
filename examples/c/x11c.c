@@ -28,7 +28,7 @@
 static int           opt[] = { DRAW_LINEXY, DRAW_LINEXY };
 
 static PLFLT         alt[] = { 33.0, 17.0 };
-static PLFLT         az[] = { 24.0, 115.0 };
+static PLFLT         az[]  = { 24.0, 115.0 };
 
 static PLCHAR_VECTOR title[4] =
 {

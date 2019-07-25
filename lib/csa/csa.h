@@ -38,7 +38,7 @@ extern int       csa_verbose;
 extern const char* csa_version;
 
 struct csa;
-typedef struct csa   csa;
+typedef struct csa csa;
 
 CSADLLIMPEXP
 csa* csa_create( void );

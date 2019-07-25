@@ -252,7 +252,7 @@ int main( char[][] args )
         plcol0( 15 );
 
         int   length = hi[page] - lo[page];
-        int   slice  = 0;
+        int   slice = 0;
         PLFLT x, y;
         for ( int j = nycells[page] - 1; j >= -1; j-- )
         {

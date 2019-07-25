@@ -40,15 +40,15 @@ public:
 
 private:
     // Class data
-    plstream             *pls;
+    plstream *pls;
 
-    static const int     XDIM;
-    static const int     YDIM;
+    static const int XDIM;
+    static const int YDIM;
 
-    static int           dbg;
-    static int           nosombrero;
-    static int           nointeractive;
-    static char          *f_name;
+    static int dbg;
+    static int nosombrero;
+    static int nointeractive;
+    static char *f_name;
 
     static PLOptionTable options[];
 };
@@ -129,7 +129,7 @@ mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer pltr_data )
 
 x20::x20( int argc, char ** argv )
 {
-    PLFLT *x = new PLFLT[XDIM];
+    PLFLT               *x = new PLFLT[XDIM];
     PLFLT               *y = new PLFLT[YDIM];
     PLFLT               **z, **r;
     PLFLT               xi, yi, xe, ye;
@@ -408,7 +408,7 @@ void x20::save_plot( const char *fname )
 int x20::get_clip( PLFLT *xi, PLFLT *xe, PLFLT *yi, PLFLT *ye )
 {
     PLGraphicsIn gin;
-    PLFLT        xxi   = *xi, yyi = *yi, xxe = *xe, yye = *ye, t;
+    PLFLT        xxi = *xi, yyi = *yi, xxe = *xe, yye = *ye, t;
     PLINT        start = 0;
     bool         st;
 

@@ -56,29 +56,29 @@ protected:
     void OnRenderTimer( wxTimerEvent &event );           //!< Timer used in delayed rendering after resize
     void OnMouse( wxMouseEvent &event );                 //!< Mouse events
     wxPLplotstream m_stream;                             //!< The wxPLplotstream which belongs to this plot widget
-    bool           m_created;                            //!< Flag to indicate the window has been Created
+    bool m_created;                                      //!< Flag to indicate the window has been Created
 
 private:
-    bool     m_useGraphicsContext;                       //!< Flag to indicate whether we should use a wxGCDC
+    bool m_useGraphicsContext;                           //!< Flag to indicate whether we should use a wxGCDC
     wxBitmap m_bitmap;
     // The memory dc and wrapping gc dc for drawing. Note we
     //use pointers and reallocate them whenever the bitmap is
     //resized because reusing either of these causes problems
     //for rendering on a wxGCDC - at least on Windows.
     wxMemoryDC *m_memoryDc;
-    wxSize     m_initialSize;
+    wxSize m_initialSize;
 #ifdef wxUSE_GRAPHICS_CONTEXT
-    wxGCDC     *m_gcDc;
+    wxGCDC *m_gcDc;
 #endif
-    wxColour   m_canvasColour;
+    wxColour m_canvasColour;
     virtual void OnLocate( const PLGraphicsIn &graphicsIn ){}
 
     //these are to allow delayed repainting on resize. This causes
     //jerky resizing for large plots
-    bool             m_resizing;
-    bool             m_completedFirstRender;
-    size_t           m_resizeRenderDelay;
-    wxTimer          m_renderTimer;
+    bool m_resizing;
+    bool m_completedFirstRender;
+    size_t m_resizeRenderDelay;
+    wxTimer m_renderTimer;
     static const int ID_RENDERTIMER;
 };
 

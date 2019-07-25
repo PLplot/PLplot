@@ -34,16 +34,16 @@ public:
     void cmap1_init();
 
 private:
-    plstream           *pls;
+    plstream *pls;
 
-    static const int   XPTS;
-    static const int   YPTS;
-    static const int   LEVELS;
-    static const int   opt[];
+    static const int XPTS;
+    static const int YPTS;
+    static const int LEVELS;
+    static const int opt[];
     static const PLFLT alt[];
     static const PLFLT az[];
 
-    static const char  *title[];
+    static const char *title[];
 };
 
 
@@ -51,8 +51,8 @@ const int   x11::  XPTS   = 35;
 const int   x11::  YPTS   = 46;
 const int   x11::  LEVELS = 10;
 const int   x11::  opt[]  = { 3, 3 };
-const PLFLT x11::alt[] = { 33.0, 17.0 };
-const PLFLT x11::az[] = { 24.0, 115.0 };
+const PLFLT x11::alt[]    = { 33.0, 17.0 };
+const PLFLT x11::az[]     = { 24.0, 115.0 };
 
 const char  *x11::title[] = {
     "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",

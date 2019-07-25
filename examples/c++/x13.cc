@@ -29,7 +29,7 @@ using namespace std;
 #endif
 
 static const char* text[] = { "Maurice", "Geoffrey", "Alan", "Rafael", "Vince" };
-static int       per[] = { 10, 32, 12, 30, 16 };
+static int       per[]    = { 10, 32, 12, 30, 16 };
 
 class x13 {
 public:

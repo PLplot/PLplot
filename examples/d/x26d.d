@@ -136,7 +136,7 @@ void plot1( int type, string x_label, string y_label, string alty_label,
 {
     // Set up data for log plot
     PLFLT[101] freql, ampl, phase;
-    PLFLT    f0      = 1.0, freq;
+    PLFLT    f0 = 1.0, freq;
     PLINT    nlegend = 2;
     string[] symbols;
     PLINT[]  opt_array;

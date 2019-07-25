@@ -239,7 +239,7 @@ void
 plD_line_xfig( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
     xfig_Dev *dev = (xfig_Dev *) pls->dev;
-    int      x1   = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
+    int      x1 = x1a, y1 = y1a, x2 = x2a, y2 = y2a;
     int      *tempptr;
     int      count;
 

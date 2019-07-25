@@ -228,7 +228,7 @@ void wxPLDevDC::CreateCanvas()
 void wxPLDevDC::SetWidth( PLStream *pls )
 {
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+        pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
 }
 
 
@@ -240,7 +240,7 @@ void wxPLDevDC::SetWidth( PLStream *pls )
 void wxPLDevDC::SetColor0( PLStream *pls )
 {
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+        pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
     m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) ) );
 }
 
@@ -253,7 +253,7 @@ void wxPLDevDC::SetColor0( PLStream *pls )
 void wxPLDevDC::SetColor1( PLStream *pls )
 {
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ),
-                         pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
+        pls->width > 0 ? pls->width : 1, wxSOLID ) ) );
     m_dc->SetBrush( wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b, pls->curcolor.a * 255 ) ) );
 }
 
@@ -283,7 +283,7 @@ void wxPLDevDC::PutPixel( short x, short y, PLINT color )
 {
     const wxPen oldpen = m_dc->GetPen();
     m_dc->SetPen( *( wxThePenList->FindOrCreatePen( wxColour( GetRValue( color ), GetGValue( color ), GetBValue( color ) ),
-                         1, wxSOLID ) ) );
+        1, wxSOLID ) ) );
     m_dc->DrawPoint( x, y );
     AddtoClipRegion( x, y, x, y );
     m_dc->SetPen( oldpen );

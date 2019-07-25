@@ -90,8 +90,8 @@ PLDLLIMPEXP_DRIVER_DATA( const char* ) plD_DEVICE_INFO_qt =
 }  // extern "C"
 
 static DrvOpt qt_options[] = { { "text_vectorize",     DRV_INT, &vectorize, "Vectorize fonts on output (0|1)"     },
-                               { "lines_antialiasing", DRV_INT, &lines_aa,  "Toggles antialiasing on lines (0|1)" },
-                               { NULL,                 DRV_INT, NULL,       NULL                                  } };
+    { "lines_antialiasing", DRV_INT, &lines_aa,  "Toggles antialiasing on lines (0|1)" },
+    { NULL,                 DRV_INT, NULL,       NULL                                  } };
 
 // The purpose of this routine is to create an internal qApp and the argc and argv data
 // that qApp needs if an external or internal qApp does not exist already.
@@ -1341,8 +1341,8 @@ void plD_init_qtwidget( PLStream * pls )
 
     widget->setWindowTitle( pls->plwindow );
 
-    qApp->connect( &handler, SIGNAL( MasterChangedPage() ), widget, SLOT( nextPage() ) );
-    qApp->connect( &handler, SIGNAL( MasterClosed() ), widget, SLOT( close() ) );
+    qApp->connect( &handler, SIGNAL(MasterChangedPage()), widget, SLOT(nextPage()) );
+    qApp->connect( &handler, SIGNAL(MasterClosed()), widget, SLOT(close()) );
 }
 
 void plD_eop_qtwidget( PLStream *pls )

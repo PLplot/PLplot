@@ -37,10 +37,10 @@ public:
 
 private:
     // Class data
-    plstream           *pls;
+    plstream *pls;
 
-    static const int   NPTS;
-    static const int   opt[4];
+    static const int NPTS;
+    static const int opt[4];
     static const PLFLT alt[4];
     static const PLFLT az[4];
 };
@@ -48,8 +48,8 @@ private:
 
 const int   x18::  NPTS  = 1000;
 const int   x18::  opt[] = { 1, 0, 1, 0 };
-const PLFLT x18::alt[4] = { 20.0, 35.0, 50.0, 65.0 };
-const PLFLT x18::az[4] = { 30.0, 40.0, 50.0, 60.0 };
+const PLFLT x18::alt[4]  = { 20.0, 35.0, 50.0, 65.0 };
+const PLFLT x18::az[4]   = { 30.0, 40.0, 50.0, 60.0 };
 
 
 x18::x18( int argc, char ** argv )

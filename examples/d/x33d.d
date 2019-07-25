@@ -128,7 +128,7 @@ plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, P
     // Parameters for the colorbars on this page
     PLINT     position_i, position, opt;
     PLFLT     x, y, x_length, y_length;
-    PLFLT     ticks[1]     = [ 0.0 ];
+    PLFLT     ticks[1] = [ 0.0 ];
     PLINT     sub_ticks[1] = [ 0 ];
     PLFLT     low_cap_color, high_cap_color;
     PLINT     vertical, ifn;
@@ -500,7 +500,7 @@ int main( char[][] args )
             nlegend += 1;
         else
             nlegend -= 1;
-        nlegend = cast(int) fmax( 1, nlegend );
+        nlegend = cast( int ) fmax( 1, nlegend );
         // nly specify legend data that are required according to the
         //  value of opt_array for that entry.
         for ( k = 0; k < nlegend; k++ )
@@ -520,7 +520,7 @@ int main( char[][] args )
         plsfont( PL_FCI_MONO, -1, -1 );
         plscol0a( 15, 32, 32, 32, 0.70 );
 
-        nrow    = cast(int) fmin( 3, nlegend );
+        nrow    = cast( int ) fmin( 3, nlegend );
         ncolumn = 0;
 
         pllegend( &legend_width, &legend_height, opt, position, x, y,

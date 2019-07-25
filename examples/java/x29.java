@@ -242,25 +242,25 @@ class x29 {
 
         double  scale;
         double  xmin[] = new double[1], xmax[] = new double[1];
-        double  ymin   = 0.0, ymax = 0.0, xlabel_step = 0.0;
+        double  ymin = 0.0, ymax = 0.0, xlabel_step = 0.0;
         int     kind, npts = 1001, i;
         boolean if_TAI_time_format = false;
         String  time_format        = "";
         String  title_suffix       = "";
         String  xtitle             = "";
-        String  title = "";
+        String  title              = "";
         double  x[];
         double  y[];
         int     epoch_year, epoch_month, epoch_day, epoch_hour, epoch_min;
         double  epoch_sec;
         int     tai_year[] = new int[1], tai_month[] = new int[1],
-                tai_day[]  = new int[1], tai_hour[] = new int[1],
-                tai_min[]  = new int[1];
-        double tai_sec[]   = new double[1], tai[] = new double[1];
-        int    utc_year[]  = new int[1], utc_month[] = new int[1],
-               utc_day[]   = new int[1], utc_hour[] = new int[1],
-               utc_min[]   = new int[1];
-        double utc_sec[]   = new double[1], utc[] = new double[1];
+                tai_day[] = new int[1], tai_hour[] = new int[1],
+                tai_min[] = new int[1];
+        double tai_sec[] = new double[1], tai[] = new double[1];
+        int    utc_year[] = new int[1], utc_month[] = new int[1],
+               utc_day[] = new int[1], utc_hour[] = new int[1],
+               utc_min[] = new int[1];
+        double utc_sec[] = new double[1], utc[] = new double[1];
 
         // Continuous time unit is Besselian years from whatever epoch is
         // chosen below.  Could change to seconds (or days) from the

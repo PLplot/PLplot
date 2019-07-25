@@ -119,9 +119,9 @@ const FontStyle  StyleLookup[3] = {
 };
 
 static DrvOpt    ps_options[] = { { "text",    DRV_INT, &text,    "Use Postscript text (text=0|1)"       },
-                                  { "color",   DRV_INT, &color,   "Use color (color=0|1)"                },
-                                  { "hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)" },
-                                  { NULL,      DRV_INT, NULL,     NULL                                   } };
+    { "color",   DRV_INT, &color,   "Use color (color=0|1)"                },
+    { "hrshsym", DRV_INT, &hrshsym, "Use Hershey symbol set (hrshsym=0|1)" },
+    { NULL,      DRV_INT, NULL,     NULL                                   } };
 
 // text > 0 uses some postscript tricks, namely a transformation matrix
 //   that scales, rotates (with slanting) and offsets text strings.
@@ -847,11 +847,11 @@ ps_getdate( void )
 void
 proc_str( PLStream *pls, EscText *args )
 {
-    PLFLT *t = args->xform, tt[4];              // Transform matrices
-    PLFLT theta, shear, stride;                 // Rotation angle and shear from the matrix
-    PLFLT ft_ht, offset;                        // Font height and offset
-    PLFLT cs, sn;
-    PSDev *dev = (PSDev *) pls->dev;
+    PLFLT              *t = args->xform, tt[4]; // Transform matrices
+    PLFLT              theta, shear, stride;    // Rotation angle and shear from the matrix
+    PLFLT              ft_ht, offset;           // Font height and offset
+    PLFLT              cs, sn;
+    PSDev              *dev = (PSDev *) pls->dev;
     PostscriptDocument *doc = (PostscriptDocument *) pls->psdoc;
     char               *font, esc;
     FontStyle          style;
@@ -860,7 +860,7 @@ proc_str( PLStream *pls, EscText *args )
     // 3 characters per change.
   #define PROC_STR_STRING_LENGTH    1000
     char   *strp, str[PROC_STR_STRING_LENGTH], *cur_strp,
-            cur_str[PROC_STR_STRING_LENGTH];
+           cur_str[PROC_STR_STRING_LENGTH];
     float  font_factor = 1.4;
     PLINT  clxmin, clxmax, clymin, clymax;  // Clip limits
     PLINT  clipx[4], clipy[4];              // Current clip limits

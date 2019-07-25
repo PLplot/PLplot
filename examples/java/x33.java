@@ -54,28 +54,28 @@ class x33 {
 
     // plcolorbar options
 
-    static           String[] colorbar_option_kind_labels = {
+    static String[] colorbar_option_kind_labels = {
         "Shade colorbars",
         "Shade colorbars with custom labels",
         "Image colorbars",
         "Gradient colorbars"
     };
 
-    static           String[] colorbar_position_option_labels = {
+    static String[] colorbar_position_option_labels = {
         "Left",
         "Right",
         "Top",
         "Bottom"
     };
 
-    static           String[] colorbar_label_option_labels = {
+    static String[] colorbar_label_option_labels = {
         "Label left",
         "Label right",
         "Label top",
         "Label bottom"
     };
 
-    static           String[] colorbar_cap_option_labels = {
+    static String[] colorbar_cap_option_labels = {
         "No caps",
         "Low cap",
         "High cap",
@@ -90,22 +90,22 @@ class x33 {
 
     void plcolorbar_example_page( int kind_i, int label_i, int cap_i, int cont_color, double cont_width, double[] values )
     {
-        int    i;
+        int        i;
         // Parameters for the colorbars on this page
-        int    position_i, position, opt;
-        double x, y, x_length, y_length;
-        double[] ticks  = { 0.0 };
-        int[] sub_ticks = { 0 };
-        double  low_cap_color, high_cap_color;
-        boolean vertical, ifn;
-        String[] axis_opts = new String[1];
-        int[] label_opts   = { 0 };
-        String[] label     = new String[1];
-        String title;
-        double[] colorbar_width  = new double[1];
-        double[] colorbar_height = new double[1];
-        int[] n_values_array     = new int[1];
-        double[][] values_array  = new double[1][values.length];
+        int        position_i, position, opt;
+        double     x, y, x_length, y_length;
+        double[]   ticks = { 0.0 };
+        int[]      sub_ticks = { 0 };
+        double     low_cap_color, high_cap_color;
+        boolean    vertical, ifn;
+        String[]   axis_opts  = new String[1];
+        int[]      label_opts = { 0 };
+        String[]   label      = new String[1];
+        String     title;
+        double[]   colorbar_width  = new double[1];
+        double[]   colorbar_height = new double[1];
+        int[]      n_values_array  = new int[1];
+        double[][] values_array    = new double[1][values.length];
 
         // Colorbar type options
         int[] colorbar_option_kinds = {
@@ -262,28 +262,28 @@ class x33 {
 
     public x33( String[] args )
     {
-        int i, k;
-        int opt;
-        int nlegend, nturn;
-        int[]      opt_array;
-        int[]      text_colors;
-        int[]      box_colors;
-        int[]      box_patterns;
-        double[]      box_scales;
-        double[]      box_line_widths;
-        int[]      line_colors;
-        int[]      line_styles;
-        double[]      line_widths;
-        int[]      symbol_numbers;
-        int[]      symbol_colors;
-        double[]      symbol_scales;
-        String[] text;
-        String[] symbols;
-        double[]      legend_width = new double[1], legend_height = new double[1];
-        double x, y, xstart, ystart;
-        double max_height, text_scale;
-        int    position, opt_base, nrow, ncolumn;
-        int[] position_options = {
+        int          i, k;
+        int          opt;
+        int          nlegend, nturn;
+        int[]        opt_array;
+        int[]        text_colors;
+        int[]        box_colors;
+        int[]        box_patterns;
+        double[]     box_scales;
+        double[]     box_line_widths;
+        int[]        line_colors;
+        int[]        line_styles;
+        double[]     line_widths;
+        int[]        symbol_numbers;
+        int[]        symbol_colors;
+        double[]     symbol_scales;
+        String[]     text;
+        String[]     symbols;
+        double[]     legend_width = new double[1], legend_height = new double[1];
+        double       x, y, xstart, ystart;
+        double       max_height, text_scale;
+        int          position, opt_base, nrow, ncolumn;
+        int[]        position_options = {
             PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
             PL_POSITION_TOP | PL_POSITION_OUTSIDE,
             PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,

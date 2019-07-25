@@ -1022,7 +1022,7 @@ Init( PLStream *pls )
 static void
 ExposeCmd( PLStream *pls, PLDisplay *pldis )
 {
-    TkwDev     *dev  = (TkwDev *) pls->dev;
+    TkwDev     *dev = (TkwDev *) pls->dev;
     TkwDisplay *tkwd = (TkwDisplay *) dev->tkwd;
     int        x, y, width, height;
 
@@ -1357,7 +1357,7 @@ AllocBGFG( PLStream *pls )
     // Allocate r/w color cell for background
 
     if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-             plane_masks, 0, pixels, 1 ) )
+        plane_masks, 0, pixels, 1 ) )
     {
         tkwd->cmap0[0].pixel = pixels[0];
     }
@@ -1372,7 +1372,7 @@ AllocBGFG( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, pixels, npixels ) )
+            plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -1571,7 +1571,7 @@ AllocCustomMap( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, pixels, npixels ) )
+            plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -1657,7 +1657,7 @@ AllocCmap0( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, &pixels[1], npixels ) )
+            plane_masks, 0, &pixels[1], npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )
@@ -1704,7 +1704,7 @@ AllocCmap1( PLStream *pls )
     for (;; )
     {
         if ( XAllocColorCells( tkwd->display, tkwd->map, False,
-                 plane_masks, 0, pixels, npixels ) )
+            plane_masks, 0, pixels, npixels ) )
             break;
         npixels--;
         if ( npixels == 0 )

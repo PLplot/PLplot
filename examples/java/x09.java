@@ -31,8 +31,8 @@ import static plplot.core.plplotjavacConstants.*;
 import java.lang.Math;
 
 class x09 {
-    static final int    XPTS = 35;
-    static final int    YPTS = 46;
+    static final int XPTS    = 35;
+    static final int YPTS    = 46;
     static final double XSPA = 2. / ( XPTS - 1 );
     static final double YSPA = 2. / ( YPTS - 1 );
 
@@ -47,11 +47,11 @@ class x09 {
     static final int PTHETAPTS     = 64;
     static final int PNLEVEL       = 20;
 
-    final double     clevel[] = { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
+    final double clevel[] = { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
 // Transformation function
-    final double     tr[] = { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
+    final double tr[] = { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
-    PLStream         pls = new PLStream();
+    PLStream pls = new PLStream();
 
 // State data used by f2mnmx
     double fmin, fmax;
@@ -65,21 +65,21 @@ class x09 {
 
     public x09( String[] args )
     {
-        int i, j;
+        int         i, j;
 
-        double[][] xg0 = new double[XPTS][YPTS];
-        double[][] yg0 = new double[XPTS][YPTS];
-        double[][] xg1 = new double[XPTS][YPTS];
-        double[][] yg1 = new double[XPTS][YPTS];
-        double[][] xg2 = new double[XPTS][YPTS];
-        double[][] yg2 = new double[XPTS][YPTS];
-        double[][] z   = new double[XPTS][YPTS];
-        double[][] w   = new double[XPTS][YPTS];
+        double[][]  xg0 = new double[XPTS][YPTS];
+        double[][]  yg0 = new double[XPTS][YPTS];
+        double[][]  xg1 = new double[XPTS][YPTS];
+        double[][]  yg1 = new double[XPTS][YPTS];
+        double[][]  xg2 = new double[XPTS][YPTS];
+        double[][]  yg2 = new double[XPTS][YPTS];
+        double[][]  z   = new double[XPTS][YPTS];
+        double[][]  w   = new double[XPTS][YPTS];
 
         double      xx, yy, argx, argy, distort;
-        final int[] mark  = { 1500 };
-        final int[] space = { 1500 };
-        final int[] mark0 = {};
+        final int[] mark   = { 1500 };
+        final int[] space  = { 1500 };
+        final int[] mark0  = {};
         final int[] space0 = {};
 
         // Parse and process command line arguments.
@@ -220,14 +220,14 @@ class x09 {
     void polar()
     // polar contour plot example.
     {
-        int i, j;
-        double[] px   = new double[PERIMETERPTS];
-        double[] py   = new double[PERIMETERPTS];
+        int        i, j;
+        double[]   px = new double[PERIMETERPTS];
+        double[]   py = new double[PERIMETERPTS];
         double[][] xg = new double[RPTS][THETAPTS];
         double[][] yg = new double[RPTS][THETAPTS];
-        double[][] z  = new double[RPTS][THETAPTS];
-        double t, r, theta;
-        double [] lev = new double[10];
+        double[][] z = new double[RPTS][THETAPTS];
+        double     t, r, theta;
+        double []  lev = new double[10];
 
         pls.env( -1., 1., -1., 1., 0, -2 );
         pls.col0( 1 );
@@ -284,23 +284,23 @@ class x09 {
     final void potential()
     // Shielded potential contour plot example.
     {
-        int    i, j;
+        int         i, j;
 
-        double rmax, xmin, xmax, x0, ymin, ymax, y0, zmin, zmax;
-        double peps, xpmin, xpmax, ypmin, ypmax;
-        double eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
-        double div1, div1i, div2, div2i;
+        double      rmax, xmin, xmax, x0, ymin, ymax, y0, zmin, zmax;
+        double      peps, xpmin, xpmax, ypmin, ypmax;
+        double      eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
+        double      div1, div1i, div2, div2i;
         double [][] xg = new double[PRPTS][PTHETAPTS];
         double [][] yg = new double[PRPTS][PTHETAPTS];
-        double [][] z  = new double[PRPTS][PTHETAPTS];
-        int    nlevelneg, nlevelpos;
-        double dz, clev;
-        double [] clevelneg_store = new double[PNLEVEL];
-        double [] clevelpos_store = new double[PNLEVEL];
-        int ncollin, ncolbox, ncollab;
-        double [] px = new double[PPERIMETERPTS];
-        double [] py = new double[PPERIMETERPTS];
-        double t, r, theta;
+        double [][] z = new double[PRPTS][PTHETAPTS];
+        int         nlevelneg, nlevelpos;
+        double      dz, clev;
+        double []   clevelneg_store = new double[PNLEVEL];
+        double []   clevelpos_store = new double[PNLEVEL];
+        int         ncollin, ncolbox, ncollab;
+        double []   px = new double[PPERIMETERPTS];
+        double []   py = new double[PPERIMETERPTS];
+        double      t, r, theta;
 
         // Create data to be contoured.
 

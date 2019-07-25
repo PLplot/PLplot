@@ -134,7 +134,7 @@ main( int argc, const char **argv )
 // Examine the result string to see if an error return is really an error
 
     if ( Tk_ParseArgv( interp, (Tk_Window) NULL, &argc, argv,
-             argTable, TK_ARGV_NO_DEFAULTS ) != TCL_OK )
+        argTable, TK_ARGV_NO_DEFAULTS ) != TCL_OK )
     {
 #ifdef DEBUG
         fprintf( stderr, "Error in Tk_ParseArgv\n" );

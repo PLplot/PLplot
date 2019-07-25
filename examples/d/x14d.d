@@ -156,8 +156,8 @@ void mypltr( PLFLT x, PLFLT y, PLFLT* tx, PLFLT* ty, void* pltr_data )
 
 class plot {
     private PLFLT[] x, y, x0, y0;
-    private         PLFLT[6] xs, ys;
-    private         PLINT[1] space1 = [ 1500 ], mark1 = [ 1500 ];
+    private PLFLT[6] xs, ys;
+    private PLINT[1] space1 = [ 1500 ], mark1 = [ 1500 ];
 
     public void plot1( PLFLT xscale, PLFLT yscale, PLFLT xoff, PLFLT yoff )
     {

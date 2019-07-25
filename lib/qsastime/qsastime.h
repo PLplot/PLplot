@@ -47,7 +47,7 @@
 #include "qsastimedll.h"
 
 struct QSASConfigStruct;
-typedef struct QSASConfigStruct   QSASConfig;
+typedef struct QSASConfigStruct QSASConfig;
 
 // externally accessible functions
 QSASTIMEDLLIMPEXP void configqsas( double scale, double offset1, double offset2, int ccontrol, int ifbtime_offset, int year, int month, int day, int hour, int min, double sec, QSASConfig **qsasconfig );

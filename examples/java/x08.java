@@ -42,12 +42,12 @@ class x08 {
     static final int XPTS = 35;
     static final int YPTS = 45;
 
-    PLStream         pls = new PLStream();
+    PLStream pls = new PLStream();
 
-    static double    alt[] = { 60.0, 40.0 };
-    static double    az[]  = { 30.0, -30.0 };
+    static double alt[] = { 60.0, 40.0 };
+    static double az[]  = { 30.0, -30.0 };
 
-    static           String[] title =
+    static String[] title =
     {
         "#frPLplot Example 8 - Alt=60, Az=30",
         "#frPLplot Example 8 - Alt=40, Az=-30",
@@ -62,10 +62,10 @@ class x08 {
 
     void cmap1_init( int gray )
     {
-        double [] i    = new double[2];
-        double [] h    = new double[2];
-        double [] l    = new double[2];
-        double [] s    = new double[2];
+        double []  i   = new double[2];
+        double []  h   = new double[2];
+        double []  l   = new double[2];
+        double []  s   = new double[2];
         boolean [] rev = new boolean[2];
 
         i[0] = 0.0;         // left boundary
@@ -111,28 +111,28 @@ class x08 {
 
     public x08( String[] args )
     {
-        int       i, j, k;
-        final int LEVELS = 10;
+        int        i, j, k;
+        final int  LEVELS = 10;
 
-        double[] x   = new double[ XPTS ];
-        double[] y   = new double[ YPTS ];
-        double[][] z = new double[XPTS][YPTS];
-        double clevel[]     = new double[LEVELS];
-        double clev_null [] = new double[0];
+        double[]   x            = new double[ XPTS ];
+        double[]   y            = new double[ YPTS ];
+        double[][] z            = new double[XPTS][YPTS];
+        double     clevel[]     = new double[LEVELS];
+        double     clev_null [] = new double[0];
 
-        double xx, yy, r;
-        double zmin = Double.MAX_VALUE, zmax = Double.MIN_VALUE;
+        double     xx, yy, r;
+        double     zmin = Double.MAX_VALUE, zmax = Double.MIN_VALUE;
 
-        int    ifshade;
+        int        ifshade;
 
-        int    indexxmin = 0;
-        int    indexxmax = XPTS;
-        int[] indexymin     = new int[XPTS];
-        int[] indexymax     = new int[XPTS];
-        double[][] zlimited = new double[XPTS][YPTS];
+        int        indexxmin = 0;
+        int        indexxmax = XPTS;
+        int[]      indexymin = new int[XPTS];
+        int[]      indexymax = new int[XPTS];
+        double[][] zlimited  = new double[XPTS][YPTS];
 
-        double dx = 2. / ( XPTS - 1 );
-        double dy = 2. / ( YPTS - 1 );
+        double     dx = 2. / ( XPTS - 1 );
+        double     dy = 2. / ( YPTS - 1 );
 
         // parameters of ellipse (in x, y index coordinates) that limits the data.
         // x0, y0 correspond to the exact floating point centre of the index

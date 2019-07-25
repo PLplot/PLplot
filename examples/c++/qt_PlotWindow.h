@@ -69,7 +69,7 @@ public slots:
 
 protected:
 
-    PLINT       strm;
+    PLINT strm;
 
     QtExtWidget * plot;
 };

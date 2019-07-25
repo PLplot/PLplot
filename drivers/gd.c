@@ -702,7 +702,7 @@ void
 plD_line_png( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
     png_Dev *dev = (png_Dev *) pls->dev;
-    int     x1   = x1a / dev->scale, y1 = y1a / dev->scale, x2 = x2a / dev->scale, y2 = y2a / dev->scale;
+    int     x1 = x1a / dev->scale, y1 = y1a / dev->scale, x2 = x2a / dev->scale, y2 = y2a / dev->scale;
     y1 = dev->pngy - y1;
     y2 = dev->pngy - y2;
 

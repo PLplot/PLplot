@@ -284,8 +284,8 @@ void plD_init_aqt( PLStream *pls )
 
     if ( !didTests )
     {
-        hasShear = [adapter respondsToSelector:@selector( addLabel:atPoint:angle:shearAngle:align: )];
-        hasAlpha = [adapter respondsToSelector:@selector( setColorRed:green:blue:alpha: )];
+        hasShear = [adapter respondsToSelector:@selector( addLabel: atPoint: angle: shearAngle: align: )];
+        hasAlpha = [adapter respondsToSelector:@selector( setColorRed: green: blue: alpha: )];
         didTests = true;
     }
 }
@@ -498,7 +498,7 @@ void get_cursor( PLStream *pls, PLGraphicsIn *gin )
     plGinInit( gin );
 
     temp    = [adapter waitNextEvent];
-    scanned = sscanf([temp cString], "1:{%d, %d}:%d", &x, &y, &button );
+    scanned = sscanf( [temp cString], "1:{%d, %d}:%d", &x, &y, &button );
 
     if ( scanned == 3 )         // check that we did actually get a reasonable event string
     {
@@ -639,7 +639,7 @@ NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len,
     int       utf8_len;
     int       updown;
     char      dummy[MAX_STRING_LEN + 1];
-    char                      *font;
+    char      *font;
     char      utf8[5];
     NSMutableAttributedString *str;
 
@@ -698,14 +698,14 @@ NSMutableAttributedString  * create_string( const PLUNICODE *ucs4, int ucs4_len,
                 if ( ucs4[i] == (PLUNICODE) 'd' )       // Subscript
                 {
                     updown--;
-                    [str addAttribute : @ "NSSuperScript"
+                    [str addAttribute : @"NSSuperScript"
                      value :[NSNumber numberWithInt : updown]
                      range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
                 }
                 if ( ucs4[i] == (PLUNICODE) 'u' )       // Superscript
                 {
                     updown++;
-                    [str addAttribute : @ "NSSuperScript"
+                    [str addAttribute : @"NSSuperScript"
                      value :[NSNumber numberWithInt : updown]
                      range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
                 }
@@ -748,10 +748,10 @@ void set_font_and_size( NSMutableAttributedString * str, PLUNICODE fci, PLFLT fo
     /* font = "FreeSerif";	*//* force the font for debugging purposes */
     // printf("Font at %d is : %s\n", cur_loc, font);
 
-    [str addAttribute : @ "AQTFontname"
+    [str addAttribute : @"AQTFontname"
      value :[NSString stringWithCString : font]
      range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
-    [str addAttribute : @ "AQTFontsize"
+    [str addAttribute : @"AQTFontsize"
      value :[NSNumber numberWithFloat : font_height]
      range : NSMakeRange( cur_loc, ( MAX_STRING_LEN - cur_loc ) )];
 }

@@ -330,7 +330,7 @@ pltclMain( int argc, char **argv, char * PL_UNUSED( RcFileName ) /* OBSOLETE */,
 
                 Tcl_AddErrorInfo( interp, "" );
                 Tcl_WriteObj( errChannel, Tcl_GetVar2Ex( interp, "errorInfo",
-                        NULL, TCL_GLOBAL_ONLY ) );
+                    NULL, TCL_GLOBAL_ONLY ) );
                 Tcl_WriteChars( errChannel, "\n", 1 );
             }
             exitCode = 1;

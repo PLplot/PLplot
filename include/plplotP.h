@@ -784,7 +784,7 @@ typedef struct cont_line
 typedef struct cont_level
 {
     // INDENT-OFF (stop infinite recursion)
-    PLFLT level;             // contour level
+    PLFLT             level; // contour level
     struct cont_line  *line; // contour line struct
     struct cont_level *next; // contour level struct
     // INDENT-ON

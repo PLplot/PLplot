@@ -33,7 +33,7 @@ import java.lang.Math;
 import java.text.*;
 
 class x14 {
-    double   xscale, yscale, xoff, yoff;
+    double xscale, yscale, xoff, yoff;
     PLStream pls1 = new PLStream();
     PLStream pls2 = new PLStream();
 
@@ -47,12 +47,12 @@ class x14 {
         String  geometry_master = "500x410+100+200";
         String  geometry_slave  = "500x410+650+200";
 
-        int     fam[]    = new int[1];
-        int     num[]    = new int[1];
-        int     bmax[]   = new int[1];
-        double  xp0[]    = new double[1], yp0[] = new double[1];
+        int     fam[] = new int[1];
+        int     num[] = new int[1];
+        int     bmax[] = new int[1];
+        double  xp0[] = new double[1], yp0[] = new double[1];
         int     xleng0[] = new int[1], yleng0[] = new int[1];
-        int     xoff0[]  = new int[1], yoff0[] = new int[1];
+        int     xoff0[] = new int[1], yoff0[] = new int[1];
         boolean valid_geometry;
 
 
@@ -239,7 +239,7 @@ class x14 {
     {
         int    i;
         int    space0[] = {};
-        int    mark0[] = {};
+        int    mark0[]  = {};
         int    space1[] = { 1500 };
         int    mark1[]  = { 1500 };
         double x[]      = new double[101];
@@ -291,10 +291,10 @@ class x14 {
         int          i, j;
         double       dtr, theta, dx, dy, r;
 
-        double[] x0 = new double[361];
-        double[] y0 = new double[361];
-        double[] x  = new double[361];
-        double[] y  = new double[361];
+        double[]     x0 = new double[361];
+        double[]     y0 = new double[361];
+        double[]     x  = new double[361];
+        double[]     y  = new double[361];
 
         dtr = Math.PI / 180.0;
         for ( i = 0; i <= 360; i++ )
@@ -357,27 +357,27 @@ class x14 {
         pls.flush();
     }
 
-    static final int    XPTS     = 35;
-    static final int    YPTS     = 46;
-    static final double XSPA     = 2. / ( XPTS - 1 );
-    static final double YSPA     = 2. / ( YPTS - 1 );
-    final double        clevel[] = { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
+    static final int XPTS    = 35;
+    static final int YPTS    = 46;
+    static final double XSPA = 2. / ( XPTS - 1 );
+    static final double YSPA = 2. / ( YPTS - 1 );
+    final double clevel[]    = { -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
 // Transformation function
-    final double        tr[] = { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
+    final double tr[] = { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
     void plot5( PLStream pls )
     {
-        int i, j;
+        int         i, j;
 
-        double[][] xg0 = new double[XPTS][YPTS];
-        double[][] yg0 = new double[XPTS][YPTS];
-        double[][] z   = new double[XPTS][YPTS];
-        double[][] w   = new double[XPTS][YPTS];
+        double[][]  xg0 = new double[XPTS][YPTS];
+        double[][]  yg0 = new double[XPTS][YPTS];
+        double[][]  z   = new double[XPTS][YPTS];
+        double[][]  w   = new double[XPTS][YPTS];
 
         double      xx, yy;
-        final int[] mark  = { 1500 };
-        final int[] space = { 1500 };
-        final int[] mark0 = {};
+        final int[] mark   = { 1500 };
+        final int[] space  = { 1500 };
+        final int[] mark0  = {};
         final int[] space0 = {};
 
         // Set up function arrays

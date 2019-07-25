@@ -48,7 +48,7 @@ private:
 
 public:
     static PLINT pl_errcode;
-    static char  errmsg[160];
+    static char errmsg[160];
 };
 
 PLINT x17::pl_errcode   = 0;

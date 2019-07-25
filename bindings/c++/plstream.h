@@ -119,7 +119,7 @@ PLDLLIMPEXP_CXX void tr2p( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, PLPointer plt
 //--------------------------------------------------------------------------
 
 class PLDLLIMPEXP_CXX plstream {
-    PLINT        stream;
+    PLINT stream;
 
     static PLINT active_streams;
 

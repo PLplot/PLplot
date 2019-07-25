@@ -22,7 +22,7 @@
 // typedef the type pid_t - a dummy for the moment - for MS Windows
 // platforms other than those (e.g., MinGW) that typedef it already.
 #if defined ( _WIN32 ) && !defined ( __MINGW32__ )
-typedef unsigned int   pid_t;
+typedef unsigned int pid_t;
 #endif
 
 // One of these holds the TK driver state information

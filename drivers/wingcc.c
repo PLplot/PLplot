@@ -190,13 +190,13 @@ static void UpdatePageMetrics( PLStream *pls, char flag );
   #define Debug3( ... )      do { if ( pls->debug ) { fprintf( stderr, __VA_ARGS__ ); } } while ( 0 )
 #endif
 
-#define ReportWinError()     do {                                                       \
-        LPVOID lpMsgBuf;                                                                \
-        FormatMessage(                                                                  \
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,                \
-            NULL, GetLastError(),                                                       \
-            MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), (LPTSTR) &lpMsgBuf, 0, NULL ); \
-        MessageBox( NULL, lpMsgBuf, "GetLastError", MB_OK | MB_ICONINFORMATION );       \
+#define ReportWinError()     do {                                                 \
+        LPVOID lpMsgBuf;                                                          \
+        FormatMessage(                                                            \
+    FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,                  \
+    NULL, GetLastError(),                                                         \
+    MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), (LPTSTR) &lpMsgBuf, 0, NULL );   \
+        MessageBox( NULL, lpMsgBuf, "GetLastError", MB_OK | MB_ICONINFORMATION ); \
         LocalFree( lpMsgBuf ); } while ( 0 )
 
 #define CrossHairCursor()    do {                                   \

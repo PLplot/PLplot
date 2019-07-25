@@ -27,7 +27,7 @@ import plplot.core.*;
 import static plplot.core.plplotjavacConstants.*;
 
 class x00 {
-    PLStream   pls = new PLStream();
+    PLStream pls = new PLStream();
 
     static int NSIZE = 101;
 
@@ -38,8 +38,8 @@ class x00 {
 
     public x00( String[] args )
     {
-        double x[]  = new double[NSIZE];
-        double y[]  = new double[NSIZE];
+        double x[] = new double[NSIZE];
+        double y[] = new double[NSIZE];
         double xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
         int    i;
 

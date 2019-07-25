@@ -38,23 +38,23 @@
 int main( int argc, char *argv[] )
 {
     PLFLT *x, *y, **z,
-           xmin     = 0., xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
-           ymin     = 0., ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
-           zmin     = 0., zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
-           ysmin    = ymin + 0.1 * yrange,
-           ysmax    = ymax - 0.1 * yrange,
-           ysrange  = ysmax - ysmin,
-           dysrot   = ysrange / (PLFLT) ( NROTATION - 1 ),
-           dysshear = ysrange / (PLFLT) ( NSHEAR - 1 ),
-           zsmin    = zmin + 0.1 * zrange,
-           zsmax    = zmax - 0.1 * zrange,
-           zsrange  = zsmax - zsmin,
-           dzsrot   = zsrange / (PLFLT) ( NROTATION - 1 ),
-           dzsshear = zsrange / (PLFLT) ( NSHEAR - 1 ),
-           ys, zs,
-           x_inclination, y_inclination, z_inclination,
-           x_shear, y_shear, z_shear,
-           omega, sin_omega, cos_omega, domega;
+          xmin = 0., xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
+          ymin = 0., ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
+          zmin = 0., zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
+          ysmin = ymin + 0.1 * yrange,
+          ysmax = ymax - 0.1 * yrange,
+          ysrange = ysmax - ysmin,
+          dysrot = ysrange / (PLFLT) ( NROTATION - 1 ),
+          dysshear = ysrange / (PLFLT) ( NSHEAR - 1 ),
+          zsmin = zmin + 0.1 * zrange,
+          zsmax = zmax - 0.1 * zrange,
+          zsrange = zsmax - zsmin,
+          dzsrot = zsrange / (PLFLT) ( NROTATION - 1 ),
+          dzsshear = zsrange / (PLFLT) ( NSHEAR - 1 ),
+          ys, zs,
+          x_inclination, y_inclination, z_inclination,
+          x_shear, y_shear, z_shear,
+          omega, sin_omega, cos_omega, domega;
     int   i, j;
     PLFLT radius, pitch, xpos, ypos, zpos;
     // p1string must be exactly one character + the null termination

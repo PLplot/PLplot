@@ -976,7 +976,7 @@ plfplot3dcl( PLFLT_VECTOR x, PLFLT_VECTOR y, PLF2OPS zops, PLPointer zp,
     PLINT init, ix, iy, color;
     PLFLT width;
     PLFLT xmin, xmax, ymin, ymax, zmin, zmax, zscale;
-    PLINT ixmin   = 0, ixmax = nx - 1, iymin = 0, iymax = ny - 1;
+    PLINT ixmin = 0, ixmax = nx - 1, iymin = 0, iymax = ny - 1;
     PLINT clipped = 0, base_cont = 0, side = 0;
     PLFLT ( *getz )( PLPointer, PLINT, PLINT ) = zops->get;
     PLFLT *_x = NULL, *_y = NULL, **_z = NULL;
@@ -2034,7 +2034,7 @@ plnxtvhi( PLINT *u, PLINT *v, PLFLT* c, PLINT n, PLINT init )
 static void
 plnxtvhi_draw( PLINT *u, PLINT *v, PLFLT* c, PLINT n )
 {
-    PLINT i   = 0, j = 0, first = 1;
+    PLINT i = 0, j = 0, first = 1;
     PLINT sx1 = 0, sx2 = 0, sy1 = 0, sy2 = 0;
     PLINT su1, su2, sv1, sv2;
     PLINT cx, cy, px, py;

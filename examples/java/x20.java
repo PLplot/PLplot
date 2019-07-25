@@ -37,14 +37,14 @@ import java.util.*;
 
 class x20 {
     // Class data
-    PLStream       pls = new PLStream();
+    PLStream pls = new PLStream();
 
-    static int     XDIM          = 260;
-    static int     YDIM          = 220;
+    static int XDIM              = 260;
+    static int YDIM              = 220;
     static boolean dbg           = false;
     static boolean nosombrero    = false;
     static boolean nointeractive = false;
-    static String  f_name        = null;
+    static String f_name         = null;
 
     //static PLOptionTable options[];
 
@@ -312,7 +312,7 @@ class x20 {
     {
         BufferedReader  in;
         DataInputStream in2;
-        double[][] img;
+        double[][]      img;
         String          line;
         StringTokenizer st;
         int             i, j, w, h;
@@ -386,10 +386,10 @@ class x20 {
     //  get selection square interactively
     boolean get_clip( double[] xi, double[] xe, double[] yi, double[] ye )
     {
-        PLGraphicsIn gin   = new PLGraphicsIn();
-        double       xxi   = xi[0], yyi = yi[0], xxe = xe[0], yye = ye[0], t;
+        PLGraphicsIn gin = new PLGraphicsIn();
+        double       xxi = xi[0], yyi = yi[0], xxe = xe[0], yye = ye[0], t;
         boolean      start = false;
-        boolean[] st = new boolean[1];
+        boolean[]    st    = new boolean[1];
 
         pls.xormod( true, st ); // enter xor mode to draw a selection rectangle
 

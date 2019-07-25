@@ -34,7 +34,7 @@ public:
 
 private:
     // Class data
-    plstream         *pls;
+    plstream *pls;
 
     static const int NPTS;
 };

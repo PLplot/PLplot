@@ -36,16 +36,16 @@ import static plplot.core.plplotjavacConstants.*;
 //
 
 class x23 {
-    PLStream     pls = new PLStream();
+    PLStream pls = new PLStream();
 
-    static       String[] Greek = {
+    static String[] Greek = {
         "#gA", "#gB", "#gG", "#gD", "#gE", "#gZ", "#gY", "#gH", "#gI", "#gK", "#gL", "#gM",
         "#gN", "#gC", "#gO", "#gP", "#gR", "#gS", "#gT", "#gU", "#gF", "#gX", "#gQ", "#gW",
         "#ga", "#gb", "#gg", "#gd", "#ge", "#gz", "#gy", "#gh", "#gi", "#gk", "#gl", "#gm",
         "#gn", "#gc", "#go", "#gp", "#gr", "#gs", "#gt", "#gu", "#gf", "#gx", "#gq", "#gw"
     };
 
-    static       String[] Type1 = {
+    static String[] Type1 = {
         "0x0020", "0x0021", "0x0023", "0x0025", "0x0026",
         "0x0028", "0x0029", "0x002b", "0x002c", "0x002e",
         "0x002f", "0x0030", "0x0031", "0x0032", "0x0033",
@@ -82,7 +82,7 @@ class x23 {
         "0x2666"
     };
 
-    static       String[] title = {
+    static String[] title = {
         "#<0x10>PLplot Example 23 - Greek Letters",
         "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (a)",
         "#<0x10>PLplot Example 23 - Type 1 Symbol Font Glyphs by Unicode (b)",
@@ -169,9 +169,9 @@ class x23 {
 
 // 30 possible FCI values.
 
-    static int    FCI_COMBINATIONS = 30;
+    static int FCI_COMBINATIONS = 30;
 
-    static long   fci[] = {
+    static long fci[] = {
         0x80000000L,
         0x80000001L,
         0x80000002L,
@@ -297,9 +297,9 @@ class x23 {
 
         // Demonstrate methods of getting the current fonts
         long[] fci_old = new long[1];
-        int[] ifamily  = new int[1];
-        int[] istyle   = new int[1];
-        int[] iweight  = new int[1];
+        int[]  ifamily = new int[1];
+        int[]  istyle  = new int[1];
+        int[]  iweight = new int[1];
         pls.gfci( fci_old );
         pls.gfont( ifamily, istyle, iweight );
         System.out.println( "For example 23 prior to page 12 the FCI is 0x" + Long.toHexString( fci_old[0] ) );

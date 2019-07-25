@@ -31,11 +31,11 @@ import static plplot.core.plplotjavacConstants.*;
 import java.lang.Math;
 import java.text.*;
 class x18 {
-    static final int NPTS  = 1000;
-    static int       opt[] = { 1, 0, 1, 0 };
-    static double    alt[] = { 20.0, 35.0, 50.0, 65.0 };
-    static double    az[]  = { 30.0, 40.0, 50.0, 60.0 };
-    PLStream         pls   = new PLStream();
+    static final int NPTS = 1000;
+    static int opt[]      = { 1, 0, 1, 0 };
+    static double alt[]   = { 20.0, 35.0, 50.0, 65.0 };
+    static double az[]    = { 30.0, 40.0, 50.0, 60.0 };
+    PLStream pls          = new PLStream();
 
     double THETA( int a )
     {
@@ -47,7 +47,7 @@ class x18 {
     }
     void test_poly( int k )
     {
-        int i, j;
+        int          i, j;
         boolean [][] draw = {
             { true,  true,  true,  true  },
             { true,  false, true,  false },
@@ -55,9 +55,9 @@ class x18 {
             { true,  true,  false, false }
         };
 
-        double [] x = new double [5];
-        double [] y = new double [5];
-        double [] z = new double [5];
+        double []    x = new double [5];
+        double []    y = new double [5];
+        double []    z = new double [5];
 
         pls.adv( 0 );
         pls.vpor( 0.0, 1.0, 0.0, 0.9 );

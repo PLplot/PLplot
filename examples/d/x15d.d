@@ -153,7 +153,7 @@ class plot {
                                     [2000, 2000], [2000, 2000], [4000, 4000],
                                     [4000, 2000] ];
 
-        PLINT sh_cmap   = 0, sh_width = 2;
+        PLINT sh_cmap = 0, sh_width = 2;
         PLINT min_color = 0, min_width = 0, max_color = 0, max_width = 0;
 
         pladv( 0 );

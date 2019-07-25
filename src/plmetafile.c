@@ -36,7 +36,7 @@
 // Older versions of Visual Studio (2005 perhaps 2008) do not define uint8_t
 // The newer versions of Visual Studio will not install on Vista or older
 // versions of Windows.
-typedef unsigned char   uint8_t;
+typedef unsigned char uint8_t;
 #endif
 
 // Not all platforms support the lround() function and the coordinate system

@@ -736,7 +736,7 @@ int translate_parse_option( int parse_option )
     int o ## _length;               \
     o ## _length = Wosize_val( o ); \
     int c_ ## o[o ## _length];      \
-    for ( i = 0; i < ( o ## _length ); i++ ) { ( c_ ## o )[i] = Int_val( Field( ( o ), i ) ); }
+    for ( i = 0; i < ( o ## _length ); i++ ) { (c_ ## o)[i] = Int_val( Field( ( o ), i ) ); }
 
 // Copy an int array, o, of n element to the C array c
 #define INIT_INT_ARRAYS( o )                   \
@@ -745,7 +745,7 @@ int translate_parse_option( int parse_option )
     int *c_ ## o[o ## _length];                \
     for ( i = 0; i < ( o ## _length ); i++ ) { \
         INIT_INT_ARRAY( o ## _subarray );      \
-        ( c_ ## o )[i] = c_ ## o ## _subarray; \
+        (c_ ## o)[i] = c_ ## o ## _subarray;   \
     }
 
 int lor_ml_list( value list, ML_VARIANT_FUNC variant_f )

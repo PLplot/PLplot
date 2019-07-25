@@ -33,19 +33,19 @@ public:
     x12( int, char ** );
     void plfbox( PLFLT, PLFLT );
 private:
-    plstream           *pls;
+    plstream *pls;
 
     static const PLFLT y0[];
 
-    static PLFLT       pos[], red[], green[], blue[];
+    static PLFLT pos[], red[], green[], blue[];
 };
 
 const PLFLT x12::y0[10] = { 5., 15., 12., 24., 28., 30., 20., 8., 12., 3. };
 
-PLFLT       x12::      pos[] = { 0.0, 0.25, 0.5, 0.75, 1.0 };
-PLFLT       x12::      red[] = { 0.0, 0.25, 0.5, 1.0, 1.0 };
+PLFLT       x12::      pos[]   = { 0.0, 0.25, 0.5, 0.75, 1.0 };
+PLFLT       x12::      red[]   = { 0.0, 0.25, 0.5, 1.0, 1.0 };
 PLFLT       x12::      green[] = { 1.0, 0.5, 0.5, 0.5, 1.0 };
-PLFLT       x12::      blue[] = { 1.0, 1.0, 0.5, 0.25, 0.0 };
+PLFLT       x12::      blue[]  = { 1.0, 1.0, 0.5, 0.25, 0.0 };
 
 x12::x12( int argc, char **argv )
 {

@@ -146,7 +146,7 @@ void spiro( PLFLT[] params, int fill )
     // Proper termination of the angle loop very near the beginning
     // point, see
     // http://mathforum.org/mathimages/index.php/Hypotrochoid.
-    windings = cast(PLINT) abs( params[1] ) / gcd( cast(PLINT) params[0], cast(PLINT) params[1] );
+    windings = cast( PLINT ) abs( params[1] ) / gcd( cast(PLINT) params[0], cast(PLINT) params[1] );
     steps    = npnt / windings;
     dphi     = 2.0 * PI / cast(PLFLT) steps;
 

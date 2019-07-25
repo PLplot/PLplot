@@ -149,8 +149,8 @@ class x19 {
         LabelFunc19       geolocation_labeler = new LabelFunc19();
         MapTransform      map_transform       = new MapTransform();
 
-        double[] x = new double[1];
-        double[] y = new double[1];
+        double[]          x = new double[1];
+        double[]          y = new double[1];
         int i;
 
         // Parse and process command line arguments.
@@ -274,8 +274,8 @@ class x19 {
 
         //woodland
         pls.col0( 3 );
-        int nwoodlandareas = 94;
-        int[] woodlandareas = new int[nwoodlandareas];
+        int   nwoodlandareas = 94;
+        int[] woodlandareas  = new int[nwoodlandareas];
         for ( i = 0; i < nwoodlandareas; ++i )
             woodlandareas[i] = i + 218;
         pls.mapfill( nullCallback, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, woodlandareas );
@@ -287,8 +287,8 @@ class x19 {
 
         //crags
         pls.col0( 8 );
-        int ncragareas = 2024;
-        int [] cragareas = new int[ncragareas];
+        int    ncragareas = 2024;
+        int [] cragareas  = new int[ncragareas];
         for ( i = 0; i < ncragareas; ++i )
             cragareas[i] = i + 325;
         pls.mapfill( nullCallback, "ss/ss64ne_Landform_Area", minx, maxx, miny, maxy, cragareas );

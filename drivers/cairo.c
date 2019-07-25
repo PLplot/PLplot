@@ -772,8 +772,8 @@ void text_esc_cairo( PLStream *pls, EscText *args )
 
 void text_end_cairo( PLStream *pls, EscText *args )
 {
-    int   textXExtent, textYExtent, baseline;
-    PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
+    int                  textXExtent, textYExtent, baseline;
+    PLFLT                rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
     cairo_matrix_t       *cairoTransformMatrix;
     cairo_font_options_t *cairoFontOptions;
     PangoContext         *context;
@@ -872,10 +872,10 @@ void text_end_cairo( PLStream *pls, EscText *args )
 
 void proc_str( PLStream *pls, EscText *args )
 {
-    float fontSize;
-    int   textXExtent, textYExtent, baseline;
+    float                fontSize;
+    int                  textXExtent, textYExtent, baseline;
     char                 *textWithPangoMarkup;
-    PLFLT rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
+    PLFLT                rotation, shear, stride, cos_rot, sin_rot, cos_shear, sin_shear;
     cairo_matrix_t       *cairoTransformMatrix;
     cairo_font_options_t *cairoFontOptions;
     PangoContext         *context;
@@ -1498,7 +1498,7 @@ void filled_polygon( PLStream *pls, short *xa, short *ya, PLINT npts )
 
 void gradient( PLStream *pls, short *xa, short *ya, PLINT npts )
 {
-    int i;
+    int             i;
     PLCairo         *aStream;
     cairo_pattern_t *linear_gradient;
 

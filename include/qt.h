@@ -139,8 +139,8 @@ public:
     // Set pen to draw solid strokes (called after drawing dashed strokes)
     virtual void setSolid();
     // Conversion factor from internal plplot coordinates to device coordinates
-    double        downscale;
-    double        m_dWidth, m_dHeight;
+    double downscale;
+    double m_dWidth, m_dHeight;
     static QMutex mutex;     // All-purpose mutex
 
 protected:
@@ -152,12 +152,12 @@ protected:
     QPicture getTextPicture( PLUNICODE fci, PLUNICODE* text, int len, PLFLT chrht );
 
     // Text-related variables
-    bool     underlined;
-    bool     overlined;
-    double   currentFontScale;
-    double   currentFontSize;
-    double   yOffset;
-    double   xOffset;
+    bool underlined;
+    bool overlined;
+    double currentFontScale;
+    double currentFontSize;
+    double yOffset;
+    double xOffset;
 
     PLStream *pls;
 
@@ -169,7 +169,7 @@ protected:
 class PLDLLIMPEXP_QT QtRasterDevice : public QtPLDriver, public QImage
 {
 public:
-    QtRasterDevice( int i_iWidth = QT_DEFAULT_X,
+    QtRasterDevice( int i_iWidth  = QT_DEFAULT_X,
                     int i_iHeight = QT_DEFAULT_Y );
     virtual ~QtRasterDevice();
 
@@ -185,7 +185,7 @@ public:
     unsigned char *memory;
 
 protected:
-    char    format[5];
+    char format[5];
     QString fileName;
 };
 #endif
@@ -196,7 +196,7 @@ protected:
 class PLDLLIMPEXP_QT QtSVGDevice : public QtPLDriver, public QSvgGenerator
 {
 public:
-    QtSVGDevice( int i_iWidth = QT_DEFAULT_X,
+    QtSVGDevice( int i_iWidth  = QT_DEFAULT_X,
                  int i_iHeight = QT_DEFAULT_Y );
 
     virtual ~QtSVGDevice();
@@ -288,7 +288,7 @@ public:
 
     union DataType
     {
-        QLineF * Line;
+        QLineF              * Line;
         QPolygonF           * Polyline;
         QRectF              * Rect;
         QLinearGradient     * LinearGradient;
@@ -352,7 +352,7 @@ protected:
 
     void resetPensAndBrushes( QPainter* );
 
-    double  m_dAspectRatio;                      // Is kept constant during resizes
+    double m_dAspectRatio;                       // Is kept constant during resizes
     QPixmap * m_pixPixmap;                       // stores the drawn image as long as it does not have to be regenerated
 
     QLinkedList<BufferElement> m_listBuffer;     // Buffer holding the draw instructions
@@ -362,9 +362,9 @@ protected:
     bool redrawAll;
 
     // Pens and brushes required to maintain the status between 2 flushes
-    QPen   SolidPen;
-    QPen   NoPen;
-    bool   hasPen;
+    QPen SolidPen;
+    QPen NoPen;
+    bool hasPen;
     QBrush SolidBrush;
     // end parameters
 
@@ -384,10 +384,10 @@ protected:
         int    g;
         int    b;
         double alpha;
-    }            bgColour;
+    } bgColour;
 
     PLGraphicsIn gin;         // Graphics Input Structure
-    int          locate_mode; // Set while in locate mode
+    int locate_mode;          // Set while in locate mode
 
 protected slots:
     void mousePressEvent( QMouseEvent * event );
@@ -425,7 +425,7 @@ protected:
     {
         bool   isTracking;
         double cursor_x, cursor_y;
-    }    cursorParameters;
+    } cursorParameters;
 
     bool killed;
 };

@@ -113,20 +113,20 @@ int circle_contains( circle* c, point* p )
 //
 void points_thin( int* pn, point** ppoints, int nx, int ny )
 {
-    int    n           = *pn;
-    point  * points    = *ppoints;
-    double xmin        = DBL_MAX;
-    double xmax        = -DBL_MAX;
-    double ymin        = DBL_MAX;
-    double ymax        = -DBL_MAX;
-    int    nxy         = nx * ny;
-    double * sumx      = calloc( (size_t) nxy, sizeof ( double ) );
-    double * sumy      = calloc( (size_t) nxy, sizeof ( double ) );
-    double * sumz      = calloc( (size_t) nxy, sizeof ( double ) );
-    int    * count     = calloc( (size_t) nxy, sizeof ( int ) );
-    double stepx       = 0.0;
-    double stepy       = 0.0;
-    int    nnew        = 0;
+    int    n = *pn;
+    point  * points = *ppoints;
+    double xmin = DBL_MAX;
+    double xmax = -DBL_MAX;
+    double ymin = DBL_MAX;
+    double ymax = -DBL_MAX;
+    int    nxy = nx * ny;
+    double * sumx = calloc( (size_t) nxy, sizeof ( double ) );
+    double * sumy = calloc( (size_t) nxy, sizeof ( double ) );
+    double * sumz = calloc( (size_t) nxy, sizeof ( double ) );
+    int    * count = calloc( (size_t) nxy, sizeof ( int ) );
+    double stepx = 0.0;
+    double stepy = 0.0;
+    int    nnew = 0;
     point  * pointsnew = NULL;
     int    i, j, ii;
 

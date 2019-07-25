@@ -1450,7 +1450,7 @@ label_box( PLCHAR_VECTOR xopt, PLFLT xtick1, PLCHAR_VECTOR yopt, PLFLT ytick1 )
     // -O3 -Wuninitialized warnings that are obvious false alarms from
     // the clarity of the code associated with the true or false
     // result for custom_exponent_placement.
-    PLFLT         pos        = 0.0, height = 0.0, just = 0.0;
+    PLFLT         pos = 0.0, height = 0.0, just = 0.0;
     PLCHAR_VECTOR esc_string = plgesc_string();
 
     plgchr( &default_mm, &char_height_mm );
@@ -1947,7 +1947,7 @@ label_box_custom( PLCHAR_VECTOR xopt, PLINT n_xticks, PLFLT_VECTOR xticks, PLCHA
     // -O3 -Wuninitialized warnings that are obvious false alarms from
     // the clarity of the code associated with the true or false
     // result for custom_exponent_placement.
-    PLFLT         pos        = 0.0, height = 0.0, just = 0.0;
+    PLFLT         pos = 0.0, height = 0.0, just = 0.0;
     PLCHAR_VECTOR esc_string = plgesc_string();
 
     plgchr( &default_mm, &char_height_mm );

@@ -42,9 +42,9 @@ PlotWindow::PlotWindow( int argc, char** argv, QWidget* parent ) :
     // setAttribute( Qt::WA_DeleteOnClose );
 
     QMenu * plotMenu = menuBar()->addMenu( "Plot" );
-    plotMenu->addAction( "Curves", this, SLOT( plotCurves() ) );
-    plotMenu->addAction( "Histogram", this, SLOT( plotHistogram() ) );
-    plotMenu->addAction( "Interactive Selection", this, SLOT( interactive() ) );
+    plotMenu->addAction( "Curves", this, SLOT(plotCurves()) );
+    plotMenu->addAction( "Histogram", this, SLOT(plotHistogram()) );
+    plotMenu->addAction( "Interactive Selection", this, SLOT(interactive()) );
 
     plot = new QtExtWidget( QT_DEFAULT_X, QT_DEFAULT_Y, this );
     setCentralWidget( plot );

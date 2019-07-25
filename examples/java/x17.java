@@ -32,8 +32,8 @@ class x17 {
     PLStream pls = new PLStream();
 
     // plerror is not implement in java at this time
-    static int    pl_errcode = 0;
-    static String errmsg     = null;
+    static int pl_errcode = 0;
+    static String errmsg  = null;
 
 
     x17( String[] args )

@@ -49,10 +49,10 @@
 // C99 adds %zd as an explicit format specifier for size_t but this is not yet
 // fully adopted.
 
-#define plr_rd( code )                                                                           \
-    if ( code ) { fprintf( stderr,                                                               \
-                      "Unable to read from %s in %s at line %d, bytecount %lu\n",                \
-                      plr->iodev->typeName, __FILE__, __LINE__, (unsigned long) plr->pdfs->bp ); \
+#define plr_rd( code )                                                         \
+    if ( code ) { fprintf( stderr,                                             \
+    "Unable to read from %s in %s at line %d, bytecount %lu\n",                \
+    plr->iodev->typeName, __FILE__, __LINE__, (unsigned long) plr->pdfs->bp ); \
                   return -1; }
 
 #define plr_cmd( code ) \
@@ -62,7 +62,7 @@
 
 #define barf( msg )                                               \
     { fprintf( stderr, "%s\nCommand code: %d, byte count: %lu\n", \
-          msg, csave, (unsigned long) plr->pdfs->bp ); return -1; }
+    msg, csave, (unsigned long) plr->pdfs->bp ); return -1; }
 
 // Static function prototypes.
 
@@ -121,7 +121,7 @@ plr_process( PLRDev *plr )
     while ( plr->pdfs->bp < (size_t) plr->nbytes )
     {
         plr_cmd( c = plr_get( plr ) );
-        csave = c;
+        csave      = c;
         plr_cmd( plr_process1( plr, c ) );
     }
     return 0;
@@ -326,9 +326,9 @@ plr_line( PLRDev *plr, int c )
 
 #define plr_rdn( code )                                           \
     if ( code ) { fprintf( stderr,                                \
-                      "Unable to read from %s in %s at line %d, bytecount %d\n\
+    "Unable to read from %s in %s at line %d, bytecount %d\n\
 Bytes requested: %d\n", plr->iodev->typeName, __FILE__, __LINE__, \
-                      (int) plr->pdfs->bp, (int) 2 * n ); return -1; }
+    (int) plr->pdfs->bp, (int) 2 * n ); return -1; }
 
 static int
 get_ncoords( PLRDev *plr, PLFLT *x, PLFLT *y, PLINT n )

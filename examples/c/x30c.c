@@ -26,20 +26,20 @@
 
 
 #include "plcdemos.h"
-static PLINT  red[] = { 0, 255, 0, 0 };
+static PLINT  red[]   = { 0, 255, 0, 0 };
 static PLINT  green[] = { 0, 0, 255, 0 };
-static PLINT  blue[] = { 0, 0, 0, 255 };
+static PLINT  blue[]  = { 0, 0, 0, 255 };
 static PLFLT  alpha[] = { 1.0, 1.0, 1.0, 1.0 };
 
 static PLFLT  px[] = { 0.1, 0.5, 0.5, 0.1 };
 static PLFLT  py[] = { 0.1, 0.1, 0.5, 0.5 };
 
-static PLFLT  pos[] = { 0.0, 1.0 };
+static PLFLT  pos[]    = { 0.0, 1.0 };
 static PLFLT  rcoord[] = { 1.0, 1.0 };
 static PLFLT  gcoord[] = { 0.0, 0.0 };
 static PLFLT  bcoord[] = { 0.0, 0.0 };
 static PLFLT  acoord[] = { 0.0, 1.0 };
-static PLBOOL rev[] = { 0, 0 };
+static PLBOOL rev[]    = { 0, 0 };
 
 int
 main( int argc, char *argv[] )

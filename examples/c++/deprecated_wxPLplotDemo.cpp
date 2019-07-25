@@ -83,7 +83,7 @@ class MyPlotwindow : public wxPLplotwindow
 public:
     MyPlotwindow( wxFrame* frame, wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition,
                   const wxSize& size = wxDefaultSize, long style = 0,
-                  int pl_style = wxPLPLOT_NONE );
+                  int pl_style       = wxPLPLOT_NONE );
 
     void OnChar( wxKeyEvent& event );
 
@@ -106,8 +106,8 @@ private:
 
 private:
     MyPlotwindow* plotwindow;
-    bool        bgcolor;
-    int         m_backend;
+    bool bgcolor;
+    int m_backend;
 
     DECLARE_EVENT_TABLE()
 };

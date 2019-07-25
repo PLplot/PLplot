@@ -1011,7 +1011,7 @@ color_set( PLINT i, U_CHAR r, U_CHAR g, U_CHAR b, PLFLT a, PLCHAR_VECTOR name )
 }
 
 #define color_def( i, r, g, b, a, n ) \
-    if ( i >= imin && i <= imax ) color_set( i, r, g, b, a, n );
+    if ( i >= imin && i <= imax ) color_set ( i, r, g, b, a, n );
 
 //--------------------------------------------------------------------------
 // plcmap0_def()
@@ -1468,8 +1468,8 @@ cmap0_palette_read( PLCHAR_VECTOR filename,
             if ( strlen( color_info ) == 7 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x",
-                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ),
-                         (unsigned int *) ( *b + i ) ) != 3 )
+                    (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ),
+                    (unsigned int *) ( *b + i ) ) != 3 )
                 {
                     err = 1;
                     break;
@@ -1479,8 +1479,8 @@ cmap0_palette_read( PLCHAR_VECTOR filename,
             else if ( strlen( color_info ) > 9 )
             {
                 if ( sscanf( color_info, "#%2x%2x%2x %lf",
-                         (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ),
-                         (unsigned int *) ( *b + i ), (double *) ( *a + i ) ) != 4 )
+                    (unsigned int *) ( *r + i ), (unsigned int *) ( *g + i ),
+                    (unsigned int *) ( *b + i ), (double *) ( *a + i ) ) != 4 )
                 {
                     err = 1;
                     break;

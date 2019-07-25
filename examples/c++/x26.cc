@@ -152,7 +152,7 @@ void x26::plot1( int type, const char *x_label, const char *y_label,
 {
     int        i;
     PLFLT      *freql = new PLFLT[101];
-    PLFLT      *ampl  = new PLFLT[101];
+    PLFLT      *ampl = new PLFLT[101];
     PLFLT      *phase = new PLFLT[101];
     PLFLT      f0, freq;
     PLINT      nlegend = 2;

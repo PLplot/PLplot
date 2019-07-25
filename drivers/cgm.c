@@ -291,7 +291,7 @@ void
 plD_line_cgm( PLStream *pls, short x1a, short y1a, short x2a, short y2a )
 {
     cgm_Dev *dev = (cgm_Dev *) pls->dev;
-    int     x1   = x1a / dev->scale, y1 = y1a / dev->scale, x2 = x2a / dev->scale, y2 = y2a / dev->scale;
+    int     x1 = x1a / dev->scale, y1 = y1a / dev->scale, x2 = x2a / dev->scale, y2 = y2a / dev->scale;
     y1 = y1;
     y2 = y2;
 

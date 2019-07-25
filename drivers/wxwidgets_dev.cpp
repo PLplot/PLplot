@@ -82,7 +82,7 @@ void PlDevice::drawText( PLStream* pls, EscText* args )
 {
     // Split the text into lines separated by forced linebreak '\n' characters
     // inserted by the user.
-    typedef std::pair< PLUNICODE *, PLUNICODE *>   uniIterPair;
+    typedef std::pair< PLUNICODE *, PLUNICODE *> uniIterPair;
     PLUNICODE *textEnd = args->unicode_array + args->unicode_array_len;
     PLUNICODE lf       = PLUNICODE( '\n' );
     std::vector< uniIterPair > lines( 1, uniIterPair( args->unicode_array, textEnd ) );
@@ -423,7 +423,7 @@ public:
             m_dc->SetUserScale( m_xScaleOld, m_yScaleOld );
     }
 private:
-    wxDC   *m_dc;
+    wxDC *m_dc;
     double m_xScaleOld;
     double m_yScaleOld;
     Scaler & operator=( const Scaler & );
@@ -454,7 +454,7 @@ public:
             m_dc->SetLogicalOrigin( m_xOriginOld, m_yOriginOld );
     }
 private:
-    wxDC    *m_dc;
+    wxDC *m_dc;
     wxCoord m_xOriginOld;
     wxCoord m_yOriginOld;
     OriginChanger & operator=( const OriginChanger & );
@@ -490,8 +490,8 @@ public:
         }
     }
 private:
-    wxDC    *m_dc;
-    wxPen   m_pen;
+    wxDC *m_dc;
+    wxPen m_pen;
     wxBrush m_brush;
     DrawingObjectsChanger & operator=( const DrawingObjectsChanger & );
     DrawingObjectsChanger ( const DrawingObjectsChanger & );
@@ -526,8 +526,8 @@ public:
         }
     }
 private:
-    wxDC     *m_dc;
-    wxFont   m_font;
+    wxDC *m_dc;
+    wxFont m_font;
     wxColour m_textForeground;
     wxColour m_textBackground;
     TextObjectsSaver & operator=( const TextObjectsSaver & );
@@ -623,9 +623,9 @@ public:
         return m_clipEverything;
     }
 private:
-    wxDC   *m_dc;
+    wxDC *m_dc;
     wxRect m_boxOld;
-    bool   m_clipEverything;
+    bool m_clipEverything;
     Clipper & operator=( const Clipper & );
     Clipper ( const Clipper & );
 };
@@ -1043,7 +1043,7 @@ void wxPLDevice::SetWidth( PLStream *pls )
 {
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
     m_pen = wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
-            pls->curcolor.a * 255 ), width, wxSOLID );
+        pls->curcolor.a * 255 ), width, wxSOLID );
 }
 
 
@@ -1056,9 +1056,9 @@ void wxPLDevice::SetColor( PLStream *pls )
 {
     PLFLT width = ( pls->width > 0.0 ? pls->width : 1.0 ) * m_scale;
     m_pen = wxPen( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
-            pls->curcolor.a * 255 ), width, wxSOLID );
+        pls->curcolor.a * 255 ), width, wxSOLID );
     m_brush = wxBrush( wxColour( pls->curcolor.r, pls->curcolor.g, pls->curcolor.b,
-            pls->curcolor.a * 255 ) );
+        pls->curcolor.a * 255 ) );
 }
 
 //--------------------------------------------------------------------------

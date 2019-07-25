@@ -167,7 +167,7 @@ static void
 plot1( void )
 {
     PLFLT shade_min, shade_max, sh_color;
-    PLINT sh_cmap   = 0;
+    PLINT sh_cmap = 0;
     PLINT min_color = 0, max_color = 0;
     PLFLT sh_width, min_width = 0., max_width = 0.;
 
@@ -210,7 +210,7 @@ static void
 plot2( void )
 {
     PLFLT        shade_min, shade_max, sh_color;
-    PLINT        sh_cmap   = 0;
+    PLINT        sh_cmap = 0;
     PLINT        min_color = 0, max_color = 0;
     PLFLT        sh_width, min_width = 0., max_width = 0.;
     int          i;

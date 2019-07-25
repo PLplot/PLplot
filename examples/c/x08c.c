@@ -40,7 +40,7 @@
 #define YPTS    45              // Data points in y
 
 static PLFLT alt[] = { 60.0, 40.0 };
-static PLFLT az[] = { 30.0, -30.0 };
+static PLFLT az[]  = { 30.0, -30.0 };
 static void cmap1_init( int );
 
 static PLCHAR_VECTOR title[] =
@@ -144,8 +144,8 @@ main( int argc, char *argv[] )
     PLFLT    *x, *y, **z;
     // Shut up spurious undefined warnings from the compiler.
     PLFLT    *z_row_major = NULL, *z_col_major = NULL;
-    PLFLT    dx           = 2. / (PLFLT) ( XPTS - 1 );
-    PLFLT    dy           = 2. / (PLFLT) ( YPTS - 1 );
+    PLFLT    dx = 2. / (PLFLT) ( XPTS - 1 );
+    PLFLT    dy = 2. / (PLFLT) ( YPTS - 1 );
     PLfGrid2 grid_c, grid_row_major, grid_col_major;
     PLFLT    xx, yy, r;
     PLINT    ifshade;

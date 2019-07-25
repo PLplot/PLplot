@@ -42,7 +42,7 @@ public:
     static const int ID_CHECK_TIMER;
 
     wxPlFrame( wxWindow *parent, wxWindowID id, const wxString &title, wxString file, long fileSize,
-               const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE,
+               const wxPoint &pos   = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE,
                const wxString &name = wxFrameNameStr );
     ~wxPlFrame();
     void fixAspect( bool fix );
@@ -65,32 +65,32 @@ private:
     void SetPageAndUpdate( size_t page = size_t(-1) );
     std::vector<std::vector<char> > m_pageBuffers;
     std::vector<bool> m_bufferValidFlags;
-    size_t            m_viewingPage;
-    size_t            m_writingPage;
-    char              * m_transferBuffer;
-    wxString          m_file;
-    size_t            m_fileSize;
+    size_t m_viewingPage;
+    size_t m_writingPage;
+    char * m_transferBuffer;
+    wxString m_file;
+    size_t m_fileSize;
 
-    PLMemoryMap       m_memoryMap;
+    PLMemoryMap m_memoryMap;
 #ifdef PL_WXWIDGETS_IPC3
     // Private variable to hold all components of a MemoryMapHeader struct for a wxPlframe instance.
-    MemoryMapHeader  m_header;
+    MemoryMapHeader m_header;
 #else
-    PLNamedMutex     m_mutex;
+    PLNamedMutex m_mutex;
 #endif
-    wxTimer          m_checkTimer;
-    int              m_currentTimerInterval;
+    wxTimer m_checkTimer;
+    int m_currentTimerInterval;
     static const int m_idleTimerInterval = 100;
     static const int m_busyTimerInterval = 0;
-    int              m_nothingToDoCounter;
+    int m_nothingToDoCounter;
     static const int m_nothingToDoCounterLimit = 5000;
-    bool             m_transferComplete;
-    bool             m_inCheckTimerFunction;
+    bool m_transferComplete;
+    bool m_inCheckTimerFunction;
 
-    wxPoint          m_cursorPosition;
-    int              m_locateModePage;
-    size_t           m_plottedBufferAmount;
-    unsigned char    m_previousTransmissionType;
+    wxPoint m_cursorPosition;
+    int m_locateModePage;
+    size_t m_plottedBufferAmount;
+    unsigned char m_previousTransmissionType;
 
     DECLARE_EVENT_TABLE();
 };

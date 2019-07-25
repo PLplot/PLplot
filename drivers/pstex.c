@@ -264,7 +264,7 @@ void
 parse_str( const char *str, char *dest )
 {
     int  n, opened = 0, raised = 0, overline = 0, underline = 0, fontset = 0, math = 0;
-    char *tp          = dest, c, esc;
+    char *tp = dest, c, esc;
     char greek[]      = "abgGdDezyhHiklLmncCopPrsStuUfFxqQwW";
     char *mathgreek[] = { "alpha",   "beta",    "gamma",  "Gamma", "delta", "Delta",
                           "epsilon", "zeta",    "eta",    "theta", "Theta", "iota",

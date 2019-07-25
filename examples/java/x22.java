@@ -50,8 +50,8 @@ class x22 {
 
     PLStream pls = new PLStream();
 
-    double[][] u  = null;
-    double[][] v  = null;
+    double[][] u = null;
+    double[][] v = null;
     double[][] xg = null;
     double[][] yg = null;
     int nx, ny, nc, nseg;
@@ -152,7 +152,7 @@ class x22 {
         double    dx, dy, x, y;
         double    xmin, xmax, ymin, ymax;
         double    Q, b;
-        double[] clev = new double[nc];
+        double[]  clev      = new double[nc];
         Transform transform = new Transform();
 
         dx = 1.0;
@@ -203,20 +203,20 @@ class x22 {
     // Vector plot of the gradient of a shielded potential (see example 9)
     void potential()
     {
-        final int nper   = 100;
-        final int nlevel = 10;
+        final int  nper   = 100;
+        final int  nlevel = 10;
 
-        int       i, j, nr, ntheta;
-        double    eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
-        double    div1, div1i, div2, div2i;
+        int        i, j, nr, ntheta;
+        double     eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
+        double     div1, div1i, div2, div2i;
         double[][] z;
-        double    r, theta, x, y, dz, rmax;
-        double[] xmaxmin = new double[2];
-        double[] ymaxmin = new double[2];
-        double[] zmaxmin = new double[2];
-        double[] px      = new double[nper];
-        double[] py      = new double[nper];
-        double[] clevel  = new double[nlevel];
+        double     r, theta, x, y, dz, rmax;
+        double[]   xmaxmin = new double[2];
+        double[]   ymaxmin = new double[2];
+        double[]   zmaxmin = new double[2];
+        double[]   px      = new double[nper];
+        double[]   py      = new double[nper];
+        double[]   clevel  = new double[nlevel];
 
         nr     = nx;
         ntheta = ny;

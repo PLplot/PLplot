@@ -39,7 +39,7 @@
     if ( code ) { fprintf( stderr, "Unable to write to MetaFile\n" ); exit( 1 ); }
 
 #define plm_rd( code ) \
-    if ( code ) plexit( "Unable to read from MetaFile" )
+    if ( code ) plexit ( "Unable to read from MetaFile" )
 
 //
 // Metafile commands.

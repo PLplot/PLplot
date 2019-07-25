@@ -5,7 +5,7 @@
 
 static int   opt[] = { 1, 0, 1, 0 };
 static PLFLT alt[] = { 20.0, 35.0, 50.0, 65.0 };
-static PLFLT az[] = { 30.0, 40.0, 50.0, 60.0 };
+static PLFLT az[]  = { 30.0, 40.0, 50.0, 60.0 };
 
 void test_poly( int k );
 

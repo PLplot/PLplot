@@ -38,17 +38,17 @@ private:
 
     // number of shade levels, x data points, y data points,
     // and perimeter points.
-    static int           ns;
-    static int           nx;
-    static int           ny;
-    static int           exclude;
-    static int           colorbar;
-    const static int     PERIMETERPTS;
+    static int ns;
+    static int nx;
+    static int ny;
+    static int exclude;
+    static int colorbar;
+    const static int PERIMETERPTS;
 public:
-    static PLFLT         tr[];
+    static PLFLT tr[];
 
     static PLOptionTable options[];
-    static const char    *notes[];
+    static const char *notes[];
 };
 
 int       x16::      ns       = 20;
@@ -145,8 +145,8 @@ x16::x16( int argc, char ** argv )
     PLFLT       **w;
     PLcGrid     cgrid1;
     PLcGrid2    cgrid2;
-    PLFLT       *clevel    = new PLFLT[ns];
-    PLFLT       *shedge    = new PLFLT[ns + 1];
+    PLFLT       *clevel = new PLFLT[ns];
+    PLFLT       *shedge = new PLFLT[ns + 1];
     const int   cont_color = 0;
     const PLFLT fill_width = 2.0, cont_width = 0.0;
     PLFLT       colorbar_width, colorbar_height;

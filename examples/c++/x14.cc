@@ -39,19 +39,19 @@ public:
     static void mypltr( PLFLT, PLFLT, PLFLT *, PLFLT *, void * );
 private:
     // Class data
-    plstream           *pls1, *pls2;
+    plstream *pls1, *pls2;
 
-    PLFLT              x[101], y[101];
-    PLFLT              xscale, yscale, xoff, yoff, xs[6], ys[6];
-    static PLINT       space0, mark0, space1, mark1;
+    PLFLT x[101], y[101];
+    PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
+    static PLINT space0, mark0, space1, mark1;
 
-    static const int   xpts, ypts;
+    static const int xpts, ypts;
     static const PLFLT xspa, yspa;
     static const PLFLT tr[6];
 };
 
 PLINT x14::space0 = 0, x14::mark0 = 0,
-x14::space1       = 1500, x14::mark1 = 1500;
+x14::space1 = 1500, x14::mark1 = 1500;
 
 const int   x14::  xpts = 35;
 const int   x14::  ypts = 46;

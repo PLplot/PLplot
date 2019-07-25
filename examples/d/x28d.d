@@ -41,18 +41,18 @@ int main( char[][] args )
     const int NSHEAR      = 8;
 
     PLFLT
-        xmin     = 0.0, xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
-        ymin     = 0.0, ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
-        zmin     = 0.0, zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
-        ysmin    = ymin + 0.1 * yrange,
-        ysmax    = ymax - 0.1 * yrange,
-        ysrange  = ysmax - ysmin,
-        dysrot   = ysrange / cast(PLFLT) ( NROTATION - 1 ),
+        xmin = 0.0, xmax = 1.0, xmid = 0.5 * ( xmax + xmin ), xrange = xmax - xmin,
+        ymin = 0.0, ymax = 1.0, ymid = 0.5 * ( ymax + ymin ), yrange = ymax - ymin,
+        zmin = 0.0, zmax = 1.0, zmid = 0.5 * ( zmax + zmin ), zrange = zmax - zmin,
+        ysmin = ymin + 0.1 * yrange,
+        ysmax = ymax - 0.1 * yrange,
+        ysrange = ysmax - ysmin,
+        dysrot = ysrange / cast(PLFLT) ( NROTATION - 1 ),
         dysshear = ysrange / cast(PLFLT) ( NSHEAR - 1 ),
-        zsmin    = zmin + 0.1 * zrange,
-        zsmax    = zmax - 0.1 * zrange,
-        zsrange  = zsmax - zsmin,
-        dzsrot   = zsrange / cast(PLFLT) ( NROTATION - 1 ),
+        zsmin = zmin + 0.1 * zrange,
+        zsmax = zmax - 0.1 * zrange,
+        zsrange = zsmax - zsmin,
+        dzsrot = zsrange / cast(PLFLT) ( NROTATION - 1 ),
         dzsshear = zsrange / cast(PLFLT) ( NSHEAR - 1 ),
         ys, zs;
 
@@ -327,7 +327,7 @@ int main( char[][] args )
     omega  = 0.;
     // 3D function is a helix of the given radius and pitch
     PLFLT radius = 0.5;
-    PLFLT pitch  = 1. / ( 2. * PI );
+    PLFLT pitch = 1. / ( 2. * PI );
     PLFLT xpos, ypos, zpos;
     for ( int i = 0; i < pstring.length; i++ )
     {

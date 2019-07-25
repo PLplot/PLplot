@@ -36,9 +36,9 @@
 
 #include "plcdemos.h"
 
-static PLINT red[] = { 240, 204, 204, 204, 0, 39, 125 };
+static PLINT red[]   = { 240, 204, 204, 204, 0, 39, 125 };
 static PLINT green[] = { 240, 0, 125, 204, 204, 80, 0 };
-static PLINT blue[] = { 240, 0, 0, 0, 0, 204, 125 };
+static PLINT blue[]  = { 240, 0, 0, 0, 0, 204, 125 };
 
 static PLFLT px[] = { 0.0, 0.0, 1.0, 1.0 };
 static PLFLT py[] = { 0.0, 0.25, 0.25, 0.0 };

@@ -564,7 +564,7 @@ void proc_str( PLStream *pls, EscText *args )
     char         plplot_esc;
     short        i;
     short        totalTags = 1;
-    short        ucs4Len   = (short) args->unicode_array_len;
+    short        ucs4Len = (short) args->unicode_array_len;
     double       ftHt, scaled_offset, scaled_ftHt;
     PLUNICODE    fci;
     PLINT        rcx[4], rcy[4];

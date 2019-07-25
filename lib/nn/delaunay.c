@@ -193,10 +193,10 @@ static void tio2delaunay( struct triangulateio* tio_out, delaunay* d )
         fprintf( stderr, "triangles:\n" );
     for ( i = 0; i < d->ntriangles; ++i )
     {
-        int offset             = i * 3;
-        triangle           * t = &d->triangles[i];
-        triangle_neighbours* n = &d->neighbours[i];
-        circle             * c = &d->circles[i];
+        int                offset = i * 3;
+        triangle           * t    = &d->triangles[i];
+        triangle_neighbours* n    = &d->neighbours[i];
+        circle             * c    = &d->circles[i];
 
         t->vids[0] = tio_out->trianglelist[offset];
         t->vids[1] = tio_out->trianglelist[offset + 1];
@@ -338,7 +338,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     delaunay* d = malloc( sizeof ( delaunay ) );
 
     coordT  *qpoints;                       // array of coordinates for each point
-    boolT   ismalloc  = False;              // True if qhull should free points
+    boolT   ismalloc = False;               // True if qhull should free points
     char    flags[64] = "qhull d Qbb Qt";   // option flags for qhull
     facetT  *facet, *neighbor, **neighborp; // variables to walk through facets
     vertexT *vertex, **vertexp;             // variables to walk through vertex

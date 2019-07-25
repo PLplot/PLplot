@@ -45,10 +45,10 @@ class x03 {
         int          i;
         double       dtr, theta, dx, dy, r, offset;
 
-        double[] x0 = new double[361];
-        double[] y0 = new double[361];
-        double[] x  = new double[361];
-        double[] y  = new double[361];
+        double[]     x0 = new double[361];
+        double[]     y0 = new double[361];
+        double[]     x  = new double[361];
+        double[]     y  = new double[361];
 
         dtr = Math.PI / 180.0;
         for ( i = 0; i <= 360; i++ )

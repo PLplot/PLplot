@@ -33,15 +33,15 @@ import static plplot.core.plplotjavacConstants.*;
 import java.lang.Math;
 
 class x01 {
-    double   xscale, yscale, xoff, yoff;
+    double xscale, yscale, xoff, yoff;
     PLStream pls = new PLStream();
 
     // Set this to true to test the xormod method
     static boolean test_xor = false;
 
     static boolean locate_mode = false;
-    static int     fontset     = 1;
-    static String  f_name      = null;
+    static int fontset         = 1;
+    static String f_name       = null;
 
     public static void main( String[] args )
     {
@@ -240,7 +240,7 @@ class x01 {
     {
         int    i;
         int    space0[] = {};
-        int    mark0[] = {};
+        int    mark0[]  = {};
         int    space1[] = { 1500 };
         int    mark1[]  = { 1500 };
         double x[]      = new double[101];

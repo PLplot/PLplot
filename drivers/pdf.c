@@ -79,7 +79,7 @@ typedef struct
     HPDF_Doc       pdf;
     HPDF_Page      page;
     HPDF_PageSizes pageSize;
-    FILE                         *pdfFile;
+    FILE           *pdfFile;
     PLFLT          scalex, scaley;
 
     // font variables

@@ -214,7 +214,7 @@ private:
 #endif
     // Size of shared memory buffer
     size_t m_size;
-    void   *m_buffer;
+    void *m_buffer;
 };
 
 #ifndef PL_WXWIDGETS_IPC3
@@ -225,7 +225,7 @@ public:
     PLNamedMutex();
     ~PLNamedMutex();
     PLNamedMutex( const char *name, bool aquireOnCreate = false );
-    void create( const char *name, bool aquireOnCreate = false );
+    void create( const char *name, bool aquireOnCreate  = false );
     void clear();
     void aquire();
     bool aquire( unsigned long millisecs );
@@ -233,12 +233,12 @@ public:
     void release();
     bool isValid();
 private:
-    bool   m_haveLock;
+    bool m_haveLock;
 #ifdef _WIN32
     HANDLE m_mutex;
 #else
-    sem_t  * m_mutex;
-    char   m_mutexName[251];
+    sem_t * m_mutex;
+    char m_mutexName[251];
 #endif
 };
 

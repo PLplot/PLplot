@@ -31,7 +31,7 @@ import static plplot.core.plplotjavacConstants.*;
 import java.text.*;
 
 class x12 {
-    static double   y0[] = { 5., 15., 12., 24., 28., 30., 20., 8., 12., 3. };
+    static double y0[] = { 5., 15., 12., 24., 28., 30., 20., 8., 12., 3. };
 
     static double[] pos   = { 0.0, 0.25, 0.5, 0.75, 1.0 };
     static double[] red   = { 0.0, 0.25, 0.5, 1.0, 1.0 };

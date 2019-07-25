@@ -1162,8 +1162,8 @@ CreateXhairs( PlPlotter *plPlotterPtr )
 // inside our window.
 
     if ( XQueryPointer( plPlotterPtr->display, Tk_WindowId( tkwin ),
-             &root, &child, &root_x, &root_y, &win_x, &win_y,
-             &mask ) )
+        &root, &child, &root_x, &root_y, &win_x, &win_y,
+        &mask ) )
     {
         #ifdef MAC_TCL
         // Mac Tk only has a partial implementation of the above function
@@ -1258,8 +1258,8 @@ CreateRband( PlPlotter *plPlotterPtr )
 // Find current pointer location, and initiate rubber banding.
 
     if ( XQueryPointer( plPlotterPtr->display, Tk_WindowId( tkwin ),
-             &root, &child, &root_x, &root_y, &win_x, &win_y,
-             &mask ) )
+        &root, &child, &root_x, &root_y, &win_x, &win_y,
+        &mask ) )
     {
         #ifdef MAC_TCL
         // Mac Tk only has a partial implementation of the above function
@@ -1450,7 +1450,7 @@ Install_cmap( PlPlotter *plPlotterPtr )
     colormap_windows[count++] = top;
 
     if ( !XSetWMColormapWindows( plPlotterPtr->display,
-             top, colormap_windows, count ) )
+        top, colormap_windows, count ) )
         fprintf( stderr, "Unable to set color map property!\n" );
 #endif
 }
@@ -1624,7 +1624,7 @@ scol0( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     }
 
     if ( !XParseColor( plPlotterPtr->display,
-             Tk_Colormap( plPlotterPtr->tkwin ), col, &xcol ) )
+        Tk_Colormap( plPlotterPtr->tkwin ), col, &xcol ) )
     {
         Tcl_AppendResult( interp, "Couldn't parse color ", col,
             (char *) NULL );
@@ -1685,7 +1685,7 @@ scol1( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     }
 
     if ( !XParseColor( plPlotterPtr->display,
-             Tk_Colormap( plPlotterPtr->tkwin ), col, &xcol ) )
+        Tk_Colormap( plPlotterPtr->tkwin ), col, &xcol ) )
     {
         Tcl_AppendResult( interp, "Couldn't parse color ", col,
             (char *) NULL );
@@ -1889,7 +1889,7 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
                 break;
 
             if ( scol1( interp, plPlotterPtr,
-                     i, col, pos, rev, &changed ) != TCL_OK )
+                i, col, pos, rev, &changed ) != TCL_OK )
                 return TCL_ERROR;
 
             col = strtok( NULL, " " );
@@ -1942,7 +1942,7 @@ Cmd( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         }
 
         if ( scol1( interp, plPlotterPtr,
-                 i, argv[2], argv[3], argv[4], &changed ) != TCL_OK )
+            i, argv[2], argv[3], argv[4], &changed ) != TCL_OK )
             return TCL_ERROR;
 
         if ( changed )
@@ -2075,7 +2075,7 @@ ConfigurePlPlotter( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     dbug_enter( "ConfigurePlPlotter" );
 
     if ( Tk_ConfigureWidget( interp, tkwin, configSpecs,
-             argc, argv, (char *) plPlotterPtr, flags ) != TCL_OK )
+        argc, argv, (char *) plPlotterPtr, flags ) != TCL_OK )
     {
         return TCL_ERROR;
     }
@@ -2088,7 +2088,7 @@ ConfigurePlPlotter( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
     plsstrm( plPlotterPtr->ipls );
     if ( PLColor_from_TkColor_Changed( &pls->cmap0[0],
-             Tk_3DBorderColor( plPlotterPtr->border ) ) )
+        Tk_3DBorderColor( plPlotterPtr->border ) ) )
     {
         need_redisplay = 1;
         // need to redraw as well as simply refresh the window
@@ -2402,7 +2402,7 @@ Openlink( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
         iodev->fileHandle = (char *) argv[1];
 
         if ( Tcl_GetOpenFile( interp, iodev->fileHandle,
-                 0, 1, ( ClientData ) & iodev->file ) != TCL_OK )
+            0, 1, ( ClientData ) & iodev->file ) != TCL_OK )
         {
             return TCL_ERROR;
         }
@@ -2699,7 +2699,7 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
     else if ( pid == 0 )
     {
         if ( execl( plPlotterPtr->plpr_cmd, plPlotterPtr->plpr_cmd, sfnam,
-                 (char *) 0 ) )
+            (char *) 0 ) )
         {
             fprintf( stderr, "Unable to exec print command.\n" );
             free( sfnam );

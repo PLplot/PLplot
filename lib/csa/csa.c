@@ -50,7 +50,7 @@ int csa_verbose = 0;
 #define NPPC_DEF     5
 
 struct square;
-typedef struct square   square;
+typedef struct square square;
 
 typedef struct
 {
@@ -437,8 +437,8 @@ void csa_addpoints( csa* a, int n, point points[] )
 static void csa_setprimaryflag( csa* a )
 {
     square*** squares = a->squares;
-    int   nj1         = a->nj - 1;
-    int   ni1         = a->ni - 1;
+    int   nj1 = a->nj - 1;
+    int   ni1 = a->ni - 1;
     int   i, j;
 
     for ( j = 1; j < nj1; ++j )
@@ -657,13 +657,13 @@ static double distance( point* p1, point* p2 )
 //
 static void thindata( triangle* t, int npmax )
 {
-    csa    * a         = t->parent->parent;
-    int    imax        = (int) ceil( sqrt( (double) ( npmax * 3 / 2 ) ) );
+    csa    * a = t->parent->parent;
+    int    imax = (int) ceil( sqrt( (double) ( npmax * 3 / 2 ) ) );
     square *** squares = alloc2d( imax, imax, sizeof ( void* ) );
-    double h           = t->r * 2.0 / imax;
-    double h2          = h / 2.0;
-    double xmin        = t->middle.x - t->r;
-    double ymin        = t->middle.y - t->r;
+    double h = t->r * 2.0 / imax;
+    double h2 = h / 2.0;
+    double xmin = t->middle.x - t->r;
+    double ymin = t->middle.y - t->r;
     int    i, j, ii;
 
     for ( j = 0; j < imax; ++j )
@@ -1673,7 +1673,7 @@ void csa_calculatespline( csa* a )
 
 void csa_approximate_point( csa* a, point* p )
 {
-    double  h  = a->h;
+    double  h = a->h;
     double  ii = ( p->x - a->xmin ) / h + 1.0;
     double  jj = ( p->y - a->ymin ) / h + 1.0;
     int     i, j;

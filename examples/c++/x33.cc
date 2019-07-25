@@ -44,18 +44,18 @@ public:
 
 private:
     // Class data
-    plstream           *pls;
+    plstream *pls;
 
     static const PLINT position_options[16];
-    static const char  *special_symbols[5];
+    static const char *special_symbols[5];
     static const PLINT colorbar_option_kinds[COLORBAR_KINDS];
-    static const char  *colorbar_option_kind_labels[COLORBAR_KINDS];
+    static const char *colorbar_option_kind_labels[COLORBAR_KINDS];
     static const PLINT colorbar_position_options[COLORBAR_POSITIONS];
-    static const char  *colorbar_position_option_labels[COLORBAR_POSITIONS];
+    static const char *colorbar_position_option_labels[COLORBAR_POSITIONS];
     static const PLINT colorbar_label_options[COLORBAR_LABELS];
-    static const char  *colorbar_label_option_labels[COLORBAR_LABELS];
+    static const char *colorbar_label_option_labels[COLORBAR_LABELS];
     static const PLINT colorbar_cap_options[COLORBAR_CAPS];
-    static const char  *colorbar_cap_option_labels[COLORBAR_CAPS];
+    static const char *colorbar_cap_option_labels[COLORBAR_CAPS];
 
     void plcolorbar_example_page( int, int, int, PLINT, PLFLT, PLINT, PLFLT * );
     void plcolorbar_example( const char *, int, PLINT, PLFLT, PLINT, PLFLT * );
@@ -156,7 +156,7 @@ x33::plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_col
     // Parameters for the colorbars on this page
     PLINT      position_i, position, opt;
     PLFLT      x, y, x_length, y_length;
-    PLFLT      ticks[1]     = { 0.0 };
+    PLFLT      ticks[1] = { 0.0 };
     PLINT      sub_ticks[1] = { 0 };
     PLFLT      low_cap_color, high_cap_color;
     PLINT      vertical, ifn;

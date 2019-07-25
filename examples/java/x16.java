@@ -42,9 +42,9 @@ class x16 {
     // calculated constants and array that depends on them
     static final double XSPA = 2. / ( XPTS - 1 );
     static final double YSPA = 2. / ( YPTS - 1 );
-    final double        tr[] = { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
+    final double tr[]        = { XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
 
-    PLStream            pls = new PLStream();
+    PLStream pls = new PLStream();
 
     double fmin, fmax;
 
@@ -72,33 +72,33 @@ class x16 {
 
     public x16( String[] args )
     {
-        int    i, j;
-        double x, y, argx, argy, distort, r, t, zmin, zmax;
-        double[] px     = new double[PERIMETERPTS];
-        double[] py     = new double[PERIMETERPTS];
-        double[][] xg0  = new double[XPTS][YPTS];
-        double[][] yg0  = new double[XPTS][YPTS];
-        double[][] xg1  = new double[XPTS][YPTS];
-        double[][] yg1  = new double[XPTS][YPTS];
-        double[][] z    = new double[XPTS][YPTS];
-        double[][] w    = new double[XPTS][YPTS];
-        double[][] xg2  = new double[XPTS][YPTS];
-        double[][] yg2  = new double[XPTS][YPTS];
-        double[] clevel = new double[NSHADES];
-        double[] shedge = new double[NSHADES + 1];
+        int          i, j;
+        double       x, y, argx, argy, distort, r, t, zmin, zmax;
+        double[]     px = new double[PERIMETERPTS];
+        double[]     py = new double[PERIMETERPTS];
+        double[][]   xg0 = new double[XPTS][YPTS];
+        double[][]   yg0 = new double[XPTS][YPTS];
+        double[][]   xg1 = new double[XPTS][YPTS];
+        double[][]   yg1 = new double[XPTS][YPTS];
+        double[][]   z = new double[XPTS][YPTS];
+        double[][]   w = new double[XPTS][YPTS];
+        double[][]   xg2 = new double[XPTS][YPTS];
+        double[][]   yg2 = new double[XPTS][YPTS];
+        double[]     clevel = new double[NSHADES];
+        double[]     shedge = new double[NSHADES + 1];
         final int    cont_color = 0;
         final double fill_width = 2., cont_width = 0.;
-        double[] colorbar_width  = new double[1];
-        double[] colorbar_height = new double[1];
+        double[]     colorbar_width  = new double[1];
+        double[]     colorbar_height = new double[1];
 
-        int[] num_values  = new int[NUM_AXES];
-        double[][] values = new double[NUM_AXES][NSHADES + 1];
-        String axis_opts[]     = { "bcvtm" };
-        double axis_ticks[]    = { 0.0 };
-        int    axis_subticks[] = { 0 };
+        int[]        num_values      = new int[NUM_AXES];
+        double[][]   values          = new double[NUM_AXES][NSHADES + 1];
+        String       axis_opts[]     = { "bcvtm" };
+        double       axis_ticks[]    = { 0.0 };
+        int          axis_subticks[] = { 0 };
 
-        int    label_opts[] = { PL_COLORBAR_LABEL_BOTTOM };
-        String labels[]     = { "Magnitude" };
+        int          label_opts[] = { PL_COLORBAR_LABEL_BOTTOM };
+        String       labels[]     = { "Magnitude" };
 
         // Parse and process command line arguments.
         pls.parseopts( args, PL_PARSE_FULL | PL_PARSE_NOPROGRAM );

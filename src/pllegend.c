@@ -575,9 +575,9 @@ c_pllegend( PLFLT *p_legend_width, PLFLT *p_legend_height,
           legend_width, legend_height, legend_width_ac, legend_height_ac;
     PLFLT x_legend_position, y_legend_position, xsign, ysign;
 
-    PLINT some_symbols       = 0;
+    PLINT some_symbols = 0;
     PLINT max_symbol_numbers = 0;
-    PLINT irow       = 0, icolumn = 0;
+    PLINT irow = 0, icolumn = 0;
     int   some_boxes = 0, some_lines = 0;
 
     // Default nrow, ncolumn.
@@ -1620,7 +1620,7 @@ c_plcolorbar( PLFLT *p_colorbar_width, PLFLT *p_colorbar_height,
     PLINT  i, j, ni = 0, nj = 0, n_steps;
     PLFLT  step_size;
 
-    PLBOOL if_edge   = 0;
+    PLBOOL if_edge = 0;
     PLBOOL if_edge_b = 0, if_edge_c = 0, if_edge_u = 0, if_edge_w = 0;
 
     // Ratio of normalized subpage coordinates to mm coordinates in

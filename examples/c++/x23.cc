@@ -37,17 +37,17 @@ public:
     x23( int, char ** );
 
 private:
-    plstream          *pls;
+    plstream *pls;
 
     static const char *Greek[];
-    static int        Type1[];
+    static int Type1[];
     static const char *title[];
-    static int        lo[];
-    static int        hi[];
-    static int        nxcells[];
-    static int        nycells[];
-    static int        offset[];
-    static PLUNICODE  fci[];
+    static int lo[];
+    static int hi[];
+    static int nxcells[];
+    static int nycells[];
+    static int offset[];
+    static PLUNICODE fci[];
     static const char *family[];
     static const char *style[];
     static const char *weight[];

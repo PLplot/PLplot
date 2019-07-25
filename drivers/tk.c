@@ -1136,7 +1136,7 @@ launch_server( PLStream *pls )
     TkDev      *dev = (TkDev *) pls->dev;
     const char *argv[20];
     char       *plserver_exec = NULL, *ptr;
-    char       *tmp           = NULL;
+    char       *tmp = NULL;
     int        i;
 
     dbug_enter( "launch_server" );
@@ -1573,7 +1573,7 @@ link_init( PLStream *pls )
         iodev->fileHandle = Tcl_GetVar( dev->interp, "data_sock", 0 );
 
         if ( Tcl_GetOpenFile( dev->interp, iodev->fileHandle,
-                 0, 1, ( ClientData ) & iodev->file ) != TCL_OK )
+            0, 1, ( ClientData ) & iodev->file ) != TCL_OK )
         {
             fprintf( stderr, "Cannot get file info:\n\t %s\n",
                 Tcl_GetStringResult( dev->interp ) );

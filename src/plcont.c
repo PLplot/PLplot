@@ -142,9 +142,9 @@ static void
 realloc_line( CONT_LINE *line )
 {
     if ( ( ( line->x = (PLFLT *) realloc( line->x,
-                 (size_t) ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) ||
+        (size_t) ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) ||
          ( ( line->y = (PLFLT *) realloc( line->y,
-                 (size_t) ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) )
+             (size_t) ( line->npts + LINE_ITEMS ) * sizeof ( PLFLT ) ) ) == NULL ) )
         plexit( "realloc_line: Insufficient memory" );
 }
 
