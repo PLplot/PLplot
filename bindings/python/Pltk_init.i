@@ -1,6 +1,6 @@
 // Swig instructions to help implement the Pltk_init extension module
 
-//Copyright (C) 2017 Alan W. Irwin
+// Copyright (C) 2017-2019 Alan W. Irwin
 
 //This file is part of PLplot.
 //
@@ -19,7 +19,7 @@
 //
 
 %module Pltk_init
-%include typemaps.i
+%include <typemaps.i>
 
 %{
 #define NPY_NO_DEPRECATED_API    NPY_1_7_API_VERSION
@@ -48,4 +48,3 @@
 
 // Interface the above routine with swig
 void Pltk_init( long x );
-

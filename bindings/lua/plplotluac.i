@@ -1,5 +1,8 @@
 //
-//Copyright (C) 2009  Werner Smekal
+// Copyright (C) 2009 Werner Smekal
+// Copyright (C) 2009-2019 Alan W. Irwin
+// Copyright (C) 2011-2013 Andrew Ross
+
 //This file is part of PLplot.
 //
 //PLplot is free software; you can redistribute it and/or modify
@@ -92,7 +95,7 @@ typedef int            PLINT;
 typedef unsigned int   PLUNICODE;
 typedef PLINT          PLBOOL;
 
-%include lua_namespace.i
+%include <lua_namespace.i>
 
 // I hate global variables but this is the best way I can think of to manage consistency
 //   checking among function arguments.
@@ -1626,7 +1629,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %rename( MinMax2dGrid ) plMinMax2dGrid;
 
 // swig compatible PLplot API definitions from here on.
-%include plplotcapi.i
+%include "plplotcapi.i"
 
 // A handy way to issue warnings, if need be.
 void

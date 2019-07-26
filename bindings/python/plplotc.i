@@ -1,10 +1,14 @@
 %module plplotc
 
 //
-//Copyright (C) 2002 Gary Bishop
-//Copyright (C) 2004-2019 Alan W. Irwin
-//Copyright (C) 2004 Andrew Ross
-//
+// Copyright (C) 2002 Gary Bishop
+// Copyright (C) 2002-2019 Alan W. Irwin
+// Copyright (C) 2004-2005 Rafael Laboissiere
+// Copyright (C) 2004-2013 Andrew Ross
+// Copyright (C) 2009 Werner Smekal
+// Copyright (C) 2013 Arjen Markus
+// Copyright (C) 2017 Hazen Babcock
+
 //This file is part of PLplot.
 //
 //PLplot is free software; you can redistribute it and/or modify
@@ -42,7 +46,7 @@
 //
 //
 
-%include typemaps.i
+%include <typemaps.i>
 
 %{
 #define NPY_NO_DEPRECATED_API    NPY_1_7_API_VERSION
@@ -1674,6 +1678,6 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 #endif
 
 //%feature commands supporting swig-generated documentation for the bindings.
-%include swig_documentation.i
+%include "swig_documentation.i"
 // swig-compatible PLplot API definitions from here on.
-%include plplotcapi.i
+%include "plplotcapi.i"

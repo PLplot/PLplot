@@ -1,7 +1,11 @@
 //
-//Copyright (C) 2002  Gary Bishop
-//Copyright (C) 2002, 2004  Alan W. Irwin
-//Copyright (C) 2004-2010  Andrew Ross
+// Copyright (C) 2002 Gary Bishop
+// Copyright (C) 2002-2019 Alan W. Irwin
+// Copyright (C) 2004-2005 Rafael Laboissiere
+// Copyright (C) 2004-2013 Andrew Ross
+// Copyright (C) 2009 Werner Smekal
+// Copyright (C) 2013 Arjen Markus
+
 //This file is part of PLplot.
 //
 //PLplot is free software; you can redistribute it and/or modify
@@ -34,7 +38,7 @@
 //
 //
 %module plplotjavac
-%include typemaps.i
+%include <typemaps.i>
 
 %{
 #include "plplotP.h"
@@ -2135,4 +2139,4 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 #endif
 
 // swig compatible PLplot API definitions from here on.
-%include plplotcapi.i
+%include "plplotcapi.i"
