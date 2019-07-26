@@ -292,9 +292,9 @@ export swig_csource_LIST
 swig_csource_LIST=bindings/swig-support/plplotcapi.i
 
 # Use specific names here for each C-like file controlling specific
-# language bindings since some files (e.g., bindings/python/fragments.i)
-# are copied from swig itself so don't mess with them.  Also, ignore octave
-# since that C++-like file goes under swig_cppsource_LIST.
+# language bindings just to be definite and since
+# bindings/octave/plplot_octave.i is C++-like so must be put in
+# swig_cppsource_LIST rather than in swig_csource_LIST.
 swig_csource_LIST="$swig_csource_LIST bindings/java/plplotjavac.i"
 swig_csource_LIST="$swig_csource_LIST bindings/lua/plplotluac.i"
 swig_csource_LIST="$swig_csource_LIST bindings/python/plplotc.i bindings/python/Pltk_init.i"
