@@ -10,7 +10,7 @@
 # and/or apply them.  This script must be run from the top-level
 # directory of the PLplot source tree.
 
-# Copyright (C) 2009-2015 Alan W. Irwin
+# Copyright (C) 2009-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -91,13 +91,18 @@ transform_source()
 	# indentation properly, but mark each occurrence in file so
 	# can restore %# swig preprocessing directives later with
 	# s_command after uncrustify processing.
-	# Also replace all occurrences of "$" with
-	# "MARK_DOLLARS_DIRECTIVE" to be replaced again by "$" after
-	# swig processing.  Otherwise, those dollar signs (which are
-	# not part of C or C++ syntax) mess up uncrustify results in
-	# ways that depend on internal details which vary from one
-	# uncrustify version to the next.
-	p_command='sed -e "/%#/ s?%#\(.*$\)?#\1//MARK_C_PREPROCESSOR_DIRECTIVE?" -e "/\$/ s?\\\$?MARK_DOLLARS_DIRECTIVE?g"'
+	# Replace the %include directive with the #include C
+	# preprocessing directive before uncrustify processing so that
+	# uncrustify can properly handle that #include syntax, but
+	# mark each occurrence in file so can restore %include swig
+	# directive later with s_command after uncrustify processing.
+	# Also replace all occurrences of "$*", $&, and "$" with
+	# variations on "MARK_DOLLARS_DIRECTIVE" to be replaced again
+	# by the relevant "$" forms after swig processing.  Otherwise,
+	# those dollar signs (which are not part of C or C++ syntax)
+	# mess up uncrustify results in ways that depend on internal
+	# details which vary from one uncrustify version to the next.
+	p_command='sed -e "/%#/ s?%#\(.*$\)?#\1//MARK_C_PREPROCESSOR_DIRECTIVE?" -e "/%include/ s?%include\(.*$\)?#include\1//MARK_C_INCLUDE_DIRECTIVE?" -e "/\$*/ s?\\\$\*?MARK_DOLLARS_DIRECTIVE_ASTERISK?g" -e "/\$&/ s?\\\$&?MARK_DOLLARS_DIRECTIVE_AMPERSAND?g" -e "/\$/ s?\\\$?MARK_DOLLARS_DIRECTIVE?g"'
 
 	# Splitting s_command into multiple invocations of sed is
         # required (for reasons I have not figured out) in order for
@@ -116,19 +121,23 @@ transform_source()
 	# The next two stanzas are to place %} and %{ on individually
 	# separate lines.
 
-	# The next stanza restores "$" from the MARK_DOLLARS_DIRECTIVE that is inserted by
-        # the above p_command.
+	# The next three stanzas restores various "$" alternatives
+        # from the various MARK_DOLLARS_DIRECTIVE placeholders that
+        # are inserted by the above p_command.
 
 	# The next stanza restores the C preprocessor directive and drops
 	# the associated trailing //MARK_C_PREPROCESSOR_DIRECTIVE comment.
 
+	# The next stanza restores the %include directive and drops
+	# the associated trailing //MARK_C_INCLUDE_DIRECTIVE comment.
+
 	# The final stanza removes trailing blanks that are left over
 	# from executing $u_command and the removal of the
-	# //MARK_C_PREPROCESSOR_DIRECTIVE comment.  That stanza is
+	# //MARK_C_PREPROCESSOR_DIRECTIVE and //MARK_C_INCLUDE_DIRECTIVE comments.  That stanza is
 	# brute force, but I seemed to be up against sed bugs if I
 	# tried anything fancy to include preceding blanks in the
 	# //MARK_C_PREPROCESSOR_DIRECTIVE comment removal stanza.
-        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "/MARK_DOLLARS_DIRECTIVE/ s?MARK_DOLLARS_DIRECTIVE?\$?g" | sed -e "/\/\/MARK_C_PREPROCESSOR_DIRECTIVE/ s?#\(.*\)//MARK_C_PREPROCESSOR_DIRECTIVE?%#\1?" | sed -e "s?  *\$??"'
+        s_command='sed -e "/%$/ N" -e "s? *%\n *\([{}]\)?%\1?" |sed -e "s?% ?%?g" -e "s? *%?%?g" | sed -e "s?\(%[{}]\)\(..*\)?\1\n\2?" -e "s?\(..*\)\(%[{}]\)?\1\n\2?" | sed -e "/MARK_DOLLARS_DIRECTIVE_ASTERISK/ s?MARK_DOLLARS_DIRECTIVE_ASTERISK?\$*?g" -e "/MARK_DOLLARS_DIRECTIVE_AMPERSAND/ s?MARK_DOLLARS_DIRECTIVE_AMPERSAND?\$\&?g" -e "/MARK_DOLLARS_DIRECTIVE/ s?MARK_DOLLARS_DIRECTIVE?\$?g" | sed -e "/\/\/MARK_C_PREPROCESSOR_DIRECTIVE/ s?#\(.*\)//MARK_C_PREPROCESSOR_DIRECTIVE?%#\1?" | sed -e "/\/\/MARK_C_INCLUDE_DIRECTIVE/ s?#include\(.*\)//MARK_C_INCLUDE_DIRECTIVE?%include\1?" | sed -e "s?  *\$??"'
     else
 	# p_command is always executed as the first in a chain of commands so there
 	# is a specific stdin file rather than "-".
@@ -317,8 +326,8 @@ if [ "$apply" = "ON" ] ; then
     transform_source "$cppsource_LIST" CPP "comments"
     transform_source "$javasource_LIST" JAVA "comments"
     transform_source "$dsource_LIST" D "comments"
-    #transform_source "$swig_csource_LIST" C "comments" "swig"
-    #transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
+    transform_source "$swig_csource_LIST" C "comments" "swig"
+    transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
     apply=ON
     echo '
 The --apply option is POWERFUL and will replace _all_ files mentioned above
@@ -339,5 +348,5 @@ transform_source "$csource_LIST" C "comments"
 transform_source "$cppsource_LIST" CPP "comments"
 transform_source "$javasource_LIST" JAVA "comments"
 transform_source "$dsource_LIST" D "comments"
-#transform_source "$swig_csource_LIST" C "comments" "swig"
-#transform_source "$swig_cppsource_LIST" CPP "comments" "swig"
+transform_source "$swig_csource_LIST" C "comments" "swig"
+transform_source "$swig_cppsource_LIST" CPP "comments" "swig"

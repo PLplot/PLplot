@@ -206,24 +206,24 @@ typedef PLINT          PLBOOL;
 //--------------------------------------------------------------------------
 
 // With preceding count and remember size to check others
-%typemap ( in ) ( PLINT n, const PLINT * Array ) ( Matrix temp )
+%typemap( in ) ( PLINT n, const PLINT * Array ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
-    $1   = Alen = (PLINT) ( _dim( $input, 0 ) );
-    $2   = new PLINT[Alen];
+    $1 = Alen = (PLINT) ( _dim( $input, 0 ) );
+    $2 = new PLINT[Alen];
     temp = $input.matrix_value();
     _cvt_double_to( $2, &temp( 0, 0 ), Alen );
 }
-%typemap ( freearg ) ( PLINT n, const PLINT * Array )
+%typemap( freearg ) ( PLINT n, const PLINT * Array )
 {
     delete [] $2;
 }
 
 // With trailing count and check consistency with previous
-%typemap ( in ) ( const PLINT * ArrayCk, PLINT n ) ( Matrix temp )
+%typemap( in ) ( const PLINT * ArrayCk, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -234,11 +234,11 @@ typedef PLINT          PLBOOL;
         error( "argument vectors must be same length" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = new PLINT[Alen];
+    $1 = new PLINT[Alen];
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
     $2 = Alen;
 }
-%typemap ( freearg ) ( const PLINT * ArrayCk, PLINT n )
+%typemap( freearg ) ( const PLINT * ArrayCk, PLINT n )
 {
     delete [] $1;
 }
@@ -255,10 +255,10 @@ typedef PLINT          PLBOOL;
         error( "argument vectors must be same length" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = new PLINT[Alen];
+    $1 = new PLINT[Alen];
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
 }
-%typemap( freearg ) const PLINT * ArrayCk { delete [] $1;}
+%typemap( freearg ) const PLINT * ArrayCk { delete [] $1; }
 
 // No count but check consistency with previous
 %typemap( in ) const PLINT * ArrayCkNull( Matrix temp )
@@ -278,7 +278,7 @@ typedef PLINT          PLBOOL;
             error( "argument vectors must be same length" ); SWIG_fail;
         }
         temp = $input.matrix_value();
-        $1   = new PLINT[Alen];
+        $1 = new PLINT[Alen];
         _cvt_double_to( $1, &temp( 0, 0 ), Alen );
     }
     else
@@ -299,10 +299,10 @@ typedef PLINT          PLBOOL;
     }
     Alen = (PLINT) ( _dim( $input, 0 ) );
     temp = $input.matrix_value();
-    $1   = new PLINT[Alen];
+    $1 = new PLINT[Alen];
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
 }
-%typemap ( freearg ) ( const PLINT * Array )
+%typemap( freearg ) ( const PLINT * Array )
 {
     delete [] $1;
 }
@@ -320,10 +320,10 @@ typedef PLINT          PLBOOL;
         error( "argument vector must be same length or one less" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = new PLINT[Alen];
+    $1 = new PLINT[Alen];
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
 }
-%typemap( freearg ) const PLINT * ArrayCkMinus1 { delete [] $1;}
+%typemap( freearg ) const PLINT * ArrayCkMinus1 { delete [] $1; }
 
 // For octave there is no provision for dropping the last argument
 // so this typemap is identical to the previous one.
@@ -338,10 +338,10 @@ typedef PLINT          PLBOOL;
         error( "argument vector must be same length or one less" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = new PLINT[Alen];
+    $1 = new PLINT[Alen];
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
 }
-%typemap( freearg ) const PLINT * ArrayCkMinus1Null { delete [] $1;}
+%typemap( freearg ) const PLINT * ArrayCkMinus1Null { delete [] $1; }
 
 // Set X and Y lengths for later consistency checking
 %typemap( in ) const PLINT * ArrayN( Matrix temp )
@@ -357,20 +357,20 @@ typedef PLINT          PLBOOL;
     }
     Xlen = Alen;
     temp = $input.matrix_value();
-    $1   = new PLINT[Alen];
+    $1 = new PLINT[Alen];
     _cvt_double_to( $1, &temp( 0, 0 ), Alen );
     Ylen = -1;
     for ( i = 0; i < Xlen; i++ )
         if ( $1[i] > Ylen )
             Ylen = $1[i];
 }
-%typemap ( freearg ) ( const PLINT * ArrayN )
+%typemap( freearg ) ( const PLINT * ArrayN )
 {
     delete [] $1;
 }
 
 // With trailing count and NULL array option.
-%typemap ( in ) ( const PLINT * ArrayNull, PLINT n ) ( Matrix temp )
+%typemap( in ) ( const PLINT * ArrayNull, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -382,9 +382,9 @@ typedef PLINT          PLBOOL;
     if ( !$input.is_empty() )
 %#endif
     {
-        $2   = (PLINT) ( _dim( $input, 0 ) );
+        $2 = (PLINT) ( _dim( $input, 0 ) );
         temp = $input.matrix_value();
-        $1   = new PLINT[$2];
+        $1 = new PLINT[$2];
         _cvt_double_to( $1, &temp( 0, 0 ), $2 );
     }
     else
@@ -393,7 +393,7 @@ typedef PLINT          PLBOOL;
         $2 = 0;
     }
 }
-%typemap ( freearg ) ( const PLINT * ArrayNull, PLINT n )
+%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n )
 {
     delete [] $1;
 }
@@ -403,22 +403,22 @@ typedef PLINT          PLBOOL;
 //--------------------------------------------------------------------------
 
 // With preceding count and remember size to check others
-%typemap ( in ) ( PLINT n, const PLFLT * Array ) ( Matrix temp )
+%typemap( in ) ( PLINT n, const PLFLT * Array ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
-    $1   = Alen = (PLINT) ( _dim( $input, 0 ) );
+    $1 = Alen = (PLINT) ( _dim( $input, 0 ) );
     temp = $input.matrix_value();
-    $2   = &temp( 0, 0 );
+    $2 = &temp( 0, 0 );
 }
-%typemap ( freearg ) ( PLINT n, const PLFLT * Array )
+%typemap( freearg ) ( PLINT n, const PLFLT * Array )
 {
 }
 
 // With trailing count and check consistency with previous
-%typemap ( in ) ( const PLFLT * ArrayCk, PLINT n ) ( Matrix temp )
+%typemap( in ) ( const PLFLT * ArrayCk, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -429,15 +429,15 @@ typedef PLINT          PLBOOL;
         error( "argument vectors must be same length" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
-    $2   = (PLINT) ( _dim( $input, 0 ) );
+    $1 = &temp( 0, 0 );
+    $2 = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayCk, PLINT n )
+%typemap( freearg ) ( const PLFLT * ArrayCk, PLINT n )
 {
 }
 
 // With trailing count and check consistency with previous
-%typemap ( in ) ( const PLFLT * ArrayCkNull, PLINT n ) ( Matrix temp )
+%typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
@@ -454,8 +454,8 @@ typedef PLINT          PLBOOL;
             error( "argument vectors must be same length" ); SWIG_fail;
         }
         temp = $input.matrix_value();
-        $1   = &temp( 0, 0 );
-        $2   = (PLINT) ( _dim( $input, 0 ) );
+        $1 = &temp( 0, 0 );
+        $2 = (PLINT) ( _dim( $input, 0 ) );
     }
     else
     {
@@ -463,7 +463,7 @@ typedef PLINT          PLBOOL;
         $2 = 0;
     }
 }
-%typemap ( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
+%typemap( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
 {
 }
 
@@ -479,7 +479,7 @@ typedef PLINT          PLBOOL;
         error( "argument vectors must be same length" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
 }
 %typemap( freearg ) const PLFLT * ArrayCk {}
 
@@ -496,7 +496,7 @@ typedef PLINT          PLBOOL;
         error( "argument vectors must have length of 6" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
 }
 %typemap( freearg ) PLFLT * Array6 {}
 
@@ -518,7 +518,7 @@ typedef PLINT          PLBOOL;
             error( "argument vectors must be same length" ); SWIG_fail;
         }
         temp = $input.matrix_value();
-        $1   = &temp( 0, 0 );
+        $1 = &temp( 0, 0 );
     }
     else
     {
@@ -536,9 +536,9 @@ typedef PLINT          PLBOOL;
     }
     Alen = (PLINT) ( _dim( $input, 0 ) );
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
 }
-%typemap ( freearg ) ( const PLFLT * Array )
+%typemap( freearg ) ( const PLFLT * Array )
 {
 }
 
@@ -557,30 +557,30 @@ typedef PLINT          PLBOOL;
     {
         Alen = (PLINT) ( _dim( $input, 0 ) );
         temp = $input.matrix_value();
-        $1   = &temp( 0, 0 );
+        $1 = &temp( 0, 0 );
     }
     else
     {
-        $1   = NULL;
+        $1 = NULL;
         Alen = 0;
     }
 }
-%typemap ( freearg ) ( const PLFLT * ArrayNull )
+%typemap( freearg ) ( const PLFLT * ArrayNull )
 {
 }
 
 // With trailing count but remember size to check others
-%typemap ( in ) ( const PLFLT * Array, PLINT n ) ( Matrix temp )
+%typemap( in ) ( const PLFLT * Array, PLINT n ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
-    $2   = Alen = (PLINT) ( _dim( $input, 0 ) );
+    $1 = &temp( 0, 0 );
+    $2 = Alen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap ( freearg ) ( const PLFLT * Array, PLINT n )
+%typemap( freearg ) ( const PLFLT * Array, PLINT n )
 {
 }
 
@@ -601,7 +601,7 @@ typedef PLINT          PLBOOL;
         error( "argument vectors must be same length" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
 }
 %typemap( freearg ) const PLFLT * ArrayCkX {}
 
@@ -617,22 +617,22 @@ typedef PLINT          PLBOOL;
         error( "argument vectors must be same length" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
 }
 %typemap( freearg ) const PLFLT * ArrayCkY {}
 
 // With trailing X count but remember X size to check others
-%typemap ( in ) ( const PLFLT * ArrayX, PLINT nx ) ( Matrix temp )
+%typemap( in ) ( const PLFLT * ArrayX, PLINT nx ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
-    $2   = Xlen = (PLINT) ( _dim( $input, 0 ) );
+    $1 = &temp( 0, 0 );
+    $2 = Xlen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayX, PLINT nx )
+%typemap( freearg ) ( const PLFLT * ArrayX, PLINT nx )
 {
 }
 
@@ -644,23 +644,23 @@ typedef PLINT          PLBOOL;
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
     Xlen = (PLINT) ( _dim( $input, 0 ) );
 }
 %typemap( freearg ) const PLFLT * ArrayX {}
 
 // With trailing Y count but remember Y size to check others
-%typemap ( in ) ( const PLFLT * ArrayY, PLINT ny ) ( Matrix temp )
+%typemap( in ) ( const PLFLT * ArrayY, PLINT ny ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 1 )
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
-    $2   = Ylen = (PLINT) ( _dim( $input, 0 ) );
+    $1 = &temp( 0, 0 );
+    $2 = Ylen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayY, PLINT ny )
+%typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny )
 {
 }
 
@@ -672,15 +672,15 @@ typedef PLINT          PLBOOL;
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
     Ylen = (PLINT) ( _dim( $input, 0 ) );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayY )
+%typemap( freearg ) ( const PLFLT * ArrayY )
 {
 }
 
 // 2D array with trailing dimensions, check consistency with previous
-%typemap ( in ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny ) ( Matrix temp )
+%typemap( in ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 2 )
     {
@@ -695,27 +695,27 @@ typedef PLINT          PLBOOL;
         error( "argument matrix must have same Y length as Y vector" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
-    $2   = (PLINT) ( _dim( $input, 0 ) );
-    $3   = (PLINT) ( _dim( $input, 1 ) );
+    $1 = &temp( 0, 0 );
+    $2 = (PLINT) ( _dim( $input, 0 ) );
+    $3 = (PLINT) ( _dim( $input, 1 ) );
 }
-%typemap ( freearg ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny )
+%typemap( freearg ) ( const PLFLT * MatrixCk, PLINT nx, PLINT ny )
 {
 }
 
 // 2D array with trailing dimensions but set the X, Y size for later checking
-%typemap ( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( Matrix temp )
+%typemap( in ) ( const PLFLT * Matrix, PLINT nx, PLINT ny ) ( Matrix temp )
 {
     if ( _n_dims( $input ) > 2 )
     {
         error( "argument must be a scalar, vector, or 2D matrix." ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
-    $2   = Xlen = (PLINT) ( _dim( $input, 0 ) );
-    $3   = Ylen = (PLINT) ( _dim( $input, 1 ) );
+    $1 = &temp( 0, 0 );
+    $2 = Xlen = (PLINT) ( _dim( $input, 0 ) );
+    $3 = Ylen = (PLINT) ( _dim( $input, 1 ) );
 }
-%typemap ( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
+%typemap( freearg ) ( const PLFLT * Matrix, PLINT nx, PLINT ny )
 {
 }
 
@@ -728,7 +728,7 @@ typedef PLINT          PLBOOL;
         error( "argument must be a scalar, vector, or 2D matrix." ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
     Xlen = (PLINT) ( _dim( $input, 0 ) );
     Ylen = (PLINT) ( _dim( $input, 1 ) );
 }
@@ -751,30 +751,30 @@ typedef PLINT          PLBOOL;
         error( "argument matrix must have same Y length as Y vector" ); SWIG_fail;
     }
     temp = $input.matrix_value();
-    $1   = &temp( 0, 0 );
+    $1 = &temp( 0, 0 );
 }
 %typemap( freearg ) const PLFLT * MatrixCk {}
 
 
 // Set Y length for later consistency checking, with trailing count
 // and 2D array, check for consistency input / output version
-%typemap ( in ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk ) ( Matrix temp, octave_value_list retval )
+%typemap( in ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk ) ( Matrix temp, octave_value_list retval )
 {
     if ( _n_dims( $input ) > 1 )
     {
         error( "argument must be a scalar or vector" ); SWIG_fail;
     }
-    temp        = $input.matrix_value();
-    $1          = &temp( 0, 0 );
-    $2          = Ylen = (PLINT) ( _dim( $input, 0 ) );
-    retval( 0 ) = octave_value( Matrix( Xlen, Ylen ) );
-    $3          = (PLFLT *) retval( 0 ).matrix_value().data();
+    temp = $input.matrix_value();
+    $1 = &temp( 0, 0 );
+    $2 = Ylen = (PLINT) ( _dim( $input, 0 ) );
+    retval( 0 )             = octave_value( Matrix( Xlen, Ylen ) );
+    $3 = (PLFLT *) retval( 0 ).matrix_value().data();
 }
-%typemap ( argout ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
+%typemap( argout ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
 {
     $result = SWIG_Octave_AppendOutput( $result, retval$argnum( 0 ) );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
+%typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny, PLFLT * OutMatrixCk )
 {
 }
 
@@ -798,7 +798,7 @@ typedef PLINT          PLBOOL;
     local_charMatrix    = charMatrix( 1, local_string_length );
     local_charMatrix.insert( local_string$argnum, 0, 0 );
     retval( 0 ) = octave_value( local_charMatrix );
-    $result     = SWIG_Octave_AppendOutput( $result, retval( 0 ) );
+    $result = SWIG_Octave_AppendOutput( $result, retval( 0 ) );
 }
 
 typedef PLINT ( *defined_func )( PLFLT, PLFLT );
@@ -1164,7 +1164,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 
 // With count which is stored in Alen to allow possible dimension
 // consistency checking for other arguments.
-%typemap ( in ) ( PLINT n, const char **Array )
+%typemap( in ) ( PLINT n, const char **Array )
 {
     charMatrix  temp_matrix;
     Cell        temp_cell;
@@ -1183,8 +1183,8 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
 %#endif
     {
         Alen = _dim( $input, 0 );
-        $1   = Alen;
-        $2   = new char*[Alen];
+        $1 = Alen;
+        $2 = new char*[Alen];
 %#if SWIG_OCTAVE_PREREQ( 4, 4, 0 )
         ifcell = $input.iscell();
 %#else
@@ -1267,7 +1267,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char*, PLINT, PLPointer );
         $2 = NULL;
     }
 }
-%typemap ( freearg ) ( PLINT n, const char **Array )
+%typemap( freearg ) ( PLINT n, const char **Array )
 {
     int i;
     if ( $2 != NULL )
@@ -1420,12 +1420,12 @@ void my_plstripc( PLINT *OUTPUT, const char *xspec, const char *yspec,
 // convert from Fortran like arrays (one vector), to C like 2D arrays
 
 #define  f2c( f, ff, nx, ny )                              \
-    PLFLT * *ff;                                           \
+    PLFLT **ff;                                            \
     ff = (PLFLT **) alloca( nx * sizeof ( PLFLT * ) );     \
     for ( int i = 0; i < nx; i++ ) {                       \
         ff[i] = (PLFLT *) alloca( ny * sizeof ( PLFLT ) ); \
         for ( int j = 0; j < ny; j++ )                     \
-            *( ff[i] + j ) = *( f + nx * j + i );}
+        * ( ff[i] + j ) = *( f + nx * j + i ); }
 
 // simpler plcont() for use with xform()
 

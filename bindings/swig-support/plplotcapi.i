@@ -29,7 +29,7 @@
 
 // For passing user data, as with X's XtPointer
 
-typedef void*  PLPointer;
+typedef void* PLPointer;
 
 // The following numerical #defines should not be independently edited
 // since they are generated from include/plplot.h by the

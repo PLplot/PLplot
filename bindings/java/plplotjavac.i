@@ -113,7 +113,7 @@ PLBOOL_INPUT_TYPEMAP( PLBOOL, jboolean, boolean, "Z" );
 %typemap( javadirectorin ) TYPE * OUTPUT, TYPE & OUTPUT "$jniinput"
 %typemap( javadirectorout ) TYPE * OUTPUT, TYPE & OUTPUT "$javacall"
 
-%typemap( in ) TYPE * OUTPUT( $*1_ltype temp ), TYPE &OUTPUT( $*1_ltype temp )
+%typemap( in ) TYPE * OUTPUT( $*1_ltype temp ), TYPE & OUTPUT( $*1_ltype temp )
 {
     if ( !$input )
     {
@@ -130,7 +130,7 @@ PLBOOL_INPUT_TYPEMAP( PLBOOL, jboolean, boolean, "Z" );
 
 %typemap( directorin, descriptor = JNIDESC ) TYPE & OUTPUT
 %{
-    *( ( $&1_ltype )$input ) = &$1;
+    *( ($&1_ltype) $input ) = &$1;
 %}
 
 %typemap( directorin, descriptor = JNIDESC, warning = "Need to provide TYPE *OUTPUT directorin typemap, TYPE array length is unknown" ) TYPE * OUTPUT
@@ -358,10 +358,10 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 //--------------------------------------------------------------------------
 
 // with preceding count
-%typemap ( in ) ( PLINT n, const PLINT * Array )
+%typemap( in ) ( PLINT n, const PLINT * Array )
 {
     jint *jxdata = ( *jenv )->GetIntArrayElements( jenv, $input, 0 );
-    $1   = ( *jenv )->GetArrayLength( jenv, $input );
+    $1 = ( *jenv )->GetArrayLength( jenv, $input );
     Alen = $1;
     setup_array_1d_i( &$2, jxdata, Alen );
     // Could find no easy way to do this as part of freearg so I modified
@@ -369,21 +369,21 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     // the java array can be released immediately.
     ( *jenv )->ReleaseIntArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap ( freearg ) ( PLINT n, const PLINT * Array )
+%typemap( freearg ) ( PLINT n, const PLINT * Array )
 {
     free( $2 );
 }
-%typemap ( jni ) ( PLINT n, const PLINT * Array ) "jintArray"
-%typemap ( jtype ) ( PLINT n, const PLINT * Array ) "int[]"
-%typemap ( jstype ) ( PLINT n, const PLINT * Array ) "int[]"
-%typemap ( javain ) ( PLINT n, const PLINT * Array ) "$javainput"
-%typemap ( javaout ) ( PLINT n, const PLINT * Array )
+%typemap( jni ) ( PLINT n, const PLINT * Array ) "jintArray"
+%typemap( jtype ) ( PLINT n, const PLINT * Array ) "int[]"
+%typemap( jstype ) ( PLINT n, const PLINT * Array ) "int[]"
+%typemap( javain ) ( PLINT n, const PLINT * Array ) "$javainput"
+%typemap( javaout ) ( PLINT n, const PLINT * Array )
 {
     return $jnicall;
 }
 
 // Trailing count and check consistency with previous
-%typemap ( in ) ( const PLINT * ArrayCk, PLINT n )
+%typemap( in ) ( const PLINT * ArrayCk, PLINT n )
 {
     jint *jydata = ( *jenv )->GetIntArrayElements( jenv, $input, 0 );
     if ( ( *jenv )->GetArrayLength( jenv, $input ) != Alen )
@@ -395,15 +395,15 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     setup_array_1d_i( &$1, jydata, Alen );
     ( *jenv )->ReleaseIntArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap ( freearg ) ( const PLINT * ArrayCk, PLINT n )
+%typemap( freearg ) ( const PLINT * ArrayCk, PLINT n )
 {
     free( $1 );
 }
-%typemap ( jni ) ( const PLINT * ArrayCk, PLINT n ) "jintArray"
-%typemap ( jtype ) ( const PLINT * ArrayCk, PLINT n ) "int[]"
-%typemap ( jstype ) ( const PLINT * ArrayCk, PLINT n ) "int[]"
-%typemap ( javain ) ( const PLINT * ArrayCk, PLINT n ) "$javainput"
-%typemap ( javaout ) ( const PLINT * ArrayCk, PLINT n )
+%typemap( jni ) ( const PLINT * ArrayCk, PLINT n ) "jintArray"
+%typemap( jtype ) ( const PLINT * ArrayCk, PLINT n ) "int[]"
+%typemap( jstype ) ( const PLINT * ArrayCk, PLINT n ) "int[]"
+%typemap( javain ) ( const PLINT * ArrayCk, PLINT n ) "$javainput"
+%typemap( javaout ) ( const PLINT * ArrayCk, PLINT n )
 {
     return $jnicall;
 }
@@ -613,7 +613,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // With trailing count and NULL array option.
-%typemap ( in ) ( const PLINT * ArrayNull, PLINT n )
+%typemap( in ) ( const PLINT * ArrayNull, PLINT n )
 {
     if ( $input != NULL )
     {
@@ -628,15 +628,15 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         $2 = 0;
     }
 }
-%typemap ( freearg ) ( const PLINT * ArrayNull, PLINT n )
+%typemap( freearg ) ( const PLINT * ArrayNull, PLINT n )
 {
     free( $1 );
 }
-%typemap ( jni ) ( const PLINT * ArrayNull, PLINT n ) "jintArray"
-%typemap ( jtype ) ( const PLINT * ArrayNull, PLINT n ) "int[]"
-%typemap ( jstype ) ( const PLINT * ArrayNull, PLINT n ) "int[]"
-%typemap ( javain ) ( const PLINT * ArrayNull, PLINT n ) "$javainput"
-%typemap ( javaout ) ( const PLINT * ArrayNull, PLINT n )
+%typemap( jni ) ( const PLINT * ArrayNull, PLINT n ) "jintArray"
+%typemap( jtype ) ( const PLINT * ArrayNull, PLINT n ) "int[]"
+%typemap( jstype ) ( const PLINT * ArrayNull, PLINT n ) "int[]"
+%typemap( javain ) ( const PLINT * ArrayNull, PLINT n ) "$javainput"
+%typemap( javaout ) ( const PLINT * ArrayNull, PLINT n )
 {
     return $jnicall;
 }
@@ -677,10 +677,10 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 // temporary
 #endif
 // with preceding count
-%typemap ( in ) ( PLINT n, const PLFLT * Array )
+%typemap( in ) ( PLINT n, const PLFLT * Array )
 {
     jPLFLT *jxdata = ( *jenv )->GetPLFLTArrayElements( jenv, $input, 0 );
-    $1   = ( *jenv )->GetArrayLength( jenv, $input );
+    $1 = ( *jenv )->GetArrayLength( jenv, $input );
     Alen = $1;
     setup_array_1d_PLFLT( &$2, jxdata, Alen );
     // Could find no easy way to do this as part of freearg so I modified
@@ -688,21 +688,21 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     // the java array can be released immediately.
     ( *jenv )->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap ( freearg ) ( PLINT n, const PLFLT * Array )
+%typemap( freearg ) ( PLINT n, const PLFLT * Array )
 {
     free( $2 );
 }
-%typemap ( jni ) ( PLINT n, const PLFLT * Array ) jPLFLTArray
-%typemap ( jtype ) ( PLINT n, const PLFLT * Array ) jPLFLTbracket
-%typemap ( jstype ) ( PLINT n, const PLFLT * Array ) jPLFLTbracket
-%typemap ( javain ) ( PLINT n, const PLFLT * Array ) "$javainput"
-%typemap ( javaout ) ( PLINT n, const PLFLT * Array )
+%typemap( jni ) ( PLINT n, const PLFLT * Array ) jPLFLTArray
+%typemap( jtype ) ( PLINT n, const PLFLT * Array ) jPLFLTbracket
+%typemap( jstype ) ( PLINT n, const PLFLT * Array ) jPLFLTbracket
+%typemap( javain ) ( PLINT n, const PLFLT * Array ) "$javainput"
+%typemap( javaout ) ( PLINT n, const PLFLT * Array )
 {
     return $jnicall;
 }
 
 // trailing count, and check consistency with previous
-%typemap ( in ) ( const PLFLT * ArrayCk, PLINT n )
+%typemap( in ) ( const PLFLT * ArrayCk, PLINT n )
 {
     jPLFLT *jydata = ( *jenv )->GetPLFLTArrayElements( jenv, $input, 0 );
     $2 = ( *jenv )->GetArrayLength( jenv, $input );
@@ -714,15 +714,15 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     setup_array_1d_PLFLT( &$1, jydata, Alen );
     ( *jenv )->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayCk, PLINT n )
+%typemap( freearg ) ( const PLFLT * ArrayCk, PLINT n )
 {
     free( $1 );
 }
-%typemap ( jni ) ( const PLFLT * ArrayCk, PLINT n ) jPLFLTArray
-%typemap ( jtype ) ( const PLFLT * ArrayCk, PLINT n ) jPLFLTbracket
-%typemap ( jstype ) ( const PLFLT * ArrayCk, PLINT n ) jPLFLTbracket
-%typemap ( javain ) ( const PLFLT * ArrayCk, PLINT n ) "$javainput"
-%typemap ( javaout ) ( const PLFLT * ArrayCk, PLINT n )
+%typemap( jni ) ( const PLFLT * ArrayCk, PLINT n ) jPLFLTArray
+%typemap( jtype ) ( const PLFLT * ArrayCk, PLINT n ) jPLFLTbracket
+%typemap( jstype ) ( const PLFLT * ArrayCk, PLINT n ) jPLFLTbracket
+%typemap( javain ) ( const PLFLT * ArrayCk, PLINT n ) "$javainput"
+%typemap( javaout ) ( const PLFLT * ArrayCk, PLINT n )
 {
     return $jnicall;
 }
@@ -750,7 +750,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // trailing count, and check consistency with previous
-%typemap ( in ) ( const PLFLT * ArrayCkNull, PLINT n )
+%typemap( in ) ( const PLFLT * ArrayCkNull, PLINT n )
 {
     if ( $input != NULL )
     {
@@ -770,16 +770,16 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         $2 = 0;
     }
 }
-%typemap ( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
+%typemap( freearg ) ( const PLFLT * ArrayCkNull, PLINT n )
 {
     if ( $1 != NULL )
         free( $1 );
 }
-%typemap ( jni ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTArray
-%typemap ( jtype ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTbracket
-%typemap ( jstype ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTbracket
-%typemap ( javain ) ( const PLFLT * ArrayCkNull, PLINT n ) "$javainput"
-%typemap ( javaout ) ( const PLFLT * ArrayCkNull, PLINT n )
+%typemap( jni ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTArray
+%typemap( jtype ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTbracket
+%typemap( jstype ) ( const PLFLT * ArrayCkNull, PLINT n ) jPLFLTbracket
+%typemap( javain ) ( const PLFLT * ArrayCkNull, PLINT n ) "$javainput"
+%typemap( javaout ) ( const PLFLT * ArrayCkNull, PLINT n )
 {
     return $jnicall;
 }
@@ -816,23 +816,23 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // set X length for later consistency checking
-%typemap ( in ) ( const PLFLT * ArrayX, PLINT nx )
+%typemap( in ) ( const PLFLT * ArrayX, PLINT nx )
 {
     jPLFLT *jxdata = ( *jenv )->GetPLFLTArrayElements( jenv, $input, 0 );
     Xlen = ( *jenv )->GetArrayLength( jenv, $input );
-    $2   = Xlen;
+    $2 = Xlen;
     setup_array_1d_PLFLT( &$1, jxdata, Xlen );
     ( *jenv )->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayX, PLINT nx )
+%typemap( freearg ) ( const PLFLT * ArrayX, PLINT nx )
 {
     free( $1 );
 }
-%typemap ( jni ) ( const PLFLT * ArrayX, PLINT nx ) jPLFLTArray
-%typemap ( jtype ) ( const PLFLT * ArrayX, PLINT nx ) jPLFLTbracket
-%typemap ( jstype ) ( const PLFLT * ArrayX, PLINT nx ) jPLFLTbracket
-%typemap ( javain ) ( const PLFLT * ArrayX, PLINT nx ) "$javainput"
-%typemap ( javaout ) ( const PLFLT * ArrayX, PLINT nx )
+%typemap( jni ) ( const PLFLT * ArrayX, PLINT nx ) jPLFLTArray
+%typemap( jtype ) ( const PLFLT * ArrayX, PLINT nx ) jPLFLTbracket
+%typemap( jstype ) ( const PLFLT * ArrayX, PLINT nx ) jPLFLTbracket
+%typemap( javain ) ( const PLFLT * ArrayX, PLINT nx ) "$javainput"
+%typemap( javaout ) ( const PLFLT * ArrayX, PLINT nx )
 {
     return $jnicall;
 }
@@ -855,23 +855,23 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // set Y length for later consistency checking
-%typemap ( in ) ( const PLFLT * ArrayY, PLINT ny )
+%typemap( in ) ( const PLFLT * ArrayY, PLINT ny )
 {
     jPLFLT *jydata = ( *jenv )->GetPLFLTArrayElements( jenv, $input, 0 );
     Ylen = ( *jenv )->GetArrayLength( jenv, $input );
-    $2   = Ylen;
+    $2 = Ylen;
     setup_array_1d_PLFLT( &$1, jydata, Ylen );
     ( *jenv )->ReleasePLFLTArrayElements( jenv, $input, jydata, 0 );
 }
-%typemap ( freearg ) ( const PLFLT * ArrayY, PLINT ny )
+%typemap( freearg ) ( const PLFLT * ArrayY, PLINT ny )
 {
     free( $1 );
 }
-%typemap ( jni ) ( const PLFLT * ArrayY, PLINT ny ) jPLFLTArray
-%typemap ( jtype ) ( const PLFLT * ArrayY, PLINT ny ) jPLFLTbracket
-%typemap ( jstype ) ( const PLFLT * ArrayY, PLINT ny ) jPLFLTbracket
-%typemap ( javain ) ( const PLFLT * ArrayY, PLINT ny ) "$javainput"
-%typemap ( javaout ) ( const PLFLT * ArrayY, PLINT ny )
+%typemap( jni ) ( const PLFLT * ArrayY, PLINT ny ) jPLFLTArray
+%typemap( jtype ) ( const PLFLT * ArrayY, PLINT ny ) jPLFLTbracket
+%typemap( jstype ) ( const PLFLT * ArrayY, PLINT ny ) jPLFLTbracket
+%typemap( javain ) ( const PLFLT * ArrayY, PLINT ny ) "$javainput"
+%typemap( javaout ) ( const PLFLT * ArrayY, PLINT ny )
 {
     return $jnicall;
 }
@@ -894,22 +894,22 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // with trailing count
-%typemap ( in ) ( const PLFLT * Array, PLINT n )
+%typemap( in ) ( const PLFLT * Array, PLINT n )
 {
     jPLFLT *jxdata = ( *jenv )->GetPLFLTArrayElements( jenv, $input, 0 );
     $2 = ( *jenv )->GetArrayLength( jenv, $input );
     setup_array_1d_PLFLT( &$1, jxdata, $2 );
     ( *jenv )->ReleasePLFLTArrayElements( jenv, $input, jxdata, 0 );
 }
-%typemap ( freearg ) ( const PLFLT * Array, PLINT n )
+%typemap( freearg ) ( const PLFLT * Array, PLINT n )
 {
     free( $1 );
 }
-%typemap ( jni ) ( const PLFLT * Array, PLINT n ) jPLFLTArray
-%typemap ( jtype ) ( const PLFLT * Array, PLINT n ) jPLFLTbracket
-%typemap ( jstype ) ( const PLFLT * Array, PLINT n ) jPLFLTbracket
-%typemap ( javain ) ( const PLFLT * Array, PLINT n ) "$javainput"
-%typemap ( javaout ) ( const PLFLT * Array, PLINT n )
+%typemap( jni ) ( const PLFLT * Array, PLINT n ) jPLFLTArray
+%typemap( jtype ) ( const PLFLT * Array, PLINT n ) jPLFLTbracket
+%typemap( jstype ) ( const PLFLT * Array, PLINT n ) jPLFLTbracket
+%typemap( javain ) ( const PLFLT * Array, PLINT n ) "$javainput"
+%typemap( javaout ) ( const PLFLT * Array, PLINT n )
 {
     return $jnicall;
 }
@@ -944,7 +944,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     }
     else
     {
-        $1   = NULL;
+        $1 = NULL;
         Alen = 0;
     }
 }
@@ -1005,7 +1005,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // 2D array with trailing dimensions, check consistency with previous
-%typemap ( in ) ( const PLFLT **MatrixCk, PLINT nx, PLINT ny )
+%typemap( in ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny )
 {
     jPLFLT  **adat;
     jobject *ai;
@@ -1057,22 +1057,22 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( adat );
     free( ai );
 }
-%typemap ( freearg ) ( const PLFLT **MatrixCk, PLINT nx, PLINT ny )
+%typemap( freearg ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny )
 {
     free( $1[0] );
     free( $1 );
 }
-%typemap ( jni ) ( const PLFLT **MatrixCk, PLINT nx, PLINT ny ) "jobjectArray"
-%typemap ( jtype ) ( const PLFLT **MatrixCk, PLINT nx, PLINT ny ) jPLFLTbracket2
-%typemap ( jstype ) ( const PLFLT **MatrixCk, PLINT nx, PLINT ny ) jPLFLTbracket2
-%typemap ( javain ) ( const PLFLT **MatrixCk, PLINT nx, PLINT ny ) "$javainput"
-%typemap ( javaout ) ( const PLFLT **MatrixCk, PLINT nx, PLINT ny )
+%typemap( jni ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) "jobjectArray"
+%typemap( jtype ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) jPLFLTbracket2
+%typemap( jstype ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) jPLFLTbracket2
+%typemap( javain ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny ) "$javainput"
+%typemap( javaout ) ( const PLFLT * *MatrixCk, PLINT nx, PLINT ny )
 {
     return $jnicall;
 }
 
 // 2D array with trailing dimensions, set the X, Y size for later checking
-%typemap ( in ) ( const PLFLT **Matrix, PLINT nx, PLINT ny )
+%typemap( in ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny )
 {
     jPLFLT  **adat;
     jobject *ai;
@@ -1116,22 +1116,22 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( adat );
     free( ai );
 }
-%typemap ( freearg ) ( const PLFLT **Matrix, PLINT nx, PLINT ny )
+%typemap( freearg ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny )
 {
     free( $1[0] );
     free( $1 );
 }
-%typemap ( jni ) ( const PLFLT **Matrix, PLINT nx, PLINT ny ) "jobjectArray"
-%typemap ( jtype ) ( const PLFLT **Matrix, PLINT nx, PLINT ny ) jPLFLTbracket2
-%typemap ( jstype ) ( const PLFLT **Matrix, PLINT nx, PLINT ny ) jPLFLTbracket2
-%typemap ( javain ) ( const PLFLT **Matrix, PLINT nx, PLINT ny ) "$javainput"
-%typemap ( javaout ) ( const PLFLT **Matrix, PLINT nx, PLINT ny )
+%typemap( jni ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny ) "jobjectArray"
+%typemap( jtype ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny ) jPLFLTbracket2
+%typemap( jstype ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny ) jPLFLTbracket2
+%typemap( javain ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny ) "$javainput"
+%typemap( javaout ) ( const PLFLT * *Matrix, PLINT nx, PLINT ny )
 {
     return $jnicall;
 }
 
 // 2D array with no trailing dimensions, set the X, Y size for later checking
-%typemap( in ) const PLFLT * *Matrix {
+%typemap( in ) const PLFLT **Matrix {
     jPLFLT  **adat;
     jobject *ai;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
@@ -1172,20 +1172,20 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( adat );
     free( ai );
 }
-%typemap( freearg ) const PLFLT * *Matrix {
+%typemap( freearg ) const PLFLT **Matrix {
     free( $1[0] );
     free( $1 );
 }
-%typemap( jni ) const PLFLT * *Matrix "jobjectArray"
-%typemap( jtype ) const PLFLT * *Matrix jPLFLTbracket2
-%typemap( jstype ) const PLFLT * *Matrix jPLFLTbracket2
-%typemap( javain ) const PLFLT * *Matrix "$javainput"
-%typemap( javaout ) const PLFLT * *Matrix {
+%typemap( jni ) const PLFLT **Matrix "jobjectArray"
+%typemap( jtype ) const PLFLT **Matrix jPLFLTbracket2
+%typemap( jstype ) const PLFLT **Matrix jPLFLTbracket2
+%typemap( javain ) const PLFLT **Matrix "$javainput"
+%typemap( javaout ) const PLFLT **Matrix {
     return $jnicall;
 }
 
 // 2D array, check for consistency
-%typemap( in ) const PLFLT * *MatrixCk {
+%typemap( in ) const PLFLT **MatrixCk {
     jPLFLT  **adat;
     jobject *ai;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
@@ -1233,21 +1233,21 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( adat );
     free( ai );
 }
-%typemap( freearg ) const PLFLT * *MatrixCk {
+%typemap( freearg ) const PLFLT **MatrixCk {
     free( $1[0] );
     free( $1 );
 }
-%typemap( jni ) const PLFLT * *MatrixCk "jobjectArray"
-%typemap( jtype ) const PLFLT * *MatrixCk jPLFLTbracket2
-%typemap( jstype ) const PLFLT * *MatrixCk jPLFLTbracket2
-%typemap( javain ) const PLFLT * *MatrixCk "$javainput"
-%typemap( javaout ) const PLFLT * *MatrixCk {
+%typemap( jni ) const PLFLT **MatrixCk "jobjectArray"
+%typemap( jtype ) const PLFLT **MatrixCk jPLFLTbracket2
+%typemap( jstype ) const PLFLT **MatrixCk jPLFLTbracket2
+%typemap( javain ) const PLFLT **MatrixCk "$javainput"
+%typemap( javaout ) const PLFLT **MatrixCk {
     return $jnicall;
 }
 
 // 2D array, check for consistency
 // Version with values returned to java
-%typemap( in ) PLFLT * *OutMatrixCk {
+%typemap( in ) PLFLT **OutMatrixCk {
     jobject ai;
     PLFLT   **ptr;
     int     nx = ( *jenv )->GetArrayLength( jenv, $input );
@@ -1284,7 +1284,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
     $1 = ptr;
 }
-%typemap( argout ) PLFLT * *OutMatrixCk {
+%typemap( argout ) PLFLT **OutMatrixCk {
     jPLFLT  **adat;
     jobject *ai;
     PLFLT   **ptr;
@@ -1318,15 +1318,15 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( adat );
     free( ai );
 }
-%typemap( freearg ) PLFLT * *OutMatrixCk {
+%typemap( freearg ) PLFLT **OutMatrixCk {
     free( $1[0] );
     free( $1 );
 }
-%typemap( jni ) PLFLT * *OutMatrixCk "jobjectArray"
-%typemap( jtype ) PLFLT * *OutMatrixCk jPLFLTbracket2
-%typemap( jstype ) PLFLT * *OutMatrixCk jPLFLTbracket2
-%typemap( javain ) PLFLT * *OutMatrixCk "$javainput"
-%typemap( javaout ) PLFLT * *OutMatrixCk {
+%typemap( jni ) PLFLT **OutMatrixCk "jobjectArray"
+%typemap( jtype ) PLFLT **OutMatrixCk jPLFLTbracket2
+%typemap( jstype ) PLFLT **OutMatrixCk jPLFLTbracket2
+%typemap( javain ) PLFLT **OutMatrixCk "$javainput"
+%typemap( javaout ) PLFLT **OutMatrixCk {
     return $jnicall;
 }
 
@@ -1436,10 +1436,10 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     if ( obj != NULL )
     {
         jclass cls = ( *jenv )->GetObjectClass( jenv, obj );
-        mapformID    = ( *jenv )->GetMethodID( jenv, cls, "mapform", "([D[D)V" );
-        mapformClass = obj;
-        cbenvMapform = jenv;
-        $1           = mapform_java;
+        mapformID               = ( *jenv )->GetMethodID( jenv, cls, "mapform", "([D[D)V" );
+        mapformClass            = obj;
+        cbenvMapform            = jenv;
+        $1 = mapform_java;
     }
     else
     {
@@ -1718,7 +1718,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     cgrid->yg = yg;
     cgrid->nx = nx;
     cgrid->ny = ny;
-    $1        = cgrid;
+    $1 = cgrid;
 }
 
 %typemap( freearg ) PLPointer OBJECT_DATA {
@@ -1862,7 +1862,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     cgrid->yg = yg;
     cgrid->nx = nx;
     cgrid->ny = ny;
-    $1        = cgrid;
+    $1 = cgrid;
 }
 
 %typemap( freearg ) PLPointer OBJECT_DATA_img {
@@ -1940,20 +1940,20 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 
 // Character arrays:
 
-%typemap ( jni ) ( int *p_argc, char **argv ) "jobjectArray"
-%typemap ( jtype ) ( int *p_argc, char **argv ) "String[]"
-%typemap ( jstype ) ( int *p_argc, char **argv ) "String[]"
-%typemap ( javain ) ( int *p_argc, char **argv ) "$javainput"
-%typemap ( javaout ) ( int *p_argc, char **argv )
+%typemap( jni ) ( int *p_argc, char **argv ) "jobjectArray"
+%typemap( jtype ) ( int *p_argc, char **argv ) "String[]"
+%typemap( jstype ) ( int *p_argc, char **argv ) "String[]"
+%typemap( javain ) ( int *p_argc, char **argv ) "$javainput"
+%typemap( javaout ) ( int *p_argc, char **argv )
 {
     return $jnicall;
 }
-%typemap ( in ) ( int *p_argc, char **argv ) ( int size )
+%typemap( in ) ( int *p_argc, char **argv ) ( int size )
 {
     int i = 0;
     size = (int) ( ( *jenv )->GetArrayLength( jenv, $input ) );
-    $1   = &size;
-    $2   = (char **) malloc( (size_t) ( size + 1 ) * sizeof ( char * ) );
+    $1 = &size;
+    $2 = (char **) malloc( (size_t) ( size + 1 ) * sizeof ( char * ) );
     // make a copy of each string
     for ( i = 0; i < size; i++ )
     {
@@ -1971,7 +1971,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // This cleans up the memory we malloc'd before the function call
-%typemap ( freearg ) ( int *p_argc, char **argv )
+%typemap( freearg ) ( int *p_argc, char **argv )
 {
     int i;
 // Commented out version straight from swig documentation, but I think
@@ -1982,15 +1982,15 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( $2 );
 }
 
-%typemap ( jni ) ( const char *legline[4] ) "jobjectArray"
-%typemap ( jtype ) ( const char *legline[4] ) "String[]"
-%typemap ( jstype ) ( const char *legline[4] ) "String[]"
-%typemap ( javain ) ( const char *legline[4] ) "$javainput"
-%typemap ( javaout ) ( const char *legline[4] )
+%typemap( jni ) ( const char *legline[4] ) "jobjectArray"
+%typemap( jtype ) ( const char *legline[4] ) "String[]"
+%typemap( jstype ) ( const char *legline[4] ) "String[]"
+%typemap( javain ) ( const char *legline[4] ) "$javainput"
+%typemap( javaout ) ( const char *legline[4] )
 {
     return $jnicall;
 }
-%typemap ( in ) ( const char *legline[4] )
+%typemap( in ) ( const char *legline[4] )
 {
     int i    = 0;
     int size = ( *jenv )->GetArrayLength( jenv, $input );
@@ -2013,7 +2013,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // This cleans up the memory we malloc'd before the function call
-%typemap ( freearg ) ( const char *legline[4] )
+%typemap( freearg ) ( const char *legline[4] )
 {
     int i;
     for ( i = 0; i < 4; i++ )
@@ -2021,7 +2021,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
     free( $1 );
 }
 
-%typemap ( in ) ( const char **ArrayCk )
+%typemap( in ) ( const char **ArrayCk )
 {
     int i = 0;
     if ( $input != NULL )
@@ -2051,7 +2051,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // This cleans up the memory we malloc'd before the function call
-%typemap ( freearg ) ( const char **ArrayCk )
+%typemap( freearg ) ( const char **ArrayCk )
 {
     int i;
     if ( $1 != NULL )
@@ -2061,24 +2061,24 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         free( $1 );
     }
 }
-%typemap ( jni ) ( const char **ArrayCk ) "jobjectArray"
-%typemap ( jtype ) ( const char **ArrayCk ) "String[]"
-%typemap ( jstype ) ( const char **ArrayCk ) "String[]"
-%typemap ( javain ) ( const char **ArrayCk ) "$javainput"
-%typemap ( javaout ) ( const char **ArrayCk )
+%typemap( jni ) ( const char **ArrayCk ) "jobjectArray"
+%typemap( jtype ) ( const char **ArrayCk ) "String[]"
+%typemap( jstype ) ( const char **ArrayCk ) "String[]"
+%typemap( javain ) ( const char **ArrayCk ) "$javainput"
+%typemap( javaout ) ( const char **ArrayCk )
 {
     return $jnicall;
 }
 
-%typemap ( in ) ( PLINT n, const char **Array )
+%typemap( in ) ( PLINT n, const char **Array )
 {
     int i = 0;
     if ( $input != NULL )
     {
         int size = ( *jenv )->GetArrayLength( jenv, $input );
         Alen = size;
-        $1   = size;
-        $2   = (char **) malloc( (size_t) Alen * sizeof ( char * ) );
+        $1 = size;
+        $2 = (char **) malloc( (size_t) Alen * sizeof ( char * ) );
         // make a copy of each string
         for ( i = 0; i < Alen; i++ )
         {
@@ -2098,7 +2098,7 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 }
 
 // This cleans up the memory we malloc'd before the function call
-%typemap ( freearg ) ( PLINT n, const char **Array )
+%typemap( freearg ) ( PLINT n, const char **Array )
 {
     int i;
     if ( $2 != NULL )
@@ -2108,11 +2108,11 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
         free( $2 );
     }
 }
-%typemap ( jni ) ( PLINT n, const char **Array ) "jobjectArray"
-%typemap ( jtype ) ( PLINT n, const char **Array ) "String[]"
-%typemap ( jstype ) ( PLINT n, const char **Array ) "String[]"
-%typemap ( javain ) ( PLINT n, const char **Array ) "$javainput"
-%typemap ( javaout ) ( PLINT n, const char **Array )
+%typemap( jni ) ( PLINT n, const char **Array ) "jobjectArray"
+%typemap( jtype ) ( PLINT n, const char **Array ) "String[]"
+%typemap( jstype ) ( PLINT n, const char **Array ) "String[]"
+%typemap( javain ) ( PLINT n, const char **Array ) "$javainput"
+%typemap( javaout ) ( PLINT n, const char **Array )
 {
     return $jnicall;
 }
