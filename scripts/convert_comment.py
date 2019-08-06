@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 # Programme to convert all single-line or multi-line "/* ... */"
 # comments to "//" form in C or C++ code.  Input source code file is
