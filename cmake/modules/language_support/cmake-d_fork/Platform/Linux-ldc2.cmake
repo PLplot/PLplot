@@ -26,17 +26,20 @@ set(CMAKE_BASE_NAME ldc2)
 
 set(CMAKE_STATIC_LIBRARY_CREATE_D_FLAGS "-lib")
 
-set(CMAKE_SHARED_LIBRARY_D_FLAGS "")            # -pic
+set(CMAKE_D_COMPILE_OPTIONS_PIC "-relocation-model=pic")
+set(CMAKE_SHARED_LIBRARY_D_FLAGS "-relocation-model=pic")
 set(CMAKE_SHARED_LIBRARY_CREATE_D_FLAGS "-shared")       # -shared
 set(CMAKE_SHARED_LIBRARY_LINK_D_FLAGS "")         # +s, flag for exe link to use shared lib
-set(CMAKE_SHARED_LIBRARY_RUNTIME_D_FLAG "")       # -rpath
+set(CMAKE_SHARED_LIBRARY_RUNTIME_D_FLAG "-L-rpath=")
 set(CMAKE_SHARED_LIBRARY_RUNTIME_D_FLAG_SEP "")   # : or empty
+set(CMAKE_SHARED_LIBRARY_SONAME_D_FLAG "-L-soname=")
+set(CMAKE_SHARED_LIBRARY_RPATH_LINK_D_FLAG "-L-rpath-link=")
 set(CMAKE_INCLUDE_FLAG_D "-I")       # -I
 set(CMAKE_INCLUDE_FLAG_D_SEP "")     # , or empty
-set(CMAKE_LIBRARY_PATH_FLAG "-L-L")
-set(CMAKE_LIBRARY_PATH_TERMINATOR "")  # for the Digital Mars D compiler the link paths have to be terminated with a "/"
-set(CMAKE_LINK_LIBRARY_FLAG "-L-l")
-
+set(CMAKE_D_LIBRARY_PATH_FLAG "-L-L")
+set(CMAKE_D_LIBRARY_PATH_TERMINATOR "")  # for the Digital Mars D compiler the link paths have to be terminated with a "/"
+set(CMAKE_D_LINK_LIBRARY_FLAG "-L-l")
+set(CMAKE_D_LINK_LIBRARY_FILE_FLAG "-L")
 set(CMAKE_LINK_LIBRARY_SUFFIX "")
 set(CMAKE_STATIC_LIBRARY_PREFIX "lib")
 set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")

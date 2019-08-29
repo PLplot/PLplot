@@ -38,4 +38,16 @@ set(CMAKE_D_FLAGS_RELWITHDEBINFO_INIT "-O2 -g ${DDOC_FLAGS}")
 set(CMAKE_D_CREATE_ASSEMBLY_SOURCE "<CMAKE_D_COMPILER> <FLAGS> -S <SOURCE> -o <ASSEMBLY_SOURCE>")
 # set(CMAKE_INCLUDE_SYSTEM_FLAG_D "-isystem ")
 
+# Options normally supplied by ../Compiler/GNU.cmake for officially supported languages.
+set(CMAKE_D_COMPILE_OPTIONS_PIC "-fPIC")
+set(CMAKE_SHARED_LIBRARY_D_FLAGS "-fPIC")
+set(CMAKE_SHARED_LIBRARY_CREATE_D_FLAGS "-shared")
+set(CMAKE_SHARED_LIBRARY_SONAME_D_FLAG "-Wl,-soname,")
+
+# C version of these flags normally set by Platform/GNU.cmake
+set(CMAKE_SHARED_LIBRARY_RUNTIME_D_FLAG "-Wl,-rpath,")
+set(CMAKE_SHARED_LIBRARY_RPATH_LINK_D_FLAG "-Wl,-rpath-link,")
+
+
+
 set(CMAKE_INCLUDE_FLAG_D "-I")       # -I

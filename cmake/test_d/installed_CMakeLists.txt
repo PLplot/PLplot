@@ -1,0 +1,25 @@
+# Top-level CMakeLists.txt for the installed version of a simple project consisting of a
+# "hello, world" C library, a D binding for that library, and a D
+# executable to be built that links to that D binding to
+# test CMake language support for D.
+
+# MAINTENANCE 2019-08-16
+# Use same minimum version for all platforms as the Linux platform minimum adopted for
+# the PLplot project.
+cmake_minimum_required(VERSION 3.13.2 FATAL_ERROR)
+
+# Before the project command must specify the location where
+# the test_ada project looks for CMake Ada language support files.
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
+
+# Test this language support case where only the D language needs to be enabled
+project(installed_test_ada D)
+
+# Define key variables that are configured by the core build.
+include(test_d_configure)
+
+# Find installed project
+find_package(test_d)
+
+# Build D executable that links to the
+add_subdirectory(d)

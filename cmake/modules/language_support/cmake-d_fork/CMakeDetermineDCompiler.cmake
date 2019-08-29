@@ -124,7 +124,7 @@ if(NOT CMAKE_D_COMPILER_ID_RUN)
     include(${CMAKE_ROOT}/Modules/CMakeDetermineCompilerId.cmake)
   else()
     file(READ ${CMAKE_ROOT}/Modules/CMakeDetermineCompilerId.cmake CMAKE_DETERMINE_COMPILER_ID_CMAKE_CONTENT)
-    STRING(REPLACE "file(READ \${CMAKE_ROOT}/Modules/\${src}.in ID_CONTENT_IN)" 
+    STRING(REPLACE "file(READ \${CMAKE_ROOT}/Modules/\${src}.in ID_CONTENT_IN)"
       "find_file(src_in \${src}.in PATHS \${CMAKE_ROOT}/Modules \${CMAKE_MODULE_PATH} NO_DEFAULT_PATH)
     file(READ \${src_in} ID_CONTENT_IN)
     unset(src_in CACHE)"

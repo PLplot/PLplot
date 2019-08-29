@@ -1,0 +1,114 @@
+The purpose of this complete project is to provide a simple D test
+case.  This project consists of a C library which defines a function
+that returns the classic "hello, world" C string, a D library which
+calls the C routine and changes the returned C string to a D string,
+and a D executable that calls that wrapper and prints out that D
+string with '\n' appended.  This complete project includes a
+CMake-based build system and updated D language support from the
+[cmake-d project](https://github.com/dcarp/cmake-d).  The plan is to
+make those updates available to that project after the CMake fix
+discussed below makes it into a CMake release.
+
+(1) Both dmd and ldc language-support files set language-support CMake
+variables that are only supported now by CMake commit (git described as v3.15.2-908-g3ec986ce8e)
+that has just (as of 2019-08-29) landed on the CMake master branch and which
+is scheduled to become part of CMake-3.16.0 once that new version of CMake is
+released.  So as a first step in this test procedure, you should build
+CMake from the tip of its git master branch or from CMake-3.16.0 source
+code once that version of CMake is released.
+
+(2) Check documentation of comprehensive test of D language support on
+your platform as follows:
+
+scripts/comprehensive_test.sh --help
+
+This script is similar in concept but quite different (note its
+different location) than the corresponding script in
+../../scripts/comprehensive_test.sh which comprehensively tests all of
+PLplot so do not confuse the two.
+
+(3) Actually do comprehensive test of D language support as follows:
+
+<set environment> scripts/comprehensive_test.sh
+
+where <set environment> sets up the cmake binary built from cmake
+source code git commit v3.15.2-908-g3ec986ce8e and one of the gdc,
+ldc, or dmd compilers.
+
+For example, on my Debian Buster system <set environment> was
+
+# dmd (and the same version of phobos) built by myself since Debian Buster does not supply a system version
+env PATH=/home/software/cmake/install-3ec986ce8e/bin:"$PATH" DC=/home/software/dmd/dmd/generated/linux/release/64/dmd LD_LIBRARY_PATH=/home/software/dmd/phobos/generated/linux/release/64
+
+# system ldc
+env PATH=/home/software/cmake/install-3ec986ce8e/bin:"$PATH" DC=ldc2
+
+# system gdc
+env PATH=/home/software/cmake/install-3ec986ce8e/bin:"$PATH" DC=gdc
+
+For our two principal build configurations (shared libraries and
+static libraries) this script (if executed without options) builds the
+test_noninteractive target (which builds the "hello" executable and
+all its prerequisites, runs that executable, and compares the output
+of that executable with the expected output) in the build tree and in
+the installed examples tree.
+
+You check for errors or warnings in the above comprehensive test using
+
+grep -i error ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out
+grep -i warning ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out
+
+and send me (Alan W. Irwin <airwin@users.sourceforge.net> the report
+tarball (of information that is collected by that script at
+../../../comprehensive_test_d_disposeable/comprehensive_test.tar.gz)
+for further analysis of any issues you discover.
+
+(4, optional) Debug result:
+
+If (3) shows any errors than you can optionally debug the result as
+follows:
+
+env <set environment> scripts/comprehensive_test.sh --do_trace yes
+
+This produces voluminous results and buried (deeply) in those is
+typically enough information to find out what is going wrong with the
+CMake D language support.  These voluminous results are automatically
+included in the tarball report so please send that report to me (as
+well as the one created without the --do_trace yes option in step 3).
+
+(5, optional) Test with valgrind:
+
+Create an empty build tree, run cmake from there, create the hello
+executable and test that with valgrind.
+
+mkdir build_dir
+cd build_dir
+env <set environment> cmake -DBUILD_TEST=ON <path to top-level of test_d source tree> >& cmake.out
+env <set LD_LIBRARY_PATH environment if necessary> make hello >& hello.out
+env <set LD_LIBRARY_PATH environment if necessary> valgrind src_executable/hello >& valgrind.out
+
+Look through the generated *.out files for any error conditions.
+
+(6, optional) Test whether run-time loader finds all the required libraries
+
+# Most Unix-like platforms (including MSYS2? and definitely Cygwin, but excluding Mac OS X)
+ldd -r src_executable/hello >& ldd.out
+
+# On Mac OS X
+otool -L src_executable/hello >& otool.out
+
+Look through the generated *.out files for any error conditions.
+
+N.B. on at least one platform (Cygwin) the -r option (which checks for
+any undefined symbols) is not implemented yet (as of 2015-11) so you
+will have to drop it for that special case until the Cygwin ldd -r
+option is implemented.
+
+In sum, this project provides a simple demonstration of how to use the
+CMake D language support with D wrapper libraries for C libraries that
+are either static or shared, and for any of the three principal D
+compilers (dmd, ldc, and/or gdc).  At the same time, this project
+tests the quality of CMake D support for various user's platforms for
+any of those three compilers.  If any user is having trouble with
+CMake D language support for any of those compilers, they should run
+at least step (3) and step (4) above.
