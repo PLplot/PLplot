@@ -4,7 +4,7 @@
 # consist of shared library and static library.  These complete tests
 # that are run for each build type are (I) in the build tree, build
 # the test_noninteractive target for the example and install the binary
-# library and the source code for the example and (II) run the test_noninteractive
+# libraries and the source code for the example and (II) run the test_noninteractive
 # target for the installed example.
 
 usage () {
@@ -191,6 +191,21 @@ Each of the steps in this comprehensive test may take a while...."
 		echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the build tree"
 		collect_exit 1
 	    fi
+	    if [[ "$OSTYPE" =~ ^linux ]] ; then
+		# The above successful build of the
+		# test_noninteractive target assures there is a
+		# "hello" executable that can be analyzed with "ldd -r".
+		# Do that analysis!
+		output="$OUTPUT_TREE"/build_tree_hello_ldd.out
+		rm -f "$output"
+		echo_tee "ldd -r \"$BUILD_TREE\"/src_d_executable/hello >& \"$output\" in the build tree just after the build of the test_noninteractive target for TEST_TYPE = ${TEST_TYPE})"
+		ldd -r "$BUILD_TREE"/src_d_executable/hello >& "$output"
+		ldd_rc=$?
+		if [ "$ldd_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: ldd -r \"$BUILD_TREE\"/src_d_executable/hello >& \"$output\" failed in the build tree"
+		    collect_exit 1
+		fi
+	    fi
 	fi
 
 	if [ "$do_test_install_tree" = "yes" ] ; then
@@ -203,6 +218,30 @@ Each of the steps in this comprehensive test may take a while...."
 	    if [ "$make_install_rc" -ne 0 ] ; then
 		echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
 		collect_exit 1
+	    fi
+	    if [[ "$OSTYPE" =~ ^linux && "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" ]] ; then
+		# The above install and the above "if" assure there are
+		# *.so files in both the build and install trees for the
+		# linux case that can be analyzed with ldd -r.
+		output="$OUTPUT_TREE"/build_tree_ldd.out
+		rm -f "$output"
+		echo_tee "find \"$BUILD_TREE\" -name \"*.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" in the build tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+		find "$BUILD_TREE" -name "*.so" -a -print0 | xargs -0 ldd -r >& "$output"
+		ldd_rc=$?
+		if [ "$ldd_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: find \"$BUILD_TREE\" -name \"*.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the build tree"
+		    collect_exit 1
+		fi
+
+		output="$OUTPUT_TREE"/install_tree_ldd.out
+		rm -f "$output"
+		echo_tee "find \"$INSTALL_TREE\" -name \"*.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" in the install tree just after the install for TEST_TYPE = ${TEST_TYPE})"
+		find "$INSTALL_TREE" -name "*.so" -a ! -name "dll*plplot_stubs.so" -a -print0 | xargs -0 ldd -r >& "$output"
+		ldd_rc=$?
+		if [ "$ldd_rc" -ne 0 ] ; then
+		    echo_tee "ERROR: find \"$INSTALL_TREE\" -name \"*.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the install tree"
+		    collect_exit 1
+		fi
 	    fi
 	fi
 
@@ -232,9 +271,23 @@ Each of the steps in this comprehensive test may take a while...."
 			echo_tee "ERROR: $build_command VERBOSE=1 test_noninteractive failed in the installed examples build tree"
 			collect_exit 1
 		    fi
+		    if [[ "$OSTYPE" =~ ^linux ]] ; then
+			# The above successful build of the
+			# test_noninteractive target assures there is a
+			# "hello" executable that can be analyzed with "ldd -r".
+			# Do that analysis!
+			output="$OUTPUT_TREE"/install_tree_hello_ldd.out
+			rm -f "$output"
+			echo_tee "ldd -r \"$INSTALL_BUILD_TREE\"/d/hello >& \"$output\" in the install tree just after the build of the test_noninteractive target for TEST_TYPE = ${TEST_TYPE})"
+			ldd -r "$INSTALL_BUILD_TREE"/d/hello >& "$output"
+			ldd_rc=$?
+			if [ "$ldd_rc" -ne 0 ] ; then
+			    echo_tee "ERROR: ldd -r \"$INSTALL_TREE\"/src_d_executable/hello >& \"$output\" failed in the install tree"
+			    collect_exit 1
+			fi
+		    fi
 		fi
 	    fi
-
 	fi
     fi
 

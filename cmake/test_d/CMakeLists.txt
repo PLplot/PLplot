@@ -4,15 +4,15 @@
 # test CMake language support for D. See the README file in this
 # directory for more details.
 
-# MAINTENANCE 2019-08-16
-# Use same minimum version for all platforms as the Linux platform minimum adopted for
-# the PLplot project.
-cmake_minimum_required(VERSION 3.13.2 FATAL_ERROR)
+# MAINTENANCE 2019-08-29
+# Use minimum version that insures necessary CMake language support fix is available.
+# for all platforms.
+cmake_minimum_required(VERSION 3.15.20190829-g3ec986c FATAL_ERROR)
 
 # Before the project command must specify the location where
 # the test_d project looks for CMake D language support files.
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../modules/language_support/cmake-d_fork")
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
 project(test_d C D)
 
