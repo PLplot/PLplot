@@ -24,7 +24,7 @@
 import plplot;
 import std.string;
 import std.math;
-import std.c.stdlib;
+import core.stdc.stdlib;
 
 //--------------------------------------------------------------------------
 // cmap1_init1
@@ -92,8 +92,8 @@ int main( char[][] args )
     PLFLT[]     alt = [ 60.0, 40.0 ];
     PLFLT[]     az  = [ 30.0, -30.0 ];
 
-    string title[] = [ "#frPLplot Example 8 - Alt=60, Az=30",
-                       "#frPLplot Example 8 - Alt=40, Az=-30" ];
+    string[]    title = [ "#frPLplot Example 8 - Alt=60, Az=30",
+                          "#frPLplot Example 8 - Alt=40, Az=-30" ];
 
     // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );

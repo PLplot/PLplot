@@ -4,7 +4,7 @@
 
 import std.math;
 import std.string;
-import std.c.string;
+import core.stdc.string;
 
 import plplot;
 
@@ -109,15 +109,15 @@ int main( char[][] args )
     PLFLT maxy = 80;
 
     //variables for the shapelib example
-    const PLINT nbeachareas = 2;
-    const PLINT beachareas[] = [ 23, 24 ];
-    const       nwoodlandareas = 94;
-    PLINT       woodlandareas[94];
-    const PLINT nshingleareas = 22;
-    const PLINT shingleareas[] = [ 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 ];
-    const PLINT ncragareas = 2024;
-    PLINT       cragareas[2024];
-    const PLINT majorroads[] = [ 33, 48, 71, 83, 89, 90, 101, 102, 111 ];
+    const PLINT   nbeachareas    = 2;
+    const PLINT[] beachareas     = [ 23, 24 ];
+    const         nwoodlandareas = 94;
+    PLINT[94] woodlandareas;
+    const PLINT   nshingleareas = 22;
+    const PLINT[] shingleareas  = [ 0, 1, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 217, 2424, 2425, 2426, 2427, 2428, 2491, 2577 ];
+    const PLINT   ncragareas    = 2024;
+    PLINT[2024]       cragareas;
+    const PLINT[] majorroads = [ 33, 48, 71, 83, 89, 90, 101, 102, 111 ];
 
     plinit();
 
@@ -173,8 +173,8 @@ int main( char[][] args )
     // Show Baltimore, MD on the map
     plcol0( 2 );
     plssym( 0.0, 2.0 );
-    PLFLT x[1] = -76.6125;
-    PLFLT y[1] = 39.2902778;
+    PLFLT[1] x = -76.6125;
+    PLFLT[1] y = 39.2902778;
     plpoin( x, y, 18 );
     plssym( 0.0, 1.0 );
     plptex( -76.6125, 43.0, 0.0, 0.0, 0.0, "Baltimore, MD" );

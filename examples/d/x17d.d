@@ -4,7 +4,7 @@
 import std.string;
 import std.math;
 import std.stdio;
-import std.c.stdlib;
+import core.stdc.stdlib;
 import plplot;
 
 

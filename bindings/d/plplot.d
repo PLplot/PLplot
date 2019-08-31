@@ -298,7 +298,7 @@ void plfill3( PLFLT[] x, PLFLT[] y, PLFLT[] z )
 // Get the current device (keyword) name
 void plgdev( out string p_dev )
 {
-    char cdev[1024];
+    char[1024] cdev;
     c_plgdev( cdev.ptr );
     p_dev = to!string( cdev.ptr );
 }
@@ -306,7 +306,7 @@ void plgdev( out string p_dev )
 // Get the (current) output file name.  Must be preallocated to >80 bytes
 void plgfnam( out string fnam )
 {
-    char cfnam[1024];
+    char[1024] cfnam;
     c_plgfnam( cfnam.ptr );
     fnam = to!string( cfnam.ptr );
 }
@@ -337,7 +337,7 @@ void  plgriddata( PLFLT[] x, PLFLT[] y, PLFLT[] z, PLFLT[] xg, PLFLT[] yg, PLFLT
 // Get the current library version number
 void plgver( out string p_ver )
 {
-    char cver[1024];
+    char[1024] cver;
     c_plgver( cver.ptr );
     p_ver = to!string( cver.ptr );
 }

@@ -195,7 +195,7 @@ int main( char[][] args )
     string[]  axis_opts = [
         "bcvtm",
     ];
-    PLFLT[] values[NUM_AXES];
+    PLFLT[][NUM_AXES] values;
     for ( size_t i = 0; i < NUM_AXES; i++ )
     {
         values[i] = new PLFLT[ns];
@@ -207,7 +207,7 @@ int main( char[][] args )
         0,
     ];
     const int NUM_LABELS = 1;
-    PLINT label_opts[] = [
+    PLINT[]   label_opts = [
         PL_COLORBAR_LABEL_BOTTOM,
     ];
     string[] labels = [

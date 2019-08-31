@@ -336,14 +336,14 @@ int main( char[][] args )
             }
             else if ( page == 14 )
             {
-                text = format( "Page 15, %s, %s, %s:  #<0x%1x0>#<0x%1x1>#<0x%1x2>"
+                text = format( "Page 15, %s, %s, %s:  #<0x%1x0>#<0x%1x1>#<0x%1x2>" ~
                     "The quick brown fox jumps over the lazy dog",
                     family[family_index], style[style_index], weight[weight_index],
                     family_index, style_index, weight_index );
             }
             else if ( page == 15 )
             {
-                text = format( "Page 16, %s, %s, %s:  #<%s/>#<%s/>#<%s/>"
+                text = format( "Page 16, %s, %s, %s:  #<%s/>#<%s/>#<%s/>" ~
                     "The quick brown fox jumps over the lazy dog",
                     family[family_index], style[style_index], weight[weight_index],
                     family[family_index], style[style_index], weight[weight_index] );

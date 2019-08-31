@@ -30,7 +30,7 @@ import plplot;
 import std.math;
 import std.string;
 
-static PLINT position_options[16] = [
+static PLINT[16] position_options = [
     PL_POSITION_LEFT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
     PL_POSITION_TOP | PL_POSITION_OUTSIDE,
     PL_POSITION_RIGHT | PL_POSITION_TOP | PL_POSITION_OUTSIDE,
@@ -50,7 +50,7 @@ static PLINT position_options[16] = [
 ];
 
 // Pick 5 arbitrary UTF-8 symbols useful for plotting points (✠✚✱✪✽✺✰✴✦).
-static string special_symbols[5] = [
+static string[5] special_symbols = [
     "✰",
     "✴",
     "✱",
@@ -61,14 +61,14 @@ static string special_symbols[5] = [
 // plcolorbar options
 
 // Colorbar type options
-const int    COLORBAR_KINDS = 4;
-static PLINT colorbar_option_kinds[COLORBAR_KINDS] = [
+const int COLORBAR_KINDS = 4;
+static    PLINT[COLORBAR_KINDS] colorbar_option_kinds = [
     PL_COLORBAR_SHADE,
     PL_COLORBAR_SHADE | PL_COLORBAR_SHADE_LABEL,
     PL_COLORBAR_IMAGE,
     PL_COLORBAR_GRADIENT
 ];
-static string colorbar_option_kind_labels[COLORBAR_KINDS] = [
+static string[COLORBAR_KINDS] colorbar_option_kind_labels = [
     "Shade colorbars",
     "Shade colorbars with custom labels",
     "Image colorbars",
@@ -76,14 +76,14 @@ static string colorbar_option_kind_labels[COLORBAR_KINDS] = [
 ];
 
 // Which side of the page are we positioned relative to?
-const int    COLORBAR_POSITIONS = 4;
-static PLINT colorbar_position_options[COLORBAR_POSITIONS] = [
+const int COLORBAR_POSITIONS = 4;
+static    PLINT[COLORBAR_POSITIONS] colorbar_position_options = [
     PL_POSITION_LEFT,
     PL_POSITION_RIGHT,
     PL_POSITION_TOP,
     PL_POSITION_BOTTOM
 ];
-static string colorbar_position_option_labels[COLORBAR_POSITIONS] = [
+static string[COLORBAR_POSITIONS] colorbar_position_option_labels = [
     "Left",
     "Right",
     "Top",
@@ -91,14 +91,14 @@ static string colorbar_position_option_labels[COLORBAR_POSITIONS] = [
 ];
 
 // Colorbar label positioning options
-const int    COLORBAR_LABELS = 4;
-static PLINT colorbar_label_options[COLORBAR_LABELS] = [
+const int COLORBAR_LABELS = 4;
+static    PLINT[COLORBAR_LABELS] colorbar_label_options = [
     PL_COLORBAR_LABEL_LEFT,
     PL_COLORBAR_LABEL_RIGHT,
     PL_COLORBAR_LABEL_TOP,
     PL_COLORBAR_LABEL_BOTTOM
 ];
-static string colorbar_label_option_labels[COLORBAR_LABELS] = [
+static string[COLORBAR_LABELS] colorbar_label_option_labels = [
     "Label left",
     "Label right",
     "Label top",
@@ -106,14 +106,14 @@ static string colorbar_label_option_labels[COLORBAR_LABELS] = [
 ];
 
 // Colorbar cap options
-const int    COLORBAR_CAPS = 4;
-static PLINT colorbar_cap_options[COLORBAR_CAPS] = [
+const int COLORBAR_CAPS = 4;
+static    PLINT[COLORBAR_CAPS] colorbar_cap_options = [
     PL_COLORBAR_CAP_NONE,
     PL_COLORBAR_CAP_LOW,
     PL_COLORBAR_CAP_HIGH,
     PL_COLORBAR_CAP_LOW | PL_COLORBAR_CAP_HIGH
 ];
-static string colorbar_cap_option_labels[COLORBAR_CAPS] = [
+static string[COLORBAR_CAPS] colorbar_cap_option_labels = [
     "No caps",
     "Low cap",
     "High cap",
@@ -126,20 +126,20 @@ void
 plcolorbar_example_page( int kind_i, int label_i, int cap_i, PLINT cont_color, PLFLT cont_width, PLINT n_values, PLFLT [] values )
 {
     // Parameters for the colorbars on this page
-    PLINT     position_i, position, opt;
-    PLFLT     x, y, x_length, y_length;
-    PLFLT     ticks[1] = [ 0.0 ];
-    PLINT     sub_ticks[1] = [ 0 ];
+    PLINT position_i, position, opt;
+    PLFLT x, y, x_length, y_length;
+    PLFLT[1]     ticks     = [ 0.0 ];
+    PLINT[1]     sub_ticks = [ 0 ];
     PLFLT     low_cap_color, high_cap_color;
     PLINT     vertical, ifn;
     PLINT     n_axes = 1;
     string[]  axis_opts;
-    PLINT     n_labels      = 1;
-    PLINT     label_opts[1] = [ 0 ];
+    PLINT     n_labels = 1;
+    PLINT[1]     label_opts = [ 0 ];
     string[]  label;
     string    title;
     PLFLT     colorbar_width, colorbar_height;
-    PLINT     n_values_array[1];
+    PLINT[1]     n_values_array;
     PLFLT[][] values_array;
 
     axis_opts.length  = 1;
@@ -279,26 +279,26 @@ const int MAX_NLEGEND = 7;
 
 int main( char[][] args )
 {
-    int    i, k;
-    PLINT  opt;
-    PLINT  nlegend, nturn;
-    PLINT  opt_array[MAX_NLEGEND];
-    PLINT  text_colors[MAX_NLEGEND];
-    PLINT  box_colors[MAX_NLEGEND];
-    PLINT  box_patterns[MAX_NLEGEND];
-    PLFLT  box_scales[MAX_NLEGEND];
-    PLFLT  box_line_widths[MAX_NLEGEND];
-    PLINT  line_colors[MAX_NLEGEND];
-    PLINT  line_styles[MAX_NLEGEND];
-    PLFLT  line_widths[MAX_NLEGEND];
-    PLINT  symbol_numbers[MAX_NLEGEND];
-    PLINT  symbol_colors[MAX_NLEGEND];
-    PLFLT  symbol_scales[MAX_NLEGEND];
-    string text[MAX_NLEGEND];
-    string symbols[MAX_NLEGEND];
-    PLFLT  legend_width, legend_height, x, y, xstart, ystart;
-    PLFLT  max_height, text_scale;
-    PLINT  position, opt_base, nrow, ncolumn;
+    int   i, k;
+    PLINT opt;
+    PLINT nlegend, nturn;
+    PLINT[MAX_NLEGEND]  opt_array;
+    PLINT[MAX_NLEGEND]  text_colors;
+    PLINT[MAX_NLEGEND]  box_colors;
+    PLINT[MAX_NLEGEND]  box_patterns;
+    PLFLT[MAX_NLEGEND]  box_scales;
+    PLFLT[MAX_NLEGEND]  box_line_widths;
+    PLINT[MAX_NLEGEND]  line_colors;
+    PLINT[MAX_NLEGEND]  line_styles;
+    PLFLT[MAX_NLEGEND]  line_widths;
+    PLINT[MAX_NLEGEND]  symbol_numbers;
+    PLINT[MAX_NLEGEND]  symbol_colors;
+    PLFLT[MAX_NLEGEND]  symbol_scales;
+    string[MAX_NLEGEND] text;
+    string[MAX_NLEGEND] symbols;
+    PLFLT legend_width, legend_height, x, y, xstart, ystart;
+    PLFLT max_height, text_scale;
+    PLINT position, opt_base, nrow, ncolumn;
 
     // Parse and process command line arguments
     plparseopts( args, PL_PARSE_FULL );
@@ -822,9 +822,9 @@ int main( char[][] args )
     if ( colorbar )
     {
         // Color bar examples
-        PLFLT values_small[2]  = [ -1.0e-20, 1.0e-20 ];
-        PLFLT values_uneven[9] = [ -1.0e-20, 2.0e-20, 2.6e-20, 3.4e-20, 6.0e-20, 7.0e-20, 8.0e-20, 9.0e-20, 10.0e-20 ];
-        PLFLT values_even[9]   = [ -2.0e-20, -1.0e-20, 0.0e-20, 1.0e-20, 2.0e-20, 3.0e-20, 4.0e-20, 5.0e-20, 6.0e-20 ];
+        PLFLT[2] values_small  = [ -1.0e-20, 1.0e-20 ];
+        PLFLT[9] values_uneven = [ -1.0e-20, 2.0e-20, 2.6e-20, 3.4e-20, 6.0e-20, 7.0e-20, 8.0e-20, 9.0e-20, 10.0e-20 ];
+        PLFLT[9] values_even   = [ -2.0e-20, -1.0e-20, 0.0e-20, 1.0e-20, 2.0e-20, 3.0e-20, 4.0e-20, 5.0e-20, 6.0e-20 ];
 
         // Use unsaturated green background colour to contrast with black caps.
         plscolbg( 70, 185, 70 );

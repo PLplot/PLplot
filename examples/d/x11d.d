@@ -48,16 +48,16 @@ void cmap1_init()
 //--------------------------------------------------------------------------
 int main( char[][] args )
 {
-    const   nlevel = 10;
-    const   XPTS   = 35;        // Data points in x
-    const   YPTS   = 46;        // Data points in y
+    const    nlevel = 10;
+    const    XPTS   = 35;       // Data points in x
+    const    YPTS   = 46;       // Data points in y
 
-    int[]   opt = [ DRAW_LINEXY, DRAW_LINEXY ];
+    int[]    opt = [ DRAW_LINEXY, DRAW_LINEXY ];
 
-    PLFLT[] alt = [ 33.0, 17.0 ];
-    PLFLT[] az  = [ 24.0, 115.0 ];
+    PLFLT[]  alt = [ 33.0, 17.0 ];
+    PLFLT[]  az  = [ 24.0, 115.0 ];
 
-    string title[] = [ "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
+    string[] title = [ "#frPLplot Example 11 - Alt=33, Az=24, Opt=3",
                        "#frPLplot Example 11 - Alt=17, Az=115, Opt=3" ];
 
     PLFLT xx, yy;

@@ -224,7 +224,7 @@ class plot {
 
         if ( do_test && test_xor )
         {
-            writefln( "The -xor command line option can only be exercised if your "
+            writefln( "The -xor command line option can only be exercised if your " ~
                 "system\nhas usleep(), which does not seem to happen." );
         }
     }
