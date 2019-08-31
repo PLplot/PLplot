@@ -1,6 +1,7 @@
 # bindings/d/CMakeLists.txt
-# Copyright (C) 2008 Werner Smekal
-# Copyright (C) 2015-2019 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2008-2009 Werner Smekal
+# Copyright (C) 2011 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -32,12 +33,9 @@ if(ENABLE_d)
   # plplotdmd depends on the plplot library.
   set(LIB_INSTALL_RPATH ${LIB_DIR})
 
-  if(plplotdmd_SHARED)
-    configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
-  else(plplotdmd_SHARED)
-    configure_library_build(plplotdmd STATIC "${plplotdmd_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
-  endif(plplotdmd_SHARED)
+  configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
 
   # Configure pkg-config *.pc file corresponding to libplplotdmd
   pkg_config_file("d" "D" " D binding" "plplotdmd" "" "-lplplot")
+
 endif(ENABLE_d)

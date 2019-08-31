@@ -1,6 +1,7 @@
 # examples/d/CMakeLists.txt
-# Copyright (C) 2008 Werner Smekal
-# Copyright (C) 2009-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2008-2009 Werner Smekal
+# Copyright (C) 2012 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -102,4 +103,3 @@ if(BUILD_TEST)
     set_property(GLOBAL APPEND PROPERTY TARGETS_examples_d x${STRING_INDEX}d)
   endforeach(STRING_INDEX ${d_STRING_INDICES})
 endif(BUILD_TEST)
-

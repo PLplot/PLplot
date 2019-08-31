@@ -498,17 +498,20 @@ if(CORE_BUILD)
 
   if(ENABLE_d)
     set(LANG_SUPPORT_FILES ${LANG_SUPPORT_FILES}
-      language_support/cmake:CMakeD_Copyright.txt
-      language_support/cmake:CMakeDCompiler.cmake.in
-      language_support/cmake:CMakeDInformation.cmake
-      language_support/cmake:CMakeDetermineDCompiler.cmake
-      language_support/cmake:CMakeTestDCompiler.cmake
-      language_support/cmake/Platform:Darwin-dmd.cmake
-      language_support/cmake/Platform:Linux-dmd.cmake
-      language_support/cmake/Platform:Linux-gdc.cmake
-      language_support/cmake/Platform:Windows-dmd.cmake
-      language_support/cmake/Platform:Windows-gdc.cmake
-      language_support/cmake/Platform:Windows-gdc.cmake
+      language_support/cmake-d_fork:CMakeDCompiler.cmake.in
+      language_support/cmake-d_fork:CMakeDCompilerABI.d
+      language_support/cmake-d_fork:CMakeDCompilerId.d.in
+      language_support/cmake-d_fork:CMakeDInformation.cmake
+      language_support/cmake-d_fork:CMakeDetermineDCompiler.cmake
+      language_support/cmake-d_fork:CMakePlatformId.di.in
+      language_support/cmake-d_fork:CMakeTestDCompiler.cmake
+      language_support/cmake-d_fork/Platform:Darwin-dmd.cmake
+      language_support/cmake-d_fork/Platform:Darwin-ldc2.cmake
+      language_support/cmake-d_fork/Platform:Linux-dmd.cmake
+      language_support/cmake-d_fork/Platform:Linux-gdc.cmake
+      language_support/cmake-d_fork/Platform:Linux-ldc2.cmake
+      language_support/cmake-d_fork/Platform:Windows-dmd.cmake
+      language_support/cmake-d_fork/Platform:Windows-gdc.cmake
       )
   endif(ENABLE_d)
 
@@ -573,6 +576,7 @@ else(CORE_BUILD)
   # Locations where the PLplot build system first looks for cmake modules.
   set(CMAKE_MODULE_PATH
     "${PROJECT_SOURCE_DIR}/cmake/modules"
+    "${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-d_fork"
     "${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake"
     )
 

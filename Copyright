@@ -254,30 +254,17 @@ cmake/test_ada/cmake/Modules/CMakeTestAdaCompiler.cmake
 were originally distributed by Kitware Inc. and were downloaded at
 various epochs by PLplot developers and then further modified by us.
 
-The CMake-related D language support files
-cmake/modules/language_support/cmake/CMakeD_Copyright.txt
-cmake/modules/language_support/cmake/CMakeDInformation.cmake
-cmake/modules/language_support/cmake/Platform/Linux-dmd.cmake
-cmake/modules/language_support/cmake/Platform/Darwin-dmd.cmake
-cmake/modules/language_support/cmake/Platform/Windows-gdc.cmake
-cmake/modules/language_support/cmake/Platform/Linux-gdc.cmake
-cmake/modules/language_support/cmake/Platform/Windows-dmd.cmake
-cmake/modules/language_support/cmake/CMakeDCompiler.cmake.in
-cmake/modules/language_support/cmake/CMakeTestDCompiler.cmake
-cmake/modules/language_support/cmake/CMakeDetermineDCompiler.cmake
+The D language support files in the subdirectories
 
-were downloaded from Kitware Inc. by CMakeD developers Selman Ulug and
-Tim Burrell <http://www.dsource.org/projects/cmaked>, substantially
-modified by them, and then further downloaded from that site in 2009
-by us and further modified by us.
+cmake/modules/language_support/cmake-d_fork and
+cmake/modules/language_support/cmake-d_fork/Platform
 
-This complete group of CMake-related files sometimes has slightly
-different licensing language depending on download epoch so look at
-each of the above files for the definitive source of licensing
-language.  However, in all cases that language is very similar to the
-modern version of the license for CMake itself which is the
-OSI-approved BSD 3-clause License (see <https://cmake.org/licensing>
-for further details).
+were downloaded from the [cmake-d project](https://github.com/dcarp/cmake-d)
+as of 2019-08-14 and subsequently modified by one of our developers
+(Alan W. Irwin) to satisfy PLplot's build-system needs for the D
+compilers, gdc, ldc, and dmd.  These files are all licensed under the
+MIT license (see cmake/modules/language_support/cmake-d_fork/LICENSE
+for the terms of that license).
 ___________________________________________________________________________
 
 Any file that is explicitly marked as "public domain" is free from any

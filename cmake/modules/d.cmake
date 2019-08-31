@@ -2,7 +2,11 @@
 #
 # D binding configuration
 #
-# Copyright (C) 2008  Werner Smekal
+# Copyright (C) 2002-2019 Alan W. Irwin
+# Copyright (C) 2003 Joao Cardoso
+# Copyright (C) 2003-2005 Rafael Laboissiere
+# Copyright (C) 2006-2013 Andrew Ross
+# Copyright (C) 2009 Werner Smekal
 #
 # This file is part of PLplot.
 #
@@ -56,11 +60,3 @@ if(ENABLE_d)
     set(ENABLE_d OFF CACHE BOOL "Enable D binding" FORCE)
   endif(NOT CMAKE_D_COMPILER_WORKS)
 endif(ENABLE_d)
-
-if(ENABLE_d)
-  # Set this option to OFF by default since the STATIC library is
-  # the only one that seems to work for now on Debian Squeeze and
-  # potentially other Linux systems.
-  option(plplotdmd_SHARED "Treat libplplotdmd as a shared library" OFF)
-endif(ENABLE_d)
-

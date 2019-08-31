@@ -10,17 +10,19 @@ option(ENABLE_workaround_9220 "Enable a workaround for cmake bug 9220" ON)
 
 if(ENABLE_workaround_9220)
   option(ENABLE_compiler_diagnostics "Enable printing out full CMake messages when CMake discovers a compiler does not work" OFF)
+
   function(workaround_9220 language language_works)
     #message("DEBUG: language = ${language}")
     # MAINTENANCE
     # Use same minimum version for all platforms as the Linux platform minimum adopted for
     # the PLplot project.
     set(text
-      "cmake_minimum_required(VERSION 3.7.2 FATAL_ERROR)
+      "cmake_minimum_required(VERSION 3.13.2 FATAL_ERROR)
 project(test NONE)
 # Locations where PLplot cmake build system first looks for cmake modules.
 set(CMAKE_MODULE_PATH
   \"${PROJECT_SOURCE_DIR}/cmake/modules\"
+  \"${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake-d_fork\"
   \"${PROJECT_SOURCE_DIR}/cmake/modules/language_support/cmake\"
   )
 
@@ -55,14 +57,20 @@ enable_language(${language})
     elseif(language STREQUAL "D")
       set(language_special ON)
       set(language_files
-	language_support/cmake/CMakeDCompiler.cmake.in
-	language_support/cmake/CMakeDInformation.cmake
-	language_support/cmake/CMakeDetermineDCompiler.cmake
-	language_support/cmake/CMakeTestDCompiler.cmake
-	language_support/cmake/Platform/Linux-dmd.cmake
-	language_support/cmake/Platform/Linux-gdc.cmake
-	language_support/cmake/Platform/Windows-dmd.cmake
-	language_support/cmake/Platform/Windows-gdc.cmake
+	language_support/cmake-d_fork/CMakeDCompiler.cmake.in
+	language_support/cmake-d_fork/CMakeDCompilerABI.d
+	language_support/cmake-d_fork/CMakeDCompilerId.d.in
+	language_support/cmake-d_fork/CMakeDInformation.cmake
+	language_support/cmake-d_fork/CMakeDetermineDCompiler.cmake
+	language_support/cmake-d_fork/CMakePlatformId.di.in
+	language_support/cmake-d_fork/CMakeTestDCompiler.cmake
+	language_support/cmake-d_fork/Platform/Darwin-dmd.cmake
+	language_support/cmake-d_fork/Platform/Darwin-ldc2.cmake
+	language_support/cmake-d_fork/Platform/Linux-dmd.cmake
+	language_support/cmake-d_fork/Platform/Linux-gdc.cmake
+	language_support/cmake-d_fork/Platform/Linux-ldc2.cmake
+	language_support/cmake-d_fork/Platform/Windows-dmd.cmake
+	language_support/cmake-d_fork/Platform/Windows-gdc.cmake
 	)
     elseif(language STREQUAL "Fortran")
       set(language_special OFF)
