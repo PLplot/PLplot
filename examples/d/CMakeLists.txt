@@ -72,6 +72,22 @@ if(CORE_BUILD)
 
   set(DC "${CMAKE_D_COMPILER} ${CMAKE_D_COMPILER_ARG1} ${CMAKE_D_FLAGS}")
 
+  # Logic to deliver vastly different build and link commands for
+  # the various D compilers.
+  if(${CMAKE_D_COMPILER} MATCHES "gdc")
+    set(DASH_o_FLAG "-o ")
+    # No need to transform pkg-config results in this case
+    set(PC_RESULTS_TRANSFORM)
+  else(${CMAKE_D_COMPILER} MATCHES "gdc")
+    # Tweaks for the dmd and ldc compilers.
+    set(DASH_o_FLAG "-of")
+    string(REGEX REPLACE "-Wl,-rpath -Wl," "-L-rpath=" install_tree_d_RPATHCMD ${install_tree_d_RPATHCMD})
+    # Note all command-line "\" character escapes have to
+    # be escaped in the CMake environment.
+    set(PC_RESULTS_TRANSFORM "| sed -e 's?\\(-[Ll]\\)?-L\\1?g'")
+    set(LIBRARY_PATHNAME_PREFIX "-L")
+  endif(${CMAKE_D_COMPILER} MATCHES "gdc")
+
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Makefile.examples.in
     ${CMAKE_CURRENT_BINARY_DIR}/Makefile.examples

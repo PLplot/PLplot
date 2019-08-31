@@ -40,6 +40,7 @@ CONTENTS
 
 2.1 Bug fixes
 2.2 Update PLplot to be consistent with modern free software
+2.3 Update our D language support so that all of gdc, ldc, and dmd are working
 
 3. PLplot testing
 ________________________________________________________________
@@ -138,6 +139,85 @@ Notes for this table:
   for that particular upstream version.  The above good results for lua
   5.3.5 were generated with a locally built version of upstream 5.3.5
   that contains the essential fix for 5.3.3.
+
+2.3 Update our D language support so that all of gdc, ldc, and dmd are working
+
+CMake currently depends on external projects to supply language
+support for the D language.  And an extra complication for D is there
+are three popular D compilers which are gdc (unique front end, gcc
+back end), ldc (dmd front end, LLVM back end), and dmd (the official D
+compiler that de facto sets the standards for the D language).
+
+Previously the PLplot D language support was based on an ancient
+version (which we have adapted over the years) of the cmaked project
+which we designate for this discussion as cmaked_fork.  Although
+cmaked_fork has worked well on Linux for the gdc compiler, it was
+completely broken on that platform for dmd (which effectively excluded
+us from enforcing D language standards for our D source code) and
+provided no support for ldc at all.
+
+Over the years cmaked has been the basis of a number of projects that
+provide D language support for CMake.  One of those that is still
+being actively developed is [the cmake-d
+project](https://github.com/dcarp/cmake-d), and that project is
+designed to support all three D compilers.  Therefore, we have
+replaced cmaked_fork with what we call cmake-d_fork which is vanilla
+modern cmake-d suitably modified so that it works perfectly on Linux
+for all three D compilers and for both the test_d and plplot projects.
+
+The newly implemented test_d project (located at cmake/test_d) is
+designed to be simple self-contained cmake-d_fork test project which
+uses the CMake D language support provided by cmake-d_fork to attempt
+to build a C library which contains one function that delivers the
+classic "hello, world" string, a D wrapper for that library, and a D
+application that links to that wrapper and outputs the string.  On
+Linux, test_d now provides perfect results for its comprehensive test
+for all three D compilers.
+
+The plplot project now also has perfect results from its own
+comprehensive test for all three D compilers on Linux.  Those perfect
+results required a number of changes to PLplot including the
+following:
+
+* Moved from cmaked_fork to cmake-d_fork.
+
+* Modified our D source code to be consistent with the de facto D
+  standard provided by dmd.  (I thank Takeshi Enomoto who donated to
+  PLplot [a preliminary version of those required D language source
+  code changes](https://sourceforge.net/p/plplot/patches/35/).
+
+* Modified the traditional non-CMake build of the installed D examples
+  so that build worked correctly for all three D compilers.
+
+The gdc compiler should work well for all modern CMake versions, but a
+major caveat for the ldc and dmd compilers is cmake-d_fork only works
+properly for those two compilers for CMake version
+3.15.20190829-g3ec986c because the D language support for those
+compilers depends on a CMake language support infrastructure fix that
+only landed on the CMake master branch as commit 3ec986c on
+2019-08-29.  It will obviously take a while until that commit
+propagates to binary versions of CMake in major free software
+distributions.  So therefore until that propagation completes it will
+be necessary for those wishing to use either ldc or dmd that they must
+build a CMake version of their own (e.g., from the tip of the git
+master branch for CMake) that contains commit 3ec986c before building
+PLplot with that version of CMake.
+
+Another major caveat is this new D language support has only been
+tested on one system so far (my own Linux [Debian Buster=Stable]
+system and with my own build of CMake version 3.15.20190829-g3ec986c).
+So it is likely it will work fine (with that version or later of CMake
+for most other Linux systems, but testing on other Linux systems would
+be good to verify that.  Furthermore, additional modifications will
+need to be made to the files in cmake/test_d/cmake/Modules/Platform/
+(for the test_d project case) or the equivalent files in
+cmake/modules/language_support/cmake-d_fork/Platform (in the plplot
+project case) in order for the new D language support to work on
+platforms other than Linux.  For those interested in helping to fix D
+language support on non-Linux platforms, I suggest you start with
+following the comprehensive test instructions in cmake/test_d/README,
+and as stated there I (AWI) would be willing to help analyze those
+results to figure out what Platform file changes are required.
 
 ________________________________________________________________
 
