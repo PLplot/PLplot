@@ -6,8 +6,7 @@
 #ifdef USINGDLL
   #if defined ( _WIN32 )
 // Visual C/C++, Borland, MinGW and Watcom
-    #if defined ( __VISUALC__ ) || defined ( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __GNUC__ ) || defined ( __WA
-TCOMC__ )
+    #if defined ( __VISUALC__ ) || defined ( _MSC_VER ) || defined ( __BORLANDC__ ) || defined ( __GNUC__ ) || defined ( __WATCOMC__ )
       #define HWDLLEXPORT    __declspec( dllexport )
       #define HWDLLIMPORT    __declspec( dllimport )
     #else
