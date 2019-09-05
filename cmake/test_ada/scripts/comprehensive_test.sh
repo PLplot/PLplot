@@ -500,16 +500,21 @@ else
     HAS_PRINTENV=true
 fi
 
-if [ "$HAS_PRINTENV" = "false" ] ; then
-    echo_tee "WARNING: printenv not on PATH so not collecting environment variables in $ENVIRONMENT_LOG"
-    rm -f "$ENVIRONMENT_LOG"
-else
 # Collect selected important environment variable results prior to testing.
-    echo "PATH=$PATH" >| "$ENVIRONMENT_LOG"
-    echo "CC=$CC" >> "$ENVIRONMENT_LOG"
-    echo "CXX=$CXX" >> "$ENVIRONMENT_LOG"
-    echo "FC=$FC" >> "$ENVIRONMENT_LOG"
-    printenv |grep -E 'CMAKE_.*PATH|FLAGS|PKG_CONFIG_PATH|LD_LIBRARY_PATH|PLPLOT' >> "$ENVIRONMENT_LOG"
+rm -f "$ENVIRONMENT_LOG"
+if [ "$HAS_PRINTENV" = "false" ] ; then
+    echo_tee "WARNING: printenv not on PATH so cannot collect certain important environment variables in $ENVIRONMENT_LOG"
+else
+    echo "# Look for the following subset of environment variables:
+    # Java-related,
+    # non-Java compilers,
+    # compiler flags,
+    # PATH-related variables,
+    # current directory, and
+    # PLplot-related." > "$ENVIRONMENT_LOG"
+    for ENVVAR in "$(printenv |grep -E '^JAVA.*=|^ADA=|^CC=|^CXX=|^DC=|^FC=|^.*FLAGS=|^PATH=|^CMAKE_.*PATH=|^PKG_CONFIG_PATH=|^LD_LIBRARY_PATH=|^PWD=|PLPLOT' | sort -u)"; do
+	echo "${ENVVAR}" | sed -e 's?=?="?' -e 's?\(.*\)$?\1"?' >> "$ENVIRONMENT_LOG"
+    done
 fi
 
 test_types=
