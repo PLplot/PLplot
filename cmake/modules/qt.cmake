@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009-2018 Alan W. Irwin
+# Copyright (C) 2009-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -32,7 +32,7 @@
 # PLD_svgqt		  - ON means the svgqt device is enabled.
 # PLD_extqt		  - ON means the extqt device is enabled.
 # PLD_memqt               - ON means the memqt device is enabled.
-# PLPLOT_USE_Qt5          - ON means the Qt5 libraries are used rather than the default Qt4.
+# PLPLOT_USE_Qt5          - ON means the Qt5 (rather than Qt4) libraries are used.
 # pc_qt_COMPILE_FLAGS	  - Space-separated Qt-related COMPILE_FLAGS used strictly
 #                           just for the pkg-config configuration case.
 # pc_qt_LIBRARIES_LIST    - List of Qt-related libraries used for just
@@ -81,11 +81,9 @@ else(DEFAULT_NO_BINDINGS)
 endif(DEFAULT_NO_BINDINGS)
 
 if(ENABLE_qt)
-  # Our experience is Qt4 is better than Qt5 in terms of character
-  # alignment (e.g., -dev svgqt results) and memory management.  So
-  # by default we search for Qt4 first then Qt5, but the user
-  # has the option to force Qt5 if they so desire.
-  option(PLPLOT_USE_QT5 "Use Qt5" OFF)
+  # Our experience now (since the Qt5 font configuration fix) is Qt5 is just as good as Qt4.
+  # So use Qt5 by default.
+  option(PLPLOT_USE_QT5 "Use Qt5" ON)
 
   if(NOT PLPLOT_USE_QT5)
     # MAINTENANCE 2016-11.
@@ -140,10 +138,12 @@ if(ENABLE_qt)
     # <http://doc.qt.io/qt-5/cmake-manual.html>.
 
     # Find needed components of Qt5.  Minimum value of the version is
-    # 5.3.1 because there were significant text alignment bugs in prior versions.
-    find_package(Qt5 5.3.1 COMPONENTS Svg Gui PrintSupport)
+    # 5.7.1 which was available in Debian Stretch (= oldstable now)
+    # so virtually all free software distributions should have at least
+    # this version of Qt.
+    find_package(Qt5 5.7.1 COMPONENTS Svg Gui PrintSupport)
     if(Qt5_FOUND)
-      message(STATUS "Attempting to use Qt5 so have set PLD_epsqt to OFF since Qt5 does not support PostScript")
+      message(STATUS "Setting PLD_epsqt to OFF since Qt5 does not support PostScript")
       set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)
 
       # Calculate pc_qt_COMPILE_FLAGS and pc_qt_LIBRARIES_LIST

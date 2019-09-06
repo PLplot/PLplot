@@ -35,6 +35,7 @@ CONTENTS
 1. OFFICIAL NOTICES FOR USERS
 
 1.1 CMake version compatibility
+1.2 Qt5 now the default choice
 
 2. Improvements relative to the previous release
 
@@ -84,6 +85,30 @@ PLplot release (3.14.4), our build system will likely continue to work
 well because CMake has an excellent reputation for preserving
 backwards compatibility.
 
+1.2 Qt5 now the default choice
+
+Since our fix (in 5.15.0) of the font configuration for the Qt5
+case our Qt5 results have been just as good as our Qt4 results.
+And free software distribution support for Qt4 is waning in general.  Therefore, for this
+release we have made Qt5 the default choice for our Qt library (as opposed to
+past releases where Qt4 was the default choice).
+
+What this means in practice is the following:
+
+* Only if the user specifies -DPLPLOT_USE_QT5=OFF
+
+Our build system will use Qt4 if available, and if Qt4 is not available,
+it will try Qt5 instead (by forcing PLPLOT_USE_QT5 to ON and proceeding
+as below).
+
+* The default case (or if the user redundantly specifies -DPLPLOT_USE_QT5=ON):
+
+Our build system will use Qt5 if available,
+and if Qt5 is not available the Qt components of PLplot are
+dropped with a suitable warning message.
+
+N.B. we currently plan to deprecate Qt4 in our next release (5.17.0) and
+drop it altogether in the release after that (5.18.0).
 ________________________________________________________________
 
 2. Improvements relative to the previous release
