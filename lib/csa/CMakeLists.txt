@@ -28,10 +28,6 @@ if(WITH_CSA)
     ${CMAKE_CURRENT_BINARY_DIR}/csadll.h
     )
 
-  include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
   set(csirocsa_LIB_SRCS
     csa.c
     )
@@ -47,6 +43,12 @@ if(WITH_CSA)
   endif(CMAKE_C_COMPILER MATCHES ".*gcc.*")
 
   configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}" "")
+  target_include_directories(${WRITEABLE_TARGET}csirocsa
+    PUBLIC
+    $<INSTALL_INTERFACE:${INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    )
 
   set(csa_DOCFILES
     README
