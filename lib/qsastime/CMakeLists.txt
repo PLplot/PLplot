@@ -34,11 +34,6 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/qsastimedll.h
   )
 
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
 # Routine for generating a header containing data to be used by the
 # TAI-UTC transformation code.
 
@@ -92,6 +87,14 @@ set(qsastime_LIB_SRCS
   )
 
 configure_library_build(qsastime "" "${qsastime_LIB_SRCS}" "${MATH_LIB}" "")
+
+target_include_directories(${WRITEABLE_TARGET}qsastime
+  PUBLIC
+  $<INSTALL_INTERFACE:${INCLUDE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  )
+
 add_dependencies(${WRITEABLE_TARGET}qsastime tai-utc.h_built deltaT.h_built)
 
 set(qsastime_LIB_HDRS
@@ -121,6 +124,11 @@ if(TEST_QSASTIME)
   # to make the private library API visible.
 
   add_executable(qsastime_test qsastime_test.c qsastime_extra.c qsastime.c)
+  target_include_directories(qsastime_test
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
   add_dependencies(qsastime_test tai-utc.h_built)
   if(MATH_LIB)
     target_link_libraries(qsastime_test ${MATH_LIB})
@@ -128,6 +136,11 @@ if(TEST_QSASTIME)
 
   # Routine for testing bhunt_search function in qsastime.c.
   add_executable(bhunt_search_test bhunt_search_test.c qsastime.c)
+  target_include_directories(bhunt_search_test
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
   add_dependencies(bhunt_search_test tai-utc.h_built)
   if(MATH_LIB)
     target_link_libraries(bhunt_search_test ${MATH_LIB})
@@ -138,6 +151,10 @@ if(TEST_QSASTIME)
   # Add in dsplint.c rather than use the library because don't want
   # to make the private library API visible.
   add_executable(deltaT_test deltaT_test.c dsplint.c)
+  target_include_directories(deltaT_test
+    PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
   add_dependencies(deltaT_test deltaT.h_built)
 
   # Routine for testing just the library functions against their library
@@ -154,6 +171,11 @@ if(TEST_QSASTIME)
 
   if(BUILD_QSASTIME_TESTLIB)
     add_executable(qsastime_testlib qsastime_testlib.c qsastime.c)
+    target_include_directories(qsastime_testlib
+      PRIVATE
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      )
     add_dependencies(qsastime_testlib tai-utc.h_built)
     if(MATH_LIB)
       target_link_libraries(qsastime_testlib ${MATH_LIB})
