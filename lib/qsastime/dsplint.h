@@ -20,6 +20,6 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-int dsplint( double *xa, double *ya, double *y2a, int n, double x, double *y );
+int dsplint( const double *xa, const double *ya, const double *y2a, int n, double x, double *y );
 
 #endif  // _DSPLINT_H_

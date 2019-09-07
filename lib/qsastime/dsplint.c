@@ -28,9 +28,7 @@
 # define MAX( a, b )    ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
 # define MIN( a, b )    ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
 
-//int dsplint(double *xa, double *ya, double *y2a,
-//          int n, double x, double *y, double *dy, double *d2y)
-int dsplint( double *xa, double *ya, double *y2a,
+int dsplint( const double *xa, const double *ya, const double *y2a,
              int n, double x, double *y )
 {
     // Initialized data
