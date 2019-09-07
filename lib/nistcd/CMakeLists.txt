@@ -30,11 +30,6 @@ if(PLD_cgm)
     ${CMAKE_CURRENT_BINARY_DIR}/cddll.h
     )
 
-  include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
   set( cd_LIB_SRCS cd.c )
 
   # Bypass "#include <malloc.h>" in all code where it appears since
@@ -50,6 +45,12 @@ if(PLD_cgm)
     )
 
   configure_library_build(nistcd "" "${cd_LIB_SRCS}" "" "")
+  target_include_directories(${WRITEABLE_TARGET}nistcd
+    PUBLIC
+    $<INSTALL_INTERFACE:${INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    )
 
   option(TEST_NISTCD "Test libnistcd" ON)
   if(TEST_NISTCD AND NOT CMAKE_CROSSCOMPILING)
