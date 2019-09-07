@@ -28,10 +28,6 @@ if(PL_HAVE_QHULL)
     ${CMAKE_CURRENT_BINARY_DIR}/nndll.h
     )
 
-  include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
-
   set(csironn_LIB_SRCS
     delaunay.c
     hash.c
@@ -61,6 +57,12 @@ if(PL_HAVE_QHULL)
 
   set(LIB_INSTALL_RPATH ${QHULL_RPATH})
   configure_library_build(csironn "" "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}" "${QHULL_RPATH}")
+  target_include_directories(${WRITEABLE_TARGET}csironn
+    PUBLIC
+    $<INSTALL_INTERFACE:${INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    )
 
   set(nn_DOCFILES
     README
