@@ -1,5 +1,5 @@
 # examples/c/CMakeLists.txt
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -96,17 +96,6 @@ if(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
-  if(CORE_BUILD)
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/include
-      ${CMAKE_BINARY_DIR}/include
-      ${CMAKE_SOURCE_DIR}/lib/qsastime
-      ${CMAKE_BINARY_DIR}/lib/qsastime
-      )
-  else(CORE_BUILD)
-    include_directories(${INCLUDE_DIR})
-  endif(CORE_BUILD)
-
   set_property(GLOBAL PROPERTY TARGETS_examples_c)
   foreach(STRING_INDEX ${c_STRING_INDICES})
     add_executable(x${STRING_INDEX}c x${STRING_INDEX}c.c)

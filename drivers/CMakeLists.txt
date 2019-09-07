@@ -22,16 +22,6 @@ install(
   )
 
 if(ENABLE_DYNDRIVERS)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/lib/qsastime
-    ${CMAKE_SOURCE_DIR}/lib/nistcd
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_BINARY_DIR}/lib/qsastime
-    ${CMAKE_BINARY_DIR}/lib/nistcd
-    )
-
   option(TEST_DYNDRIVERS "Test dynamic drivers" ON)
   if(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
     file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/test_dyndrivers_dir)
@@ -136,9 +126,9 @@ if(ENABLE_DYNDRIVERS)
 	)
       configure_library_build(${SOURCE_ROOT_NAME} MODULE "${${SOURCE_ROOT_NAME}_SOURCE}" "${wx_tll_list}" "${${SOURCE_ROOT_NAME}_RPATH}" ${DRV_DIR})
       if(PLD_wxwidgets OR PLD_wxpng)
-	set_property(TARGET ${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
-	  APPEND PROPERTY
-	  INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
+	target_include_directories(${WRITEABLE_TARGET}${SOURCE_ROOT_NAME}
+	  PRIVATE
+	  ${CMAKE_BINARY_DIR}/bindings/wxwidgets
 	  )
       endif(PLD_wxwidgets OR PLD_wxpng)
 

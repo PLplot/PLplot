@@ -163,13 +163,8 @@ if(NOT ENABLE_DYNDRIVERS)
   endforeach(SOURCE_ROOT_NAME ${DRIVERS_LIST})
 endif(NOT ENABLE_DYNDRIVERS)
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/lib/qsastime
-  ${CMAKE_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/include
-  ${CMAKE_BINARY_DIR}/lib/qsastime
-  )
+# List of private header directories used by the plplot library alone.
+set(private_includes_LIST)
 
 # The plplot library depends on the "lib subdirectory" libraries such
 # as csironn, csirocsa, qsastime, and (possibly) nistcd.
@@ -249,9 +244,6 @@ endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 if(WITH_CSA)
   list(APPEND libplplot_LINK_LIBRARIES PLPLOT::csirocsa)
   list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csirocsa)
-  include_directories(
-    ${CMAKE_BINARY_DIR}/lib/csa
-    )
 endif(WITH_CSA)
 
 if(PL_HAVE_QHULL)
@@ -264,42 +256,19 @@ if(PL_HAVE_QHULL)
     list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -lqhull)
   endif(QHULL_RPATH)
 
-  # Needed by plgridd.c.
-  include_directories(
-    ${CMAKE_BINARY_DIR}/lib/nn
-    )
 endif(PL_HAVE_QHULL)
 
 if(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
   list(APPEND libplplot_LINK_LIBRARIES PLPLOT::nistcd)
   list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}nistcd)
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/lib/nistcd
-    ${CMAKE_BINARY_DIR}/lib/nistcd
-    )
 endif(NOT ENABLE_DYNDRIVERS AND PLD_cgm)
 
 list(APPEND libplplot_LINK_LIBRARIES PLPLOT::qsastime)
 list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}qsastime)
 
-if(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
-  list(APPEND libplplot_LINK_LIBRARIES ${RT_LIB})
-  list(APPEND pc_libplplot_LINK_FLAGS ${RT_LIB})
-endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
-
-#message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
-
-if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  list(APPEND libplplot_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-
-configure_library_build(plplot "" "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}" "${LIB_INSTALL_RPATH}")
-add_dependencies(${WRITEABLE_TARGET}plplot plhershey-unicode.h_built)
-
 if(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
-  set_property(TARGET ${WRITEABLE_TARGET}plplot
-    APPEND PROPERTY
-    INCLUDE_DIRECTORIES ${CMAKE_BINARY_DIR}/bindings/wxwidgets
+  list(APPEND private_includes_LIST
+    ${CMAKE_BINARY_DIR}/bindings/wxwidgets
     )
 endif(NOT ENABLE_DYNDRIVERS AND (PLD_wxwidgets OR PLD_wxpng))
 
@@ -313,16 +282,45 @@ if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
     AUTOMOC ON
     AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
     )
-    # This is not required for g++ and many other C++ compilers, but
-    # still this is best practice for AUTOMOC just in case there is a
-    # compiler out there (which is allowed by the lax C/C++ standards)
-    # that does not look in the source directory for the quoted form
-    # of #included headers in the automoc-generated source code
-    # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
-    # specifically added by automoc to the list of source files for
-    # the target.
-    target_include_directories(${WRITEABLE_TARGET}plplot PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  # This is not required for g++ and many other C++ compilers, but
+  # still this is best practice for AUTOMOC just in case there is a
+  # compiler out there (which is allowed by the lax C/C++ standards)
+  # that does not look in the source directory for the quoted form
+  # of #included headers in the automoc-generated source code
+  # ${CMAKE_CURRENT_BINARY_DIR}/<targetname>_automoc.cpp that is
+  # specifically added by automoc to the list of source files for
+  # the target.
+  list(APPEND private_includes_LIST
+    ${CMAKE_CURRENT_BINARY_DIR}
+    )
 endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE)
+
+if(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
+  list(APPEND libplplot_LINK_LIBRARIES ${RT_LIB})
+  list(APPEND pc_libplplot_LINK_FLAGS ${RT_LIB})
+endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
+
+#message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
+
+if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+  list(APPEND libplplot_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
+endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+
+configure_library_build(plplot "" "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}" "${LIB_INSTALL_RPATH}")
+
+target_include_directories(${WRITEABLE_TARGET}plplot
+  PUBLIC
+  $<INSTALL_INTERFACE:${INCLUDE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/qsastime>
+  $<BUILD_INTERFACE:${CMAKE_BINARY_DIR}/lib/qsastime>
+  PRIVATE
+  ${private_includes_LIST}
+  )
+
+add_dependencies(${WRITEABLE_TARGET}plplot plhershey-unicode.h_built)
 
 message("pc_libplplot_LINK_FLAGS = ${pc_libplplot_LINK_FLAGS}")
 
