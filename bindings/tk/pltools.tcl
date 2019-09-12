@@ -301,7 +301,7 @@ proc getSaveFile {devkey} {
     switch "$devkey" \
 	"ps"		"set filter *.ps" \
 	"psc"		"set filter *.ps" \
-	"plmeta"	"set filter *.plm" \
+	"plm"           "set filter *.plm" \
 	"xfig"		"set filter *.fig"
 
     return [fileSelect $filter]

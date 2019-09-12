@@ -129,7 +129,7 @@ static int     do_file_loop = 1; // loop over multiple files if set
 static PDFstrm *pdfs;            // PDF stream handle
 static FILE    *MetaFile;        // Actual metafile handle, for seeks etc
 
-static char    BaseName[80] = "", FileName[90] = "";
+static char    BaseName[PLPLOT_MAX_PATH] = "", FileName[PLPLOT_MAX_PATH] = "";
 static PLINT   is_family, member = 1;
 static char    mf_magic[40], mf_version[40];
 
@@ -363,7 +363,7 @@ ProcessFile( int argc, char **argv )
 {
     int    i;
     U_CHAR c = 0;
-    char   devname[80];
+    char   devname[PLPLOT_MAX_PATH];
 
     dbug_enter( "ProcessFile" );
 
@@ -500,7 +500,7 @@ ProcessFile( int argc, char **argv )
 static int
 OpenMetaFile( char **argv )
 {
-    char name[70];
+    char name[PLPLOT_MAX_PATH];
 
     dbug_enter( "OpenMetaFile" );
 
@@ -1193,7 +1193,7 @@ static void
 plresc_ancol( void )
 {
     U_CHAR icolor;
-    char   name[80];
+    char   name[PLPLOT_MAX_PATH];
 
     dbug_enter( "plresc_ancol" );
 

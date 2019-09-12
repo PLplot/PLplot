@@ -2,7 +2,12 @@
 #
 # Start driver initializations
 #
-# Copyright (C) 2006-2018  Alan W. Irwin
+# Copyright (C) 2006-2008 Werner Smekal
+# Copyright (C) 2006-2012 Hazen Babcock
+# Copyright (C) 2006-2015 Andrew Ross
+# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2015 Aaron Hexamer
+# Copyright (C) 2015 Jim Dishaw
 #
 # This file is part of PLplot.
 #
@@ -165,11 +170,11 @@ set(DRIVERS_DEVICE_LIST
   "ntk:ntk:ON:I:OFF"
   "null:null:ON:N:OFF"
   "pdf:pdf:ON:F:OFF"
-  # (2007-09-01) As discussed on list, don't enable plmeta until we sort
+  # (2007-09-01) As discussed on list, don't enable the plm device until we sort
   # out the known issues (e.g., strings, aspect ratio, and TrueType fonts).
   # This is going to take time/energy for some volunteer who has not volunteered
   # yet.... :-)
-  "plmeta:plmeta:OFF:F:OFF"
+  "plm:plmeta:OFF:F:OFF"
   "ps:ps:ON:F:OFF"
   "psc:ps:ON:F:OFF"
   # No longer segfaults, but still default OFF because cleaner/better ways
@@ -236,8 +241,8 @@ foreach(DRIVERS_DEVICE ${DRIVERS_DEVICE_LIST})
   endif(PLD_${DEVICE} AND USED_DRIVERS_DEVICE AND NOT ${DEFAULT})
 endforeach(DRIVERS_DEVICE)
 
-if(PLD_plmeta)
+if(PLD_plm)
   set(ENABLE_plrender ON)
-else(PLD_plmeta)
+else(PLD_plm)
   set(ENABLE_plrender OFF)
-endif(PLD_plmeta)
+endif(PLD_plm)

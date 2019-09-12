@@ -807,6 +807,15 @@ if(BUILD_TEST)
 	    list(APPEND compare_file_depends_${language} ${targets_examples_${language}})
 	  endif(targets_examples_${language})
 	endif(files_examples_${language})
+
+	if(language STREQUAL "plrender")
+	  # Extra target dependencies for this case
+	  list(APPEND compare_file_depends_${language} PLPLOT::plrender)
+	  if(ENABLE_DYNDRIVERS)
+	    list(APPEND compare_file_depends_${language} PLPLOT::plmeta)
+	  endif(ENABLE_DYNDRIVERS)
+
+	endif(language STREQUAL "plrender")
 	#message(STATUS "DEBUG: compare_file_depends_${language} = ${compare_file_depends_${language}}")
 
 	if(language STREQUAL "java")

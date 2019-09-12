@@ -8,9 +8,9 @@ if(PLD_pstex)
   set(core_manpages ${core_manpages} pstex2eps.1)
 endif(PLD_pstex)
 
-if(PLD_plmeta)
+if(PLD_plm)
   set(core_manpages ${core_manpages} plrender.1 plm2gif.1 plpr.1)
-endif(PLD_plmeta)
+endif(PLD_plm)
 
 set(tcl_manpages plserver.1 pltcl.1)
 

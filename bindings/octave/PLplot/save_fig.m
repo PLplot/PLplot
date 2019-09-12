@@ -34,7 +34,7 @@
 ##
 ##	ps         PostScript File (monochrome)
 ##	psc        PostScript File (color)
-##	plmeta     PLPLOT Native Meta-File (can be displayed with 'plrender')
+##	plm        PLPLOT Native Meta-File (can be displayed with 'plrender')
 ##	xfig       Xfig file
 ##	pbm        PDB (PPM) Driver
 ##	lj_hpgl    HP Laserjet III, HPGL emulation mode
@@ -69,7 +69,7 @@ function save_fig(file, device, rev)
 
   ## FIXME -- this should be get from plgDevs()
   vdev = [ "xwin"; "tk"; "xterm"; "tekt"; "tek4107t"; "mskermit"; "versaterm";
-	  "vlt"; "conex"; "dg300"; "plmeta"; "tekf"; "tek4107f"; "ps"; "psc";
+	  "vlt"; "conex"; "dg300"; "plm"; "tekf"; "tek4107f"; "ps"; "psc";
 	  "xfig"; "ljiip"; "ljii"; "hp7470"; "hp7580"; "lj_hpgl"; \
 	  "imp"; "pbm"; "png"; "jpeg"; "pstex"];
 

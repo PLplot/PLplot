@@ -62,11 +62,11 @@ nothing to do with location so is the same for all contexts.
 
 * plrender:
 This is a special case that is virtually identical to the C case
-(including ignoring SRC_EXAMPLES_PREFIX) except that -dev plmeta is
+(including ignoring SRC_EXAMPLES_PREFIX) except that -dev plm is
 used to provide intermediate results and plrender used to provide
 final results to compare with the C results.  N.B. I am not sure
-whether this works anymore since -dev plmeta and plrender are no
-longer enabled by default (because of -dev plmeta and plrender UTF-8
+whether this works anymore since -dev plm and plrender are no
+longer enabled by default (because of -dev plm and plrender UTF-8
 and other issues) so may have fallen into disrepair.
 
 * Tcl:

@@ -862,7 +862,7 @@ proc plw::SaveFile {devkey} {
     switch -- "$devkey" \
       "ps"	"set filter .ps" \
       "psc"	"set filter .ps" \
-      "plmeta"	"set filter .plm" \
+      "plm"	"set filter .plm" \
       "pam"	"set filter .ppm" \
       "xfig"	"set filter .fig"
 

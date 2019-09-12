@@ -159,7 +159,7 @@ These devices depend on the Qt4 libraries and generally give beautiful results w
 
 **PLD_pdf:BOOL**=ON
 
-**PLD_plmeta:BOOL**=OFF
+**PLD_plm:BOOL**=OFF
 
 **PLD_ps:BOOL**=ON
 

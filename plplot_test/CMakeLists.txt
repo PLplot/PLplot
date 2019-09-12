@@ -286,7 +286,7 @@ if(SH_EXECUTABLE)
       list(APPEND SCRIPTS test_d.sh)
     endif(ENABLE_d)
 
-    if(PLD_plmeta)
+    if(PLD_plm)
       set(plrender_LOCATION $<TARGET_FILE:PLPLOT::plrender>)
       configure_file_generate(
 	test_plrender.sh.in
@@ -309,7 +309,7 @@ if(SH_EXECUTABLE)
 	PERMISSIONS ${PERM_SCRIPTS}
 	RENAME test_plrender.sh
 	)
-    endif(PLD_plmeta)
+    endif(PLD_plm)
 
     if(TEST_DIFF)
       configure_file(
@@ -454,13 +454,13 @@ if(SH_EXECUTABLE)
       list(APPEND examples_compare_DEPENDS examples_d)
     endif(ENABLE_d)
 
-    if(PLD_plmeta)
+    if(PLD_plm)
       add_test(NAME examples_plrender
         WORKING_DIRECTORY ${TEST_SCRIPT_DIRECTORY}
 	COMMAND ${SH_EXECUTABLE} -c "${TEST_ENVIRONMENT} ${TEST_SCRIPT_DEVICE} --front-end=plrender"
 	)
       list(APPEND examples_compare_DEPENDS examples_plrender)
-    endif(PLD_plmeta)
+    endif(PLD_plm)
 
   endif(PLD_TEST_DEVICE)
 

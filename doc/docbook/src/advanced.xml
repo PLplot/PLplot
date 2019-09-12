@@ -199,7 +199,7 @@ dependent.  Please see the PLplot reference document for more detail.
 	    <row><entry>JPEG (GD)</entry><entry>jpeg</entry><entry>gd.c</entry><entry>No</entry></row>
 	    <row><entry>GIF (GD)</entry><entry>gif</entry><entry>gd.c</entry><entry>No</entry></row>
 	    <row><entry>PDF (Haru)</entry><entry>pdf</entry><entry>pdf.c</entry><entry>Yes</entry></row>
-	    <row><entry>PLplot Native Meta-File</entry><entry>plmeta</entry><entry>plmeta.c</entry><entry>No</entry></row>
+	    <row><entry>PLplot Native Meta-File</entry><entry>plm</entry><entry>plmeta.c</entry><entry>No</entry></row>
 	    <row><entry>PostScript (monochrome)</entry><entry>ps</entry><entry>ps.c</entry><entry>Yes</entry></row>
 	    <row><entry>PostScript (color)</entry><entry>psc</entry><entry>ps.c</entry><entry>Yes</entry></row>
 	    <row><entry>PostScript (monochrome), (LASi)</entry><entry>psttf</entry><entry>psttf.cc</entry><entry>Yes</entry></row>

@@ -118,7 +118,7 @@ main( int argc, char *argv[] )
 
     // Start fresh and use the plmeta driver
     plsfnam( "test_plbuf_0.plm" );
-    plstart( "plmeta", 2, 2 );
+    plstart( "plm", 2, 2 );
 
     // Generate the same plots as before
 

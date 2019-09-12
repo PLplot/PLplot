@@ -28,9 +28,9 @@ include_directories(
 # the plplotwxwidgets and plplotcxx libraries.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
 
-if(PLD_plmeta)
+if(PLD_plm)
   configure_executable_build(plrender "plrender.c" "PLPLOT::plplot" "${LIB_INSTALL_RPATH}" ${BIN_DIR})
-endif(PLD_plmeta)
+endif(PLD_plm)
 
 configure_executable_build(pltek "pltek.c" "PLPLOT::plplot" "${LIB_INSTALL_RPATH}" ${BIN_DIR})
 

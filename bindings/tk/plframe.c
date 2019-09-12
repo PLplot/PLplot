@@ -2855,9 +2855,9 @@ Print( Tcl_Interp *interp, register PlFrame *plFramePtr,
 
 // Initialize stream
 
-    plsdev( "plmeta" );
+    plsdev( "plm" );
     plsfile( sfile );
-// FIXME: plmeta/plrender need to honor these, needed to preserve the aspect ratio
+// FIXME: plm/plrender need to honor these, needed to preserve the aspect ratio
     plspage( 0., 0., plFramePtr->width, plFramePtr->height, 0, 0 );
     plcpstrm( plFramePtr->ipls, 0 );
     pladv( 0 );

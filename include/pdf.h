@@ -96,7 +96,7 @@ int pdf_rdx( U_CHAR * x, long nitems, PDFstrm * pdfs );
 
 PLDLLIMPEXP int pdf_rd_header( PDFstrm * pdfs, char *header );
 PLDLLIMPEXP int pdf_wr_header( PDFstrm * pdfs, const char *header );
-int pdf_wr_string( PDFstrm * pdfs, const char *string );
+PLDLLIMPEXP int pdf_wr_string( PDFstrm * pdfs, const char *string );
 int pdf_rd_string( PDFstrm * pdfs, char *string, int nmax );
 PLDLLIMPEXP int pdf_wr_1byte( PDFstrm * pdfs, U_CHAR s );
 PLDLLIMPEXP int pdf_rd_1byte( PDFstrm * pdfs, U_CHAR * ps );

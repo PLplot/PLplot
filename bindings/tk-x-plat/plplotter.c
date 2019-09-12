@@ -2672,7 +2672,7 @@ Print( Tcl_Interp *interp, register PlPlotter *plPlotterPtr,
 
 // Initialize stream
 
-    plsdev( "plmeta" );
+    plsdev( "plm" );
     plsfile( sfile );
     plcpstrm( plPlotterPtr->ipls, 0 );
     pladv( 0 );

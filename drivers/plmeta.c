@@ -1,5 +1,13 @@
-//  Copyright (C) 1991, 1992, 1993, 1994, 1995  Geoffrey Furnish
-//  Copyright (C) 1991, 1992, 1993, 1994, 1995  Maurice LeBrun
+// Copyright (C) 1992-2001 Geoffrey Furnish
+// Copyright (C) 1992-2005 Maurice LeBrun
+// Copyright (C) 2000-2019 Alan W. Irwin
+// Copyright (C) 2001 Joao Cardoso
+// Copyright (C) 2003 Rafael Laboissiere
+// Copyright (C) 2007-2011 Andrew Ross
+// Copyright (C) 2008 Werner Smekal
+// Copyright (C) 2010 Hezekiah M. Carty
+// Copyright (C) 2015 Phil Rosenberg
+// Copyright (C) 2015 jdishaw
 //
 // PLplot is free software; you can redistribute it and/or modify
 // it under the terms of the GNU Library General Public License as published
@@ -24,7 +32,7 @@
 
 //#define DEBUG
 
-#ifdef PLD_plmeta
+#ifdef PLD_plm
 
 #define NEED_PLDEBUG
 #include "plplotP.h"
@@ -91,7 +99,7 @@ void plD_dispatch_init_plm( PLDispatchTable *pdt )
 {
 #ifndef ENABLE_DYNDRIVERS
     pdt->pl_MenuStr = "PLplot Native Meta-File";
-    pdt->pl_DevName = "plmeta";
+    pdt->pl_DevName = "plm";
 #endif
     pdt->pl_type     = plDevType_FileOriented;
     pdt->pl_seq      = 26;
@@ -132,7 +140,7 @@ plD_init_plm( PLStream *pls )
     {
         // NOTE:  This breaks compatibility with the 2005 version of
         // the plot metafile format
-        // Unicode support is not needed because the plmeta driver
+        // Unicode support is not needed because the plmeta device driver
         // stores the unprocessed string data that was passed to PLplot.
         // However, we turn it on to force unicode representation of the
         // plot symbols in plsym.c rather than vectorization.
@@ -470,7 +478,7 @@ plD_esc_plm( PLStream *pls, PLINT op, void *ptr )
     case PLESC_END_TEXT:
         // NOP these for now until a decision is made
         // which method should be implemented for metafiles
-        plwarn( "plmeta: Alternate Unicode text handling is not implemented" );
+        plwarn( "plmeta.c: Alternate Unicode text handling is not implemented" );
         break;
     }
 }
@@ -551,7 +559,7 @@ plm_text( PLStream *pls, EscText *args )
     }
     else
     {
-        plwarn( "plmeta: transformation matrix undefined, using a guess" );
+        plwarn( "plmeta.c: transformation matrix undefined, using a guess" );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 1.0 ) );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 0.0 ) );
         plm_wr( pdf_wr_ieeef( pls->pdfs, (float) 0.0 ) );
@@ -859,4 +867,4 @@ pldummy_plmeta()
     return 0;
 }
 
-#endif                          // PLD_plmeta
+#endif                          // PLD_plm

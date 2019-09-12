@@ -21,12 +21,12 @@
 
 if(HAVE_BASH)
   set(scripts_SCRIPTS "")
-  if(PLD_plmeta)
+  if(PLD_plm)
     set(scripts_SCRIPTS ${scripts_SCRIPTS}
     plm2gif
     plpr
     )
-  endif(PLD_plmeta)
+  endif(PLD_plm)
   if(PLD_pstex)
     set(scripts_SCRIPTS ${scripts_SCRIPTS} pstex2eps)
   endif(PLD_pstex)
