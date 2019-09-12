@@ -1,6 +1,6 @@
 # examples/c++/CMakeLists.txt
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -84,18 +84,6 @@ if(CORE_BUILD)
 endif(CORE_BUILD)
 
 if(BUILD_TEST)
-  if(CORE_BUILD)
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/bindings/c++
-      ${CMAKE_SOURCE_DIR}/include
-      ${CMAKE_BINARY_DIR}/include
-      ${CMAKE_SOURCE_DIR}/lib/qsastime
-      ${CMAKE_BINARY_DIR}/lib/qsastime
-      )
-  else(CORE_BUILD)
-    include_directories(${INCLUDE_DIR})
-  endif(CORE_BUILD)
-
   set_property(GLOBAL PROPERTY TARGETS_examples_cxx)
   foreach(STRING_INDEX ${cxx_STRING_INDICES})
     add_executable(x${STRING_INDEX} x${STRING_INDEX}.cc)
@@ -112,12 +100,6 @@ endif(BUILD_TEST)
 if(ENABLE_wxwidgets)
   # Build wxwidgets applications with same wxwidgets compile and link flags
   # as used with the PLplot wxwidgets device driver.
-  if(CORE_BUILD)
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/bindings/wxwidgets
-      ${CMAKE_BINARY_DIR}/bindings/wxwidgets
-      )
-  endif(CORE_BUILD)
   if(BUILD_TEST)
     set_source_files_properties(${wxPLplotDemo_SRCS}
       PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
@@ -128,6 +110,7 @@ if(ENABLE_wxwidgets)
 	)
     endif(BUILD_SHARED_LIBS)
     target_link_libraries(wxPLplotDemo PLPLOT::plplotwxwidgets PLPLOT::plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
+    
   endif(BUILD_TEST)
   # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
   # for use in configuring Makefile.examples.

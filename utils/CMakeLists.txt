@@ -16,14 +16,6 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/lib/qsastime
-  ${CMAKE_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/include
-  ${CMAKE_BINARY_DIR}/lib/qsastime
-  )
-
 # plrender, pltek, both depend on the plplot library while wxPLViewer depends on
 # the plplotwxwidgets and plplotcxx libraries.
 set(LIB_INSTALL_RPATH ${LIB_DIR})
@@ -39,17 +31,12 @@ configure_executable_build(pltek "pltek.c" "PLPLOT::plplot" "${LIB_INSTALL_RPATH
 add_executable(parity_bit_check parity_bit_check.c)
 
 if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
-# Build wxwidgets applications with same wxwidgets compile and link flags
-# as used with the PLplot wxwidgets device driver.
+  # Build wxwidgets applications with same wxwidgets compile and link flags
+  # as used with the PLplot wxwidgets device driver.
 
   set(wxPLViewer_SRCS wxplviewer.cpp wxplframe.cpp ${CMAKE_SOURCE_DIR}/drivers/wxwidgets_comms.cpp)
   set_source_files_properties(${wxPLViewer_SRCS}
     PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/bindings/wxwidgets
-    ${CMAKE_BINARY_DIR}/bindings/wxwidgets
-    ${CMAKE_SOURCE_DIR}/bindings/c++
-    )
 
   set(wxPLViewer_link_libraries PLPLOT::plplotwxwidgets PLPLOT::plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
   configure_executable_build(wxPLViewer "${wxPLViewer_SRCS}" "${wxPLViewer_link_libraries}" "${LIB_INSTALL_RPATH}" ${BIN_DIR})

@@ -20,17 +20,6 @@ if(ENABLE_qt)
   if(ANY_QT_DEVICE)
     # Set up Qt4- or Qt5-based build environment.
     set(qt_SOURCE plqt.cpp)
-    include_directories(
-      ${CMAKE_SOURCE_DIR}/include
-      ${CMAKE_SOURCE_DIR}/lib/qsastime
-      ${CMAKE_SOURCE_DIR}/lib/nistcd
-      ${CMAKE_SOURCE_DIR}/drivers
-      ${CMAKE_BINARY_DIR}
-      ${CMAKE_BINARY_DIR}/include
-      ${CMAKE_BINARY_DIR}/lib/qsastime
-      ${CMAKE_BINARY_DIR}/lib/nistcd
-      )
-
     # Must add qt.h to explicit sources for AUTOMOC method to work for either
     # Qt4 or Qt5.
     list(APPEND qt_SOURCE ${CMAKE_SOURCE_DIR}/include/qt.h)
@@ -54,8 +43,21 @@ if(ENABLE_qt)
       # plplotqt depends on the Qt libraries.
       ${qt_RPATH}
       )
-      #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
+    #message("LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
     configure_library_build(plplotqt "" "${qt_SOURCE}" "${libplplotqt_LINK_LIBRARIES}" "${LIB_INSTALL_RPATH}")
+    target_include_directories(${WRITEABLE_TARGET}plplotqt
+      PUBLIC
+      # Examples (e.g., qt_example) which are linked to
+      # PLPLOT::plplotqt are also linked to PLPLOT::plplot which
+      # already makes PUBLIC all the plplot library include locations.
+      # So we don't need to make those locations PUBLIC here as well.
+      # As it happens one of those locations corresponds to the
+      # location of qt.h, but for form's sake (since that header is
+      # used by examples which link to this library) we make the
+      # location PUBLIC here as well.
+      $<INSTALL_INTERFACE:${INCLUDE_DIR}>
+      $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+      )
 
     if(NOT PLPLOT_USE_QT5)
       if(NOT QT_LIBRARIES)

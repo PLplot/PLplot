@@ -10,10 +10,18 @@
 //  best to hand-configure a plDevs.h file and keep it with the
 //  system-specific files.
 //
-//  Copyright (C) 2004 Andrew Roach
-//  Copyright (C) 2005 Thomas J. Duck
-//  Copyright (C) 2006 Andrew Ross
-//  Copyright (C) 2006-2018 Alan W. Irwin
+// Copyright (C) 1994-2002 Maurice LeBrun
+// Copyright (C) 1996-2001 Geoffrey Furnish
+// Copyright (C) 2001 Joao Cardoso
+// Copyright (C) 2001-2005 Rafael Laboissiere
+// Copyright (C) 2001-2019 Alan W. Irwin
+// Copyright (C) 2002 Vince Darley
+// Copyright (C) 2004 Andrew Roach
+// Copyright (C) 2005 Thomas Duck
+// Copyright (C) 2005-2012 Hazen Babcock
+// Copyright (C) 2006 Andrew Ross
+// Copyright (C) 2006-2008 Werner Smekal
+// Copyright (C) 2015-2017 Jim Dishaw
 //
 //  This file is part of PLplot.
 //

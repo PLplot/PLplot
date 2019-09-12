@@ -51,17 +51,6 @@ if(ENABLE_wxwidgets)
       ${CMAKE_CURRENT_BINARY_DIR}/wxPLplot_nanosec.h
       )
   endif(OLD_WXWIDGETS)
-  # Set the include path
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/include
-    ${CMAKE_SOURCE_DIR}/lib/qsastime
-    ${CMAKE_SOURCE_DIR}/bindings/c++
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_BINARY_DIR}/lib/qsastime
-    ${CMAKE_CURRENT_BINARY_DIR}
-    )
-
   set_source_files_properties(${plplotwxwidgets_LIB_SRCS}
     PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}"
     )
@@ -72,8 +61,19 @@ if(ENABLE_wxwidgets)
   list(APPEND LIB_INSTALL_RPATH ${wxwidgets_RPATH})
 
   configure_library_build(plplotwxwidgets "" "${plplotwxwidgets_LIB_SRCS}" "PLPLOT::plplot;PLPLOT::plplotcxx;${wxwidgets_LINK_FLAGS}" "${LIB_INSTALL_RPATH}")
-
-  INCLUDE_DIRECTORIES( ${wxWidgets_INCLUDE_DIRS} )
+  target_include_directories(${WRITEABLE_TARGET}plplotwxwidgets
+    PUBLIC
+    # Applications (e.g., wxPLplotDemo and wxPLViewer) which are linked to
+    # PLPLOT::plplotwxwidgets are also linked to PLPLOT::plplotcxx
+    # which already makes PUBLIC all the plplot library include
+    # locations.  So we don't need to make those locations PUBLIC here
+    # as well.
+    $<INSTALL_INTERFACE:${INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+    PRIVATE
+    ${wxWidgets_INCLUDE_DIRS}
+    )
   IF(wxWidgets_DEFINITIONS)
     set_property(TARGET ${WRITEABLE_TARGET}plplotwxwidgets APPEND
       PROPERTY COMPILE_DEFINITIONS ${wxWidgets_DEFINITIONS})
