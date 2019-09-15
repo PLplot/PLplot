@@ -78,16 +78,43 @@ git checkout -b new_branch
 
 git commit
 
-   to create commits in new_branch.  If you create a commit and
-   realize before you make additional commits that there is an error
-   in the commit, please use the --amend option to the subsequent
-   commit that fixes the error.  What this option does is squash the
-   two commits together, i.e., it replace the old commit with the
-   error by the combined old commit and fix.  This approach minimizes
+   to create commits in new_branch.
+
+git commit --amend
+
+   If you create a bad commit *on a topic branch* (see CAVEAT below)
+   and realize before you make additional commits that there is an error
+   in the commit, use the above command.
+   What this command does is squash the effects of your present
+   commit (which revises the bad commit) and the prior bad commit 
+   together, i.e., it replaces the old bad commit
+   by the combined bad commit and fix for that bad commit.  This approach minimizes
    errors in the commits that will eventually be merged to master (see
    below), and this cleaner master history will make subsequent use of
    git-bisect (a killer-app typically used to find which commit first
    caused a regression) much easier.
+
+   (CAVEAT: this command should never be used for a commit that has
+   been pushed since that violates the git social contract that pushed
+   commits are never deleted or changed.  Instead, if you want to
+   remove the effects of a pushed commit or modify those effects, you
+   do that with another pushed commit.)
+
+git reset --soft HEAD~1
+
+   This command is extremely useful for deleting a bad last commit *on
+   a topic branch* (see CAVEAT for the "git commit --amend" command
+   above) while still leaving all the file changes associated with
+   that commit in the staging area.  This gives you freedom to make
+   further changes before attempting to commit again.  That freedom
+   includes possibly removing some or all of those staging area file
+   changes, and "git status" will tell you how to do that just like
+   with any file changes in the staging area.  So the effects are
+   similar to those of the "git commit --amend" command above with the
+   added freedom to completely remove the bad commit and all file changes
+   associated with it (e.g., if someone sends you a commit in "git
+   format-patch" form that needs further revision by them before you
+   finally push their commit).
 
 2. Updating the master branch:
 
