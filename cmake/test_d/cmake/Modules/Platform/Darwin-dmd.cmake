@@ -27,37 +27,51 @@ set(CMAKE_BASE_NAME dmd)
 set(CMAKE_STATIC_LIBRARY_CREATE_D_FLAGS "-lib")
 
 set(CMAKE_SHARED_LIBRARY_D_FLAGS "")            # -pic
-set(CMAKE_SHARED_LIBRARY_CREATE_D_FLAGS "-shared -defaultlib=libphobos2.so")       # -shared
 set(CMAKE_SHARED_LIBRARY_LINK_D_FLAGS "")         # +s, flag for exe link to use shared lib
-set(CMAKE_SHARED_LIBRARY_RUNTIME_D_FLAG "")       # -rpath
+
+# dmd communicates with the linker (on this platform the Darwin system linker) using
+# the dmd -L option.
+set(CMAKE_SHARED_LIBRARY_RUNTIME_D_FLAG "-L-rpath\ -L")
 set(CMAKE_SHARED_LIBRARY_RUNTIME_D_FLAG_SEP "")   # : or empty
-set(CMAKE_SHARED_LIBRARY_SONAME_D_FLAG "-L-soname=")
-set(CMAKE_SHARED_LIBRARY_RPATH_LINK_D_FLAG "-L-rpath=")
+set(CMAKE_SHARED_LIBRARY_SONAME_D_FLAG "-L-install_name\ -L@rpath/")
+set(CMAKE_SHARED_LIBRARY_RPATH_LINK_D_FLAG "-L-rpath\ -L")
 set(CMAKE_INCLUDE_FLAG_D "-I")       # -I
 set(CMAKE_INCLUDE_FLAG_D_SEP "")     # , or empty
-set(CMAKE_LIBRARY_PATH_FLAG "-L-L")
-set(CMAKE_LIBRARY_PATH_TERMINATOR "")  # for the Digital Mars D compiler the link paths have to be terminated with a "/"
-set(CMAKE_LINK_LIBRARY_FLAG "-L-l")
+set(CMAKE_D_LIBRARY_PATH_FLAG "-L-L")
+set(CMAKE_D_LIBRARY_PATH_TERMINATOR "")  # for the Digital Mars D compiler the link paths have to be terminated with a "/"
+set(CMAKE_D_LINK_LIBRARY_FLAG "-L-l")
+set(CMAKE_D_LINK_LIBRARY_FILE_FLAG "-L")
 
 set(CMAKE_D_COMPILE_OPTIONS_PIC "-fPIC")
 
 set(CMAKE_LINK_LIBRARY_SUFFIX "")
+# Copy or infer these variables from Platform/Darwin.cmake
+# or Platform/Apple-Clang.cmake.
+set(CMAKE_SHARED_LIBRARY_PREFIX "lib")
+set(CMAKE_SHARED_LIBRARY_SUFFIX ".dylib")
+set(CMAKE_SHARED_MODULE_PREFIX "lib")
+set(CMAKE_SHARED_MODULE_SUFFIX ".so")
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".tbd" ".dylib" ".so" ".a")
+set(CMAKE_D_LINK_FLAGS -L-headerpad_max_install_names)
+# Combined with previous flags that were required for D....
+set(CMAKE_SHARED_LIBRARY_CREATE_D_FLAGS "-shared -defaultlib=libphobos2.so -L-headerpad_max_install_names")
+
+# Standard on Unix platforms...
 set(CMAKE_STATIC_LIBRARY_PREFIX "lib")
 set(CMAKE_STATIC_LIBRARY_SUFFIX ".a")
-set(CMAKE_SHARED_LIBRARY_PREFIX "lib")          # lib
-set(CMAKE_SHARED_LIBRARY_SUFFIX ".so")          # .so
 set(CMAKE_EXECUTABLE_SUFFIX "")          # .exe
+
+# Same as Platform/GNU.cmake
 set(CMAKE_DL_LIBS "dl")
 
+# Same as CMakeGenericSystem.cmake
 set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".so" ".a")
 
 # set(CMAKE_D_STDLIBS "-L-lphobos2 -L-lpthread -L-lm -defaultlib=libphobos2.so")
 
 # set(CMAKE_D_FLAGS_INIT "-version=${CMAKE_BUILD_TYPE}Build ${DSTDLIB_FLAGS} ${DSTDLIB_TYPE} -I$ENV{D_PATH}/include -I$ENV{D_PATH}/import -I${CMAKE_PROJECT_SOURCE_DIR}")
 set(CMAKE_D_FLAGS_INIT "")
 
-set(CMAKE_D_LINK_FLAGS "")
 set(CMAKE_D_FLAGS_DEBUG_INIT "-g -debug -L-export_dynamic ${DDOC_FLAGS}")
 set(CMAKE_D_FLAGS_MINSIZEREL_INIT "-O -L-s ${DDOC_FLAGS}")
 set(CMAKE_D_FLAGS_RELEASE_INIT "-O ${DDOC_FLAGS}")
