@@ -110,7 +110,7 @@ if(ENABLE_wxwidgets)
 	)
     endif(BUILD_SHARED_LIBS)
     target_link_libraries(wxPLplotDemo PLPLOT::plplotwxwidgets PLPLOT::plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB})
-    
+
   endif(BUILD_TEST)
   # Transform wxwidgets_LINK_FLAGS from list of libraries to the standard pkg-config form
   # for use in configuring Makefile.examples.

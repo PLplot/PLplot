@@ -86,7 +86,7 @@ git commit --amend
    and realize before you make additional commits that there is an error
    in the commit, use the above command.
    What this command does is squash the effects of your present
-   commit (which revises the bad commit) and the prior bad commit 
+   commit (which revises the bad commit) and the prior bad commit
    together, i.e., it replaces the old bad commit
    by the combined bad commit and fix for that bad commit.  This approach minimizes
    errors in the commits that will eventually be merged to master (see
