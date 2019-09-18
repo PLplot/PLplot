@@ -149,11 +149,6 @@ if(PLD_wxwidgets OR PLD_wxpng)
     endif(UNIX AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   endif(OLD_WXWIDGETS)
 
-  set(DRIVERS_LINK_FLAGS
-    ${DRIVERS_LINK_FLAGS}
-    ${wxwidgets_LINK_FLAGS}
-    )
-
 endif(PLD_wxwidgets OR PLD_wxpng)
 
 if(DEFAULT_NO_BINDINGS)
@@ -208,3 +203,7 @@ else(ENABLE_wxwidgets)
     set(PLD_wxwidgets OFF CACHE BOOL "Enable wxwidgets device" FORCE)
     set(PLD_wxpng OFF CACHE BOOL "Enable wxwidgets png device" FORCE)
 endif(ENABLE_wxwidgets)
+
+if(PLD_wxwidgets OR PLD_wxpng)
+  list(APPEND DRIVERS_LINK_FLAGS ${wxwidgets_LINK_FLAGS})
+endif(PLD_wxwidgets OR PLD_wxpng)
