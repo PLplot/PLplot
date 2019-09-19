@@ -710,3 +710,24 @@ function(configure_target_install target)
 ")
 
 endfunction(configure_target_install target install_dir)
+
+function(debug_target_properties target output_property_list)
+  # print out (via message) the list of properties in output_property_list for
+  # a given target.
+  # N.B. output_property_list should be specified in the call as a CMake
+  # list that is turned into a string by quotes, e.g.,
+  #
+  # debug_target_properties(PLPLOT::plplot "COMPILE_DEFINITIONS;COMPILE_OPTIONS;INTERFACE_COMPILE_DEFINITIONS;INTERFACE_COMPILE_OPTIONS;LINK_LIBRARIES;LINK_OPTIONS;INTERFACE_LINK_LIBRARIES;INTERFACE_LINK_OPTIONS")
+  #
+  if(TARGET ${target})
+    if(NOT "${output_property_list}" STREQUAL "")
+      foreach(output_property ${output_property_list})
+	get_target_property(value ${target} ${output_property})
+	message(STATUS "DEBUG: For target=${target} and property=${output_property}, the value of the property is ${value}")
+      endforeach(output_property ${output_property_list})
+    endif(NOT "${output_property_list}" STREQUAL "")
+  else(TARGET ${target})
+    message(STATUS "WARNING: debug_target_properties has attempted to determine a target property for ${target} which is not a target")
+  endif(TARGET ${target})
+
+endfunction(debug_target_properties target)

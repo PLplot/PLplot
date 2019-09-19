@@ -35,6 +35,17 @@ if(ENABLE_d)
 
   configure_library_build(plplotdmd "" "${plplotdmd_LIB_SRCS}" PLPLOT::plplot "${LIB_INSTALL_RPATH}")
 
+  #debug_target_properties(no_target "COMPILE_DEFINITIONS;COMPILE_OPTIONS;INTERFACE_COMPILE_DEFINITIONS;INTERFACE_COMPILE_OPTIONS;LINK_LIBRARIES;LINK_OPTIONS;INTERFACE_LINK_LIBRARIES;INTERFACE_LINK_OPTIONS")
+
+  # Careful! Threads::Threads is an interface library.  Therefore,
+  # this call of debug_target_properties will error out unless the
+  # properties list is a subset of the white-listed properties for
+  # interface libraries.
+  #debug_target_properties(Threads::Threads "INTERFACE_COMPILE_DEFINITIONS;INTERFACE_COMPILE_OPTIONS;INTERFACE_LINK_LIBRARIES;INTERFACE_LINK_OPTIONS")
+  #debug_target_properties(Qt5::Core "COMPILE_DEFINITIONS;COMPILE_OPTIONS;INTERFACE_COMPILE_DEFINITIONS;INTERFACE_COMPILE_OPTIONS;LINK_LIBRARIES;LINK_OPTIONS;INTERFACE_LINK_LIBRARIES;INTERFACE_LINK_OPTIONS")
+  #debug_target_properties(PLPLOT::plplot "COMPILE_DEFINITIONS;COMPILE_OPTIONS;INTERFACE_COMPILE_DEFINITIONS;INTERFACE_COMPILE_OPTIONS;LINK_LIBRARIES;LINK_OPTIONS;INTERFACE_LINK_LIBRARIES;INTERFACE_LINK_OPTIONS")
+  #debug_target_properties(PLPLOT::plplotdmd "COMPILE_DEFINITIONS;COMPILE_OPTIONS;INTERFACE_COMPILE_DEFINITIONS;INTERFACE_COMPILE_OPTIONS;LINK_LIBRARIES;LINK_OPTIONS;INTERFACE_LINK_LIBRARIES;INTERFACE_LINK_OPTIONS")
+
   # Configure pkg-config *.pc file corresponding to libplplotdmd
   pkg_config_file("d" "D" " D binding" "plplotdmd" "" "-lplplot")
 
