@@ -343,27 +343,24 @@ if(CORE_BUILD)
       # Extra layer of -Wl indirection required for the nagfor compiler
       string(REPLACE "-Wl," "-Wl,-Wl,," install_tree_fortran_RPATHCMD ${install_tree_fortran_RPATHCMD})
     endif(install_tree_fortran_RPATHCMD AND CMAKE_Fortran_COMPILER MATCHES "nagfor")
+  endif(USE_RPATH AND NOT WIN32_OR_CYGWIN)
 
-    # ocaml is a special case because the (unofficial) CMake language support is
-    # implemented with low-level add_custom commands/targets so that rpath
-    # must be specified for 3 cases (the traditional build of the installed
-    # examples, and the CMake-based build of the build-tree and install-tree examples).
-    # Furthermore, the rpath syntax is different for ocaml.
-    if(ENABLE_ocaml)
-      set(language ocaml)
+  # ocaml is a special case not handled by the above logic for other languages
+  # because the (unofficial) CMake language support is
+  # implemented with low-level add_custom commands/targets so that rpath
+  # must be specified for 3 cases (the traditional build of the installed
+  # examples, and the CMake-based build of the build-tree and install-tree examples).
+  # Furthermore, the rpath syntax is different for ocaml.
+  if(ENABLE_ocaml)
+    set(language ocaml)
+
+    if(USE_RPATH AND NOT WIN32_OR_CYGWIN)
       # Each of the installed examples that are built depend on a library installed in ${LIB_DIR}.
       set(install_tree_${language}_RPATH ${LIB_DIR})
-      # The ocaml examples depend on the plplot library
+      # The ocaml examples depend on the plplot library so use INSTALL_RPATH
+      # property of that library target.
       set(tll_arguments PLPLOT::plplot)
       process_rpath(install_tree_${language}_RPATH "${tll_arguments}")
-
-      # Special case of the ocaml build-tree examples.
-      # Must be done before ${install_tree_${language}_RPATH gets transformed
-      # from official CMake list to colon-separated form.
-      set(build_tree_${language}_RPATH ${install_tree_${language}_RPATH})
-      list(REMOVE_ITEM build_tree_${language}_RPATH ${LIB_DIR})
-      list(APPEND build_tree_${language}_RPATH ${CMAKE_BINARY_DIR}/src)
-
       # Transform from semicolon- to colon-separated list.  (Quotes
       # for last argument required to process whole argument as string
       # containing semicolons rather than as the concatanated elements
@@ -372,19 +369,30 @@ if(CORE_BUILD)
       # install- and build-tree versions of CMake-based build of ocaml
       # examples
       string(REGEX REPLACE ";" ":"  install_tree_${language}_RPATH "${install_tree_${language}_RPATH}")
-      string(REGEX REPLACE ";" ":"  build_tree_${language}_RPATH "${build_tree_${language}_RPATH}")
       string(REPLACE " " "\\ " install_tree_${language}_RPATH_ESCAPED "${install_tree_${language}_RPATH}")
-      string(REPLACE " " "\\ " build_tree_${language}_RPATH_ESCAPED "${build_tree_${language}_RPATH}")
-
       # install_tree_ocaml_RPATHCMD needed in configured traditional
       # Makefile for the ocaml subdirectory.
       # Ocaml compiler requires -ccopt in front of every -Wl option:
       set(install_tree_${language}_RPATHCMD "-ccopt -Wl,-rpath -ccopt -Wl,\"${install_tree_${language}_RPATH_ESCAPED}\"")
+    endif(USE_RPATH AND NOT WIN32_OR_CYGWIN)
 
-    endif(ENABLE_ocaml)
+    # Special case of the ocaml build-tree examples.
+    # Follow above process_rpath logic but with some changes
+    # appropriate for the core build of the ocaml examples.
+    set(build_tree_${language}_RPATH ${CMAKE_BINARY_DIR}/src)
+    set(tll_arguments PLPLOT::plplot)
+    process_rpath(build_tree_${language}_RPATH "${tll_arguments}")
 
+    # Get rid of any mention of ${LIB_DIR} for the core build version
+    # of the examples.
+    # Must be done before ${build_tree_${language}_RPATH gets transformed
+    # from official CMake list to colon-separated form.
+    list(REMOVE_ITEM build_tree_${language}_RPATH ${LIB_DIR})
 
-  endif(USE_RPATH AND NOT WIN32_OR_CYGWIN)
+    string(REGEX REPLACE ";" ":"  build_tree_${language}_RPATH "${build_tree_${language}_RPATH}")
+    string(REPLACE " " "\\ " build_tree_${language}_RPATH_ESCAPED "${build_tree_${language}_RPATH}")
+
+  endif(ENABLE_ocaml)
 
   # Install Chloe.pgm in installed examples directory so that all implementations
   # of example 20 in the various examples subdirectories can conveniently
