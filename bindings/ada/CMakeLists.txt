@@ -121,8 +121,7 @@ if(ENABLE_ada)
 
   # N.B. nm evidence shows that examples that use
   # callbacks (e.g., plfill in x15a.adb) have unresolved references
-  # to c_plfill, etc. that require a public link to plplot
-  # regardless of how NON_TRANSITIVE is set.
+  # to c_plfill, etc. that require a public link to plplot.
   target_link_libraries(${WRITEABLE_TARGET}plplotada PUBLIC PLPLOT::plplot)
 
   install(FILES ${plplotada_SPEC_SRCS} ${plplotada_BODY_SRCS}

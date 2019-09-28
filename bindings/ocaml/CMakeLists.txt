@@ -142,8 +142,12 @@ if(ENABLE_ocaml)
       list(APPEND ocaml_LIBRARIES_FLAGS ${LIBRARY_LIST})
     endforeach(library in LISTS library_LIST)
 
-    # Get rid of internal symbolic targets and symbolic Qt5 targets from the list
     #message(STATUS "DEBUG: (original) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
+    # Replace $<LINK_ONLY:([^>]*)> by whatever was inside those parentheses.
+    string(REGEX REPLACE "\\$<LINK_ONLY:([^>]*)>" "\\1" ocaml_LIBRARIES_FLAGS "${ocaml_LIBRARIES_FLAGS}")
+    #message(STATUS "DEBUG: (\$<LINK_ONLY:...> generator expression replaced by whatever in ellipses) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
+
+    # Get rid of internal and Qt5 symbolic targets from the list.
     list(FILTER ocaml_LIBRARIES_FLAGS EXCLUDE REGEX "^PLPLOT::csirocsa$|^PLPLOT::csironn$|^PLPLOT::nistcd$|^PLPLOT::qsastime$|^Qt5::")
     #message(STATUS "DEBUG: (filtered) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
 

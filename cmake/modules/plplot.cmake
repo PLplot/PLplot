@@ -1,6 +1,11 @@
 # cmake/modules/plplot.cmake
 #
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006 Arjen Markus
+# Copyright (C) 2006-2009 Werner Smekal
+# Copyright (C) 2006-2013 Andrew Ross
+# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2007-2010 Hazen Babcock
+# Copyright (C) 2009 Hezekiah M. Carty
 #
 # This file is part of PLplot.
 #
@@ -52,19 +57,7 @@ if(FORCE_EXTERNAL_STATIC)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 endif(FORCE_EXTERNAL_STATIC)
 
-if(BUILD_SHARED_LIBS)
-  # OFF means shared libraries (but never static libraries) are
-  # transitively linked by default by CMake and also by pkg-config (used
-  # to generate compile and link flags for the traditional build and
-  # test system of the installed examples).
-  if(WIN32_OR_CYGWIN)
-    option(NON_TRANSITIVE "Option to use non-transitive linking" OFF)
-  else(WIN32_OR_CYGWIN)
-    option(NON_TRANSITIVE "Option to use non-transitive linking" ON)
-  endif(WIN32_OR_CYGWIN)
-else(BUILD_SHARED_LIBS)
-  set(NON_TRANSITIVE OFF CACHE BOOL "Option to use non-transitive linking" FORCE)
-endif(BUILD_SHARED_LIBS)
+option(TLL_PUBLIC "Option to use the target_link_libraries PUBLIC signature.  Possibly useful for a linking emergency but not recommended in general because of leakage of compile and link options between libraries that can potentially occur for the PUBLIC case" OFF)
 
 # Color maps (discrete and continuous) to use by default
 if(NOT DEFAULT_CMAP0_FILE)

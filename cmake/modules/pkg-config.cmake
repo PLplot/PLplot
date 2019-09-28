@@ -1,6 +1,10 @@
 # cmake/modules/pkg-config.cmake
 #
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2007 Arjen Markus
+# Copyright (C) 2007-2012 Andrew Ross
+# Copyright (C) 2009 Hazen Babcock
+# Copyright (C) 2016 Raphael Kubo da Costa
 #
 # This file is part of PLplot.
 #
@@ -363,12 +367,12 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
   #			    fields.
   # PC_COMPILE_FLAGS      - Space-delimited string of compile flags for this library.
   # PC_LINK_Flags         - List of libraries that this library depends on.  These will
-  #                         be added to the public libraries for NON_TRANSITIVE OFF
-  #                         and added to the private libraries for NON_TRANSITIVE ON
+  #                         be added to the public libraries for BUILD_SHARED_LIBS OFF
+  #                         and added to the private libraries for BUILD_SHARED_LIBS ON
   #
   # There may be one additional optional argument (accessed with ${ARGN}) containing
   # a list of additional libraries to be added to the public libraries regardless of
-  # NON_TRANSITIVE value.
+  # BUILD_SHARED_LIBS value.
 
   # An example of a call of this function using these arguments is
   # pkg_config_file("tcl" "Tcl/Tk" "Tcl/Tk bindings, " "plplottcltk" "${libplplottcltk_COMPILE_FLAGS}" "${libplplottcltk_LINK_FLAGS}")
@@ -376,7 +380,7 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
   # This function depends on the following non-argument CMake variables being set.
   # PKG_CONFIG_EXECUTABLE
   # PL_DOUBLE
-  # NON_TRANSITIVE
+  # BUILD_SHARED_LIBS
   # PKG_CONFIG_DIR
   # These last non-argument CMake variables required for configuring
   # pkgcfg/plplot-template.pc.in
@@ -413,11 +417,11 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
     #message(STATUS "input PC_LINK_FLAGS = ${PC_LINK_FLAGS}")
     pkg_config_link_flags(PC_LINK_FLAGS "${PC_LINK_FLAGS}")
     #message(STATUS "pkg-config form of PC_LINK_FLAGS = ${PC_LINK_FLAGS}")
-    if(NON_TRANSITIVE)
+    if(BUILD_SHARED_LIBS)
       set(PC_PRIVATE_LINK_FLAGS ${PC_LINK_FLAGS})
-    else(NON_TRANSITIVE)
+    else(BUILD_SHARED_LIBS)
       set(PC_PUBLIC_LINK_FLAGS ${PC_LINK_FLAGS})
-    endif(NON_TRANSITIVE)
+    endif(BUILD_SHARED_LIBS)
 
     if(ARGC EQUAL 7)
       #message(STATUS "pkg_config_file called with ARGN = ${ARGN}")
@@ -444,7 +448,7 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
       set(PC_REQUIRES "plplot")
     endif("X${BINDING}X" STREQUAL "XcX")
 
-    if(NON_TRANSITIVE)
+    if(BUILD_SHARED_LIBS)
       if("X${BINDING}X" STREQUAL "XocamlX")
 	# Don't know how to do non-transitive linking for
         # Ocaml binding of PLplot.
@@ -452,9 +456,9 @@ function(pkg_config_file BINDING PC_SHORT_NAME PC_LONG_NAME PC_LIBRARY_NAME PC_C
       else("X${BINDING}X" STREQUAL "XocamlX")
 	set(PC_REQUIRES_TAG "Requires.private")
       endif("X${BINDING}X" STREQUAL "XocamlX")
-    else(NON_TRANSITIVE)
+    else(BUILD_SHARED_LIBS)
       set(PC_REQUIRES_TAG "Requires")
-    endif(NON_TRANSITIVE)
+    endif(BUILD_SHARED_LIBS)
 
     # Include library itself in space-separated list of public libraries for
     # this package.

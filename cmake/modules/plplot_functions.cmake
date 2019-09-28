@@ -336,11 +336,11 @@ function(configure_executable_build executable executable_src tll_arguments lib_
   add_executable(${PROJECT_NAMESPACE}${original_executable} ALIAS ${executable})
 
   if(NOT "${tll_arguments}" STREQUAL "")
-    if(NON_TRANSITIVE)
-      target_link_libraries(${executable} PRIVATE ${tll_arguments})
-    else(NON_TRANSITIVE)
+    if(TLL_PUBLIC)
       target_link_libraries(${executable} PUBLIC ${tll_arguments})
-    endif(NON_TRANSITIVE)
+    else(TLL_PUBLIC)
+      target_link_libraries(${executable} PRIVATE ${tll_arguments})
+    endif(TLL_PUBLIC)
   endif(NOT "${tll_arguments}" STREQUAL "")
 
   if(BUILD_SHARED_LIBS)
@@ -432,7 +432,7 @@ function(configure_library_build library library_type library_src tll_arguments 
 
   # Global variables which must be defined
   #message(STATUS "DEBUG: BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}")
-  #message(STATUS "DEBUG: NON_TRANSITIVE = ${NON_TRANSITIVE}")
+  #message(STATUS "DEBUG: TLL_PUBLIC = ${TLL_PUBLIC}")
   #message(STATUS "DEBUG: ${library}_SOVERSION = ${${library}_SOVERSION}")
   #message(STATUS "DEBUG: ${library}_VERSION = ${${library}_VERSION}")
   #message(STATUS "DEBUG: CMAKE_INSTALL_LIBDIR = ${CMAKE_INSTALL_LIBDIR}")
@@ -477,7 +477,7 @@ function(configure_library_build library library_type library_src tll_arguments 
   # above have been DEFINED.
   set(variables_list)
   list(APPEND variables_list
-    NON_TRANSITIVE
+    TLL_PUBLIC
     )
 
   set(original_library ${library})
@@ -510,11 +510,11 @@ function(configure_library_build library library_type library_src tll_arguments 
     add_library(${PROJECT_NAMESPACE}${SWIG_MODULE_${library}_UNPREFIXED_REAL_NAME} ALIAS ${SWIG_MODULE_${library}_REAL_NAME})
 
     if(NOT "${tll_arguments}" STREQUAL "")
-      if(NON_TRANSITIVE)
-	target_link_libraries(${SWIG_MODULE_${library}_REAL_NAME} PRIVATE ${tll_arguments})
-      else(NON_TRANSITIVE)
+      if(TLL_PUBLIC)
 	target_link_libraries(${SWIG_MODULE_${library}_REAL_NAME} PUBLIC ${tll_arguments})
-      endif(NON_TRANSITIVE)
+      else(TLL_PUBLIC)
+	target_link_libraries(${SWIG_MODULE_${library}_REAL_NAME} PRIVATE ${tll_arguments})
+      endif(TLL_PUBLIC)
     endif(NOT "${tll_arguments}" STREQUAL "")
 
     set_target_properties(
@@ -580,11 +580,11 @@ function(configure_library_build library library_type library_src tll_arguments 
     add_library(${PROJECT_NAMESPACE}${original_library} ALIAS ${library})
 
     if(NOT "${tll_arguments}" STREQUAL "")
-      if(NON_TRANSITIVE)
-	target_link_libraries(${library} PRIVATE ${tll_arguments})
-      else(NON_TRANSITIVE)
+      if(TLL_PUBLIC)
 	target_link_libraries(${library} PUBLIC ${tll_arguments})
-      endif(NON_TRANSITIVE)
+      else(TLL_PUBLIC)
+	target_link_libraries(${library} PRIVATE ${tll_arguments})
+      endif(TLL_PUBLIC)
     endif(NOT "${tll_arguments}" STREQUAL "")
 
     # Set library target properties

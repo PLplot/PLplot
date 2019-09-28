@@ -40,7 +40,7 @@ if(LTDL_INCLUDE_DIR)
       endif(${_lib})
     endmacro(_find_check_libs)
 
-    if(NOT NON_TRANSITIVE)
+    if(NOT BUILD_SHARED_LIBS)
       # Find and check platform-dependent libraries which
       # libltdl depends upon using model given
       # for determining LIBADD_DL in $prefix/share/libtool/libltdl/acinclude.m4
@@ -75,10 +75,9 @@ if(LTDL_INCLUDE_DIR)
         set(LTDL_LIBRARIES ${LTDL_LIBRARIES} ${LTDL_LTDL_ADDLIB3})
         set(LTDL_FOUND ON)
       endif(LTDL_LTDL_HAVE_ADDLIB3)
-    else(NOT NON_TRANSITIVE)
+    else(NOT BUILD_SHARED_LIBS)
       set(LTDL_FOUND ON)
-    endif(NOT NON_TRANSITIVE)
-
+    endif(NOT BUILD_SHARED_LIBS)
   endif(LTDL_LIBRARIES)
 endif(LTDL_INCLUDE_DIR)
 

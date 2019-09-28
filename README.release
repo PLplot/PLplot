@@ -36,6 +36,7 @@ CONTENTS
 
 1.1 CMake version compatibility
 1.2 Qt5 now the default choice
+1.3 Build system option NON_TRANSITIVE now replaced with the TLL_PUBLIC option which has completely changed semantics
 
 2. Improvements relative to the previous release
 
@@ -109,6 +110,31 @@ dropped with a suitable warning message.
 
 N.B. we currently plan to deprecate Qt4 in our next release (5.17.0) and
 drop it altogether in the release after that (5.18.0).
+
+1.3 Build system option NON_TRANSITIVE now replaced with the TLL_PUBLIC option which has completely changed semantics
+
+The semantic differences are as follows:
+
+* Opposite interpretation of the logical value so -DTLL_PUBLIC=ON is
+  equivalent to the old -DNON_TRANSITIVE=OFF
+
+* TLL_PUBLIC has a smaller scope than NON_TRANSITIVE.  That is,
+  TLL_PUBLIC is only used to control the PUBLIC or PRIVATE nature of
+  the target_link_libraries commands used for building targets that
+  will be installed, while NON_TRANSITIVE was used in that context as
+  well as used to affect other components of the build system (i.e.,
+  cmake/modules/FindLTDL.cmake and cmake/modules/pkg-config.cmake)
+  which are now implemented depending on the CMake BUILD_SHARED_LIBS
+  option rather than the old NON_TRANSITIVE option.
+
+Another important change (non-semantic in this case) is the TLL_PUBLIC
+default value is OFF in all cases (to minimize leakage of flags
+between library targets as much as possible) while the previous
+default value for NON_TRANSITIVE (ON which is the equivalent of the
+present default OFF value for TLL_PUBLIC) was only used for the shared
+library non-Windows case.  So this change means the default treatment
+of static libraries and Windows platforms is now quite different.
+
 ________________________________________________________________
 
 2. Improvements relative to the previous release

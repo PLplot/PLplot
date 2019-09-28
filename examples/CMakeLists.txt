@@ -202,7 +202,7 @@ if(CORE_BUILD)
   # Note that the results configured in the Requires,
   # Requires.private, Libs, and Libs.private lines of the PLplot *.pc
   # files used in our traditional build of the installed examples
-  # depend on whether NON_TRANSITIVE is ON or OFF.
+  # depend on whether libraries are built shared or static.
   if(BUILD_SHARED_LIBS)
     # pkg-config will not use the --static pkg-config option for the
     # traditional installed examples build, i.e., the configured
