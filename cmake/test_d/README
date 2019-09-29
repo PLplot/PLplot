@@ -53,6 +53,66 @@ released.  So as a first step in this test procedure, you should build
 CMake from the tip of its git master branch or from CMake-3.16.0 source
 code once that version of CMake is released.
 
+N.B. Similarly, if you are using dmd, you MUST have access to a dmd
+version that includes support for either the -preview=noXlinker dmd
+option that landed on the dmd git master branch on 2019-08-31 as
+commit d6183e9ff or Cybershadow's alternative effort to implement the
+-Xcc approach instead.  The reason there are two implementations of the dmd
+effort to allow users to communicate options to the underlying C
+compiler is at the time of writing (2019-09-28) there is still
+[debate] (https://github.com/dlang/dmd/pull/10438) about whether they
+want to deal with the -L general change in semantics implemented by
+the -preview=noXlinker approach (all -L options would communicate
+those options to the underlying compiler rather than the previous approach
+where -L communicated options with the linker invoked by that
+compiler).  As a result of this discussion, CyberShawdow has begun
+work on an alternative to the -preview=noXlinker approach that follows
+what ldc2 does which is to implement an -Xcc option to communicate
+with the underlying C compiler used for linking with -L continuing as
+the flag used to communicate directly with the linker invoked by that
+compiler.
+
+PLplot needs one of these approaches or the other to deal with the
+-pthread option that MUST be communicated to the underlying C
+compiler, but since our D language support currently assumes -L means
+communicate all -L options to the linker, and I had just started to
+change that support to the -preview=noXlinker semantics, I will stick
+with the CyberShadow approach for now, with the understanding that we
+could also get the -preview=noXlinker new -L semantics to work with
+some fairly trivial changes in our D language support for dmd, if the
+dmd developers decide (finally) that is the approach they want to
+take.
+
+Therefore, I built and installed the -preview=noXlinker version of dmd
+first following the instructions in
+<https://wiki.dlang.org/Building_under_Posix> for POSIX platforms like
+Linux, Mac OS X, etc.  Or those on Windows could follow the instructions in
+<https://wiki.dlang.org/Building_under_Windows>.
+I then copied that
+hard-coded install location /home/software/dmd/install to /home/software/dmd/install_noXlinker so
+I can potentially get access to it later.  And then I rebuilt and reinstalled
+dmd with the CyberShadow preliminary pull request concerning -Xcc support using
+the following steps:
+
+# Change to the preexisting dmd repository whose single remote
+# previously accessed just the master branch of dmd.
+cd ~/dmd/dmd
+# Add the CyberShadow remote, fetch it, and checkout the branch of his work where he is working on
+# implementing a -Xcc option similar to that already available for ldc2.
+
+git remote add CyberShadow https://github.com/CyberShadow/dmd
+git fetch --all
+git checkout pull-20190926-222551
+
+# Then I did what I normally do to rebuild and reinstall dmd
+# (following the directions at
+# <https://wiki.dlang.org/Building_under_Posix>) using this
+# -Xcc-capable version.  Since this rebuild and reinstall was done
+# after the other one, the installed version is available in the
+# hard-coded location "/home/software/dmd/install/linux/bin64/dmd
+# which is accessed via setting the PATH and DC environment variables
+# below.
+
 (2) Check documentation of comprehensive test of D language support on
 your platform as follows:
 
@@ -71,15 +131,27 @@ where <set environment> sets up the cmake binary built from cmake
 source code git commit v3.15.2-908-g3ec986ce8e and one of the gdc,
 ldc, or dmd compilers.
 
-For example, on my Debian Buster system <set environment> was
+For example, on my Debian Buster system <set environment> was one of the three following possibilities:
 
-# dmd (and the same version of phobos) built by myself since Debian Buster does not supply a system version
-env PATH=/home/software/cmake/install-3ec986ce8e/bin:"$PATH" DC=/home/software/dmd/dmd/generated/linux/release/64/dmd LD_LIBRARY_PATH=/home/software/dmd/phobos/generated/linux/release/64
+# I. dmd (and the same version of phobos) built by myself since Debian
+# Buster does not supply a system version.
 
-# system ldc
+# N.B. Currently I am testing the CyberShadow PR to provide the -Xcc option for dmd.
+# See previous dmd comments about this version.  To gain
+# access to that work I used the PATH setting below:
+
+# N.B. This build system is a simple one that does not set up RPATH to find the particular phobos library
+# required when linking D libraries and executables.  So must set LD_LIBRARY_PATH appropriately.
+
+# We use the -v option for dmd so that we can see the actual derived
+# command-line that dmd uses to communicate with the linker.
+
+env PATH=/home/software/cmake/install-3ec986ce8e/bin:/home/software/dmd/install/linux/bin64:"$PATH" LD_LIBRARY_PATH=/home/software/dmd/install/linux/lib64  DC="dmd -v"
+
+# II. system ldc
 env PATH=/home/software/cmake/install-3ec986ce8e/bin:"$PATH" DC=ldc2
 
-# system gdc
+# III. system gdc
 env PATH=/home/software/cmake/install-3ec986ce8e/bin:"$PATH" DC=gdc
 
 For our two principal build configurations (shared libraries and
@@ -89,9 +161,13 @@ all its prerequisites, runs that executable, and compares the output
 of that executable with the expected output) in the build tree and in
 the installed examples tree.
 
-Check for errors or warnings in the above comprehensive test.
+Check for errors.  Last pipeline stanza filters out dmd -v results for function internals
+that mention case-insensitive "error" anywhere on the D language source code for the function.
 
-grep -i error ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out
+grep -i error ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out |grep -v out:function
+
+Check for warnings
+
 grep -i warning ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out
 
 Also (on Linux only) check for any undefined symbol issues discovered by the script.
@@ -124,8 +200,8 @@ executable and test that with valgrind.
 mkdir build_dir
 cd build_dir
 <set environment> cmake -DBUILD_TEST=ON <path to top-level of test_d source tree> >& cmake.out
-<set LD_LIBRARY_PATH environment if necessary> make hello >& hello.out
-<set LD_LIBRARY_PATH environment if necessary> valgrind src_executable/hello >& valgrind.out
+make hello >& hello.out
+valgrind src_executable/hello >& valgrind.out
 
 Look through the generated *.out files for any error conditions.
 
