@@ -21,7 +21,7 @@ OPTIONS:
                   directory is located two levels below the top-level source-tree directory for
                   PLplot.)]
 
-  The next option controls whether the cmake --trace option is used
+  The next option controls whether the cmake --debug-output --trace-expand options are used
   This option produces lots of output so typically \"yes\" is specified only if there is some
   aspect of D language support that needs to be debugged on a particular platform.
   [--do_trace (yes/no, defaults to no)]
@@ -157,7 +157,7 @@ Each of the steps in this comprehensive test may take a while...."
     fi
 
     if [ "$do_trace" = "yes" ] ; then
-	TRACE_OPTION="--trace"
+	TRACE_OPTION="--debug-output --trace-expand"
     else
 	TRACE_OPTION=""
     fi
