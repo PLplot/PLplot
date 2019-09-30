@@ -38,7 +38,7 @@ OPTIONS:
   The next three options control the tools used for the configurations, builds, and tests.
   [--cmake_command (defaults to cmake)]
   [--generator_string (defaults to 'Unix Makefiles')]
-  [--build_command (defaults to 'make -j16')]
+  [--build_command (defaults to 'make -j18')]
 
   The next two options control which of the two principal test_d configurations are tested.
   [--do_shared (yes/no, defaults to yes)]
@@ -321,7 +321,7 @@ do_clean_first=yes
 
 cmake_command="cmake"
 generator_string="Unix Makefiles"
-build_command="make -j16"
+build_command="make -j18"
 
 do_shared=yes
 do_static=yes

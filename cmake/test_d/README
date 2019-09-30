@@ -161,18 +161,20 @@ all its prerequisites, runs that executable, and compares the output
 of that executable with the expected output) in the build tree and in
 the installed examples tree.
 
-Check for errors.  Last pipeline stanza filters out dmd -v results for function internals
-that mention case-insensitive "error" anywhere on the D language source code for the function.
-
+# Check for errors.  Last pipeline stanza filters out dmd -v results for function internals
+#  that mention case-insensitive "error" anywhere on the D language source code for the function.
 grep -i error ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out |grep -v out:function
 
-Check for warnings
-
+# Check for warnings
 grep -i warning ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out
 
-Also (on Linux only) check for any undefined symbol issues discovered by the script.
-
+# Check (Linux only) for any undefined symbol issues discovered by the script.
 grep -iE 'found|symbol|undefined' ../../../comprehensive_test_d_disposeable/*/*/output_tree/*ldd.out
+
+# Check references to -pthread flag to help evaluate whether the
+# -pthread logic is working as expected.
+grep 'Check if compiler accepts \-pthread' ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out |less
+grep '\-pthread' ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out | grep -v 'Check if compiler accepts \-pthread' | less
 
 Send me (Alan W. Irwin <airwin@users.sourceforge.net> the report
 tarball (of information that is collected by that script at

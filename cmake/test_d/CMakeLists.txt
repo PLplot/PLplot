@@ -16,6 +16,13 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
 project(test_d C D)
 
+# Configure the Threads::Threads library in the recommended way so can test with it.
+option(THREADS_PREFER_PTHREAD_FLAG "Use -pthread if available for compiling and linking" ON)
+find_package(Threads)
+if(CMAKE_USE_PTHREADS_INIT)
+  set(tll_argument Threads::Threads)
+endif(CMAKE_USE_PTHREADS_INIT)
+
 # Identify this project as the core build (as opposed to installed example
 # build).
 

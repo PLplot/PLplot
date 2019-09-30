@@ -6,7 +6,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/hello_world.d
 
 add_library(hello_world_d ${D_LIBRARY_TYPE} ${SOURCE_LIST})
 
-target_link_libraries(hello_world_d PRIVATE hello_world_c)
+if(TARGET hello_world_c_static_D_linking)
+  target_link_libraries(hello_world_d PRIVATE hello_world_c_static_D_linking)
+else(TARGET hello_world_c_static_D_linking)
+  target_link_libraries(hello_world_d PRIVATE hello_world_c)
+endif(TARGET hello_world_c_static_D_linking)
 
 if(BUILD_SHARED_LIBS)
   if(USE_RPATH)
