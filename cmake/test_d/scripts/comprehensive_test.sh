@@ -157,8 +157,10 @@ Each of the steps in this comprehensive test may take a while...."
     fi
 
     if [ "$do_trace" = "yes" ] ; then
-	TRACE_OPTION="--debug-output --trace-expand"
+	DEBUG_OPTION="--debug-output"
+	TRACE_OPTION="--trace-expand"
     else
+	DEBUG_OPTION=""
 	TRACE_OPTION=""
     fi
 
@@ -172,7 +174,7 @@ Each of the steps in this comprehensive test may take a while...."
 
     echo_tee "${cmake_command} in the build tree"
     ${cmake_command} "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
-		     $CMAKE_BUILD_TYPE_OPTION "$TRACE_OPTION" -G "$generator_string" \
+		     $CMAKE_BUILD_TYPE_OPTION $DEBUG_OPTION $TRACE_OPTION -G "$generator_string" \
 		     "$SOURCE_TREE" >& "$output"
     cmake_rc=$?
     if [ "$cmake_rc" -ne 0 ] ; then
@@ -254,7 +256,7 @@ Each of the steps in this comprehensive test may take a while...."
 		output="$OUTPUT_TREE"/installed_cmake.out
 		rm -f "$output"
 		echo_tee "${cmake_command} in the installed examples build tree"
-		${cmake_command} -G "$generator_string" "$TRACE_OPTION" "$INSTALL_TREE"/share/test_d/examples \
+		${cmake_command} -G "$generator_string" $DEBUG_OPTION $TRACE_OPTION "$INSTALL_TREE"/share/test_d/examples \
 				 >& "$output"
 		cmake_rc=$?
 		if [ "$cmake_rc" -ne 0 ] ; then

@@ -171,10 +171,14 @@ grep -i warning ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out
 # Check (Linux only) for any undefined symbol issues discovered by the script.
 grep -iE 'found|symbol|undefined' ../../../comprehensive_test_d_disposeable/*/*/output_tree/*ldd.out
 
-# Check references to -pthread flag to help evaluate whether the
-# -pthread logic is working as expected.
+# Check whether -pthread flag is actually checked by the Threads find module.  (This is just out
+# of interest since test_d forces use of the -pthread flag in all cases other than Cygwin.)
 grep 'Check if compiler accepts \-pthread' ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out |less
-grep '\-pthread' ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out | grep -v 'Check if compiler accepts \-pthread' | less
+
+# Check linking of hello executable to help evaluate whether the
+# -pthread logic is working as expected.
+
+grep '\-pthread' ../../../comprehensive_test_d_disposeable/*/*/output_tree/*.out | grep -v 'Check if compiler accepts \-pthread' | grep '\-o[^ ]*hello'
 
 Send me (Alan W. Irwin <airwin@users.sourceforge.net> the report
 tarball (of information that is collected by that script at

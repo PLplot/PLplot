@@ -20,12 +20,30 @@ project(installed_test_d C D)
 # Define key variables that are configured by the core build.
 include(test_d_configure)
 
-# Configure the Threads::Threads library in the recommended way so can test with it.
+# Configure the Threads::Threads library exactly as in the core build
+# (except for tll_argument which is unused for the installed example case).
 # The required THREADS_PREFER_PTHREAD_FLAG variable is set by the above include.
-find_package(Threads)
-if(CMAKE_USE_PTHREADS_INIT)
-  set(tll_argument Threads::Threads)
-endif(CMAKE_USE_PTHREADS_INIT)
+if(THREADS_PREFER_PTHREAD_FLAG)
+  find_package(Threads)
+  if(Threads_FOUND)
+    #set(tll_argument Threads::Threads)
+    # N.B. From comprehensive test results for the plplot project case
+    # that have been reported to me (AWI) by various testers it is
+    # known that one or both of pkg-config and wx-config uses the
+    # -pthread flag for linking for the Linux(2019) and MSYS2(2019)
+    # platforms, and this is NOT the case for the Cygwin(2016 and
+    # 2018) platform where, for example, -pthread does not occur in
+    # the CMakeCache.txt file for those two Cygwin comprehensive
+    # tests.  Furthermore, we assume for the Mac OS X platform (unless
+    # and until plplot comprehensive tests on that platform show
+    # otherwise) that pkg-config and/or wx-config uses the -pthread
+    # flag for linking.  Therefore, for test_d we currently enforce -pthread
+    # testing for all platforms other than Cygwin.
+    if(NOT CYGWIN)
+      set_target_properties(Threads::Threads PROPERTIES INTERFACE_LINK_LIBRARIES -pthread)
+    endif(NOT CYGWIN)
+  endif(Threads_FOUND)
+endif(THREADS_PREFER_PTHREAD_FLAG)
 
 # Find installed project
 find_package(test_d)
