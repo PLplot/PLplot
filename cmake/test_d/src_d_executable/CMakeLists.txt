@@ -16,7 +16,12 @@ if(BUILD_TEST)
       INCLUDE_DIRECTORIES ${SOURCE_CODE_DIR}
       )
   endif(CORE_BUILD)
-  target_link_libraries(hello hello_world_d)
+  if(TARGET hello_world_c_alt_interface)
+    # Need explicit link to that library to pick up INTERFACE_LINK_OPTIONS from it
+    target_link_libraries(hello hello_world_d hello_world_c_alt_interface)
+  else(TARGET hello_world_c_alt_interface)
+    target_link_libraries(hello hello_world_d)
+  endif(TARGET hello_world_c_alt_interface)
 
   # configure file to compare with output of hello executable.
   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/compare_hello.out

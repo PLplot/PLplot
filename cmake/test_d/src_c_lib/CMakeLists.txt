@@ -46,12 +46,15 @@ endfunction(configure_library_build target)
 
 configure_library_build(hello_world_c)
 
-# Configure the hello_world_c_static_D_linking library only if the following conditions are met:
+# Configure build of the hello_world_c_alt_threads library only if the following conditions are met:
 # the C library must be built statically;
 # the D compiler must not be gdc;
 # the C library INTERFACE_LINK_LIBRARIES property must include in the list
 # "$<LINK_ONLY:Threads::Threads>"; and
 # the Threads::Threads INTERFACE_LINK_LIBRARIES property must include "-pthread";
+# N.B. The genex expression below should handle the gdc case without issues, but
+# typically we avoid the library approach below for gdc because that compiler
+# understands the -pthread option without requiring the approach below.
 if(NOT BUILD_SHARED_LIBS AND NOT CMAKE_D_COMPILER_ID STREQUAL "GNU")
   get_target_property(C_LIBRARY_INTERFACE_LINK_LIBRARIES hello_world_c INTERFACE_LINK_LIBRARIES)
   if(C_LIBRARY_INTERFACE_LINK_LIBRARIES)
@@ -62,17 +65,42 @@ if(NOT BUILD_SHARED_LIBS AND NOT CMAKE_D_COMPILER_ID STREQUAL "GNU")
       get_target_property(Threads_INTERFACE_LINK_LIBRARIES Threads::Threads INTERFACE_LINK_LIBRARIES)
       #message(STATUS "DEBUG: Threads_INTERFACE_LINK_LIBRARIES = ${Threads_INTERFACE_LINK_LIBRARIES}")
       if("${Threads_INTERFACE_LINK_LIBRARIES}" STREQUAL "-pthread")
-	# All conditions have been met to build  hello_world_c_static_D_linking the identical way
-	# to hello_world_c, and then modify the INTERFACE_LINK_LIBRARIES property of that
-	# otherwise identical library.
-	configure_library_build(hello_world_c_static_D_linking)
-	# Determine the desired INTERFACE_LINK_LIBRARIES property for this library
-	# by replacing all instances of "$<LINK_ONLY:Threads::Threads>" by 
-	string(REPLACE "$<LINK_ONLY:Threads::Threads>" "-Xcc=-pthread" STATIC_D_LINKING_INTERFACE_LINK_LIBRARIES ${C_LIBRARY_INTERFACE_LINK_LIBRARIES})
-	#message(STATUS "DEBUG: STATIC_D_LINKING_INTERFACE_LINK_LIBRARIES ${STATIC_D_LINKING_INTERFACE_LINK_LIBRARIES}")
-	set_target_properties(hello_world_c_static_D_linking
+	# All conditions have been met to build
+	# hello_world_c_alt_threads the identical way to
+	# hello_world_c, with INTERFACE_LINK_LIBRARIES property
+	# updated to remove all references to THREADS::Threads and
+	# -pthread, and adding an INTERFACE_LINK_OPTIONS that refers
+	# to the appropriate genex for transforming (or not) -pthread
+	# into a link option the relevant D compiler can understand.
+
+	# N.B. A better solution would be simply to use this genex
+	# within target_link_libraries (so no alt_threads version of the C
+	# library would be necessary), but that elegant solution is
+	# currently not allowed because of [CMake bug
+	# 19757](https://gitlab.kitware.com/cmake/cmake/issues/19757).
+	configure_library_build(hello_world_c_alt_threads)
+	# Determine the desired INTERFACE_LINK_LIBRARIES property for
+	# this alt_threads version of the library by removing the following items from the
+	# list.  Only the first removed item is relevant for the
+	# test_d project, but the other removed items might be
+	# relevant in the plplot project case.
+	list(REMOVE_ITEM C_LIBRARY_INTERFACE_LINK_LIBRARIES "$<LINK_ONLY:Threads::Threads>" "Threads::Threads" "-pthread")
+	#message(STATUS "DEBUG: C_LIBRARY_INTERFACE_LINK_LIBRARIES = ${C_LIBRARY_INTERFACE_LINK_LIBRARIES}")
+	set_target_properties(hello_world_c_alt_threads
 	  PROPERTIES
-	  INTERFACE_LINK_LIBRARIES ${STATIC_D_LINKING_INTERFACE_LINK_LIBRARIES}
+	  INTERFACE_LINK_LIBRARIES "${C_LIBRARY_INTERFACE_LINK_LIBRARIES}"
+	  )
+	# Create an interface library to carry the required INTERFACE_LINK_OPTIONS genex
+	add_library(hello_world_c_alt_interface INTERFACE)
+	set_target_properties(hello_world_c_alt_interface
+	  PROPERTIES
+	  INTERFACE_LINK_OPTIONS $<IF:$<COMPILE_LANG_AND_ID:D,DigitalMars,LDC>,-Xcc=-pthread,-pthread>
+	  )
+	install(TARGETS hello_world_c_alt_interface
+	  EXPORT export_test_d
+	  ARCHIVE DESTINATION ${LIB_DIR}
+	  LIBRARY DESTINATION ${LIB_DIR}
+	  RUNTIME DESTINATION ${BIN_DIR}
 	  )
       endif("${Threads_INTERFACE_LINK_LIBRARIES}" STREQUAL "-pthread")
     endif("${FOUND_Threads_index}" GREATER_EQUAL "0")

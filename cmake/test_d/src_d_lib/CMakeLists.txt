@@ -6,11 +6,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/hello_world.d
 
 add_library(hello_world_d ${D_LIBRARY_TYPE} ${SOURCE_LIST})
 
-if(TARGET hello_world_c_static_D_linking)
-  target_link_libraries(hello_world_d PRIVATE hello_world_c_static_D_linking)
-else(TARGET hello_world_c_static_D_linking)
+if(TARGET hello_world_c_alt_threads)
+  target_link_libraries(hello_world_d PRIVATE hello_world_c_alt_threads)
+else(TARGET hello_world_c_alt_threads)
   target_link_libraries(hello_world_d PRIVATE hello_world_c)
-endif(TARGET hello_world_c_static_D_linking)
+endif(TARGET hello_world_c_alt_threads)
 
 if(BUILD_SHARED_LIBS)
   if(USE_RPATH)

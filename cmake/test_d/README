@@ -1,6 +1,6 @@
 SUMMARY:
 
-The purpose of this complete project is to provide a simple test
+The purpose of this self-contained project is to provide a simple test
 case for CMake D language support.
 
 DESCRIPTION:
@@ -45,75 +45,91 @@ TESTING PROCEDURE:
 
 The test_d project may be used to test the CMake D language support as follows:
 
-(1) Both dmd and ldc language-support files set language-support CMake
-variables that are only supported now by a CMake commit (git described as v3.15.2-908-g3ec986ce8e)
+(1) Access a recent git master branch version CMake if you are testing ldc2 or dmd.
+
+Both dmd and ldc language-support files set language-support CMake
+variables that are only recognized by CMake commit (git described as v3.15.2-908-g3ec986ce8e)
 that has just (as of 2019-08-29) landed on the CMake master branch and which
 will become part of CMake-3.16.0 once that new version of CMake is
 released.  So as a first step in this test procedure, you should build
-CMake from the tip of its git master branch or from CMake-3.16.0 source
-code once that version of CMake is released.
+AND install CMake from the tip of its git master branch or from
+CMake-3.16.0 source code once that version of CMake is released.
 
-N.B. Similarly, if you are using dmd, you MUST have access to a dmd
-version that includes support for either the -preview=noXlinker dmd
-option that landed on the dmd git master branch on 2019-08-31 as
-commit d6183e9ff or Cybershadow's alternative effort to implement the
--Xcc approach instead.  The reason there are two implementations of the dmd
-effort to allow users to communicate options to the underlying C
-compiler is at the time of writing (2019-09-28) there is still
-[debate] (https://github.com/dlang/dmd/pull/10438) about whether they
-want to deal with the -L general change in semantics implemented by
-the -preview=noXlinker approach (all -L options would communicate
-those options to the underlying compiler rather than the previous approach
-where -L communicated options with the linker invoked by that
-compiler).  As a result of this discussion, CyberShawdow has begun
-work on an alternative to the -preview=noXlinker approach that follows
-what ldc2 does which is to implement an -Xcc option to communicate
-with the underlying C compiler used for linking with -L continuing as
-the flag used to communicate directly with the linker invoked by that
-compiler.
+N.B. that build (using the bootstrap method) and install worked well for me, and I access
+that installed version by setting the PATH variable below.
 
-PLplot needs one of these approaches or the other to deal with the
--pthread option that MUST be communicated to the underlying C
-compiler, but since our D language support currently assumes -L means
-communicate all -L options to the linker, and I had just started to
-change that support to the -preview=noXlinker semantics, I will stick
-with the CyberShadow approach for now, with the understanding that we
-could also get the -preview=noXlinker new -L semantics to work with
-some fairly trivial changes in our D language support for dmd, if the
-dmd developers decide (finally) that is the approach they want to
-take.
+(2) Access a recent git master branch version of dmd if you are testing dmd.
 
-Therefore, I built and installed the -preview=noXlinker version of dmd
-first following the instructions in
-<https://wiki.dlang.org/Building_under_Posix> for POSIX platforms like
-Linux, Mac OS X, etc.  Or those on Windows could follow the instructions in
-<https://wiki.dlang.org/Building_under_Windows>.
-I then copied that
-hard-coded install location /home/software/dmd/install to /home/software/dmd/install_noXlinker so
-I can potentially get access to it later.  And then I rebuilt and reinstalled
-dmd with the CyberShadow preliminary pull request concerning -Xcc support using
-the following steps:
+The -pthread link option is currently used for Linux and MSYS2 builds
+of the plplot project but not Cygwin builds of that project.  Also, I
+currently don't know -pthread link details for plplot on Mac OS X, but
+I do have some preliminary evidence that at least the -pthread option
+is honored (e.g., by gcc for MacPorts) on Mac OS X.  So currently,
+test_d *requires* for all platforms other than Cygwin that -pthread is
+used when building the C library to create for the simple test_d
+project the same test conditions that occur for the much more complex
+plplot project build for all of Linux, MSYS2, Cygwin, and (likely) Mac
+OS X.
 
-# Change to the preexisting dmd repository whose single remote
-# previously accessed just the master branch of dmd.
-cd ~/dmd/dmd
-# Add the CyberShadow remote, fetch it, and checkout the branch of his work where he is working on
-# implementing a -Xcc option similar to that already available for ldc2.
+That -pthread link option works without issues for gdc, but does
+require the -Xcc=-pthread command-line option to work for both ldc2
+and dmd to pass the -pthread option to the underlying gcc that is used
+for linking dmd results on Posix platforms.  The -Xcc= option has been
+implemented for more than a year now for ldc2 so most platforms (e.g.,
+Debian Buster) will have an ldc2 version that supports that option.
+However, released versions of dmd currently do not have that option
+implemented so you have to build a pre-release version of dmd from its
+git master branch from 2019-10-14 or later or else wait for the
+release of dmd 2.089.0
+[scheduled for release on 2019-11-01](https://dlang.org/changelog/release-schedule.html)
+which should include this current master branch support for the -Xcc= option.
 
-git remote add CyberShadow https://github.com/CyberShadow/dmd
-git fetch --all
-git checkout pull-20190926-222551
+The reason for the 2019-10-14 date is Cybershadow's pull request to implement the
+needed (for -pthread tests) -Xcc= option was merged to the dmd master
+branch on that date.
 
-# Then I did what I normally do to rebuild and reinstall dmd
-# (following the directions at
-# <https://wiki.dlang.org/Building_under_Posix>) using this
-# -Xcc-capable version.  Since this rebuild and reinstall was done
-# after the other one, the installed version is available in the
-# hard-coded location "/home/software/dmd/install/linux/bin64/dmd
-# which is accessed via setting the PATH and DC environment variables
-# below.
+Therefore, as of 2019-10-14, I built the latest master branch version
+of dmd following the directions at
+<https://wiki.dlang.org/Building_under_Posix>.  However, inspection
+of the relevant Makefiles indicated those instructions must be supplemented
+as follows:
 
-(2) Check documentation of comprehensive test of D language support on
+N.B. each of these steps are essential AND must be concluded for all
+indicated repositories before moving on to the next step.
+
+* Remove the install tree (which if it exists will have a top-level
+  directory corresponding to the "install" subdirectory of your
+  current results).  The reason for this removal is that stale results
+  from previous installs of dmd, phobos, and druntime might interfere
+  with the proper operation of the install tree.
+
+* git clone dmd, phobos, druntime, and tools or else if those local
+  git repositories already exist, pull the latest master branch
+  version for each of those local repositories.
+
+* Build the "clean" target for dmd, phobos, druntime, and tools to remove stale
+  generated files from previous builds and tests that tend to litter the working
+  directories of those repositories and which are KNOWN to interfere (e.g.,
+  ldd on the installed phobos library did not work correctly without this
+  clean step for druntime) with the proper
+  operation of the install tree.
+
+* Build the "all" target for dmd and phobos (which will build all the parts
+  from druntime and tools that are needed by phobos). 
+
+* Build the "install" target for dmd, phobos, AND druntime.  (Apparently, nothing
+  has to be installed for tools for test_d (and plplot) project needs.)
+
+* (Optional) build the "test" target for dmd.
+
+* (Optional) build the "unittest" target for phobos.
+
+N.B.  In my case those optional tests passed perfectly with no warning
+or error messages, and it is that installed and tested version of dmd,
+phobos, and druntime that I access below by setting appropriate
+environment variables.
+
+(3) Check documentation of comprehensive test of D language support on
 your platform as follows:
 
 scripts/comprehensive_test.sh --help
@@ -123,7 +139,7 @@ different location) than the corresponding script in
 ../../scripts/comprehensive_test.sh which comprehensively tests all of
 PLplot so do not confuse the two.
 
-(3) Actually do comprehensive test of D language support as follows:
+(4) Actually do a comprehensive test of D language support as follows:
 
 <set environment> scripts/comprehensive_test.sh
 
@@ -136,12 +152,30 @@ For example, on my Debian Buster system <set environment> was one of the three f
 # I. dmd (and the same version of phobos) built by myself since Debian
 # Buster does not supply a system version.
 
-# N.B. Currently I am testing the CyberShadow PR to provide the -Xcc option for dmd.
-# See previous dmd comments about this version.  To gain
-# access to that work I used the PATH setting below:
+# N.B. Currently I am testing the master branch version of dmd that
+# includes the needed -Xcc option for dmd.  See previous dmd comments
+# about building this version.  To gain access to that work I used the
+# PATH setting below.  Furthermore, the current test_d build system
+# does not set up RPATH properly so that the particular phobos library
+# required when linking D libraries and executables is not found by
+# the run-time loader.  So I had to set LD_LIBRARY_PATH appropriately
+# below to overcome this deficiency in the test_d build system for
+# the case where dmd has to be built.
 
-# N.B. This build system is a simple one that does not set up RPATH to find the particular phobos library
-# required when linking D libraries and executables.  So must set LD_LIBRARY_PATH appropriately.
+# <aside>
+# This test_d build-system deficiency will very likely never be fixed
+# since access to non-system versions of any D compiler is a rather
+# special requirement that will likely (at least a relatively short
+# time after dmd-2.089.0 is released) only be required on the
+# relatively small subset of platforms where no modern system version
+# of dmd is available.  Debian Buster=Stable is such an example.  But
+# even in that case there is some hope (since the historic dmd
+# licensing issues have apparently now been addressed) this dmd Debian
+# packaging deficiency will be addressed in future versions of Debian
+# and similarly for other Linux and non-Linux free software
+# distributions that currently do not supply a modern system version
+# of dmd.
+# </aside>
 
 # We use the -v option for dmd so that we can see the actual derived
 # command-line that dmd uses to communicate with the linker.
@@ -185,9 +219,9 @@ tarball (of information that is collected by that script at
 ../../../comprehensive_test_d_disposeable/comprehensive_test.tar.gz)
 for further analysis of any issues you discover.
 
-(4, optional) Debug result:
+(5, optional) Debug result:
 
-If (3) shows any errors than you can optionally debug the result as
+If step (4) shows any errors than you can optionally debug the result as
 follows:
 
 <set environment> scripts/comprehensive_test.sh --do_trace yes
@@ -196,9 +230,9 @@ This produces voluminous results and buried (deeply) in those is
 typically enough information to find out what is going wrong with the
 CMake D language support.  These voluminous results are automatically
 included in the tarball report so please send that report to me (as
-well as the one created without the --do_trace yes option in step 3).
+well as the one created without the --do_trace yes option in step (4).
 
-(5, optional) Test with valgrind:
+(6, optional) Test with valgrind:
 
 Create an empty build tree, run cmake from there, create the hello
 executable and test that with valgrind.
@@ -211,11 +245,26 @@ valgrind src_executable/hello >& valgrind.out
 
 Look through the generated *.out files for any error conditions.
 
-In sum, this project provides a simple demonstration of how to use the
-CMake D language support with D wrapper libraries for C libraries that
-are either static or shared, and for any of the three principal D
-compilers (dmd, ldc, and/or gdc).  At the same time, this project
-tests the quality of CMake D support for various user's platforms for
-any of those three compilers.  If any user is having trouble with
-CMake D language support for any of those compilers, they should run
-at least step (3) and step (4) above.
+In sum, this project provides a good test of CMake language support
+for D.
+
+In a bit more detail, the CMake-based build system of this project
+demonstrates how to use CMake D language support to build D
+executables that must be linked to D libraries that wrap functions
+implemented in C libraries.  A special effort is made to link the
+test_d C library with the -pthread compiler option to increase the
+power of this test (on all platforms other than Cygwin).  The
+comprehensive test script supplied with this project tests this
+project for all principal library configurations and both the build
+tree and install tree.  Which of the three principal D compilers (dmd,
+ldc2, or gdc) that are used for this test can be controlled in a
+simple way using environment variables, with an example given above
+for each of these compilers.
+
+N.B. If any user is having trouble with any of dmd, ldc2, or gdc for
+any software project or any platform that uses *identical* CMake D
+language support as test_d (e.g., the plplot project), then their
+first debugging/replication steps should be to run at least step (4)
+and step (5) above to help figure out with this simple test_d project
+what the CMake D language support issue might be for their more
+complex project.
