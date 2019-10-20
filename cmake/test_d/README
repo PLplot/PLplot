@@ -115,7 +115,7 @@ indicated repositories before moving on to the next step.
   operation of the install tree.
 
 * Build the "all" target for dmd and phobos (which will build all the parts
-  from druntime and tools that are needed by phobos). 
+  from druntime and tools that are needed by phobos).
 
 * Build the "install" target for dmd, phobos, AND druntime.  (Apparently, nothing
   has to be installed for tools for test_d (and plplot) project needs.)
