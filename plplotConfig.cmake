@@ -1,3 +1,9 @@
+# Determine Threads::Threads interface library following what is done
+# in cmake/modules/threads.cmake.  The value of
+# THREADS_PREFER_PTHREAD_FLAG is configured to be the same as used in
+# the core build.
+find_package(Threads)
+
 if(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
   # Find Qt5 components that we need to link applications against
   # the plplot library (if ENABLE_DYNDRIVERS is false) and which we

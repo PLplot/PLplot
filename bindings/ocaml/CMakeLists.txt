@@ -1,10 +1,9 @@
 # -*- mode: cmake -*-
 # bindings/ocaml/CMakeLists.txt
 #
-#
-# Copyright (C) 2008 Andrew Ross
-# Copyright (C) 2009 Hezekiah M. Carty
-# Copyright (C) 2009-2018 Alan W. Irwin
+# Copyright (C) 2008-2011 Andrew Ross
+# Copyright (C) 2008-2019 Alan W. Irwin
+# Copyright (C) 2009-2013 Hezekiah M. Carty
 #
 # This file is part of PLplot.
 #
@@ -143,19 +142,34 @@ if(ENABLE_ocaml)
     endforeach(library in LISTS library_LIST)
 
     #message(STATUS "DEBUG: (original) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
-    # Replace $<LINK_ONLY:([^>]*)> by whatever was inside those parentheses.
+
+    if(ocaml_LIBRARIES_FLAGS MATCHES "Threads::Threads")
+      set(matches_Threads_target ON)
+    endif(ocaml_LIBRARIES_FLAGS MATCHES "Threads::Threads")
+
+    # Replace $<LINK_ONLY:([^>]*)> by whatever was inside those angle brackets.
     string(REGEX REPLACE "\\$<LINK_ONLY:([^>]*)>" "\\1" ocaml_LIBRARIES_FLAGS "${ocaml_LIBRARIES_FLAGS}")
     #message(STATUS "DEBUG: (\$<LINK_ONLY:...> generator expression replaced by whatever in ellipses) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
 
-    # Get rid of internal and Qt5 symbolic targets from the list.
-    list(FILTER ocaml_LIBRARIES_FLAGS EXCLUDE REGEX "^PLPLOT::csirocsa$|^PLPLOT::csironn$|^PLPLOT::nistcd$|^PLPLOT::qsastime$|^Qt5::")
+    # Get rid of internal, Threads, and Qt5 symbolic targets from the list.
+    list(FILTER ocaml_LIBRARIES_FLAGS EXCLUDE REGEX "^PLPLOT::csirocsa$|^PLPLOT::csironn$|^PLPLOT::nistcd$|^PLPLOT::qsastime$|^Threads::Threads$|^Qt5::")
     #message(STATUS "DEBUG: (filtered) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
+
+    #message(STATUS "DEBUG: raw ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
 
     # Add C++ libraries in case there is at least one C++ device
     # driver in libplplot.
     list(APPEND ocaml_LIBRARIES_FLAGS ${cxx_compiler_library_pathname_list})
 
-    #message(STATUS "DEBUG: raw ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
+    #message(STATUS "DEBUG: (C++ added) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
+
+    if(matches_Threads_target)
+      # If there was a symbolic Threads::Threads target in the original set of flags that has
+      # since been removed, must restore the equivalent threads library or link option to the list
+      get_target_property(threads_result Threads::Threads INTERFACE_LINK_LIBRARIES)
+      list(APPEND ocaml_LIBRARIES_FLAGS ${threads_result})
+      #message(STATUS "DEBUG: (threads library added) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
+    endif(matches_Threads_target)
 
     # Add back actual list of Qt5 libraries to replace the symbolic
     # form of Qt5 libraries that were removed above.

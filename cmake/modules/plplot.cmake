@@ -458,6 +458,9 @@ message(STATUS "X11_INCLUDE_DIR = ${X11_INCLUDE_DIR}")
 message(STATUS "X11_COMPILE_FLAGS = ${X11_COMPILE_FLAGS}")
 message(STATUS "X11_LIBRARIES = ${X11_LIBRARIES}")
 
+# Find threads library (required before any devices are configured that might require threads).
+include(threads)
+
 option(DEFAULT_NO_BINDINGS
 "All language bindings are disabled by default"
 OFF

@@ -177,9 +177,15 @@ if(ENABLE_DYNDRIVERS)
   # For this case the plplot library depends on the ltdl library.
   list(APPEND LIB_INSTALL_RPATH ${LTDL_LIBRARY_RPATH})
 else(ENABLE_DYNDRIVERS)
-  list(APPEND libplplot_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
   # For this case the plplot library depends on external libraries required
   # by the device driver code that is in the plplot library.
+  # N.B. the imported targets Qt5::* and Threads::Threads have deliberatedly
+  # been excluded from DRIVERS_LINK_FLAGS because pc_libplplot_LINK_FLAGS (set
+  # below to help configure the pkg-config case) cannot include such target names.
+  # So the associated libraries for these targets are handled in a distinct
+  # way for libplplot_LINK_LIBRARIES and pc_libplplot_LINK_FLAGS below
+  # AFTER pc_libplplot_LINK_FLAGS is copied from libplplot_LINK_LIBRARIES.
+  list(APPEND libplplot_LINK_LIBRARIES ${DRIVERS_LINK_FLAGS})
   list(APPEND LIB_INSTALL_RPATH ${DRIVERS_RPATH})
 endif(ENABLE_DYNDRIVERS)
 #message("DEBUG: LIB_INSTALL_RPATH = ${LIB_INSTALL_RPATH}")
@@ -227,15 +233,28 @@ endif(WITH_FREETYPE)
 # eventually be transformted into pure pkg-config form.  Both variables
 # will have data added to them afterward due to the internal PLplot libraries
 # which have a different pkg-config treatment than the external libraries
-# dealt with here.
+# dealt with in the above code.
 set(pc_libplplot_LINK_FLAGS ${libplplot_LINK_LIBRARIES})
 
-if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  # N.B. pc_qt_LIBRARIES_LIST is the same as QT_LIBRARIES for
-  # the Qt4 case which is why this logic is redundant in that
-  # case.
-  list(APPEND pc_libplplot_LINK_FLAGS ${pc_qt_LIBRARIES_LIST})
-endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+if(NOT ENABLE_DYNDRIVERS)
+  # Handle the cases where the plplot library may depend on imported targets where
+  # the libplplot_LINK_LIBRARIES (used for configuring the plplot build)
+  # and pc_libplplot_LINK_FLAGS (used for configuring the plplot pkg-config
+  # file) must obviously (because pkg-config does not understand imported targets)
+  # be configured differently.
+  if(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+    list(APPEND libplplot_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
+    # N.B. pc_qt_LIBRARIES_LIST is the same as QT_LIBRARIES for the Qt4
+    # case which is why this logic is redundant in that case.
+    list(APPEND pc_libplplot_LINK_FLAGS ${pc_qt_LIBRARIES_LIST})
+  endif(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+
+  if(PLD_xwin AND PL_USE_PTHREADS_XWIN)
+    list(APPEND libplplot_LINK_LIBRARIES Threads::Threads)
+    get_target_property(Threads_INTERFACE_LINK_LIBRARIES Threads::Threads INTERFACE_LINK_LIBRARIES)
+    list(APPEND pc_libplplot_LINK_FLAGS ${Threads_INTERFACE_LINK_LIBRARIES})
+  endif(PLD_xwin AND PL_USE_PTHREADS_XWIN)
+endif(NOT ENABLE_DYNDRIVERS)
 
 # The above completes dealing with the external libraries.  Now
 # deal with the internal libraries that are built by the PLplot
@@ -278,10 +297,6 @@ if(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
 endif(NOT ENABLE_DYNDRIVERS AND PLD_wxwidgets AND RT_LIB)
 
 #message(STATUS "libplplot_LINK_LIBRARIES = ${libplplot_LINK_LIBRARIES}")
-
-if(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  list(APPEND libplplot_LINK_LIBRARIES Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-endif(NOT ENABLE_DYNDRIVERS AND ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
 configure_library_build(plplot "" "${plplot_LIB_SRCS}" "${libplplot_LINK_LIBRARIES}" "${LIB_INSTALL_RPATH}")
 

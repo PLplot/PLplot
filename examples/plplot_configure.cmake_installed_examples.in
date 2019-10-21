@@ -5,6 +5,9 @@
 set(BUILD_TEST ON)
 set(CORE_BUILD OFF)
 
+# Needed to configure Threads::Threads interface library.
+set(THREADS_PREFER_PTHREAD_FLAG @THREADS_PREFER_PTHREAD_FLAG@)
+
 # =======================================================================
 # Useful functions.
 # =======================================================================

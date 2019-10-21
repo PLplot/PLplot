@@ -1,6 +1,7 @@
 # cmake/modules/xwin.cmake
 #
-# Copyright (C) 2006  Alan W. Irwin
+# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2009 Andrew Ross
 #
 # This file is part of PLplot.
 #
@@ -25,45 +26,38 @@
 # 			    device.
 # xwin_LINK_FLAGS	  - individual LINK_FLAGS for dynamic xwin device.
 # DRIVERS_LINK_FLAGS	  - list of LINK_FLAGS for all static devices.
-# PL_HAVE_PTHREAD         - ON means use pthreads with xwin driver.
+# PL_USE_PTHREADS_XWIN    - ON means use pthreads with xwin driver.
 # PLPLOT_MUTEX_RECURSIVE  - Portable definition for PTHREAD_MUTEX_RECURSIVE
 if(PLD_xwin)
   if(X11_FOUND)
     set(xwin_COMPILE_FLAGS "${X11_COMPILE_FLAGS}")
+    # N.B. X11_LIBRARIES already converted to full path names with call to cmake_link_flags.
     set(xwin_LINK_FLAGS "${X11_LIBRARIES}")
-    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      # turn PL_HAVE_PTHREAD OFF by default for Mac OS X since it doesn't
-      # work for Mac OS X 10.4.  Werner says it does work for vanilla
-      # XQuartz X11, but the official Apple version of X(Quartz) for 10.5
-      # doesn't have all the fixes of the vanilla version so he doesn't trust
-      # it.  This his advice for now is to be conservative until we can
-      # get a clear report that official X works for 10.5.
-      option(PL_HAVE_PTHREAD "Use pthreads with the xwin driver" OFF)
-    else(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      # Turn PL_HAVE_PTHREAD ON by default for other platforms now that
-      # the tk segmentation fault has been cured.
-      option(PL_HAVE_PTHREAD "Use pthreads with the xwin driver" ON)
-    endif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    if(PL_HAVE_PTHREAD)
-      find_package(Threads)
-      if(CMAKE_USE_PTHREADS_INIT)
-        set(xwin_LINK_FLAGS ${xwin_LINK_FLAGS} ${CMAKE_THREAD_LIBS_INIT})
-	cmake_link_flags(xwin_LINK_FLAGS "${xwin_LINK_FLAGS}")
-	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
- 	elseif(CMAKE_SYSTEM_NAME STREQUAL "kFreeBSD")
- 	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
-	else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-	  set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE")
-	endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-      else(CMAKE_USE_PTHREADS_INIT)
-        # I am being super-careful here to follow the autotools model.  In
-        # fact, it is possible other thread systems will work as well as
-	# pthreads.  So something to investigate for later.
-        set(PL_HAVE_PTHREAD OFF)
-      endif(CMAKE_USE_PTHREADS_INIT)
-    endif(PL_HAVE_PTHREAD)
+    # This is deliberately set without Threads::Threads to avoid messing up pkg-config
+    # results which indirectly depend on DRIVERS_LINK_FLAGS in src/CMakeLists.txt.
+    # Of course, this also means that Threads has to be configured with special
+    # logic in that file for both the configuration of the plplot library build
+    # and also the configured pkg-config results for the plplot library.
     set(DRIVERS_LINK_FLAGS ${DRIVERS_LINK_FLAGS} ${xwin_LINK_FLAGS})
+
+    if(PL_HAVE_PTHREADS)
+      # Posix threads library has (previously) been found.
+      option(PL_USE_PTHREADS_XWIN "Use pthreads with the xwin device driver" ON)
+    else(PL_HAVE_PTHREADS)
+      message(STATUS "WARNING: Posix threads library not found so cannot use pthreads with the xwin device driver")
+      set(PL_USE_PTHREADS_XWIN OFF CACHE BOOL "Use pthreads with the xwin device driver" FORCE)
+    endif(PL_HAVE_PTHREADS)
+
+    if(PL_USE_PTHREADS_XWIN)
+      set(xwin_LINK_FLAGS ${xwin_LINK_FLAGS} Threads::Threads)
+      if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
+      elseif(CMAKE_SYSTEM_NAME STREQUAL "kFreeBSD")
+ 	set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE_NP")
+      else(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	set(PLPLOT_MUTEX_RECURSIVE "PTHREAD_MUTEX_RECURSIVE")
+      endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    endif(PL_USE_PTHREADS_XWIN)
   else(X11_FOUND)
     set(PLD_xwin OFF CACHE BOOL "Enable xwin device" FORCE)
   endif(X11_FOUND)

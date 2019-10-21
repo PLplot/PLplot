@@ -189,7 +189,7 @@ pltkMain( int argc, const char **argv, char *RcFileName,
     char       buf[20];
     int        code;
 
-#ifdef PL_HAVE_PTHREAD
+#ifdef PL_USE_PTHREADS_XWIN
     XInitThreads();
 #endif
 
