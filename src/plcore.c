@@ -2966,7 +2966,7 @@ int plInBuildTree()
     return inBuildTree;
 }
 
-#ifdef ENABLE_DYNDRIVERS
+// Need this for both the ENABLE_DYNDRIVERS case and the wxPLViewer case.
 
 PLCHAR_VECTOR
 plGetDrvDir()
@@ -2997,9 +2997,6 @@ plGetDrvDir()
 
     return drvdir;
 }
-
-#endif
-
 
 //--------------------------------------------------------------------------
 // void plInitDispatchTable()

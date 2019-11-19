@@ -227,3 +227,26 @@ if(ENABLE_DYNDRIVERS)
   endif(TEST_DYNDRIVERS AND NOT CMAKE_CROSSCOMPILING)
 
 endif(ENABLE_DYNDRIVERS)
+
+if(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
+  # Build wxPLViewer (an application needed by -dev wxwidgets) with same wxwidgets compile and link flags
+  # as used with the PLplot wxwidgets device driver.
+
+  set(wxPLViewer_SRCS wxwidgets_viewer/wxplviewer.cpp wxwidgets_viewer/wxplframe.cpp wxwidgets_comms.cpp)
+  set_source_files_properties(${wxPLViewer_SRCS}
+    PROPERTIES COMPILE_FLAGS "${wxwidgets_COMPILE_FLAGS}")
+
+  set(wxPLViewer_link_libraries PLPLOT::plplotwxwidgets PLPLOT::plplotcxx ${wxwidgets_LINK_FLAGS} ${MATH_LIB} ${RT_LIB})
+
+  # wxPLViewer depends on the plplotwxwidgets and plplotcxx libraries and is installed
+  # in the drivers directory.
+  set(LIB_INSTALL_RPATH ${LIB_DIR})
+  configure_executable_build(wxPLViewer "${wxPLViewer_SRCS}" "${wxPLViewer_link_libraries}" "${LIB_INSTALL_RPATH}" ${DRV_DIR})
+
+  # Set this property rather than using the WIN32 signature of add_executable
+  # inside the configure_executable_build function.
+  set_target_properties(${WRITEABLE_TARGET}wxPLViewer
+    PROPERTIES
+    WIN32_EXECUTABLE "ON"
+    )
+endif(ENABLE_wxwidgets AND NOT OLD_WXWIDGETS)
