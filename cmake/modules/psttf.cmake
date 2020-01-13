@@ -1,6 +1,8 @@
 # cmake/modules/psttf.cmake
 #
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2020 Alan W. Irwin
+# Copyright (C) 2008 Andrew Ross
+# Copyright (C) 2009 Hazen Babcock
 #
 # This file is part of PLplot.
 #
@@ -39,7 +41,7 @@
 
 if(PLD_psttf OR PLD_psttfc)
   if(NOT CMAKE_CXX_COMPILER_WORKS)
-    message(STATUS "WARNING: no working C++ compiler so "
+    message(STATUS "PLATFORM ISSUE: no working C++ compiler so "
       "setting PLD_psttf and PLD_psttfc to OFF."
       )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
@@ -51,7 +53,7 @@ endif(PLD_psttf OR PLD_psttfc)
 if(PLD_psttf OR PLD_psttfc)
   if(NOT PKG_CONFIG_EXECUTABLE)
     message(STATUS
-    "WARNING: pkg-config not found so setting PLD_psttf and PLD_psttfc to OFF."
+    "PLATFORM ISSUE: pkg-config not found so setting PLD_psttf and PLD_psttfc to OFF."
     )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
     set(PLD_psttfc OFF CACHE BOOL "Enable psttfc device" FORCE)
@@ -59,27 +61,51 @@ if(PLD_psttf OR PLD_psttfc)
 endif(PLD_psttf OR PLD_psttfc)
 
 if(PLD_psttf OR PLD_psttfc)
-  pkg_check_pkgconfig("lasi;pango;pangoft2" includedir libdir linkflags cflags version _PSTTF)
-  if(linkflags)
-    #blank-separated required.
-    string(REGEX REPLACE ";" " " psttf_COMPILE_FLAGS "${cflags}")
-    set(psttf_LINK_FLAGS ${linkflags})
-    set(psttf_RPATH ${libdir})
-    filter_rpath(psttf_RPATH)
-    list(APPEND DRIVERS_LINK_FLAGS ${psttf_LINK_FLAGS})
-  else(linkflags)
-    message("includedir = ${includedir}")
-    message("libdir = ${libdir}")
-    message("linkflags = ${linkflags}")
-    message("cflags = ${cflags}")
-    message(STATUS
-       "WARNING: pango, pangoft2, or lasi not found with pkg-config.\n"
-    "   Setting PLD_psttf and PLD_psttfc to OFF.  Please install all of these packages\n"
-    "   and/or set the environment variable PKG_CONFIG_PATH appropriately."
-    )
+  # Versions of libLASi prior to 1.1.4 have bugs that can affect the psttf device driver.
+  # So exclude those old versions.
+  set(MINIMUM_LASI_PACKAGE_VERSION 1.1.4)
+  pkg_check_pkgconfig("lasi" includedir libdir linkflags cflags version _PSTTF)
+  pkg_get_variable(LASI_PACKAGE_VERSION lasi lasi_package_version)
+  #message(STATUS "DEBUG: LASI_PACKAGE_VERSION = ${LASI_PACKAGE_VERSION}")
+  if(LASI_PACKAGE_VERSION)
+    message(STATUS "LASI_PACKAGE_VERSION = ${LASI_PACKAGE_VERSION}")
+    if(LASI_PACKAGE_VERSION VERSION_LESS ${MINIMUM_LASI_PACKAGE_VERSION})
+      message(STATUS
+	"PLATFORM ISSUE: Detected LASI_PACKAGE_VERSION < ${MINIMUM_LASI_PACKAGE_VERSION}.  Therefore setting PLD_psttf and PLD_psttfc to OFF.\n"
+	"   To address this issue, install libLASi-${MINIMUM_LASI_PACKAGE_VERSION} or later and/or set the environment variable\n"
+	"   PKG_CONFIG_PATH appropriately."
+	)
+      set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+      set(PLD_psttfc OFF CACHE BOOL "Enable psttfc device" FORCE)
+    endif(LASI_PACKAGE_VERSION VERSION_LESS ${MINIMUM_LASI_PACKAGE_VERSION})
+  else(LASI_PACKAGE_VERSION)
+    message(STATUS "PLATFORM ISSUE: Determination of LASI_PACKAGE_VERSION failed.\n"
+      "   Therefore setting PLD_psttf and PLD_psttfc to OFF.  To address this issue install libLASi-${MINIMUM_LASI_PACKAGE_VERSION} or later\n"
+      "   and the pango and pangoft2 packages and/or set the environment variable PKG_CONFIG_PATH appropriately."
+      )
     set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
     set(PLD_psttfc OFF CACHE BOOL "Enable psttfc device" FORCE)
-  endif(linkflags)
+  endif(LASI_PACKAGE_VERSION)
 endif(PLD_psttf OR PLD_psttfc)
-# Test for correct version of liblasi by looking
-# for API that was added for 1.0.5 which is required by PLplot.???
+if(PLD_psttf OR PLD_psttfc)
+  # PASSED version check above.
+  if(includedir AND libdir AND linkflags AND cflags)
+      #blank-separated required.
+      string(REGEX REPLACE ";" " " psttf_COMPILE_FLAGS "${cflags}")
+      set(psttf_LINK_FLAGS ${linkflags})
+      set(psttf_RPATH ${libdir})
+      filter_rpath(psttf_RPATH)
+      list(APPEND DRIVERS_LINK_FLAGS ${psttf_LINK_FLAGS})
+  else(includedir AND libdir AND linkflags AND cflags)
+    message(STATUS "PLATFORM ISSUE: Found the following incomplete libLASi results:\n"
+      "   includedir = ${includedir}\n"
+      "   libdir = ${libdir}\n"
+      "   linkflags = ${linkflags}\n"
+      "   cflags = ${cflags}\n"
+      "   Therefore setting PLD_psttf and PLD_psttfc to OFF.  To address this issue install libLASi-${MINIMUM_LASI_PACKAGE_VERSION} or later\n"
+      "   and the pango and pangoft2 packages and/or set the environment variable PKG_CONFIG_PATH appropriately."
+      )
+    set(PLD_psttf OFF CACHE BOOL "Enable psttf device" FORCE)
+    set(PLD_psttfc OFF CACHE BOOL "Enable psttfc device" FORCE)
+  endif(includedir AND libdir AND linkflags AND cflags)
+endif(PLD_psttf OR PLD_psttfc)
