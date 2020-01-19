@@ -27,7 +27,7 @@ Download the [Cygwin installer](http://www.cygwin.com/setup.exe) and execute it.
 -   Devel/gcc or Devel/gcc4
 -   Devel/g++ or Devel/g++4 (for C++ bindings)
 -   Devel/gada or Devel/gada4 (for Ada bindings)
--   Devel/gfortran (for f95 bindings)
+-   Devel/gfortran (for Fortran bindings)
 -   Devel/libqhull-devel
 -   Devel/swig
 -   Devel/cmake

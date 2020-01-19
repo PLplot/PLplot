@@ -52,7 +52,7 @@ Bindings options
 
 **ENABLE_d:BOOL**=ON - [D](http://www.digitalmars.com/d/index.html) binding.
 
-**ENABLE_f95:BOOL**=ON - Fortran 95 binding.
+**ENABLE_fortran:BOOL**=ON - Fortran binding.
 
 **ENABLE_itcl:BOOL**=ON - iTcl object-oriented extension of the Tcl binding.
 
