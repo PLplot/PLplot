@@ -48,9 +48,13 @@
 #                           Qt5 case by a special target_link_libraries call and taken care of
 #                           explicitly in the Qt4 case by the QT_LIBRARIES variable that is defined
 #                           by "include(ndp_UseQt4)".
+# qt_TARGETS		  - list of targets which the qt dynamic device
+#			    depends on.
 # qt_RPATH	       	  - RPATH directory list for qt device driver.
 # DRIVERS_LINK_FLAGS  	  - list of device LINK_FLAGS for case when
-#			    ENABLE_DYNDRIVERS OFF.
+#			    ENABLE_DYNDRIVERS OFF.  (qt_TARGETS not included
+#			    since source code used instead of this target
+#			    for ENABLE_DYNDRIVERS OFF.)
 # qt_SOURCE		  - list of source files to be appended to qt.cpp.
 # ENABLE_qt		  - ON means the plplot_qt library is enabled.
 # ENABLE_pyqt4		  - ON means the plplot_pyqt4 Python extension module
@@ -383,12 +387,15 @@ if(ANY_QT_DEVICE)
   if(ENABLE_DYNDRIVERS)
     if(ENABLE_qt)
       set(qt_SOURCE)
+      set(qt_TARGETS PLPLOT::plplotqt)
     else(ENABLE_qt)
-      # if qt disabled, then must include full source for this dynamic device.
+      # if qt disabled, then must include full source and forget
+      # qt_TARGETS for this dynamic device.
       set(qt_SOURCE ${CMAKE_SOURCE_DIR}/bindings/qt_gui/plqt.cpp)
     endif(ENABLE_qt)
   else(ENABLE_DYNDRIVERS)
-    # N.B. Use appropriate source code (see below) to break circular linking.
+    # N.B. no qt_TARGETS here since use appropriate source code (see below)
+    # instead to break circular linking.
     list(APPEND DRIVERS_LINK_FLAGS ${qt_LINK_FLAGS})
     set(qt_SOURCE ${CMAKE_SOURCE_DIR}/bindings/qt_gui/plqt.cpp)
   endif(ENABLE_DYNDRIVERS)

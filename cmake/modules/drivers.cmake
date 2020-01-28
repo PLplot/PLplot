@@ -2,7 +2,7 @@
 #
 # Start driver initializations
 #
-# Copyright (C) 2006-2019  Alan W. Irwin
+# Copyright (C) 2006-2015  Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -87,6 +87,7 @@ include(drivers-init)
 # and set appropriate PLD_devicename to OFF if the required resources are
 # not available.
 include(cairo)
+include(cgm)
 include(gd)
 include(xwin)
 include(tk)
