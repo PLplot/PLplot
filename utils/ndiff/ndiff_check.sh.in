@@ -1,0 +1,5 @@
+$<TARGET_FILE:ndiff> --quick --logfile $1.err --outfile $1.out $(${CAT_EXECUTABLE} ${TEST_DIR}/$1.opt) ${TEST_DIR}/$1.in1 ${TEST_DIR}/$1.in2
+# Use diff instead of cmp to give more details about the differences.
+# ${CAT_EXECUTABLE} < $1.err ${FILTER} | ${CMP_EXECUTABLE} -s - ${CHECK_DIR}/$1.err && ${CAT_EXECUTABLE} < $1.out ${FILTER} | ${CMP_EXECUTABLE} -s - ${CHECK_DIR}/$1.out
+${CAT_EXECUTABLE} < $1.err ${FILTER} | ${DIFF_EXECUTABLE} - ${CHECK_DIR}/$1.err && ${CAT_EXECUTABLE} < $1.out ${FILTER} | ${DIFF_EXECUTABLE} - ${CHECK_DIR}/$1.out
+

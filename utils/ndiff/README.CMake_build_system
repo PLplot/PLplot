@@ -1,0 +1,55 @@
+The ndiff application is a useful fuzzy diff that can be used to
+analyze, for example, the most significant differences between the C
+and Python PostScript results without having those important
+differences obscured by minor numerical differences.
+
+ndiff was last released in 2000, and its autotools and Make-based
+build system is beginning to show the signs of bit-rot.  For example,
+building from a separate build tree does not work, and you must create
+_all_ the required subdirectories of the install tree using repeated
+runs of mkdir before "make install" will work.
+
+AWI got tired of dealing with those issues so he implemented (with
+help from Andrew Ross) a comprehensive CMake-based build system for
+ndiff for the cmake/epa_build/ndiff subproject of PLplot.  I have
+copied that build system here using
+
+software@merlin> cp /home/software/plplot/HEAD/plplot.git/cmake/epa_build/ndiff/README.ndiff README.CMake_build_system
+software@merlin> cp /home/software/plplot/HEAD/plplot.git/cmake/epa_build/ndiff/config.h.cmake .
+
+software@merlin> cp /home/software/plplot/HEAD/plplot.git/cmake/epa_build/ndiff/ndiff_CMakeLists.txt CMakeLists.txt
+
+modified this file (README.CMake_build_system) considerably and updated CMakeLists.txt here
+to modern CMake practices (which, in part, meant I had to create an
+additional file ndiff_check.sh.in).  So here is the manifest of the files
+I added to ndiff-2.0.0.
+
+README.CMake_build_system	This file
+CMakeLists.txt			The principal file containing the CMake-based build system for ndiff
+config.h.cmake			The CMake equivalent of the autoheader-generated config.hin
+ndiff_check.sh.in		A configurable script that is run by bash as part of the test process
+
+To use this build system run the following commands *from this directory*.
+
+# Dangerous unless you are in the correct directory!
+# Clean out old builds if they exist
+rm -rf build_dir
+# Separate, initially empty build tree
+mkdir build_dir
+cd build_dir
+cmake -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX ..
+make
+make test
+make install
+
+where $INSTALL_PREFIX stands for the top-level directory of the
+install tree that the user decides to use, e.g., for convenience the
+same directory install prefix as for a PLplot install.
+
+Note AWI has historically been in touch with the ndiff author, and he
+has absolutely no use for CMake because it is difficult to debug (!)
+the resulting Makefiles.  So this CMake-based build system will likely
+always be external to the ndiff project.  Nevertheless, ndiff is
+extremely useful to PLplot developers who are all fairly expert with
+CMake so this new build system should save some time and effort for
+PLplot developers.
