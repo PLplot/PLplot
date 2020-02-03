@@ -265,6 +265,13 @@ as of 2019-08-14 and subsequently modified by one of our developers
 compilers, gdc, ldc, and dmd.  These files are all licensed under the
 MIT license (see cmake/modules/language_support/cmake-d_fork/LICENSE
 for the terms of that license).
+
+The ndiff-2.00 software package in utils/ndiff was downloaded from
+ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz and gpg verified
+with ftp://ftp.math.utah.edu/pub/misc/ndiff-2.00.tar.gz.sig with the
+directory name changed from utils/ndiff-2.0.0 to utils/ndiff.  The
+license of this utility software is GPL version 2 or above.  See
+utils/ndiff/COPYING for the exact details of that license.
 ___________________________________________________________________________
 
 Any file that is explicitly marked as "public domain" is free from any
