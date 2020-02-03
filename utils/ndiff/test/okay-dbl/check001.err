@@ -1,0 +1,8 @@
+Usage:
+	ndiff [ -? ] [ -abserr abserr ] [ -author ] [ -copyright ]
+	      [ -fields n1a-n1b,n2,n3a-n3b,...  ] [ -help ]
+	      [ -logfile filename ] [ -minwidth nnn ] [ -outfile filename ]
+	      [ -precision number-of-bits ] [ -quick ] [ -quiet ]
+	      [ -relerr relerr ] [ -separators regexp ] [ -silent ]
+	      [ -version ] [ -www ]
+	      infile1 infile2

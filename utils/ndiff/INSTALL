@@ -1,0 +1,410 @@
+%% /u/sy/beebe/src/ndiff/ndiff-2.00/INSTALL, Sun Dec 10 10:33:35 2000
+%% Edit by Nelson H. F. Beebe <beebe@math.utah.edu>
+%%
+%% Copyright (C) 2000 Nelson H. F. Beebe
+%%
+%% See the file ndiff.sin for a full copyright notice, and the file
+%% COPYING for the license.
+
+========================================================================
+
+
+====================
+INSTALLATION ON UNIX
+====================
+
+As with most GNUware, you can build, test, and install this program on
+most UNIX systems by these simple steps
+
+	./configure && make all check install
+
+No source code compilations are required, so the installation should
+only take a minute or so.
+
+ndiff supports three flavors of floating-point arithmetic:
+
+	(1) multiple precision, using the GNU gmp library, with the
+	    precision controllable by a command-line option;
+
+	(2) extended precision (80 bits on Intel and Motorola, 128
+	    bits on most RISC systems); and
+
+	(3) double precision (64 bits in almost all current
+	    architectures, including all with IEEE-754 conformant
+	    arithmetic (Intel, Motorola, all RISC, plus recent IBM
+	    S/390 systems)).
+
+The configure script will investigate which of these is available, and
+choose the one offering the highest precision.  Support for arbitrary
+precision is highly desirable, so that ndiff can be used to evaluate
+the results of computations done in higher-than-normal precision, such
+as in symbolic algebra systems.
+
+You can force any of the above with an option to configure, provided
+your system supports it:
+
+	./configure --with-gmp
+	./configure --with-long-double
+	./configure --with-double
+
+There are separate test suite results for each of these three choices,
+and "make check" will automatically determine the correct result set
+to use.
+
+If you have not already installed it, the GNU gmp library is available
+at
+
+	ftp://ftp.gnu.org/pub/gnu/gmp
+
+and can be built and installed on most UNIX systems with the simple
+recipe above.
+
+You can force use of a particular C or C++ compiler (yes, any recent
+C++ compiler should work), and optimization options, like this:
+
+	env CC=your-compiler-name ./configure && \
+		make all check install OPT='your-compiler-options'
+
+The env command allows Bourne-shell-like temporary setting of
+environment variables, even with non-sh-compatible login shells.
+
+For special purposes, you can augment several variables in the
+Makefile by setting one or more of the variables XCFLAGS, XDEFINES,
+XINCLUDES, XLDFLAGS, XLIBS, XOPT, and XTGRINDFLAGS on the command line.
+For example, during testing, I ran
+
+	make OPT=-g XLIBS=-lefence XDEFINES=-DDEBUG
+
+to build a test version with debug output, and the Electric Fence
+memory management library, available from
+
+	ftp://gatekeeper.dec.com/pub/usenet/comp.sources.unix/volume27/efence
+
+Here is what the "configure" output looks like on the author's Sun
+Solaris 2.7 system:
+
+./configure
+creating cache ./config.cache
+checking for autoconf... autoconf
+checking for mawk... /usr/local/bin/mawk
+checking for ksh... /bin/ksh
+checking for mkdir.sh... /u/sy/beebe/src/ndiff/mkdir.sh
+checking for cat... cat
+checking for checknr... checknr
+checking for checksum... checksum
+checking for chmod... chmod
+checking for cmp... cmp
+checking for scp... scp
+checking for deroff... deroff
+checking for diff... diff
+checking for distill... distill
+checking for ditroff... no
+checking for groff... groff
+checking for dw... dw
+checking for grep... grep
+checking for gzip... gzip
+checking for ispell... ispell
+checking for jar... jar
+checking for lex... lex
+checking for ln... ln
+checking for ls... ls
+checking for man2html... man2html
+checking for mv... mv
+checking for nroff... nroff
+checking for rm... rm
+checking for sed... sed
+checking for sort... sort
+checking for spell... spell
+checking for tar... tar
+checking for tgrind... tgrind
+checking for unzip... unzip
+checking for zip... zip
+checking for zoo... zoo
+updating cache ./config.cache
+creating ./config.status
+creating Makefile
+creating ndiff.sh
+
+This is what the "make check" output should look like:
+
+========================================================================
+Test of ndiff: there should be no output, other than the test and
+command names. The tests take about 10 sec on a fast workstation.
+========================================================================
+============ check001: ndiff -?
+============ check002: ndiff --author
+============ check003: ndiff --copyright
+============ check004: ndiff --copyleft
+============ check005: ndiff --help
+============ check006: ndiff --version
+============ check007: ndiff --absolute-error 1.e-14
+============ check008: ndiff -fields 2--3,4,1
+============ check009: ndiff --minimum-width 4
+============ check010: ndiff -quiet
+============ check011: ndiff --relative-error 2
+============ check012: ndiff --relerr 8
+============ check013: ndiff --relative-error 1.e-10
+============ check014: ndiff --relative-error 1.e-14 --quiet
+============ check015: ndiff --relative-error 1.e-14 --silent
+============ check016: ndiff --relative-error 1.e-14 --quiet --silent
+============ check017: ndiff --relative-error 1.e-14
+============ check018: ndiff --relative-error 1.e-15
+============ check019: ndiff --relative-error 1.23e-300
+============ check020: ndiff
+============ check021: ndiff
+============ check022: ndiff
+========================================================================
+
+If you wish to undo a "make install", just do "make uninstall"; this
+will remove any files in system directories put there by "make
+install".
+
+The GNU standard installation directories /usr/local/bin for binaries,
+/usr/local/share/lib/PROGRAMNAME for shared files, and
+/usr/local/man/man1 for manual pages are assumed.
+
+The prefix /usr/local can be overridden by providing an alternate
+definition on the command line:
+
+	make prefix=/some/other/path install
+
+After installation, you can do "make distclean" to restore the
+directories to their distribution state.  You should also do this
+between builds for different architectures from the same source tree;
+neglecting to do to will almost certainly lead to failure, because the
+config.cache file created by configure will lead to incorrect settings
+of one or more macro assignments in the Makefile.
+
+This program has been installed at the author's site on at least these
+systems:
+
+	Apple Macintosh PPC G3	Rhapsody 5.5
+	DEC Alpha		OSF/1 4.0F
+	HP 9000/735		HP-UX 10.01
+	IBM PowerPC		AIX 4.2
+	IBM PowerPC		AIX 4.3
+	Intel Pentium II	FreeBSD 4.1.1	
+	Intel Pentium II MMX	GNU/Linux 2.2.5-22 (Redhat 6.1)
+	NeXT Turbostation	Mach 3.3
+	SGI Indigo/2		IRIX 5.3
+	SGI Origin 200		IRIX 6.5
+	Sun SPARC		GNU/Linux 2.0.35 (Redhat 5.2 and 6.0)
+	Sun SPARC		Solaris 2.6
+	Sun SPARC		Solaris 2.7
+
+All but one of the installations succeeded with the one-line command
+above.  However, on the NeXT, because of a shell bug in the handling
+of shell functions, it was necessary to use bash instead of sh in
+order to get the tests to succeed:
+
+	make SHELL=/usr/local/bin/bash check install
+
+Even then, there is an apparent bug in the handling of a shell
+case statement like this:
+
+	case $opt in
+	...
+	-[?] | -help | -hel | -he | -h )
+	...
+	esac
+
+The shell fails to match the chorrect case with opt set to -\?, -'?',
+and '-?', but curiously, succeeds with --\?, --'?', '--?', etc.  The
+workaround was to do
+
+	cp test/check005.opt test/check001.opt
+
+thereby replacing -? by -help for the first test (which of course then
+fails, but that is expected).
+
+
+======================
+VALIDATION AND TESTING
+======================
+
+The torture test suite that is run by "make check" tests all of the
+command-line options, and should reveal any installation problems.
+
+On a GNU/Linux 2.2.5-22 (Redhat 6.0) system on an Intel Pentium
+II-MMX, one of the tests produced a single difference (with both awk
+and mawk):
+
+============ check019: ndiff --relative-error 1.e-20
+143c143
+< --- field 4	absolute error 6.25e-01	relative error 8.09e-16 [4*(machine epsilon)]
+---
+> --- field 4	absolute error 5.00e-01	relative error 6.47e-16 [3*(machine epsilon)]
+
+On this architecture, floating-point registers contain 80-bit values,
+while memory holds only 64-bit values.  On almost all other
+architectures, including all of the RISC ones, registers and memory
+words have the same size.  Thus, the difference very likely arises
+from accumulation in higher precision during the conversion of decimal
+to binary.  The field in question in those two files looks like this:
+
+file 1:
+1	60.0	0	   -1.75971495472908891589771643038651673376219882791710e+73
+
+file 2:
+1       60.0    0          -1.75971495472908e+73
+
+I therefore view the test as successful, despite the slight difference
+in computation of the relative error: the difference is only one
+machine epsilon.
+
+The long-double test results are from a Sun UltraSPARC system with
+128-bit floating-point; if --with-long-double is used on Intel or
+Motorola architectures with 80-bit floating-point, "make check" will
+show differences.  When --with-double was used on an Intel x86 system,
+"make check" produced one (harmless) difference:
+
+============ check019: ndiff --relative-error 1.23e-300
+143c143
+< --- field 4   absolute error 6.25e-01 relative error 8.09e-16 [4*(machine epsilon)]
+---
+> --- field 4   absolute error 5.00e-01 relative error 6.47e-16 [3*(machine epsilon)]
+
+
+======
+CAVEAT
+======
+
+This program requires two critical supporting programs: the UNIX
+Bourne shell (or compatible), and an awk implementation based on the
+`new' awk language described in the 1988 book (see the accompanying
+README.AWK file for further details).
+
+Of the several awk implementations, mawk is preferred, because it has
+often proven to be the fastest one. The configure script therefore
+chooses awk implementations based on their relative speeds.
+
+
+=======================================
+INSTALLATION ON OTHER OPERATING SYSTEMS
+=======================================
+
+ndiff has not yet been ported by the author to other operating
+systems, notably IBM PC DOS, Microsoft Windows (95, 98, NT), Macintosh
+MacOS, and Compaq/DEC (Open)VMS.
+
+However, as long as a POSIX-compliant shell implementation can be
+found, it should be straightforward to install ndiff.  awk is part
+of the POSIX standard, so it should already be installed.
+
+Most non-UNIX operating systems claim POSIX compliance, although the
+POSIX environment may not be installed by default.
+
+In particular, on the popular Microsoft Windows platform, there are
+several implementations, some free, and some commercial, of a
+UNIX-like environment that will make installation of ndiff as
+simple as it is on UNIX.  For details, see
+
+	http://www.math.utah.edu/~beebe/gnu-on-windows.html
+
+For further information about POSIX, and its availability on other
+operating systems, see the IEEE POSIX Certification Authority Web site
+at
+
+	http://standards.ieee.org/regauth/posix/index.html
+	http://standards.ieee.org/regauth/posix/posix2.html	
+	http://www.nist.gov/itl/div897/ctg/posix/finalreg4.htm
+
+plus these books:
+
+@String{pub-BENCUM              = "Benjamin/Cummings Pub. Co."}
+
+@String{pub-BENCUM:adr          = "Redwood City, CA, USA"}
+
+@String{pub-ORA                 = "O'Reilly \& {Associates, Inc.}"}
+
+@String{pub-ORA:adr             = "981 Chestnut Street, Newton, MA 02164, USA"}
+
+@String{pub-WILEY-INTERSCIENCE = "Wiley-In{\-}ter{\-}sci{\-}ence"}
+
+@String{pub-WILEY-INTERSCIENCE:adr = "New York, NY, USA"}
+
+@Book{IEEE:ITU86,
+  author =       "IEEE",
+  title =        "{IEEE} Trial-Use Standard Portable Operating System
+                 for Computer Environments",
+  publisher =    pub-WILEY-INTERSCIENCE,
+  address =      pub-WILEY-INTERSCIENCE:adr,
+  edition =      "{IEEE Std} 1003.1",
+  pages =        "207",
+  month =        apr,
+  year =         "1986",
+  ISBN =         "0-471-85027-6",
+  LCCN =         "TK 275 I5 Std 1003.1",
+  bibdate =      "Wed Dec 15 10:34:55 1993",
+}
+
+@Book{Gallmeister:1995:PPR,
+  author =       "Bill Gallmeister",
+  title =        "{POSIX.4}: Programming for the Real World",
+  publisher =    pub-ORA,
+  address =      pub-ORA:adr,
+  pages =        "xviii + 548",
+  month =        jan,
+  year =         "1995",
+  ISBN =         "1-56592-074-0",
+  LCCN =         "QA76.76.O63 G34 1995",
+  bibdate =      "Fri May 19 19:20:07 MDT 1995",
+  bibsource =    "ftp://ftp.ora.com/pub/book.catalog",
+  price =        "US\$29.95",
+  acknowledgement = ack-nhfb,
+}
+
+@Book{Lewine:1991:PPG,
+  author =       "Donald A. Lewine",
+  title =        "{POSIX} programmer's guide: writing portable {UNIX}
+                 programs with the {POSIX.1} standard",
+  publisher =    pub-ORA,
+  address =      pub-ORA:adr,
+  pages =        "xxvii + 607",
+  year =         "1991",
+  ISBN =         "0-937175-73-0",
+  LCCN =         "QA76.76.O63 L487 1991b",
+  bibdate =      "Wed Nov 13 14:58:22 1996",
+  bibsource =    "ftp://ftp.ora.com/pub/book.catalog",
+  note =         "March 1994 printing with corrections, updates, and
+                 December 1991 Appendix G.",
+  price =        "US\$34.95",
+  acknowledgement = ack-nhfb,
+}
+
+@Book{Zlotnick:PSP91,
+  author =       "Fred Zlotnick",
+  title =        "The {POSIX.1} standard: a programmer's guide",
+  publisher =    pub-BENCUM,
+  address =      pub-BENCUM:adr,
+  pages =        "xi + 379",
+  year =         "1991",
+  ISBN =         "0-8053-9605-5",
+  LCCN =         "QA76.76.063 Z57 1991",
+  bibdate =      "Sat Nov 12 21:24:05 1994",
+}
+
+
+=============
+BUG REPORTING
+=============
+
+Please report bugs, comments, and kudos by e-mail (or postal mail)
+directly to the author:
+
+	Nelson H. F. Beebe
+	Center for Scientific Computing
+	University of Utah
+	Department of Mathematics, 322 INSCC
+	155 S 1400 E RM 233
+	Salt Lake City, UT 84112-0090
+	USA
+	Email: beebe@math.utah.edu, beebe@acm.org,
+	       beebe@computer.org, beebe@ieee.org (Internet)
+	WWW URL: http://www.math.utah.edu/~beebe
+	Telephone: +1 801 581 5254
+	FAX: +1 801 585 1640, +1 801 581 4148
+
+The author's mail volume is far too large, so please do not expect an
+immediate response.  However, all reports will be collected and acted
+on as soon as time permits.

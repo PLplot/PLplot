@@ -1,0 +1,120 @@
+%% /u/sy/beebe/src/ndiff/ndiff-2.00/ChangeLog, Sun Dec 10 09:21:44 2000
+%% Edit by Nelson H. F. Beebe <beebe@math.utah.edu>
+
+2000-12-10  Nelson H. F. Beebe  <beebe@math.utah.edu>
+
+	* Release 2.00: Final version.
+	  The major new feature in this version is support for NaN and
+	  optionally-signed Infinity.  This should eliminate bogus
+	  differences reported by version 1.00 from differing
+	  vendor-dependent representations of these values.
+
+	  The only bug fix is addition of code to handle "-" as stdin.
+	  This was documented in the manual pages for version 1.00, but I
+	  forgot to implement it: mea maxima culpa!
+
+	* awklib.c:
+		* Update email address list in file header.
+
+		* Add private file global variable _awk_lib_initialized,
+		  and insert calls to ENSURE_INITIALIZATION() in all
+		  global functions.  This guarantees proper initialization
+		  at the cost of a single if-test; though not required for
+		  ndiff, this code might be used elsewhere, so this
+		  addition is an inexpensive safety feature.
+
+		* Add private file globals _awk_NaN_regexp,
+		  _awk_positive_infinity_regexp, and
+		  _awk_negative_infinity_regexp.
+
+		* Add private function _awk_regmatch().
+
+		* Add code in _awk_open_infile() to handle special cases
+		  of "-", "/dev/stdin", and "/dev/fd/0" [bug fix].
+
+		* Add global function awk_terminate(), for symmetry with
+		  awk_initialize(), and possible future use.
+
+		  I had planned to add an interface to regcomp() to cache
+		  compiled regular expressions in a hash table.  However,
+		  profiling on large data files requiring ndiff run times
+		  of several minutes showed that regcomp() takes only
+		  about 0.5% of the total time, whereas regmatch()
+		  accounts for about 43% of the total time, and is called
+		  about 16 times more frequently than regcomp().  Caching
+		  of compiled regular expressions is therefore not
+		  worthwhile.
+
+		* Add global functions awk_is_NaN(),
+		  awk_is_positive_infinity(), and
+		  awk_is_negative_infinity().
+
+	* awklib.h:
+	  Add declarations of awk_is_NaN(), awk_is_positive_infinity(),
+	  and awk_is_negative_infinity().
+
+	* configure.in:
+	  Update DATE, VERSION, and VERSIONREGEXP, and correct tiny error
+	  in a comment.  Also, remove AC_PROG_CXX, since that prevents
+	  builds on systems that lack a C++ compiler.
+	
+	* INSTALL:
+		* Update email address list.
+		* Add pointers to IEEE and NIST Web sites for further
+		  POSIX information, and lists of compliant systems.
+
+	* Makefile.in: Update for version 2.00:
+		* Add more check files (check023 -- check026).
+
+		* Use $(PROGNAME) instead of ndiff in several places.
+
+		* Add "make check" output line to tell what precision is
+		  used.
+
+		* Change order of link command arguments to make c89 on
+		  FreeBSD 4.1.1 happy, sigh...
+	
+	* ndiff.c:
+		* Update version number in file header.
+
+		* Update email address list in file comment header and
+		  opt_author().
+
+		* Add support for new -www option (another table entry in
+		  do_one_arg(), plus new function opt_www()).
+
+		* Update comments about C standards, since the 1999
+		  Standard is now available.
+
+		* Call awk_terminate() in cleanup().
+
+		* Add three more else-if branches in diff_field() to test
+		  for NaN, +Infinity, and -Infinity.
+
+		* Remove bogus trailing space in some option names in the
+		  option table in do_one_arg().
+
+		* Recognize "-" as a filename in do_one_arg() [bug fix].
+
+		* Add usage() function, and in main(), check for omitted
+		  filename arguments.
+	
+	* ndiff.man:
+		* Update version number in file header.
+
+		* Update email address list in file comment header and
+		  AUTHOR section.
+
+		* Add another line break in the floating-point number
+		  regular expression.
+
+		* Document patterns for NaN, +Infinity, and -Infinity.
+
+		* Document new -www option.
+
+	* README:  Update email address list.
+
+
+2000-01-28  Nelson H. F. Beebe  <beebe@math.utah.edu>
+
+	* Release 1.00: First released version of ndiff

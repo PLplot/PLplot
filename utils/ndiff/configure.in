@@ -1,0 +1,188 @@
+dnl Copyright (C) 2000 Nelson H. F. Beebe
+dnl See the file ndiff.sin for a full copyright notice.
+dnl
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(ndiff.c)
+
+AC_CONFIG_HEADER(config.h:config.hin)
+
+DATE=10-Dec-2000
+AC_SUBST(DATE)
+VERSION=2.00
+VERSIONREGEXP=2[[.]]00
+AC_SUBST(VERSION)
+AC_SUBST(VERSIONREGEXP)
+
+dnl Checks for package options.
+dnl Normally, configure will choose the longest precision supported,
+dnl but the user can configure a particular choice with any of these
+dnl mutually-exclusive options:
+dnl	--with-gmp
+dnl	--with-double
+dnl	--with-long-double
+
+fp_package=
+
+AC_ARG_WITH(gmp,
+	[  --with-gmp              use GNU multiple-precision floating-point library],
+	[fp_package=gmp])
+
+AC_ARG_WITH(double,
+	[  --with-double           use double floating-point precision],
+	[fp_package=dbl])
+
+AC_ARG_WITH(long-double,
+	[  --with-long-double      use long double floating-point precision],
+	[fp_package=ldb])
+
+dnl Checks for compiler
+AC_PROG_CC
+
+dnl Checks for support programs
+AC_CHECK_PROGS(AUTOCONF,	autoconf)
+AC_CHECK_PROGS(AUTOHEADER,	autoheader)
+
+dnl These must have a full pathname, because we will embed the
+dnl definitions not only in the Makefile, but also in the installed
+dnl scripts, which must be impervious to the PATH settings of all
+dnl users.
+AC_PATH_PROGS(AWK,		[mawk nawk gawk bawk awk])
+AC_PATH_PROGS(SH,		[sh ksh bash])
+
+dnl We need to have the current directory first in the path, so that
+dnl any private script is found first (mkdir.sh handles the -p option
+dnl portably; some older mkdir commands do not support -p):
+AC_PATH_PROGS(MKDIR,		mkdir.sh mkdir,,$PWD:$PATH)
+
+AC_CHECK_PROGS(CAT,		cat)
+AC_CHECK_PROGS(CHECKNR,		[checknr echo])
+AC_CHECK_PROGS(CHECKSUM,	[checksum cat])
+AC_CHECK_PROGS(CHMOD,		chmod)
+AC_CHECK_PROGS(CMP,		cmp)
+AC_CHECK_PROGS(CP,		[scp rcp cp])
+AC_CHECK_PROGS(DEROFF,		deroff)
+AC_CHECK_PROGS(DIFF,		diff)
+AC_CHECK_PROGS(DISTILL,		[distill ps2pdf])
+AC_CHECK_PROGS(DITROFF,		[ditroff groff])
+AC_CHECK_PROGS(DW,		[dw echo])
+AC_CHECK_PROGS(ETAGS,		etags)
+AC_CHECK_PROGS(GREP,		grep)
+AC_CHECK_PROGS(GZIP,		[gzip compress])
+AC_CHECK_PROGS(ISPELL,		[ispell echo])
+AC_CHECK_PROGS(JAR,		[jar tar])
+AC_CHECK_PROGS(LN,		ln)
+AC_CHECK_PROGS(LS,		ls)
+AC_CHECK_PROGS(MAN2HTML,	man2html)
+AC_CHECK_PROGS(MV,		mv)
+AC_CHECK_PROGS(NROFF,		[nroff groff])
+AC_CHECK_PROGS(RM,		rm)
+AC_CHECK_PROGS(SED,		sed)
+AC_CHECK_PROGS(SORT,		sort)
+AC_CHECK_PROGS(SPELL,		spell)
+AC_CHECK_PROGS(TAR,		tar)
+AC_CHECK_PROGS(TGRIND,		tgrind)
+AC_CHECK_PROGS(UNZIP,		unzip)
+AC_CHECK_PROGS(ZIP,		zip)
+AC_CHECK_PROGS(ZOO,		zoo)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+
+dnl Do NOT use this test for const: it gets the wrong answer for C++,
+dnl and this code is written for ANSI/ISO Standard C anyway.
+dnl AC_C_CONST
+
+AC_CHECK_HEADERS(ctype.h limits.h stddef.h stdio.h stdlib.h string.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_TYPE_SIZE_T
+
+if test -z "$fp_package"
+then
+	AC_CACHE_CHECK([GNU multiple-precision library (gmp)],ac_cv_have_gmp,
+		OLDCFLAGS="$CFLAGS"
+		OLDLIBS=$LIBS
+		if test "x$prefix" != xNONE
+		then
+			CFLAGS="$CFLAGS -I$prefix/include"
+			LIBS="$LIBS -L$prefix/lib -lgmp"
+		else
+			CFLAGS="$CFLAGS -I$ac_default_prefix/include"
+			LIBS="$LIBS -L$ac_default_prefix/lib -lgmp"
+		fi
+		AC_TRY_LINK(
+			[#include <gmp.h>],
+			[mpf_t x; mpf_init(x);],
+			[ac_cv_have_gmp=yes],
+			[ac_cv_have_gmp=no])
+		if test "$ac_cv_have_gmp" = "yes"
+		then
+			ac_cv_c_long_double=no
+			AC_DEFINE(HAVE_GMP)
+			fp_package=gmp
+		else
+			CFLAGS=$OLDCFLAGS
+			LIBS=$OLDLIBS
+		fi
+	)
+
+	dnl The built-in test for long double fails for C++ compilers because
+	dnl of a missing exit() prototype, sigh..., so we create our own,
+	dnl using very similar code.  However, we change the < to <= in the
+	dnl return statement, so as to catch the several implementations that
+	dnl treat long double like double, so as not to confuse the user who
+	dnl believes the code has been built for quadruple precision.
+	dnl AC_C_LONG_DOUBLE
+	if test "$ac_cv_have_gmp" = "no"
+	then
+		AC_MSG_CHECKING(for long double)
+		AC_TRY_RUN(
+		    [
+			#include "confdefs.h"
+			int main() 
+			{
+			    /* The Stardent Vistra knows sizeof(long double), but does not support it.  */
+			    long double foo = 0.0;
+			    /* On Ultrix 4.3 cc, long double is 4 and double is 8.  */
+			    return (sizeof(long double) <= sizeof(double)); 
+			}
+		    ],
+		    [ac_cv_c_long_double=yes],[ac_cv_c_long_double=no]
+		)
+		if test $ac_cv_c_long_double = yes
+		then
+		    fp_package=ldb
+		    AC_DEFINE(HAVE_LONG_DOUBLE)
+		fi
+		AC_MSG_RESULT($ac_cv_c_long_double)
+	fi
+elif test $fp_package = gmp
+then
+	AC_DEFINE(HAVE_GMP)
+elif test $fp_package = ldb
+then
+	AC_DEFINE(HAVE_LONG_DOUBLE)
+fi
+
+if test -z "$fp_package"
+then
+	fp_package=dbl
+elif test $fp_package = gmp
+then
+	LIBS="$LIBS -lgmp"
+fi
+
+CHECKOKAY=okay-$fp_package
+AC_SUBST(CHECKOKAY)
+
+dnl Remove -g from CFLAGS gratuitously inserted by configure.
+CFLAGS="`echo $CFLAGS | sed -e 's/-g //g' -e 's/ -g$//g' -e 's/^-g$//'`"
+
+dnl Remove -O2 from CFLAGS gratuitously inserted by configure.
+CFLAGS="`echo $CFLAGS | sed -e 's/-O2 //g' -e 's/ -O2$//g' -e 's/^-O2$//'`"
+
+AC_OUTPUT(Makefile ndiff.sh:ndiff.sin)
+
+dnl Make the shell scripts executable, and all generated files, non-writable
+chmod 555 ndiff.sh
+chmod 444 Makefile

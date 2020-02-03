@@ -1,0 +1,27 @@
+[18-Feb-2000]
+
+The code in this directory has been converted to ANSI/ISO Standard C
+and Standard C++ by
+
+	* addition of const modifiers to char* pointers in several
+          places;
+
+	* addition of required #include <...> statements;
+
+	* addition of Standard C function prototypes;
+
+	* changing arguments 0 and 1 to exit() to EXIT_FAILURE and
+          EXIT_SUCCESS respectively;
+
+	* conversion of function definitions to Standard C form;
+
+	* replacing calls to exit() by return statements in main()
+          programs;
+
+	* replacing the C++ reserved word `try' by `try_re' and
+          `try_group'.
+
+The code should now compile successfully with any Standard C or C++
+compiler, PROVIDED that you remember to use the -I. switch to force
+the compiler to use the *.h files in this directory, instead of system
+ones!

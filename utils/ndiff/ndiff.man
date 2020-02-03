@@ -1,0 +1,930 @@
+.\" -*-nroff-*-
+.\" ====================================================================
+.\"  @Troff-man-file{
+.\"     author          = "Nelson H. F. Beebe",
+.\"     version         = "2.00",
+.\"     date            = "10 December 2000",
+.\"     time            = "07:52:03 MST",
+.\"     filename        = "ndiff.man",
+.\"     copyright       = "Copyright (c) 2000 Nelson H. F. Beebe. This
+.\"                        code is licensed under the GNU General Public
+.\"                        License, version 2 or later.",
+.\"     address         = "Center for Scientific Computing
+.\"                        University of Utah
+.\"                        Department of Mathematics, 322 INSCC
+.\"                        155 S 1400 E RM 233
+.\"                        Salt Lake City, UT 84112-0090
+.\"                        USA",
+.\"     telephone       = "+1 801 581 5254",
+.\"     FAX             = "+1 801 585 1640, +1 801 581 4148",
+.\"     URL             = "http://www.math.utah.edu/~beebe",
+.\"     checksum        = "38346 930 3480 25807",
+.\"     email           = "beebe@math.utah.edu, beebe@acm.org,
+.\"                        beebe@ieee.org (Internet)",
+.\"     codetable       = "ISO/ASCII",
+.\"     keywords        = "numerical file differencing",
+.\"     supported       = "yes",
+.\"     docstring       = "This file contains the UNIX manual pages
+.\"                        for ndiff.
+.\"
+.\"                        The checksum field above contains a CRC-16
+.\"                        checksum as the first value, followed by the
+.\"                        equivalent of the standard UNIX wc (word
+.\"                        count) utility output of lines, words, and
+.\"                        characters.  This is produced by Robert
+.\"                        Solovay's checksum utility.",
+.\"  }
+.\" ====================================================================
+.\" ====================================================================
+.TH NDIFF 1 "09 December 2000" "Version 2.00"
+.hw white-space
+.\"=====================================================================
+.SH NAME
+ndiff \- compare putatively similar files, ignoring small numeric differences
+.\"=====================================================================
+.SH SYNOPSIS
+.B ndiff
+[
+.B \-?
+]
+[
+.BI \-abserr " abserr"
+]
+[
+.BI \-author
+]
+[
+.B \-copyright
+]
+.if n .ti +\w'\fBndiff\fP\ 'u
+[
+.BI \-fields " n1a-n1b,n2,n3a-n3b,.\|.\|."
+]
+[
+.B \-help
+]
+.if n .ti +\w'\fBndiff\fP\ 'u
+.if t .ti +\w'\fBndiff\fP\ 'u
+[
+.BI \-logfile " filename"
+]
+[
+.BI \-minwidth " nnn"
+]
+.if n .ti +\w'\fBndiff\fP\ 'u
+[
+.BI \-outfile " filename"
+]
+[
+.BI \-precision " number-of-bits"
+]
+.if n .ti +\w'\fBndiff\fP\ 'u
+.if t .ti +\w'\fBndiff\fP\ 'u
+[
+.B \-quick
+]
+[
+.B \-quiet
+]
+[
+.BI \-relerr " relerr"
+]
+.if n .ti +\w'\fBndiff\fP\ 'u
+[
+.BI \-separators " regexp"
+]
+[
+.B \-silent
+]
+[
+.B \-version
+]
+.if n .ti +\w'\fBndiff\fP\ 'u
+.if t .ti +\w'\fBndiff\fP\ 'u
+[
+.B \-www
+]
+.I infile1
+.I infile2
+.\"=====================================================================
+.SH DESCRIPTION
+When a numerical program is run in multiple
+environments (operating systems, architectures, or
+compilers), assessing its consistency can be a
+difficult task for a human, since small
+differences in numerical output values are
+expected.
+.PP
+Application of a file differencing utility, such
+as POSIX/UNIX
+.BR diff (1),
+will generally produce voluminous output, often
+longer than the original files, and is thus not
+useful.  The lesser-known UNIX
+.BR spiff (1)
+utility, while capable of handling numeric fields,
+suffers from excessively-long running times, and
+often terminates prematurely.
+.PP
+.B ndiff
+provides a solution to this problem.  It compares
+two files that are expected to be identical, or at
+least, numerically similar.  It assumes that lines
+consist of whitespace-separated fields of numeric
+and non-numeric data.
+.PP
+A hyphen (minus sign) can be used in place of
+either input filename to represent
+.IR stdin ,
+allowing one input stream to come from a UNIX
+pipe.  This is a common, but by no means
+universal, idiom in UNIX software as a workaround
+for the regrettable lack of standard names for the
+default
+.I stdin
+and
+.I stdout
+streams.  On some, but not all, UNIX systems,
+.I stdin
+can be named explicitly as
+.I /dev/stdin
+or
+.IR /dev/fd/0 .
+.PP
+The default field separator characters can be
+modified with the
+.BI \-separators " regexp"
+command-line option, so that
+.B ndiff
+can also handle files with, e.g., parenthesized
+complex numbers, and comma-separated numbers from
+Fortran list-directed output.  However, because
+line breaking and use of repeats counts in Fortran
+list-directed is implementation dependent, such
+files are not really suitable for
+cross-implementation file comparisons, unless the
+lists are kept short enough to fit on a single
+line.
+.PP
+.B ndiff
+expects the files to contain the same number of
+lines; otherwise, a diagnostic will be issued.
+Unlike
+.BR diff (1),
+this program cannot handle inserted or deleted
+lines.
+.PP
+Also unlike
+.BR diff (1)
+(unless
+.BR diff 's
+.B \-b
+and
+.B \-w
+options are used), whitespace is
+.I not
+significant for
+.BR ndiff ,
+except that it normally separates fields.
+.PP
+Lines that differ in at least one field (as
+determined by the absolute and/or relative
+tolerances, for numeric values, or string
+comparisons otherwise) are reported on
+.I stdout
+in a
+.BR diff (1)
+-style listing of the form
+.RS
+.IR nnn c nnn
+.br
+< line from \fIinfile1\fP
+.br
+.nf
+\&\fI---\fP\fR field\fP\fI n\fP\fR  absolute error\
+\fP\fI x.xxe-xx\fP\fR  relative error\fP\fI x.xxe-xx\
+\fP\fR [\fP\fInn\fP\fR*(machine epsilon)]\fP
+.fi
+.br
+> line from \fIinfile2\fP
+.fi
+.RE
+The first of these lines shows the line number
+twice, separated by the letter
+.I c
+(for change).  The second and fourth lines begin
+with a two-character identifying prefix.  The
+third, separator, line shows the field number at
+which the difference was found; fields beyond that
+one may also differ, but have not been checked.
+If the differing field is numeric, then the errors
+found are also shown on that line.  If the
+relative error is not too big, its value is also
+shown as a multiple of the machine epsilon.
+.PP
+.B ndiff
+recognizes the following patterns as valid
+numbers.  In the patterns,
+.I #
+is a string of one or more decimal digits,
+optionally separated by a nonsignificant
+underscore (as in the Ada programming language),
+.I s
+is an optional
+.I +
+or
+.I  -
+sign, and
+.I X
+is an exponent letter, one of
+.IR D ,
+.IR d,
+.IR E ,
+.IR e,
+.IR Q ,
+or
+.IR q :
+.RS
+.nf
+\&\fCs#      s#s#    s#Xs#          s#.     s#.s#   s#.Xs#\fP
+.PP
+\&\fCs#.#    s#.#s#  s#.#Xs#        s.#     s.#s#   s.#Xs#\fP
+.fi
+.RE
+.PP
+The rigorous programming rule that determines
+whether a string is interpreted as a
+floating-point value is that it must match this
+very complicated regular expression (the line
+breaks are for readability only):
+.RS
+.nf
+\&\fC"^[-+]?([0-9](_?[0-9])*([.]?([0-9](_?[0-9])*)*)?|
+    [.][0-9](_?[0-9])*+)
+    ([DdEeQq]?[-+]?[0-9](_?[0-9])*)?$"\fP
+.fi
+.RE
+.PP
+Thus,
+.IR 123 ,
+.IR -1q-27 ,
+.IR .987d77 ,
+.IR 3.14159_26535_89793_23846 ,
+and
+.I .456-123
+are all valid numbers.
+.PP
+Notably absent from this list are Fortran-style
+numbers with embedded blanks (blanks are not
+significant in Fortran, except in string
+constants).  If your files contain such data, then
+you must convert them to standard form first, if
+you want
+.B ndiff
+to perform reliably.  In the interests of
+interlanguage data exchange, most modern Fortran
+implementations do not output floating-point
+numbers with embedded spaces, so you should rarely
+need such file conversions.
+.PP
+From version 2.00,
+.B ndiff
+also recognizes patterns for optionally-signed NaN (Not-a-Number):
+.RS
+.nf
+\&\fCNaN     SNaN    QNaN    NaNS    NaNQ    ?.0e+0  ??.0\fP
+.PP
+\&\fC+NaN    +SNaN   +QNaN   +NaNS   +NaNQ   +?.0e+0 +??.0\fP
+.PP
+\&\fC-NaN    -SNaN   -QNaN   -NaNS   -NaNQ   -?.0e+0 -??.0\fP
+.fi
+.RE
+and optionally-signed Infinity:
+.RS
+.nf
+\&\fCInf     Infinity        +.+0e+0 +.+0\fP
+.PP
+\&\fC+Inf    +Infinity       +.+0e+0 +.+0\fP
+.PP
+\&\fC-Inf    -Infinity       -.-0e+0 -.-0\fP
+.fi
+.RE
+.PP
+Lettercase is
+.I not
+significant in these values.
+.PP
+The rigorous programming rule for whether a field
+is a NaN or an Infinity is determined by these
+complex regular expressions (again, the line
+breaks are for readability only):
+.RS
+.nf
+\&\fC"^[-+]?([QqSs]?[Nn][Aa][Nn][QqSs]?|
+    [?]+[.][?0]+[DdEeQq][-+]?[0-9]+|
+    [?]+[.][?0]+)$"\fP
+\&\fC"^(-[Ii][Nn][Ff]|
+    -[Ii][Nn][Ff][Ii][Nn][Ii][Tt][Yy]|
+    -+[.][-]0+[DdEeQq][-+]?[0-9]+|
+    -+[.][-]0+)$"\fP
+\&\fC"^([+]?[Ii][Nn][Ff]|
+    [+]?[Ii][Nn][Ff][Ii][Nn][Ii][Tt][Yy]|
+    [+]+[.][-]0+[DdEeQq][-+]?[0-9]+|
+    [+]+[.][-]0+)$"\fP
+.fi
+.RE
+.PP
+Even though in numerical computations, a NaN is
+never equal to anything, even itself, for
+.BR ndiff ,
+fields that match a NaN pattern
+.I are
+considered equal.
+.PP
+Fields that match Infinity patterns are considered
+equal if they have the same sign.
+.PP
+.B ndiff
+terminates with a success exit code (on UNIX, 0)
+if no differences (subject to the absolute and/or
+relative tolerances) are found.  Otherwise, it
+terminates with a failure exit code (on UNIX, 1).
+.\"=====================================================================
+.SH OPTIONS
+Command-line options may be abbreviated to a
+unique leading prefix, and letter case is ignored.
+.PP
+To avoid confusion with options, if a filename
+begins with a hyphen, it must be disguised by a
+leading absolute or relative directory path, e.g.,
+.I /tmp/-foo.dat
+or
+.IR ./-foo.dat .
+.PP
+GNU- and POSIX-style options of the form
+.B \-\|\-name
+are also recognized: they begin with two option
+prefix characters.
+.\"-----------------------------------------------
+.TP \w'\fB\-copyright\fP\fI\ nnnn\fP'u+3n
+.B \-?
+Display brief usage information on
+.I stderr
+and exit with a success status code before
+processing any input files.
+.IP
+This is a synonym for
+.BR \-help .
+.\"-----------------------------------------------
+.TP
+.BI \-abserr " abserr"
+Specify a maximum absolute difference permitted
+before fields are regarded as different.  Unless
+the fields are all of the same approximate
+magnitude, you probably do not want to use this
+option.
+.IP
+A zero value for this option suppresses reports of
+absolute error differences.
+.IP
+This option may be abbreviated
+.BR \-a .
+.IP
+For readability, this option may also be called
+.BR \-absolute-error ,
+or any unique prefix thereof.
+.\"-----------------------------------------------
+.TP
+.B \-author
+Show author information on
+.I stderr
+and exit with a success status code before
+processing any input files.
+.\"-----------------------------------------------
+.TP
+.B \-copyright
+Show copyright information on
+.I stderr
+and exit with a success status code before
+processing any input files.
+.\"-----------------------------------------------
+.TP
+.BI \-fields " n1a-n1b,n2,n3a-n3b,.\|.\|."
+By default, all fields are compared, but this
+option can specify a comma-separated list of
+numbers, and/or ranges, selecting the fields that
+are to be compared.
+.IP
+Fields are numbered starting from 1.
+.IP
+A field range is a pair of numbers, separated by
+one or more hyphens (minus signs): 4-7 and 4--7
+are equivalent to 4,5,6,7.
+.IP
+To prevent long range-expansion loops, field
+ranges are restricted to a non-negative span of no
+more than 100: 8-8 and 1-100 are acceptable, but
+3-, -5, 8-7 and 1-101 all generate an error.
+.\"-----------------------------------------------
+.TP
+.B \-help
+Display brief usage information on
+.I stderr
+and exit with a success status code before
+processing any input files.
+.IP
+This is a synonym for
+.BR \-? .
+.\"-----------------------------------------------
+.TP
+.BI \-logfile " filename"
+Redirect warning and error messages from
+.I stderr
+to the indicated filename.  This option is
+provided for user convenience on poorly-designed
+operating systems (e.g., IBM PC DOS) that fail to
+provide for redirection of
+.I stderr
+to a specified file.
+.IP
+This option can also be used for discarding
+messages, with, e.g., on UNIX systems,
+.BI \-logfile " /dev/null."
+.\"-----------------------------------------------
+.TP
+.BI \-minwidth " nnn"
+Specify a minimum field width required for numeric
+fields containing a decimal point and/or exponent.
+If both such fields being compared are shorter
+than this, they are treated as equal.
+.IP
+This option is useful when fields contain relative
+error values given to only a few digits; such
+values might differ widely between two files, but
+those differences can be made irrelevant by invoking
+this option.
+.IP
+For readability, this option may also be called
+.BR \-minimum-width ,
+or any unique prefix thereof.
+.\"-----------------------------------------------
+.TP
+.BI \-outfile " filename"
+Redirect output from
+.I stdout
+to the indicated filename.  This option is
+provided for user convenience on operating systems
+that fail to provide for redirection of
+.I stdout
+to a specified file.
+.\"-----------------------------------------------
+.TP
+.BI \-precision " number-of-bits"
+Specify the number of bits in the significands
+used in multiple-precision arithmetic.  The
+corresponding number of decimal digits is
+.IR "floor( number-of-bits / lg 10) = floor(number-of-bits / 3.32)" .
+.IP
+You can use the
+.B \-version
+option to see the value of the corresponding
+machine epsilon (the smallest number, which, when
+added to one, still differs from one).
+.IP
+The multiple-precision arithmetic library
+used by
+.B ndiff
+increases its working precision in multiples of a
+certain implementation-dependent size, usually 64
+bits, so the reported machine epsilon may not
+decrease until
+.I number-of-bits
+has been increased beyond the next multiple of
+that size.
+.IP
+If
+.B ndiff
+was compiled without support for
+multiple-precision arithmetic, use of this option
+will elicit a warning.
+.\"-----------------------------------------------
+.TP
+.B \-quick
+Suppress reading of the initialization files,
+.IR $LIBDIR/.ndiffrc ,
+.IR $HOME/.ndiffrc ,
+and
+.IR ./.ndiffrc .
+.I LIBDIR
+represents the name of the
+.B ndiff
+installation directory; it is not a user-definable
+environment variable.
+.IP
+Normally, the contents of those files, if they
+exist, are implicitly inserted at the beginning of
+the command line, with comments removed and
+newlines replaced by spaces.  Thus, those files
+can contain any
+.B ndiff
+options defined in this documentation, either one
+option, or option/value pair, per line, or with
+multiple options per line.  Empty lines, and lines
+that begin with optional whitespace followed by a
+sharp (#) are comment lines that are discarded.
+.IP
+If the initialization file contains backslashes,
+they must be doubled because the text is
+interpreted by the shell before
+.B ndiff
+sees it.
+.\"-----------------------------------------------
+.TP
+.B \-quiet
+The maximum absolute and relative errors, and
+their locations, in
+.I matching
+lines are tracked, and at termination, a two-line
+report with their values is normally printed on
+.IR stdout .
+This option suppresses that report.
+.IP
+This option may be abbreviated
+.BR \-qui ,
+.BR \-qu ,
+or
+.BR \-q .
+.\"-----------------------------------------------
+.TP
+.BI \-relerr " relerr"
+Specify a maximum relative difference permitted
+before fields are regarded as different.  The
+relative error of two fields
+.I x
+and
+.I y
+is defined to be:
+.IP
+.RS
+.TP \w'\fRabs(\fP\fIx-y\fP\fR)/min(abs(\fP\fIx\fP\fR),abs(\fP\fIy\fP\fR))\fP'u+3n
+.RI 0
+if
+.I x
+is identical to
+.IR y ,
+or else
+.TP
+\&\fRabs(\fP\fIx-y\fP\fR)/min(abs(\fP\fIx\fP\fR),abs(\fP\fIy\fP\fR))\fP
+if
+.I x
+and
+.I y
+are nonzero, or else
+.TP
+.I 1
+if
+.I x
+is zero, and
+.I y
+is nonzero, or else
+.TP
+.I 1
+if
+.I y
+is zero, and
+.I x
+is nonzero, or else
+.TP
+.I 0
+since both
+.I x
+and
+.I y
+are zero.
+.RE
+.IP
+This complex definition of relative error ensures
+that the results will be independent of the order
+of the two input files on the command line.
+.IP
+A zero value for this option suppresses reports of
+relative error differences.
+.IP
+For readability, this option may also be called
+.BR \-relative-error ,
+or any unique prefix thereof.
+.IP
+If neither
+.B \-abserr
+nor
+.B \-relerr
+is specified, then
+.BI \-relerr " x"
+is assumed, where
+.I x
+is the larger of 1.0e-15 and eight times the
+machine epsilon (the smallest number whose sum
+with 1.0 still differs from 1.0).
+.IP
+If the specified relative error value is greater
+than or equal to 1.0, it is multiplied by the
+machine epsilon.  Thus, you can specify
+.BI \-relerr " 16"
+to allow relative errors of up to 4 bits (since
+2^4 == 16).
+.IP
+.B ndiff
+will issue a warning if you specify a relative
+error value smaller than the machine epsilon, but
+will accept and use your specified value.
+.\"-----------------------------------------------
+.TP
+.BI \-separators " regexp"
+The argument is an
+.BR awk (1)
+regular expression that specifies an alternate set
+of characters separating fields in input lines.
+.IP
+By default, this is a single blank, which has a
+special meaning in
+.BR awk (1):
+leading and trailing whitespace (blanks and tabs)
+is first stripped, then runs of consecutive
+whitespace are collapsed to a single space, and
+finally, the line is split into fields at the
+spaces.
+.IP
+If the input files contain parenthesized complex
+numbers, or comma-separated numbers from Fortran
+list-directed output, then you should specify
+.BI \-separators " '[\ \et,()]'"
+so that blanks, tabs, commas, and parentheses
+separate input fields.
+.\"-----------------------------------------------
+.TP
+.B \-silent
+Suppress the output of the difference lines on
+.IR stdout .
+.IP
+Using both
+.B \-quiet
+and
+.B \-silent
+guarantees that nothing is printed on
+.IR stdout ,
+but the
+.B ndiff
+exit code can still be used for testing for a
+successful comparison.
+.IP
+This option may be abbreviated
+.BR \-s .
+.\"-----------------------------------------------
+.TP
+.B \-version
+Show version and precision information on
+.I stderr
+and exit with a success status code before
+processing any input files.
+.IP
+The machine epsilon reported in this output may
+depend on a preceding
+.BI \-precision " number-of-bits"
+specification.
+.\"-----------------------------------------------
+.TP
+.B \-www
+Show the World-Wide Web master archive location
+for this program on
+.I stderr
+and exit with a success status code before
+processing any input files.
+.\"=====================================================================
+.SH CAVEATS
+This implementation of
+.B ndiff
+can be built with support for double-precision,
+quadruple-precision, or multiple-precision
+arithmetic.  The
+.B \-version
+option reports the particular choice at your site.
+Thus,
+.B ndiff
+will not correctly handle absolute and relative
+error tolerances that are smaller than those
+corresponding to the machine epsilon in the
+arithmetic for which it was built, and for that
+reason, installers are encouraged to build the
+multiple-precision version, so that users can
+select any required precision.
+.\"=====================================================================
+.SH "WISH LIST"
+It would be nice to have
+.BR ndiff 's
+abilities incorporated into the GNU
+.BR diff (1)
+program; that way, numeric fields could be
+successfully compared even in files with inserted
+or deleted lines, and much of the entire computing
+world could benefit.
+.PP
+Perhaps some community-minded and clever reader of
+this documentation will take up this challenge,
+and present the Free Software Foundation with an
+improved
+.BR diff (1)
+implementation that offers support for tolerant
+differencing of numeric files, using
+.B ndiff
+as a design model, sample implementation, and testbed!
+.PP
+Ideally, such an improved
+.BR diff (1)
+implementation should handle numbers of
+.I arbitrary
+precision, allowing comparisons of numeric output
+from systems that support high-precision
+arithmetic, such as Lisp and symbolic algebra
+languages.  In addition, it might choose to do its
+arithmetic in decimal floating-point, so as to
+avoid inaccuracies introduced by vendor-dependent
+libraries for decimal-to-native-base number
+conversion.
+.PP
+The
+.BR awk (1)
+prototype version of
+.B ndiff
+supports only double-precision arithmetic; the C
+version is more flexible.
+.\"=====================================================================
+.SH FILES
+In the following,
+.I LIBDIR
+represents the name of the
+.B ndiff
+installation directory; it is not a user-definable
+environment variable.  If
+.B ndiff
+has been installed properly at your site,
+the value of
+.I LIBDIR
+is
+.RS
+.nf
+\fC@LIBDIR@\fP
+.fi
+.RE
+.\"-----------------------------------------------
+.TP \w'\fC$LIBDIR/ndiff.awk\fP'u+2n
+\&\fC$LIBDIR/.ndiffrc\fP
+System-specific initialization file containing
+customized
+.B ndiff
+command-line options.
+.\"-----------------------------------------------
+.TP
+\&\fC$HOME/.ndiffrc\fP
+User-specific initialization file containing
+customized
+.B ndiff
+command-line options.
+.\"-----------------------------------------------
+.TP
+\&\fC./.ndiffrc\fP
+Current-directory-specific initialization file
+containing customized
+.B ndiff
+command-line options.
+.\"-----------------------------------------------
+.TP
+\&\fC$LIBDIR/ndiff.awk\fP
+.BR awk (1)
+program
+invoked by
+.BR ndiff .
+This file will not be installed if the C version
+of
+.B ndiff
+was built.
+.\"-----------------------------------------------
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR awk (1),
+.BR bawk (1),
+.BR cmp (1),
+.BR diff (1),
+.BR gawk (1),
+.BR mawk (1),
+.BR nawk (1),
+.BR spiff (1).
+.\"=====================================================================
+.SH AUTHOR
+.nf
+Nelson H. F. Beebe
+Center for Scientific Computing
+University of Utah
+Department of Mathematics, 322 INSCC
+155 S 1400 E RM 233
+Salt Lake City, UT 84112-0090
+USA
+Email: \fCbeebe@math.utah.edu\fP, \fCbeebe@acm.org\fP,
+.if n .ti +\w'Email:\ 'u
+.if t .ti +\w'Email:\ 'u
+\fCbeebe@computer.org\fP, \fCbeebe@ieee.org\fP (Internet)
+WWW URL: \fChttp://www.math.utah.edu/~beebe\fP
+Telephone: +1 801 581 5254
+FAX: +1 801 585 1640, +1 801 581 4148
+.fi
+.\"=====================================================================
+.SH AVAILABILITY
+.B ndiff
+is freely available; its master distribution can
+be found at
+.PP
+.RS
+.nf
+\&\fCftp://ftp.math.utah.edu/pub/misc/\fP
+\&\fChttp://www.math.utah.edu/pub/misc/\fP
+.fi
+.RE
+.PP
+in the file
+.I ndiff-x.yy.tar.gz
+where
+.I x.yy
+is the current version.  Other distribution
+formats are usually available at the same
+location.
+.PP
+That site is mirrored to several other Internet
+archives, so you may also be able to find it
+elsewhere on the Internet; try searching for the
+string
+.I ndiff
+at one or more of the popular Web search sites,
+such as
+.PP
+.RS
+.nf
+\&\fChttp://altavista.digital.com/
+http://search.microsoft.com/us/default.asp
+http://www.dejanews.com/
+http://www.dogpile.com/index.html
+http://www.euroseek.net/page?ifl=uk
+http://www.excite.com/
+http://www.go2net.com/search.html
+http://www.google.com/
+http://www.hotbot.com/
+http://www.infoseek.com/
+http://www.inktomi.com/
+http://www.lycos.com/
+http://www.northernlight.com/
+http://www.snap.com/
+http://www.stpt.com/
+http://www.yahoo.com/\fP
+.fi
+.RE
+.\"=====================================================================
+.SH COPYRIGHT
+.nf
+\fC########################################################################
+########################################################################
+########################################################################
+###                                                                  ###
+### ndiff: compare putatively similar files, ignoring small numeric  ###
+###        differences                                               ###
+###                                                                  ###
+###              Copyright (C) 2000 Nelson H. F. Beebe               ###
+###                                                                  ###
+### This program is covered by the GNU General Public License (GPL), ###
+### version 2 or later, available as the file COPYING in the program ###
+### source distribution, and on the Internet at                      ###
+###                                                                  ###
+###               ftp://ftp.gnu.org/gnu/GPL                          ###
+###                                                                  ###
+###               http://www.gnu.org/copyleft/gpl.html               ###
+###                                                                  ###
+### This program is free software; you can redistribute it and/or    ###
+### modify it under the terms of the GNU General Public License as   ###
+### published by the Free Software Foundation; either version 2 of   ###
+### the License, or (at your option) any later version.              ###
+###                                                                  ###
+### This program is distributed in the hope that it will be useful,  ###
+### but WITHOUT ANY WARRANTY; without even the implied warranty of   ###
+### MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the    ###
+### GNU General Public License for more details.                     ###
+###                                                                  ###
+### You should have received a copy of the GNU General Public        ###
+### License along with this program; if not, write to the Free       ###
+### Software Foundation, Inc., 59 Temple Place, Suite 330, Boston,   ###
+### MA 02111-1307 USA.                                               ###
+########################################################################
+########################################################################
+########################################################################\fP
+.fi
+.\"==============================[The End]==============================
+.\" This is for GNU Emacs file-specific customization:
+.\" Local Variables:
+.\" fill-column: 50
+.\" End:

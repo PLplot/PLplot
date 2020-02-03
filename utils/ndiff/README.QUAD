@@ -1,0 +1,171 @@
+     Comments on quadruple-precision machine epsilon computation
+
+				  by
+
+			  Nelson H. F. Beebe
+		   Center for Scientific Computing
+			  University of Utah
+		 Department of Mathematics, 322 INSCC
+			 155 S 1400 E RM 233
+		    Salt Lake City, UT 84112-0090
+				 USA
+ Email: beebe@math.utah.edu, beebe@acm.org, beebe@ieee.org (Internet)
+	       WWW URL: http://www.math.utah.edu/~beebe
+		      Telephone: +1 801 581 5254
+		FAX: +1 801 585 1640, +1 801 581 4148
+
+		Last revised: Mon Feb 21 16:31:12 2000
+
+
+Several vendors have implemented a 128-bit quadruple-precision
+floating-point format, among them, Compaq/DEC, HP, SGI, and Sun, all
+implemented as a 1-bit sign, 15-bit exponent, and 113-bit fraction
+(including one hidden bit).  This makes the machine epsilon 2^{-112} =
+1.93e-34.  [If the significand is 1.fffff...fff, with p-1 bits, f,
+after the binary point, then the machine epsilon is 0.000...001, which
+is 2^(p-1).]
+
+Intel and Motorola offer IEEE 754 80-bit temporary real (1-bit sign,
+15-bit exponent, 64-bit significand with no hidden bit), which C
+compilers offer as long double, padding to 96 bits (12 bytes) or 128
+bits (16 bytes) for storage access efficiency.  The gcc compilers in
+GNU/Linux on Intel x86 use 12 bytes for long double, and the machine
+epsilon is 2^{-63} = 1.08e-19.
+
+IBM RS/6000 systems also have a 128-bit quadruple-precision format, but
+unlike the others, this is a pair of normal IEEE 754 64-bit values.
+The IBM compilers require an extra option, -qlongdouble, to enable
+code generation for it; without that option, long double is treated
+like double.
+
+This `double-double' representation, while convenient for the
+implementation of quadruple-precision operations using only the
+double-precision hardware instructions, and particularly, the fused
+multiply-add instruction, has a serious side effect: given
+double-precision values a and b, the quadruple-precision value a + b
+represents a significand of the form
+
+	pppppp...ppp?????....?????qqqqq....qqqq
+
+in which there can be unknown bits in the middle.  For example, one
+can have a = 1 and b = 1e-323: this does not imply that their sum has
+323 accurate decimal digits, even though 1 + 1.e-323 differs from 1.
+
+On this system, code of the form
+
+	do
+	{
+		tolerance = ...
+	}
+	until ((x + tolerance) != x)
+
+which works perfectly well in IEEE 754 single, double, and
+temporary-real formats, as well as Sun-style quadruple-precision
+arithmetic, and also Cray, IBM, and Compaq/DEC VAX mainframe formats,
+will not work as expected, because tolerance must underflow to zero
+before the sum x + tolerance finally differs from x, when x == 1.
+
+This affects the computation of the machine epsilon, which normally
+takes the form
+
+fp_t machine_epsilon(void)
+{
+    fp_t x;
+
+    while ((1 + x/2) != 1)
+	x /= 2;
+
+    return (x);
+}
+
+(writing it in a form that doesn't require length modifiers on the
+constants, allowing typedefs of fp_t to float, double, and long double
+without changing the code, and assuming that longer registers are not
+involved in the computation in while condition).
+
+On the IBM RS/6000, this code produces the incorrect answer
+4.9406564584124654e-324 (== 2^(-1074)).
+
+Since there are only 53 bits in each of the two significands, the
+expected precision is only (2*53 =) 106 bits, corresponding to just
+under 31 decimal digits.  The machine epsilon should therefore be
+2^{-105} = 2.47e-32.
+
+Despite several experiments, and considerable thought over the course
+of a day, I haven't yet been able to program a MACHINE-INDEPENDENT way
+to write the machine_epsilon() function for the quadruple-precision
+precision case.  I've therefore temporarily taken the easy way out,
+and put in a machine-dependent conditional that checks for the IBM
+RS/6000, and long double revert to double.  During my Web searching, I
+came across a reference to an Apple floating-point implementation that
+uses a similar double + double representation; thus, this problem may
+be endemic on all systems based on the Power and PowerPC chips.
+
+On Apple Rhapsody (also known as MacOS 10), the C compiler (gcc
+2.7.2.1) treats long double like double, so this problem isn't
+exhibited. 
+
+On GNU/Linux on Apple Macintosh, the C and C++ compilers also
+treat long double like double; they define the symbols
+	__powerpc__
+	__PPC
+	__PPC__
+	powerpc
+	PPC 
+
+The IBM RS/6000 compilers on AIX 4.x define the symbols
+	_IBMR2
+	_POWER
+independent of which architecture subset (com, pwr, pwr2,
+pwrx, ppc, ppcgr) is selected by a -qarch=xxx flag.
+
+The Apple Rhapsody compiler defines
+
+    __ARCHITECTURE__="ppc"
+    __ppc
+    __ppc__
+    ppc
+
+I've therefore modified confix.h to test for some of these symbols,
+and if any are found, to disable long double arithmetic.  There was
+already a similar disabling there for the NeXT, where the compiler
+handles long double, but the run-time library doesn't.
+
+Fri Mar 31 15:24:16 2000
+I tracked down an IBM Web page that discusses implications of their
+peculiar 128-bit floating-point format:
+
+http://www.rs6000.ibm.com/doc_link/en_US/a_doc_lib/aixprggd/genprogc/128bit_long_double_floating-point_datatype.htm#CE7AE41923raga
+
+Just in case that page disappears, or moves, here is what IBM has to
+say about the machine epsilon:
+
+>> ...
+>> Epsilon
+>> 
+>> The ANSI C standard defines the value of epsilon as the difference
+>> between 1.0 and the least representable value greater than 1.0, that
+>> is, b**(1-p), where b is the radix (2) and p is the number of base b
+>> digits in the number. This definition requires that the number of base
+>> b digits is fixed, which is not true for 128-bit long double numbers.
+>> 
+>> The smallest representable value greater than 1.0 is this number:
+>> 
+>> 0x3FF0000000000000, 0x0000000000000001
+>> 
+>> The difference between this value and 1.0 is this number:
+>> 
+>> 0x0000000000000001, 0x0000000000000000
+>> 0.4940656458412465441765687928682213E-323
+>> 
+>> Because 128-bit numbers usually provide at least 106 bits of
+>> precision, an appropriate minimum value for p is 106. Thus, b**(1-p)
+>> and 2**(-105) yield this value:
+>> 
+>> 0x3960000000000000, 0x0000000000000000
+>> 0.24651903288156618919116517665087070E-31
+>> 
+>> Both values satisfy the definition of epsilon according to standard
+>> C. The long double subroutines use the second value because it better
+>> characterizes the accuracy provided by the 128-bit implementation.
+>> ...
