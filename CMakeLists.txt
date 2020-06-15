@@ -309,8 +309,25 @@ endif(USE_DLL_SUBDIRECTORY)
 
 # Prior to processing directories must initialize exports of installed targets.
 
-# Install CMake package config file which handles all those exports.
-install(FILES plplotConfig.cmake DESTINATION ${LIB_DIR}/cmake/plplot)
+# Follow example at <https://cmake.org/cmake/help/latest/module/CMakePackageConfigHelpers.html#module:CMakePackageConfigHelpers>
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+  plplotConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotConfig.cmake
+  INSTALL_DESTINATION ${LIB_DIR}/cmake/plplot
+  )
+write_basic_package_version_file(
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotConfigVersion.cmake
+  VERSION ${PLPLOT_VERSION}
+  COMPATIBILITY ExactVersion
+  )
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/plplotConfigVersion.cmake
+  DESTINATION ${LIB_DIR}/cmake/plplot
+  )
 
 # Initialize the plplot_exports.cmake file which is appended to by CMake logic
 # to install and export targets that is indirectly executed by the add_subdirectory commands below.
