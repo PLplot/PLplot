@@ -67,6 +67,7 @@
 #include <QMainWindow>
 #include <QPicture>
 #include <QMutex>
+#include <QPainterPath>
 
 #include "plDevs.h"
 #include "plplotP.h"
