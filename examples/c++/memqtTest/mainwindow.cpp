@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::plot1(int do_test)
+void MainWindow::plot1(void)
 {
     int i;
     PLFLT xmin, xmax, ymin, ymax;
@@ -66,30 +66,6 @@ void MainWindow::plot1(int do_test)
     plcol0(3);
     plline(60, x, y);
 
-    // xor mode enable erasing a line/point/text by replotting it again
-    // it does not work in double buffering mode, however
-
-    if (do_test && test_xor) {
-#ifdef PL_HAVE_NANOSLEEP
-        PLINT st;
-        struct timespec ts;
-        ts.tv_sec = 0;
-        ts.tv_nsec = 50000000;
-        plxormod(1, &st); // enter xor mode
-        if (st) {
-            for (i = 0; i < 60; i++) {
-                plpoin(1, x + i, y + i, 9); // draw a point
-                nanosleep(&ts, NULL); // wait a little
-                plflush(); // force an update of the tk driver
-                plpoin(1, x + i, y + i, 9); // erase point
-            }
-            plxormod(0, &st); // leave xor mode
-        }
-#else
-        printf("The -xor command line option can only be exercised if your "
-               "system\nhas nanosleep(), which does not seem to happen.\n");
-#endif
-    }
 }
 
 //--------------------------------------------------------------------------
@@ -184,7 +160,8 @@ void MainWindow::memqt()
     buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
 
     plsmema(w1, h1, buf);
-    plscolbga(5, 50, 50, .5);
+    //plscolbga(5, 50, 50, .5);
+    plscolbga(0,0,0,1.);
 
 
     plspage(0., 0., w1, h1, 0, 0);
@@ -216,7 +193,7 @@ void MainWindow::memqt()
 
     // Do a plot
 
-    plot1(0);
+    plot1();
 
     // Set up the data
 
@@ -229,14 +206,11 @@ void MainWindow::memqt()
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot1(1);
+    plot1();
 
     plot2();
 
     plot3();
-
-
-
 
     plend();
     QImage image = QImage(buf, w1, h1, QImage::Format_ARGB32);
@@ -263,7 +237,8 @@ void MainWindow::pngqt()
     h1 = (long) geo.height();
 
 
-    plscolbga(5,50,50,0.5);
+    //plscolbga(5,50,50,0.5);
+    plscolbga(0,0,0,1.);
 
     plspage(0.,0.,w1,h1,0,0);
 
@@ -293,7 +268,7 @@ void MainWindow::pngqt()
 
     // Do a plot
 
-    plot1( 0 );
+    plot1();
 
     // Set up the data
 
@@ -306,7 +281,7 @@ void MainWindow::pngqt()
     digmax = 5;
     plsyax( digmax, 0 );
 
-    plot1( 1 );
+    plot1();
 
     plot2();
 
