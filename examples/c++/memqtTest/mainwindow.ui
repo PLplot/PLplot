@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QGraphicsView" name="graphicsView"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuactions">
+    <property name="title">
+     <string>actions</string>
+    </property>
+    <addaction name="action_testmemqt"/>
+    <addaction name="actionPlot_using_pngqt"/>
+   </widget>
+   <addaction name="menuactions"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="action_testmemqt">
+   <property name="text">
+    <string>Testmemqt</string>
+   </property>
+   <property name="toolTip">
+    <string>plot using memqt driver</string>
+   </property>
+  </action>
+  <action name="actionPlot_using_pngqt">
+   <property name="text">
+    <string>Plot using pngqt</string>
+   </property>
+   <property name="toolTip">
+    <string>Plot using pngqt</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

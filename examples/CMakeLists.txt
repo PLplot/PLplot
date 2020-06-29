@@ -1152,6 +1152,14 @@ if(BUILD_TEST)
       endif(PLPLOT_USE_QT5)
     endif(PLD_extqt AND TARGET qt_example)
 
+    if(TARGET memqt_example)
+      add_custom_target(test_memqt_example
+	COMMAND memqt_example
+	)
+      add_dependencies(test_memqt_example memqt_example ${qt_targets})
+      list(APPEND qt_targets_LIST test_memqt_example)
+    endif(TARGET memqt_example)
+
   endif(ENABLE_cxx)
 
   if(ENABLE_pyqt4)

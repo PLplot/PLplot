@@ -1,6 +1,6 @@
 # examples/c++/CMakeLists.txt
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2006-2020 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -71,10 +71,31 @@ if(CORE_BUILD)
   endforeach(STRING_INDEX ${cxx_STRING_INDICES})
 
   if(PLD_extqt)
-    set(qt_INSTALLED_FILES qt_PlotWindow.cpp qt_PlotWindow.h qt_example.cpp README.qt_example)
+    set(qt_example_INSTALLED_FILES qt_PlotWindow.cpp qt_PlotWindow.h qt_example.cpp README.qt_example)
+    install(FILES ${qt_example_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
   endif(PLD_extqt)
 
-  install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} ${qt_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
+  if(PLPLOT_USE_QT5)
+    # Check consistency of memqtTest/ui_mainwindow.h with memqtTest/mainwindow.ui
+    add_custom_target(
+      check_ui_mainwindow_h
+      COMMAND ${CMAKE_COMMAND} -E echo "Check that memqtTest/ui_mainwindow.h is consistent with memqtTest/mainwindow.ui"
+      COMMAND ${CMAKE_COMMAND} -E remove -f
+      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h_compare
+      COMMAND uic -qt=5 ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui -o ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h_compare
+      COMMAND
+      cmp ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/ui_mainwindow.h
+      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h_compare
+      )
+    add_dependencies(check_all check_ui_mainwindow_h)
+  endif(PLPLOT_USE_QT5)
+
+  if(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
+    set(memqt_example_INSTALLED_FILES memqtTest/main.cpp  memqtTest/mainwindow.cpp  memqtTest/mainwindow.h memqtTest/ui_mainwindow.h)
+    install(FILES ${memqt_example_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++/memqtTest)
+  endif(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
+
+  install(FILES ${cxx_SRCS} ${wxPLplotDemo_SRCS} DESTINATION ${DATA_DIR}/examples/c++)
 
   set(CXX "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} ${CMAKE_CXX_FLAGS}")
 
@@ -174,6 +195,28 @@ if(PLD_extqt)
   endif(CORE_BUILD)
 endif(PLD_extqt)
 
+if(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
+  if(CORE_BUILD)
+    set(BUILD_memqt_example ON)
+  else(CORE_BUILD)
+    # Check previous find results here for this particular use of Qt5.
+    if(Qt5_FOUND AND Qt5_VERSION_MAJOR STREQUAL "${CORE_Qt5_VERSION_MAJOR}" AND Qt5_VERSION_MINOR STREQUAL "${CORE_Qt5_VERSION_MINOR}" AND Qt5_VERSION_PATCH STREQUAL "${CORE_Qt5_VERSION_PATCH}")
+      set(BUILD_memqt_example ON)
+    else(Qt5_FOUND AND Qt5_VERSION_MAJOR STREQUAL "${CORE_Qt5_VERSION_MAJOR}" AND Qt5_VERSION_MINOR STREQUAL "${CORE_Qt5_VERSION_MINOR}" AND Qt5_VERSION_PATCH STREQUAL "${CORE_Qt5_VERSION_PATCH}")
+      message(STATUS "CORE_Qt5_FOUND = ON")
+      message(STATUS "CORE_Qt5_VERSION_MAJOR = ${CORE_Qt5_VERSION_MAJOR}")
+      message(STATUS "CORE_Qt5_VERSION_MINOR = ${CORE_Qt5_VERSION_MINOR}")
+      message(STATUS "CORE_Qt5_VERSION_PATCH = ${CORE_Qt5_VERSION_PATCH}")
+      message(STATUS "Qt5_FOUND = ${Qt5_FOUND}")
+      message(STATUS "Qt5_VERSION_MAJOR = ${Qt5_VERSION_MAJOR}")
+      message(STATUS "Qt5_VERSION_MINOR = ${Qt5_VERSION_MINOR}")
+      message(STATUS "Qt5_VERSION_PATCH = ${Qt5_VERSION_PATCH}")
+      message(STATUS "WARNING: Qt5 core build-tree and install-tree inconsistency so memqt_example will not be built")
+      set(BUILD_memqt_example OFF)
+    endif(Qt5_FOUND AND Qt5_VERSION_MAJOR STREQUAL "${CORE_Qt5_VERSION_MAJOR}" AND Qt5_VERSION_MINOR STREQUAL "${CORE_Qt5_VERSION_MINOR}" AND Qt5_VERSION_PATCH STREQUAL "${CORE_Qt5_VERSION_PATCH}")
+  endif(CORE_BUILD)
+endif(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
+
 if(BUILD_TEST AND BUILD_qt_example)
   # For both Qt4 and Qt5 AUTOMOC method works fine to process
   # qt_PlotWindow.h in the same directory with the same base name as
@@ -222,6 +265,29 @@ if(BUILD_TEST AND BUILD_qt_example)
     # the target.
     target_include_directories(qt_example PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif(BUILD_TEST AND BUILD_qt_example)
+
+if(BUILD_TEST AND BUILD_memqt_example)
+  # Qt5 AUTOMOC method works fine to process memqtTest/mainwindow.h in the
+  # same directory with the same base name as memqtTest/mainwindow.cpp.
+  add_executable(memqt_example memqtTest/main.cpp  memqtTest/mainwindow.cpp)
+    if(BUILD_SHARED_LIBS)
+    set_target_properties(memqt_example PROPERTIES
+      COMPILE_DEFINITIONS "USINGDLL"
+      )
+  endif(BUILD_SHARED_LIBS)
+
+  if(ENABLE_DYNDRIVERS)
+    target_link_libraries(memqt_example PLPLOT::plplotqt PLPLOT::plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
+  else(ENABLE_DYNDRIVERS)
+    target_link_libraries(memqt_example PLPLOT::plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
+  endif(ENABLE_DYNDRIVERS)
+
+  set_target_properties(memqt_example PROPERTIES
+    AUTOMOC ON
+    AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
+    )
+    target_include_directories(memqt_example PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+endif(BUILD_TEST AND BUILD_memqt_example)
 
 if(CORE_BUILD)
   if(ENABLE_qt)
