@@ -1842,9 +1842,10 @@ void plD_init_memqt( PLStream * pls )
     pls->family = true;
 }
 
-void plD_bop_memqt( PLStream * /* pls */ )
+void plD_bop_memqt( PLStream *  pls  )
 {
-    // Do nothing to preserve user data
+    ( (QtRasterDevice *) pls->dev )->setBackgroundColor( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a );
+    // Do nothing else to preserve user data
 }
 
 void plD_eop_memqt( PLStream *pls )
