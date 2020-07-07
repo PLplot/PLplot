@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsView>
+#include <QString>
 #include <plplot.h>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,17 +24,21 @@ public:
     int          fontset ;
     char         *f_name ;
     long w1,h1;
-
+    QString picture;
 
 private slots:
     void memqt();
     void pngqt();
+    void mycase1();
+    void memqtwithbg();
+    void mycase();
+    void normal();
 
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene scene;
-    void plot1();
+    void plot1(int );
     void plot2();
     void plot3();
     void plot();

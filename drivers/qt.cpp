@@ -1844,8 +1844,8 @@ void plD_init_memqt( PLStream * pls )
 
 void plD_bop_memqt( PLStream *  pls  )
 {
-    ( (QtRasterDevice *) pls->dev )->setBackgroundColor( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a );
-    // Do nothing else to preserve user data
+   
+    // Do nothing  to preserve the backgroud image in the memory buffer provide by the user.
 }
 
 void plD_eop_memqt( PLStream *pls )

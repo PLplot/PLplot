@@ -26,15 +26,19 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuactions">
     <property name="title">
      <string>actions</string>
     </property>
+    <addaction name="actionNormalBackgroud_all_others_are_alhpa"/>
     <addaction name="action_testmemqt"/>
     <addaction name="actionPlot_using_pngqt"/>
+    <addaction name="actionwithanimagebackground"/>
+    <addaction name="actionmycase"/>
+    <addaction name="actionmycase1"/>
    </widget>
    <addaction name="menuactions"/>
   </widget>
@@ -53,6 +57,26 @@
    </property>
    <property name="toolTip">
     <string>Plot using pngqt</string>
+   </property>
+  </action>
+  <action name="actionwithanimagebackground">
+   <property name="text">
+    <string>withanimagebackground</string>
+   </property>
+  </action>
+  <action name="actionmycase">
+   <property name="text">
+    <string>mycase</string>
+   </property>
+  </action>
+  <action name="actionmycase1">
+   <property name="text">
+    <string>mycase1</string>
+   </property>
+  </action>
+  <action name="actionNormalBackgroud_all_others_are_alhpa">
+   <property name="text">
+    <string>NormalBackgroud (all others are alhpa)</string>
    </property>
   </action>
  </widget>
