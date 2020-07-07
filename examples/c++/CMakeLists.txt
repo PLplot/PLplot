@@ -75,23 +75,24 @@ if(CORE_BUILD)
     install(FILES ${qt_example_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++)
   endif(PLD_extqt)
 
-  if(PLPLOT_USE_QT5)
-    # Check consistency of memqtTest/ui_mainwindow.h with memqtTest/mainwindow.ui
-    add_custom_target(
-      check_ui_mainwindow_h
-      COMMAND ${CMAKE_COMMAND} -E echo "Check that memqtTest/ui_mainwindow.h is consistent with memqtTest/mainwindow.ui"
-      COMMAND ${CMAKE_COMMAND} -E remove -f
-      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h_compare
-      COMMAND uic -qt=5 ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui -o ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h_compare
-      COMMAND
-      cmp ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/ui_mainwindow.h
-      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h_compare
-      )
-    add_dependencies(check_all check_ui_mainwindow_h)
-  endif(PLPLOT_USE_QT5)
-
   if(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
-    set(memqt_example_INSTALLED_FILES memqtTest/main.cpp  memqtTest/mainwindow.cpp  memqtTest/mainwindow.h memqtTest/ui_mainwindow.h)
+    # Generate memqtTest/ui_mainwindow.h from memqtTest/mainwindow.ui
+    add_custom_command(
+      OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
+      COMMAND
+      uic -qt=5 ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui -o ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
+      DEPENDS
+      ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      VERBATIM
+      )
+    add_custom_target(
+      generate_ui_mainwindow_h
+      DEPENDS
+      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
+      )
+    set(memqt_example_INSTALLED_FILES memqtTest/main.cpp  memqtTest/mainwindow.cpp  memqtTest/mainwindow.h ${CMAKE_CURRENT_BINARY_DIR}/memqtTest/ui_mainwindow.h)
     install(FILES ${memqt_example_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++/memqtTest)
   endif(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
 
@@ -286,7 +287,8 @@ if(BUILD_TEST AND BUILD_memqt_example)
     AUTOMOC ON
     AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
     )
-    target_include_directories(memqt_example PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  target_include_directories(memqt_example PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  add_dependencies(memqt_example generate_ui_mainwindow_h)
 endif(BUILD_TEST AND BUILD_memqt_example)
 
 if(CORE_BUILD)

@@ -38,7 +38,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QGraphicsScene scene;
-    void plot1(int );
+    void plot1();
     void plot2();
     void plot3();
     void plot();

@@ -1844,7 +1844,7 @@ void plD_init_memqt( PLStream * pls )
 
 void plD_bop_memqt( PLStream *  pls  )
 {
-   
+
     // Do nothing  to preserve the backgroud image in the memory buffer provide by the user.
 }
 

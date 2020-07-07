@@ -36,7 +36,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::plot1(int do_test)
+void MainWindow::plot1(void)
 {
     int i;
     PLFLT xmin, xmax, ymin, ymax;
@@ -49,7 +49,6 @@ void MainWindow::plot1(int do_test)
     xmin = x[0];
     xmax = x[59];
     ymin = y[0];
-
     ymax = y[59];
 
     for (i = 0; i < 6; i++) {
@@ -77,30 +76,6 @@ void MainWindow::plot1(int do_test)
     plcol0(3);
     plline(60, x, y);
 
-    // xor mode enable erasing a line/point/text by replotting it again
-    // it does not work in double buffering mode, however
-
-    if (do_test && test_xor) {
-#ifdef PL_HAVE_NANOSLEEP
-        PLINT st;
-        struct timespec ts;
-        ts.tv_sec = 0;
-        ts.tv_nsec = 50000000;
-        plxormod(1, &st); // enter xor mode
-        if (st) {
-            for (i = 0; i < 60; i++) {
-                plpoin(1, x + i, y + i, 9); // draw a point
-                nanosleep(&ts, NULL); // wait a little
-                plflush(); // force an update of the tk driver
-                plpoin(1, x + i, y + i, 9); // erase point
-            }
-            plxormod(0, &st); // leave xor mode
-        }
-#else
-        printf("The -xor command line option can only be exercised if your "
-               "system\nhas nanosleep(), which does not seem to happen.\n");
-#endif
-    }
 }
 
 //--------------------------------------------------------------------------
@@ -239,7 +214,7 @@ void MainWindow::normal()
 
     // Do a plot
 
-    plot1(0);
+    plot1();
 
     // Set up the data
 
@@ -252,7 +227,7 @@ void MainWindow::normal()
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot1(1);
+    plot1();
 
     plot2();
 
@@ -337,7 +312,7 @@ void MainWindow::memqt()
 
     // Do a plot
 
-    plot1(0);
+    plot1();
 
     // Set up the data
 
@@ -350,7 +325,7 @@ void MainWindow::memqt()
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot1(1);
+    plot1();
 
     plot2();
 
@@ -414,7 +389,7 @@ void MainWindow::pngqt()
 
     // Do a plot
 
-    plot1( 0 );
+    plot1();
 
     // Set up the data
 
@@ -427,7 +402,7 @@ void MainWindow::pngqt()
     digmax = 5;
     plsyax( digmax, 0 );
 
-    plot1( 1 );
+    plot1();
 
     plot2();
 
@@ -510,7 +485,7 @@ void MainWindow::memqtwithbg()
 
     // Do a plot
 
-    plot1(0);
+    plot1();
 
     // Set up the data
 
@@ -523,7 +498,7 @@ void MainWindow::memqtwithbg()
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot1(1);
+    plot1();
 
     plot2();
 
@@ -637,7 +612,7 @@ void MainWindow::mycase1()
 
     // Do a plot
 
-    plot1(0);
+    plot1();
 
     // Set up the data
 
@@ -650,7 +625,7 @@ void MainWindow::mycase1()
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot1(1);
+    plot1();
 
     plot2();
 
@@ -722,7 +697,7 @@ void MainWindow::mycase()
 
     // Do a plot
 
-    plot1(0);
+    plot1();
 
     // Set up the data
 
@@ -735,7 +710,7 @@ void MainWindow::mycase()
     digmax = 5;
     plsyax(digmax, 0);
 
-    plot1(1);
+    plot1();
 
     plot2();
 
