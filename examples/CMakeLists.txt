@@ -1154,7 +1154,7 @@ if(BUILD_TEST)
 
     if(TARGET memqt_example)
       add_custom_target(test_memqt_example
-	COMMAND memqt_example
+	COMMAND memqt_example ${CMAKE_CURRENT_SOURCE_DIR}/c++/memqtTest/aurora.png
 	)
       add_dependencies(test_memqt_example memqt_example ${qt_targets})
       list(APPEND qt_targets_LIST test_memqt_example)
