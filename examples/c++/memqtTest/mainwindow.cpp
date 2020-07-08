@@ -78,11 +78,7 @@ void MainWindow::plot1(void)
 
     plcol0(3);
     plline(60, x, y);
-
 }
-
-//--------------------------------------------------------------------------
-
 
 void MainWindow::plot2(void)
 {
@@ -113,9 +109,6 @@ void MainWindow::plot2(void)
     plline(100, x, y);
     plwidth(1);
 }
-
-//--------------------------------------------------------------------------
-
 
 void MainWindow::plot3(void)
 {
@@ -157,6 +150,18 @@ void MainWindow::plot3(void)
     plcol0(4);
     plline(101, x, y);
 }
+
+void MainWindow::memqtscolbga(unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha)
+{
+    int i;
+    for (int i=0; i < buf_length; i=i+4){
+        buf[i]=r;
+        buf[i+1]=g;
+        buf[i+2]=b;
+        buf[i+3]=(int) ( alpha * 255. );
+    }
+}
+
 void MainWindow::opaque()
 {
     this->setWindowTitle("**Now displaying the result from the memqt device with opaque background**");
@@ -165,35 +170,19 @@ void MainWindow::opaque()
     h1 = (long) geo.height();
     PLINT digmax;
 
-
     unsigned char *buf; //= new uchar[4*w1*h1];
 
     // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
     buf = (unsigned char *) malloc(4 * w1 * h1);
 
-   //mimic the effect of calling     plscolbga(0, 0, 0, 1.);
+    //mimic the effect of calling plscolbga(0, 0, 0, 1.);
+    memqtscolbga(buf, 4*w1*h1, 0, 0, 0, 1.);
 
-    for (int i=0; i<4*w1*h1;i=i+4){
-        buf[i]=0;
-        buf[i+1]=0;
-        buf[i+2]=0;
-        buf[i+3]=(int) ( 1. * 255 ); //alpha
-
-    }
     plsmema(w1, h1, buf);
-//    plscolbga(5, 50, 50, .5);
-
 
     plspage(0., 0., w1, h1, 0, 0);
 
-
-
     plsdev("memqt");
-
-
-
-
-
 
     // Initialize plplot
     // Divide page into 2x2 plots
@@ -236,14 +225,10 @@ void MainWindow::opaque()
 
     plot3();
 
-
-
-
     plend();
     QImage image = QImage(buf, w1, h1, QImage::Format_ARGB32);
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap(QPixmap::fromImage(image));
-
 
     scene.clear();
     this->ui->graphicsView->setScene(&scene);
@@ -263,35 +248,19 @@ void MainWindow::memqt()
     h1 = (long) geo.height();
     PLINT digmax;
 
-
     unsigned char *buf; //= new uchar[4*w1*h1];
 
     // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
     buf = (unsigned char *) malloc(4 * w1 * h1);
 
-   //mimic the effect of calling     plscolbga(5, 50, 50, .5);
+    //mimic the effect of calling plscolbga(5, 50, 50, 0.5);
+    memqtscolbga(buf, 4*w1*h1, 5, 50, 50, 0.5);
 
-    for (int i=0; i<4*w1*h1;i=i+4){
-        buf[i]=5;
-        buf[i+1]=50;
-        buf[i+2]=50;
-        buf[i+3]=(int) ( .5 * 255 ); //alpha
-
-    }
     plsmema(w1, h1, buf);
-//    plscolbga(5, 50, 50, .5);
-
 
     plspage(0., 0., w1, h1, 0, 0);
 
-
-
     plsdev("memqt");
-
-
-
-
-
 
     // Initialize plplot
     // Divide page into 2x2 plots
@@ -334,14 +303,10 @@ void MainWindow::memqt()
 
     plot3();
 
-
-
-
     plend();
     QImage image = QImage(buf, w1, h1, QImage::Format_ARGB32);
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap(QPixmap::fromImage(image));
-
 
     scene.clear();
     this->ui->graphicsView->setScene(&scene);
@@ -361,8 +326,7 @@ void MainWindow::pngqt()
     w1 = (long) geo.width();
     h1 = (long) geo.height();
 
-
-    plscolbga(5,50,50,0.5);
+    plscolbga(5, 50, 50, 0.5);
 
     plspage(0.,0.,w1,h1,0,0);
 
@@ -417,11 +381,7 @@ void MainWindow::pngqt()
     // and replay the plot buffer
     //
 
-
-
-
     // Don't forget to call plend() to finish off!
-
 
     plend();
 
@@ -439,7 +399,6 @@ void MainWindow::imagebackground()
     h1 = (long) geo.height();
     PLINT digmax;
 
-
     unsigned char *buf;
     // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
     QImage image2 = QImage(picture);
@@ -450,21 +409,15 @@ void MainWindow::imagebackground()
 
     buf=image2.scanLine(0);
 
+    //mimic the effect of calling plscolbga(5, 50, 50, 0.5);
+    // ToDo since this requires combining image2 with a different image
+    // corresponding to memqtscolbga(buf, 4*w1*h1, 5, 50, 50, 0.5);
 
     plsmema(w1, h1, buf);
 
-
-
     plspage(0., 0., w1, h1, 0, 0);
 
-
-
     plsdev("memqt");
-
-
-
-
-
 
     // Initialize plplot
     // Divide page into 2x2 plots
@@ -507,21 +460,16 @@ void MainWindow::imagebackground()
 
     plot3();
 
-
-
-
     plend();
     QImage image = QImage(buf, w1, h1, QImage::Format_ARGB32);
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap(QPixmap::fromImage(image));
-
 
     scene.clear();
     this->ui->graphicsView->setScene(&scene);
     scene.addPixmap(*renderer);
     this->ui->graphicsView->setScene(&scene);
     delete renderer;
-
 }
 
 void MainWindow::mycase1()
@@ -534,8 +482,8 @@ void MainWindow::mycase1()
 
     QImage image = QImage(w1,h1,QImage::Format_ARGB32);
 
-  //mimic the effect of calling     plscolbga(5, 50, 50, .5);
-    image.fill(QColor(50,50,5,(int) ( .5 * 255 )));
+  //mimic the effect of calling plscolbga(5, 50, 50, .5);
+    image.fill(QColor(50,50,5,(int) ( 0.5 * 255 )));
   //  image.fill(QColor(5,50,50,(int) ( .5 * 255 ))); This should be the natural  usage
   // however for some strange speciall needs as qt drivers are also based on  QImage::Format_ARGB32 the bytes are swaped
   // (twice otherwise it would not work) for example  let's look at de code plD_init_memqt the RGB is expressely swapped
@@ -579,19 +527,10 @@ void MainWindow::mycase1()
  // hard to understand why it has been done this way but that imposes the need
  // to explicily call     image.rgbSwapped(); to obtain the the derirable collors.
 
-
-
     plsmema(w1, h1, image.scanLine(0));
     plspage(0., 0., w1, h1, 0, 0);
 
-
-
     plsdev("memqt");
-
-
-
-
-
 
     // Initialize plplot
     // Divide page into 2x2 plots
@@ -634,20 +573,15 @@ void MainWindow::mycase1()
 
     plot3();
 
-
-
-
     plend();
     image = image.rgbSwapped(); //hard to understand why the drivres do a RGB swapp
     QPixmap *renderer = new QPixmap(QPixmap::fromImage(image));
-
 
     scene.clear();
     this->ui->graphicsView->setScene(&scene);
     scene.addPixmap(*renderer);
     this->ui->graphicsView->setScene(&scene);
     delete renderer;
-
 }
 void MainWindow::mycase()
 {
@@ -662,19 +596,15 @@ void MainWindow::mycase()
     image=image.rgbSwapped();
     w1=image.width();
     h1=image.height();
-   //mimic the effect of calling     plscolbga(5, 50, 50, .5);
+
+    //mimic the effect of calling plscolbga(5, 50, 50, 0.5);
+    // ToDo since this requires combining image with a different image
+    // corresponding to memqtscolbga(image.scanLine(0), 4*w1*h1, 5, 50, 50, 0.5);
 
     plsmema(w1, h1, image.scanLine(0));
     plspage(0., 0., w1, h1, 0, 0);
 
-
-
     plsdev("memqt");
-
-
-
-
-
 
     // Initialize plplot
     // Divide page into 2x2 plots
@@ -717,20 +647,13 @@ void MainWindow::mycase()
 
     plot3();
 
-
-
-
     plend();
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap(QPixmap::fromImage(image));
-
 
     scene.clear();
     this->ui->graphicsView->setScene(&scene);
     scene.addPixmap(*renderer);
     this->ui->graphicsView->setScene(&scene);
     delete renderer;
-
 }
-
-

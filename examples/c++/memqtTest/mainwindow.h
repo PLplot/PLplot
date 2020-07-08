@@ -18,9 +18,6 @@ public:
     ~MainWindow();
     PLFLT        x[101], y[101];
     PLFLT        xscale, yscale, xoff, yoff, xs[6], ys[6];
-    PLGraphicsIn gin;
-    int          locate_mode;
-    int          test_xor;
     int          fontset ;
     char         *f_name ;
     long w1,h1;
@@ -34,7 +31,6 @@ private slots:
     void mycase();
     void opaque();
 
-
 private:
     Ui::MainWindow *ui;
     QGraphicsScene scene;
@@ -42,7 +38,7 @@ private:
     void plot2();
     void plot3();
     void plot();
-
+    void memqtscolbga(unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha);
 
 };
 #endif // MAINWINDOW_H
