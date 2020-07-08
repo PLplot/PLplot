@@ -1588,6 +1588,8 @@ Interactive device drivers:
 
 PLD_xcairo:		${PLD_xcairo}
 PLD_extcairo:		${PLD_extcairo}
+PLD_extqt:		${PLD_extqt}
+PLD_memqt:		${PLD_memqt}
 
 Noninteractive bindings:
 

@@ -76,23 +76,13 @@ if(CORE_BUILD)
   endif(PLD_extqt)
 
   if(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
-    # Generate memqtTest/ui_mainwindow.h from memqtTest/mainwindow.ui
-    add_custom_command(
-      OUTPUT
-      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
-      COMMAND
-      uic -qt=5 ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui -o ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
-      DEPENDS
-      ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui
-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      VERBATIM
-      )
-    add_custom_target(
-      generate_ui_mainwindow_h
-      DEPENDS
-      ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
-      )
-    set(memqt_example_INSTALLED_FILES memqtTest/main.cpp  memqtTest/mainwindow.cpp  memqtTest/mainwindow.h ${CMAKE_CURRENT_BINARY_DIR}/memqtTest/ui_mainwindow.h)
+    set(memqt_example_INSTALLED_FILES
+      memqtTest/main.cpp
+      memqtTest/mainwindow.cpp
+      memqtTest/mainwindow.h
+      memqtTest/mainwindow.ui
+      memqtTest/README.aurora
+      memqtTest/aurora.png)
     install(FILES ${memqt_example_INSTALLED_FILES} DESTINATION ${DATA_DIR}/examples/c++/memqtTest)
   endif(PLPLOT_USE_QT5 AND PLD_memqt AND PLD_pngqt)
 
@@ -268,6 +258,22 @@ if(BUILD_TEST AND BUILD_qt_example)
 endif(BUILD_TEST AND BUILD_qt_example)
 
 if(BUILD_TEST AND BUILD_memqt_example)
+  # Generate memqtTest/ui_mainwindow.h from memqtTest/mainwindow.ui
+  add_custom_command(
+    OUTPUT
+    ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
+    COMMAND
+    uic -qt=5 ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui -o ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
+    DEPENDS
+    ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    VERBATIM
+    )
+  add_custom_target(
+    generate_ui_mainwindow_h
+    DEPENDS
+    ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
+    )
   # Qt5 AUTOMOC method works fine to process memqtTest/mainwindow.h in the
   # same directory with the same base name as memqtTest/mainwindow.cpp.
   add_executable(memqt_example memqtTest/main.cpp  memqtTest/mainwindow.cpp)

@@ -30,9 +30,9 @@ private slots:
     void memqt();
     void pngqt();
     void mycase1();
-    void memqtwithbg();
+    void imagebackground();
     void mycase();
-    void normal();
+    void opaque();
 
 
 private:

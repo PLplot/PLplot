@@ -227,9 +227,10 @@ set(PLD_xcairo @PLD_xcairo@)
 set(PLD_xwin @PLD_xwin@)
 set(PLD_wingdi @PLD_wingdi@)
 
-# Set external devices that are needed to build certain examples.
+# Set devices that are needed to build certain non-standard examples.
 set(PLD_extcairo @PLD_extcairo@)
 set(PLD_extqt @PLD_extqt@)
+set(PLD_memqt @PLD_memqt@)
 
 # Needed to optionally drop creation and testing of extXdrawable_demo target.
 set(DROP_GTK_PLUS_2_BUILDS @DROP_GTK_PLUS_2_BUILDS@)

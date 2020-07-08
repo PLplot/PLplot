@@ -33,35 +33,46 @@
     <property name="title">
      <string>actions</string>
     </property>
-    <addaction name="actionNormalBackgroud_all_others_are_alhpa"/>
-    <addaction name="action_testmemqt"/>
-    <addaction name="actionPlot_using_pngqt"/>
-    <addaction name="actionwithanimagebackground"/>
+    <addaction name="actionimagebackground"/>
+    <addaction name="actionopaque_background"/>
+    <addaction name="actionmemqt"/>
+    <addaction name="actionpngqt"/>
     <addaction name="actionmycase"/>
     <addaction name="actionmycase1"/>
    </widget>
    <addaction name="menuactions"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action_testmemqt">
+  <action name="actionimagebackground">
    <property name="text">
-    <string>Testmemqt</string>
+    <string>Plot using memqt device with image background</string>
    </property>
    <property name="toolTip">
-    <string>plot using memqt driver</string>
+    <string>memqt device with image background</string>
    </property>
   </action>
-  <action name="actionPlot_using_pngqt">
+  <action name="actionopaque_background">
    <property name="text">
-    <string>Plot using pngqt</string>
+    <string>Plot using memqt device with opaque background</string>
    </property>
    <property name="toolTip">
-    <string>Plot using pngqt</string>
+    <string>memqt device with opaque background</string>
    </property>
   </action>
-  <action name="actionwithanimagebackground">
+  <action name="actionmemqt">
    <property name="text">
-    <string>withanimagebackground</string>
+    <string>Plot using memqt device with semi-transparent background</string>
+   </property>
+   <property name="toolTip">
+    <string>memqt device with semi-transparent background</string>
+   </property>
+  </action>
+  <action name="actionpngqt">
+   <property name="text">
+    <string>Plot using pngqt device with semi-transparent background</string>
+   </property>
+   <property name="toolTip">
+    <string>pngqt device with semi-transparent background</string>
    </property>
   </action>
   <action name="actionmycase">
@@ -72,11 +83,6 @@
   <action name="actionmycase1">
    <property name="text">
     <string>mycase1</string>
-   </property>
-  </action>
-  <action name="actionNormalBackgroud_all_others_are_alhpa">
-   <property name="text">
-    <string>NormalBackgroud (all others are alhpa)</string>
    </property>
   </action>
  </widget>

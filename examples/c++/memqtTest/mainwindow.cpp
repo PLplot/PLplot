@@ -1,13 +1,17 @@
-
-//      This test program was built to show ways how to se  memqt and uses the plplot x01 example code
-//       x01
-//     the Plot_using_pngqt does not use memqt driver it uses instead pngqt driver saves it to a file and then renders the file for viewing
-//     it is here for output comparasion.
-//     the actions memqtwithbg and mycase needes an image for background in the directory where the program runs with a name aurora.png by default
-// one can invoke the program  memqtTest backgroundpicture
-//     memqt action expressely sets a buffer and fills it with the desired background for the ones that want to use this driver in a non qt program
+// This test program is designed to show how to use the memqt device where the basic
+// calls to PLplot routines are taken from examples/c++/x01.cc.
 //
-//    the action mycase one does not set any buffer but instead defines a QImage with the appropriated size ans sends its memory pointer to the drive.
+// Further comments about this code:
+// * imagebackground() demonstrates how to display an image background with the memqt device.
+// * opaque() demonstrates how to display an opaque background with the memqt device.
+// * memqt() demonstrates how to display a semi-transparent background with the memqt device.
+// * pngqt() demonstrates how to display a semi-transparent background with the pngqt device.
+//   (In this case, the results are saved to a file, and then that file rendered for
+//   comparison with the results from memqt().)
+// * mycase() is a variant of imagebackground() that does not set a buffer.  Instead, it
+//   defines a QImage of the appropriated size and uses a memory pointer to that QImage.
+// * mycase1() is a variant of memqt() that does not set a buffer.  Instead, it
+//   defines a QImage of the appropriated size and uses a memory pointer to that QImage.
 //
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -20,15 +24,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->action_testmemqt,SIGNAL(triggered()),this,SLOT(memqt()));
-    connect(ui->actionwithanimagebackground,SIGNAL(triggered()),this,SLOT(memqtwithbg()));
-    connect(ui->actionPlot_using_pngqt,SIGNAL(triggered()),this,SLOT(pngqt()));
+    connect(ui->actionimagebackground,SIGNAL(triggered()),this,SLOT(imagebackground()));
+    connect(ui->actionopaque_background,SIGNAL(triggered()),this,SLOT(opaque()));
+    connect(ui->actionmemqt,SIGNAL(triggered()),this,SLOT(memqt()));
+    connect(ui->actionpngqt,SIGNAL(triggered()),this,SLOT(pngqt()));
     connect(ui->actionmycase,SIGNAL(triggered()),this,SLOT(mycase()));
     connect(ui->actionmycase1,SIGNAL(triggered()),this,SLOT(mycase1()));
-    connect(ui->actionNormalBackgroud_all_others_are_alhpa,SIGNAL(triggered()),this,SLOT(normal()));
     fontset = 1;
     f_name = NULL;
-
 }
 
 MainWindow::~MainWindow()
@@ -154,9 +157,9 @@ void MainWindow::plot3(void)
     plcol0(4);
     plline(101, x, y);
 }
-void MainWindow::normal()
+void MainWindow::opaque()
 {
-    this->setWindowTitle("**now displaying the result from memqt driver**");
+    this->setWindowTitle("**Now displaying the result from the memqt device with opaque background**");
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
@@ -254,7 +257,7 @@ void MainWindow::normal()
 
 void MainWindow::memqt()
 {
-    this->setWindowTitle("**now displaying the result from memqt driver**");
+    this->setWindowTitle("**Now displaying the result from the memqt device with semi-transparent background**");
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
@@ -352,7 +355,7 @@ void MainWindow::memqt()
 
 void MainWindow::pngqt()
 {
-    this->setWindowTitle("now displaying the result from pngqt driver");
+    this->setWindowTitle("**Now displaying the result from the pngqt device with semi-transparent background**");
     PLINT digmax;
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
@@ -428,9 +431,9 @@ void MainWindow::pngqt()
     this->ui->graphicsView->setScene(&scene);
     delete renderer;
 }
-void MainWindow::memqtwithbg()
+void MainWindow::imagebackground()
 {
-    this->setWindowTitle("**now displaying the result from memqt driver with background**");
+    this->setWindowTitle("**Now displaying the result from the memqt device with image background**");
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
@@ -523,7 +526,7 @@ void MainWindow::memqtwithbg()
 
 void MainWindow::mycase1()
 {
-    this->setWindowTitle("**now displaying the result from memqt driver with mycase**");
+    this->setWindowTitle("**Now displaying the result from the memqt device with mycase1**");
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
@@ -648,13 +651,11 @@ void MainWindow::mycase1()
 }
 void MainWindow::mycase()
 {
-    this->setWindowTitle("**now displaying the result from memqt driver with mycase**");
+    this->setWindowTitle("**Now displaying the result from the memqt device with mycase**");
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
     PLINT digmax;
-
-
 
     // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
     QImage image = QImage(picture);
