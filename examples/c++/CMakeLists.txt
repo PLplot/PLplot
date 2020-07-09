@@ -258,24 +258,9 @@ if(BUILD_TEST AND BUILD_qt_example)
 endif(BUILD_TEST AND BUILD_qt_example)
 
 if(BUILD_TEST AND BUILD_memqt_example)
-  # Generate memqtTest/ui_mainwindow.h from memqtTest/mainwindow.ui
-  add_custom_command(
-    OUTPUT
-    ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
-    COMMAND
-    uic -qt=5 ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui -o ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
-    DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/memqtTest/mainwindow.ui
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    VERBATIM
-    )
-  add_custom_target(
-    generate_ui_mainwindow_h
-    DEPENDS
-    ${CMAKE_CURRENT_BINARY_DIR}/ui_mainwindow.h
-    )
-  # Qt5 AUTOMOC method works fine to process memqtTest/mainwindow.h in the
-  # same directory with the same base name as memqtTest/mainwindow.cpp.
+  # Qt5 AUTOMOC and AUTOUIC methods work fine to process
+  # memqtTest/mainwindow.h in the same directory with the same base
+  # name as memqtTest/mainwindow.cpp.
   add_executable(memqt_example memqtTest/main.cpp  memqtTest/mainwindow.cpp)
     if(BUILD_SHARED_LIBS)
     set_target_properties(memqt_example PROPERTIES
@@ -292,9 +277,9 @@ if(BUILD_TEST AND BUILD_memqt_example)
   set_target_properties(memqt_example PROPERTIES
     AUTOMOC ON
     AUTOMOC_MOC_OPTIONS "${PLPLOT_AUTOMOC_MOC_OPTIONS}"
+    AUTOUIC ON
     )
   target_include_directories(memqt_example PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
-  add_dependencies(memqt_example generate_ui_mainwindow_h)
 endif(BUILD_TEST AND BUILD_memqt_example)
 
 if(CORE_BUILD)
