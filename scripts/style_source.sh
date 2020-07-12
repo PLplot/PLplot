@@ -10,7 +10,7 @@
 # and/or apply them.  This script must be run from the top-level
 # directory of the PLplot source tree.
 
-# Copyright (C) 2009-2019 Alan W. Irwin
+# Copyright (C) 2009-2020 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -273,7 +273,7 @@ cppsource_LIST="$cppsource_LIST drivers/wx*.h drivers/*.cpp drivers/*.cc"
 cppsource_LIST="$cppsource_LIST drivers/wxwidgets_viewer/wx*.h drivers/wxwidgets_viewer/wx*.cpp"
 
 # C++ part of examples.
-cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h"
+cppsource_LIST="$cppsource_LIST examples/c++/*.cc examples/c++/*.cpp examples/c++/*.h examples/c++/memqtTest/*.cpp examples/c++/memqtTest/*.h"
 
 # C++ source in bindings.
 cppsource_LIST="$cppsource_LIST bindings/qt_gui/plqt.cpp bindings/wxwidgets/wx*.h bindings/wxwidgets/wx*.cpp"

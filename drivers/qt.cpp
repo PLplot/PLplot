@@ -6,13 +6,13 @@
 // Imperial College, London
 //
 // Copyright (C) 2009 Imperial College, London
-// Copyright (C) 2009-2019 Alan W. Irwin
+// Copyright (C) 2009-2020 Alan W. Irwin
 // Copyright (C) 2009 Werner Smekal
 // Copyright (C) 2009-2012 Andrew Ross
 // Copyright (C) 2009-2011 Hazen Babcock
 // Copyright (C) 2010 Hezekiah M. Carty
 // Copyright (C) 2015 Jim Dishaw
-// Copyright (C) 2019 António R. Tomé
+// Copyright (C) 2019-2020 António R. Tomé
 //
 // This is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Lesser Public License as published
@@ -1844,7 +1844,8 @@ void plD_init_memqt( PLStream * pls )
 
 void plD_bop_memqt( PLStream *  pls )
 {
-    // Do nothing  to preserve the backgroud image in the memory buffer provide by the user.
+    ( (QtRasterDevice *) pls->dev )->setBackgroundColor( pls->cmap0[0].r, pls->cmap0[0].g, pls->cmap0[0].b, pls->cmap0[0].a );
+    // Do nothing else to preserve user data
 }
 
 void plD_eop_memqt( PLStream *pls )

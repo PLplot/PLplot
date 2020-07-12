@@ -14,13 +14,13 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow( QWidget *parent = nullptr );
     ~MainWindow();
-    PLFLT        x[101], y[101];
-    PLFLT        xscale, yscale, xoff, yoff, xs[6], ys[6];
-    int          fontset ;
-    char         *f_name ;
-    long w1,h1;
+    PLFLT x[101], y[101];
+    PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
+    int fontset;
+    char *f_name;
+    long w1, h1;
     QString picture;
 
 private slots:
@@ -38,7 +38,6 @@ private:
     void plot2();
     void plot3();
     void plot();
-    void memqtscolbga(unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha);
-
+    void initialize_memqt_buffer( unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha );
 };
 #endif // MAINWINDOW_H
