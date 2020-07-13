@@ -141,7 +141,7 @@ if(PLD_extqt)
       # find_package(Qt5 ...) already done by find_package(plplot) for
       # the reasons given in src/plplotConfig.cmake.  So no need to repeat
       # here.
-      # find_package(Qt5 5.3.1 COMPONENTS Svg Gui PrintSupport)
+      # find_package(Qt5 5.7.1 COMPONENTS Svg Gui PrintSupport Widgets)
       # So only need to check those results here for this particular
       # use of Qt5.
       if(Qt5_FOUND AND Qt5_VERSION_MAJOR STREQUAL "${CORE_Qt5_VERSION_MAJOR}" AND Qt5_VERSION_MINOR STREQUAL "${CORE_Qt5_VERSION_MINOR}" AND Qt5_VERSION_PATCH STREQUAL "${CORE_Qt5_VERSION_PATCH}")
@@ -268,11 +268,7 @@ if(BUILD_TEST AND BUILD_memqt_example)
       )
   endif(BUILD_SHARED_LIBS)
 
-  if(ENABLE_DYNDRIVERS)
-    target_link_libraries(memqt_example PLPLOT::plplotqt PLPLOT::plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-  else(ENABLE_DYNDRIVERS)
-    target_link_libraries(memqt_example PLPLOT::plplot Qt5::Svg Qt5::Gui Qt5::PrintSupport)
-  endif(ENABLE_DYNDRIVERS)
+  target_link_libraries(memqt_example PLPLOT::plplotcxx Qt5::Widgets ${MATH_LIB})
 
   set_target_properties(memqt_example PROPERTIES
     AUTOMOC ON

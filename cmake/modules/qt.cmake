@@ -141,7 +141,7 @@ if(ENABLE_qt)
     # 5.7.1 which was available in Debian Stretch (= oldstable now)
     # so virtually all free software distributions should have at least
     # this version of Qt.
-    find_package(Qt5 5.7.1 COMPONENTS Svg Gui PrintSupport)
+    find_package(Qt5 5.7.1 COMPONENTS Svg Gui PrintSupport Widgets)
     if(Qt5_FOUND)
       message(STATUS "Setting PLD_epsqt to OFF since Qt5 does not support PostScript")
       set(PLD_epsqt OFF CACHE BOOL "Enable Qt EPS device" FORCE)

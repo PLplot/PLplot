@@ -19,6 +19,10 @@
 #include <QImage>
 #include <cmath>
 
+#ifdef PL_USE_NAMESPACE
+using namespace std;
+#endif
+
 MainWindow::MainWindow( QWidget *parent )
     : QMainWindow( parent )
     , ui( new Ui::MainWindow )
@@ -66,20 +70,20 @@ void MainWindow::plot1( void )
     // scaled separately (just = 0), and we just draw a labelled
     // box (axis = 0).
     //
-    plcol0( 1 );
-    plenv( xmin, xmax, ymin, ymax, 0, 0 );
-    plcol0( 2 );
-    pllab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
+    pls->col0( 1 );
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->col0( 2 );
+    pls->lab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
     // Plot the data points
 
-    plcol0( 4 );
-    plpoin( 6, xs, ys, 9 );
+    pls->col0( 4 );
+    pls->poin( 6, xs, ys, 9 );
 
     // Draw the line through the data
 
-    plcol0( 3 );
-    plline( 60, x, y );
+    pls->col0( 3 );
+    pls->line( 60, x, y );
 }
 
 void MainWindow::plot2( void )
@@ -90,10 +94,10 @@ void MainWindow::plot2( void )
     // 10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
     // (just = 0), and we draw a box with axes (axis = 1).
     //
-    plcol0( 1 );
-    plenv( -2.0, 10.0, -0.4, 1.2, 0, 1 );
-    plcol0( 2 );
-    pllab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
+    pls->col0( 1 );
+    pls->env( -2.0, 10.0, -0.4, 1.2, 0, 1 );
+    pls->col0( 2 );
+    pls->lab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
 
     // Fill up the arrays
 
@@ -107,10 +111,10 @@ void MainWindow::plot2( void )
 
     // Draw the line
 
-    plcol0( 3 );
-    plwidth( 2 );
-    plline( 100, x, y );
-    plwidth( 1 );
+    pls->col0( 3 );
+    pls->width( 2 );
+    pls->line( 100, x, y );
+    pls->width( 1 );
 }
 
 void MainWindow::plot3( void )
@@ -121,29 +125,29 @@ void MainWindow::plot3( void )
     // For the final graph we wish to override the default tick intervals, and
     // so do not use plenv().
     //
-    pladv( 0 );
+    pls->adv( 0 );
 
     // Use standard viewport, and define X range from 0 to 360 degrees, Y range
     // from -1.2 to 1.2.
     //
-    plvsta();
-    plwind( 0.0, 360.0, -1.2, 1.2 );
+    pls->vsta();
+    pls->wind( 0.0, 360.0, -1.2, 1.2 );
 
     // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
 
-    plcol0( 1 );
-    plbox( "bcnst", 60.0, 2, "bcnstv", 0.2, 2 );
+    pls->col0( 1 );
+    pls->box( "bcnst", 60.0, 2, "bcnstv", 0.2, 2 );
 
     // Superimpose a dashed line grid, with 1.5 mm marks and spaces.
     // plstyl expects a pointer!
     //
-    plstyl( 1, &mark1, &space1 );
-    plcol0( 2 );
-    plbox( "g", 30.0, 0, "g", 0.2, 0 );
-    plstyl( 0, &mark0, &space0 );
+    pls->styl( 1, &mark1, &space1 );
+    pls->col0( 2 );
+    pls->box( "g", 30.0, 0, "g", 0.2, 0 );
+    pls->styl( 0, &mark0, &space0 );
 
-    plcol0( 3 );
-    pllab( "Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function" );
+    pls->col0( 3 );
+    pls->lab( "Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function" );
 
     for ( i = 0; i < 101; i++ )
     {
@@ -151,25 +155,25 @@ void MainWindow::plot3( void )
         y[i] = sin( x[i] * M_PI / 180.0 );
     }
 
-    plcol0( 4 );
-    plline( 101, x, y );
+    pls->col0( 4 );
+    pls->line( 101, x, y );
 }
 
 void MainWindow::plplot_commands( void )
 {
     PLINT digmax;
-  
+
     // Initialize plplot
     // Divide page into 2x2 plots
     // Note: calling plstar replaces separate calls to plssub and plinit
-    plstar( 2, 2 );
+    pls->star( 2, 2 );
 
     // Select font set as per input flag
 
     if ( fontset )
-        plfontld( 1 );
+        pls->fontld( 1 );
     else
-        plfontld( 0 );
+        pls->fontld( 0 );
 
     // Set up the data
     // Original case
@@ -192,16 +196,13 @@ void MainWindow::plplot_commands( void )
     // Do a plot
 
     digmax = 5;
-    plsyax( digmax, 0 );
+    pls->syax( digmax, 0 );
 
     plot1();
 
     plot2();
 
     plot3();
-
-    plend();
-
 }
 
 void MainWindow::initialize_memqt_buffer( unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha )
@@ -228,16 +229,20 @@ void MainWindow::opaque( void )
     // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
     buf = (unsigned char *) malloc( 4 * w1 * h1 );
 
+    pls = new plstream();
+
     // Use opaque black background for this case.
-    plscolbga( 0, 0, 0, 1. );
+    pls->scolbga( 0, 0, 0, 1. );
 
-    plsmema( w1, h1, buf );
+    pls->smema( w1, h1, buf );
 
-    plspage( 0., 0., w1, h1, 0, 0 );
+    pls->spage( 0., 0., w1, h1, 0, 0 );
 
-    plsdev( "memqt" );
+    pls->sdev( "memqt" );
 
     plplot_commands();
+
+    delete pls;
 
     QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
     image = image.rgbSwapped();
@@ -270,17 +275,21 @@ void MainWindow::memqt( void )
     // whatever PLplot RGBA background colour that is specified later.
     initialize_memqt_buffer( buf, 4 * w1 * h1, 0, 0, 0, 0. );
 
+    pls = new plstream();
+
     // The default PLplot opaque black background works fine, but for
     // this case specify a blue semi-transparent background instead.
-    plscolbga( 0, 0, 255, 0.5 );
+    pls->scolbga( 0, 0, 255, 0.5 );
 
-    plsmema( w1, h1, buf );
+    pls->smema( w1, h1, buf );
 
-    plspage( 0., 0., w1, h1, 0, 0 );
+    pls->spage( 0., 0., w1, h1, 0, 0 );
 
-    plsdev( "memqt" );
+    pls->sdev( "memqt" );
 
     plplot_commands();
+
+    delete pls;
 
     QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
     image = image.rgbSwapped();
@@ -304,16 +313,20 @@ void MainWindow::pngqt( void )
     w1 = (long) geo.width();
     h1 = (long) geo.height();
 
+    pls = new plstream();
+
     // Use blue semi-transparent background for this case.
-    plscolbga( 0, 0, 255, 0.5 );
+    pls->scolbga( 0, 0, 255, 0.5 );
 
-    plspage( 0., 0., w1, h1, 0, 0 );
+    pls->spage( 0., 0., w1, h1, 0, 0 );
 
-    plsdev( "pngqt" );
+    pls->sdev( "pngqt" );
 
-    plsfnam( "lixo.png" );
+    pls->sfnam( "lixo.png" );
 
     plplot_commands();
+
+    delete pls;
 
     QPixmap *renderer = new QPixmap( "lixo.png" );
     scene.clear();
@@ -335,18 +348,22 @@ void MainWindow::imagebackground( void )
     w1     = image2.width();
     h1     = image2.height();
 
+    pls = new plstream();
+
     // Emphasize the plot by applying a gray semi-transparent layer on top of the background image.
-    plscolbga( 100, 100, 100, 0.5 );
+    pls->scolbga( 100, 100, 100, 0.5 );
 
     buf = image2.scanLine( 0 );
 
-    plsmema( w1, h1, buf );
+    pls->smema( w1, h1, buf );
 
-    plspage( 0., 0., w1, h1, 0, 0 );
+    pls->spage( 0., 0., w1, h1, 0, 0 );
 
-    plsdev( "memqt" );
+    pls->sdev( "memqt" );
 
     plplot_commands();
+
+    delete pls;
 
     QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
     image = image.rgbSwapped();
@@ -388,15 +405,19 @@ void MainWindow::mycase1( void )
     // not the case above) to explicitly call image.rgbSwapped();
     // below to obtain the the correct RGB colours.
 
+    pls = new plstream();
+
     // Use blue semi-transparent background for this case.
-    plscolbga( 0, 0, 255, 0.5 );
+    pls->scolbga( 0, 0, 255, 0.5 );
 
-    plsmema( w1, h1, image.scanLine( 0 ) );
-    plspage( 0., 0., w1, h1, 0, 0 );
+    pls->smema( w1, h1, image.scanLine( 0 ) );
+    pls->spage( 0., 0., w1, h1, 0, 0 );
 
-    plsdev( "memqt" );
+    pls->sdev( "memqt" );
 
     plplot_commands();
+
+    delete pls;
 
     // It is hard to understand why memqt does this RGB swap, but this
     // compensates for it when R, G, and B are different from each other, see comment above.
@@ -409,6 +430,7 @@ void MainWindow::mycase1( void )
     this->ui->graphicsView->setScene( &scene );
     delete renderer;
 }
+
 void MainWindow::mycase( void )
 {
     this->setWindowTitle( "**Now displaying the result from the memqt device with mycase**" );
@@ -422,17 +444,21 @@ void MainWindow::mycase( void )
     w1    = image.width();
     h1    = image.height();
 
+    pls = new plstream();
+
     // Emphasize the background by specifying a completely transparent PLplot background
     // rather than the default opaque black (no image background at all) or
     // light-grey semi-transparent background (plot emphasized over background).
-    plscolbga( 0, 0, 0, 0.0 );
+    pls->scolbga( 0, 0, 0, 0.0 );
 
-    plsmema( w1, h1, image.scanLine( 0 ) );
-    plspage( 0., 0., w1, h1, 0, 0 );
+    pls->smema( w1, h1, image.scanLine( 0 ) );
+    pls->spage( 0., 0., w1, h1, 0, 0 );
 
-    plsdev( "memqt" );
+    pls->sdev( "memqt" );
 
     plplot_commands();
+
+    delete pls;
 
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap( QPixmap::fromImage( image ) );

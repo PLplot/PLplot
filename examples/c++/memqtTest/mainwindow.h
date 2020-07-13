@@ -4,7 +4,8 @@
 #include <QMainWindow>
 #include <QGraphicsView>
 #include <QString>
-#include <plplot.h>
+#include "plstream.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -15,7 +16,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow( QWidget *parent = nullptr );
-  ~MainWindow( void );
+    ~MainWindow( void );
     PLFLT x[101], y[101];
     PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
     int fontset;
@@ -34,6 +35,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QGraphicsScene scene;
+    plstream *pls;
     void plot1( void );
     void plot2( void );
     void plot3( void );
