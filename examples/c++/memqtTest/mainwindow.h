@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow( QWidget *parent = nullptr );
-    ~MainWindow();
+  ~MainWindow( void );
     PLFLT x[101], y[101];
     PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
     int fontset;
@@ -24,20 +24,20 @@ public:
     QString picture;
 
 private slots:
-    void memqt();
-    void pngqt();
-    void mycase1();
-    void imagebackground();
-    void mycase();
-    void opaque();
+    void memqt( void );
+    void pngqt( void );
+    void mycase1( void );
+    void imagebackground( void );
+    void mycase( void );
+    void opaque( void );
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene scene;
-    void plot1();
-    void plot2();
-    void plot3();
-    void plot();
+    void plot1( void );
+    void plot2( void );
+    void plot3( void );
+    void plplot_commands( void );
     void initialize_memqt_buffer( unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha );
 };
 #endif // MAINWINDOW_H

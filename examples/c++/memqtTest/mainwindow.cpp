@@ -34,7 +34,7 @@ MainWindow::MainWindow( QWidget *parent )
     f_name  = NULL;
 }
 
-MainWindow::~MainWindow()
+MainWindow::~MainWindow( void )
 {
     delete ui;
 }
@@ -155,40 +155,10 @@ void MainWindow::plot3( void )
     plline( 101, x, y );
 }
 
-void MainWindow::initialize_memqt_buffer( unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha )
+void MainWindow::plplot_commands( void )
 {
-    int i;
-    for ( int i = 0; i < buf_length; i = i + 4 )
-    {
-        buf[i]     = r;
-        buf[i + 1] = g;
-        buf[i + 2] = b;
-        buf[i + 3] = (int) ( alpha * 255. );
-    }
-}
-
-void MainWindow::opaque()
-{
-    this->setWindowTitle( "**Now displaying the result from the memqt device with opaque black background**" );
-    QRect geo = this->ui->graphicsView->geometry();
-    w1 = (long) geo.width();
-    h1 = (long) geo.height();
-    PLINT         digmax;
-
-    unsigned char *buf; //= new uchar[4*w1*h1];
-
-    // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
-    buf = (unsigned char *) malloc( 4 * w1 * h1 );
-
-    // Use opaque black background for this case.
-    plscolbga( 0, 0, 0, 1. );
-
-    plsmema( w1, h1, buf );
-
-    plspage( 0., 0., w1, h1, 0, 0 );
-
-    plsdev( "memqt" );
-
+    PLINT digmax;
+  
     // Initialize plplot
     // Divide page into 2x2 plots
     // Note: calling plstar replaces separate calls to plssub and plinit
@@ -231,6 +201,44 @@ void MainWindow::opaque()
     plot3();
 
     plend();
+
+}
+
+void MainWindow::initialize_memqt_buffer( unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha )
+{
+    int i;
+    for ( int i = 0; i < buf_length; i = i + 4 )
+    {
+        buf[i]     = r;
+        buf[i + 1] = g;
+        buf[i + 2] = b;
+        buf[i + 3] = (int) ( alpha * 255. );
+    }
+}
+
+void MainWindow::opaque( void )
+{
+    this->setWindowTitle( "**Now displaying the result from the memqt device with opaque black background**" );
+    QRect geo = this->ui->graphicsView->geometry();
+    w1 = (long) geo.width();
+    h1 = (long) geo.height();
+
+    unsigned char *buf; //= new uchar[4*w1*h1];
+
+    // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
+    buf = (unsigned char *) malloc( 4 * w1 * h1 );
+
+    // Use opaque black background for this case.
+    plscolbga( 0, 0, 0, 1. );
+
+    plsmema( w1, h1, buf );
+
+    plspage( 0., 0., w1, h1, 0, 0 );
+
+    plsdev( "memqt" );
+
+    plplot_commands();
+
     QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap( QPixmap::fromImage( image ) );
@@ -244,13 +252,12 @@ void MainWindow::opaque()
     free( buf );
 }
 
-void MainWindow::memqt()
+void MainWindow::memqt( void )
 {
     this->setWindowTitle( "**Now displaying the result from the memqt device with blue semi-transparent background**" );
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
-    PLINT         digmax;
 
     unsigned char *buf; //= new uchar[4*w1*h1];
 
@@ -273,48 +280,8 @@ void MainWindow::memqt()
 
     plsdev( "memqt" );
 
-    // Initialize plplot
-    // Divide page into 2x2 plots
-    // Note: calling plstar replaces separate calls to plssub and plinit
-    plstar( 2, 2 );
+    plplot_commands();
 
-    // Select font set as per input flag
-
-    if ( fontset )
-        plfontld( 1 );
-    else
-        plfontld( 0 );
-
-    // Set up the data
-    // Original case
-
-    xscale = 6.;
-    yscale = 1.;
-    xoff   = 0.;
-    yoff   = 0.;
-
-    // Do a plot
-
-    plot1();
-
-    // Set up the data
-
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff   = 0.0185;
-
-    // Do a plot
-
-    digmax = 5;
-    plsyax( digmax, 0 );
-
-    plot1();
-
-    plot2();
-
-    plot3();
-
-    plend();
     QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap( QPixmap::fromImage( image ) );
@@ -329,10 +296,10 @@ void MainWindow::memqt()
 }
 
 
-void MainWindow::pngqt()
+void MainWindow::pngqt( void )
 {
     this->setWindowTitle( "**Now displaying the result from the pngqt device with blue semi-transparent background**" );
-    PLINT digmax;
+
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
@@ -346,56 +313,7 @@ void MainWindow::pngqt()
 
     plsfnam( "lixo.png" );
 
-    // Initialize plplot
-    // Divide page into 2x2 plots
-    // Note: calling plstar replaces separate calls to plssub and plinit
-    plstar( 2, 2 );
-
-    // Select font set as per input flag
-
-    if ( fontset )
-        plfontld( 1 );
-    else
-        plfontld( 0 );
-
-    // Set up the data
-    // Original case
-
-    xscale = 6.;
-    yscale = 1.;
-    xoff   = 0.;
-    yoff   = 0.;
-
-    // Do a plot
-
-    plot1();
-
-    // Set up the data
-
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff   = 0.0185;
-
-    // Do a plot
-
-    digmax = 5;
-    plsyax( digmax, 0 );
-
-    plot1();
-
-    plot2();
-
-    plot3();
-
-    //
-    // Show how to save a plot:
-    // Open a new device, make it current, copy parameters,
-    // and replay the plot buffer
-    //
-
-    // Don't forget to call plend() to finish off!
-
-    plend();
+    plplot_commands();
 
     QPixmap *renderer = new QPixmap( "lixo.png" );
     scene.clear();
@@ -403,13 +321,12 @@ void MainWindow::pngqt()
     this->ui->graphicsView->setScene( &scene );
     delete renderer;
 }
-void MainWindow::imagebackground()
+void MainWindow::imagebackground( void )
 {
     this->setWindowTitle( "**Now displaying the result from the memqt device with image background**" );
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
-    PLINT         digmax;
 
     unsigned char *buf;
     // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
@@ -429,48 +346,8 @@ void MainWindow::imagebackground()
 
     plsdev( "memqt" );
 
-    // Initialize plplot
-    // Divide page into 2x2 plots
-    // Note: calling plstar replaces separate calls to plssub and plinit
-    plstar( 2, 2 );
+    plplot_commands();
 
-    // Select font set as per input flag
-
-    if ( fontset )
-        plfontld( 1 );
-    else
-        plfontld( 0 );
-
-    // Set up the data
-    // Original case
-
-    xscale = 6.;
-    yscale = 1.;
-    xoff   = 0.;
-    yoff   = 0.;
-
-    // Do a plot
-
-    plot1();
-
-    // Set up the data
-
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff   = 0.0185;
-
-    // Do a plot
-
-    digmax = 5;
-    plsyax( digmax, 0 );
-
-    plot1();
-
-    plot2();
-
-    plot3();
-
-    plend();
     QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap( QPixmap::fromImage( image ) );
@@ -482,13 +359,12 @@ void MainWindow::imagebackground()
     delete renderer;
 }
 
-void MainWindow::mycase1()
+void MainWindow::mycase1( void )
 {
     this->setWindowTitle( "**Now displaying the result from the memqt device with mycase1**" );
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
-    PLINT  digmax;
 
     QImage image = QImage( w1, h1, QImage::Format_ARGB32 );
 
@@ -520,48 +396,8 @@ void MainWindow::mycase1()
 
     plsdev( "memqt" );
 
-    // Initialize plplot
-    // Divide page into 2x2 plots
-    // Note: calling plstar replaces separate calls to plssub and plinit
-    plstar( 2, 2 );
+    plplot_commands();
 
-    // Select font set as per input flag
-
-    if ( fontset )
-        plfontld( 1 );
-    else
-        plfontld( 0 );
-
-    // Set up the data
-    // Original case
-
-    xscale = 6.;
-    yscale = 1.;
-    xoff   = 0.;
-    yoff   = 0.;
-
-    // Do a plot
-
-    plot1();
-
-    // Set up the data
-
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff   = 0.0185;
-
-    // Do a plot
-
-    digmax = 5;
-    plsyax( digmax, 0 );
-
-    plot1();
-
-    plot2();
-
-    plot3();
-
-    plend();
     // It is hard to understand why memqt does this RGB swap, but this
     // compensates for it when R, G, and B are different from each other, see comment above.
     image = image.rgbSwapped();
@@ -573,13 +409,12 @@ void MainWindow::mycase1()
     this->ui->graphicsView->setScene( &scene );
     delete renderer;
 }
-void MainWindow::mycase()
+void MainWindow::mycase( void )
 {
     this->setWindowTitle( "**Now displaying the result from the memqt device with mycase**" );
     QRect geo = this->ui->graphicsView->geometry();
     w1 = (long) geo.width();
     h1 = (long) geo.height();
-    PLINT digmax;
 
     // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
     QImage image = QImage( picture );
@@ -597,48 +432,8 @@ void MainWindow::mycase()
 
     plsdev( "memqt" );
 
-    // Initialize plplot
-    // Divide page into 2x2 plots
-    // Note: calling plstar replaces separate calls to plssub and plinit
-    plstar( 2, 2 );
+    plplot_commands();
 
-    // Select font set as per input flag
-
-    if ( fontset )
-        plfontld( 1 );
-    else
-        plfontld( 0 );
-
-    // Set up the data
-    // Original case
-
-    xscale = 6.;
-    yscale = 1.;
-    xoff   = 0.;
-    yoff   = 0.;
-
-    // Do a plot
-
-    plot1();
-
-    // Set up the data
-
-    xscale = 1.;
-    yscale = 0.0014;
-    yoff   = 0.0185;
-
-    // Do a plot
-
-    digmax = 5;
-    plsyax( digmax, 0 );
-
-    plot1();
-
-    plot2();
-
-    plot3();
-
-    plend();
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap( QPixmap::fromImage( image ) );
 
