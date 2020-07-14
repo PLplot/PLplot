@@ -26,6 +26,7 @@ public:
 
 private slots:
     void memqt( void );
+    void memqtTransp( void );
     void pngqt( void );
     void mycase1( void );
     void imagebackground( void );

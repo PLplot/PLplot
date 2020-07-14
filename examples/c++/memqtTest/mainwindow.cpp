@@ -18,6 +18,7 @@
 #include <QPixmap>
 #include <QImage>
 #include <cmath>
+#include <QScreen>
 
 #ifdef PL_USE_NAMESPACE
 using namespace std;
@@ -31,11 +32,13 @@ MainWindow::MainWindow( QWidget *parent )
     connect( ui->actionimagebackground, SIGNAL(triggered()), this, SLOT(imagebackground()) );
     connect( ui->actionopaque_background, SIGNAL(triggered()), this, SLOT(opaque()) );
     connect( ui->actionmemqt, SIGNAL(triggered()), this, SLOT(memqt()) );
+    connect( ui->actionplot_using_memqt_device_with_full_transparency, SIGNAL(triggered()), this, SLOT(memqtTransp()) );
     connect( ui->actionpngqt, SIGNAL(triggered()), this, SLOT(pngqt()) );
     connect( ui->actionmycase, SIGNAL(triggered()), this, SLOT(mycase()) );
     connect( ui->actionmycase1, SIGNAL(triggered()), this, SLOT(mycase1()) );
     fontset = 1;
     f_name  = NULL;
+    setAttribute( Qt::WA_TranslucentBackground );
 }
 
 MainWindow::~MainWindow( void )
@@ -208,7 +211,7 @@ void MainWindow::plplot_commands( void )
 void MainWindow::initialize_memqt_buffer( unsigned char *buf, int buf_length, PLINT r, PLINT g, PLINT b, PLFLT alpha )
 {
     int i;
-    for ( int i = 0; i < buf_length; i = i + 4 )
+    for ( i = 0; i < buf_length; i = i + 4 )
     {
         buf[i]     = r;
         buf[i + 1] = g;
@@ -256,7 +259,58 @@ void MainWindow::opaque( void )
 
     free( buf );
 }
+void MainWindow::memqtTransp( void )
+{
+    this->setWindowTitle( "**Now displaying the result from the memqt device with blue semi-transparent background**" );
+    // setStyleSheet("background:transparent;");
+    setAttribute( Qt::WA_TranslucentBackground );
+    //  setWindowFlags(Qt::FramelessWindowHint);
+    //  setWindowFlags(Qt::WindowTransparentForInput);
+    QRect geo = this->ui->graphicsView->geometry();
+    w1 = (long) geo.width();
+    h1 = (long) geo.height();
 
+    unsigned char *buf; //= new uchar[4*w1*h1];
+
+    // buf = (unsigned char *) calloc((4 * w1 * h1), sizeof(unsigned char));
+    buf = (unsigned char *) malloc( 4 * w1 * h1 );
+    // N.B. buf must be intialized to avoid memory management issues.  Furthermore, the
+    // memqt device *always* specifies a background colour which is applied
+    // on top of this initialization.  Therefore,
+    // initialize buf to a transparent image so as not to interfere with
+    // whatever PLplot RGBA background colour that is specified later.
+    initialize_memqt_buffer( buf, 4 * w1 * h1, 0, 0, 0, 0. );
+
+    pls = new plstream();
+
+    // The default PLplot opaque black background works fine, but for
+    // this case specify a transparent background instead.
+    pls->scolbga( 0, 0, 0, 0.0 );
+
+    pls->smema( w1, h1, buf );
+
+    pls->spage( 0., 0., w1, h1, 0, 0 );
+
+    pls->sdev( "memqt" );
+
+    plplot_commands();
+
+    delete pls;
+    this->setWindowOpacity( 0.0 );
+
+    this->setWindowOpacity( 1.0 );
+    QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
+    image = image.rgbSwapped();
+    QPixmap *renderer = new QPixmap( QPixmap::fromImage( image ) );
+
+    scene.clear();
+    this->ui->graphicsView->setScene( &scene );
+    scene.addPixmap( *renderer );
+    this->ui->graphicsView->setScene( &scene );
+    delete renderer;
+
+    free( buf );
+}
 void MainWindow::memqt( void )
 {
     this->setWindowTitle( "**Now displaying the result from the memqt device with blue semi-transparent background**" );
@@ -291,11 +345,13 @@ void MainWindow::memqt( void )
 
     delete pls;
 
+
     QImage  image = QImage( buf, w1, h1, QImage::Format_ARGB32 );
     image = image.rgbSwapped();
     QPixmap *renderer = new QPixmap( QPixmap::fromImage( image ) );
 
     scene.clear();
+
     this->ui->graphicsView->setScene( &scene );
     scene.addPixmap( *renderer );
     this->ui->graphicsView->setScene( &scene );

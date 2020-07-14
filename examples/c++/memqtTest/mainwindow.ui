@@ -11,12 +11,43 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>memqt_test</string>
+  </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">background-color: transparent;</string>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QGraphicsView" name="graphicsView"/>
+     <widget class="QGraphicsView" name="graphicsView">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: transparent;</string>
+      </property>
+      <property name="backgroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+      <property name="foregroundBrush">
+       <brush brushstyle="NoBrush">
+        <color alpha="0">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -26,8 +57,11 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>32</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <widget class="QMenu" name="menuactions">
     <property name="title">
@@ -36,6 +70,7 @@
     <addaction name="actionimagebackground"/>
     <addaction name="actionopaque_background"/>
     <addaction name="actionmemqt"/>
+    <addaction name="actionplot_using_memqt_device_with_full_transparency"/>
     <addaction name="actionpngqt"/>
     <addaction name="actionmycase"/>
     <addaction name="actionmycase1"/>
@@ -83,6 +118,11 @@
   <action name="actionmycase1">
    <property name="text">
     <string>mycase1</string>
+   </property>
+  </action>
+  <action name="actionplot_using_memqt_device_with_full_transparency">
+   <property name="text">
+    <string>plot using memqt device with full transparency</string>
    </property>
   </action>
  </widget>
