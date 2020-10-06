@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009-2019 Alan W. Irwin
+# Copyright (C) 2009-2020 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -63,7 +63,7 @@
 # 			    is enabled.
 # ENABLE_smoke            - ON means the smoke plplotqt library is enabled.
 # SIP_EXECUTABLE	  - full path for sip
-# PYQT_SIP_DIR		  - sip system directory
+# PYQT_SIP_DIR		  - sip system directory containing QtCore/QtCoremod.sip (and other required sip files).
 # PYQT_SIP_FLAGS	  - sip command flags
 
 if(DEFAULT_NO_BINDINGS)
@@ -425,75 +425,97 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
       OUTPUT_STRIP_TRAILING_WHITESPACE
       )
     if(NOT SYS_PREFIX_ERR)
-      set(sip_dir_HINTS)
+      # Find directory which contains QtCore/QtCoremod.sip.  This file
+      # is imported by both bindings/qt_gui/pyqt4/plplot_pyqt4.sip and
+      # bindings/qt_gui/pyqt5/plplot_pyqt5.sip.  If that directory
+      # location is found then we also check below that the other sip
+      # files imported by those files are also resident in this same
+      # directory.  Use all combinations of sip_dir_PATHS and
+      # sip_dir_PATH_SUFFIXES to find this location.
+
+      set(sip_dir_PATHS)
       if(WIN32_AND_NOT_CYGWIN)
-        # First hint for MinGW-w64/MSYS2 which distributes python/sip/pyqt
-        # itself.
-        list(APPEND sip_dir_HINTS "${SYS_PREFIX}/share/sip")
-        # Second hint for those Windows platforms (e.g.,
-        # MSVC, MinGW-w64, legacy MinGW, legacy MinGW/MSYS) which do not
-        # distribute python/sip/pyqt themselves so users typically
-        # download python/sip/pyqt as a generic binary
-        # download suitable for "Windows" platforms.  (For one such download, the
-        # sip directory location was c:\python25\sip so we assume
-        # that generic form (other than the prefix) here.)
-        list(APPEND sip_dir_HINTS "${SYS_PREFIX}/sip")
+	# Here is the MinGW-w64/MSYS2 data concerning this location.
+	# from the following results from Arjen's run of "pkgfile -v QtCoremod.sip".
+	# mingw32/mingw-w64-i686-python2-pyqt4 4.11.4-2 /mingw32/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
+	# mingw32/mingw-w64-i686-python2-pyqt5 5.8-1 /mingw32/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
+	# mingw32/mingw-w64-i686-python3-pyqt4 4.11.4-2 /mingw32/share/sip/PyQt4/QtCore/QtCoremod.sip
+	# mingw32/mingw-w64-i686-python3-pyqt5 5.8-1 /mingw32/share/sip/PyQt5/QtCore/QtCoremod.sip
+	# mingw64/mingw-w64-x86_64-python2-pyqt4 4.11.4-2 /mingw64/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
+	# mingw64/mingw-w64-x86_64-python2-pyqt5 5.8-1 /mingw64/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
+	# mingw64/mingw-w64-x86_64-python3-pyqt4 4.11.4-2 /mingw64/share/sip/PyQt4/QtCore/QtCoremod.sip
+	# mingw64/mingw-w64-x86_64-python3-pyqt5 5.8-1 /mingw64/share/sip/PyQt5/QtCore/QtCoremod.sip
+        list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/sip")
+	# MSVC, MinGW-w64, legacy MinGW, legacy MinGW/MSYS) which do not
+	# distribute python/sip/pyqt themselves so users typically
+	# download python/sip/pyqt as a generic binary
+	# download suitable for "Windows" platforms.  (For one such download, the
+	# sip directory location was c:\python25\sip so we assume
+	# that generic form (other than the prefix) here.)
+        list(APPEND sip_dir_PATHS "${SYS_PREFIX}/sip")
       else(WIN32_AND_NOT_CYGWIN)
         if(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0")
-          # First hint for Fedora (and possibly some other Linux
-          # distros) based on results from search of
-          # <http://rpm.pbone.net/> for sip files such as
-          # QtWidgetsmod.sip, etc.
-          list(APPEND sip_dir_HINTS "${SYS_PREFIX}/share/python3-sip")
+	  # Here is the Fedora 32 (and likely previous Fedora) python3/qt5 locations according to
+	  # <http://rpm.pbone.net/index.php3/stat/6/idpl/70683647/dir/fedora_32/com/python3-qt5-devel-5.14.2-3.fc32.x86_64.rpm>
+	  # I assume these two different locations are for backwards compatibility or compatibility
+	  # with other Linux distros (see below) so I will search
+	  # for both.
+	  # Fedora 32: /usr/share/python3-sip/PyQt5/QtCore/QtCoremod.sip
+	  # Fedora 32: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
+
+	  # Here is the OpenSUSE Tumbleweed distro location from
+	  # <http://rpm.pbone.net/index.php3/stat/6/idpl/54882581/dir/opensuse_tumbleweed/com/python-qt5-utils-5.12-2.3.x86_64.rpm>
+	  # I note this location is the same as one of the Fedora alternatives so it is likely
+	  # a good generic location for most Linux distributions other than Debian Buster and Sid.
+	  # OpenSUSE Tumbleweed: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
+          list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/python3-sip")
+          list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/sip")
+	  # Here is Debian Sid data (taken from <https://packages.debian.org/sid/all/pyqt5-dev/filelist>)
+	  # concerning this python3 location.
+	  # pyqt5-dev: /usr/lib/python3/dist-packages/PyQt5/bindings/QtCore/QtCoremod.sip
+	  list(APPEND sip_dir_PATHS "${SYS_PREFIX}/lib/python3/dist-packages")
         endif(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0")
-        # From looking at apt-file results on Debian,
-        # rpm.pbone results for non-Debian based distros, and
+
+	# Here is Debian Buster data (from "apt-file search") concerning this location.
+	# pyqt5-dev: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
+	# python-qt4-dev: /usr/share/sip/PyQt4/QtCore/QtCoremod.sip
+        # Also from looking at rpm.pbone results for non-Debian based distros, and
         # <https://cygwin.com/cgi-bin2/package-grep.cgi>, all Linux
-        # distros other than Fedora/python3 and Cygwin install their
+        # distros other than Fedora/python3 Cygwin and Debian Sid install their
         # sip files in this location.
-        list(APPEND sip_dir_HINTS "${SYS_PREFIX}/share/sip")
+        list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/sip")
 
-        # I have no sip install location information for official Mac
-        # OSX software; the Mac free software distros Homebrew,
-        # MacPorts, or Fink; the *BSD free software distros, or
-        # proprietary Unices.  However, as a first approximation
-        # we will use the above HINTS, and expand that list
-        # of HINTS if/when we get more feedback from our users on those platforms
-        # as a result of the messages below if they have to work around the
-        # case where the hints fail.
+	# I have no QtCore/QtCoremod.sip location information for official Mac
+	# OSX software; the Mac free software distros Homebrew,
+	# MacPorts, or Fink; the *BSD free software distros, or
+	# proprietary Unices.  So for those platforms we will have to
+	# rely on feedback from our users to figure out the location
+	# of QtCore/QtCoremod.sip if none of the variants we try
+	# below work.
+
       endif(WIN32_AND_NOT_CYGWIN)
+      # We determine PATHS corresponding to the data above, and then use
+      # PATH_SUFFIXES to look for all possible subdirectories of those PATHS.
+      # QtCore/QtCoremod.sip within several possible subdirectories
 
-      # Here is the MinGW-w64/MSYS2 pyqt sip file location information
-      # from the following results from Arjen's run of "pkgfile -v QtCoremod.sip".
-      # mingw32/mingw-w64-i686-python2-pyqt4 4.11.4-2 /mingw32/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
-      # mingw32/mingw-w64-i686-python2-pyqt5 5.8-1 /mingw32/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
-      # mingw32/mingw-w64-i686-python3-pyqt4 4.11.4-2 /mingw32/share/sip/PyQt4/QtCore/QtCoremod.sip
-      # mingw32/mingw-w64-i686-python3-pyqt5 5.8-1 /mingw32/share/sip/PyQt5/QtCore/QtCoremod.sip
-      # mingw64/mingw-w64-x86_64-python2-pyqt4 4.11.4-2 /mingw64/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
-      # mingw64/mingw-w64-x86_64-python2-pyqt5 5.8-1 /mingw64/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
-      # mingw64/mingw-w64-x86_64-python3-pyqt4 4.11.4-2 /mingw64/share/sip/PyQt4/QtCore/QtCoremod.sip
-      # mingw64/mingw-w64-x86_64-python3-pyqt5 5.8-1 /mingw64/share/sip/PyQt5/QtCore/QtCoremod.sip
-      # The sip_dir_HINTS list (above) and pyqt_NAMES list (below) are derived from this result.
-
-      # I have made the further assumption below that the pyqt_module_name for PyQt4 or
+      # I have assumed below that the pyqt_module_name for PyQt4 or
       # PyQt5 always has the respective name of "PyQt4" or "PyQt5".
-
       if(ENABLE_pyqt4)
         set(pyqt_module_name PyQt4)
-        set(pyqt_NAMES Py2-Qt4)
+        set(sip_dir_PATH_SUFFIXES Py2-Qt4 PyQt4)
       elseif(ENABLE_pyqt5)
         set(pyqt_module_name PyQt5)
-        set(pyqt_NAMES Py2-Qt5)
+	# The PyQt5/bindings variant required by Debian Sid, see above
+        set(sip_dir_PATH_SUFFIXES Py2-Qt5 PyQt5 PyQt5/bindings)
       else(ENABLE_pyqt4)
-        # N.B. at this stage either ENABLE_pyqt4 or ENABLE_pyqt4 is
+        # N.B. at this stage either ENABLE_pyqt4 or ENABLE_pyqt5 is
         # true but not both.
         message(AUTHOR_ERROR "Both ENABLE_pyqt4 and ENABLE_pyqt5 are true which should be impossible at this stage in the logic")
       endif(ENABLE_pyqt4)
-      list(APPEND pyqt_NAMES ${pyqt_module_name})
 
-      # Use pyqt_NAMES and sip_dir_HINTS to find PYQT_SIP_DIR
+      # Use sip_dir_PATHS and sip_dir_PATH_SUFFIXES to find the PATH of QtCore/QtCoremod.sip
 
-      find_file(PYQT_SIP_DIR NAMES ${pyqt_NAMES} HINTS ${sip_dir_HINTS})
+      find_path(PYQT_SIP_DIR NAMES QtCore/QtCoremod.sip PATHS ${sip_dir_PATHS} PATH_SUFFIXES ${sip_dir_PATH_SUFFIXES})
 
       message(STATUS "PYQT_SIP_DIR = ${PYQT_SIP_DIR}")
       if(PYQT_SIP_DIR)
@@ -527,10 +549,10 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
         endif(EXISTS ${PYQT_SIP_DIR}/QtCore/QtCoremod.sip AND EXISTS ${PYQT_SIP_DIR}/QtGui/QtGuimod.sip AND (ENABLE_pyqt4 OR EXISTS ${PYQT_SIP_DIR}/QtWidgets/QtWidgetsmod.sip))
       else(PYQT_SIP_DIR)
         if(ENABLE_pyqt4)
-          message(STATUS "WARNING: The ${pyqt_NAMES} subdirectories of one of the directories in sip_dir_HINTS = ${sip_dir_HINTS} not found.  Therefore setting  ENABLE_pyqt4 to OFF.  The issue might be you need to install the system package containing QtCore/QtCoremod.sip and QtGui/QtGuimod.sip.  But if those files are installed on your platform, then work around the PLplot build system not being able to find those files by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
+          message(STATUS "WARNING: QtCore/QtCoremod.sip not found in any combination of the directories in sip_dir_PATHS = ${sip_dir_PATHS} and the subdirectories in sip_dir_PATH_SUFFIXES = ${sip_dir_PATH_SUFFIXES}.  Therefore setting  ENABLE_pyqt4 to OFF.  The issue might be you need to install the system package containing QtCore/QtCoremod.sip.  But if that file is already installed on your platform, then work around the PLplot build system not being able to find the path location of that file by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
           set(ENABLE_pyqt4 OFF CACHE BOOL "Enable pyqt4 Python extension module " FORCE)
         elseif(ENABLE_pyqt5)
-          message(STATUS "WARNING: The ${pyqt_NAMES} subdirectories of one of the directories in sip_dir_HINTS = ${sip_dir_HINTS} not found.  Therefore setting  ENABLE_pyqt5 to OFF. The issue might be you need to install the system package containing QtCore/QtCoremod.sip, QtGui/QtGuimod.sip, and QtWidgets/QtWidgetsmod.sip.  But if those files are installed on your platform, then work around the PLplot build system not being able to find those files by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
+          message(STATUS "WARNING: QtCore/QtCoremod.sip not found in any combination of the directories in sip_dir_PATHS = ${sip_dir_PATHS} and the subdirectories in sip_dir_PATH_SUFFIXES = ${sip_dir_PATH_SUFFIXES}.  Therefore setting  ENABLE_pyqt5 to OFF.  The issue might be you need to install the system package containing QtCore/QtCoremod.sip.  But if that file is already installed on your platform, then work around the PLplot build system not being able to find the path location of that file by specifying the correct PYQT_SIP_DIR directory corresponding to their location.  And also report this issue to the plplot-general mailing list to allow us to fix our build system")
           set(ENABLE_pyqt5 OFF CACHE BOOL "Enable pyqt5 Python extension module " FORCE)
         endif(ENABLE_pyqt4)
       endif(PYQT_SIP_DIR)
