@@ -2777,10 +2777,15 @@ c_plcpstrm( PLINT iplsr, PLINT flags )
 // Plot buffer -- need to copy buffer pointer so that plreplot() works
 // This also prevents inadvertent writes into the plot buffer
     plsc->plbuf_buffer_grow = plsr->plbuf_buffer_grow;
-    plsc->plbuf_buffer_size = plsr->plbuf_buffer_size;
     plsc->plbuf_top         = plsr->plbuf_top;
     plsc->plbuf_readpos     = plsr->plbuf_readpos;
-    if ( ( plsc->plbuf_buffer = malloc( plsc->plbuf_buffer_size ) ) == NULL )
+    if ( plsc->plbuf_buffer_size < plsr->plbuf_buffer_size )
+    {
+        free( plsc->plbuf_buffer );
+        plsc->plbuf_buffer = malloc( plsr->plbuf_buffer_size );
+        plsc->plbuf_buffer_size = plsr->plbuf_buffer_size;
+    }
+    if( plsc->plbuf_buffer == NULL )
         plexit( "plcpstrm: Error allocating plot buffer." );
     memcpy( plsc->plbuf_buffer, plsr->plbuf_buffer, plsr->plbuf_top );
 
