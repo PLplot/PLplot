@@ -270,9 +270,9 @@ if(PL_HAVE_QHULL)
   # No *.pc files for lib subdirectory libraries so must add relevant bits
   # to the plplot.pc file instead.
   if(QHULL_RPATH)
-    list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -L${QHULL_RPATH} -lqhull)
+    list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -L${QHULL_RPATH} -lqhull_r)
   else(QHULL_RPATH)
-    list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -lqhull)
+    list(APPEND pc_libplplot_LINK_FLAGS -l${WRITEABLE_TARGET}csironn -lqhull_r)
   endif(QHULL_RPATH)
 
 endif(PL_HAVE_QHULL)

@@ -34,11 +34,7 @@
 #include <limits.h>
 #include <float.h>
 #ifdef USE_QHULL
-#ifdef HAS_LIBQHULL_INCLUDE
-#include <libqhull/qhull_a.h>
-#else
-#include <qhull/qhull_a.h>
-#endif
+#include <libqhull_r/qhull_ra.h>
 #else
 #include "triangle.h"
 #endif
@@ -388,7 +384,10 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     // climax
     //
 
-    exitcode = qh_new_qhull( dim, np, qpoints, ismalloc,
+    qhT context = { 0 };
+    qhT* qh = &context;
+
+    exitcode = qh_new_qhull( qh, dim, np, qpoints, ismalloc,
         flags, outfile, errfile );
 
     if ( !exitcode )
@@ -433,8 +432,8 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
             }
         }
 
-        qh_findgood_all( qh facet_list );
-        qh_countfacets( qh facet_list, NULL, !qh_ALL, &numfacets,
+        qh_findgood_all( qh, qh->facet_list );
+        qh_countfacets( qh, qh->facet_list, NULL, !qh_ALL, &numfacets,
             &numsimplicial, &totneighbors, &numridges,
             &numcoplanars, &numtricoplanars );
 
@@ -462,7 +461,7 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
 
                 j = 0;
                 FOREACHvertex_( facet->vertices )
-                t->vids[j++] = qh_pointid( vertex->point );
+                t->vids[j++] = qh_pointid( qh, vertex->point );
 
                 j = 0;
                 FOREACHneighbor_( facet )
@@ -548,8 +547,8 @@ delaunay* delaunay_build( int np, point points[], int ns, int segments[], int nh
     }
 
     free( qpoints );
-    qh_freeqhull( !qh_ALL );               // free long memory
-    qh_memfreeshort( &curlong, &totlong ); // free short memory and memory allocator
+    qh_freeqhull( qh, !qh_ALL );               // free long memory
+    qh_memfreeshort( qh, &curlong, &totlong ); // free short memory and memory allocator
     if ( curlong || totlong )
         fprintf( errfile,
             "qhull: did not free %d bytes of long memory (%d pieces)\n",
