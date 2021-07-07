@@ -58,7 +58,7 @@
 #include <iostream>
 #include <QImage>
 #include <QPainter>
-#include <QLinkedList>
+#include <list>
 #include <QPrinter>
 #include <QApplication>
 #include <QWidget>
@@ -356,7 +356,7 @@ protected:
     double m_dAspectRatio;                       // Is kept constant during resizes
     QPixmap * m_pixPixmap;                       // stores the drawn image as long as it does not have to be regenerated
 
-    QLinkedList<BufferElement> m_listBuffer;     // Buffer holding the draw instructions
+    std::list<BufferElement> m_listBuffer;     // Buffer holding the draw instructions
 //         bool m_bAwaitingRedraw;
 //         int m_iOldSize; // Holds the size of the buffer. Modified => image has to be redrawn
     bool redrawFromLastFlush;
@@ -369,7 +369,7 @@ protected:
     QBrush SolidBrush;
     // end parameters
 
-    QLinkedList<BufferElement>::const_iterator start_iterator;
+    std::list<BufferElement>::const_iterator start_iterator;
 
     struct
     {

@@ -23,7 +23,7 @@
 //
 
 #include "qt.h"
-
+#include<list>
 // Global variables for Qt driver.
 PLDLLIMPEXP_QT_DATA( int ) vectorize = 0;
 PLDLLIMPEXP_QT_DATA( int ) lines_aa  = 1;
@@ -429,7 +429,7 @@ void QtPLDriver::drawText( EscText* txt )
     m_painterP->translate( txt->x * downscale, m_dHeight - txt->y * downscale );
     QMatrix rotShearMatrix( cos( rotation ) * stride, -sin( rotation ) * stride, cos( rotation ) * sin( shear ) + sin( rotation ) * cos( shear ), -sin( rotation ) * sin( shear ) + cos( rotation ) * cos( shear ), 0., 0. );
 
-    m_painterP->setWorldMatrix( rotShearMatrix, true );
+    m_painterP->setWorldTransform( QTransform (rotShearMatrix), true );
 
     m_painterP->translate( -txt->just * xOffset * m_painterP->device()->logicalDpiY() / picDpi, 0. );
 
@@ -618,19 +618,34 @@ QtEPSDevice::QtEPSDevice( int i_iWidth, int i_iHeight )
 {
 #if QT_VERSION < 0x040400
     setPageSize( QPrinter::A4 );
+
 #else
+    #if QT_VERSION < 0x050300
     setFullPage( true );
     setPaperSize( QSizeF( i_iHeight, i_iWidth ), QPrinter::Point );
+    #else
+    setFullPage( true );
+    setPageSize( QPageSize(QSizeF( i_iHeight, i_iWidth ), QPageSize::Point,""));
+    #endif
 #endif
     setResolution( POINTS_PER_INCH );
     setColorMode( QPrinter::Color );
+    #if QT_VERSION < 0x050300
     setOrientation( QPrinter::Landscape );
+    #else
+    setPageOrientation( QPageLayout::Landscape );
+    #endif
     setPrintProgram( QString( "lpr" ) );
 
     if ( i_iWidth <= 0 || i_iHeight <= 0 )
     {
+        #if QT_VERSION < 0x050300
         m_dWidth  = pageRect().width();
         m_dHeight = pageRect().height();
+        #else
+         m_dWidth  =pageLayout().paintRectPixels(resolution()).width();
+         m_dHeight =pageLayout().paintRectPixels(resolution()).height();
+        #endif
     }
     else
     {
@@ -730,7 +745,7 @@ void QtPLWidget::flush()
 void QtPLWidget::clearBuffer()
 {
     lastColour.r = -1;
-    for ( QLinkedList<BufferElement>::iterator i = m_listBuffer.begin(); i != m_listBuffer.end(); ++i )
+    for ( std::list<BufferElement>::iterator i = m_listBuffer.begin(); i != m_listBuffer.end(); ++i )
     {
         switch ( i->Element )
         {
@@ -771,7 +786,7 @@ void QtPLWidget::clearBuffer()
     }
 
     m_listBuffer.clear();
-    start_iterator = m_listBuffer.constBegin();
+    start_iterator = m_listBuffer.cbegin();
     redrawAll      = true;
 }
 
@@ -792,7 +807,7 @@ void QtPLWidget::drawArc( short x, short y, short a, short b, PLFLT angle1, PLFL
     el.Data.ArcStruct->dx         = new QPointF( (PLFLT) x * downscale, m_dHeight - (PLFLT) y * downscale );
     el.Data.ArcStruct->fill       = fill;
 
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
     redrawFromLastFlush = true;
 }
 
@@ -803,7 +818,7 @@ void QtPLWidget::drawLine( short x1, short y1, short x2, short y2 )
     el.Element   = LINE;
     el.Data.Line = new QLineF( QPointF( (PLFLT) x1 * downscale, (PLFLT) ( m_dHeight - y1 * downscale ) ), QPointF( (PLFLT) x2 * downscale, (PLFLT) ( m_dHeight - y2 * downscale ) ) );
 
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
     redrawFromLastFlush = true;
 }
 
@@ -817,7 +832,7 @@ void QtPLWidget::drawPolyline( short * x, short * y, PLINT npts )
         ( *el.Data.Polyline ) << QPointF( (PLFLT) ( x[i] ) * downscale, (PLFLT) ( m_dHeight - ( y[i] ) * downscale ) );
     }
 
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
     redrawFromLastFlush = true;
 }
 
@@ -893,7 +908,7 @@ void QtPLWidget::drawPolygon( short * x, short * y, PLINT npts )
         }
     }
 
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
     redrawFromLastFlush = true;
 }
 
@@ -909,7 +924,7 @@ void QtPLWidget::setColor( int r, int g, int b, double alpha )
         el.Data.ColourStruct->B = b;
         el.Data.ColourStruct->A = (PLINT) ( alpha * 255. );
 
-        m_listBuffer.append( el );
+        m_listBuffer.push_back( el );
 
         lastColour.r     = r;
         lastColour.g     = g;
@@ -942,7 +957,7 @@ void QtPLWidget::setGradient( int x1, int x2, int y1, int y2,
             b[i], (int) ( alpha[i] * 255 ) ) );
     }
     ( *el.Data.LinearGradient ).setStops( stops );
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
 
     // No need to ask for a redraw at this point. The gradient only
     // affects subsequent items.
@@ -967,7 +982,7 @@ void QtPLWidget::setBackgroundColor( int r, int g, int b, double alpha )
     {
         clearBuffer();
     }
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
     redrawFromLastFlush = true;
 }
 
@@ -976,7 +991,7 @@ void QtPLWidget::setWidthF( PLFLT w )
     BufferElement el;
     el.Element       = SET_WIDTH;
     el.Data.fltParam = w;
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
 //     redrawFromLastFlush=true;
 }
 
@@ -1034,7 +1049,7 @@ void QtPLWidget::drawText( EscText* txt )
     el.Data.TextStruct->len   = txt->unicode_array_len;
     el.Data.TextStruct->chrht = pls->chrht;
 
-    m_listBuffer.append( el );
+    m_listBuffer.push_back( el );
     redrawFromLastFlush = true;
 }
 
@@ -1050,7 +1065,7 @@ void QtPLWidget::renderText( QPainter* p, struct TextStruct_* s, double x_fact, 
     p->setClipRect( QRectF( s->clipxmin * x_fact + x_offset, s->clipymax * y_fact + y_offset, ( s->clipxmax - s->clipxmin ) * x_fact, ( -s->clipymax + s->clipymin ) * y_fact ), Qt::ReplaceClip );
     p->translate( s->x * x_fact + x_offset, s->y * y_fact + y_offset );
     QMatrix rotShearMatrix( cos( s->rotation ) * s->stride, -sin( s->rotation ) * s->stride, cos( s->rotation ) * sin( s->shear ) + sin( s->rotation ) * cos( s->shear ), -sin( s->rotation ) * sin( s->shear ) + cos( s->rotation ) * cos( s->shear ), 0., 0. );
-    p->setWorldMatrix( rotShearMatrix, true );
+    p->setWorldTransform( QTransform  (rotShearMatrix), true );
 
     p->translate( -s->just * xOffset * p->device()->logicalDpiY() / picDpi, 0. );
 
@@ -1315,7 +1330,7 @@ void QtPLWidget::paintEvent( QPaintEvent * )
         // Re-initialise pens etc.
         resetPensAndBrushes( painter );
 
-        start_iterator = m_listBuffer.constBegin();
+        start_iterator = m_listBuffer.cbegin();
 
         // Draw the plot
         doPlot( painter, x_fact, y_fact, x_offset, y_offset );
@@ -1379,7 +1394,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
     }
 
     // unrolls the buffer and draws each element accordingly
-    for ( QLinkedList<BufferElement>::const_iterator i = start_iterator; i != m_listBuffer.constEnd(); ++i )
+    for ( std::list<BufferElement>::const_iterator i = start_iterator; i != m_listBuffer.cend(); ++i )
     {
         switch ( i->Element )
         {
@@ -1497,7 +1512,7 @@ void QtPLWidget::doPlot( QPainter* p, double x_fact, double y_fact, double x_off
         }
     }
 
-    start_iterator = m_listBuffer.constEnd();
+    start_iterator = m_listBuffer.cend();
     --start_iterator;
     redrawFromLastFlush = false;
     redrawAll           = false;
