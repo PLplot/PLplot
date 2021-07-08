@@ -1,7 +1,7 @@
 # examples/CMakeLists.txt
 
 # Copyright (C) 2006-2015 Andrew Ross
-# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2006-2021 Alan W. Irwin
 # Copyright (C) 2008-2009 Werner Smekal
 #
 # This file is part of PLplot.
@@ -884,6 +884,9 @@ if(BUILD_TEST)
   # ENABLE_c is always ON by construction, but test it anyway for
   # consistency sake.
   if(ENABLE_c)
+    # Keep track of all qt-related noninteractive and interactive targets for later use
+    set(qt_test_targets_LIST)
+
     set(device_depends ${custom_test_script})
     # See explanation above about what to do with files_examples_${language} and
     # targets_examples_${language}.
@@ -937,6 +940,9 @@ if(BUILD_TEST)
 	endif(TARGET test_${driver}_dyndriver)
 
 	list(APPEND noninteractive_targets_LIST test_c_${device})
+	if(driver STREQUAL "qt")
+	  list(APPEND qt_test_targets_LIST test_c_${device})
+	endif(driver STREQUAL "qt")
 	# Follow what was done above.
 	if(files_examples_c AND targets_examples_c)
 	  add_dependencies(test_c_${device} ${targets_examples_c})
@@ -946,7 +952,6 @@ if(BUILD_TEST)
 
     set(interactive_targets_LIST)
     set(tk_targets_LIST)
-    set(qt_targets_LIST)
 
     # EXTERNAL_DEVICES_LIST determined here from what external devices
     # are enabled.  The required PLD_* data are available both for the
@@ -1024,16 +1029,15 @@ if(BUILD_TEST)
 #	message(STATUS "WARNING: The test_c_qtwidget target can be run independently
 #   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
 #   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
-#   temporarily exclude this target from being a dependency of other more general interactive
-#   test targets")
+#   temporarily exclude this target from being a dependency of the test_interactive target")
 	list(APPEND interactive_targets_LIST test_c_${device})
-	list(APPEND qt_targets_LIST test_c_${device})
+	list(APPEND qt_test_targets_LIST test_c_${device})
       else(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
 	list(APPEND interactive_targets_LIST test_c_${device})
 	if(device STREQUAL "tk" OR device STREQUAL "ntk")
 	  list(APPEND tk_targets_LIST test_c_${device})
 	elseif(device STREQUAL "qtwidget")
-	  list(APPEND qt_targets_LIST test_c_${device})
+	  list(APPEND qt_test_targets_LIST test_c_${device})
 	endif(device STREQUAL "tk" OR device STREQUAL "ntk")
       endif(PLPLOT_USE_QT5 AND device STREQUAL "qtwidget")
 
@@ -1045,13 +1049,16 @@ if(BUILD_TEST)
 	  VERBATIM
 	  )
 	add_dependencies(test_octave_${device} ${targets_examples_octave} ${${driver}_targets})
-	message(STATUS "WARNING: The test_octave_${device} target can be run independently but does not
-   work reliably so it is temporarily excluded from being a dependency of other
-   more general interactive test targets")
-	#list(APPEND interactive_targets_LIST test_octave_${device})
-	#if(device STREQUAL "tk" OR device STREQUAL "ntk")
-	#  list(APPEND tk_targets_LIST test_octave_${device})
-	#endif(device STREQUAL "tk" OR device STREQUAL "ntk")
+	if(device STREQUAL "tk" OR device STREQUAL "ntk")
+	  message(STATUS "WARNING: The test_octave_${device} target can be run independently but does not
+   work reliably so it is temporarily excluded from being a dependency of the test_interactive and test_tk targets")
+	  #list(APPEND interactive_targets_LIST test_octave_${device})
+	  #list(APPEND tk_targets_LIST test_octave_${device})
+	else(device STREQUAL "tk" OR device STREQUAL "ntk")
+	  message(STATUS "WARNING: The test_octave_${device} target can be run independently but does not
+   work reliably so it is temporarily excluded from being a dependency of the test_interactive target")
+	  #list(APPEND interactive_targets_LIST test_octave_${device})
+	endif(device STREQUAL "tk" OR device STREQUAL "ntk")
       endif(ENABLE_octave)
     endforeach(interactive_devices_info IN LISTS INTERACTIVE_DEVICES_LIST)
 
@@ -1142,14 +1149,12 @@ if(BUILD_TEST)
 	message(STATUS "WARNING: The test_qt_example target can be run independently
    but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
    PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
-   temporarily exclude this target from being a dependency of other more general interactive
-   test targets")
-	#list(APPEND qt_targets_LIST test_qt_example)
+   temporarily exclude this target from being a dependency of the test_interactive target")
 	#list(APPEND interactive_targets_LIST test_qt_example)
       else(PLPLOT_USE_QT5)
-	list(APPEND qt_targets_LIST test_qt_example)
 	list(APPEND interactive_targets_LIST test_qt_example)
       endif(PLPLOT_USE_QT5)
+      list(APPEND qt_test_targets_LIST test_qt_example)
     endif(PLD_extqt AND TARGET qt_example)
 
     if(TARGET memqt_example)
@@ -1157,7 +1162,8 @@ if(BUILD_TEST)
 	COMMAND memqt_example ${CMAKE_CURRENT_SOURCE_DIR}/c++/memqtTest/aurora.png
 	)
       add_dependencies(test_memqt_example memqt_example ${qt_targets})
-      list(APPEND qt_targets_LIST test_memqt_example)
+      list(APPEND interactive_targets_LIST test_memqt_example)
+      list(APPEND qt_test_targets_LIST test_memqt_example)
     endif(TARGET memqt_example)
 
   endif(ENABLE_cxx)
@@ -1187,6 +1193,7 @@ if(BUILD_TEST)
     endif(CORE_BUILD)
 
     list(APPEND interactive_targets_LIST test_pyqt4_example)
+    list(APPEND qt_test_targets_LIST test_pyqt4_example)
 
   endif(ENABLE_pyqt4)
 
@@ -1215,9 +1222,9 @@ if(BUILD_TEST)
     endif(CORE_BUILD)
     message(STATUS "WARNING: The test_pyqt5_example target can be run
    independently but it intermittently hangs (at least for
-   Qt-5.11.2) so is temporarily excluded from being a dependency of
-   other more general interactive test targets")
+   Qt-5.11.2) so is temporarily excluded from being a dependency of the test_interactive target")
     #list(APPEND interactive_targets_LIST test_pyqt5_example)
+    list(APPEND qt_test_targets_LIST test_pyqt5_example)
   endif(ENABLE_pyqt5)
 
   if(ENABLE_tcl AND PLD_${generic_interactive_device})
@@ -1357,8 +1364,7 @@ if(BUILD_TEST)
       endif(CORE_BUILD)
       message(STATUS "WARNING: The test_pytkdemo target can be run independently but does not
    work reliably (i.e., it sometimes hangs on exit) so it is
-   temporarily excluded from being a dependency of other more general
-   interactive test targets")
+   temporarily excluded from being a dependency of the test_interactive and test_tk targets")
       #list(APPEND interactive_targets_LIST test_pytkdemo)
       #list(APPEND tk_targets_LIST test_pytkdemo)
     endif(ENABLE_python AND (ENABLE_DYNDRIVERS OR PLD_tk))
@@ -1389,9 +1395,8 @@ if(BUILD_TEST)
       # that is run by tkdemos.tcl in the wish case, but that is as much
       # as we know at this stage.
       message(STATUS "WARNING: The test_wish_standard_examples target can be run independently but
-   it segfaults at the end so it is temporarily excluded from being a dependency
-   of other more general interactive test targets")
-      # list(APPEND targets_examples_tk test_wish_standard_examples)
+   it segfaults at the end so it is temporarily excluded from being a dependency of the test_interactive and test_tk targets")
+      #list(APPEND targets_examples_tk test_wish_standard_examples)
     endif(BUILD_SHARED_LIBS AND PLD_tk)
 
     if(ENABLE_itkX)
@@ -1408,7 +1413,7 @@ if(BUILD_TEST)
 #      if(USE_INCRTCL_VERSION_4)
 #	message(STATUS "WARNING: The test_tk_02 target can be run independently but it currently
 #   does not work for version 4 of Itcl and friends so it is temporarily excluded
-#   from being a dependency of other more general interactive test targets")
+#   from being a dependency of the test_interactive and test_tk targets")
 #      else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_02)
 #      endif(USE_INCRTCL_VERSION_4)
@@ -1425,7 +1430,7 @@ if(BUILD_TEST)
 #      if(USE_INCRTCL_VERSION_4)
 #	message(STATUS "WARNING: The test_tk_04 target can be run independently but it currently
 #   does not work for version 4 of Itcl and friends so it is temporarily excluded
-#   from being a dependency of other more general interactive test targets")
+#   from being a dependency of the test_interactive and test_tk targets")
 #      else(USE_INCRTCL_VERSION_4)
 	list(APPEND targets_examples_tk test_tk_04)
 #      endif(USE_INCRTCL_VERSION_4)
@@ -1447,7 +1452,7 @@ if(BUILD_TEST)
 
     message(STATUS "WARNING: The test_plserver_runAllDemos target can be run independently but
    there are several issues with this target so it is temporarily excluded from being a
-   dependency of other more general interactive test targets")
+   dependency of the test_interactive and test_tk targets")
     #list(APPEND targets_examples_tk test_plserver_runAllDemos)
 
     if(BUILD_SHARED_LIBS AND PLD_tkwin)
@@ -1468,7 +1473,7 @@ if(BUILD_TEST)
 	)
       message(STATUS "WARNING: The test_wish_runAllDemos target can be run independently but
    there are several issues with this target so it is temporarily excluded from being a
-   dependency of other more general interactive test targets")
+   dependency of the test_interactive and test_tk targets")
       # list(APPEND targets_examples_tk test_wish_runAllDemos)
     endif(BUILD_SHARED_LIBS AND PLD_tkwin)
   endif(ENABLE_tkX AND xwin_targets)
@@ -1493,40 +1498,20 @@ if(BUILD_TEST)
     add_dependencies(test_tk ${tk_targets_LIST})
   endif(tk_targets_LIST)
 
-  # List of custom targets that test all of qt devices/special examples.
-  # Must be maintained.
-  set(qt_test_target_LIST
-    test_c_bmpqt
-    test_c_epsqt
-    test_c_jpgqt
-    test_c_pdfqt
-    test_c_pngqt
-    test_c_ppmqt
-    test_c_qtwidget
-    test_c_svgqt
-    test_c_tiffqt
-    #test_octave_qtwidget
-    test_qt_example
-    )
-  if(ENABLE_pyqt4)
-    list(APPEND qt_test_target_LIST test_pyqt4_example)
-  elseif(ENABLE_pyqt5)
-    list(APPEND qt_test_target_LIST test_pyqt5_example)
-  endif(ENABLE_pyqt4)
-
-  set(qt_test_target_DEPENDS)
-  foreach(qt_test_target ${qt_test_target_LIST})
+  set(qt_test_targets_DEPENDS)
+  foreach(qt_test_target ${qt_test_targets_LIST})
     if(TARGET ${qt_test_target})
-      list(APPEND qt_test_target_DEPENDS ${qt_test_targets})
+      list(APPEND qt_test_targets_DEPENDS ${qt_test_target})
     endif(TARGET ${qt_test_target})
-  endforeach(qt_test_target ${qt_test_target_LIST})
-  if(qt_test_target_DEPENDS)
+  endforeach(qt_test_target ${qt_test_targets_LIST})
+  if(qt_test_targets_DEPENDS)
     add_custom_target(test_all_qt)
-    add_dependencies(test_all_qt ${qt_test_target_DEPENDS})
-  endif(qt_test_target_DEPENDS)
+    add_dependencies(test_all_qt ${qt_test_targets_DEPENDS})
+  endif(qt_test_targets_DEPENDS)
 
   # List of custom targets that test all of cairo devices/special examples.
-  # Must be maintained.
+  # Maintenance (2021).  Perhaps instead of this maintenance approach
+  # shift to the above automated qt approach?
   set(cairo_test_target_LIST
     test_c_pdfcairo
     test_c_pngcairo
