@@ -2,7 +2,7 @@
 # bindings/ocaml/CMakeLists.txt
 #
 # Copyright (C) 2008-2011 Andrew Ross
-# Copyright (C) 2008-2019 Alan W. Irwin
+# Copyright (C) 2008-2021 Alan W. Irwin
 # Copyright (C) 2009-2013 Hezekiah M. Carty
 #
 # This file is part of PLplot.
@@ -151,8 +151,8 @@ if(ENABLE_ocaml)
     string(REGEX REPLACE "\\$<LINK_ONLY:([^>]*)>" "\\1" ocaml_LIBRARIES_FLAGS "${ocaml_LIBRARIES_FLAGS}")
     #message(STATUS "DEBUG: (\$<LINK_ONLY:...> generator expression replaced by whatever in ellipses) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
 
-    # Get rid of internal, Threads, and Qt5 symbolic targets from the list.
-    list(FILTER ocaml_LIBRARIES_FLAGS EXCLUDE REGEX "^PLPLOT::csirocsa$|^PLPLOT::csironn$|^PLPLOT::nistcd$|^PLPLOT::qsastime$|^Threads::Threads$|^Qt5::")
+    # Get rid of internal, Threads, Qt5, and Qhull symbolic targets from the list.
+    list(FILTER ocaml_LIBRARIES_FLAGS EXCLUDE REGEX "^PLPLOT::csirocsa$|^PLPLOT::csironn$|^PLPLOT::nistcd$|^PLPLOT::qsastime$|^Threads::Threads$|^Qt5::|Qhull::")
     #message(STATUS "DEBUG: (filtered) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
 
     #message(STATUS "DEBUG: raw ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
@@ -177,6 +177,17 @@ if(ENABLE_ocaml)
       list(APPEND ocaml_LIBRARIES_FLAGS ${pc_qt_LIBRARIES_LIST})
       #message(STATUS "DEBUG: (Qt5 added) ocaml_LIBRARIES_FLAGS = ${ocaml_LIBRARIES_FLAGS}")
     endif(PLPLOT_USE_QT5)
+
+    # Add back actual qhull_r library to replace the symbolic
+    # form of Qhull library that was removed above.
+    if(PL_HAVE_QHULL)
+      list(APPEND ocaml_LIBRARIES_FLAGS )
+      if(QHULL_RPATH)
+	list(APPEND ocaml_LIBRARIES_FLAGS -L${QHULL_RPATH} -lqhull_r)
+      else(QHULL_RPATH)
+	list(APPEND ocaml_LIBRARIES_FLAGS -lqhull_r)
+      endif(QHULL_RPATH)
+    endif(PL_HAVE_QHULL)
 
     # There is a long-standing bug for cmake where the regexp "^[^-]"
     # acts the same as "[^-]", i.e., the starting anchor is ignored.

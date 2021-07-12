@@ -38,19 +38,8 @@ if(PL_HAVE_QHULL)
     nncommon.c
     )
 
-  set_source_files_properties(
-    ${csironn_LIB_SRCS}
-    PROPERTIES
-    COMPILE_FLAGS "-I${QHULL_INCLUDE_DIRS}"
-    )
-
-  set(csironn_LINK_LIBRARIES ${QHULL_LIBRARIES})
-  if(MATH_LIB)
-    list(APPEND csironn_LINK_LIBRARIES ${MATH_LIB})
-  endif(MATH_LIB)
-
   set(LIB_INSTALL_RPATH ${QHULL_RPATH})
-  configure_library_build(csironn "" "${csironn_LIB_SRCS}" "${csironn_LINK_LIBRARIES}" "${QHULL_RPATH}")
+  configure_library_build(csironn "" "${csironn_LIB_SRCS}" Qhull::qhull_r "${QHULL_RPATH}")
   target_include_directories(${WRITEABLE_TARGET}csironn
     PUBLIC
     $<INSTALL_INTERFACE:${INCLUDE_DIR}>
