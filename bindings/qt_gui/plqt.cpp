@@ -24,6 +24,7 @@
 
 #include "qt.h"
 #include<list>
+#include <QTransform>
 // Global variables for Qt driver.
 PLDLLIMPEXP_QT_DATA( int ) vectorize = 0;
 PLDLLIMPEXP_QT_DATA( int ) lines_aa  = 1;
@@ -427,7 +428,7 @@ void QtPLDriver::drawText( EscText* txt )
 
     rotation -= pls->diorot * M_PI / 2.0;
     m_painterP->translate( txt->x * downscale, m_dHeight - txt->y * downscale );
-    QMatrix rotShearMatrix( cos( rotation ) * stride, -sin( rotation ) * stride, cos( rotation ) * sin( shear ) + sin( rotation ) * cos( shear ), -sin( rotation ) * sin( shear ) + cos( rotation ) * cos( shear ), 0., 0. );
+    QTransform rotShearMatrix( cos( rotation ) * stride, -sin( rotation ) * stride, cos( rotation ) * sin( shear ) + sin( rotation ) * cos( shear ), -sin( rotation ) * sin( shear ) + cos( rotation ) * cos( shear ), 0., 0. );
 
     m_painterP->setWorldTransform( QTransform (rotShearMatrix), true );
 
@@ -1064,7 +1065,7 @@ void QtPLWidget::renderText( QPainter* p, struct TextStruct_* s, double x_fact, 
     p->setClipping( true );
     p->setClipRect( QRectF( s->clipxmin * x_fact + x_offset, s->clipymax * y_fact + y_offset, ( s->clipxmax - s->clipxmin ) * x_fact, ( -s->clipymax + s->clipymin ) * y_fact ), Qt::ReplaceClip );
     p->translate( s->x * x_fact + x_offset, s->y * y_fact + y_offset );
-    QMatrix rotShearMatrix( cos( s->rotation ) * s->stride, -sin( s->rotation ) * s->stride, cos( s->rotation ) * sin( s->shear ) + sin( s->rotation ) * cos( s->shear ), -sin( s->rotation ) * sin( s->shear ) + cos( s->rotation ) * cos( s->shear ), 0., 0. );
+    QTransform rotShearMatrix( cos( s->rotation ) * s->stride, -sin( s->rotation ) * s->stride, cos( s->rotation ) * sin( s->shear ) + sin( s->rotation ) * cos( s->shear ), -sin( s->rotation ) * sin( s->shear ) + cos( s->rotation ) * cos( s->shear ), 0., 0. );
     p->setWorldTransform( QTransform  (rotShearMatrix), true );
 
     p->translate( -s->just * xOffset * p->device()->logicalDpiY() / picDpi, 0. );
@@ -1088,17 +1089,17 @@ void QtPLWidget::lookupButtonEvent( QMouseEvent * event )
 {
     Qt::MouseButtons      buttons   = event->buttons();
     Qt::KeyboardModifiers modifiers = event->modifiers();
-    gin.pX = event->x();
-    gin.pY = height() - event->y();
-    gin.dX = (PLFLT) event->x() / width();
-    gin.dY = (PLFLT) ( height() - event->y() ) / height();
+    gin.pX = event->pos().x();
+    gin.pY = height() - event->pos().y();
+    gin.dX = (PLFLT) event->pos().x() / width();
+    gin.dY = (PLFLT) ( height() - event->pos().y() ) / height();
 
     switch ( event->button() )
     {
     case Qt::LeftButton:
         gin.button = 1;
         break;
-    case Qt::MidButton:
+    case Qt::MiddleButton:
         gin.button = 2;
         break;
     case Qt::RightButton:
@@ -1113,7 +1114,7 @@ void QtPLWidget::lookupButtonEvent( QMouseEvent * event )
     gin.state = 0;
     if ( buttons & Qt::LeftButton )
         gin.state |= 1 << 8;
-    if ( buttons & Qt::MidButton )
+    if ( buttons &Qt::MiddleButton )
         gin.state |= 1 << 9;
     if ( buttons & Qt::RightButton )
         gin.state |= 1 << 10;
@@ -1598,8 +1599,8 @@ void QtExtWidget::mouseMoveEvent( QMouseEvent* event )
 
     getPlotParameters( x_fact, y_fact, x_offset, y_offset );
 
-    cursorParameters.cursor_x = (PLFLT) event->x();
-    cursorParameters.cursor_y = (PLFLT) event->y();
+    cursorParameters.cursor_x = (PLFLT) event->pos().x();
+    cursorParameters.cursor_y = (PLFLT) event->pos().y();
 
     double ratio_x;
     double ratio_y;
@@ -1632,8 +1633,8 @@ void QtExtWidget::mouseReleaseEvent( QMouseEvent* event )
 
     getPlotParameters( x_fact, y_fact, x_offset, y_offset );
 
-    cursorParameters.cursor_x   = (PLFLT) event->x();
-    cursorParameters.cursor_y   = (PLFLT) event->y();
+    cursorParameters.cursor_x   = (PLFLT) event->pos().x();
+    cursorParameters.cursor_y   = (PLFLT) event->pos().y();
     cursorParameters.isTracking = false;
     setMouseTracking( false );
 
