@@ -2700,7 +2700,7 @@ void
 plP_sfnam( PLStream *pls, PLCHAR_VECTOR fnam )
 {
     char   prefix[BUFFER_SIZE];
-    char   * suffix;
+    const char   * suffix;
     size_t maxlen;
     pls->OutFile = NULL;
 
