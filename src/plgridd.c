@@ -26,7 +26,6 @@
 #ifdef WITH_CSA
 #include "../lib/csa/csa.h"
 #endif
-#include "../lib/csa/nan.h" // this is handy
 
 #ifdef PL_HAVE_QHULL
 #include "../lib/nn/nn.h"
@@ -337,7 +336,7 @@ grid_nnidw( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
             if ( nt != 0. )
                 zops->div( zgp, i, j, nt );
             else
-                zops->set( zgp, i, j, NaN );
+                zops->set( zgp, i, j, NAN );
         }
     }
 }
@@ -387,7 +386,7 @@ grid_nnli( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
 
             if ( d1 == 0. || d2 == 0. || d3 == 0. ) // coincident points
             {
-                zops->set( zgp, i, j, NaN );
+                zops->set( zgp, i, j, NAN );
                 continue;
             }
 
@@ -405,7 +404,7 @@ grid_nnli( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
 
             if ( ( d1 + d2 ) / d3 < threshold ) // thin triangle!
             {
-                zops->set( zgp, i, j, NaN );    // deal with it later
+                zops->set( zgp, i, j, NAN );    // deal with it later
             }
             else                                // calculate the plane passing through the three points
 
@@ -551,7 +550,7 @@ grid_nnaidw( PLFLT_VECTOR x, PLFLT_VECTOR y, PLFLT_VECTOR z, int npts,
                 }
             }
             if ( nt == 0. ) // no points found?!
-                zops->set( zgp, i, j, NaN );
+                zops->set( zgp, i, j, NAN );
             else
                 zops->div( zgp, i, j, nt );
         }
