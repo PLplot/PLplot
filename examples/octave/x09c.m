@@ -249,11 +249,11 @@ endif
 	    argy = yy * pi/2;
 	    distort = 0.4;
 
-	    xg3(i+1,:) = xx .+ distort .* cos(argx);
-	    yg3(i+1,:) = yy .- distort .* cos(argy);
+	    xg3(i+1,:) = xx + distort .* cos(argx);
+	    yg3(i+1,:) = yy - distort .* cos(argy);
 
-	    xg2(i+1,:) = xx .+ distort .* cos(argx) .* cos(argy);
-	    yg2(i+1,:) = yy .- distort .* cos(argx) .* cos(argy);
+	    xg2(i+1,:) = xx + distort .* cos(argx) .* cos(argy);
+	    yg2(i+1,:) = yy - distort .* cos(argx) .* cos(argy);
 	  endfor
 
 	  xg1 = xg3(:,1);

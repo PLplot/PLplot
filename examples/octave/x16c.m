@@ -79,17 +79,17 @@ function ix16c
   for i = 0:nx-1
     x = (i - fix(nx / 2)) / fix(nx / 2);
     j = 0:ny-1;
-    y = (j .- fix(ny / 2)) ./ fix(ny / 2) - 1.0;
+    y = (j - fix(ny / 2)) ./ fix(ny / 2) - 1.0;
 
-    z(i+1,:) = - sin(7.*x) .* cos(7.*y) .+ x*x - y.*y;
-    w(i+1,:) = - cos(7.*x) .* sin(7.*y) .+ 2 .* x .* y;
+    z(i+1,:) = - sin(7.*x) .* cos(7.*y) + x*x - y.*y;
+    w(i+1,:) = - cos(7.*x) .* sin(7.*y) + 2 .* x .* y;
   endfor
 
   zmin=min(min(z));
   zmax=max(max(z));
 
   i = 0:ns-1;
-  clevel = (zmin .+ (zmax - zmin) .* (i + 0.5) ./ ns)';
+  clevel = (zmin + (zmax - zmin) .* (i + 0.5) ./ ns)';
   i = 0:ns;
   shedge = zmin + (zmax - zmin) * i / ns;
 
@@ -103,11 +103,11 @@ function ix16c
     argy = y * pi/2;
     distort = 0.4;
 
-    xg1(i+1,:) = x .+ distort .* cos(argx);
-    yg1(i+1,:) = y .- distort .* cos(argy);
+    xg1(i+1,:) = x + distort .* cos(argx);
+    yg1(i+1,:) = y - distort .* cos(argy);
 
-    xg2(i+1,:) = x .+ distort .* cos(argx) .* cos(argy);
-    yg2(i+1,:) = y .- distort .* cos(argx) .* cos(argy);
+    xg2(i+1,:) = x + distort .* cos(argx) .* cos(argy);
+    yg2(i+1,:) = y - distort .* cos(argx) .* cos(argy);
   endfor
 
   xg1 = xg1(:,1);

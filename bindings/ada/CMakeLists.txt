@@ -85,8 +85,14 @@ if(ENABLE_ada)
   # plplotada depends on the plplot library.
   set(LIB_INSTALL_RPATH ${LIB_DIR})
 
+  if(ENABLE_ada_static)
+    set(ADA_lib_type "STATIC")
+  else(ENABLE_ada_static)
+    set(ADA_lib_type "")
+  endif(ENABLE_ada_static)
+
   # target_link_libraries used in special way below so avoid using it inside configure_library_build.
-  configure_library_build(plplotada "" "${plplotada_BODY_SRCS}" "" "${LIB_INSTALL_RPATH}")
+  configure_library_build(plplotada ${ADA_lib_type} "${plplotada_BODY_SRCS}" "" "${LIB_INSTALL_RPATH}")
 
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed

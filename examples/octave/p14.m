@@ -36,7 +36,7 @@ function p14(fg)
   x = y = linspace(-l, l, 30);
 
   [xx,yy] = meshgrid(x,y);
-  r = yy .* exp(-(xx.^2 .+ yy.^2));
+  r = yy .* exp(-(xx.^2 + yy.^2));
 
   axis([-l l -l l min(min(r)) max(max(r))]);
 

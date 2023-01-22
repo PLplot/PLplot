@@ -28,7 +28,7 @@ lang="o"
 export lang
 
 # Launch an Octave script that exercises all the demos
-$octave -f -q  <<EOF 2> octave_${device}_test.error
+$octave -f -q --no-gui <<EOF 2> octave_${device}_test.error
 
 # Disable warnings about shadowed functions - PLplot is _supposed_ to shadow the core functions
 warning("off","Octave:shadowed-function");

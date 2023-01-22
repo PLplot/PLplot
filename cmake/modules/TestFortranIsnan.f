@@ -1,8 +1,11 @@
       program testisnan
 
-c      external isnan
+      real dummy
 
-      if (isnan(0.0/0.0)) then
+c      external isnan
+      dummy = 0.0
+
+      if (isnan(0.0/dummy)) then
         print *,"NaN"
       endif
 

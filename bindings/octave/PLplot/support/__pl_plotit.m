@@ -240,13 +240,13 @@ function __pl_plotit
 
 	    pllsty(1); # solid bars
 	    if (xc == 2)
-	      xm = x(:,1) .- x(:,2); xM = x(:,1) .+ x(:,2);
+	      xm = x(:,1) - x(:,2); xM = x(:,1) + x(:,2);
 	    elseif (xc == 3)
 	      xm = x(:,2); xM = x(:,3);
 	    endif
 
 	    if (yc == 2)
-	      ym = y(:,1) .- y(:,2); yM = y(:,1) .+ y(:,2);
+	      ym = y(:,1) - y(:,2); yM = y(:,1) + y(:,2);
 	    elseif (yc == 3)
 	      ym = y(:,2); yM = y(:,3);
 	    endif

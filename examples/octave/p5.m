@@ -19,7 +19,7 @@ function p5
   pl_automatic_replot = 0;
 
   x=-pi:0.01:pi;
-  y=sin(x).+cos(3*x);
+  y=sin(x)+cos(3*x);
 
   og = grid ("on");
   title("Polar example");
