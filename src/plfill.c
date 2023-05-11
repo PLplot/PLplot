@@ -58,13 +58,15 @@
 //
 enum PL_CrossedStatus
 {
+    PL_CROSSED       = 0x0,
     PL_NOT_CROSSED   = 0x1,
     PL_NEAR_A1       = 0x2,
     PL_NEAR_A2       = 0x4,
     PL_NEAR_B1       = 0x8,
     PL_NEAR_B2       = 0x10,
     PL_NEAR_PARALLEL = 0x20,
-    PL_PARALLEL      = 0x40
+    PL_PARALLEL      = 0x40,
+    PL_NEAR_LINE     = 0x80
 };
 
 struct point
@@ -116,6 +118,8 @@ static int
 notcrossed( PLINT *xintersect, PLINT *yintersect,
             PLINT xA1, PLINT yA1, PLINT xA2, PLINT yA2,
             PLINT xB1, PLINT yB1, PLINT xB2, PLINT yB2 );
+static int
+notcrossedhorizontalray(PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT xp, PLINT yp);
 
 //--------------------------------------------------------------------------
 // void plfill()
@@ -642,7 +646,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
 }
 #else // USE_FILL_INTERSECTION_POLYGON
 
-    PLINT i, x1, x2, y1, y2;
+    PLINT i, x1, x2, y1, y2, xmid, mid;
     int   iclp = 0, iout = 2;
     short _xclp[2 * PL_MAXPOLY + 2], _yclp[2 * PL_MAXPOLY + 2];
     short *xclp = NULL, *yclp = NULL;
@@ -657,6 +661,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     int   inside_lu;
     int   inside_rb;
     int   inside_ru;
+    int   inside_mid;
 
     // Must have at least 3 points and draw() specified
     if ( npts < 3 || !draw )
@@ -679,6 +684,7 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     inside_lu = !notpointinpolygon( npts, x, y, xmin, ymax );
     inside_rb = !notpointinpolygon( npts, x, y, xmax, ymin );
     inside_ru = !notpointinpolygon( npts, x, y, xmax, ymax );
+    inside_mid = !notpointinpolygon(npts, x, y, xmin / 2 + xmax / 2, ymin / 2 + ymax / 2);
 
     for ( i = 0; i < npts - 1; i++ )
     {
@@ -837,7 +843,12 @@ plP_plfclp( PLINT *x, PLINT *y, PLINT npts,
     //
     if ( iclp == 0 )
     {
-        if ( inside_lb )
+        //note that plP_clipline rounds to the nearest integer
+        //whereas notpointinpolygon is more accurate. This means iclp
+        //can be 0, even when one or more of the corners show as inside
+        //the polygon and the whoe box is not engulfed. To counter this
+        // we check a point in the middle of the box
+        if ( inside_mid )
         {
             xclp[0] = (short) xmin; yclp[0] = (short) ymin;
             xclp[1] = (short) xmax; yclp[1] = (short) ymin;
@@ -1260,38 +1271,23 @@ notpointinpolygon( PLINT n, PLINT_VECTOR x, PLINT_VECTOR y, PLINT xp, PLINT yp )
 #ifdef NEW_NOTPOINTINPOLYGON_CODE
     int i, im1, ifnotcrossed;
     int count_crossings = 0;
-    PLINT xmin, xout, yout, xintersect, yintersect;
 
 
-    // Determine a point outside the polygon
-
-    xmin = x[0];
-    xout = x[0];
-    yout = y[0];
-    for ( i = 1; i < n; i++ )
-    {
-        xout = MAX( xout, x[i] );
-        xmin = MIN( xmin, x[i] );
-    }
-    // + 10 to make sure completely outside.
-    xout = xout + ( xout - xmin ) + 10;
-
-    // Determine whether the line between (xout, yout) and (xp, yp) intersects
-    // one of the polygon segments.
+    // Determine whether the horizontal ray from (xp, yp) intersects
+    // each of the polygon segments.
 
     im1 = n - 1;
     for ( i = 0; i < n; i++ )
     {
         if ( !( x[im1] == x[i] && y[im1] == y[i] ) )
         {
-            ifnotcrossed = notcrossed( &xintersect, &yintersect,
+            ifnotcrossed = notcrossedhorizontalray(
                 x[im1], y[im1], x[i], y[i],
-                xp, yp, xout, yout );
-
+                xp, yp );
+            if ( ifnotcrossed ==2 )
+                return 1;
             if ( !ifnotcrossed )
                 count_crossings++;
-            else if ( ifnotcrossed & ( PL_NEAR_A1 | PL_NEAR_A2 | PL_NEAR_B1 | PL_NEAR_B2 ) )
-                return 1;
         }
         im1 = i;
     }
@@ -2017,6 +2013,68 @@ notcrossed( PLINT * xintersect, PLINT * yintersect,
     }
 
     return status;
+}
+
+//this is an optimised version of notcrossed, but where the second line is a semi-infinite
+//horizontal ray in the positive direction from point xp,yp.
+//returns 0 if the line crosses the ray, returns 1 if the line does not cross the ray
+//returns 2 if we are not sure, due to floating point accuracy.
+//If the line ends exactly on the ray, we assume the end of the line is actually just slightly
+//higher than the ray.
+//There is exactly one floating point division in the calculation, so we should be pretty
+//accurate.
+int
+notcrossedhorizontalray(PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT xp, PLINT yp)
+{
+    PLFLT dy1f, dy2f, xpf;
+    PLFLT xcrossupper, xcrosslower, xcross, epsilonplusone, dxbydy;
+
+    if (xp > x1 && xp > x2) // the line is all to the left of the ray, return PL_NOT_CROSSED
+        return PL_NOT_CROSSED;
+
+    dy1f = (PLFLT)(y1 - yp);
+    dy2f = (PLFLT)(y2 - yp);
+    if (dy1f * dy2f > 0.0) //the line is above or below the ray, return PL_NOT_CROSSED
+        return PL_NOT_CROSSED;
+
+    //catch the cases where y1==yp or y2==yp and we can categorically say we are not crossed.
+    // Although these seem like rare cases, we have to test for them for all remaining scenarios
+    // so we might as well do it now.
+    if (y1 == yp && y2 >yp) //assume y1 is slightly higher than it really is
+        return PL_NOT_CROSSED; 
+    if (y2 == yp && y1 >yp) //assume y1 is slightly higher than it really is
+        return PL_NOT_CROSSED; 
+
+    if (y1 == y2) //horizontal lines never cross the ray - this is compatible with the points slightly higher. 
+        return PL_NOT_CROSSED;
+
+    //we now know the line crosses the line y=yp, we just need to make sure the crossing point is to the
+    //right of xp
+
+    if (xp < x1 && xp < x2) //all the line is to the right of xp
+        return PL_CROSSED;
+
+    //the above logic will deal with almost all cases. We are left with only scenarios where the point is within the
+    //bounding box of the line. we just need to find the x value where the line crosses y=yp.
+    //In the equation below abs(dy1-dy2) must be at least 1, so it is numerically stable.
+    //also, we have mostly integer maths, so we are pretty darned accuarate
+#ifdef PL_DOUBLE
+    epsilonplusone = 1.0 + DBL_EPSILON;
+#else
+    epsilonplusone = 1.0 + FLT_EPSILON;
+#endif 
+
+    xpf = (PLFLT)xp;
+    dxbydy = (PLFLT)(x2 - x1) / (dy2f - dy1f);
+    xcross = ((PLFLT)(x1 - x2) * (-dy1f)) / (dy1f - dy2f) + (PLFLT)x1; //use the brackets to maintain integer maths, but need to use floats as we may overrun integers
+    xcrossupper = xcross * epsilonplusone * epsilonplusone; //could maybe get away with just one epsilon, but if (x1-x2)*(-dy1f) is bigger than the biggest ineger a float can represent perfectly, then we get some rounding there as well as in the division
+    xcrosslower = xcross / epsilonplusone * epsilonplusone;
+
+    if ((xcrossupper - xpf) * (xcrosslower - xpf) < 0.0) //the point is within the calcualtion accuaracy of the line
+        return PL_NEAR_LINE;
+    if (xpf < xcrosslower)
+        return PL_CROSSED;
+    return PL_NOT_CROSSED;
 }
 
 #ifdef USE_FILL_INTERSECTION_POLYGON
