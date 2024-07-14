@@ -107,20 +107,18 @@ if(ENABLE_python)
     execute_process(
       COMMAND
       ${PYTHON_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
-      OUTPUT_VARIABLE NUMPY_INCLUDE_PATH_PARENT
+      OUTPUT_VARIABLE NUMPY_GET_INCLUDE
       RESULT_VARIABLE NUMPY_ERR
       OUTPUT_STRIP_TRAILING_WHITESPACE
       )
     if(NUMPY_ERR)
       set(NUMPY_INCLUDE_PATH)
     else(NUMPY_ERR)
-      # We use the full path name (including numpy on the end), but
-      # Double-check that all is well with that choice.
       find_path(
-	NUMPY_INCLUDE_PATH
-	arrayobject.h
-	${NUMPY_INCLUDE_PATH_PARENT}/numpy
-	)
+	    NUMPY_INCLUDE_PATH
+        numpy/arrayobject.h
+	    ${NUMPY_GET_INCLUDE}
+	  )
     endif(NUMPY_ERR)
 
   endif(NOT NUMPY_INCLUDE_PATH)
