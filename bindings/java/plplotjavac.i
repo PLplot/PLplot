@@ -2132,9 +2132,9 @@ PLBOOL_OUTPUT_TYPEMAP( PLBOOL, jboolean, boolean, Boolean, "[Ljava/lang/Boolean;
 %typemap( argout ) PLGraphicsIn * gin {
     PyObject *o;
     o         = PyFloat_FromDouble( $1->wX );
-    resultobj = t_output_helper( resultobj, o );
+    resultobj = SWIG_AppendOutput( resultobj, o );
     o         = PyFloat_FromDouble( $1->wY );
-    resultobj = t_output_helper( resultobj, o );
+    resultobj = SWIG_AppendOutput( resultobj, o );
 }
 #endif
 
