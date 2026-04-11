@@ -1,5 +1,5 @@
 # plplot_test/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -135,7 +135,7 @@ if(SH_EXECUTABLE)
     # for the traditional build.
     if(PLPLOT_USE_QT5)
       # FIXME once the Qt5 memory management issues are fixed
-      set(SHELL_TEST_QT_EXAMPLE 0)
+      set(SHELL_TEST_QT_EXAMPLE 1)
     else(PLPLOT_USE_QT5)
       set(SHELL_TEST_QT_EXAMPLE 1)
     endif(PLPLOT_USE_QT5)

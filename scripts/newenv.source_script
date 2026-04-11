@@ -1,0 +1,70 @@
+# source this file to tailor builds according to the local needs of
+# AWI as an example. Change this locally for your own needs, but do
+# not push.
+
+# N.B. You will probably want to change the following two AWI-specific values.
+
+# SourceForge user name for AWI.
+export WWW_USER=airwin
+
+# AWI computer has 16 hardware threads so following traditional Linux scheduler advice
+# set this to two higher than that.
+export PARALLEL_BUILD_OPTION=-j18
+export PARALLEL_CTEST_OPTION=-j18
+
+# N.B. You will probably want to adopt the following values.
+
+# May want to add -Wall -Wextra -Wmissing-prototypes
+# -Wstrict-prototypes -Wnested-externs -Wconversion -Wshadow
+# -Wcast-qual -Wcast-align -Wwrite-strings -fno-common (extra gcc
+# options recommended a long time ago by Andrew) later to CFLAGS, but
+# drop these for now.  See also
+# <http://www.gnu.org/s/gsl/manual/html_node/GCC-warning-options-for-numerical-programs.html>
+# which suggests additional option possibilities as well.
+
+# May want to add -Wall -Wextra to CXXFLAGS and FFLAGS later, but drop
+# these for now.
+
+# Each of these iso standards used below is the latest standard
+# version that is essentially completely implemented by gcc-14,
+# g++-14, and gfortran-14.  Setting -D_POSIX_C_SOURCE=200809L in
+# CFLAGS allows POSIX 2008 extensions to ISO C17 that our C source
+# uses.  Therefore, any deviation from ISO C17 + POSIX 2008 for our C
+# code, ISO C++17 for our C++ code, or ISO Fortran 2008 for our
+# Fortran code will generate a build warning.
+export CFLAGS="-O3 -fvisibility=hidden -std=c17 -D_POSIX_C_SOURCE=200809L -pedantic -Wuninitialized"
+export CXXFLAGS="-O3 -fvisibility=hidden -std=c++17 -pedantic -Wuninitialized"
+export FFLAGS="-O3 -std=f2008 -pedantic -Wuninitialized -Wunused"
+
+# Maintenance 2026: make this consistent with the minimum CMake version for PLplot.
+CMAKE_VERSION=3.31.6
+# It turned out this version could not be built with modern curl so
+# the following check will fail in this case and the system version
+# (which is 3.31.6 for Trixie) will be used instead.
+if [ -x "/home/software/cmake/install-$CMAKE_VERSION/bin/cmake" ]; then
+    PATH=/home/software/cmake/install-$CMAKE_VERSION/bin":$PATH"
+fi
+
+# Latest uncrustify version (commented out to use Debian Trixie version instead).
+# PATH=/home/software/uncrustify/install/bin":$PATH"
+
+# Start with empty values.
+export CMAKE_INCLUDE_PATH=
+export CMAKE_LIBRARY_PATH=
+
+# Latest (1995!) ralcgm version (that allows "display to work for cgm files).
+#PATH='/home/software/cgmlib/ralcgm-3.50/bin:'$PATH
+
+# This is a leftover that was needed for an old version of openjdk.  It is not
+# needed now so comment out.
+#CMAKE_INCLUDE_PATH=/usr/lib/jvm/java-11-openjdk-amd64/include:$CMAKE_INCLUDE_PATH
+
+# This old help for finding the phobos library is no longer needed.
+#CMAKE_LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.6/:$CMAKE_LIBRARY_PATH
+
+# This help to find libLASi is no longer needed.
+# PKG_CONFIG for -dev psttf
+# export PKG_CONFIG_PATH=/home/software/lasi_svn/install/lib/pkgconfig
+
+# Put Hǎiliàng Wang's api.xml consistency checker on the PATH.
+# PATH=/home/software/golang_apps/bin:$PATH

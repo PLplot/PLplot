@@ -1,11 +1,25 @@
 @PACKAGE_INIT@
 
-# Users of the python binding of PLplot may require this location.
-set(${CMAKE_FIND_PACKAGE_NAME}_PYTHON_SITE_PACKAGES_PREFIX @PYTHON_INSTDIR@)
+# N.B. If we need targets from a package then it is necessary to find the package rather than
+# just rely on setting variables as is done in plplot_configure.cmake_installed_examples.in
+# to set ENABLE_python, for example.
+if(ENABLE_python)
+  # Users of the python binding of PLplot may require this location.
+  set(${CMAKE_FIND_PACKAGE_NAME}_PYTHON_SITE_PACKAGES_PREFIX @PYTHON_INSTDIR@)
+  # Maintenance 2026: This should be the same Python-finding logic as in
+  # cmake/modules/python.cmake
+  find_package(Python3 COMPONENTS Interpreter Development NumPy)
+  if(NOT Python3_FOUND)
+    message(STATUS "WARNING: "
+      "Some/all of Interpreter Development NumPy Python3 components not found. Disabling Python binding")
+    set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
+  endif(NOT Python3_FOUND)
+endif(ENABLE_python)
+
 # Determine Threads::Threads interface library following what is done
 # in cmake/modules/threads.cmake.  The value of
 # THREADS_PREFER_PTHREAD_FLAG is configured to be the same as used in
-# the core build.
+# the core build in plplot_configure.cmake_installed_examples.in.
 find_package(Threads)
 
 if(ANY_QT_DEVICE AND PLPLOT_USE_QT5)

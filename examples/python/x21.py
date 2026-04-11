@@ -20,6 +20,8 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
+python_min = min
+python_max = max
 from numpy import *
 import time
 
@@ -131,8 +133,8 @@ def main(w):
                         if isnan(zg[i][j]):
                             zg[i][j] = 0.0
                             dist = 0.0
-                            for ii in range(max(i-1,0),min(i+2,xp)):
-                                for jj in range(max(j-1,0),min(j+2,yp)):
+                            for ii in range(python_max(i-1,0),python_min(i+2,xp)):
+                                for jj in range(python_max(j-1,0),python_min(j+2,yp)):
                                     if (not isnan(zg[ii][jj])):
                                         d = abs(ii-i) + abs(jj-j)
                                         if (d != 1.0) :
@@ -148,8 +150,8 @@ def main(w):
             lzM = max(zg.flat)
             lzm = min(zg.flat)
 
-            lzm = min(lzm,zmin)
-            lzM = max(lzM,zmax)
+            lzm = python_min(lzm,zmin)
+            lzM = python_max(lzM,zmax)
 
             lzm = lzm - 0.01
             lzM = lzM + 0.01

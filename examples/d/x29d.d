@@ -21,7 +21,10 @@
 //
 
 import std.string;
+// Provide floating point fmin and fmax and others.
 import std.math;
+// Provide integer min and max.
+import std.algorithm.comparison : min, max;
 
 import plplot;
 
@@ -205,7 +208,7 @@ class plot {
         for ( int i = 0; i < npts; i++ )
         {
             x[i] = xmin + i * 60.0 * 60.0 * 24.0;
-            y[i] = 1.0 + sin( 2 * PI * i / 7.0 ) + exp( fmin( i, npts - i ) / 31.0 );
+            y[i] = 1.0 + sin( 2 * PI * i / 7.0 ) + exp( cast( PLFLT ) ( min( i, npts - i ) ) / 31.0 );
         }
         pladv( 0 );
 

@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2008 Andrew Ross
 # Copyright (C) 2009 Hezekiah M. Carty
-# Copyright (C) 2009-2017 Alan W. Irwin
+# Copyright (C) 2009-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -26,6 +26,13 @@ if(DEFAULT_NO_BINDINGS)
 else(DEFAULT_NO_BINDINGS)
   option(ENABLE_ocaml "Enable OCaml binding" ON)
 endif(DEFAULT_NO_BINDINGS)
+
+if(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
+  message(STATUS "WARNING: The PLplot ocaml binding currently does not link correctly for\n"
+    "   this static build case so it is temporarily disabled."
+    )
+  set(ENABLE_ocaml OFF CACHE BOOL "Enable Ocaml binding" FORCE)
+endif(ENABLE_ocaml AND NOT BUILD_SHARED_LIBS)
 
 if(ENABLE_ocaml AND NOT PL_DOUBLE)
   message(STATUS "WARNING: "
@@ -140,11 +147,11 @@ if(ENABLE_ocaml)
   list(APPEND INSTALL_LOCATION_VARIABLES_LIST OCAML_INSTALL_DIR)
 
   if(ADD_SPECIAL_CONSISTENCY_CHECKING)
-    option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" ON)
+    option(GENERATE_PLPLOT_H_INC "Configure target check_plplot_h.inc that compares a generated plplot_h.inc with the source-tree version" ON)
   else(ADD_SPECIAL_CONSISTENCY_CHECKING)
     # Leave this OFF by default since this target requires extra
     # dependencies such as libpcre-ocaml-dev package on Debian.
-    option(GENERATE_PLPLOT_H_INC "Generate generated_plplot_h.inc" OFF)
+    option(GENERATE_PLPLOT_H_INC "Configure target check_plplot_h.inc that compares a generated plplot_h.inc with source-tree version" OFF)
   endif(ADD_SPECIAL_CONSISTENCY_CHECKING)
 
   if(GENERATE_PLPLOT_H_INC)
@@ -154,7 +161,7 @@ if(ENABLE_ocaml)
     else (OCAML)
       message(STATUS "WARNING: "
 	"The ocaml application not found. Disabling generation of generated_plplot_h.inc")
-      set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
+      set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Configure target check_plplot_h.inc that compares a generated plplot_h.inc with the source-tree version" FORCE)
     endif (OCAML)
   endif(GENERATE_PLPLOT_H_INC)
 
@@ -179,9 +186,10 @@ if(ENABLE_ocaml)
       ERROR_STRIP_TRAILING_WHITESPACE
       )
     if(output OR error)
-      message(STATUS "WARNING: "
-	"One or all of topfind, unix, or pcre components of ocaml are not installed.  Disabling generation of generated_plplot_h.inc")
-      set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Generate generated_plplot_h.inc" FORCE)
+      message(STATUS "WARNING: One or all of topfind, unix, or pcre components of ocaml are not installed.\n"
+	"   Therefore, target check_plplot_h.inc that compares a generated plplot_h.inc with\n"
+	"   the source-tree version cannot be configured.")
+      set(GENERATE_PLPLOT_H_INC OFF CACHE BOOL "Configure target check_plplot_h.inc that compares a generated plplot_h.inc with the source-tree version" FORCE)
     endif(output OR error)
 
   endif(GENERATE_PLPLOT_H_INC)

@@ -4,7 +4,7 @@
 #              manual) into a swig documentation file.
 #
 # Copyright (C) 2000, 2003 Rafael Laboissiere
-# Copyright (C) 2010-2017 Alan W. Irwin
+# Copyright (C) 2010-2026 Alan W. Irwin
 #
 # This script relies on the present structure of the API chapter (file
 # ../src/api.xml), where each API function is documented in its own
@@ -100,13 +100,13 @@ while (<MASTER>) {
     $api .= $_;
   }
 }
-# Add a few additional entities that are needed.
-$api .= "<!ENTITY amp '#38;#38;'>
-<!ENTITY deg ' degrees'>
-<!ENTITY gt '&#x003E;'>
+
+# Add a few additional entities that are needed, but note that amp,
+# gt, and lt that were historically included are now built in to the
+# XML specification. So including them would cause an error.
+$api .= "<!ENTITY deg ' degrees'>
 <!ENTITY leq '&#38;#60;='>
 <!ENTITY le '&#38;#60;='>
-<!ENTITY lt '&#38;#60;'>
 <!ENTITY ndash '--'>
 ]>\n";
 close MASTER;

@@ -2041,11 +2041,11 @@ notcrossedhorizontalray(PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT xp, PLINT 
     // Although these seem like rare cases, we have to test for them for all remaining scenarios
     // so we might as well do it now.
     if (y1 == yp && y2 >yp) //assume y1 is slightly higher than it really is
-        return PL_NOT_CROSSED; 
+        return PL_NOT_CROSSED;
     if (y2 == yp && y1 >yp) //assume y1 is slightly higher than it really is
-        return PL_NOT_CROSSED; 
+        return PL_NOT_CROSSED;
 
-    if (y1 == y2) //horizontal lines never cross the ray - this is compatible with the points slightly higher. 
+    if (y1 == y2) //horizontal lines never cross the ray - this is compatible with the points slightly higher.
         return PL_NOT_CROSSED;
 
     //we now know the line crosses the line y=yp, we just need to make sure the crossing point is to the
@@ -2062,7 +2062,7 @@ notcrossedhorizontalray(PLINT x1, PLINT y1, PLINT x2, PLINT y2, PLINT xp, PLINT 
     epsilonplusone = 1.0 + DBL_EPSILON;
 #else
     epsilonplusone = 1.0 + FLT_EPSILON;
-#endif 
+#endif
 
     xpf = (PLFLT)xp;
     dxbydy = (PLFLT)(x2 - x1) / (dy2f - dy1f);

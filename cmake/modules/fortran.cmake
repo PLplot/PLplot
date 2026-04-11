@@ -3,7 +3,7 @@
 # Fortran binding configuration
 #
 # Copyright (C) 2006  Andrew Ross
-# Copyright (C) 2006-2017 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -72,22 +72,19 @@ if(ENABLE_fortran)
   # bindings/fortran/plstubs.h
 
   message(STATUS "NOTICE: " "Found: ${CMAKE_Fortran_COMPILER}")
-  if(CMAKE_Fortran_COMPILER MATCHES ".*/ifort.*")
-    # Intel Visual Fortran
-    message(STATUS "NOTICE: " "Found Intel Visual Fortran")
-    set(TARGET_FORTRAN "IVF" CACHE STRING "Target Fortran Compiler")
-  endif(CMAKE_Fortran_COMPILER MATCHES ".*/ifort.*")
-
-  if(CMAKE_Fortran_COMPILER MATCHES ".*/DF.*")
-    # Compaq Visual Fortran
-    message(STATUS "NOTICE: " "Found Compaq Visual Fortran")
-    set(TARGET_FORTRAN "CVF" CACHE STRING "Target Fortran Compiler")
-  endif(CMAKE_Fortran_COMPILER MATCHES ".*/DF.*")
-
-  if(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32_OR_CYGWIN)
-    # Compaq Visual Fortran - alternative name
-    message(STATUS "NOTICE: " "Found Compaq Visual Fortran")
-    set(TARGET_FORTRAN "CVF" CACHE STRING "Target Fortran Compiler")
-  endif(CMAKE_Fortran_COMPILER MATCHES ".*/F90.*" AND WIN32_OR_CYGWIN)
+  # Identify the Fortran compiler.
+  if(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+    # gfortran
+    message(STATUS "NOTICE: " "Found gfortran compiler")
+    set(TARGET_FORTRAN "GFORTRAN" CACHE STRING "Target Fortran Compiler")
+  elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
+    # ifort
+    message(STATUS "NOTICE: " "Found ifort compiler")
+    set(TARGET_FORTRAN "IFORT" CACHE STRING "Target Fortran Compiler")
+  elseif(CMAKE_Fortran_COMPILER_ID STREQUAL "IntelLLVM")
+    # ifx
+    message(STATUS "NOTICE: " "Found ifx compiler")
+    set(TARGET_FORTRAN "IFX" CACHE STRING "Target Fortran Compiler")
+  endif(CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
 
 endif(ENABLE_fortran)

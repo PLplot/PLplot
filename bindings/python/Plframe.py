@@ -1,9 +1,4 @@
-# Python 2 name is Tkinter, Python 3 name is tkinter (sigh).
-import sys
-if sys.version_info[:2] >= (3, 0):
-    from tkinter import *
-else:
-    from Tkinter import *
+from tkinter import *
 
 import plplot as plplot_Plframe
 from TclSup import *

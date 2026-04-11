@@ -32,7 +32,7 @@ if(WITH_CSA)
     csa.c
     )
 
-  if(CMAKE_C_COMPILER MATCHES ".*gcc.*")
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
     # Certain versions of the gcc compiler (e.g., gcc 7.3.0-21 from
     # Debian Buster) produce libcsirocsa code that segfaults at run
     # time if the -finline-functions compiler option is used directly
@@ -40,7 +40,7 @@ if(WITH_CSA)
     # the -fno-inline-functions option.
     message(STATUS "For csa.c use gcc -fno-inline-functions option to avoid segfaults")
     set_source_files_properties(csa.c PROPERTIES COMPILE_FLAGS "-fno-inline-functions")
-  endif(CMAKE_C_COMPILER MATCHES ".*gcc.*")
+  endif(CMAKE_C_COMPILER_ID STREQUAL "GNU")
 
   configure_library_build(csirocsa "" "${csirocsa_LIB_SRCS}" "${MATH_LIB}" "")
   target_include_directories(${WRITEABLE_TARGET}csirocsa

@@ -1,6 +1,6 @@
 # cmake/modules/tcl-related.cmake
 #
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -32,7 +32,7 @@ else(DEFAULT_NO_BINDINGS)
   option(ENABLE_itk "Enable Itk interface code" ON)
 endif(DEFAULT_NO_BINDINGS)
 
-option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwidgets" OFF)
+option(USE_INCRTCL_VERSION_4 "Use version 4 of Itcl and Itcl, version 4.1 of Iwidgets" ON)
 
 option(USE_TCL_TK_STUBS "Use Tcl/Tk stubs libraries" OFF)
 
@@ -100,7 +100,8 @@ if(ENABLE_tcl)
           # would error out due to some tclsh issue.
 	  set(PLPLOT_TCL_VERSION ${_plplot_tcl_version}
 	    CACHE STRING "Tcl version that is available"
-	    )
+	  )
+	  message(STATUS "PLPLOT_TCL_VERSION = ${PLPLOT_TCL_VERSION}")
 	else(NOT TCL_RC)
 	  message(STATUS "Looking for Tcl version with tclsh - not found")
 	  message(STATUS "WARNING: setting ENABLE_tcl to OFF")
@@ -120,7 +121,6 @@ if(ENABLE_tcl)
 endif(ENABLE_tcl)
 
 if(ENABLE_tcl)
-  message(STATUS "PLPLOT_TCL_VERSION = ${PLPLOT_TCL_VERSION}")
 
   set(TCL_RPATH ${TCL_LIBRARY_PATH})
   set(TCL_TK_RPATH ${TCL_RPATH})
@@ -147,13 +147,13 @@ if(ENABLE_tcl)
 
   if(ENABLE_itcl)
     if(USE_INCRTCL_VERSION_4)
-      set(SUGGESTED_ITCL_VERSION 4)
+      set(MINIMUM_ITCL_VERSION 4)
     else(USE_INCRTCL_VERSION_4)
-      set(SUGGESTED_ITCL_VERSION 3)
+      set(MINIMUM_ITCL_VERSION 3)
     endif(USE_INCRTCL_VERSION_4)
     if(NOT PLPLOT_ITCL_VERSION)
-      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl "puts -nonewline [package require Itcl ${SUGGESTED_ITCL_VERSION}]; exit")
-      # Refine SUGGESTED_ITCL_VERSION to exact value or fail.
+      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl "puts -nonewline [package require Itcl ${MINIMUM_ITCL_VERSION}-]; exit")
+      # Refine MINIMUM_ITCL_VERSION to exact value or fail.
       execute_process(
 	COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITCL_Available.tcl
 	RESULT_VARIABLE ITCL_RC
@@ -168,7 +168,8 @@ if(ENABLE_tcl)
         # would error out due to some tclsh issue.
 	set(PLPLOT_ITCL_VERSION ${_plplot_itcl_version}
 	  CACHE STRING "Itcl version that will be used"
-	  )
+	)
+	message(STATUS "PLPLOT_ITCL_VERSION = ${PLPLOT_ITCL_VERSION}")
       endif(NOT ITCL_RC)
     else(NOT PLPLOT_ITCL_VERSION)
       set(ITCL_RC 0)
@@ -176,14 +177,7 @@ if(ENABLE_tcl)
 
     if(NOT ITCL_RC)
       message(STATUS "Looking for itcl.h")
-      if(NOT USE_INCRTCL_VERSION_4)
-	# Search first for epa_build install location.
-        find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION}")
-      endif(NOT USE_INCRTCL_VERSION_4)
-      message(STATUS "PLPLOT_ITCL_VERSION = ${PLPLOT_ITCL_VERSION}")
-      string(SUBSTRING ${PLPLOT_ITCL_VERSION} 0 1 SHORT_PLPLOT_ITCL_VERSION)
-      # N.B. Debian jessie itcl3-dev package stores itcl.h in /usr/include/itcl${SHORT_PLPLOT_ITCL_VERSION}
-      find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}" PATH_SUFFIXES itcl${SHORT_PLPLOT_ITCL_VERSION})
+      find_path(ITCL_INCLUDE_PATH itcl.h HINTS "${TCL_INCLUDE_PATH}" PATH_SUFFIXES itcl)
 
       if(ITCL_INCLUDE_PATH)
         message(STATUS "Looking for itcl.h - found")
@@ -227,9 +221,7 @@ void main(void){}
 
       if(ENABLE_itcl)
         message(STATUS "Looking for itcl library")
-	# Search first for epa_build install location.
 	string(REGEX REPLACE "\\." "" COMPACT_PLPLOT_ITCL_VERSION ${PLPLOT_ITCL_VERSION})
-        find_library(ITCL_LIBRARY NAMES itcl${PLPLOT_ITCL_VERSION} itcl${COMPACT_PLPLOT_ITCL_VERSION} itcl HINTS ${TCL_LIBRARY_PATH}/itcl${PLPLOT_ITCL_VERSION})
         find_library(ITCL_LIBRARY NAMES itcl${PLPLOT_ITCL_VERSION} itcl${COMPACT_PLPLOT_ITCL_VERSION} itcl HINTS ${TCL_LIBRARY_PATH})
         if(ITCL_LIBRARY)
           message(STATUS "Looking for itcl library - found")
@@ -284,7 +276,8 @@ void main(void){}
           # would error out due to some wish issue.
 	  set(PLPLOT_TK_VERSION ${_plplot_tk_version}
 	    CACHE STRING "Tk version found by wish"
-	    )
+	  )
+	  message(STATUS "PLPLOT_TK_VERSION = ${PLPLOT_TK_VERSION}")
 
 	  if(PLPLOT_TCL_VERSION STREQUAL PLPLOT_TK_VERSION)
 	    # Cross check that wish finds the same Tcl version as tclsh.
@@ -381,13 +374,13 @@ void main(void){}
 
   if(ENABLE_itk)
     if(USE_INCRTCL_VERSION_4)
-      set(SUGGESTED_ITK_VERSION 4)
+      set(MINIMUM_ITK_VERSION 4)
     else(USE_INCRTCL_VERSION_4)
-      set(SUGGESTED_ITK_VERSION 3)
+      set(MINIMUM_ITK_VERSION 3)
     endif(USE_INCRTCL_VERSION_4)
     if(NOT PLPLOT_ITK_VERSION)
-      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl "puts -nonewline [package require Itk ${SUGGESTED_ITK_VERSION}]; exit")
-      # Refine SUGGESTED_ITK_VERSION to exact value or fail.
+      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl "puts -nonewline [package require Itk ${MINIMUM_ITK_VERSION}-]; exit")
+      # Refine MINIMUM_ITK_VERSION to exact value or fail.
       execute_process(
 	COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/CheckITK_Available.tcl
 	RESULT_VARIABLE ITK_RC
@@ -403,20 +396,15 @@ void main(void){}
         # of X or some tclsh issue.
 	set(PLPLOT_ITK_VERSION ${_plplot_itk_version}
 	  CACHE STRING "Itk version that will be used"
-	  )
+	)
+	message(STATUS "PLPLOT_ITK_VERSION = ${PLPLOT_ITK_VERSION}")
       endif(NOT ITK_RC)
     else(NOT PLPLOT_ITK_VERSION)
       set(ITCL_RC 0)
     endif(NOT PLPLOT_ITK_VERSION)
     if(NOT ITK_RC)
       message(STATUS "Looking for itk.h")
-      if(NOT USE_INCRTCL_VERSION_4)
-	# Search first for epa_build install location.
-        find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}/itcl${PLPLOT_ITCL_VERSION}")
-      endif(NOT USE_INCRTCL_VERSION_4)
-      message(STATUS "PLPLOT_ITK_VERSION = ${PLPLOT_ITK_VERSION}")
-      # N.B. Debian jessie itk3-dev package stores itk.h in /usr/include/itcl${SHORT_PLPLOT_ITCL_VERSION}
-      find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}" PATH_SUFFIXES itcl${SHORT_PLPLOT_ITCL_VERSION})
+      find_path(ITK_INCLUDE_PATH itk.h HINTS "${TCL_INCLUDE_PATH}" PATH_SUFFIXES itcl)
 
       if(ITK_INCLUDE_PATH)
         message(STATUS "Looking for itk.h - found")
@@ -461,47 +449,26 @@ void main(void){}
 
       if(ENABLE_itk)
         message(STATUS "Looking for itk library")
-	# Search first for epa_build install location.
 	string(REGEX REPLACE "\\." "" COMPACT_PLPLOT_ITK_VERSION ${PLPLOT_ITK_VERSION})
-        find_library(ITK_LIBRARY NAMES itk${PLPLOT_ITK_VERSION} itk${COMPACT_PLPLOT_ITK_VERSION} itk HINTS ${TK_LIBRARY_PATH}/itk${PLPLOT_ITK_VERSION})
         find_library(ITK_LIBRARY NAMES itk${PLPLOT_ITK_VERSION} itk${COMPACT_PLPLOT_ITK_VERSION} itk HINTS ${TK_LIBRARY_PATH})
         if(ITK_LIBRARY)
           message(STATUS "Looking for itk library - found")
 	  message(STATUS "ITK_LIBRARY = ${ITK_LIBRARY}")
 
+	  if(USE_INCRTCL_VERSION_4)
+	    set(MINIMUM_IWIDGETS_VERSION 4.1)
+	  else(USE_INCRTCL_VERSION_4)
+	    set(MINIMUM_IWIDGETS_VERSION 4.0)
+	  endif(USE_INCRTCL_VERSION_4)
+
 	  # Test version consistency between iwidgets, itk, and itcl.
 	  if(NOT IWIDGETS_VERSIONS_LIST)
-	    if(USE_INCRTCL_VERSION_4)
-	      set(SUGGESTED_IWIDGETS_VERSION 4.1)
-	      file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl "puts -nonewline \"[package require Iwidgets ${SUGGESTED_IWIDGETS_VERSION}];[package require Itk];[package require Itcl]\";exit")
-	      execute_process(
-		COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl
-		RESULT_VARIABLE IWIDGETS_RC
-		OUTPUT_VARIABLE _iwidgets_versions_list
-		)
-	    else(USE_INCRTCL_VERSION_4)
-	      # Find maximum 4.0 version of iwidgets that is
-	      # available.  4.0.1 (released in 2002) is the largest
-	      # version of iwidgets4.0 (as opposed to the recently
-	      # developed iwidgets4.1) I have found on the web in
-	      # tarball form, but I have seen one reference to 4.0.2
-	      # which may have been publicly released somewhere
-	      # inaccessible to my google searches or privately made
-	      # available before all development of iwidgets4.0
-	      # stopped. So add 4.0.2 to the list just in case.
-	      foreach(SUGGESTED_IWIDGETS_VERSION 4.0.2 4.0.1 4.0.0)
-		file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl "puts -nonewline \"[package require -exact Iwidgets ${SUGGESTED_IWIDGETS_VERSION}];[package require Itk];[package require Itcl]\";exit")
-		execute_process(
-		  COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl
-		  RESULT_VARIABLE IWIDGETS_RC
-		  OUTPUT_VARIABLE _iwidgets_versions_list
-		  ERROR_QUIET
-		  )
-		if(NOT IWIDGETS_RC)
-		  break()
-		endif(NOT IWIDGETS_RC)
-	      endforeach(SUGGESTED_IWIDGETS_VERSION 4.0.2 4.0.1 4.0.0)
-	    endif(USE_INCRTCL_VERSION_4)
+	    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl "puts -nonewline \"[package require Iwidgets ${MINIMUM_IWIDGETS_VERSION}-];[package require Itk];[package require Itcl]\";exit")
+	    execute_process(
+	      COMMAND ${TCL_TCLSH} ${CMAKE_CURRENT_BINARY_DIR}/determine_versions.tcl
+	      RESULT_VARIABLE IWIDGETS_RC
+	      OUTPUT_VARIABLE _iwidgets_versions_list
+	    )
 	    if(NOT IWIDGETS_RC)
 	      # Store result in cached variable so it will be
 	      # remembered when cmake is re-run, but use type of
@@ -626,11 +593,9 @@ endif(NOT ENABLE_itk)
 
 if(ENABLE_itcl)
   set(HAVE_ITCL ON)
-  find_path(HAVE_ITCLDECLS_H itclDecls.h HINTS "${ITCL_INCLUDE_PATH}")
+  find_path(HAVE_ITCLDECLS_H itclDecls.h HINTS "${ITCL_INCLUDE_PATH}" PATH_SUFFIXES itcl)
 endif(ENABLE_itcl)
 
 if(ENABLE_itk)
   set(HAVE_ITK ON)
 endif(ENABLE_itk)
-
-

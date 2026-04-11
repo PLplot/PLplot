@@ -1,6 +1,6 @@
 # bindings/qt_gui/pyqt5/CMakeLists.txt
 # Copyright (C) 2016 Hazen Babcock
-# Copyright (C) 2009-2019 Alan W. Irwin
+# Copyright (C) 2009-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -51,21 +51,21 @@ if(ENABLE_pyqt5)
     DEPENDS ${plplot_pyqt5_HDR} ${plplot_pyqt5_SRC}
     )
 
-  # Assume sip.h can be found in PYTHON_INCLUDE_PATH
+  # Assume sip.h can be found in Python3_INCLUDE_DIRS
   include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/lib/qsastime
     ${CMAKE_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/include
     ${CMAKE_BINARY_DIR}/lib/qsastime
-    ${PYTHON_INCLUDE_PATH}
+    ${Python3_INCLUDE_DIRS}
     )
 
   if(ENABLE_DYNDRIVERS)
     set(pyqt5_tll_list
       PLPLOT::plplotqt
       PLPLOT::plplot
-      ${PYTHON_LIBRARIES}
+      ${Python3_LIBRARIES}
       Qt5::Svg Qt5::Gui Qt5::PrintSupport
       )
   else(ENABLE_DYNDRIVERS)
@@ -73,7 +73,7 @@ if(ENABLE_pyqt5)
     # in the plplot library so plplotqt becomes redundant.
     set(pyqt5_tll_list
       PLPLOT::plplot
-      ${PYTHON_LIBRARIES}
+      ${Python3_LIBRARIES}
       Qt5::Svg Qt5::Gui Qt5::PrintSupport
       )
   endif(ENABLE_DYNDRIVERS)
@@ -90,7 +90,7 @@ if(ENABLE_pyqt5)
       )
   endif(WRITEABLE_TARGET)
 
-  if(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     # The combination of python3 (at least for version 3.4) and sip
     # creates a useless shared object with no externally accessible
     # symbols when g++ with the -fvisibility=hidden option is used to
@@ -98,10 +98,9 @@ if(ENABLE_pyqt5)
     # module.  Work around this issue by appending
     # -fvisibility=default to the compiler options for this target for
     # all python 3 cases (although it is not clear if this bug has
-    # been fixed for python 3 versions higher than 3.4). This
-    # visibility bug does not occur for Python 2.
+    # been fixed for python 3 versions higher than 3.4).
     target_compile_options(${WRITEABLE_TARGET}plplot_pyqt5 PRIVATE "-fvisibility=default")
-  endif(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0" AND ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+  endif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 
   if(WIN32_OR_CYGWIN)
     set_target_properties(

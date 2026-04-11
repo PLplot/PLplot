@@ -8,9 +8,9 @@ message(STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
 message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
 message(STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
 
-# Maintenance 2020-02, for convenience keep this identical with
+# Maintenance 2026, for convenience keep this identical with
 # the minimum CMake version used by PLplot.
-cmake_minimum_required(VERSION 3.13.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.31.6 FATAL_ERROR)
 
 # Copied from cmake/modules/plplot_functions, but given
 # a different name (ndiff_ prefix) in anticipation

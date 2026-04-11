@@ -1,7 +1,7 @@
 
 #=============================================================================
 # Copyright 2003-2012 Kitware, Inc.
-# Copyright 2015 Alan W. Irwin
+# Copyright 2015-2026 Alan W. Irwin
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -67,10 +67,10 @@ end;
   # file must be named target.adb.
   FILE(WRITE ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/CMakeTmp/CMakeLists.txt
   "
-# MAINTENANCE
+# MAINTENANCE 2026
 # Use same minimum version for all platforms as the Linux platform minimum adopted for
 # the PLplot project.
-cmake_minimum_required(VERSION 3.7.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.31.6 FATAL_ERROR)
 set(CMAKE_MODULE_PATH \"${CMAKE_Ada_MODULES}\")
 set(CMAKE_VERBOSE_MAKEFILE ON CACHE BOOL \"\" FORCE)
 project(test Ada)

@@ -1,5 +1,5 @@
 # bindings/python/CMakeLists.txt
-# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -32,8 +32,11 @@ if(ENABLE_python)
       ${CMAKE_CURRENT_BINARY_DIR}
       ${TCL_INCLUDE_PATH}
       ${TK_INCLUDE_PATH}
-      ${PYTHON_INCLUDE_PATH}
-      ${NUMPY_INCLUDE_PATH}
+      ${Python3_INCLUDE_DIRS}
+      # On Debian 13.3 this variable needs a numpy suffix, but use both
+      # forms because this mistake (IMHO) is unlikely to be true on other distros.
+      ${Python3_NumPy_INCLUDE_DIRS}
+      ${Python3_NumPy_INCLUDE_DIRS}/numpy
       ${CMAKE_SOURCE_DIR}/bindings/swig-support
       )
   else(ENABLE_tkX)
@@ -44,8 +47,11 @@ if(ENABLE_python)
       ${CMAKE_BINARY_DIR}/include
       ${CMAKE_BINARY_DIR}/lib/qsastime
       ${CMAKE_CURRENT_BINARY_DIR}
-      ${PYTHON_INCLUDE_PATH}
-      ${NUMPY_INCLUDE_PATH}
+      ${Python3_INCLUDE_DIRS}
+      # On Debian 13.3 this variable needs a numpy suffix, but use both
+      # forms because this mistake (IMHO) is unlikely to be true on other distros.
+      ${Python3_NumPy_INCLUDE_DIRS}
+      ${Python3_NumPy_INCLUDE_DIRS}/numpy
       ${CMAKE_SOURCE_DIR}/bindings/swig-support
       )
   endif(ENABLE_tkX)
@@ -53,11 +59,9 @@ if(ENABLE_python)
 
   # Implement _Pltk_init swig-generated Python extension module
   # that allows calling our Tcl/Tk code from python.  This result
-  # works both for Python 2 and Python 3 and
-  # replaces the old unmaintable plplot_widget hand-crafted extension
-  # module that was not compatible with Python 3.
+  # works for Python 3.
 
-  # AND (ENABLE_DYNDRIVERS OR PLD_tk) Boolean logic required to
+  # N.B. "AND (ENABLE_DYNDRIVERS OR PLD_tk)" Boolean logic required to
   # insure correct code to support _Pltk_init extension module is in
   # libplplot if ENABLE_DYNDRIVERS is OFF.
   if(ENABLE_tkX AND (ENABLE_DYNDRIVERS OR PLD_tk))
@@ -67,7 +71,7 @@ if(ENABLE_python)
       set(pltk_init_tll_list
 	PLPLOT::plplot
 	PLPLOT::plplottcltk
-	${PYTHON_LIBRARIES}
+	${Python3_LIBRARIES}
 	)
     else(ENABLE_DYNDRIVERS)
       # Don't link to plplottcltk if ENABLE_DYNDRIVERS is false since all of
@@ -75,7 +79,7 @@ if(ENABLE_python)
       # rule avoids redundant linking.
       set(pltk_init_tll_list
 	PLPLOT::plplot
-	${PYTHON_LIBRARIES}
+	${Python3_LIBRARIES}
 	)
     endif(ENABLE_DYNDRIVERS)
 
@@ -131,7 +135,7 @@ if(ENABLE_python)
 
   set(plotc_tll_list
     PLPLOT::plplot
-    ${PYTHON_LIBRARIES}
+    ${Python3_LIBRARIES}
     )
   # plplotc depends on the plplot library.
   set(LIB_INSTALL_RPATH ${LIB_DIR})
@@ -146,14 +150,6 @@ if(ENABLE_python)
       VERBATIM
     )
   endif(WRITEABLE_TARGET)
-
-  if(${PYTHON_VERSION} VERSION_LESS "3.0.0")
-    # Fix up the swig-generated plplotc.py code to allow UTF-8 help strings for the python2 case.
-    add_custom_command(TARGET ${SWIG_MODULE_plplotc_REAL_NAME} POST_BUILD
-      COMMAND ${SED_EXECUTABLE} -i -e "1s?^\\(.*\\)\$?\\1  It uses coding: utf-8?" ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py
-      VERBATIM
-    )
-  endif(${PYTHON_VERSION} VERSION_LESS "3.0.0")
 
   install(
     FILES plplot.py ${CMAKE_CURRENT_BINARY_DIR}/plplotc.py

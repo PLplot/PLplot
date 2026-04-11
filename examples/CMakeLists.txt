@@ -1,7 +1,7 @@
 # examples/CMakeLists.txt
 
 # Copyright (C) 2006-2015 Andrew Ross
-# Copyright (C) 2006-2021 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 # Copyright (C) 2008-2009 Werner Smekal
 #
 # This file is part of PLplot.
@@ -1146,11 +1146,11 @@ if(BUILD_TEST)
 	)
       add_dependencies(test_qt_example qt_example ${qt_targets})
       if(PLPLOT_USE_QT5)
-	message(STATUS "WARNING: The test_qt_example target can be run independently
-   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
-   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
-   temporarily exclude this target from being a dependency of the test_interactive target")
-	#list(APPEND interactive_targets_LIST test_qt_example)
+#	message(STATUS "WARNING: The test_qt_example target can be run independently
+#   but is not reliable (see <https://sourceforge.net/p/plplot/bugs/158/>) when
+#   PLPLOT_USE_QT5 is set to ${PLPLOT_USE_QT5}.  So until this issue can be straightened out
+#   temporarily exclude this target from being a dependency of the test_interactive target")
+	list(APPEND interactive_targets_LIST test_qt_example)
       else(PLPLOT_USE_QT5)
 	list(APPEND interactive_targets_LIST test_qt_example)
       endif(PLPLOT_USE_QT5)
@@ -1171,7 +1171,7 @@ if(BUILD_TEST)
   if(ENABLE_pyqt4)
     if(CORE_BUILD)
       add_custom_target(test_pyqt4_example
-	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt4_example.py
+	COMMAND $<TARGET_FILE:Python3::Interpreter> ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt4_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	)
       add_dependencies(test_pyqt4_example
@@ -1182,7 +1182,7 @@ if(BUILD_TEST)
 	)
     else(CORE_BUILD)
       add_custom_target(test_pyqt4_example
-	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt4_example.py
+	COMMAND $<TARGET_FILE:Python3::Interpreter> ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt4_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	)
       add_dependencies(test_pyqt4_example
@@ -1200,7 +1200,7 @@ if(BUILD_TEST)
   if(ENABLE_pyqt5)
     if(CORE_BUILD)
       add_custom_target(test_pyqt5_example
-	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt5_example.py
+	COMMAND $<TARGET_FILE:Python3::Interpreter> ${CMAKE_CURRENT_BINARY_DIR}/python/pyqt5_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	)
       add_dependencies(test_pyqt5_example
@@ -1211,7 +1211,7 @@ if(BUILD_TEST)
 	)
     else(CORE_BUILD)
       add_custom_target(test_pyqt5_example
-	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt5_example.py
+	COMMAND $<TARGET_FILE:Python3::Interpreter> ${CMAKE_CURRENT_SOURCE_DIR}/python/pyqt5_example.py
 	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	)
       add_dependencies(test_pyqt5_example
@@ -1338,7 +1338,7 @@ if(BUILD_TEST)
     if(ENABLE_python AND (ENABLE_DYNDRIVERS OR PLD_tk))
       if(CORE_BUILD)
 	add_custom_target(test_pytkdemo
-	  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/python/pytkdemo
+	  COMMAND $<TARGET_FILE:Python3::Interpreter> ${CMAKE_CURRENT_BINARY_DIR}/python/pytkdemo
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
 	  VERBATIM
 	  )
@@ -1351,7 +1351,7 @@ if(BUILD_TEST)
 	  )
       else(CORE_BUILD)
 	add_custom_target(test_pytkdemo
-	  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/python/pytkdemo
+	  COMMAND $<TARGET_FILE:Python3::Interpreter> ${CMAKE_CURRENT_SOURCE_DIR}/python/pytkdemo
 	  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
 	  VERBATIM
 	  )

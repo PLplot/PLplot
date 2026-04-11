@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 
-#  Copyright (C) 2006-2016 Alan W. Irwin
+#  Copyright (C) 2006-2026 Alan W. Irwin
 
 #  Multi-lingual version of the first page of example 4.
 
@@ -179,7 +179,7 @@ def plot1(w, type, x_label, y_label, alty_label, title_label, line_label, legend
     # Data for first legend entry.
     opt_array[0] = w.PL_LEGEND_LINE
     text_colors[0] = 2
-    text[0] = legend_text[0].encode() if (sys.version_info > (3, 0)) else legend_text[0]
+    text[0] = legend_text[0].encode()
     line_colors[0] = 2
     line_styles[0] = 1
     line_widths[0] = 1.
@@ -188,7 +188,7 @@ def plot1(w, type, x_label, y_label, alty_label, title_label, line_label, legend
     if nlegend > 1:
         opt_array[1]      = w.PL_LEGEND_LINE | w.PL_LEGEND_SYMBOL
         text_colors[1]    = 3
-        text[1] = legend_text[1].encode() if (sys.version_info > (3, 0)) else legend_text[1]
+        text[1] = legend_text[1].encode()
         line_colors[1]    = 3
         line_styles[1]    = 1
         line_widths[1]    = 1.

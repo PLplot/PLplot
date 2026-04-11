@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2010-2016 Alan W. Irwin
 # This file is part of PLplot.

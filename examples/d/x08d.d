@@ -1,7 +1,7 @@
 //      3-d plot demo.
 //
 // Copyright (C) 2008  Werner Smekal
-// Copyright (C) 2004  Alan W. Irwin
+// Copyright (C) 2004-2026 Alan W. Irwin
 // Copyright (C) 2004  Rafael Laboissiere
 //
 // This file is part of PLplot.
@@ -23,8 +23,11 @@
 
 import plplot;
 import std.string;
+// Provide floating point fmin and fmax and others.
 import std.math;
 import core.stdc.stdlib;
+// Provide integer min and max.
+import std.algorithm.comparison : min, max;
 
 //--------------------------------------------------------------------------
 // cmap1_init1
@@ -157,10 +160,10 @@ int main( char[][] args )
         square_root = sqrt( 1. - fmin( 1., pow( ( cast(PLFLT) i - x0 ) / a, 2. ) ) );
         // Add 0.5 to find nearest integer and therefore preserve symmetry
         // with regard to lower and upper bound of y range.
-        indexymin[i] = cast( PLINT ) fmax( 0, cast(PLINT) ( 0.5 + y0 - b * square_root ) );
+        indexymin[i] = max( 0, cast( PLINT ) ( 0.5 + y0 - b * square_root ) );
         // indexymax calculated with the convention that it is 1
         // greater than highest valid index.
-        indexymax[i] = cast( PLINT ) fmin( YPTS, 1 + cast(PLINT) ( 0.5 + y0 + b * square_root ) );
+        indexymax[i] = min( YPTS, 1 + cast( PLINT ) ( 0.5 + y0 + b * square_root ) );
 
         for ( size_t j = indexymin[i]; j < indexymax[i]; j++ )
             zlimited[i][j] = z[i][j];

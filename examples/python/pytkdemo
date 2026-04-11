@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*-python-*-
 # Geoffrey Furnish
 #
@@ -7,22 +7,17 @@
 # Append to effective python path so that can find plplot modules.
 import plplot_python_start
 
-# Python 2 name is Tkinter, Python 3 name is tkinter (sigh).
 import sys
-if sys.version_info[:2] >= (3, 0):
-    from tkinter import *
-else:
-    from Tkinter import *
+
+from tkinter import *
 
 # According to the discussion at
 # <https://stackoverflow.com/questions/437589/how-do-i-unload-reload-a-python-module>
-# reload is just part of Python2, it is part of the imp module (deprecated as of
+# reload is part of the imp module (deprecated as of
 # Python 3.4) for Python3 version < 3.4.0, and it is part of the importlib module
 # that is available for Python3 version >= 3.4.0
 
-if sys.version_info[:3] < (3, 0, 0):
-    pass
-elif  sys.version_info[:3] < (3, 4, 0):
+if sys.version_info[:3] < (3, 4, 0):
     from imp import reload
 else:
     from importlib import reload

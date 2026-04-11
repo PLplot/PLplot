@@ -2,7 +2,7 @@
 !  plplot_small_modules.f90
 !
 !  Copyright (C) 2005-2016  Arjen Markus
-!  Copyright (C) 2006-2018 Alan W. Irwin
+!  Copyright (C) 2006-2026 Alan W. Irwin
 !
 !  This file is part of PLplot.
 !
@@ -212,7 +212,8 @@ contains
 
         max_cstring_length = 0
         do j_local = 1, number_local
-            max_cstring_length = max(max_cstring_length, interface_strlen(cstring_address_array(j_local)))
+           max_cstring_length = max(max_cstring_length,&
+                int(interface_strlen(cstring_address_array(j_local)), kind(max_cstring_length)))
         enddo
     end function max_cstring_length
 

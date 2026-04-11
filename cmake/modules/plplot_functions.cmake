@@ -209,11 +209,11 @@ function(filter_rpath rpath)
   set(${rpath} ${internal_rpath} PARENT_SCOPE)
 endfunction(filter_rpath)
 
-# First argument is a variable corresponding to a list of rpath locations which gets updated
-# in the parent scope.
-# Second argument is a string containing a semicolon-delimited list of dependent libraries
-# whose INSTALL_RPATH properties are to be added to the rpath list for the transitive rpath case.
 function(process_rpath rpath tll_arguments)
+  # First argument is a variable corresponding to a list of rpath locations which gets updated
+  # in the parent scope.
+  # Second argument is a string containing a semicolon-delimited list of dependent libraries
+  # whose INSTALL_RPATH properties are to be added to the rpath list for the transitive rpath case.
   #message("DEBUG: ${rpath} = ${${rpath}}")
   set(internal_rpath ${${rpath}})
   if(internal_rpath)
@@ -286,8 +286,8 @@ function(configure_executable_build executable executable_src tll_arguments lib_
   # ALIAS executables in a uniform way that supports the appropriate
   # writeable or read-only prefixes for all target names that are generated.
   #
-  # This function should be duplicated for the PLplot, ephcom, and
-  # te_gen software projects and should only be used for those
+  # This function should be duplicated for the PLplot, ephcom, te_gen,
+  # and FreeEOS software projects and should only be used for those
   # executables that are both built in the build tree AND namespaced
   # installed (not built) in the install tree.
 
@@ -382,8 +382,8 @@ function(configure_library_build library library_type library_src tll_arguments 
   # way that supports the appropriate writeable or read-only prefixes
   # for all target names that are generated.
   #
-  # This function should be duplicated for the PLplot, ephcom, and
-  # te_gen software projects and should only be used for those
+  # This function should be duplicated for the PLplot, ephcom, te_gen,
+  # and FreeEOS software projects and should only be used for those
   # libraries that are both built in the build tree AND namespaced
   # installed (not built) in the install tree.
 
@@ -555,7 +555,19 @@ function(configure_library_build library library_type library_src tll_arguments 
     elseif(ARGC EQUAL 7)
       configure_target_install(${SWIG_MODULE_${library}_REAL_NAME} ${ARGV5} "${ARGV6}")
     else(ARGC EQUAL 6)
-      message(FATAL_ERROR "configure_library_build called with number of arguments not equal to 6 or 7 for library_type = ${library_type}")
+      message(FATAL_ERROR "
+ configure_library_build called with incorrect number of arguments for library_type = ${library_type}.
+ The following results should help to diagnose this internal build-system issue.
+ ARGC = ${ARGC}
+ ARGV0 = ${ARGV0}
+ ARGV1 = ${ARGV1}
+ ARGV2 = ${ARGV2}
+ ARGV3 = ${ARGV3}
+ ARGV4 = ${ARGV4}
+ ARGV5 = ${ARGV5}
+ ARGV = ${ARGV}
+ ARGN = ${ARGN}"
+      )
     endif(ARGC EQUAL 6)
 
   else(if_swig_module)
@@ -644,8 +656,20 @@ function(configure_library_build library library_type library_src tll_arguments 
       configure_target_install(${library} ${ARGV5})
     elseif(ARGC EQUAL 7 AND "${library_type}" STREQUAL "MODULE")
       configure_target_install(${library} ${ARGV5} "${ARGV6}")
-    else(ARGC EQUAL 5)
-      message(FATAL_ERROR "configure_library_build called with too many arguments for library_type = ${library_type}")
+    else(ARGC EQUAL 5 AND ("${library_type}" STREQUAL "SHARED" OR "${library_type}" STREQUAL "STATIC"))
+      message(FATAL_ERROR "
+ configure_library_build called with incorrect number of arguments for library_type = ${library_type}.
+ The following results should help to diagnose this internal build-system issue.
+ ARGC = ${ARGC}
+ ARGV0 = ${ARGV0}
+ ARGV1 = ${ARGV1}
+ ARGV2 = ${ARGV2}
+ ARGV3 = ${ARGV3}
+ ARGV4 = ${ARGV4}
+ ARGV5 = ${ARGV5}
+ ARGV = ${ARGV}
+ ARGN = ${ARGN}"
+      )
     endif(ARGC EQUAL 5 AND ("${library_type}" STREQUAL "SHARED" OR "${library_type}" STREQUAL "STATIC"))
   endif(if_swig_module)
 endfunction(configure_library_build library library_type library_src tll_arguments lib_install_rpath)
@@ -653,8 +677,8 @@ endfunction(configure_library_build library library_type library_src tll_argumen
 function(configure_target_install target)
   # configure the install of targets and their export data.
   #
-  # This function should be duplicated for the PLplot, ephcom, and
-  # te_gen software projects and should only be used for those targets
+  # This function should be duplicated for the PLplot, ephcom, te_gen,
+  # and FreeEOS software projects and should only be used for those targets
   # (libraries, shared objects, and executables) that are both built
   # in the build tree AND namespaced installed (not built) in the
   # install tree.

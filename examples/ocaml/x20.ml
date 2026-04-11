@@ -59,7 +59,7 @@ let read_img fname =
   let w, h = Scanf.sscanf w_h_line "%d %d" (fun w h -> w, h) in
   let num_col = Scanf.sscanf num_col_line "%d" (fun n -> n) in
 
-  let img = String.make (w * h) ' ' in
+  let img = Bytes.create (w * h) in
   let imf = Array.make_matrix w h 0.0 in
 
   (* Note that under 32bit OCaml, this will only work when reading strings up
@@ -72,7 +72,12 @@ let read_img fname =
     for j = 0 to h - 1 do
       imf.(i).(j) <-
         (* flip image up-down *)
-        float_of_int (int_of_char (img.[(h - 1 - j ) * w + i]));
+        (* N.B. Bytes.get converts an element of the img
+           array of type bytes to (8-bit) char type and
+	   Char.code converts that char to integer by simply
+	   filling in the most significant bits with zeroes, i.e.,
+	   doing no twos-complement sign conversions. *)
+        float_of_int (Char.code (Bytes.get img ((h - 1 - j) * w + i)));
     done
   done;
   imf, w, h, num_col

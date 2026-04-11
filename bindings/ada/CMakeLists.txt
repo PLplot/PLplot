@@ -1,5 +1,5 @@
 # bindings/ada/CMakeLists.txt
-# Copyright (C) 2007-2019 Alan W. Irwin
+# Copyright (C) 2007-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -92,7 +92,7 @@ if(ENABLE_ada)
   endif(ENABLE_ada_static)
 
   # target_link_libraries used in special way below so avoid using it inside configure_library_build.
-  configure_library_build(plplotada ${ADA_lib_type} "${plplotada_BODY_SRCS}" "" "${LIB_INSTALL_RPATH}")
+  configure_library_build(plplotada "${ADA_lib_type}" "${plplotada_BODY_SRCS}" "" "${LIB_INSTALL_RPATH}")
 
   # Work around an issue in our CMake Ada language
   # support for MinGW/Windows.  FIXME.  This issue should be fixed

@@ -1,4 +1,3 @@
-# -*- mode: cmake -*-
 # This file used to configure CMake variables that are used to build the
 # installed examples.
 # Identify that this is the build system for the installed examples.
@@ -254,10 +253,3 @@ set(WIN32_OR_CYGWIN @WIN32_OR_CYGWIN@)
 
 # Needed for Tcl/Tk linking decisions.
 set(tcltk_in_plplot_library @tcltk_in_plplot_library@)
-
-# Needed for running Python scripts if PYTHON_EXECUTABLE is different
-# from /usr/bin/env python (which often happens if both python2 and python3
-# are installed).
-set(PYTHON_EXECUTABLE @PYTHON_EXECUTABLE@)
-# Needed for Python testing
-set(PYTHON_VERSION @PYTHON_VERSION@)

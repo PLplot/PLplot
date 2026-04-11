@@ -1,18 +1,11 @@
 This file explains how we use our CMake-based build system and other
 tools to build dynamically loaded python extension modules
-implementing PLplot support for either Python 3 (preferred because
-it generally is less buggy/better supported than Python 2 these days) or
-Python 2.
+implementing PLplot support for Python3.
 
-I. Selection of Python 3 or Python 2:
+I. Selection of Python3:
 
-Because of the above fundamental preference our build system first
-searches for the Python 3 executable (unless the user specifies
--DFORCE_PYTHON2=ON).  But if it cannot find a Python 3 executable or
-the user has specified -DFORCE_PYTHON2=ON it will search for a Python
-2 executable.  If a Python executable is found our build system uses
-that executable to find the Python library and numpy extension
-corresponding to that executable.
+We use the recommended modern method of finding consistent Python3
+components.  See cmake/modules/python.cmake for details.
 
 II. plplotc.py and _plplotc.so
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (C) 2004-2016 Alan W. Irwin
 # Copyright (C) 2004 Andrew Ross

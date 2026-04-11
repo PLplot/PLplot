@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Simple test of plgradient for a complicated polygon.
 
 # Append to effective python path so that can find plplot modules.

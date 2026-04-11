@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8; -*-
 # Test whether utf8 and PLplot #[0x...] unicode encoding give same result.
 # Also test whether #<FCI-COMMAND-STRING/> form works to change font

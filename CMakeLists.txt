@@ -50,10 +50,14 @@
 # Adapted method suggested by Brad King for using
 # potentially different minimum versions for different platforms.
 
-set(MINIMUM_LINUX_CMAKE_VERSION 3.13.2)
-# Latest CMake version for all platforms other than Linux.
-# Must be greater than or equal to MINIMUM_LINUX_CMAKE_VERSION
-set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.13.2)
+# Minimum CMake version for all Linux platforms.
+set(MINIMUM_LINUX_CMAKE_VERSION 3.31.6)
+# Minimum CMake version for all platforms other than Linux.
+set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.31.6)
+if(MINIMUM_NON_LINUX_CMAKE_VERSION VERSION_LESS MINIMUM_LINUX_CMAKE_VERSION)
+    message(FATAL_ERROR "Incorrect order for potential minimum cmake version strings")
+endif(MINIMUM_NON_LINUX_CMAKE_VERSION VERSION_LESS MINIMUM_LINUX_CMAKE_VERSION)
+
 # Keep policy consistent for all platforms, i.e., use the Linux
 # version which must be the minimum of the two versions above.
 set(CMAKE_UNIFORM_POLICY_VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
@@ -190,14 +194,20 @@ endif(BORLAND)
 # Enable CTest-based testing framework for examples
 if(BUILD_TEST)
 
-  # Use same BUILDNAME logic as the CTest module except
-  # we allow a BUILDNAME suffix whose value is specified
-  # by the user as PLPLOT_BUILDNAME_SUFFIX.  In order
-  # for this logic to work it must precede including the
-  # CTest module which configures DartConfiguration.tcl
-  # with BUILDNAME as determined here.
-  # Maintenance: 2019-03-28 copy this BUILDNAME logic from
-  # cmake git v3.13.4 Modules/CTest.cmake.
+  # BUILDNAME appears throughout CMake git repository files including
+  # likely in files included by the CTest module so be extremely
+  # cautious about modifying it by using the exact same BUILDNAME
+  # logic as the CTest module for 4.3.1 (Maintenance 2026-04)
+  # including adding a suffix to the value *before* including the
+  # CTest module (which obviously skips changing BUILDNAME since it
+  # has already been determined here.  N.B. I used git diff on this
+  # file to show this copied CTest BUILDNAME logic has not changed
+  # since I last maintained this logic (six years ago by coping it
+  # from cmake git v3.13.4 Modules/CTest.cmake).  So no changes in six
+  # years shows this BUILDNAME logic is rarely changed by the cmake
+  # developers.
+
+  # set the build name
   if(NOT BUILDNAME)
     set(DART_COMPILER "${CMAKE_CXX_COMPILER}")
     if(NOT DART_COMPILER)

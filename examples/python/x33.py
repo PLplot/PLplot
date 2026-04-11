@@ -1,6 +1,6 @@
 # -*- coding: utf-8; -*-
 
-#  Copyright (C) 2010-2017 Alan W. Irwin
+#  Copyright (C) 2010-2026 Alan W. Irwin
 
 #  Demonstrate most pllegend capability including unicode symbols.
 
@@ -29,6 +29,8 @@
 
 import sys
 
+python_min = min
+python_max = max
 from numpy import *
 
 # This only needed to define the following lists
@@ -435,7 +437,7 @@ def main(w):
             nlegend += 1
         else:
             nlegend -= 1
-        nlegend = max(1, nlegend)
+        nlegend = python_max(1, nlegend)
         opt_array = zeros(nlegend, "int")
         text_colors = zeros(nlegend, "int")
         text = zeros(nlegend, "S200")
@@ -469,7 +471,7 @@ def main(w):
         w.plsfont(w.PL_FCI_MONO, -1, -1)
         w.plscol0a( 15, 32, 32, 32, 0.70 )
 
-        nrow = min(3, nlegend)
+        nrow = python_min(3, nlegend)
         ncolumn = 0
 
         (legend_width, legend_height) = \
@@ -550,7 +552,7 @@ def main(w):
     symbol_colors[3] = 4
     symbol_scales[3] = text_scale
     symbol_numbers[3] = 4
-    symbols[3] = special_symbols[2].encode() if (sys.version_info > (3, 0)) else special_symbols[2]
+    symbols[3] = special_symbols[2].encode()
 
     opt_array[4] = w.PL_LEGEND_SYMBOL | w.PL_LEGEND_LINE
     text[4] = "L & S"
@@ -561,7 +563,7 @@ def main(w):
     symbol_colors[4] = 5
     symbol_scales[4] = text_scale
     symbol_numbers[4] = 4
-    symbols[4] = special_symbols[2].encode() if (sys.version_info > (3, 0)) else special_symbols[2]
+    symbols[4] = special_symbols[2].encode()
 
     opt = opt_base
     w.plscol0a( 15, 32, 32, 32, 0.70 )
@@ -572,18 +574,18 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up symbol legend entries with various symbols.
     for i in range(nlegend):
         opt_array[i] = w.PL_LEGEND_SYMBOL
-        text[i] = "Symbol ".encode() if (sys.version_info > (3, 0)) else "Symbol "
-        text[i] += special_symbols[i].encode() if (sys.version_info > (3, 0)) else special_symbols[i]
+        text[i] = "Symbol ".encode()
+        text[i] += special_symbols[i].encode()
         text_colors[i] = i+1
         symbol_colors[i] = i+1
         symbol_scales[i] = text_scale
         symbol_numbers[i] = 4
-        symbols[i] = special_symbols[i].encode() if (sys.version_info > (3, 0)) else special_symbols[i]
+        symbols[i] = special_symbols[i].encode()
 
     opt = opt_base
     x += legend_width
@@ -595,7 +597,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up symbol legend entries with various numbers of symbols.
     for i in range(nlegend):
@@ -605,7 +607,7 @@ def main(w):
         symbol_colors[i] = i+1
         symbol_scales[i] = text_scale
         symbol_numbers[i] = i+2
-        symbols[i] = special_symbols[2].encode() if (sys.version_info > (3, 0)) else special_symbols[2]
+        symbols[i] = special_symbols[2].encode()
 
     opt = opt_base
     x += legend_width
@@ -617,7 +619,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up box legend entries with various colours.
     for i in range(nlegend):
@@ -642,7 +644,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up box legend entries with various patterns.
     for i in range(nlegend):
@@ -664,7 +666,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up box legend entries with various box pattern line widths.
     for i in range(nlegend):
@@ -686,7 +688,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up line legend entries with various colours.
     for i in range(nlegend):
@@ -710,7 +712,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up line legend entries with various styles
     for i in range(nlegend):
@@ -731,7 +733,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Set up line legend entries with various widths.
     for i in range(nlegend):
@@ -752,7 +754,7 @@ def main(w):
               box_colors, box_patterns, box_scales, box_line_widths,
               line_colors, line_styles, line_widths,
               symbol_colors, symbol_scales, symbol_numbers, symbols )
-    max_height = max(max_height, legend_height)
+    max_height = python_max(max_height, legend_height)
 
     # Color bar examples
     values_small  = [ -1.0e-20, 1.0e-20 ]

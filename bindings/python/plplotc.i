@@ -2,7 +2,7 @@
 
 //
 // Copyright (C) 2002 Gary Bishop
-// Copyright (C) 2002-2019 Alan W. Irwin
+// Copyright (C) 2002-2026 Alan W. Irwin
 // Copyright (C) 2004-2005 Rafael Laboissiere
 // Copyright (C) 2004-2013 Andrew Ross
 // Copyright (C) 2009 Werner Smekal
@@ -686,7 +686,7 @@ typedef PLINT          PLBOOL;
 }
 %typemap( argout ) ( const PLFLT * ArrayY, PLINT ny, PLFLT **OutMatrixCk )
 {
-    $result = SWIG_Python_AppendOutput( $result, array$argnum );
+    $result = SWIG_Python_AppendOutput( $result, array$argnum, $isvoid);
 }
 
 //**************************
@@ -753,9 +753,9 @@ typedef PLINT          PLBOOL;
 {
     $1 = buff;
 }
-%typemap( argout, fragment = "t_output_helper" ) char *OUTPUT {
+%typemap( argout ) char *OUTPUT {
     PyObject *o = PyString_FromString( $1 );
-    $result = t_output_helper( $result, o );
+    $result = SWIG_AppendOutput( $result, o );
 }
 
 //**************************
@@ -1015,7 +1015,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         PyObject      *pdata, *arglist, *result;
         PyArrayObject *tmp;
 
-        // the data argument is acutally a pointer to a python object
+        // the data argument is actually a pointer to a python object
         pdata = (PyObject *) data;
         if ( data == NULL )
         {
@@ -1035,11 +1035,11 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             if ( arglist == NULL )
             {
                 fprintf( stderr, "Py_BuildValue failed to make argument list.\n" );
+                PyErr_SetString( PyExc_RuntimeError, "No pltr callback argument list." );
                 *tx = *ty = 0;
-                return;
             }
             // call the python function
-            result = PyEval_CallObject( python_pltr, arglist );
+            result = PyObject_Call( python_pltr, arglist, NULL );
             // release the argument list
             Py_CLEAR( arglist );
             // check and unpack the result
@@ -1078,7 +1078,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         PyObject *pdata, *arglist, *result;
         PLFLT    fresult = 0.0;
 
-        // the data argument is acutally a pointer to a python object
+        // the data argument is actually a pointer to a python object
         pdata = (PyObject *) data;
         if ( python_f2eval ) // if not something is terribly wrong
         {                    // hold a reference to the data object
@@ -1086,9 +1086,14 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             // grab the Global Interpreter Lock to be sure threads don't mess us up
             MY_BLOCK_THREADS
             // build the argument list
-                arglist = Py_BuildValue( "(iiO)", x, y, pdata );
+	      arglist = Py_BuildValue( "(iiO)", x, y, pdata );
+            if ( arglist == NULL )
+            {
+                fprintf( stderr, "Py_BuildValue failed to make argument list.\n" );
+                PyErr_SetString( PyExc_RuntimeError, "No f2eval callback argument list." );
+            }
             // call the python function
-            result = PyEval_CallObject( python_f2eval, arglist );
+            result = PyObject_Call( python_f2eval, arglist, NULL );
             // release the argument list
             Py_CLEAR( arglist );
             // check and unpack the result
@@ -1115,7 +1120,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         PyObject *pdata, *arglist, *result, *unicode_string;
         char     *pystring;
 
-        // the data argument is acutally a pointer to a python object
+        // the data argument is actually a pointer to a python object
         if ( data )
             pdata = (PyObject *) data;
         else
@@ -1131,8 +1136,13 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 #else
             arglist = Py_BuildValue( "(lfO)", axis, value, pdata );
 #endif
+            if ( arglist == NULL )
+            {
+                fprintf( stderr, "Py_BuildValue failed to make argument list.\n" );
+                PyErr_SetString( PyExc_RuntimeError, "No label callback argument list." );
+            }
             // call the python function
-            result = PyEval_CallObject( python_label, arglist );
+            result = PyObject_Call( python_label, arglist, NULL );
             // release the argument list
             //Py_CLEAR(arglist);
             // check and unpack the result
@@ -1173,7 +1183,7 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
         npy_intp n;
         n = 1;
 
-        // the data argument is acutally a pointer to a python object
+        // the data argument is actually a pointer to a python object
         pdata = (PyObject *) data;
         if ( data == NULL )
         {
@@ -1188,8 +1198,13 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
                 px = PyArray_SimpleNewFromData( 1, &n, NPY_PLFLT, (void *) xt );
             py      = PyArray_SimpleNewFromData( 1, &n, NPY_PLFLT, (void *) yt );
             arglist = Py_BuildValue( "(ddOOO)", x, y, px, py, pdata );
+            if ( arglist == NULL )
+            {
+                fprintf( stderr, "Py_BuildValue failed to make argument list.\n" );
+		PyErr_SetString( PyExc_RuntimeError, "No coordinate transform callback argument list." );
+            }
             // call the python function
-            result = PyEval_CallObject( python_ct, arglist );
+            result = PyObject_Call( python_ct, arglist, NULL );
             // release the argument list
             Py_CLEAR( arglist );
             Py_CLEAR( px );
@@ -1229,8 +1244,13 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
             py = PyArray_FromDimsAndData( 1, &n, NPY_PLFLT, (char *) y );
 #endif
             arglist = Py_BuildValue( "(iOO)", n, px, py );
+            if ( arglist == NULL )
+            {
+                fprintf( stderr, "Py_BuildValue failed to make argument list.\n" );
+		PyErr_SetString( PyExc_RuntimeError, "No mapform callback argument list." );
+            }
             // call the python function
-            result = PyEval_CallObject( python_mapform, arglist );
+            result = PyObject_Call( python_mapform, arglist, NULL );
             // release the argument list
             Py_CLEAR( arglist );
             Py_CLEAR( px );
@@ -1666,9 +1686,9 @@ typedef void ( *label_func )( PLINT, PLFLT, char *, PLINT, PLPointer );
 %typemap( argout ) PLGraphicsIn * gin {
     PyObject *o;
     o         = PyFloat_FromDouble( $1->wX );
-    resultobj = t_output_helper( resultobj, o );
+    resultobj = SWIG_AppendOutput( resultobj, o );
     o         = PyFloat_FromDouble( $1->wY );
-    resultobj = t_output_helper( resultobj, o );
+    resultobj = SWIG_AppendOutput( resultobj, o );
 }
 #endif
 

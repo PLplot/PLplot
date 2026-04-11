@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Simple test of plfill for the case where the polygon is just outside the
 # window.
 

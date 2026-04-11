@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Test of all line styles and box styles using pllegend.
 
 # Append to effective python path so that can find plplot modules.

@@ -1,6 +1,6 @@
 # cmake/modules/qt.cmake
 #
-# Copyright (C) 2009-2020 Alan W. Irwin
+# Copyright (C) 2009-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -419,7 +419,7 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
 
     # Look in standard places for sip files.
     execute_process(
-      COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(sys.prefix)"
+      COMMAND ${Python3_EXECUTABLE} -c "import sys; print(sys.prefix)"
       OUTPUT_VARIABLE SYS_PREFIX
       RESULT_VARIABLE SYS_PREFIX_ERR
       OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -436,13 +436,9 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
       set(sip_dir_PATHS)
       if(WIN32_AND_NOT_CYGWIN)
 	# Here is the MinGW-w64/MSYS2 data concerning this location.
-	# from the following results from Arjen's run of "pkgfile -v QtCoremod.sip".
-	# mingw32/mingw-w64-i686-python2-pyqt4 4.11.4-2 /mingw32/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
-	# mingw32/mingw-w64-i686-python2-pyqt5 5.8-1 /mingw32/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
+	# from the following Python3 results from Arjen's run of "pkgfile -v QtCoremod.sip".
 	# mingw32/mingw-w64-i686-python3-pyqt4 4.11.4-2 /mingw32/share/sip/PyQt4/QtCore/QtCoremod.sip
 	# mingw32/mingw-w64-i686-python3-pyqt5 5.8-1 /mingw32/share/sip/PyQt5/QtCore/QtCoremod.sip
-	# mingw64/mingw-w64-x86_64-python2-pyqt4 4.11.4-2 /mingw64/share/sip/Py2-Qt4/QtCore/QtCoremod.sip
-	# mingw64/mingw-w64-x86_64-python2-pyqt5 5.8-1 /mingw64/share/sip/Py2-Qt5/QtCore/QtCoremod.sip
 	# mingw64/mingw-w64-x86_64-python3-pyqt4 4.11.4-2 /mingw64/share/sip/PyQt4/QtCore/QtCoremod.sip
 	# mingw64/mingw-w64-x86_64-python3-pyqt5 5.8-1 /mingw64/share/sip/PyQt5/QtCore/QtCoremod.sip
         list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/sip")
@@ -454,27 +450,25 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
 	# that generic form (other than the prefix) here.)
         list(APPEND sip_dir_PATHS "${SYS_PREFIX}/sip")
       else(WIN32_AND_NOT_CYGWIN)
-        if(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0")
-	  # Here is the Fedora 32 (and likely previous Fedora) python3/qt5 locations according to
-	  # <http://rpm.pbone.net/index.php3/stat/6/idpl/70683647/dir/fedora_32/com/python3-qt5-devel-5.14.2-3.fc32.x86_64.rpm>
-	  # I assume these two different locations are for backwards compatibility or compatibility
-	  # with other Linux distros (see below) so I will search
-	  # for both.
-	  # Fedora 32: /usr/share/python3-sip/PyQt5/QtCore/QtCoremod.sip
-	  # Fedora 32: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
+	# Here is the Fedora 32 (and likely previous Fedora) python3/qt5 locations according to
+	# <http://rpm.pbone.net/index.php3/stat/6/idpl/70683647/dir/fedora_32/com/python3-qt5-devel-5.14.2-3.fc32.x86_64.rpm>
+	# I assume these two different locations are for backwards compatibility or compatibility
+	# with other Linux distros (see below) so I will search
+	# for both.
+	# Fedora 32: /usr/share/python3-sip/PyQt5/QtCore/QtCoremod.sip
+	# Fedora 32: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
 
-	  # Here is the OpenSUSE Tumbleweed distro location from
-	  # <http://rpm.pbone.net/index.php3/stat/6/idpl/54882581/dir/opensuse_tumbleweed/com/python-qt5-utils-5.12-2.3.x86_64.rpm>
-	  # I note this location is the same as one of the Fedora alternatives so it is likely
-	  # a good generic location for most Linux distributions other than Debian Buster and Sid.
-	  # OpenSUSE Tumbleweed: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
-          list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/python3-sip")
-          list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/sip")
-	  # Here is Debian Sid data (taken from <https://packages.debian.org/sid/all/pyqt5-dev/filelist>)
-	  # concerning this python3 location.
-	  # pyqt5-dev: /usr/lib/python3/dist-packages/PyQt5/bindings/QtCore/QtCoremod.sip
-	  list(APPEND sip_dir_PATHS "${SYS_PREFIX}/lib/python3/dist-packages")
-        endif(NOT ${PYTHON_VERSION} VERSION_LESS "3.0.0")
+	# Here is the OpenSUSE Tumbleweed distro location from
+	# <http://rpm.pbone.net/index.php3/stat/6/idpl/54882581/dir/opensuse_tumbleweed/com/python-qt5-utils-5.12-2.3.x86_64.rpm>
+	# I note this location is the same as one of the Fedora alternatives so it is likely
+	# a good generic location for most Linux distributions other than Debian Buster and Sid.
+	# OpenSUSE Tumbleweed: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
+        list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/python3-sip")
+        list(APPEND sip_dir_PATHS "${SYS_PREFIX}/share/sip")
+	# Here is Debian Sid data (taken from <https://packages.debian.org/sid/all/pyqt5-dev/filelist>)
+	# concerning this python3 location.
+	# pyqt5-dev: /usr/lib/python3/dist-packages/PyQt5/bindings/QtCore/QtCoremod.sip
+	list(APPEND sip_dir_PATHS "${SYS_PREFIX}/lib/python3/dist-packages")
 
 	# Here is Debian Buster data (from "apt-file search") concerning this location.
 	# pyqt5-dev: /usr/share/sip/PyQt5/QtCore/QtCoremod.sip
@@ -492,7 +486,6 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
 	# rely on feedback from our users to figure out the location
 	# of QtCore/QtCoremod.sip if none of the variants we try
 	# below work.
-
       endif(WIN32_AND_NOT_CYGWIN)
       # We determine PATHS corresponding to the data above, and then use
       # PATH_SUFFIXES to look for all possible subdirectories of those PATHS.
@@ -521,7 +514,7 @@ if(ENABLE_pyqt4 OR ENABLE_pyqt5)
       if(PYQT_SIP_DIR)
         if(EXISTS ${PYQT_SIP_DIR}/QtCore/QtCoremod.sip AND EXISTS ${PYQT_SIP_DIR}/QtGui/QtGuimod.sip AND (ENABLE_pyqt4 OR EXISTS ${PYQT_SIP_DIR}/QtWidgets/QtWidgetsmod.sip))
           execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} -c "from ${pyqt_module_name}.QtCore import PYQT_CONFIGURATION; print(PYQT_CONFIGURATION['sip_flags'])"
+            COMMAND ${Python3_EXECUTABLE} -c "from ${pyqt_module_name}.QtCore import PYQT_CONFIGURATION; print(PYQT_CONFIGURATION['sip_flags'])"
             OUTPUT_VARIABLE PYQT_SIP_FLAGS
             RESULT_VARIABLE PYQT_SIP_FLAGS_ERR
             OUTPUT_STRIP_TRAILING_WHITESPACE

@@ -1,5 +1,5 @@
 # src/CMakeLists.txt for PLplot
-# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -249,11 +249,16 @@ if(NOT ENABLE_DYNDRIVERS)
     list(APPEND pc_libplplot_LINK_FLAGS ${pc_qt_LIBRARIES_LIST})
   endif(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
 
-  if(PLD_xwin AND PL_USE_PTHREADS_XWIN)
+  if(PLD_xwin AND PL_USE_PTHREADS_XWIN AND Threads_FOUND)
     list(APPEND libplplot_LINK_LIBRARIES Threads::Threads)
     get_target_property(Threads_INTERFACE_LINK_LIBRARIES Threads::Threads INTERFACE_LINK_LIBRARIES)
-    list(APPEND pc_libplplot_LINK_FLAGS ${Threads_INTERFACE_LINK_LIBRARIES})
-  endif(PLD_xwin AND PL_USE_PTHREADS_XWIN)
+    # When threads are found, this property still may not exist when it is not specifically needed,
+    # e.g., when threads are provided by a general system library that is always linked
+    # rather than a specific threads library.
+    if(Threads_INTERFACE_LINK_LIBRARIES)
+      list(APPEND pc_libplplot_LINK_FLAGS ${Threads_INTERFACE_LINK_LIBRARIES})
+    endif(Threads_INTERFACE_LINK_LIBRARIES)
+  endif(PLD_xwin AND PL_USE_PTHREADS_XWIN AND Threads_FOUND)
 endif(NOT ENABLE_DYNDRIVERS)
 
 # The above completes dealing with the external libraries.  Now

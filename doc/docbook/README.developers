@@ -345,13 +345,12 @@ for the python and octave documentation checked below.
 2. Check the python documentation
 
 Build the test_python_svg target in order to build
-all the required /prerequisites.
+all the required prerequisites.
 
 cd to examples/python in the build tree and invoke
 the python interpreter
 
-Execute the python3 (or python2 if appropriate) Python interpreter
-Then for that Python environment execute the following commands:
+Execute the python3 interpreter and from that environment execute the following commands:
 
 >>> from plplot_python_start import *
 >>> import plplot as w

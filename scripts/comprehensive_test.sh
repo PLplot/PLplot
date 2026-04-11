@@ -9,62 +9,219 @@
 # traditional [Makefile+pkg-config] test_noninteractive and
 # test_interactive of the installed examples.
 
-usage () {
+# Define useful bash functions...
+
+function determine_TOP_GIT_DIR {
+    # CAVEAT: make sure this script is executed from a specific
+    # file location.  Otherwise, (e.g., executing this script from stdin) this
+    # idea for obtaining the filesystem location of this script will not work!
+
+    # Find absolute PATH of script without using readlink (since readlink is
+    # not available on all platforms).  Followed advice at
+    # http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
+    local ORIGINAL_PATH="$(pwd)"
+    cd $(dirname "$0")
+    # Note you are now in the scripts subdirectory (where the current
+    # script is located).  So cd to its parent since this logic should
+    # work for any script that executes "git checkout" which in some
+    # instances temporarily removes the scripts subdirectory.
+    cd ..
+
+    # Determine fullpathname of the script parent.
+    # Because of the location of this script in the scripts subdirectory of
+    # the top-level directory, this location is the top-level directory of
+    # an unpacked tarball or git repository working directory) version.
+    TOP_GIT_DIR="$(pwd)"
+    # Restore back to the directory before this function was called.
+    cd "${ORIGINAL_PATH}"
+}
+
+function cdgit {
+    # determine_TOP_GIT_DIR must be executed once before this function is executed.
+    # See the self-documentation of that function to see how
+    # TOP_GIT_DIR is determined.
+    # echo "debug: TOP_GIT_DIR = $TOP_GIT_DIR"
+    cd $TOP_GIT_DIR
+}
+
+function echo_tee {
+    # N.B. only useful after this script defines $COMPREHENSIVE_TEST_LOG
+    echo "$@" |tee -a "$COMPREHENSIVE_TEST_LOG"
+}
+
+function printf_tee {
+    # N.B. only useful after this script defines $COMPREHENSIVE_TEST_LOG
+    printf "$@" |tee -a "$COMPREHENSIVE_TEST_LOG"
+}
+
+function my_exit {
+    local rc=$1
+    local message=$2
+    cdgit
+    # No git checkouts in this script so comment this out.
+    #git checkout --quiet $DEFAULT_GIT_BRANCH
+    if [ -z "$rc" -o "$rc" -eq 0 ] ; then
+	exit $rc
+    elif [ -z "$message" ] ; then
+	echo_tee "Immediate exit executed because of non-zero rc = ${rc} with no message!"
+	exit $rc
+    else
+	echo_tee "Immediate exit executed because of non-zero rc = ${rc} with the following message:"
+	echo_tee "$message"
+	exit $rc
+    fi
+}
+
+function y_or_n {
+    local message="$1"
+    ANSWER=
+    while [ "$ANSWER" != "y" -a "$ANSWER" != "n" ] ; do
+	echo_tee -n "$message"
+	read ANSWER
+    done
+    echo_tee ""
+    echo_tee "response was $ANSWER"
+    echo_tee ""
+}
+
+function y_or_exit {
+    local message="$1"
+    local error_code=$2
+    local error_message="$3"
+
+    y_or_n "$message"
+    if [ "$ANSWER" = "n" ] ; then
+	my_exit $error_code "$error_message"
+    fi
+
+}
+
+function rm_r_f {
+    # Most foolproof way to remove an existing absolute directory (starting with "/")
+    # AND contents that I can come up with.
+    local DIRECTORY="$1"
+    if [ -d "${DIRECTORY}" ] ; then
+	if [ "${DIRECTORY:0:1}" = "/" ] ; then
+	    printf_tee "%s\n" "WARNING: If you say 'y' to the following question"$'\n'"$DIRECTORY"$'\n'"will be removed!"
+	    y_or_exit "rm -rf $DIRECTORY (y/n)? " 1
+	    rm -rf "$DIRECTORY"
+	    if [ $? -eq 0 ] ; then
+		echo_tee "Absolute directory '$DIRECTORY' and its contents completely removed."
+	    else
+		my_exit 1 "ERROR: Failed to completely remove absolute directory '$DIRECTORY' and its contents."
+	    fi
+	else
+	    my_exit 1 "ERROR: Directory '$DIRECTORY' is not an absolute directory so will not be removed."
+	fi
+    else
+	if [ "$IGNORE_EMPTY_DIRECTORY_REMOVAL" != "y" ] ; then
+	    printf_tee "%s\n" "WARNING:"$'\n'"$DIRECTORY"$'\n'"is not an existing absolute directory so will not be removed."$'\n'"This WARNING is expected if the directory has been removed by hand"$'\n'"(or never existed) before running this script.  But otherwise, this"$'\n'"WARNING is actually likely due to some ERROR."
+	    y_or_exit "Is this WARNING expected (y/n)? " 1
+	fi
+    fi
+}
+
+function my_time {
+
+    local num_arguments=$#
+
+    if [ $num_arguments -lt 3 ]; then
+	my_exit 1 "ERROR: the my_time function requires 3 or more arguments."
+    fi
+
+    local num_command_plus_arguments=$(($num_arguments - 2))
+    #echo "DEBUG: num_command_plus_arguments = $num_command_plus_arguments"
+    local command_plus_arguments=${@:1:$num_command_plus_arguments}
+    #echo "DEBUG: command_plus_arguments = $command_plus_arguments"
+    local index_stdout_err=$(($num_arguments - 1))
+    local stdout_err=${@:$index_stdout_err:1}
+    #echo "DEBUG: stdout_err = $stdout_err"
+    local index_message=$(($num_arguments - 0))
+    local message=${@:$index_message:1}
+    #echo "DEBUG: message = \"$message\""
+
+    # N.B. this only works because TIMEFORMAT is set above to
+    # generate a single line with r, u, and s numerical values
+    # that are separated by a single space. (These numerical
+    # values have 3 digits after the decimal point and have
+    # implied units of seconds.)
+
+    echo_tee -n "$message "
+
+    # This bash process substitution method is the recommended way to
+    # parse one-line space-separated numerical values from a command.
+    # (In this case the time command with the above TIMEFORMAT.)
+
+    #echo "DEBUG: This is the command that is going to be run"
+    #echo "{ read rtime utime stime; } < <(time ($command_plus_arguments >& $stdout_err) 2>&1)"
+    { read rtime utime stime; } < <(time ($command_plus_arguments >& $stdout_err) 2>&1)
+
+    # N.B. bc -l truncates to 20 figures after the decimal point.
+    # That figure is rounded by printf_tee to two figures past the decimal point.
+    parallel_efficiency=$(echo "(${utime}+${stime})/$rtime" |bc -l)
+    printf_tee "%s %.3f %.3f %.3f %.2f\n" "generated time statistics (r, u, and s in seconds and (u+s)/r) =" $rtime $utime $stime $parallel_efficiency
+}
+
+function usage {
     local prog=`basename $0`
     echo "Usage: $prog [OPTIONS]
 OPTIONS:
   The next option specifies the directory prefix (absolute or relative to
   the original directory from which this script was invoked) which controls
   where all files produced by this script are located.
-  [--prefix (defaults to the 'comprehensive_test_disposeable'
+  [--prefix (defaults to the \"comprehensive_test_disposeable\"
                   subdirectory of the directory just above the
                   top-level source-tree directory)]
 
   The next option controls whether the shared, nondynamic, and static
   subdirectories of the prefix tree are initially removed so the
   tarball of all results is guaranteed not to contain stale results.
-  Only use no for this option if you want to preserve results from a
+  Only use n for this option if you want to preserve results from a
   previous run of this script that will not be tested for this run,
-  (e.g., if you previously used the option --do_shared yes and are now
-  using the option --do_shared no).
-  [--do_clean_first (yes/no, defaults to yes)]
+  (e.g., if you previously used the option --do_shared y and are now
+  using the option --do_shared n).
+  [--do_clean_first (y/n, defaults to y)]
 
   The next option controls whether the script runs clean to get rid of
   file results and save disk space after the tests are completed.
   This option is highly recommended to greatly reduce the
   the disk usage (which can be as large as 40GB [!] without this
   option).
-  [--do_clean_as_you_go (yes/no, defaults to yes)]
+  [--do_clean_as_you_go (y/n, defaults to y)]
 
   The next six options control the tools used for the configurations, builds, and tests.
   [--cmake_command (defaults to cmake)]
-  [--generator_string (defaults to 'Unix Makefiles')]
+  [--generator_string (defaults to \"Unix Makefiles\")]
   [--cmake_added_options (defaults to none, but can be used to specify any
                           combination of white-space-separated cmake options
                           to, e.g., refine what parts of the PLplot software are
-                          built and tested)]
-  [--build_command (defaults to 'make -j4')]
-  [--ctest_command (defaults to 'ctest -j4')]
-  [--do_submit_dashboard (yes/no defaults to no,  but if set to yes, the -D Experimental option
+                          built and tested.)]
+  [--build_command (defaults to \"make $PARALLEL_BUILD_OPTION\" where
+                          PARALLEL_BUILD_OPTION is an environment variable that
+                          can be set by the user.)]
+  [--ctest_command (defaults to \"ctest $PARALLEL_CTEST_OPTION\" where
+                          PARALLEL_CTEST_OPTION is an environment variable that
+                          can be set by the user.)]
+  [--do_submit_dashboard (y/n defaults to n,  but if set to y, the -D Experimental option
                       will be added to the ctest command, i.e., a dashboard of the ctest results
                       will be sent to <http://my.cdash.org/index.php?project=PLplot_git> where
                       they will be publicly displayed.]
 
   The next three options control which of the three principal PLplot configurations are tested.
-  [--do_shared (yes/no, defaults to yes)]
-  [--do_nondynamic (yes/no, defaults to yes)]
-  [--do_static (yes/no, defaults to yes)]
+  [--do_shared (y/n, defaults to y)]
+  [--do_nondynamic (y/n, defaults to y)]
+  [--do_static (y/n, defaults to y)]
 
   The next six control which of eight kinds of tests
   (test_interactive, test_noninteractive, and ctest for both the build
   and install tree and test_interactive and test_noninteractive for
   the traditional install tree) are done for each kind of build.
-  [--do_test_interactive (yes/no, defaults to yes)]
-  [--do_test_noninteractive (yes/no, defaults to yes)]
-  [--do_ctest (yes/no, defaults to yes)]
-  [--do_test_build_tree (yes/no, defaults to yes)]
-  [--do_test_install_tree (yes/no, defaults to yes)]
-  [--do_test_traditional_install_tree (yes/no, defaults to yes)]
+  [--do_test_interactive (y/n, defaults to y)]
+  [--do_test_noninteractive (y/n, defaults to y)]
+  [--do_ctest (y/n, defaults to y)]
+  [--do_test_build_tree (y/n, defaults to y)]
+  [--do_test_install_tree (y/n, defaults to y)]
+  [--do_test_traditional_install_tree (y/n, defaults to y)]
 
   [--help] Show this message.
 "
@@ -73,7 +230,7 @@ OPTIONS:
     fi
 }
 
-collect_exit() {
+function collect_exit {
     # Collect all information in a tarball and exit with return
     # code = $1
 
@@ -81,7 +238,8 @@ collect_exit() {
     # RELATIVE_COMPREHENSIVE_TEST_LOG and RELATIVE_ENVIRONMENT_LOG
     # have been defined.
 
-    return_code=$1
+    local return_code=$1
+    local message="$2"
     cd "$prefix"
 
     # Clean up stale results before appending new information to the tarball.
@@ -116,15 +274,11 @@ collect_exit() {
 
     gzip "$TARBALL"
 
-    exit $return_code
+    echo_tee "$message"
+    my_exit $return_code
 }
 
-echo_tee() {
-    # N.B. only useful after this script defines $COMPREHENSIVE_TEST_LOG
-    echo "$@" |tee -a "$COMPREHENSIVE_TEST_LOG"
-}
-
-comprehensive_test () {
+function comprehensive_test {
     CMAKE_BUILD_TYPE_OPTION=$1
     TEST_TYPE=$2
     echo_tee "
@@ -158,15 +312,15 @@ Each of the steps in this comprehensive test may take a while...."
     PATH_SAVE="$PATH"
     mkdir -p "$OUTPUT_TREE"
     # Clean start with nonexistent install tree and empty build tree(s).
-    rm -rf "$INSTALL_TREE"
-    rm -rf "$BUILD_TREE"
+    rm_r_f "$INSTALL_TREE"
+    rm_r_f "$BUILD_TREE"
     mkdir -p "$BUILD_TREE"
-    if [ "$do_test_install_tree" = "yes" ] ; then
-	rm -rf "$INSTALL_BUILD_TREE"
+    if [ "$do_test_install_tree" = "y" ] ; then
+	rm_r_f "$INSTALL_BUILD_TREE"
 	mkdir -p "$INSTALL_BUILD_TREE"
     fi
     cd "$BUILD_TREE"
-    if [ "$do_test_build_tree" = "yes" ] ; then
+    if [ "$do_test_build_tree" = "y" ] ; then
 	BUILD_TEST_OPTION="-DBUILD_TEST=ON"
     else
 	BUILD_TEST_OPTION=""
@@ -179,17 +333,24 @@ Each of the steps in this comprehensive test may take a while...."
 	PATH="$BUILD_TREE/dll:$PATH_SAVE"
     fi
 
-    # Process $cmake_added_options into $* to be used on the ${cmake_command} command
-    # line below.
+    # Process space-separated arguments in $cmake_added_options into $* to be used in the
+    # ${cmake_command} command below.
     set -- $cmake_added_options
     echo_tee "${cmake_command} in the build tree"
-    ${cmake_command} "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
-		     $* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
-		     "$DASHBOARD_LABEL_OPTION" "$SOURCE_TREE" >& "$output"
-    cmake_rc=$?
+    if [ -z "$DASHBOARD_LABEL_OPTION"] ; then
+	# Avoid cmake null string argument warning if $DASHBOARD_LABEL_OPTION is empty.
+	${cmake_command} "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
+			 $* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
+			 "$SOURCE_TREE" >& "$output"
+	cmake_rc=$?
+    else
+	${cmake_command} "-DCMAKE_INSTALL_PREFIX=$INSTALL_TREE" $BUILD_TEST_OPTION \
+			 $* $CMAKE_BUILD_TYPE_OPTION -G "$generator_string" \
+			 "$DASHBOARD_LABEL_OPTION" "$SOURCE_TREE" >& "$output"
+	cmake_rc=$?
+    fi
     if [ "$cmake_rc" -ne 0 ] ; then
-	echo_tee "ERROR: ${cmake_command} in the build tree failed"
-	collect_exit 1
+	collect_exit 1 "ERROR: ${cmake_command} in the build tree failed"
     fi
 
     # Prepare do_test_type variables.
@@ -198,20 +359,19 @@ Each of the steps in this comprehensive test may take a while...."
     else
 	do_test_type=$do_test_interactive
     fi
-    if [ "$do_test_build_tree" = "yes" ] ; then
-	if [ "$do_test_type" = "yes" ] ; then
+    if [ "$do_test_build_tree" = "y" ] ; then
+	if [ "$do_test_type" = "y" ] ; then
 	    output="${OUTPUT_TREE}/make_${TEST_TYPE}.out"
 	    rm -f "$output"
 	    echo_tee "$build_command VERBOSE=1 test_${TEST_TYPE} in the build tree"
 	    $build_command VERBOSE=1 test_${TEST_TYPE} >& "$output"
 	    make_test_type_rc=$?
 	    if [ "$make_test_type_rc" -ne 0 ] ; then
-		echo_tee "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the build tree"
-		collect_exit 1
+		collect_exit 1 "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the build tree"
 	    fi
 	fi
 
-	if [ "$do_ctest" = "yes" -a "$TEST_TYPE" = "noninteractive" ] ; then
+	if [ "$do_ctest" = "y" -a "$TEST_TYPE" = "noninteractive" ] ; then
 	    output="$OUTPUT_TREE"/make.out
 	    rm -f "$output"
 	    echo_tee "$build_command VERBOSE=1 in the build tree"
@@ -224,38 +384,34 @@ Each of the steps in this comprehensive test may take a while...."
 		$ctest_command --extra-verbose ${dashboard_option}>& "$output"
 		ctest_rc=$?
 		if [ "$ctest_rc" -eq 0 ] ; then
-		    if [ "$do_clean_as_you_go" = "yes" ] ; then
+		    if [ "$do_clean_as_you_go" = "y" ] ; then
 			output="$OUTPUT_TREE"/clean_ctest_plot_files.out
 			rm -f "$output"
 			echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the build tree (since we are done with ctest)"
 			$build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
 			make_rc=$?
 			if [ "$make_rc" -ne 0 ] ; then
-			    echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the build tree"
-			    collect_exit 1
+			    collect_exit 1 "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the build tree"
 			fi
 		    fi
 		else
-		    echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the build tree"
-		    collect_exit 1
+		    collect_exit 1 "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the build tree"
 		fi
 	    else
-		echo_tee "ERROR: $build_command VERBOSE=1 failed in the build tree"
-		collect_exit 1
+		collect_exit 1 "ERROR: $build_command VERBOSE=1 failed in the build tree"
 	    fi
 	fi
     fi
 
-    if [ "$do_test_install_tree" = "yes" -o "$do_test_traditional_install_tree" = "yes" ] ; then
-	rm -rf "$INSTALL_TREE"
+    if [ "$do_test_install_tree" = "y" -o "$do_test_traditional_install_tree" = "y" ] ; then
+	rm_r_f "$INSTALL_TREE"
 	output="$OUTPUT_TREE"/make_install.out
 	rm -f "$output"
 	echo_tee "$build_command VERBOSE=1 install in the build tree"
 	$build_command VERBOSE=1 install >& "$output"
 	make_install_rc=$?
 	if [ "$make_install_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command VERBOSE=1 install failed in the build tree"
-	    collect_exit 1
+	    collect_exit 1 "ERROR: $build_command VERBOSE=1 install failed in the build tree"
 	fi
 
 	if [[ "$OSTYPE" =~ ^linux && "$CMAKE_BUILD_TYPE_OPTION" != "-DBUILD_SHARED_LIBS=OFF" ]]; then
@@ -275,8 +431,7 @@ Each of the steps in this comprehensive test may take a while...."
 	    find "$BUILD_TREE" -name "*.so" -a ! -name "dll*plplot_stubs.so" -a -print0 | xargs -0 ldd -r >& "$output"
 	    ldd_rc=$?
 	    if [ "$ldd_rc" -ne 0 ] ; then
-		echo_tee "ERROR: find \"$BUILD_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the build tree"
-		collect_exit 1
+		collect_exit 1 "ERROR: find \"$BUILD_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the build tree"
 	    fi
 
 	    output="$OUTPUT_TREE"/install_tree_ldd.out
@@ -285,25 +440,23 @@ Each of the steps in this comprehensive test may take a while...."
 	    find "$INSTALL_TREE" -name "*.so" -a ! -name "dll*plplot_stubs.so" -a -print0 | xargs -0 ldd -r >& "$output"
 	    ldd_rc=$?
 	    if [ "$ldd_rc" -ne 0 ] ; then
-		echo_tee "ERROR: find \"$INSTALL_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the install tree"
-		collect_exit 1
+		collect_exit 1 "ERROR: find \"$INSTALL_TREE\" -name \"*.so\" -a ! -name \"dll*plplot_stubs.so\" -a -print0 |xargs -0 ldd -r >& \"$output\" failed in the install tree"
 	    fi
 	fi
     fi
 
-    if [ "$do_clean_as_you_go" = "yes" ] ; then
+    if [ "$do_clean_as_you_go" = "y" ] ; then
 	output="$OUTPUT_TREE"/clean.out
 	rm -f "$output"
 	echo_tee "$build_command VERBOSE=1 clean in the build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
 	$build_command VERBOSE=1 clean >& "$output"
 	make_rc=$?
 	if [ "$make_rc" -ne 0 ] ; then
-	    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the build tree"
-	    collect_exit 1
+	    collect_exit 1 "ERROR: $build_command VERBOSE=1 clean failed in the build tree"
 	fi
     fi
 
-    if [ "$do_test_install_tree" = "yes" -o "$do_test_traditional_install_tree" = "yes" ] ; then
+    if [ "$do_test_install_tree" = "y" -o "$do_test_traditional_install_tree" = "y" ] ; then
 	echo_tee "Prepend \"$INSTALL_TREE/bin\" to the original PATH"
 	PATH="$INSTALL_TREE/bin:$PATH_SAVE"
 
@@ -317,29 +470,34 @@ Each of the steps in this comprehensive test may take a while...."
 	    cd $current_dir
 	fi
 
-	if [ "$do_test_install_tree" = "yes" ] ; then
+	if [ "$do_test_install_tree" = "y" ] ; then
 	    cd "$INSTALL_BUILD_TREE"
 	    output="$OUTPUT_TREE"/installed_cmake.out
 	    rm -f "$output"
+
 	    echo_tee "${cmake_command} in the installed examples build tree"
-	    ${cmake_command} -G "$generator_string" "$INSTALLED_DASHBOARD_LABEL_OPTION" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
-	    cmake_rc=$?
-	    if [ "$cmake_rc" -ne 0 ] ; then
-		echo_tee "ERROR: ${cmake_command} in the installed examples build tree failed"
-		collect_exit 1
+	    if [ -z "$INSTALLED_DASHBOARD_LABEL_OPTION"] ; then
+		# Avoid cmake null string argument warning if $INSTALLED_DASHBOARD_LABEL_OPTION is empty.
+		${cmake_command} -G "$generator_string" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+		cmake_rc=$?
+	    else
+		${cmake_command} -G "$generator_string" "$INSTALLED_DASHBOARD_LABEL_OPTION" "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples >& "$output"
+		cmake_rc=$?
 	    fi
-	    if [ "$do_test_type" = "yes" ] ; then
+	    if [ "$cmake_rc" -ne 0 ] ; then
+		collect_exit 1 "ERROR: ${cmake_command} in the installed examples build tree failed"
+	    fi
+	    if [ "$do_test_type" = "y" ] ; then
 		output="${OUTPUT_TREE}/installed_make_${TEST_TYPE}.out"
 		rm -f "$output"
 		echo_tee "$build_command VERBOSE=1 test_${TEST_TYPE} in the installed examples build tree"
 		$build_command VERBOSE=1 test_${TEST_TYPE} >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the installed examples build tree"
-		    collect_exit 1
+		    collect_exit 1 "ERROR: $build_command VERBOSE=1 test_${TEST_TYPE} failed in the installed examples build tree"
 		fi
 	    fi
-	    if [ "$do_ctest" = "yes" -a "$TEST_TYPE" = "noninteractive" ] ; then
+	    if [ "$do_ctest" = "y" -a "$TEST_TYPE" = "noninteractive" ] ; then
 		output="$OUTPUT_TREE"/installed_make.out
 		rm -f "$output"
 		echo_tee "$build_command VERBOSE=1 in the installed examples build tree"
@@ -352,40 +510,36 @@ Each of the steps in this comprehensive test may take a while...."
 		    $ctest_command --extra-verbose ${dashboard_option}>& "$output"
 		    ctest_rc=$?
 		    if [ "$ctest_rc" -eq 0 ] ; then
-			if [ "$do_clean_as_you_go" = "yes" ] ; then
+			if [ "$do_clean_as_you_go" = "y" ] ; then
 			    output="$OUTPUT_TREE"/installed_clean_ctest_plot_files.out
 			    rm -f "$output"
 			    echo_tee "$build_command VERBOSE=1 clean_ctest_plot_files in the installed examples build tree"
 			    $build_command VERBOSE=1 clean_ctest_plot_files >& "$output"
 			    make_rc=$?
 			    if [ "$make_rc" -ne 0 ] ; then
-				echo_tee "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the installed examples build tree"
-				collect_exit 1
+				collect_exit 1 "ERROR: $build_command VERBOSE=1 clean_ctest_plot_files failed in the installed examples build tree"
 			    fi
 			fi
 		    else
-			echo_tee "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the installed examples build tree"
-			collect_exit 1
+			collect_exit 1 "ERROR: $ctest_command --extra-verbose ${dashboard_option}failed in the installed examples build tree"
 		    fi
 		else
-		    echo_tee "ERROR: $build_command VERBOSE=1 failed in the installed examples build tree"
-		    collect_exit 1
+		    collect_exit 1 "ERROR: $build_command VERBOSE=1 failed in the installed examples build tree"
 		fi
 	    fi
-	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+	    if [ "$do_clean_as_you_go" = "y" ] ; then
 		output="$OUTPUT_TREE"/installed_clean.out
 		rm -f "$output"
 		echo_tee "$build_command VERBOSE=1 clean in the installed examples build tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
 		$build_command VERBOSE=1 clean >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
-		    collect_exit 1
+		    collect_exit 1 "ERROR: $build_command VERBOSE=1 clean failed in the installed examples build tree"
 		fi
 	    fi
 	fi
 
-	if [ "$do_test_traditional_install_tree" = "yes" -a "$do_test_type" = "yes" ] ; then
+	if [ "$do_test_traditional_install_tree" = "y" -a "$do_test_type" = "y" ] ; then
 	    cd "$INSTALL_TREE"/share/plplot[0-9].[0-9]*.[0-9]*/examples
 	    output="${OUTPUT_TREE}/traditional_make_${TEST_TYPE}.out"
 	    rm -f "$output"
@@ -393,18 +547,16 @@ Each of the steps in this comprehensive test may take a while...."
 	    $traditional_build_command test_${TEST_TYPE} >& "$output"
 	    make_rc=$?
 	    if [ "$make_rc" -ne 0 ] ; then
-		echo_tee "ERROR: Traditional $traditional_build_command test_${TEST_TYPE} failed in the installed examples tree"
-		collect_exit 1
+		collect_exit 1 "ERROR: Traditional $traditional_build_command test_${TEST_TYPE} failed in the installed examples tree"
 	    fi
-	    if [ "$do_clean_as_you_go" = "yes" ] ; then
+	    if [ "$do_clean_as_you_go" = "y" ] ; then
 		output="$OUTPUT_TREE"/traditional_clean.out
 		rm -f "$output"
 		echo_tee "Traditional $traditional_build_command clean in the installed examples tree (since we are done with it for TEST_TYPE = ${TEST_TYPE})"
 		$traditional_build_command clean >& "$output"
 		make_rc=$?
 		if [ "$make_rc" -ne 0 ] ; then
-		    echo_tee "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
-		    collect_exit 1
+		    collect_exit 1 "ERROR: Traditional $traditional_build_command clean failed in the installed examples tree"
 		fi
 	    fi
 	fi
@@ -415,45 +567,38 @@ Each of the steps in this comprehensive test may take a while...."
 
 # Start of actual script after functions are defined.
 
-# Find absolute PATH of script without using readlink (since readlink is
-# not available on all platforms).  Followed advice at
-# http://fritzthomas.com/open-source/linux/551-how-to-get-absolute-path-within-shell-script-part2/
-ORIGINAL_PATH="$(pwd)"
-cd "$(dirname "$0")"
-# Absolute Path of the script
-SCRIPT_PATH="$(pwd)"
-cd "${ORIGINAL_PATH}"
-
-# Assumption: top-level source tree is parent directory of where script
-# is located.
-SOURCE_TREE=$(dirname "${SCRIPT_PATH}")
-# This is the parent tree for the BUILD_TREE, INSTALL_TREE,
-# INSTALL_BUILD_TREE, and OUTPUT_TREE.  It is disposable.
+# Needs to be executed once to do what its name implies.
+determine_TOP_GIT_DIR
+SOURCE_TREE=$TOP_GIT_DIR
 
 # Default values for options
+
+# $prefix is the parent tree for the BUILD_TREE, INSTALL_TREE,
+# INSTALL_BUILD_TREE, and OUTPUT_TREE.  It is disposable.
+
 prefix="${SOURCE_TREE}/../comprehensive_test_disposeable"
 
-do_clean_first=yes
+do_clean_first=y
 
-do_clean_as_you_go=yes
+do_clean_as_you_go=y
 
 cmake_command="cmake"
 generator_string="Unix Makefiles"
 cmake_added_options=
-build_command="make -j4"
-ctest_command="ctest -j4"
-do_submit_dashboard=no
+build_command="make ${PARALLEL_BUILD_OPTION}"
+ctest_command="ctest ${PARALLEL_CTEST_OPTION}"
+do_submit_dashboard=n
 
-do_shared=yes
-do_nondynamic=yes
-do_static=yes
+do_shared=y
+do_nondynamic=y
+do_static=y
 
-do_test_interactive=yes
-do_test_noninteractive=yes
-do_ctest=yes
-do_test_build_tree=yes
-do_test_install_tree=yes
-do_test_traditional_install_tree=yes
+do_test_interactive=y
+do_test_noninteractive=y
+do_ctest=y
+do_test_build_tree=y
+do_test_install_tree=y
+do_test_traditional_install_tree=y
 
 usage_reported=0
 
@@ -466,7 +611,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_clean_first)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_clean_first=$2
 		    shift
 		    ;;
@@ -478,7 +623,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_clean_as_you_go)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_clean_as_you_go=$2
 		    shift
 		    ;;
@@ -510,7 +655,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_submit_dashboard)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_submit_dashboard=$2
 		    shift
 		    ;;
@@ -522,7 +667,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_shared)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_shared=$2
 		    shift
 		    ;;
@@ -534,7 +679,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_nondynamic)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_nondynamic=$2
 		    shift
 		    ;;
@@ -545,7 +690,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_static)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_static=$2
 		    shift
 		    ;;
@@ -556,7 +701,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_test_interactive)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_test_interactive=$2
 		    shift
 		    ;;
@@ -567,7 +712,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_test_noninteractive)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_test_noninteractive=$2
 		    shift
 		    ;;
@@ -578,7 +723,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_ctest)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_ctest=$2
 		    shift
 		    ;;
@@ -589,7 +734,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_test_build_tree)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_test_build_tree=$2
 		    shift
 		    ;;
@@ -600,7 +745,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_test_install_tree)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_test_install_tree=$2
 		    shift
 		    ;;
@@ -611,7 +756,7 @@ while test $# -gt 0; do
 	    ;;
 	--do_test_traditional_install_tree)
 	    case $2 in
-		yes|no)
+		y|n)
 		    do_test_traditional_install_tree=$2
 		    shift
 		    ;;
@@ -622,7 +767,7 @@ while test $# -gt 0; do
 	    ;;
         --help)
             usage 0 1>&2
-	    exit 0;
+	    my_exit 0;
             ;;
         *)
             if [ $usage_reported -eq 0 ]; then
@@ -637,7 +782,7 @@ while test $# -gt 0; do
 done
 
 if [ $usage_reported -eq 1 ]; then
-    exit 1
+    my_exit 1
 fi
 
 # Create $prefix directory if it does not exist already
@@ -645,7 +790,7 @@ mkdir -p "$prefix"
 # Convert $prefix to absolute path (if it is not already that).
 cd "$prefix"
 prefix="$(pwd)"
-cd "${ORIGINAL_PATH}"
+cdgit
 
 # Establish names of output files.  We do this here (as soon as
 # possible after $prefix is determined) because
@@ -662,7 +807,7 @@ rm -f "$COMPREHENSIVE_TEST_LOG"
 
 # Set up trap of user interrupts as soon as possible after the above variables
 # have been determined and the stale $COMPREHENSIVE_TEST_LOG has been removed.
-trap '{ echo_tee "Exiting because of user interrupt" ; collect_exit 1; }' INT
+trap '{ collect_exit 1 "Exiting because of user interrupt" ; }' INT
 
 hash git
 hash_rc=$?
@@ -687,8 +832,8 @@ echo_tee "OSTYPE = ${OSTYPE}"
 hash pkg-config
 hash_rc=$?
 if [ "$hash_rc" -ne 0 ] ; then
-    echo_tee "WARNING: pkg-config not on PATH so setting do_test_traditional_install_tree=no"
-    do_test_traditional_install_tree=no
+    echo_tee "WARNING: pkg-config not on PATH so setting do_test_traditional_install_tree=n"
+    do_test_traditional_install_tree=n
 fi
 
 # The question of what to use for the traditional build command is a
@@ -733,46 +878,47 @@ echo_tee "Summary of options used for these tests
 --do_test_install_tree $do_test_install_tree
 --do_test_traditional_install_tree $do_test_traditional_install_tree
 
-N.B. do_clean_as_you_go above should be yes unless you don't mind an
-accumulation of ~40GB of plot files!  Even with this option set to yes
+N.B. do_clean_as_you_go above should be y unless you don't mind an
+accumulation of ~40GB of plot files!  Even with this option set to y
 the high-water mark of disk usage can still be as high as 4GB so be
 sure you have enough free disk space to run this test!
 "
 
-if [ "$do_submit_dashboard" = "yes" ] ; then
+if [ "$do_submit_dashboard" = "y" ] ; then
     echo_tee "WARNING: Because you have specified \"do_submit_dashboard $do_submit_dashboard\" above, all (anonymized) details concerning each
 of your ctest results will be published at <http://my.cdash.org/index.php?project=PLplot_git>
 "
+    # From the ctest-3.31.6 man page -D Experimental
+    # "enables the Start, Configure, Build, Test, Coverage, and Submit steps by default."
+    # That is, it does essentially everything other than the Update step (which
+    # would be problematic given that "git pull" would either fail or make
+    # a mess of a local branch with local changes in the working directory,
+    # and git pull is also problematic when the local git repository
+    # owned by a different user than the user running this script.
+
+    # Needs trailing blank.
     dashboard_option="-D Experimental "
 else
     dashboard_option=""
 fi
 
 
-if [ "$do_clean_first" = "yes" ] ; then
-    echo_tee "WARNING: The shared, nondynamic, and static subdirectory trees of
-\"$prefix\"
-are about to be removed!
-"
-fi
-ANSWER=
-while [ "$ANSWER" != "yes" -a "$ANSWER" != "no" ] ; do
-    echo_tee -n "Continue (yes/no)? "
-    read ANSWER
-    if [ -z "$ANSWER" ] ; then
-	# default of no if no ANSWER
-	ANSWER=no
-    fi
-done
-echo_tee ""
-
-if [ "$ANSWER" = "no" ] ; then
-    echo_tee "Immediate exit specified!"
-    exit
+if [ "$do_clean_first" = "y" ] ; then
+    echo_tee "WARNING: --do_clean_first yes has been specified so the
+     shared, nondynamic, and static subdirectory trees of
+     \"$prefix\"
+     are about to be removed!
+     "
 fi
 
-if [ "$do_clean_first" = "yes" ] ; then
-    rm -rf "$prefix/shared" "$prefix/nondynamic" "$prefix/static"
+y_or_exit "Continue (y/n)? " 0
+
+IGNORE_EMPTY_DIRECTORY_REMOVAL=n
+if [ "$do_clean_first" = "y" ] ; then
+    rm_r_f "$prefix/shared"
+    rm_r_f "$prefix/nondynamic"
+    rm_r_f "$prefix/static"
+    IGNORE_EMPTY_DIRECTORY_REMOVAL=y
 fi
 
 # Discover if it is a Windows platform or not.
@@ -819,22 +965,22 @@ else
 fi
 
 test_types=
-if [ "$do_test_interactive" = "yes" ] ; then
+if [ "$do_test_interactive" = "y" ] ; then
     test_types="${test_types} interactive"
 fi
 
-if [ "$do_test_noninteractive" = "yes" -o "$do_ctest" = "yes" ] ; then
+if [ "$do_test_noninteractive" = "y" -o "$do_ctest" = "y" ] ; then
     test_types="${test_types} noninteractive"
 fi
 
 for test_type in ${test_types} ; do
     # Shared + dynamic
-    if [ "$do_shared" = "yes" ] ; then
+    if [ "$do_shared" = "y" ] ; then
 	OUTPUT_TREE="$prefix/shared/$test_type/output_tree"
 	BUILD_TREE="$prefix/shared/$test_type/build_tree"
 	INSTALL_TREE="$prefix/shared/$test_type/install_tree"
 	INSTALL_BUILD_TREE="$prefix/shared/$test_type/install_build_tree"
-	if [ "$do_submit_dashboard" = "yes" ] ; then
+	if [ "$do_submit_dashboard" = "y" ] ; then
 	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(shared library + dynamic devices)"
 	    INSTALLED_DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(installed shared library + dynamic devices)"
 	else
@@ -845,12 +991,12 @@ for test_type in ${test_types} ; do
     fi
 
     # Shared + nondynamic
-    if [ "$do_nondynamic" = "yes" ] ; then
+    if [ "$do_nondynamic" = "y" ] ; then
 	OUTPUT_TREE="$prefix/nondynamic/$test_type/output_tree"
 	BUILD_TREE="$prefix/nondynamic/$test_type/build_tree"
 	INSTALL_TREE="$prefix/nondynamic/$test_type/install_tree"
 	INSTALL_BUILD_TREE="$prefix/nondynamic/$test_type/install_build_tree"
-	if [ "$do_submit_dashboard" = "yes" ] ; then
+	if [ "$do_submit_dashboard" = "y" ] ; then
 	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(shared library + nondynamic devices)"
 	    INSTALLED_DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(installed shared library + nondynamic devices)"
 	else
@@ -861,12 +1007,12 @@ for test_type in ${test_types} ; do
     fi
 
     # Static + nondynamic
-    if [ "$do_static" = "yes" ] ; then
+    if [ "$do_static" = "y" ] ; then
 	OUTPUT_TREE="$prefix/static/$test_type/output_tree"
 	BUILD_TREE="$prefix/static/$test_type/build_tree"
 	INSTALL_TREE="$prefix/static/$test_type/install_tree"
 	INSTALL_BUILD_TREE="$prefix/static/$test_type/install_build_tree"
-	if [ "$do_submit_dashboard" = "yes" ] ; then
+	if [ "$do_submit_dashboard" = "y" ] ; then
 	    DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(static library + nondynamic devices)"
 	    INSTALLED_DASHBOARD_LABEL_OPTION="-DPLPLOT_BUILDNAME_SUFFIX:STRING=-(installed static library + nondynamic devices)"
 	else

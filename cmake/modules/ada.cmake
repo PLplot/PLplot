@@ -1,6 +1,6 @@
 # cmake/modules/ada.cmake
 #
-# Copyright (C) 2007-2015 Alan W. Irwin
+# Copyright (C) 2007-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #

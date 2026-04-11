@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Append to effective python path so that can find plplot modules.
 from plplot_python_start import *

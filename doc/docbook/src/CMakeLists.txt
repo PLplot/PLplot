@@ -1,6 +1,6 @@
 # doc/docbook/src/CMakeLists.txt for PLplot
 # Copyright (C) 2006 Andrew Ross
-# Copyright (C) 2006-2018 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -239,8 +239,8 @@ else(
 
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}.txml
-	COMMAND ${CMAKE_COMMAND} -E echo "Note that no information is lost when \"too deep\" warning messages indicate"
-	COMMAND ${CMAKE_COMMAND} -E echo "where flat organization has replaced hierarchical organization."
+	COMMAND ${CMAKE_COMMAND} -E echo "Note that no information is lost when \"too deep\" messages simply indicate"
+	COMMAND ${CMAKE_COMMAND} -E echo "that flat organization has replaced hierarchical organization."
 	COMMAND ${DB2X_XSLTPROC}
 	-s texi -o ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}.txml ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-clean.xml
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PLPLOTDOC}-clean.xml

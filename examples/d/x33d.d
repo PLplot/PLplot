@@ -27,7 +27,10 @@
 // have access to all the required glyphs.
 
 import plplot;
+// Provide floating point fmin and fmax and others.
 import std.math;
+// Provide integer min and max.
+import std.algorithm.comparison : min, max;
 import std.string;
 
 static PLINT[16] position_options = [
@@ -500,7 +503,7 @@ int main( char[][] args )
             nlegend += 1;
         else
             nlegend -= 1;
-        nlegend = cast( int ) fmax( 1, nlegend );
+        nlegend = max( 1, nlegend );
         // nly specify legend data that are required according to the
         //  value of opt_array for that entry.
         for ( k = 0; k < nlegend; k++ )
@@ -520,7 +523,7 @@ int main( char[][] args )
         plsfont( PL_FCI_MONO, -1, -1 );
         plscol0a( 15, 32, 32, 32, 0.70 );
 
-        nrow    = cast( int ) fmin( 3, nlegend );
+        nrow    = min( 3, nlegend );
         ncolumn = 0;
 
         pllegend( &legend_width, &legend_height, opt, position, x, y,

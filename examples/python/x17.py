@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright 2002 Gary Bishop
 # Copyright 2004-2016 Alan W. Irwin

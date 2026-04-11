@@ -18,6 +18,8 @@
 # along with PLplot; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+python_min = min
+python_max = max
 from numpy import *
 
 # These values must be odd, for the middle
@@ -104,13 +106,13 @@ def main(w):
     y0 = 0.5*(YPTS - 1)
     b = 0.7*y0
     for i in range(indexxmin, indexxmax):
-         square_root = sqrt(1. - min(1., ((double(i) - x0)/a)**2))
+         square_root = sqrt(1. - python_min(1., ((double(i) - x0)/a)**2))
          # Add 0.5 to find nearest integer and therefore preserve symmetry
          # with regard to lower and upper bound of y range.
-         indexymin[i] = max(0, int(0.5 + y0 - b*square_root))
+         indexymin[i] = python_max(0, int(0.5 + y0 - b*square_root))
          # indexymax calculated with the convention that it is 1
          # greater than highest valid index.
-         indexymax[i] = min(YPTS, 1 + int(0.5 + y0 + b*square_root))
+         indexymax[i] = python_min(YPTS, 1 + int(0.5 + y0 + b*square_root))
          zlimited[i][indexymin[i]:indexymax[i]] = z[i][indexymin[i]:indexymax[i]]
 
     w.pllightsource(1., 1., 1.)

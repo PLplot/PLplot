@@ -85,8 +85,8 @@
         return array;                                                                                   \
     }
 
-    LUA_DECLARE_TYPEMAP_ARR_FN( double, double );
-    LUA_DECLARE_TYPEMAP_ARR_FN( int, int );
+    LUA_DECLARE_TYPEMAP_ARR_FN( double, double )
+    LUA_DECLARE_TYPEMAP_ARR_FN( int, int )
 %}
 
 // type definitions

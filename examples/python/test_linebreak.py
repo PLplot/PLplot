@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8; -*-
 # Test whether line breaks work for utf8 "Peace" strings.
 # Append to effective python path so that can find plplot modules.

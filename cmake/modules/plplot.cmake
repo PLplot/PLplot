@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Arjen Markus
 # Copyright (C) 2006-2009 Werner Smekal
 # Copyright (C) 2006-2013 Andrew Ross
-# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 # Copyright (C) 2007-2010 Hazen Babcock
 # Copyright (C) 2009 Hezekiah M. Carty
 #
@@ -28,6 +28,19 @@
 # of those devices simply show a blank screen rather than the plot actively being rendered when -np is
 # used.  So once those -np issues are fixed for wxwidgets and wingcc, this option will no longer
 # be necessary.
+
+option(USE_CCACHE "Use ccache for C and C++ compilations" ON)
+if(USE_CCACHE)
+  find_program(CCACHE_FOUND ccache)
+  if(CCACHE_FOUND)
+    set(CMAKE_C_COMPILER_LAUNCHER ccache)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ccache)
+  else(CCACHE_FOUND)
+    message(STATUS "Warning: USE_CCACHE is true while no ccache found. To resolve this either\n"
+      "   specify DUSE_CCACHE=OFF or else install ccache."
+    )
+  endif(CCACHE_FOUND)
+endif(USE_CCACHE)
 
 option(PAUSE_CERTAIN_INTERACTIVE_DEVICES "Experimental option to drop the -np option for interactive tests of certain devices where -np is currently not implemented well" OFF)
 
@@ -469,6 +482,10 @@ OFF
 # Individual language support (beyond C and C++)
 include(fortran)
 include(java)
+
+# SED_EXECUTABLE needed in the python.cmake module and elsewhere in
+# the principal part of the build system.
+find_program(SED_EXECUTABLE sed)
 include(python)
 include(octave)
 # tcl-related must come after c++ and fortran because of use of filter_rpath
