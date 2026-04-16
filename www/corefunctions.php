@@ -1,6 +1,6 @@
 <?php
-	// open plplot rss news feed via simplepie
-	include('simplepie.inc');
+	// Use the compiled SimplePie library
+	require_once('SimplePie.compiled.php');
 
 	// Substring without losing word meaning and
 	// tiny words (length 3 by default) are included on the result.
@@ -36,7 +36,7 @@
 <!--
 Copyright 2008-2010 Werner Smekal
 Copyright 2008-2011 Hazen Babcock
-Copyright 2008-2013 Alan W. Irwin
+Copyright 2008-2026 Alan W. Irwin
 -->
 
 <head>
@@ -97,8 +97,43 @@ END;
 	{
 		// Open the PLplot News RSS feed and parse it (rss link taken from the plplot project page)
 		$feed = new SimplePie();
-		$feed->enable_cache(false);  // disable cache
-		$feed->set_feed_url("http://sourceforge.net/p/plplot/news/feed");
+
+		// Both http and https worked for a local version of
+		// the website but neither worked for plplot.sf.net.
+		// So stick with simpler http in case that it is one
+		// element of getting plplot.sf.net to eventually work.
+		$url = 'http://sourceforge.net/p/plplot/news/feed.rss';
+
+		$feed->set_feed_url($url);
+
+		// Uncomment command below if you want to disable
+		// caching.  That is ordinarily not recommended since it it means
+		// simplepie goes through its dance each time the website
+		// is reloaded.  This extra work slows everything down
+		// and *might* convince the sourceforge web server that
+		// you are doing a denial-of-service attack.  However,
+		// using the cache requires access by the webserver
+		// which means setting 777 permissions for the cache directory
+		// (a significant security concern), or changing ownership
+		// to (likely) www-data so it can be written to by the webserver.
+		// But changing that ownership requires root access which I
+		// don't have for plplot.sf.net.  Therefore disable caching!
+		$feed->enable_cache(false);
+
+		// This has worked for a local linux webserver where for
+		// the ordinary "irwin" user, I created the cache
+		// directory with 777 permissions (so it can be written
+		// to by the webserver).  But that is a security issue
+		// so comment this out and disable disable caching above.
+		//$feed->set_cache_location('cache');
+
+		// Comment this out because it did not help at SF,
+		// and I want to try the more highly recommended php-curl
+		// extension locally which is available at SF so simplepie
+		// will use it there.
+		// Force socket usage
+		// $feed->force_fsockopen(true);
+
 		$feed->init();
 		$feed->handle_content_type();
 
