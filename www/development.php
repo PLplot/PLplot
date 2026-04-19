@@ -48,7 +48,7 @@
       <p></p>
 		</div>
 
-		<?php pageSidebar(1); ?>
+		<?php pageSidebar(); ?>
 
 		<div id="spacer"></div>
 	</div>

@@ -107,8 +107,8 @@ label plots.</p>
 			<p>You can find the code for these and other examples at the <a href="examples.php">examples page</a></p>
 		</div>
 
-    <!-- add the sidebar, news displayed -->
-    <?php pageSidebar(1); ?>
+    <!-- add the sidebar -->
+    <?php pageSidebar(); ?>
 
 		<div id="spacer"></div>
 	</div>

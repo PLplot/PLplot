@@ -45,7 +45,7 @@ Windows platforms so our Windows users must build PLplot
 <a href="#source_code">from source</a>.</p>
 		</div>
 
-		<?php pageSidebar(1); ?>
+		<?php pageSidebar(); ?>
 
 		<div id="spacer"></div>
 	</div>

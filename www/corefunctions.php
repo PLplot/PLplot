@@ -1,29 +1,4 @@
 <?php
-	// Use the compiled SimplePie library
-	require_once('SimplePie.compiled.php');
-
-	// Substring without losing word meaning and
-	// tiny words (length 3 by default) are included on the result.
-	// "..." is added if result do not reach original string length
-	// taken from http://www.php.net/manual/en/function.substr.php#93963
-	function _substr($str, $length, $minword = 3)
-	{
-    $sub = '';
-    $len = 0;
-
-    foreach(explode(' ', $str) as $word) {
-	    $part = (($sub != '') ? ' ' : '') . $word;
-	    $sub .= $part;
-	    $len += strlen($part);
-
-	    if(strlen($word) > $minword && strlen($sub) >= $length) {
-	    	break;
-	    }
-    }
-
-    return $sub . (($len < strlen($str)) ? '...' : '');
-	}
-
 	//
 	// Print standard page header
 	//
@@ -57,7 +32,7 @@ END;
 	// Print menu code with selected element
 	// $item might be: index, downloads, examples, development, credits
 	//
-	function pageMenu($item)#
+	function pageMenu($item)
 	{
 		echo "	<div id=\"pageheader\">\n";
 		echo "	</div>\n";
@@ -88,108 +63,40 @@ END;
 		echo '		</div>';
 	}
 
-	//
-	// Print News from project page
-	// $newscount - number of news itmes to be shown
-	// $contentlength - defines the length in characters of the news content
-	//
-	function pageNews($newscount, $contentlength)
-	{
-		// Open the PLplot News RSS feed and parse it (rss link taken from the plplot project page)
-		$feed = new SimplePie();
+	// Print a standard sidebar.
 
-		// Both http and https worked for a local version of
-		// the website but neither worked for plplot.sf.net.
-		// So stick with simpler http in case that it is one
-		// element of getting plplot.sf.net to eventually work.
-		$url = 'http://sourceforge.net/p/plplot/news/feed.rss';
+	// N.B. A previously available (dynamic) display of the latest
+	// three news items using a modern simplepie/php approach
+	// "just worked" on a copy of our website hosted by a localhost
+	// apache2 webserver that allows dynamic content.  However, that
+	// copy of our website failed to work at plplot.sf.net, and I
+	// have attributed that issue to SourceForge no longer allowing
+	// dynamic content for project websites.  As far as I know, the
+	// rest of our web content is static.  So to adjust to the
+	// plplot.sf.net conditions, I have stripped out all dynamic
+	// display of news from our website after committing that previous
+	// version of our website that worked perfectly for localhost.
 
-		$feed->set_feed_url($url);
-
-		// Uncomment command below if you want to disable
-		// caching.  That is ordinarily not recommended since it it means
-		// simplepie goes through its dance each time the website
-		// is reloaded.  This extra work slows everything down
-		// and *might* convince the sourceforge web server that
-		// you are doing a denial-of-service attack.  However,
-		// using the cache requires access by the webserver
-		// which means setting 777 permissions for the cache directory
-		// (a significant security concern), or changing ownership
-		// to (likely) www-data so it can be written to by the webserver.
-		// But changing that ownership requires root access which I
-		// don't have for plplot.sf.net.  Therefore disable caching!
-		$feed->enable_cache(false);
-
-		// This has worked for a local linux webserver where for
-		// the ordinary "irwin" user, I created the cache
-		// directory with 777 permissions (so it can be written
-		// to by the webserver).  But that is a security issue
-		// so comment this out and disable disable caching above.
-		//$feed->set_cache_location('cache');
-
-		// Comment this out because it did not help at SF,
-		// and I want to try the more highly recommended php-curl
-		// extension locally which is available at SF so simplepie
-		// will use it there.
-		// Force socket usage
-		// $feed->force_fsockopen(true);
-
-		$feed->init();
-		$feed->handle_content_type();
-
-		// In case of error show error
-		//if($feed->error())
-		//	echo $feed->error();
-
-		// show news items
-		if($feed->data) {
-			$items = $feed->get_items();
-			$i = 0;
-			foreach($items as $item) {
-				echo '<h4><a href="' . $item->get_permalink() . '">' . $item->get_title() . '</a></h4>' . "\n";
-				echo '<p>' . _substr(strip_tags($item->get_content()), $contentlength) . ' ';
-				echo '<a href="' . $item->get_permalink() . '">Read more</a> (' . $item->get_date('j M Y') . ')</p>' . "\n";
-
-				$i = $i + 1;
-				if( $i >= $newscount )
-					break;
-			}
-		} else
-			echo '<p>Could not open <a href="' . $url . '">News feed</a>!</p>';
-	}
-
-	//
-	// Print a standard sidebar
-	//
-	function pageSidebar($news=0)
+	function pageSidebar()
 	{
 		echo <<<END
 		<!-- Sidebar -->
 		<div id="rightside">
-END;
-//			Permanently disable and do another way (see above)
-//                      because pageNews calls SF php script that returns
-//			bad URL's.
-		echo "<h3>News</h3>\n";
-		pageNews(3, 100);
-
-		echo <<<END
-			<h3>Resources</h3>
-			<ul class="arrowlist">
-				<li><a href="documentation.php">Documentation</a></li>
-				<li><a href="http://sourceforge.net/p/plplot/wiki">Wiki</a></li>
-				<li><a href="http://sourceforge.net/projects/plplot">SourceForge Project Page</a></li>
-				<li><a href="http://sourceforge.net/projects/plplot/support">Project Support Page</a></li>
-				<li><a href="http://sourceforge.net/p/plplot/mailman/">Mailing Lists</a></li>
-				<li><a href="http://sourceforge.net/p/plplot/bugs/">Bug Tracker</a></li>
-			</ul>
-			<h3>Source Code</h3>
-			<ul class="arrowlist">
-				<li><a href="http://sourceforge.net/projects/plplot/files/plplot/">Releases</a></li>
-				<li>git repository is git://git.code.sf.net/p/plplot/plplot</li>
-				<li><a href="http://sourceforge.net/p/plplot/plplot/ci/master/tree/">Browse git repository</a></li>
-			</ul>
-
+		     <h3>Resources</h3>
+		     <ul class="arrowlist">
+		     	 <li><a href="http://sourceforge.net/p/plplot/news">News</a></li>
+		     	 <li><a href="documentation.php">Documentation</a></li>
+			 <li><a href="http://sourceforge.net/p/plplot/wiki">Wiki</a></li>
+			 <li><a href="http://sourceforge.net/projects/plplot">SourceForge Project Page</a></li>
+			 <li><a href="http://sourceforge.net/projects/plplot/support">Project Support Page</a></li>
+			 <li><a href="http://sourceforge.net/p/plplot/mailman/">Mailing Lists</a></li>
+			 <li><a href="http://sourceforge.net/p/plplot/bugs/">Bug Tracker</a></li>
+		     </ul>
+		     <h3>Source Code</h3>
+		     <ul class="arrowlist">
+		     	 <li><a href="http://sourceforge.net/projects/plplot/files/plplot/">Releases</a></li>
+			 <li><a href="http://sourceforge.net/p/plplot/plplot/ci/master/tree/">Browse git repository</a></li>
+		     </ul>
 		</div>
 END;
 	}

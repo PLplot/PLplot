@@ -19,7 +19,7 @@
 		  <p>text</p>
 		</div>
 
-    <!-- add the sidebar, no news displayed -->
+    <!-- add the sidebar -->
 		<?php pageSidebar(); ?>
 
 		<div id="spacer"></div>

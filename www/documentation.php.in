@@ -52,7 +52,7 @@ so there is plenty of scope to help out here.
 </p>
 		</div>
 
-		<?php pageSidebar(1); ?>
+		<?php pageSidebar(); ?>
 
 		<div id="spacer"></div>
 	</div>
