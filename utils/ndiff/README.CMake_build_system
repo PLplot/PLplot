@@ -11,17 +11,9 @@ runs of mkdir before "make install" will work.
 
 AWI got tired of dealing with those issues so he implemented (with
 help from Andrew Ross) a comprehensive CMake-based build system for
-ndiff for the cmake/epa_build/ndiff subproject of PLplot.  I have
-copied that build system here using
+ndiff which is present in this directory.
 
-software@merlin> cp /home/software/plplot/HEAD/plplot.git/cmake/epa_build/ndiff/README.ndiff README.CMake_build_system
-software@merlin> cp /home/software/plplot/HEAD/plplot.git/cmake/epa_build/ndiff/config.h.cmake .
-
-software@merlin> cp /home/software/plplot/HEAD/plplot.git/cmake/epa_build/ndiff/ndiff_CMakeLists.txt CMakeLists.txt
-
-modified this file (README.CMake_build_system) considerably and updated CMakeLists.txt here
-to modern CMake practices (which, in part, meant I had to create an
-additional file ndiff_check.sh.in).  So here is the manifest of the files
+So here is the manifest of the files
 I added to ndiff-2.0.0.
 
 README.CMake_build_system	This file

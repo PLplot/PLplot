@@ -52,7 +52,6 @@ cd "$SOURCE_TREE"
 # * Exclude *.pyc binary files recognized in .gitignore.
 # * Exclude all files in the rpm, and lib trees (may review lib later).
 # * Exclude all *.patch files.
-# * Exclude libqhull/src/mem.h (may review this later when epa_build is updated).
 # * Exclude COPYING.LIB (since we want to preserve exact LGPL licensing text).
 # * Exclude test_tclmatrix.out (since this file is used to compare with a pltcl result
 #   that does generate lines with some trailing blanks).
