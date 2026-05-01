@@ -536,38 +536,40 @@ if(CORE_BUILD)
 
 else(CORE_BUILD)
 
-  # MAINTENANCE 2019-02-03
+  # MAINTENANCE 2026
   # This logic copied exactly (including version numbers which change
   # from time to time) from the top-level CMakeLists.txt file except
-  # for the name of the project.
-  set(MINIMUM_LINUX_CMAKE_VERSION 3.13.2)
-  # Latest CMake version for all platforms other than Linux.
-  # Must be greater than or equal to MINIMUM_LINUX_CMAKE_VERSION
-  set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.13.2)
+  # for project_name and indentation.
+
+  set(project_name installed_plplot_examples)
+
+  # Adapted method suggested by Brad King for using
+  # potentially different minimum versions for different platforms.
+
+  # Minimum CMake version for all Linux platforms.
+  set(MINIMUM_LINUX_CMAKE_VERSION 3.31.6)
+  # Minimum CMake version for all platforms other than Linux.
+  set(MINIMUM_NON_LINUX_CMAKE_VERSION 3.31.6)
+  if(MINIMUM_NON_LINUX_CMAKE_VERSION VERSION_LESS MINIMUM_LINUX_CMAKE_VERSION)
+    message(FATAL_ERROR "Incorrect order for potential minimum cmake version strings")
+  endif(MINIMUM_NON_LINUX_CMAKE_VERSION VERSION_LESS MINIMUM_LINUX_CMAKE_VERSION)
+
   # Keep policy consistent for all platforms, i.e., use the Linux
   # version which must be the minimum of the two versions above.
   set(CMAKE_UNIFORM_POLICY_VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
   cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
   cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
-  project(installed_plplot_examples NONE)
-
+  project(${project_name} NONE)
   if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
     cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
   endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-  # CMP0086 implemented for cmake-3.14.0 so to avoid warning
-  # messages when our minimum version is less than that must
-  # set this policy when it is available.
-  if(POLICY CMP0086)
-    cmake_policy(SET CMP0086 NEW)
-  endif(POLICY CMP0086)
-
   # It is a fatal error if no working C compiler is available to build
-  # the PLplot core C library and core C examples.  All other compilers
-  # required by our bindings are optional in that if no working compiler
-  # of the kind needed is available, the associated bindings and
-  # examples are disabled.
+  # the installed C examples.  All other compilers required by our
+  # installed examples are optional in that if no working compiler of
+  # the kind needed is available, the appropriate examples are
+  # disabled.
   enable_language(C)
 
   message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
@@ -674,7 +676,7 @@ else(CORE_BUILD)
     # run by ctest.
   endif(BUILD_TEST)
 
-  find_package(plplot)
+  find_package(plplot CONFIG)
 
   add_subdirectory(plplot_test)
 

@@ -1,5 +1,5 @@
 # Top-level CMakeLists.txt for PLplot
-# Copyright (C) 2006-2019 Alan W. Irwin
+# Copyright (C) 2006-2026 Alan W. Irwin
 #
 # This file is part of PLplot.
 #
@@ -47,6 +47,8 @@
 # Therefore, I have adopted this CMake minimum version for both Linux and
 # non-Linux platforms.
 
+set(project_name plplot)
+
 # Adapted method suggested by Brad King for using
 # potentially different minimum versions for different platforms.
 
@@ -63,19 +65,29 @@ endif(MINIMUM_NON_LINUX_CMAKE_VERSION VERSION_LESS MINIMUM_LINUX_CMAKE_VERSION)
 set(CMAKE_UNIFORM_POLICY_VERSION ${MINIMUM_LINUX_CMAKE_VERSION})
 cmake_minimum_required(VERSION ${MINIMUM_LINUX_CMAKE_VERSION} FATAL_ERROR)
 cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
-project(plplot NONE)
-
+project(${project_name} NONE)
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
   cmake_minimum_required(VERSION ${MINIMUM_NON_LINUX_CMAKE_VERSION} FATAL_ERROR)
   cmake_policy(VERSION ${CMAKE_UNIFORM_POLICY_VERSION})
 endif(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
 
-# CMP0086 implemented for cmake-3.14.0 so to avoid warning
-# messages when our minimum version is less than that must
-# set this policy when it is available.
-if(POLICY CMP0086)
-  cmake_policy(SET CMP0086 NEW)
-endif(POLICY CMP0086)
+# It is a fatal error if no working C compiler is available to build
+# the PLplot core C library and core C examples.  All other compilers
+# required by our bindings are optional in that if no working compiler
+# of the kind needed is available, the associated bindings and
+# examples are disabled.
+enable_language(C)
+
+message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_COMMAND = ${CMAKE_COMMAND}")
+message(STATUS "CMAKE_VERSION = ${CMAKE_VERSION}")
+message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
+message(STATUS "CMAKE_INCLUDE_PATH = ${CMAKE_INCLUDE_PATH}")
+message(STATUS "Environment variable CMAKE_INCLUDE_PATH = $ENV{CMAKE_INCLUDE_PATH}")
+message(STATUS "CMAKE_LIBRARY_PATH = ${CMAKE_LIBRARY_PATH}")
+message(STATUS "Environment variable CMAKE_LIBRARY_PATH = $ENV{CMAKE_LIBRARY_PATH}")
+# Location of configured language support files.
+message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
 
 # N.B. As a result of the following two set commands and logic in the
 # configure_library_build function, all internal writeable library
@@ -106,23 +118,6 @@ else(USE_WRITEABLE_TARGET_TEST_PREFIX)
   set(WRITEABLE_TARGET)
 endif(USE_WRITEABLE_TARGET_TEST_PREFIX)
 
-# It is a fatal error if no working C compiler is available to build
-# the PLplot core C library and core C examples.  All other compilers
-# required by our bindings are optional in that if no working compiler
-# of the kind needed is available, the associated bindings and
-# examples are disabled.
-enable_language(C)
-
-message(STATUS "CMAKE_SYSTEM_NAME = ${CMAKE_SYSTEM_NAME}")
-message(STATUS "CMAKE_COMMAND = ${CMAKE_COMMAND}")
-message(STATUS "CMAKE_VERSION = ${CMAKE_VERSION}")
-message(STATUS "CMAKE_GENERATOR = ${CMAKE_GENERATOR}")
-message(STATUS "CMAKE_INCLUDE_PATH = ${CMAKE_INCLUDE_PATH}")
-message(STATUS "Environment variable CMAKE_INCLUDE_PATH = $ENV{CMAKE_INCLUDE_PATH}")
-message(STATUS "CMAKE_LIBRARY_PATH = ${CMAKE_LIBRARY_PATH}")
-message(STATUS "Environment variable CMAKE_LIBRARY_PATH = $ENV{CMAKE_LIBRARY_PATH}")
-# Location of configured language support files.
-message(STATUS "CMAKE_PLATFORM_INFO_DIR = ${CMAKE_PLATFORM_INFO_DIR}")
 
 # Set unambiguous names for these variables as a reminder.
 set(WIN32_AND_NOT_CYGWIN ${WIN32})
