@@ -272,13 +272,15 @@ if(BUILD_TEST)
   # N.B. we execute add_test(...) in the plplot_test
   # subdirectory to implement the various tests that are
   # run by ctest.
-
-  # N.B. The above commands have been copied to examples/CMakeLists.txt so that
-  # ctest can be configured for the installed examples tree.  We also have to
-  # install the following files to implement that as well.
-  install(FILES CTestCustom.cmake.in CTestConfig.cmake DESTINATION ${DATA_DIR}/examples)
-
 endif(BUILD_TEST)
+
+# N.B. The above commands have been copied to examples/CMakeLists.txt so that
+# ctest can be configured for the installed_plplot_examples project.  We also have to
+# install the following files to implement that as well regardless of CORE BUILD_TEST
+# since sometimes CORE BUILD_TEST will be false while BUILD_TEST
+# is always true (see examples/plplot_configure.cmake_installed_examples.in)
+# for the installed_plplot_examples project.
+install(FILES CTestCustom.cmake.in CTestConfig.cmake DESTINATION ${DATA_DIR}/examples)
 
 # Install top-level files
 set(top_level_DOCFILES

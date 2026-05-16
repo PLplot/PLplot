@@ -1,55 +1,111 @@
 @PACKAGE_INIT@
 
-# N.B. If we need targets from a package then it is necessary to find the package rather than
-# just rely on setting variables as is done in plplot_configure.cmake_installed_examples.in
-# to set ENABLE_python, for example.
-if(ENABLE_python)
-  # Users of the python binding of PLplot may require this location.
-  set(${CMAKE_FIND_PACKAGE_NAME}_PYTHON_SITE_PACKAGES_PREFIX @PYTHON_INSTDIR@)
-  # Maintenance 2026: This should be the same Python-finding logic as in
-  # cmake/modules/python.cmake
-  find_package(Python3 COMPONENTS Interpreter Development NumPy)
-  if(NOT Python3_FOUND)
-    message(STATUS "WARNING: "
-      "Some/all of Interpreter Development NumPy Python3 components not found. Disabling Python binding")
-    set(ENABLE_python OFF CACHE BOOL "Enable Python binding" FORCE)
-  endif(NOT Python3_FOUND)
-endif(ENABLE_python)
+# FixMe! If you ask google.com/ai the following question:
 
-# Determine Threads::Threads interface library following what is done
-# in cmake/modules/threads.cmake.  The value of
-# THREADS_PREFER_PTHREAD_FLAG is configured to be the same as used in
-# the core build in plplot_configure.cmake_installed_examples.in.
-find_package(Threads)
+# "What should be the criterion for deciding whether a cmake package
+# should be found within the <pkg_name>Config.cmake.in file? For
+# example, should all found packages required for the build of
+# pkg_name be included?"
 
-if(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
-  # Find Qt5 components that we need to link applications against
-  # the plplot library (if ENABLE_DYNDRIVERS is false) and which we
-  # need in any case if we want to build qt_example and memqt_example.
-  # Maintenance 2020-07
-  # This should be the same as the Qt5 find_package command in cmake/modules/qt.cmake
-  find_package(Qt5 5.7.1 COMPONENTS Svg Gui PrintSupport Widgets)
-  if(NOT(Qt5_FOUND AND Qt5_VERSION_MAJOR STREQUAL "${CORE_Qt5_VERSION_MAJOR}" AND Qt5_VERSION_MINOR STREQUAL "${CORE_Qt5_VERSION_MINOR}" AND Qt5_VERSION_PATCH STREQUAL "${CORE_Qt5_VERSION_PATCH}"))
-    message(STATUS "CORE_Qt5_FOUND = ON")
-    message(STATUS "CORE_Qt5_VERSION_MAJOR = ${CORE_Qt5_VERSION_MAJOR}")
-    message(STATUS "CORE_Qt5_VERSION_MINOR = ${CORE_Qt5_VERSION_MINOR}")
-    message(STATUS "CORE_Qt5_VERSION_PATCH = ${CORE_Qt5_VERSION_PATCH}")
-    message(STATUS "Qt5_FOUND = ${Qt5_FOUND}")
-    message(STATUS "Qt5_VERSION_MAJOR = ${Qt5_VERSION_MAJOR}")
-    message(STATUS "Qt5_VERSION_MINOR = ${Qt5_VERSION_MINOR}")
-    message(STATUS "Qt5_VERSION_PATCH = ${Qt5_VERSION_PATCH}")
-    message(STATUS "WARNING: Qt5 core build-tree and install-tree inconsistency")
-  endif(NOT(Qt5_FOUND AND Qt5_VERSION_MAJOR STREQUAL "${CORE_Qt5_VERSION_MAJOR}" AND Qt5_VERSION_MINOR STREQUAL "${CORE_Qt5_VERSION_MINOR}" AND Qt5_VERSION_PATCH STREQUAL "${CORE_Qt5_VERSION_PATCH}"))
-endif(ANY_QT_DEVICE AND PLPLOT_USE_QT5)
+# The response gives a clear set of modern CMake rules to provide only
+# what minimally required so projects that depend on PLplot are not
+# overburdened, but also have everything they must need.  In contrast
+# to that rule-based approach, the reasons for finding the packages
+# below are lost in the mist of time.  They do work for the
+# installed_plplot_examples project for PLplot that uses many
+# different computer languages, and they also work for the external
+# project FreeEOS that is strictly Fortran.  But those are fairly
+# special cases (one with a huge number of requirements, one with
+# minimal Fortran-only requirements) so the list of CMake packages
+# that are found below needs review according to the rules supplied by
+# the google.com/ai response to the above question.
 
-if(PL_HAVE_QHULL)
-  # Maintenance(2021)
-  # Find qhull the same way as done in cmake/modules/csiro.cmake
-  find_package(Qhull CONFIG)
-  if(NOT Qhull_FOUND)
-    message(STATUS "WARNING: Qhull core build-tree and install-tree inconsistency")
-  endif(NOT Qhull_FOUND)
-endif(PL_HAVE_QHULL)
+# Note although there is a substantial FixMe question concerning the
+# list of packages (see above) I (AWI in 2026) have reviewed the
+# packages that are found below (i.e., currently Python3, Threads,
+# Qt5, and Qhull) via google questions that these particular
+# find modules are high quality so they, for example, can be called
+# twice in case the build system that executes find_package(plplot...)
+# finds any of these packages itself before or after that command is
+# executed.
+
+# N.B. Always use configured variables @<variable_name@ when referring to
+# variables known to the PLplot configuration, and ordinary variables if referring to variables
+# that have been defined for the build system that invoked find_package(plplot ...).
+
+# N.B. the variables ${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY and
+# ${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED automatically set by the
+# build system that invoked find_package(plplot ...) are used below to
+# propagate that build system's QUIET and REQUIRED requirements for
+# the plplot package.
+
+if(@ENABLE_python@)
+    # Users of the python binding of PLplot may require this location.
+    set(${CMAKE_FIND_PACKAGE_NAME}_PYTHON_SITE_PACKAGES_PREFIX @PYTHON_INSTDIR@)
+    # Maintenance 2026: Find Python3 following what is done in cmake/modules/python.cmake
+    find_package(Python3 ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY} ${${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED} COMPONENTS Interpreter Development NumPy)
+    if(NOT(Python3_FOUND AND Python3_Interpreter_FOUND AND Python3_Development_FOUND AND Python3_NumPy_FOUND))
+        message(STATUS "Python3_FOUND = ${Python3_FOUND}")
+        message(STATUS "Python3_Interpreter_FOUND = ${Python3_Interpreter_FOUND}")
+        message(STATUS "Python3_Development_FOUND = ${Python3_Development_FOUND}")
+        message(STATUS "Python3_NumPy_FOUND = ${Python3_NumPy_FOUND}")
+        message(STATUS "WARNING:\n"
+            "   Some/all of Python3 or its Interpreter, Development, or NumPy components not found.\n"
+            "   Until this inconsistency with the PLplot build is addressed by installing\n"
+            "   the missing components from your software distribution, the Python3 components\n"
+            "   of PLplot are unlikely to work.")
+    endif(NOT(Python3_FOUND AND Python3_Interpreter_FOUND AND Python3_Development_FOUND AND Python3_NumPy_FOUND))
+endif(@ENABLE_python@)
+
+# Find Threads following what is done in cmake/modules/threads.cmake.
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY} ${${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED})
+if(NOT Threads_FOUND)
+    message(STATUS "WARNING:\n"
+        "   Threads not found. Until this inconsistency with the PLplot\n"
+        "   build is addressed by installing Threads from your software\n"
+        "   distribution, PLplot is unlikely to work.")
+endif(NOT Threads_FOUND)
+
+if(@ANY_QT_DEVICE@ AND @PLPLOT_USE_QT5@)
+    # Find Qt5 components that we need to link applications against
+    # the PLplot library (if ENABLE_DYNDRIVERS is false) and which we
+    # need in any case if we want to build qt_example and memqt_example.
+    # Maintenance 2026
+    # Find Qt5 following what is done in cmake/modules/qt.cmake
+    find_package(Qt5 5.7.1 ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY} ${${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED} COMPONENTS Svg Gui PrintSupport Widgets)
+    if(NOT(Qt5_FOUND AND Qt5Svg_FOUND AND Qt5Gui_FOUND AND Qt5PrintSupport_FOUND AND Qt5Widgets_FOUND))
+        message(STATUS "Qt5_FOUND = ${Qt5_FOUND}")
+        message(STATUS "Qt5Svg_FOUND = ${Qt5Svg_FOUND}")
+        message(STATUS "Qt5Gui_FOUND = ${Qt5Gui_FOUND}")
+        message(STATUS "Qt5PrintSupport_FOUND = ${Qt5PrintSupport_FOUND}")
+        message(STATUS "Qt5Widgets_FOUND = ${Qt5Widgets_FOUND}")
+        message(STATUS "WARNING:\n"
+            "   Some/all of Qt5 or its Svg, Gui, PrintSupport, or Widgets components not found.\n"
+            "   Until this inconsistency with the PLplot build is addressed by installing\n"
+            "   the missing components from your software distribution, the Qt5\n"
+            "   components of PLplot are unlikely to work.")
+    endif(NOT(Qt5_FOUND AND Qt5Svg_FOUND AND Qt5Gui_FOUND AND Qt5PrintSupport_FOUND AND Qt5Widgets_FOUND))
+    if(NOT("${Qt5_VERSION}" STREQUAL "@Qt5_VERSION@"))
+        message(STATUS "INFORMATION:\n"
+            "   The Qt5_VERSION provided by your software distribution is ${Qt5_VERSION},\n"
+            "   while the Qt5_VERSION used for the PLplot build is @Qt5_VERSION@.\n"
+            "   This inconsistency might make the Qt5 components of PLplot unlikely to work.")
+    endif(NOT("${Qt5_VERSION}" STREQUAL "@Qt5_VERSION@"))
+endif(@ANY_QT_DEVICE@ AND @PLPLOT_USE_QT5@)
+
+if(@PL_HAVE_QHULL@)
+    # Maintenance(2026)
+    # Find qhull following what is done in cmake/modules/csiro.cmake
+    find_package(Qhull ${${CMAKE_FIND_PACKAGE_NAME}_FIND_QUIETLY} ${${CMAKE_FIND_PACKAGE_NAME}_FIND_REQUIRED} CONFIG)
+    if(NOT Qhull_FOUND)
+        message(STATUS "WARNING:\n"
+            "   Qhull not found.  Until this inconsistency with the\n"
+            "   PLplot build is addressed by installing Qhull from your\n"
+            "   software distribution, the Qhull component of PLplot will\n"
+            "   not work.")
+    endif(NOT Qhull_FOUND)
+endif(@PL_HAVE_QHULL@)
 
 # Find export files in same directory location as present file.
 include(${CMAKE_CURRENT_LIST_DIR}/plplot_exports.cmake)
